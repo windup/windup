@@ -68,91 +68,102 @@ public class ResolveWeblogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
         XmlFileService xmlFileService = new XmlFileService(event.getGraphContext());
         GraphService<EjbSessionBeanModel> ejbSessionBeanService = new GraphService<>(event.getGraphContext(), EjbSessionBeanModel.class);
         GraphService<EjbMessageDrivenModel> mdbService = new GraphService<>(event.getGraphContext(), EjbMessageDrivenModel.class);
-        
+
         ClassificationService classificationService = new ClassificationService(event.getGraphContext());
         classificationService.attachClassification(payload, "Weblogic EJB XML", "Weblogic Enterprise Java Bean XML Descriptor.");
-        
+
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
         technologyTagService.addTagToFileModel(payload, "Weblogic EJB XML", TechnologyTagLevel.IMPORTANT);
-        
+
         Document doc = xmlFileService.loadDocumentQuiet(payload);
 
-        
-        for (Element resourceRef : $(doc).find("resource-description").get()) {
+        for (Element resourceRef : $(doc).find("resource-description").get())
+        {
             String jndiLocation = $(resourceRef).child("jndi-name").text();
             String resourceName = $(resourceRef).child("res-ref-name").text();
-            
-            if(StringUtils.isNotBlank(jndiLocation) && StringUtils.isNotBlank(resourceName)) {
+
+            if (StringUtils.isNotBlank(jndiLocation) && StringUtils.isNotBlank(resourceName))
+            {
                 JNDIResourceModel resource = jndiResourceService.createUnique(jndiLocation);
-                LOG.info("JNDI Name: "+jndiLocation+" to Resource: "+resourceName);
-                //now, look up the resource which is resolved by DiscoverEjbConfigurationXmlRuleProvider
-                for(EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceName)) {
+                LOG.info("JNDI Name: " + jndiLocation + " to Resource: " + resourceName);
+                // now, look up the resource which is resolved by DiscoverEjbConfigurationXmlRuleProvider
+                for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceName))
+                {
                     envRefService.associateEnvironmentToJndi(event, resource, ref);
                 }
             }
         }
-        
-        //register beans to JNDI 
-        for (Element resourceRef : $(doc).find("ejb-local-reference-description").get()) {
+
+        // register beans to JNDI
+        for (Element resourceRef : $(doc).find("ejb-local-reference-description").get())
+        {
             String resourceName = $(resourceRef).child("ejb-ref-name").text();
             String jndiLocation = $(resourceRef).child("jndi-name").text();
 
-            
-            if(StringUtils.isNotBlank(jndiLocation) && StringUtils.isNotBlank(resourceName)) {
+            if (StringUtils.isNotBlank(jndiLocation) && StringUtils.isNotBlank(resourceName))
+            {
                 JNDIResourceModel resource = jndiResourceService.createUnique(jndiLocation);
-                LOG.info("JNDI Name: "+jndiLocation+" to Resource: "+resourceName);
-                //now, look up the resource which is resolved by DiscoverEjbConfigurationXmlRuleProvider
-                for(EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceName)) {
+                LOG.info("JNDI Name: " + jndiLocation + " to Resource: " + resourceName);
+                // now, look up the resource which is resolved by DiscoverEjbConfigurationXmlRuleProvider
+                for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceName))
+                {
                     envRefService.associateEnvironmentToJndi(event, resource, ref);
                 }
 
-                for(EjbSessionBeanModel ejb : ejbSessionBeanService.findAllByProperty(EjbSessionBeanModel.EJB_BEAN_NAME, resourceName)) {
+                for (EjbSessionBeanModel ejb : ejbSessionBeanService.findAllByProperty(EjbSessionBeanModel.EJB_BEAN_NAME, resourceName))
+                {
                     ejb.setJndiReference(resource);
                 }
             }
         }
-        
-        
-        
-        
-        //bind the EJB beans to JNDI.
-        for (Element resourceRef : $(doc).find("weblogic-enterprise-bean").get()) {
-            
-            //register the EJB to the JNDI location, if it exists.
+
+        // bind the EJB beans to JNDI.
+        for (Element resourceRef : $(doc).find("weblogic-enterprise-bean").get())
+        {
+
+            // register the EJB to the JNDI location, if it exists.
             String localJndiLocation = $(resourceRef).child("local-jndi-name").text();
             String jndiLocation = $(resourceRef).child("jndi-name").text();
             String ejbName = $(resourceRef).child("ejb-name").text();
-            
-            if(StringUtils.isNotBlank(jndiLocation) && StringUtils.isNotBlank(ejbName)) {
+
+            if (StringUtils.isNotBlank(jndiLocation) && StringUtils.isNotBlank(ejbName))
+            {
                 JNDIResourceModel jndiRef = jndiResourceService.createUnique(jndiLocation);
-                //look up the EJB by the name, and associate to JNDI.
-                for(EjbSessionBeanModel sessionBean : ejbSessionBeanService.findAllByProperty(EjbSessionBeanModel.EJB_BEAN_NAME, ejbName)) {
-                    LOG.info("Registering EJB: "+ejbName+" to JNDI: "+jndiLocation);
-                    //TODO: support multiple JNDI references
-                    if(sessionBean.getJndiReference()==null) {
+                // look up the EJB by the name, and associate to JNDI.
+                for (EjbSessionBeanModel sessionBean : ejbSessionBeanService.findAllByProperty(EjbSessionBeanModel.EJB_BEAN_NAME, ejbName))
+                {
+                    LOG.info("Registering EJB: " + ejbName + " to JNDI: " + jndiLocation);
+                    // TODO: support multiple JNDI references
+                    if (sessionBean.getJndiReference() == null)
+                    {
                         sessionBean.setJndiReference(jndiRef);
                     }
                 }
             }
-            
-            if(StringUtils.isNotBlank(localJndiLocation) && StringUtils.isNotBlank(ejbName)) {
-                //look up the EJB by the name, and associate to JNDI.
+
+            if (StringUtils.isNotBlank(localJndiLocation) && StringUtils.isNotBlank(ejbName))
+            {
+                // look up the EJB by the name, and associate to JNDI.
                 JNDIResourceModel localJndiRef = jndiResourceService.createUnique(localJndiLocation);
-                
-                for(EjbSessionBeanModel sessionBean : ejbSessionBeanService.findAllByProperty(EjbSessionBeanModel.EJB_BEAN_NAME, ejbName)) {
-                    LOG.info("Registering EJB: "+ejbName+" to JNDI: "+jndiLocation);
-                    if(sessionBean.getJndiReference()==null) {
+
+                for (EjbSessionBeanModel sessionBean : ejbSessionBeanService.findAllByProperty(EjbSessionBeanModel.EJB_BEAN_NAME, ejbName))
+                {
+                    LOG.info("Registering EJB: " + ejbName + " to JNDI: " + jndiLocation);
+                    if (sessionBean.getJndiReference() == null)
+                    {
                         sessionBean.setJndiReference(localJndiRef);
                     }
                 }
             }
-            
-            
-            //extract the JNDI location of any message driven beans.
-            for (Element messageDrivenDescriptor : $(resourceRef).find("message-driven-descriptor").get()) {
-                for(EjbMessageDrivenModel mdb : mdbService.findAllByProperty(EjbMessageDrivenModel.EJB_BEAN_NAME, ejbName)) {
+
+            // extract the JNDI location of any message driven beans.
+            for (Element messageDrivenDescriptor : $(resourceRef).find("message-driven-descriptor").get())
+            {
+                for (EjbMessageDrivenModel mdb : mdbService.findAllByProperty(EjbMessageDrivenModel.EJB_BEAN_NAME, ejbName))
+                {
                     String destination = $(messageDrivenDescriptor).child("destination-jndi-name").text();
-                    if(StringUtils.isNotBlank(destination)) {
+                    if (StringUtils.isNotBlank(destination))
+                    {
                         JmsDestinationModel jndiRef = jmsDestinationService.createUnique(destination);
                         mdb.setDestination(jndiRef);
                     }
@@ -161,7 +172,4 @@ public class ResolveWeblogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
         }
 
     }
-
-    
-
 }

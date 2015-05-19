@@ -15,31 +15,38 @@ import org.jboss.windup.rules.apps.javaee.model.JmsDestinationType;
 public class JmsDestinationService extends GraphService<JmsDestinationModel>
 {
     private final JNDIResourceService jndiResourceService;
-    
+
+    /**
+     * Creates a new {@link JmsDestinationService} instance.
+     */
     public JmsDestinationService(GraphContext context)
     {
         super(context, JmsDestinationModel.class);
         this.jndiResourceService = new JNDIResourceService(context);
     }
-    
-    public JmsDestinationModel createUnique(String jndiName, JmsDestinationType destinationType) {
+
+    public JmsDestinationModel createUnique(String jndiName, JmsDestinationType destinationType)
+    {
         JmsDestinationModel model = createUnique(jndiName);
         model.setDestinationType(destinationType);
-        
+
         return model;
     }
-    
-    public JmsDestinationModel createUnique(String jndiName) {
+
+    public JmsDestinationModel createUnique(String jndiName)
+    {
         JmsDestinationModel model = null;
-        
+
         JNDIResourceModel jndiRef = jndiResourceService.createUnique(jndiName);
-        if(jndiRef instanceof JmsDestinationModel) {
-            model = (JmsDestinationModel)jndiRef;
+        if (jndiRef instanceof JmsDestinationModel)
+        {
+            model = (JmsDestinationModel) jndiRef;
         }
-        else {
+        else
+        {
             model = this.addTypeToModel(jndiRef);
         }
-        
+
         return model;
     }
 }

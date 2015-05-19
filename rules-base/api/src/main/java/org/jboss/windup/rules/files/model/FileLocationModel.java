@@ -1,7 +1,5 @@
 package org.jboss.windup.rules.files.model;
 
-import org.jboss.windup.graph.IndexType;
-import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.model.resource.FileModel;
 
 import com.tinkerpop.blueprints.Vertex;
@@ -64,7 +62,6 @@ public interface FileLocationModel extends FileReferenceModel
     /**
      * Gets the snippit referenced by this {@link FileLocationModel}.
      */
-    @Indexed(IndexType.SEARCH)
     @Property(SOURCE_SNIPPIT)
     void setSourceSnippit(String source);
 

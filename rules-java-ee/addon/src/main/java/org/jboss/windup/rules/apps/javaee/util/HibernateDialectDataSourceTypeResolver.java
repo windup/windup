@@ -10,6 +10,9 @@ import org.apache.commons.lang.StringUtils;
  */
 public class HibernateDialectDataSourceTypeResolver
 {
+    /**
+     * Converts the given dislect to a human-readable datasource type.
+     */
     public static String resolveDataSourceTypeFromDialect(String dialect) {
         if(StringUtils.contains(dialect, "Oracle")) {
             return "Oracle";
@@ -51,5 +54,4 @@ public class HibernateDialectDataSourceTypeResolver
         return dialect;
         
     }
-    
 }

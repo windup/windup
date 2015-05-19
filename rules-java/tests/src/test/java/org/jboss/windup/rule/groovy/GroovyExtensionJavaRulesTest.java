@@ -13,10 +13,9 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.AddonDependency;
-import org.jboss.forge.arquillian.Dependencies;
-import org.jboss.forge.arquillian.archive.ForgeArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
+import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.util.Iterators;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -47,7 +46,7 @@ import org.junit.runner.RunWith;
 public class GroovyExtensionJavaRulesTest
 {
     @Deployment
-    @Dependencies({
+    @AddonDependencies({
                 @AddonDependency(name = "org.jboss.windup.config:windup-config"),
                 @AddonDependency(name = "org.jboss.windup.config:windup-config-groovy"),
                 @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
@@ -55,23 +54,13 @@ public class GroovyExtensionJavaRulesTest
                 @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static ForgeArchive getDeployment()
+    public static AddonArchive getDeployment()
     {
-        final ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
+        return ShrinkWrap.create(AddonArchive.class)
                     .addBeansXML()
                     .addClass(TestHintsClassificationsTestRuleProvider.class)
                     .addAsResource(new File("src/test/resources/groovy/GroovyClassificationsAndHints.windup.groovy"),
-                                GROOVY_CLASSIFICATION_AND_HINT_FILE)
-                    .addAsAddonDependencies(
-                                AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
-                                AddonDependencyEntry.create("org.jboss.windup.config:windup-config-groovy"),
-                                AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
-                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:windup-rules-java"),
-                                AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
-                                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-                    );
-
-        return archive;
+                                GROOVY_CLASSIFICATION_AND_HINT_FILE);
     }
 
     @Inject
@@ -85,16 +74,14 @@ public class GroovyExtensionJavaRulesTest
     @Test
     public void testHintsAndClassificationOperation() throws Exception
     {
-        try (GraphContext context = factory.create())
+        final Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(),
+                    "windup_" + RandomStringUtils.randomAlphanumeric(6));
+
+        FileUtils.deleteDirectory(outputPath.toFile());
+        Files.createDirectories(outputPath);
+
+        try (GraphContext context = factory.create(outputPath.resolve("graph")))
         {
-
-            Assert.assertNotNull(context);
-
-            final Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(),
-                        "windup_" + RandomStringUtils.randomAlphanumeric(6));
-            FileUtils.deleteDirectory(outputPath.toFile());
-            Files.createDirectories(outputPath);
-
             String inputPath = "src/test/resources/org/jboss/windup/rules/java";
 
             ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);

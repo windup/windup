@@ -210,10 +210,10 @@ public class ExecutionBuilderImpl implements ExecutionBuilder, ExecutionBuilderS
             hint.setHint(hintModel.getHint());
             hint.setSeverity(hintModel.getSeverity());
             hint.setEffort(hintModel.getEffort());
-            hint.setColumn(hintModel.getFileLocationReference().getColumnNumber());
-            hint.setLineNumber(hintModel.getFileLocationReference().getLineNumber());
-            hint.setLength(hintModel.getFileLocationReference().getLength());
-            hint.setSourceSnippit(hintModel.getFileLocationReference().getSourceSnippit());
+            hint.setColumn(hintModel.getColumnNumber());
+            hint.setLineNumber(hintModel.getLineNumber());
+            hint.setLength(hintModel.getLength());
+            hint.setSourceSnippit(hintModel.getSourceSnippit());
             hint.setRuleID(hintModel.getRuleID());
 
             hint.setLinks(asLinks(hintModel.getLinks()));

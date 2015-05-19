@@ -27,6 +27,7 @@ public class WindupArchitectureSmallBinaryMode2Test extends WindupArchitectureTe
                 @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
                 @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-ee"),
                 @AddonDependency(name = "org.jboss.windup.config:windup-config-groovy"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
     })

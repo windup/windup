@@ -186,9 +186,9 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
                     "org.windup.examples.ejb.messagedriven.MessageDrivenBean",
                     "jms/MyQueue"));
         Assert.assertTrue(util.checkBeanInReport(EJBType.STATELESS, "MyNameForSimpleStatelessEJB",
-                    "org.windup.examples.ejb.simplestateless.SimpleStatelessEJB", "Stateless"));
+                    "org.windup.examples.ejb.simplestateless.SimpleStatelessEJB"));
         Assert.assertTrue(util.checkBeanInReport(EJBType.STATEFUL, "MyNameForSimpleStatefulEJB",
-                    "org.windup.examples.ejb.simplestateful.SimpleStatefulEJB", "Stateful"));
+                    "org.windup.examples.ejb.simplestateful.SimpleStatefulEJB"));
         Assert.assertTrue(util.checkBeanInReport(EJBType.ENTITY, "SimpleEntity", "org.windup.examples.ejb.entitybean.SimpleEntity",
                     "SimpleEntityTable", "Container"));
         Assert.assertTrue(util.checkBeanInReport(EJBType.ENTITY, "SimpleEntityNoTableName",

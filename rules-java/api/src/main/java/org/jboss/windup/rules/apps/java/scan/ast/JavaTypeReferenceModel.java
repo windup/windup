@@ -1,6 +1,8 @@
 package org.jboss.windup.rules.apps.java.scan.ast;
 
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
+import org.jboss.windup.graph.IndexType;
+import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.rules.files.model.FileLocationModel;
 
 import com.tinkerpop.blueprints.Vertex;
@@ -24,6 +26,7 @@ public interface JavaTypeReferenceModel extends FileLocationModel
      * Gets the snippit referenced by this {@link FileLocationModel}.
      */
     @Property(RESOLVED_SOURCE_SNIPPIT)
+    @Indexed(IndexType.SEARCH)
     void setResolvedSourceSnippit(String source);
 
     /**
@@ -42,6 +45,7 @@ public interface JavaTypeReferenceModel extends FileLocationModel
      * Contains the {@link TypeReferenceLocation} location referred to by this {@link Vertex}.
      */
     @Property(REFERENCE_TYPE)
+    @Indexed(IndexType.SEARCH)
     void setReferenceLocation(TypeReferenceLocation type);
 
     /**

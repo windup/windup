@@ -25,6 +25,7 @@ import com.thinkaurelius.titan.core.Cardinality;
 import com.thinkaurelius.titan.core.PropertyKey;
 import com.thinkaurelius.titan.core.TitanFactory;
 import com.thinkaurelius.titan.core.TitanGraph;
+import com.thinkaurelius.titan.core.schema.Mapping;
 import com.thinkaurelius.titan.core.schema.TitanManagement;
 import com.thinkaurelius.titan.core.util.TitanCleanup;
 import com.tinkerpop.blueprints.Graph;
@@ -191,7 +192,9 @@ public class GraphContextImpl implements GraphContext
          */
         listIndexKeys.add(WindupVertexFrame.TYPE_PROP);
 
-        log.info("Detected and initialized [" + defaultIndexKeys.size() + "] indexes: " + defaultIndexKeys);
+        log.info("Detected and initialized [" + defaultIndexKeys.size() + "] default indexes: " + defaultIndexKeys);
+        log.info("Detected and initialized [" + searchIndexKeys.size() + "] search indexes: " + searchIndexKeys);
+        log.info("Detected and initialized [" + listIndexKeys.size() + "] list indexes: " + listIndexKeys);
 
         TitanManagement titan = titanGraph.getManagementSystem();
         for (String key : defaultIndexKeys)
@@ -203,7 +206,7 @@ public class GraphContextImpl implements GraphContext
         for (String key : searchIndexKeys)
         {
             PropertyKey propKey = titan.makePropertyKey(key).dataType(String.class).cardinality(Cardinality.SINGLE).make();
-            titan.buildIndex(key, Vertex.class).addKey(propKey).buildMixedIndex("search");
+            titan.buildIndex(key, Vertex.class).addKey(propKey, Mapping.STRING.getParameter()).buildMixedIndex("search");
         }
 
         for (String key : listIndexKeys)

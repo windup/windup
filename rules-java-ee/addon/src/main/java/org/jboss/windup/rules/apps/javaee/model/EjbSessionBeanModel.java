@@ -77,9 +77,15 @@ public interface EjbSessionBeanModel extends EjbBeanBaseModel
     public EjbDeploymentDescriptorModel getEjbDeploymentDescriptor();
 
 
+    /**
+     * Contains the jndi location for this resource.
+     */
     @Adjacency(label = JNDIResourceModel.TYPE, direction = Direction.OUT)
     public JNDIResourceModel getJndiReference();
-    
+
+    /**
+     * Contains the jndi location for this resource.
+     */
     @Adjacency(label = JNDIResourceModel.TYPE, direction = Direction.OUT)
     public void setJndiReference(JNDIResourceModel jndiReference);
 }

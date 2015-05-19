@@ -61,23 +61,25 @@ public class ResolveJBossWebXmlRuleProvider extends IteratingRuleProvider<XmlFil
         XmlFileService xmlFileService = new XmlFileService(event.getGraphContext());
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
         technologyTagService.addTagToFileModel(payload, "JBoss Web XML", TechnologyTagLevel.IMPORTANT);
-        
+
         ClassificationService classificationService = new ClassificationService(event.getGraphContext());
         classificationService.attachClassification(payload, "JBoss Web XML", "JBoss Web XML Descriptor.");
-        
+
         Document doc = xmlFileService.loadDocumentQuiet(payload);
 
-        for (Element resourceRef : $(doc).find("resource-ref").get()) {
+        for (Element resourceRef : $(doc).find("resource-ref").get())
+        {
             String jndiLocation = $(resourceRef).child("jndi-name").text();
             String resourceName = $(resourceRef).child("res-ref-name").text();
-            
+
             JNDIResourceModel resource = jndiResourceService.createUnique(jndiLocation);
-            
-            //now, look up the resource
-            for(EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceName)) {
+
+            // now, look up the resource
+            for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceName))
+            {
                 envRefService.associateEnvironmentToJndi(event, resource, ref);
             }
-            
+
         }
 
     }

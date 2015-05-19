@@ -67,6 +67,12 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
             @Override
             public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
             {
+                /*
+                 * Make sure we don't add try to create multiple projects out of it
+                 */
+                if (payload.getProjectModel() != null)
+                    return;
+
                 // get a default name from the parent file (if the maven project doesn't contain one)
                 String defaultName = payload.getParentArchive() == null ? payload.asFile().getParentFile().getName() : payload.getParentArchive()
                             .getFileName();

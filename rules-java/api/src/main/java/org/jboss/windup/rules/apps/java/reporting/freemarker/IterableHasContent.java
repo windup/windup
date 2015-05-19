@@ -44,7 +44,6 @@ public class IterableHasContent implements WindupFreeMarkerMethod
             ExecutionStatistics.get().end(NAME);
         }
     }
-    
 
     @SuppressWarnings("unchecked")
     private Iterable getList(Object arg) throws TemplateModelException
@@ -57,7 +56,7 @@ public class IterableHasContent implements WindupFreeMarkerMethod
         else if (arg instanceof SimpleSequence)
         {
             SimpleSequence simpleSequence = (SimpleSequence) arg;
-            return (Iterable) simpleSequence.toList();
+            return simpleSequence.toList();
         }
         else
         {
@@ -65,7 +64,6 @@ public class IterableHasContent implements WindupFreeMarkerMethod
                         + arg.getClass().getCanonicalName());
         }
     }
-
 
     @Override
     public String getMethodName()
@@ -76,7 +74,7 @@ public class IterableHasContent implements WindupFreeMarkerMethod
     @Override
     public String getDescription()
     {
-        return "Takes an Iterable as a parameter and checks to see whether items exist in the iterable.";
+        return "Takes an Iterable as a parameter and checks to see whether items exist in the Iterable.";
     }
 
     @Override

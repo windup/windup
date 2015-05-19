@@ -68,63 +68,75 @@ public class ResolveOrionEjbXmlRuleProvider extends IteratingRuleProvider<XmlFil
         XmlFileService xmlFileService = new XmlFileService(event.getGraphContext());
         GraphService<EjbSessionBeanModel> ejbSessionBeanService = new GraphService<>(event.getGraphContext(), EjbSessionBeanModel.class);
         GraphService<EjbMessageDrivenModel> mdbService = new GraphService<>(event.getGraphContext(), EjbMessageDrivenModel.class);
-        
+
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
 
-        
         Document doc = xmlFileService.loadDocumentQuiet(payload);
 
         TechnologyTagModel technologyTag = technologyTagService.addTagToFileModel(payload, "Orion EJB XML", TechnologyTagLevel.IMPORTANT);
-        for (Element resourceRef : $(doc).find("resource-ref-mapping").get()) {
+        for (Element resourceRef : $(doc).find("resource-ref-mapping").get())
+        {
             String jndiLocation = $(resourceRef).attr("location");
             String resourceName = $(resourceRef).attr("name");
-            
-            if(StringUtils.isNotBlank(jndiLocation) && StringUtils.isNotBlank(resourceName)) {
+
+            if (StringUtils.isNotBlank(jndiLocation) && StringUtils.isNotBlank(resourceName))
+            {
                 JNDIResourceModel resource = jndiResourceService.createUnique(jndiLocation);
-                LOG.info("JNDI Name: "+jndiLocation+" to Resource: "+resourceName);
-                //now, look up the resource which is resolved by DiscoverEjbConfigurationXmlRuleProvider
-                for(EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceName)) {
+                LOG.info("JNDI Name: " + jndiLocation + " to Resource: " + resourceName);
+                // now, look up the resource which is resolved by DiscoverEjbConfigurationXmlRuleProvider
+                for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceName))
+                {
                     envRefService.associateEnvironmentToJndi(event, resource, ref);
                 }
             }
         }
-        
-        for (Element ejbRef : $(doc).find("session-deployment").get()) {
+
+        for (Element ejbRef : $(doc).find("session-deployment").get())
+        {
             String ejbName = $(ejbRef).attr("name");
-            
-            if(StringUtils.isNotBlank(ejbName)) {
-                LOG.info("Looking up name: "+ejbName);
-                for(EjbSessionBeanModel ejb : ejbSessionBeanService.findAllByProperty(EjbMessageDrivenModel.EJB_BEAN_NAME, ejbName)) {
+
+            if (StringUtils.isNotBlank(ejbName))
+            {
+                LOG.info("Looking up name: " + ejbName);
+                for (EjbSessionBeanModel ejb : ejbSessionBeanService.findAllByProperty(EjbMessageDrivenModel.EJB_BEAN_NAME, ejbName))
+                {
                     String destination = $(ejbRef).attr("location");
 
-                    if(StringUtils.isNotBlank(destination)) {
+                    if (StringUtils.isNotBlank(destination))
+                    {
                         JNDIResourceModel jndiRef = jndiResourceService.createUnique(destination);
                         ejb.setJndiReference(jndiRef);
                     }
                 }
             }
         }
-        
-        //bind the EJB beans to JNDI.
-        for (Element messageDrivenRef : $(doc).find("message-driven-deployment").get()) {
-            //register the EJB to the JNDI location, if it exists.
+
+        // bind the EJB beans to JNDI.
+        for (Element messageDrivenRef : $(doc).find("message-driven-deployment").get())
+        {
+            // register the EJB to the JNDI location, if it exists.
             String ejbName = $(messageDrivenRef).attr("name");
-            
-            if(StringUtils.isNotBlank(ejbName)) {
-                LOG.info("Looking up name: "+ejbName);
-                for(EjbMessageDrivenModel mdb : mdbService.findAllByProperty(EjbMessageDrivenModel.EJB_BEAN_NAME, ejbName)) {
+
+            if (StringUtils.isNotBlank(ejbName))
+            {
+                LOG.info("Looking up name: " + ejbName);
+                for (EjbMessageDrivenModel mdb : mdbService.findAllByProperty(EjbMessageDrivenModel.EJB_BEAN_NAME, ejbName))
+                {
                     String destination = $(messageDrivenRef).attr("destination-location");
-                    
-                    for(Element configProperty : $(messageDrivenRef).find("config-property").get()) {
+
+                    for (Element configProperty : $(messageDrivenRef).find("config-property").get())
+                    {
                         String name = $(configProperty).child("config-property-name").text();
                         String value = $(configProperty).child("config-property-value").text();
-                        
-                        if(StringUtils.isBlank(destination) && StringUtils.equals("DestinationName", name)) {
+
+                        if (StringUtils.isBlank(destination) && StringUtils.equals("DestinationName", name))
+                        {
                             destination = value;
                         }
                     }
-                    
-                    if(StringUtils.isNotBlank(destination)) {
+
+                    if (StringUtils.isNotBlank(destination))
+                    {
                         JmsDestinationModel jndiRef = jmsDestinationService.createUnique(destination);
                         mdb.setDestination(jndiRef);
                     }
@@ -133,7 +145,4 @@ public class ResolveOrionEjbXmlRuleProvider extends IteratingRuleProvider<XmlFil
         }
 
     }
-
-    
-
 }
