@@ -57,7 +57,6 @@ public class ResolveWebsphereEjbBindingXmlRuleProvider extends IteratingRuleProv
     @Override
     public ConditionBuilder when()
     {
-
         return Query.fromType(XmlFileModel.class).withProperty(FileModel.FILE_NAME, "ibm-ejb-jar-bnd.xmi")
                     .withProperty(XmlFileModel.ROOT_TAG_NAME, "EJBJarBinding");
     }
@@ -144,7 +143,5 @@ public class ResolveWebsphereEjbBindingXmlRuleProvider extends IteratingRuleProv
                 }
             }
         }
-
     }
-
 }

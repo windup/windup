@@ -8,6 +8,7 @@ import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
+ * 
  * Contains a graph model representing a JPA configuration file within the application.
  * 
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>

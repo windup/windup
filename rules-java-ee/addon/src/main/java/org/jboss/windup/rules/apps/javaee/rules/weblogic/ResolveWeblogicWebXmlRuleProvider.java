@@ -81,7 +81,6 @@ public class ResolveWeblogicWebXmlRuleProvider extends IteratingRuleProvider<Xml
                     envRefService.associateEnvironmentToJndi(resource, ref);
                 }
             }
-
         }
 
     }

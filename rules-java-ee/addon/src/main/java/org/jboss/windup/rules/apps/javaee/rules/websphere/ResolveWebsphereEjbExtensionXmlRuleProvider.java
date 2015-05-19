@@ -55,5 +55,4 @@ public class ResolveWebsphereEjbExtensionXmlRuleProvider extends IteratingRulePr
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
         technologyTagService.addTagToFileModel(payload, "Websphere EJB Ext", TechnologyTagLevel.IMPORTANT);
     }
-
 }

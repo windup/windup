@@ -39,6 +39,7 @@ public class JNDIResourceService extends GraphService<JNDIResourceModel>
     /**
      * Associate a type with the given resource model.
      */
+
     public void associateTypeJndiResource(JNDIResourceModel resource, String type)
     {
         if (type == null || resource == null)

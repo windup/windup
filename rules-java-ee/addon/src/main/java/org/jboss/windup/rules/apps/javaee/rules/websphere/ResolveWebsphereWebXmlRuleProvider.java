@@ -81,7 +81,6 @@ public class ResolveWebsphereWebXmlRuleProvider extends IteratingRuleProvider<Xm
                     envRefService.associateEnvironmentToJndi(resource, ref);
                 }
             }
-
         }
 
     }

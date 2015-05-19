@@ -51,10 +51,7 @@ public class ResolveWebsphereWsClientBindingXmlRuleProvider extends IteratingRul
     {
         ClassificationService classificationService = new ClassificationService(event.getGraphContext());
         classificationService.attachClassification(payload, "Websphere WS Client", "Websphere Webservice Binding XML Descriptor.");
-
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
         technologyTagService.addTagToFileModel(payload, "Websphere WS Client", TechnologyTagLevel.IMPORTANT);
-
     }
-
 }

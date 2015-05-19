@@ -7,6 +7,7 @@ import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.exception.WindupException;
 
+import freemarker.core.CollectionAndSequence;
 import freemarker.ext.beans.BeanModel;
 import freemarker.template.SimpleSequence;
 import freemarker.template.TemplateModelException;

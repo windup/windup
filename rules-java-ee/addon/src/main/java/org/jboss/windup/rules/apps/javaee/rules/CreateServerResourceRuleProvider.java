@@ -41,7 +41,6 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 public class CreateServerResourceRuleProvider extends AbstractRuleProvider
 {
     private static final Logger LOG = Logging.get(CreateServerResourceRuleProvider.class);
-
     public static final String TEMPLATE_JPA_REPORT = "/reports/templates/server.ftl";
 
     public CreateServerResourceRuleProvider()
@@ -103,6 +102,7 @@ public class CreateServerResourceRuleProvider extends AbstractRuleProvider
         WindupVertexListModel jmsList = listService.create();
         WindupVertexListModel jmsConnectionFactoryList = listService.create();
         WindupVertexListModel otherJndiList = listService.create();
+
 
         for (JNDIResourceModel jndi : jndiResourceService.findAll())
         {

@@ -54,7 +54,5 @@ public class ResolveWebsphereWsExtBindingXmlRuleProvider extends IteratingRulePr
 
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
         technologyTagService.addTagToFileModel(payload, "Websphere WS Extension", TechnologyTagLevel.IMPORTANT);
-
     }
-
 }

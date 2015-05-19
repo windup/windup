@@ -45,7 +45,6 @@ import org.w3c.dom.Element;
 public class DiscoverJpaConfigurationXmlRuleProvider extends IteratingRuleProvider<NamespaceMetaModel>
 {
     private static final Logger LOG = Logging.get(DiscoverJpaConfigurationXmlRuleProvider.class);
-
     private static final String TECH_TAG = "JPA XML";
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.IMPORTANT;
 
@@ -137,7 +136,6 @@ public class DiscoverJpaConfigurationXmlRuleProvider extends IteratingRuleProvid
                 {
                     dataSourceName = StringUtils.substringAfterLast(dataSourceName, "/");
                 }
-
                 DataSourceModel dataSource = dataSourceService.createUnique(dataSourceName, dataSourceJndiName);
                 persistenceUnitModel.addDataSource(dataSource);
             }

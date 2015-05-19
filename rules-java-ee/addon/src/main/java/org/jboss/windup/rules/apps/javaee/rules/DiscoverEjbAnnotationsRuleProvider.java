@@ -190,7 +190,6 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
             JmsDestinationService jmsDestinationService = new JmsDestinationService(event.getGraphContext());
             messageDrivenBean.setDestination(jmsDestinationService.createUnique(destination));
         }
-
     }
 
     private String getDestinationFromActivationConfig(JavaAnnotationTypeValueModel annotationTypeReferenceModel)

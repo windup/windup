@@ -59,6 +59,7 @@ public interface EnvironmentReferenceModel extends WindupVertexFrame
     @Property(REFERENCE_TYPE)
     public void setReferenceType(String referenceType);
 
+
     /**
      * Contains the jndi location for this resource.
      */

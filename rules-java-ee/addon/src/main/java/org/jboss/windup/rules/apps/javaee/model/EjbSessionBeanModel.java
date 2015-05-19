@@ -76,6 +76,7 @@ public interface EjbSessionBeanModel extends EjbBeanBaseModel
     @Adjacency(label = EjbDeploymentDescriptorModel.EJB_SESSION_BEAN, direction = Direction.IN)
     public EjbDeploymentDescriptorModel getEjbDeploymentDescriptor();
 
+
     /**
      * Contains the jndi location for this resource.
      */

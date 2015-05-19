@@ -153,7 +153,6 @@ public class DiscoverHibernateConfigurationRuleProvider extends IteratingRulePro
                     dataSource.setDatabaseTypeName(HibernateDialectDataSourceTypeResolver.resolveDataSourceTypeFromDialect(dialect));
                 }
             }
-
         }
     }
 
@@ -184,5 +183,4 @@ public class DiscoverHibernateConfigurationRuleProvider extends IteratingRulePro
 
         return null;
     }
-
 }

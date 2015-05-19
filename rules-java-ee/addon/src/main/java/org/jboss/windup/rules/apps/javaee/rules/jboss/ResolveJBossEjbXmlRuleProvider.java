@@ -169,5 +169,4 @@ public class ResolveJBossEjbXmlRuleProvider extends IteratingRuleProvider<XmlFil
         }
 
     }
-
 }
