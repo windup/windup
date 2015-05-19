@@ -1,6 +1,7 @@
 package org.jboss.windup.rules.apps.javaee.rules;
 
 import static org.joox.JOOX.$;
+import static org.joox.JOOX.attr;
 
 import java.util.List;
 import java.util.logging.Level;
@@ -16,8 +17,10 @@ import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
+import org.jboss.windup.rules.apps.javaee.model.JNDIResourceModel;
 import org.jboss.windup.rules.apps.javaee.model.SpringBeanModel;
 import org.jboss.windup.rules.apps.javaee.model.SpringConfigurationFileModel;
+import org.jboss.windup.rules.apps.javaee.service.JNDIResourceService;
 import org.jboss.windup.rules.apps.javaee.service.SpringBeanService;
 import org.jboss.windup.rules.apps.javaee.service.SpringConfigurationFileService;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
@@ -67,6 +70,7 @@ public class DiscoverSpringConfigurationFilesRuleProvider extends IteratingRuleP
         SpringConfigurationFileService springConfigurationFileService = new SpringConfigurationFileService(
                     event.getGraphContext());
         SpringBeanService springBeanService = new SpringBeanService(event.getGraphContext());
+        JNDIResourceService jndiResourceService = new JNDIResourceService(event.getGraphContext());
 
         Document doc = xmlFileService.loadDocumentQuiet(payload);
         if (doc == null)
@@ -89,6 +93,7 @@ public class DiscoverSpringConfigurationFilesRuleProvider extends IteratingRuleP
         SpringConfigurationFileModel springConfigurationModel = springConfigurationFileService
                     .addTypeToModel(payload);
 
+        // create bean models
         List<Element> beans = $(element).children("bean").get();
         for (Element bean : beans)
         {
@@ -117,6 +122,54 @@ public class DiscoverSpringConfigurationFilesRuleProvider extends IteratingRuleP
             springBeanRef.setJavaClass(classReference);
 
             springConfigurationModel.addSpringBeanReference(springBeanRef);
+
+            // find out if the class is a JndiObjectFactoryBean, extract the JNDI & type the JNDI resource, when expectedType property is provided.
+            /*
+             * <bean id="beanDataSource" class="org.springframework.jndi.JndiObjectFactoryBean"> <property name="jndiName"
+             * value="jdbc/ExampleSpringBeanDataSource"/> <property name="expectedType" value="javax.sql.DataSource"/> </bean>
+             */
+            if (StringUtils.isNotBlank(clz) && StringUtils.equals("org.springframework.jndi.JndiObjectFactoryBean", clz))
+            {
+                String expectedType = $(bean).children("property").filter(attr("name", "expectedType")).first().attr("value");
+                String jndiName = $(bean).children("property").filter(attr("name", "jndiName")).first().attr("value");
+
+                LOG.info("Found JNDI in Bean Spring: " + jndiName);
+                if (StringUtils.isNotBlank(jndiName))
+                {
+                    JNDIResourceModel jndiResource = jndiResourceService.createUnique(jndiName);
+                    if (StringUtils.isNotBlank(expectedType))
+                    {
+                        LOG.info(" -- Type: " + expectedType);
+                        jndiResourceService.associateTypeJndiResource(jndiResource, expectedType);
+                    }
+                }
+            }
+        }
+
+        // extract JNDI references & type the JNDI resource, when expected-type is provided.
+        /*
+         * <jee:jndi-lookup id="jeeDataSource" jndi-name="jdbc/ExampleSpringJNDIDataSource" expected-type="javax.sql.DataSource" />
+         */
+        List<Element> jndis = $(element).children("jndi-lookup").get();
+        if (jndis.size() > 0)
+        {
+            for (Element jndi : jndis)
+            {
+                String jndiName = $(jndi).attr("jndi-name");
+                String expectedType = $(jndi).attr("expected-type");
+
+                LOG.info("Found JNDI in JEE Spring: " + jndiName);
+
+                if (StringUtils.isNotBlank(jndiName))
+                {
+                    JNDIResourceModel jndiResource = jndiResourceService.createUnique(jndiName);
+                    if (StringUtils.isNotBlank(expectedType))
+                    {
+                        LOG.info(" -- Type: " + expectedType);
+                        jndiResourceService.associateTypeJndiResource(jndiResource, expectedType);
+                    }
+                }
+            }
         }
     }
 }

@@ -3,13 +3,11 @@ package org.jboss.windup.rules.apps.java.reporting.freemarker;
 import java.util.List;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.exception.WindupException;
 
 import freemarker.ext.beans.BeanModel;
-import freemarker.ext.beans.StringModel;
 import freemarker.template.SimpleSequence;
 import freemarker.template.TemplateModelException;
 
@@ -45,7 +43,6 @@ public class IterableHasContent implements WindupFreeMarkerMethod
             ExecutionStatistics.get().end(NAME);
         }
     }
-    
 
     @SuppressWarnings("unchecked")
     private Iterable getList(Object arg) throws TemplateModelException
@@ -58,7 +55,7 @@ public class IterableHasContent implements WindupFreeMarkerMethod
         else if (arg instanceof SimpleSequence)
         {
             SimpleSequence simpleSequence = (SimpleSequence) arg;
-            return (Iterable) simpleSequence.toList();
+            return simpleSequence.toList();
         }
         else
         {
@@ -66,7 +63,6 @@ public class IterableHasContent implements WindupFreeMarkerMethod
                         + arg.getClass().getCanonicalName());
         }
     }
-
 
     @Override
     public String getMethodName()
@@ -77,7 +73,7 @@ public class IterableHasContent implements WindupFreeMarkerMethod
     @Override
     public String getDescription()
     {
-        return "Takes an Iterable as a parameter and checks to see whether items exist in the iterable.";
+        return "Takes an Iterable as a parameter and checks to see whether items exist in the Iterable.";
     }
 
     @Override

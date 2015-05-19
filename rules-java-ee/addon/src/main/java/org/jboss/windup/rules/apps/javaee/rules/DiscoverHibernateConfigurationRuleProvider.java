@@ -4,6 +4,7 @@ import static org.joox.JOOX.$;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -18,12 +19,16 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.TechnologyTagService;
+import org.jboss.windup.rules.apps.javaee.model.DataSourceModel;
 import org.jboss.windup.rules.apps.javaee.model.HibernateConfigurationFileModel;
 import org.jboss.windup.rules.apps.javaee.model.HibernateSessionFactoryModel;
+import org.jboss.windup.rules.apps.javaee.service.DataSourceService;
 import org.jboss.windup.rules.apps.javaee.service.HibernateConfigurationFileService;
+import org.jboss.windup.rules.apps.javaee.util.HibernateDialectDataSourceTypeResolver;
 import org.jboss.windup.rules.apps.xml.model.DoctypeMetaModel;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.apps.xml.service.XmlFileService;
+import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.w3c.dom.Document;
@@ -35,14 +40,15 @@ import com.tinkerpop.frames.FramedGraphQuery;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 /**
- * Discovers Hibernate Configuration Files (eg, hibernate.cfg.xml), extracts their metadata, and places this metadata
- * into the graph.
+ * Discovers Hibernate Configuration Files (eg, hibernate.cfg.xml), extracts their metadata, and places this metadata into the graph.
  * 
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
  */
 public class DiscoverHibernateConfigurationRuleProvider extends IteratingRuleProvider<DoctypeMetaModel>
 {
+    private static final Logger LOG = Logging.get(DiscoverHibernateConfigurationRuleProvider.class);
+
     private static final String TECH_TAG = "Hibernate Cfg";
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.IMPORTANT;
 
@@ -100,6 +106,7 @@ public class DiscoverHibernateConfigurationRuleProvider extends IteratingRulePro
 
     private void createHibernateConfigurationModel(GraphContext graphContext, XmlFileModel xmlFileModel, String versionInformation)
     {
+        DataSourceService dataSourceService = new DataSourceService(graphContext);
         HibernateConfigurationFileService hibernateConfigurationFileService = new HibernateConfigurationFileService(graphContext);
         GraphService<HibernateSessionFactoryModel> hibernateSessionFactoryService = new GraphService<>(graphContext,
                     HibernateSessionFactoryModel.class);
@@ -127,6 +134,26 @@ public class DiscoverHibernateConfigurationRuleProvider extends IteratingRulePro
                 sessionFactoryProperties.put(propKey, propValue);
             }
             sessionFactoryModel.setSessionFactoryProperties(sessionFactoryProperties);
+
+            // create the datasource references.
+            if (sessionFactoryProperties.containsKey("hibernate.connection.datasource"))
+            {
+                final String dataSourceJndiName = sessionFactoryProperties.get("hibernate.connection.datasource");
+                String dataSourceName = dataSourceJndiName;
+                if (StringUtils.contains(dataSourceName, "/"))
+                {
+                    dataSourceName = StringUtils.substringAfterLast(dataSourceName, "/");
+                }
+
+                DataSourceModel dataSource = dataSourceService.createUnique(dataSourceName, dataSourceJndiName);
+
+                if (sessionFactoryProperties.containsKey("hibernate.dialect"))
+                {
+                    String dialect = sessionFactoryProperties.get("hibernate.dialect");
+                    dataSource.setDatabaseTypeName(HibernateDialectDataSourceTypeResolver.resolveDataSourceTypeFromDialect(dialect));
+                }
+            }
+
         }
     }
 
@@ -157,4 +184,5 @@ public class DiscoverHibernateConfigurationRuleProvider extends IteratingRulePro
 
         return null;
     }
+
 }

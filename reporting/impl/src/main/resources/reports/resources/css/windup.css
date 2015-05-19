@@ -102,4 +102,10 @@ p.windup-contributors  {
 .ejb-nav-logo {
 	background: url(../img/styles/ejb-small-white-icon.png);
 }
+.jpa-nav-logo {
+	background: url(../img/styles/jpa-small-white-icon.png);
+}
+.server-resource-nav-logo {
+	background: url(../img/styles/server-resource-small-white-icon.png);
+}
 /** /Navigation **/

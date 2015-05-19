@@ -30,12 +30,16 @@ public class LocationAwareXmlReader {
 	private static final SAXParserFactory factory = SAXParserFactory.newInstance();
 	private static final DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 	
+	
+	
 	static {
 		factory.setNamespaceAware(true);
 		factory.setValidating(false);
 		factory.setXIncludeAware(false);
+		
+	
 	}
-
+	
 	public static Document readXML(final InputStream is) throws IOException, SAXException {
 		final Document doc;
 		SAXParser parser;
