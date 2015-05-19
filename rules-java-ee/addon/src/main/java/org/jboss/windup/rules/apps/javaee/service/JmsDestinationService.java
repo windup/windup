@@ -25,6 +25,9 @@ public class JmsDestinationService extends GraphService<JmsDestinationModel>
         this.jndiResourceService = new JNDIResourceService(context);
     }
 
+    /**
+     * Creates a new instance with the given name, or converts an existing instance at this location if one already exists
+     */
     public JmsDestinationModel createUnique(String jndiName, JmsDestinationType destinationType)
     {
         JmsDestinationModel model = createUnique(jndiName);

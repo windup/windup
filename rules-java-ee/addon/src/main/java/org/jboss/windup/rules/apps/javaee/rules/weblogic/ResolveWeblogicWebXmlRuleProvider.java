@@ -78,7 +78,7 @@ public class ResolveWeblogicWebXmlRuleProvider extends IteratingRuleProvider<Xml
                 // now, look up the resource by name, and associate the type which is resolved by DiscoverWebXmlRuleProvider
                 for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceName))
                 {
-                    envRefService.associateEnvironmentToJndi(event, resource, ref);
+                    envRefService.associateEnvironmentToJndi(resource, ref);
                 }
             }
         }

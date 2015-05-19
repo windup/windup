@@ -86,7 +86,7 @@ public class ResolveOrionEjbXmlRuleProvider extends IteratingRuleProvider<XmlFil
                 // now, look up the resource which is resolved by DiscoverEjbConfigurationXmlRuleProvider
                 for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceName))
                 {
-                    envRefService.associateEnvironmentToJndi(event, resource, ref);
+                    envRefService.associateEnvironmentToJndi(resource, ref);
                 }
             }
         }

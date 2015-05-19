@@ -117,7 +117,7 @@ public class ResolveJBossLegacyEjbXmlRuleProvider extends IteratingRuleProvider<
                 // now, look up the resource which is resolved by DiscoverEjbConfigurationXmlRuleProvider
                 for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceRefName))
                 {
-                    envRefService.associateEnvironmentToJndi(event, resource, ref);
+                    envRefService.associateEnvironmentToJndi(resource, ref);
                 }
             }
         }
@@ -142,7 +142,7 @@ public class ResolveJBossLegacyEjbXmlRuleProvider extends IteratingRuleProvider<
                 // now, look up the resource which is resolved by DiscoverEjbConfigurationXmlRuleProvider
                 for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceRefName))
                 {
-                    envRefService.associateEnvironmentToJndi(event, resource, ref);
+                    envRefService.associateEnvironmentToJndi(resource, ref);
                 }
             }
         }

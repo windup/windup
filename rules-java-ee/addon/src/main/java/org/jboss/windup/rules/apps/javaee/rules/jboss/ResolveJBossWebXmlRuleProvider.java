@@ -77,7 +77,7 @@ public class ResolveJBossWebXmlRuleProvider extends IteratingRuleProvider<XmlFil
             // now, look up the resource
             for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceName))
             {
-                envRefService.associateEnvironmentToJndi(event, resource, ref);
+                envRefService.associateEnvironmentToJndi(resource, ref);
             }
 
         }

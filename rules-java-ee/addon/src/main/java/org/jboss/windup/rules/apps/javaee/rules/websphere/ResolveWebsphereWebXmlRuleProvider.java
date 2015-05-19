@@ -78,7 +78,7 @@ public class ResolveWebsphereWebXmlRuleProvider extends IteratingRuleProvider<Xm
                 // now, look up the resource
                 for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.REFERENCE_ID, resourceId))
                 {
-                    envRefService.associateEnvironmentToJndi(event, resource, ref);
+                    envRefService.associateEnvironmentToJndi(resource, ref);
                 }
             }
         }

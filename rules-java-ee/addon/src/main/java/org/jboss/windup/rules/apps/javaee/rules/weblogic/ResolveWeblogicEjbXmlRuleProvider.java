@@ -89,7 +89,7 @@ public class ResolveWeblogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
                 // now, look up the resource which is resolved by DiscoverEjbConfigurationXmlRuleProvider
                 for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceName))
                 {
-                    envRefService.associateEnvironmentToJndi(event, resource, ref);
+                    envRefService.associateEnvironmentToJndi(resource, ref);
                 }
             }
         }
@@ -107,7 +107,7 @@ public class ResolveWeblogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
                 // now, look up the resource which is resolved by DiscoverEjbConfigurationXmlRuleProvider
                 for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceName))
                 {
-                    envRefService.associateEnvironmentToJndi(event, resource, ref);
+                    envRefService.associateEnvironmentToJndi(resource, ref);
                 }
 
                 for (EjbSessionBeanModel ejb : ejbSessionBeanService.findAllByProperty(EjbSessionBeanModel.EJB_BEAN_NAME, resourceName))

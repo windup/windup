@@ -410,10 +410,10 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
                 ref.setReferenceId(id);
                 ref.setReferenceType(type);
             }
-            LOG.info("Reference: "+name+", Type: "+type);
+            LOG.info("Reference: " + name + ", Type: " + type);
             resources.add(ref);
         }
-        
+
         for (Element e : $(element).find("resource-env-ref").get())
         {
             String id = $(e).attr("id");
@@ -434,7 +434,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
             LOG.info("Reference: " + name + ", Type: " + type);
             resources.add(ref);
         }
-        
+
         for (Element e : $(element).find("message-destination-ref").get())
         {
             String id = $(e).attr("id");
@@ -452,10 +452,10 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
                 ref.setName(name);
                 ref.setReferenceType(type);
             }
-            LOG.info("Reference: "+name+", Type: "+type);
+            LOG.info("Reference: " + name + ", Type: " + type);
             resources.add(ref);
         }
-        
+
         return resources;
     }
 
