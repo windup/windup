@@ -7,6 +7,7 @@ import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.exception.WindupException;
 
+import freemarker.core.CollectionAndSequence;
 import freemarker.ext.beans.BeanModel;
 import freemarker.template.SimpleSequence;
 import freemarker.template.TemplateModelException;
@@ -35,8 +36,7 @@ public class IterableHasContent implements WindupFreeMarkerMethod
             {
                 throw new TemplateModelException("Error, method expects one argument (FileModel)");
             }
-            Iterable iterable = getList(arguments.get(0));
-            return iterable.iterator().hasNext();
+            return hasContent(arguments.get(0));
         }
         finally
         {
@@ -45,17 +45,21 @@ public class IterableHasContent implements WindupFreeMarkerMethod
     }
 
     @SuppressWarnings("unchecked")
-    private Iterable getList(Object arg) throws TemplateModelException
+    private boolean hasContent(Object arg) throws TemplateModelException
     {
         if (arg instanceof BeanModel)
         {
             BeanModel beanModel = (BeanModel) arg;
-            return (Iterable) beanModel.getWrappedObject();
+            return ((Iterable) beanModel.getWrappedObject()).iterator().hasNext();
         }
         else if (arg instanceof SimpleSequence)
         {
             SimpleSequence simpleSequence = (SimpleSequence) arg;
-            return simpleSequence.toList();
+            return (simpleSequence.toList().size() > 0);
+        }
+        else if (arg instanceof CollectionAndSequence) {
+            CollectionAndSequence sequence = (CollectionAndSequence)arg;
+            return (sequence.size() > 0);
         }
         else
         {
