@@ -269,7 +269,7 @@
                                     <footer>${javadoc.branding}</footer>
 
                                     <detectLinks>true</detectLinks>
-                                    <additionalparam>-link http://docs.jboss.org/forge/javadoc/2.13.2-SNAPSHOT/</additionalparam>
+                                    <additionalparam>-link http://docs.jboss.org/forge/javadoc/2.15.2-SNAPSHOT/</additionalparam>
 
                                     <includeDependencySources>true</includeDependencySources>
                                     <dependencySourceExcludes>

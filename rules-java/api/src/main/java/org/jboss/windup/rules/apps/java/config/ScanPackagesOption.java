@@ -68,6 +68,10 @@ public class ScanPackagesOption extends AbstractConfigurationOption
         return ValidationResult.SUCCESS;
     }
 
+
+    /**
+     * @return true if the given packages are too general, or not set at all.
+     */
     private boolean isScanPackagesTooGeneral(List<String> includeJavaPackages)
     {
         if (includeJavaPackages != null)
