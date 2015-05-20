@@ -15,6 +15,7 @@ import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.model.TechnologyTagModel;
 import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.javaee.model.EjbMessageDrivenModel;
+import org.jboss.windup.rules.apps.javaee.model.EjbSessionBeanModel;
 import org.jboss.windup.rules.apps.javaee.model.EnvironmentReferenceModel;
 import org.jboss.windup.rules.apps.javaee.model.JNDIResourceModel;
 import org.jboss.windup.rules.apps.javaee.model.JmsDestinationModel;
@@ -65,6 +66,7 @@ public class ResolveOrionEjbXmlRuleProvider extends IteratingRuleProvider<XmlFil
         JNDIResourceService jndiResourceService = new JNDIResourceService(event.getGraphContext());
         JmsDestinationService jmsDestinationService = new JmsDestinationService(event.getGraphContext());
         XmlFileService xmlFileService = new XmlFileService(event.getGraphContext());
+        GraphService<EjbSessionBeanModel> ejbSessionBeanService = new GraphService<>(event.getGraphContext(), EjbSessionBeanModel.class);
         GraphService<EjbMessageDrivenModel> mdbService = new GraphService<>(event.getGraphContext(), EjbMessageDrivenModel.class);
 
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
@@ -85,6 +87,26 @@ public class ResolveOrionEjbXmlRuleProvider extends IteratingRuleProvider<XmlFil
                 for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceName))
                 {
                     envRefService.associateEnvironmentToJndi(resource, ref);
+                }
+            }
+        }
+
+        for (Element ejbRef : $(doc).find("session-deployment").get())
+        {
+            String ejbName = $(ejbRef).attr("name");
+
+            if (StringUtils.isNotBlank(ejbName))
+            {
+                LOG.info("Looking up name: " + ejbName);
+                for (EjbSessionBeanModel ejb : ejbSessionBeanService.findAllByProperty(EjbMessageDrivenModel.EJB_BEAN_NAME, ejbName))
+                {
+                    String destination = $(ejbRef).attr("location");
+
+                    if (StringUtils.isNotBlank(destination))
+                    {
+                        JNDIResourceModel jndiRef = jndiResourceService.createUnique(destination);
+                        ejb.setJndiReference(jndiRef);
+                    }
                 }
             }
         }
@@ -123,5 +145,4 @@ public class ResolveOrionEjbXmlRuleProvider extends IteratingRuleProvider<XmlFil
         }
 
     }
-
 }
