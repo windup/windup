@@ -1,5 +1,6 @@
 package org.jboss.windup.reporting.service;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.tools.ant.taskdefs.Length;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -7,6 +8,7 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.ClassificationModel;
+import org.jboss.windup.reporting.model.LinkModel;
 
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Vertex;
@@ -118,6 +120,19 @@ public class ClassificationService extends GraphService<ClassificationModel>
             }
         }
         classificationModel.addFileModel(fileModel);
+        return classificationModel;
+    }
+
+    public ClassificationModel attachLink(ClassificationModel classificationModel, LinkModel linkModel)
+    {
+        for (LinkModel existing : classificationModel.getLinks())
+        {
+            if (StringUtils.equals(existing.getLink(), linkModel.getLink()))
+            {
+                return classificationModel;
+            }
+        }
+        classificationModel.addLink(linkModel);
         return classificationModel;
     }
 }

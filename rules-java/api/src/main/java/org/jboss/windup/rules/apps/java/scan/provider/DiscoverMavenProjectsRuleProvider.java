@@ -18,6 +18,9 @@ import org.jboss.windup.graph.model.ProjectDependencyModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.reporting.model.TechnologyTagLevel;
+import org.jboss.windup.reporting.service.ClassificationService;
+import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.java.model.project.MavenProjectModel;
 import org.jboss.windup.rules.apps.java.scan.operation.packagemapping.PackageNameMapping;
 import org.jboss.windup.rules.apps.maven.dao.MavenProjectService;
@@ -62,6 +65,9 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
                     .fromType(XmlFileModel.class)
                     .withProperty(FileModel.FILE_NAME, "pom.xml");
 
+        final ClassificationService classificationService = new ClassificationService(context);
+        final TechnologyTagService technologyTagService = new TechnologyTagService(context);
+        
         AbstractIterationOperation<XmlFileModel> evaluatePomFiles = new AbstractIterationOperation<XmlFileModel>()
         {
             @Override
@@ -79,6 +85,10 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
                 MavenProjectModel mavenProjectModel = extractMavenProjectModel(event, defaultName, payload);
                 if (mavenProjectModel != null)
                 {
+                    //add classification information to file.
+                    classificationService.attachClassification(payload, "Maven POM", "Maven Project Object Model (POM) File");
+                    technologyTagService.addTagToFileModel(payload, "Maven XML", TechnologyTagLevel.INFORMATIONAL);
+                    
                     ArchiveModel archiveModel = payload.getParentArchive();
                     if (archiveModel != null && !isAlreadyMavenProject(archiveModel))
                     {
