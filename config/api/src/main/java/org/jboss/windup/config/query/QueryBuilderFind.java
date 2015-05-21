@@ -12,4 +12,9 @@ public interface QueryBuilderFind extends QueryBuilderFrom, QueryBuilderWith, Co
      * Excludes Vertices that are of the provided type.
      */
     QueryBuilderFind excludingType(final Class<? extends WindupVertexFrame> type);
+    
+    /**
+     * Excludes Vertices that are of the provided type.
+     */
+    QueryBuilderFind includingType(final Class<? extends WindupVertexFrame> type);
 }

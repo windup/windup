@@ -90,6 +90,30 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
     }
 
     /**
+     * Includes Vertices that are of the provided type.
+     */
+    @Override
+    public QueryBuilderFind includingType(final Class<? extends WindupVertexFrame> type)
+    {
+        pipelineCriteria.add(new QueryGremlinCriterion()
+        {
+            @Override
+            public void query(GraphRewrite event, GremlinPipeline<Vertex, Vertex> pipeline)
+            {
+                pipeline.filter(new PipeFunction<Vertex, Boolean>()
+                {
+                    @Override
+                    public Boolean compute(Vertex argument)
+                    {
+                        return GraphTypeManager.hasType(type, argument);
+                    }
+                });
+            }
+        });
+        return this;
+    }
+
+    /**
      * Begin this {@link Query} with results of a prior {@link Query}, read from the variable with the given name.
      */
     public static QueryBuilderFrom from(final String name)
