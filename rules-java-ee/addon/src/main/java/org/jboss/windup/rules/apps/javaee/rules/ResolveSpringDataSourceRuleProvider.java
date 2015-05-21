@@ -35,9 +35,6 @@ import org.w3c.dom.Element;
  */
 public class ResolveSpringDataSourceRuleProvider extends IteratingRuleProvider<SpringBeanModel>
 {
-    @Inject
-    GraphTypeManager manager;
-
     private static final Logger LOG = Logger.getLogger(ResolveSpringDataSourceRuleProvider.class
                 .getSimpleName());
 
@@ -66,7 +63,6 @@ public class ResolveSpringDataSourceRuleProvider extends IteratingRuleProvider<S
         if (payload.getSpringConfiguration() == null || payload.getJavaClass() == null
                     || !isLocalSessionFactoryBean(payload.getJavaClass().getQualifiedName()))
         {
-            LOG.info("Skipping.");
             return;
         }
 
