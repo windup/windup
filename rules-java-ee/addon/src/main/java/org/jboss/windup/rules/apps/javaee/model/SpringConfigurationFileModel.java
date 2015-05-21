@@ -15,7 +15,6 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(SpringConfigurationFileModel.TYPE)
 public interface SpringConfigurationFileModel extends XmlFileModel
 {
-    public static final String SPRING_BEAN = "springBean";
     public static final String SPECIFICATION_VERSION = "specificationVersion";
     public static final String TYPE = "SpringConfigurationFileModel";
 
@@ -34,12 +33,12 @@ public interface SpringConfigurationFileModel extends XmlFileModel
     /**
      * A list of Spring Beans defined within this Spring configuration file.
      */
-    @Adjacency(label = SPRING_BEAN, direction = Direction.OUT)
+    @Adjacency(label = SpringBeanModel.SPRING_CONFIGURATION, direction = Direction.OUT)
     public Iterable<SpringBeanModel> getSpringBeans();
 
     /**
      * A list of Spring Beans defined within this Spring configuration file.
      */
-    @Adjacency(label = SPRING_BEAN, direction = Direction.OUT)
+    @Adjacency(label = SpringBeanModel.SPRING_CONFIGURATION, direction = Direction.OUT)
     public void addSpringBeanReference(SpringBeanModel springBean);
 }

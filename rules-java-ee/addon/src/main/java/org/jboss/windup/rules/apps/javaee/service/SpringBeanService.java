@@ -17,4 +17,8 @@ public class SpringBeanService extends GraphService<SpringBeanModel>
         super(context, SpringBeanModel.class);
     }
 
+    public Iterable<SpringBeanModel> findAllBySpringBeanName(String name)
+    {
+        return super.findAllByProperty(SpringBeanModel.SPRING_BEAN_NAME, name);
+    }
 }
