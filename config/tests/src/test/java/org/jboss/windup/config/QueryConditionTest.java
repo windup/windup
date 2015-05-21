@@ -7,10 +7,9 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.AddonDependency;
-import org.jboss.forge.arquillian.Dependencies;
-import org.jboss.forge.arquillian.archive.ForgeArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
+import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.model.TestSomeModel;
@@ -39,16 +38,16 @@ import com.google.common.collect.Iterables;
 public class QueryConditionTest
 {
     @Deployment
-    @Dependencies({
+    @AddonDependencies({
                 @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
                 @AddonDependency(name = "org.jboss.windup.config:windup-config"),
                 @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static ForgeArchive getDeployment()
+    public static AddonArchive getDeployment()
     {
-        final ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
+        final AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
                     .addBeansXML()
                     .addClasses(TestMavenExampleRuleProvider.class,
                                 TestJavaExampleRuleProvider.class,
@@ -58,14 +57,7 @@ public class QueryConditionTest
                                 TestGremlinQueryOnlyRuleProvider.class,
                                 TestXmlMetaFacetModel.class,
                                 TestSomeModel.class,
-                                TestWindupConfigurationExampleRuleProvider.class)
-                    .addAsAddonDependencies(
-                                AddonDependencyEntry.create("org.jboss.windup.utils:windup-utils"),
-                                AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
-                                AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
-                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:windup-rules-java"),
-                                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-                    );
+                                TestWindupConfigurationExampleRuleProvider.class);
         return archive;
     }
 
@@ -362,6 +354,51 @@ public class QueryConditionTest
             {
                 Assert.assertTrue(frame instanceof TestSomeModel);
                 Assert.assertFalse(frame instanceof TestXmlMetaFacetModel);
+            }
+
+            variables.pop();
+        }
+    }
+
+    @Test
+    public void testIncludeTypeFilter() throws Exception
+    {
+        try (final GraphContext context = factory.create())
+        {
+            GraphRewrite event = new GraphRewrite(context);
+            DefaultEvaluationContext evaluationContext = createEvalContext(event);
+
+            fillData(context);
+
+            WindupVertexFrame bothTypesFrame = context.getFramed().addVertex(null, TestSomeModel.class);
+            bothTypesFrame = GraphService.addTypeToModel(context, bothTypesFrame, TestXmlMetaFacetModel.class);
+
+            context.getGraph().getBaseGraph().commit();
+
+            Variables variables = Variables.instance(event);
+            variables.push();
+            QueryBuilderFrom q = Query.fromType(TestSomeModel.class);
+            q.as("allResults");
+            boolean resultsFound = q.evaluate(event, evaluationContext);
+            Assert.assertTrue(resultsFound);
+
+            Iterable<? extends WindupVertexFrame> allResults = variables.findVariable("allResults");
+            Assert.assertEquals(5, Iterables.size(allResults));
+
+            variables.pop();
+
+            variables.push();
+            QueryBuilderFind queryIncluded = Query.fromType(TestSomeModel.class).includingType(TestXmlMetaFacetModel.class);
+            queryIncluded.as("withTypeIncluded");
+            boolean excludedResultsFound = queryIncluded.evaluate(event, evaluationContext);
+            Assert.assertTrue(excludedResultsFound);
+            Iterable<? extends WindupVertexFrame> includedResults = variables.findVariable("withTypeIncluded");
+            Assert.assertEquals(1, Iterables.size(includedResults));
+
+            for (WindupVertexFrame frame : includedResults)
+            {
+                Assert.assertTrue(frame instanceof TestSomeModel);
+                Assert.assertTrue(frame instanceof TestXmlMetaFacetModel);
             }
 
             variables.pop();
