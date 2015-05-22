@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:jee="http://www.springframework.org/schema/jee" xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd">
+
+
+    <!-- jee JNDI data source-->
+    <jee:jndi-lookup id="dataSource9" jndi-name="jdbc/ExampleDataSource9"/>
+
+    <!-- jee JNDI data source-->
+    <jee:jndi-lookup id="dataSource8" jndi-name="jdbc/ExampleDataSource8"/>
+
+    <!-- jee JNDI data source-->
+    <jee:jndi-lookup id="dataSource7" jndi-name="jdbc/ExampleDataSource7"/>
+
+    <!-- jee JNDI data source-->
+    <jee:jndi-lookup id="dataSource6" jndi-name="jdbc/ExampleDataSource6"/>
+
+    <!-- jee JNDI data source-->
+    <jee:jndi-lookup id="dataSource5" jndi-name="jdbc/ExampleDataSource5"/>
+
+    <!-- jee JNDI data source-->
+    <jee:jndi-lookup id="dataSource4" jndi-name="jdbc/ExampleDataSource4"/>
+
+    <!-- typical JNDI data source-->
+    <bean id="dataSource3" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName" value="jdbc/ExampleDataSource3"/>
+    </bean>
+
+    <!-- typical JNDI data source-->
+    <bean id="dataSource2" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName" value="jdbc/ExampleDataSource2"/>
+    </bean>
+
+    <!-- jee JNDI data source-->
+    <jee:jndi-lookup id="dataSource1" jndi-name="jdbc/ExampleDataSource1"/>
+
+    <!-- database as attribute property on bean -->
+    <bean id="jpaVendorAdapter1" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" p:database="DB2"/>
+
+    <!-- database as property tag on bean -->
+    <bean id="jpaVendorAdapter2" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+        <property name="database" value="HSQL"/>
+    </bean>
+
+    <bean id="jpaVendorAdapter3" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+        <property name="jpaPropertyMap">
+            <util:map>
+                <entry key="hibernate.hbm2ddl.auto" value="update"/>
+                <entry key="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect"/>
+            </util:map>
+        </property>
+    </bean>
+
+    <bean id="jpaVendorAdapter4" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+        <property name="databasePlatform" value="org.hibernate.dialect.Oracle10gDialect"/>
+    </bean>
+
+    <util:map id="jpaPropertyMap">
+        <entry key="hibernate.hbm2ddl.auto" value="update"/>
+        <entry key="hibernate.dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect"/>
+    </util:map>
+
+    <!-- example with properties in key=prop form-->
+    <bean id="hibernatePropertyFactory1" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource1"/>
+        <property name="mappingResources">
+            <list>
+                <value>product.hbm.xml</value>
+            </list>
+        </property>
+        <property name="hibernateProperties">
+            <value>
+                hibernate.dialect=org.hibernate.dialect.Oracle10gDialect
+            </value>
+        </property>
+    </bean>
+
+    <!-- example with properties in map / entry form-->
+    <bean id="hibernatePropertyFactory2" class="org.springframework.orm.hibernate3.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource2"/>
+        <property name="mappingResources">
+            <list>
+                <value>product.hbm.xml</value>
+            </list>
+        </property>
+        <property name="hibernateProperties">
+            <map>
+                <entry key="hibernate.dialect" value="org.hibernate.dialect.Oracle10gDialect" />
+            </map>
+        </property>
+    </bean>
+
+    <!-- example with properties in props/prop form-->
+    <bean id="hibernatePropertyFactory3" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource3"/>
+        <property name="mappingResources">
+            <list>
+                <value>product.hbm.xml</value>
+            </list>
+        </property>
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.Oracle10gDialect</prop>
+            </props>
+        </property>
+    </bean>
+
+    <!-- with jpaProperties provided -->
+    <bean id="jpaPropertyFactory1" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+      <property name="dataSource" ref="dataSource4" />
+      <property name="packagesToScan" value="org.jboss.windup.example.spring.jpa" />
+      <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
+      </property>
+      <property name="jpaProperties">
+         <props>
+            <prop key="hibernate.hbm2ddl.auto">create-drop</prop>
+            <prop key="hibernate.dialect">org.hibernate.dialect.Oracle10gDialect</prop>
+         </props>
+      </property>
+   </bean>
+
+   <!-- no dialect, loaded from remote jpaPropertyMap-->
+   <bean id="jpaPropertyFactory2" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+      <property name="dataSource" ref="dataSource5" />
+      <property name="packagesToScan" value="org.jboss.windup.example.spring.jpa" />
+      <property name="jpaVendorAdapter">
+            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
+      </property>
+      <property name="jpaPropertyMap" ref="jpaPropertyMap"/>
+   </bean>
+
+   <!-- no dialect, loaded from jpaVendorAdapter -->
+   <bean id="jpaPropertyFactory3" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+      <property name="dataSource" ref="dataSource6" />
+      <property name="packagesToScan" value="org.jboss.windup.example.spring.jpa" />
+      <property name="jpaVendorAdapter" ref="jpaVendorAdapter1"/>
+      <property name="jpaProperties">
+         <props>
+            <prop key="hibernate.hbm2ddl.auto">create-drop</prop>
+         </props>
+      </property>
+   </bean>
+
+    <!-- no dialect, loaded from jpaVendorAdapter's database setting -->
+   <bean id="jpaPropertyFactory4" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+      <property name="dataSource" ref="dataSource7" />
+      <property name="packagesToScan" value="org.jboss.windup.example.spring.jpa" />
+      <property name="jpaVendorAdapter" ref="jpaVendorAdapter2"/>
+      <property name="jpaProperties">
+         <props>
+            <prop key="hibernate.hbm2ddl.auto">create-drop</prop>
+         </props>
+      </property>
+   </bean>
+
+
+   <!-- no dialect, loaded from jpaVendorAdapter's jpaPropertyMap -->
+   <bean id="jpaPropertyFactory5" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+      <property name="dataSource" ref="dataSource8" />
+      <property name="packagesToScan" value="org.jboss.windup.example.spring.jpa" />
+      <property name="jpaVendorAdapter" ref="jpaVendorAdapter3"/>
+   </bean>
+
+   <!-- no dialect, loaded from jpaVendorAdapter's databasePlatform -->
+   <bean id="jpaPropertyFactory6" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+      <property name="dataSource" ref="dataSource9" />
+      <property name="packagesToScan" value="org.jboss.windup.example.spring.jpa" />
+      <property name="jpaVendorAdapter" ref="jpaVendorAdapter4"/>
+   </bean>
+</beans>
