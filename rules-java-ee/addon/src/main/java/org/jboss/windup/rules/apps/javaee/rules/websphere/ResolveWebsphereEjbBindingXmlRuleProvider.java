@@ -99,7 +99,7 @@ public class ResolveWebsphereEjbBindingXmlRuleProvider extends IteratingRuleProv
 
                 for (EjbSessionBeanModel ejb : ejbSessionBeanService.findAllByProperty(EjbSessionBeanModel.EJB_ID, resourceId))
                 {
-                    ejb.setJndiReference(resource);
+                    ejb.setGlobalJndiReference(resource);
                 }
             }
         }

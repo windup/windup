@@ -147,6 +147,32 @@ public class ResolveJBossLegacyEjbXmlRuleProvider extends IteratingRuleProvider<
             }
         }
 
+        for (Element ejbRef : $(doc).find("session").get())
+        {
+            String ejbName = $(ejbRef).child("ejb-name").content();
+
+            if (StringUtils.isNotBlank(ejbName))
+            {
+                LOG.info("Looking up name: " + ejbName);
+                for (EjbSessionBeanModel ejb : ejbSessionBeanService.findAllByProperty(EjbMessageDrivenModel.EJB_BEAN_NAME, ejbName))
+                {
+                    String jndi = $(ejbRef).child("jndi-name").content();
+                    String localJNDI = $(ejbRef).child("local-jndi-name").content();
+                    if (StringUtils.isNotBlank(jndi))
+                    {
+                        JNDIResourceModel jndiRef = jndiResourceService.createUnique(jndi);
+                        ejb.setGlobalJndiReference(jndiRef);
+                    }
+
+                    if (StringUtils.isNotBlank(localJNDI))
+                    {
+                        JNDIResourceModel jndiRef = jndiResourceService.createUnique(localJNDI);
+                        ejb.setLocalJndiReference(jndiRef);
+                    }
+                }
+            }
+        }
+
         // bind the MDBs to the JMS Destination.
         for (Element messageDrivenRef : $(doc).find("message-driven").get())
         {

@@ -21,6 +21,9 @@ public interface EjbSessionBeanModel extends EjbBeanBaseModel
     public static final String EJB_LOCAL_HOME = "ejbLocalHome";
     public static final String EJB_REMOTE = "ejbRemote";
     public static final String EJB_LOCAL = "ejbLocal";
+    public static final String GLOBAL_JNDI = "globalJNDI";
+    public static final String MODULE_JNDI = "moduleJNDI";
+    public static final String LOCAL_JNDI = "localJNDI";
 
     /**
      * Contains the Session bean's local interface
@@ -77,14 +80,39 @@ public interface EjbSessionBeanModel extends EjbBeanBaseModel
     public EjbDeploymentDescriptorModel getEjbDeploymentDescriptor();
 
     /**
-     * Contains the jndi location for this resource.
+     * Contains the global jndi location for this resource.
      */
-    @Adjacency(label = JNDIResourceModel.TYPE, direction = Direction.OUT)
-    public JNDIResourceModel getJndiReference();
+    @Adjacency(label = GLOBAL_JNDI, direction = Direction.OUT)
+    public void setGlobalJndiReference(JNDIResourceModel jndi);
 
     /**
-     * Contains the jndi location for this resource.
+     * Contains the module jndi location for this resource.
      */
-    @Adjacency(label = JNDIResourceModel.TYPE, direction = Direction.OUT)
-    public void setJndiReference(JNDIResourceModel jndiReference);
+    @Adjacency(label = MODULE_JNDI, direction = Direction.OUT)
+    public void setModuleJndiReference(JNDIResourceModel jndi);
+
+    /**
+     * Contains the app jndi location for this resource.
+     */
+    @Adjacency(label = LOCAL_JNDI, direction = Direction.OUT)
+    public void setLocalJndiReference(JNDIResourceModel jndi);
+
+    /**
+     * Contains the global jndi location for this resource.
+     */
+    @Adjacency(label = GLOBAL_JNDI, direction = Direction.OUT)
+    public JNDIResourceModel getGlobalJndiReference();
+
+    /**
+     * Contains the module jndi location for this resource.
+     */
+    @Adjacency(label = MODULE_JNDI, direction = Direction.OUT)
+    public JNDIResourceModel getModuleJndiReference();
+
+    /**
+     * Contains the app jndi location for this resource.
+     */
+    @Adjacency(label = LOCAL_JNDI, direction = Direction.OUT)
+    public JNDIResourceModel getLocalJndiReference();
+
 }

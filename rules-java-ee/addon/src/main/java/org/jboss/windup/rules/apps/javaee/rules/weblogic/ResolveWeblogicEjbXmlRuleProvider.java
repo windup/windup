@@ -112,7 +112,7 @@ public class ResolveWeblogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
 
                 for (EjbSessionBeanModel ejb : ejbSessionBeanService.findAllByProperty(EjbSessionBeanModel.EJB_BEAN_NAME, resourceName))
                 {
-                    ejb.setJndiReference(resource);
+                    ejb.setGlobalJndiReference(resource);
                 }
             }
         }
@@ -133,11 +133,7 @@ public class ResolveWeblogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
                 for (EjbSessionBeanModel sessionBean : ejbSessionBeanService.findAllByProperty(EjbSessionBeanModel.EJB_BEAN_NAME, ejbName))
                 {
                     LOG.info("Registering EJB: " + ejbName + " to JNDI: " + jndiLocation);
-                    // TODO: support multiple JNDI references
-                    if (sessionBean.getJndiReference() == null)
-                    {
-                        sessionBean.setJndiReference(jndiRef);
-                    }
+                    sessionBean.setGlobalJndiReference(jndiRef);
                 }
             }
 
@@ -149,10 +145,7 @@ public class ResolveWeblogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
                 for (EjbSessionBeanModel sessionBean : ejbSessionBeanService.findAllByProperty(EjbSessionBeanModel.EJB_BEAN_NAME, ejbName))
                 {
                     LOG.info("Registering EJB: " + ejbName + " to JNDI: " + jndiLocation);
-                    if (sessionBean.getJndiReference() == null)
-                    {
-                        sessionBean.setJndiReference(localJndiRef);
-                    }
+                    sessionBean.setLocalJndiReference(localJndiRef);
                 }
             }
 

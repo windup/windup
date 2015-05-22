@@ -49,7 +49,7 @@ public class DiscoverXmlFilesRuleProvider extends AbstractRuleProvider
         return ConfigurationBuilder.begin()
 
                     .addRule(FileMapping.from(".*\\.xml$").to(XmlFileModel.class))
-
+                    .addRule(FileMapping.from(".*\\.xmi$").to(XmlFileModel.class))
                     .addRule()
                     .when(Query.fromType(XmlFileModel.class))
                     .perform(new AbstractIterationOperation<XmlFileModel>()

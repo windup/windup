@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ejbbnd:EJBJarBinding xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:common="common.xmi" xmlns:ejb="ejb.xmi" xmlns:ejbbnd="ejbbnd.xmi" xmi:id="EJBJarBinding_1111111111111" currentBackendId="BACKEND_ID">
+  <ejbJar href="META-INF/ejb-jar.xml#ejb-jar_ID"/>
+
+  <ejbBindings xmi:id="EnterpriseBeanBinding_5970145776901" jndiName="session/service/WindupExampleServiceLocalHome">ok
+      <enterpriseBean xmi:type="ejb:Session" href="META-INF/ejb-jar.xml#WindupExampleService"/>
+      <ejbRefBindings xmi:id="EjbRefBinding_9959629590241" jndiName="session/service/WindupAnotherExampleServiceLocalHome"> ok
+        <bindingEjbRef xmi:type="common:EJBLocalRef" href="META-INF/ejb-jar.xml#EJBLocalRef_9959629590241"/>
+      </ejbRefBindings>
+  </ejbBindings>
+	    
+  <ejbBindings xmi:id="EnterpriseBeanBinding_8932831624681" jndiName="session/service/WindupAnotherExampleServiceLocalHome"> ok
+      <enterpriseBean xmi:type="ejb:Session" href="META-INF/ejb-jar.xml#WindupAnotherExampleService"/>
+  </ejbBindings>
+    
+  <ejbBindings xmi:type="ejbbnd:MessageDrivenBeanBinding" xmi:id="MessageDrivenBeanBinding_4423312098111" activationSpecJndiName="org/windup/ActivationSpec" destinationJndiName="queue/WindupMLQueue">
+    <enterpriseBean xmi:type="ejb:MessageDriven" href="META-INF/ejb-jar.xml#WindupExampleMDB"/>
+  
+    <resRefBindings xmi:id="ResourceBindingRef_7447516360331" jndiName="jdbc/WindupDS"> ok
+      <bindingResourceRef href="META-INF/ejb-jar.xml#ResourceRef_7447516360331"/>
+    </resRefBindings>
+    
+    <resRefBindings xmi:id="ResourceBindingRef_8834938869601" jndiName="/WindupMail"> ok
+      <bindingResourceRef href="META-INF/ejb-jar.xml#ResourceRef_8834938869601"/>
+    </resRefBindings>
+    
+    <resRefBindings xmi:id="ResourceBindingRef_4262558611901" jndiName="/ConnectionFactory"> ok
+      <bindingResourceRef href="META-INF/ejb-jar.xml#ResourceRef_4262558611901"/>
+    </resRefBindings>
+    
+    <resRefBindings xmi:id="ResourceBindingRef_1328507683971" jndiName="/ConnectionFactory"> ok
+      <bindingResourceRef href="META-INF/ejb-jar.xml#ResourceRef_1328507683971"/>
+    </resRefBindings>
+    
+    <resRefBindings xmi:id="ResourceBindingRef_7374249009461" jndiName="/WindupWorkManager"> ok
+      <bindingResourceRef href="META-INF/ejb-jar.xml#ResourceRef_7374249009461"/>
+    </resRefBindings>
+    
+    <resRefBindings xmi:id="ResourceBindingRef_2937098976471" jndiName="queue/WindupExampleQueue"> ok
+      <bindingResourceRef href="META-INF/ejb-jar.xml#ResourceRef_2937098976471"/>
+    </resRefBindings>
+    
+    <resRefBindings xmi:id="ResourceBindingRef_3581597780411" jndiName="topic/WindupExampleTopic"> ok
+      <bindingResourceRef href="META-INF/ejb-jar.xml#ResourceRef_3581597780411"/>
+    </resRefBindings>
+    
+    <messageDestinationRefBindings xmi:id="MessageDestinationRefBinding_6949083997731" jndiName="queue/WindupMLQueue"> ok
+      <bindingMessageDestinationRef href="META-INF/ejb-jar.xml#MessageDestinationRef_6949083997731"/>
+    </messageDestinationRefBindings>
+  </ejbBindings>
+  
+  
+  <defaultCMPConnectionFactory xmi:id="CMPConnectionFactoryBinding_0308183681531" jndiName="jdbc/WindupDS" resAuth="Container"/> 
+</ejbbnd:EJBJarBinding>
