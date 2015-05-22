@@ -144,16 +144,27 @@ public class ResolveSpringHibernateJPADataSourceRuleProvider extends IteratingRu
     }
     
     private Map<String, String> extractHibernateJpaVendorJpaProperties(Document doc, Element bean) {
+        Map<String, String> properties = new HashMap<>();
         for(Element jpaVendorAdapterProperty: $(bean).children("property").filter(attr("name", "jpaVendorAdapter")).get()) {
             String propertyRef = $(jpaVendorAdapterProperty).attr("ref");
             if(StringUtils.isNotBlank(propertyRef)) { 
                 //look for the properties referenced by a local bean.. 
                 for(Element jpaVendorAdapter : findLocalBeanById(doc, propertyRef)) {
-                    return extractProperties(doc, jpaVendorAdapter);
+                    properties = extractProperties(doc, jpaVendorAdapter);
+
+                    //read the hibernate dialect
+                    for(Element p : $(jpaVendorAdapter).children("property").filter(attr("name", "databasePlatform")).get()) {
+                        String dialect = $(p).attr("value");
+                        if(StringUtils.isNotBlank(dialect)) {
+                            if(!properties.containsKey("hibernate.dialect")) {
+                                properties.put("hibernate.dialect", dialect);
+                            }
+                        }
+                    }
                 }
             }
         }
-        return new HashMap<>();
+        return properties;
     }
     
     private Map<String, String> extractProperties(Document doc, Element bean) {
