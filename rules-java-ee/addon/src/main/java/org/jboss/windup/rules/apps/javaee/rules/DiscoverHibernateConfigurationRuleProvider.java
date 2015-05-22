@@ -150,7 +150,10 @@ public class DiscoverHibernateConfigurationRuleProvider extends IteratingRulePro
                 if (sessionFactoryProperties.containsKey("hibernate.dialect"))
                 {
                     String dialect = sessionFactoryProperties.get("hibernate.dialect");
-                    dataSource.setDatabaseTypeName(HibernateDialectDataSourceTypeResolver.resolveDataSourceTypeFromDialect(dialect));
+                    String resolvedType = HibernateDialectDataSourceTypeResolver.resolveDataSourceTypeFromDialect(dialect);
+                    if(StringUtils.isNotBlank(resolvedType)) {
+                        dataSource.setDatabaseTypeName(resolvedType);
+                    }
                 }
             }
 

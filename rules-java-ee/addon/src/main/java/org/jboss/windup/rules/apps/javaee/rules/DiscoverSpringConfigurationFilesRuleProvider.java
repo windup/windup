@@ -152,6 +152,40 @@ public class DiscoverSpringConfigurationFilesRuleProvider extends IteratingRuleP
                 }
             }
         }
+        
+        // extract map elements
+        /*
+         * <util:map id="exMap">
+         * <entry key="ex" value="val"/>
+         * </util:map>
+         */
+        for(Element map : $(element).children("map").get()) {
+            String id = $(map).attr("id");
+            
+            SpringBeanModel springBeanRef = springBeanService.create();
+            springBeanRef.setSpringBeanName(id);
+            springConfigurationModel.addSpringBeanReference(springBeanRef);
+            
+            JavaClassModel classReference = javaClassService.getOrCreatePhantom("java.util.Map");
+            springBeanRef.setJavaClass(classReference);
+        }
+        
+        // extract map elements
+        /*
+         * <util:set id="exSet">
+         * <value>ex</value>
+         * </util:set>
+         */
+        for(Element map : $(element).children("set").get()) {
+            String id = $(map).attr("id");
+            
+            SpringBeanModel springBeanRef = springBeanService.create();
+            springBeanRef.setSpringBeanName(id);
+            springConfigurationModel.addSpringBeanReference(springBeanRef);
+            
+            JavaClassModel classReference = javaClassService.getOrCreatePhantom("java.util.Set");
+            springBeanRef.setJavaClass(classReference);
+        }
 
         // extract JNDI references & type the JNDI resource, when expected-type is provided.
         /*
