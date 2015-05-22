@@ -93,8 +93,9 @@ public class ClassificationService extends GraphService<ClassificationModel>
         if (model == null)
         {
             model = create();
-            model.setClassifiation(classificationText);
+            model.setClassification(classificationText);
             model.setDescription(description);
+            model.setEffort(0);
             model.addFileModel(fileModel);
         }
         else
