@@ -9,7 +9,6 @@ import org.ocpsoft.rewrite.config.Rule;
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.annotations.gremlin.GremlinGroovy;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
@@ -72,7 +71,7 @@ public interface ClassificationModel extends WindupVertexFrame
      */
     @Indexed
     @Property(CLASSIFICATION)
-    void setClassifiation(String classification);
+    void setClassification(String classification);
 
     /**
      * Get text of this {@link ClassificationModel}.
