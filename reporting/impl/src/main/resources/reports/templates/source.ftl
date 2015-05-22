@@ -84,7 +84,7 @@
 					        			- ${classificationLineItem.description!""}
 					        			</#if>
 					        		</#if>
-					        		<@render_linkable linkable=classificationLineItem layout='list'/>
+					        		<@render_linkable linkable=classificationLineItem layout='ul'/>
 					        	</dd>
 							</#if>
 							</#list>
