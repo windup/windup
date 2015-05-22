@@ -60,6 +60,7 @@
 			        		<th>JNDI Location</th>
 			        		<th>Database Type</th>
 			        		<th>Database Version</th>
+			        		<th>Links</th>
 			        	</tr>
 			        			
 			    		<#list reportModel.relatedResources.datasources.list.iterator() as datasource>
@@ -67,6 +68,7 @@
 								<td>${datasource.jndiLocation}</td>
 								<td><#if datasource.databaseTypeName??>${datasource.databaseTypeName}</#if></td>
 								<td><#if datasource.databaseTypeVersion??>${datasource.databaseTypeVersion}</#if></td>
+								<td><@render_linkable linkable=datasource layout='horizontal'/></td>
 			    			</tr>
 					    </#list>
 			    		</table>
@@ -83,11 +85,13 @@
 			        	<tr>
 			        		<th>JNDI Location</th>
 			        		<th>Destination Type</th>
+			        		<th>Links</th>
 			        	</tr>
 			    		<#list reportModel.relatedResources.jmsDestinations.list.iterator() as jmsDestination>
 			    			<tr>
 								<td>${jmsDestination.jndiLocation}</td>
 								<td><#if jmsDestination.destinationType??>${jmsDestination.destinationType}</#if></td>
+								<td></td>
 			    			</tr>
 					    </#list>
 			    		</table>
@@ -103,11 +107,13 @@
 			        	<tr>
 			        		<th>JNDI Location</th>
 			        		<th>Connection Factory Type</th>
+			        		<th>Links</th>
 			        	</tr>
 			    		<#list reportModel.relatedResources.jmsConnectionFactories.list.iterator() as jmsConnectionFactory>
 			    			<tr>
 								<td>${jmsConnectionFactory.jndiLocation}</td>
 								<td><#if jmsConnectionFactory.connectionFactoryType??>${jmsConnectionFactory.connectionFactoryType}</#if></td>
+								<td></td>
 			    			</tr>
 					    </#list>
 			    		</table>

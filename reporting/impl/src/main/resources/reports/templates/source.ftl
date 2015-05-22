@@ -84,15 +84,7 @@
 					        			- ${classificationLineItem.description!""}
 					        			</#if>
 					        		</#if>
-					        		<#if classificationLineItem.links??>
-									<ul>
-										<#list classificationLineItem.links.iterator() as link>
-											<li>
-												<a href='${link.link}'>${link.description}</a>
-											</li>
-										</#list>
-									</ul>
-									</#if>
+					        		<@render_linkable linkable=classificationLineItem layout='list'/>
 					        	</dd>
 							</#if>
 							</#list>
