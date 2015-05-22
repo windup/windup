@@ -131,7 +131,7 @@ public class DiscoverNonMavenArchiveProjectsRuleProvider extends AbstractRulePro
                             return "ScanAsNonMavenProject";
                         }
                     }
-                    .and(IterationProgress.monitoring("Checking for non-Maven archive: ", 1))
+                    .and(IterationProgress.monitoring("Checking for non-Maven archive", 1))
                 )
             .endIteration()
         );       

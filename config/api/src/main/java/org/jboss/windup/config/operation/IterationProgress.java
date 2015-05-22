@@ -7,6 +7,7 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.util.Logging;
+import org.jboss.windup.util.ProgressEstimate;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
@@ -22,7 +23,8 @@ public class IterationProgress extends AbstractIterationOperation<WindupVertexFr
     private String messagePrefix;
     private int interval;
     private int totalIterations = -1;
-    private int currentIteration = 0;
+    private boolean estimateTimeRemaining = true;
+    private ProgressEstimate progressEstimate;
 
     public IterationProgress(String messagePrefix, int interval)
     {
@@ -35,6 +37,12 @@ public class IterationProgress extends AbstractIterationOperation<WindupVertexFr
         return new IterationProgress(messagePrefix, interval);
     }
 
+    public IterationProgress disableTimeEstimation()
+    {
+        estimateTimeRemaining = false;
+        return this;
+    }
+
     @Override
     public void perform(GraphRewrite event, EvaluationContext context, WindupVertexFrame payload)
     {
@@ -44,11 +52,18 @@ public class IterationProgress extends AbstractIterationOperation<WindupVertexFr
             Iterable<WindupVertexFrame> frames = (Iterable<WindupVertexFrame>) event.getRewriteContext().get(
                         Iteration.DEFAULT_VARIABLE_LIST_STRING);
             totalIterations = Iterators.asList(frames).size();
+            progressEstimate = new ProgressEstimate(totalIterations);
         }
-        currentIteration++;
-        if (currentIteration % interval == 0)
+        progressEstimate.addWork(1);
+        if (progressEstimate.getWorked() % interval == 0)
         {
-            LOG.info(messagePrefix + currentIteration + " / " + totalIterations);
+            if (estimateTimeRemaining)
+            {
+                long remainingTimeMillis = progressEstimate.getTimeRemainingInMillis();
+                if (remainingTimeMillis > 1000)
+                    event.ruleEvaluationProgress(messagePrefix, progressEstimate.getWorked(), totalIterations, (int) remainingTimeMillis / 1000);
+            }
+            LOG.info(messagePrefix + ": " + progressEstimate.getWorked() + " / " + totalIterations);
         }
     }
 }

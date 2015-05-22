@@ -54,9 +54,8 @@ import org.jboss.windup.ast.java.data.annotations.AnnotationLiteralValue;
 import org.jboss.windup.ast.java.data.annotations.AnnotationValue;
 
 /**
- * Provides the ability to parse a Java source file and return a {@link List} of {@link ClassReference} objects
- * containing the fully qualified names of all of the contained references. <b>Note: A new instance of this visitor
- * should be constructed for each {@link CompilationUnit}</b>
+ * Provides the ability to parse a Java source file and return a {@link List} of {@link ClassReference} objects containing the fully qualified names
+ * of all of the contained references. <b>Note: A new instance of this visitor should be constructed for each {@link CompilationUnit}</b>
  * 
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -187,8 +186,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
     }
 
     /**
-     * The method determines if the type can be resolved and if not, will try to guess the qualified name using the
-     * information from the imports.
+     * The method determines if the type can be resolved and if not, will try to guess the qualified name using the information from the imports.
      */
     private ClassReference processType(Type type, TypeReferenceLocation typeReferenceLocation, int lineNumber, int columnNumber, int length,
                 String line)
@@ -587,6 +585,16 @@ public class ReferenceResolvingVisitor extends ASTVisitor
             if (clzSuperClasses instanceof SimpleType)
             {
                 ITypeBinding resolvedSuperClass = ((SimpleType) clzSuperClasses).resolveBinding();
+
+                if (resolvedSuperClass == null)
+                {
+                    String superClass = resolveClassname(((SimpleType) clzSuperClasses).getName().toString());
+                    processTypeAsString(superClass, TypeReferenceLocation.INHERITANCE,
+                                compilationUnit.getLineNumber(node.getStartPosition()),
+                                compilationUnit.getColumnNumber(node.getStartPosition()),
+                                node.getLength(), extractDefinitionLine(node.toString()));
+                }
+
                 // register all the superClasses up to Object
                 while (resolvedSuperClass != null && !resolvedSuperClass.getQualifiedName().equals("java.lang.Object"))
                 {

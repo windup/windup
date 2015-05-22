@@ -69,7 +69,7 @@ public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
                     .when(Query.fromType(JavaSourceFileModel.class))
                     .perform(new IndexJavaFileIterationOperator()
                                 .and(Commit.every(100))
-                                .and(IterationProgress.monitoring("Indexed Java Source File: ", 250))
+                                .and(IterationProgress.monitoring("Index Java Source Files", 250))
                     );
     }
 

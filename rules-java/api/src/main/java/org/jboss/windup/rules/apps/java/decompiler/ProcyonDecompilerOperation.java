@@ -3,57 +3,49 @@ package org.jboss.windup.rules.apps.java.decompiler;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.zip.ZipEntry;
 
+import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
-import org.jboss.windup.decompiler.api.DecompilationException;
-import org.jboss.windup.decompiler.api.DecompilationFailure;
+import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.decompiler.api.DecompilationListener;
-import org.jboss.windup.decompiler.api.DecompilationResult;
+import org.jboss.windup.decompiler.procyon.ProcyonClassDecompileRequest;
 import org.jboss.windup.decompiler.procyon.ProcyonConfiguration;
 import org.jboss.windup.decompiler.procyon.ProcyonDecompiler;
-import org.jboss.windup.decompiler.util.Filter;
-import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.service.ArchiveService;
 import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
-import org.jboss.windup.rules.apps.java.model.WarArchiveModel;
+import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.PathUtil;
+import org.jboss.windup.util.ProgressEstimate;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
- * Decompile the provided archive and place metadata regarding which files were decompiled into the graph.
+ * Decompile all .class files that match the requested package filter.
  */
-public class ProcyonDecompilerOperation extends AbstractIterationOperation<ArchiveModel>
+public class ProcyonDecompilerOperation extends GraphOperation
 {
     private static Logger LOG = Logging.get(ProcyonDecompilerOperation.class);
 
     private static final String TECH_TAG = "Decompiled Java File";
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.INFORMATIONAL;
-
-    public ProcyonDecompilerOperation(String variableName)
-    {
-        super(variableName);
-    }
 
     /**
      * Let the variable name to be set by the current Iteration.
@@ -63,48 +55,62 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
         super();
     }
 
+    private File getRootDirectoryForClass(JavaClassFileModel fileModel)
+    {
+        String packageName = fileModel.getPackageName();
+        if (StringUtils.isBlank(packageName))
+            return fileModel.asFile().getParentFile();
+
+        String[] packageComponents = packageName.split("\\.");
+        File rootFile = fileModel.asFile().getParentFile();
+        for (int i = 0; i < packageComponents.length; i++)
+        {
+            rootFile = rootFile.getParentFile();
+        }
+        return rootFile;
+    }
+
     @Override
-    public void perform(final GraphRewrite event, final EvaluationContext context, final ArchiveModel payload)
+    public void perform(final GraphRewrite event, final EvaluationContext context)
     {
         ExecutionStatistics.get().begin("ProcyonDecompilationOperation.perform");
-        if (payload.getUnzippedDirectory() != null)
+        int totalCores = Runtime.getRuntime().availableProcessors();
+        int threads = totalCores;
+        if (threads == 0)
         {
-            ProcyonDecompiler decompiler = new ProcyonDecompiler(new ProcyonConfiguration().setIncludeNested(false));
-            int totalCores = Runtime.getRuntime().availableProcessors();
-            int threads = totalCores;
-            if (threads == 0)
-            {
-                threads = 1;
-            }
+            threads = 1;
+        }
+        LOG.info("Decompiling with " + threads + " threads");
 
-            LOG.info("Decompiling with " + threads + " threads");
-
-            decompiler.setExecutorService(Executors.newFixedThreadPool(threads), threads);
-            String archivePath = ((FileModel) payload).getFilePath();
-            File archive = new File(archivePath);
-            File outputDir = new File(payload.getUnzippedDirectory().getFilePath());
-            if (payload instanceof WarArchiveModel)
+        WindupJavaConfigurationService configurationService = new WindupJavaConfigurationService(event.getGraphContext());
+        GraphService<JavaClassFileModel> classFileService = new GraphService<>(event.getGraphContext(), JavaClassFileModel.class);
+        Iterable<JavaClassFileModel> allClasses = classFileService.findAll();
+        List<ProcyonClassDecompileRequest> classesToDecompile = new ArrayList<>(10000); // Just a guess as to the average size
+        for (JavaClassFileModel classFileModel : allClasses)
+        {
+            if (!classFileModel.getFilePath().contains("$") && configurationService.shouldScanPackage(classFileModel.getPackageName()))
             {
-                outputDir = outputDir.toPath().resolve("WEB-INF").resolve("classes").toFile();
-            }
-
-            Filter<ZipEntry> filter = new ZipEntryPackageFilter(event.getGraphContext());
-            try
-            {
-                AddDecompiledItemsToGraph addDecompiledItemsToGraph = new AddDecompiledItemsToGraph(payload, event.getGraphContext());
-                DecompilationResult result = decompiler.decompileArchive(archive, outputDir, filter, addDecompiledItemsToGraph);
-                for (DecompilationFailure failure : result.getFailures())
-                {
-                    LOG.log(Level.WARNING, "Failed to decompile.", failure);
-                }
-                decompiler.close();
-            }
-            catch (final DecompilationException exc)
-            {
-                throw new WindupException("Error decompiling archive " + archivePath + " due to: " + exc.getMessage(),
-                            exc);
+                File outputDir = getRootDirectoryForClass(classFileModel);
+                classesToDecompile.add(new ProcyonClassDecompileRequest(outputDir.toPath(), classFileModel.asFile().toPath(), outputDir.toPath()));
             }
         }
+        Collections.sort(classesToDecompile, new Comparator<ProcyonClassDecompileRequest>()
+        {
+            @Override
+            public int compare(ProcyonClassDecompileRequest o1, ProcyonClassDecompileRequest o2)
+            {
+                return o1.getOutputDirectory().toAbsolutePath().toString().compareTo(o2.getOutputDirectory().toString());
+            }
+        });
+
+        ProgressEstimate progressEstimate = new ProgressEstimate(classesToDecompile.size());
+
+        AddDecompiledItemsToGraph addDecompiledItemsToGraph = new AddDecompiledItemsToGraph(progressEstimate, event);
+        ProcyonDecompiler decompiler = new ProcyonDecompiler(new ProcyonConfiguration().setIncludeNested(false));
+        decompiler.setExecutorService(Executors.newFixedThreadPool(threads), threads);
+        decompiler.decompileClassFiles(classesToDecompile, addDecompiledItemsToGraph);
+        decompiler.close();
+
         ExecutionStatistics.get().end("ProcyonDecompilationOperation.perform");
     }
 
@@ -117,16 +123,16 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
     private class AddDecompiledItemsToGraph implements DecompilationListener
     {
         private final ExecutorService executorService = Executors.newSingleThreadExecutor();
-        private final GraphContext context;
-        private final Object archiveModelID;
-        private final FileService fileService;
-        private final AtomicInteger atomicInteger = new AtomicInteger(0);
+        private final AtomicInteger queueSize = new AtomicInteger(0);
 
-        private AddDecompiledItemsToGraph(ArchiveModel archiveModel, GraphContext context)
+        private final GraphRewrite event;
+        private final AtomicInteger atomicInteger = new AtomicInteger(0);
+        private final ProgressEstimate progressEstimate;
+
+        private AddDecompiledItemsToGraph(ProgressEstimate progressEstimate, GraphRewrite event)
         {
-            this.context = context;
-            this.archiveModelID = archiveModel.asVertex().getId();
-            this.fileService = new FileService(context);
+            this.progressEstimate = progressEstimate;
+            this.event = event;
         }
 
         @Override
@@ -137,8 +143,8 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
                 @Override
                 public void run()
                 {
-                    LOG.info("Performing final commit for archive vertex: " + archiveModelID);
-                    context.getGraph().getBaseGraph().commit();
+                    LOG.info("Performing final commit for decompilation process!");
+                    event.getGraphContext().getGraph().getBaseGraph().commit();
                 }
             });
             executorService.shutdown();
@@ -153,24 +159,31 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
         }
 
         @Override
+        public void decompilationFailed(String inputPath, String message)
+        {
+            progressEstimate.addWork(1);
+        }
+
+        @Override
         public synchronized void fileDecompiled(final String inputPath, final String decompiledOutputFile)
         {
-            executorService.submit(new Runnable()
+            Runnable saveDecompiledRunnable = new Runnable()
             {
                 @Override
                 public void run()
                 {
-                    ArchiveService archiveService = new ArchiveService(context);
-                    ArchiveModel archiveModel = archiveService.getById(archiveModelID);
-                    // original source is a path inside the archive... split it up by separator, and append
-                    // it to the unzipped directory
-                    String[] classFilePathTokens = inputPath.split("\\\\|/");
-
-                    Path classFilePath = Paths.get(archiveModel.getUnzippedDirectory().getFilePath());
-                    for (String pathToken : classFilePathTokens)
+                    queueSize.decrementAndGet();
+                    progressEstimate.addWork(1);
+                    if (progressEstimate.getWorked() % 250 == 0)
                     {
-                        classFilePath = classFilePath.resolve(pathToken);
+                        long remainingTimeMillis = progressEstimate.getTimeRemainingInMillis();
+                        if (remainingTimeMillis > 1000)
+                            event.ruleEvaluationProgress("Decompilation", progressEstimate.getWorked(), progressEstimate.getTotal(),
+                                        (int) remainingTimeMillis / 1000);
                     }
+
+                    FileService fileService = new FileService(event.getGraphContext());
+                    Path classFilePath = Paths.get(inputPath);
 
                     FileModel decompiledFileModel = fileService.getUniqueByProperty(FileModel.FILE_PATH,
                                 decompiledOutputFile);
@@ -206,27 +219,31 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
                         }
 
                         decompiledFileModel = fileService.createByFilePath(parentFileModel, decompiledOutputFile);
-                        decompiledFileModel.setParentArchive(archiveModel);
                     }
-                    ProjectModel projectModel = archiveModel.getProjectModel();
-                    decompiledFileModel.setProjectModel(projectModel);
-                    projectModel.addFileModel(decompiledFileModel);
 
                     if (decompiledOutputFile.endsWith(".java"))
                     {
                         if (!(decompiledFileModel instanceof JavaSourceFileModel))
                         {
-                            decompiledFileModel = new GraphService<JavaSourceFileModel>(context, JavaSourceFileModel.class)
+                            decompiledFileModel = new GraphService<JavaSourceFileModel>(event.getGraphContext(), JavaSourceFileModel.class)
                                         .addTypeToModel(decompiledFileModel);
                         }
                         JavaSourceFileModel decompiledSourceFileModel = (JavaSourceFileModel) decompiledFileModel;
-                        TechnologyTagService techTagService = new TechnologyTagService(context);
+                        TechnologyTagService techTagService = new TechnologyTagService(event.getGraphContext());
                         techTagService.addTagToFileModel(decompiledSourceFileModel, TECH_TAG, TECH_TAG_LEVEL);
 
                         FileModel classFileModel = fileService.getUniqueByProperty(
                                     FileModel.FILE_PATH, classFilePath.toAbsolutePath().toString());
                         if (classFileModel != null && classFileModel instanceof JavaClassFileModel)
                         {
+                            decompiledFileModel.setParentArchive(classFileModel.getParentArchive());
+                            ProjectModel projectModel = classFileModel.getProjectModel();
+                            decompiledFileModel.setProjectModel(projectModel);
+                            projectModel.addFileModel(decompiledFileModel);
+
+                            if (decompiledFileModel.getParentArchive() != null)
+                                decompiledFileModel.getParentArchive().addDecompiledFileModel(decompiledFileModel);
+
                             JavaClassFileModel classModel = (JavaClassFileModel) classFileModel;
                             classModel.getJavaClass().setDecompiledSource(decompiledSourceFileModel);
                             decompiledSourceFileModel.setPackageName(classModel.getPackageName());
@@ -251,15 +268,28 @@ public class ProcyonDecompilerOperation extends AbstractIterationOperation<Archi
                                                     + decompiledOutputFile + " at: " + classFilePath.toString());
                         }
                     }
-                    archiveModel.addDecompiledFileModel(decompiledFileModel);
                     if (atomicInteger.incrementAndGet() % 100 == 0)
                     {
-                        LOG.info("Performing periodic commit (" + atomicInteger.get() + ") for archive vertex: " + archiveModelID);
-                        context.getGraph().getBaseGraph().commit();
+                        LOG.info("Performing periodic commit (" + atomicInteger.get() + ")");
+                        event.getGraphContext().getGraph().getBaseGraph().commit();
                     }
                 }
-            });
+            };
 
+            queueSize.incrementAndGet();
+            executorService.submit(saveDecompiledRunnable);
+
+            while (queueSize.get() > 1000)
+            {
+                try
+                {
+                    Thread.sleep(250L);
+                }
+                catch (InterruptedException e)
+                {
+                    // noop
+                }
+            }
         }
 
         @Override

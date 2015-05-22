@@ -8,12 +8,17 @@ public interface DecompilationListener
     /**
      * Indicates that the file at inputPath has been decompiled to outputPath
      */
-    public void fileDecompiled(String inputPath, String outputPath);
+    void fileDecompiled(String inputPath, String outputPath);
+
+    /**
+     * Called to indicate that decompilation of this particular file has failed for the specified reason.
+     */
+    void decompilationFailed(String inputPath, String message);
 
     /**
      * Indicates that the decompilation process is complete for all files within the archive (or directory).
      * 
      * This allows for cleanup, such as committing all results to disk.
      */
-    public void decompilationProcessComplete();
+    void decompilationProcessComplete();
 }

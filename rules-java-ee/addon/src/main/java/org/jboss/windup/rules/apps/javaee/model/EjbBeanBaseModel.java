@@ -1,5 +1,6 @@
 package org.jboss.windup.rules.apps.javaee.model;
 
+import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 
@@ -48,6 +49,7 @@ public interface EjbBeanBaseModel extends WindupVertexFrame
     /**
      * Contains the bean's ejb id
      */
+    @Indexed
     @Property(EJB_ID)
     public void setEjbId(String id);
 
@@ -84,6 +86,7 @@ public interface EjbBeanBaseModel extends WindupVertexFrame
     /**
      * Contains the bean's name
      */
+    @Indexed
     @Property(EJB_BEAN_NAME)
     public void setBeanName(String ejbSessionBeanName);
 
