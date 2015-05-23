@@ -67,12 +67,8 @@
 					        </tr>
 					        <#list reportModel.relatedResources.springBeans.list.iterator() as springBean>
 					            <tr>
-		                           <td>${springBean.springBeanName!""}</td>
-		                           <td>
-		                               <#if springBean.javaClass??>
-		                                   ${springBean.javaClass.qualifiedName}
-		                               </#if>
-		                           </td>
+		                           <td><@render_link model=springBean.springConfiguration text=springBean.springBeanName/></td>
+		                           <td><@render_link model=springBean.javaClass /></td>
 					            </tr>
 					        </#list>
 					    </table>
