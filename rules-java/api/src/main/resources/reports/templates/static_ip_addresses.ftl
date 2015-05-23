@@ -8,19 +8,6 @@
 </#macro>
 
 
-<#macro fileSourceLink fileRef name>
-  	<#if fileRef??>
-  		<#assign sourceReportModel = fileModelToSourceReport(fileRef)!>
-  		<#if sourceReportModel.reportFilename??>
-			<a href="${sourceReportModel.reportFilename}"> ${name!""} </a>
-    	<#else>
-	  		${name!""}
-	  	</#if>
-	 <#else>
-	  	${name!""}
-	 </#if>
-</#macro>
-
 <#macro staticIpFileRenderer reportModel>
     <div class="panel panel-primary">
     	<div class="panel-heading">
@@ -31,17 +18,16 @@
 	        <table class="table table-striped table-bordered" id="staticIPTable">
 	            <tr>
 	                <th>File</th>
-	                <th>Location</th>
+					<th>Location</th>
 					<th>IP Address</th>
 	            </tr>
 	
 	            <#list reportModel.relatedResources.staticIPLocations.list.iterator() as staticIpRef>
 	            <tr>
 	                <td>
-	                	<#assign fileName = getPrettyPathForFile(staticIpRef.file)!> 
-						<@fileSourceLink staticIpRef.file fileName/>
+						<@render_link model=staticIpRef />
 	                </td>
-	                <td> <#if staticIpRef.lineNumber?has_content>Line Number ${staticIpRef.lineNumber}, </#if><#if staticIpRef.columnNumber?has_content>Column Number ${staticIpRef.columnNumber} </#if> </td>
+	                <td> <#if staticIpRef.lineNumber?has_content>Line: ${staticIpRef.lineNumber}, </#if><#if staticIpRef.columnNumber?has_content>Position: ${staticIpRef.columnNumber} </#if> </td>
 					<td> <#if staticIpRef.sourceSnippit?has_content> ${staticIpRef.sourceSnippit} </#if> </td>
 	            </tr>
 	            </#list>
