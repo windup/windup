@@ -1,23 +1,6 @@
 
 <!DOCTYPE html>
 
-<#macro renderLinksToClass fqcn>
-	<#assign sourceFiles = findSourceFilesByClassName(fqcn)>
-	<#if sourceFiles?has_content>
-		<#list sourceFiles as sourceFile>
-			<#assign sourceReportModel = fileModelToSourceReport(sourceFile)>
-			<a href="${sourceReportModel.reportFilename}">
-				<#if sourceFile_index == 0>
-					${fqcn}
-				<#else>
-					(${sourceFile_index + 1})
-				</#if>
-			</a>
-		</#list>
-	<#else>
-		${fqcn!""}
-	</#if>
-</#macro>
 
 <#assign applicationReportIndexModel = reportModel.applicationReportIndexModel>
 
@@ -69,7 +52,6 @@
 	    <#if iterableHasContent(reportModel.relatedResources.processes)>
 		    <#list reportModel.relatedResources.processes.list.iterator() as process>
 		    
-		    <#assign sourceReportModel = fileModelToSourceReport(process)!>
 			<div class="row">
 	    		<div class="container-fluid theme-showcase" role="main">
 					<div class="panel panel-primary">
@@ -81,7 +63,7 @@
 							<div class="panel-body">
 								<dl class="dl-horizontal small">
 						        	<dt>Process</dt>
-						        	<dd><a href="${sourceReportModel.reportFilename}">${getPrettyPathForFile(process)}</a></dd>
+						        	<dd><@render_link model=process /></dd>
 						        	
 						        	<#if process.processName??>
 						        	<dt>Name</dt>
@@ -126,7 +108,7 @@
 							            </tr>
 										<#list process.actionHandlers.iterator() as actionHandler>
 										    <tr>
-										    	<td><@renderLinksToClass actionHandler.qualifiedName/></td>
+										    	<td><@render_link model=actionHandler/></td>
 								            </tr>
 								        </#list>
 							        </table>
@@ -139,7 +121,7 @@
 							            </tr>
 										<#list process.decisionHandlers.iterator() as decisionHandler>
 										    <tr>
-										    	<td><@renderLinksToClass decisionHandler.qualifiedName/></td>
+										    	<td><@render_link model=decisionHandler/></td>
 								            </tr>
 								        </#list>
 							        </table>
