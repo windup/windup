@@ -115,11 +115,11 @@
 	    
 	<script type='text/javascript'>
 		$(window).on("hashchange", function () {
-		    window.scrollTo(window.scrollX, window.scrollY - 100);
+		    window.scrollTo(window.scrollX, window.scrollY - 50);
 		});
 		function offsetAnchor() {
 		    if(location.hash.length !== 0) {
-		        window.scrollTo(window.scrollX, window.scrollY - 100);
+		        window.scrollTo(window.scrollX, window.scrollY - 50);
 		    }
 		}
 		window.setTimeout(function() {
