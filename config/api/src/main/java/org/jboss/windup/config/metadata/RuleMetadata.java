@@ -27,6 +27,11 @@ public @interface RuleMetadata
     String id() default "";
 
     /**
+     * Returns a human-readable text containing a description of the rules in this {@link RuleProvider}.
+     */
+    String description() default "";
+
+    /**
      * Return the {@link RulePhase} in which the {@link Rule} instances from this {@link RuleProvider} should be executed.
      * <p>
      * The default phase is {@link MigrationRulesPhase}.

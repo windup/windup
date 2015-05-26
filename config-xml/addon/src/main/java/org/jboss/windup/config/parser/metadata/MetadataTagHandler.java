@@ -21,7 +21,7 @@ public class MetadataTagHandler implements ElementHandler<List<String>>
     {
         List<Element> children = $(element).children().get();
         
-        List<String> tags = new ArrayList<String>();
+        List<String> tags = new ArrayList<>();
         for (Element child : children)
         {
             switch ($(child).tag())
