@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<test xmlns="http://windup.jboss.org/v1/xml">
+<test xmlns="http://windup.jboss.org/ns/ruleset/2.3.0.Final">
 	<javaclass as="testVariable" references="org.apache.commons.{*}" in="{*}File1">
                <location>METHOD_CALL</location>
     </javaclass>

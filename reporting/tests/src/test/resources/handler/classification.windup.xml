@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<test xmlns="http://windup.jboss.org/v1/xml">
+<test xmlns="http://windup.jboss.org/ns/ruleset/2.3.0.Final">
 	<classification effort="5" classification="test message" description="simple description" of="testVariable">
 		<link href="someUrl" description="someDescription"/>
 	</classification>

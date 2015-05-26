@@ -33,7 +33,7 @@ import org.w3c.dom.Element;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
-@NamespaceElementHandler(elementName = JavaClassHandler.ELEM_NAME, namespace = "http://windup.jboss.org/v1/xml")
+@NamespaceElementHandler(elementName = JavaClassHandler.ELEM_NAME, namespace = "http://windup.jboss.org/ns/ruleset/2.3.0.Final")
 public class JavaClassHandler implements ElementHandler<JavaClassBuilderAt>
 {
     public static final String ELEM_NAME = "javaclass";

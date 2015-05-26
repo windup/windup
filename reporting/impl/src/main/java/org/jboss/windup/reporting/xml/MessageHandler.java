@@ -19,7 +19,7 @@ import org.w3c.dom.Element;
  *  &lt;/message&gt;
  * </pre>
  */
-@NamespaceElementHandler(elementName = "message", namespace = "http://windup.jboss.org/v1/xml")
+@NamespaceElementHandler(elementName = "message", namespace = "http://windup.jboss.org/ns/ruleset/2.3.0.Final")
 public class MessageHandler implements ElementHandler<String>
 {
 

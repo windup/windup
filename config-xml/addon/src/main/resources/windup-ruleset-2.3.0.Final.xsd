@@ -1,6 +1,6 @@
-<?xml version="1.1" encoding="UTF-8" ?>
-<xs:schema targetNamespace="http://windup.jboss.org/v1/xml"
-	xmlns="http://windup.jboss.org/v1/xml" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema targetNamespace="http://windup.jboss.org/ns/ruleset/2.3.0.Final"
+	xmlns="http://windup.jboss.org/ns/ruleset/2.3.0.Final" xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	elementFormDefault="qualified">
 
 	<!-- CONDITION DEFINITIONS -->
@@ -213,7 +213,7 @@
 			<xs:element ref="lineitem" minOccurs="0" maxOccurs="unbounded" />
 		</xs:choice>
 		<xs:attribute type="xs:string" name="over" />
-		<!-- <xs:attribute type="xs:string" name="as" /> not supported in handler 
+		<!-- <xs:attribute type="xs:string" name="as" /> not supported in handler
 			yet -->
 	</xs:complexType>
 
