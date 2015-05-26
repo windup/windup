@@ -33,7 +33,7 @@ public class RuleProviderHandler implements ElementHandler<Void>
     private static final String PHASE = "phase";
     private static final AtomicInteger currentDefaultIDIndex = new AtomicInteger(0);
     private Map<String, Class<? extends RulePhase>> cachedPhases;
-    public static final String WINDUP_RULE_NAMESPACE="http://windup.jboss.org/v1/xml";
+    public static final String WINDUP_RULE_NAMESPACE="http://windup.jboss.org/ns/ruleset/2.3.0.Final";
 
     @Override
     public Void processElement(ParserContext context, Element element) throws ConfigurationException

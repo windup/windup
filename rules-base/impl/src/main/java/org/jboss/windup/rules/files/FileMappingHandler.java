@@ -20,7 +20,7 @@ import org.w3c.dom.Element;
 /**
  * Handles parsing the "file-mapping" element to add rules to the current ruleset.
  */
-@NamespaceElementHandler(elementName = FileMappingHandler.ELEM_NAME, namespace = "http://windup.jboss.org/v1/xml")
+@NamespaceElementHandler(elementName = FileMappingHandler.ELEM_NAME, namespace = "http://windup.jboss.org/ns/ruleset/2.3.0.Final")
 public class FileMappingHandler implements ElementHandler<Void>
 {
     protected static final String ELEM_NAME = "file-mapping";

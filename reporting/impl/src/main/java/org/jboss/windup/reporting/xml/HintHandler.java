@@ -42,7 +42,7 @@ import org.w3c.dom.Element;
  * 
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-@NamespaceElementHandler(elementName = "hint", namespace = "http://windup.jboss.org/v1/xml")
+@NamespaceElementHandler(elementName = "hint", namespace = "http://windup.jboss.org/ns/ruleset/2.3.0.Final")
 public class HintHandler implements ElementHandler<Hint>
 {
 

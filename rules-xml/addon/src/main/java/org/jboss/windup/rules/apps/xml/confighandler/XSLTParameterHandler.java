@@ -8,7 +8,7 @@ import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
 import org.w3c.dom.Element;
 
-@NamespaceElementHandler(elementName = "xslt-parameter", namespace = "http://windup.jboss.org/v1/xml")
+@NamespaceElementHandler(elementName = "xslt-parameter", namespace = "http://windup.jboss.org/ns/ruleset/2.3.0.Final")
 public class XSLTParameterHandler implements ElementHandler<XSLTParameter>
 {
 
