@@ -22,7 +22,7 @@
         <dependency>
             <groupId>org.ocpsoft.rewrite</groupId>
             <artifactId>rewrite-impl</artifactId>
-            <version>3.0.0.Alpha5</version>
+            <version>${version.rewrite}</version>
         </dependency>
 
         <!-- Addon Dependencies -->
@@ -34,13 +34,11 @@
         <dependency>
             <groupId>org.jboss.windup.graph</groupId>
             <artifactId>windup-graph-api</artifactId>
-            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.utils</groupId>
             <artifactId>windup-utils</artifactId>
-            <version>${project.version}</version>
        	    <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
