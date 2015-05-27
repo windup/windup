@@ -7,7 +7,7 @@ import java.nio.file.Path;
 /**
  * Provides a base for validating {@link ConfigurationOption}s of type {@link File}. This uses the results of {@link ConfigurationOption#getUIType()}
  * to determine whether to validate as a file or as a directory.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
@@ -40,7 +40,7 @@ public abstract class AbstractPathConfigurationOption extends AbstractConfigurat
     {
         if (fileObject == null && isRequired())
         {
-            return new ValidationResult(false, getName() + " is required!");
+            return new ValidationResult(ValidationResult.Level.ERROR, getName() + " is required!");
         }
         else if (fileObject == null)
         {
@@ -53,15 +53,15 @@ public abstract class AbstractPathConfigurationOption extends AbstractConfigurat
         {
             if (getUIType() == InputType.DIRECTORY && !Files.isDirectory(path))
             {
-                return new ValidationResult(false, getName() + " must exist and be a directory!");
+                return new ValidationResult(ValidationResult.Level.ERROR, getName() + " must exist and be a directory!");
             }
             else if (getUIType() == InputType.FILE && !Files.isRegularFile(path))
             {
-                return new ValidationResult(false, getName() + " must exist and be a regular file!");
+                return new ValidationResult(ValidationResult.Level.ERROR, getName() + " must exist and be a regular file!");
             }
             else if (getUIType() == InputType.FILE_OR_DIRECTORY && !Files.exists(path))
             {
-                return new ValidationResult(false, getName() + " must exist!");
+                return new ValidationResult(ValidationResult.Level.ERROR, getName() + " must exist!");
             }
         }
         return ValidationResult.SUCCESS;

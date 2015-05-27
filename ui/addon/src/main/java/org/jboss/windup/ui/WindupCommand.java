@@ -28,6 +28,7 @@ import org.jboss.forge.addon.ui.input.UISelectMany;
 import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
 import org.jboss.forge.addon.ui.progress.UIProgressMonitor;
+import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
@@ -65,6 +66,11 @@ public class WindupCommand implements UICommand
 
     @Inject
     private ResourceFactory resourceFactory;
+
+
+    private ValidationResult stopperPrompt = null;
+
+
 
     @Override
     public UICommandMetadata getMetadata(UIContext ctx)
@@ -142,23 +148,38 @@ public class WindupCommand implements UICommand
     }
 
     @Override
-    public void validate(UIValidationContext context)
+    public void validate(UIValidationContext validationContext)
     {
+        //context.addValidationError(this.getInputForOption(InputPathOption.class), "AAAAAAAAAAAAA");
+
         for (Entry<ConfigurationOption, InputComponent<?, ?>> entry : this.inputOptions.entrySet())
         {
-            Object value = getValueForInput(entry.getValue());
-            ValidationResult result = entry.getKey().validate(value);
-            if (!result.isSuccess())
+            final InputComponent<?, ?> inputComponent = entry.getValue();
+
+            Object inputValue = getValueForInput(inputComponent);
+            ValidationResult result = entry.getKey().validate(inputValue);
+
+            if (result.getLevel().equals(ValidationResult.Level.ERROR))
+                validationContext.addValidationError(inputComponent, result.getMessage());
+
+            if (result.getLevel().equals(ValidationResult.Level.PROMPT_TO_CONTINUE))
             {
-                context.addValidationError(entry.getValue(), result.getMessage());
+                this.stopperPrompt = result; // A bit hacky - can't prompt in validate(). See WINDUP-595.
             }
+
+            if (result.getLevel().equals(ValidationResult.Level.WARNING))
+                validationContext.addValidationWarning(inputComponent, result.getMessage());
         }
 
     }
 
     @Override
-    public Result execute(UIExecutionContext context) throws Exception
+    public Result execute(UIExecutionContext uiExecContext) throws Exception
     {
+        if (this.stopperPrompt != null)
+            if (!uiExecContext.getPrompt().promptBoolean(this.stopperPrompt.getMessage(), true))
+                return new SimpleFailed("Aborted by the user.");
+
         WindupConfiguration windupConfiguration = new WindupConfiguration();
         for (Entry<ConfigurationOption, InputComponent<?, ?>> entry : this.inputOptions.entrySet())
         {
@@ -174,11 +195,12 @@ public class WindupCommand implements UICommand
         {
             overwrite = false;
         }
+
         if (!overwrite && pathNotEmpty(windupConfiguration.getOutputDirectory().toFile()))
         {
             String promptMsg = "Overwrite all contents of \"" + windupConfiguration.getOutputDirectory().toString()
                         + "\" (anything already in the directory will be deleted)?";
-            if (!context.getPrompt().promptBoolean(promptMsg, false))
+            if (!uiExecContext.getPrompt().promptBoolean(promptMsg, false))
             {
                 String outputPath = windupConfiguration.getOutputDirectory().toString();
                 return Results.fail("Files exist in " + outputPath + ", but --overwrite not specified. Aborting!");
@@ -186,16 +208,16 @@ public class WindupCommand implements UICommand
         }
 
         /*
-         * Put this in the context for debugging, and unit tests (or anything else that needs it)
+         * Put this in the context for debugging, and unit tests (or anything else that needs it).
          */
-        context.getUIContext().getAttributeMap().put(WindupConfiguration.class, windupConfiguration);
+        uiExecContext.getUIContext().getAttributeMap().put(WindupConfiguration.class, windupConfiguration);
 
         FileUtils.deleteQuietly(windupConfiguration.getOutputDirectory().toFile());
         Path graphPath = windupConfiguration.getOutputDirectory().resolve("graph");
         try (GraphContext graphContext = graphContextFactory.create(graphPath))
         {
-            context.getUIContext().getAttributeMap().put(GraphContext.class, graphContext);
-            UIProgressMonitor uiProgressMonitor = context.getProgressMonitor();
+            uiExecContext.getUIContext().getAttributeMap().put(GraphContext.class, graphContext);
+            UIProgressMonitor uiProgressMonitor = uiExecContext.getProgressMonitor();
             WindupProgressMonitor progressMonitor = new WindupProgressMonitorAdapter(uiProgressMonitor);
             windupConfiguration
                         .setProgressMonitor(progressMonitor)
@@ -340,6 +362,27 @@ public class WindupCommand implements UICommand
             return true;
         }
         return false;
+    }
+
+
+    private static class SimpleFailed implements Failed
+    {
+        private final String message;
+
+        public SimpleFailed(String message)
+        {
+            this.message = message;
+        }
+
+        public Throwable getException()
+        {
+            return null;
+        }
+
+        public String getMessage()
+        {
+            return this.message;
+        }
     }
 
 }
