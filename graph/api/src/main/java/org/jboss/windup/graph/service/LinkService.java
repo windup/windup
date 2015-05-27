@@ -1,8 +1,7 @@
-package org.jboss.windup.reporting.service;
+package org.jboss.windup.graph.service;
 
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.service.GraphService;
-import org.jboss.windup.reporting.model.LinkModel;
+import org.jboss.windup.graph.model.LinkModel;
 
 import com.tinkerpop.blueprints.Vertex;
 
@@ -36,4 +35,5 @@ public class LinkService extends GraphService<LinkModel>
         }
         return frame(results.iterator().next());
     }
+
 }
