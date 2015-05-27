@@ -53,6 +53,6 @@ public interface ArchiveModel extends FileModel
     public void addDecompiledFileModel(FileModel archiveFile);
     
     @Adjacency(label = OrganizationModel.ARCHIVE_MODEL, direction = Direction.IN)
-    public Iterable<OrganizationModel> getVendorModels();
+    public Iterable<OrganizationModel> getOrganizationModels();
 
 }
