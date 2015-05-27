@@ -21,6 +21,7 @@ public class PathUtil
     public static final String RULES_DIRECTORY_NAME="rules";
     public static final String IGNORE_DIRECTORY_NAME="ignore";
     public static final String CACHE_DIRECTORY_NAME="cache";
+    public static final String UPDATE_DIRECTORY_NAME=".update";
     public static final String ADDONS_DIRECTORY_NAME="addons";
     public static String LIBRARY_DIRECTORY_NAME = "lib";
     public static String BINARY_DIRECTORY_NAME = "bin";
@@ -67,13 +68,21 @@ public class PathUtil
     {
         return getUserSubdirectory(CACHE_DIRECTORY_NAME);
     }
-
+    
     /**
      * The path $WINDUP_HOME/cache
      */
     public static Path getWindupCacheDir()
     {
         return getWindupSubdirectory(CACHE_DIRECTORY_NAME);
+    }
+    
+    /**
+     * The path $WINDUP_HOME/.update
+     */
+    public static Path getWindupUpdateDir()
+    {
+        return getWindupSubdirectory(UPDATE_DIRECTORY_NAME);
     }
 
     /**

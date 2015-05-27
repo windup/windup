@@ -9,8 +9,6 @@ import java.nio.file.Path;
 
 import org.jboss.forge.addon.maven.resources.MavenModelResource;
 import org.jboss.forge.furnace.versions.SingleVersion;
-import org.jboss.forge.furnace.versions.Version;
-import org.jboss.forge.furnace.versions.Versions;
 
 import java.util.List;
 
@@ -29,6 +27,11 @@ import org.jboss.forge.furnace.services.Imported;
 import org.jboss.windup.config.furnace.FurnaceHolder;
 import org.jboss.windup.util.PathUtil;
 
+/**
+ * Furnace listener that checks the version of the ruleset and if possible, propose an update.
+ * @author <a href="mailto:mbriskar@gmail.com">Matej Briškár</a>
+ *
+ */
 @Singleton
 public class RulesetUpdateChecker
 {
@@ -54,8 +57,7 @@ public class RulesetUpdateChecker
         }
     }
 
-    public static boolean rulesetNeedUpdate(DependencyResolver dependencyResolver)
-    {
+    public static boolean rulesetNeedUpdate(DependencyResolver dependencyResolver, String rulesPomXml) {
         List<Coordinate> resolveVersions = dependencyResolver.resolveVersions(DependencyQueryBuilder.create(CoordinateBuilder.create()
                     .setGroupId("org.jboss.windup.rules")
                     .setArtifactId("windup-rulesets")));
@@ -64,15 +66,18 @@ public class RulesetUpdateChecker
         do
         {
             i++;
+            if(resolveVersions.size() <= i) {
+                //if we haven't found final version
+                return false;
+            }
             latestCoordinate = resolveVersions.get(resolveVersions.size() - i);
         }
         while (latestCoordinate.isSnapshot());
-        Path windupRulesDir = PathUtil.getWindupRulesDir();
+        
         Imported<ResourceFactory> imported = FurnaceHolder.getFurnace().getAddonRegistry().getServices(ResourceFactory.class);
         ResourceFactory factory = imported.get();
-        Path coreRulesPropertiesPath = windupRulesDir.resolve(RULESET_CORE_DIRECTORY
-                    + "/META-INF/maven/org.jboss.windup.rules/windup-rulesets/pom.xml");
-        File pomXml = coreRulesPropertiesPath.toFile();
+        
+        File pomXml = new File(rulesPomXml);
         if (pomXml.exists())
         {
             MavenModelResource pom = (MavenModelResource) factory.create(pomXml);
@@ -86,6 +91,13 @@ public class RulesetUpdateChecker
         {
             return false;
         }
+    }
+    public static boolean rulesetNeedUpdate(DependencyResolver dependencyResolver)
+    {
+        Path windupRulesDir = PathUtil.getWindupRulesDir();
+        Path coreRulesPropertiesPath = windupRulesDir.resolve(RULESET_CORE_DIRECTORY
+                    + "/META-INF/maven/org.jboss.windup.rules/windup-rulesets/pom.xml");
+        return rulesetNeedUpdate(dependencyResolver,coreRulesPropertiesPath.toString());
     }
 
     private static boolean versionIsOld(SingleVersion installedVersion, SingleVersion latestVersion)
