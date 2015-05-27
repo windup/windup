@@ -39,7 +39,6 @@ public class InputPathOption extends AbstractPathConfigurationOption
         return "Input file or directory (a directory is required for source mode)";
     }
 
-
     @Override
     public ValidationResult validate(Object fileObject)
     {
@@ -47,7 +46,7 @@ public class InputPathOption extends AbstractPathConfigurationOption
         if (!result.isSuccess())
             return result;
 
-        File file = ((File)fileObject);
+        File file = ((File) fileObject);
         if (!file.exists())
             return new ValidationResult(ValidationResult.Level.ERROR, "Input path not found: " + file.getAbsolutePath());
 
@@ -56,16 +55,13 @@ public class InputPathOption extends AbstractPathConfigurationOption
             if (file.length() > SIZE_WARNING_TRESHOLD_MB * 1024 * 1024)
             {
                 return new ValidationResult(ValidationResult.Level.PROMPT_TO_CONTINUE,
-                    "The input application is large. Processing it may take very long time. "
-                    + "Please consult the Windup User Guide for performance tips. Proceed?");
+                            "The input application is large. Processing may take a very long time. "
+                                        + "Please consult the Windup User Guide for performance tips.");
             }
         }
 
         return ValidationResult.SUCCESS;
     }
-
-
-
 
     @Override
     public InputType getUIType()

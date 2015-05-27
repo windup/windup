@@ -1,9 +1,8 @@
 package org.jboss.windup.rules.apps.java.config;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+
 import org.jboss.windup.config.AbstractConfigurationOption;
 import org.jboss.windup.config.InputType;
 import org.jboss.windup.config.ValidationResult;
@@ -16,7 +15,6 @@ import org.jboss.windup.config.ValidationResult;
 public class ScanPackagesOption extends AbstractConfigurationOption
 {
     public static final String NAME = "packages";
-
 
     @Override
     public String getDescription()
@@ -54,13 +52,14 @@ public class ScanPackagesOption extends AbstractConfigurationOption
         return false;
     }
 
+    @SuppressWarnings("unchecked")
     public ValidationResult validate(Object value)
     {
-        if (isScanPackagesTooGeneral((List<String>) value))
+        if (tooGeneralOrMissing((List<String>) value))
         {
             String message = "No packages were set in --" + ScanPackagesOption.NAME
-                + ". This will cause all .jar files to be decompiled and can possibly take a long time. "
-                + "Check the Windup User Guide for performance tips.";
+                        + ". This will cause all .jar files to be decompiled and can possibly take a long time. "
+                        + "Check the Windup User Guide for performance tips.";
 
             return new ValidationResult(ValidationResult.Level.WARNING, message);
         }
@@ -68,19 +67,19 @@ public class ScanPackagesOption extends AbstractConfigurationOption
         return ValidationResult.SUCCESS;
     }
 
-
     /**
-     * @return true if the given packages are too general, or not set at all.
+     * @return <code>true</code> if the given packages are too general, or not set at all.
      */
-    private boolean isScanPackagesTooGeneral(List<String> includeJavaPackages)
+    private boolean tooGeneralOrMissing(List<String> includeJavaPackages)
     {
         if (includeJavaPackages != null)
         {
-            Set<String> tooGeneral = new HashSet(Arrays.asList("com org net".split(" ")));
-            for (String pkg : includeJavaPackages)
+            List<String> generalPackages = Arrays.asList("com", "org", "net");
+            for (String packge : includeJavaPackages)
             {
-                if (tooGeneral.contains(pkg))
+                if (generalPackages.contains(packge))
                     continue;
+
                 return false;
             }
         }

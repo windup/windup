@@ -2,8 +2,11 @@ package org.jboss.windup.ui;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
@@ -27,8 +30,8 @@ import org.jboss.forge.addon.ui.input.UIInputMany;
 import org.jboss.forge.addon.ui.input.UISelectMany;
 import org.jboss.forge.addon.ui.input.UISelectOne;
 import org.jboss.forge.addon.ui.metadata.UICommandMetadata;
+import org.jboss.forge.addon.ui.output.UIOutput;
 import org.jboss.forge.addon.ui.progress.UIProgressMonitor;
-import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
@@ -53,7 +56,7 @@ import org.jboss.windup.graph.GraphContextFactory;
  */
 public class WindupCommand implements UICommand
 {
-    private LinkedHashMap<ConfigurationOption, InputComponent<?, ?>> inputOptions = new LinkedHashMap<>();
+    private Map<ConfigurationOption, InputComponent<?, ?>> inputOptions = new LinkedHashMap<>();
 
     @Inject
     private InputComponentFactory componentFactory;
@@ -67,10 +70,10 @@ public class WindupCommand implements UICommand
     @Inject
     private ResourceFactory resourceFactory;
 
-
-    private ValidationResult stopperPrompt = null;
-
-
+    /*
+     * Using a Set because messages seem to be added multiple times by validation. Need to look into this.
+     */
+    private Set<ValidationResult> promptMessages = new HashSet<>();
 
     @Override
     public UICommandMetadata getMetadata(UIContext ctx)
@@ -112,8 +115,9 @@ public class WindupCommand implements UICommand
                 if (inputPath.hasValue())
                 {
                     /**
-                     * It would be really nice to be able to use native Resource types here... but we can't "realllly" do that because the Windup
-                     * configuration API doesn't understand Forge data types, so instead we use string comparison and write a test case.
+                     * It would be really nice to be able to use native Resource types here... but we can't "realllly"
+                     * do that because the Windup configuration API doesn't understand Forge data types, so instead we
+                     * use string comparison and write a test case.
                      */
                     File inputFile = (File) getValueForInput(inputPath);
                     File outputFile = (File) getValueForInput(outputPath);
@@ -148,10 +152,8 @@ public class WindupCommand implements UICommand
     }
 
     @Override
-    public void validate(UIValidationContext validationContext)
+    public void validate(UIValidationContext context)
     {
-        //context.addValidationError(this.getInputForOption(InputPathOption.class), "AAAAAAAAAAAAA");
-
         for (Entry<ConfigurationOption, InputComponent<?, ?>> entry : this.inputOptions.entrySet())
         {
             final InputComponent<?, ?> inputComponent = entry.getValue();
@@ -160,25 +162,38 @@ public class WindupCommand implements UICommand
             ValidationResult result = entry.getKey().validate(inputValue);
 
             if (result.getLevel().equals(ValidationResult.Level.ERROR))
-                validationContext.addValidationError(inputComponent, result.getMessage());
+            {
+                context.addValidationError(inputComponent, result.getMessage());
+            }
 
             if (result.getLevel().equals(ValidationResult.Level.PROMPT_TO_CONTINUE))
             {
-                this.stopperPrompt = result; // A bit hacky - can't prompt in validate(). See WINDUP-595.
+                this.promptMessages.add(result);
             }
 
             if (result.getLevel().equals(ValidationResult.Level.WARNING))
-                validationContext.addValidationWarning(inputComponent, result.getMessage());
+            {
+                context.addValidationWarning(inputComponent, result.getMessage());
+            }
         }
-
     }
 
     @Override
-    public Result execute(UIExecutionContext uiExecContext) throws Exception
+    public Result execute(UIExecutionContext context) throws Exception
     {
-        if (this.stopperPrompt != null)
-            if (!uiExecContext.getPrompt().promptBoolean(this.stopperPrompt.getMessage(), true))
-                return new SimpleFailed("Aborted by the user.");
+        if (!this.promptMessages.isEmpty())
+        {
+            for (ValidationResult message : promptMessages)
+            {
+                UIOutput output = context.getUIContext().getProvider().getOutput();
+                output.warn(output.out(), message.getMessage());
+            }
+
+            if (context.getPrompt().promptBoolean("Would you like to continue?", true) == false)
+            {
+                return Results.fail("Aborted by the user.");
+            }
+        }
 
         WindupConfiguration windupConfiguration = new WindupConfiguration();
         for (Entry<ConfigurationOption, InputComponent<?, ?>> entry : this.inputOptions.entrySet())
@@ -200,7 +215,7 @@ public class WindupCommand implements UICommand
         {
             String promptMsg = "Overwrite all contents of \"" + windupConfiguration.getOutputDirectory().toString()
                         + "\" (anything already in the directory will be deleted)?";
-            if (!uiExecContext.getPrompt().promptBoolean(promptMsg, false))
+            if (!context.getPrompt().promptBoolean(promptMsg, false))
             {
                 String outputPath = windupConfiguration.getOutputDirectory().toString();
                 return Results.fail("Files exist in " + outputPath + ", but --overwrite not specified. Aborting!");
@@ -210,14 +225,14 @@ public class WindupCommand implements UICommand
         /*
          * Put this in the context for debugging, and unit tests (or anything else that needs it).
          */
-        uiExecContext.getUIContext().getAttributeMap().put(WindupConfiguration.class, windupConfiguration);
+        context.getUIContext().getAttributeMap().put(WindupConfiguration.class, windupConfiguration);
 
         FileUtils.deleteQuietly(windupConfiguration.getOutputDirectory().toFile());
         Path graphPath = windupConfiguration.getOutputDirectory().resolve("graph");
         try (GraphContext graphContext = graphContextFactory.create(graphPath))
         {
-            uiExecContext.getUIContext().getAttributeMap().put(GraphContext.class, graphContext);
-            UIProgressMonitor uiProgressMonitor = uiExecContext.getProgressMonitor();
+            context.getUIContext().getAttributeMap().put(GraphContext.class, graphContext);
+            UIProgressMonitor uiProgressMonitor = context.getProgressMonitor();
             WindupProgressMonitor progressMonitor = new WindupProgressMonitorAdapter(uiProgressMonitor);
             windupConfiguration
                         .setProgressMonitor(progressMonitor)
@@ -226,10 +241,8 @@ public class WindupCommand implements UICommand
 
             uiProgressMonitor.done();
 
-            // Provide both the report file path and the URL to access it.
             Path indexHtmlPath = windupConfiguration.getOutputDirectory().resolve("index.html").normalize().toAbsolutePath();
-            return Results.success("Windup report created: "
-                        + indexHtmlPath + System.getProperty("line.separator")
+            return Results.success("Windup report created: " + indexHtmlPath + System.getProperty("line.separator")
                         + "              Access it at this URL: " + indexHtmlPath.toUri());
         }
     }
@@ -362,27 +375,6 @@ public class WindupCommand implements UICommand
             return true;
         }
         return false;
-    }
-
-
-    private static class SimpleFailed implements Failed
-    {
-        private final String message;
-
-        public SimpleFailed(String message)
-        {
-            this.message = message;
-        }
-
-        public Throwable getException()
-        {
-            return null;
-        }
-
-        public String getMessage()
-        {
-            return this.message;
-        }
     }
 
 }
