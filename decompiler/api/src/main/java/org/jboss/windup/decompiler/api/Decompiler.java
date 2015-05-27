@@ -1,6 +1,5 @@
 package org.jboss.windup.decompiler.api;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.util.zip.ZipEntry;
 
@@ -21,7 +20,7 @@ public interface Decompiler
      * @param classFile the .class file to be decompiled.
      * @param outputDir The directory where decompiled .java files will be placed.
      */
-    public DecompilationResult decompileClassFile(File rootDir, Path classFilePath, File outputDir)
+    public DecompilationResult decompileClassFile(Path rootDir, Path classFilePath, Path outputDir)
                 throws DecompilationException;
 
     /**
@@ -40,7 +39,7 @@ public interface Decompiler
      * @param classesDir The directory containing source files and archives.
      * @param outputDir The directory where decompiled .java files will be placed.
      */
-    public DecompilationResult decompileDirectory(File classesDir, File outputDir) throws DecompilationException;
+    public DecompilationResult decompileDirectory(Path classesDir, Path outputDir) throws DecompilationException;
 
     /**
      * Decompiles all .class files and nested archives in the given archive.
@@ -54,7 +53,7 @@ public interface Decompiler
      * @param outputDir The directory where decompiled .java files will be placed.
      * @param listener This is called after each successful decompilation
      */
-    public DecompilationResult decompileArchive(File archive, File outputDir, DecompilationListener listener) throws DecompilationException;
+    public DecompilationResult decompileArchive(Path archive, Path outputDir, DecompilationListener listener) throws DecompilationException;
 
     /**
      * Decompiles all .class files and nested archives in the given archive.
@@ -63,12 +62,12 @@ public interface Decompiler
      * <code>foo.ear/bar.jar/src/com/foo/bar/Baz.java</code>.
      * <p>
      * Required directories will be created as needed.
-     * 
+     *
      * @param archive The archive containing source files and archives.
      * @param outputDir The directory where decompiled .java files will be placed.
      * @param filter Decides what files from the archive to decompile.
      * @param listener This is called after each successful decompilation
      */
-    public DecompilationResult decompileArchive(File archive, File outputDir, Filter<ZipEntry> filter, DecompilationListener listener)
+    public DecompilationResult decompileArchive(Path archive, Path outputDir, Filter<ZipEntry> filter, DecompilationListener listener)
                 throws DecompilationException;
 }

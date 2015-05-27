@@ -107,6 +107,11 @@ public class TagsIncludeExcludeTest
         }
 
         @Override
+        public void ruleEvaluationProgress(GraphRewrite event, String name, int currentPosition, int total, int timeRemainingInSeconds)
+        {
+        }
+
+        @Override
         public void afterRuleConditionEvaluation(GraphRewrite event, EvaluationContext context, Rule rule, boolean result)
         {
             RuleProvider provider = (RuleProvider) ((Context) rule).get(RuleMetadataType.RULE_PROVIDER);

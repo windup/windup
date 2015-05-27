@@ -34,7 +34,7 @@ public class IndexJavaClassFilesRuleProvider extends AbstractRuleProvider
                     .perform(
                         new AddClassFileMetadata()
                         .and(Commit.every(10))
-                        .and(IterationProgress.monitoring("Indexed class file: ", 1000))
+                        .and(IterationProgress.monitoring("Index Class Files", 1000))
                     );
     }
     // @formatter:on

@@ -13,7 +13,6 @@ import java.util.TreeSet;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -54,6 +53,7 @@ import org.jboss.windup.rules.apps.java.service.TypeReferenceService;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.Logging;
+import org.jboss.windup.util.ProgressEstimate;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -86,10 +86,6 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
         return ConfigurationBuilder.begin()
             .addRule()
             .perform(new ParseSourceOperation());
-
-
-                                    //.and(IterationProgress.monitoring("Analyzed Java File: ", 250))
-                                    //.and(Commit.every(10))
     }
     // @formatter:on
 
@@ -149,7 +145,6 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                 {
                     WindupWildcardImportResolver.setGraphContext(event.getGraphContext());
                     final int totalToProcess = allSourceFiles.size();
-                    final AtomicInteger numberProcessed = new AtomicInteger(0);
 
                     final BlockingQueue<Pair<Path, List<ClassReference>>> processedPaths = new ArrayBlockingQueue<>(ANALYSIS_QUEUE_SIZE);
                     final Set<Path> failedPaths = Sets.getConcurrentSet();
@@ -177,7 +172,9 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                     };
 
                     Set<Path> filesToProcess = new TreeSet<>(allSourceFiles);
+
                     BatchASTFuture future = BatchASTProcessor.analyze(listener, importResolver, libraryPaths, sourcePaths, filesToProcess);
+                    ProgressEstimate estimate = new ProgressEstimate(filesToProcess.size());
 
                     while (!future.isDone() || !processedPaths.isEmpty())
                     {
@@ -189,13 +186,10 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
 
                         processReferences(event.getGraphContext(), pair.getKey(), pair.getValue());
 
-                        numberProcessed.incrementAndGet();
-                        if (numberProcessed.get() % LOG_INTERVAL == 0)
-                        {
-                            LOG.info("Analyzed Java File: " + numberProcessed.get() + " / " + totalToProcess);
-                        }
+                        estimate.addWork(1);
+                        printProgressEstimate(event, estimate);
 
-                        if (numberProcessed.get() % COMMIT_INTERVAL == 0)
+                        if (estimate.getWorked() % COMMIT_INTERVAL == 0)
                         {
                             event.getGraphContext().getGraph().getBaseGraph().commit();
                         }
@@ -232,6 +226,8 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                                 classificationService.attachClassification(sourceFileModel, JavaSourceFileModel.UNPARSEABLE_JAVA_CLASSIFICATION,
                                             JavaSourceFileModel.UNPARSEABLE_JAVA_DESCRIPTION);
                             }
+                            estimate.addWork(1);
+                            printProgressEstimate(event, estimate);
                         }
                     }
 
@@ -265,6 +261,21 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
             finally
             {
                 ExecutionStatistics.get().end("AnalyzeJavaFilesRuleProvider.analyzeFile");
+            }
+        }
+
+        private void printProgressEstimate(GraphRewrite event, ProgressEstimate estimate)
+        {
+            if (estimate.getWorked() % LOG_INTERVAL == 0)
+            {
+                int timeRemainingInMillis = (int) estimate.getTimeRemainingInMillis();
+                if (timeRemainingInMillis > 0)
+                {
+
+                    event.ruleEvaluationProgress("Analyze Java", estimate.getWorked(), estimate.getTotal(), timeRemainingInMillis / 1000);
+                }
+
+                LOG.info("Analyzed Java File: " + estimate.getWorked() + " / " + estimate.getTotal());
             }
         }
 

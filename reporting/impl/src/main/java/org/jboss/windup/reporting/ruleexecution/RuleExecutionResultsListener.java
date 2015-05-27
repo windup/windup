@@ -5,9 +5,9 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleLifecycleListener;
-import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.metadata.RuleProviderRegistry;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -66,6 +66,11 @@ public class RuleExecutionResultsListener implements RuleLifecycleListener
     {
         ruleExecutionInformation.put(rule, new RuleExecutionInformation(rule));
         RuleExecutionResultsListener.this.currentRule = rule;
+    }
+
+    @Override
+    public void ruleEvaluationProgress(GraphRewrite event, String name, int currentPosition, int total, int timeRemainingInSeconds)
+    {
     }
 
     @Override
