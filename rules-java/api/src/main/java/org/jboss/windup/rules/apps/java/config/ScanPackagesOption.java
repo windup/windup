@@ -31,7 +31,7 @@ public class ScanPackagesOption extends AbstractConfigurationOption
     @Override
     public String getLabel()
     {
-        return "Java packages to scan.";
+        return "Java packages to scan";
     }
 
     @Override
