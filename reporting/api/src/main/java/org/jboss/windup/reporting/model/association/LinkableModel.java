@@ -1,7 +1,7 @@
 package org.jboss.windup.reporting.model.association;
 
+import org.jboss.windup.graph.model.LinkModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.reporting.model.LinkModel;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;

@@ -3,19 +3,24 @@ package org.jboss.windup.rules.apps.java.scan.operation.packagemapping;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-import java.util.regex.Pattern;
+import java.util.logging.Logger;
 
+import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.GraphRule;
 import org.jboss.windup.config.PreRulesetEvaluation;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+import com.esotericsoftware.minlog.Log;
+
 /**
- * Maps from a package pattern (regular expression) to a organization name.
+ * Maps from a package to a organization name.
  */
 public class PackageNameMapping extends GraphRule implements PackageNameMappingWithPackagePattern, PreRulesetEvaluation
 {
+    private static final Logger LOG = Logger.getLogger(PackageNameMapping.class.getSimpleName());
+
     private String organization;
     private String packagePattern;
 
@@ -24,13 +29,16 @@ public class PackageNameMapping extends GraphRule implements PackageNameMappingW
      */
     public static String getOrganizationForPackage(GraphRewrite event, String pkg)
     {
+        final String pkgComparison = pkg+".";
         String organization = null;
-        for (Map.Entry<Pattern, String> entry : getMappings(event).entrySet())
+        for (Map.Entry<String, String> entry : getMappings(event).entrySet())
         {
-            Pattern packagePattern = entry.getKey();
-            if (packagePattern.matcher(pkg).find())
+            final String pkgPattern = entry.getKey()+".";
+            LOG.info("Comparing: "+pkgComparison +" to: "+pkgPattern);
+            if (StringUtils.startsWith(pkgComparison, pkgPattern))
             {
                 organization = entry.getValue();
+                LOG.info(" -- Found organization: "+organization);
                 break;
             }
         }
@@ -60,23 +68,13 @@ public class PackageNameMapping extends GraphRule implements PackageNameMappingW
     @Override
     public void preRulesetEvaluation(GraphRewrite event)
     {
-        Pattern pattern;
-        if (!packagePattern.startsWith("^"))
-        {
-            pattern = Pattern.compile("^" + packagePattern);
-        }
-        else
-        {
-            pattern = Pattern.compile(packagePattern);
-        }
-
-        PackageNameMapping.getMappings(event).put(pattern, organization);
+        PackageNameMapping.getMappings(event).put(packagePattern, organization);
     }
 
-    private static Map<Pattern, String> getMappings(GraphRewrite event)
+    private static Map<String, String> getMappings(GraphRewrite event)
     {
         @SuppressWarnings("unchecked")
-        Map<Pattern, String> map = (Map<Pattern, String>) event.getRewriteContext().get(PackageNameMapping.class);
+        Map<String, String> map = (Map<String, String>) event.getRewriteContext().get(PackageNameMapping.class);
         if (map == null)
         {
             map = new HashMap<>();

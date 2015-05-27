@@ -96,7 +96,16 @@
 						<th>Link</th>
 					</tr>
 					<tr>
-						<td>${projectModel.organization!"Unknown"}</td>
+						<td>
+						<#assign organizations = projectModelToOrganizations(projectModel)>
+						
+						<#if iterableHasContent(organizations)>
+							<#list organizations.iterator() as organization>
+								${organization.name}
+							</#list>
+						</#if>
+						</td>
+						
 						<td>${projectModel.name!""}</td>
 						<td>
 							<#if projectModel.url?has_content>

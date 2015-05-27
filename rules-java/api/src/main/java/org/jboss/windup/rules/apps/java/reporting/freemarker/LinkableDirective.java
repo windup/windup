@@ -8,8 +8,8 @@ import java.util.logging.Logger;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.LinkModel;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerTemplateDirective;
-import org.jboss.windup.reporting.model.LinkModel;
 import org.jboss.windup.reporting.model.association.LinkableModel;
 import org.jboss.windup.util.Logging;
 
