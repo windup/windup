@@ -16,7 +16,8 @@ public interface DataSourceModel extends JNDIResourceModel
     public static final String NAME = "dataSourceName";
     public static final String DATABASE_TYPE_NAME = "databaseTypeName";
     public static final String DATABASE_TYPE_VERSION = "databaseTypeVersion";
-
+    public static final String XA_TYPE = "xaType";
+    
     /**
      * Contains persistence unit name
      */
@@ -25,10 +26,20 @@ public interface DataSourceModel extends JNDIResourceModel
     public String getName();
 
     /**
-     * Contains persistence unit name
+     * Defines whether it is an XA datasource
      */
     @Property(NAME)
     public void setName(String name);
+    
+    @Property(XA_TYPE)
+    public Boolean setXa();
+
+    /**
+     * Defines whether it is an XA datasource
+     */
+    @Property(XA_TYPE)
+    public Boolean getXa(Boolean name);
+    
     
     /**
      * Contains database type name 

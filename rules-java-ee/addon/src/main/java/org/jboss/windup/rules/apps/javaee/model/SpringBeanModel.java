@@ -1,5 +1,6 @@
 package org.jboss.windup.rules.apps.javaee.model;
 
+import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 
@@ -14,9 +15,10 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
  */
-@TypeValue("SpringBean")
+@TypeValue(SpringBeanModel.TYPE)
 public interface SpringBeanModel extends WindupVertexFrame
 {
+    public static final String TYPE = "SpringBeanModel";
     public static final String SPRING_BEAN_TO_JAVA_CLASS = "springBeanToJavaClass";
     public static final String SPRING_CONFIGURATION = "springConfiguration";
     public static final String SPRING_BEAN_NAME = "springBeanName";
@@ -24,6 +26,7 @@ public interface SpringBeanModel extends WindupVertexFrame
     /**
      * The name of this spring bean
      */
+    @Indexed
     @Property(SPRING_BEAN_NAME)
     public String getSpringBeanName();
 
