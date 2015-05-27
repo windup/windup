@@ -439,11 +439,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#Execute">2.2. Execute Windup</a>
 <ul class="sectlevel3">
 <li><a href="#_prerequisites">2.2.1. Prerequisites</a></li>
-<li><a href="#_start_windup">2.2.2. Start Windup</a></li>
-<li><a href="#_run_windup">2.2.3. Run Windup</a></li>
-<li><a href="#_run_windup_in_batch_mode">2.2.4. Run Windup in Batch Mode</a></li>
-<li><a href="#_windup_command_line_help">2.2.5. Windup Command Line Help</a></li>
-<li><a href="#command-examples">2.2.6. Command Examples</a></li>
+<li><a href="#_run_windup_in_batch_mode">2.2.2. Run Windup in Batch Mode</a></li>
+<li><a href="#_windup_help_for_batch_mode">2.2.3. Windup Help for Batch Mode</a></li>
+<li><a href="#_start_windup_in_interactive_mode">2.2.4. Start Windup in Interactive Mode</a></li>
+<li><a href="#_windup_help_for_interactive_mode">2.2.5. Windup Help for Interactive Mode</a></li>
+<li><a href="#command-examples">2.2.6. Windup Command Examples</a></li>
 </ul>
 </li>
 <li><a href="#Review-the-Report">2.3. Review the Report</a>
@@ -851,7 +851,7 @@ Better Reporting
 <div class="sect3">
 <h4 id="_hardware">1.3.2. Hardware</h4>
 <div class="paragraph">
-<p>The following memory and disk space requirements are the minimum needed to run Windup. If your application is very large or you need to evaluate multiple applications, you make want to increase these values to improve performance.</p>
+<p>The following memory and disk space requirements are the minimum needed to run Windup. If your application is very large or you need to evaluate multiple applications, you may want to increase these values to improve performance. For tips on how to optimize performance, see <a href="#Optimize-Performance">Optimize Windup Performance</a>.</p>
 </div>
 <div class="ulist">
 <ul>
@@ -927,32 +927,47 @@ Better Reporting
 <div class="ulist">
 <ul>
 <li>
-<p>If the folder does not exist, it is created by Windup.</p>
+<p>If you do not specify a folder, Windup creates one for you at the same level as the application.</p>
 </li>
 <li>
-<p>If the folder exists, you are prompted with the message:</p>
+<p>If you specify a folder and it does not exist, it is created by Windup.</p>
+</li>
+<li>
+<p>If you specify a folder and it does exist, you see the following:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>In batch mode, you must specify <code>--overwrite</code> or you see the following error.</p>
+<div class="literalblock">
+<div class="content">
+<pre>***ERROR*** Files exist in /home/username/OUTPUT_REPORT_DIRECTORY, but --overwrite not specified. Aborting!</pre>
+</div>
+</div>
+</li>
+<li>
+<p>In interactive mode, you see see the following prompt and can choose whether to overwrite the directory.</p>
 <div class="literalblock">
 <div class="content">
 <pre>Overwrite all contents of &lt;OUTPUT_DIRECTORY&gt; (anything already in the directory will be deleted)? [y/N]</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Choose "y" if you want Windup to delete and recreate the directory.</p>
+<p>Choose "y" if you want Windup to delete and recreate the directory. If you are confident you want to overwrite the output directory, you can specify <code>--overwrite</code> on the command line to automatically delete and recreate the directory.</p>
 </div>
-</li>
-<li>
-<p>If you are confident you want to overwrite the output directory, you can specify <code>--overwrite</code> on the command line to automatically delete and recreate the directory.</p>
-<div class="admonitionblock note">
+<div class="admonitionblock warning">
 <table>
 <tr>
 <td class="icon">
-<div class="title">Note</div>
+<div class="title">Warning</div>
 </td>
 <td class="content">
-Be careful not to specify a directory that contains important information!
+Be careful not to specify a report output directory that contains important information!
 </td>
 </tr>
 </table>
+</div>
+</li>
+</ul>
 </div>
 </li>
 </ul>
@@ -974,13 +989,149 @@ Be careful not to specify a directory that contains important information!
 </ul>
 </div>
 </li>
+<li>
+<p>For information about the use of WINDUP_HOME in the instructions below, see <a href="#About-the-HOME-Variable">About the WINDUP_HOME Variable</a>.</p>
+</li>
 </ol>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_start_windup">2.2.2. Start Windup</h4>
+<h4 id="_run_windup_in_batch_mode">2.2.2. Run Windup in Batch Mode</h4>
 <div class="paragraph">
-<p>For information about the use of WINDUP_HOME in the instructions below, see <a href="#About-the-HOME-Variable">About the WINDUP_HOME Variable</a>.</p>
+<p>This is the quickest way to run Windup.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Open a terminal and navigate to the WINDUP_HOME directory.</p>
+</li>
+<li>
+<p>Type the following command to run Windup in batch mode:</p>
+<div class="listingblock">
+<div class="content">
+<pre>For Linux:     $ WINDUP_HOME/bin/windup --input INPUT_ARCHIVE --output OUTPUT_REPORT --packages PACKAGE_1 PACKAGE_2 PACKAGE_N
+For Windows:   &gt; WINDUP_HOME\bin\windup.bat --input INPUT_ARCHIVE --output OUTPUT_REPORT --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
+</div>
+</div>
+</li>
+<li>
+<p>This command can take arbitrary options processed by different add-ons. The list of options in the core Windup distribution can be found in the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/config/ConfigurationOption.html">Javadoc</a>. Most commonly used command line arguments are:</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">--input <strong>INPUT_ARCHIVE_OR_FOLDER</strong></dt>
+<dd>
+<p>This is the fully qualified application archive or source path.</p>
+</dd>
+<dt class="hdlist1">--output <strong>OUTPUT_REPORT_DIRECTORY</strong> (optional)</dt>
+<dd>
+<p>The fully qualified path to the folder that will contain the the report information produced by Windup. If omitted, the report will be generated in a  <strong>INPUT_ARCHIVE_OR_FOLDER.report</strong> folder. If the output directory exists, you will see the error described above and must specify the <code>--overwrite</code> argument. This forces Windup to delete and recreate the folder, so be careful not to specify an output directory that contains important information!</p>
+</dd>
+<dt class="hdlist1">--source (optional)</dt>
+<dd>
+<p>One or more source technologies, platforms, or frameworks to migrate from.</p>
+</dd>
+<dt class="hdlist1">--target (optional)</dt>
+<dd>
+<p>One or more source technologies, platforms, or frameworks to migrate to.</p>
+</dd>
+<dt class="hdlist1">--overwrite (optional)</dt>
+<dd>
+<p>Specify this optional argument only if you are certain you want to force Windup to delete the existing <strong>OUTPUT_REPORT_DIRECTORY</strong> folder. The default value is <code>false</code>.</p>
+</dd>
+<dt class="hdlist1">--userRulesDirectory (optional)</dt>
+<dd>
+<p>Points to a directory to load XML rules from. (Search pattern: *.windup.groovy and *.windup.xml)</p>
+</dd>
+<dt class="hdlist1">--packages <strong>PACKAGE_1</strong>, <strong>PACKAGE_2</strong>, <strong>PACKAGE_N</strong> (optional)</dt>
+<dd>
+<p>This is a comma-delimited list of the packages to be evaluated by Windup.</p>
+</dd>
+<dt class="hdlist1">--excludePackages <strong>PACKAGE_1</strong>, <strong>PACKAGE_2</strong>, <strong>PACKAGE_N</strong> (optional)</dt>
+<dd>
+<p>This is a comma-delimited list of the packages to be excluded by Windup.</p>
+</dd>
+<dt class="hdlist1">--source-mode true (optional)</dt>
+<dd>
+<p>This argument is optional and is only required if the application to be evaluated contains source files rather than compiled binaries. The default value is <code>false</code>.</p>
+</dd>
+</dl>
+</div>
+</li>
+<li>
+<p>To evaluate an application archive, use the following syntax:</p>
+<div class="listingblock">
+<div class="content">
+<pre>WINDUP_HOME/bin/windup --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To run Windup against application source code, you must add the <code>--sourceMode true</code> argument:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>WINDUP_HOME/bin/windup  --sourceMode true --source SOURCE_TECHNOLOGY --target TARGET_TECHNOLOGY --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>See <a href="#command-examples">Windup Command Examples</a> below for concrete examples of commands that use source code directories and archives located in the Windup GitHub repository.</p>
+</div>
+</li>
+<li>
+<p>You should see the following result upon completion of the command:</p>
+<div class="listingblock">
+<div class="content">
+<pre>**SUCCESS*** Windup report created: PATH_TO_REPORTS/index.html
+              Access it at this URL: file:///home/username/PATH_TO_REPORTS/index.html</pre>
+</div>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Warning</div>
+</td>
+<td class="content">
+Depending on the size of the application and the hardware Windup is running on, this command can take a very long time. For tips on how to improve performance, see <a href="#Optimize-Performance">Optimize Windup Performance</a>.
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>Open the <code>OUTPUT_REPORT_DIRECTORY/index.html</code> file in a browser to access the report.
+The following subdirectories in the <code>OUTPUT_REPORT_DIRECTORY</code> contain the supporting information for the report:</p>
+<div class="literalblock">
+<div class="content">
+<pre>OUTPUT_REPORT_DIRECTORY/
+    graph/
+    renderedGraph/
+    reports/
+    stats/
+    index.html</pre>
+</div>
+</div>
+</li>
+<li>
+<p>For details on how to evaluate the report data, see <a href="#Review-the-Report">Review the Report</a>.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_windup_help_for_batch_mode">2.2.3. Windup Help for Batch Mode</h4>
+<div class="paragraph">
+<p>To see the complete list of available arguments for the <code>windup</code> command, execute the following command in the terminal:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>WINDUP_HOME/bin/windup --help</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_start_windup_in_interactive_mode">2.2.4. Start Windup in Interactive Mode</h4>
+<div class="paragraph">
+<p>Windup can also be run in interactive mode. This mode offers tab completion, which is useful if you need assistance with valid argument values, for example, valid <code>--source</code> or <code>--target</code> technologies.</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
@@ -991,7 +1142,7 @@ Be careful not to specify a directory that contains important information!
 <p>Type the following command to start Windup:</p>
 <div class="listingblock">
 <div class="content">
-<pre>For Linux:    windup/bin $ ./windup
+<pre>For Linux:    WINDUP_HOME/bin $ ./windup
 For Windows:  C:\WINDUP_HOME\bin&gt; windup</pre>
 </div>
 </div>
@@ -1015,68 +1166,14 @@ JBoss Windup, version [ 2.2.0.Final ] - JBoss, by Red Hat, Inc. [ http://windup.
 </div>
 </div>
 </li>
-</ol>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_run_windup">2.2.3. Run Windup</h4>
-<div class="olist arabic">
-<ol class="arabic">
 <li>
-<p>The command to run Windup is <code>windup-migrate-app</code>.</p>
-</li>
-<li>
-<p>This command can take arbitrary options processed by different add-ons. The list of options in the core Windup distribution can be found in <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/config/ConfigurationOption.html">Javadoc</a>. Most commonly used command line arguments are:</p>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">--input <strong>INPUT_ARCHIVE_OR_FOLDER</strong></dt>
-<dd>
-<p>This is the fully qualified application archive or source path.</p>
-</dd>
-<dt class="hdlist1">--output <strong>OUTPUT_REPORT_DIRECTORY</strong></dt>
-<dd>
-<p>The fully qualified path to the folder that will contain the the report information produced by Windup.</p>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">
-If the <strong>OUTPUT_REPORT_DIRECTORY</strong> directory exists and you do not specify the <code>--overwrite</code> argument, you are prompted to overwrite the contents. If you respond "y", it is deleted and recreated by Windup, so be careful not to specify an output directory that contains important information!
-</td>
-</tr>
-</table>
-</div>
-</dd>
-<dt class="hdlist1">--overwrite (optional)</dt>
-<dd>
-<p>Specify this optional argument only if you are certain you want to force Windup to delete the existing <strong>OUTPUT_REPORT_DIRECTORY</strong>. The default value is <code>false</code>.</p>
-</dd>
-<dt class="hdlist1">--userRulesDirectory</dt>
-<dd>
-<p>Points to a directory to load XML rules from. (Search pattern: *.windup.groovy and *.windup.xml)</p>
-</dd>
-<dt class="hdlist1">--packages <strong>PACKAGE_1</strong>, <strong>PACKAGE_2</strong>, <strong>PACKAGE_N</strong> (optional)</dt>
-<dd>
-<p>This is a comma-delimited list of the packages to be evaluated by Windup.</p>
-</dd>
-<dt class="hdlist1">--excludePackages <strong>PACKAGE_1</strong>, <strong>PACKAGE_2</strong>, <strong>PACKAGE_N</strong> (optional)</dt>
-<dd>
-<p>This is a comma-delimited list of the packages to be excluded by Windup.</p>
-</dd>
-<dt class="hdlist1">--source-mode true (optional)</dt>
-<dd>
-<p>This argument is optional and is only required if the application to be evaluated contains source files rather than compiled binaries. The default value is <code>false</code>.</p>
-</dd>
-</dl>
-</div>
+<p>The command to run Windup is <code>windup-migrate-app</code>. It uses the same arguments as batch mode. If you are unsure of valid arguement values, hit the <code>tab</code> a few times to see what is available.</p>
 </li>
 <li>
 <p>To evaluate an application archive, use the following syntax:</p>
 <div class="listingblock">
 <div class="content">
-<pre>windup-migrate-app --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
+<pre>windup-migrate-app --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY -source SOURCE_TECHNOLOGY --target TARGET_TECHNOLOGY--packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1084,11 +1181,8 @@ If the <strong>OUTPUT_REPORT_DIRECTORY</strong> directory exists and you do not 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>windup-migrate-app --sourceMode true --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
+<pre>windup-migrate-app --sourceMode true --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY -source SOURCE_TECHNOLOGY --target TARGET_TECHNOLOGY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
 </div>
-</div>
-<div class="paragraph">
-<p>See <a href="#command-examples">Windup Command Examples</a> below for concrete examples of commands that use source code directories and archives located in the Windup GitHub repository.</p>
 </div>
 </li>
 <li>
@@ -1120,51 +1214,15 @@ Depending on the size of the application and the hardware Windup is running on, 
 </div>
 </li>
 <li>
-<p>Open the <code>OUTPUT_REPORT_DIRECTORY/index.html</code> file in a browser to access the report.
-The following subdirectories in the <code>OUTPUT_REPORT_DIRECTORY</code> contain the supporting information for the report:</p>
-<div class="literalblock">
-<div class="content">
-<pre>OUTPUT_REPORT_DIRECTORY/
-    graph/
-    renderedGraph/
-    reports/
-    stats/
-    index.html</pre>
-</div>
-</div>
-</li>
-<li>
-<p>For details on how to evaluate the report data, see <a href="#Review-the-Report">Review the Report</a>.</p>
+<p>Review the report as described for batch mode.</p>
 </li>
 </ol>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_run_windup_in_batch_mode">2.2.4. Run Windup in Batch Mode</h4>
+<h4 id="_windup_help_for_interactive_mode">2.2.5. Windup Help for Interactive Mode</h4>
 <div class="paragraph">
-<p>Windup can be also executed in batch mode within a shell or batch script using the <code>--evaluate</code> argument as follows.</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Open a terminal and navigate to the WINDUP_HOME directory.</p>
-</li>
-<li>
-<p>Type the following command to run Windup in batch mode:</p>
-<div class="listingblock">
-<div class="content">
-<pre>For Linux:     $ bin/windup --evaluate "windup-migrate-app --input INPUT_ARCHIVE --output OUTPUT_REPORT --packages PACKAGE_1 PACKAGE_2 PACKAGE_N"
-For Windows:   &gt; bin\windup.bat --evaluate "windup-migrate-app --input INPUT_ARCHIVE --output OUTPUT_REPORT --packages PACKAGE_1 PACKAGE_2 PACKAGE_N"</pre>
-</div>
-</div>
-</li>
-</ol>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_windup_command_line_help">2.2.5. Windup Command Line Help</h4>
-<div class="paragraph">
-<p>To see the complete list of available arguments for the <code>windup-migrate-app</code> command, execute the following command in the Windup prompt:</p>
+<p>To see the complete list of available arguments for the <code>windup-migrate-app</code> command, execute the following command at the Windup prompt:</p>
 </div>
 <div class="literalblock">
 <div class="content">
@@ -1173,9 +1231,9 @@ For Windows:   &gt; bin\windup.bat --evaluate "windup-migrate-app --input INPUT_
 </div>
 </div>
 <div class="sect3">
-<h4 id="command-examples">2.2.6. Command Examples</h4>
+<h4 id="command-examples">2.2.6. Windup Command Examples</h4>
 <div class="paragraph">
-<p>The following command examples report against applications located in the Windup source <a href="https://github.com/windup/windup/tree/master/test-files">test-files</a> directory.</p>
+<p>The following batch mode examples report against applications located in the Windup source <a href="https://github.com/windup/windup/tree/master/test-files">test-files</a> directory. The same arguments can be used to run the commands interactively in Windup using the <code>windup-migrate-app</code> command.</p>
 </div>
 <div class="sect4">
 <h5 id="_source_code_example">Source Code Example</h5>
@@ -1184,7 +1242,7 @@ For Windows:   &gt; bin\windup.bat --evaluate "windup-migrate-app --input INPUT_
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>windup-migrate-app --sourceMode true --input /home/username/windup-source/test-files/seam-booking-5.2/ --output /home/username/windup-reports/seam-booking-report --packages org.jboss.seam</pre>
+<pre>WINDUP_HOME/bin/windup --sourceMode true --input /home/username/windup-source/test-files/seam-booking-5.2/ --output /home/username/windup-reports/seam-booking-report --source eap4,eap5 --target eap6 --packages org.jboss.seam</pre>
 </div>
 </div>
 </div>
@@ -1195,19 +1253,7 @@ For Windows:   &gt; bin\windup.bat --evaluate "windup-migrate-app --input INPUT_
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>windup-migrate-app --input /home/username/windup-source/test-files/jee-example-app-1.0.0.ear/ --output /home/username/windup-reports/jee-example-app-1.0.0.ear-report --packages com.acme org.apache</pre>
-</div>
-</div>
-</div>
-<div class="sect4">
-<h5 id="_windup_batch_example">Windup Batch Example</h5>
-<div class="paragraph">
-<p>The following Windup batch command runs against the <a href="https://github.com/windup/windup/blob/master/test-files/jee-example-app-1.0.0.ear">jee-example-app-1.0.0.ear</a> EAR archive. It evaluates all <code>com.acme</code> and <code>org.apache</code> packages and creates a folder named 'jee-example-app-1.0.0.ear-report' in the <code>/home/username/windup-reports/</code> directory to contain the reporting output.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>For Linux: $ bin/windup --evaluate "windup-migrate-app --input /home/username/windup-source/test-files/jee-example-app-1.0.0.ear/ --output /home/username/windup-reports/jee-example-app-1.0.0.ear-report --packages com.acme org.apache"
-For Windows: &gt; bin\windup.bat --evaluate "windup-migrate-app --input \windup-source\test-files\jee-example-app-1.0.0.ear --output \windup-reports\jee-example-app-1.0.0.ear-report --packages com.acme org.apache</pre>
+<pre>WINDUP_HOME/bin/windup  --input /home/username/windup-source/test-files/jee-example-app-1.0.0.ear/ --output /home/username/windup-reports/jee-example-app-1.0.0.ear-report --source eap4,eap5 --target eap6 --packages com.acme org.apache</pre>
 </div>
 </div>
 </div>
@@ -4315,10 +4361,10 @@ This may especially happen after Maven coordinates of some module are changed.</
 <div class="sect2">
 <h3 id="Review-the-Quickstarts">9.1. Review the Windup Quickstarts</h3>
 <div class="paragraph">
-<p>The Windup quickstarts provide working examples of how to create custom Java-based rule add-ons and XML rules. You can use them as a starting point for creating your own custom rules. The quickstarts are available on GitHub here: <a href="https://github.com/windup/windup-quickstarts" class="bare">https://github.com/windup/windup-quickstarts</a></p>
+<p>The Windup quickstarts provide working examples of how to create custom Java-based rule add-ons and XML rules. You can use them as a starting point for creating your own custom rules.</p>
 </div>
 <div class="paragraph">
-<p>You can fork and clone the project to have access to regular updates or you can download a ZIP file of the latest version.</p>
+<p>You can download a ZIP file of the latest released version of the quickstarts. Or, if you prefer to play around with the source code, you can fork and clone the windup-quickstarts project repository.</p>
 </div>
 <div class="sect3">
 <h4 id="_download_the_latest_quickstart_zip">9.1.1. Download the Latest Quickstart ZIP</h4>
@@ -4385,7 +4431,7 @@ This may especially happen after Maven coordinates of some module are changed.</
 <div class="ulist">
 <ul>
 <li>
-<p>Send an email to <a href="mailto:windup-users@lists.jboss.org">windup-users@lists.jboss.org</a> and let us know what Windup migration rules should cover.</p>
+<p>Send an email to <a href="mailto:windup-users@lists.jboss.org">windup-users@lists.jboss.org</a> and let us know what should Windup migration rules  cover.</p>
 </li>
 <li>
 <p>Provide example applications to test migration rules.</p>
@@ -4417,7 +4463,10 @@ This may especially happen after Maven coordinates of some module are changed.</
 <p>Create a test for the new rule.</p>
 </li>
 <li>
-<p>Details are provided in the <em>Windup Rules Development Guide</em>.</p>
+<p>Fork the <code>windup-rulesets</code> Github repository and put the rule therein.</p>
+</li>
+<li>
+<p>Details are provided in the <em><a href="http://windup.github.io/windup/docs/latest/html/WindupRulesDevelopmentGuide.html#_fork_and_clone_the_quickstart_github_project">Windup Rules Development Guide</a></em>.</p>
 </li>
 </ul>
 </div>
@@ -4433,7 +4482,7 @@ This may especially happen after Maven coordinates of some module are changed.</
 <p>Improve Windup performance or efficiency.</p>
 </li>
 <li>
-<p>See the_Windup Core Development Guide_ for information about how to configure your environment and set up the project.</p>
+<p>See the <em><a href="http://windup.github.io/windup/docs/latest/html/WindupCoreDevelopmentGuide.html">Windup Core Development Guide</a></em> for information about how to configure your environment and set up the project.</p>
 </li>
 </ul>
 </div>
@@ -4781,7 +4830,7 @@ Useful Commands: #action #agreed #help #info #idea #link #topic.</pre>
 <p>Windup performance depends on a number of factors, including hardware configuration, the number and types of files in the application, the size and number of applications to be evaluated, and whether the application contains source or compiled code. For example, a file that is larger than 10 MB may need a lot of time to process.</p>
 </div>
 <div class="paragraph">
-<p>In general, Windup spends about 40% of the time decompiling classes, 40% of the time executing rules, and the remainder of the time processing other tasks and generating rules. This section describes what you can do to improve the performance of Windup.</p>
+<p>In general, Windup spends about 40% of the time decompiling classes, 40% of the time executing rules, and the remainder of the time processing other tasks and generating reports. This section describes what you can do to improve the performance of Windup.</p>
 </div>
 </div>
 <div class="sect3">
@@ -4837,7 +4886,7 @@ Useful Commands: #action #agreed #help #info #idea #link #topic.</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-05-21 11:40:20 EDT
+Last updated 2015-05-27 16:36:58 EDT
 </div>
 </div>
 </body>
