@@ -19,6 +19,7 @@ import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.rules.apps.java.reporting.rules.CreateJavaApplicationOverviewReportRuleProvider;
 import org.jboss.windup.rules.apps.javaee.model.SpringBeanModel;
 import org.jboss.windup.rules.apps.javaee.model.SpringConfigurationFileModel;
+import org.jboss.windup.rules.apps.javaee.model.association.JNDIReferenceModel;
 import org.jboss.windup.rules.apps.javaee.rules.CreateSpringBeanReportRuleProvider;
 import org.jboss.windup.rules.apps.javaee.service.SpringConfigurationFileService;
 import org.jboss.windup.testutil.html.TestJavaApplicationOverviewUtil;
@@ -78,6 +79,9 @@ public class WindupArchitectureSpringSmallTest extends WindupArchitectureTest
         int numberFound = 0;
         boolean foundSpringMvcContext = false;
         boolean foundSpringBusinessContext = false;
+
+        boolean foundDataSourceJNDIReference = false;
+        boolean foundEntityManagerJNDIReference = false;
         for (SpringConfigurationFileModel model : models)
         {
             numberFound++;
@@ -95,12 +99,24 @@ public class WindupArchitectureSpringSmallTest extends WindupArchitectureTest
             else if (model.getFileName().equals("spring-business-context.xml"))
             {
                 foundSpringBusinessContext = true;
-                Assert.assertFalse(model.getSpringBeans().iterator().hasNext());
+
+                for (SpringBeanModel springBeanModel : model.getSpringBeans())
+                {
+                    if (springBeanModel instanceof JNDIReferenceModel)
+                    {
+                        if ("dataSource".equals(springBeanModel.getSpringBeanName()))
+                            foundDataSourceJNDIReference = true;
+                        else if ("entityManager".equals(springBeanModel.getSpringBeanName()))
+                            foundEntityManagerJNDIReference = true;
+                    }
+                }
             }
         }
         Assert.assertEquals(2, numberFound);
         Assert.assertTrue(foundSpringMvcContext);
         Assert.assertTrue(foundSpringBusinessContext);
+        Assert.assertTrue(foundDataSourceJNDIReference);
+        Assert.assertTrue(foundEntityManagerJNDIReference);
     }
 
     private void validateSpringBeanReport(GraphContext context)

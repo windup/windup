@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.reporting.pegdown.WindupCodeBlockPlugin;
 import org.pegdown.Extensions;
 import org.pegdown.LinkRenderer;
 import org.pegdown.PegDownProcessor;
@@ -37,15 +36,14 @@ public class MarkdownToHtmlMethod implements WindupFreeMarkerMethod
         String markdownSource = freemarkerArg.getAsString();
 
         // build the plugins object with our extensions
-        PegDownPlugins plugins = PegDownPlugins.builder().withPlugin(WindupCodeBlockPlugin.class).build();
-        PegDownProcessor proc = new PegDownProcessor(Extensions.NONE, plugins);
+        PegDownPlugins plugins = PegDownPlugins.builder().build();
+        PegDownProcessor processor = new PegDownProcessor(Extensions.FENCED_CODE_BLOCKS, plugins);
 
         // build the node and then serialize it so that we can make sure the serializer uses our plugins
-        RootNode outputNode = proc.parseMarkdown(markdownSource.toCharArray());
+        RootNode outputNode = processor.parseMarkdown(markdownSource.toCharArray());
 
-        // Out plugin is also a serializer, so build a plugins list for serialization as well
+        // Our plugin is also a serializer, so build a plugins list for serialization as well
         List<ToHtmlSerializerPlugin> serializerPlugins = new ArrayList<>(1);
-        serializerPlugins.add(new WindupCodeBlockPlugin());
 
         ToHtmlSerializer serializer = new ToHtmlSerializer(new LinkRenderer(), Collections.<String, VerbatimSerializer> emptyMap(), serializerPlugins);
         return serializer.toHtml(outputNode);
