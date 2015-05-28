@@ -424,13 +424,14 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </ul>
 </li>
 <li><a href="#Features">1.2. Features of Windup</a></li>
-<li><a href="#System-Requirements">1.3. System Requirements</a>
+<li><a href="#_about_windup_rules">1.3. About Windup Rules</a></li>
+<li><a href="#System-Requirements">1.4. System Requirements</a>
 <ul class="sectlevel3">
-<li><a href="#_software">1.3.1. Software</a></li>
-<li><a href="#_hardware">1.3.2. Hardware</a></li>
+<li><a href="#_software">1.4.1. Software</a></li>
+<li><a href="#_hardware">1.4.2. Hardware</a></li>
 </ul>
 </li>
-<li><a href="#About-the-HOME-Variable">1.4. About the WINDUP_HOME Variable</a></li>
+<li><a href="#About-the-HOME-Variable">1.5. About the WINDUP_HOME Variable</a></li>
 </ul>
 </li>
 <li><a href="#_get_started">2. Get Started</a>
@@ -492,6 +493,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel3">
 <li><a href="#_what_are_story_points">4.2.1. What are Story Points?</a></li>
 <li><a href="#_how_story_points_are_estimated_in_rules">4.2.2. How Story Points are Estimated in Rules</a></li>
+<li><a href="#_task_severity">4.2.3. Task Severity</a></li>
 </ul>
 </li>
 <li><a href="#Optimize-Performance">4.3. Optimize Windup Performance</a>
@@ -631,20 +633,7 @@ Automation
 Work Estimation
 </td>
 <td class="hdlist2">
-<p>Estimates for the level of effort is based on the skills required and the classification of migration work needed.</p>
-<div class="ulist">
-<ul>
-<li>
-<p>Lift and Shift - The code or file is standards-based and can be ported to the new environment with no changes.</p>
-</li>
-<li>
-<p>Known Solution - There is a standard mapping algorithm to port the code or file to the new environment.</p>
-</li>
-<li>
-<p>Custom – The code or file must be rewritten or modified to work in the new environment.</p>
-</li>
-</ul>
-</div>
+<p>Estimates for the <em>level of effort</em> are based on the skills required and the classification of migration work needed. <em>Level of effort</em> is represented as <em>story points</em> in the Windup reports and are described in more detail here: <a href="#Rules-Rule-Story-Points">Rule Story Points</a>.</p>
 </td>
 </tr>
 <tr>
@@ -672,9 +661,31 @@ Better Reporting
 </div>
 </div>
 <div class="sect2">
-<h3 id="System-Requirements">1.3. System Requirements</h3>
+<h3 id="_about_windup_rules">1.3. About Windup Rules</h3>
+<div class="paragraph">
+<p>Windup is a rule-based migration tool that analyzes the APIs, technologies, and architectures used by the applications you plan to migrate. In fact, the Windup tool executes its own core set of rules through all phases of the migration process. It uses rules to extract files from archives, decompile files, scan and classify file types, analyze XML and other file content, analyze the application code, and build the reports.</p>
+</div>
+<div class="paragraph">
+<p>Windup builds a data model based on the rule execution results and stores component data and relationships in a graph database, which can then be queried and updated as needed by the migration rules and for reporting purposes.</p>
+</div>
+<div class="paragraph">
+<p>Windup rules use the following familiar rule pattern:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>when(condition)
+    perform(action)
+otherwise(action)</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Windup provides comprehensive set of standard migration rules out-of-the-box. Because applications may contain custom libraries or components, Windup allows you to write your own rules to identify use of components or software that may not be covered by the existing ruleset. If you plan to write your own custom rules, see the <em>Windup Rule Development Guide</em> for detailed instructions.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="System-Requirements">1.4. System Requirements</h3>
 <div class="sect3">
-<h4 id="_software">1.3.1. Software</h4>
+<h4 id="_software">1.4.1. Software</h4>
 <div class="ulist">
 <ul>
 <li>
@@ -687,7 +698,7 @@ Better Reporting
 </div>
 </div>
 <div class="sect3">
-<h4 id="_hardware">1.3.2. Hardware</h4>
+<h4 id="_hardware">1.4.2. Hardware</h4>
 <div class="paragraph">
 <p>The following memory and disk space requirements are the minimum needed to run Windup. If your application is very large or you need to evaluate multiple applications, you may want to increase these values to improve performance. For tips on how to optimize performance, see <a href="#Optimize-Performance">Optimize Windup Performance</a>.</p>
 </div>
@@ -704,7 +715,7 @@ Better Reporting
 </div>
 </div>
 <div class="sect2">
-<h3 id="About-the-HOME-Variable">1.4. About the WINDUP_HOME Variable</h3>
+<h3 id="About-the-HOME-Variable">1.5. About the WINDUP_HOME Variable</h3>
 <div class="paragraph">
 <p>This documentation uses the <strong>WINDUP_HOME</strong> <em>replaceable</em> value to denote the path to the Windup distribution. When you encounter this value in the documentation, be sure to replace it with the actual path to your Windup installation.</p>
 </div>
@@ -1179,7 +1190,7 @@ Depending on the size of the application and the hardware Windup is running on, 
 <p>A list of issues, if any, that were found in the file</p>
 </li>
 <li>
-<p>The estimated total <em>Story Points</em> to migrate the file. A <em>Story Point</em> is a term commonly used in Scrum Agile software development methodology to estimate the level of effort needed to implement a feature or change. It does not necessarily translate to man-hours, but the value should be consistent across tasks.</p>
+<p>The estimated total <em>Story Points</em> to migrate the file. A <em>Story Point</em> is a term commonly used in Scrum Agile software development methodology to estimate the level of effort needed to implement a feature or change. It does not necessarily translate to man-hours, but the value should be consistent across tasks. For more information about <em>Story Points</em>, see <a href="#Rules-Rule-Story-Points">Rule Story Points</a>.</p>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -1736,24 +1747,11 @@ The estimated Story Points change as new rules are added to Windup. The values h
 <dl>
 <dt class="hdlist1">Level of effort</dt>
 <dd>
-<p>The level of effort required for the migration task. The following values are used in the reports.</p>
-<div class="ulist">
-<ul>
-<li>
-<p><em>Lift and Shift</em>: The code or file is standards-based and can be ported to the new environment with no changes.</p>
-</li>
-<li>
-<p><em>Known Solution</em>: There is a standard mapping algorithm to port the code or file to the new environment.</p>
-</li>
-<li>
-<p><em>Custom</em>: The code or file must be rewritten or modified to work in the new environment.</p>
-</li>
-</ul>
-</div>
+<p>The effort required to complete the migration task. <em>Level of effort</em> is represented as <em>story points</em> in the Windup reports.</p>
 </dd>
 <dt class="hdlist1">Story Point</dt>
 <dd>
-<p>A term commonly used in Scrum Agile software development methodology to estimate the level of effort needed to implement a feature or change. It does not necessarily translate to man-hours, but the value should be consistent across tasks.</p>
+<p>A term commonly used in Scrum Agile software development methodology to estimate the <em>level of effort</em> needed to implement a feature or change. It does not necessarily translate to man-hours, but the value should be consistent across tasks.  <em>Story points</em> and <em>level of effort</em> are described in more detail here: <a href="#Rules-Rule-Story-Points">Rule Story Points</a>.</p>
 </dd>
 </dl>
 </div>
@@ -1764,16 +1762,16 @@ The estimated Story Points change as new rules are added to Windup. The values h
 <div class="sect3">
 <h4 id="_what_are_story_points">4.2.1. What are Story Points?</h4>
 <div class="paragraph">
-<p>Story points are an abstract metric commonly used in Scrum Agile software development methodology to estimate the level of effort needed to implement a feature or change. They are based on a <a href="http://scrummethodology.com/scrum-effort-estimation-and-story-points/">modified Fibonacci sequence</a>.</p>
+<p><em>Story Points</em> are an abstract metric commonly used in Scrum Agile software development methodology to estimate the <em>level of effort</em> needed to implement a feature or change. They are based on a <a href="http://scrummethodology.com/scrum-effort-estimation-and-story-points/">modified Fibonacci sequence</a>.</p>
 </div>
 <div class="paragraph">
-<p>In a similar manner, Windup uses story points to express the level of effort needed to migrate particular application constructs, and in a sum, the application as a whole. It does not necessarily translate to man-hours, but the value should be consistent across tasks.</p>
+<p>In a similar manner, Windup uses <em>story points</em> to express the <em>level of effort</em> needed to migrate particular application constructs, and in a sum, the application as a whole. It does not necessarily translate to man-hours, but the value should be consistent across tasks.</p>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_how_story_points_are_estimated_in_rules">4.2.2. How Story Points are Estimated in Rules</h4>
 <div class="paragraph">
-<p>Estimating story points for a rule can be tricky. The following are the general guidelines Windup uses when estimating the level of effort required for a rule.</p>
+<p>Estimating the <em>level of effort</em> for the <em>story points</em> for a rule can be tricky. The following are the general guidelines Windup uses when estimating the <em>level of effort</em> required for a rule.</p>
 </div>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
@@ -1790,34 +1788,50 @@ The estimated Story Points change as new rules are added to Windup. The values h
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Lift and Shift</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">0</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The code or file is standards-based and requires no effort.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Trivial</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The migration is a trivial change or a simple library swap with no or minimal API changes.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Known Solution</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">1- 2 per file</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">There is a standard mapping algorithm to port the code or file to the new environment. The number of story points required is small, but is dependent on the number of files to port.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Complex</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The changes required for the migration task are complex, but have a documented solution.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Custom</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">5 - 20 per change or component</p></td>
-<td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p>The number of story points required to modify and rewrite code depends on the complexity of the change, the number of unknown imports, the size of the files, and the number of components. The following are examples of how to estimate story points.</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Port MyBatis to JPA: '20' story points per query.</p>
-</li>
-<li>
-<p>Port a web page from one web framework to another depends on the complexity and the number of components involved in the migration. You could estimate '20' story points per component.</p>
-</li>
-</ul>
-</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Redesign</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The migration task requires a redesign or a complete library change, with significant API changes.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rearchitecture</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">7</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The migration requires a complete rearchitecture of the component or subsystem.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Unknown</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">13</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The migration solution is not known and may need a complete rewrite.</p></td>
 </tr>
 </tbody>
 </table>
+</div>
+<div class="sect3">
+<h4 id="_task_severity">4.2.3. Task Severity</h4>
+<div class="paragraph">
+<p>In addition to the <em>level of effort</em>, migration tasks can be assigned a <em>severity</em> that indicates whether the task must be completed or can be postponed.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Mandatory</dt>
+<dd>
+<p>The task must be completed for a successful migration. If the changes are not made, the resulting application will not build or run successfully. Examples include replacement of proprietary APIs that are not supported in the target platform.</p>
+</dd>
+<dt class="hdlist1">Optional</dt>
+<dd>
+<p>If the migration task is not completed, the application will work, but the results may not be the optimal. If the change is not made at the time of migration, it is recommended to put it on the schedule soon after migration is completed. An example of this would be the upgrade of EJB 2.x code to EJB 3.</p>
+</dd>
+</dl>
+</div>
 </div>
 </div>
 <div class="sect2">
@@ -1884,7 +1898,7 @@ The estimated Story Points change as new rules are added to Windup. The values h
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-05-27 16:36:58 EDT
+Last updated 2015-05-28 11:24:15 EDT
 </div>
 </div>
 </body>
