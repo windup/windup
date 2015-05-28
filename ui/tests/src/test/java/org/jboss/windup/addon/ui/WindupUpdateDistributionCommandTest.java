@@ -10,7 +10,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.util.Set;
 
 import javax.inject.Inject;
 import javax.xml.parsers.DocumentBuilder;
@@ -37,12 +36,11 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.Addon;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.forge.furnace.services.Imported;
+import org.jboss.forge.furnace.addons.AddonId;
+import org.jboss.forge.furnace.util.Addons;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.ui.RulesetUpdateChecker;
-import org.jboss.windup.ui.WindupUpdateDistributionCommand;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -53,10 +51,13 @@ import org.w3c.dom.NodeList;
 @RunWith(Arquillian.class)
 public class WindupUpdateDistributionCommandTest
 {
+    private static final String WINDUP_UI_ADDON_NAME = "org.jboss.windup.ui:windup-ui";
+
     private static String WINDUP_OLD_VERSION = "2.0.0.Final";
+
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.ui:windup-ui"),
+                @AddonDependency(name = WINDUP_UI_ADDON_NAME),
                 @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
                 @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
@@ -114,11 +115,13 @@ public class WindupUpdateDistributionCommandTest
         String uiPreviousVersion = getPreviousVersion(addon.getRepository().getRootDirectory().getPath());
         changeUiAddonDirectoryToBeOlder(addon.getRepository().getRootDirectory(), uiPreviousVersion);
         waitForWindupUIAddon(furnace);
-        do{
-          //we need to wait till furnace will process all the information changed in the directories
-          Thread.sleep(500);
-        } while(furnace.getAddonRegistry().getServices("org.jboss.windup.ui.WindupUpdateDistributionCommand").isUnsatisfied());
-        
+        do
+        {
+            // we need to wait till furnace will process all the information changed in the directories
+            Thread.sleep(500);
+        }
+        while (furnace.getAddonRegistry().getServices("org.jboss.windup.ui.WindupUpdateDistributionCommand").isUnsatisfied());
+
         boolean rulesetNeedUpdate = RulesetUpdateChecker.rulesetNeedUpdate(resolver);
         Assert.assertTrue(rulesetNeedUpdate);
         try (CommandController controller = uiTestHarness.createCommandController("Windup Update Distribution"))
@@ -128,18 +131,19 @@ public class WindupUpdateDistributionCommandTest
                 controller.initialize();
                 Assert.assertTrue(controller.isEnabled());
                 Result result = controller.execute();
-                Assert.assertFalse("Windup Update Distribution command should suceed, but it failed.",result instanceof Failed);
+                Assert.assertFalse("Windup Update Distribution command should suceed, but it failed.", result instanceof Failed);
                 rulesetNeedUpdate = RulesetUpdateChecker.rulesetNeedUpdate(resolver);
-                Assert.assertFalse("Ruleset should have already been updated to the latest version and as such should not need another update.",rulesetNeedUpdate);
+                Assert.assertFalse("Ruleset should have already been updated to the latest version and as such should not need another update.",
+                            rulesetNeedUpdate);
                 File addonsHomeNew = new File(windupHome + "/addons");
                 File binNew = new File(windupHome + "/bin");
                 File libNew = new File(windupHome + "/lib");
-                Assert.assertTrue("Addons folder was not updated sucessfully",addonsHomeNew.exists());
-                Assert.assertTrue("Bin folder was not updated sucessfully",binNew.exists());
-                Assert.assertTrue("Library folder was not updated sucessfully",libNew.exists());
-                Assert.assertTrue("Binary folder does not contain enough items (at least 2)",binNew.listFiles().length > 1);
-                Assert.assertTrue("Library folder does not contain enough libraries (at least 8)",libNew.listFiles().length > 7);
-                Assert.assertTrue("Addons folder does not contain enough addons (at least 6)",addonsHomeNew.listFiles().length > 5);
+                Assert.assertTrue("Addons folder was not updated sucessfully", addonsHomeNew.exists());
+                Assert.assertTrue("Bin folder was not updated sucessfully", binNew.exists());
+                Assert.assertTrue("Library folder was not updated sucessfully", libNew.exists());
+                Assert.assertTrue("Binary folder does not contain enough items (at least 2)", binNew.listFiles().length > 1);
+                Assert.assertTrue("Library folder does not contain enough libraries (at least 8)", libNew.listFiles().length > 7);
+                Assert.assertTrue("Addons folder does not contain enough addons (at least 6)", addonsHomeNew.listFiles().length > 5);
             }
             finally
             {
@@ -148,28 +152,18 @@ public class WindupUpdateDistributionCommandTest
         }
     }
 
-    private void waitForWindupUIAddon(Furnace furnace) {
-        Set<Addon> addons = furnace.getAddonRegistry().getAddons();
-        for(Addon addon : addons) {
-            if(addon.getId().getVersion().toString().equals(WINDUP_OLD_VERSION) && addon.getId().getName().contains("windup-ui")) {
-                while(!addon.getStatus().isStarted()) {
-                    try
-                    {
-                        Thread.sleep(100);
-                    }
-                    catch (InterruptedException e)
-                    {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
+    private void waitForWindupUIAddon(Furnace furnace)
+    {
+        Addon addon = furnace.getAddonRegistry().getAddon(AddonId.from(WINDUP_UI_ADDON_NAME, WINDUP_OLD_VERSION));
+        Addons.waitUntilStarted(addon);
     }
+
     private void changeUiAddonDirectoryToBeOlder(File homeAddonsDir, String uiPreviousVersion)
     {
         File uiAddonDirectory = new File(homeAddonsDir.getAbsolutePath() + "/org-jboss-windup-ui-windup-ui-"
                     + uiPreviousVersion.replaceAll("\\.", "-"));
-        File olderVersionAddon = new File(homeAddonsDir.getAbsolutePath() + "/org-jboss-windup-ui-windup-ui-" + WINDUP_OLD_VERSION.replaceAll("\\.", "-"));
+        File olderVersionAddon = new File(homeAddonsDir.getAbsolutePath() + "/org-jboss-windup-ui-windup-ui-"
+                    + WINDUP_OLD_VERSION.replaceAll("\\.", "-"));
         if (!olderVersionAddon.exists())
         {
             olderVersionAddon.mkdir();
@@ -205,7 +199,7 @@ public class WindupUpdateDistributionCommandTest
                 if (item.getNodeName().equals("addon"))
                 {
                     String addonName = item.getAttribute("name");
-                    if (addonName.equals("org.jboss.windup.ui:windup-ui"))
+                    if (addonName.equals(WINDUP_UI_ADDON_NAME))
                     {
                         oldUiAddonVersion = item.getAttribute("version");
                         return oldUiAddonVersion;
@@ -242,7 +236,7 @@ public class WindupUpdateDistributionCommandTest
                 if (item.getNodeName().equals("addon"))
                 {
                     String addonName = item.getAttribute("name");
-                    if (addonName.equals("org.jboss.windup.ui:windup-ui"))
+                    if (addonName.equals(WINDUP_UI_ADDON_NAME))
                     {
                         item.setAttribute("version", WINDUP_OLD_VERSION);
                         TransformerFactory transformerFactory = TransformerFactory.newInstance();
