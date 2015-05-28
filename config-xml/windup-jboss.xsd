@@ -13,6 +13,7 @@
 				<xs:element type="xs:string" name="location" minOccurs="0" />
 			</xs:sequence>
 			<xs:attribute type="xs:string" name="references" />
+			<xs:attribute type="xs:string" name="matchesSource" />
 			<xs:attribute type="xs:string" name="as" use="optional" />
 			<xs:attribute type="xs:string" name="from" use="optional" />
 			<xs:attribute type="xs:string" name="in" use="optional" />
@@ -23,17 +24,7 @@
 	<xs:element name="xmlfile">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element name="namespace" maxOccurs="unbounded"
-					minOccurs="0">
-					<xs:complexType>
-						<xs:simpleContent>
-							<xs:extension base="xs:string">
-								<xs:attribute type="xs:string" name="prefix" use="optional" />
-								<xs:attribute type="xs:anyURI" name="uri" use="optional" />
-							</xs:extension>
-						</xs:simpleContent>
-					</xs:complexType>
-				</xs:element>
+				<xs:element ref="namespace" minOccurs="0"/>
 			</xs:sequence>
 			<xs:attribute type="xs:string" name="as" use="optional" />
 			<xs:attribute type="xs:string" name="xpathResultMatch"
@@ -45,6 +36,16 @@
 		</xs:complexType>
 	</xs:element>
 
+	<xs:element name="namespace" >
+		<xs:complexType>
+			<xs:simpleContent>
+				<xs:extension base="xs:string">
+					<xs:attribute type="xs:string" name="prefix" use="optional" />
+					<xs:attribute type="xs:anyURI" name="uri" use="optional" />
+				</xs:extension>
+			</xs:simpleContent>
+		</xs:complexType>
+	</xs:element>
 
 	<!-- Project -->
 	<xs:element name="project">
@@ -80,16 +81,10 @@
 	<xs:element name="classification">
 		<xs:complexType mixed="true">
 			<xs:sequence>
-				<xs:element name="links" minOccurs="0">
-					<xs:complexType>
-						<xs:sequence>
-							<xs:element ref="link" minOccurs="0" />
-						</xs:sequence>
-					</xs:complexType>
-				</xs:element>
-				<xs:element ref="link" minOccurs="0" maxOccurs="unbounded" />
+				<xs:element ref="link" minOccurs="0"/>
+				<xs:element name="tag" minOccurs="0" type="xs:string"/>
 			</xs:sequence>
-			<xs:attribute type="xs:string" name="classification" />
+			<xs:attribute type="xs:string" name="title" />
 			<xs:attribute type="xs:byte" name="effort" use="optional" />
 			<xs:attribute type="xs:string" name="severity" use="optional" />
 			<xs:attribute type="xs:string" name="description" use="optional" />
@@ -112,20 +107,13 @@
 	<xs:element name="hint">
 		<xs:complexType mixed="true">
 			<xs:sequence>
-				<xs:element name="links" minOccurs="0">
-					<xs:complexType>
-						<xs:sequence>
-							<xs:element ref="link" minOccurs="0" />
-						</xs:sequence>
-					</xs:complexType>
-				</xs:element>
-				<xs:element name="message" minOccurs="0" type="xs:string"/>
+				<xs:element name="message" minOccurs="0" maxOccurs="1" type="xs:string"/>
+				<xs:element name="tag" minOccurs="0" type="xs:string"/>
 				<xs:element ref="link" minOccurs="0" maxOccurs="unbounded" />
 			</xs:sequence>
 			<xs:attribute type="xs:string" name="title" use="optional" />
 			<xs:attribute type="xs:string" name="severity" use="optional" />
 			<xs:attribute type="xs:string" name="in" use="optional" />
-			<xs:attribute type="xs:string" name="message"/>
 			<xs:attribute type="xs:byte" name="effort" use="optional" />
 		</xs:complexType>
 	</xs:element>
@@ -265,15 +253,9 @@
 							</xs:element>
 							<xs:element name="sourceTechnology" type="technology" maxOccurs="unbounded" minOccurs="0"/>
 							<xs:element name="targetTechnology" type="technology" maxOccurs="unbounded" minOccurs="0"/>
-							<xs:element name="tags">
-								<xs:complexType>
-									<xs:sequence>
-										<xs:element name="tag" type="xs:string"  maxOccurs="unbounded" minOccurs="1"/>
-									</xs:sequence>
-								</xs:complexType>
-							</xs:element>
 							<xs:element name="executeAfter"  type="xs:string"  maxOccurs="unbounded" minOccurs="0"/>
 							<xs:element name="executeBefore"  type="xs:string"  maxOccurs="unbounded" minOccurs="0"/>
+							<xs:element name="tag" type="xs:string"  maxOccurs="unbounded" minOccurs="0"/>
 						</xs:sequence>
 					</xs:complexType>
 				</xs:element>
