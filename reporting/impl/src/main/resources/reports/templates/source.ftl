@@ -156,9 +156,8 @@
 		</#list>
 
 
-		
-			$('code[data-code-syntax]').each(function(){
-		         var codeSyntax = ($(this).data('code-syntax'));
+			$('code[class]').each(function(){
+		         var codeSyntax = ($(this).attr('class'));
 		         if(codeSyntax) {
 		            $(this).parent().snippet(codeSyntax,{style:'ide-eclipse', menu:false, showNum:false});
 		         }
