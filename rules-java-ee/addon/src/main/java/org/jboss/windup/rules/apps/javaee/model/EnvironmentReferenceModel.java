@@ -31,6 +31,7 @@ public interface EnvironmentReferenceModel extends WindupVertexFrame
     /**
      * Contains the reference id
      */
+    @Indexed
     @Property(REFERENCE_ID)
     public void setReferenceId(String resourceId);
 

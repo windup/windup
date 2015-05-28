@@ -156,7 +156,7 @@ public class Classification extends ParameterizedIterationOperation<FileModel> i
             classification.setEffort(effort);
             classification.setSeverity(severity);
             classification.setDescription(description);
-            classification.setClassifiation(text);
+            classification.setClassification(text);
 
             classification.setRuleID(((Rule) context.get(Rule.class)).getId());
 

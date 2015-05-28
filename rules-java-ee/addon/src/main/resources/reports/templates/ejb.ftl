@@ -19,7 +19,6 @@
         <td>
             <@render_link model=ejb.ejbDeploymentDescriptor text=ejb.beanName/>
         </td>
-        <td>${ejb.sessionType!""}</td>
         <td>
             <@render_link model=ejb.ejbClass/>
         </td>
@@ -122,7 +121,7 @@
 			        </div>
 					<table class="table table-striped table-bordered" id="statelessTable">
 						<tr>
-							<th>Bean Name</th><th>Type</th><th>Class</th><th>JNDI Location</th>
+							<th>Bean Name</th><th>Class</th><th>JNDI Location</th>
 						</tr>
 						<#list reportModel.relatedResources.stateless.list.iterator() as statelessBean>
 							<@ejbRenderer statelessBean/>
@@ -138,7 +137,7 @@
 			        </div>
 			        <table class="table table-striped table-bordered" id="statefulTable">
 			            <tr>
-			              <th>Bean Name</th><th>Type</th><th>Class</th><th>JNDI Location</th>
+			              <th>Bean Name</th><th>Class</th><th>JNDI Location</th>
 			            </tr>
 						<#list reportModel.relatedResources.stateful.list.iterator() as statefulBean>
 			            	<@ejbRenderer statefulBean/>

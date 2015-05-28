@@ -18,6 +18,7 @@ class DefaultRuleLifecycleListener implements RuleLifecycleListener
 
     private final WindupProgressMonitor progressMonitor;
     private final Configuration configuration;
+    private String lastRuleProgressMessage = null;
 
     public DefaultRuleLifecycleListener(WindupProgressMonitor progressMonitor, Configuration configuration)
     {
@@ -28,13 +29,42 @@ class DefaultRuleLifecycleListener implements RuleLifecycleListener
     @Override
     public void beforeExecution(GraphRewrite event)
     {
-        progressMonitor.beginTask("Executing Rules: ", configuration.getRules().size());
+        progressMonitor.beginTask("Executing Rules", configuration.getRules().size());
     }
 
     @Override
     public void beforeRuleEvaluation(GraphRewrite event, Rule rule, EvaluationContext context)
     {
         progressMonitor.subTask(RuleUtils.prettyPrintRule(rule));
+    }
+
+    @Override
+    public void ruleEvaluationProgress(GraphRewrite event, String name, int currentPosition, int total, int timeRemainingInSeconds)
+    {
+        String timeRemaining = formatTimeRemaining(timeRemainingInSeconds);
+        int percentage = (int) (100 * ((double) currentPosition / (double) total));
+        String newProgressMessage = "(" + percentage + "%) " + name + ", Estimated time until next Rule: " + timeRemaining;
+        // don't redisplay it if nothing has changed
+        if (!newProgressMessage.equals(lastRuleProgressMessage))
+        {
+            lastRuleProgressMessage = newProgressMessage;
+            progressMonitor.subTask(newProgressMessage);
+        }
+    }
+
+    private String formatTimeRemaining(int timeRemainingInSeconds)
+    {
+        int hours = timeRemainingInSeconds / 60 / 60;
+        int minutes = (timeRemainingInSeconds - (hours * 60 * 60)) / 60;
+        int seconds = timeRemainingInSeconds % 60;
+
+        StringBuilder result = new StringBuilder();
+        if (hours > 0)
+            result.append(hours).append(" hours, ");
+        if (hours > 0 || minutes > 0)
+            result.append(minutes).append(" minutes, ");
+        result.append(seconds).append(" seconds");
+        return result.toString();
     }
 
     @Override

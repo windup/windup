@@ -13,37 +13,42 @@ public interface RuleLifecycleListener
     /**
      * Called immediately before any {@link Rule} instances are executed.
      */
-    public void beforeExecution(GraphRewrite event);
+    void beforeExecution(GraphRewrite event);
 
     /**
      * Called immediately before the given {@link Rule} is executed.
      */
-    public void beforeRuleEvaluation(GraphRewrite event, Rule rule, EvaluationContext context);
+    void beforeRuleEvaluation(GraphRewrite event, Rule rule, EvaluationContext context);
+
+    /**
+     * This is optionally called by long-running rules to indicate their current progress and estimated time-remaining.
+     */
+    void ruleEvaluationProgress(GraphRewrite event, String name, int currentPosition, int total, int timeRemainingInSeconds);
 
     /**
      * Called immediately after execution of the each {@link Rule}.
      */
-    public void afterRuleConditionEvaluation(GraphRewrite event, EvaluationContext context, Rule rule, boolean result);
+    void afterRuleConditionEvaluation(GraphRewrite event, EvaluationContext context, Rule rule, boolean result);
 
     /**
      * Called immediately before {@link Rule} operations are performed (Only called if
      * {@link Rule#evaluate(org.ocpsoft.rewrite.event.Rewrite, EvaluationContext)} returned <code>true</code>).
      */
-    public void beforeRuleOperationsPerformed(GraphRewrite event, EvaluationContext context, Rule rule);
+    void beforeRuleOperationsPerformed(GraphRewrite event, EvaluationContext context, Rule rule);
 
     /**
      * Called immediately after {@link Rule} operations are performed (Only called if
      * {@link Rule#evaluate(org.ocpsoft.rewrite.event.Rewrite, EvaluationContext)} returned <code>true</code>).
      */
-    public void afterRuleOperationsPerformed(GraphRewrite event, EvaluationContext context, Rule rule);
+    void afterRuleOperationsPerformed(GraphRewrite event, EvaluationContext context, Rule rule);
 
     /**
      * Called immediately after a a {@link Rule} has thrown an exception, to indicate a failure of some kind
      */
-    public void afterRuleExecutionFailed(GraphRewrite event, EvaluationContext context, Rule rule, Throwable failureCause);
+    void afterRuleExecutionFailed(GraphRewrite event, EvaluationContext context, Rule rule, Throwable failureCause);
 
     /**
      * Called immediately after any {@link Rule} instances are executed.
      */
-    public void afterExecution(GraphRewrite event);
+    void afterExecution(GraphRewrite event);
 }

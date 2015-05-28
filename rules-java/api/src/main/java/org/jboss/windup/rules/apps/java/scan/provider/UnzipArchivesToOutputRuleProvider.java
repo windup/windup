@@ -33,7 +33,7 @@ public class UnzipArchivesToOutputRuleProvider extends AbstractRuleProvider
         return ConfigurationBuilder.begin().addRule()
                     .when(Query.fromType(ArchiveModel.class).excludingType(IgnoredArchiveModel.class))
                     .perform(UnzipArchiveToOutputFolder.unzip()
-                                .and(IterationProgress.monitoring("Unzipped archive: ", 1))
+                                .and(IterationProgress.monitoring("Unzipped archive", 1))
                                 .and(Commit.every(1))
                     );
     }

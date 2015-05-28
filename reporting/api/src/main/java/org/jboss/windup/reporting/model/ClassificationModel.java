@@ -58,7 +58,7 @@ public interface ClassificationModel extends WindupVertexFrame, LinkableModel
      */
     @Indexed
     @Property(CLASSIFICATION)
-    void setClassifiation(String classification);
+    void setClassification(String classification);
 
     /**
      * Get text of this {@link ClassificationModel}.

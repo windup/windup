@@ -6,6 +6,8 @@
  */
 package org.jboss.windup.config;
 
+import java.util.Collections;
+
 import org.jboss.windup.graph.GraphContext;
 import org.ocpsoft.rewrite.AbstractRewrite;
 import org.ocpsoft.rewrite.event.Flow;
@@ -18,9 +20,17 @@ import org.ocpsoft.rewrite.event.Rewrite;
 public class GraphRewrite extends AbstractRewrite implements Rewrite
 {
     private final GraphContext graphContext;
+    private final Iterable<RuleLifecycleListener> listeners;
 
     public GraphRewrite(GraphContext context)
     {
+        this.listeners = Collections.emptyList();
+        this.graphContext = context;
+    }
+
+    public GraphRewrite(Iterable<RuleLifecycleListener> listeners, GraphContext context)
+    {
+        this.listeners = listeners;
         this.graphContext = context;
     }
 
@@ -47,5 +57,14 @@ public class GraphRewrite extends AbstractRewrite implements Rewrite
     public GraphContext getGraphContext()
     {
         return graphContext;
+    }
+
+    /**
+     * This is optionally called by long-running rules to indicate their current progress and estimated time-remaining.
+     */
+    public void ruleEvaluationProgress(String name, int currentPosition, int total, int timeRemainingInSeconds)
+    {
+        for (RuleLifecycleListener listener : listeners)
+            listener.ruleEvaluationProgress(this, name, currentPosition, total, timeRemainingInSeconds);
     }
 }

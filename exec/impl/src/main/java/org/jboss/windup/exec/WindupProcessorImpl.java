@@ -1,7 +1,9 @@
 package org.jboss.windup.exec;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
@@ -94,19 +96,24 @@ public class WindupProcessorImpl implements WindupProcessor
             configModel.addUserIgnorePath(getFileModel(context, path));
         }
 
-        final GraphRewrite event = new GraphRewrite(context);
-
         configureRuleProviderAndTagFilters(config);
 
         RuleProviderRegistry providerRegistry =
                     ruleLoader.loadConfiguration(context, config.getRuleProviderFilter());
-        event.getRewriteContext().put(RuleProviderRegistry.class, providerRegistry);
-
         Configuration rules = providerRegistry.getConfiguration();
 
-        RuleSubset ruleSubset = RuleSubset.create(rules);
+        List<RuleLifecycleListener> listeners = new ArrayList<>();
+        for (RuleLifecycleListener listener : this.listeners)
+        {
+            listeners.add(listener);
+        }
         if (config.getProgressMonitor() != null)
-            ruleSubset.addLifecycleListener(new DefaultRuleLifecycleListener(config.getProgressMonitor(), rules));
+            listeners.add(new DefaultRuleLifecycleListener(config.getProgressMonitor(), rules));
+
+        final GraphRewrite event = new GraphRewrite(listeners, context);
+        event.getRewriteContext().put(RuleProviderRegistry.class, providerRegistry);
+
+        RuleSubset ruleSubset = RuleSubset.create(rules);
 
         for (RuleLifecycleListener listener : listeners)
         {

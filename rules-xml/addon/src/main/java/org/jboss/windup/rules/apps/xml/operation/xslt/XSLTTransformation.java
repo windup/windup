@@ -69,9 +69,8 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
     }
 
     /**
-     * Set the payload to the fileModel of the given instance even though the variable is not directly of it's type.
-     * This is mainly to simplify the creation of the rule, when the FileModel itself is not being iterated but just a
-     * model referencing it.
+     * Set the payload to the fileModel of the given instance even though the variable is not directly of it's type. This is mainly to simplify the
+     * creation of the rule, when the FileModel itself is not being iterated but just a model referencing it.
      *
      */
     @Override
@@ -153,8 +152,7 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
     }
 
     /**
-     * Create a new {@link XSLTTransformation} using the given location of the source XSLT file within the given
-     * {@link ClassLoader}.
+     * Create a new {@link XSLTTransformation} using the given location of the source XSLT file within the given {@link ClassLoader}.
      */
     public static XSLTTransformationLocation using(String location, ClassLoader classLoader)
     {
@@ -268,7 +266,7 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
 
             ClassificationService classificationService = new ClassificationService(graphContext);
             ClassificationModel classificationModel = classificationService.create();
-            classificationModel.setClassifiation("Transformed to: " + description);
+            classificationModel.setClassification("Transformed to: " + description);
             classificationModel.setEffort(effort);
             classificationModel.addFileModel(payload);
 

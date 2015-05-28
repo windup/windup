@@ -1,6 +1,5 @@
 package org.jboss.windup.decompiler;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -29,9 +28,9 @@ import org.junit.Test;
  */
 public abstract class DecompilerTestBase
 {
-    private static final Logger log = Logger.getLogger(DecompilerTestBase.class.getName());
+    protected static final Logger log = Logger.getLogger(DecompilerTestBase.class.getName());
 
-    private File testTempDir;
+    protected Path testTempDir;
 
     /**
      * Get an instance of the {@link Decompiler} under test.
@@ -46,9 +45,9 @@ public abstract class DecompilerTestBase
     @Before
     public void setUp() throws IOException
     {
-        this.testTempDir = new File("target/testTmp");
-        FileUtils.deleteQuietly(testTempDir);
-        Files.createDirectory(this.testTempDir.toPath());
+        this.testTempDir = Paths.get("target").resolve("testTmp");
+        FileUtils.deleteQuietly(testTempDir.toFile());
+        Files.createDirectory(this.testTempDir);
     }
 
     @After
@@ -64,14 +63,14 @@ public abstract class DecompilerTestBase
     {
         final Decompiler dec = this.getDecompiler();
 
-        File archive = new File("target/TestJars/wicket-core-6.11.0.jar");
-        File decompDir = new File(testTempDir, "decompiled");
-        File unzipDir = new File(testTempDir, "unzipped");
+        Path archive = Paths.get("target/TestJars/wicket-core-6.11.0.jar");
+        Path decompDir = testTempDir.resolve("decompiled");
+        Path unzipDir = testTempDir.resolve("unzipped");
 
-        ZipUtil.unzip(archive, unzipDir);
+        ZipUtil.unzip(archive.toFile(), unzipDir.toFile());
 
         // DECOMPILE
-        Path clsFile = Paths.get("org/apache/wicket/ajax/AbstractAjaxResponse.class");
+        Path clsFile = unzipDir.resolve("org/apache/wicket/ajax/AbstractAjaxResponse.class");
         final DecompilationResult res = dec.decompileClassFile(unzipDir, clsFile, decompDir);
 
         Assert.assertNotNull("Results object was returned.", res);
@@ -99,8 +98,8 @@ public abstract class DecompilerTestBase
         log.info("Compilation results: " + res.getDecompiledFiles().size() + " succeeded, " + res.getFailures().size()
                     + " failed.");
 
-        final File sampleFile = new File(decompDir, "org/apache/wicket/ajax/AbstractAjaxResponse.java");
-        Assert.assertTrue("Decompiled class did not exist in: " + sampleFile.getAbsolutePath(), sampleFile.exists());
+        final Path sampleFile = decompDir.resolve("org").resolve("apache").resolve("wicket").resolve("ajax").resolve("AbstractAjaxResponse.java");
+        Assert.assertTrue("Decompiled class did not exist in: " + sampleFile.toString(), Files.exists(sampleFile));
         dec.close();
     }
 
@@ -110,8 +109,8 @@ public abstract class DecompilerTestBase
     @Test
     public void testDecompileWicketJar() throws DecompilationException
     {
-        File archive = new File("target/TestJars/wicket-core-6.11.0.jar");
-        File decompDir = new File(testTempDir, "decompiled");
+        Path archive = Paths.get("target/TestJars/wicket-core-6.11.0.jar");
+        Path decompDir = testTempDir.resolve("decompiled");
 
         final Decompiler dec = this.getDecompiler();
         final DecompilationResult res = dec.decompileArchive(archive, decompDir, new CountClassesFilter(100), new DecompilationListener()
@@ -120,6 +119,12 @@ public abstract class DecompilerTestBase
             public void decompilationProcessComplete()
             {
                 // noop
+            }
+
+            @Override
+            public void decompilationFailed(String inputPath, String message)
+            {
+
             }
 
             @Override
@@ -148,8 +153,8 @@ public abstract class DecompilerTestBase
         log.info("Compilation results: " + res.getDecompiledFiles().size() + " succeeded, " + res.getFailures().size()
                     + " failed.");
 
-        final File sampleFile = new File(decompDir, "org/apache/wicket/ajax/AbstractAjaxResponse.java");
-        Assert.assertTrue("Decompiled class files exist:\n    " + sampleFile.getAbsolutePath(), sampleFile.exists());
+        final Path sampleFile = decompDir.resolve("org").resolve("apache").resolve("wicket").resolve("ajax").resolve("AbstractAjaxResponse.java");
+        Assert.assertTrue("Decompiled class files exist:\n    " + sampleFile.toString(), Files.exists(sampleFile));
         dec.close();
     }
 
@@ -159,11 +164,11 @@ public abstract class DecompilerTestBase
     {
         final Decompiler dec = this.getDecompiler();
 
-        File archive = new File("target/TestJars/wicket-core-6.11.0.jar");
-        File decompDir = new File(testTempDir, "decompiled");
-        File unzipDir = new File(testTempDir, "unzipped");
+        Path archive = Paths.get("target/TestJars/wicket-core-6.11.0.jar");
+        Path decompDir = testTempDir.resolve("decompiled");
+        Path unzipDir = testTempDir.resolve("unzipped");
 
-        ZipUtil.unzipWithFilter(archive, unzipDir, new CountClassesFilter(100));
+        ZipUtil.unzipWithFilter(archive.toFile(), unzipDir.toFile(), new CountClassesFilter(100));
 
         final DecompilationResult res = dec.decompileDirectory(unzipDir, decompDir);
 
@@ -186,8 +191,8 @@ public abstract class DecompilerTestBase
         log.info("Compilation results: " + res.getDecompiledFiles().size() + " succeeded, " + res.getFailures().size()
                     + " failed.");
 
-        final File sampleFile = new File(decompDir, "org/apache/wicket/ajax/AbstractAjaxResponse.java");
-        Assert.assertTrue("Decompiled class did not exist in: " + sampleFile.getAbsolutePath(), sampleFile.exists());
+        final Path sampleFile = decompDir.resolve("org").resolve("apache").resolve("wicket").resolve("ajax").resolve("AbstractAjaxResponse.java");
+        Assert.assertTrue("Decompiled class did not exist in: " + sampleFile, Files.exists(sampleFile));
         dec.close();
     }
 
