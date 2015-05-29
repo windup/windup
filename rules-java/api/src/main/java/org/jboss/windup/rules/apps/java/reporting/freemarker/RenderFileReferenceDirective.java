@@ -56,28 +56,21 @@ public class RenderFileReferenceDirective implements WindupFreeMarkerTemplateDir
                 throws TemplateException, IOException
     {
         final Writer writer = env.getOut();
-        StringModel projectStringModel = (StringModel) params.get("model");
-
-        if (projectStringModel == null)
-        {
-            LOG.warning("model is null.");
-            return;
-        }
+        StringModel stringModel = (StringModel) params.get("model");
 
         SimpleScalar defaultTextModel = (SimpleScalar) params.get("text");
         String defaultText = params.get("text") == null ? null : defaultTextModel.getAsString();
 
-        if ((projectStringModel == null || projectStringModel.getWrappedObject() == null) && StringUtils.isNotBlank(defaultText))
+        if (stringModel == null || stringModel.getWrappedObject() == null)
         {
-            writer.append(defaultText);
+            if (StringUtils.isNotBlank(defaultText))
+                writer.append(defaultText);
+            else
+                throw new TemplateException("No model provided.", env);
             return;
         }
-        else if (projectStringModel == null || projectStringModel.getWrappedObject() == null)
-        {
-            throw new TemplateException("No model provided.", env);
-        }
 
-        Object obj = projectStringModel.getWrappedObject();
+        Object model = stringModel.getWrappedObject();
 
         LayoutType layoutType = LayoutType.HORIZONTAL;
         SimpleScalar layoutModel = (SimpleScalar) params.get("layout");
@@ -87,7 +80,6 @@ public class RenderFileReferenceDirective implements WindupFreeMarkerTemplateDir
             try
             {
                 LayoutType.valueOf(lt.toUpperCase());
-
             }
             catch (IllegalArgumentException e)
             {
@@ -95,25 +87,25 @@ public class RenderFileReferenceDirective implements WindupFreeMarkerTemplateDir
             }
         }
 
-        if (obj instanceof FileLocationModel)
+        if (model instanceof FileLocationModel)
         {
-            processFileLocationModel(writer, (FileLocationModel) obj, defaultText);
+            processFileLocationModel(writer, (FileLocationModel) model, defaultText);
         }
-        else if (obj instanceof FileModel)
+        else if (model instanceof FileModel)
         {
-            processFileModel(writer, (FileModel) obj, defaultText);
+            processFileModel(writer, (FileModel) model, defaultText);
         }
-        else if (obj instanceof JavaClassModel)
+        else if (model instanceof JavaClassModel)
         {
-            processJavaClassModel(writer, layoutType, (JavaClassModel) obj, defaultText);
+            processJavaClassModel(writer, layoutType, (JavaClassModel) model, defaultText);
         }
-        else if (obj instanceof LinkableModel)
+        else if (model instanceof LinkableModel)
         {
-            processLinkableModel(writer, layoutType, (LinkableModel) obj, defaultText);
+            processLinkableModel(writer, layoutType, (LinkableModel) model, defaultText);
         }
         else
         {
-            throw new TemplateException("Object type not permitted: " + obj.getClass().getSimpleName(), env);
+            throw new TemplateException("Object type not permitted: " + model.getClass().getSimpleName(), env);
         }
     }
 
