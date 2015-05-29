@@ -14,6 +14,7 @@ import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
 import org.jboss.windup.rules.apps.java.condition.JavaClassBuilder;
 import org.jboss.windup.rules.apps.java.condition.JavaClassBuilderAt;
+import org.jboss.windup.rules.apps.java.condition.JavaClassBuilderLineMatch;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Condition;
 import org.w3c.dom.Element;
@@ -46,6 +47,7 @@ public class JavaClassHandler implements ElementHandler<JavaClassBuilderAt>
         String type = $(element).attr(ATTR_REFERENCES);
         String as = $(element).attr("as");
         String from = $(element).attr("from");
+        String matchesSource = $(element).attr("matchesSource");
         if (StringUtils.isBlank(type))
         {
             throw new WindupException("The '" + ELEM_NAME + "' element must have a non-empty '" + ATTR_REFERENCES + "' attribute");
@@ -66,6 +68,9 @@ public class JavaClassHandler implements ElementHandler<JavaClassBuilderAt>
         else
         {
             javaClassReferences = JavaClass.references(type);
+        }
+        if(matchesSource !=null) {
+            javaClassReferences.matchesSource(matchesSource);
         }
 
         String namePattern = $(element).attr("in");

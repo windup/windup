@@ -390,6 +390,11 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
         return referencePattern;
     }
 
+    public RegexParameterizedPatternParser getMatchesSource()
+    {
+        return lineMatchPattern;
+    }
+
     public List<TypeReferenceLocation> getLocations()
     {
         return locations;

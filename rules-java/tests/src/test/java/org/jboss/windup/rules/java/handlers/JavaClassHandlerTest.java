@@ -82,8 +82,8 @@ public class JavaClassHandlerTest
         List<TypeReferenceLocation> locations = javaClassCondition.getLocations();
         Assert.assertEquals("METHOD_CALL", locations.get(0).name());
         Assert.assertEquals("org.apache.commons.{*}", javaClassCondition.getReferences().toString());
-        Assert.assertEquals("{*}File1", javaClassCondition.getTypeFilterRegex().toString());
 
+        Assert.assertEquals("{*}File1", javaClassCondition.getTypeFilterRegex().toString());
         Element secondJavaClass = javaClassList.get(1);
         javaClassCondition = parser.<JavaClass> processElement(secondJavaClass);
 
@@ -95,6 +95,7 @@ public class JavaClassHandlerTest
         Assert.assertEquals("INHERITANCE", locations.get(2).name());
         Assert.assertEquals("org.apache.commons.{*}", javaClassCondition.getReferences().toString());
         Assert.assertEquals(null, javaClassCondition.getTypeFilterRegex());
+        Assert.assertEquals("source-match", javaClassCondition.getMatchesSource().toString());
     }
 
     @Test(expected = WindupException.class)
