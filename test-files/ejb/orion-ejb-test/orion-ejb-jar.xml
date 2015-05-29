@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<orion-ejb-jar xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://xmlns.oracle.com/oracleas/schema/orion-ejb-jar-10_0.xsd" schema-major-version="10" schema-minor-version="0">
+    <enterprise-beans>
+
+        <session-deployment name="WindupExampleService" location="session/service/WindupExampleServiceLocalHome"></session-deployment>
+        <session-deployment name="WindupAnotherExampleService" location="session/service/WindupAnotherExampleServiceLocalHome"></session-deployment>
+
+        <message-driven-deployment
+          name="WindupMLBean"
+          destination-location="queue/WindupMLQueue"
+          resource-adapter="JMSResourceAdapter"
+          connection-factory-location="jms/WindupQueueConnectionFactory">
+             <resource-ref-mapping location="/WindupMail" name="smtp/WindupMail"/>
+             <resource-ref-mapping location="jdbc/WindupDS" name="jdbc/WindupDataSource"/>
+             <resource-ref-mapping location="/ConnectionFactory" name="jms/WindupQueueConnectionFactory"/>
+             <resource-ref-mapping location="/ConnectionFactory" name="jms/WindupTopicConnectionFactory"/>
+             <resource-ref-mapping location="queue/WindupExampleQueue" name="jms/WindupExampleQueue"/>
+             <resource-ref-mapping location="topic/WindupExampleTopic" name="jms/WindupExampleTopic"/>
+
+            <config-property>
+                <config-property-name>ConnectionFactoryJndiName</config-property-name>
+                <config-property-value>jms/WindupQueueConnectionFactory</config-property-value>
+            </config-property>
+            <config-property>
+                <config-property-name>DestinationName</config-property-name>
+                <config-property-value>queue/WindupMLQueue</config-property-value>
+            </config-property>
+            <config-property>
+                <config-property-name>DestinationType</config-property-name>
+                <config-property-value>javax.jms.Queue</config-property-value>
+            </config-property>
+            <config-property>
+                <config-property-name>ReceiverThreads</config-property-name>
+                <config-property-value>5</config-property-value>
+            </config-property>
+        </message-driven-deployment>
+    </enterprise-beans>
+    <assembly-descriptor>
+    </assembly-descriptor>
+</orion-ejb-jar>

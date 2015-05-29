@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jboss>
+	<enterprise-beans>
+		<session>
+            <ejb-name>WindupExampleService</ejb-name>
+            <jndi-name>session/service/WindupExampleServiceLocalHome</jndi-name>
+            <local-jndi-name>WindupExampleServiceLocal</local-jndi-name>
+            <method-attributes />
+        </session>
+
+		<session>
+            <ejb-name>WindupAnotherExampleService</ejb-name>
+            <jndi-name>session/service/WindupAnotherExampleServiceLocalHome</jndi-name>
+            <local-jndi-name>WindupAnotherExampleServiceLocal</local-jndi-name>
+            <method-attributes />
+        </session>
+        
+		<message-driven>
+			<ejb-name>WindupMLBean</ejb-name>
+			<destination-jndi-name>queue/WindupMLQueue</destination-jndi-name>
+
+			<resource-ref>
+	            <res-ref-name>jdbc/WindupDataSource</res-ref-name>
+	            <resource-name>WindupDataSource</resource-name>
+	        </resource-ref>
+	        <resource-ref>
+	            <res-ref-name>smtp/WindupMail</res-ref-name>
+	            <resource-name>WindupMail</resource-name>
+	        </resource-ref>
+
+	        <resource-ref>
+	            <res-ref-name>jms/WindupQueueConnectionFactory</res-ref-name>
+	            <jndi-name>/ConnectionFactory</jndi-name>
+	        </resource-ref>
+
+	        <resource-env-ref>
+	            <resource-env-ref-name>jms/WindupTopicConnectionFactory</resource-env-ref-name>
+	            <jndi-name>/ConnectionFactory</jndi-name>
+	        </resource-env-ref>
+
+	        <resource-env-ref>
+	            <resource-env-ref-name>jms/WindupExampleTopic</resource-env-ref-name>
+	            <jndi-name>topic/WindupExampleTopic</jndi-name>
+	        </resource-env-ref>
+
+	        <resource-env-ref>
+	            <resource-env-ref-name>jms/WindupExampleQueue</resource-env-ref-name>
+	            <jndi-name>topic/WindupExampleQueue</jndi-name>
+	        </resource-env-ref>
+	        
+		</message-driven>
+	</enterprise-beans>
+
+	<resource-managers>
+        <resource-manager res-class="">
+            <res-name>WindupMail</res-name>
+            <res-jndi-name>/WindupMail</res-jndi-name>
+        </resource-manager>
+        <resource-manager res-class="">
+            <res-name>WindupDataSource</res-name>
+            <res-jndi-name>jdbc/WindupDS</res-jndi-name>
+        </resource-manager>
+    </resource-managers>
+</jboss>

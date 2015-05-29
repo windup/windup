@@ -105,7 +105,7 @@ public class ResolveOrionEjbXmlRuleProvider extends IteratingRuleProvider<XmlFil
                     if (StringUtils.isNotBlank(destination))
                     {
                         JNDIResourceModel jndiRef = jndiResourceService.createUnique(destination);
-                        ejb.setJndiReference(jndiRef);
+                        ejb.setGlobalJndiReference(jndiRef);
                     }
                 }
             }
