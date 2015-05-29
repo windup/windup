@@ -556,23 +556,35 @@ public class ReferenceResolvingVisitor extends ASTVisitor
                 {
                     if (clzInterface instanceof SimpleType)
                     {
-                        ITypeBinding resolvedSuperInterface = ((SimpleType) clzInterface).resolveBinding();
-                        Stack<ITypeBinding> stack = new Stack<ITypeBinding>();
-                        stack.push(resolvedSuperInterface);
-                        // register all the implemented interfaces (even superinterfaces)
-                        while (!stack.isEmpty())
+                        SimpleType simpleType = (SimpleType) clzInterface;
+                        ITypeBinding resolvedSuperInterface = simpleType.resolveBinding();
+                        if (resolvedSuperInterface == null)
                         {
-                            resolvedSuperInterface = stack.pop();
-                            processTypeBinding(resolvedSuperInterface, TypeReferenceLocation.IMPLEMENTS_TYPE,
+                            String resolvedName = resolveClassname(simpleType.getName().toString());
+                            processTypeAsString(resolvedName, TypeReferenceLocation.IMPLEMENTS_TYPE,
                                         compilationUnit.getLineNumber(node.getStartPosition()),
-                                        compilationUnit.getColumnNumber(node.getStartPosition()), node.getLength(),
-                                        extractDefinitionLine(node.toString()));
-                            if (resolvedSuperInterface != null)
+                                        compilationUnit.getColumnNumber(node.getStartPosition()),
+                                        node.getLength(), extractDefinitionLine(node.toString()));
+                        }
+                        else
+                        {
+
+                            Stack<ITypeBinding> stack = new Stack<>();
+                            stack.push(resolvedSuperInterface);
+                            // register all the implemented interfaces (even superinterfaces, if we are able to resolve them)
+                            while (!stack.isEmpty())
                             {
-                                ITypeBinding[] interfaces = resolvedSuperInterface.getInterfaces();
-                                for (ITypeBinding oneInterface : interfaces)
+                                processTypeBinding(resolvedSuperInterface, TypeReferenceLocation.IMPLEMENTS_TYPE,
+                                            compilationUnit.getLineNumber(node.getStartPosition()),
+                                            compilationUnit.getColumnNumber(node.getStartPosition()), node.getLength(),
+                                            extractDefinitionLine(node.toString()));
+                                if (resolvedSuperInterface != null)
                                 {
-                                    stack.push(oneInterface);
+                                    ITypeBinding[] interfaces = resolvedSuperInterface.getInterfaces();
+                                    for (ITypeBinding oneInterface : interfaces)
+                                    {
+                                        stack.push(oneInterface);
+                                    }
                                 }
                             }
                         }
