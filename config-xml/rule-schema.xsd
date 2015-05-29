@@ -250,6 +250,7 @@
 							minOccurs="0">
 					<xs:complexType>
 						<xs:sequence>
+							<xs:element name="description" type="xs:string" maxOccurs="1" minOccurs="0"/>
 							<xs:element name="dependencies">
 								<xs:complexType>
 									<xs:sequence>

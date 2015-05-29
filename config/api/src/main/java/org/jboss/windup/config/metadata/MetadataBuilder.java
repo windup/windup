@@ -42,6 +42,7 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
     private List<String> executeAfterIDs = new ArrayList<>();
     private List<Class<? extends RuleProvider>> executeBefore = new ArrayList<>();
     private List<String> executeBeforeIDs = new ArrayList<>();
+    private String description;
     private Set<String> tags = new HashSet<>();
     private Set<TechnologyReference> sourceTechnologies = new HashSet<>();
     private Set<TechnologyReference> targetTechnologies = new HashSet<>();
@@ -49,7 +50,6 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
     private boolean haltOnException = false;
 
     private RulesetMetadata parent = new AbstractRulesetMetadata("NULL");
-
 
     private MetadataBuilder(Class<? extends RuleProvider> implementationType, String providerId)
     {
@@ -82,11 +82,14 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
         Assert.notNull(providerId, "Rule provider ID must not be null.");
 
         MetadataBuilder builder = new MetadataBuilder(implementationType, providerId)
-            .setOrigin(implementationType.getName() + " loaded from " + implementationType.getClassLoader().toString());
+                    .setOrigin(implementationType.getName() + " loaded from " + implementationType.getClassLoader().toString());
 
         RuleMetadata metadata = Annotations.getAnnotation(implementationType, RuleMetadata.class);
         if (metadata == null)
             return builder;
+
+        if (StringUtils.isNotBlank(metadata.description()))
+            builder.setDescription(metadata.description());
 
         Class<? extends RuleProvider>[] after = metadata.after();
         if (after.length > 0)
@@ -222,6 +225,21 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
             executeAfter.add(type);
         }
         return this;
+    }
+
+    /**
+     * Sets the human readable description.
+     */
+    public MetadataBuilder setDescription(String description)
+    {
+        this.description = description;
+        return this;
+    }
+
+    @Override
+    public String getDescription()
+    {
+        return this.description;
     }
 
     @Override
@@ -363,7 +381,8 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
 
     public MetadataBuilder addTag(String tag)
     {
-        if (!StringUtils.isBlank(tag)) {
+        if (!StringUtils.isBlank(tag))
+        {
             this.tags.add(tag.trim());
         }
         return this;
@@ -448,12 +467,11 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
         return this;
     }
 
-
     /**
      * Whether Windup should stop execution if this provider's rule execution ends with an exception.
      *
-     * By default, the exceptions are only logged and the failing rule appears in report.
-     * The rule itself is responsible for handling exceptions and storing them into the graph.
+     * By default, the exceptions are only logged and the failing rule appears in report. The rule itself is responsible for handling exceptions and
+     * storing them into the graph.
      */
     public MetadataBuilder setHaltOnException(boolean haltOnException)
     {
@@ -466,10 +484,6 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
     {
         return haltOnException;
     }
-
-
-
-
 
     /**
      * Join N sets.

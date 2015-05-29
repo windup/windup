@@ -33,6 +33,12 @@ public class AbstractRulesetMetadata implements RulesetMetadata
     }
 
     @Override
+    public String getDescription()
+    {
+        return "";
+    }
+
+    @Override
     public String getOrigin()
     {
         return getClass().getClassLoader().toString();
@@ -115,6 +121,7 @@ public class AbstractRulesetMetadata implements RulesetMetadata
     {
         return "RulesetMetadata ["
                     + "\tid=" + id + ", "
+                    + "\tdescription=" + getDescription() + ", "
                     + "\torigin=" + getOrigin() + ", "
                     + "\ttags=" + getTags() + ", "
                     + "\tsourceTechnologies=" + getSourceTechnologies() + ", "

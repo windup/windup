@@ -12,6 +12,7 @@ import org.jboss.windup.config.metadata.TechnologyReference;
 import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
+import org.jboss.windup.config.parser.metadata.MetadataDescriptionHandler;
 import org.w3c.dom.Element;
 
 @NamespaceElementHandler(elementName = "metadata", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
@@ -26,35 +27,41 @@ public class MetadataRootHandler implements ElementHandler<RulesetMetadata>
         for (Element child : children)
         {
             Object result = context.processElement(child);
-            
+
             switch ($(child).tag())
             {
+
+            case MetadataDescriptionHandler.DESCRIPTION:
+                metadataBuilder.setDescription((String) result);
+                break;
             case "dependencies":
-                List<AddonId> resultList = (List<AddonId>)result;
-                for(AddonId id : resultList) {
+                List<AddonId> resultList = (List<AddonId>) result;
+                for (AddonId id : resultList)
+                {
                     metadataBuilder.addRequiredAddon(id);
                 }
                 break;
 
             case "sourceTechnology":
-                metadataBuilder.addSourceTechnology((TechnologyReference)result);
+                metadataBuilder.addSourceTechnology((TechnologyReference) result);
                 break;
 
             case "targetTechnology":
-                metadataBuilder.addTargetTechnology((TechnologyReference)result);
+                metadataBuilder.addTargetTechnology((TechnologyReference) result);
                 break;
-                
+
             case "tags":
-                List<String> tagList = (List<String>)result;
-                for(String tag : tagList) {
+                List<String> tagList = (List<String>) result;
+                for (String tag : tagList)
+                {
                     metadataBuilder.addTag(tag);
                 }
                 break;
             case "executeAfter":
-                metadataBuilder.addExecuteAfterId((String)result);
+                metadataBuilder.addExecuteAfterId((String) result);
                 break;
             case "executeBefore":
-                metadataBuilder.addExecuteBeforeId((String)result);
+                metadataBuilder.addExecuteBeforeId((String) result);
                 break;
             }
         }

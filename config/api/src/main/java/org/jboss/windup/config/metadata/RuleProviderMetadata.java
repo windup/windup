@@ -29,7 +29,7 @@ public interface RuleProviderMetadata extends RulesetMetadata
      * <p>
      * The default phase is {@link org.jboss.windup.config.phase.MigrationRulesPhase}.
      */
-    public Class<? extends RulePhase> getPhase();
+    Class<? extends RulePhase> getPhase();
 
     /**
      * Returns a list of {@link RuleProvider} classes that should execute before the {@link Rule} instances in this corresponding {@link RuleProvider}
@@ -37,7 +37,7 @@ public interface RuleProviderMetadata extends RulesetMetadata
      *
      * {@link RuleProvider}s can also be specified based on id ({@link #getExecuteAfterIDs}).
      */
-    public List<Class<? extends RuleProvider>> getExecuteAfter();
+    List<Class<? extends RuleProvider>> getExecuteAfter();
 
     /**
      * Returns a list of the {@link RuleProvider} classes that should execute before the {@link Rule}s in this
@@ -49,14 +49,14 @@ public interface RuleProviderMetadata extends RulesetMetadata
      *
      * For specifying Java-based rules, {@link #getExecuteAfter()} is preferred.
      */
-    public List<String> getExecuteAfterIDs();
+    List<String> getExecuteAfterIDs();
 
     /**
      * Returns a list of {@link RuleProvider} classes that should execute after the {@link Rule}s in this {@link RuleProvider}.
      *
      * {@link RuleProvider}s can also be specified based on id ({@link #getExecuteBeforeIDs}).
      */
-    public List<Class<? extends RuleProvider>> getExecuteBefore();
+    List<Class<? extends RuleProvider>> getExecuteBefore();
 
     /**
      * Returns a list of the {@link RuleProvider} classes that should execute after the {@link Rule}s in this
@@ -68,7 +68,7 @@ public interface RuleProviderMetadata extends RulesetMetadata
      *
      * For specifying Java-based rules, {@link #getExecuteBefore()} is preferred.
      */
-    public List<String> getExecuteBeforeIDs();
+    List<String> getExecuteBeforeIDs();
 
 
     /**
@@ -77,6 +77,5 @@ public interface RuleProviderMetadata extends RulesetMetadata
      * By default, the exceptions are only logged and the failing rule appears in report.
      * The rule itself is responsible for handling exceptions and storing them into the graph.
      */
-    public boolean isHaltOnException();
-
+    boolean isHaltOnException();
 }

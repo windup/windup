@@ -20,18 +20,23 @@ public interface RulesetMetadata
      * Returns a unique identifier for the corresponding {@link RuleProvider}. The default is based on the originating
      * {@link Addon} and {@link Class} name, but this can be overridden in subclasses to provide a more readable name.
      */
-    public String getID();
+    String getID();
 
     /**
      * Returns a descriptive {@link String}, informing a human where they can find the {@link Rule} instances provided
      * by this {@link RuleProvider}.
      */
-    public String getOrigin();
+    String getOrigin();
+
+    /**
+     * Returns a human-readable description the rules associated with this {@link RulesetMetadata}.
+     */
+    String getDescription();
 
     /**
      * Return the {@link Set} of tags by which this {@link RulesetMetadata} is classified.
      */
-    public Set<String> getTags();
+    Set<String> getTags();
 
     /**
      * Return <code>true</code> if this {@link RulesetMetadata} contains all of the given tags.
