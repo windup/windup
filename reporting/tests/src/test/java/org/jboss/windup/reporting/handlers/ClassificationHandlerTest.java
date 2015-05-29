@@ -11,9 +11,9 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.AddonDependency;
-import org.jboss.forge.arquillian.Dependencies;
-import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -35,16 +35,16 @@ public class ClassificationHandlerTest
     private static final String CLASSIFICATION_XML_FILE = "src/test/resources/handler/classification.windup.xml";
 
     @Deployment
-    @Dependencies({
+    @AddonDependencies({
                 @AddonDependency(name = "org.jboss.windup.config:windup-config"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
                 @AddonDependency(name = "org.jboss.windup.config:windup-config-xml"),
                 @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi") })
-    public static ForgeArchive getDeployment()
+    public static AddonArchive getDeployment()
     {
-        final ForgeArchive archive = ShrinkWrap
-                    .create(ForgeArchive.class)
+        final AddonArchive archive = ShrinkWrap
+                    .create(AddonArchive.class)
                     .addBeansXML()
                     .addClass(HintHandlerTest.class)
                     .addAsAddonDependencies(
@@ -111,8 +111,7 @@ public class ClassificationHandlerTest
         Document doc = dBuilder.parse(fXmlFile);
         List<Element> classificationList = $(doc).children("classification").get();
         Element firstClassification = classificationList.get(2);
-        Classification classification = parser.<Classification> processElement(firstClassification);
-
+        parser.<Classification> processElement(firstClassification);
     }
 
     @Test(expected = WindupException.class)
@@ -126,7 +125,6 @@ public class ClassificationHandlerTest
         Document doc = dBuilder.parse(fXmlFile);
         List<Element> classificationList = $(doc).children("classification").get();
         Element firstClassification = classificationList.get(3);
-        Classification classification = parser.<Classification> processElement(firstClassification);
-
+        parser.<Classification> processElement(firstClassification);
     }
 }

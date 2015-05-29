@@ -11,9 +11,9 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.AddonDependency;
-import org.jboss.forge.arquillian.Dependencies;
-import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -35,16 +35,16 @@ public class HintHandlerTest
     private static final String HINT_XML_FILE = "src/test/resources/handler/hint.windup.xml";
 
     @Deployment
-    @Dependencies({
+    @AddonDependencies({
                 @AddonDependency(name = "org.jboss.windup.config:windup-config"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
                 @AddonDependency(name = "org.jboss.windup.config:windup-config-xml"),
                 @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi") })
-    public static ForgeArchive getDeployment()
+    public static AddonArchive getDeployment()
     {
-        final ForgeArchive archive = ShrinkWrap
-                    .create(ForgeArchive.class)
+        final AddonArchive archive = ShrinkWrap
+                    .create(AddonArchive.class)
                     .addBeansXML()
                     .addClass(HintHandlerTest.class)
                     .addAsAddonDependencies(
@@ -110,7 +110,6 @@ public class HintHandlerTest
         Document doc = dBuilder.parse(fXmlFile);
         List<Element> hintList = $(doc).children("hint").get();
         Element firstHint = hintList.get(2);
-        Hint hint = parser.<Hint> processElement(firstHint);
-
+        parser.<Hint> processElement(firstHint);
     }
 }
