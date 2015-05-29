@@ -3,7 +3,7 @@
 	<javaclass as="testVariable" references="org.apache.commons.{*}" in="{*}File1">
                <location>METHOD_CALL</location>
     </javaclass>
-    <javaclass references="org.apache.commons.{*}" >
+    <javaclass references="org.apache.commons.{*}" matchesSource="source-match">
                <location>IMPORT</location>
                <location>METHOD_CALL</location>
                <location>INHERITANCE</location>
