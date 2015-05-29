@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.MapInAdjacentVertices;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
@@ -61,6 +62,7 @@ public interface ReportModel extends WindupVertexFrame
     /**
      * The path to the template that produced this report (for example, /reports/blacklist.ftl)
      */
+    @Indexed
     @Property(TEMPLATE_PATH)
     public void setTemplatePath(String templatePath);
 
