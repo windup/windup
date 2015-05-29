@@ -35,11 +35,11 @@ public class ClassificationHandler implements ElementHandler<Classification>
     @Override
     public Classification processElement(ParserContext handlerManager, Element element) throws ConfigurationException
     {
-        String classificationStr = $(element).attr("classification");
+        String classificationStr = $(element).attr("title");
         if (StringUtils.isBlank(classificationStr))
         {
             throw new WindupException(
-                        "Error, 'classification' element must have a non-empty 'classification' attribute (eg, 'Mule ESB Transformer')");
+                        "Error, 'classification' element must have a non-empty 'title' attribute (eg, 'Mule ESB Transformer')");
         }
         String description = $(element).attr("description");
         String of = $(element).attr("of");
