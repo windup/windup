@@ -3,43 +3,11 @@
 
 <#assign applicationReportIndexModel = reportModel.applicationReportIndexModel>
 
-<#macro fileSourceLink fileRef name>
-  	<#if fileRef?has_content>
-  		<#assign sourceReportModel = fileModelToSourceReport(fileRef)>
-
-  		<#if sourceReportModel.reportFilename??>
-			<a href="${sourceReportModel.reportFilename}"> ${name!""} </a>
-    	<#else>
-	  		${name!""}
-	  	</#if>
-	 <#else>
-	  	${name!""}
-	 </#if>
-</#macro>
-
-<#macro renderLinksToClass fqcn>
-	<#assign sourceFiles = findSourceFilesByClassName(fqcn)>
-	<#if sourceFiles?has_content>
-		<#list sourceFiles as sourceFile>
-			<#assign sourceReportModel = fileModelToSourceReport(sourceFile)>
-			<a href="${sourceReportModel.reportFilename}">
-				<#if sourceFile_index == 0>
-					${fqcn}
-				<#else>
-					(${sourceFile_index + 1})
-				</#if>
-			</a>
-		</#list>
-	<#else>
-		${fqcn!""}
-	</#if>
-</#macro>
-
 <#macro mdbRenderer mdb>
 	<tr>
-    	<td><@fileSourceLink mdb.ejbDeploymentDescriptor!"" mdb.beanName!""/></td>
+    	<td><@render_link model=mdb.ejbDeploymentDescriptor text=mdb.beanName /></td>
     	<td>
-    		<@renderLinksToClass mdb.ejbClass.qualifiedName/>
+    		<@render_link model=mdb.ejbClass/>
     	</td>
     	<td><#if mdb.destination??>${mdb.destination.jndiLocation}</#if></td>
 	</tr>
@@ -49,12 +17,10 @@
 <#macro ejbRenderer ejb>
     <tr>
         <td>
-            <@fileSourceLink ejb.ejbDeploymentDescriptor!"" ejb.beanName!""/>
+            <@render_link model=ejb.ejbDeploymentDescriptor text=ejb.beanName/>
         </td>
         <td>
-            <#if ejb.ejbClass??>
-                <@renderLinksToClass ejb.ejbClass.qualifiedName/>
-            </#if>
+            <@render_link model=ejb.ejbClass/>
         </td>
         <td>
         	<#if ejb.jndiReference??>${ejb.jndiReference.jndiLocation}</#if>
@@ -65,12 +31,10 @@
 <#macro entityRenderer ejb>
     <tr>
         <td>
-            <@fileSourceLink ejb.ejbDeploymentDescriptor!"" ejb.beanName!""/>
+            <@render_link model=ejb.ejbDeploymentDescriptor text=ejb.beanName />
         </td>
         <td>
-            <#if ejb.ejbClass??>
-                <@renderLinksToClass ejb.ejbClass.qualifiedName/>
-            </#if>
+            <@render_link model=ejb.ejbClass/>
         </td>
         <td>${ejb.tableName!""}</td>
         <td>${ejb.persistenceType!""}</td>

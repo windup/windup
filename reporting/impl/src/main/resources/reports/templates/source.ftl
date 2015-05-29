@@ -114,6 +114,17 @@
 
 	    
 	<script type='text/javascript'>
+		$(window).on("hashchange", function () {
+		    window.scrollTo(window.scrollX, window.scrollY - 50);
+		});
+		function offsetAnchor() {
+		    if(location.hash.length !== 0) {
+		        window.scrollTo(window.scrollX, window.scrollY - 50);
+		    }
+		}
+		window.setTimeout(function() {
+		    offsetAnchor();
+		}, 1);
 		$(document).ready(function(){
 			$('pre').snippet('${reportModel.sourceType}',{style:'ide-eclipse', showNum:true,boxFill:'#ffeeb9', box: '${reportModel.sourceBlock}' });
 	
@@ -126,7 +137,7 @@
 			<#assign lineNumber = hintLine.lineNumber>
 			
 			<#compress>
-			$("<a name='${hintLine.asVertex().getId()?c}'></a><#t>
+			$("<a name='${hintLine.asVertex().getId()?c}' class='windup-file-location'></a><#t>
 				<div class='inline-source-comment green'><#t>
 					<#if hintLine.hint?has_content>
 						<div class='inline-comment'><#t>
