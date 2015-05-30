@@ -128,7 +128,7 @@ public class WindupArchitectureSpringSmallTest extends WindupArchitectureTest
         TestSpringBeanReportUtil util = new TestSpringBeanReportUtil();
         Path reportPath = Paths.get(reportService.getReportDirectory(), reportModel.getReportFilename());
         util.loadPage(reportPath);
-        Assert.assertTrue(util.checkSpringBeanInReport("", "org.springframework.web.servlet.view.InternalResourceViewResolver"));
+        Assert.assertTrue(util.checkSpringBeanInReport("WEB-INF/spring-mvc-context.xml", "org.springframework.web.servlet.view.InternalResourceViewResolver"));
     }
 
     private void validateReports(GraphContext context)

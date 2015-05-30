@@ -1,6 +1,9 @@
 package org.jboss.windup.rules.apps.java.service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 import org.jboss.forge.roaster.model.util.Types;
@@ -11,6 +14,7 @@ import org.jboss.windup.rules.apps.java.model.AmbiguousJavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaMethodModel;
 import org.jboss.windup.rules.apps.java.model.JavaParameterModel;
+import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.model.PhantomJavaClassModel;
 import org.jboss.windup.util.ExecutionStatistics;
 
@@ -181,6 +185,40 @@ public class JavaClassService extends GraphService<JavaClassModel>
         jcm.addJavaMethod(javaMethodModel);
         ExecutionStatistics.get().end("JavaClassService.addJavaMethod(jcm, methodName, params)");
         return javaMethodModel;
+    }
+    
+    public Iterable<JavaSourceFileModel> getJavaSource(String clz) {
+        List<JavaSourceFileModel> sources = new LinkedList<>();
+        
+        JavaClassModel classModel = getByName(clz);
+        if(classModel == null) {
+            return sources;
+        }
+        
+        if (classModel instanceof AmbiguousJavaClassModel)
+        {
+            AmbiguousJavaClassModel ambiguousJavaClassModel = (AmbiguousJavaClassModel) classModel;
+            for (JavaClassModel referencedClass : ambiguousJavaClassModel.getReferences())
+            {
+                if(referencedClass.getDecompiledSource() != null) {
+                    sources.add(referencedClass.getDecompiledSource());
+                }
+                if(referencedClass.getOriginalSource() != null) {
+                    sources.add(referencedClass.getOriginalSource());
+                }
+            }
+        }
+        else
+        {
+            if(classModel.getDecompiledSource() != null) {
+                sources.add(classModel.getDecompiledSource());
+            }
+            if(classModel.getOriginalSource() != null) {
+                sources.add(classModel.getOriginalSource());
+            }
+        }
+        
+        return sources;
     }
 
     public enum JavaVersion
