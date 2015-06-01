@@ -15,7 +15,6 @@ import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.Furnace;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.reporting.config.Hint;
@@ -43,18 +42,9 @@ public class HintHandlerTest
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi") })
     public static AddonArchive getDeployment()
     {
-        final AddonArchive archive = ShrinkWrap
+        return ShrinkWrap
                     .create(AddonArchive.class)
-                    .addBeansXML()
-                    .addClass(HintHandlerTest.class)
-                    .addAsAddonDependencies(
-                                AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
-                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:windup-rules-java"),
-                                AddonDependencyEntry.create("org.jboss.windup.config:windup-config-xml"),
-                                AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
-                                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"));
-
-        return archive;
+                    .addBeansXML();
     }
 
     @Inject
@@ -71,11 +61,11 @@ public class HintHandlerTest
         Document doc = dBuilder.parse(fXmlFile);
         List<Element> hintList = $(doc).children("hint").get();
         Element firstHint = hintList.get(0);
-        Hint hint = parser.<Hint> processElement(firstHint);
+        Hint hint = parser.processElement(firstHint);
 
         Assert.assertEquals("testVariable", hint.getVariableName());
         Assert.assertEquals(5, hint.getEffort());
-        Assert.assertEquals(Severity.MANDATORY, hint.getSeverity());
+        Assert.assertEquals(Severity.OPTIONAL, hint.getSeverity());
         Assert.assertEquals("test message", hint.getHintText().toString());
         Assert.assertEquals(1, hint.getLinks().size());
         List<Link> links = hint.getLinks();
@@ -83,10 +73,10 @@ public class HintHandlerTest
         Assert.assertEquals("someDescription", links.get(0).getDescription());
 
         Element secondHint = hintList.get(1);
-        hint = parser.<Hint> processElement(secondHint);
+        hint = parser.processElement(secondHint);
         Assert.assertEquals(null, hint.getVariableName());
         Assert.assertEquals(0, hint.getEffort());
-        Assert.assertEquals(Severity.OPTIONAL, hint.getSeverity());
+        Assert.assertEquals(Severity.MANDATORY, hint.getSeverity());
         Assert.assertEquals("test-message", hint.getHintText().toString());
         Assert.assertEquals(3, hint.getLinks().size());
         links = hint.getLinks();
