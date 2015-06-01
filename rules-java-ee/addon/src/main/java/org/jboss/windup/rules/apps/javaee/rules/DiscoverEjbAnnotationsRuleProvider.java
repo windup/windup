@@ -3,6 +3,7 @@ package org.jboss.windup.rules.apps.javaee.rules;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
+import org.jboss.forge.furnace.util.Strings;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
@@ -118,6 +119,11 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
         JavaClassModel ejbClass = getJavaClass(javaTypeReference);
 
         String ejbName = getAnnotationLiteralValue(annotationTypeReference, "name");
+        if(Strings.isNullOrEmpty(ejbName))
+        {
+            ejbName = ejbClass.getClassName();
+        }
+        
         String sessionType = javaTypeReference.getResolvedSourceSnippit()
                     .substring(javaTypeReference.getResolvedSourceSnippit().lastIndexOf(".") + 1);
 
@@ -145,21 +151,21 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
 
         JavaClassModel ejbClass = getJavaClass(entityTypeReference);
 
-        String name = getAnnotationLiteralValue(entityAnnotationTypeReference, "name");
-        if (name == null)
+        String ejbName = getAnnotationLiteralValue(entityAnnotationTypeReference, "name");
+        if (ejbName == null)
         {
-            name = ejbClass.getClassName();
+            ejbName = ejbClass.getClassName();
         }
-        String tableName = tableAnnotationTypeReference == null ? name : getAnnotationLiteralValue(tableAnnotationTypeReference, "name");
+        String tableName = tableAnnotationTypeReference == null ? ejbName : getAnnotationLiteralValue(tableAnnotationTypeReference, "name");
         if (tableName == null)
         {
-            tableName = name;
+            tableName = ejbName;
         }
         String persistenceType = "Container"; // It is always container in the case of Annotations
 
         Service<EjbEntityBeanModel> entityBeanService = new GraphService<>(event.getGraphContext(), EjbEntityBeanModel.class);
         EjbEntityBeanModel entityBean = entityBeanService.create();
-        entityBean.setBeanName(name);
+        entityBean.setBeanName(ejbName);
         entityBean.setEjbClass(ejbClass);
         entityBean.setTableName(tableName);
         entityBean.setPersistenceType(persistenceType);
@@ -173,6 +179,11 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
         JavaClassModel ejbClass = getJavaClass(javaTypeReference);
 
         String ejbName = getAnnotationLiteralValue(annotationTypeReference, "name");
+        if(Strings.isNullOrEmpty(ejbName))
+        {
+            ejbName = ejbClass.getClassName();
+        }
+        
         String destination = getAnnotationLiteralValue(annotationTypeReference, "mappedName");
         if (StringUtils.isBlank(destination))
         {

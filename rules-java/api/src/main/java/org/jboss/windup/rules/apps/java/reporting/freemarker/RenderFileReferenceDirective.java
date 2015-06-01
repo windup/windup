@@ -66,7 +66,10 @@ public class RenderFileReferenceDirective implements WindupFreeMarkerTemplateDir
             if (StringUtils.isNotBlank(defaultText))
                 writer.append(defaultText);
             else
-                throw new TemplateException("No model provided.", env);
+            {
+                writer.append("unknown");
+                LOG.warning("Failed to resolve name or text for " + getClass().getName() + ". " + env);
+            }
             return;
         }
 

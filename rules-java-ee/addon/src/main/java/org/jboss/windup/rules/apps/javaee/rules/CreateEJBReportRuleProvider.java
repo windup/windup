@@ -3,6 +3,7 @@ package org.jboss.windup.rules.apps.javaee.rules;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jboss.forge.furnace.util.Strings;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.MetadataBuilder;
@@ -69,6 +70,7 @@ public class CreateEJBReportRuleProvider extends AbstractRuleProvider
 
     }
 
+    @SuppressWarnings("unchecked")
     private void createEJBReport(GraphContext context, ProjectModel projectModel)
     {
         ApplicationReportService applicationReportService = new ApplicationReportService(context);
@@ -82,12 +84,12 @@ public class CreateEJBReportRuleProvider extends AbstractRuleProvider
         applicationReportModel.setTemplateType(TemplateType.FREEMARKER);
 
         GraphService<EjbBeanBaseModel> ejbService = new GraphService<EjbBeanBaseModel>(context, EjbBeanBaseModel.class);
-        GraphService<WindupVertexListModel> listService = new GraphService<WindupVertexListModel>(context, WindupVertexListModel.class);
+        GraphService<WindupVertexListModel> listService = new GraphService<>(context, WindupVertexListModel.class);
 
-        WindupVertexListModel entityList = listService.create();
-        WindupVertexListModel mdbList = listService.create();
-        WindupVertexListModel statelessList = listService.create();
-        WindupVertexListModel statefulList = listService.create();
+        WindupVertexListModel<EjbBeanBaseModel> entityList = listService.create();
+        WindupVertexListModel<EjbBeanBaseModel> mdbList = listService.create();
+        WindupVertexListModel<EjbBeanBaseModel> statelessList = listService.create();
+        WindupVertexListModel<EjbBeanBaseModel> statefulList = listService.create();
 
         for (EjbBeanBaseModel ejbModel : ejbService.findAll())
         {
@@ -112,12 +114,12 @@ public class CreateEJBReportRuleProvider extends AbstractRuleProvider
             }
         }
 
-        Map<String, WindupVertexFrame> additionalData = new HashMap<>(4);
-        additionalData.put("entity", entityList);
-        additionalData.put("mdb", mdbList);
-        additionalData.put("stateless", statelessList);
-        additionalData.put("stateful", statefulList);
-        applicationReportModel.setRelatedResource(additionalData);
+        Map<String, WindupVertexFrame> data = new HashMap<>(4);
+        data.put("entity", entityList);
+        data.put("mdb", mdbList);
+        data.put("stateless", statelessList);
+        data.put("stateful", statefulList);
+        applicationReportModel.setRelatedResource(data);
 
         ReportService reportService = new ReportService(context);
         reportService.setUniqueFilename(applicationReportModel, "ejbreport_" + projectModel.getName(), "html");
