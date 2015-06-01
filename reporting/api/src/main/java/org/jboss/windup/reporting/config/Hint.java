@@ -26,7 +26,7 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
 {
     private static final Logger log = Logger.getLogger(Hint.class.getName());
 
-    public static final Severity DEFAULT_SEVERITY = Severity.WARNING;
+    public static final Severity DEFAULT_SEVERITY = Severity.OPTIONAL;
 
     private RegexParameterizedPatternParser hintTitlePattern;
     private RegexParameterizedPatternParser hintTextPattern;

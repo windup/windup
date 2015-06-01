@@ -66,7 +66,7 @@ public class ClassificationHandler implements ElementHandler<Classification>
 
         if (StringUtils.isNotBlank(severityStr))
         {
-            Severity severity = Severity.valueOf(severityStr);
+            Severity severity = Severity.valueOf(severityStr.toUpperCase());
             classification.withSeverity(severity);
         }
 

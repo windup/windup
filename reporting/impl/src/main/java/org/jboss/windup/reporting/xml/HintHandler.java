@@ -89,7 +89,7 @@ public class HintHandler implements ElementHandler<Hint>
 
         if (StringUtils.isNotBlank(severityStr))
         {
-            Severity severity = Severity.valueOf(severityStr);
+            Severity severity = Severity.valueOf(severityStr.toUpperCase());
             hint.withSeverity(severity);
         }
 

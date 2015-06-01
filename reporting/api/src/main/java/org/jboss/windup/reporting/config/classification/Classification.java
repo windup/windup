@@ -34,7 +34,7 @@ import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
 public class Classification extends ParameterizedIterationOperation<FileModel> implements ClassificationAs, ClassificationEffort,
             ClassificationDescription, ClassificationLink, ClassificationSeverity
 {
-    public static final Severity DEFAULT_SEVERITY = Severity.WARNING;
+    public static final Severity DEFAULT_SEVERITY = Severity.OPTIONAL;
     private static final Logger log = Logger.getLogger(Classification.class.getName());
 
     private List<Link> links = new ArrayList<>();
