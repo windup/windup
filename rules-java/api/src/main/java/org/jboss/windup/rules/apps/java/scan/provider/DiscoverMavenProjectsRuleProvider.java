@@ -67,7 +67,7 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
 
         final ClassificationService classificationService = new ClassificationService(context);
         final TechnologyTagService technologyTagService = new TechnologyTagService(context);
-        
+
         AbstractIterationOperation<XmlFileModel> evaluatePomFiles = new AbstractIterationOperation<XmlFileModel>()
         {
             @Override
@@ -85,10 +85,10 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
                 MavenProjectModel mavenProjectModel = extractMavenProjectModel(event, defaultName, payload);
                 if (mavenProjectModel != null)
                 {
-                    //add classification information to file.
+                    // add classification information to file.
                     classificationService.attachClassification(payload, "Maven POM", "Maven Project Object Model (POM) File");
                     technologyTagService.addTagToFileModel(payload, "Maven XML", TechnologyTagLevel.INFORMATIONAL);
-                    
+
                     ArchiveModel archiveModel = payload.getParentArchive();
                     if (archiveModel != null && !isAlreadyMavenProject(archiveModel))
                     {
@@ -146,8 +146,8 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
     }
 
     /**
-     * This method is here so that the caller can know not to try to reset the project model for an archive (or directory) if the archive (or
-     * directory) is already a maven project.
+     * This method is here so that the caller can know not to try to reset the project model for an archive (or
+     * directory) if the archive (or directory) is already a maven project.
      * <p/>
      * This can sometimes help in cases in which an archive includes multiple poms in its META-INF.
      */
@@ -223,8 +223,8 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
         MavenProjectService mavenProjectService = new MavenProjectService(event.getGraphContext());
         MavenProjectModel mavenProjectModel = getMavenStubProject(mavenProjectService, groupId, artifactId, version);
         /*
-         * We don't want to reuse one that is already associated with a file (defined twice). This happens sometimes if the same maven gav is defined
-         * multiple times within the input application.
+         * We don't want to reuse one that is already associated with a file (defined twice). This happens sometimes if
+         * the same maven gav is defined multiple times within the input application.
          */
         if (mavenProjectModel == null)
         {
@@ -336,8 +336,8 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
     }
 
     /**
-     * This will return a {@link MavenProjectModel} with the give gav, preferring one that has been found in the input application as opposed to a
-     * stub.
+     * This will return a {@link MavenProjectModel} with the give gav, preferring one that has been found in the input
+     * application as opposed to a stub.
      */
     private MavenProjectModel getMavenProject(MavenProjectService mavenProjectService, String groupId, String artifactId, String version)
     {
@@ -358,8 +358,9 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
     }
 
     /**
-     * A Maven stub is a Maven Project for which we have found information, but the project has not yet been located within the input application. If
-     * we have found an application of the same GAV within the input app, we should fill out this stub instead of creating a new one.
+     * A Maven stub is a Maven Project for which we have found information, but the project has not yet been located
+     * within the input application. If we have found an application of the same GAV within the input app, we should
+     * fill out this stub instead of creating a new one.
      */
     private MavenProjectModel getMavenStubProject(MavenProjectService mavenProjectService, String groupId, String artifactId, String version)
     {

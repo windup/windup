@@ -33,7 +33,7 @@ public class RuleProviderHandler implements ElementHandler<Void>
     private static final String PHASE = "phase";
     private static final AtomicInteger currentDefaultIDIndex = new AtomicInteger(0);
     private Map<String, Class<? extends RulePhase>> cachedPhases;
-    public static final String WINDUP_RULE_NAMESPACE="http://windup.jboss.org/schema/jboss-ruleset";
+    public static final String WINDUP_RULE_NAMESPACE = "http://windup.jboss.org/schema/jboss-ruleset";
 
     @Override
     public Void processElement(ParserContext context, Element element) throws ConfigurationException
@@ -47,13 +47,13 @@ public class RuleProviderHandler implements ElementHandler<Void>
         String phaseStr = element.getAttribute(PHASE);
         Class<? extends RulePhase> phase = getPhases().get(classNameToKey(phaseStr));
         builder.setPhase(phase);
-        
+
         context.setBuilder(builder);
 
         List<Element> children = $(element).children().get();
         for (Element child : children)
         {
-            Object result = context.processElement(child);
+            context.processElement(child);
         }
         context.addRuleProvider(builder);
 
@@ -64,7 +64,7 @@ public class RuleProviderHandler implements ElementHandler<Void>
     {
         return "XMLRuleProvider:" + RandomStringUtils.random(4) + ":" + currentDefaultIDIndex.incrementAndGet();
     }
-    
+
     private Map<String, Class<? extends RulePhase>> getPhases()
     {
         if (cachedPhases == null)
@@ -81,7 +81,7 @@ public class RuleProviderHandler implements ElementHandler<Void>
         }
         return cachedPhases;
     }
-    
+
     private String classNameToKey(String className)
     {
         return className.toUpperCase();

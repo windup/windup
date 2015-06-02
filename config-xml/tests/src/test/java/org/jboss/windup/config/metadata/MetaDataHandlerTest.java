@@ -10,9 +10,9 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.AddonDependency;
-import org.jboss.forge.arquillian.Dependencies;
-import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
@@ -34,14 +34,14 @@ public class MetaDataHandlerTest
     private static final String XML_FILE = "src/test/resources/testxml/metadata.windup.xml";
 
     @Deployment
-    @Dependencies({
+    @AddonDependencies({
                 @AddonDependency(name = "org.jboss.windup.config:windup-config"),
                 @AddonDependency(name = "org.jboss.windup.config:windup-config-xml"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static ForgeArchive getDeployment()
+    public static AddonArchive getDeployment()
     {
-        final ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
+        final AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
                     .addBeansXML()
                     .addClass(MetaDataHandlerTest.class)
                     .addAsAddonDependencies(

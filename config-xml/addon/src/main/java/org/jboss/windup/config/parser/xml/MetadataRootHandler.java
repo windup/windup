@@ -20,6 +20,7 @@ public class MetadataRootHandler implements ElementHandler<RulesetMetadata>
 {
 
     @Override
+    @SuppressWarnings("unchecked")
     public RulesetMetadata processElement(ParserContext context, Element element) throws ConfigurationException
     {
         List<Element> children = $(element).children().get();
@@ -30,13 +31,12 @@ public class MetadataRootHandler implements ElementHandler<RulesetMetadata>
 
             switch ($(child).tag())
             {
-
             case MetadataDescriptionHandler.DESCRIPTION:
                 metadataBuilder.setDescription((String) result);
                 break;
+
             case "dependencies":
-                List<AddonId> resultList = (List<AddonId>) result;
-                for (AddonId id : resultList)
+                for (AddonId id : (List<AddonId>) result)
                 {
                     metadataBuilder.addRequiredAddon(id);
                 }
@@ -50,16 +50,14 @@ public class MetadataRootHandler implements ElementHandler<RulesetMetadata>
                 metadataBuilder.addTargetTechnology((TechnologyReference) result);
                 break;
 
-            case "tags":
-                List<String> tagList = (List<String>) result;
-                for (String tag : tagList)
-                {
-                    metadataBuilder.addTag(tag);
-                }
+            case "tag":
+                metadataBuilder.addTag((String) result);
                 break;
+
             case "executeAfter":
                 metadataBuilder.addExecuteAfterId((String) result);
                 break;
+
             case "executeBefore":
                 metadataBuilder.addExecuteBeforeId((String) result);
                 break;

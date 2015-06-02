@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -8,7 +9,6 @@
         <version>2.3.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.jboss.windup.config</groupId>
     <artifactId>windup-config-xml</artifactId>
 
     <name>Windup Engine - Config XML</name>
@@ -70,10 +70,13 @@
                 <executions>
                     <execution>
                         <phase>generate-resources</phase>
-                        <goals> <goal>run</goal> </goals>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
                         <configuration>
                             <tasks>
-                                <copy file="../schema/windup-jboss-ruleset.xsd" tofile="${project.build.directory}/schema-versioned/windup-jboss-ruleset-${project.version}.xsd"/>
+                                <copy file="../schema/windup-jboss-ruleset.xsd"
+                                    tofile="${project.build.directory}/schema-versioned/windup-jboss-ruleset-${project.version}.xsd" />
                             </tasks>
                         </configuration>
                     </execution>

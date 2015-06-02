@@ -1,47 +1,48 @@
-<ruleset xmlns="http://windup.jboss.org/schema/jboss-ruleset" id="WLS_10_12_TO_EAP_6" phase="testPhase">
+<ruleset xmlns="http://windup.jboss.org/schema/jboss-ruleset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://windup.jboss.org/schema/jboss-ruleset http://windup.jboss.org/schema/jboss-ruleset/windup-jboss-ruleset.xsd"
+    id="WLS_10_12_TO_EAP_6" phase="testPhase">
 
-<metadata>
-	<dependencies>
-		<addon id="org.jboss.windup.rules,windup-rules-javaee,2.0.1.Final"/>			
-		<addon id="org.jboss.windup.rules,windup-rules-java,2.0.0.Final"/>
-	</dependencies>
-	<sourceTechnology id="weblogic" versionRange="(10,12]"/>
-	<sourceTechnology id="ejb" versionRange="(2,3]"/>
-	<targetTechnology id="eap" versionRange="(5,6]"/>
-	<targetTechnology id="ejb" versionRange="(2,3]"/>
-	<tags>
-		<tag>require-stateless</tag>
-		<tag>require-nofilesystem-io</tag>
-	</tags>
-	<executeAfter>AfterId</executeAfter>
-	<executeBefore>BeforeId</executeBefore>
-</metadata>
+    <metadata>
+        <dependencies>
+            <addon id="org.jboss.windup.rules,windup-rules-javaee,2.0.1.Final" />
+            <addon id="org.jboss.windup.rules,windup-rules-java,2.0.0.Final" />
+        </dependencies>
+        <sourceTechnology id="weblogic" versionRange="(10,12]" />
+        <sourceTechnology id="ejb" versionRange="(2,3]" />
+        <targetTechnology id="eap" versionRange="(5,6]" />
+        <targetTechnology id="ejb" versionRange="(2,3]" />
+        <tag>require-stateless</tag>
+        <tag>require-nofilesystem-io</tag>
+        <executeAfter>AfterId</executeAfter>
+        <executeBefore>BeforeId</executeBefore>
+    </metadata>
 
 
-<rules>
+    <rules>
         <rule>
             <when>
-                <true/>
+                <true />
             </when>
             <perform>
                 <iteration>
                     <when>
-                        <true/>
+                        <true />
                     </when>
                     <perform>
-                        <log message="test {foo} iteration perform"/>
+                        <log message="test {foo} iteration perform" />
                     </perform>
                     <otherwise>
-                        <log message="test {foo} iteration otherwise"/>
+                        <log message="test {foo} iteration otherwise" />
                     </otherwise>
                 </iteration>
             </perform>
             <otherwise>
-                <log message="test rule {foo} otherwise"/>
+                <log message="test rule {foo} otherwise" />
             </otherwise>
             <where param="foo">
-                <matches pattern="\d+"/>
+                <matches pattern="\d+" />
             </where>
         </rule>
-</rules>
+    </rules>
 </ruleset>

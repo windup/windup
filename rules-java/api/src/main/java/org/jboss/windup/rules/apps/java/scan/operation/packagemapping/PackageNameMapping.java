@@ -3,6 +3,7 @@ package org.jboss.windup.rules.apps.java.scan.operation.packagemapping;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
@@ -12,14 +13,14 @@ import org.jboss.windup.config.PreRulesetEvaluation;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-import com.esotericsoftware.minlog.Log;
-
 /**
  * Maps from a package to a organization name.
  */
 public class PackageNameMapping extends GraphRule implements PackageNameMappingWithPackagePattern, PreRulesetEvaluation
 {
     private static final Logger LOG = Logger.getLogger(PackageNameMapping.class.getSimpleName());
+
+    private String id = this.getClass().getName() + "_" + UUID.randomUUID().toString();
 
     private String organization;
     private String packagePattern;
@@ -29,16 +30,18 @@ public class PackageNameMapping extends GraphRule implements PackageNameMappingW
      */
     public static String getOrganizationForPackage(GraphRewrite event, String pkg)
     {
-        final String pkgComparison = pkg+".";
+        final String pkgComparison = pkg + ".";
         String organization = null;
         for (Map.Entry<String, String> entry : getMappings(event).entrySet())
         {
-            final String pkgPattern = entry.getKey()+".";
-            LOG.info("Comparing: "+pkgComparison +" to: "+pkgPattern);
+            final String pkgPattern = entry.getKey() + ".";
             if (StringUtils.startsWith(pkgComparison, pkgPattern))
             {
                 organization = entry.getValue();
-                LOG.info(" -- Found organization: "+organization);
+                if (LOG.isLoggable(Level.FINE))
+                {
+                    LOG.fine(" -- Found organization: " + organization);
+                }
                 break;
             }
         }
@@ -86,12 +89,18 @@ public class PackageNameMapping extends GraphRule implements PackageNameMappingW
     @Override
     public boolean evaluate(GraphRewrite event, EvaluationContext context)
     {
+        /*
+         * This is empty because we only care about PreRulesetEvaluation
+         */
         return true;
     }
 
     @Override
     public void perform(GraphRewrite event, EvaluationContext context)
     {
+        /*
+         * This is empty because we only care about PreRulesetEvaluation
+         */
     }
 
     /**
@@ -129,7 +138,7 @@ public class PackageNameMapping extends GraphRule implements PackageNameMappingW
     @Override
     public String getId()
     {
-        return this.getClass().getName() + "_" + UUID.randomUUID().toString();
+        return id;
     }
 
     @Override
