@@ -50,7 +50,35 @@
     </dependencies>
 
     <build>
+        <resources>
+            <resource>
+                <directory>../schema/</directory>
+                <targetPath>schema/</targetPath>
+            </resource>
+            <resource>
+                <directory>${project.build.directory}/schema-versioned/</directory>
+                <targetPath>schema/</targetPath>
+            </resource>
+            <resource>
+                <directory>src/main/resources/</directory>
+            </resource>
+        </resources>
         <plugins>
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.8</version>
+                <executions>
+                    <execution>
+                        <phase>generate-resources</phase>
+                        <goals> <goal>run</goal> </goals>
+                        <configuration>
+                            <tasks>
+                                <copy file="../schema/windup-jboss-ruleset.xsd" tofile="${project.build.directory}/schema-versioned/windup-jboss-ruleset-${project.version}.xsd"/>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.jboss.forge.furnace</groupId>
                 <artifactId>furnace-maven-plugin</artifactId>
