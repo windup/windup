@@ -1,4 +1,4 @@
-<ruleset xmlns="http://windup.jboss.org/v1/xml" id="WLS_10_12_TO_EAP_6" phase="testPhase">
+<ruleset xmlns="http://windup.jboss.org/schema/jboss-ruleset" id="WLS_10_12_TO_EAP_6" phase="testPhase">
 
 <metadata>
 	<dependencies>

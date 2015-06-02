@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<test xmlns="http://windup.jboss.org/v1/xml">
+<test xmlns="http://windup.jboss.org/schema/jboss-ruleset">
 	<xslt of="testVariable_instance" description="XSLT Tranformed Output" extension="-test-result.html" template="simpleXSLT.xsl" />
 	<xslt description="XSLT Tranformed Output" extension="-test-result.html" template="simpleXSLT.xsl" />
 	<xslt of="testVariable_instance" description="XSLT Tranformed Output" template="simpleXSLT.xsl" />

@@ -10,7 +10,7 @@ import org.jboss.windup.project.condition.Artifact;
 import org.jboss.windup.project.condition.Version;
 import org.w3c.dom.Element;
 
-@NamespaceElementHandler(elementName = "artifact", namespace = "http://windup.jboss.org/v1/xml")
+@NamespaceElementHandler(elementName = "artifact", namespace = "http://windup.jboss.org/schema/jboss-ruleset")
 public class ArtifactHandler implements ElementHandler<Artifact>
 {
 

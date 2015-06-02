@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<test xmlns="http://windup.jboss.org/v1/xml">
+<test xmlns="http://windup.jboss.org/schema/jboss-ruleset">
 	<lineitem message="someMessage"/>
 	<lineitem/>
 </test>

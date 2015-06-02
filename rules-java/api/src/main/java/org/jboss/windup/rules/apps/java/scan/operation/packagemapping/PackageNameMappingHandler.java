@@ -18,7 +18,7 @@ import org.w3c.dom.Element;
  * &lt;package-mapping from="org.apache" to="Apache"/&gt;
  * </pre>
  */
-@NamespaceElementHandler(elementName = PackageNameMappingHandler.ELEM_NAME, namespace = "http://windup.jboss.org/v1/xml")
+@NamespaceElementHandler(elementName = PackageNameMappingHandler.ELEM_NAME, namespace = "http://windup.jboss.org/schema/jboss-ruleset")
 public class PackageNameMappingHandler implements ElementHandler<Void>
 {
     protected static final String ELEM_NAME = "package-mapping";

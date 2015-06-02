@@ -11,7 +11,7 @@ import org.jboss.windup.project.operation.LineItem;
 import org.jboss.windup.util.exception.WindupException;
 import org.w3c.dom.Element;
 
-@NamespaceElementHandler(elementName = "lineitem", namespace = "http://windup.jboss.org/v1/xml")
+@NamespaceElementHandler(elementName = "lineitem", namespace = "http://windup.jboss.org/schema/jboss-ruleset")
 public class LineItemHandler implements ElementHandler<LineItem>
 {
 

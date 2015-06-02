@@ -12,7 +12,7 @@ import org.jboss.windup.project.condition.Artifact;
 import org.jboss.windup.project.condition.Project;
 import org.w3c.dom.Element;
 
-@NamespaceElementHandler(elementName = "project", namespace = "http://windup.jboss.org/v1/xml")
+@NamespaceElementHandler(elementName = "project", namespace = "http://windup.jboss.org/schema/jboss-ruleset")
 public class ProjectHandler implements ElementHandler<Project>
 {
 
