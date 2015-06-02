@@ -30,7 +30,7 @@ import org.w3c.dom.Element;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
-@NamespaceElementHandler(elementName = "xslt", namespace = "http://windup.jboss.org/v1/xml")
+@NamespaceElementHandler(elementName = "xslt", namespace = "http://windup.jboss.org/schema/jboss-ruleset")
 public class XSLTTransformationHandler implements ElementHandler<XSLTTransformation>
 {
 
