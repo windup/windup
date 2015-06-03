@@ -54,9 +54,8 @@ import org.jboss.windup.ast.java.data.annotations.AnnotationLiteralValue;
 import org.jboss.windup.ast.java.data.annotations.AnnotationValue;
 
 /**
- * Provides the ability to parse a Java source file and return a {@link List} of {@link ClassReference} objects
- * containing the fully qualified names of all of the contained references. <b>Note: A new instance of this visitor
- * should be constructed for each {@link CompilationUnit}</b>
+ * Provides the ability to parse a Java source file and return a {@link List} of {@link ClassReference} objects containing the fully qualified names
+ * of all of the contained references. <b>Note: A new instance of this visitor should be constructed for each {@link CompilationUnit}</b>
  * 
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -187,8 +186,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
     }
 
     /**
-     * The method determines if the type can be resolved and if not, will try to guess the qualified name using the
-     * information from the imports.
+     * The method determines if the type can be resolved and if not, will try to guess the qualified name using the information from the imports.
      */
     private ClassReference processType(Type type, TypeReferenceLocation typeReferenceLocation, int lineNumber, int columnNumber, int length,
                 String line)
@@ -571,8 +569,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
                         else
                         {
                             /*
-                             * Register all the implemented interfaces (even super interfaces, if we are able to resolve
-                             * them.)
+                             * Register all the implemented interfaces (even super interfaces, if we are able to resolve them.)
                              */
                             Stack<ITypeBinding> stack = new Stack<>();
                             stack.push(resolvedSuperInterface);
@@ -657,8 +654,15 @@ public class ReferenceResolvingVisitor extends ASTVisitor
             for (String resolvedName : resolvedNames)
             {
                 processImport(resolvedName, compilationUnit.getLineNumber(node.getName().getStartPosition()),
-                            compilationUnit.getColumnNumber(node.getName().getStartPosition()), node.getName().getLength(), node.toString());
+                            compilationUnit.getColumnNumber(node.getName().getStartPosition()), node.getName().getLength(), node.toString().trim());
             }
+
+            /*
+             * Also, register the wildcard itself so that we can have rules that match against wildcard imports, event if we do not know what classes
+             * may be contained in that wildcard
+             */
+            processImport(name + ".*", compilationUnit.getLineNumber(node.getName().getStartPosition()),
+                        compilationUnit.getColumnNumber(node.getName().getStartPosition()), node.getName().getLength(), node.toString().trim());
         }
         else
         {
@@ -666,7 +670,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
             state.getClassNameLookedUp().add(clzName);
             state.getClassNameToFQCN().put(clzName, name);
             processImport(name, compilationUnit.getLineNumber(node.getName().getStartPosition()),
-                        compilationUnit.getColumnNumber(node.getName().getStartPosition()), node.getName().getLength(), node.toString());
+                        compilationUnit.getColumnNumber(node.getName().getStartPosition()), node.getName().getLength(), node.toString().trim());
         }
 
         return super.visit(node);
