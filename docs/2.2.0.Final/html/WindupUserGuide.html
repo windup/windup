@@ -528,7 +528,7 @@ Windup to migrate Java applications or other components.</p>
 <p>Windup is an extensible and customizable rule-based tool that helps simplify migration of Java applications.</p>
 </div>
 <div class="paragraph">
-<p>Windup can be run as a standalone application or as a plug-in to Red Hat JBoss Developer Studio. Running from a <a href="http://forge.jboss.org">Forge</a> environment, it examines application artifacts, including project source directories and applications archives, then produces an HTML report highlighting areas that need changes. Windup can be used to migrate Java applications from previous versions of <em>Red Hat JBoss Enterprise Application Platform</em> or from other containers, such as <em>Oracle WebLogic Server</em> or <em>IBM® WebSphere® Application Server</em>.</p>
+<p>Running from a <a href="http://forge.jboss.org">Forge</a> environment, Windup examines application artifacts, including project source directories and applications archives, then produces an HTML report highlighting areas that need changes. Windup can be used to migrate Java applications from previous versions of <em>Red Hat JBoss Enterprise Application Platform</em> or from other containers, such as <em>Oracle WebLogic Server</em> or <em>IBM® WebSphere® Application Server</em>.</p>
 </div>
 </div>
 <div class="sect3">
@@ -541,13 +541,10 @@ spots” when migrating applications. The goal is to provide a high level view i
 </div>
 <div class="sect2">
 <h3 id="Features">1.2. Features of Windup</h3>
-<div class="hdlist">
-<table>
-<tr>
-<td class="hdlist1">
-Shared Data Model
-</td>
-<td class="hdlist2">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Shared Data Model</dt>
+<dd>
 <p>Windup creates a shared data model graph that provides the following benefits.</p>
 <div class="ulist">
 <ul>
@@ -562,13 +559,9 @@ Shared Data Model
 </li>
 </ul>
 </div>
-</td>
-</tr>
-<tr>
-<td class="hdlist1">
-Extensibility
-</td>
-<td class="hdlist2">
+</dd>
+<dt class="hdlist1">Extensibility</dt>
+<dd>
 <p>Windup can be extended by developers, users, and 3rd-party software.</p>
 <div class="ulist">
 <ul>
@@ -583,13 +576,9 @@ Extensibility
 </li>
 </ul>
 </div>
-</td>
-</tr>
-<tr>
-<td class="hdlist1">
-Better Rules
-</td>
-<td class="hdlist2">
+</dd>
+<dt class="hdlist1">Better Rules</dt>
+<dd>
 <p>Windup provides more powerful and complex rules.</p>
 <div class="ulist">
 <ul>
@@ -605,13 +594,9 @@ Better Rules
 </li>
 </ul>
 </div>
-</td>
-</tr>
-<tr>
-<td class="hdlist1">
-Automation
-</td>
-<td class="hdlist2">
+</dd>
+<dt class="hdlist1">Automation</dt>
+<dd>
 <p>Windup has the ability to automate some of the migration processes.</p>
 <div class="ulist">
 <ul>
@@ -626,21 +611,13 @@ Automation
 </li>
 </ul>
 </div>
-</td>
-</tr>
-<tr>
-<td class="hdlist1">
-Work Estimation
-</td>
-<td class="hdlist2">
+</dd>
+<dt class="hdlist1">Work Estimation</dt>
+<dd>
 <p>Estimates for the <em>level of effort</em> are based on the skills required and the classification of migration work needed. <em>Level of effort</em> is represented as <em>story points</em> in the Windup reports and are described in more detail here: <a href="#Rules-Rule-Story-Points">Rule Story Points</a>.</p>
-</td>
-</tr>
-<tr>
-<td class="hdlist1">
-Better Reporting
-</td>
-<td class="hdlist2">
+</dd>
+<dt class="hdlist1">Better Reporting</dt>
+<dd>
 <p>Windup  reports are now targeted for specific audiences.</p>
 <div class="ulist">
 <ul>
@@ -655,9 +632,8 @@ Better Reporting
 </li>
 </ul>
 </div>
-</td>
-</tr>
-</table>
+</dd>
+</dl>
 </div>
 </div>
 <div class="sect2">
@@ -743,7 +719,7 @@ otherwise(action)</pre>
 <p>If you installed previous versions of Windup, delete the <code>${user.home}/.windup/</code> directory. Otherwise you may see errors like the following when you execute Windup.</p>
 <div class="listingblock">
 <div class="content">
-<pre>Command: windup-migrate-app was not found</pre>
+<pre class="nowrap">Command: windup-migrate-app was not found</pre>
 </div>
 </div>
 </li>
@@ -855,7 +831,7 @@ Be careful not to specify a report output directory that contains important info
 <p>Type the following command to run Windup in batch mode:</p>
 <div class="listingblock">
 <div class="content">
-<pre>For Linux:     $ WINDUP_HOME/bin/windup --input INPUT_ARCHIVE --output OUTPUT_REPORT --packages PACKAGE_1 PACKAGE_2 PACKAGE_N
+<pre class="nowrap">For Linux:     $ WINDUP_HOME/bin/windup --input INPUT_ARCHIVE --output OUTPUT_REPORT --packages PACKAGE_1 PACKAGE_2 PACKAGE_N
 For Windows:   &gt; WINDUP_HOME\bin\windup.bat --input INPUT_ARCHIVE --output OUTPUT_REPORT --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
 </div>
 </div>
@@ -907,7 +883,7 @@ For Windows:   &gt; WINDUP_HOME\bin\windup.bat --input INPUT_ARCHIVE --output OU
 <p>To evaluate an application archive, use the following syntax:</p>
 <div class="listingblock">
 <div class="content">
-<pre>WINDUP_HOME/bin/windup --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
+<pre class="nowrap">WINDUP_HOME/bin/windup --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -915,7 +891,7 @@ For Windows:   &gt; WINDUP_HOME\bin\windup.bat --input INPUT_ARCHIVE --output OU
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>WINDUP_HOME/bin/windup  --sourceMode true --source SOURCE_TECHNOLOGY --target TARGET_TECHNOLOGY --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
+<pre class="nowrap">WINDUP_HOME/bin/windup  --sourceMode true --source SOURCE_TECHNOLOGY --target TARGET_TECHNOLOGY --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -926,7 +902,7 @@ For Windows:   &gt; WINDUP_HOME\bin\windup.bat --input INPUT_ARCHIVE --output OU
 <p>You should see the following result upon completion of the command:</p>
 <div class="listingblock">
 <div class="content">
-<pre>**SUCCESS*** Windup report created: PATH_TO_REPORTS/index.html
+<pre class="nowrap">**SUCCESS*** Windup report created: PATH_TO_REPORTS/index.html
               Access it at this URL: file:///home/username/PATH_TO_REPORTS/index.html</pre>
 </div>
 </div>
@@ -988,7 +964,7 @@ The following subdirectories in the <code>OUTPUT_REPORT_DIRECTORY</code> contain
 <p>Type the following command to start Windup:</p>
 <div class="listingblock">
 <div class="content">
-<pre>For Linux:    WINDUP_HOME/bin $ ./windup
+<pre class="nowrap">For Linux:    WINDUP_HOME/bin $ ./windup
 For Windows:  C:\WINDUP_HOME\bin&gt; windup</pre>
 </div>
 </div>
@@ -997,7 +973,7 @@ For Windows:  C:\WINDUP_HOME\bin&gt; windup</pre>
 <p>You are presented with the following prompt.</p>
 <div class="listingblock">
 <div class="content">
-<pre>Using Windup at WINDUP_HOME
+<pre class="nowrap">Using Windup at WINDUP_HOME
 
  _       ___           __
 | |     / (_)___  ____/ /_  ______
@@ -1019,7 +995,7 @@ JBoss Windup, version [ 2.2.0.Final ] - JBoss, by Red Hat, Inc. [ http://windup.
 <p>To evaluate an application archive, use the following syntax:</p>
 <div class="listingblock">
 <div class="content">
-<pre>windup-migrate-app --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY -source SOURCE_TECHNOLOGY --target TARGET_TECHNOLOGY--packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
+<pre class="nowrap">windup-migrate-app --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY -source SOURCE_TECHNOLOGY --target TARGET_TECHNOLOGY--packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1027,7 +1003,7 @@ JBoss Windup, version [ 2.2.0.Final ] - JBoss, by Red Hat, Inc. [ http://windup.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>windup-migrate-app --sourceMode true --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY -source SOURCE_TECHNOLOGY --target TARGET_TECHNOLOGY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
+<pre class="nowrap">windup-migrate-app --sourceMode true --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY -source SOURCE_TECHNOLOGY --target TARGET_TECHNOLOGY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
 </div>
 </div>
 </li>
@@ -1035,7 +1011,7 @@ JBoss Windup, version [ 2.2.0.Final ] - JBoss, by Red Hat, Inc. [ http://windup.
 <p>You should see the following result upon completion of the command:</p>
 <div class="listingblock">
 <div class="content">
-<pre>***SUCCESS*** Windup execution successful!</pre>
+<pre class="nowrap">***SUCCESS*** Windup execution successful!</pre>
 </div>
 </div>
 <div class="admonitionblock warning">
@@ -1055,7 +1031,7 @@ Depending on the size of the application and the hardware Windup is running on, 
 <p>To exit Windup, type:</p>
 <div class="listingblock">
 <div class="content">
-<pre>exit</pre>
+<pre class="nowrap">exit</pre>
 </div>
 </div>
 </li>
@@ -1414,7 +1390,7 @@ The estimated Story Points change as new rules are added to Windup. The values h
 <p>Clone your Windup quickstart repository to your local file system:</p>
 <div class="listingblock">
 <div class="content">
-<pre>git clone https://github.com/YOUR_USER_NAME/windup-quickstarts.git</pre>
+<pre class="nowrap">git clone https://github.com/YOUR_USER_NAME/windup-quickstarts.git</pre>
 </div>
 </div>
 </li>
@@ -1422,7 +1398,7 @@ The estimated Story Points change as new rules are added to Windup. The values h
 <p>This creates and populates a <code>windup-quickstarts</code> directory on your local file system. Navigate to the newly created directory, for example</p>
 <div class="listingblock">
 <div class="content">
-<pre>cd windup-quickstarts/</pre>
+<pre class="nowrap">cd windup-quickstarts/</pre>
 </div>
 </div>
 </li>
@@ -1430,7 +1406,7 @@ The estimated Story Points change as new rules are added to Windup. The values h
 <p>If you want to be able to retrieve the lates code updates, add the remote <code>upstream</code> repository so you can fetch any changes to the original forked repository.</p>
 <div class="listingblock">
 <div class="content">
-<pre>git remote add upstream https://github.com/windup/windup-quickstarts.git</pre>
+<pre class="nowrap">git remote add upstream https://github.com/windup/windup-quickstarts.git</pre>
 </div>
 </div>
 </li>
@@ -1438,7 +1414,7 @@ The estimated Story Points change as new rules are added to Windup. The values h
 <p>To get the latest files from the <code>upstream</code> repository.</p>
 <div class="listingblock">
 <div class="content">
-<pre>git reset --hard upstream/master</pre>
+<pre class="nowrap">git reset --hard upstream/master</pre>
 </div>
 </div>
 </li>
@@ -1775,9 +1751,9 @@ The estimated Story Points change as new rules are added to Windup. The values h
 </div>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
-<col style="width: 33%;">
-<col style="width: 33%;">
-<col style="width: 33%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
 </colgroup>
 <thead>
 <tr>
@@ -1898,7 +1874,7 @@ The estimated Story Points change as new rules are added to Windup. The values h
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-05-28 11:24:15 EDT
+Last updated 2015-06-04 15:38:28 EDT
 </div>
 </div>
 </body>

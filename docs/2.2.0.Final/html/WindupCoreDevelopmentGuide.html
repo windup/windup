@@ -690,7 +690,7 @@ or core rule add-ons to the Windup project.</p>
 <p>Windup is an extensible and customizable rule-based tool that helps simplify migration of Java applications.</p>
 </div>
 <div class="paragraph">
-<p>Windup can be run as a standalone application or as a plug-in to Red Hat JBoss Developer Studio. Running from a <a href="http://forge.jboss.org">Forge</a> environment, it examines application artifacts, including project source directories and applications archives, then produces an HTML report highlighting areas that need changes. Windup can be used to migrate Java applications from previous versions of <em>Red Hat JBoss Enterprise Application Platform</em> or from other containers, such as <em>Oracle WebLogic Server</em> or <em>IBM® WebSphere® Application Server</em>.</p>
+<p>Running from a <a href="http://forge.jboss.org">Forge</a> environment, Windup examines application artifacts, including project source directories and applications archives, then produces an HTML report highlighting areas that need changes. Windup can be used to migrate Java applications from previous versions of <em>Red Hat JBoss Enterprise Application Platform</em> or from other containers, such as <em>Oracle WebLogic Server</em> or <em>IBM® WebSphere® Application Server</em>.</p>
 </div>
 </div>
 <div class="sect3">
@@ -703,13 +703,10 @@ spots” when migrating applications. The goal is to provide a high level view i
 </div>
 <div class="sect2">
 <h3 id="Features">1.2. Features of Windup</h3>
-<div class="hdlist">
-<table>
-<tr>
-<td class="hdlist1">
-Shared Data Model
-</td>
-<td class="hdlist2">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Shared Data Model</dt>
+<dd>
 <p>Windup creates a shared data model graph that provides the following benefits.</p>
 <div class="ulist">
 <ul>
@@ -724,13 +721,9 @@ Shared Data Model
 </li>
 </ul>
 </div>
-</td>
-</tr>
-<tr>
-<td class="hdlist1">
-Extensibility
-</td>
-<td class="hdlist2">
+</dd>
+<dt class="hdlist1">Extensibility</dt>
+<dd>
 <p>Windup can be extended by developers, users, and 3rd-party software.</p>
 <div class="ulist">
 <ul>
@@ -745,13 +738,9 @@ Extensibility
 </li>
 </ul>
 </div>
-</td>
-</tr>
-<tr>
-<td class="hdlist1">
-Better Rules
-</td>
-<td class="hdlist2">
+</dd>
+<dt class="hdlist1">Better Rules</dt>
+<dd>
 <p>Windup provides more powerful and complex rules.</p>
 <div class="ulist">
 <ul>
@@ -767,13 +756,9 @@ Better Rules
 </li>
 </ul>
 </div>
-</td>
-</tr>
-<tr>
-<td class="hdlist1">
-Automation
-</td>
-<td class="hdlist2">
+</dd>
+<dt class="hdlist1">Automation</dt>
+<dd>
 <p>Windup has the ability to automate some of the migration processes.</p>
 <div class="ulist">
 <ul>
@@ -788,21 +773,13 @@ Automation
 </li>
 </ul>
 </div>
-</td>
-</tr>
-<tr>
-<td class="hdlist1">
-Work Estimation
-</td>
-<td class="hdlist2">
+</dd>
+<dt class="hdlist1">Work Estimation</dt>
+<dd>
 <p>Estimates for the <em>level of effort</em> are based on the skills required and the classification of migration work needed. <em>Level of effort</em> is represented as <em>story points</em> in the Windup reports and are described in more detail here: <a href="#Rules-Rule-Story-Points">Rule Story Points</a>.</p>
-</td>
-</tr>
-<tr>
-<td class="hdlist1">
-Better Reporting
-</td>
-<td class="hdlist2">
+</dd>
+<dt class="hdlist1">Better Reporting</dt>
+<dd>
 <p>Windup  reports are now targeted for specific audiences.</p>
 <div class="ulist">
 <ul>
@@ -817,9 +794,8 @@ Better Reporting
 </li>
 </ul>
 </div>
-</td>
-</tr>
-</table>
+</dd>
+</dl>
 </div>
 </div>
 <div class="sect2">
@@ -908,7 +884,7 @@ otherwise(action)</pre>
 <p>If you installed previous versions of Windup, delete the <code>${user.home}/.windup/</code> directory. Otherwise you may see errors like the following when you execute Windup.</p>
 <div class="listingblock">
 <div class="content">
-<pre>Command: windup-migrate-app was not found</pre>
+<pre class="nowrap">Command: windup-migrate-app was not found</pre>
 </div>
 </div>
 </li>
@@ -1020,7 +996,7 @@ Be careful not to specify a report output directory that contains important info
 <p>Type the following command to run Windup in batch mode:</p>
 <div class="listingblock">
 <div class="content">
-<pre>For Linux:     $ WINDUP_HOME/bin/windup --input INPUT_ARCHIVE --output OUTPUT_REPORT --packages PACKAGE_1 PACKAGE_2 PACKAGE_N
+<pre class="nowrap">For Linux:     $ WINDUP_HOME/bin/windup --input INPUT_ARCHIVE --output OUTPUT_REPORT --packages PACKAGE_1 PACKAGE_2 PACKAGE_N
 For Windows:   &gt; WINDUP_HOME\bin\windup.bat --input INPUT_ARCHIVE --output OUTPUT_REPORT --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
 </div>
 </div>
@@ -1072,7 +1048,7 @@ For Windows:   &gt; WINDUP_HOME\bin\windup.bat --input INPUT_ARCHIVE --output OU
 <p>To evaluate an application archive, use the following syntax:</p>
 <div class="listingblock">
 <div class="content">
-<pre>WINDUP_HOME/bin/windup --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
+<pre class="nowrap">WINDUP_HOME/bin/windup --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1080,7 +1056,7 @@ For Windows:   &gt; WINDUP_HOME\bin\windup.bat --input INPUT_ARCHIVE --output OU
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>WINDUP_HOME/bin/windup  --sourceMode true --source SOURCE_TECHNOLOGY --target TARGET_TECHNOLOGY --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
+<pre class="nowrap">WINDUP_HOME/bin/windup  --sourceMode true --source SOURCE_TECHNOLOGY --target TARGET_TECHNOLOGY --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1091,7 +1067,7 @@ For Windows:   &gt; WINDUP_HOME\bin\windup.bat --input INPUT_ARCHIVE --output OU
 <p>You should see the following result upon completion of the command:</p>
 <div class="listingblock">
 <div class="content">
-<pre>**SUCCESS*** Windup report created: PATH_TO_REPORTS/index.html
+<pre class="nowrap">**SUCCESS*** Windup report created: PATH_TO_REPORTS/index.html
               Access it at this URL: file:///home/username/PATH_TO_REPORTS/index.html</pre>
 </div>
 </div>
@@ -1153,7 +1129,7 @@ The following subdirectories in the <code>OUTPUT_REPORT_DIRECTORY</code> contain
 <p>Type the following command to start Windup:</p>
 <div class="listingblock">
 <div class="content">
-<pre>For Linux:    WINDUP_HOME/bin $ ./windup
+<pre class="nowrap">For Linux:    WINDUP_HOME/bin $ ./windup
 For Windows:  C:\WINDUP_HOME\bin&gt; windup</pre>
 </div>
 </div>
@@ -1162,7 +1138,7 @@ For Windows:  C:\WINDUP_HOME\bin&gt; windup</pre>
 <p>You are presented with the following prompt.</p>
 <div class="listingblock">
 <div class="content">
-<pre>Using Windup at WINDUP_HOME
+<pre class="nowrap">Using Windup at WINDUP_HOME
 
  _       ___           __
 | |     / (_)___  ____/ /_  ______
@@ -1184,7 +1160,7 @@ JBoss Windup, version [ 2.2.0.Final ] - JBoss, by Red Hat, Inc. [ http://windup.
 <p>To evaluate an application archive, use the following syntax:</p>
 <div class="listingblock">
 <div class="content">
-<pre>windup-migrate-app --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY -source SOURCE_TECHNOLOGY --target TARGET_TECHNOLOGY--packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
+<pre class="nowrap">windup-migrate-app --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY -source SOURCE_TECHNOLOGY --target TARGET_TECHNOLOGY--packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1192,7 +1168,7 @@ JBoss Windup, version [ 2.2.0.Final ] - JBoss, by Red Hat, Inc. [ http://windup.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>windup-migrate-app --sourceMode true --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY -source SOURCE_TECHNOLOGY --target TARGET_TECHNOLOGY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
+<pre class="nowrap">windup-migrate-app --sourceMode true --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY -source SOURCE_TECHNOLOGY --target TARGET_TECHNOLOGY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
 </div>
 </div>
 </li>
@@ -1200,7 +1176,7 @@ JBoss Windup, version [ 2.2.0.Final ] - JBoss, by Red Hat, Inc. [ http://windup.
 <p>You should see the following result upon completion of the command:</p>
 <div class="listingblock">
 <div class="content">
-<pre>***SUCCESS*** Windup execution successful!</pre>
+<pre class="nowrap">***SUCCESS*** Windup execution successful!</pre>
 </div>
 </div>
 <div class="admonitionblock warning">
@@ -1220,7 +1196,7 @@ Depending on the size of the application and the hardware Windup is running on, 
 <p>To exit Windup, type:</p>
 <div class="listingblock">
 <div class="content">
-<pre>exit</pre>
+<pre class="nowrap">exit</pre>
 </div>
 </div>
 </li>
@@ -1627,7 +1603,7 @@ The estimated Story Points change as new rules are added to Windup. The values h
 ending <code>&lt;/profiles&gt;</code> element.</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;profile&gt;
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;profile&gt;
   &lt;id&gt;jboss-nexus-repository&lt;/id&gt;
   &lt;repositories&gt;
     &lt;repository&gt;
@@ -1662,7 +1638,7 @@ ending <code>&lt;/profiles&gt;</code> element.</p>
 element to make the profile active.</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;activeProfile&gt;jboss-nexus-repository&lt;/activeProfile&gt;</code></pre>
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;activeProfile&gt;jboss-nexus-repository&lt;/activeProfile&gt;</code></pre>
 </div>
 </div>
 </li>
@@ -1704,25 +1680,30 @@ element to make the profile active.</p>
 <ul>
 <li>
 <p>Be sure to generate an SSH key and add the public key to your GitHub account: <a href="https://help.github.com/articles/generating-ssh-keys" class="bare">https://help.github.com/articles/generating-ssh-keys</a>. You can verify the key using the following command:</p>
-<div class="literalblock">
+</li>
+</ul>
+</div>
+<div class="listingblock">
 <div class="content">
-<pre>ssh -T git@github.com</pre>
+<pre class="nowrap">ssh -T git@github.com</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>You should see a message indicating your ID has successfully authenticated.</p>
+<p>+
+You should see a message indicating your ID has successfully authenticated.</p>
 </div>
-</li>
+<div class="ulist">
+<ul>
 <li>
 <p>You should also configure your name and email identity using the following commands:</p>
-<div class="literalblock">
-<div class="content">
-<pre>git config --global user_name "FIRST_NAME LAST_NAME"
-git config --global user_email "YOUR_EMAIL_ADDRESS"</pre>
-</div>
-</div>
 </li>
 </ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">git config --global user_name "FIRST_NAME LAST_NAME"
+git config --global user_email "YOUR_EMAIL_ADDRESS"</pre>
+</div>
 </div>
 </div>
 <div class="sect3">
@@ -1739,7 +1720,7 @@ name 'origin'.</p>
 local file system.</p>
 <div class="listingblock">
 <div class="content">
-<pre>git clone https://github.com/&lt;your-username&gt;/windup.git</pre>
+<pre class="nowrap">git clone https://github.com/&lt;your-username&gt;/windup.git</pre>
 </div>
 </div>
 </li>
@@ -1751,7 +1732,7 @@ local file system.</p>
 the original forked repository.</p>
 <div class="listingblock">
 <div class="content">
-<pre>git remote add upstream git@github.com:windup/windup.git</pre>
+<pre class="nowrap">git remote add upstream git@github.com:windup/windup.git</pre>
 </div>
 </div>
 </li>
@@ -1759,7 +1740,7 @@ the original forked repository.</p>
 <p>Get the latest files from the <code>upstream</code> repository.</p>
 <div class="listingblock">
 <div class="content">
-<pre>git fetch upstream</pre>
+<pre class="nowrap">git fetch upstream</pre>
 </div>
 </div>
 </li>
@@ -1782,7 +1763,7 @@ name 'origin'.</p>
 <p>Clone your fork. This creates and populates a directory in your local file system.</p>
 <div class="listingblock">
 <div class="content">
-<pre>git clone https://github.com/&lt;your-username&gt;/windup-rulesets.git</pre>
+<pre class="nowrap">git clone https://github.com/&lt;your-username&gt;/windup-rulesets.git</pre>
 </div>
 </div>
 </li>
@@ -1794,7 +1775,7 @@ name 'origin'.</p>
 the original forked repository.</p>
 <div class="listingblock">
 <div class="content">
-<pre>git remote add upstream git@github.com:windup/windup-rulesets.git</pre>
+<pre class="nowrap">git remote add upstream git@github.com:windup/windup-rulesets.git</pre>
 </div>
 </div>
 </li>
@@ -1802,7 +1783,7 @@ the original forked repository.</p>
 <p>Get the latest files from the <code>upstream</code> repository.</p>
 <div class="listingblock">
 <div class="content">
-<pre>git fetch upstream</pre>
+<pre class="nowrap">git fetch upstream</pre>
 </div>
 </div>
 </li>
@@ -1822,7 +1803,7 @@ name 'origin'.</p>
 <p>Clone your fork. This creates and populates a directory in your local file system.</p>
 <div class="listingblock">
 <div class="content">
-<pre>git clone https://github.com/&lt;your-username&gt;/windup-distribution.git</pre>
+<pre class="nowrap">git clone https://github.com/&lt;your-username&gt;/windup-distribution.git</pre>
 </div>
 </div>
 </li>
@@ -1834,7 +1815,7 @@ name 'origin'.</p>
 the original forked repository.</p>
 <div class="listingblock">
 <div class="content">
-<pre>git remote add upstream git@github.com:windup/windup-distribution.git</pre>
+<pre class="nowrap">git remote add upstream git@github.com:windup/windup-distribution.git</pre>
 </div>
 </div>
 </li>
@@ -1842,7 +1823,7 @@ the original forked repository.</p>
 <p>Get the latest files from the <code>upstream</code> repository.</p>
 <div class="listingblock">
 <div class="content">
-<pre>git fetch upstream</pre>
+<pre class="nowrap">git fetch upstream</pre>
 </div>
 </div>
 </li>
@@ -1873,7 +1854,7 @@ to the Windup open source project. It describes how to build Windup from source 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>OpenJDK
+<pre class="nowrap">OpenJDK
 Oracle Java SE</pre>
 </div>
 </div>
@@ -1890,7 +1871,7 @@ following in a command prompt:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>mvn --version</pre>
+<pre class="nowrap">mvn --version</pre>
 </div>
 </div>
 </li>
@@ -2054,7 +2035,7 @@ or dependency errors and click <code>Finish</code>. If you get a dialog titled
 <p>Open a command terminal and navigate to the root of the Windup Ruleset project directory.</p>
 <div class="listingblock">
 <div class="content">
-<pre>    cd windup-ruleset/</pre>
+<pre class="nowrap">    cd windup-ruleset/</pre>
 </div>
 </div>
 </li>
@@ -2062,7 +2043,7 @@ or dependency errors and click <code>Finish</code>. If you get a dialog titled
 <p>Build the project.</p>
 <div class="listingblock">
 <div class="content">
-<pre>mvn clean install</pre>
+<pre class="nowrap">mvn clean install</pre>
 </div>
 </div>
 </li>
@@ -2077,7 +2058,7 @@ or dependency errors and click <code>Finish</code>. If you get a dialog titled
 <p>Open a command terminal and navigate to the root of the windup project directory.</p>
 <div class="listingblock">
 <div class="content">
-<pre>    cd windup/</pre>
+<pre class="nowrap">cd windup/</pre>
 </div>
 </div>
 </li>
@@ -2085,7 +2066,7 @@ or dependency errors and click <code>Finish</code>. If you get a dialog titled
 <p>Build the project.</p>
 <div class="listingblock">
 <div class="content">
-<pre>mvn clean install</pre>
+<pre class="nowrap">mvn clean install</pre>
 </div>
 </div>
 </li>
@@ -2093,7 +2074,7 @@ or dependency errors and click <code>Finish</code>. If you get a dialog titled
 <p>You can also build the project without the tests.</p>
 <div class="listingblock">
 <div class="content">
-<pre>mvn clean install -DskipTests</pre>
+<pre class="nowrap">mvn clean install -DskipTests</pre>
 </div>
 </div>
 </li>
@@ -2108,7 +2089,7 @@ or dependency errors and click <code>Finish</code>. If you get a dialog titled
 <p>Open a command terminal and navigate to the root of the Windup distribution project directory.</p>
 <div class="listingblock">
 <div class="content">
-<pre>    cd windup-distribution/</pre>
+<pre class="nowrap">cd windup-distribution/</pre>
 </div>
 </div>
 </li>
@@ -2116,7 +2097,7 @@ or dependency errors and click <code>Finish</code>. If you get a dialog titled
 <p>Build the project.</p>
 <div class="listingblock">
 <div class="content">
-<pre>mvn clean install</pre>
+<pre class="nowrap">mvn clean install</pre>
 </div>
 </div>
 </li>
@@ -2235,7 +2216,7 @@ or dependency errors and click <code>Finish</code>. If you get a dialog titled
 <h4 id="quick-build-review-for-experienced-developers">3.3.8. Quick Build Review for Experienced Developers</h4>
 <div class="listingblock">
 <div class="content">
-<pre>git clone git@github.com:windup/windup-ruleset.git windup
+<pre class="nowrap">git clone git@github.com:windup/windup-ruleset.git windup
 cd windup-ruleset
 mvn clean install
 git clone git@github.com:windup/windup.git windup
@@ -2263,7 +2244,7 @@ unzip target/windup-distribution-&lt;VERSION-offline.zip -d &lt;WINDUP-DIRECTORY
 <p>Experienced users who need a refresher can follow the steps below.</p>
 <div class="listingblock">
 <div class="content">
-<pre>mkdir tmp
+<pre class="nowrap">mkdir tmp
 cd tmp
 unzip -q ../dist/target/windup-*.zip
 cd windup-*
@@ -2307,7 +2288,7 @@ firefox Report/index.html</pre>
 <div class="sect3">
 <h4 id="project-source-code-formatting">4.1.1. Project Source Code Formatting</h4>
 <div class="paragraph">
-<p>All project source code contributed to Windup should be formatted using the settings defined in the <code>Eclipse_Code_Format_Profile.xml</code> file located in the root directory of the Windup project.</p>
+<p>All project source code contributed to Windup should be formatted using the settings defined in the <code>Eclipse_Code_Format_Profile.xml</code> file located in the <code>ide-config</code> directory of the Windup project.</p>
 </div>
 <div class="sect4">
 <h5 id="_eclipse_ide">Eclipse IDE</h5>
@@ -2323,7 +2304,7 @@ firefox Report/index.html</pre>
 <p>Click Import</p>
 </li>
 <li>
-<p>Browse to the <code>Eclipse_Code_Format_Profile.xml</code> located in the root of the Windup project directory, then click 'OK'.</p>
+<p>Browse to the <code>Eclipse_Code_Format_Profile.xml</code> located in the <code>ide-config</code> directory of the Windup project, then click 'OK'.</p>
 </li>
 </ol>
 </div>
@@ -2419,7 +2400,7 @@ firefox Report/index.html</pre>
 <p>Create a new topic branch to contain your features, changes, or fixes using the <code>git checkout</code> command:</p>
 <div class="listingblock">
 <div class="content">
-<pre> git checkout -b  &lt;topic-branch-name&gt; upstream/master</pre>
+<pre class="nowrap"> git checkout -b  &lt;topic-branch-name&gt; upstream/master</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2428,7 +2409,7 @@ branch name. For example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>git checkout -b WINDUP-225 upstream/master</pre>
+<pre class="nowrap">git checkout -b WINDUP-225 upstream/master</pre>
 </div>
 </div>
 </li>
@@ -2440,7 +2421,7 @@ branch name. For example:</p>
 staging area.</p>
 <div class="listingblock">
 <div class="content">
-<pre>git add &lt;folder-name&gt;/
+<pre class="nowrap">git add &lt;folder-name&gt;/
 git add &lt;file-name&gt;</pre>
 </div>
 </div>
@@ -2451,7 +2432,7 @@ directory and in the staging area and ensure that all modified files are
 properly staged:</p>
 <div class="listingblock">
 <div class="content">
-<pre>git status</pre>
+<pre class="nowrap">git status</pre>
 </div>
 </div>
 </li>
@@ -2459,7 +2440,7 @@ properly staged:</p>
 <p>Commit your changes to your local topic branch. For example:</p>
 <div class="listingblock">
 <div class="content">
-<pre>git commit -m 'WINDUP-225: Description of change...'</pre>
+<pre class="nowrap">git commit -m 'WINDUP-225: Description of change...'</pre>
 </div>
 </div>
 </li>
@@ -2469,7 +2450,7 @@ will create a branch on your GitHub fork repository with the same name as
 your local topic branch name.</p>
 <div class="listingblock">
 <div class="content">
-<pre>git push origin HEAD</pre>
+<pre class="nowrap">git push origin HEAD</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2482,7 +2463,7 @@ command `git remote -v`</em>.</p>
 <p>Browse to the newly created branch on your forked GitHub repository.</p>
 <div class="listingblock">
 <div class="content">
-<pre>https://github.com/&lt;your-username&gt;/windup/tree/&lt;topic-branch-name&gt;</pre>
+<pre class="nowrap">https://github.com/&lt;your-username&gt;/windup/tree/&lt;topic-branch-name&gt;</pre>
 </div>
 </div>
 </li>
@@ -3090,9 +3071,9 @@ FooModel = fooService.create();
 </div>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
-<col style="width: 33%;">
-<col style="width: 33%;">
-<col style="width: 33%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
 </colgroup>
 <thead>
 <tr>
@@ -3249,7 +3230,7 @@ FooModel = fooService.create();
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;?xml version="1.0"?&gt;
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;?xml version="1.0"?&gt;
 &lt;ruleset xmlns="http://windup.jboss.org/v1/xml" id="EjbRules"&gt;
     &lt;rules&gt;
         &lt;rule id="EjbRules_2fmb"&gt;
@@ -3273,7 +3254,7 @@ FooModel = fooService.create();
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">/**
+<pre class="highlight nowrap"><code class="language-java" data-lang="java">/**
  * Scans for classes with EJB related annotations, and adds EJB related metadata for these.
  */
 public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
@@ -3320,9 +3301,9 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
 <h4 id="_quick_comparison_summary">6.6.6. Quick Comparison Summary</h4>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
-<col style="width: 33%;">
-<col style="width: 33%;">
-<col style="width: 33%;">
+<col style="width: 60%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
 </colgroup>
 <thead>
 <tr>
@@ -3661,14 +3642,14 @@ Example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>return ConfigurationBuilder.begin()
+<pre class="highlight nowrap"><code class="language-java" data-lang="java">return ConfigurationBuilder.begin()
     .addRule()
     .perform(new GraphOperation(){
         @Override
         public void perform(GraphRewrite event, EvaluationContext context){
             ...
         }
-    });</pre>
+    });</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -3685,7 +3666,7 @@ Example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>return ConfigurationBuilder.begin()
+<pre class="highlight nowrap"><code class="language-java" data-lang="java">return ConfigurationBuilder.begin()
     .addRule()
     .when( ... )
     .perform(new GraphOperation(){
@@ -3693,7 +3674,7 @@ Example:</p>
         public void perform(GraphRewrite event, EvaluationContext context){
             ...
         }
-    });</pre>
+    });</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -3707,7 +3688,7 @@ Example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">public class ComputeArchivesSHA512 extends IteratingRuleProvider&lt;ArchiveModel&gt;
+<pre class="highlight nowrap"><code class="language-java" data-lang="java">public class ComputeArchivesSHA512 extends IteratingRuleProvider&lt;ArchiveModel&gt;
 {
     public ConditionBuilder when() {
         return Query.find(ArchiveModel.class);
@@ -3738,7 +3719,7 @@ Example:</p>
 <h4 id="_conditional_iteration_if_for">7.2.4. Conditional Iteration - if( &#8230;&#8203; ){ for( &#8230;&#8203; ) }</h4>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">return ConfigurationBuilder.begin()
+<pre class="highlight nowrap"><code class="language-java" data-lang="java">return ConfigurationBuilder.begin()
     .addRule()
     .when(
         new GraphCondition(){ ... }
@@ -3756,7 +3737,7 @@ Example:</p>
 <h4 id="_iteration_with_a_condition_for_if">7.2.5. Iteration With a Condition - for( &#8230;&#8203; ){ if( &#8230;&#8203; ){ &#8230;&#8203; } }</h4>
 <div class="listingblock">
 <div class="content">
-<pre>return ConfigurationBuilder.begin()
+<pre class="highlight nowrap"><code class="language-java" data-lang="java">return ConfigurationBuilder.begin()
 .addRule()
     .when(
         // Stores all ArchiveModel's into variables stack, under that type.
@@ -3775,7 +3756,7 @@ Example:</p>
                     return "ProjectModel == null";
                 }
             })
-            .perform( ... )</pre>
+            .perform( ... )</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -3786,7 +3767,7 @@ Example:</p>
 <h4 id="_nested_iterations_for_for">7.2.6. Nested Iterations - for( &#8230;&#8203; ){ for( &#8230;&#8203; ) { &#8230;&#8203; } }</h4>
 <div class="listingblock">
 <div class="content">
-<pre>.addRule()
+<pre class="highlight nowrap"><code class="language-java" data-lang="java">.addRule()
      .when(...)
      .perform(Iteration //first iteration
      .over("list_variable").as("single_var")
@@ -3795,11 +3776,11 @@ Example:</p>
          .perform(...).endIteration()
      )
      .endIteration()
-);</pre>
+);</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Windup source code example: <a href="https://github.com/windup/windup/blob/master/config/tests/src/test/java/org/jboss/windup/config/iteration/payload/IterationPayLoadPassTest.java#L183-L202" class="bare">https://github.com/windup/windup/blob/master/config/tests/src/test/java/org/jboss/windup/config/iteration/payload/IterationPayLoadPassTest.java#L183-L202</a></p>
+<p>Windup source code example: <a href="https://github.com/windup/windup/blob/master/config/tests/src/test/java/org/jboss/windup/config/iteration/payload/IterationPayLoadPassTest.java#L186-L202" class="bare">https://github.com/windup/windup/blob/master/config/tests/src/test/java/org/jboss/windup/config/iteration/payload/IterationPayLoadPassTest.java#L186-L202</a></p>
 </div>
 </div>
 </div>
@@ -4246,7 +4227,7 @@ Windup building elements.</p>
 <p>Pass the <code>--debug</code> argument on the command line when you execute Windup.</p>
 <div class="listingblock">
 <div class="content">
-<pre>For Linux:    WINDUP_HOME/bin $ ./windup --debug
+<pre class="nowrap">For Linux:    WINDUP_HOME/bin $ ./windup --debug
 For Windows:  C:\WINDUP_HOME\bin&gt; windup --debug</pre>
 </div>
 </div>
@@ -4255,7 +4236,7 @@ For Windows:  C:\WINDUP_HOME\bin&gt; windup --debug</pre>
 <p>Configure the <code>FORGE_OPTS</code> for debugging.</p>
 <div class="listingblock">
 <div class="content">
-<pre>export FORGE_OPTS="-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000"</pre>
+<pre class="nowrap">export FORGE_OPTS="-Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8000"</pre>
 </div>
 </div>
 </li>
@@ -4286,7 +4267,7 @@ For Windows:  C:\WINDUP_HOME\bin&gt; windup --debug</pre>
 <p>Add the following option</p>
 <div class="listingblock">
 <div class="content">
-<pre>-J-Xmx5200m -J-XX:MaxPermSize=1024m</pre>
+<pre class="nowrap">-J-Xmx5200m -J-XX:MaxPermSize=1024m</pre>
 </div>
 </div>
 </li>
@@ -4303,7 +4284,7 @@ For Windows:  C:\WINDUP_HOME\bin&gt; windup --debug</pre>
 <p>In the resulting dialog, enter the following.</p>
 <div class="listingblock">
 <div class="content">
-<pre>exec.args=-Djboss.modules.system.pkgs=org.netbeans</pre>
+<pre class="nowrap">exec.args=-Djboss.modules.system.pkgs=org.netbeans</pre>
 </div>
 </div>
 </li>
@@ -4321,7 +4302,7 @@ For Windows:  C:\WINDUP_HOME\bin&gt; windup --debug</pre>
 <p>Configure the <code>FORGE_OPTS</code> for Yourkit:</p>
 <div class="listingblock">
 <div class="content">
-<pre>export YOURKIT_HOME=/home/ondra/sw/prog/YourKit-b14092
+<pre class="nowrap">export YOURKIT_HOME=/home/ondra/sw/prog/YourKit-b14092
 export FORGE_OPTS="-Djboss.modules.system.pkgs=com.yourkit -agentpath:$YOURKIT_HOME/bin/linux-x86-64/libyjpagent.so=sampling,onexit=snapshot,delay=0"</pre>
 </div>
 </div>
@@ -4334,7 +4315,7 @@ Forge</a>, but skip the first 2 points that direct you to copy the YourKit modul
 <p>Run <code>windup-analyze-app</code>.</p>
 <div class="listingblock">
 <div class="content">
-<pre>forge -e windup-migrate-app</pre>
+<pre class="nowrap">forge -e windup-migrate-app</pre>
 </div>
 </div>
 </li>
@@ -4416,7 +4397,7 @@ This may especially happen after Maven coordinates of some module are changed.</
 <p>Clone your Windup quickstart repository to your local file system:</p>
 <div class="listingblock">
 <div class="content">
-<pre>git clone https://github.com/YOUR_USER_NAME/windup-quickstarts.git</pre>
+<pre class="nowrap">git clone https://github.com/YOUR_USER_NAME/windup-quickstarts.git</pre>
 </div>
 </div>
 </li>
@@ -4424,7 +4405,7 @@ This may especially happen after Maven coordinates of some module are changed.</
 <p>This creates and populates a <code>windup-quickstarts</code> directory on your local file system. Navigate to the newly created directory, for example</p>
 <div class="listingblock">
 <div class="content">
-<pre>cd windup-quickstarts/</pre>
+<pre class="nowrap">cd windup-quickstarts/</pre>
 </div>
 </div>
 </li>
@@ -4432,7 +4413,7 @@ This may especially happen after Maven coordinates of some module are changed.</
 <p>If you want to be able to retrieve the lates code updates, add the remote <code>upstream</code> repository so you can fetch any changes to the original forked repository.</p>
 <div class="listingblock">
 <div class="content">
-<pre>git remote add upstream https://github.com/windup/windup-quickstarts.git</pre>
+<pre class="nowrap">git remote add upstream https://github.com/windup/windup-quickstarts.git</pre>
 </div>
 </div>
 </li>
@@ -4440,7 +4421,7 @@ This may especially happen after Maven coordinates of some module are changed.</
 <p>To get the latest files from the <code>upstream</code> repository.</p>
 <div class="listingblock">
 <div class="content">
-<pre>git reset --hard upstream/master</pre>
+<pre class="nowrap">git reset --hard upstream/master</pre>
 </div>
 </div>
 </li>
@@ -4824,7 +4805,7 @@ Zizka (ozizka)</p>
 <h4 id="_irc_meeting_bot_commands_hint_for_the_moderator">10.2.7. IRC meeting bot commands (hint for the moderator)</h4>
 <div class="listingblock">
 <div class="content">
-<pre>#startmeeting
+<pre class="nowrap">#startmeeting
 #chair lincolnthree, ozizka, jsightler, mbriskar
 #addtopic Status Reports
 #addtopic Next steps
@@ -4900,7 +4881,7 @@ Useful Commands: #action #agreed #help #info #idea #link #topic.</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-05-28 11:24:15 EDT
+Last updated 2015-06-04 15:38:28 EDT
 </div>
 </div>
 </body>

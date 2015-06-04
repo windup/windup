@@ -465,9 +465,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#Rules-XML-Rule-Construction">3.2. XML-Rule-Construction</a>
 <ul class="sectlevel3">
-<li><a href="#_ruleset_element">3.2.1. Ruleset Element</a></li>
-<li><a href="#rule-elements">3.2.2. Rule Elements</a></li>
-<li><a href="#_predefined_rules">3.2.3. Predefined Rules</a></li>
+<li><a href="#_rulesets">3.2.1. Rulesets</a></li>
+<li><a href="#_predefined_rules">3.2.2. Predefined Rules</a></li>
 </ul>
 </li>
 <li><a href="#Rules-Create-a-Basic-XML-Rule">3.3. Create a Basic XML Rule</a>
@@ -602,7 +601,7 @@ custom XML-based rules for Windup.</p>
 <p>Windup is an extensible and customizable rule-based tool that helps simplify migration of Java applications.</p>
 </div>
 <div class="paragraph">
-<p>Windup can be run as a standalone application or as a plug-in to Red Hat JBoss Developer Studio. Running from a <a href="http://forge.jboss.org">Forge</a> environment, it examines application artifacts, including project source directories and applications archives, then produces an HTML report highlighting areas that need changes. Windup can be used to migrate Java applications from previous versions of <em>Red Hat JBoss Enterprise Application Platform</em> or from other containers, such as <em>Oracle WebLogic Server</em> or <em>IBM® WebSphere® Application Server</em>.</p>
+<p>Running from a <a href="http://forge.jboss.org">Forge</a> environment, Windup examines application artifacts, including project source directories and applications archives, then produces an HTML report highlighting areas that need changes. Windup can be used to migrate Java applications from previous versions of <em>Red Hat JBoss Enterprise Application Platform</em> or from other containers, such as <em>Oracle WebLogic Server</em> or <em>IBM® WebSphere® Application Server</em>.</p>
 </div>
 </div>
 <div class="sect3">
@@ -615,13 +614,10 @@ spots” when migrating applications. The goal is to provide a high level view i
 </div>
 <div class="sect2">
 <h3 id="Features">1.2. Features of Windup</h3>
-<div class="hdlist">
-<table>
-<tr>
-<td class="hdlist1">
-Shared Data Model
-</td>
-<td class="hdlist2">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Shared Data Model</dt>
+<dd>
 <p>Windup creates a shared data model graph that provides the following benefits.</p>
 <div class="ulist">
 <ul>
@@ -636,13 +632,9 @@ Shared Data Model
 </li>
 </ul>
 </div>
-</td>
-</tr>
-<tr>
-<td class="hdlist1">
-Extensibility
-</td>
-<td class="hdlist2">
+</dd>
+<dt class="hdlist1">Extensibility</dt>
+<dd>
 <p>Windup can be extended by developers, users, and 3rd-party software.</p>
 <div class="ulist">
 <ul>
@@ -657,13 +649,9 @@ Extensibility
 </li>
 </ul>
 </div>
-</td>
-</tr>
-<tr>
-<td class="hdlist1">
-Better Rules
-</td>
-<td class="hdlist2">
+</dd>
+<dt class="hdlist1">Better Rules</dt>
+<dd>
 <p>Windup provides more powerful and complex rules.</p>
 <div class="ulist">
 <ul>
@@ -679,13 +667,9 @@ Better Rules
 </li>
 </ul>
 </div>
-</td>
-</tr>
-<tr>
-<td class="hdlist1">
-Automation
-</td>
-<td class="hdlist2">
+</dd>
+<dt class="hdlist1">Automation</dt>
+<dd>
 <p>Windup has the ability to automate some of the migration processes.</p>
 <div class="ulist">
 <ul>
@@ -700,21 +684,13 @@ Automation
 </li>
 </ul>
 </div>
-</td>
-</tr>
-<tr>
-<td class="hdlist1">
-Work Estimation
-</td>
-<td class="hdlist2">
+</dd>
+<dt class="hdlist1">Work Estimation</dt>
+<dd>
 <p>Estimates for the <em>level of effort</em> are based on the skills required and the classification of migration work needed. <em>Level of effort</em> is represented as <em>story points</em> in the Windup reports and are described in more detail here: <a href="#Rules-Rule-Story-Points">Rule Story Points</a>.</p>
-</td>
-</tr>
-<tr>
-<td class="hdlist1">
-Better Reporting
-</td>
-<td class="hdlist2">
+</dd>
+<dt class="hdlist1">Better Reporting</dt>
+<dd>
 <p>Windup  reports are now targeted for specific audiences.</p>
 <div class="ulist">
 <ul>
@@ -729,9 +705,8 @@ Better Reporting
 </li>
 </ul>
 </div>
-</td>
-</tr>
-</table>
+</dd>
+</dl>
 </div>
 </div>
 <div class="sect2">
@@ -817,7 +792,7 @@ otherwise(action)</pre>
 <p>If you installed previous versions of Windup, delete the <code>${user.home}/.windup/</code> directory. Otherwise you may see errors like the following when you execute Windup.</p>
 <div class="listingblock">
 <div class="content">
-<pre>Command: windup-migrate-app was not found</pre>
+<pre class="nowrap">Command: windup-migrate-app was not found</pre>
 </div>
 </div>
 </li>
@@ -848,10 +823,13 @@ otherwise(action)</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>As you create your first rule, refer to the <a href="http://windup.jboss.org/schema/rule-schema_1_0.xsd">Rules Schema</a> for valid XML syntax.</p>
+<p>Ruleset and Rule XML elements are covered in more detail here: <a href="#Rules-XML-Rule-Construction">XML Rule Construction</a>.</p>
 </div>
 <div class="paragraph">
-<p>For more information about XML rule construction, see <a href="#Rules-Create-a-Basic-XML-Rule">Create a Basic XML Rule</a>.</p>
+<p>Additional details about creating XML rules, with example syntax, can be found here: <a href="#Rules-Create-a-Basic-XML-Rule">Create a Basic XML Rule</a>.</p>
+</div>
+<div class="paragraph">
+<p>As you create your first rule, refer to the <a href="http://windup.jboss.org/schema/windup-jboss-ruleset.xsd">Rules Schema</a> for valid XML syntax.</p>
 </div>
 </div>
 <div class="sect3">
@@ -871,7 +849,7 @@ otherwise(action)</pre>
 <p>Create a directory structure to contain your first rule and the data file to use for testing.</p>
 <div class="listingblock">
 <div class="content">
-<pre>$ mkdir -p migration-rules/rules
+<pre class="nowrap">$ mkdir -p migration-rules/rules
 $ mkdir -p migration-rules/data</pre>
 </div>
 </div>
@@ -893,7 +871,7 @@ $ mkdir -p migration-rules/data</pre>
 <p>Copy in the following content.</p>
 <div class="listingblock">
 <div class="content">
-<pre>&lt;!DOCTYPE jboss-web PUBLIC "-//JBoss//DTD Web Application 4.2//EN" "http://www.jboss.org/j2ee/dtd/jboss-web_4_2.dtd"&gt;
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;!DOCTYPE jboss-web PUBLIC "-//JBoss//DTD Web Application 4.2//EN" "http://www.jboss.org/j2ee/dtd/jboss-web_4_2.dtd"&gt;
 &lt;jboss-web&gt;
     &lt;class-loading java2ClassLoadingCompliance="false"&gt;
         &lt;loader-repository&gt;
@@ -901,7 +879,7 @@ $ mkdir -p migration-rules/data</pre>
             &lt;loader-repository-config&gt;java2ParentDelegation=false&lt;/loader-repository-config&gt;
         &lt;/loader-repository&gt;
     &lt;/class-loading&gt;
-&lt;/jboss-web&gt;</pre>
+&lt;/jboss-web&gt;</code></pre>
 </div>
 </div>
 </li>
@@ -916,7 +894,7 @@ $ mkdir -p migration-rules/data</pre>
 <p>Use your favorite editor or IDE to create an XML file in the <code>~/migration-rules/rules/</code> subdirectory named <code>JBoss5-web-class-loading.windup.xml</code>. Copy in the following content.</p>
 <div class="listingblock">
 <div class="content">
-<pre>&lt;?xml version="1.0"?&gt;
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;?xml version="1.0"?&gt;
 &lt;ruleset xmlns="http://windup.jboss.org/v1/xml" id="UNIQUE_RULESET_ID"&gt;
     &lt;metadata&gt;
         &lt;description&gt;
@@ -924,6 +902,7 @@ $ mkdir -p migration-rules/data</pre>
         &lt;/description&gt;
         &lt;sourceTechnology id="SOURCE_ID" versionRange="VERSION-RANGE"/&gt;
         &lt;targetTechnology id="TARGET_ID" versionRange="VERSION-RANGE"/&gt;
+        &lt;tag&gt;Reviewed-2015-05-01&lt;/tag&gt;
     &lt;/metadata&gt;
     &lt;rules&gt;
         &lt;rule id="UNIQUE_RULE_ID"&gt;
@@ -935,7 +914,7 @@ $ mkdir -p migration-rules/data</pre>
             &lt;/perform&gt;
         &lt;/rule&gt;
      &lt;/rules&gt;
-&lt;/ruleset&gt;</pre>
+&lt;/ruleset&gt;</code></pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -975,9 +954,9 @@ Windup identifies files with the <code>.windup.xml</code> extension as XML-based
 <p>To match on the <code>class-loading</code> element that is a child of <code>jboss-web</code>, use the xpath expression "jboss-web/class-loading".</p>
 <div class="listingblock">
 <div class="content">
-<pre>&lt;when&gt;
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;when&gt;
     &lt;xmlfile matches="jboss-web/class-loading" /&gt;
-&lt;/when&gt;</pre>
+&lt;/when&gt;</code></pre>
 </div>
 </div>
 </li>
@@ -998,14 +977,14 @@ Windup identifies files with the <code>.windup.xml</code> extension as XML-based
 <p>Assign a level of effort of "1" to this task.</p>
 <div class="listingblock">
 <div class="content">
-<pre>&lt;perform&gt;
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;perform&gt;
     &lt;iteration&gt;
         &lt;classification classification="JBoss Web Application Descriptor" effort="0"/&gt;
         &lt;hint message="The class-loading element is no longer valid in the jboss-web.xml file." effort="1"&gt;
             &lt;link href="https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html-single/Migration_Guide/index.html#Create_or_Modify_Files_That_Control_Class_Loading_in_JBoss_Enterprise_Application_Platform_6" description="Create or Modify Files That Control Class Loading in JBoss EAP 6"/&gt;
         &lt;/hint&gt;
     &lt;/iteration&gt;
-&lt;/perform&gt;</pre>
+&lt;/perform&gt;</code></pre>
 </div>
 </div>
 </li>
@@ -1016,7 +995,7 @@ Windup identifies files with the <code>.windup.xml</code> extension as XML-based
 <p>The rule is now complete and should look like the following example.</p>
 <div class="listingblock">
 <div class="content">
-<pre>&lt;?xml version="1.0"?&gt;
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;?xml version="1.0"?&gt;
 &lt;ruleset xmlns="http://windup.jboss.org/v1/xml" id="JBoss5-web-class-loading"&gt;
     &lt;metadata&gt;
         &lt;description&gt;
@@ -1040,7 +1019,7 @@ Windup identifies files with the <code>.windup.xml</code> extension as XML-based
             &lt;/perform&gt;
         &lt;/rule&gt;
      &lt;/rules&gt;
-&lt;/ruleset&gt;</pre>
+&lt;/ruleset&gt;</code></pre>
 </div>
 </div>
 </li>
@@ -1057,7 +1036,7 @@ Windup identifies files with the <code>.windup.xml</code> extension as XML-based
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>For Linux or Mac: ~/.windup/rules/
+<pre class="nowrap">For Linux or Mac: ~/.windup/rules/
 For Windows: "\Documents and Settings\USER_NAME\.windup\rules\" or "\Users\USER_NAME\.windup\rules\"</pre>
 </div>
 </div>
@@ -1073,22 +1052,14 @@ For Windows: "\Documents and Settings\USER_NAME\.windup\rules\" or "\Users\USER_
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Open a terminal and navigate to the WINDUP_HOME/bin directory</p>
+<p>Open a terminal and navigate to the WINDUP_HOME directory.</p>
 </li>
 <li>
-<p>Type the following command to start Windup:</p>
+<p>Type the following command to test the rule in batch mode, passing the test file as an input argument and a directory for the output report.</p>
 <div class="listingblock">
 <div class="content">
-<pre>For Linux:    windup/bin $ ./windup
-For Windows:  C:\WINDUP_HOME\bin&gt; windup</pre>
-</div>
-</div>
-</li>
-<li>
-<p>Execute the <code>windup-migrate-app</code> command, passing the test data file as the input parameter.</p>
-<div class="listingblock">
-<div class="content">
-<pre>windup-migrate-app sourceMode true --input ~/migration-rules/data --output ~/migration-rules/reports</pre>
+<pre class="nowrap">For Linux:    WINDUP_HOME/bin/windup --sourceMode true --input ~/migration-rules/data --output ~/migration-rules/reports
+For Windows:  WINDUP_HOME\bin\windup.bat --sourceMode true --input migration-rules\data --output migration-rules\reports</pre>
 </div>
 </div>
 </li>
@@ -1096,7 +1067,7 @@ For Windows:  C:\WINDUP_HOME\bin&gt; windup</pre>
 <p>You should see this result.</p>
 <div class="listingblock">
 <div class="content">
-<pre>***SUCCESS*** Windup report created: /home/your-username/migration-rules/reports/index.html
+<pre class="nowrap">***SUCCESS*** Windup report created: /home/your-username/migration-rules/reports/index.html
               Access it at this URL: file:///home/your-username/migration-rules/reports/index.html</pre>
 </div>
 </div>
@@ -1235,7 +1206,7 @@ For Windows:  C:\WINDUP_HOME\bin&gt; windup</pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;?xml version="1.0"?&gt;
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;?xml version="1.0"?&gt;
 &lt;ruleset xmlns="http://windup.jboss.org/v1/xml" id="EjbRules"&gt;
     &lt;rules&gt;
         &lt;rule id="EjbRules_2fmb"&gt;
@@ -1259,7 +1230,7 @@ For Windows:  C:\WINDUP_HOME\bin&gt; windup</pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">/**
+<pre class="highlight nowrap"><code class="language-java" data-lang="java">/**
  * Scans for classes with EJB related annotations, and adds EJB related metadata for these.
  */
 public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
@@ -1306,9 +1277,9 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
 <h4 id="_quick_comparison_summary">3.1.6. Quick Comparison Summary</h4>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
-<col style="width: 33%;">
-<col style="width: 33%;">
-<col style="width: 33%;">
+<col style="width: 60%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
 </colgroup>
 <thead>
 <tr>
@@ -1363,14 +1334,14 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
 <p>This section describes the basic construction of XML rules. All XML rules are defined as elements within rulesets.</p>
 </div>
 <div class="sect3">
-<h4 id="_ruleset_element">3.2.1. Ruleset Element</h4>
+<h4 id="_rulesets">3.2.1. Rulesets</h4>
 <div class="paragraph">
 <p>A  ruleset is a group of one or more rules that targets a specific area of migration. This is the basic construct for the <code>&lt;ruleset&gt;</code> element.</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><strong>&lt;ruleset&gt;</strong>: This element defines this as a Windup ruleset.</p>
+<p><strong>&lt;ruleset id="UNIQUE_RULESET_ID&gt;</strong>: This element defines this as a Windup ruleset and gives it a unique ruleset ID.</p>
 <div class="ulist">
 <ul>
 <li>
@@ -1397,270 +1368,41 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
 <div class="ulist">
 <ul>
 <li>
-<p><strong>&lt;rule/&gt;</strong>: This element is defines the rule.</p>
-<div class="paragraph">
-<p>One or more rules can be defined for a ruleset.
-See <a href="#rule-elements">Rule Elements</a> in the following section for details on how to define <code>&lt;rule&gt;</code> elements.</p>
-</div>
+<p><strong>&lt;rule id=UNIQUE_RULESET_ID_UNIQUE_RULE_ID&gt;</strong>: This element is defines the rule and gives it a unique ID. One or more rules can be defined for a ruleset.</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>&lt;when&gt;</strong>: This element defines the condition or conditions to match on. For a detailed description of the elements allowed in a <code>&lt;when&gt;</code>, see <a href="#Rules-XML-Rule-When-Condition-Syntax">XML Rule - When Condition Syntax</a>.</p>
 </li>
 <li>
-<p><strong>&lt;rule/&gt;</strong></p>
-<div class="paragraph">
-<p>Defines an individual rule.</p>
-</div>
+<p><strong>&lt;perform&gt;</strong>: This element defines the action to be performed when the rule condition is matched. For a detailed description of the elements allowed in a <code>&lt;perform&gt;</code>, see <a href="#Rules-XML-Rule-Perform-Action-Syntax">XML Rule - Perform Action Syntax</a>.</p>
 </li>
 <li>
-<p><strong>&lt;file-mapping/&gt;</strong></p>
-<div class="paragraph">
-<p>Map an extension to a graph type</p>
-</div>
+<p><strong>&lt;otherwise&gt;</strong>: This element defines the action to be performed when the rule condition is not matched. This element takes the same child elements as the <code>&lt;perform&gt;</code> element.</p>
 </li>
 <li>
-<p><strong>&lt;package-mapping/&gt;</strong></p>
-<div class="paragraph">
-<p>Maps from a package pattern (regular expression) to a organization name.</p>
-</div>
+<p><strong>&lt;where&gt;</strong>: This element matches on a string pattern.</p>
 </li>
 </ul>
 </div>
 </li>
 <li>
-<p><strong>&lt;/rules&gt;</strong></p>
+<p><strong>&lt;file-mapping/&gt;</strong>: Mapa an extension to a graph type</p>
+</li>
+<li>
+<p><strong>&lt;package-mapping/&gt;</strong>: Maps from a package pattern (regular expression) to a organization name.</p>
 </li>
 </ul>
 </div>
 </li>
-<li>
-<p><strong>&lt;/ruleset&gt;</strong>:</p>
+</ul>
+</div>
 </li>
 </ul>
 </div>
 </div>
 <div class="sect3">
-<h4 id="rule-elements">3.2.2. Rule Elements</h4>
-<div class="paragraph">
-<p>Rule elements follow the familiar construct:</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>when(condition)
-    perform(action)
-otherwise(action)</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The following section describes the more commonly used elements in a <code>&lt;rule.</code>.</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><strong>&lt;when&gt;</strong>: This element defines the condition or conditions to match on.</p>
-<div class="ulist">
-<ul>
-<li>
-<p><strong>&lt;javaclass/&gt;</strong>: Match on a Java class.</p>
-<div class="paragraph">
-<p>This element can have the following attributes:</p>
-</div>
-<table class="tableblock frame-all grid-all spread">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Attribute</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">references="CLASS_NAME"</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Match on the fully qualified class name. Wildcards can be specified using <code>{*}</code> syntax. For example: "org.apache.commons.{*}"</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">in="FILE_NAME"</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The file name</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">as="VARIABLE_NAME"</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">An optional variable name that can be used in later processing.</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>This element can contain the following elements:</p>
-</div>
-<table class="tableblock frame-all grid-all spread">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Element</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;location&gt;</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The location where the reference was found in a Java source file, for example, in the IMPORT, ANNOTATION, METHOD, VARIABLE_DECLARATION. You can specify multiple locations. See the <a href="http://windup.github.io/windup/docs/javadoc/latest/org/jboss/windup/rules/apps/java/scan/ast/TypeReferenceLocation.html">TypeReferenceLocation</a> Javadoc for the full list of valid values.</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>For more information, see the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/rules/apps/java/condition/JavaClass.html">JavaClass</a> JavaDoc.</p>
-</div>
-</li>
-<li>
-<p><strong>&lt;xmlfile/&gt;</strong>: Match on an XML file. The following table lists some of the most commonly used attributes and elements.</p>
-<div class="paragraph">
-<p>This element can have the following attributes:</p>
-</div>
-<table class="tableblock frame-all grid-all spread">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Attribute</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">matches="XPATH_PATH"</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Match on the XPath, for example: "/w:web-app/w:resource-ref/w:res-auth[text() = 'Container']". Wildcards can be specified using <code>{*}</code> syntax.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">in="FILE_NAME"</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The file name</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">as="VARIABLE_NAME"</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">An optional variable name that can be used in later processing.</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>This element can contain the following elements:</p>
-</div>
-<table class="tableblock frame-all grid-all spread">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Element</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;namespace&gt;</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The namespace prefix and URI</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>For more information, see the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/rules/apps/xml/condition/XmlFile.html">XmlFile</a> JavaDoc.</p>
-</div>
-</li>
-<li>
-<p><strong>&lt;project/&gt;</strong>: Match on a project. The following table lists some of the most commonly used attributes and elements. For more information, see the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/project/condition/Project.html">Project</a> JavaDoc.</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p><strong>&lt;/when&gt;</strong></p>
-</li>
-<li>
-<p><strong>&lt;perform&gt;</strong>: This element is invoked when the condition is met.</p>
-<div class="ulist">
-<ul>
-<li>
-<p><strong>&lt;hint&gt;</strong>: This child element of <strong>perform</strong> is used to create a <code>hint</code>
-This element can have the following attributes:</p>
-<table class="tableblock frame-all grid-all spread">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Attribute</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">effort=LEVEL_OF_EFFORT</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">A level of effort assigned to this rule</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">message="MESSAGE"</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The message ??</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">in="VARIABLE_NAME"</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">A variable to use for substitution.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">title="Title"</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The title ??.</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>This element can contain the following elements:</p>
-</div>
-<table class="tableblock frame-all grid-all spread">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Element</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;message&gt;</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The message to display in the report.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;link&gt;</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">An HREF link and description for further information.</p></td>
-</tr>
-</tbody>
-</table>
-</li>
-<li>
-<p><strong>&lt;xslt&gt;</strong>: This specifies how to transform the the specified XML file</p>
-</li>
-<li>
-<p><strong>&lt;log&gt;</strong>: This child element of <strong>perform</strong> is used to log a message. It takes the attribute <strong>message</strong> to define the text message.</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p><strong>&lt;/perform&gt;</strong></p>
-</li>
-<li>
-<p>The <strong>&lt;otherwise/&gt;</strong> element is invoked when the condition is not met.</p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_predefined_rules">3.2.3. Predefined Rules</h4>
+<h4 id="_predefined_rules">3.2.2. Predefined Rules</h4>
 <div class="paragraph">
 <p>Windup provides some predefined rules for more common migration requirements, for example, mapping files from the source platform to target platform. The following is an example of the predefined "XmlFileMappings" rule.</p>
 </div>
@@ -1716,7 +1458,7 @@ This element can have the following attributes:</p>
 <p>The JavaDoc for the Windup API is located here: <a href="http://windup.github.io/windup/docs/javadoc/latest/" class="bare">http://windup.github.io/windup/docs/javadoc/latest/</a></p>
 </li>
 <li>
-<p>The XML rule schema is located here: <a href="http://windup.jboss.org/schema/rule-schema_1_0.xsd" class="bare">http://windup.jboss.org/schema/rule-schema_1_0.xsd</a></p>
+<p>The XML rule schema is located here: <a href="http://windup.jboss.org/schema/windup-jboss-ruleset.xsd" class="bare">http://windup.jboss.org/schema/windup-jboss-ruleset.xsd</a></p>
 </li>
 </ul>
 </div>
@@ -1745,9 +1487,9 @@ otherwise(action)</pre>
 <div class="paragraph">
 <p>The following is the basic syntax for XML rules.</p>
 </div>
-<div class="literalblock">
+<div class="listingblock">
 <div class="content">
-<pre>&lt;?xml version="1.0"?&gt;
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;?xml version="1.0"?&gt;
 &lt;ruleset xmlns="http://windup.jboss.org/v1/xml" id="&lt;unique-rule-identifier"&gt;
     &lt;metadata&gt;
         &lt;!-- Metadata about the rule including a description,
@@ -1766,8 +1508,8 @@ otherwise(action)</pre>
                 &lt;!-- Perform this action when condition is not satisfied --&gt;
             &lt;/otherwise&gt;
         &lt;/rule&gt;
-      &lt;rules&gt;
-    &lt;/ruleset&gt;</pre>
+    &lt;rules&gt;
+&lt;/ruleset&gt;</code></pre>
 </div>
 </div>
 </div>
@@ -1781,7 +1523,7 @@ otherwise(action)</pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;ruleset id=”ruleset-id”&gt;
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;ruleset id=”ruleset-id”&gt;
 &lt;metadata&gt;
         &lt;description&gt;
                 This is the description.
@@ -1794,12 +1536,10 @@ otherwise(action)</pre>
         &lt;sourceTechnology id="ejb" versionRange="(2,3]"/&gt;
         &lt;targetTechnology id="eap" versionRange="(5,6]"/&gt;
         &lt;targetTechnology id="ejb" versionRange="(2,3]"/&gt;
-        &lt;tags&gt;
-                &lt;tag&gt;require-stateless&lt;/tag&gt;
-                &lt;tag&gt;require-nofilesystem-io&lt;/tag&gt;
-        &lt;/tags&gt;
-        &lt;executeAfter&gt;AfterId&lt;/executeAfter&gt;
-        &lt;executeBefore&gt;BeforeId&lt;/executeBefore&gt;
+        &lt;tag&gt;require-stateless&lt;/tag&gt;
+        &lt;tag&gt;require-nofilesystem-io&lt;/tag&gt;
+        &lt;executeAfter&gt;AfterRulesetId&lt;/executeAfter&gt;
+        &lt;executeBefore&gt;BeforeRulesetId&lt;/executeBefore&gt;
     &lt;/metadata&gt;
     &lt;rules&gt;
     &lt;/rules&gt;
@@ -1838,10 +1578,10 @@ otherwise(action)</pre>
 <div class="ulist">
 <ul>
 <li>
-<p><a href="http://windup.jboss.org/schema/rule-schema_1_0.xsd" class="bare">http://windup.jboss.org/schema/rule-schema_1_0.xsd</a></p>
+<p><a href="http://windup.jboss.org/schema/windup-jboss-ruleset.xsd" class="bare">http://windup.jboss.org/schema/windup-jboss-ruleset.xsd</a></p>
 </li>
 <li>
-<p><a href="https://github.com/windup/windup/blob/master/config-xml/rule-schema_1_0.xsd" class="bare">https://github.com/windup/windup/blob/master/config-xml/rule-schema_1_0.xsd</a></p>
+<p><a href="https://github.com/windup/windup/blob/master/config-xml/windup-jboss-ruleset.xsd" class="bare">https://github.com/windup/windup/blob/master/config-xml/windup-jboss-ruleset.xsd</a></p>
 </li>
 </ul>
 </div>
@@ -1857,10 +1597,10 @@ otherwise(action)</pre>
 <p>XSD_VALIDATOR: The path to the extracted xsd-validator.</p>
 </li>
 <li>
-<p>XSD_SCHEMA: The path to the local Windup rule-schema_1_0.xsd file.</p>
+<p>XSD_SCHEMA: The path to the local Windup windup-jboss-ruleset.xsd file.</p>
 <div class="listingblock">
 <div class="content">
-<pre>find RULESET_DIRECTORY -type f -iname "*.windup.xml" -exec XSD_VALIDATOR./xsdv.sh XSD_SCHEMA {} \;</pre>
+<pre class="nowrap">find RULESET_DIRECTORY -type f -iname "*.windup.xml" -exec XSD_VALIDATOR./xsdv.sh XSD_SCHEMA {} \;</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1868,7 +1608,7 @@ otherwise(action)</pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre> find ~/MigrationRules/ -type f -iname "*.windup.xml" -exec ~/Downloads/xsdv/xsdv.sh ~/windup/config-xml/rule-schema_1_0.xsd {} \;</pre>
+<pre class="nowrap"> find ~/MigrationRules/ -type f -iname "*.windup.xml" -exec ~/Downloads/xsdv/xsdv.sh ~/windup/config-xml/windup-jboss-ruleset.xsd {} \;</pre>
 </div>
 </div>
 </li>
@@ -1906,7 +1646,7 @@ otherwise(action)</pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>For Linux or Mac:   ~/.windup/rules/
+<pre class="nowrap">For Linux or Mac:   ~/.windup/rules/
 For Windows: "\Documents and Settings\USER_NAME\.windup\rules\"  -or-  "\Users\USER_NAME\.windup\rules\"</pre>
 </div>
 </div>
@@ -1928,7 +1668,7 @@ For Windows: "\Documents and Settings\USER_NAME\.windup\rules\"  -or-  "\Users\U
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>windup-migrate-app [--sourceMode true] --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
+<pre class="nowrap">windup-migrate-app [--sourceMode true] --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1936,7 +1676,7 @@ For Windows: "\Documents and Settings\USER_NAME\.windup\rules\"  -or-  "\Users\U
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>***SUCCESS*** Windup report created: OUTPUT_REPORT_DIRECTORY/index.html</pre>
+<pre class="nowrap">***SUCCESS*** Windup report created: OUTPUT_REPORT_DIRECTORY/index.html</pre>
 </div>
 </div>
 </li>
@@ -2061,7 +1801,7 @@ Be careful not to specify a report output directory that contains important info
 <p>Type the following command to run Windup in batch mode:</p>
 <div class="listingblock">
 <div class="content">
-<pre>For Linux:     $ WINDUP_HOME/bin/windup --input INPUT_ARCHIVE --output OUTPUT_REPORT --packages PACKAGE_1 PACKAGE_2 PACKAGE_N
+<pre class="nowrap">For Linux:     $ WINDUP_HOME/bin/windup --input INPUT_ARCHIVE --output OUTPUT_REPORT --packages PACKAGE_1 PACKAGE_2 PACKAGE_N
 For Windows:   &gt; WINDUP_HOME\bin\windup.bat --input INPUT_ARCHIVE --output OUTPUT_REPORT --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
 </div>
 </div>
@@ -2113,7 +1853,7 @@ For Windows:   &gt; WINDUP_HOME\bin\windup.bat --input INPUT_ARCHIVE --output OU
 <p>To evaluate an application archive, use the following syntax:</p>
 <div class="listingblock">
 <div class="content">
-<pre>WINDUP_HOME/bin/windup --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
+<pre class="nowrap">WINDUP_HOME/bin/windup --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2121,7 +1861,7 @@ For Windows:   &gt; WINDUP_HOME\bin\windup.bat --input INPUT_ARCHIVE --output OU
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>WINDUP_HOME/bin/windup  --sourceMode true --source SOURCE_TECHNOLOGY --target TARGET_TECHNOLOGY --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
+<pre class="nowrap">WINDUP_HOME/bin/windup  --sourceMode true --source SOURCE_TECHNOLOGY --target TARGET_TECHNOLOGY --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2132,7 +1872,7 @@ For Windows:   &gt; WINDUP_HOME\bin\windup.bat --input INPUT_ARCHIVE --output OU
 <p>You should see the following result upon completion of the command:</p>
 <div class="listingblock">
 <div class="content">
-<pre>**SUCCESS*** Windup report created: PATH_TO_REPORTS/index.html
+<pre class="nowrap">**SUCCESS*** Windup report created: PATH_TO_REPORTS/index.html
               Access it at this URL: file:///home/username/PATH_TO_REPORTS/index.html</pre>
 </div>
 </div>
@@ -2194,7 +1934,7 @@ The following subdirectories in the <code>OUTPUT_REPORT_DIRECTORY</code> contain
 <p>Type the following command to start Windup:</p>
 <div class="listingblock">
 <div class="content">
-<pre>For Linux:    WINDUP_HOME/bin $ ./windup
+<pre class="nowrap">For Linux:    WINDUP_HOME/bin $ ./windup
 For Windows:  C:\WINDUP_HOME\bin&gt; windup</pre>
 </div>
 </div>
@@ -2203,7 +1943,7 @@ For Windows:  C:\WINDUP_HOME\bin&gt; windup</pre>
 <p>You are presented with the following prompt.</p>
 <div class="listingblock">
 <div class="content">
-<pre>Using Windup at WINDUP_HOME
+<pre class="nowrap">Using Windup at WINDUP_HOME
 
  _       ___           __
 | |     / (_)___  ____/ /_  ______
@@ -2225,7 +1965,7 @@ JBoss Windup, version [ 2.2.0.Final ] - JBoss, by Red Hat, Inc. [ http://windup.
 <p>To evaluate an application archive, use the following syntax:</p>
 <div class="listingblock">
 <div class="content">
-<pre>windup-migrate-app --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY -source SOURCE_TECHNOLOGY --target TARGET_TECHNOLOGY--packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
+<pre class="nowrap">windup-migrate-app --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY -source SOURCE_TECHNOLOGY --target TARGET_TECHNOLOGY--packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2233,7 +1973,7 @@ JBoss Windup, version [ 2.2.0.Final ] - JBoss, by Red Hat, Inc. [ http://windup.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>windup-migrate-app --sourceMode true --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY -source SOURCE_TECHNOLOGY --target TARGET_TECHNOLOGY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
+<pre class="nowrap">windup-migrate-app --sourceMode true --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY -source SOURCE_TECHNOLOGY --target TARGET_TECHNOLOGY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
 </div>
 </div>
 </li>
@@ -2241,7 +1981,7 @@ JBoss Windup, version [ 2.2.0.Final ] - JBoss, by Red Hat, Inc. [ http://windup.
 <p>You should see the following result upon completion of the command:</p>
 <div class="listingblock">
 <div class="content">
-<pre>***SUCCESS*** Windup execution successful!</pre>
+<pre class="nowrap">***SUCCESS*** Windup execution successful!</pre>
 </div>
 </div>
 <div class="admonitionblock warning">
@@ -2261,7 +2001,7 @@ Depending on the size of the application and the hardware Windup is running on, 
 <p>To exit Windup, type:</p>
 <div class="listingblock">
 <div class="content">
-<pre>exit</pre>
+<pre class="nowrap">exit</pre>
 </div>
 </div>
 </li>
@@ -2781,7 +2521,7 @@ The estimated Story Points change as new rules are added to Windup. The values h
 <p>Clone your Windup quickstart repository to your local file system:</p>
 <div class="listingblock">
 <div class="content">
-<pre>git clone https://github.com/YOUR_USER_NAME/windup-quickstarts.git</pre>
+<pre class="nowrap">git clone https://github.com/YOUR_USER_NAME/windup-quickstarts.git</pre>
 </div>
 </div>
 </li>
@@ -2789,7 +2529,7 @@ The estimated Story Points change as new rules are added to Windup. The values h
 <p>This creates and populates a <code>windup-quickstarts</code> directory on your local file system. Navigate to the newly created directory, for example</p>
 <div class="listingblock">
 <div class="content">
-<pre>cd windup-quickstarts/</pre>
+<pre class="nowrap">cd windup-quickstarts/</pre>
 </div>
 </div>
 </li>
@@ -2797,7 +2537,7 @@ The estimated Story Points change as new rules are added to Windup. The values h
 <p>If you want to be able to retrieve the lates code updates, add the remote <code>upstream</code> repository so you can fetch any changes to the original forked repository.</p>
 <div class="listingblock">
 <div class="content">
-<pre>git remote add upstream https://github.com/windup/windup-quickstarts.git</pre>
+<pre class="nowrap">git remote add upstream https://github.com/windup/windup-quickstarts.git</pre>
 </div>
 </div>
 </li>
@@ -2805,7 +2545,7 @@ The estimated Story Points change as new rules are added to Windup. The values h
 <p>To get the latest files from the <code>upstream</code> repository.</p>
 <div class="listingblock">
 <div class="content">
-<pre>git reset --hard upstream/master</pre>
+<pre class="nowrap">git reset --hard upstream/master</pre>
 </div>
 </div>
 </li>
@@ -2996,9 +2736,9 @@ The estimated Story Points change as new rules are added to Windup. The values h
 </div>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
-<col style="width: 33%;">
-<col style="width: 33%;">
-<col style="width: 33%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
 </colgroup>
 <thead>
 <tr>
@@ -3061,7 +2801,7 @@ The estimated Story Points change as new rules are added to Windup. The values h
 <p>Conditions allowed in the <code>when</code> portion of a rule must extend <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/config/operation/GraphOperation.html">GraphOperation</a> and currently include evaluation of Java classes, XML files, projects, and file content. Because XML rules are modeled after the Java-based rule add-ons, links to JavaDocs for the related Java classes are provided for a better understanding of how they behave.</p>
 </div>
 <div class="paragraph">
-<p>The complete XML rule schema is located here: <a href="http://windup.jboss.org/schema/rule-schema_1_0.xsd" class="bare">http://windup.jboss.org/schema/rule-schema_1_0.xsd</a></p>
+<p>The complete XML rule schema is located here: <a href="http://windup.jboss.org/schema/windup-jboss-ruleset.xsd" class="bare">http://windup.jboss.org/schema/windup-jboss-ruleset.xsd</a></p>
 </div>
 <div class="paragraph">
 <p>The following sections describe the more common XML <code>when</code> rule conditions.</p>
@@ -3094,7 +2834,7 @@ The estimated Story Points change as new rules are added to Windup. The values h
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;rule&gt;
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;rule&gt;
     &lt;when&gt;
         &lt;javaclass references="org.jboss.ws.api.annotation.WebContext" in="org/jboss/{*}" as="webcontextclasses"&gt;
             &lt;location&gt;IMPORT&lt;/location&gt;
@@ -3112,77 +2852,128 @@ The estimated Story Points change as new rules are added to Windup. The values h
 <h5 id="_construct_a_javaclass_element">Construct a javaclass Element</h5>
 <div class="sect5">
 <h6 id="_javaclass_element_attributes">javaclass Element Attributes</h6>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">references="CLASS_NAME"</dt>
-<dd>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Attribute Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">references</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CLASS_NAME</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
 <p>The package or class name to match on. Wildcard characters can be used.</p>
+</div>
 <div class="paragraph">
 <p><em>Example:</em></p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">references="org.apache.commons.{*}"</code></pre>
+<pre class="nowrap">references="org.apache.commons.{*}"</pre>
 </div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">sourceMatch</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>An exact regex to match. This is useful to distinguish hard-coded strings.</p>
 </div>
-</dd>
-<dt class="hdlist1">as="VARIABLE_NAME"</dt>
-<dd>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">sourceMatch="log4j.logger"</pre>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">as</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">VARIABLE_NAME</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
 <p>A variable name assigned to the rule so that it can be used as a reference in later processing. See the <code>from</code> attribute below.</p>
+</div>
 <div class="paragraph">
 <p><em>Example:</em></p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">as="MyEjbRule"</code></pre>
+<pre class="nowrap">as="MyEjbRule"</pre>
 </div>
-</div>
-</dd>
-<dt class="hdlist1">in="PATH_FILTER"</dt>
-<dd>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">in</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PATH_FILTER</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
 <p>Used to filter input files matching this regex (regular expression) naming pattern. Wildcard characters can be used.</p>
+</div>
 <div class="paragraph">
 <p><em>Example:</em></p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">in="{*}File1"</code></pre>
+<pre class="nowrap">in="{*}File1"</pre>
 </div>
-</div>
-</dd>
-<dt class="hdlist1">from="VARIABLE_NAME"</dt>
-<dd>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">from</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">VARIABLE_NAME</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
 <p>Begin the search query with the filtered result from a previous search identified by its <code>as</code> VARIABLE_NAME.</p>
+</div>
 <div class="paragraph">
 <p><em>Example:</em></p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">from="MyEjbRule"</code></pre>
+<pre class="nowrap">from="MyEjbRule"</pre>
 </div>
-</div>
-</dd>
-</dl>
-</div>
+</div></div></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="sect5">
 <h6 id="_javaclass_element_child_elements">JavaClass Element Child Elements</h6>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">location</dt>
-<dd>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 80%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Child Element</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;location&gt;</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
 <p>The location where the reference was found in a Java class. Location can refer to annotations, field and variable declarations, imports, and methods. For the complete list of valid values, see the JavaDoc for <a href="http://windup.github.io/windup/docs/javadoc/latest/org/jboss/windup/rules/apps/java/scan/ast/TypeReferenceLocation.html">TypeReferenceLocation</a>.</p>
+</div>
 <div class="paragraph">
 <p><em>Example:</em></p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;location&gt;IMPORT&lt;/location&gt;</code></pre>
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;location&gt;IMPORT&lt;/location&gt;</code></pre>
 </div>
-</div>
-</dd>
-</dl>
-</div>
+</div></div></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
@@ -3198,7 +2989,7 @@ The estimated Story Points change as new rules are added to Windup. The values h
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;rule&gt;
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;rule&gt;
     &lt;when&gt;
         &lt;xmlfile matches="/w:web-app/w:resource-ref/w:res-auth[text() = 'Container']"&gt;
             &lt;namespace prefix="w" uri="http://java.sun.com/xml/ns/javaee"/&gt;
@@ -3219,101 +3010,143 @@ The estimated Story Points change as new rules are added to Windup. The values h
 <h5 id="_construct_an_xmlfile_element">Construct an xmlfile Element</h5>
 <div class="sect5">
 <h6 id="_xmlfile_element_attributes">xmlfile Element: Attributes</h6>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">matches="XPATH"</dt>
-<dd>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Attribute Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">matches</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">XPATH</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
 <p>Match on an XML file condition.</p>
+</div>
 <div class="paragraph">
 <p><em>Example:</em></p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">matches="/w:web-app/w:resource-ref/w:res-auth[text() = 'Container']"</code></pre>
+<pre class="nowrap">matches="/w:web-app/w:resource-ref/w:res-auth[text() = 'Container']"</pre>
 </div>
-</div>
-</dd>
-<dt class="hdlist1">xpathResultMatch="XPATH_RESULT_STRING"</dt>
-<dd>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">xpathResultMatch</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">XPATH_RESULT_STRING</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
 <p>Return results that match the given regex.</p>
+</div>
 <div class="paragraph">
 <p><em>Example:</em></p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">xpathResultMatch=""</code></pre>
+<pre class="nowrap">xpathResultMatch=""</pre>
 </div>
-</div>
-</dd>
-<dt class="hdlist1">as="VARIABLE_NAME"</dt>
-<dd>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">as</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">VARIABLE_NAME</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
 <p>A variable name assigned to the rule so that it can be used as a reference in later processing. See the <code>from</code> attribute below.</p>
+</div>
 <div class="paragraph">
 <p><em>Example:</em></p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">as="MyEjbRule"</code></pre>
+<pre class="nowrap">as="MyEjbRule"</pre>
 </div>
-</div>
-</dd>
-<dt class="hdlist1">in="PATH_FILTER"</dt>
-<dd>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">in</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PATH_FILTER</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
 <p>Used to filter input files matching this regex (regular expression) naming pattern. Wildcard characters can be used.</p>
+</div>
 <div class="paragraph">
 <p><em>Example:</em></p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">in="{*}File1"</code></pre>
+<pre class="nowrap">in="{*}File1"</pre>
 </div>
-</div>
-</dd>
-<dt class="hdlist1">from="VARIABLE_NAME"</dt>
-<dd>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">from</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">VARIABLE_NAME</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
 <p>Begin the search query with the filtered result from a previous search identified by its <code>as</code> VARIABLE_NAME.</p>
+</div>
 <div class="paragraph">
 <p><em>Example:</em></p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">from="MyEjbRule"</code></pre>
+<pre class="nowrap">from="MyEjbRule"</pre>
 </div>
-</div>
-</dd>
-<dt class="hdlist1">public-id="PUBLIC_ID"</dt>
-<dd>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">public-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PUBLIC_ID</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
 <p>The DTD public-id regex.</p>
+</div>
 <div class="paragraph">
 <p><em>Example:</em></p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">public-id="public"</code></pre>
+<pre class="nowrap">public-id="public"</pre>
 </div>
-</div>
-</dd>
-</dl>
-</div>
+</div></div></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="sect5">
 <h6 id="_xmlfile_element_child_elements">xmlfile Element: Child Elements</h6>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">namespace</dt>
-<dd>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 80%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Child Element</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;namespace&gt;</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
 <p>The namespace to referenced in XML files. This element contains 2 attributes: The <code>prefix</code> and the <code>uri</code>.</p>
+</div>
 <div class="paragraph">
 <p><em>Example:</em></p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;namespace prefix="abc" uri="http://maven.apache.org/POM/4.0.0"/&gt;</code></pre>
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;namespace prefix="abc" uri="http://maven.apache.org/POM/4.0.0"/&gt;</code></pre>
 </div>
-</div>
-</dd>
-</dl>
-</div>
+</div></div></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
@@ -3329,7 +3162,7 @@ The estimated Story Points change as new rules are added to Windup. The values h
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;rule&gt;
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;rule&gt;
     &lt;when&gt;
         &lt;project&gt;
             &lt;artifact groupId="junit" artifactId="junit" from="2.0.0.Final" to="2.2.0.Final"/&gt;
@@ -3352,47 +3185,107 @@ The estimated Story Points change as new rules are added to Windup. The values h
 </div>
 <div class="sect5">
 <h6 id="_project_element_child_elements">project Element Child Elements</h6>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">artifact</dt>
-<dd>
-<p>Subcondition used within <code>project</code> to query against project dependencies. This element contains the following attributes:</p>
-<div class="ulist">
-<ul>
-<li>
-<p>groupId="PROJECT_GROUP_ID"</p>
-<div class="paragraph">
-<p>Match on the project <code>&lt;groupId&gt;</code> of the dependency</p>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 80%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Child Element</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;artifact&gt;</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Subcondition used within <code>project</code> to query against project dependencies. The <code>artifact</code> element attributes are described below.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
 </div>
-</li>
-<li>
-<p>artifactId="PROJECT_ARTIFACT_ID"
-Match on the project <code>&lt;artifactId&gt;</code> of the dependency</p>
-</li>
-<li>
-<p>fromVersion="FROM_VERSION"</p>
-<div class="paragraph">
-<p>Specify the lower version bound of the artifact. For example <code>2.0.0.Final</code></p>
-</div>
-</li>
-<li>
-<p>toVersion="TO_VERSION"</p>
-<div class="paragraph">
-<p>Specify the upper version bound of the artifact. For example <code>2.2.0.Final</code></p>
-</div>
-</li>
-</ul>
-</div>
-</dd>
-</dl>
-</div>
+<div class="sect5">
+<h6 id="_artifact_element_attributes">artifact Element Attributes</h6>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Attribute Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">groupId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PROJECT_GROUP_ID</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Match on the project <code>&lt;groupId&gt;</code> of the dependency</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">artifactId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PROJECT_ARTIFACT_ID</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Match on the project <code>&lt;artifactId&gt;</code> of the dependency</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">fromVersion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">FROM_VERSION</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Specify the lower version bound of the artifact. For example <code>2.0.0.Final</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">toVersion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">TO_VERSION</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Specify the upper version bound of the artifact. For example <code>2.2.0.Final</code></p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
 <div class="sect3">
 <h4 id="filecontent-syntax">6.3.4. filecontent Syntax</h4>
+<div class="sect4">
+<h5 id="_summary_5">Summary</h5>
 <div class="paragraph">
 <p>Use the <code>filecontent</code> element to find strings or text within files, for example, a line in a Properties file. For a better understanding of the <code>filecontent</code> condition, see the JavaDoc for the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/rules/files/condition/FileContent.html">FileContent</a> class.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_construct_a_filecontent_element">Construct a filecontent Element</h5>
+<div class="sect5">
+<h6 id="_filecontent_element_attributes">filecontent Element Attributes</h6>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Attribute Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">pattern</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Match the file contents against the provided parameterized string</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">filename</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Match the file names against the provided parameterized string.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 </div>
 </div>
@@ -3402,7 +3295,7 @@ Match on the project <code>&lt;artifactId&gt;</code> of the dependency</p>
 <p>Operations available in the <code>perform</code> section of the rule include the classification of application resources, in-line hints for migration steps, links to migration information, and project lineitem reporting. Because XML rules are modeled after the Java-based rule add-ons, links to JavaDocs for the related Java classes are provided for a better understanding of how they behave.</p>
 </div>
 <div class="paragraph">
-<p>The complete XML rule schema is located here: <a href="http://windup.jboss.org/schema/rule-schema_1_0.xsd" class="bare">http://windup.jboss.org/schema/rule-schema_1_0.xsd</a></p>
+<p>The complete XML rule schema is located here: <a href="http://windup.jboss.org/schema/windup-jboss-ruleset.xsd" class="bare">http://windup.jboss.org/schema/windup-jboss-ruleset.xsd</a></p>
 </div>
 <div class="paragraph">
 <p>The following sections describe the more common XML rule perform actions.</p>
@@ -3432,7 +3325,7 @@ Match on the project <code>&lt;artifactId&gt;</code> of the dependency</p>
 <div class="sect3">
 <h4 id="classification-syntax">6.4.1. Classification Syntax</h4>
 <div class="sect4">
-<h5 id="_summary_5">Summary</h5>
+<h5 id="_summary_6">Summary</h5>
 <div class="paragraph">
 <p>The <code>classification</code> element is used to identify or classify application resources. It provides a level of effort and can also provide links to additional information about how to migrate this resource classification. For a better understanding of the <code>classification</code> action, see the JavaDoc for the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/reporting/config/classification/Classification.html">Classification</a> class.</p>
 </div>
@@ -3444,13 +3337,13 @@ Match on the project <code>&lt;artifactId&gt;</code> of the dependency</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;rule id="XmlWebLogicRules_10vvyf"&gt;
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;rule id="XmlWebLogicRules_10vvyf"&gt;
     &lt;when&gt;
         &lt;xmlfile as="default" matches="/*[local-name()='weblogic-application']"&gt;&lt;/xmlfile&gt;
     &lt;/when&gt;
     &lt;perform&gt;
         &lt;iteration&gt;
-            &lt;classification classification="Weblogic EAR Application Descriptor" effort="3"/&gt;
+            &lt;classification title="Weblogic EAR Application Descriptor" effort="3"/&gt;
         &lt;/iteration&gt;
     &lt;/perform&gt;
 &lt;/rule&gt;</code></pre>
@@ -3459,62 +3352,151 @@ Match on the project <code>&lt;artifactId&gt;</code> of the dependency</p>
 </div>
 <div class="sect4">
 <h5 id="__code_classification_code_element_attributes"><code>classification</code> Element: Attributes</h5>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">classification="STRING"</dt>
-<dd>
-<p>Classify the resource as the specified string.</p>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Attribute Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">title</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Title this resource using the specified string.</p>
+</div>
 <div class="paragraph">
 <p><em>Example:</em></p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">classification="JBoss Seam Components"</code></pre>
+<pre class="nowrap">title="JBoss Seam Components"</pre>
 </div>
-</div>
-</dd>
-<dt class="hdlist1">effort="NUMBER"</dt>
-<dd>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">effort</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">NUMBER</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
 <p>The level of effort assigned to this resource.</p>
+</div>
 <div class="paragraph">
 <p><em>Example:</em></p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">effort="2"</code></pre>
+<pre class="nowrap">effort="2"</pre>
 </div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">severity</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Whether this classification is mandatory or optional</p>
 </div>
-</dd>
-</dl>
+<div class="paragraph">
+<p><em>Example:</em></p>
 </div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">severity="mandatory"</pre>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">description</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Description of this resource</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">description="JBoss Seam components must be replaced"</pre>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">of</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">VARIABLE_NAME</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Create a new classification for the given reference.</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">of="MySeamRule"</pre>
+</div>
+</div></div></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="sect4">
 <h5 id="__code_classification_code_element_child_elements"><code>classification</code> Element: Child Elements</h5>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">xref</dt>
-<dd>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 80%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Child Element</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;link&gt;</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
 <p>Provides a link URI and text description for additional information.</p>
+</div>
 <div class="paragraph">
 <p><em>Example:</em></p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;classification classification="Websphere Startup Service" effort="4"&gt;
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;classification title="Websphere Startup Service" effort="4"&gt;
    &lt;link href="http://docs.oracle.com/javaee/6/api/javax/ejb/Singleton.html" description="EJB3.1 Singleton Bean"/&gt;
    &lt;link href="http://docs.oracle.com/javaee/6/api/javax/ejb/Startup.html" description="EJB3.1 Startup Bean"/&gt;
 &lt;/classification&gt;</code></pre>
 </div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;tag&gt;</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Provides additional custom information for the classification.</p>
 </div>
-</dd>
-</dl>
+<div class="paragraph">
+<p><em>Example:</em></p>
 </div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;tag&gt;Seam3&lt;/tag&gt;</code></pre>
+</div>
+</div></div></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div class="sect3">
 <h4 id="link-syntax">6.4.2. Link Syntax</h4>
 <div class="sect4">
-<h5 id="_summary_6">Summary</h5>
+<h5 id="_summary_7">Summary</h5>
 <div class="paragraph">
 <p>The <code>link</code> element is used in classifications or hints to identify or classify links to informational content. For a better understanding of the <code>link</code> action, see the JavaDoc for the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/reporting/config/Link.html">Link</a> class.</p>
 </div>
@@ -3526,13 +3508,13 @@ Match on the project <code>&lt;artifactId&gt;</code> of the dependency</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;rule id="SeamToCDIRules_2fmb"&gt;
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;rule id="SeamToCDIRules_2fmb"&gt;
     &lt;when&gt;
         &lt;javaclass references="org.jboss.seam.{*}" as="default"/&gt;
     &lt;/when&gt;
     &lt;perform&gt;
         &lt;iteration&gt;
-            &lt;classification classification="SEAM Component" effort="1"&gt;
+            &lt;classification title="SEAM Component" effort="1"&gt;
                 &lt;link href="http://www.seamframework.org/Seam3/Seam2ToSeam3MigrationNotes" description="Seam 2 to Seam 3 Migration Notes"/&gt;
                 &lt;link href="http://docs.jboss.org/weld/reference/latest/en-US/html/example.html" description="JSF Web Application Example"/&gt;
                 &lt;link href="http://docs.jboss.org/weld/reference/latest/en-US/html/contexts.html" description="JBoss Context Documentation"/&gt;
@@ -3546,40 +3528,58 @@ Match on the project <code>&lt;artifactId&gt;</code> of the dependency</p>
 </div>
 <div class="sect4">
 <h5 id="__code_link_code_element_attributes"><code>link</code> Element: Attributes</h5>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">href="URI"</dt>
-<dd>
-<p>The URI for the referenced link/.</p>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Attribute Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">href</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">URI</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>The URI for the referenced link.</p>
+</div>
 <div class="paragraph">
 <p><em>Example:</em></p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">href="https://access.redhat.com/articles/1249423"</code></pre>
+<pre class="nowrap">href="https://access.redhat.com/articles/1249423"</pre>
 </div>
-</div>
-</dd>
-<dt class="hdlist1">description="URI_DESCRIPTION"</dt>
-<dd>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">description</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
 <p>A description for the link.</p>
+</div>
 <div class="paragraph">
 <p><em>Example:</em></p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">description="Migrate WebLogic Proprietary Servlet Annotations"</code></pre>
+<pre class="nowrap">description="Migrate WebLogic Proprietary Servlet Annotations"</pre>
 </div>
-</div>
-</dd>
-</dl>
-</div>
+</div></div></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div class="sect3">
 <h4 id="hint-syntax">6.4.3. Hint Syntax</h4>
 <div class="sect4">
-<h5 id="_summary_7">Summary</h5>
+<h5 id="_summary_8">Summary</h5>
 <div class="paragraph">
 <p>The <code>hint</code> element is used to provide a hint or inline information about how to migrate a section of code. For a better understanding of the <code>hint</code> action, see the JavaDoc for the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/reporting/config/Hint.html">Hint</a> class.</p>
 </div>
@@ -3591,7 +3591,7 @@ Match on the project <code>&lt;artifactId&gt;</code> of the dependency</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;rule id="WebLogicWebServiceRules_8jyqn"&gt;
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;rule id="WebLogicWebServiceRules_8jyqn"&gt;
     &lt;when&gt;
         &lt;javaclass references="weblogic.wsee.connection.transport.http.HttpTransportInfo.setUsername({*})" as="default"&gt;
             &lt;location&gt;METHOD&lt;/location&gt;
@@ -3599,7 +3599,8 @@ Match on the project <code>&lt;artifactId&gt;</code> of the dependency</p>
     &lt;/when&gt;
     &lt;perform&gt;
         &lt;iteration&gt;
-            &lt;hint message="Replace proprietary web-service authentication with JAX-WS standards." effort="0"&gt;
+            &lt;hint effort="3"&gt;
+                &lt;message&gt;Replace proprietary web-service authentication with JAX-WS standards.&lt;/message&gt;
                 &lt;link href="http://java-x.blogspot.com/2009/03/invoking-web-services-through-proxy.html" description="JAX-WS Proxy Password Example"/&gt;
             &lt;/hint&gt;
         &lt;/iteration&gt;
@@ -3610,59 +3611,147 @@ Match on the project <code>&lt;artifactId&gt;</code> of the dependency</p>
 </div>
 <div class="sect4">
 <h5 id="__code_hint_code_element_attributes"><code>hint</code> Element:  Attributes</h5>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">message="MESSAGE"</dt>
-<dd>
-<p>A message describing the migration hint</p>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Attribute Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">title</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Title this hint using the specified string.</p>
+</div>
 <div class="paragraph">
 <p><em>Example:</em></p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">message="See this KnowledgeBase article on the Customer Portal: &lt;some-url&gt;"</code></pre>
+<pre class="nowrap">title="JBoss Seam Component Hint"</pre>
 </div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">severity</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Whether this hint is mandatory or optional</p>
 </div>
-</dd>
-<dt class="hdlist1">effort="NUMBER"</dt>
-<dd>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">severity="mandatory"</pre>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">in</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">VARIABLE_NAME</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Create a new Hint in the FileLocationModel resolved by the given variable.</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">in="Foo"</pre>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">effort</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">NUMBER</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
 <p>The level of effort assigned to this resource.</p>
+</div>
 <div class="paragraph">
 <p><em>Example:</em></p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">effort="2"</code></pre>
+<pre class="nowrap">effort="2"</pre>
 </div>
-</div>
-</dd>
-</dl>
-</div>
+</div></div></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="sect4">
 <h5 id="__code_hint_code_element_child_elements"><code>hint</code> Element: Child Elements</h5>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">xref</dt>
-<dd>
-<p>Identify or classify links to informational content. See the section on <a href="#link-syntax">Link Syntax</a> for details.</p>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 80%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Child Element</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;message&gt;</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>A message describing the migration hint</p>
+</div>
 <div class="paragraph">
 <p><em>Example:</em></p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">link href="http://java-x.blogspot.com/2009/03/invoking-web-services-through-proxy.html" description="JAX-WS Proxy Password Example"/&gt;</code></pre>
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;message&gt;EJB 2.0 is deprecated&lt;/message&gt;</code></pre>
 </div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;link&gt;</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Identify or classify links to informational content. See the section on <a href="#link-syntax">Link Syntax</a> for details.</p>
 </div>
-</dd>
-</dl>
+<div class="paragraph">
+<p><em>Example:</em></p>
 </div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;link href="" description="" /&gt;</code></pre>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;tag&gt;</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Define a custom tag for this <code>hint</code>.</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;tag&gt;Needs review&lt;/tag&gt;</code></pre>
+</div>
+</div></div></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div class="sect3">
 <h4 id="xslt-syntax">6.4.4. XSLT Syntax</h4>
 <div class="sect4">
-<h5 id="_summary_8">Summary</h5>
+<h5 id="_summary_9">Summary</h5>
 <div class="paragraph">
 <p>The <code>xslt</code> element specifies how to transform an XML file. For a better understanding of the <code>xslt</code> action, see the JavaDoc for the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/rules/apps/xml/operation/xslt/XSLTTransformation.html">XSLTTransformation</a>  class.</p>
 </div>
@@ -3674,13 +3763,13 @@ Match on the project <code>&lt;artifactId&gt;</code> of the dependency</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;rule id="XmlWebLogicRules_6bcvk"&gt;
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;rule id="XmlWebLogicRules_6bcvk"&gt;
     &lt;when&gt;
         &lt;xmlfile as="default" matches="/weblogic-ejb-jar"/&gt;
     &lt;/when&gt;
     &lt;perform&gt;
         &lt;iteration&gt;
-            &lt;classification classification="Weblogic EJB XML" effort="3"/&gt;
+            &lt;classification title="Weblogic EJB XML" effort="3"/&gt;
             &lt;xslt description="JBoss EJB Descriptor (Windup-Generated)" template="transformations/xslt/weblogic-ejb-to-jboss.xsl" extension="-jboss.xml"/&gt;
         &lt;/iteration&gt;
     &lt;/perform&gt;
@@ -3690,83 +3779,114 @@ Match on the project <code>&lt;artifactId&gt;</code> of the dependency</p>
 </div>
 <div class="sect4">
 <h5 id="__code_xslt_code_element_attributes"><code>xslt</code> Element:  Attributes</h5>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">of="STRING"</dt>
-<dd>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Attribute Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">of</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
 <p>Create a new transformation for the given reference.</p>
+</div>
 <div class="paragraph">
 <p><em>Example:</em></p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">of="testVariable_instance"</code></pre>
+<pre class="nowrap">of="testVariable_instance"</pre>
 </div>
-</div>
-</dd>
-<dt class="hdlist1">description="String"</dt>
-<dd>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">description</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
 <p>Sets the description of this XSLTTransformation.</p>
+</div>
 <div class="paragraph">
-<p><em>Example:</em></p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">description="XSLT Transformed Output"</code></pre>
-</div>
-</div>
-</dd>
-<dt class="hdlist1">extension="String"</dt>
-<dd>
+<p><em>Example:</em> description="XSLT Transformed Output"</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">extension</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
 <p>Sets the extension for this XSLTTransformation.</p>
+</div>
 <div class="paragraph">
 <p><em>Example:</em></p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">extension="-result.html"</code></pre>
+<pre class="nowrap">extension="-result.html"</pre>
 </div>
-</div>
-</dd>
-<dt class="hdlist1">template=String</dt>
-<dd>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">template</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
 <p>Sets the XSL template.</p>
+</div>
 <div class="paragraph">
 <p><em>Example:</em></p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">template="simpleXSLT.xsl"</code></pre>
+<pre class="nowrap">template="simpleXSLT.xsl"</pre>
 </div>
-</div>
-</dd>
-</dl>
-</div>
+</div></div></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="sect4">
 <h5 id="__code_xslt_code_element_child_elements"><code>xslt</code> Element: Child Elements</h5>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">xslt-parameter=Map&lt;String,String&gt; </dt>
-<dd>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 80%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Child Element</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;xslt-parameter&gt;</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
 <p>Specify XSLTTransformation parameters as property value pairs</p>
+</div>
 <div class="paragraph">
 <p><em>Example:</em></p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;xslt-parameter property="title" value="EJB Transformation"/&gt;</code></pre>
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;xslt-parameter property="title" value="EJB Transformation"/&gt;</code></pre>
 </div>
-</div>
-</dd>
-</dl>
-</div>
+</div></div></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div class="sect3">
 <h4 id="lineitem-syntax">6.4.5. Lineitem Syntax</h4>
 <div class="sect4">
-<h5 id="_summary_9">Summary</h5>
+<h5 id="_summary_10">Summary</h5>
 <div class="paragraph">
 <p>The <code>lineitem</code> element is used to provide line item information about a hint on the project or application overview page. For a better understanding of the <code>lineitem</code> action, see the JavaDoc for the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/project/operation/LineItem.html">Lineitem</a> class.</p>
 </div>
@@ -3778,14 +3898,15 @@ Match on the project <code>&lt;artifactId&gt;</code> of the dependency</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;rule&gt;
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;rule&gt;
     &lt;when&gt;
         &lt;javaclass references="weblogic.servlet.annotation.WLServlet" as="default"&gt;
             &lt;location&gt;ANNOTATION&lt;/location&gt;
         &lt;/javaclass&gt;
     &lt;/when&gt;
     &lt;perform&gt;
-        &lt;hint message="Replace the proprietary WebLogic @WLServlet annotation with the Java EE 6 standard @WebServlet annotation." effort="1"&gt;
+        &lt;hint effort="1"&gt;
+            &lt;message&gt;Replace the proprietary WebLogic @WLServlet annotation with the Java EE 6 standard @WebServlet annotation.&lt;/message&gt;
             &lt;link href="https://access.redhat.com/articles/1249423" description="Migrate WebLogic Proprietary Servlet Annotations" /&gt;
             &lt;lineitem message="Proprietary WebLogic @WLServlet annotation found in file."/&gt;
         &lt;/hint&gt;
@@ -3796,28 +3917,43 @@ Match on the project <code>&lt;artifactId&gt;</code> of the dependency</p>
 </div>
 <div class="sect4">
 <h5 id="__code_lineitem_code_element_attributes"><code>lineitem</code> Element:  Attributes</h5>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">message="MESSAGE"</dt>
-<dd>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Attribute Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">message</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
 <p>A lineitem message</p>
+</div>
 <div class="paragraph">
 <p><em>Example:</em></p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">message="Proprietary code found."</code></pre>
+<pre class="nowrap">message="Proprietary code found."</pre>
 </div>
-</div>
-</dd>
-</dl>
-</div>
+</div></div></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div class="sect3">
 <h4 id="iteration-syntax">6.4.6. Iteration Syntax</h4>
 <div class="sect4">
-<h5 id="_summary_10">Summary</h5>
+<h5 id="_summary_11">Summary</h5>
 <div class="paragraph">
 <p>The <code>iteration</code> element specifies to iterate over an implicit or explicit variable defined within the rule. For a better understanding of the <code>iteration</code> action, see the JavaDoc for the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/config/operation/Iteration.html">Iteration</a> class.</p>
 </div>
@@ -3829,7 +3965,7 @@ Match on the project <code>&lt;artifactId&gt;</code> of the dependency</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">&lt;rule id="XmlWebLogicRules_14wscy"&gt;
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;rule id="XmlWebLogicRules_14wscy"&gt;
     &lt;when&gt;
         &lt;xmlfile as="1" matches="/wl:weblogic-webservices | /wl9:weblogic-webservices"&gt;
             &lt;namespace prefix="wl9" uri="http://www.bea.com/ns/weblogic/90"/&gt;
@@ -3842,10 +3978,11 @@ Match on the project <code>&lt;artifactId&gt;</code> of the dependency</p>
     &lt;/when&gt;
     &lt;perform&gt;
         &lt;iteration over="1"&gt;
-            &lt;classification classification="Weblogic Webservice Descriptor" effort="0"/&gt;
+            &lt;classification title="Weblogic Webservice Descriptor" effort="0"/&gt;
         &lt;/iteration&gt;
         &lt;iteration over="2"&gt;
-            &lt;hint message="Webservice Type" effort="0"/&gt;
+            &lt;hint effort="1"&gt;
+                &lt;message&gt;Webservice Type&lt;/message&gt;
         &lt;/iteration&gt;
     &lt;/perform&gt;
 &lt;/rule&gt;</code></pre>
@@ -3854,28 +3991,58 @@ Match on the project <code>&lt;artifactId&gt;</code> of the dependency</p>
 </div>
 <div class="sect4">
 <h5 id="__code_iteration_code_element_attributes"><code>iteration</code> Element:  Attributes</h5>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">over="VARIABLE_NAME"</dt>
-<dd>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Attribute Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">over</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">VARIABLE_NAME</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
 <p>Iterate over the condition identified by this VARIABLE_NAME.</p>
+</div>
 <div class="paragraph">
 <p><em>Example:</em></p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-xml" data-lang="xml">over="2"</code></pre>
+<pre class="nowrap">over="2"</pre>
 </div>
-</div>
-</dd>
-</dl>
-</div>
+</div></div></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="sect4">
 <h5 id="__code_iteration_code_element_child_elements"><code>iteration</code> Element: Child Elements</h5>
-<div class="paragraph">
-<p>iteration child elements include a <code>when</code> condition, along with the actions <code>iteration</code>, <code>classification</code>, <code>hint</code>, <code>xslt</code>, <code>lineitem</code>, and <code>otherwise</code>.</p>
-</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 80%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Child Element</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;iteration&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Child elements include a <code>when</code> condition, along with the actions <code>iteration</code>, <code>classification</code>, <code>hint</code>, <code>xslt</code>, <code>lineitem</code>, and <code>otherwise</code>.</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 </div>
@@ -3943,7 +4110,7 @@ Match on the project <code>&lt;artifactId&gt;</code> of the dependency</p>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-05-28 11:24:15 EDT
+Last updated 2015-06-04 15:38:28 EDT
 </div>
 </div>
 </body>
