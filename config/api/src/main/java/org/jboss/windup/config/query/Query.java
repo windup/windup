@@ -160,7 +160,7 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
                 }
 
                 Variables variables = Variables.instance(event);
-                variables.setVariable(outputVar, result);
+                setResults(event, outputVar, result);
 
                 return result.iterator().hasNext();
             }

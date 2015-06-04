@@ -28,6 +28,8 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 @Vetoed
 public class Variables
 {
+    public static int SEARCH_ALL_LAYERS = Integer.MAX_VALUE;
+
     private final Deque<Map<String, Iterable<? extends WindupVertexFrame>>> deque = new LinkedList<>();
 
     private Variables()
@@ -167,6 +169,17 @@ public class Variables
      */
     public Iterable<? extends WindupVertexFrame> findVariable(String name)
     {
+        return findVariable(name, SEARCH_ALL_LAYERS);
+    }
+
+    /**
+     * Searches the variables layers, top to bottom, for given name, and returns if found; null otherwise.
+     *
+     * If maxDepth is set to {@link Variables#SEARCH_ALL_LAYERS}, then search all layers.
+     */
+    public Iterable<? extends WindupVertexFrame> findVariable(String name, int maxDepth)
+    {
+        int currentDepth = 0;
         Iterable<? extends WindupVertexFrame> result = null;
         for (Map<String, Iterable<? extends WindupVertexFrame>> frame : deque)
         {
@@ -175,6 +188,9 @@ public class Variables
             {
                 break;
             }
+            currentDepth++;
+            if (currentDepth >= maxDepth)
+                break;
         }
         return result;
     }

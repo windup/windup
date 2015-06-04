@@ -13,7 +13,6 @@ import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.Variables;
 import org.jboss.windup.config.condition.EvaluationStrategy;
 import org.jboss.windup.config.condition.NoopEvaluationStrategy;
 import org.jboss.windup.config.parameters.FrameContext;
@@ -225,7 +224,7 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
             }
         }
 
-        Variables.instance(event).setVariable(getVarname(), results);
+        setResults(event, getVarname(), results);
         return !results.isEmpty();
     }
 
