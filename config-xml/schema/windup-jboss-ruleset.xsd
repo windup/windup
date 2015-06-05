@@ -142,7 +142,7 @@
 		<xs:complexType mixed="true">
 			<xs:sequence>
 				<xs:element ref="link" minOccurs="0" maxOccurs="unbounded"/>
-				<xs:element name="tag" minOccurs="0" type="xs:string"/>
+				<xs:element name="tag" minOccurs="0" maxOccurs="unbounded" type="xs:string"/>
 			</xs:sequence>
 			<xs:attribute type="xs:string" name="title" />
 			<xs:attribute type="xs:byte" name="effort" use="optional" />
@@ -168,8 +168,8 @@
 		<xs:complexType mixed="true">
 			<xs:sequence>
 				<xs:element name="message" minOccurs="0" maxOccurs="1" type="xs:string"/>
-				<xs:element name="tag" minOccurs="0"  maxOccurs="unbounded" type="xs:string"/>
 				<xs:element ref="link" minOccurs="0" maxOccurs="unbounded" />
+				<xs:element name="tag" minOccurs="0"  maxOccurs="unbounded" type="xs:string"/>
 			</xs:sequence>
 			<xs:attribute type="xs:string" name="title" use="optional" />
 			<xs:attribute type="xs:string" name="severity" use="optional" />
