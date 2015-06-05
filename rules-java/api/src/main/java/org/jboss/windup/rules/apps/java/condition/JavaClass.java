@@ -36,7 +36,6 @@ import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.jboss.windup.rules.apps.java.scan.ast.TypeInterestFactory;
 import org.jboss.windup.rules.files.model.FileReferenceModel;
 import org.jboss.windup.util.ExecutionStatistics;
-import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -232,7 +231,7 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
             if (!locations.isEmpty())
                 query.withProperty(JavaTypeReferenceModel.REFERENCE_TYPE, locations);
 
-            List<WindupVertexFrame> allFrameResults = new ArrayList<>();
+            List<WindupVertexFrame> results = new ArrayList<>();
             if (query.evaluate(event, context))
             {
                 Iterable<? extends WindupVertexFrame> frames = Variables.instance(event).findVariable(uuid);
@@ -260,7 +259,7 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
                                             && (typeFilterPattern == null || typeFilterPattern.parse(javaClassModel
                                                         .getQualifiedName()).submit(event, context)))
                                 {
-                                    allFrameResults.add(model);
+                                    results.add(model);
                                     evaluationStrategy.modelSubmitted(model);
                                 }
                                 else
@@ -275,15 +274,8 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
                 if (initialQueryID != null)
                     Variables.instance(event).removeVariable(initialQueryID);
 
-                try
-                {
-                    Variables.instance(event).setVariable(getVarname(), allFrameResults);
-                }
-                catch (Exception e)
-                {
-                    throw new WindupException("Failed to set result variable \"" + getVarname() + "\" due to: " + e.getMessage(), e);
-                }
-                return !allFrameResults.isEmpty();
+                setResults(event, getVarname(), results);
+                return !results.isEmpty();
             }
             return false;
         }

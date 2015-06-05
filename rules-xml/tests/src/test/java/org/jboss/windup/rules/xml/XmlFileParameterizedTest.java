@@ -13,14 +13,14 @@ import javax.inject.Inject;
 import org.apache.commons.io.FileUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.AddonDependency;
-import org.jboss.forge.arquillian.Dependencies;
-import org.jboss.forge.arquillian.archive.ForgeArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
+import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
 import org.jboss.windup.config.phase.PostMigrationRulesPhase;
@@ -52,7 +52,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 public class XmlFileParameterizedTest
 {
     @Deployment
-    @Dependencies({
+    @AddonDependencies({
                 @AddonDependency(name = "org.jboss.windup.config:windup-config"),
                 @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
@@ -61,20 +61,9 @@ public class XmlFileParameterizedTest
                 @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static ForgeArchive getDeployment()
+    public static AddonArchive getDeployment()
     {
-        final ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
-                    .addBeansXML()
-                    .addAsAddonDependencies(
-                                AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
-                                AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
-                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:windup-rules-base"),
-                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:windup-rules-xml"),
-                                AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
-                                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-                    );
-
-        return archive;
+        return ShrinkWrap.create(AddonArchive.class).addBeansXML();
     }
 
     @Inject
@@ -212,18 +201,23 @@ public class XmlFileParameterizedTest
             super(MetadataBuilder.forProvider(TestParameterizedXmlRuleProvider.class).setPhase(PostMigrationRulesPhase.class));
         }
 
+        private class AddTypeRefToListOperation extends AbstractIterationOperation<FileLocationModel>
+        {
+            @Override
+            public void perform(GraphRewrite event, EvaluationContext context, FileLocationModel payload)
+            {
+                xmlFiles.add(payload);
+            }
+        }
+
         // @formatter:off
         @Override
         public Configuration getConfiguration(GraphContext context)
         {
-            AbstractIterationOperation<FileLocationModel> addTypeRefToList = new AbstractIterationOperation<FileLocationModel>()
-            {
-                @Override
-                public void perform(GraphRewrite event, EvaluationContext context, FileLocationModel payload)
-                {
-                    xmlFiles.add(payload);
-                }
-            };
+            // Using three separate instances as there is some mutable state in the implementations of these classes
+            AbstractIterationOperation<FileLocationModel> addTypeRefToList1 = new AddTypeRefToListOperation();
+            AbstractIterationOperation<FileLocationModel> addTypeRefToList2 = new AddTypeRefToListOperation();
+            AbstractIterationOperation<FileLocationModel> addTypeRefToList3 = new AddTypeRefToListOperation();
 
             return ConfigurationBuilder
                         .begin()
@@ -235,7 +229,7 @@ public class XmlFileParameterizedTest
                                     )
                         )
                         .perform(Hint.withText("Found value: {index}").withEffort(2)
-                                     .and(addTypeRefToList))
+                                     .and(addTypeRefToList1))
 
 
                         .addRule()
@@ -246,16 +240,19 @@ public class XmlFileParameterizedTest
                                     )
                         )
                         .perform(Hint.withText("Found dangling value: {index}").withEffort(2)
-                                     .and(addTypeRefToList))
+                                     .and(addTypeRefToList2))
 
 
                         .addRule()
                         .when(
-                                    XmlFile.matchesXpath("//row[windup:matches(index/text(), '{index}')]")
-                                    .and(XmlFile.matchesXpath("//@indexAtt[windup:matches(self::node(), '{index}')]"))
+                                    XmlFile.matchesXpath("//row[windup:matches(index/text(), '{index}')]").as("1")
+                                    .and(XmlFile.matchesXpath("//@indexAtt[windup:matches(self::node(), '{index}')]").as("2"))
                         )
-                        .perform(Hint.withText("Found dual value: {index}").withEffort(2)
-                                     .and(addTypeRefToList));
+                        .perform(
+                                Iteration.over("2").perform(
+                                    Hint.withText("Found dual value: {index}").withEffort(2).and(addTypeRefToList3)
+                                ).endIteration()
+                        );
         }
         // @formatter:on
 

@@ -16,11 +16,15 @@
 package org.jboss.windup.config.condition;
 
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.Variables;
 import org.jboss.windup.config.operation.Iteration;
+import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.DefaultConditionBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.event.Rewrite;
+
+import com.google.common.collect.Iterables;
 
 /**
  * A {@link Condition} that evaluates against a {@link GraphRewrite} event.
@@ -61,5 +65,25 @@ public abstract class GraphCondition extends DefaultConditionBuilder
     public void setOutputVariablesName(String outputVariablesName)
     {
         this.outputVariablesName = outputVariablesName;
+    }
+
+    /**
+     * This sets the variable with the given name to the given value. If there is already a variable with the same name in the top-most stack frame,
+     * we will combine them here.
+     *
+     * This helps in the case of multiple conditions tied together with "or" or "and".
+     */
+    protected void setResults(GraphRewrite event, String variable, Iterable<? extends WindupVertexFrame> results)
+    {
+        Variables variables = Variables.instance(event);
+        Iterable<? extends WindupVertexFrame> existingVariables = variables.findVariable(variable, 1);
+        if (existingVariables != null)
+        {
+            variables.setVariable(variable, Iterables.concat(existingVariables, results));
+        }
+        else
+        {
+            variables.setVariable(variable, results);
+        }
     }
 }

@@ -310,7 +310,7 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD, 
         {
             ExecutionStatistics.get().begin("XmlFile.evaluate");
             // list will cache all the created xpath matches for this given condition running
-            final List<WindupVertexFrame> resultLocations = new ArrayList<>();
+            final List<WindupVertexFrame> results = new ArrayList<>();
             final GraphContext graphContext = event.getGraphContext();
             GraphService<XmlFileModel> xmlResourceService = new GraphService<>(graphContext, XmlFileModel.class);
             Iterable<? extends WindupVertexFrame> allXmls;
@@ -337,7 +337,7 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD, 
                 else
                 {
                     throw new WindupException("XmlFile was called on the wrong graph type ( " + iterated.toPrettyString()
-                            + ")");
+                                + ")");
                 }
 
                 // in case of taking a result of other XmlFile condition as input, multiple FileReferenceModels may reference the same XmlFileModel.
@@ -382,7 +382,7 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD, 
                             }
                         }
                         evaluationStrategy.modelSubmitted(xml);
-                        resultLocations.add(xml);
+                        results.add(xml);
                     }
 
                 }
@@ -403,9 +403,9 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD, 
                         this.xmlFileFunctionResolver
                                     .registerFunction(WINDUP_NS_URI, "evaluate", new XmlFileEvaluateXPathFunction(evaluationStrategy));
                         this.xmlFileFunctionResolver.registerFunction(WINDUP_NS_URI, "matches", new XmlFileMatchesXPathFunction(context, store,
-                                paramMatchCache, event));
+                                    paramMatchCache, event));
                         this.xmlFileFunctionResolver.registerFunction(WINDUP_NS_URI, "persist", new XmlFilePersistXPathFunction(event, context, xml,
-                                evaluationStrategy, store, paramMatchCache, resultLocations));
+                                    evaluationStrategy, store, paramMatchCache, results));
 
                         if (compiledXPath == null)
                         {
@@ -425,8 +425,8 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD, 
                                     message = e.getCause().getMessage();
                                 }
                                 LOG.severe("Condition: " + this + " failed to run, as the following xpath was uncompilable: " + xpathString
-                                        + " (compiled contents: " + xpathStringWithParameterFunctions + ") due to: "
-                                        + message);
+                                            + " (compiled contents: " + xpathStringWithParameterFunctions + ") due to: "
+                                            + message);
                                 return false;
                             }
                         }
@@ -439,9 +439,9 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD, 
                     }
                 }
             }
-            Variables.instance(event).setVariable(getOutputVariablesName(), resultLocations);
+            setResults(event, getOutputVariablesName(), results);
 
-            return !resultLocations.isEmpty();
+            return !results.isEmpty();
         }
         finally
         {
