@@ -440,9 +440,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#Execute">2.2. Execute Windup</a>
 <ul class="sectlevel3">
 <li><a href="#_prerequisites">2.2.1. Prerequisites</a></li>
-<li><a href="#_run_windup_in_batch_mode">2.2.2. Run Windup in Batch Mode</a></li>
+<li><a href="#run-windup-in-batch-mode">2.2.2. Run Windup in Batch Mode</a></li>
 <li><a href="#_windup_help_for_batch_mode">2.2.3. Windup Help for Batch Mode</a></li>
-<li><a href="#_start_windup_in_interactive_mode">2.2.4. Start Windup in Interactive Mode</a></li>
+<li><a href="#start-windup-in-interactive-mode">2.2.4. Start Windup in Interactive Mode</a></li>
 <li><a href="#_windup_help_for_interactive_mode">2.2.5. Windup Help for Interactive Mode</a></li>
 <li><a href="#command-examples">2.2.6. Windup Command Examples</a></li>
 </ul>
@@ -818,7 +818,7 @@ Be careful not to specify a report output directory that contains important info
 </div>
 </div>
 <div class="sect3">
-<h4 id="_run_windup_in_batch_mode">2.2.2. Run Windup in Batch Mode</h4>
+<h4 id="run-windup-in-batch-mode">2.2.2. Run Windup in Batch Mode</h4>
 <div class="paragraph">
 <p>This is the quickest way to run Windup.</p>
 </div>
@@ -951,7 +951,7 @@ The following subdirectories in the <code>OUTPUT_REPORT_DIRECTORY</code> contain
 </div>
 </div>
 <div class="sect3">
-<h4 id="_start_windup_in_interactive_mode">2.2.4. Start Windup in Interactive Mode</h4>
+<h4 id="start-windup-in-interactive-mode">2.2.4. Start Windup in Interactive Mode</h4>
 <div class="paragraph">
 <p>Windup can also be run in interactive mode. This mode offers tab completion, which is useful if you need assistance with valid argument values, for example, valid <code>--source</code> or <code>--target</code> technologies.</p>
 </div>
@@ -1121,7 +1121,7 @@ Depending on the size of the application and the hardware Windup is running on, 
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>windup-migrate-app --input /home/username/windup-source/test-files/jee-example-app-1.0.0.ear/ --output /home/username/windup-reports/jee-example-app-1.0.0.ear-report --packages com.acme org.apache</pre>
+<pre>WINDUP_HOME/bin/windup --input /home/username/windup-source/test-files/jee-example-app-1.0.0.ear/ --output /home/username/windup-reports/jee-example-app-1.0.0.ear-report --packages com.acme org.apache</pre>
 </div>
 </div>
 </div>
@@ -1834,10 +1834,10 @@ The estimated Story Points change as new rules are added to Windup. The values h
 <p>If possible, execute Windup against the source code instead of the archives. This eliminates the need to decompile additional JARs and archives.</p>
 </li>
 <li>
-<p>Specify the <code>--target</code> platform on the on the <code>windup-migrate-app</code> command line to limit the execution of rules to only those that apply to this target platform.</p>
+<p>Specify the <code>--target</code> platform on the on the <code>WINDUP_HOME/bin/windup</code> or <code>windup-migrate-app</code> command line to limit the execution of rules to only those that apply to this target platform.</p>
 </li>
 <li>
-<p>Be sure to specify a comma-delimited list of the packages to be evaluated by Windup using the <code>--packages</code> argument on the <code>windup-migrate-app</code> command line. If you omit this argument, Windup will decompile everything, which has a big impact on performance.</p>
+<p>Be sure to specify a comma-delimited list of the packages to be evaluated by Windup using the <code>--packages</code> argument on the <code>WINDUP_HOME/bin/windup</code> or <code>windup-migrate-app</code> command line. If you omit this argument, Windup will decompile everything, which has a big impact on performance.</p>
 </li>
 <li>
 <p>Specify the <code>--excludePackages</code> and <code>--excludeTags</code> where possible to exclude them from processing.</p>
@@ -1874,7 +1874,7 @@ The estimated Story Points change as new rules are added to Windup. The values h
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-06-04 15:38:28 EDT
+Last updated 2015-06-05 15:33:20 EDT
 </div>
 </div>
 </body>

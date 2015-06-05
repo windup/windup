@@ -475,8 +475,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_file_naming_convention_for_xml_rules">3.3.2. File Naming Convention for XML Rules</a></li>
 <li><a href="#_basic_xml_rule_template">3.3.3. Basic XML Rule Template</a></li>
 <li><a href="#_create_the_ruleset_metadata">3.3.4. Create the Ruleset Metadata</a></li>
-<li><a href="#_create_the_rule_when_condition">3.3.5. Create the Rule When Condition</a></li>
-<li><a href="#_create_the_rule_perform_action">3.3.6. Create the Rule Perform Action</a></li>
+<li><a href="#_create_the_rule_2">3.3.5. Create the Rule</a></li>
 </ul>
 </li>
 <li><a href="#Rules-Validate-Rulesets-Against-the-Schema">3.4. Validate Rulesets Against the Schema</a></li>
@@ -494,9 +493,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#Execute">4.1. Execute Windup</a>
 <ul class="sectlevel3">
 <li><a href="#_prerequisites_2">4.1.1. Prerequisites</a></li>
-<li><a href="#_run_windup_in_batch_mode">4.1.2. Run Windup in Batch Mode</a></li>
+<li><a href="#run-windup-in-batch-mode">4.1.2. Run Windup in Batch Mode</a></li>
 <li><a href="#_windup_help_for_batch_mode">4.1.3. Windup Help for Batch Mode</a></li>
-<li><a href="#_start_windup_in_interactive_mode">4.1.4. Start Windup in Interactive Mode</a></li>
+<li><a href="#start-windup-in-interactive-mode">4.1.4. Start Windup in Interactive Mode</a></li>
 <li><a href="#_windup_help_for_interactive_mode">4.1.5. Windup Help for Interactive Mode</a></li>
 <li><a href="#command-examples">4.1.6. Windup Command Examples</a></li>
 </ul>
@@ -1490,14 +1489,15 @@ otherwise(action)</pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;?xml version="1.0"?&gt;
-&lt;ruleset xmlns="http://windup.jboss.org/v1/xml" id="&lt;unique-rule-identifier"&gt;
+&lt;ruleset id="unique-ruleset-id" xmlns="http://windup.jboss.org/schema/jboss-ruleset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://windup.jboss.org/schema/jboss-ruleset http://windup.jboss.org/schema/jboss-ruleset/windup-jboss-ruleset.xsd"&gt;
     &lt;metadata&gt;
         &lt;!-- Metadata about the rule including a description,
              source technology, target technology, and any
              add-on dependencies --&gt;
     &lt;/metadata&gt;
     &lt;rules&gt;
-        &lt;rule&gt;
+        &lt;rule id="unique-ruleset-id-01000"&gt;
             &lt;when&gt;
                 &lt;!-- Test a condition... --&gt;
             &lt;/when&gt;
@@ -1523,7 +1523,7 @@ otherwise(action)</pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;ruleset id=”ruleset-id”&gt;
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;ruleset id=”unique-ruleset-id”&gt;
 &lt;metadata&gt;
         &lt;description&gt;
                 This is the description.
@@ -1548,15 +1548,111 @@ otherwise(action)</pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_create_the_rule_when_condition">3.3.5. Create the Rule When Condition</h4>
+<h4 id="_create_the_rule_2">3.3.5. Create the Rule</h4>
 <div class="paragraph">
-<p>The syntax is dependent on whether you are creating a rule to evaluate Java class, an XML file, a project, or file content and is described in more detail here: <a href="#Rules-XML-Rule-When-Condition-Syntax">XML Rule - When Condition Syntax</a></p>
+<p>Individual rules are contained within a <code>&lt;rules&gt;</code> element and consist of one or more conditions and actions.</p>
+</div>
+<div class="sect4">
+<h5 id="_create_the_rule_when_condition">Create the Rule When Condition</h5>
+<div class="paragraph">
+<p>The XML rule <code>&lt;when&gt;</code> element tests for a condition. The following is a list of valid <code>&lt;when&gt;</code> conditions.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 80%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Element</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;true&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Always match.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>&lt;or&gt;</p>
+</div>
+<div class="paragraph">
+<p>&lt;and&gt;</p>
+</div>
+<div class="paragraph">
+<p>&lt;not&gt;</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">These are the standard logical operators.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;javaclass&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Test for a match in a Java class.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;xmlfile&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Test for a match in an XML file.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;project&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Test for project characteristics, such as dependencies.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;filecontent&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Find strings or text within files, for example, properties files.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The specific syntax is dependent on whether you are creating a rule to evaluate Java class, an XML file, a project, or file content and is described in more detail here: <a href="#Rules-XML-Rule-When-Condition-Syntax">XML Rule - When Condition Syntax</a></p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_create_the_rule_perform_action">3.3.6. Create the Rule Perform Action</h4>
+<div class="sect4">
+<h5 id="_create_the_rule_perform_action">Create the Rule Perform Action</h5>
 <div class="paragraph">
-<p>Operations allowed in the <code>perform</code> section of the rule include the classification of application resources, in-line hints for migration steps, links to migration information, and project lineitem reporting. The syntax is described in detail here: <a href="#Rules-XML-Rule-Perform-Action-Syntax">XML Rule - Perform Action Syntax</a>.</p>
+<p>The XML rule <code>&lt;perform&gt;</code> element performs the action when the condition is met. Operations allowed in this ection of the rule include the classification of application resources, in-line hints for migration steps, links to migration information, and project lineitem reporting. The following is a list of valid <code>&lt;peform&gt;</code> actions.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 80%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Element</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;classification&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Identify or classify a resource.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;link&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Provide links or references to additional information.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;hint&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Provide a hint or inline information.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;xslt&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Specify how to transform an XML file.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;lineitem&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Provide line item information about a hint on the project or application overview page.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;iteration&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Specify to iterate over an implicit or explicit variable defined within the rule.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The syntax is described in more detail here: <a href="#Rules-XML-Rule-Perform-Action-Syntax">XML Rule - Perform Action Syntax</a>.</p>
+</div>
 </div>
 </div>
 </div>
@@ -1631,19 +1727,13 @@ otherwise(action)</pre>
 <div class="ulist">
 <ul>
 <li>
-<p>In the directory specified on the <code>windup-migrate-app</code> using the <code>--userRulesDirectory</code> argument.</p>
+<p>Copy the rule to a directory specified by the <code>--userRulesDirectory</code> argument on the Windup command line.</p>
 </li>
 <li>
-<p>In the WINDUP_HOME/rules/ directory.</p>
-<div class="paragraph">
-<p><a href="#About-the-HOME-Variable">WINDUP_HOME</a> is the directory where you install and run the Windup executable.</p>
-</div>
+<p>Copy the rule to the WINDUP_HOME/rules/ directory. <a href="#About-the-HOME-Variable">WINDUP_HOME</a> is the directory where you install and run the Windup executable.</p>
 </li>
 <li>
-<p>In the <code>${user.home}/.windup/rules/</code> directory.</p>
-<div class="paragraph">
-<p>The <code>${user.home}/.windup</code> is a directory created by Windup at first run and contains rules, add-ons, and the Windup log.</p>
-</div>
+<p>Copy the rule to the <code>${user.home}/.windup/rules/</code> directory. This directory is created by Windup the first time it is executed and contains rules, add-ons, and the Windup log.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="nowrap">For Linux or Mac:   ~/.windup/rules/
@@ -1662,13 +1752,13 @@ For Windows: "\Documents and Settings\USER_NAME\.windup\rules\"  -or-  "\Users\U
 <p>If you have not started Windup, follow the instructions to <a href="#Execute">Execute Windup</a>.</p>
 </li>
 <li>
-<p>Test the XML rule against your application file by running the <code>windup-migrate-app</code> command in the Windup console prompt.</p>
+<p>Test the XML rule against your application file by running Windup in a terminal.</p>
 <div class="paragraph">
 <p>The command uses this syntax:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="nowrap">windup-migrate-app [--sourceMode true] --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
+<pre class="nowrap">WINDUP_HOME/bin/windup [--sourceMode true] --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1788,7 +1878,7 @@ Be careful not to specify a report output directory that contains important info
 </div>
 </div>
 <div class="sect3">
-<h4 id="_run_windup_in_batch_mode">4.1.2. Run Windup in Batch Mode</h4>
+<h4 id="run-windup-in-batch-mode">4.1.2. Run Windup in Batch Mode</h4>
 <div class="paragraph">
 <p>This is the quickest way to run Windup.</p>
 </div>
@@ -1921,7 +2011,7 @@ The following subdirectories in the <code>OUTPUT_REPORT_DIRECTORY</code> contain
 </div>
 </div>
 <div class="sect3">
-<h4 id="_start_windup_in_interactive_mode">4.1.4. Start Windup in Interactive Mode</h4>
+<h4 id="start-windup-in-interactive-mode">4.1.4. Start Windup in Interactive Mode</h4>
 <div class="paragraph">
 <p>Windup can also be run in interactive mode. This mode offers tab completion, which is useful if you need assistance with valid argument values, for example, valid <code>--source</code> or <code>--target</code> technologies.</p>
 </div>
@@ -2091,7 +2181,7 @@ Depending on the size of the application and the hardware Windup is running on, 
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>windup-migrate-app --input /home/username/windup-source/test-files/jee-example-app-1.0.0.ear/ --output /home/username/windup-reports/jee-example-app-1.0.0.ear-report --packages com.acme org.apache</pre>
+<pre>WINDUP_HOME/bin/windup --input /home/username/windup-source/test-files/jee-example-app-1.0.0.ear/ --output /home/username/windup-reports/jee-example-app-1.0.0.ear-report --packages com.acme org.apache</pre>
 </div>
 </div>
 </div>
@@ -4070,10 +4160,10 @@ The estimated Story Points change as new rules are added to Windup. The values h
 <p>If possible, execute Windup against the source code instead of the archives. This eliminates the need to decompile additional JARs and archives.</p>
 </li>
 <li>
-<p>Specify the <code>--target</code> platform on the on the <code>windup-migrate-app</code> command line to limit the execution of rules to only those that apply to this target platform.</p>
+<p>Specify the <code>--target</code> platform on the on the <code>WINDUP_HOME/bin/windup</code> or <code>windup-migrate-app</code> command line to limit the execution of rules to only those that apply to this target platform.</p>
 </li>
 <li>
-<p>Be sure to specify a comma-delimited list of the packages to be evaluated by Windup using the <code>--packages</code> argument on the <code>windup-migrate-app</code> command line. If you omit this argument, Windup will decompile everything, which has a big impact on performance.</p>
+<p>Be sure to specify a comma-delimited list of the packages to be evaluated by Windup using the <code>--packages</code> argument on the <code>WINDUP_HOME/bin/windup</code> or <code>windup-migrate-app</code> command line. If you omit this argument, Windup will decompile everything, which has a big impact on performance.</p>
 </li>
 <li>
 <p>Specify the <code>--excludePackages</code> and <code>--excludeTags</code> where possible to exclude them from processing.</p>
@@ -4110,7 +4200,7 @@ The estimated Story Points change as new rules are added to Windup. The values h
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-06-04 15:38:28 EDT
+Last updated 2015-06-05 15:33:20 EDT
 </div>
 </div>
 </body>

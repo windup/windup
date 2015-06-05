@@ -440,9 +440,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#Execute">2.2. Execute Windup</a>
 <ul class="sectlevel3">
 <li><a href="#_prerequisites">2.2.1. Prerequisites</a></li>
-<li><a href="#_run_windup_in_batch_mode">2.2.2. Run Windup in Batch Mode</a></li>
+<li><a href="#run-windup-in-batch-mode">2.2.2. Run Windup in Batch Mode</a></li>
 <li><a href="#_windup_help_for_batch_mode">2.2.3. Windup Help for Batch Mode</a></li>
-<li><a href="#_start_windup_in_interactive_mode">2.2.4. Start Windup in Interactive Mode</a></li>
+<li><a href="#start-windup-in-interactive-mode">2.2.4. Start Windup in Interactive Mode</a></li>
 <li><a href="#_windup_help_for_interactive_mode">2.2.5. Windup Help for Interactive Mode</a></li>
 <li><a href="#command-examples">2.2.6. Windup Command Examples</a></li>
 </ul>
@@ -983,7 +983,7 @@ Be careful not to specify a report output directory that contains important info
 </div>
 </div>
 <div class="sect3">
-<h4 id="_run_windup_in_batch_mode">2.2.2. Run Windup in Batch Mode</h4>
+<h4 id="run-windup-in-batch-mode">2.2.2. Run Windup in Batch Mode</h4>
 <div class="paragraph">
 <p>This is the quickest way to run Windup.</p>
 </div>
@@ -1116,7 +1116,7 @@ The following subdirectories in the <code>OUTPUT_REPORT_DIRECTORY</code> contain
 </div>
 </div>
 <div class="sect3">
-<h4 id="_start_windup_in_interactive_mode">2.2.4. Start Windup in Interactive Mode</h4>
+<h4 id="start-windup-in-interactive-mode">2.2.4. Start Windup in Interactive Mode</h4>
 <div class="paragraph">
 <p>Windup can also be run in interactive mode. This mode offers tab completion, which is useful if you need assistance with valid argument values, for example, valid <code>--source</code> or <code>--target</code> technologies.</p>
 </div>
@@ -1286,7 +1286,7 @@ Depending on the size of the application and the hardware Windup is running on, 
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>windup-migrate-app --input /home/username/windup-source/test-files/jee-example-app-1.0.0.ear/ --output /home/username/windup-reports/jee-example-app-1.0.0.ear-report --packages com.acme org.apache</pre>
+<pre>WINDUP_HOME/bin/windup --input /home/username/windup-source/test-files/jee-example-app-1.0.0.ear/ --output /home/username/windup-reports/jee-example-app-1.0.0.ear-report --packages com.acme org.apache</pre>
 </div>
 </div>
 </div>
@@ -2249,9 +2249,12 @@ cd tmp
 unzip -q ../dist/target/windup-*.zip
 cd windup-*
 rm -rf ~/.forge/addons/
-bin/windup.sh
 
-## Execute
+## Execute using Batch Mode
+bin/windup.sh --input /home/username/work/Migration/TestApps/_apps/BradApp --output Report --packages org com net
+
+## Execute using Interactive Mode
+bin/windup.sh
 $ windup-migrate-app --input /home/username/work/Migration/TestApps/_apps/BradApp --output Report --packages org com net
 
 ## Exit
@@ -2679,7 +2682,7 @@ related to the rules or the core code base.</p>
 <div class="sect3">
 <h4 id="_run_windup_against_your_application">6.1.1. Run Windup Against Your Application</h4>
 <div class="paragraph">
-<p>Wnen you run the <code>windup-migrate-app</code> command against your application, Windup executes its own core rules to process the following types of application input artifacts:</p>
+<p>Wnen you run the <code>WINDUP_HOME/bin/windup</code> command against your application, Windup executes its own core rules to process the following types of application input artifacts:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -4146,7 +4149,7 @@ Windup building elements.</p>
 <div class="ulist">
 <ul>
 <li>
-<p>If you have not started Windup, follow the instructions to <a href="#Execute">Execute Windup</a>.</p>
+<p>If you have not started Windup, follow the instructions to <a href="#start-windup-in-interactive-mode">Start Windup in Interactive Mode</a>.</p>
 </li>
 <li>
 <p>At the Windup console prompt, enter the <code>addon-build-and-install</code> command:</p>
@@ -4170,14 +4173,14 @@ Windup building elements.</p>
 <div class="sect3">
 <h4 id="_test_the_java_based_rule_add_on">7.3.5. Test the Java-based Rule Add-on</h4>
 <div class="paragraph">
-<p>Test the Java-based rule add-on against your application file by running the <code>windup-migrate-app</code> command in the Windup console prompt.</p>
+<p>Test the Java-based rule add-on against your application file by running Windup in a terminal.</p>
 </div>
 <div class="paragraph">
 <p>The command uses this syntax:</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>windup-migrate-app [--sourceMode true] --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
+<pre>WINDUP_HOME/bin/windup [--sourceMode true] --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -4841,10 +4844,10 @@ Useful Commands: #action #agreed #help #info #idea #link #topic.</pre>
 <p>If possible, execute Windup against the source code instead of the archives. This eliminates the need to decompile additional JARs and archives.</p>
 </li>
 <li>
-<p>Specify the <code>--target</code> platform on the on the <code>windup-migrate-app</code> command line to limit the execution of rules to only those that apply to this target platform.</p>
+<p>Specify the <code>--target</code> platform on the on the <code>WINDUP_HOME/bin/windup</code> or <code>windup-migrate-app</code> command line to limit the execution of rules to only those that apply to this target platform.</p>
 </li>
 <li>
-<p>Be sure to specify a comma-delimited list of the packages to be evaluated by Windup using the <code>--packages</code> argument on the <code>windup-migrate-app</code> command line. If you omit this argument, Windup will decompile everything, which has a big impact on performance.</p>
+<p>Be sure to specify a comma-delimited list of the packages to be evaluated by Windup using the <code>--packages</code> argument on the <code>WINDUP_HOME/bin/windup</code> or <code>windup-migrate-app</code> command line. If you omit this argument, Windup will decompile everything, which has a big impact on performance.</p>
 </li>
 <li>
 <p>Specify the <code>--excludePackages</code> and <code>--excludeTags</code> where possible to exclude them from processing.</p>
@@ -4881,7 +4884,7 @@ Useful Commands: #action #agreed #help #info #idea #link #topic.</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-06-04 15:38:28 EDT
+Last updated 2015-06-05 15:33:20 EDT
 </div>
 </div>
 </body>
