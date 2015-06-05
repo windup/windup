@@ -26,9 +26,16 @@ public class TechnologyReference
      */
     public TechnologyReference(String id, VersionRange versionRange)
     {
-        super();
         this.id = id;
         this.versionRange = versionRange;
+    }
+
+    /**
+     * Construct a new {@link TechnologyReference} using the given {@link String} ID.
+     */
+    public TechnologyReference(String id)
+    {
+        this(id, (VersionRange) null);
     }
 
     /**

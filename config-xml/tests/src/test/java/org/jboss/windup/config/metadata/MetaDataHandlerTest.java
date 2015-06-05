@@ -88,9 +88,11 @@ public class MetaDataHandlerTest
         Assert.assertTrue(requiredAddons.contains(AddonId.valueOf("org.jboss.windup.rules,windup-rules-java,2.0.0.Final")));
         Assert.assertTrue(sourceTechnologies.contains(new TechnologyReference("ejb", "(2,3]")));
         Assert.assertTrue(sourceTechnologies.contains(new TechnologyReference("weblogic", "(10,12]")));
+        Assert.assertTrue(sourceTechnologies.contains(new TechnologyReference("servlet")));
         Assert.assertTrue(targetTechnologies.contains(new TechnologyReference("eap", "(5,6]")));
         Assert.assertTrue(targetTechnologies.contains(new TechnologyReference("ejb", "(2,3]")));
         Assert.assertTrue(targetTechnologies.contains(new TechnologyReference("ejb", "(2,3]")));
+        Assert.assertTrue(targetTechnologies.contains(new TechnologyReference("jsp")));
 
         try (GraphContext graphContext = graphContextFactory.create())
         {
