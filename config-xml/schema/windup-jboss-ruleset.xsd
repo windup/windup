@@ -34,7 +34,7 @@
 						</xs:sequence>
 					</xs:complexType>
 				</xs:element>
-				<xs:element name="rules" minOccurs="0" maxOccurs="unbounded">
+				<xs:element name="rules" minOccurs="1">
 					<xs:complexType>
 						<xs:sequence>
 							<xs:element name="rule" minOccurs="0" maxOccurs="unbounded" type="rule" />
