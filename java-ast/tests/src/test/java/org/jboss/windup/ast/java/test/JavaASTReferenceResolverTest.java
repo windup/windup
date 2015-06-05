@@ -129,6 +129,20 @@ public class JavaASTReferenceResolverTest extends AbstractJavaASTTest
                     new ClassReference("java.lang.String", TypeReferenceLocation.VARIABLE_DECLARATION, 8, 8, 26, "String b=a.substring(1);")));
         Assert.assertTrue(references.contains(
                     new ClassReference("java.lang.String.substring(int)", TypeReferenceLocation.METHOD_CALL, 8, 21, 9, "a.substring(1)")));
+    }
 
+    @Test
+    public void testWildcardImport()
+    {
+        List<ClassReference> references = ASTProcessor.analyze(getLibraryPaths(), getSourcePaths(),
+                    Paths.get("src/test/resources/testclasses/simple/ExampleWildcardImport.java"));
+        for (ClassReference reference : references)
+        {
+            System.out.println("Reference: " + reference);
+        }
+
+        Assert.assertTrue(references.contains(new ClassReference("java.util.*", TypeReferenceLocation.IMPORT, 10, 7, 9, "import java.util.*;")));
+        Assert.assertTrue(references.contains(new ClassReference("java.net.*", TypeReferenceLocation.IMPORT, 11, 7, 8, "import java.net.*;")));
+        Assert.assertTrue(references.contains(new ClassReference("java.awt.*", TypeReferenceLocation.IMPORT, 12, 7, 8, "import java.awt.*;")));
     }
 }
