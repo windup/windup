@@ -1,6 +1,7 @@
 package org.jboss.windup.reporting.config;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -76,7 +77,8 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
     }
 
     /**
-     * Create a new {@link Hint} in the current {@link FileLocationModel}, and specify the text or content to be displayed in the report.
+     * Create a new {@link Hint} in the current {@link FileLocationModel}, and specify the text or content to be
+     * displayed in the report.
      */
     public static HintText withText(String text)
     {
@@ -104,7 +106,8 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
         }
         else
         {
-            // if there is no title, just use the description of the location (eg, 'Constructing com.otherproduct.Foo()')
+            // if there is no title, just use the description of the location (eg, 'Constructing
+            // com.otherproduct.Foo()')
             hintModel.setTitle(locationModel.getDescription());
         }
         hintModel.setHint(hintTextPattern.getBuilder().build(event, context));
@@ -184,13 +187,19 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
     @Override
     public Set<String> getRequiredParameterNames()
     {
-        return hintTextPattern.getRequiredParameterNames();
+        final Set<String> result = new LinkedHashSet<String>();
+        result.addAll(hintTextPattern.getRequiredParameterNames());
+        if (hintTitlePattern != null)
+            result.addAll(hintTitlePattern.getRequiredParameterNames());
+        return result;
     }
 
     @Override
     public void setParameterStore(ParameterStore store)
     {
         hintTextPattern.setParameterStore(store);
+        if (hintTitlePattern != null)
+            hintTitlePattern.setParameterStore(store);
     }
 
 }
