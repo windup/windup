@@ -18,8 +18,6 @@ public abstract class AbstractIterationFilter<T extends WindupVertexFrame> exten
 
     /**
      * If the variable name is not specified, the iteration will set it.
-     * 
-     * @param clazz
      */
     public AbstractIterationFilter()
     {

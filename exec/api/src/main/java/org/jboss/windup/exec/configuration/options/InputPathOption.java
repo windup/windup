@@ -1,6 +1,7 @@
 package org.jboss.windup.exec.configuration.options;
 
 import java.io.File;
+
 import org.jboss.windup.config.AbstractPathConfigurationOption;
 import org.jboss.windup.config.InputType;
 import org.jboss.windup.config.ValidationResult;
@@ -56,7 +57,7 @@ public class InputPathOption extends AbstractPathConfigurationOption
             {
                 return new ValidationResult(ValidationResult.Level.PROMPT_TO_CONTINUE,
                             "The input application is large. Processing may take a very long time. "
-                                        + "Please consult the Windup User Guide for performance tips.");
+                                        + "Please consult the Windup User Guide for performance tips.", true);
             }
         }
 

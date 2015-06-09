@@ -3,8 +3,11 @@ package org.jboss.windup.reporting.freemarker;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.util.Logging;
 import org.pegdown.Extensions;
 import org.pegdown.LinkRenderer;
 import org.pegdown.PegDownProcessor;
@@ -24,6 +27,9 @@ import freemarker.template.TemplateModelException;
  */
 public class MarkdownToHtmlMethod implements WindupFreeMarkerMethod
 {
+    private static final Logger LOG = Logging.get(MarkdownToHtmlMethod.class);
+
+    public static final long MAX_PARSING_TIME_MILLIS = 10000;
 
     @Override
     public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
@@ -35,18 +41,29 @@ public class MarkdownToHtmlMethod implements WindupFreeMarkerMethod
         SimpleScalar freemarkerArg = (SimpleScalar) arguments.get(0);
         String markdownSource = freemarkerArg.getAsString();
 
-        // build the plugins object with our extensions
-        PegDownPlugins plugins = PegDownPlugins.builder().build();
-        PegDownProcessor processor = new PegDownProcessor(Extensions.FENCED_CODE_BLOCKS, plugins);
+        try
+        {
 
-        // build the node and then serialize it so that we can make sure the serializer uses our plugins
-        RootNode outputNode = processor.parseMarkdown(markdownSource.toCharArray());
+            // build the plugins object with our extensions
+            PegDownPlugins plugins = PegDownPlugins.builder().build();
+            PegDownProcessor processor = new PegDownProcessor(Extensions.FENCED_CODE_BLOCKS, MAX_PARSING_TIME_MILLIS, plugins);
 
-        // Our plugin is also a serializer, so build a plugins list for serialization as well
-        List<ToHtmlSerializerPlugin> serializerPlugins = new ArrayList<>(1);
+            // build the node and then serialize it so that we can make sure the serializer uses our plugins
+            RootNode outputNode = processor.parseMarkdown(markdownSource.toCharArray());
 
-        ToHtmlSerializer serializer = new ToHtmlSerializer(new LinkRenderer(), Collections.<String, VerbatimSerializer> emptyMap(), serializerPlugins);
-        return serializer.toHtml(outputNode);
+            // Our plugin is also a serializer, so build a plugins list for serialization as well
+            List<ToHtmlSerializerPlugin> serializerPlugins = new ArrayList<>(1);
+
+            ToHtmlSerializer serializer = new ToHtmlSerializer(new LinkRenderer(), Collections.<String, VerbatimSerializer> emptyMap(),
+                        serializerPlugins);
+            return serializer.toHtml(outputNode);
+        }
+        catch (Throwable t)
+        {
+            LOG.log(Level.WARNING, "Failed to parse markdown due to: " + t.getMessage() + " markdown source: " + markdownSource, t);
+            // Return the unformatted markdown, as this is better than failing the report completely.
+            return markdownSource;
+        }
     }
 
     @Override

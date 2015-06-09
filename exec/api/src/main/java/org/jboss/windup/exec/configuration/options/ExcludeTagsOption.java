@@ -1,14 +1,11 @@
 package org.jboss.windup.exec.configuration.options;
 
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.inject.Inject;
 
 import org.jboss.windup.config.AbstractConfigurationOption;
 import org.jboss.windup.config.InputType;
-import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.ValidationResult;
 import org.jboss.windup.config.metadata.RuleProviderRegistryCache;
 
@@ -27,12 +24,7 @@ public class ExcludeTagsOption extends AbstractConfigurationOption
     @Override
     public Collection<?> getAvailableValues()
     {
-        Set<String> tags = new HashSet<>();
-        for (RuleProvider provider : cache.getRuleProviderRegistry().getProviders())
-        {
-            tags.addAll(provider.getMetadata().getTags());
-        }
-        return tags;
+        return cache.getAvailableTags();
     }
 
     @Override

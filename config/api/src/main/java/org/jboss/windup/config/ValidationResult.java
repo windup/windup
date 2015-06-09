@@ -20,6 +20,20 @@ public class ValidationResult
 
     private final Level level;
     private final String message;
+    private final boolean promptDefault;
+
+    /**
+     * Indicates the success of failure of a validation, as well as a short informative message for the user and what value to assume as a default for
+     * the prompt message.
+     *
+     * This only applies to {@link Level#PROMPT_TO_CONTINUE}.
+     */
+    public ValidationResult(Level level, String message, boolean promptDefault)
+    {
+        this.level = level;
+        this.message = message;
+        this.promptDefault = promptDefault;
+    }
 
     /**
      * Indicates the success of failure of a validation, as well as a short informative message for the user.
@@ -28,18 +42,46 @@ public class ValidationResult
     {
         this.level = level;
         this.message = message;
+        this.promptDefault = false;
     }
 
+    /**
+     * DO NOT USE - This is here so that Furnace can create proxies.
+     */
+    public ValidationResult()
+    {
+        this.level = null;
+        this.message = null;
+        this.promptDefault = false;
+    }
+
+    /**
+     * Indicates whether this is considered a valid response.
+     */
     public boolean isSuccess()
     {
         return !Level.ERROR.equals(level);
     }
 
+    /**
+     * Gets the default prompt value for {@link Level#PROMPT_TO_CONTINUE} results.
+     */
+    public boolean getPromptDefault()
+    {
+        return promptDefault;
+    }
+
+    /**
+     * Returns the validation level (error, prompt, etc).
+     */
     public Level getLevel()
     {
         return level;
     }
 
+    /**
+     * Returns a readable message to display to the user.
+     */
     public String getMessage()
     {
         return message;

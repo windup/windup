@@ -5,8 +5,10 @@ import static org.jboss.windup.bootstrap.Bootstrap.getVersionString;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import org.jboss.forge.furnace.ContainerStatus;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.impl.addons.AddonRepositoryImpl;
@@ -27,8 +29,9 @@ import org.jboss.forge.furnace.versions.Versions;
  */
 public class BootstrapFurnaceService
 {
-
-    private static final String FORGE_ADDON_GROUP_ID = "org.jboss.forge.addon:";
+    private static final String artifactWithColonVersionPattern = "(.*?):(.*?):(.*)";
+    private static final String artifactWithCommaVersionPattern = "(.*?):(.*?),(.*)";
+    private static final String artifactPattern = "(.*?):(.*?)";
 
     private final Furnace furnace;
 
@@ -37,9 +40,8 @@ public class BootstrapFurnaceService
         this.furnace = furnace;
     }
 
-    boolean list()
+    void list()
     {
-        boolean exitAfter = true;
         try
         {
             for (AddonRepository repository : furnace.getRepositories())
@@ -56,9 +58,7 @@ public class BootstrapFurnaceService
         {
             e.printStackTrace();
             System.out.println("> Forge version [" + AddonRepositoryImpl.getRuntimeAPIVersion() + "]");
-            exitAfter = false;
         }
-        return exitAfter;
     }
 
     private List<AddonId> getEnabledAddonIds()
@@ -75,9 +75,8 @@ public class BootstrapFurnaceService
     /**
      * Install core addons if none are installed; then start.
      */
-    void start(boolean exitAfter, boolean batchMode) throws InterruptedException, ExecutionException
+    Future<Furnace> start(boolean batchMode) throws InterruptedException, ExecutionException
     {
-
         if (!batchMode)
         {
             List<AddonId> addonIds = getEnabledAddonIds();
@@ -91,10 +90,10 @@ public class BootstrapFurnaceService
                 }
             }
         }
-        furnace.start();
+        return furnace.startAsync();
     }
 
-    boolean install(String addonCoordinates, boolean batchMode)
+    void install(String coordinates, boolean batchMode)
     {
         Version runtimeAPIVersion = AddonRepositoryImpl.getRuntimeAPIVersion();
         try
@@ -102,33 +101,19 @@ public class BootstrapFurnaceService
             AddonDependencyResolver resolver = new MavenAddonDependencyResolver();
             AddonManagerImpl addonManager = new AddonManagerImpl(furnace, resolver);
 
-            AddonId addon;
+            AddonId addonId;
+
+            coordinates = convertColonVersionToComma(coordinates);
+
             // This allows windup --install maven
-            if (addonCoordinates.contains(","))
+            if (coordinates.matches(artifactWithCommaVersionPattern))
             {
-                if (addonCoordinates.contains(":"))
-                {
-                    addon = AddonId.fromCoordinates(addonCoordinates);
-                }
-                else
-                {
-                    addon = AddonId.fromCoordinates(FORGE_ADDON_GROUP_ID + addonCoordinates);
-                }
+                addonId = AddonId.fromCoordinates(coordinates);
             }
-            else
+            else if (coordinates.matches(artifactPattern))
             {
-                AddonId[] versions;
-                String coordinate;
-                if (addonCoordinates.contains(":"))
-                {
-                    coordinate = addonCoordinates;
-                    versions = resolver.resolveVersions(addonCoordinates).get();
-                }
-                else
-                {
-                    coordinate = FORGE_ADDON_GROUP_ID + addonCoordinates;
-                    versions = resolver.resolveVersions(coordinate).get();
-                }
+                AddonId[] versions = resolver.resolveVersions(coordinates).get();
+                String coordinate = coordinates;
 
                 if (versions.length == 0)
                 {
@@ -152,11 +137,15 @@ public class BootstrapFurnaceService
                                     + " for API " + runtimeAPIVersion);
                     }
 
-                    addon = selected;
+                    addonId = selected;
                 }
             }
+            else
+            {
+                throw new IllegalArgumentException("Unrecognized format: " + coordinates + ", format must match: GROUP_ID:ARTIFACT_ID:VERSION");
+            }
 
-            AddonActionRequest request = addonManager.install(addon);
+            AddonActionRequest request = addonManager.install(addonId);
             System.out.println(request);
             if (!batchMode)
             {
@@ -164,7 +153,7 @@ public class BootstrapFurnaceService
                 if ("n".equalsIgnoreCase(result.trim()))
                 {
                     System.out.println("Installation aborted.");
-                    return false;
+                    return;
                 }
             }
             request.perform();
@@ -176,60 +165,51 @@ public class BootstrapFurnaceService
             e.printStackTrace();
             System.out.println("> Forge version [" + runtimeAPIVersion + "]");
         }
-        return true;
+        return;
     }
 
     /**
      * @return Exit after execution of this.
      */
-    boolean remove(String addonCoordinates, boolean batchMode)
+    void remove(String coordinates, boolean batchMode)
     {
         try
         {
             AddonDependencyResolver resolver = new MavenAddonDependencyResolver();
             AddonManagerImpl addonManager = new AddonManagerImpl(furnace, resolver);
             AddonId addon = null;
-            String coordinates;
 
-            if (addonCoordinates.contains(":"))
-                addonCoordinates = FORGE_ADDON_GROUP_ID + addonCoordinates;
+            coordinates = convertColonVersionToComma(coordinates);
 
             // This allows windup --remove maven
-            if (addonCoordinates.contains(","))
+            if (coordinates.matches(artifactWithCommaVersionPattern))
             {
-                addon = AddonId.fromCoordinates(addonCoordinates);
+                addon = AddonId.fromCoordinates(coordinates);
                 coordinates = addon.getName();
-            }
-            else
-            {
-                coordinates = addonCoordinates;
             }
 
             REPOS: for (AddonRepository repository : furnace.getRepositories())
             {
                 for (AddonId id : repository.listEnabled())
                 {
-                    if (!coordinates.equals(id.getName()))
+                    if (!coordinates.equals(id.getName()) || !(repository instanceof MutableAddonRepository))
                         continue;
 
                     addon = id;
-                    if (repository instanceof MutableAddonRepository)
+                    RemoveRequest request = addonManager.remove(id, (repository));
+                    System.out.println(request);
+                    if (!batchMode)
                     {
-                        RemoveRequest request = addonManager.remove(id, (repository));
-                        System.out.println(request);
-                        if (!batchMode)
+                        String result = System.console().readLine("Confirm uninstallation [Y/n]? ");
+                        if ("n".equalsIgnoreCase(result.trim()))
                         {
-                            String result = System.console().readLine("Confirm uninstallation [Y/n]? ");
-                            if ("n".equalsIgnoreCase(result.trim()))
-                            {
-                                System.out.println("Uninstallation aborted.");
-                                return false;
-                            }
+                            System.out.println("Uninstallation aborted.");
+                            return;
                         }
-                        request.perform();
-                        System.out.println("Uninstallation completed successfully.");
-                        System.out.println();
                     }
+                    request.perform();
+                    System.out.println("Uninstallation completed successfully.");
+                    System.out.println();
                     break REPOS;
                 }
             }
@@ -243,7 +223,23 @@ public class BootstrapFurnaceService
             e.printStackTrace();
             System.out.println(getVersionString());
         }
-        return true;
+        return;
+    }
+
+    private String convertColonVersionToComma(String coordinates)
+    {
+        String result;
+        Matcher matcher = Pattern.compile(artifactWithColonVersionPattern).matcher(coordinates);
+        if (matcher.matches())
+        {
+            result = matcher.group(1) + ":" + matcher.group(2) + "," + matcher.group(3);
+        }
+        else
+        {
+            result = coordinates;
+        }
+        System.out.println("In: " + coordinates + ", Out: " + result);
+        return result;
     }
 
     Furnace getFurnace()

@@ -23,22 +23,16 @@ public class RuleUtils
         if (rule instanceof Context)
         {
             final Context context = (Context) rule;
-
-            if (rule.getId() != null)
-                result.append(rule.getId()).append(": ");
-            else
-                result.append("Rule: ");
-
             RuleProvider provider = (RuleProvider) context.get(RuleMetadataType.RULE_PROVIDER);
+
             if (provider != null && provider.getMetadata() != null)
             {
-                result.append(provider.getMetadata().getPhase()).append(" - ");
-                result.append(provider.getMetadata().getID()).append(' ');
+                result.append(provider.getMetadata().getPhase().getSimpleName()).append(" - ");
+                result.append(provider.getMetadata().getID()).append(" - ");
             }
 
-            Object tags = context.get(RuleMetadataType.TAGS);
-            if (tags != null)
-                result.append(tags);
+            if (rule.getId() != null)
+                result.append(rule.getId());
         }
 
         return result.toString();
