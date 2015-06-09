@@ -18,4 +18,36 @@
         <module>addon</module>
         <module>tests</module>
     </modules>
+
+    <build>
+        <plugins>
+            <!-- Validate the XSD. -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>xml-maven-plugin</artifactId>
+                <version>1.0</version>
+                <executions>
+                    <execution>
+                        <inherited>false</inherited>
+                        <goals>
+                            <goal>validate</goal>
+                        </goals>
+                        <phase>process-resources</phase>
+                    </execution>
+                </executions>
+                <configuration>
+                    <validationSets>
+                        <validationSet>
+                            <includes>
+                                <include>**/*.xml</include>
+                            </includes>
+                            <dir>src/test/resources</dir>
+                            <systemId>schema/windup-jboss-ruleset.xsd</systemId>
+                        </validationSet>
+                    </validationSets>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
 </project>
