@@ -1,17 +1,13 @@
 package org.jboss.windup.exec.configuration.options;
 
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 import javax.inject.Inject;
 
 import org.jboss.windup.config.AbstractConfigurationOption;
 import org.jboss.windup.config.InputType;
-import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.ValidationResult;
 import org.jboss.windup.config.metadata.RuleProviderRegistryCache;
-import org.jboss.windup.config.metadata.TechnologyReference;
 
 /**
  * Specifies the source framework or server to migrate from. This could include multiple items.
@@ -32,15 +28,7 @@ public class SourceOption extends AbstractConfigurationOption
     @Override
     public Collection<?> getAvailableValues()
     {
-        Set<String> sourceOptions = new HashSet<>();
-        for (RuleProvider provider : cache.getRuleProviderRegistry().getProviders())
-        {
-            for (TechnologyReference technologyReference : provider.getMetadata().getSourceTechnologies())
-            {
-                sourceOptions.add(technologyReference.getId());
-            }
-        }
-        return sourceOptions;
+        return cache.getAvailableSourceTechnologies();
     }
 
     @Override

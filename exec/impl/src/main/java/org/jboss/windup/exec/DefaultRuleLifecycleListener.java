@@ -29,7 +29,7 @@ class DefaultRuleLifecycleListener implements RuleLifecycleListener
     @Override
     public void beforeExecution(GraphRewrite event)
     {
-        progressMonitor.beginTask("Executing Rules", configuration.getRules().size());
+        progressMonitor.beginTask("Executing Windup", configuration.getRules().size());
     }
 
     @Override

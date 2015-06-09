@@ -10,12 +10,12 @@ import javax.inject.Inject;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.Iteration;
+import org.jboss.windup.config.operation.IterationProgress;
 import org.jboss.windup.config.operation.iteration.AbstractIterationFilter;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.ReportRenderingPhase;
@@ -25,7 +25,6 @@ import org.jboss.windup.graph.model.resource.ReportResourceFileModel;
 import org.jboss.windup.reporting.freemarker.FreeMarkerIterationOperation;
 import org.jboss.windup.reporting.model.ReportModel;
 import org.jboss.windup.reporting.model.TemplateType;
-import org.jboss.windup.reporting.rules.generation.CreateSourceReportRuleProvider;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -41,7 +40,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 public class RenderReportRuleProvider extends AbstractRuleProvider
 {
     private static Logger LOG = Logging.get(RenderReportRuleProvider.class);
-    
+
     @Inject
     private Furnace furnace;
 
@@ -62,7 +61,7 @@ public class RenderReportRuleProvider extends AbstractRuleProvider
             .addRule()
             .when(Query.fromType(ReportModel.class))
             .perform(
-                        Iteration.over()
+                    Iteration.over()
                             .when(new AbstractIterationFilter<ReportModel>()
                             {
                                 @Override
@@ -70,14 +69,17 @@ public class RenderReportRuleProvider extends AbstractRuleProvider
                                 {
                                     return TemplateType.FREEMARKER.equals(payload.getTemplateType());
                                 }
-                                
+
                                 @Override
                                 public String toString()
                                 {
                                     return "ReportModel.templateType == TemplateType.FREEMARKER";
                                 }
                             })
-                            .perform(reportOperation)
+                            .perform(
+                                    reportOperation
+                                    .and(IterationProgress.monitoring("Rendering Reports", 100))
+                            )
                             .endIteration()
             )
             
@@ -90,23 +92,22 @@ public class RenderReportRuleProvider extends AbstractRuleProvider
                 {
                     ReportService reportService = new ReportService(event.getGraphContext());
                     Path outputDir = Paths.get(reportService.getReportDirectory());
-                    
+
                     File directory = outputDir.toFile();
-                    File fullPath = new File(directory, FilenameUtils.separatorsToSystem("resources/"+payload.getPrettyPath()));
-                    
+                    File fullPath = new File(directory, FilenameUtils.separatorsToSystem("resources/" + payload.getPrettyPath()));
+
                     try
                     {
                         FileUtils.forceMkdir(fullPath.getParentFile());
                         FileUtils.copyFile(payload.asFile(), fullPath);
-                        LOG.info("Copied raw file: "+payload.getFilePath()+" to: "+fullPath.getAbsolutePath());
+                        LOG.info("Copied raw file: " + payload.getFilePath() + " to: " + fullPath.getAbsolutePath());
                     }
                     catch (IOException e)
                     {
-                        LOG.warning("Exception creating file: "+fullPath.getAbsolutePath());
+                        LOG.warning("Exception creating file: " + fullPath.getAbsolutePath());
                     }
                 }
-            })
-            ;
+            });
     }
     // @formatter:on
 }

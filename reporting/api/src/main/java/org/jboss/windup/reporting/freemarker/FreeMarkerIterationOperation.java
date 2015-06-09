@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.forge.furnace.Furnace;
@@ -19,7 +20,6 @@ import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.reporting.model.ReportModel;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.util.ExecutionStatistics;
-import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 import freemarker.template.Configuration;
@@ -74,9 +74,6 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
     /**
      * Create a FreeMarkerIterationOperation with the provided furnace instance, the provided iteration var, as well as any other associated variables
      * (based upon variables in the Variables object).
-     * 
-     * iterationVarName will be defaulted to {@link DEFAULT_ITERATION_PAYLOAD_NAME}
-     * 
      */
     public static FreeMarkerIterationOperation create(Furnace furnace, String... varNames)
     {
@@ -103,8 +100,7 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
 
             Path outputPath = outputDir.resolve(outputFilename);
 
-            LOG.info("Reporting: Writing template \"" + templatePath + "\" to output file \""
-                        + outputPath.toAbsolutePath().toString() + "\"");
+            LOG.info("Reporting: Writing template \"" + templatePath + "\" to output file \"" + outputPath.toAbsolutePath().toString() + "\"");
 
             Configuration freemarkerConfig = new Configuration();
             freemarkerConfig.setTemplateLoader(new FurnaceFreeMarkerTemplateLoader());
@@ -140,11 +136,13 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
         }
         catch (IOException e)
         {
-            throw new WindupException("Failed to write template results due to: " + e.getMessage(), e);
+            LOG.log(Level.WARNING,
+                        "Template \"" + templatePath + "\" Failed to write report at \"" + outputFilename + "\" due to: " + e.getMessage(), e);
         }
         catch (TemplateException e)
         {
-            throw new WindupException("FreeMarkerOperation TemplateException: " + e.getMessage(), e);
+            LOG.log(Level.WARNING,
+                        "Template \"" + templatePath + "\" Failed to write report at \"" + outputFilename + "\" due to: " + e.getMessage(), e);
         }
         finally
         {
