@@ -559,7 +559,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_which_one_to_choose">6.6.2. Which one to choose?</a></li>
 <li><a href="#_pros_and_cons_of_xml_based_rules">6.6.3. Pros and Cons of XML-based Rules</a></li>
 <li><a href="#_pros_and_cons_of_java_based_rules">6.6.4. Pros and Cons of Java-based Rules</a></li>
-<li><a href="#_examples">6.6.5. Examples</a></li>
+<li><a href="#_examples_of_xml_based_and_java_based_rules">6.6.5. Examples of XML-based and Java Based Rules</a></li>
 <li><a href="#_quick_comparison_summary">6.6.6. Quick Comparison Summary</a></li>
 </ul>
 </li>
@@ -626,7 +626,6 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#Get-Involved">9.2. Get Involved</a>
 <ul class="sectlevel3">
 <li><a href="#_how_can_you_help">9.2.1. How can you help?</a></li>
-<li><a href="#_important_links">9.2.2. Important links</a></li>
 </ul>
 </li>
 <li><a href="#Important-Links">9.3. Important Links</a></li>
@@ -776,7 +775,7 @@ spots” when migrating applications. The goal is to provide a high level view i
 </dd>
 <dt class="hdlist1">Work Estimation</dt>
 <dd>
-<p>Estimates for the <em>level of effort</em> are based on the skills required and the classification of migration work needed. <em>Level of effort</em> is represented as <em>story points</em> in the Windup reports and are described in more detail here: <a href="#Rules-Rule-Story-Points">Rule Story Points</a>.</p>
+<p>Estimates for the <em>level of effort</em> are based on the skills required and the classification of migration work needed. <em>Level of effort</em> is represented as <em>story points</em> in the Windup reports.</p>
 </dd>
 <dt class="hdlist1">Better Reporting</dt>
 <dd>
@@ -1331,7 +1330,7 @@ Depending on the size of the application and the hardware Windup is running on, 
 <p>A list of issues, if any, that were found in the file</p>
 </li>
 <li>
-<p>The estimated total <em>Story Points</em> to migrate the file. A <em>Story Point</em> is a term commonly used in Scrum Agile software development methodology to estimate the level of effort needed to implement a feature or change. It does not necessarily translate to man-hours, but the value should be consistent across tasks. For more information about <em>Story Points</em>, see <a href="#Rules-Rule-Story-Points">Rule Story Points</a>.</p>
+<p>The estimated total <em>Story Points</em> to migrate the file. <em>Story Points</em> are covered in more detail in the <em>Windup Rules Development Guide</em>.</p>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -3227,16 +3226,19 @@ FooModel = fooService.create();
 </div>
 </div>
 <div class="sect3">
-<h4 id="_examples">6.6.5. Examples</h4>
+<h4 id="_examples_of_xml_based_and_java_based_rules">6.6.5. Examples of XML-based and Java Based Rules</h4>
 <div class="paragraph">
 <p>The following is an example of a rule written in XML that classifies Java code:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;?xml version="1.0"?&gt;
-&lt;ruleset xmlns="http://windup.jboss.org/v1/xml" id="EjbRules"&gt;
+&lt;ruleset id="EjbRules"
+    xmlns="http://windup.jboss.org/schema/jboss-ruleset"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://windup.jboss.org/schema/jboss-ruleset http://windup.jboss.org/schema/jboss-ruleset/windup-jboss-ruleset.xsd"&gt;
     &lt;rules&gt;
-        &lt;rule id="EjbRules_2fmb"&gt;
+        &lt;rule id="EjbRules_1000"&gt;
             &lt;when&gt;
                 &lt;javaclass references="javax.persistence.Entity" as="default"&gt;
                     &lt;location&gt;TYPE&lt;/location&gt;
@@ -4504,12 +4506,6 @@ This may especially happen after Maven coordinates of some module are changed.</
 <p>Any level of involvement is greatly appreciated!</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_important_links">9.2.2. Important links</h4>
-<div class="paragraph">
-<p>See the <a href="#Important-Links">list of links to Windup resources</a>.</p>
-</div>
-</div>
 </div>
 <div class="sect2">
 <h3 id="Important-Links">9.3. Important Links</h3>
@@ -4525,27 +4521,11 @@ This may especially happen after Maven coordinates of some module are changed.</
 <li>
 <p><a href="http://windup.github.io/windup/docs/latest/html/WindupUserGuide.html">Windup User Guide</a></p>
 </li>
-<li>
-<p><a href="http://windup.github.io/windup/docs/latest/html/WindupRulesDevelopmentGuide.html">Windup Rules Development Guide</a></p>
-</li>
-<li>
-<p><a href="http://windup.github.io/windup/docs/latest/html/WindupCoreDevelopmentGuide.html">Windup Core Development Guide</a></p>
-</li>
-<li>
-<p><a href="http://windup.github.io/windup/docs/latest/javadoc">Windup Javadoc</a></p>
-</li>
 </ul>
 </div>
 </li>
 <li>
 <p>Windup forums: <a href="https://community.jboss.org/en/windup" class="bare">https://community.jboss.org/en/windup</a></p>
-<div class="ulist">
-<ul>
-<li>
-<p>Windup 0.x legacy forums: <a href="https://developer.jboss.org/en/windup" class="bare">https://developer.jboss.org/en/windup</a></p>
-</li>
-</ul>
-</div>
 </li>
 <li>
 <p>Windup issue tracker: <a href="https://issues.jboss.org/browse/WINDUP" class="bare">https://issues.jboss.org/browse/WINDUP</a></p>
@@ -4554,26 +4534,10 @@ This may especially happen after Maven coordinates of some module are changed.</
 <p>Windup users mailing List: <a href="mailto:windup-users@lists.jboss.org">windup-users@lists.jboss.org</a></p>
 </li>
 <li>
-<p>Windup developers mailing list: <a href="mailto:windup-dev@lists.jboss.org">windup-dev@lists.jboss.org</a></p>
-</li>
-<li>
-<p>Windup commits mailing list: <a href="mailto:windup-commits@lists.jboss.org">windup-commits@lists.jboss.org</a></p>
-</li>
-<li>
 <p>Windup on Twitter: <a href="https://twitter.com/jbosswindup">@JBossWindup</a></p>
 </li>
 <li>
 <p>Windup IRC channel: Server FreeNode (<code>irc.freenode.net</code>), channel <code>#windup</code>.</p>
-<div class="ulist">
-<ul>
-<li>
-<p>Windup IRC Chat transcripts: <a href="http://bit.ly/windup-transcripts" class="bare">http://bit.ly/windup-transcripts</a></p>
-</li>
-<li>
-<p>Windup meeting IRC Chat transcripts: transcripts: <a href="http://bit.ly/windup-meetings" class="bare">http://bit.ly/windup-meetings</a></p>
-</li>
-</ul>
-</div>
 </li>
 </ul>
 </div>
@@ -4737,7 +4701,7 @@ This may especially happen after Maven coordinates of some module are changed.</
 </dd>
 <dt class="hdlist1">Story Point</dt>
 <dd>
-<p>A term commonly used in Scrum Agile software development methodology to estimate the <em>level of effort</em> needed to implement a feature or change. It does not necessarily translate to man-hours, but the value should be consistent across tasks.  <em>Story points</em> and <em>level of effort</em> are described in more detail here: <a href="#Rules-Rule-Story-Points">Rule Story Points</a>.</p>
+<p>A term commonly used in Scrum Agile software development methodology to estimate the <em>level of effort</em> needed to implement a feature or change. It does not necessarily translate to man-hours, but the value should be consistent across tasks. Story points are covered in more detail in the <em>Windup Rules Development Guide</em>.</p>
 </dd>
 </dl>
 </div>
@@ -4884,7 +4848,7 @@ Useful Commands: #action #agreed #help #info #idea #link #topic.</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-06-05 15:33:20 EDT
+Last updated 2015-06-08 20:28:29 EDT
 </div>
 </div>
 </body>

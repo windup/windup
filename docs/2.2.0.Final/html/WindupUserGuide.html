@@ -468,7 +468,6 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#Get-Involved">3.2. Get Involved</a>
 <ul class="sectlevel3">
 <li><a href="#_how_can_you_help">3.2.1. How can you help?</a></li>
-<li><a href="#_important_links">3.2.2. Important links</a></li>
 </ul>
 </li>
 <li><a href="#Important-Links">3.3. Important Links</a></li>
@@ -489,17 +488,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_reporting_terms">4.1.2. Reporting Terms</a></li>
 </ul>
 </li>
-<li><a href="#Rules-Rule-Story-Points">4.2. Rule Story Points</a>
+<li><a href="#Optimize-Performance">4.2. Optimize Windup Performance</a>
 <ul class="sectlevel3">
-<li><a href="#_what_are_story_points">4.2.1. What are Story Points?</a></li>
-<li><a href="#_how_story_points_are_estimated_in_rules">4.2.2. How Story Points are Estimated in Rules</a></li>
-<li><a href="#_task_severity">4.2.3. Task Severity</a></li>
-</ul>
-</li>
-<li><a href="#Optimize-Performance">4.3. Optimize Windup Performance</a>
-<ul class="sectlevel3">
-<li><a href="#_overview_2">4.3.1. Overview</a></li>
-<li><a href="#_tips_to_optimize_performance">4.3.2. Tips to Optimize Performance</a></li>
+<li><a href="#_overview_2">4.2.1. Overview</a></li>
+<li><a href="#_tips_to_optimize_performance">4.2.2. Tips to Optimize Performance</a></li>
 </ul>
 </li>
 </ul>
@@ -614,7 +606,7 @@ spots” when migrating applications. The goal is to provide a high level view i
 </dd>
 <dt class="hdlist1">Work Estimation</dt>
 <dd>
-<p>Estimates for the <em>level of effort</em> are based on the skills required and the classification of migration work needed. <em>Level of effort</em> is represented as <em>story points</em> in the Windup reports and are described in more detail here: <a href="#Rules-Rule-Story-Points">Rule Story Points</a>.</p>
+<p>Estimates for the <em>level of effort</em> are based on the skills required and the classification of migration work needed. <em>Level of effort</em> is represented as <em>story points</em> in the Windup reports.</p>
 </dd>
 <dt class="hdlist1">Better Reporting</dt>
 <dd>
@@ -1166,7 +1158,7 @@ Depending on the size of the application and the hardware Windup is running on, 
 <p>A list of issues, if any, that were found in the file</p>
 </li>
 <li>
-<p>The estimated total <em>Story Points</em> to migrate the file. A <em>Story Point</em> is a term commonly used in Scrum Agile software development methodology to estimate the level of effort needed to implement a feature or change. It does not necessarily translate to man-hours, but the value should be consistent across tasks. For more information about <em>Story Points</em>, see <a href="#Rules-Rule-Story-Points">Rule Story Points</a>.</p>
+<p>The estimated total <em>Story Points</em> to migrate the file. <em>Story Points</em> are covered in more detail in the <em>Windup Rules Development Guide</em>.</p>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -1494,12 +1486,6 @@ The estimated Story Points change as new rules are added to Windup. The values h
 <p>Any level of involvement is greatly appreciated!</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_important_links">3.2.2. Important links</h4>
-<div class="paragraph">
-<p>See the <a href="#Important-Links">list of links to Windup resources</a>.</p>
-</div>
-</div>
 </div>
 <div class="sect2">
 <h3 id="Important-Links">3.3. Important Links</h3>
@@ -1515,27 +1501,11 @@ The estimated Story Points change as new rules are added to Windup. The values h
 <li>
 <p><a href="http://windup.github.io/windup/docs/latest/html/WindupUserGuide.html">Windup User Guide</a></p>
 </li>
-<li>
-<p><a href="http://windup.github.io/windup/docs/latest/html/WindupRulesDevelopmentGuide.html">Windup Rules Development Guide</a></p>
-</li>
-<li>
-<p><a href="http://windup.github.io/windup/docs/latest/html/WindupCoreDevelopmentGuide.html">Windup Core Development Guide</a></p>
-</li>
-<li>
-<p><a href="http://windup.github.io/windup/docs/latest/javadoc">Windup Javadoc</a></p>
-</li>
 </ul>
 </div>
 </li>
 <li>
 <p>Windup forums: <a href="https://community.jboss.org/en/windup" class="bare">https://community.jboss.org/en/windup</a></p>
-<div class="ulist">
-<ul>
-<li>
-<p>Windup 0.x legacy forums: <a href="https://developer.jboss.org/en/windup" class="bare">https://developer.jboss.org/en/windup</a></p>
-</li>
-</ul>
-</div>
 </li>
 <li>
 <p>Windup issue tracker: <a href="https://issues.jboss.org/browse/WINDUP" class="bare">https://issues.jboss.org/browse/WINDUP</a></p>
@@ -1544,26 +1514,10 @@ The estimated Story Points change as new rules are added to Windup. The values h
 <p>Windup users mailing List: <a href="mailto:windup-users@lists.jboss.org">windup-users@lists.jboss.org</a></p>
 </li>
 <li>
-<p>Windup developers mailing list: <a href="mailto:windup-dev@lists.jboss.org">windup-dev@lists.jboss.org</a></p>
-</li>
-<li>
-<p>Windup commits mailing list: <a href="mailto:windup-commits@lists.jboss.org">windup-commits@lists.jboss.org</a></p>
-</li>
-<li>
 <p>Windup on Twitter: <a href="https://twitter.com/jbosswindup">@JBossWindup</a></p>
 </li>
 <li>
 <p>Windup IRC channel: Server FreeNode (<code>irc.freenode.net</code>), channel <code>#windup</code>.</p>
-<div class="ulist">
-<ul>
-<li>
-<p>Windup IRC Chat transcripts: <a href="http://bit.ly/windup-transcripts" class="bare">http://bit.ly/windup-transcripts</a></p>
-</li>
-<li>
-<p>Windup meeting IRC Chat transcripts: transcripts: <a href="http://bit.ly/windup-meetings" class="bare">http://bit.ly/windup-meetings</a></p>
-</li>
-</ul>
-</div>
 </li>
 </ul>
 </div>
@@ -1727,93 +1681,16 @@ The estimated Story Points change as new rules are added to Windup. The values h
 </dd>
 <dt class="hdlist1">Story Point</dt>
 <dd>
-<p>A term commonly used in Scrum Agile software development methodology to estimate the <em>level of effort</em> needed to implement a feature or change. It does not necessarily translate to man-hours, but the value should be consistent across tasks.  <em>Story points</em> and <em>level of effort</em> are described in more detail here: <a href="#Rules-Rule-Story-Points">Rule Story Points</a>.</p>
+<p>A term commonly used in Scrum Agile software development methodology to estimate the <em>level of effort</em> needed to implement a feature or change. It does not necessarily translate to man-hours, but the value should be consistent across tasks. Story points are covered in more detail in the <em>Windup Rules Development Guide</em>.</p>
 </dd>
 </dl>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="Rules-Rule-Story-Points">4.2. Rule Story Points</h3>
+<h3 id="Optimize-Performance">4.2. Optimize Windup Performance</h3>
 <div class="sect3">
-<h4 id="_what_are_story_points">4.2.1. What are Story Points?</h4>
-<div class="paragraph">
-<p><em>Story Points</em> are an abstract metric commonly used in Scrum Agile software development methodology to estimate the <em>level of effort</em> needed to implement a feature or change. They are based on a <a href="http://scrummethodology.com/scrum-effort-estimation-and-story-points/">modified Fibonacci sequence</a>.</p>
-</div>
-<div class="paragraph">
-<p>In a similar manner, Windup uses <em>story points</em> to express the <em>level of effort</em> needed to migrate particular application constructs, and in a sum, the application as a whole. It does not necessarily translate to man-hours, but the value should be consistent across tasks.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_how_story_points_are_estimated_in_rules">4.2.2. How Story Points are Estimated in Rules</h4>
-<div class="paragraph">
-<p>Estimating the <em>level of effort</em> for the <em>story points</em> for a rule can be tricky. The following are the general guidelines Windup uses when estimating the <em>level of effort</em> required for a rule.</p>
-</div>
-<table class="tableblock frame-all grid-all spread">
-<colgroup>
-<col style="width: 20%;">
-<col style="width: 20%;">
-<col style="width: 60%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Level of Effort</th>
-<th class="tableblock halign-left valign-top">Story Points</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Trivial</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The migration is a trivial change or a simple library swap with no or minimal API changes.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Complex</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">3</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The changes required for the migration task are complex, but have a documented solution.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Redesign</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">5</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The migration task requires a redesign or a complete library change, with significant API changes.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Rearchitecture</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">7</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The migration requires a complete rearchitecture of the component or subsystem.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Unknown</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">13</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The migration solution is not known and may need a complete rewrite.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_task_severity">4.2.3. Task Severity</h4>
-<div class="paragraph">
-<p>In addition to the <em>level of effort</em>, migration tasks can be assigned a <em>severity</em> that indicates whether the task must be completed or can be postponed.</p>
-</div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">Mandatory</dt>
-<dd>
-<p>The task must be completed for a successful migration. If the changes are not made, the resulting application will not build or run successfully. Examples include replacement of proprietary APIs that are not supported in the target platform.</p>
-</dd>
-<dt class="hdlist1">Optional</dt>
-<dd>
-<p>If the migration task is not completed, the application will work, but the results may not be the optimal. If the change is not made at the time of migration, it is recommended to put it on the schedule soon after migration is completed. An example of this would be the upgrade of EJB 2.x code to EJB 3.</p>
-</dd>
-</dl>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="Optimize-Performance">4.3. Optimize Windup Performance</h3>
-<div class="sect3">
-<h4 id="_overview_2">4.3.1. Overview</h4>
+<h4 id="_overview_2">4.2.1. Overview</h4>
 <div class="paragraph">
 <p>Windup performance depends on a number of factors, including hardware configuration, the number and types of files in the application, the size and number of applications to be evaluated, and whether the application contains source or compiled code. For example, a file that is larger than 10 MB may need a lot of time to process.</p>
 </div>
@@ -1822,7 +1699,7 @@ The estimated Story Points change as new rules are added to Windup. The values h
 </div>
 </div>
 <div class="sect3">
-<h4 id="_tips_to_optimize_performance">4.3.2. Tips to Optimize Performance</h4>
+<h4 id="_tips_to_optimize_performance">4.2.2. Tips to Optimize Performance</h4>
 <div class="sect4">
 <h5 id="_application_and_command_line_suggestions">Application and Command Line Suggestions</h5>
 <div class="paragraph">
@@ -1874,7 +1751,7 @@ The estimated Story Points change as new rules are added to Windup. The values h
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-06-05 15:33:20 EDT
+Last updated 2015-06-08 20:28:29 EDT
 </div>
 </div>
 </body>
