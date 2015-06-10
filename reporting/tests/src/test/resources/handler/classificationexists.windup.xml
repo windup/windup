@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<test xmlns="http://windup.jboss.org/schema/jboss-ruleset">
+
+    <classification-exists />
+    <classification-exists title="test-message"/>
+    <classification-exists title="test-message" in="test-in"/>
+
+</test>
+            
