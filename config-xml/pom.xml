@@ -28,6 +28,7 @@
                 <version>1.0</version>
                 <executions>
                     <execution>
+                        <inherited>false</inherited>
                         <goals>
                             <goal>validate</goal>
                         </goals>
@@ -38,9 +39,9 @@
                     <validationSets>
                         <validationSet>
                             <includes>
-                                <include>dummy.xml</include>
+                                <include>**/*.xml</include>
                             </includes>
-                            <dir>schema</dir>
+                            <dir>src/test/resources</dir>
                             <systemId>schema/windup-jboss-ruleset.xsd</systemId>
                         </validationSet>
                     </validationSets>
