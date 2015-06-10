@@ -63,7 +63,6 @@
 	</xs:complexType>
 
 
-
 	<!-- CONDITION DEFINITIONS -->
 
 
@@ -234,6 +233,16 @@
 		<xs:attribute type="xs:string" name="param" use="optional" />
 	</xs:complexType>
 
+	<xs:complexType name="hint-exists">
+		<xs:attribute type="xs:string" name="message" use="optional" />
+		<xs:attribute type="xs:string" name="in" use="optional" />
+	</xs:complexType>
+
+	<xs:complexType name="classification-exists">
+		<xs:attribute type="xs:string" name="title" use="optional" />
+		<xs:attribute type="xs:string" name="in" use="optional" />
+	</xs:complexType>
+
 	<xs:complexType name="when">
 		<!-- Conditions -->
 		<xs:choice maxOccurs="unbounded">
@@ -245,6 +254,10 @@
 			<xs:element ref="xmlfile" minOccurs="0" maxOccurs="unbounded" />
 			<xs:element ref="project" minOccurs="0" maxOccurs="unbounded" />
 			<xs:element ref="filecontent" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="hint-exists" type="hint-exists" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="hint-not-exists" type="hint-exists" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="classification-exists" type="classification-exists" minOccurs="0" maxOccurs="unbounded" />
+			<xs:element name="classification-not-exists" type="classification-exists" minOccurs="0" maxOccurs="unbounded" />
 		</xs:choice>
 	</xs:complexType>
 

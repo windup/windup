@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<test xmlns="http://windup.jboss.org/schema/jboss-ruleset">
+
+    <hint-exists />
+    <hint-exists message="test-message"/>
+    <hint-exists message="test-message" in="test-in"/>
+
+</test>
+            

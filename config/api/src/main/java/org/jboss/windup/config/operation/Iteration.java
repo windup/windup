@@ -322,6 +322,28 @@ public class Iteration extends DefaultOperationBuilder
     }
 
     /**
+     * Get the {@link Iteration} payload with the given name.
+     *
+     * @throws IllegalArgumentException if the given variable refers to a non-payload.
+     */
+    @SuppressWarnings("unchecked")
+    public static <FRAMETYPE extends WindupVertexFrame> Iterable<? extends FRAMETYPE> getCurrentIterationPayload(Variables stack, String name)
+                throws IllegalStateException, IllegalArgumentException
+    {
+        Map<String, Iterable<? extends WindupVertexFrame>> vars = stack.peek();
+
+        Iterable<? extends WindupVertexFrame> existingValue = vars.get(name);
+        if (existingValue == null)
+        {
+            throw new IllegalArgumentException("Variable \"" + name
+                        + "\" is not an " + Iteration.class.getSimpleName() + " variable.");
+        }
+
+        Object object = stack.findVariable(name);
+        return (Iterable<? extends FRAMETYPE>) object;
+    }
+
+    /**
      * Get the {@link Iteration} payload with the given name and type.
      *
      * @throws IllegalArgumentException if the given variable refers to a non-payload.
