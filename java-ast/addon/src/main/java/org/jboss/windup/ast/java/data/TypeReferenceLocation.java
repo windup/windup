@@ -86,7 +86,14 @@ public enum TypeReferenceLocation
     /**
      * A Java class implements the specified type.
      */
-    IMPLEMENTS_TYPE("Implements type");
+    IMPLEMENTS_TYPE("Implements type"),
+
+    /**
+     * A variable initalization expression value. For example, this would resolve to "mypackage.MyConstants.FOO" for the following field declaration:
+     *
+     * int foo = mypackage.MyConstants.FOO;
+     */
+    VARIABLE_INITIALIZER("Variable Initializer");
 
     private String readablePrefix;
 

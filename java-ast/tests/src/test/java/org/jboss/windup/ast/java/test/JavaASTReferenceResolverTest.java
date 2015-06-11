@@ -145,4 +145,20 @@ public class JavaASTReferenceResolverTest extends AbstractJavaASTTest
         Assert.assertTrue(references.contains(new ClassReference("java.net.*", TypeReferenceLocation.IMPORT, 11, 7, 8, "import java.net.*;")));
         Assert.assertTrue(references.contains(new ClassReference("java.awt.*", TypeReferenceLocation.IMPORT, 12, 7, 8, "import java.awt.*;")));
     }
+
+    @Test
+    public void testNonImportedFQCN()
+    {
+        List<ClassReference> references = ASTProcessor.analyze(getLibraryPaths(), getSourcePaths(),
+                    Paths.get("src/test/resources/testclasses/simple/FullNonImportedFQCNNotOnClasspath.java"));
+        for (ClassReference reference : references)
+        {
+            System.out.println("Reference: " + reference);
+        }
+
+        Assert.assertTrue(references.contains(new ClassReference("com.proprietary.Constants.MY_CONSTANT", TypeReferenceLocation.VARIABLE_INITIALIZER,
+                    5, 4, 56, "private int foo=com.proprietary.Constants.MY_CONSTANT;")));
+        Assert.assertTrue(references.contains(new ClassReference("OtherConstants.OTHER_CONSTANT", TypeReferenceLocation.VARIABLE_INITIALIZER,
+                    6, 4, 49, "private int foo2=OtherConstants.OTHER_CONSTANT;")));
+    }
 }
