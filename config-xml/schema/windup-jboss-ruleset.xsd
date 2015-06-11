@@ -1,278 +1,311 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <xs:schema targetNamespace="http://windup.jboss.org/schema/jboss-ruleset"
-	xmlns="http://windup.jboss.org/schema/jboss-ruleset" xmlns:xs="http://www.w3.org/2001/XMLSchema"
-	elementFormDefault="qualified">
+           xmlns="http://windup.jboss.org/schema/jboss-ruleset" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           elementFormDefault="qualified">
 
 
-	<!-- Root element. -->
-	<xs:element name="ruleset">
-		<xs:annotation>
-        		<xs:documentation>Root element of Windup ruleset.</xs:documentation>
-		</xs:annotation>
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element name="metadata" maxOccurs="unbounded" minOccurs="0">
-					<xs:complexType>
-						<xs:sequence>
-							<xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1"/>
-							<xs:element name="dependencies">
-								<xs:complexType>
-									<xs:sequence>
-										<xs:element name="addon" minOccurs="1" maxOccurs="unbounded">
-											<xs:complexType>
-												<xs:attribute type="xs:string" name="id" use="optional" />
-											</xs:complexType>
-										</xs:element>
-									</xs:sequence>
-								</xs:complexType>
-							</xs:element>
-							<xs:element name="sourceTechnology" type="technology" maxOccurs="unbounded" minOccurs="0"/>
-							<xs:element name="targetTechnology" type="technology" maxOccurs="unbounded" minOccurs="0"/>
-							<xs:element name="executeAfter"  type="xs:string"  maxOccurs="unbounded" minOccurs="0"/>
-							<xs:element name="executeBefore"  type="xs:string"  maxOccurs="unbounded" minOccurs="0"/>
-							<xs:element name="tag" type="xs:string"  maxOccurs="unbounded" minOccurs="0"/>
-						</xs:sequence>
-					</xs:complexType>
-				</xs:element>
-				<xs:element name="rules" minOccurs="1">
-					<xs:complexType>
-						<xs:sequence>
-							<xs:element name="rule" minOccurs="0" maxOccurs="unbounded" type="rule" />
-							<xs:element name="file-mapping" type="mapping" minOccurs="0" maxOccurs="unbounded" />
-							<xs:element name="package-mapping" type="mapping" minOccurs="0" maxOccurs="unbounded" />
-						</xs:sequence>
-					</xs:complexType>
-				</xs:element>
-				<xs:element name="package-mapping" type="mapping" minOccurs="0" maxOccurs="unbounded"/>
-				<xs:element name="file-mapping" type="mapping" minOccurs="0" maxOccurs="unbounded"/>
-			</xs:sequence>
-			<xs:attribute type="xs:string" name="id" use="optional" />
-			<xs:attribute type="xs:string" name="phase" use="optional" />
-		</xs:complexType>
-	</xs:element>
+    <!-- Root element. -->
+    <xs:element name="ruleset">
+        <xs:annotation>
+            <xs:documentation>Root element of Windup ruleset.</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="metadata" maxOccurs="unbounded" minOccurs="0">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                            <xs:element name="dependencies">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="addon" minOccurs="1" maxOccurs="unbounded">
+                                            <xs:complexType>
+                                                <xs:attribute type="xs:string" name="id" use="optional"/>
+                                            </xs:complexType>
+                                        </xs:element>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="sourceTechnology" type="technology" maxOccurs="unbounded" minOccurs="0"/>
+                            <xs:element name="targetTechnology" type="technology" maxOccurs="unbounded" minOccurs="0"/>
+                            <xs:element name="executeAfter" type="xs:string" maxOccurs="unbounded" minOccurs="0"/>
+                            <xs:element name="executeBefore" type="xs:string" maxOccurs="unbounded" minOccurs="0"/>
+                            <xs:element name="tag" type="xs:string" maxOccurs="unbounded" minOccurs="0"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="rules" minOccurs="1">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="rule" minOccurs="0" maxOccurs="unbounded" type="rule"/>
+                            <xs:element name="file-mapping" type="mapping" minOccurs="0" maxOccurs="unbounded"/>
+                            <xs:element name="package-mapping" type="mapping" minOccurs="0" maxOccurs="unbounded"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="package-mapping" type="mapping" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="file-mapping" type="mapping" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attribute type="xs:string" name="id" use="optional"/>
+            <xs:attribute type="xs:string" name="phase" use="optional"/>
+        </xs:complexType>
+    </xs:element>
 
-	<xs:complexType name="rule">
-		<xs:sequence>
-			<xs:element name="when" type="when" />
-			<xs:element name="perform" type="iteration">
-			</xs:element>
-			<xs:element name="otherwise" type="iteration" minOccurs="0" maxOccurs="1" />
-			<xs:element name="where" type="where" minOccurs="0" maxOccurs="1"/>
-		</xs:sequence>
-		<xs:attribute type="xs:string" name="id" use="optional" />
-	</xs:complexType>
-
-
-
-	<!-- CONDITION DEFINITIONS -->
+    <xs:complexType name="rule">
+        <xs:sequence>
+            <xs:element name="when" type="when"/>
+            <xs:element name="perform" type="iteration">
+            </xs:element>
+            <xs:element name="otherwise" type="iteration" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="where" type="where" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+        <xs:attribute type="xs:string" name="id" use="optional"/>
+    </xs:complexType>
 
 
-	<!-- JavaClass -->
-	<xs:element name="javaclass">
-		<xs:complexType mixed="true">
-			<xs:sequence>
-				<xs:element type="xs:string" name="location" minOccurs="0" maxOccurs="unbounded"/>
-			</xs:sequence>
-			<xs:attribute type="xs:string" name="references" />
-			<xs:attribute type="xs:string" name="matchesSource" />
-			<xs:attribute type="xs:string" name="as" use="optional" />
-			<xs:attribute type="xs:string" name="from" use="optional" />
-			<xs:attribute type="xs:string" name="in" use="optional" />
-		</xs:complexType>
-	</xs:element>
-
-	<!-- XmlFile -->
-	<xs:element name="xmlfile">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element ref="namespace" minOccurs="0" maxOccurs="unbounded"/>
-			</xs:sequence>
-			<xs:attribute type="xs:string" name="as" use="optional" />
-			<xs:attribute type="xs:string" name="xpathResultMatch" use="optional" />
-			<xs:attribute type="xs:string" name="matches" use="optional" />
-			<xs:attribute type="xs:string" name="public-id" use="optional" />
-			<xs:attribute type="xs:string" name="in" use="optional" />
-			<xs:attribute type="xs:string" name="from" use="optional" />
-		</xs:complexType>
-	</xs:element>
-
-	<xs:element name="namespace" >
-		<xs:complexType>
-			<xs:simpleContent>
-				<xs:extension base="xs:string">
-					<xs:attribute type="xs:string" name="prefix" use="optional" />
-					<xs:attribute type="xs:anyURI" name="uri" use="optional" />
-				</xs:extension>
-			</xs:simpleContent>
-		</xs:complexType>
-	</xs:element>
-
-	<!-- Project -->
-	<xs:element name="project">
-		<xs:complexType>
-			<xs:sequence>
-				<xs:element name="artifact">
-					<xs:complexType>
-						<xs:simpleContent>
-							<xs:extension base="xs:string">
-								<xs:attribute type="xs:string" name="groupId" />
-								<xs:attribute type="xs:string" name="artifactId" />
-								<xs:attribute type="xs:string" name="fromVersion" />
-								<xs:attribute type="xs:string" name="toVersion" />
-							</xs:extension>
-						</xs:simpleContent>
-					</xs:complexType>
-				</xs:element>
-			</xs:sequence>
-		</xs:complexType>
-	</xs:element>
-
-	<xs:element name="filecontent">
-		<xs:complexType>
-			<xs:attribute type="xs:string" name="pattern" />
-			<xs:attribute type="xs:string" name="filename" />
-		</xs:complexType>
-	</xs:element>
+    <!-- CONDITION DEFINITIONS -->
 
 
-	<!-- OPERATION DEFINITIONS -->
+    <!-- JavaClass -->
+    <xs:element name="javaclass">
+        <xs:complexType mixed="true">
+            <xs:sequence>
+                <xs:element type="xs:string" name="location" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attribute type="xs:string" name="references"/>
+            <xs:attribute type="xs:string" name="matchesSource"/>
+            <xs:attribute type="xs:string" name="as" use="optional"/>
+            <xs:attribute type="xs:string" name="from" use="optional"/>
+            <xs:attribute type="xs:string" name="in" use="optional"/>
+        </xs:complexType>
+    </xs:element>
 
-	<!-- Classification -->
-	<xs:element name="classification">
-		<xs:complexType mixed="true">
-			<xs:sequence>
-				<xs:element ref="link" minOccurs="0" maxOccurs="unbounded"/>
-				<xs:element name="tag" minOccurs="0" maxOccurs="unbounded" type="xs:string"/>
-			</xs:sequence>
-			<xs:attribute type="xs:string" name="title" />
-			<xs:attribute type="xs:byte" name="effort" use="optional" />
-			<xs:attribute type="xs:string" name="severity" use="optional" />
-			<xs:attribute type="xs:string" name="description" use="optional" />
-			<xs:attribute type="xs:string" name="of" use="optional" />
-		</xs:complexType>
-	</xs:element>
+    <!-- XmlFile -->
+    <xs:element name="xmlfile">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="namespace" minOccurs="0" maxOccurs="unbounded"/>
+            </xs:sequence>
+            <xs:attribute type="xs:string" name="as" use="optional"/>
+            <xs:attribute type="xs:string" name="xpathResultMatch" use="optional"/>
+            <xs:attribute type="xs:string" name="matches" use="optional"/>
+            <xs:attribute type="xs:string" name="public-id" use="optional"/>
+            <xs:attribute type="xs:string" name="in" use="optional"/>
+            <xs:attribute type="xs:string" name="from" use="optional"/>
+        </xs:complexType>
+    </xs:element>
 
-	<xs:element name="link">
-		<xs:complexType>
-			<xs:simpleContent>
-				<xs:extension base="xs:string">
-					<xs:attribute type="xs:anyURI" name="href" />
-					<xs:attribute type="xs:string" name="description" />
-				</xs:extension>
-			</xs:simpleContent>
-		</xs:complexType>
-	</xs:element>
+    <xs:element name="namespace">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:string">
+                    <xs:attribute type="xs:string" name="prefix" use="optional"/>
+                    <xs:attribute type="xs:anyURI" name="uri" use="optional"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
 
-	<!-- Hint -->
-	<xs:element name="hint">
-		<xs:complexType mixed="true">
-			<xs:sequence>
-				<xs:element name="message" minOccurs="0" maxOccurs="1" type="xs:string"/>
-				<xs:element ref="link" minOccurs="0" maxOccurs="unbounded" />
-				<xs:element name="tag" minOccurs="0"  maxOccurs="unbounded" type="xs:string"/>
-			</xs:sequence>
-			<xs:attribute type="xs:string" name="title" use="optional" />
-			<xs:attribute type="xs:string" name="severity" use="optional" />
-			<xs:attribute type="xs:string" name="in" use="optional" />
-			<xs:attribute type="xs:byte" name="effort" use="optional" />
-		</xs:complexType>
-	</xs:element>
+    <!-- Project -->
+    <xs:element name="project">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="artifact">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension base="xs:string">
+                                <xs:attribute type="xs:string" name="groupId"/>
+                                <xs:attribute type="xs:string" name="artifactId"/>
+                                <xs:attribute type="xs:string" name="fromVersion"/>
+                                <xs:attribute type="xs:string" name="toVersion"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
 
-	<xs:element name="log">
-		<xs:complexType>
-			<xs:attribute type="xs:string" name="message"/>
-		</xs:complexType>
-	</xs:element>
+    <xs:element name="filecontent">
+        <xs:complexType>
+            <xs:attribute type="xs:string" name="pattern"/>
+            <xs:attribute type="xs:string" name="filename"/>
+        </xs:complexType>
+    </xs:element>
 
-	<!-- XSLT Transformation -->
-	<xs:element name="xslt">
-		<xs:complexType mixed="true">
-			<xs:sequence>
-				<xs:element name="xslt-parameter" minOccurs="0" maxOccurs="unbounded">
-					<xs:complexType>
-						<xs:simpleContent>
-							<xs:extension base="xs:string">
-								<xs:attribute type="xs:string" name="property" />
-								<xs:attribute type="xs:string" name="value" />
-							</xs:extension>
-						</xs:simpleContent>
-					</xs:complexType>
-				</xs:element>
-			</xs:sequence>
-			<xs:attribute type="xs:string" name="of" use="optional" />
-			<xs:attribute type="xs:string" name="description" />
-			<xs:attribute type="xs:string" name="extension" />
-			<xs:attribute type="xs:string" name="template"/>
-			<xs:attribute type="xs:byte" name="effort" use="optional" />
-		</xs:complexType>
-	</xs:element>
+    <xs:element name="has-classification">
+        <xs:complexType>
+            <xs:attribute type="xs:string" name="title" use="optional"/>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="has-hint">
+        <xs:complexType>
+            <xs:attribute type="xs:string" name="message" use="optional"/>
+        </xs:complexType>
+    </xs:element>
 
-	<!-- Line Hint -->
-	<xs:element name="lineitem">
-		<xs:complexType>
-			<xs:simpleContent>
-				<xs:extension base="xs:string">
-					<xs:attribute type="xs:string" name="message"/>
-				</xs:extension>
-			</xs:simpleContent>
-		</xs:complexType>
-	</xs:element>
+    <!-- OPERATION DEFINITIONS -->
 
-	<!-- MAIN BUILDING BLOCKS -->
-	<xs:complexType name="where">
-		<xs:sequence>
-			<xs:element name="matches" minOccurs="0" maxOccurs="unbounded">
-				<xs:complexType>
-					<xs:simpleContent>
-						<xs:extension base="xs:string">
-							<xs:attribute type="xs:string" name="pattern" />
-						</xs:extension>
-					</xs:simpleContent>
-				</xs:complexType>
-			</xs:element>
-		</xs:sequence>
-		<xs:attribute type="xs:string" name="param" use="optional" />
-	</xs:complexType>
+    <!-- Classification -->
+    <xs:element name="classification">
+        <xs:complexType mixed="true">
+            <xs:sequence>
+                <xs:element ref="link" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="tag" minOccurs="0" maxOccurs="unbounded" type="xs:string"/>
+            </xs:sequence>
+            <xs:attribute type="xs:string" name="title"/>
+            <xs:attribute type="xs:byte" name="effort" use="optional"/>
+            <xs:attribute type="xs:string" name="severity" use="optional"/>
+            <xs:attribute type="xs:string" name="description" use="optional"/>
+            <xs:attribute type="xs:string" name="of" use="optional"/>
+        </xs:complexType>
+    </xs:element>
 
-	<xs:complexType name="when">
-		<!-- Conditions -->
-		<xs:choice maxOccurs="unbounded">
-			<xs:element name="true" minOccurs="0" maxOccurs="1" />
-			<xs:element name="or" type="when" minOccurs="0" maxOccurs="unbounded" />
-			<xs:element name="and" type="when" minOccurs="0" maxOccurs="unbounded" />
-			<xs:element name="not" type="when" minOccurs="0" maxOccurs="unbounded" />
-			<xs:element ref="javaclass" minOccurs="0" maxOccurs="unbounded" />
-			<xs:element ref="xmlfile" minOccurs="0" maxOccurs="unbounded" />
-			<xs:element ref="project" minOccurs="0" maxOccurs="unbounded" />
-			<xs:element ref="filecontent" minOccurs="0" maxOccurs="unbounded" />
-		</xs:choice>
-	</xs:complexType>
+    <xs:element name="link">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:string">
+                    <xs:attribute type="xs:anyURI" name="href"/>
+                    <xs:attribute type="xs:string" name="description"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
 
-	<xs:complexType name="iteration">
-		<xs:choice maxOccurs="unbounded">
-			<xs:element name="when" type="when" minOccurs="0" maxOccurs="1" />
-			<xs:element name="perform" type="iteration"/>
-			<xs:element name="otherwise" type="iteration"  minOccurs="0" maxOccurs="1"/>
-			<xs:element name="iteration" type="iteration" minOccurs="0" maxOccurs="unbounded" />
-			<xs:element ref="classification" minOccurs="0" maxOccurs="unbounded" />
-			<xs:element ref="hint" minOccurs="0" maxOccurs="unbounded" />
-			<xs:element ref="log" minOccurs="0" maxOccurs="unbounded" />
-			<xs:element ref="xslt" minOccurs="0" maxOccurs="unbounded" />
-			<xs:element ref="lineitem" minOccurs="0" maxOccurs="unbounded" />
-		</xs:choice>
-		<xs:attribute type="xs:string" name="over" />
-		<!-- <xs:attribute type="xs:string" name="as" /> not supported in handler yet -->
-	</xs:complexType>
+    <!-- Hint -->
+    <xs:element name="hint">
+        <xs:complexType mixed="true">
+            <xs:sequence>
+                <xs:element name="message" minOccurs="0" maxOccurs="1" type="xs:string"/>
+                <xs:element ref="link" minOccurs="0" maxOccurs="unbounded"/>
+                <xs:element name="tag" minOccurs="0" maxOccurs="unbounded" type="xs:string"/>
+            </xs:sequence>
+            <xs:attribute type="xs:string" name="title" use="optional"/>
+            <xs:attribute type="xs:string" name="severity" use="optional"/>
+            <xs:attribute type="xs:string" name="in" use="optional"/>
+            <xs:attribute type="xs:byte" name="effort" use="optional"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="log">
+        <xs:complexType>
+            <xs:attribute type="xs:string" name="message"/>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- XSLT Transformation -->
+    <xs:element name="xslt">
+        <xs:complexType mixed="true">
+            <xs:sequence>
+                <xs:element name="xslt-parameter" minOccurs="0" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension base="xs:string">
+                                <xs:attribute type="xs:string" name="property"/>
+                                <xs:attribute type="xs:string" name="value"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+            <xs:attribute type="xs:string" name="of" use="optional"/>
+            <xs:attribute type="xs:string" name="description"/>
+            <xs:attribute type="xs:string" name="extension"/>
+            <xs:attribute type="xs:string" name="template"/>
+            <xs:attribute type="xs:byte" name="effort" use="optional"/>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Line Hint -->
+    <xs:element name="lineitem">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:string">
+                    <xs:attribute type="xs:string" name="message"/>
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- MAIN BUILDING BLOCKS -->
+    <xs:complexType name="where">
+        <xs:sequence>
+            <xs:element name="matches" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:simpleContent>
+                        <xs:extension base="xs:string">
+                            <xs:attribute type="xs:string" name="pattern"/>
+                        </xs:extension>
+                    </xs:simpleContent>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute type="xs:string" name="param" use="optional"/>
+    </xs:complexType>
+
+    <xs:complexType name="when-base">
+        <!-- Conditions -->
+        <xs:choice maxOccurs="unbounded">
+            <xs:element name="true" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="false" minOccurs="0" maxOccurs="1"/>
+            <xs:element ref="javaclass" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element ref="xmlfile" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element ref="project" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element ref="filecontent" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:complexType name="when">
+        <xs:complexContent>
+            <xs:extension base="when-base">
+                <xs:choice maxOccurs="unbounded">
+                    <xs:element name="or" type="when" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element name="and" type="when" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element name="not" type="when" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:choice>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="iteration-when">
+        <xs:complexContent>
+            <xs:extension base="when-base">
+                <xs:choice maxOccurs="unbounded">
+                    <xs:element ref="has-classification"/>
+                    <xs:element ref="has-hint"/>
+                    <xs:element name="or" type="iteration-when" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element name="and" type="iteration-when" minOccurs="0" maxOccurs="unbounded"/>
+                    <xs:element name="not" type="iteration-when" minOccurs="0" maxOccurs="unbounded"/>
+                </xs:choice>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="iteration">
+        <xs:choice maxOccurs="unbounded">
+            <xs:element name="when" type="iteration-when" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="perform" type="iteration"/>
+            <xs:element name="otherwise" type="iteration" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="iteration" type="iteration" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element ref="classification" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element ref="hint" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element ref="log" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element ref="xslt" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element ref="lineitem" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:choice>
+        <xs:attribute type="xs:string" name="over"/>
+        <!-- <xs:attribute type="xs:string" name="as" /> not supported in handler yet -->
+    </xs:complexType>
 
 
-	<xs:complexType name="technology">
-		<xs:attribute type="xs:string" name="versionRange"  />
-		<xs:attribute type="xs:string" name="id"/>
-	</xs:complexType>
+    <xs:complexType name="technology">
+        <xs:attribute type="xs:string" name="versionRange"/>
+        <xs:attribute type="xs:string" name="id"/>
+    </xs:complexType>
 
-	<xs:complexType name="mapping">
-			<xs:attribute type="xs:string" name="from" use="optional" />
-			<xs:attribute type="xs:string" name="to" use="optional" />
-	</xs:complexType>
+    <xs:complexType name="mapping">
+        <xs:attribute type="xs:string" name="from" use="optional"/>
+        <xs:attribute type="xs:string" name="to" use="optional"/>
+    </xs:complexType>
 
 </xs:schema>
