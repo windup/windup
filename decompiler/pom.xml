@@ -16,6 +16,7 @@
 
     <modules>
         <module>api</module>
+        <module>impl-fernflower</module>
         <module>impl-procyon</module>
     </modules>
 

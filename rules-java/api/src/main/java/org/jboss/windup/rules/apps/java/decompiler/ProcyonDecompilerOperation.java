@@ -17,8 +17,8 @@ import java.util.logging.Logger;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.GraphOperation;
+import org.jboss.windup.decompiler.api.ClassDecompileRequest;
 import org.jboss.windup.decompiler.api.DecompilationListener;
-import org.jboss.windup.decompiler.procyon.ProcyonClassDecompileRequest;
 import org.jboss.windup.decompiler.procyon.ProcyonConfiguration;
 import org.jboss.windup.decompiler.procyon.ProcyonDecompiler;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -75,29 +75,25 @@ public class ProcyonDecompilerOperation extends GraphOperation
     {
         ExecutionStatistics.get().begin("ProcyonDecompilationOperation.perform");
         int totalCores = Runtime.getRuntime().availableProcessors();
-        int threads = totalCores;
-        if (threads == 0)
-        {
-            threads = 1;
-        }
+        int threads = totalCores == 0 ? 1 : totalCores;
         LOG.info("Decompiling with " + threads + " threads");
 
         WindupJavaConfigurationService configurationService = new WindupJavaConfigurationService(event.getGraphContext());
         GraphService<JavaClassFileModel> classFileService = new GraphService<>(event.getGraphContext(), JavaClassFileModel.class);
         Iterable<JavaClassFileModel> allClasses = classFileService.findAll();
-        List<ProcyonClassDecompileRequest> classesToDecompile = new ArrayList<>(10000); // Just a guess as to the average size
+        List<ClassDecompileRequest> classesToDecompile = new ArrayList<>(10000); // Just a guess as to the average size
         for (JavaClassFileModel classFileModel : allClasses)
         {
             if (!classFileModel.getFilePath().contains("$") && configurationService.shouldScanPackage(classFileModel.getPackageName()))
             {
                 File outputDir = getRootDirectoryForClass(classFileModel);
-                classesToDecompile.add(new ProcyonClassDecompileRequest(outputDir.toPath(), classFileModel.asFile().toPath(), outputDir.toPath()));
+                classesToDecompile.add(new ClassDecompileRequest(outputDir.toPath(), classFileModel.asFile().toPath(), outputDir.toPath()));
             }
         }
-        Collections.sort(classesToDecompile, new Comparator<ProcyonClassDecompileRequest>()
+        Collections.sort(classesToDecompile, new Comparator<ClassDecompileRequest>()
         {
             @Override
-            public int compare(ProcyonClassDecompileRequest o1, ProcyonClassDecompileRequest o2)
+            public int compare(ClassDecompileRequest o1, ClassDecompileRequest o2)
             {
                 return o1.getOutputDirectory().toAbsolutePath().toString().compareTo(o2.getOutputDirectory().toString());
             }
@@ -195,7 +191,7 @@ public class ProcyonDecompilerOperation extends GraphOperation
                                     .toString());
 
                         // make sure parent files already exist
-                        // (it can happen that it does not if procyon puts the decompiled .java file in an unexpected
+                        // (it can happen that it does not if PROCYON puts the decompiled .java file in an unexpected
                         // place, for example in the case
                         // of war files)
                         if (parentFileModel == null)

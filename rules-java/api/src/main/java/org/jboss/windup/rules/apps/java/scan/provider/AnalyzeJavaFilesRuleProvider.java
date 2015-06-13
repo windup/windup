@@ -125,7 +125,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                     }
                 }
 
-                GraphService<JarArchiveModel> libraryService = new GraphService<JarArchiveModel>(event.getGraphContext(), JarArchiveModel.class);
+                GraphService<JarArchiveModel> libraryService = new GraphService<>(event.getGraphContext(), JarArchiveModel.class);
 
                 Iterable<JarArchiveModel> libraries = libraryService.findAll();
                 Set<String> libraryPaths = new HashSet<>();
@@ -144,7 +144,6 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                 try
                 {
                     WindupWildcardImportResolver.setGraphContext(event.getGraphContext());
-                    final int totalToProcess = allSourceFiles.size();
 
                     final BlockingQueue<Pair<Path, List<ClassReference>>> processedPaths = new ArrayBlockingQueue<>(ANALYSIS_QUEUE_SIZE);
                     final Set<Path> failedPaths = Sets.getConcurrentSet();

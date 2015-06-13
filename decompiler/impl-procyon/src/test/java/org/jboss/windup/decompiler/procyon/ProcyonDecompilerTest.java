@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jboss.windup.decompiler.DecompilerTestBase;
+import org.jboss.windup.decompiler.api.ClassDecompileRequest;
 import org.jboss.windup.decompiler.api.DecompilationException;
 import org.jboss.windup.decompiler.api.DecompilationListener;
 import org.jboss.windup.decompiler.api.DecompilationResult;
@@ -52,7 +53,7 @@ public class ProcyonDecompilerTest extends DecompilerTestBase
         // DECOMPILE
         Path clsFile = unzipDir.resolve("org/apache/wicket/ajax/AbstractAjaxResponse.class");
 
-        Collection<ProcyonClassDecompileRequest> requests = Collections.singletonList(new ProcyonClassDecompileRequest(unzipDir, clsFile, decompDir));
+        Collection<ClassDecompileRequest> requests = Collections.singletonList(new ClassDecompileRequest(unzipDir, clsFile, decompDir));
         final AtomicInteger numberDecompiled = new AtomicInteger(0);
         DecompilationListener listener = new DecompilationListener()
         {
