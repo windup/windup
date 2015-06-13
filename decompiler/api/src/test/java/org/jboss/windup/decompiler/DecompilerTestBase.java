@@ -17,7 +17,6 @@ import org.jboss.windup.decompiler.util.ZipUtil;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -157,43 +156,4 @@ public abstract class DecompilerTestBase
         Assert.assertTrue("Decompiled class files exist:\n    " + sampleFile.toString(), Files.exists(sampleFile));
         dec.close();
     }
-
-    @Test
-    @Ignore("Not yet working.")
-    public void testDecompileWicketJarDirectory() throws DecompilationException, IOException
-    {
-        final Decompiler dec = this.getDecompiler();
-
-        Path archive = Paths.get("target/TestJars/wicket-core-6.11.0.jar");
-        Path decompDir = testTempDir.resolve("decompiled");
-        Path unzipDir = testTempDir.resolve("unzipped");
-
-        ZipUtil.unzipWithFilter(archive.toFile(), unzipDir.toFile(), new CountClassesFilter(100));
-
-        final DecompilationResult res = dec.decompileDirectory(unzipDir, decompDir);
-
-        Assert.assertNotNull("Results object was returned.", res);
-
-        if (!res.getFailures().isEmpty())
-        {
-            final StringBuilder sb = new StringBuilder();
-            sb.append("Failed decompilation of " + res.getFailures().size() + " classes: ");
-            for (final DecompilationFailure dex : res.getFailures())
-            {
-                sb.append("\n    ").append(dex.getMessage());
-            }
-
-            if (!this.isResultValid(res))
-                Assert.fail(sb.toString());
-            else
-                log.severe(sb.toString());
-        }
-        log.info("Compilation results: " + res.getDecompiledFiles().size() + " succeeded, " + res.getFailures().size()
-                    + " failed.");
-
-        final Path sampleFile = decompDir.resolve("org").resolve("apache").resolve("wicket").resolve("ajax").resolve("AbstractAjaxResponse.java");
-        Assert.assertTrue("Decompiled class did not exist in: " + sampleFile, Files.exists(sampleFile));
-        dec.close();
-    }
-
 }

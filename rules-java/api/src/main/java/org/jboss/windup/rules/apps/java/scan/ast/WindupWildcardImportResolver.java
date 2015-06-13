@@ -1,11 +1,12 @@
 package org.jboss.windup.rules.apps.java.scan.ast;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.jboss.forge.roaster.model.JavaType;
 import org.jboss.forge.roaster.model.source.Import;
@@ -26,13 +27,13 @@ public class WindupWildcardImportResolver implements WildcardImportResolver, org
     /**
      * Contains a map of class short names (eg, MyClass) to qualified names (eg, com.example.MyClass)
      */
-    private final Map<String, String> classNameToFQCN = new HashMap<>();
+    private final Map<String, String> classNameToFQCN = new ConcurrentHashMap<>();
 
     /**
      * Indicates that we have already attempted to query the graph for this particular shortname. The shortname will exist here even if no results
      * were found.
      */
-    private final Set<String> classNameLookedUp = new HashSet<>();
+    private final Set<String> classNameLookedUp = Collections.synchronizedSet(new HashSet<String>());
 
     @Override
     public String resolve(List<String> wildcardImports, String type)

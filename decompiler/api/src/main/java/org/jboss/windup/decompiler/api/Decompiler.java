@@ -1,6 +1,7 @@
 package org.jboss.windup.decompiler.api;
 
 import java.nio.file.Path;
+import java.util.Collection;
 import java.util.zip.ZipEntry;
 
 import org.jboss.windup.decompiler.util.Filter;
@@ -14,32 +15,23 @@ import org.jboss.windup.decompiler.util.Filter;
 public interface Decompiler
 {
     /**
+     * Decompiles the given batch of ".class" files.
+     */
+    void decompileClassFiles(final Collection<ClassDecompileRequest> requests, final DecompilationListener listener);
+
+    /**
      * Decompiles the given .class file and creates the specified output source file in the given output dir under appropriate package subdirectories,
      * like $outputDir/org/jboss/Foo.java. Decompilation may need multiple .class files for one .java file, e.g. for inner classes.
      * 
-     * @param classFile the .class file to be decompiled.
+     * @param classFilePath the .class file to be decompiled.
      * @param outputDir The directory where decompiled .java files will be placed.
      */
-    public DecompilationResult decompileClassFile(Path rootDir, Path classFilePath, Path outputDir)
-                throws DecompilationException;
+    DecompilationResult decompileClassFile(Path rootDir, Path classFilePath, Path outputDir) throws DecompilationException;
 
     /**
      * Close all the resources
      */
-    public void close();
-
-    /**
-     * Decompiles all .class files and archives in the given directory and places results in the specified output directory.
-     * <p>
-     * Discovered archives will be decompiled into directories matching the name of the archive, e.g.
-     * <code>foo.ear/bar.jar/src/com/foo/bar/Baz.java</code>.
-     * <p>
-     * Required directories will be created as needed.
-     * 
-     * @param classesDir The directory containing source files and archives.
-     * @param outputDir The directory where decompiled .java files will be placed.
-     */
-    public DecompilationResult decompileDirectory(Path classesDir, Path outputDir) throws DecompilationException;
+    void close();
 
     /**
      * Decompiles all .class files and nested archives in the given archive.
@@ -53,7 +45,7 @@ public interface Decompiler
      * @param outputDir The directory where decompiled .java files will be placed.
      * @param listener This is called after each successful decompilation
      */
-    public DecompilationResult decompileArchive(Path archive, Path outputDir, DecompilationListener listener) throws DecompilationException;
+    DecompilationResult decompileArchive(Path archive, Path outputDir, DecompilationListener listener) throws DecompilationException;
 
     /**
      * Decompiles all .class files and nested archives in the given archive.
@@ -68,6 +60,6 @@ public interface Decompiler
      * @param filter Decides what files from the archive to decompile.
      * @param listener This is called after each successful decompilation
      */
-    public DecompilationResult decompileArchive(Path archive, Path outputDir, Filter<ZipEntry> filter, DecompilationListener listener)
+    DecompilationResult decompileArchive(Path archive, Path outputDir, Filter<ZipEntry> filter, DecompilationListener listener)
                 throws DecompilationException;
 }

@@ -59,6 +59,7 @@
 
     <modules>
         <module>bom</module>
+        <module>forks/fernflower</module>
         <module>forks/frames</module>
         <module>forks/procyon</module>
         <module>rexster</module>

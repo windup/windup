@@ -1,4 +1,4 @@
-package org.jboss.windup.decompiler.procyon;
+package org.jboss.windup.decompiler.api;
 
 import java.nio.file.Path;
 
@@ -7,7 +7,7 @@ import java.nio.file.Path;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class ProcyonClassDecompileRequest
+public class ClassDecompileRequest
 {
     private Path rootDirectory;
     private Path classFile;
@@ -19,7 +19,7 @@ public class ProcyonClassDecompileRequest
      *
      * The resulting decompiled file will be placed in outputDirectory.
      */
-    public ProcyonClassDecompileRequest(Path rootDirectory, Path classFile, Path outputDirectory)
+    public ClassDecompileRequest(Path rootDirectory, Path classFile, Path outputDirectory)
     {
         this.rootDirectory = rootDirectory;
         this.classFile = classFile;
@@ -55,7 +55,7 @@ public class ProcyonClassDecompileRequest
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        ProcyonClassDecompileRequest that = (ProcyonClassDecompileRequest) o;
+        ClassDecompileRequest that = (ClassDecompileRequest) o;
 
         if (classFile != null ? !classFile.equals(that.classFile) : that.classFile != null) return false;
         if (outputDirectory != null ? !outputDirectory.equals(that.outputDirectory) : that.outputDirectory != null)
