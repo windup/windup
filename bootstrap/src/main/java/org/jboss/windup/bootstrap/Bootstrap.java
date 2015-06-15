@@ -68,36 +68,47 @@ public class Bootstrap
     {
         final List<String> bootstrapArgs = new ArrayList<>();
 
-        // For all arguments...
         for (String arg : args)
         {
-            // Turn -D...[=...] into system properties
             if (!handleAsSystemProperty(arg))
                 bootstrapArgs.add(arg);
         }
 
-        // Ensure user rules directory is created
         File rulesDir = new File(getUserWindupDir(), "rules");
         if (!rulesDir.exists())
         {
             rulesDir.mkdirs();
         }
 
-        // Check for the forge log directory
         final String defaultLog = new File(getUserWindupDir(), "log/windup.log").getAbsolutePath();
         final String logDir = System.getProperty("org.jboss.forge.log.file", defaultLog);
 
-        // Ensure this value is always set
         System.setProperty("org.jboss.forge.log.file", logDir);
 
-        // Look for a logmanager before any logging takes place
         final String logManagerName = getServiceName(Bootstrap.class.getClassLoader(), "java.util.logging.LogManager");
         if (logManagerName != null)
         {
             System.setProperty("java.util.logging.manager", logManagerName);
         }
 
-        Bootstrap bootstrap = new Bootstrap(bootstrapArgs);
+        new Bootstrap().run(bootstrapArgs);
+    }
+
+    private void run(List<String> args)
+    {
+        try
+        {
+            Furnace furnace = FurnaceFactory.getInstance();
+            furnaceService = new BootstrapFurnaceService(furnace);
+
+            processArguments(args, furnaceService);
+            furnaceService.getFurnace().stop();
+        }
+        catch (Throwable t)
+        {
+            System.err.println("Windup execution failed due to: " + t.getMessage());
+            t.printStackTrace();
+        }
     }
 
     private static boolean handleAsSystemProperty(String argument)
@@ -267,6 +278,8 @@ public class Bootstrap
             break;
         case GENERATE_COMPLETION_DATA:
             break;
+        default:
+            break;
         }
 
         try
@@ -305,6 +318,9 @@ public class Bootstrap
         case RUN_WINDUP:
             runWindup(windupArguments);
             break;
+        default:
+            displayHelp();
+            break;
         }
     }
 
@@ -340,7 +356,6 @@ public class Bootstrap
         Path completionPath = PathUtil.getWindupHome().resolve("cache").resolve("bash-completion").resolve("bash-completion.data");
         if (!force && Files.isRegularFile(completionPath))
         {
-            // check the age first
             try
             {
                 FileTime modifiedTime = Files.getLastModifiedTime(completionPath);
@@ -400,6 +415,7 @@ public class Bootstrap
         }
     }
 
+    @SuppressWarnings("unchecked")
     private void runWindup(List<String> arguments)
     {
         Iterable<ConfigurationOption> optionIterable = WindupConfiguration.getWindupConfigurationOptions(furnaceService.getFurnace());
@@ -460,12 +476,13 @@ public class Bootstrap
                  * 
                  * For example:
                  * 
-                 * windup --packages foo --packages bar --packages baz
+                 * `windup --packages foo --packages bar --packages baz`
                  * 
-                 * While this is not necessarily the recommended approach, it would be nice for it to work smoothly if someone does it this way.
+                 * While this is not necessarily the recommended approach, it would be nice for it to work smoothly if
+                 * someone does it this way.
                  */
                 if (optionValues.containsKey(option.getName()))
-                    ((List) optionValues.get(option.getName())).addAll(values);
+                    ((List<Object>) optionValues.get(option.getName())).addAll(values);
                 else
                     optionValues.put(option.getName(), values);
             }
@@ -481,42 +498,10 @@ public class Bootstrap
             }
         }
 
-        // set default values
-        if (!optionValues.containsKey(OutputPathOption.NAME))
-        {
-            // set a default, if possible
-            File inputFile = (File) optionValues.get(InputPathOption.NAME);
-            if (inputFile != null)
-            {
-                File outputFile = new File(inputFile.getAbsoluteFile().getParentFile(), inputFile.getName() + ".report");
-                optionValues.put(OutputPathOption.NAME, outputFile);
-            }
-        }
+        setDefaultOutputPath(optionValues);
+        validateOptionValues(options, optionValues);
 
-        // Validate all of the values
         WindupConfiguration windupConfiguration = new WindupConfiguration();
-        for (Map.Entry<String, ConfigurationOption> optionEntry : options.entrySet())
-        {
-            ConfigurationOption option = optionEntry.getValue();
-            ValidationResult result = option.validate(optionValues.get(option.getName()));
-
-            switch (result.getLevel())
-            {
-            case ERROR:
-                System.err.println("ERROR: " + result.getMessage());
-                return;
-            case PROMPT_TO_CONTINUE:
-                if (!prompt(result.getMessage(), result.getPromptDefault()))
-                    return;
-                break;
-            case WARNING:
-                System.err.println("WARNING: " + result.getMessage());
-                break;
-            case SUCCESS:
-                break;
-            }
-        }
-
         for (Map.Entry<String, ConfigurationOption> optionEntry : options.entrySet())
         {
             ConfigurationOption option = optionEntry.getValue();
@@ -551,7 +536,6 @@ public class Bootstrap
             }
         }
 
-        // update bash completion information if it is stale
         generateCompletionData(false);
 
         FileUtils.deleteQuietly(windupConfiguration.getOutputDirectory().toFile());
@@ -572,6 +556,44 @@ public class Bootstrap
         {
             System.err.println("Windup Execution failed due to: " + e.getMessage());
             e.printStackTrace();
+        }
+    }
+
+    private void validateOptionValues(Map<String, ConfigurationOption> options, Map<String, Object> optionValues)
+    {
+        for (Map.Entry<String, ConfigurationOption> optionEntry : options.entrySet())
+        {
+            ConfigurationOption option = optionEntry.getValue();
+            ValidationResult result = option.validate(optionValues.get(option.getName()));
+
+            switch (result.getLevel())
+            {
+            case ERROR:
+                System.err.println("ERROR: " + result.getMessage());
+                return;
+            case PROMPT_TO_CONTINUE:
+                if (!prompt(result.getMessage(), result.getPromptDefault()))
+                    return;
+                break;
+            case WARNING:
+                System.err.println("WARNING: " + result.getMessage());
+                break;
+            case SUCCESS:
+                break;
+            }
+        }
+    }
+
+    private void setDefaultOutputPath(Map<String, Object> optionValues)
+    {
+        if (!optionValues.containsKey(OutputPathOption.NAME))
+        {
+            File inputFile = (File) optionValues.get(InputPathOption.NAME);
+            if (inputFile != null)
+            {
+                File outputFile = new File(inputFile.getAbsoluteFile().getParentFile(), inputFile.getName() + ".report");
+                optionValues.put(OutputPathOption.NAME, outputFile);
+            }
         }
     }
 
@@ -598,9 +620,19 @@ public class Bootstrap
     private boolean prompt(String message, boolean defaultValue)
     {
         if (batchMode)
+        {
             return defaultValue;
+        }
         else
-            return "y".equalsIgnoreCase(System.console().readLine(message + " [Y,n] ").trim());
+        {
+            String defaultMessage = defaultValue ? " [Y,n] " : " [y,N] ";
+            String line = System.console().readLine(message + defaultMessage).trim();
+            if ("y".equalsIgnoreCase(line))
+                return true;
+            if ("n".equalsIgnoreCase(line))
+                return false;
+            return defaultValue;
+        }
     }
 
     private boolean pathNotEmpty(File f)
@@ -717,26 +749,6 @@ public class Bootstrap
         furnace.setServerMode(true);
         System.setProperty("INTERACTIVE", "false");
         System.setProperty("forge.shell.evaluate", "true");
-    }
-
-    /**
-     * Initialize Furnace and process some of arguments.
-     */
-    private Bootstrap(List<String> args)
-    {
-        try
-        {
-            Furnace furnace = FurnaceFactory.getInstance();
-            furnaceService = new BootstrapFurnaceService(furnace);
-
-            processArguments(args, furnaceService);
-            furnaceService.getFurnace().stop();
-        }
-        catch (Throwable t)
-        {
-            System.err.println("Windup execution failed due to: " + t.getMessage());
-            t.printStackTrace();
-        }
     }
 
     private static boolean containsMutableRepository(List<AddonRepository> repositories)

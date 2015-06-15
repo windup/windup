@@ -51,18 +51,22 @@
 					</div>
 					<table class="table table-striped table-bordered">
 					  	<tr>
+				    		<th>Rule-ID</th>			    		
 				    		<th>Rule</th>			    		
 				    		<th>Statistics</th>
-				    		<th>Executed?</th>
-				    		<th>Failed?</th>
+				    		<th>Status?</th>
+				    		<th>Result?</th>
 				    		<th>Failure Cause</th>
 			  			</tr>
 				  		<#list getRuleExecutionResults(ruleProvider) as ruleExecutionInfo>
 							<#if ruleExecutionInfo??>
 							<tr>
 								<td>
-										<a name="${ruleExecutionInfo.rule.id}" class="anchor"></a>
-										<span style="white-space: pre">${formatRule(ruleExecutionInfo.rule)}</span>
+									${ruleExecutionInfo.rule.id}
+								</td>
+								<td>
+									<a name="${ruleExecutionInfo.rule.id}" class="anchor"></a>
+									<span style="white-space: pre">${formatRule(ruleExecutionInfo.rule)}</span>
 								</td>
 								<td>
 									<div>Vertices Created: ${ruleExecutionInfo.vertexIDsAdded}</div>
@@ -71,10 +75,10 @@
 									<div>Edges Removed: ${ruleExecutionInfo.edgeIDsRemoved}</div>
 								</td>					
 								<td>
-									${ruleExecutionInfo.executed?string("yes", "no")}
+									${ruleExecutionInfo.executed?string("executed", "not-executed")}
 								</td>
 								<td>
-									${ruleExecutionInfo.failed?string("yes", "no")}
+									${ruleExecutionInfo.failed?string("failed", "success")}
 								</td>
 								<td>
 									<#if ruleExecutionInfo.failureCause?? && ruleExecutionInfo.failureCause.message??>
