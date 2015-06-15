@@ -69,7 +69,7 @@ public class AddClassFileMetadata extends AbstractIterationOperation<JavaClassFi
                 String simpleName = qualifiedName;
                 if (packageName != null && !packageName.equals("") && simpleName != null)
                 {
-                    simpleName = StringUtils.removeStart(simpleName, packageName);
+                    simpleName = StringUtils.substringAfterLast(simpleName, ".");
                 }
 
                 payload.setMajorVersion(majorVersion);

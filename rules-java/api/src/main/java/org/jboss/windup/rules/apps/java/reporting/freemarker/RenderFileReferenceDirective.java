@@ -151,7 +151,7 @@ public class RenderFileReferenceDirective implements WindupFreeMarkerTemplateDir
 
     private void processJavaClassModel(Writer writer, LayoutType layoutType, JavaClassModel clz, String defaultText) throws IOException
     {
-        Iterator<JavaSourceFileModel> results = javaClassService.getJavaSource(clz.getClassName()).iterator();
+        Iterator<JavaSourceFileModel> results = javaClassService.getJavaSource(clz.getQualifiedName()).iterator();
 
         int i = 0;
         if (results.hasNext())
@@ -162,14 +162,32 @@ public class RenderFileReferenceDirective implements WindupFreeMarkerTemplateDir
                 {
                     String linkText = StringUtils.isBlank(defaultText) ? clz.getQualifiedName() : defaultText;
                     JavaSourceFileModel source = results.next();
+
                     SourceReportModel result = sourceReportService.getSourceReportForFileModel(source);
-                    renderLink(writer, result.getReportFilename(), linkText);
+                    if (result == null)
+                    {
+                        writer.write(linkText);
+                    }
+                    else
+                    {
+                        renderLink(writer, result.getReportFilename(), linkText);
+                    }
+
                 }
                 else
                 {
                     JavaSourceFileModel source = results.next();
                     SourceReportModel result = sourceReportService.getSourceReportForFileModel(source);
-                    renderLink(writer, result.getReportFilename(), " (" + (i + 1) + ")");
+
+                    if (result == null)
+                    {
+                        writer.write(" (" + (i + 1) + ")");
+                    }
+                    else
+                    {
+                        renderLink(writer, result.getReportFilename(), " (" + (i + 1) + ")");
+                    }
+
                 }
                 i++;
             }
