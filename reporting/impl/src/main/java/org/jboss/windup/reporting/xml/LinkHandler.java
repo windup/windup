@@ -35,7 +35,7 @@ public class LinkHandler implements ElementHandler<Link>
             throw new WindupException(
                         "Error, 'link' element must have a non-empty 'href' attribute (eg, 'http://www.example.com/somepage.html')");
         }
-        String description = $(element).attr("description");
+        String description = $(element).attr("title");
         if (StringUtils.isBlank(description))
         {
             throw new WindupException(

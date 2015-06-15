@@ -38,7 +38,7 @@ public class XSLTTransformationHandler implements ElementHandler<XSLTTransformat
     public XSLTTransformation processElement(ParserContext handlerManager, Element element)
                 throws ConfigurationException
     {
-        String description = $(element).attr("description");
+        String description = $(element).attr("title");
         String extension = $(element).attr("extension");
         String effort = $(element).attr("effort");
         String template = $(element).attr("template");
