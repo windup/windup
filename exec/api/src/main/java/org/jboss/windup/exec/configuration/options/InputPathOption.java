@@ -57,7 +57,8 @@ public class InputPathOption extends AbstractPathConfigurationOption
             {
                 return new ValidationResult(ValidationResult.Level.PROMPT_TO_CONTINUE,
                             "The input application is large. Processing may take a very long time. "
-                                        + "Please consult the Windup User Guide for performance tips.", true);
+                                        + "Please consult the Windup User Guide for performance tips. "
+                                        + "Would you like to continue?", true);
             }
         }
 
