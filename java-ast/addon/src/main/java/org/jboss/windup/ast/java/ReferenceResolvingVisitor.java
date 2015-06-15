@@ -22,6 +22,7 @@ import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
+import org.eclipse.jdt.core.dom.IBinding;
 import org.eclipse.jdt.core.dom.IMethodBinding;
 import org.eclipse.jdt.core.dom.ITypeBinding;
 import org.eclipse.jdt.core.dom.ImportDeclaration;
@@ -331,7 +332,26 @@ public class ReferenceResolvingVisitor extends ASTVisitor
             String nodeType = node.getType().toString();
             nodeType = resolveClassname(nodeType);
             VariableDeclarationFragment frag = (VariableDeclarationFragment) node.fragments().get(i);
-            frag.resolveBinding();
+            Expression expression = frag.getInitializer();
+            if (expression instanceof QualifiedName)
+            {
+                QualifiedName qualifiedName = (QualifiedName) expression;
+                IBinding binding = qualifiedName.resolveBinding();
+                if (binding == null)
+                {
+                    processTypeAsString(resolveClassname(qualifiedName.getFullyQualifiedName().toString()),
+                                TypeReferenceLocation.VARIABLE_INITIALIZER,
+                                compilationUnit.getLineNumber(node.getStartPosition()),
+                                compilationUnit.getColumnNumber(node.getStartPosition()), node.getLength(), node.toString());
+                }
+                else
+                {
+                    processTypeBinding(node.getType().resolveBinding(), TypeReferenceLocation.VARIABLE_INITIALIZER,
+                                compilationUnit.getLineNumber(node.getStartPosition()),
+                                compilationUnit.getColumnNumber(node.getStartPosition()), node.getLength(), node.toString());
+                }
+            }
+
             state.getNames().add(frag.getName().getIdentifier());
             state.getNameInstance().put(frag.getName().toString(), nodeType.toString());
 
