@@ -165,9 +165,9 @@
     <xs:element name="classification">
         <xs:complexType mixed="true">
             <xs:sequence>
+                <xs:element name="description" minOccurs="0" maxOccurs="unbounded" type="xs:string" />
                 <xs:element ref="link" minOccurs="0" maxOccurs="unbounded" />
                 <xs:element name="tag" minOccurs="0" maxOccurs="unbounded" type="xs:string" />
-                <xs:element name="description" minOccurs="0" maxOccurs="unbounded" type="xs:string" />
             </xs:sequence>
             <xs:attribute type="xs:string" name="title" />
             <xs:attribute type="xs:byte" name="effort" use="optional" />
