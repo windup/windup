@@ -28,6 +28,7 @@
                             </xs:element>
                             <xs:element name="sourceTechnology" type="technology" maxOccurs="unbounded" minOccurs="0"/>
                             <xs:element name="targetTechnology" type="technology" maxOccurs="unbounded" minOccurs="0"/>
+                            <xs:element name="phase" type="phase" maxOccurs="1" minOccurs="0"/>
                             <xs:element name="executeAfter" type="xs:string" maxOccurs="unbounded" minOccurs="0"/>
                             <xs:element name="executeBefore" type="xs:string" maxOccurs="unbounded" minOccurs="0"/>
                             <xs:element name="tag" type="xs:string" maxOccurs="unbounded" minOccurs="0"/>
@@ -301,6 +302,14 @@
     <xs:complexType name="technology">
         <xs:attribute type="xs:string" name="versionRange"/>
         <xs:attribute type="xs:string" name="id"/>
+    </xs:complexType>
+
+    <xs:complexType name="phase">
+        <xs:choice>
+            <xs:element name="MigrationRulesPhase"/>
+            <xs:element name="PostMigrationRulesPhase"/>
+            <xs:element name="PreReportGenerationPhase"/>
+        </xs:choice>
     </xs:complexType>
 
     <xs:complexType name="mapping">

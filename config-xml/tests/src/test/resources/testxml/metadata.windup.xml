@@ -14,10 +14,11 @@
         <targetTechnology id="eap" versionRange="(5,6]" />
         <targetTechnology id="ejb" versionRange="(2,3]" />
         <targetTechnology id="jsp"/>
-        <tag>require-stateless</tag>
-        <tag>require-nofilesystem-io</tag>
+        <phase>PostMigrationRulesPhase</phase>
         <executeAfter>AfterId</executeAfter>
         <executeBefore>BeforeId</executeBefore>
+        <tag>require-stateless</tag>
+        <tag>require-nofilesystem-io</tag>
     </metadata>
 
     <rules>

@@ -19,6 +19,8 @@ import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.parser.ParserContext;
+import org.jboss.windup.config.phase.PostMigrationRulesPhase;
+import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.junit.Assert;
@@ -73,6 +75,7 @@ public class MetaDataHandlerTest
         Assert.assertEquals(1, parser.getRuleProviders().size());
         AbstractRuleProvider abstractRuleProvider = parser.getRuleProviders().get(0);
         RuleProviderMetadata metadata = abstractRuleProvider.getMetadata();
+        Class<? extends RulePhase> phase = metadata.getPhase();
         List<String> executeAfterIDs = metadata.getExecuteAfterIDs();
         List<String> executeBeforeIDs = metadata.getExecuteBeforeIDs();
         Set<AddonId> requiredAddons = metadata.getRequiredAddons();
@@ -80,6 +83,7 @@ public class MetaDataHandlerTest
         Set<TechnologyReference> targetTechnologies = metadata.getTargetTechnologies();
         Set<String> tags = metadata.getTags();
 
+        Assert.assertTrue(PostMigrationRulesPhase.class.isAssignableFrom(phase));
         Assert.assertTrue(executeAfterIDs.contains("AfterId"));
         Assert.assertTrue(executeBeforeIDs.contains("BeforeId"));
         Assert.assertTrue(tags.contains("require-stateless"));
