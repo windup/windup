@@ -7,6 +7,8 @@
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd">
 
+    <!-- jee JNDI data source-->
+    <jee:jndi-lookup id="dataSource10" jndi-name="jdbc/ExampleDataSource10"/>
 
     <!-- jee JNDI data source-->
     <jee:jndi-lookup id="dataSource9" jndi-name="jdbc/ExampleDataSource9"/>
@@ -173,4 +175,15 @@
       <property name="packagesToScan" value="org.jboss.windup.example.spring.jpa" />
       <property name="jpaVendorAdapter" ref="jpaVendorAdapter4"/>
    </bean>
+   
+   <!-- test property/ref referencing in datasource property -->
+   <bean id="jpaPropertyFactory7" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+      <property name="dataSource">
+      	 <ref bean="dataSource10"/> 
+      </property>
+      <property name="packagesToScan" value="org.jboss.windup.example.spring.jpa" />
+      <property name="jpaVendorAdapter" ref="jpaVendorAdapter4"/>
+   </bean>
+   
+   
 </beans>

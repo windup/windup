@@ -100,7 +100,7 @@ public class ResolveSpringHibernateJPADataSourceRuleProvider extends IteratingRu
             processHibernateSessionFactoryBean(event, dsBeanNameRef, hibernateDialect, springDbName);
             return;
         }
-        LOG.warning("Did not find bean: " + payload.getSpringBeanName() + " to process.");
+        LOG.warning("Did not find bean: " + payload.getSpringBeanName() + " to process within: " + springConfig.getFileName());
     }
 
     private boolean isLocalSessionFactoryBean(String qualifiedName)
@@ -223,8 +223,13 @@ public class ResolveSpringHibernateJPADataSourceRuleProvider extends IteratingRu
         {
             // read ref...
             String jndiRef = $(dataSource).attr("ref");
-            if (StringUtils.isNotBlank(jndiRef))
+            if (StringUtils.isBlank(jndiRef))
             {
+                LOG.info("Looking at ref child of property tag...");
+                //look to see if the ref is a child of the property tag...
+                jndiRef = $(dataSource).child("ref").attr("bean");
+            }
+            if(StringUtils.isNotBlank(jndiRef)) {
                 return jndiRef;
             }
         }
@@ -317,6 +322,8 @@ public class ResolveSpringHibernateJPADataSourceRuleProvider extends IteratingRu
             {
                 String name = $(context).attr("name");
                 String idVal = $(context).attr("id");
+
+                LOG.info("Matching: " + id + " Against -- ID: " + idVal + " Name: " + name);
 
                 return (StringUtils.equals(id, idVal) || StringUtils.equals(id, name));
             }
