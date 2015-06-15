@@ -6,14 +6,12 @@ import java.util.logging.Logger;
 
 import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.JavaClass;
-import org.apache.bcel.generic.Type;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
-import org.jboss.windup.rules.apps.java.model.WindupJavaConfigurationModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.jboss.windup.util.ExecutionStatistics;
@@ -22,7 +20,6 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * Adds metadata from the .class file itself to the graph.
- * 
  */
 public class AddClassFileMetadata extends AbstractIterationOperation<JavaClassFileModel>
 {
@@ -44,15 +41,11 @@ public class AddClassFileMetadata extends AbstractIterationOperation<JavaClassFi
         ExecutionStatistics.get().begin("AddClassFileMetadata.perform()");
         try
         {
-            
-            WindupJavaConfigurationModel javaConfiguration = WindupJavaConfigurationService.getJavaConfigurationModel(event.getGraphContext());
-
             String absolutePath = payload.asFile().getAbsolutePath();
 
             if (!new WindupJavaConfigurationService(event.getGraphContext()).shouldScanFile(absolutePath))
                 return;
 
-            // we should scan it, so make sure we get the package name from it
             try (FileInputStream fis = new FileInputStream(payload.getFilePath()))
             {
                 final ClassParser parser = new ClassParser(fis, payload.getFilePath());
@@ -69,7 +62,7 @@ public class AddClassFileMetadata extends AbstractIterationOperation<JavaClassFi
                 String simpleName = qualifiedName;
                 if (packageName != null && !packageName.equals("") && simpleName != null)
                 {
-                    simpleName = StringUtils.removeStart(simpleName, packageName);
+                    simpleName = StringUtils.substringAfterLast(simpleName, ".");
                 }
 
                 payload.setMajorVersion(majorVersion);
@@ -112,19 +105,6 @@ public class AddClassFileMetadata extends AbstractIterationOperation<JavaClassFi
         {
             ExecutionStatistics.get().end("AddClassFileMetadata.perform()");
         }
-    }
-
-    private JavaClassModel[] toJavaClasses(final JavaClassService javaClassService, final Type[] types)
-    {
-        JavaClassModel[] clz = new JavaClassModel[types.length];
-
-        for (int i = 0, j = types.length; i < j; i++)
-        {
-            Type t = types[i];
-            clz[i] = javaClassService.getOrCreatePhantom(t.toString());
-        }
-
-        return clz;
     }
 
     public static OperationBuilder to(String var)
