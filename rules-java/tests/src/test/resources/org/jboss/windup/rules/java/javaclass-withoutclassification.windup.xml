@@ -10,7 +10,7 @@
             </when>
             <perform>
                 <classification title="Rule1">
-                    <link href="http://example.com" description="Description from XML Hint Link" />
+                    <link href="http://example.com" title="Description from XML Hint Link" />
                 </classification>
             </perform>
         </rule>
@@ -30,7 +30,7 @@
                     </when>
                     <perform>
                         <classification title="Rule2 catch-all">
-                            <link href="http://example.com" description="Description from XML Classification Link" />
+                            <link href="http://example.com" title="Description from XML Classification Link" />
                         </classification>
                     </perform>
                 </iteration>
@@ -52,7 +52,7 @@
                     </when>
                     <perform>
                         <classification title="Rule3 catch-all">
-                            <link href="http://example.com" description="Description from XML Classification Link" />
+                            <link href="http://example.com" title="Description from XML Classification Link" />
                         </classification>
                     </perform>
                 </iteration>

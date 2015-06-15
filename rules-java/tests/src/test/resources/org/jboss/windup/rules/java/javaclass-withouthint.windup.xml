@@ -11,7 +11,7 @@
             <perform>
                 <iteration over="testVariable">
                     <hint in="testVariable_instance" message="Rule1">
-                        <link href="http://example.com" description="Description from XML Hint Link" />
+                        <link href="http://example.com" title="Description from XML Hint Link" />
                     </hint>
                 </iteration>
             </perform>
@@ -31,7 +31,7 @@
                     </when>
                     <perform>
                         <hint message="Rule2 catch-all {type}">
-                            <link href="http://example.com" description="Description from XML Hint Link" />
+                            <link href="http://example.com" title="Description from XML Hint Link" />
                         </hint>
                     </perform>
                 </iteration>
@@ -53,7 +53,7 @@
                     </when>
                     <perform>
                         <hint message="Rule3 catch-all">
-                            <link href="http://example.com" description="Description from XML Hint Link" />
+                            <link href="http://example.com" title="Description from XML Hint Link" />
                         </hint>
                     </perform>
                 </iteration>
@@ -75,7 +75,7 @@
                     </when>
                     <perform>
                         <hint message="Rule4 catch-all (should not occur)">
-                            <link href="http://example.com" description="Description from XML Hint Link" />
+                            <link href="http://example.com" title="Description from XML Hint Link" />
                         </hint>
                     </perform>
                 </iteration>
