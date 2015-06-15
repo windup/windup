@@ -5,15 +5,15 @@
 	</hint>
 	
 	<hint message="test-message" severity="mandatory">
-		<link href="url1" description="description1"/>
-		<link href="url2" description="description2"/>
-		<link href="url3" description="description3"/>
+		<link href="url1" title="description1"/>
+		<link href="url2" title="description2"/>
+		<link href="url3" title="description3"/>
 	</hint>
 	
 	<hint effort="asadsa" message="test message" in="testVariable">
-		<link href="url1" description="description1"/>
-		<link href="url2" description="description2"/>
-		<link href="url3" description="description3"/>
+		<link href="url1" title="description1"/>
+		<link href="url2" title="description2"/>
+		<link href="url3" title="description3"/>
 	</hint>
 	
 </test>

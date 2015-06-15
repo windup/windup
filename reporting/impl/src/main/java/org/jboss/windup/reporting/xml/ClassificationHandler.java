@@ -41,7 +41,6 @@ public class ClassificationHandler implements ElementHandler<Classification>
             throw new WindupException(
                         "Error, 'classification' element must have a non-empty 'title' attribute (eg, 'Decompiled Source File')");
         }
-        String description = $(element).attr("description");
         String of = $(element).attr("of");
         String effortStr = $(element).attr("effort");
         String severityStr = $(element).attr("severity");
@@ -70,9 +69,11 @@ public class ClassificationHandler implements ElementHandler<Classification>
             classification.withSeverity(severity);
         }
 
-        if (StringUtils.isNotBlank(description))
+        Element descriptionChildren = $(element).children("descriptiion").get(0);
+
+        if (StringUtils.isNotBlank(descriptionChildren.getTextContent()))
         {
-            classification.withDescription(description);
+            classification.withDescription(descriptionChildren.getTextContent());
         }
 
         List<Element> children = $(element).children("link").get();

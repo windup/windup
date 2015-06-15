@@ -143,11 +143,11 @@
 			<xs:sequence>
 				<xs:element ref="link" minOccurs="0" maxOccurs="unbounded"/>
 				<xs:element name="tag" minOccurs="0" maxOccurs="unbounded" type="xs:string"/>
+				<xs:element name="description" minOccurs="0" maxOccurs="unbounded" type="xs:string"/>
 			</xs:sequence>
 			<xs:attribute type="xs:string" name="title" />
 			<xs:attribute type="xs:byte" name="effort" use="optional" />
 			<xs:attribute type="xs:string" name="severity" use="optional" />
-			<xs:attribute type="xs:string" name="description" use="optional" />
 			<xs:attribute type="xs:string" name="of" use="optional" />
 		</xs:complexType>
 	</xs:element>
@@ -157,7 +157,7 @@
 			<xs:simpleContent>
 				<xs:extension base="xs:string">
 					<xs:attribute type="xs:anyURI" name="href" />
-					<xs:attribute type="xs:string" name="description" />
+					<xs:attribute type="xs:string" name="title" />
 				</xs:extension>
 			</xs:simpleContent>
 		</xs:complexType>
@@ -200,7 +200,7 @@
 				</xs:element>
 			</xs:sequence>
 			<xs:attribute type="xs:string" name="of" use="optional" />
-			<xs:attribute type="xs:string" name="description" />
+			<xs:attribute type="xs:string" name="title" />
 			<xs:attribute type="xs:string" name="extension" />
 			<xs:attribute type="xs:string" name="template"/>
 			<xs:attribute type="xs:byte" name="effort" use="optional" />
