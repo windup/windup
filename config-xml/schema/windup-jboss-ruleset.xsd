@@ -57,7 +57,7 @@
             <xs:element name="perform" type="iteration">
             </xs:element>
             <xs:element name="otherwise" type="iteration" minOccurs="0" maxOccurs="1" />
-            <xs:element name="where" type="where" minOccurs="0" maxOccurs="1" />
+            <xs:element name="where" type="where" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
         <xs:attribute type="xs:string" name="id" use="optional" />
     </xs:complexType>
