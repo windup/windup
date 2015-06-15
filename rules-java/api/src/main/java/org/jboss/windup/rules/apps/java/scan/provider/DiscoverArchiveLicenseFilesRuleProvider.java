@@ -89,8 +89,7 @@ public class DiscoverArchiveLicenseFilesRuleProvider extends
             {
                 String content = IOUtils.toString(stream);
 
-                if (StringUtils.containsIgnoreCase(content,
-                            "Apache License, Version 2.0"))
+                if (StringUtils.containsIgnoreCase(content, "Apache License, Version 2.0"))
                 {
                     ClassificationModel classificationModel = tagLicense(classificationService, linkService, licenseService, technologyTagService,
                                 license,
@@ -102,8 +101,7 @@ public class DiscoverArchiveLicenseFilesRuleProvider extends
                                 "Apache License Wikipedia");
                     addLink(classificationService, linkService, classificationModel, "http://www.apache.org/licenses/", "Apache License Website");
                 }
-                else if (StringUtils.containsIgnoreCase(content,
-                            "Apache Software License, Version 1.1"))
+                else if (StringUtils.containsIgnoreCase(content, "Apache Software License, Version 1.1"))
                 {
                     ClassificationModel classificationModel = tagLicense(classificationService, linkService, licenseService, technologyTagService,
                                 license,
@@ -115,8 +113,7 @@ public class DiscoverArchiveLicenseFilesRuleProvider extends
                                 "Apache License Wikipedia");
                     addLink(classificationService, linkService, classificationModel, "http://www.apache.org/licenses/", "Apache License Website");
                 }
-                else if (StringUtils.containsIgnoreCase(content,
-                            "Copyright (c) 1995-1999 The Apache Group.  All rights reserved."))
+                else if (StringUtils.containsIgnoreCase(content, "Copyright (c) 1995-1999 The Apache Group.  All rights reserved."))
                 {
                     ClassificationModel classificationModel = tagLicense(classificationService, linkService, licenseService, technologyTagService,
                                 license,
@@ -128,8 +125,7 @@ public class DiscoverArchiveLicenseFilesRuleProvider extends
                                 "Apache License Wikipedia");
                     addLink(classificationService, linkService, classificationModel, "http://www.apache.org/licenses/", "Apache License Website");
                 }
-                else if (StringUtils.containsIgnoreCase(content,
-                            "GNU General Public License"))
+                else if (StringUtils.containsIgnoreCase(content, "GNU General Public License"))
                 {
                     ClassificationModel classificationModel = tagLicense(classificationService, linkService, licenseService, technologyTagService,
                                 license,
@@ -141,8 +137,7 @@ public class DiscoverArchiveLicenseFilesRuleProvider extends
                                 "GNU License Wikipedia");
 
                 }
-                else if (StringUtils.containsIgnoreCase(content,
-                            "The MIT License (MIT)"))
+                else if (StringUtils.containsIgnoreCase(content, "The MIT License (MIT)"))
                 {
                     ClassificationModel classificationModel = tagLicense(classificationService, linkService, licenseService, technologyTagService,
                                 license,
@@ -154,8 +149,7 @@ public class DiscoverArchiveLicenseFilesRuleProvider extends
                                 "MIT License Wikipedia");
 
                 }
-                else if (StringUtils.containsIgnoreCase(content,
-                            "Mozilla Public License, version 2.0"))
+                else if (StringUtils.containsIgnoreCase(content, "Mozilla Public License, version 2.0"))
                 {
                     ClassificationModel classificationModel = tagLicense(classificationService, linkService, licenseService, technologyTagService,
                                 license,
@@ -165,8 +159,7 @@ public class DiscoverArchiveLicenseFilesRuleProvider extends
                     addLink(classificationService, linkService, classificationModel, "http://en.wikipedia.org/wiki/Mozilla_Public_License",
                                 "Mozilla License Wikipedia");
                 }
-                else if (StringUtils.containsIgnoreCase(content,
-                            "GNU Lesser General Public License"))
+                else if (StringUtils.containsIgnoreCase(content, "GNU Lesser General Public License"))
                 {
                     ClassificationModel classificationModel = tagLicense(classificationService, linkService, licenseService, technologyTagService,
                                 license,
@@ -179,8 +172,7 @@ public class DiscoverArchiveLicenseFilesRuleProvider extends
                                 "GNU LGPL License Wikipedia");
 
                 }
-                else if (StringUtils.contains(content,
-                            "COMMON DEVELOPMENT AND DISTRIBUTION LICENSE"))
+                else if (StringUtils.contains(content, "COMMON DEVELOPMENT AND DISTRIBUTION LICENSE"))
                 {
                     ClassificationModel classificationModel = tagLicense(classificationService, linkService, licenseService, technologyTagService,
                                 license,
@@ -193,8 +185,7 @@ public class DiscoverArchiveLicenseFilesRuleProvider extends
                                 "CDDL Wikipedia");
 
                 }
-                else if (StringUtils.containsIgnoreCase(content,
-                            "Eclipse Public License"))
+                else if (StringUtils.containsIgnoreCase(content, "Eclipse Public License"))
                 {
                     ClassificationModel classificationModel = tagLicense(classificationService, linkService, licenseService, technologyTagService,
                                 license,
@@ -205,8 +196,7 @@ public class DiscoverArchiveLicenseFilesRuleProvider extends
                     addLink(classificationService, linkService, classificationModel, "http://en.wikipedia.org/wiki/Eclipse_Public_License",
                                 "Eclipse Public License Wikipedia");
                 }
-                else if (StringUtils.containsIgnoreCase(content,
-                            "Redistribution and use in source and binary forms"))
+                else if (StringUtils.containsIgnoreCase(content, "Redistribution and use in source and binary forms"))
                 {
                     ClassificationModel classificationModel = tagLicense(classificationService, linkService, licenseService, technologyTagService,
                                 license,
@@ -217,8 +207,7 @@ public class DiscoverArchiveLicenseFilesRuleProvider extends
                     addLink(classificationService, linkService, classificationModel, "http://en.wikipedia.org/wiki/BSD_licenses",
                                 "BSD Licenses Wikipedia");
                 }
-                else if (StringUtils.containsIgnoreCase(content,
-                            "the work of authorship identified is in the public domain of the country"))
+                else if (StringUtils.containsIgnoreCase(content, "the work of authorship identified is in the public domain of the country"))
                 {
                     ClassificationModel classificationModel = tagLicense(classificationService, linkService, licenseService, technologyTagService,
                                 license,
@@ -232,8 +221,7 @@ public class DiscoverArchiveLicenseFilesRuleProvider extends
 
                 else
                 {
-                    LOG.warning("Must be unknown license type: "
-                                + license.getFileName());
+                    LOG.warning("Must be unknown license type: " + license.getFileName());
 
                     ClassificationModel classificationModel = tagLicense(classificationService, linkService, licenseService, technologyTagService,
                                 license,

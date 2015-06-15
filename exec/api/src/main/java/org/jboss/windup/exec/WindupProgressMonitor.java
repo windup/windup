@@ -10,7 +10,7 @@ public interface WindupProgressMonitor
     /**
      * Constant indicating an unknown amount of work.
      */
-    public final static int UNKNOWN = -1;
+    static int UNKNOWN = -1;
 
     /**
      * Notifies that the main task is beginning. This must only be called once on a given progress monitor instance.
@@ -20,13 +20,13 @@ public interface WindupProgressMonitor
      *            <code>UNKNOWN</code> the implementation is free to indicate progress in a way which doesn't require
      *            the total number of work units in advance.
      */
-    public void beginTask(String name, int totalWork);
+    void beginTask(String name, int totalWork);
 
     /**
      * Notifies that the work is done; that is, either the main task is completed or the user canceled it. This method
      * may be called more than once (implementations should be prepared to handle this case).
      */
-    public void done();
+    void done();
 
     /**
      * Returns whether cancellation of current operation has been requested. Long-running operations should poll to see
@@ -35,7 +35,7 @@ public interface WindupProgressMonitor
      * @return <code>true</code> if cancellation has been requested, and <code>false</code> otherwise
      * @see #setCancelled(boolean)
      */
-    public boolean isCancelled();
+    boolean isCancelled();
 
     /**
      * Sets the cancel state to the given value.
@@ -44,7 +44,7 @@ public interface WindupProgressMonitor
      *            <code>false</code> clears this flag
      * @see #isCancelled()
      */
-    public void setCancelled(boolean value);
+    void setCancelled(boolean value);
 
     /**
      * Sets the task name to the given value. This method is used to restore the task label after a nested operation was
@@ -53,7 +53,7 @@ public interface WindupProgressMonitor
      * @param name the name (or description) of the main task
      * @see #beginTask(java.lang.String, int)
      */
-    public void setTaskName(String name);
+    void setTaskName(String name);
 
     /**
      * Notifies that a subtask of the main task is beginning. Subtasks are optional; the main task might not have
@@ -61,7 +61,7 @@ public interface WindupProgressMonitor
      * 
      * @param name the name (or description) of the subtask
      */
-    public void subTask(String name);
+    void subTask(String name);
 
     /**
      * Notifies that a given number of work unit of the main task has been completed. Note that this amount represents
@@ -69,5 +69,5 @@ public interface WindupProgressMonitor
      * 
      * @param work a non-negative number of work units just completed
      */
-    public void worked(int work);
+    void worked(int work);
 }
