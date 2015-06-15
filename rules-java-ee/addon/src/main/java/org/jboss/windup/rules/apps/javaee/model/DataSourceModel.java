@@ -32,13 +32,13 @@ public interface DataSourceModel extends JNDIResourceModel
     public void setName(String name);
     
     @Property(XA_TYPE)
-    public Boolean setXa();
+    public Boolean getXa();
 
     /**
      * Defines whether it is an XA datasource
      */
     @Property(XA_TYPE)
-    public Boolean getXa(Boolean name);
+    public Boolean setXa(Boolean name);
     
     
     /**
