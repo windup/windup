@@ -12,6 +12,7 @@ import org.jboss.windup.reporting.model.ClassificationModel;
 
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.frames.structures.FramedVertexIterable;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 /**
@@ -28,12 +29,11 @@ public class ClassificationService extends GraphService<ClassificationModel>
     }
 
     /**
-     * Returns the total effort points in all of the {@link ClassificationModel}s associated with the provided {@link FileModel}.
-     * 
+     * Returns the total effort points in all of the {@link ClassificationModel}s associated with the provided
+     * {@link FileModel}.
      */
     public int getMigrationEffortPoints(FileModel fileModel)
     {
-        // 1. Get all classification models
         GremlinPipeline<Vertex, Vertex> classificationPipeline = new GremlinPipeline<>(fileModel.asVertex());
         classificationPipeline.in(ClassificationModel.FILE_MODEL);
         classificationPipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, ClassificationModel.TYPE);
@@ -51,14 +51,24 @@ public class ClassificationService extends GraphService<ClassificationModel>
     }
 
     /**
-     * Returns the total effort points in all of the {@link ClassificationModel}s associated with the files in this project.
+     * Return all {@link ClassificationModel} instances that are attached to the given {@link FileModel} instance.
+     */
+    public Iterable<ClassificationModel> getClassifications(FileModel model)
+    {
+        GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(model.asVertex());
+        pipeline.in(ClassificationModel.FILE_MODEL);
+        pipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, ClassificationModel.TYPE);
+        return new FramedVertexIterable<ClassificationModel>(getGraphContext().getFramed(), pipeline, ClassificationModel.class);
+    }
+
+    /**
+     * Returns the total effort points in all of the {@link ClassificationModel}s associated with the files in this
+     * project.
      * 
      * If set to recursive, then also include the effort points from child projects.
-     * 
      */
     public int getMigrationEffortPoints(ProjectModel projectModel, boolean recursive)
     {
-        // 1. Get all classification models
         GremlinPipeline<Vertex, Vertex> classificationPipeline = new GremlinPipeline<>(projectModel.asVertex());
         classificationPipeline.out(ProjectModel.PROJECT_MODEL_TO_FILE).in(ClassificationModel.FILE_MODEL);
         classificationPipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, ClassificationModel.TYPE);
@@ -83,8 +93,9 @@ public class ClassificationService extends GraphService<ClassificationModel>
     }
 
     /**
-     * Attach a {@link ClassificationModel} with the given classificationText and description to the provided {@link FileModel}. If an existing Model
-     * exists with the provided classificationText, that one will be used instead.
+     * Attach a {@link ClassificationModel} with the given classificationText and description to the provided
+     * {@link FileModel}. If an existing Model exists with the provided classificationText, that one will be used
+     * instead.
      */
     public ClassificationModel attachClassification(FileModel fileModel, String classificationText, String description)
     {
@@ -107,8 +118,8 @@ public class ClassificationService extends GraphService<ClassificationModel>
     }
 
     /**
-     * This method just attaches the {@link ClassificationModel} to the {@link Length.FileMode}. It will only do so if this link is not already
-     * present.
+     * This method just attaches the {@link ClassificationModel} to the {@link Length.FileMode}. It will only do so if
+     * this link is not already present.
      */
     public ClassificationModel attachClassification(ClassificationModel classificationModel, FileModel fileModel)
     {

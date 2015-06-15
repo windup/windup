@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<ruleset xmlns="http://windup.jboss.org/schema/jboss-ruleset" id="xmltestrules_1">
+    <rules>
+        <rule id="XmlJonasRules_2fmb">
+            <when>
+                <xmlfile as="default" public-id=".+JOnAS Web App.+" />
+            </when>
+            <perform>
+                <classification title="rule1" effort="0" />
+            </perform>
+        </rule>
+        <rule>
+            <when>
+                <xmlfile as="default" public-id=".+JOnAS Web App.+" />
+            </when>
+            <perform>
+                <iteration>
+                    <when>
+                        <not>
+                            <has-classification />
+                        </not>
+                    </when>
+                    <perform>
+                        <classification title="rule2" />
+                    </perform>
+                </iteration>
+            </perform>
+        </rule>
+    </rules>
+</ruleset>

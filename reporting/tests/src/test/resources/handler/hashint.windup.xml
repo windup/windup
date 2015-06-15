@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<test xmlns="http://windup.jboss.org/schema/jboss-ruleset">
+
+    <has-hint />
+    <has-hint message="test-message" />
+    <has-hint message="test-message" />
+
+</test>
+            

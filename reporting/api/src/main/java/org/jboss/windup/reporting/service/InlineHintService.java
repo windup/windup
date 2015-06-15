@@ -1,5 +1,6 @@
 package org.jboss.windup.reporting.service;
 
+import org.apache.tools.ant.taskdefs.Length.FileMode;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
@@ -14,7 +15,7 @@ import com.tinkerpop.frames.structures.FramedVertexIterable;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 /**
- * This provides helper functions for finding and creating BlackListModels within the graph.
+ * This provides helper functions for finding and creating {@link InlineHintModel} instances within the graph.
  * 
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
@@ -27,20 +28,30 @@ public class InlineHintService extends GraphService<InlineHintModel>
     }
 
     /**
-     * Gets all inline hints that are directly associated with the given file
+     * Gets all {@link InlineHintModel} instances that are directly associated with the given {@link FileReferenceModel}
+     */
+    public Iterable<InlineHintModel> getHintsForFileReference(FileReferenceModel reference)
+    {
+        GremlinPipeline<Vertex, Vertex> inlineHintPipeline = new GremlinPipeline<>(reference.asVertex());
+        inlineHintPipeline.in(InlineHintModel.FILE_LOCATION_REFERENCE);
+        inlineHintPipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, InlineHintModel.TYPE);
+        return new FramedVertexIterable<InlineHintModel>(getGraphContext().getFramed(), inlineHintPipeline, InlineHintModel.class);
+    }
+
+    /**
+     * Gets all {@link InlineHintModel} instances that are directly associated with the given {@link FileModel}
      */
     public Iterable<InlineHintModel> getHintsForFile(FileModel file)
     {
         GremlinPipeline<Vertex, Vertex> inlineHintPipeline = new GremlinPipeline<>(file.asVertex());
         inlineHintPipeline.in(FileReferenceModel.FILE_MODEL);
         inlineHintPipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, InlineHintModel.TYPE);
-
-        return new FramedVertexIterable<InlineHintModel>(getGraphContext().getFramed(), inlineHintPipeline,
-                    InlineHintModel.class);
+        return new FramedVertexIterable<InlineHintModel>(getGraphContext().getFramed(), inlineHintPipeline, InlineHintModel.class);
     }
 
     /**
-     * Returns the total effort points in all of the {@link InlineHintModel}s associated with the provided {@link FileModel}.
+     * Returns the total effort points in all of the {@link InlineHintModel} instances associated with the provided
+     * {@link FileModel}.
      */
     public int getMigrationEffortPoints(FileModel fileModel)
     {
@@ -57,7 +68,8 @@ public class InlineHintService extends GraphService<InlineHintModel>
     }
 
     /**
-     * Returns the total effort points in all of the {@link InlineHintModel}s associated with the files in this project.
+     * Returns the total effort points in all of the {@link InlineHintModel} instances associated with the
+     * {@link FileMode} instances in the given {@link ProjectModel}.
      * 
      * If set to recursive, then also include the effort points from child projects.
      * 

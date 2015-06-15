@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+<ruleset xmlns="http://windup.jboss.org/schema/jboss-ruleset" id="xmltestrules_1">
+    <rules>
+        <!-- Hint-exists tests -->
+        <rule>
+            <when>
+                <javaclass references="org.jboss.forge.furnace.repositories.AddonDependencyEntry" in="{*}File2">
+                    <location>IMPORT</location>
+                </javaclass>
+            </when>
+            <perform>
+                <classification title="Rule1">
+                    <link href="http://example.com" description="Description from XML Hint Link" />
+                </classification>
+            </perform>
+        </rule>
+
+        <rule>
+            <when>
+                <javaclass references="org.jboss.forge.{*}" in="{*}File2">
+                    <location>IMPORT</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <when>
+                        <not>
+                            <has-classification />
+                        </not>
+                    </when>
+                    <perform>
+                        <classification title="Rule2 catch-all">
+                            <link href="http://example.com" description="Description from XML Classification Link" />
+                        </classification>
+                    </perform>
+                </iteration>
+            </perform>
+        </rule>
+
+        <rule>
+            <when>
+                <javaclass references="org.jboss.forge.{*}" in="{*}File1">
+                    <location>IMPORT</location>
+                </javaclass>
+            </when>
+            <perform>
+                <iteration>
+                    <when>
+                        <not>
+                            <has-classification />
+                        </not>
+                    </when>
+                    <perform>
+                        <classification title="Rule3 catch-all">
+                            <link href="http://example.com" description="Description from XML Classification Link" />
+                        </classification>
+                    </perform>
+                </iteration>
+            </perform>
+        </rule>
+
+    </rules>
+</ruleset>
