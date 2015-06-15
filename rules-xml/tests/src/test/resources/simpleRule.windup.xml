@@ -9,7 +9,7 @@
             </when>
             <perform>
             	<iteration over="testVariable">
-                	<xslt of="testVariable_instance" description="XSLT Tranformed Output" extension="-test-result.html" template="simpleXSLT.xsl"/>
+                	<xslt of="testVariable_instance" title="XSLT Tranformed Output" extension="-test-result.html" template="simpleXSLT.xsl"/>
                 </iteration>
             </perform>
         </rule>

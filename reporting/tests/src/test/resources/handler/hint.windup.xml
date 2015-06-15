@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <test xmlns="http://windup.jboss.org/schema/jboss-ruleset">
 	<hint effort="5" message="test message" in="testVariable">
-		<link href="someUrl" description="someDescription"/>
+		<link href="someUrl" title="someDescription"/>
 	</hint>
 	
 	<hint message="test-message" severity="mandatory">

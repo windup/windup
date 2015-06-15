@@ -100,8 +100,7 @@ public class XMLRuleProviderLoader implements RuleProviderLoader
                 catch (Exception e)
                 {
                     throw new WindupException("Failed to parse XML configuration at: " + resource.toString()
-                                + " due to: "
-                                + e.getMessage(), e);
+                                + " due to: " + e.getMessage(), e);
                 }
             }
         }

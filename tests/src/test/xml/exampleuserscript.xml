@@ -13,7 +13,7 @@
         <hint title="title from user script">
         	<message>User script Container Auth</message>
         </hint>
-        <xslt description="User script XSLT Conversion" extension="userscript-converted-example.xml" template="exampleconversion_userdir.xslt"/>
+        <xslt title="User script XSLT Conversion" extension="userscript-converted-example.xml" template="exampleconversion_userdir.xslt"/>
       </perform>
     </rule>
   </rules>

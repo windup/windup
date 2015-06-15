@@ -69,11 +69,10 @@ public class ClassificationHandler implements ElementHandler<Classification>
             classification.withSeverity(severity);
         }
 
-        Element descriptionChildren = $(element).children("descriptiion").get(0);
-
-        if (StringUtils.isNotBlank(descriptionChildren.getTextContent()))
+        String description = $(element).child("description").text();
+        if (StringUtils.isNotBlank(description))
         {
-            classification.withDescription(descriptionChildren.getTextContent());
+            classification.withDescription(description);
         }
 
         List<Element> children = $(element).children("link").get();

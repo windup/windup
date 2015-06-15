@@ -9,7 +9,7 @@
       </when>
       <perform>
         <hint message="Message from XML Rule">
-            <link href="http://example.com" description="Description from XML Hint Link"/>
+            <link href="http://example.com" title="Description from XML Hint Link"/>
         </hint>
       </perform>
     </rule>
@@ -24,7 +24,7 @@
         <hint title="Title for Hint from XML">
         	<message>Container Auth</message>
         </hint>
-        <xslt description="Example XSLT Conversion" extension="-converted-example.xml" template="/exampleconversion.xsl"/>
+        <xslt title="Example XSLT Conversion" extension="-converted-example.xml" template="/exampleconversion.xsl"/>
       </perform>
     </rule>
   </rules>

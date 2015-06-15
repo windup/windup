@@ -22,25 +22,29 @@ import org.w3c.dom.Element;
  * 
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-@NamespaceElementHandler(elementName = "link", namespace = "http://windup.jboss.org/schema/jboss-ruleset")
+@NamespaceElementHandler(elementName = LinkHandler.ELEMENT_NAME, namespace = "http://windup.jboss.org/schema/jboss-ruleset")
 public class LinkHandler implements ElementHandler<Link>
 {
+    static final String ELEMENT_NAME = "link";
+    private static final String HREF_ATTR = "href";
+    private static final String TITLE_ATTR = "title";
 
     @Override
     public Link processElement(ParserContext handlerManager, Element element) throws ConfigurationException
     {
-        String link = $(element).attr("href");
+        String link = $(element).attr(HREF_ATTR);
         if (StringUtils.isBlank(link))
         {
-            throw new WindupException(
-                        "Error, 'link' element must have a non-empty 'href' attribute (eg, 'http://www.example.com/somepage.html')");
+            throw new WindupException("Error, '" + ELEMENT_NAME + "' element must have a non-empty '" + HREF_ATTR
+                        + "' attribute (eg, 'http://www.example.com/somepage.html')");
         }
-        String description = $(element).attr("title");
-        if (StringUtils.isBlank(description))
+        String title = $(element).attr(TITLE_ATTR);
+        if (StringUtils.isBlank(title))
         {
             throw new WindupException(
-                        "Error, 'link' element must have a non-empty 'description' attribute (eg, 'Helpful tips on migrating Spring Beans')");
+                        "Error, '" + ELEMENT_NAME + "' element must have a non-empty '" + TITLE_ATTR
+                                    + "' attribute (eg, 'Documentation for XYZ')");
         }
-        return (Link)Link.to(description, link);
+        return (Link) Link.to(title, link);
     }
 }
