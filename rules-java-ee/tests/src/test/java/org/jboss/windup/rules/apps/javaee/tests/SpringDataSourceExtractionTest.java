@@ -69,7 +69,7 @@ public class SpringDataSourceExtractionTest
                 Assert.assertTrue(StringUtils.isNotBlank(type));
                 
             }
-            Assert.assertEquals(countDataSources, 9);
+            Assert.assertEquals(countDataSources, 10);
         }
     }
 
