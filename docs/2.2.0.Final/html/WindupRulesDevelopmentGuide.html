@@ -418,7 +418,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_introduction">1. Introduction</a></li>
 <li><a href="#_get_started">2. Get Started</a>
 <ul class="sectlevel2">
-<li><a href="#Rules-Create-Your-First-Rule">2.1. Create Your First Rule</a>
+<li><a href="#Rules-Create-Your-First-Rule">2.1. Create Your First XML Rule</a>
 <ul class="sectlevel3">
 <li><a href="#_overview">2.1.1. Overview</a></li>
 <li><a href="#_rule_example_description">2.1.2. Rule Example Description</a></li>
@@ -516,10 +516,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>This guide is for engineers, consultants, and others who plan to create custom XML-based rules for Windup.</p>
 </div>
 <div class="paragraph">
-<p>If you are new to Windup, it is recommended that you start with the <em>Windup User Guide</em>. It provides detailed information about system requirements and detailed instructions on how to install and execute Windup. It also contains tips to optimize performance and provides links to other sources of information about Windup.</p>
+<p>If you are new to Windup, it is recommended that you start with the <a href="http://windup.github.io/windup/docs/latest/html/WindupUserGuide.html">Windup User Guide</a>. It provides detailed information about system requirements and detailed instructions on how to install and execute Windup. It also contains tips to optimize performance and provides links to other sources of information about Windup.</p>
 </div>
 <div class="paragraph">
-<p>If you would like to contribute to the Windup source code base or provide Java-based rule add-ons, see the <em>Windup Core Development Guide</em>.</p>
+<p>If you would like to contribute to the Windup source code base or provide Java-based rule add-ons, see the <a href="http://windup.github.io/windup/docs/latest/html/WindupCoreDevelopmentGuide.html">Windup Core Development Guide</a>.</p>
 </div>
 </div>
 </div>
@@ -527,11 +527,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_get_started">2. Get Started</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="Rules-Create-Your-First-Rule">2.1. Create Your First Rule</h3>
+<h3 id="Rules-Create-Your-First-Rule">2.1. Create Your First XML Rule</h3>
 <div class="sect3">
 <h4 id="_overview">2.1.1. Overview</h4>
 <div class="paragraph">
-<p>This topic guides you through the process of creating and testing your first rule.</p>
+<p>This topic guides you through the process of creating and testing your first Windup XML-based rule.</p>
 </div>
 <div class="paragraph">
 <p>Windup XML-base rules use the following familiar rule pattern:</p>
@@ -779,7 +779,7 @@ For Windows: "\Documents and Settings\USER_NAME\.windup\rules\" or "\Users\USER_
 <p>Open a terminal and navigate to the WINDUP_HOME directory.</p>
 </li>
 <li>
-<p>Type the following command to test the rule in batch mode, passing the test file as an input argument and a directory for the output report.</p>
+<p>Type the following command to test the rule in Windup, passing the test file as an input argument and a directory for the output report.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="nowrap">For Linux:    WINDUP_HOME/bin/windup --sourceMode true --input ~/migration-rules/data --output ~/migration-rules/reports
@@ -841,10 +841,10 @@ For Windows:  WINDUP_HOME\bin\windup.bat --sourceMode true --input migration-rul
 <div class="sect3">
 <h4 id="_which_one_to_choose">3.1.2. Which one to choose?</h4>
 <div class="paragraph">
-<p><em>XML-based</em> rules provide a quick, simple way to create rules to analyze Java, XML, and properties files. If you simply need to highlight a specific section of Java code or XML file content and provide migration hints for it, creation of <em>XML-based</em> rules is the recommended approach. Creation of custom <em>XML-based</em> rules is covered in the <em>Windup Rules Development Guide</em>.</p>
+<p><em>XML-based</em> rules provide a quick, simple way to create rules to analyze Java, XML, and properties files. If you simply need to highlight a specific section of Java code or XML file content and provide migration hints for it, creation of <em>XML-based</em> rules is the recommended approach. Creation of custom <em>XML-based</em> rules is covered in the <a href="http://windup.github.io/windup/docs/latest/html/WindupRulesDevelopmentGuide.html">Windup Rules Development Guide</a>.</p>
 </div>
 <div class="paragraph">
-<p><em>Java-based</em> rule add-ons provide the ability to create very complex rules, manipulate the shared data model graph, and customize the resulting reports. If you need to test or perform complex conditions and operations or want to manipulate the shared data model graph, create custom reports, or extend the functionality in any other way beyond what the <em>XML-based</em> rules provide, you must create <em>Java-based</em> rules. Creation of custom <em>Java-based</em> rules is covered in the <em>Windup Core Development Guide</em>.</p>
+<p><em>Java-based</em> rule add-ons provide the ability to create very complex rules, manipulate the shared data model graph, and customize the resulting reports. If you need to test or perform complex conditions and operations or want to manipulate the shared data model graph, create custom reports, or extend the functionality in any other way beyond what the <em>XML-based</em> rules provide, you must create <em>Java-based</em> rules. Creation of custom <em>Java-based</em> rules is covered in the <a href="http://windup.github.io/windup/docs/latest/html/WindupCoreDevelopmentGuide.html">Windup Core Development Guide</a>.</p>
 </div>
 </div>
 <div class="sect3">
@@ -1186,7 +1186,7 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
 <div class="ulist">
 <ul>
 <li>
-<p>You should have already installed Windup. Installation instruction are provided in the <em>Windup User Guide</em>.</p>
+<p>You should have already installed Windup. Installation instruction are provided in the <a href="http://windup.github.io/windup/docs/latest/html/WindupUserGuide.html">Windup User Guide</a>.</p>
 </li>
 <li>
 <p>Before you begin, you may also want to be familiar with the following documentation:</p>
@@ -2008,7 +2008,7 @@ otherwise(action)</pre>
 <td class="tableblock halign-left valign-top"><p class="tableblock">severity</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p>Whether this classification is mandatory or optional</p>
+<p>Whether this classification is "mandatory" or "optional"</p>
 </div>
 <div class="paragraph">
 <p><em>Example:</em></p>
@@ -2016,21 +2016,6 @@ otherwise(action)</pre>
 <div class="listingblock">
 <div class="content">
 <pre class="nowrap">severity="mandatory"</pre>
-</div>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">description</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
-<td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p>Description of this resource</p>
-</div>
-<div class="paragraph">
-<p><em>Example:</em></p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="nowrap">description="JBoss Seam components must be replaced"</pre>
 </div>
 </div></div></td>
 </tr>
@@ -2069,7 +2054,7 @@ otherwise(action)</pre>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">&lt;link&gt;</p></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p>Provides a link URI and text description for additional information.</p>
+<p>Provides a link URI and text title for additional information.</p>
 </div>
 <div class="paragraph">
 <p><em>Example:</em></p>
@@ -2077,8 +2062,8 @@ otherwise(action)</pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;classification title="Websphere Startup Service" effort="4"&gt;
-   &lt;link href="http://docs.oracle.com/javaee/6/api/javax/ejb/Singleton.html" description="EJB3.1 Singleton Bean"/&gt;
-   &lt;link href="http://docs.oracle.com/javaee/6/api/javax/ejb/Startup.html" description="EJB3.1 Startup Bean"/&gt;
+   &lt;link href="http://docs.oracle.com/javaee/6/api/javax/ejb/Singleton.html" title="EJB3.1 Singleton Bean"/&gt;
+   &lt;link href="http://docs.oracle.com/javaee/6/api/javax/ejb/Startup.html" title="EJB3.1 Startup Bean"/&gt;
 &lt;/classification&gt;</code></pre>
 </div>
 </div></div></td>
@@ -2094,6 +2079,20 @@ otherwise(action)</pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;tag&gt;Seam3&lt;/tag&gt;</code></pre>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;description&gt;</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Description of this resource</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;description&gt;JBoss Seam components must be replaced&lt;/description&gt;</code></pre>
 </div>
 </div></div></td>
 </tr>
@@ -2123,10 +2122,10 @@ otherwise(action)</pre>
     &lt;perform&gt;
         &lt;iteration&gt;
             &lt;classification title="SEAM Component" effort="1"&gt;
-                &lt;link href="http://www.seamframework.org/Seam3/Seam2ToSeam3MigrationNotes" description="Seam 2 to Seam 3 Migration Notes"/&gt;
-                &lt;link href="http://docs.jboss.org/weld/reference/latest/en-US/html/example.html" description="JSF Web Application Example"/&gt;
-                &lt;link href="http://docs.jboss.org/weld/reference/latest/en-US/html/contexts.html" description="JBoss Context Documentation"/&gt;
-                &lt;link href="http://www.andygibson.net/blog/tutorial/cdi-conversations-part-2/" description="CDI Conversations Blog Post"/&gt;
+                &lt;link href="http://www.seamframework.org/Seam3/Seam2ToSeam3MigrationNotes" title="Seam 2 to Seam 3 Migration Notes"/&gt;
+                &lt;link href="http://docs.jboss.org/weld/reference/latest/en-US/html/example.html" title="JSF Web Application Example"/&gt;
+                &lt;link href="http://docs.jboss.org/weld/reference/latest/en-US/html/contexts.html" title="JBoss Context Documentation"/&gt;
+                &lt;link href="http://www.andygibson.net/blog/tutorial/cdi-conversations-part-2/" title="CDI Conversations Blog Post"/&gt;
             &lt;/classification&gt;
         &lt;/iteration&gt;
     &lt;/perform&gt;
@@ -2166,17 +2165,17 @@ otherwise(action)</pre>
 </div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">description</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">title</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p>A description for the link.</p>
+<p>A title for the link.</p>
 </div>
 <div class="paragraph">
 <p><em>Example:</em></p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="nowrap">description="Migrate WebLogic Proprietary Servlet Annotations"</pre>
+<pre class="nowrap">title="Migrate WebLogic Proprietary Servlet Annotations"</pre>
 </div>
 </div></div></td>
 </tr>
@@ -2209,7 +2208,7 @@ otherwise(action)</pre>
         &lt;iteration&gt;
             &lt;hint effort="3"&gt;
                 &lt;message&gt;Replace proprietary web-service authentication with JAX-WS standards.&lt;/message&gt;
-                &lt;link href="http://java-x.blogspot.com/2009/03/invoking-web-services-through-proxy.html" description="JAX-WS Proxy Password Example"/&gt;
+                &lt;link href="http://java-x.blogspot.com/2009/03/invoking-web-services-through-proxy.html" title="JAX-WS Proxy Password Example"/&gt;
             &lt;/hint&gt;
         &lt;/iteration&gt;
     &lt;/perform&gt;
@@ -2252,7 +2251,7 @@ otherwise(action)</pre>
 <td class="tableblock halign-left valign-top"><p class="tableblock">severity</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p>Whether this hint is mandatory or optional</p>
+<p>Whether this hint is "mandatory" or "optional"</p>
 </div>
 <div class="paragraph">
 <p><em>Example:</em></p>
@@ -2334,7 +2333,8 @@ otherwise(action)</pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;link href="" description="" /&gt;</code></pre>
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;link href="http://docs.oracle.com/javaee/6/api/" title="Java Platform, Enterprise Edition 6
+API Specification" /&gt;</code></pre>
 </div>
 </div></div></td>
 </tr>
@@ -2378,7 +2378,7 @@ otherwise(action)</pre>
     &lt;perform&gt;
         &lt;iteration&gt;
             &lt;classification title="Weblogic EJB XML" effort="3"/&gt;
-            &lt;xslt description="JBoss EJB Descriptor (Windup-Generated)" template="transformations/xslt/weblogic-ejb-to-jboss.xsl" extension="-jboss.xml"/&gt;
+            &lt;xslt title="JBoss EJB Descriptor (Windup-Generated)" template="transformations/xslt/weblogic-ejb-to-jboss.xsl" extension="-jboss.xml"/&gt;
         &lt;/iteration&gt;
     &lt;/perform&gt;
 &lt;/rule&gt;</code></pre>
@@ -2417,13 +2417,18 @@ otherwise(action)</pre>
 </div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">description</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">title</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p>Sets the description of this XSLTTransformation.</p>
+<p>Sets the title for this XSLTTransformation.</p>
 </div>
 <div class="paragraph">
-<p><em>Example:</em> description="XSLT Transformed Output"</p>
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">title="XSLT Transformed Output"</pre>
+</div>
 </div></div></td>
 </tr>
 <tr>
@@ -2515,7 +2520,7 @@ otherwise(action)</pre>
     &lt;perform&gt;
         &lt;hint effort="1"&gt;
             &lt;message&gt;Replace the proprietary WebLogic @WLServlet annotation with the Java EE 6 standard @WebServlet annotation.&lt;/message&gt;
-            &lt;link href="https://access.redhat.com/articles/1249423" description="Migrate WebLogic Proprietary Servlet Annotations" /&gt;
+            &lt;link href="https://access.redhat.com/articles/1249423" title="Migrate WebLogic Proprietary Servlet Annotations" /&gt;
             &lt;lineitem message="Proprietary WebLogic @WLServlet annotation found in file."/&gt;
         &lt;/hint&gt;
     &lt;/perform&gt;
@@ -2773,7 +2778,7 @@ For Windows: "\Documents and Settings\USER_NAME\.windup\rules\"  -or-  "\Users\U
 <div class="ulist">
 <ul>
 <li>
-<p>More examples of how to run Windup are located in the <em>Windup User Guide</em>.</p>
+<p>More examples of how to run Windup are located in the <a href="http://windup.github.io/windup/docs/latest/html/WindupUserGuide.html">Windup User Guide</a>.</p>
 </li>
 <li>
 <p>Working examples of XML-based rules can be found on GitHub in the <a href="https://github.com/windup/windup/">Windup source code</a> GitHub repository and the Windup quickstarts <a href="https://github.com/windup/windup-quickstarts/">GitHub repository</a> or <a href="https://github.com/windup/windup-quickstarts/releases">latest release ZIP download</a>.</p>
@@ -2962,7 +2967,7 @@ For Windows: "\Documents and Settings\USER_NAME\.windup\rules\"  -or-  "\Users\U
 <p>If you download and install the latest distribution of Windup from the JBoss Nexus repository, WINDUP_HOME refers to the windup-distribution-2.2.0-Final folder extracted from the downloaded ZIP file.</p>
 </li>
 <li>
-<p>If you build Windup from GitHub source, WINDUP_HOME refers to the windup-distribution-2.2.0-Final folder extracted from the Windup source dist/target/windup-distribution-2.2.0-Final.zip file.</p>
+<p>If you build Windup from GitHub source, WINDUP_HOME refers to the windup-distribution-2.2.0-Final folder extracted from the windup-distribution/target/windup-distribution-2.2.0-Final.zip file.</p>
 </li>
 </ul>
 </div>
@@ -2972,7 +2977,7 @@ For Windows: "\Documents and Settings\USER_NAME\.windup\rules\"  -or-  "\Users\U
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-06-09 09:28:46 EDT
+Last updated 2015-06-16 15:45:42 EDT
 </div>
 </div>
 </body>

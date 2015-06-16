@@ -439,12 +439,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#Install">2.1. Install Windup</a></li>
 <li><a href="#Execute">2.2. Execute Windup</a>
 <ul class="sectlevel3">
-<li><a href="#_prerequisites">2.2.1. Prerequisites</a></li>
-<li><a href="#run-windup-in-batch-mode">2.2.2. Run Windup in Batch Mode</a></li>
-<li><a href="#_windup_help_for_batch_mode">2.2.3. Windup Help for Batch Mode</a></li>
-<li><a href="#start-windup-in-interactive-mode">2.2.4. Start Windup in Interactive Mode</a></li>
-<li><a href="#_windup_help_for_interactive_mode">2.2.5. Windup Help for Interactive Mode</a></li>
-<li><a href="#command-examples">2.2.6. Windup Command Examples</a></li>
+<li><a href="#overview">2.2.1. Overview</a></li>
+<li><a href="#run-windup">2.2.2. Run Windup</a></li>
+<li><a href="#_windup_help">2.2.3. Windup Help</a></li>
+<li><a href="#command-examples">2.2.4. Windup Command Examples</a></li>
 </ul>
 </li>
 <li><a href="#Review-the-Report">2.3. Review the Report</a>
@@ -647,7 +645,8 @@ otherwise(action)</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Windup provides comprehensive set of standard migration rules out-of-the-box. Because applications may contain custom libraries or components, Windup allows you to write your own rules to identify use of components or software that may not be covered by the existing ruleset. If you plan to write your own custom rules, see the <em>Windup Rule Development Guide</em> for detailed instructions.</p>
+<p>Windup provides comprehensive set of standard migration rules out-of-the-box. Because applications may contain custom libraries or components, Windup allows you to write your own rules to identify use of components or software that may not be covered by the existing ruleset. If you plan to write your own custom rules, see the <a href="http://windup.github.io/windup/docs/latest/html/WindupRulesDevelopmentGuide.html">
+Windup Rules Development Guide</a> for detailed instructions.</p>
 </div>
 </div>
 <div class="sect2">
@@ -693,7 +692,7 @@ otherwise(action)</pre>
 <p>If you download and install the latest distribution of Windup from the JBoss Nexus repository, WINDUP_HOME refers to the windup-distribution-2.2.0-Final folder extracted from the downloaded ZIP file.</p>
 </li>
 <li>
-<p>If you build Windup from GitHub source, WINDUP_HOME refers to the windup-distribution-2.2.0-Final folder extracted from the Windup source dist/target/windup-distribution-2.2.0-Final.zip file.</p>
+<p>If you build Windup from GitHub source, WINDUP_HOME refers to the windup-distribution-2.2.0-Final folder extracted from the windup-distribution/target/windup-distribution-2.2.0-Final.zip file.</p>
 </li>
 </ul>
 </div>
@@ -708,12 +707,7 @@ otherwise(action)</pre>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>If you installed previous versions of Windup, delete the <code>${user.home}/.windup/</code> directory. Otherwise you may see errors like the following when you execute Windup.</p>
-<div class="listingblock">
-<div class="content">
-<pre class="nowrap">Command: windup-migrate-app was not found</pre>
-</div>
-</div>
+<p>If you installed previous versions of Windup, delete the <code>${user.home}/.windup/</code> directory. Otherwise you may see errors when you execute Windup.</p>
 </li>
 <li>
 <p>Download the latest <a href="https://repository.jboss.org/nexus/service/local/artifact/maven/redirect?r=releases&amp;g=org.jboss.windup&amp;a=windup-distribution&amp;v=LATEST&amp;e=zip&amp;c=offline">Windup ZIP distribution</a>.</p>
@@ -727,100 +721,20 @@ otherwise(action)</pre>
 <div class="sect2">
 <h3 id="Execute">2.2. Execute Windup</h3>
 <div class="sect3">
-<h4 id="_prerequisites">2.2.1. Prerequisites</h4>
+<h4 id="overview">2.2.1. Overview</h4>
 <div class="paragraph">
-<p>Before you begin, you must gather the following information.</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>The fully qualified path of the application archive or folder you plan to migrate.</p>
-</li>
-<li>
-<p>The fully qualified path to a folder that will contain the resulting report information.</p>
-<div class="ulist">
-<ul>
-<li>
-<p>If you do not specify a folder, Windup creates one for you at the same level as the application.</p>
-</li>
-<li>
-<p>If you specify a folder and it does not exist, it is created by Windup.</p>
-</li>
-<li>
-<p>If you specify a folder and it does exist, you see the following:</p>
-<div class="ulist">
-<ul>
-<li>
-<p>In batch mode, you must specify <code>--overwrite</code> or you see the following error.</p>
-<div class="literalblock">
-<div class="content">
-<pre>***ERROR*** Files exist in /home/username/OUTPUT_REPORT_DIRECTORY, but --overwrite not specified. Aborting!</pre>
-</div>
-</div>
-</li>
-<li>
-<p>In interactive mode, you see see the following prompt and can choose whether to overwrite the directory.</p>
-<div class="literalblock">
-<div class="content">
-<pre>Overwrite all contents of &lt;OUTPUT_DIRECTORY&gt; (anything already in the directory will be deleted)? [y/N]</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Choose "y" if you want Windup to delete and recreate the directory. If you are confident you want to overwrite the output directory, you can specify <code>--overwrite</code> on the command line to automatically delete and recreate the directory.</p>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<div class="title">Warning</div>
-</td>
-<td class="content">
-Be careful not to specify a report output directory that contains important information!
-</td>
-</tr>
-</table>
-</div>
-</li>
-</ul>
-</div>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>You must also provide a list of the application packages to be evaluated.</p>
-<div class="ulist">
-<ul>
-<li>
-<p>In most cases, you are interested only in evaluating the custom application class packages and not the standard Java EE or 3rd party packages. For example, if the <em>MyCustomApp</em> application uses the package <code>com.mycustomapp</code>, you provide that package using the <code>--packages</code> argument on the command line. It is not necessary to provide the standard Java EE packages, like <code>java.util</code> or <code>javax.ejb</code>.</p>
-</li>
-<li>
-<p>While you can provide package names for standard Java EE 3rd party software like <code>org.apache</code>, it is usually best not to include them as they should not impact the migration effort.</p>
-</li>
-<li>
-<p>If you omit the <code>--packages</code> argument, every package in the application is scanned, resulting in very slow performance. It is best to provide the argument with one or more packages.</p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>For information about the use of WINDUP_HOME in the instructions below, see <a href="#About-the-HOME-Variable">About the WINDUP_HOME Variable</a>.</p>
-</li>
-</ol>
+<p>These instructions use the replaceable variable <code>WINDUP_HOME</code> to refer to the fully qualified path to your Windup installation. For more information, see <a href="#About-the-HOME-Variable">About the WINDUP_HOME Variable</a>.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="run-windup-in-batch-mode">2.2.2. Run Windup in Batch Mode</h4>
-<div class="paragraph">
-<p>This is the quickest way to run Windup.</p>
-</div>
+<h4 id="run-windup">2.2.2. Run Windup</h4>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
 <p>Open a terminal and navigate to the WINDUP_HOME directory.</p>
 </li>
 <li>
-<p>Type the following command to run Windup in batch mode:</p>
+<p>The command to run Windup uses the following syntax.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="nowrap">For Linux:     $ WINDUP_HOME/bin/windup --input INPUT_ARCHIVE --output OUTPUT_REPORT --packages PACKAGE_1 PACKAGE_2 PACKAGE_N
@@ -829,24 +743,94 @@ For Windows:   &gt; WINDUP_HOME\bin\windup.bat --input INPUT_ARCHIVE --output OU
 </div>
 </li>
 <li>
-<p>This command can take arbitrary options processed by different add-ons. The list of options in the core Windup distribution can be found in the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/config/ConfigurationOption.html">Javadoc</a>. Most commonly used command line arguments are:</p>
+<p>This command takes arbitrary options processed by different add-ons. The list of options in the core Windup distribution can be found in the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/config/ConfigurationOption.html">Javadoc</a>. Most commonly used command line arguments are:</p>
 <div class="dlist">
 <dl>
 <dt class="hdlist1">--input <strong>INPUT_ARCHIVE_OR_FOLDER</strong></dt>
 <dd>
-<p>This is the fully qualified application archive or source path.</p>
+<p>This is the fully qualified path of the application archive or folder you plan to migrate.</p>
 </dd>
 <dt class="hdlist1">--output <strong>OUTPUT_REPORT_DIRECTORY</strong> (optional)</dt>
 <dd>
-<p>The fully qualified path to the folder that will contain the the report information produced by Windup. If omitted, the report will be generated in a  <strong>INPUT_ARCHIVE_OR_FOLDER.report</strong> folder. If the output directory exists, you will see the error described above and must specify the <code>--overwrite</code> argument. This forces Windup to delete and recreate the folder, so be careful not to specify an output directory that contains important information!</p>
+<p>This is the fully qualified path to the folder that will contain the the report information produced by Windup.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>If omitted, the report will be generated in a  <strong>INPUT_ARCHIVE_OR_FOLDER.report</strong> folder.</p>
+</li>
+<li>
+<p>If the output directory exists, you will see the following error.</p>
+<div class="listingblock">
+<div class="content">
+<pre>***ERROR*** Files exist in /home/username/OUTPUT_REPORT_DIRECTORY, but --overwrite not specified. Aborting!</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You must specify the <code>--overwrite</code> argument to proceed. This forces Windup to delete and recreate the folder.</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Warning</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Be careful not to specify a report output directory that contains important information!</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</li>
+</ul>
+</div>
 </dd>
 <dt class="hdlist1">--source (optional)</dt>
 <dd>
-<p>One or more source technologies, platforms, or frameworks to migrate from.</p>
+<p>One or more source technologies, servers, platforms, or frameworks to migrate from.</p>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>For the list of the available <code>--source</code> servers or frameworks, use the <code>--listSourceTechnologies</code> argument on the <code>windup</code> command line as in the following example.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">WINDUP_HOME/bin/windup --listSourceTechnologies</pre>
+</div>
+</div>
+</td>
+</tr>
+</table>
+</div>
 </dd>
 <dt class="hdlist1">--target (optional)</dt>
 <dd>
-<p>One or more source technologies, platforms, or frameworks to migrate to.</p>
+<p>One or more source technologies, servers, platforms, or frameworks to migrate to.</p>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>For the list of the available <code>--target</code> servers or frameworks, use the <code>--listTargetTechnologies</code> argument on the <code>windup</code> command line as in the following example.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">WINDUP_HOME/bin/windup --listTargetTechnologies</pre>
+</div>
+</div>
+</td>
+</tr>
+</table>
+</div>
 </dd>
 <dt class="hdlist1">--overwrite (optional)</dt>
 <dd>
@@ -854,17 +838,42 @@ For Windows:   &gt; WINDUP_HOME\bin\windup.bat --input INPUT_ARCHIVE --output OU
 </dd>
 <dt class="hdlist1">--userRulesDirectory (optional)</dt>
 <dd>
-<p>Points to a directory to load XML rules from. (Search pattern: *.windup.groovy and *.windup.xml)</p>
+<p>The fully qualified path to a user directory containing custom XML rules that should be loaded and executed by Windup. The XML ruleset files must use one of the following extensions:  <code>*.windup.groovy</code> or <code>*.windup.xml</code>.</p>
 </dd>
 <dt class="hdlist1">--packages <strong>PACKAGE_1</strong>, <strong>PACKAGE_2</strong>, <strong>PACKAGE_N</strong> (optional)</dt>
 <dd>
 <p>This is a comma-delimited list of the packages to be evaluated by Windup.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>In most cases, you are interested only in evaluating the custom application class packages and not the standard Java EE or 3rd party packages. For example, if the <em>MyCustomApp</em> application uses the package <code>com.mycustomapp</code>, you provide that package using the <code>--packages</code> argument on the command line.</p>
+</li>
+<li>
+<p>It is not necessary to provide the standard Java EE packages, like <code>java.util</code> or <code>javax.ejb</code>.</p>
+</li>
+<li>
+<p>While you can provide package names for standard Java EE 3rd party software like <code>org.apache</code>, it is usually best not to include them as they should not impact the migration effort.</p>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Warning</div>
+</td>
+<td class="content">
+If you omit the <code>--packages</code> argument, every package in the application is scanned, resulting in very slow performance. It is best to provide the argument with one or more packages.
+</td>
+</tr>
+</table>
+</div>
+</li>
+</ul>
+</div>
 </dd>
 <dt class="hdlist1">--excludePackages <strong>PACKAGE_1</strong>, <strong>PACKAGE_2</strong>, <strong>PACKAGE_N</strong> (optional)</dt>
 <dd>
 <p>This is a comma-delimited list of the packages to be excluded by Windup.</p>
 </dd>
-<dt class="hdlist1">--source-mode true (optional)</dt>
+<dt class="hdlist1">--sourceMode (optional)</dt>
 <dd>
 <p>This argument is optional and is only required if the application to be evaluated contains source files rather than compiled binaries. The default value is <code>false</code>.</p>
 </dd>
@@ -932,7 +941,7 @@ The following subdirectories in the <code>OUTPUT_REPORT_DIRECTORY</code> contain
 </div>
 </div>
 <div class="sect3">
-<h4 id="_windup_help_for_batch_mode">2.2.3. Windup Help for Batch Mode</h4>
+<h4 id="_windup_help">2.2.3. Windup Help</h4>
 <div class="paragraph">
 <p>To see the complete list of available arguments for the <code>windup</code> command, execute the following command in the terminal:</p>
 </div>
@@ -943,111 +952,9 @@ The following subdirectories in the <code>OUTPUT_REPORT_DIRECTORY</code> contain
 </div>
 </div>
 <div class="sect3">
-<h4 id="start-windup-in-interactive-mode">2.2.4. Start Windup in Interactive Mode</h4>
+<h4 id="command-examples">2.2.4. Windup Command Examples</h4>
 <div class="paragraph">
-<p>Windup can also be run in interactive mode. This mode offers tab completion, which is useful if you need assistance with valid argument values, for example, valid <code>--source</code> or <code>--target</code> technologies.</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Open a terminal and navigate to the WINDUP_HOME/bin directory</p>
-</li>
-<li>
-<p>Type the following command to start Windup:</p>
-<div class="listingblock">
-<div class="content">
-<pre class="nowrap">For Linux:    WINDUP_HOME/bin $ ./windup
-For Windows:  C:\WINDUP_HOME\bin&gt; windup</pre>
-</div>
-</div>
-</li>
-<li>
-<p>You are presented with the following prompt.</p>
-<div class="listingblock">
-<div class="content">
-<pre class="nowrap">Using Windup at WINDUP_HOME
-
- _       ___           __
-| |     / (_)___  ____/ /_  ______
-| | /| / / / __ \/ __  / / / / __ \
-| |/ |/ / / / / / /_/ / /_/ / /_/ /
-|__/|__/_/_/ /_/\__,_/\__,_/ .___/
-                          /_/
-
-JBoss Windup, version [ 2.2.0.Final ] - JBoss, by Red Hat, Inc. [ http://windup.jboss.org ]
-
-[windup-distribution-2.2.0.Final]$</pre>
-</div>
-</div>
-</li>
-<li>
-<p>The command to run Windup is <code>windup-migrate-app</code>. It uses the same arguments as batch mode. If you are unsure of valid arguement values, hit the <code>tab</code> a few times to see what is available.</p>
-</li>
-<li>
-<p>To evaluate an application archive, use the following syntax:</p>
-<div class="listingblock">
-<div class="content">
-<pre class="nowrap">windup-migrate-app --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY -source SOURCE_TECHNOLOGY --target TARGET_TECHNOLOGY--packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>To run Windup against application source code, you must add the <code>--sourceMode true</code> argument:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="nowrap">windup-migrate-app --sourceMode true --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY -source SOURCE_TECHNOLOGY --target TARGET_TECHNOLOGY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
-</div>
-</div>
-</li>
-<li>
-<p>You should see the following result upon completion of the command:</p>
-<div class="listingblock">
-<div class="content">
-<pre class="nowrap">***SUCCESS*** Windup execution successful!</pre>
-</div>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<div class="title">Warning</div>
-</td>
-<td class="content">
-Depending on the size of the application and the hardware Windup is running on, this command can take a very long time. For tips on how to improve performance, see <a href="#Optimize-Performance">Optimize Windup Performance</a>.
-</td>
-</tr>
-</table>
-</div>
-</li>
-<li>
-<p>To exit Windup, type:</p>
-<div class="listingblock">
-<div class="content">
-<pre class="nowrap">exit</pre>
-</div>
-</div>
-</li>
-<li>
-<p>Review the report as described for batch mode.</p>
-</li>
-</ol>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_windup_help_for_interactive_mode">2.2.5. Windup Help for Interactive Mode</h4>
-<div class="paragraph">
-<p>To see the complete list of available arguments for the <code>windup-migrate-app</code> command, execute the following command at the Windup prompt:</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>man windup-migrate-app</pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="command-examples">2.2.6. Windup Command Examples</h4>
-<div class="paragraph">
-<p>The following batch mode examples report against applications located in the Windup source <a href="https://github.com/windup/windup/tree/master/test-files">test-files</a> directory. The same arguments can be used to run the commands interactively in Windup using the <code>windup-migrate-app</code> command.</p>
+<p>The following examples report against applications located in the Windup source <a href="https://github.com/windup/windup/tree/master/test-files">test-files</a> directory.</p>
 </div>
 <div class="sect4">
 <h5 id="_source_code_example">Source Code Example</h5>
@@ -1158,7 +1065,7 @@ Depending on the size of the application and the hardware Windup is running on, 
 <p>A list of issues, if any, that were found in the file</p>
 </li>
 <li>
-<p>The estimated total <em>Story Points</em> to migrate the file. <em>Story Points</em> are covered in more detail in the <em>Windup Rules Development Guide</em>.</p>
+<p>The estimated total <em>Story Points</em> to migrate the file. <em>Story Points</em> are covered in more detail in the <a href="http://windup.github.io/windup/docs/latest/html/WindupRulesDevelopmentGuide.html">Windup Rules Development Guide</a>.</p>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -1456,10 +1363,7 @@ The estimated Story Points change as new rules are added to Windup. The values h
 <p>Create a test for the new rule.</p>
 </li>
 <li>
-<p>Fork the <code>windup-rulesets</code> Github repository and put the rule therein.</p>
-</li>
-<li>
-<p>Details are provided in the <em><a href="http://windup.github.io/windup/docs/latest/html/WindupRulesDevelopmentGuide.html#_fork_and_clone_the_quickstart_github_project">Windup Rules Development Guide</a></em>.</p>
+<p>Details are provided in the <a href="http://windup.github.io/windup/docs/latest/html/WindupRulesDevelopmentGuide.html">Windup Rules Development Guide</a>.</p>
 </li>
 </ul>
 </div>
@@ -1475,7 +1379,7 @@ The estimated Story Points change as new rules are added to Windup. The values h
 <p>Improve Windup performance or efficiency.</p>
 </li>
 <li>
-<p>See the <em><a href="http://windup.github.io/windup/docs/latest/html/WindupCoreDevelopmentGuide.html">Windup Core Development Guide</a></em> for information about how to configure your environment and set up the project.</p>
+<p>See the <a href="http://windup.github.io/windup/docs/latest/html/WindupCoreDevelopmentGuide.html">Windup Core Development Guide</a> for information about how to configure your environment and set up the project.</p>
 </li>
 </ul>
 </div>
@@ -1493,16 +1397,6 @@ The estimated Story Points change as new rules are added to Windup. The values h
 <ul>
 <li>
 <p>Windup wiki: <a href="https://github.com/windup/windup/wiki" class="bare">https://github.com/windup/windup/wiki</a></p>
-</li>
-<li>
-<p>Windup documentation (generated from the Wiki documentation at the link above):</p>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="http://windup.github.io/windup/docs/latest/html/WindupUserGuide.html">Windup User Guide</a></p>
-</li>
-</ul>
-</div>
 </li>
 <li>
 <p>Windup forums: <a href="https://community.jboss.org/en/windup" class="bare">https://community.jboss.org/en/windup</a></p>
@@ -1681,7 +1575,7 @@ The estimated Story Points change as new rules are added to Windup. The values h
 </dd>
 <dt class="hdlist1">Story Point</dt>
 <dd>
-<p>A term commonly used in Scrum Agile software development methodology to estimate the <em>level of effort</em> needed to implement a feature or change. It does not necessarily translate to man-hours, but the value should be consistent across tasks. Story points are covered in more detail in the <em>Windup Rules Development Guide</em>.</p>
+<p>A term commonly used in Scrum Agile software development methodology to estimate the <em>level of effort</em> needed to implement a feature or change. It does not necessarily translate to man-hours, but the value should be consistent across tasks. Story points are covered in more detail in the <a href="http://windup.github.io/windup/docs/latest/html/WindupRulesDevelopmentGuide.html">Windup Rules Development Guide</a>.</p>
 </dd>
 </dl>
 </div>
@@ -1711,10 +1605,10 @@ The estimated Story Points change as new rules are added to Windup. The values h
 <p>If possible, execute Windup against the source code instead of the archives. This eliminates the need to decompile additional JARs and archives.</p>
 </li>
 <li>
-<p>Specify the <code>--target</code> platform on the on the <code>WINDUP_HOME/bin/windup</code> or <code>windup-migrate-app</code> command line to limit the execution of rules to only those that apply to this target platform.</p>
+<p>Specify the <code>--target</code> platform on the on the <code>WINDUP_HOME/bin/windup</code> command line to limit the execution of rules to only those that apply to this target platform.</p>
 </li>
 <li>
-<p>Be sure to specify a comma-delimited list of the packages to be evaluated by Windup using the <code>--packages</code> argument on the <code>WINDUP_HOME/bin/windup</code> or <code>windup-migrate-app</code> command line. If you omit this argument, Windup will decompile everything, which has a big impact on performance.</p>
+<p>Be sure to specify a comma-delimited list of the packages to be evaluated by Windup using the <code>--packages</code> argument on the `WINDUP_HOME/bin/windup`command line. If you omit this argument, Windup will decompile everything, which has a big impact on performance.</p>
 </li>
 <li>
 <p>Specify the <code>--excludePackages</code> and <code>--excludeTags</code> where possible to exclude them from processing.</p>
@@ -1751,7 +1645,7 @@ The estimated Story Points change as new rules are added to Windup. The values h
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-06-09 09:28:46 EDT
+Last updated 2015-06-16 15:45:42 EDT
 </div>
 </div>
 </body>
