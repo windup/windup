@@ -50,53 +50,33 @@
 		<div class="row">
     		<div class="container-fluid theme-showcase" role="main">
 		
-		    <#if !reportModel.relatedResources.hibernateConfiguration.list.iterator()?has_content>
-		        <div class="panel panel-primary">
-		            <div class="panel-heading">
-		                <h3 class="panel-title">Hibernate Configurations</h3>
-		            </div>
-		            <div class="panel-body">
-		                No Hibernate configuration files to report!
-		            </div>
-		        </div>
-		    </#if>
-
 		    <#list reportModel.relatedResources.hibernateConfiguration.list.iterator() as hibernateConfiguration>
-			    <div class="panel panel-primary">
-		            <div class="panel-heading">
-		                <h3 class="panel-title">Hibernate Configuration: ${hibernateConfiguration.prettyPath}</h3>
-		            </div>
-                    <table class="table table-striped table-bordered" id="sessionFactoryPropertiesTable">
-                        <tr>
-                            <th>Session Property</th><th>Value</th>
-                        </tr>
-		                <#list hibernateConfiguration.hibernateSessionFactories.iterator() as sessionFactory>
-                                <#list sessionFactory.sessionFactoryProperties?keys as sessionPropKey>
+		    	<#list hibernateConfiguration.hibernateSessionFactories.iterator() as sessionFactory>
+			    	<#if iterableHasContent(sessionFactory.sessionFactoryProperties?keys)>
+					    <div class="panel panel-primary">
+				            <div class="panel-heading">
+				                <h3 class="panel-title">Session Factory: ${hibernateConfiguration.prettyPath}</h3>
+				            </div>
+		                    <table class="table table-striped table-bordered" id="sessionFactoryPropertiesTable">
+		                        <tr>
+		                            <th>Session Property</th><th>Value</th>
+		                        </tr>
+		                        <#list sessionFactory.sessionFactoryProperties?keys as sessionPropKey>
 		                            <tr>
 		                                <td>${sessionPropKey}</td>
 		                                <td>${sessionFactory.sessionFactoryProperties[sessionPropKey]}</td>
 		                            </tr>
 		                        </#list>
-		                </#list>
-		            </table>
-		        </div>
+				            </table>
+				        </div>
+			        </#if>
+		        </#list>
 		    </#list>
-
-			<#if !reportModel.relatedResources.hibernateEntities.list.iterator()?has_content>
-		        <div class="panel panel-primary">
-		        	<div class="panel-heading">
-		                <h3 class="panel-title">Hibernate Entities</h3>
-		            </div>
-		            <div class="panel-body">
-		                No Hibernate entity mapping files found to report!
-		            </div>
-		        </div>
-		    </#if>
 
 		    <#if reportModel.relatedResources.hibernateEntities.list.iterator()?has_content>
 		        <div class="panel panel-primary">
 		            <div class="panel-heading">
-		                <h3 class="panel-title">Hibernate Entities</h3>
+		                <h3 class="panel-title">Entities</h3>
 		            </div>
     		        <table class="table table-striped table-bordered" id="hibernateEntityTable">
 		                <tr>
@@ -105,9 +85,7 @@
 		                <#list reportModel.relatedResources.hibernateEntities.list.iterator() as entity>
 		          	        <tr>
 		          		        <td>
-		          			        <#if entity.javaClass??>
-								        ${entity.javaClass.qualifiedName}
-							        </#if>
+		          		        	<@render_link model=entity.javaClass/>
 						        </td>
 		          		        <td>${entity.tableName!""}</td>
 		          	        </tr>
