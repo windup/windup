@@ -80,7 +80,7 @@ public class ClassificationHandlerTest
         Assert.assertEquals(1, classification.getLinks().size());
         List<Link> links = classification.getLinks();
         Assert.assertEquals("someUrl", links.get(0).getLink());
-        Assert.assertEquals("someDescription", links.get(0).getDescription());
+        Assert.assertEquals("someDescription", links.get(0).getTitle());
 
         Element secondClassification = classificationList.get(1);
         classification = parser.<Classification> processElement(secondClassification);
@@ -94,9 +94,9 @@ public class ClassificationHandlerTest
         Assert.assertEquals("url1", links.get(0).getLink());
         Assert.assertEquals("url2", links.get(1).getLink());
         Assert.assertEquals("url3", links.get(2).getLink());
-        Assert.assertEquals("description1", links.get(0).getDescription());
-        Assert.assertEquals("description2", links.get(1).getDescription());
-        Assert.assertEquals("description3", links.get(2).getDescription());
+        Assert.assertEquals("description1", links.get(0).getTitle());
+        Assert.assertEquals("description2", links.get(1).getTitle());
+        Assert.assertEquals("description3", links.get(2).getTitle());
 
     }
 

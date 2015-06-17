@@ -163,7 +163,7 @@ public class Classification extends ParameterizedIterationOperation<FileModel> i
             LinkService linkService = new LinkService(graphContext);
             for (Link link : links)
             {
-                LinkModel linkModel = linkService.getOrCreate(link.getDescription(), link.getLink());
+                LinkModel linkModel = linkService.getOrCreate(link.getTitle(), link.getLink());
                 classification.addLink(linkModel);
             }
         }

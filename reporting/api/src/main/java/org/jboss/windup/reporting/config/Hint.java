@@ -106,17 +106,23 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
         }
         else
         {
-            // if there is no title, just use the description of the location (eg, 'Constructing
-            // com.otherproduct.Foo()')
+            /*
+             * if there is no title, just use the description of the location (eg, 'Constructing
+             * com.otherproduct.Foo()')
+             */
             hintModel.setTitle(locationModel.getDescription());
         }
-        hintModel.setHint(hintTextPattern.getBuilder().build(event, context));
+
+        String hintTitle = hintModel.getTitle();
+        String hintText = hintTextPattern.getBuilder().build(event, context);
+
+        hintModel.setHint(hintText);
 
         GraphService<LinkModel> linkService = new GraphService<>(event.getGraphContext(), LinkModel.class);
         for (Link link : links)
         {
             LinkModel linkModel = linkService.create();
-            linkModel.setDescription(link.getDescription());
+            linkModel.setDescription(link.getTitle());
             linkModel.setLink(link.getLink());
             hintModel.addLink(linkModel);
         }
@@ -124,7 +130,7 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
         if (locationModel.getFile() instanceof SourceFileModel)
             ((SourceFileModel) locationModel.getFile()).setGenerateSourceReport(true);
 
-        log.info("Hint added to " + locationModel.getFile().getPrettyPathWithinProject() + " [" + this + "] ");
+        log.info("Hint added to " + locationModel.getFile().getPrettyPathWithinProject() + " [" + this.toString(hintTitle, hintText) + "] ");
     }
 
     @Override
@@ -152,21 +158,6 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
     protected void setTitle(String title)
     {
         this.hintTitlePattern = new RegexParameterizedPatternParser(title);
-    }
-
-    @Override
-    public String toString()
-    {
-        StringBuilder result = new StringBuilder();
-        result.append("Hint");
-        if (hintTitlePattern != null)
-            result.append(".titled(\"").append(hintTitlePattern.getPattern()).append("\")");
-        result.append(".withText(\"" + hintTextPattern.getPattern() + "\")");
-        if (effort != 0)
-            result.append(".withEffort(" + effort + ")");
-        if (links != null && !links.isEmpty())
-            result.append(".with(" + links + ")");
-        return result.toString();
     }
 
     public RegexParameterizedPatternParser getHintText()
@@ -200,6 +191,29 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
         hintTextPattern.setParameterStore(store);
         if (hintTitlePattern != null)
             hintTitlePattern.setParameterStore(store);
+    }
+
+    @Override
+    public String toString()
+    {
+        String title = "";
+        if (hintTitlePattern != null)
+            title = hintTitlePattern.getPattern();
+        return toString(title, hintTextPattern.getPattern());
+    }
+
+    private String toString(String title, String text)
+    {
+        StringBuilder result = new StringBuilder();
+        result.append("Hint");
+        if (title != null)
+            result.append(".titled(\"").append(title).append("\")");
+        result.append(".withText(\"" + text + "\")");
+        if (effort != 0)
+            result.append(".withEffort(" + effort + ")");
+        if (links != null && !links.isEmpty())
+            result.append(".with(" + links + ")");
+        return result.toString();
     }
 
 }

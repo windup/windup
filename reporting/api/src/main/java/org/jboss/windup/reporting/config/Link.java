@@ -8,16 +8,16 @@ package org.jboss.windup.reporting.config;
 public class Link
 {
     private String link;
-    private String description;
+    private String title;
 
-    private Link(String link, String description)
+    private Link(String link, String title)
     {
         this.link = link;
-        this.description = description;
+        this.title = title;
     }
 
     /**
-     * Create a new {@link Link} instance with the given target and description.
+     * Create a new {@link Link} instance with the given target and title.
      */
     public static Link to(String description, String link)
     {
@@ -33,10 +33,16 @@ public class Link
     }
 
     /**
-     * Get the description of this {@link Link}.
+     * Get the title of this {@link Link}.
      */
-    public String getDescription()
+    public String getTitle()
     {
-        return description;
+        return title;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Link.to(" + link + ").titled(" + title + ")";
     }
 }
