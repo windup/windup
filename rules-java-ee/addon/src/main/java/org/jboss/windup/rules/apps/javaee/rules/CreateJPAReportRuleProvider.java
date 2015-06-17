@@ -22,6 +22,7 @@ import org.jboss.windup.reporting.service.ApplicationReportService;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.rules.apps.javaee.model.JPAConfigurationFileModel;
 import org.jboss.windup.rules.apps.javaee.model.JPAEntityModel;
+import org.jboss.windup.rules.apps.javaee.model.JPANamedQueryModel;
 import org.jboss.windup.rules.apps.javaee.service.JPAConfigurationFileService;
 import org.jboss.windup.rules.apps.javaee.service.JPAEntityService;
 import org.jboss.windup.util.exception.WindupException;
@@ -47,8 +48,9 @@ public class CreateJPAReportRuleProvider extends AbstractRuleProvider
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        ConditionBuilder applicationProjectModelsFound = Query.fromType(JPAConfigurationFileModel.class).or(
-                    Query.fromType(JPAEntityModel.class));
+        ConditionBuilder applicationProjectModelsFound = Query.fromType(JPAConfigurationFileModel.class)
+                    .or(Query.fromType(JPAEntityModel.class))
+                    .or(Query.fromType(JPANamedQueryModel.class));
 
         GraphOperation addReport = new GraphOperation()
         {
@@ -92,6 +94,8 @@ public class CreateJPAReportRuleProvider extends AbstractRuleProvider
 
         JPAConfigurationFileService jpaConfigurationFileService = new JPAConfigurationFileService(context);
         JPAEntityService jpaEntityService = new JPAEntityService(context);
+        GraphService<JPANamedQueryModel> jpaNamedQueryService = new GraphService<>(context, JPANamedQueryModel.class);
+        
         GraphService<WindupVertexListModel> listService = new GraphService<WindupVertexListModel>(context, WindupVertexListModel.class);
 
         WindupVertexListModel jpaConfigList = listService.create();
@@ -105,10 +109,19 @@ public class CreateJPAReportRuleProvider extends AbstractRuleProvider
         {
             entityList.addItem(entityModel);
         }
+        
+        WindupVertexListModel namedQueryList = listService.create();
+        for (JPANamedQueryModel model : jpaNamedQueryService.findAll())
+        {
+            namedQueryList.addItem(model);
+        }
+        
 
         Map<String, WindupVertexFrame> additionalData = new HashMap<>(2);
         additionalData.put("jpaConfiguration", jpaConfigList);
         additionalData.put("jpaEntities", entityList);
+        additionalData.put("jpaNamedQueries", namedQueryList);
+        
         applicationReportModel.setRelatedResource(additionalData);
 
         // Set the filename for the report

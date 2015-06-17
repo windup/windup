@@ -49,17 +49,6 @@
 
 		<div class="row">
     		<div class="container-fluid theme-showcase" role="main">
-		
-		    <#if !reportModel.relatedResources.jpaConfiguration.list.iterator()?has_content>
-		        <div class="panel panel-primary">
-		            <div class="panel-heading">
-		                <h3 class="panel-title">JPA Configurations</h3>
-		            </div>
-		            <div class="panel-body">
-		                No JPA configuration files to report!
-		            </div>
-		        </div>
-		    </#if>
 
 		    <#list reportModel.relatedResources.jpaConfiguration.list.iterator() as jpaConfiguration>
 			    <#list jpaConfiguration.persistenceUnits.iterator() as persistenceUnit>
@@ -107,17 +96,6 @@
 		        </#list>
 		    </#list>
 
-			<#if !reportModel.relatedResources.jpaEntities.list.iterator()?has_content>
-		        <div class="panel panel-primary">
-		        	<div class="panel-heading">
-		                <h3 class="panel-title">JPA Entities</h3>
-		            </div>
-		            <div class="panel-body">
-		                No JPA entity mapping files found to report!
-		            </div>
-		        </div>
-		    </#if>
-
 		    <#if reportModel.relatedResources.jpaEntities.list.iterator()?has_content>
 		        <div class="panel panel-primary">
 		            <div class="panel-heading">
@@ -125,16 +103,35 @@
 		            </div>
     		        <table class="table table-striped table-bordered" id="jpaEntityTable">
 		                <tr>
-		                    <th>JPA Entity</th><th>Table</th>
+		                    <th>Entity Name</th><th>JPA Entity</th><th>Table</th>
 		                </tr>
 		                <#list reportModel.relatedResources.jpaEntities.list.iterator() as entity>
 		          	        <tr>
+		          	        	<td>${entity.entityName}</td>
 		          		        <td>
-		          			        <#if entity.javaClass??>
-								        ${entity.javaClass.qualifiedName}
-							        </#if>
+		          		        	<@render_link model=entity.javaClass/>
 						        </td>
 		          		        <td>${entity.tableName!""}</td>
+		          	        </tr>
+		                </#list>
+		            </table>
+		        </div>
+		    </#if>
+		    
+		    <#if reportModel.relatedResources.jpaNamedQueries.list.iterator()?has_content>
+		        <div class="panel panel-primary">
+		            <div class="panel-heading">
+		                <h3 class="panel-title">JPA Named Queries</h3>
+		            </div>
+    		        <table class="table table-striped table-bordered" id="jpaEntityTable">
+		                <tr>
+		                    <th>Query Name</th>
+		                    <th>Query</th>
+		                </tr>
+		                <#list reportModel.relatedResources.jpaNamedQueries.list.iterator() as named>
+		          	        <tr>
+		          	        	<td>${named.queryName}</td>
+		          		        <td>${named.query}</td>
 		          	        </tr>
 		                </#list>
 		            </table>
