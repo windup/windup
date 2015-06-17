@@ -1,5 +1,8 @@
 package org.jboss.windup.reporting.model;
 
+import java.util.Map;
+
+import org.jboss.windup.graph.MapInAdjacentProperties;
 import org.jboss.windup.graph.model.ProjectModel;
 
 import com.tinkerpop.blueprints.Direction;
@@ -125,4 +128,16 @@ public interface ApplicationReportModel extends ReportModel
     @Adjacency(label = REPORT_TO_PROJECT_MODEL, direction = Direction.OUT)
     public void setProjectModel(ProjectModel projectModel);
 
+    
+    /**
+     * Contains report properties
+     */
+    @MapInAdjacentProperties(label = "reportProperties")
+    Map<String, String> getReportProperties();
+
+    /**
+     * Contains report properties
+     */
+    @MapInAdjacentProperties(label = "reportProperties")
+    void setReportProperties(Map<String, String> map);
 }
