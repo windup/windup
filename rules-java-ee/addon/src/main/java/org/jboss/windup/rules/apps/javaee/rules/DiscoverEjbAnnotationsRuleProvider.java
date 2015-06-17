@@ -28,9 +28,10 @@ import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationLiter
 import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationTypeReferenceModel;
 import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationTypeValueModel;
 import org.jboss.windup.rules.apps.java.scan.provider.AnalyzeJavaFilesRuleProvider;
-import org.jboss.windup.rules.apps.javaee.model.EjbEntityBeanModel;
 import org.jboss.windup.rules.apps.javaee.model.EjbMessageDrivenModel;
 import org.jboss.windup.rules.apps.javaee.model.EjbSessionBeanModel;
+import org.jboss.windup.rules.apps.javaee.model.JPAEntityModel;
+import org.jboss.windup.rules.apps.javaee.service.JPAEntityService;
 import org.jboss.windup.rules.apps.javaee.service.JmsDestinationService;
 import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -80,20 +81,7 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
                             extractMessageDrivenMetadata(event, payload);
                         }
                     })
-                    .withId(ruleIDPrefix + "_MessageDrivenRule")
-                    .addRule()
-                    .when(JavaClass.references("javax.persistence.Entity").at(TypeReferenceLocation.ANNOTATION).as(ENTITY_ANNOTATIONS)
-                                .or(JavaClass.references("javax.persistence.Table").at(TypeReferenceLocation.ANNOTATION).as(TABLE_ANNOTATIONS_LIST)))
-                    .perform(Iteration.over(ENTITY_ANNOTATIONS).perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
-                    {
-                        @Override
-                        public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
-                        {
-                            extractEntityBeanMetadata(event, payload);
-                        }
-                    }).endIteration())
-                    .withId(ruleIDPrefix + "_EntityBeanRule");
-
+                    .withId(ruleIDPrefix + "_MessageDrivenRule");
     }
 
     private String getAnnotationLiteralValue(JavaAnnotationTypeReferenceModel model, String name)
@@ -132,43 +120,6 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
         sessionBean.setBeanName(ejbName);
         sessionBean.setEjbClass(ejbClass);
         sessionBean.setSessionType(sessionType);
-    }
-
-    private void extractEntityBeanMetadata(GraphRewrite event, JavaTypeReferenceModel entityTypeReference)
-    {
-        ((SourceFileModel) entityTypeReference.getFile()).setGenerateSourceReport(true);
-        JavaAnnotationTypeReferenceModel entityAnnotationTypeReference = (JavaAnnotationTypeReferenceModel) entityTypeReference;
-        JavaAnnotationTypeReferenceModel tableAnnotationTypeReference = null;
-        for (WindupVertexFrame annotationTypeReferenceBase : Variables.instance(event).findVariable(TABLE_ANNOTATIONS_LIST))
-        {
-            JavaAnnotationTypeReferenceModel annotationTypeReference = (JavaAnnotationTypeReferenceModel) annotationTypeReferenceBase;
-            if (annotationTypeReference.getFile().equals(entityTypeReference.getFile()))
-            {
-                tableAnnotationTypeReference = (JavaAnnotationTypeReferenceModel) annotationTypeReference;
-                break;
-            }
-        }
-
-        JavaClassModel ejbClass = getJavaClass(entityTypeReference);
-
-        String ejbName = getAnnotationLiteralValue(entityAnnotationTypeReference, "name");
-        if (ejbName == null)
-        {
-            ejbName = ejbClass.getClassName();
-        }
-        String tableName = tableAnnotationTypeReference == null ? ejbName : getAnnotationLiteralValue(tableAnnotationTypeReference, "name");
-        if (tableName == null)
-        {
-            tableName = ejbName;
-        }
-        String persistenceType = "Container"; // It is always container in the case of Annotations
-
-        Service<EjbEntityBeanModel> entityBeanService = new GraphService<>(event.getGraphContext(), EjbEntityBeanModel.class);
-        EjbEntityBeanModel entityBean = entityBeanService.create();
-        entityBean.setBeanName(ejbName);
-        entityBean.setEjbClass(ejbClass);
-        entityBean.setTableName(tableName);
-        entityBean.setPersistenceType(persistenceType);
     }
 
     private void extractMessageDrivenMetadata(GraphRewrite event, JavaTypeReferenceModel javaTypeReference)

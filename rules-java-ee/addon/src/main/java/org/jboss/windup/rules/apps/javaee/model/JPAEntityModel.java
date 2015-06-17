@@ -17,13 +17,29 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(JPAEntityModel.TYPE)
 public interface JPAEntityModel extends WindupVertexFrame
 {
+    public static final String ENTITY_NAME = "entityName";
     public static final String CATALOG_NAME = "catalogName";
     public static final String SCHEMA_NAME = "schemaName";
     public static final String TABLE_NAME = "tableName";
+    public static final String NAMED_QUERY = "namedQuery";
     public static final String JPA_ENTITY_CLASS = "jpaEntityClass";
     public static final String SPECIFICATION_VERSION = "specificationVersion";
     public static final String TYPE = "JPAEntityModel";
 
+
+    /**
+     * Contains the entity name
+     */
+    @Property(ENTITY_NAME)
+    public String getEntityName();
+
+    /**
+     * Contains the entity name
+     */
+    @Property(ENTITY_NAME)
+    public void setEntityName(String entityName);
+
+    
     /**
      * Contains the specification version
      */
@@ -83,4 +99,20 @@ public interface JPAEntityModel extends WindupVertexFrame
      */
     @Adjacency(label = JPA_ENTITY_CLASS, direction = Direction.OUT)
     public JavaClassModel getJavaClass();
+    
+
+    /**
+     * Contains the jpa named query
+     */
+    @Adjacency(label = NAMED_QUERY, direction = Direction.OUT)
+    public void addNamedQuery(JPANamedQueryModel model);
+
+    
+    /**
+     * Contains the jpa named query
+     */
+    @Adjacency(label = NAMED_QUERY, direction = Direction.OUT)
+    Iterable<JPANamedQueryModel> getNamedQueries();
+    
+    
 }
