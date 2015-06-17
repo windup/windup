@@ -1,5 +1,7 @@
 package org.jboss.windup.tooling;
 
+import org.jboss.windup.config.ConfigurationOption;
+
 /**
  * Allows configuring options on Windup.
  *
@@ -21,6 +23,12 @@ public interface ExecutionBuilderSetOptions
      * Sets the package name prefixes to ignore.
      */
     ExecutionBuilderSetOptions excludePackage(String excludePackagePrefix);
+
+    /**
+     * Sets the option with the specified name to the specified value. Option names can be found in static variables on {@link ConfigurationOption}
+     * implementations.
+     */
+    ExecutionBuilderSetOptions setOption(String name, Object value);
 
     /**
      * Execute windup.

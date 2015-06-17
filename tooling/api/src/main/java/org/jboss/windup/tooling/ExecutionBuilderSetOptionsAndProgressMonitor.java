@@ -1,5 +1,6 @@
 package org.jboss.windup.tooling;
 
+import org.jboss.windup.config.ConfigurationOption;
 import org.jboss.windup.exec.WindupProgressMonitor;
 
 /**
@@ -28,6 +29,12 @@ public interface ExecutionBuilderSetOptionsAndProgressMonitor
      * Sets the callback that will be used for monitoring progress.
      */
     ExecutionBuilderSetOptions setProgressMonitor(WindupProgressMonitor monitor);
+
+    /**
+     * Sets the option with the specified name to the specified value. Option names can be found in static variables on {@link ConfigurationOption}
+     * implementations.
+     */
+    ExecutionBuilderSetOptions setOption(String name, Object value);
 
     /**
      * Execute windup.

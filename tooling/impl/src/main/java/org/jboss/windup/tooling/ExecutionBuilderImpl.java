@@ -4,8 +4,10 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -61,6 +63,7 @@ public class ExecutionBuilderImpl implements ExecutionBuilder, ExecutionBuilderS
     private Set<String> ignorePathPatterns = new HashSet<>();
     private Set<String> includePackagePrefixSet = new HashSet<>();
     private Set<String> excludePackagePrefixSet = new HashSet<>();
+    private Map<String, Object> options = new HashMap<>();
 
     @Override
     public ExecutionBuilderSetInput begin(Path windupHome)
@@ -112,6 +115,13 @@ public class ExecutionBuilderImpl implements ExecutionBuilder, ExecutionBuilderS
     }
 
     @Override
+    public ExecutionBuilderSetOptions setOption(String name, Object value)
+    {
+        this.options.put(name, value);
+        return this;
+    }
+
+    @Override
     public ExecutionResults execute()
     {
         PathUtil.setWindupHome(this.windupHome);
@@ -145,6 +155,11 @@ public class ExecutionBuilderImpl implements ExecutionBuilder, ExecutionBuilderS
 
             windupConfiguration.setOptionValue(ScanPackagesOption.NAME, Lists.toList(this.includePackagePrefixSet));
             windupConfiguration.setOptionValue(ExcludePackagesOption.NAME, Lists.toList(this.excludePackagePrefixSet));
+
+            for (Map.Entry<String, Object> option : options.entrySet())
+            {
+                windupConfiguration.setOptionValue(option.getKey(), option.getValue());
+            }
 
             windupConfiguration
                         .setProgressMonitor(progressMonitor)
