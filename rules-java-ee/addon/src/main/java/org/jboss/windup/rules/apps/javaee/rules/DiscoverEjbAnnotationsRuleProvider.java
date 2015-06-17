@@ -28,9 +28,10 @@ import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationLiter
 import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationTypeReferenceModel;
 import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationTypeValueModel;
 import org.jboss.windup.rules.apps.java.scan.provider.AnalyzeJavaFilesRuleProvider;
-import org.jboss.windup.rules.apps.javaee.model.EjbEntityBeanModel;
 import org.jboss.windup.rules.apps.javaee.model.EjbMessageDrivenModel;
 import org.jboss.windup.rules.apps.javaee.model.EjbSessionBeanModel;
+import org.jboss.windup.rules.apps.javaee.model.JPAEntityModel;
+import org.jboss.windup.rules.apps.javaee.service.JPAEntityService;
 import org.jboss.windup.rules.apps.javaee.service.JmsDestinationService;
 import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -161,14 +162,18 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
         {
             tableName = ejbName;
         }
-        String persistenceType = "Container"; // It is always container in the case of Annotations
 
-        Service<EjbEntityBeanModel> entityBeanService = new GraphService<>(event.getGraphContext(), EjbEntityBeanModel.class);
-        EjbEntityBeanModel entityBean = entityBeanService.create();
-        entityBean.setBeanName(ejbName);
-        entityBean.setEjbClass(ejbClass);
-        entityBean.setTableName(tableName);
-        entityBean.setPersistenceType(persistenceType);
+        String catalogName = tableAnnotationTypeReference == null ? null : getAnnotationLiteralValue(tableAnnotationTypeReference, "catalog");
+        String schemaName = tableAnnotationTypeReference == null ? null : getAnnotationLiteralValue(tableAnnotationTypeReference, "schema");
+        
+        JPAEntityService jpaService = new JPAEntityService(event.getGraphContext());
+        JPAEntityModel jpaEntity = jpaService.create();
+        
+        jpaEntity.setEntityName(ejbName);
+        jpaEntity.setJavaClass(ejbClass);
+        jpaEntity.setTableName(tableName);
+        jpaEntity.setCatalogName(catalogName);
+        jpaEntity.setSchemaName(schemaName);
     }
 
     private void extractMessageDrivenMetadata(GraphRewrite event, JavaTypeReferenceModel javaTypeReference)
