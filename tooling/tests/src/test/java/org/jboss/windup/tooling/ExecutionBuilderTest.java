@@ -15,16 +15,25 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.operation.GraphOperation;
+import org.jboss.windup.exec.configuration.options.OfflineModeOption;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.WindupConfigurationModel;
+import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.config.Hint;
 import org.jboss.windup.reporting.config.classification.Classification;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
+import org.jboss.windup.rules.apps.java.config.SourceModeOption;
+import org.jboss.windup.rules.apps.java.model.WindupJavaConfigurationModel;
+import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
+import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
@@ -69,12 +78,16 @@ public class ExecutionBuilderTest
                     .setOutput(output)
                     .includePackage("org.windup.examples.ejb.messagedriven")
                     .ignore("\\.class$")
+                    .setOption(SourceModeOption.NAME, true)
+                    .setOption(OfflineModeOption.NAME, true)
                     .execute();
 
         Assert.assertNotNull(results.getClassifications());
         Assert.assertNotNull(results.getHints());
         Assert.assertTrue(results.getHints().iterator().hasNext());
         Assert.assertTrue(results.getClassifications().iterator().hasNext());
+        Assert.assertTrue(testProvider.sourceMode);
+        Assert.assertTrue(testProvider.offlineMode);
     }
 
     private Path getDefaultPath()
@@ -85,6 +98,9 @@ public class ExecutionBuilderTest
     @Singleton
     public static class TestProvider extends AbstractRuleProvider
     {
+        private boolean sourceMode = false;
+        private boolean offlineMode = false;
+
         public TestProvider()
         {
             super(MetadataBuilder.forProvider(TestProvider.class));
@@ -97,7 +113,21 @@ public class ExecutionBuilderTest
                         .addRule()
                         .when(JavaClass.references("javax.{*}"))
                         .perform(Hint.withText("References javax.*").withEffort(43)
-                                    .and(Classification.as("References some javax stuff")));
+                                    .and(Classification.as("References some javax stuff")))
+                        .addRule()
+                        .perform(new GraphOperation()
+                        {
+                            @Override
+                            public void perform(GraphRewrite event, EvaluationContext context)
+                            {
+                                WindupConfigurationModel configuration = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
+                                offlineMode = configuration.isOfflineMode();
+
+                                WindupJavaConfigurationModel javaConfiguration = WindupJavaConfigurationService.getJavaConfigurationModel(event
+                                            .getGraphContext());
+                                sourceMode = javaConfiguration.isSourceMode();
+                            }
+                        });
         }
     }
 }
