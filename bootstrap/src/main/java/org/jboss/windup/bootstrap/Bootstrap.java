@@ -222,8 +222,6 @@ public class Bootstrap
 
         addReposToFurnace(furnace, mutableRepos, immutableRepos);
 
-        // furnace.addContainerLifecycleListener(new GreetingListener(displayHelp));
-
         setupNonInteractive(furnace);
 
         for (int i = 0; i < arguments.size(); i++)
@@ -499,7 +497,9 @@ public class Bootstrap
         }
 
         setDefaultOutputPath(optionValues);
-        validateOptionValues(options, optionValues);
+        boolean validationSuccess = validateOptionValues(options, optionValues);
+        if (!validationSuccess)
+            return;
 
         WindupConfiguration windupConfiguration = new WindupConfiguration();
         for (Map.Entry<String, ConfigurationOption> optionEntry : options.entrySet())
@@ -559,7 +559,7 @@ public class Bootstrap
         }
     }
 
-    private void validateOptionValues(Map<String, ConfigurationOption> options, Map<String, Object> optionValues)
+    private boolean validateOptionValues(Map<String, ConfigurationOption> options, Map<String, Object> optionValues)
     {
         for (Map.Entry<String, ConfigurationOption> optionEntry : options.entrySet())
         {
@@ -570,10 +570,10 @@ public class Bootstrap
             {
             case ERROR:
                 System.err.println("ERROR: " + result.getMessage());
-                return;
+                return false;
             case PROMPT_TO_CONTINUE:
                 if (!prompt(result.getMessage(), result.getPromptDefault()))
-                    return;
+                    return false;
                 break;
             case WARNING:
                 System.err.println("WARNING: " + result.getMessage());
@@ -582,6 +582,7 @@ public class Bootstrap
                 break;
             }
         }
+        return true;
     }
 
     private void setDefaultOutputPath(Map<String, Object> optionValues)
