@@ -85,6 +85,7 @@ public abstract class WindupArchitectureTest
     {
 
         WindupConfiguration wpc = new WindupConfiguration().setGraphContext(graphContext);
+        wpc.setAlwaysHaltOnException(true);
         wpc.setInputPath(Paths.get(inputPath));
         wpc.setOutputDirectory(graphContext.getGraphDirectory());
         if (userRulesDir != null)

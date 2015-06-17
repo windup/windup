@@ -30,12 +30,14 @@ import org.jboss.windup.rules.apps.java.reporting.rules.CreateJavaApplicationOve
 import org.jboss.windup.rules.apps.javaee.model.EnvironmentReferenceModel;
 import org.jboss.windup.rules.apps.javaee.model.WebXmlModel;
 import org.jboss.windup.rules.apps.javaee.rules.CreateEJBReportRuleProvider;
+import org.jboss.windup.rules.apps.javaee.rules.CreateJPAReportRuleProvider;
 import org.jboss.windup.rules.apps.javaee.rules.CreateSpringBeanReportRuleProvider;
 import org.jboss.windup.rules.apps.javaee.service.WebXmlService;
 import org.jboss.windup.rules.apps.xml.service.XsltTransformationService;
 import org.jboss.windup.tests.application.rules.TestServletAnnotationRuleProvider;
 import org.jboss.windup.testutil.html.TestEJBReportUtil;
 import org.jboss.windup.testutil.html.TestEJBReportUtil.EJBType;
+import org.jboss.windup.testutil.html.TestJPAReportUtil;
 import org.jboss.windup.testutil.html.TestJavaApplicationOverviewUtil;
 import org.jboss.windup.testutil.html.TestSpringBeanReportUtil;
 import org.junit.Assert;
@@ -189,10 +191,23 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
                     "org.windup.examples.ejb.simplestateless.SimpleStatelessEJB"));
         Assert.assertTrue(util.checkBeanInReport(EJBType.STATEFUL, "MyNameForSimpleStatefulEJB",
                     "org.windup.examples.ejb.simplestateful.SimpleStatefulEJB"));
-        Assert.assertTrue(util.checkBeanInReport(EJBType.ENTITY, "SimpleEntity", "org.windup.examples.ejb.entitybean.SimpleEntity",
-                    "SimpleEntityTable", "Container"));
-        Assert.assertTrue(util.checkBeanInReport(EJBType.ENTITY, "SimpleEntityNoTableName",
-                    "org.windup.examples.ejb.entitybean.SimpleEntityNoTableName", "SimpleEntityNoTableName", "Container"));
+    }
+
+    private void validateJPAReport(GraphContext context)
+    {
+        TestJPAReportUtil util = new TestJPAReportUtil();
+
+        ReportService reportService = new ReportService(context);
+        ReportModel reportModel = reportService.getUniqueByProperty(
+                    ReportModel.TEMPLATE_PATH,
+                    CreateJPAReportRuleProvider.TEMPLATE_JPA_REPORT);
+        Path reportPath = Paths.get(reportService.getReportDirectory(), reportModel.getReportFilename());
+        util.loadPage(reportPath);
+
+        Assert.assertTrue(util.checkEntityInReport("SimpleEntity", "org.windup.examples.ejb.entitybean.SimpleEntity",
+                    "SimpleEntityTable"));
+        Assert.assertTrue(util.checkEntityInReport("SimpleEntityNoTableName",
+                    "org.windup.examples.ejb.entitybean.SimpleEntityNoTableName", "SimpleEntityNoTableName"));
     }
 
     /**
@@ -227,5 +242,6 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
 
         validateSpringBeanReport(context);
         validateEJBReport(context);
+        validateJPAReport(context);
     }
 }
