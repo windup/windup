@@ -81,20 +81,7 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
                             extractMessageDrivenMetadata(event, payload);
                         }
                     })
-                    .withId(ruleIDPrefix + "_MessageDrivenRule")
-                    .addRule()
-                    .when(JavaClass.references("javax.persistence.Entity").at(TypeReferenceLocation.ANNOTATION).as(ENTITY_ANNOTATIONS)
-                                .or(JavaClass.references("javax.persistence.Table").at(TypeReferenceLocation.ANNOTATION).as(TABLE_ANNOTATIONS_LIST)))
-                    .perform(Iteration.over(ENTITY_ANNOTATIONS).perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
-                    {
-                        @Override
-                        public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
-                        {
-                            extractEntityBeanMetadata(event, payload);
-                        }
-                    }).endIteration())
-                    .withId(ruleIDPrefix + "_EntityBeanRule");
-
+                    .withId(ruleIDPrefix + "_MessageDrivenRule");
     }
 
     private String getAnnotationLiteralValue(JavaAnnotationTypeReferenceModel model, String name)
@@ -133,47 +120,6 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
         sessionBean.setBeanName(ejbName);
         sessionBean.setEjbClass(ejbClass);
         sessionBean.setSessionType(sessionType);
-    }
-
-    private void extractEntityBeanMetadata(GraphRewrite event, JavaTypeReferenceModel entityTypeReference)
-    {
-        ((SourceFileModel) entityTypeReference.getFile()).setGenerateSourceReport(true);
-        JavaAnnotationTypeReferenceModel entityAnnotationTypeReference = (JavaAnnotationTypeReferenceModel) entityTypeReference;
-        JavaAnnotationTypeReferenceModel tableAnnotationTypeReference = null;
-        for (WindupVertexFrame annotationTypeReferenceBase : Variables.instance(event).findVariable(TABLE_ANNOTATIONS_LIST))
-        {
-            JavaAnnotationTypeReferenceModel annotationTypeReference = (JavaAnnotationTypeReferenceModel) annotationTypeReferenceBase;
-            if (annotationTypeReference.getFile().equals(entityTypeReference.getFile()))
-            {
-                tableAnnotationTypeReference = (JavaAnnotationTypeReferenceModel) annotationTypeReference;
-                break;
-            }
-        }
-
-        JavaClassModel ejbClass = getJavaClass(entityTypeReference);
-
-        String ejbName = getAnnotationLiteralValue(entityAnnotationTypeReference, "name");
-        if (ejbName == null)
-        {
-            ejbName = ejbClass.getClassName();
-        }
-        String tableName = tableAnnotationTypeReference == null ? ejbName : getAnnotationLiteralValue(tableAnnotationTypeReference, "name");
-        if (tableName == null)
-        {
-            tableName = ejbName;
-        }
-
-        String catalogName = tableAnnotationTypeReference == null ? null : getAnnotationLiteralValue(tableAnnotationTypeReference, "catalog");
-        String schemaName = tableAnnotationTypeReference == null ? null : getAnnotationLiteralValue(tableAnnotationTypeReference, "schema");
-        
-        JPAEntityService jpaService = new JPAEntityService(event.getGraphContext());
-        JPAEntityModel jpaEntity = jpaService.create();
-        
-        jpaEntity.setEntityName(ejbName);
-        jpaEntity.setJavaClass(ejbClass);
-        jpaEntity.setTableName(tableName);
-        jpaEntity.setCatalogName(catalogName);
-        jpaEntity.setSchemaName(schemaName);
     }
 
     private void extractMessageDrivenMetadata(GraphRewrite event, JavaTypeReferenceModel javaTypeReference)

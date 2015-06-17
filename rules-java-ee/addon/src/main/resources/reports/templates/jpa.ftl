@@ -117,6 +117,26 @@
 		            </table>
 		        </div>
 		    </#if>
+		    
+		    <#if reportModel.relatedResources.jpaNamedQueries.list.iterator()?has_content>
+		        <div class="panel panel-primary">
+		            <div class="panel-heading">
+		                <h3 class="panel-title">JPA Named Queries</h3>
+		            </div>
+    		        <table class="table table-striped table-bordered" id="jpaEntityTable">
+		                <tr>
+		                    <th>Query Name</th>
+		                    <th>Query</th>
+		                </tr>
+		                <#list reportModel.relatedResources.jpaNamedQueries.list.iterator() as named>
+		          	        <tr>
+		          	        	<td>${named.queryName}</td>
+		          		        <td>${named.query}</td>
+		          	        </tr>
+		                </#list>
+		            </table>
+		        </div>
+		    </#if>
 	    </div> <!-- /container -->
 	</div><!--/row-->
 	
