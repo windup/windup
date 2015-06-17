@@ -77,7 +77,7 @@ public class CreateEJBReportRuleProvider extends AbstractRuleProvider
         ApplicationReportModel applicationReportModel = applicationReportService.create();
         applicationReportModel.setReportPriority(300);
         applicationReportModel.setDisplayInApplicationReportIndex(true);
-        applicationReportModel.setReportName("EJB Report");
+        applicationReportModel.setReportName("EJBs");
         applicationReportModel.setReportIconClass("glyphicon ejb-nav-logo");
         applicationReportModel.setProjectModel(projectModel);
         applicationReportModel.setTemplatePath(TEMPLATE_EJB_REPORT);

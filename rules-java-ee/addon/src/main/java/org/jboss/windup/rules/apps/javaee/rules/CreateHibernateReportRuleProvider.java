@@ -84,7 +84,7 @@ public class CreateHibernateReportRuleProvider extends AbstractRuleProvider
         ApplicationReportModel applicationReportModel = applicationReportService.create();
         applicationReportModel.setReportPriority(400);
         applicationReportModel.setDisplayInApplicationReportIndex(true);
-        applicationReportModel.setReportName("Hibernate Report");
+        applicationReportModel.setReportName("Hibernate");
         applicationReportModel.setReportIconClass("glyphicon hibernate-nav-logo");
         applicationReportModel.setProjectModel(projectModel);
         applicationReportModel.setTemplatePath(TEMPLATE_HIBERNATE_REPORT);

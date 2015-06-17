@@ -73,7 +73,7 @@ public class CreateJBossJBPMReportRuleProvider extends AbstractRuleProvider
         ApplicationReportModel applicationReportModel = applicationReportService.create();
         applicationReportModel.setReportPriority(300);
         applicationReportModel.setDisplayInApplicationReportIndex(true);
-        applicationReportModel.setReportName("JBPM Report");
+        applicationReportModel.setReportName("JBPM");
         applicationReportModel.setReportIconClass("glyphicon bpm-nav-logo");
         applicationReportModel.setProjectModel(projectModel);
         applicationReportModel.setTemplatePath(TEMPLATE_EJB_REPORT);

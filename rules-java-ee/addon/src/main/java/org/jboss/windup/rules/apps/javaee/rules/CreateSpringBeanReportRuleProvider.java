@@ -83,7 +83,7 @@ public class CreateSpringBeanReportRuleProvider extends AbstractRuleProvider
         ApplicationReportModel applicationReportModel = applicationReportService.create();
         applicationReportModel.setReportPriority(500);
         applicationReportModel.setDisplayInApplicationReportIndex(true);
-        applicationReportModel.setReportName("Spring Bean Report");
+        applicationReportModel.setReportName("Spring Beans");
         applicationReportModel.setReportIconClass("glyphicon glyphicon-leaf");
         applicationReportModel.setProjectModel(projectModel);
         applicationReportModel.setReportIconClass("glyphicon glyphicon-leaf");
