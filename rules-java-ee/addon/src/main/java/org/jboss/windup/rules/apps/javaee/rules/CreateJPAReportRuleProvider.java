@@ -84,7 +84,7 @@ public class CreateJPAReportRuleProvider extends AbstractRuleProvider
         ApplicationReportModel applicationReportModel = applicationReportService.create();
         applicationReportModel.setReportPriority(400);
         applicationReportModel.setDisplayInApplicationReportIndex(true);
-        applicationReportModel.setReportName("JPA Report");
+        applicationReportModel.setReportName("JPA");
         applicationReportModel.setReportIconClass("glyphicon jpa-nav-logo");
         applicationReportModel.setProjectModel(projectModel);
         applicationReportModel.setTemplatePath(TEMPLATE_JPA_REPORT);
