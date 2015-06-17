@@ -27,7 +27,15 @@
                             </xs:element>
                             <xs:element name="sourceTechnology" type="technology" maxOccurs="unbounded" minOccurs="0" />
                             <xs:element name="targetTechnology" type="technology" maxOccurs="unbounded" minOccurs="0" />
-                            <xs:element name="phase" type="phase" maxOccurs="1" minOccurs="0" />
+                            <xs:element name="phase" maxOccurs="1" minOccurs="0">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                        <xs:enumeration value="MigrationRulesPhase" />
+                                        <xs:enumeration value="PostMigrationRulesPhase" />
+                                        <xs:enumeration value="PreReportGenerationPhase" />
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
                             <xs:element name="executeAfter" type="xs:string" maxOccurs="unbounded" minOccurs="0" />
                             <xs:element name="executeBefore" type="xs:string" maxOccurs="unbounded" minOccurs="0" />
                             <xs:element name="tag" type="xs:string" maxOccurs="unbounded" minOccurs="0" />
@@ -47,7 +55,6 @@
                 <xs:element name="file-mapping" type="mapping" minOccurs="0" maxOccurs="unbounded" />
             </xs:sequence>
             <xs:attribute type="xs:string" name="id" use="optional" />
-            <xs:attribute type="xs:string" name="phase" use="optional" />
         </xs:complexType>
     </xs:element>
 
@@ -301,14 +308,6 @@
     <xs:complexType name="technology">
         <xs:attribute type="xs:string" name="versionRange" />
         <xs:attribute type="xs:string" name="id" />
-    </xs:complexType>
-
-    <xs:complexType name="phase">
-        <xs:choice>
-            <xs:element name="MigrationRulesPhase" />
-            <xs:element name="PostMigrationRulesPhase" />
-            <xs:element name="PreReportGenerationPhase" />
-        </xs:choice>
     </xs:complexType>
 
     <xs:complexType name="mapping">

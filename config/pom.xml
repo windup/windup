@@ -23,7 +23,7 @@
     </modules>
 
     <properties>
-        <version.rewrite>3.0.0-SNAPSHOT</version.rewrite>
+        <version.rewrite>3.0.0.Alpha8-jboss</version.rewrite>
     </properties>
 
     <repositories>
