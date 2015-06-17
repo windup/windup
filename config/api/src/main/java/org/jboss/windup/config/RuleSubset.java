@@ -77,11 +77,13 @@ import org.ocpsoft.rewrite.util.Visitor;
  */
 public class RuleSubset extends DefaultOperationBuilder implements CompositeOperation, Parameterized, CompositeRule
 {
+    // public static final String SYSTEM_PROPERTY
+
     private static Logger log = Logger.getLogger(RuleSubset.class.getName());
 
     /**
-     * Used for tracking the time taken by the rules within each RuleProvider. This links from a
-     * {@link AbstractRuleProvider} to the ID of a {@link RuleProviderExecutionStatisticsModel}
+     * Used for tracking the time taken by the rules within each RuleProvider. This links from a {@link AbstractRuleProvider} to the ID of a
+     * {@link RuleProviderExecutionStatisticsModel}
      */
     private final IdentityHashMap<AbstractRuleProvider, Object> timeTakenByProvider = new IdentityHashMap<>();
 
@@ -95,6 +97,8 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
 
     private List<RuleLifecycleListener> listeners = new ArrayList<>();
 
+    private boolean alwaysHaltOnFailure = false;
+
     private RuleSubset(Configuration config)
     {
         Assert.notNull(config, "Configuration must not be null.");
@@ -104,6 +108,11 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
     public static RuleSubset create(Configuration config)
     {
         return new RuleSubset(config);
+    }
+
+    public void setAlwaysHaltOnFailure(boolean alwaysHaltOnFailure)
+    {
+        this.alwaysHaltOnFailure = alwaysHaltOnFailure;
     }
 
     /**
@@ -306,9 +315,9 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
 
                 // Depending on RuleProvider's haltOnException, halt Windup on exception.
                 AbstractRuleProvider ruleProvider = (AbstractRuleProvider) ruleContext.get(RuleMetadataType.RULE_PROVIDER);
-                boolean halt = ruleProvider.getMetadata().isHaltOnException();
+                boolean halt = alwaysHaltOnFailure || ruleProvider.getMetadata().isHaltOnException();
                 Object halt_ = ruleContext.get(RuleMetadataType.HALT_ON_EXCEPTION);
-                halt |= (halt_ instanceof Boolean && ((Boolean)halt_).booleanValue());
+                halt |= (halt_ instanceof Boolean && ((Boolean) halt_).booleanValue());
                 if (halt)
                     throw new WindupException(exMsg, ex);
             }
@@ -515,8 +524,7 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
     }
 
     /**
-     * Add a {@link RuleLifecycleListener} to receive events when {@link Rule} instances are evaluated, executed, and
-     * their results.
+     * Add a {@link RuleLifecycleListener} to receive events when {@link Rule} instances are evaluated, executed, and their results.
      */
     public ListenerRegistration<RuleLifecycleListener> addLifecycleListener(final RuleLifecycleListener listener)
     {

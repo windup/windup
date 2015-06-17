@@ -28,6 +28,18 @@ public interface HibernateSessionFactoryModel extends WindupVertexFrame
     HibernateConfigurationFileModel getHibernateConfigurationFileModel();
 
     /**
+     * Contains a link back to the {@link DataSourceModel}
+     */
+    @Adjacency(label = DataSourceModel.DATA_SOURCE, direction = Direction.OUT)
+    public Iterable<DataSourceModel> getDataSources();
+
+    /**
+     * Contains a link back to the {@link DataSourceModel}
+     */
+    @Adjacency(label = DataSourceModel.DATA_SOURCE, direction = Direction.OUT)
+    void addDataSource(DataSourceModel dataSource);
+    
+    /**
      * Contains the hibernate session factories properties
      */
     @MapInAdjacentProperties(label = "sessionFactoryProperties")

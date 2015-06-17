@@ -114,6 +114,7 @@ public class WindupProcessorImpl implements WindupProcessor
         event.getRewriteContext().put(RuleProviderRegistry.class, providerRegistry);
 
         RuleSubset ruleSubset = RuleSubset.create(rules);
+        ruleSubset.setAlwaysHaltOnFailure(config.isAlwaysHaltOnException());
 
         for (RuleLifecycleListener listener : listeners)
         {

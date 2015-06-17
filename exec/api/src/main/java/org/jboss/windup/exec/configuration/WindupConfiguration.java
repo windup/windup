@@ -30,6 +30,7 @@ import org.jboss.windup.exec.configuration.options.UserIgnorePathOption;
 import org.jboss.windup.exec.configuration.options.UserRulesDirectoryOption;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.util.PathUtil;
+import org.ocpsoft.rewrite.config.Rule;
 
 /**
  * Configuration of WindupProcessor.
@@ -45,6 +46,7 @@ public class WindupConfiguration
     private Predicate<RuleProvider> ruleProviderFilter;
     private WindupProgressMonitor progressMonitor = new NullWindupProgressMonitor();
     private Map<String, Object> configurationOptions = new HashMap<>();
+    private boolean alwaysHaltOnException;
 
     private GraphContext context;
 
@@ -102,6 +104,26 @@ public class WindupConfiguration
     {
         configurationOptions.put(name, value);
         return this;
+    }
+
+    /**
+     * Indicates that we should always halt on a {@link Rule} failure, regardless of whether or not we would normally bypass the failure.
+     *
+     * This can be useful in test scenarios where we don't want errors to be ignored at all.
+     */
+    public boolean isAlwaysHaltOnException()
+    {
+        return alwaysHaltOnException;
+    }
+
+    /**
+     * Indicates that we should always halt on a {@link Rule} failure, regardless of whether or not we would normally bypass the failure.
+     *
+     * This can be useful in test scenarios where we don't want errors to be ignored at all.
+     */
+    public void setAlwaysHaltOnException(boolean alwaysHaltOnException)
+    {
+        this.alwaysHaltOnException = alwaysHaltOnException;
     }
 
     /**
@@ -213,8 +235,8 @@ public class WindupConfiguration
     }
 
     /**
-     * Gets all user rule directories. This includes both the ones that they specify (eg, /path/to/rules) as well as
-     * ones that Windup provides by default (eg, WINDUP_HOME/rules and ~/.windup/rules).
+     * Gets all user rule directories. This includes both the ones that they specify (eg, /path/to/rules) as well as ones that Windup provides by
+     * default (eg, WINDUP_HOME/rules and ~/.windup/rules).
      */
     public Iterable<Path> getAllUserRulesDirectories()
     {
@@ -229,8 +251,8 @@ public class WindupConfiguration
     }
 
     /**
-     * Gets all the directories/files in which the regexes for ignoring the files is placed. This includes the
-     * file/directory specified by the user and the default paths that are WINDUP_HOME/ignore and ~/.windup/ignore.
+     * Gets all the directories/files in which the regexes for ignoring the files is placed. This includes the file/directory specified by the user
+     * and the default paths that are WINDUP_HOME/ignore and ~/.windup/ignore.
      *
      * @return
      */
@@ -260,8 +282,7 @@ public class WindupConfiguration
     }
 
     /**
-     * Contains a default list of {@link Path}s with directories/files that contains files having regexes of file names
-     * to be ignored.
+     * Contains a default list of {@link Path}s with directories/files that contains files having regexes of file names to be ignored.
      */
     public List<Path> getDefaultUserIgnoreDirectories()
     {
@@ -305,8 +326,7 @@ public class WindupConfiguration
     }
 
     /**
-     * Adds a path to the list of default {@link Path}s with directories/files that contain files with regexes of file
-     * names to be ignored.
+     * Adds a path to the list of default {@link Path}s with directories/files that contain files with regexes of file names to be ignored.
      *
      * This method does guard against duplicate directories.
      */
@@ -391,8 +411,7 @@ public class WindupConfiguration
     }
 
     /**
-     * Returns true if Windup is operating in {@link OfflineModeOption} == true. (with respect to an internet
-     * connection)
+     * Returns true if Windup is operating in {@link OfflineModeOption} == true. (with respect to an internet connection)
      */
     public boolean isOffline()
     {
