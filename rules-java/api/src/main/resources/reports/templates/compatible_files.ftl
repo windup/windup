@@ -92,19 +92,25 @@
 	<div class="container-fluid" role="main">
 		<div class="row">
 			<div class="page-header page-header-no-border">
-				<h1>Unclassified Files Report <span class="slash">/</span><small style="margin-left: 20px; font-weight: 100;">${reportModel.projectModel.name}</small></h1>
+				<h1>Compatible Files Report <span class="slash">/</span><small style="margin-left: 20px; font-weight: 100;">${reportModel.projectModel.name}</small></h1>
 			</div>
 		</div>
 
 		<div class="row">
-			<!-- Breadcrumbs -->
 			<div class="container-fluid">
 			  <ol class="breadcrumb top-menu">
 				<li><a href="../index.html">All Applications</a></li>
 				<#include "include/breadcrumbs.ftl">
 			  </ol> 
 	        </div>
-	        <!-- / Breadcrumbs -->
+        </div>
+
+		<div class="row">
+			<div class="container-fluid">
+			  <p>DISCLAIMER: Files in this report are believed to be compatible with the selected target platform; 
+			  however, it is possible that this report contains incompatible files that were not identified by any rules in the system. Therefore, it is
+			  recommended that these files be reviewed manually for any issues.</p> 
+	        </div>
         </div>
 
 

@@ -19,13 +19,13 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-public class CreateJavaNonClassifiedFileReportRuleProvider extends AbstractRuleProvider
+public class CreateCompatibleFileReportRuleProvider extends AbstractRuleProvider
 {
-    private static final String TEMPLATE_APPLICATION_REPORT = "/reports/templates/non_classified_files.ftl";
+    private static final String TEMPLATE_APPLICATION_REPORT = "/reports/templates/compatible_files.ftl";
 
-    public CreateJavaNonClassifiedFileReportRuleProvider()
+    public CreateCompatibleFileReportRuleProvider()
     {
-        super(MetadataBuilder.forProvider(CreateJavaNonClassifiedFileReportRuleProvider.class)
+        super(MetadataBuilder.forProvider(CreateCompatibleFileReportRuleProvider.class)
                     .setPhase(ReportGenerationPhase.class));
     }
 
@@ -52,7 +52,7 @@ public class CreateJavaNonClassifiedFileReportRuleProvider extends AbstractRuleP
             @Override
             public String toString()
             {
-                return "CreateNonClassifiedFilesApplicationReport";
+                return "CreateCompatibleFilesApplicationReport";
             }
         };
 
@@ -70,7 +70,7 @@ public class CreateJavaNonClassifiedFileReportRuleProvider extends AbstractRuleP
         ApplicationReportModel applicationReportModel = applicationReportService.create();
         applicationReportModel.setReportPriority(200);
         applicationReportModel.setDisplayInApplicationReportIndex(true);
-        applicationReportModel.setReportName("Unclassified Files");
+        applicationReportModel.setReportName("Compatible Files");
         applicationReportModel.setReportIconClass("glyphicon glyphicon-question-sign");
         applicationReportModel.setMainApplicationReport(false);
         applicationReportModel.setProjectModel(projectModel);
