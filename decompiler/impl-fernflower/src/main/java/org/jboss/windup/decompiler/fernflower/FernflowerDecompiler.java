@@ -29,6 +29,7 @@ import org.jboss.windup.decompiler.util.Filter;
 import org.jboss.windup.util.Checks;
 import org.jetbrains.java.decompiler.main.Fernflower;
 import org.jetbrains.java.decompiler.main.extern.IBytecodeProvider;
+import org.jetbrains.java.decompiler.main.extern.IFernflowerPreferences;
 import org.jetbrains.java.decompiler.main.extern.IResultSaver;
 import org.jetbrains.java.decompiler.util.InterpreterUtil;
 
@@ -81,7 +82,9 @@ public class FernflowerDecompiler implements Decompiler
 
     private Map<String, Object> getOptions()
     {
-        return new HashMap<>();
+        Map<String, Object> options = new HashMap<>();
+        options.put(IFernflowerPreferences.MAX_PROCESSING_METHOD, 30);
+        return options;
     }
 
     private IBytecodeProvider getByteCodeProvider()
