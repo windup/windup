@@ -146,7 +146,10 @@ public class RenderFileReferenceDirective implements WindupFreeMarkerTemplateDir
         {
             writer.write(linkText);
         }
-        renderLink(writer, result.getReportFilename(), linkText);
+        else
+        {
+            renderLink(writer, result.getReportFilename(), linkText);
+        }
     }
 
     private void processJavaClassModel(Writer writer, LayoutType layoutType, JavaClassModel clz, String defaultText) throws IOException
