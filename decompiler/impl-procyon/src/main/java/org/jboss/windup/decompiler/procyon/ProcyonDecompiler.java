@@ -236,7 +236,6 @@ public class ProcyonDecompiler implements Decompiler
         log.info("Decompiling .class '" + classFilePath + "' to '" + outputDir + "' from: '" + rootDir + "'");
 
         String name = classFilePath.normalize().toAbsolutePath().toString().substring(rootDir.toAbsolutePath().toString().length() + 1);
-        System.out.println("Name: " + name);
         final String typeName = StringUtils.removeEnd(name, ".class");// .replace('/', '.');
 
         DecompilationResult result = new DecompilationResult();

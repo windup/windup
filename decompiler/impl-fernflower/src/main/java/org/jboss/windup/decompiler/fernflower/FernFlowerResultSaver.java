@@ -19,11 +19,24 @@ public class FernFlowerResultSaver implements IResultSaver
     private final File outputDirectory;
     private final DecompilationListener listener;
 
+    private boolean fileSaved = false;
+
+    /**
+     * Creates a {@link IResultSaver} for this single classfile. Each instance should not be reused.
+     */
     public FernFlowerResultSaver(String classFile, File outputDirectory, DecompilationListener listener)
     {
         this.classFile = classFile;
         this.outputDirectory = outputDirectory;
         this.listener = listener;
+    }
+
+    /**
+     * Indicates that this file
+     */
+    public boolean isFileSaved()
+    {
+        return fileSaved;
     }
 
     @Override
@@ -41,6 +54,8 @@ public class FernFlowerResultSaver implements IResultSaver
             }
             if (listener != null)
                 listener.fileDecompiled(classFile, outputFile.toString());
+
+            fileSaved = true;
         }
         catch (IOException t)
         {
@@ -52,35 +67,42 @@ public class FernFlowerResultSaver implements IResultSaver
     @Override
     public void saveFolder(String path)
     {
+        // Not implemented as it is not needed for our Fernflower usage.
     }
 
     @Override
     public void copyFile(String source, String path, String entryName)
     {
+        // Not implemented as it is not needed for our Fernflower usage.
     }
 
     @Override
     public void createArchive(String path, String archiveName, Manifest manifest)
     {
+        // Not implemented as it is not needed for our Fernflower usage.
     }
 
     @Override
     public void saveDirEntry(String path, String archiveName, String entryName)
     {
+        // Not implemented as it is not needed for our Fernflower usage.
     }
 
     @Override
     public void copyEntry(String source, String path, String archiveName, String entry)
     {
+        // Not implemented as it is not needed for our Fernflower usage.
     }
 
     @Override
     public void saveClassEntry(String path, String archiveName, String qualifiedName, String entryName, String content)
     {
+        // Not implemented as it is not needed for our Fernflower usage.
     }
 
     @Override
     public void closeArchive(String path, String archiveName)
     {
+        // Not implemented as it is not needed for our Fernflower usage.
     }
 }

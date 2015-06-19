@@ -1,5 +1,7 @@
 package org.jboss.windup.bootstrap;
 
+import java.util.logging.Logger;
+
 import org.jboss.windup.exec.WindupProgressMonitor;
 
 /**
@@ -9,6 +11,8 @@ import org.jboss.windup.exec.WindupProgressMonitor;
  */
 public class ConsoleProgressMonitor implements WindupProgressMonitor
 {
+    private static Logger LOG = Logger.getLogger(ConsoleProgressMonitor.class.getName());
+
     private String task;
     private String subTask;
     private int totalWork;
@@ -23,6 +27,7 @@ public class ConsoleProgressMonitor implements WindupProgressMonitor
 
         String message = String.format("[%d/%d] %s", currentWork, totalWork, name);
         System.out.println(message);
+        LOG.info(message);
     }
 
     @Override
@@ -49,6 +54,7 @@ public class ConsoleProgressMonitor implements WindupProgressMonitor
 
         String message = String.format("[%d/%d] \t", currentWork, totalWork, name);
         System.out.println(message);
+        LOG.info(message);
     }
 
     @Override
@@ -58,6 +64,7 @@ public class ConsoleProgressMonitor implements WindupProgressMonitor
 
         String message = String.format("[%d/%d] %s", currentWork, totalWork, subTask);
         System.out.println(message);
+        LOG.info(message);
     }
 
     @Override

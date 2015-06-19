@@ -30,7 +30,6 @@ import org.jboss.windup.util.Checks;
 import org.jetbrains.java.decompiler.main.Fernflower;
 import org.jetbrains.java.decompiler.main.extern.IBytecodeProvider;
 import org.jetbrains.java.decompiler.main.extern.IFernflowerPreferences;
-import org.jetbrains.java.decompiler.main.extern.IResultSaver;
 import org.jetbrains.java.decompiler.util.InterpreterUtil;
 
 /**
@@ -99,7 +98,7 @@ public class FernflowerDecompiler implements Decompiler
         };
     }
 
-    private IResultSaver getResultSaver(final String classFile, final File outputDirectory, final DecompilationListener listener)
+    private FernFlowerResultSaver getResultSaver(final String classFile, final File outputDirectory, final DecompilationListener listener)
     {
         return new FernFlowerResultSaver(classFile, outputDirectory, listener);
     }
@@ -146,7 +145,7 @@ public class FernflowerDecompiler implements Decompiler
                 public Void call() throws Exception
                 {
                     ClassDecompileRequest firstRequest = requests.get(0);
-                    IResultSaver resultSaver = getResultSaver(
+                    FernFlowerResultSaver resultSaver = getResultSaver(
                                 firstRequest.getClassFile().toString(),
                                 firstRequest.getOutputDirectory().toFile(),
                                 listener);
@@ -158,12 +157,15 @@ public class FernflowerDecompiler implements Decompiler
                     try
                     {
                         fernflower.decompileContext();
+                        if (!resultSaver.isFileSaved())
+                            listener.decompilationFailed(key, "File was not decompiled!");
                     }
                     catch (Throwable t)
                     {
                         listener.decompilationFailed(key, "Decompilation failed due to: " + t.getMessage());
                         LOG.warning("Decompilation of " + key + " failed due to: " + t.getMessage());
                     }
+
                     return null;
                 }
             };
@@ -209,10 +211,13 @@ public class FernflowerDecompiler implements Decompiler
             }
         };
 
-        IResultSaver resultSaver = getResultSaver(classFilePath.toString(), outputDir.toFile(), listener);
+        FernFlowerResultSaver resultSaver = getResultSaver(classFilePath.toString(), outputDir.toFile(), listener);
         Fernflower fernflower = new Fernflower(getByteCodeProvider(), resultSaver, getOptions(), new FernflowerJDKLogger());
         fernflower.getStructContext().addSpace(classFilePath.toFile(), true);
         fernflower.decompileContext();
+
+        if (!resultSaver.isFileSaved())
+            listener.decompilationFailed(classFilePath.toString(), "File was not decompiled!");
 
         return result;
     }
@@ -318,10 +323,13 @@ public class FernflowerDecompiler implements Decompiler
                     }
                 };
 
-                IResultSaver resultSaver = getResultSaver(entry.getName(), outputDir.toFile(), listener);
+                FernFlowerResultSaver resultSaver = getResultSaver(entry.getName(), outputDir.toFile(), listener);
                 Fernflower fernflower = new Fernflower(bytecodeProvider, resultSaver, getOptions(), new FernflowerJDKLogger());
                 fernflower.getStructContext().addSpace(new File(entry.getName()), true);
                 fernflower.decompileContext();
+
+                if (!resultSaver.isFileSaved())
+                    listener.decompilationFailed(entry.getName(), "File was not decompiled!");
             }
             listener.decompilationProcessComplete();
             return result;
