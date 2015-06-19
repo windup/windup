@@ -154,8 +154,8 @@ public class EjbXmlParsingTest
                 for (EnvironmentReferenceModel environmentReferenceModel : envRefService
                             .findAllByProperty(EnvironmentReferenceModel.NAME, envRef))
                 {
-                    Assert.assertNotNull(environmentReferenceModel.getJNDIReference());
-                    Assert.assertEquals(environmentReferenceModel.getJNDIReference().getJndiLocation(), jndiResourceModel.getJndiLocation());
+                    Assert.assertNotNull(environmentReferenceModel.getJndiReference());
+                    Assert.assertEquals(environmentReferenceModel.getJndiReference().getJndiLocation(), jndiResourceModel.getJndiLocation());
                     envCount++;
                 }
                 Assert.assertTrue(envCount > 0);

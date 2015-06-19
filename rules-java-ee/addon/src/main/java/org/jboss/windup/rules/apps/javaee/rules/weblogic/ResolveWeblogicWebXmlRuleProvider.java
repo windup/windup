@@ -11,13 +11,13 @@ import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
-import org.jboss.windup.reporting.model.TechnologyTagModel;
 import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.javaee.model.EnvironmentReferenceModel;
 import org.jboss.windup.rules.apps.javaee.model.JNDIResourceModel;
 import org.jboss.windup.rules.apps.javaee.rules.DiscoverWebXmlRuleProvider;
 import org.jboss.windup.rules.apps.javaee.service.EnvironmentReferenceService;
 import org.jboss.windup.rules.apps.javaee.service.JNDIResourceService;
+import org.jboss.windup.rules.apps.javaee.service.VendorSpecificationExtensionService;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.apps.xml.service.XmlFileService;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
@@ -63,8 +63,11 @@ public class ResolveWeblogicWebXmlRuleProvider extends IteratingRuleProvider<Xml
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
 
         Document doc = xmlFileService.loadDocumentQuiet(context, payload);
+        VendorSpecificationExtensionService vendorSpecificationService = new VendorSpecificationExtensionService(event.getGraphContext());
+        //mark as vendor extension; create reference to web.xml
+        vendorSpecificationService.associateAsVendorExtension(payload, "web.xml");
 
-        TechnologyTagModel technologyTag = technologyTagService.addTagToFileModel(payload, "Weblogic Web XML", TechnologyTagLevel.IMPORTANT);
+        technologyTagService.addTagToFileModel(payload, "Weblogic Web XML", TechnologyTagLevel.IMPORTANT);
         for (Element resourceRef : $(doc).find("resource-description").get())
         {
             String jndiLocation = $(resourceRef).child("jndi-name").text();

@@ -4,6 +4,7 @@ import static org.joox.JOOX.$;
 
 import java.util.logging.Logger;
 
+import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
@@ -17,6 +18,7 @@ import org.jboss.windup.rules.apps.javaee.model.JNDIResourceModel;
 import org.jboss.windup.rules.apps.javaee.rules.DiscoverWebXmlRuleProvider;
 import org.jboss.windup.rules.apps.javaee.service.EnvironmentReferenceService;
 import org.jboss.windup.rules.apps.javaee.service.JNDIResourceService;
+import org.jboss.windup.rules.apps.javaee.service.VendorSpecificationExtensionService;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.apps.xml.service.XmlFileService;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
@@ -67,21 +69,48 @@ public class ResolveJBossWebXmlRuleProvider extends IteratingRuleProvider<XmlFil
 
         Document doc = xmlFileService.loadDocumentQuiet(context, payload);
 
+        VendorSpecificationExtensionService vendorSpecificationService = new VendorSpecificationExtensionService(event.getGraphContext());
+        //mark as vendor extension; create reference to web.xml
+        vendorSpecificationService.associateAsVendorExtension(payload, "web.xml");
+        
+        // register beans to JNDI: http://grepcode.com/file/repository.jboss.org/nexus/content/repositories/releases/org.jboss.ejb3/jboss-ejb3-core/0.1.0/test/naming/META-INF/jboss1.xml?av=f
         for (Element resourceRef : $(doc).find("resource-ref").get())
         {
-            String jndiLocation = $(resourceRef).child("jndi-name").text();
-            String resourceName = $(resourceRef).child("res-ref-name").text();
+            processBinding(envRefService, jndiResourceService, resourceRef, "res-ref-name", "jndi-name");
+        }
+        for (Element resourceRef : $(doc).find("resource-env-ref").get())
+        {
+            processBinding(envRefService, jndiResourceService, resourceRef, "resource-env-ref-name", "jndi-name");
+        }
+        for (Element resourceRef : $(doc).find("message-destination-ref").get())
+        {
+            processBinding(envRefService, jndiResourceService, resourceRef, "message-destination-ref-name", "jndi-name");
+        }
+        for (Element resourceRef : $(doc).find("ejb-ref").get())
+        {
+            processBinding(envRefService, jndiResourceService, resourceRef, "ejb-ref-name", "jndi-name");
+        }
+        for (Element resourceRef : $(doc).find("ejb-local-ref").get())
+        {
+            processBinding(envRefService, jndiResourceService, resourceRef, "ejb-ref-name", "local-jndi-name");
+        }
+    }
+    
+    private void processBinding(EnvironmentReferenceService envRefService, JNDIResourceService jndiResourceService, Element resourceRef, String tagName, String tagJndi)
+    {
+        String jndiLocation = $(resourceRef).child(tagJndi).text();
+        String resourceRefName = $(resourceRef).child(tagName).text();
 
+        if (StringUtils.isNotBlank(jndiLocation) && StringUtils.isNotBlank(resourceRefName))
+        {
             JNDIResourceModel resource = jndiResourceService.createUnique(jndiLocation);
-
-            // now, look up the resource
-            for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceName))
+            LOG.info("JNDI Name: " + jndiLocation + " to Resource: " + resourceRefName);
+            // now, look up the resource which is resolved by DiscoverEjbConfigurationXmlRuleProvider
+            for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceRefName))
             {
                 envRefService.associateEnvironmentToJndi(resource, ref);
             }
-
         }
-
     }
 
 }

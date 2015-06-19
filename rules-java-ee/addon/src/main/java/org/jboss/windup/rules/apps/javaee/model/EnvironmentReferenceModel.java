@@ -21,6 +21,7 @@ public interface EnvironmentReferenceModel extends WindupVertexFrame
     public static final String NAME = "name";
     public static final String REFERENCE_ID = "referenceId";
     public static final String TYPE = "EnvironmentReferenceModel";
+    public static final String TAG_TYPE = "referenceTagType";
 
     /**
      * Contains the reference id
@@ -60,16 +61,30 @@ public interface EnvironmentReferenceModel extends WindupVertexFrame
     @Property(REFERENCE_TYPE)
     public void setReferenceType(String referenceType);
 
+    
+    /**
+     * The reference type
+     */
+    @Property(TAG_TYPE)
+    public EnvironmentReferenceTagType getReferenceTagType();
+
+    /**
+     * The reference type
+     */
+    @Property(TAG_TYPE)
+    public void setReferenceTagType(EnvironmentReferenceTagType referenceType);
+
+    
     /**
      * Contains the jndi location for this resource.
      */
     @Adjacency(label = JNDIResourceModel.TYPE, direction = Direction.OUT)
-    public JNDIResourceModel getJNDIReference();
+    public JNDIResourceModel getJndiReference();
 
     /**
      * Contains the jndi location for this resource.
      */
     @Adjacency(label = JNDIResourceModel.TYPE, direction = Direction.OUT)
-    public void setJNDIReference(JNDIResourceModel jndiReference);
+    public void setJndiReference(JNDIResourceModel jndiReference);
 
 }

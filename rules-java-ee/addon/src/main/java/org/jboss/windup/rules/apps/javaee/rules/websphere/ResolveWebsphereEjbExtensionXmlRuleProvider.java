@@ -2,6 +2,7 @@ package org.jboss.windup.rules.apps.javaee.rules.websphere;
 
 import java.util.logging.Logger;
 
+import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
@@ -11,8 +12,11 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.TechnologyTagService;
+import org.jboss.windup.rules.apps.javaee.model.association.VendorSpecificationExtensionModel;
 import org.jboss.windup.rules.apps.javaee.rules.DiscoverEjbConfigurationXmlRuleProvider;
+import org.jboss.windup.rules.apps.javaee.service.VendorSpecificationExtensionService;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
+import org.jboss.windup.rules.apps.xml.service.XmlFileService;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
@@ -54,6 +58,9 @@ public class ResolveWebsphereEjbExtensionXmlRuleProvider extends IteratingRulePr
 
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
         technologyTagService.addTagToFileModel(payload, "Websphere EJB Ext", TechnologyTagLevel.IMPORTANT);
+        
+        VendorSpecificationExtensionService vendorSpecificationService = new VendorSpecificationExtensionService(event.getGraphContext());
+        vendorSpecificationService.associateAsVendorExtension(payload, "ejb-jar.xml");
     }
 
 }

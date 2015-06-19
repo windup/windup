@@ -48,9 +48,9 @@ public class EnvironmentReferenceService extends GraphService<EnvironmentReferen
         LOG.info("Associating JNDI: " + resource + " to Environmental Ref: " + ref.getName() + ", " + ref.getReferenceId() + ", "
                     + ref.getReferenceType());
         // hook up the JNDI resource to the environment reference
-        if (ref.getJNDIReference() == null)
+        if (ref.getJndiReference() == null)
         {
-            ref.setJNDIReference(resource);
+            ref.setJndiReference(resource);
         }
         jndiResourceService.associateTypeJndiResource(resource, ref.getReferenceType());
     }

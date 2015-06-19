@@ -12,7 +12,6 @@ import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
-import org.jboss.windup.reporting.model.TechnologyTagModel;
 import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.javaee.model.EjbMessageDrivenModel;
 import org.jboss.windup.rules.apps.javaee.model.EjbSessionBeanModel;
@@ -23,6 +22,7 @@ import org.jboss.windup.rules.apps.javaee.rules.DiscoverEjbConfigurationXmlRuleP
 import org.jboss.windup.rules.apps.javaee.service.EnvironmentReferenceService;
 import org.jboss.windup.rules.apps.javaee.service.JNDIResourceService;
 import org.jboss.windup.rules.apps.javaee.service.JmsDestinationService;
+import org.jboss.windup.rules.apps.javaee.service.VendorSpecificationExtensionService;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.apps.xml.service.XmlFileService;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
@@ -68,12 +68,15 @@ public class ResolveOrionEjbXmlRuleProvider extends IteratingRuleProvider<XmlFil
         XmlFileService xmlFileService = new XmlFileService(event.getGraphContext());
         GraphService<EjbSessionBeanModel> ejbSessionBeanService = new GraphService<>(event.getGraphContext(), EjbSessionBeanModel.class);
         GraphService<EjbMessageDrivenModel> mdbService = new GraphService<>(event.getGraphContext(), EjbMessageDrivenModel.class);
+        VendorSpecificationExtensionService vendorSpecificationService = new VendorSpecificationExtensionService(event.getGraphContext());
 
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
 
         Document doc = xmlFileService.loadDocumentQuiet(context, payload);
+        // mark as vendor extension; create reference to ejb-jar.xml
+        vendorSpecificationService.associateAsVendorExtension(payload, "ejb-jar.xml");
 
-        TechnologyTagModel technologyTag = technologyTagService.addTagToFileModel(payload, "Orion EJB XML", TechnologyTagLevel.IMPORTANT);
+        technologyTagService.addTagToFileModel(payload, "Orion EJB XML", TechnologyTagLevel.IMPORTANT);
         for (Element resourceRef : $(doc).find("resource-ref-mapping").get())
         {
             String jndiLocation = $(resourceRef).attr("location");

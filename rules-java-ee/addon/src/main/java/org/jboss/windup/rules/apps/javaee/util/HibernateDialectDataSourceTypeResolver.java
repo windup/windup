@@ -62,7 +62,11 @@ public class HibernateDialectDataSourceTypeResolver
         {
             return "HyperSQL";
         }
-
+        else if (StringUtils.contains(dialect, "H2Dialect"))
+        {
+            return "H2";
+        }
+        
         return dialect;
 
     }

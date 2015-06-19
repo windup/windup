@@ -47,7 +47,7 @@ public class DiscoverJpaConfigurationXmlRuleProvider extends IteratingRuleProvid
     private static final Logger LOG = Logging.get(DiscoverJpaConfigurationXmlRuleProvider.class);
 
     private static final String TECH_TAG = "JPA XML";
-    private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.IMPORTANT;
+    private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.INFORMATIONAL;
 
     public DiscoverJpaConfigurationXmlRuleProvider()
     {
