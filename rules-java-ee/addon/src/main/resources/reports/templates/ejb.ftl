@@ -19,6 +19,18 @@
         <td>
             <@render_link model=ejb.ejbDeploymentDescriptor text=ejb.beanName/>
         </td>
+        <td style="text-align:center">
+        	<#if ejb.ejbLocal??>
+    			<@render_link model=ejb.ejbLocal text="Local" class="btn btn-xxs btn-success"/><#t>
+    		<#else>
+    			<a style="visibility:hidden" class="btn btn-xxs btn-default disabled">Local</a><#t>
+    		</#if>
+    		<#if ejb.ejbRemote??>
+            	<@render_link model=ejb.ejbRemote text="Remote" class="btn btn-xxs btn-danger"/><#t>
+    		<#else>
+    			<a style="visibility:hidden" class="btn btn-xxs btn-default disabled">Remote</a><#t>
+            </#if>
+        </td>
         <td>
             <@render_link model=ejb.ejbClass/>
         </td>
@@ -105,7 +117,7 @@
 			        </div>
 					<table class="table table-striped table-bordered" id="mdbTable">
 						<tr>
-							<th>MDB Name</th><th>Class</th><th>JMS Destination</th>
+							<th class="col-md-2">MDB Name</th><th>Class</th><th class="col-md-3">JMS Destination</th>
 						</tr>
 						<#list reportModel.relatedResources.mdb.list.iterator() as mdb>
 							<@mdbRenderer mdb />
@@ -121,7 +133,7 @@
 			        </div>
 					<table class="table table-striped table-bordered" id="statelessTable">
 						<tr>
-							<th>Bean Name</th><th>Class</th><th>JNDI Location</th>
+							<th class="col-md-2">Bean Name</th><th style="width:130px">Interface</th><th>Implementation</th><th class="col-md-3">JNDI Location</th>
 						</tr>
 						<#list reportModel.relatedResources.stateless.list.iterator() as statelessBean>
 							<@ejbRenderer statelessBean/>
@@ -137,7 +149,7 @@
 			        </div>
 			        <table class="table table-striped table-bordered" id="statefulTable">
 			            <tr>
-			              <th>Bean Name</th><th>Class</th><th>JNDI Location</th>
+			              <th class="col-md-2">Bean Name</th><th style="width:130px">Interface</th><th>Implementation</th><th class="col-md-3">JNDI Location</th>
 			            </tr>
 						<#list reportModel.relatedResources.stateful.list.iterator() as statefulBean>
 			            	<@ejbRenderer statefulBean/>
@@ -153,7 +165,7 @@
 					</div>
 					<table class="table table-striped table-bordered" id="entityTable">
 						<tr>
-						<th>Bean Name</th><th>Class</th><th>Table</th><th>Persistence Type</th>
+						<th class="col-md-2">Bean Name</th><th>Class</th><th class="col-md-2">Table</th><th class="col-md-1">Persistence Type</th>
 						</tr>
 						<#list reportModel.relatedResources.entity.list.iterator() as entityBean>
 							<@entityRenderer entityBean/>

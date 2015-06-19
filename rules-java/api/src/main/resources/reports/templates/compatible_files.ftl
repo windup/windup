@@ -4,7 +4,12 @@
 <#assign applicationReportIndexModel = reportModel.applicationReportIndexModel>
 
 <#macro tagRenderer tag>
-  <span class="label label-${tag.level.name()?lower_case}"><#nested/></span>
+	<#if tag.level?? && tag.level == "IMPORTANT">
+		<span class="label label-danger">
+	<#else>
+		<span class="label label-info">
+	</#if>
+		<#nested/></span>
 </#macro>
 
 
@@ -48,7 +53,7 @@
 	        </div>
 	        <table class="table table-striped table-bordered">
 	          <tr>
-	            <th>Name</th><th>Technology</th>
+	            <th class="col-md-8">Name</th><th class="col-md-4">Technology</th>
 	          </tr>
 	          <#list fileModelCollection as fileModel>
 	             <@fileModelRenderer fileModel/>
@@ -107,9 +112,11 @@
 
 		<div class="row">
 			<div class="container-fluid">
-			  <p>DISCLAIMER: Files in this report are believed to be compatible with the selected target platform; 
-			  however, it is possible that this report contains incompatible files that were not identified by any rules in the system. It is
-			  recommended that these files be reviewed manually for any issues.</p> 
+				<div class="alert alert-info">
+				  <p><strong>DISCLAIMER:</strong> Files in this report are believed to be compatible with the selected target platform; 
+				  however, it is possible that this report contains incompatible files that were not identified by any rules in the system. It is
+				  recommended that these files be reviewed manually for any issues.</p>
+				</div> 
 	        </div>
         </div>
 

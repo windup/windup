@@ -24,6 +24,7 @@ import org.jboss.windup.rules.apps.javaee.rules.DiscoverEjbConfigurationXmlRuleP
 import org.jboss.windup.rules.apps.javaee.service.EnvironmentReferenceService;
 import org.jboss.windup.rules.apps.javaee.service.JNDIResourceService;
 import org.jboss.windup.rules.apps.javaee.service.JmsDestinationService;
+import org.jboss.windup.rules.apps.javaee.service.VendorSpecificationExtensionService;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.apps.xml.service.XmlFileService;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
@@ -78,16 +79,20 @@ public class ResolveJBossEjbXmlRuleProvider extends IteratingRuleProvider<XmlFil
         EnvironmentReferenceService envRefService = new EnvironmentReferenceService(event.getGraphContext());
         JNDIResourceService jndiResourceService = new JNDIResourceService(event.getGraphContext());
         JmsDestinationService jmsDestinationService = new JmsDestinationService(event.getGraphContext());
-
+        
         GraphService<EjbSessionBeanModel> ejbSessionBeanService = new GraphService<>(event.getGraphContext(), EjbSessionBeanModel.class);
         GraphService<EjbMessageDrivenModel> mdbService = new GraphService<>(event.getGraphContext(), EjbMessageDrivenModel.class);
 
         ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-        classificationService.attachClassification(payload, "JBoss Legacy EJB XML", "JBoss Enterprise Java Bean XML Descriptor prior to EAP 6.");
+        classificationService.attachClassification(payload, "JBoss EJB XML", "JBoss Enterprise Java Bean XML Descriptor prior to EAP 6.");
 
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
         technologyTagService.addTagToFileModel(payload, "JBoss EJB XML", TechnologyTagLevel.IMPORTANT);
 
+        VendorSpecificationExtensionService vendorSpecificationService = new VendorSpecificationExtensionService(event.getGraphContext());
+        //mark as vendor extension; create reference to ejb-jar.xml
+        vendorSpecificationService.associateAsVendorExtension(payload, "ejb-jar.xml");
+        
         // handle resource-ref
         for (Element resourceRef : $(doc).find("enterprise-beans").find("resource-ref").get())
         {

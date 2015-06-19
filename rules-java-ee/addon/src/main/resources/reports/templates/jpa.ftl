@@ -65,32 +65,35 @@
 								<dt>JPA Version</dt>
 								<dd>${jpaConfiguration.specificationVersion}</dd>
 							</#if>
-							
-							<#if persistenceUnit.dataSource??>
-								<#if persistenceUnit.dataSource.jndiLocation??>
-									<dt>Data Source</dt>
-									<dd>${persistenceUnit.dataSource.jndiLocation}</dd>
-								</#if>
-								
-								<#if persistenceUnit.dataSource.databaseTypeName??>
-									<dt>Data Source Type</dt>
-									<dd>${persistenceUnit.dataSource.databaseTypeName}</dd>
-								</#if>
-							</#if>
 						</dl>
+						
 						<#if persistenceUnit.properties?has_content>
 			                <table class="table table-striped table-bordered" id="persistenceUnitPropertiesTable">
 		                        <tr>
-		                            <th>Persistence Unit Property</th><th>Value</th>
+		                            <th class="col-md-6">Persistence Unit Property</th><th class="col-md-6">Value</th>
 		                        </tr>
 		                        <#list persistenceUnit.properties?keys as propKey>
 		                            <tr>
-		                                <td>${propKey}</td>
-		                                <td>${persistenceUnit.properties[propKey]}</td>
+		                                <td class="col-md-6">${propKey}</td>
+		                                <td class="col-md-6">${persistenceUnit.properties[propKey]}</td>
 		                            </tr>
 		                        </#list>
 				            </table>
 			            </#if>
+			            
+						<#if iterableHasContent(persistenceUnit.dataSources)>
+							<table class="table table-striped table-bordered">
+		                        <tr>
+		                            <th class="col-md-6">Data Source</th><th class="col-md-6">Type</th>
+		                        </tr>
+							<#list persistenceUnit.dataSources.iterator() as dataSource>
+								<tr>
+									<td class="col-md-6">${dataSource.jndiLocation!""}</td>
+									<td class="col-md-6">${dataSource.databaseTypeName!""}</td>
+								</tr>
+`							</#list>
+							</table>
+						</#if>
 		            </div>
 		        </div>
 		        </#list>
