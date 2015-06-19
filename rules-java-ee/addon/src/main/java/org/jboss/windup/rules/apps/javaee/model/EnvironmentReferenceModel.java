@@ -64,12 +64,12 @@ public interface EnvironmentReferenceModel extends WindupVertexFrame
      * Contains the jndi location for this resource.
      */
     @Adjacency(label = JNDIResourceModel.TYPE, direction = Direction.OUT)
-    public JNDIResourceModel getJNDIReference();
+    public JNDIResourceModel getJndiReference();
 
     /**
      * Contains the jndi location for this resource.
      */
     @Adjacency(label = JNDIResourceModel.TYPE, direction = Direction.OUT)
-    public void setJNDIReference(JNDIResourceModel jndiReference);
+    public void setJndiReference(JNDIResourceModel jndiReference);
 
 }

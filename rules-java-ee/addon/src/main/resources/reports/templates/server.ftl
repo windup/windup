@@ -91,7 +91,7 @@
 			    			<tr>
 								<td>${jmsDestination.jndiLocation}</td>
 								<td><#if jmsDestination.destinationType??>${jmsDestination.destinationType}</#if></td>
-								<td></td>
+								<td><@render_linkable linkable=jmsDestination layout='horizontal'/></td>
 			    			</tr>
 					    </#list>
 			    		</table>

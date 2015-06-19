@@ -83,7 +83,7 @@ public class ResolveJBossEjbXmlRuleProvider extends IteratingRuleProvider<XmlFil
         GraphService<EjbMessageDrivenModel> mdbService = new GraphService<>(event.getGraphContext(), EjbMessageDrivenModel.class);
 
         ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-        classificationService.attachClassification(payload, "JBoss Legacy EJB XML", "JBoss Enterprise Java Bean XML Descriptor prior to EAP 6.");
+        classificationService.attachClassification(payload, "JBoss EJB XML", "JBoss Enterprise Java Bean XML Descriptor prior to EAP 6.");
 
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
         technologyTagService.addTagToFileModel(payload, "JBoss EJB XML", TechnologyTagLevel.IMPORTANT);
