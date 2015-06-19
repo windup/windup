@@ -12,17 +12,13 @@
 
     <name>Windup Engine - Decompiler Fernflower</name>
 
-    <properties>
-        <version.fernflower>1.0.0-20150612-WINDUP</version.fernflower>
-    </properties>
 
     <dependencies>
-
         <!-- Local Dependencies -->
         <dependency>
-            <groupId>org.fernflower</groupId>
+            <groupId>org.jboss.windup.decompiler.fernflower</groupId>
             <artifactId>fernflower</artifactId>
-            <version>${version.fernflower}</version>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
