@@ -65,21 +65,8 @@
 								<dt>JPA Version</dt>
 								<dd>${jpaConfiguration.specificationVersion}</dd>
 							</#if>
-							
-							<#if persistenceUnit.dataSources??>
-							
-								<#list persistenceUnit.dataSources.iterator() as dataSource>
-								<#if dataSource.jndiLocation??>
-									<dt>Data Source</dt>
-									<dd>${dataSource.jndiLocation}</dd>
-								</#if>
-								
-								<#if dataSource.databaseTypeName??>
-									<dt>Data Source Type</dt>
-									<dd>${dataSource.databaseTypeName}</dd>
-								</#if>
-							</#if>
 						</dl>
+						
 						<#if persistenceUnit.properties?has_content>
 			                <table class="table table-striped table-bordered" id="persistenceUnitPropertiesTable">
 		                        <tr>
@@ -87,12 +74,26 @@
 		                        </tr>
 		                        <#list persistenceUnit.properties?keys as propKey>
 		                            <tr>
-		                                <td>${propKey}</td>
-		                                <td>${persistenceUnit.properties[propKey]}</td>
+		                                <td class="col-md-6">${propKey}</td>
+		                                <td class="col-md-6">${persistenceUnit.properties[propKey]}</td>
 		                            </tr>
 		                        </#list>
 				            </table>
 			            </#if>
+			            
+						<#if iterableHasContent(persistenceUnit.dataSources)>
+							<table class="table table-striped table-bordered">
+		                        <tr>
+		                            <th>Data Source</th><th>Type</th>
+		                        </tr>
+							<#list persistenceUnit.dataSources.iterator() as dataSource>
+								<tr>
+									<td class="col-md-6">${dataSource.jndiLocation!""}</td>
+									<td class="col-md-6">${dataSource.databaseTypeName!""}</td>
+								</tr>
+`							</#list>
+							</table>
+						</#if>
 		            </div>
 		        </div>
 		        </#list>
