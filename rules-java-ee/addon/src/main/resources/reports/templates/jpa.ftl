@@ -66,15 +66,17 @@
 								<dd>${jpaConfiguration.specificationVersion}</dd>
 							</#if>
 							
-							<#if persistenceUnit.dataSource??>
-								<#if persistenceUnit.dataSource.jndiLocation??>
+							<#if persistenceUnit.dataSources??>
+							
+								<#list persistenceUnit.dataSources.iterator() as dataSource>
+								<#if dataSource.jndiLocation??>
 									<dt>Data Source</dt>
-									<dd>${persistenceUnit.dataSource.jndiLocation}</dd>
+									<dd>${dataSource.jndiLocation}</dd>
 								</#if>
 								
-								<#if persistenceUnit.dataSource.databaseTypeName??>
+								<#if dataSource.databaseTypeName??>
 									<dt>Data Source Type</dt>
-									<dd>${persistenceUnit.dataSource.databaseTypeName}</dd>
+									<dd>${dataSource.databaseTypeName}</dd>
 								</#if>
 							</#if>
 						</dl>
