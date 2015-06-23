@@ -86,6 +86,11 @@ public class ResolveWebsphereEjbBindingXmlRuleProvider extends IteratingRuleProv
             String href = $(resourceRef).child("enterpriseBean").attr("href");
             String resourceId = StringUtils.substringAfterLast(href, "ejb-jar.xml#");
             String jndiLocation = $(resourceRef).attr("jndiName");
+            
+            //determine type:
+            String type = $(resourceRef).child("enterpriseBean").attr("type");
+            
+            LOG.info("Type: "+type);
 
             if (StringUtils.isNotBlank(jndiLocation) && StringUtils.isNotBlank(resourceId))
             {
@@ -107,22 +112,20 @@ public class ResolveWebsphereEjbBindingXmlRuleProvider extends IteratingRuleProv
         // register beans to JNDI
         for (Element resourceRef : $(doc).find("resRefBindings").get())
         {
-            String href = $(resourceRef).child("bindingResourceRef").attr("href");
-            String resourceId = StringUtils.substringAfterLast(href, "ejb-jar.xml#");
-            String jndiLocation = $(resourceRef).attr("jndiName");
-
-            if (StringUtils.isNotBlank(jndiLocation) && StringUtils.isNotBlank(resourceId))
-            {
-                JNDIResourceModel resource = jndiResourceService.createUnique(jndiLocation);
-                LOG.info("JNDI Name: " + jndiLocation + " to Resource: " + resourceId);
-                // now, look up the resource which is resolved by DiscoverEjbConfigurationXmlRuleProvider
-                for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.REFERENCE_ID, resourceId))
-                {
-                    envRefService.associateEnvironmentToJndi(resource, ref);
-                }
-            }
+            processBinding(envRefService, jndiResourceService, resourceRef, "bindingResourceRef");
         }
-
+        for (Element resourceRef : $(doc).find("ejbRefBindings").get())
+        {
+            processBinding(envRefService, jndiResourceService, resourceRef, "bindingEjbRef");
+        }
+        for (Element resourceRef : $(doc).find("messageDestinationRefBindings").get())
+        {
+            processBinding(envRefService, jndiResourceService, resourceRef, "bindingMessageDestinationRef");
+        }
+        
+        
+        
+        // Bind MDBs to Destinations
         for (Element resourceRef : $(doc).find("messageDestinationRefBindings").get())
         {
             String jndiLocation = $(resourceRef).attr("jndiName");
@@ -145,6 +148,24 @@ public class ResolveWebsphereEjbBindingXmlRuleProvider extends IteratingRuleProv
             }
         }
 
+    }
+    
+    private void processBinding(EnvironmentReferenceService envRefService, JNDIResourceService jndiResourceService, Element resourceRef, String tagName)
+    {
+        String href = $(resourceRef).child(tagName).attr("href");
+        String resourceId = StringUtils.substringAfterLast(href, "ejb-jar.xml#");
+        String jndiLocation = $(resourceRef).attr("jndiName");
+
+        if (StringUtils.isNotBlank(jndiLocation) && StringUtils.isNotBlank(resourceId))
+        {
+            JNDIResourceModel resource = jndiResourceService.createUnique(jndiLocation);
+            LOG.info("JNDI Name: " + jndiLocation + " to Resource: " + resourceId);
+            // now, look up the resource which is resolved by DiscoverEjbConfigurationXmlRuleProvider
+            for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.REFERENCE_ID, resourceId))
+            {
+                envRefService.associateEnvironmentToJndi(resource, ref);
+            }
+        }
     }
 
 }

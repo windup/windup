@@ -67,23 +67,39 @@ public class ResolveWebsphereWebXmlRuleProvider extends IteratingRuleProvider<Xm
         TechnologyTagModel technologyTag = technologyTagService.addTagToFileModel(payload, "Websphere Web XML", TechnologyTagLevel.IMPORTANT);
         for (Element resourceRef : $(doc).find("resRefBindings").get())
         {
-            String jndiLocation = $(resourceRef).attr("jndiName");
-            String resourceId = $(resourceRef).child("bindingResourceRef").attr("href");
-            resourceId = StringUtils.substringAfter(resourceId, "WEB-INF/web.xml#");
+            processBinding(envRefService, jndiResourceService, resourceRef, "bindingResourceRef");
+        }
+        for (Element resourceRef : $(doc).find("ejbRefBindings").get())
+        {
+            processBinding(envRefService, jndiResourceService, resourceRef, "bindingEjbRef");
+        }
+        for (Element resourceRef : $(doc).find("messageDestinationRefBindings").get())
+        {
+            processBinding(envRefService, jndiResourceService, resourceRef, "bindingMessageDestinationRef");
+        }
+    }
 
-            if (StringUtils.isNotBlank(jndiLocation))
-            {
-                JNDIResourceModel resource = jndiResourceService.createUnique(jndiLocation);
-                LOG.info("JNDI: " + jndiLocation + " Resource: " + resourceId);
-                // now, look up the resource
-                for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.REFERENCE_ID, resourceId))
-                {
-                    envRefService.associateEnvironmentToJndi(resource, ref);
-                }
-            }
-
+    private void processBinding(EnvironmentReferenceService envRefService, JNDIResourceService jndiResourceService, Element resourceRef, String tagName)
+    {
+        String jndiLocation = $(resourceRef).attr("jndiName");
+        String resourceId = $(resourceRef).child(tagName).attr("href");
+        resourceId = StringUtils.substringAfter(resourceId, "WEB-INF/web.xml#");
+        
+        if(StringUtils.isBlank(resourceId)) {
+            LOG.info("Issue Element: "+$(resourceRef).toString());
+            return;
         }
 
+        if (StringUtils.isNotBlank(jndiLocation))
+        {
+            JNDIResourceModel resource = jndiResourceService.createUnique(jndiLocation);
+            LOG.info("JNDI: " + jndiLocation + " Resource: " + resourceId);
+            // now, look up the resource
+            for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.REFERENCE_ID, resourceId))
+            {
+                envRefService.associateEnvironmentToJndi(resource, ref);
+            }
+        }
     }
 
 }

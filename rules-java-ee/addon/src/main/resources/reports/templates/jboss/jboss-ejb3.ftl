@@ -10,31 +10,41 @@
 		
 		<#if iterableHasContent(reportModel.relatedResources.sessionBeans)>
 		<#list reportModel.relatedResources.sessionBeans.list.iterator() as sessionBean>
-		<session>
-            <ejb-name>AuthenticatorService</ejb-name>
+		<session> 
+            <ejb-name>${sessionBean.beanName}</ejb-name>
             <session-type>Stateless</session-type>
             
             <#if iterableHasContent(sessionBean.environmentReferences)>
 	            <#list sessionBean.environmentReferences.iterator() as environmentRef>
-	            <resource-ref>
-	                <res-ref-name>${environmentRef.name}</res-ref-name>
-	                <#if environmentRef.jndiReference??>
-	                <jndi-name>${environmentRef.jndiReference.jndiLocation}</jndi-name>
-	                </#if>
-	            </resource-ref>
+		            <#switch environmentRef.referenceTagType>
+					  <#case "RESOURCE_REF">
+					  	 <resource-ref>
+			                <res-ref-name>${environmentRef.name}</res-ref-name>
+			                <#if environmentRef.jndiReference??><jndi-name>${environmentRef.jndiReference.jndiLocation}</jndi-name></#if>
+			             </resource-ref>
+					     <#break>
+					  <#case "EJB_LOCAL_REF">
+					  	 <ejb-local-ref>
+							<ejb-ref-name>${environmentRef.name}</ejb-ref-name>
+							<#if environmentRef.jndiReference??><mapped-name>${environmentRef.jndiReference.jndiLocation}</mapped-name></#if>
+						 </ejb-local-ref>
+						 <#break>
+					  <#default>
+						<!-- Unhandled type: ${environmentRef.referenceTagType} -->
+					</#switch>
 	            </#list>
             </#if>
         </session>
         </#list>
         </#if>
         
-     	<#if iterableHasContent(reportModel.relatedResources.messageDriven)>
+     	<#if reportModel.relatedResources.messageDriven.list.iterator()?has_content>
     	<#list reportModel.relatedResources.messageDriven.list.iterator() as mdb>
     	<message-driven>
-			<ejb-name>NotificationMDB</ejb-name>
+			<ejb-name>${mdb.beanName}</ejb-name>
 			<activation-config>
                <activation-config-property>
-                  <#if mdb.destination??>
+               	  <#if mdb.destination??>
                   <activation-config-property-name>destination</activation-config-property-name>
                   <activation-config-property-value>${mdb.destination.jndiLocation}</activation-config-property-value>
                   </#if>

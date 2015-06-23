@@ -70,7 +70,7 @@
 						<#if persistenceUnit.properties?has_content>
 			                <table class="table table-striped table-bordered" id="persistenceUnitPropertiesTable">
 		                        <tr>
-		                            <th>Persistence Unit Property</th><th>Value</th>
+		                            <th class="col-md-6">Persistence Unit Property</th><th class="col-md-6">Value</th>
 		                        </tr>
 		                        <#list persistenceUnit.properties?keys as propKey>
 		                            <tr>
@@ -84,7 +84,7 @@
 						<#if iterableHasContent(persistenceUnit.dataSources)>
 							<table class="table table-striped table-bordered">
 		                        <tr>
-		                            <th>Data Source</th><th>Type</th>
+		                            <th class="col-md-6">Data Source</th><th class="col-md-6">Type</th>
 		                        </tr>
 							<#list persistenceUnit.dataSources.iterator() as dataSource>
 								<tr>

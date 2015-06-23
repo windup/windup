@@ -48,7 +48,7 @@
 	        </div>
 	        <table class="table table-striped table-bordered">
 	          <tr>
-	            <th>Name</th><th>Technology</th>
+	            <th class="col-md-8">Name</th><th class="col-md-4">Technology</th>
 	          </tr>
 	          <#list fileModelCollection as fileModel>
 	             <@fileModelRenderer fileModel/>

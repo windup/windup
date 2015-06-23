@@ -32,6 +32,7 @@ import org.jboss.windup.rules.apps.javaee.model.EjbEntityBeanModel;
 import org.jboss.windup.rules.apps.javaee.model.EjbMessageDrivenModel;
 import org.jboss.windup.rules.apps.javaee.model.EjbSessionBeanModel;
 import org.jboss.windup.rules.apps.javaee.model.EnvironmentReferenceModel;
+import org.jboss.windup.rules.apps.javaee.model.EnvironmentReferenceTagType;
 import org.jboss.windup.rules.apps.javaee.model.JmsDestinationModel;
 import org.jboss.windup.rules.apps.javaee.service.EnvironmentReferenceService;
 import org.jboss.windup.rules.apps.javaee.service.JmsDestinationService;
@@ -413,6 +414,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
                 ref.setName(name);
                 ref.setReferenceId(id);
                 ref.setReferenceType(type);
+                ref.setReferenceTagType(EnvironmentReferenceTagType.RESOURCE_REF);
             }
             LOG.info("Reference: " + name + ", Type: " + type);
             resources.add(ref);
@@ -434,8 +436,9 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
                 ref.setReferenceId(id);
                 ref.setName(name);
                 ref.setReferenceType(type);
+                ref.setReferenceTagType(EnvironmentReferenceTagType.RESOURCE_REF);
             }
-            LOG.info("Reference: " + name + ", Type: " + type);
+            LOG.info("Reference: " + name + ", Type: " + type+ ", Tag: "+ref.getReferenceTagType());
             resources.add(ref);
         }
 
@@ -455,8 +458,53 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
                 ref.setReferenceId(id);
                 ref.setName(name);
                 ref.setReferenceType(type);
+                ref.setReferenceTagType(EnvironmentReferenceTagType.MSG_DESTINATION_REF);
             }
-            LOG.info("Reference: " + name + ", Type: " + type);
+            LOG.info("Reference: " + name + ", Type: " + type+ ", Tag: "+ref.getReferenceTagType());
+            resources.add(ref);
+        }
+        
+        for (Element e : $(element).find("ejb-local-ref").get())
+        {
+            String id = $(e).attr("id");
+            String type = $(e).child("ejb-ref-type").text();
+            String name = $(e).child("ejb-ref-name").text();
+
+            type = StringUtils.trim(type);
+            name = StringUtils.trim(name);
+
+            EnvironmentReferenceModel ref = environmentReferenceService.findEnvironmentReference(name, type);
+            if (ref == null)
+            {
+                ref = environmentReferenceService.create();
+                ref.setReferenceId(id);
+                ref.setName(name);
+                ref.setReferenceType(type);
+                ref.setReferenceTagType(EnvironmentReferenceTagType.EJB_LOCAL_REF);
+            }
+            LOG.info("Reference: " + name + ", Type: " + type+ ", Tag: "+ref.getReferenceTagType());
+            resources.add(ref);
+        }
+        
+        for (Element e : $(element).find("ejb-ref").get())
+        {
+            String id = $(e).attr("id");
+            String type = $(e).child("ejb-ref-type").text();
+            String name = $(e).child("ejb-ref-name").text();
+
+            type = StringUtils.trim(type);
+            name = StringUtils.trim(name);
+
+            EnvironmentReferenceModel ref = environmentReferenceService.findEnvironmentReference(name, type);
+            if (ref == null)
+            {
+                ref = environmentReferenceService.create();
+                ref.setReferenceId(id);
+                ref.setName(name);
+                ref.setReferenceType(type);
+                ref.setReferenceTagType(EnvironmentReferenceTagType.EJB_REF);
+            }
+            LOG.info("Reference: " + name + ", Type: " + type+ ", Tag: "+ref.getReferenceTagType());
             resources.add(ref);
         }
 

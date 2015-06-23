@@ -57,10 +57,10 @@
 			            </div>
 			            <table class="table table-striped table-bordered">
 			        	<tr>
-			        		<th>JNDI Location</th>
-			        		<th>Database Type</th>
-			        		<th>Database Version</th>
-			        		<th>Links</th>
+			        		<th class="col-md-4">JNDI Location</th>
+			        		<th class="col-md-1">Database Type</th>
+			        		<th class="col-md-1">Database Version</th>
+			        		<th class="col-md-6">Links</th>
 			        	</tr>
 			        			
 			    		<#list reportModel.relatedResources.datasources.list.iterator() as datasource>
@@ -83,8 +83,8 @@
 			            </div>
 			            <table class="table table-striped table-bordered">
 			        	<tr>
-			        		<th>JNDI Location</th>
-			        		<th>Destination Type</th>
+			        		<th class="col-md-4">JNDI Location</th>
+			        		<th class="col-md-2">Destination Type</th>
 			        		<th>Links</th>
 			        	</tr>
 			    		<#list reportModel.relatedResources.jmsDestinations.list.iterator() as jmsDestination>

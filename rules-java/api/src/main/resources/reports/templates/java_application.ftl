@@ -134,7 +134,7 @@
         <#if iterableHasContent(projectModel.fileModelsNoDirectories)>
         <table class="table table-striped table-bordered">
           <tr>
-            <th>Name</th><th>Technology</th><th>Issues</th><th>Estimated Story Points</th>
+            <th class="col-md-6">Name</th><th class="col-md-1">Technology</th><th>Issues</th><th class="col-md-1">Story Points</th>
           </tr>
           <#list sortFilesByPathAscending(projectModel.fileModelsNoDirectories) as fileModel>
              <@fileModelRenderer fileModel/>

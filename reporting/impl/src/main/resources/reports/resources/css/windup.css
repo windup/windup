@@ -34,6 +34,9 @@ dl:last-child {
 	margin-bottom:0;
 }
 
+.label {
+	margin:2px;
+}
 a.windup-file-location {
 	display: block; position: relative; top: -40px; visibility: hidden;
 }
