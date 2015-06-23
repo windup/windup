@@ -7,8 +7,10 @@ import org.jboss.forge.furnace.versions.Versions;
 import org.jboss.windup.config.exception.ConfigurationException;
 import org.jboss.windup.config.metadata.TechnologyReference;
 import org.jboss.windup.config.parser.ElementHandler;
+import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.config.parser.WindupXMLRulesetParsingException;
+import org.jboss.windup.config.parser.xml.RuleProviderHandler;
 import org.w3c.dom.Element;
 
 /**
@@ -16,8 +18,10 @@ import org.w3c.dom.Element;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public abstract class AbstractMetadataTechnologyHandler implements ElementHandler<TechnologyReference>
+@NamespaceElementHandler(elementName = MetadataTechnologyHandler.TECHNOLOGY_ELEMENT, namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
+public abstract class MetadataTechnologyHandler implements ElementHandler<TechnologyReference>
 {
+    public static final String TECHNOLOGY_ELEMENT = "technology";
     private static String ID = "id";
     private static String VERSION_RANGE = "versionRange";
 

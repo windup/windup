@@ -13,13 +13,15 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(WindupConfigurationModel.TYPE)
 public interface WindupConfigurationModel extends WindupVertexFrame
 {
-    public static final String INPUT_PATH = "inputPath";
+    String TYPE = "BaseWindupConfiguration";
 
-    public static final String TYPE = "BaseWindupConfiguration";
-
-    public static final String USER_RULES_PATH = "userRulesPath";
-    public static final String USER_IGNORE_PATH = "userIgnorePath";
-    public static final String OFFLINE_MODE = "fetchRemoteResources";
+    String INPUT_PATH = "inputPath";
+    String USER_RULES_PATH = "userRulesPath";
+    String USER_IGNORE_PATH = "userIgnorePath";
+    String OFFLINE_MODE = "fetchRemoteResources";
+    String OUTPUT_PATH = "outputPath";
+    String SOURCE_TECHNOLOGY = "sourceTechnology";
+    String TARGET_TECHNOLOGY = "targetTechnology";
 
     /**
      * The input path to scan
@@ -60,21 +62,48 @@ public interface WindupConfigurationModel extends WindupVertexFrame
     /**
      * Where to put the report and other files produced during Windup execution.
      */
-    @Adjacency(label = "outputPath", direction = Direction.OUT)
+    @Adjacency(label = OUTPUT_PATH, direction = Direction.OUT)
     FileModel getOutputPath();
 
     /**
      * Where to put the report and other files produced during Windup execution.
      */
-    @Adjacency(label = "outputPath", direction = Direction.OUT)
+    @Adjacency(label = OUTPUT_PATH, direction = Direction.OUT)
     void setOutputPath(FileModel outputPath);
 
     /**
-     * Indicates whether or not to function in offline mode
+     * Indicates whether or not to function in offline mode (no network access)
      */
     @Property(OFFLINE_MODE)
     boolean isOfflineMode();
 
+    /**
+     * Indicates whether or not to function in offline mode (no network access)
+     */
     @Property(OFFLINE_MODE)
     void setOfflineMode(boolean offline);
+
+    /**
+     * Contains the id of the source technology (the technology being migrated from).
+     */
+    @Adjacency(label = SOURCE_TECHNOLOGY, direction = Direction.OUT)
+    Iterable<TechnologyReferenceModel> getSourceTechnologies();
+
+    /**
+     * Contains the id of the source technology (the technology being migrated from).
+     */
+    @Adjacency(label = SOURCE_TECHNOLOGY, direction = Direction.OUT)
+    void addSourceTechnology(TechnologyReferenceModel technology);
+
+    /**
+     * Contains the id of the target technology (the technology being migrated to).
+     */
+    @Adjacency(label = TARGET_TECHNOLOGY, direction = Direction.OUT)
+    Iterable<TechnologyReferenceModel> getTargetTechnologies();
+
+    /**
+     * Contains the id of the target technology (the technology being migrated to).
+     */
+    @Adjacency(label = TARGET_TECHNOLOGY, direction = Direction.OUT)
+    void addTargetTechnology(TechnologyReferenceModel technology);
 }

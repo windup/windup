@@ -7,6 +7,7 @@ import org.jboss.windup.config.exception.ConfigurationException;
 import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
+import org.jboss.windup.config.parser.xml.RuleProviderHandler;
 import org.jboss.windup.reporting.config.Link;
 import org.jboss.windup.util.exception.WindupException;
 import org.w3c.dom.Element;
@@ -22,7 +23,7 @@ import org.w3c.dom.Element;
  * 
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-@NamespaceElementHandler(elementName = LinkHandler.ELEMENT_NAME, namespace = "http://windup.jboss.org/schema/jboss-ruleset")
+@NamespaceElementHandler(elementName = LinkHandler.ELEMENT_NAME, namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
 public class LinkHandler implements ElementHandler<Link>
 {
     static final String ELEMENT_NAME = "link";

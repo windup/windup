@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.report.IgnoredFileRegexModel;
+import org.jboss.windup.graph.model.resource.FileModel;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Vertex;
@@ -21,11 +22,12 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(WindupJavaConfigurationModel.TYPE)
 public interface WindupJavaConfigurationModel extends WindupVertexFrame
 {
-    public static final String TYPE = "WindupJavaConfigurationModel";
-    public static final String SOURCE_MODE = "sourceMode";
-    public static final String EXCLUDE_JAVA_PACKAGES = "excludeJavaPackages";
-    public static final String SCAN_JAVA_PACKAGES = "scanJavaPackages";
-    public static final String IGNORED_FILES = "ignoredFiles";
+    String TYPE = "WindupJavaConfigurationModel";
+    String SOURCE_MODE = "sourceMode";
+    String EXCLUDE_JAVA_PACKAGES = "excludeJavaPackages";
+    String SCAN_JAVA_PACKAGES = "scanJavaPackages";
+    String IGNORED_FILES = "ignoredFiles";
+    String ADDITIONAL_CLASSPATHS = "additionalClasspath";
 
     /**
      * Specifies which Java packages should be scanned by windup
@@ -98,6 +100,18 @@ public interface WindupJavaConfigurationModel extends WindupVertexFrame
      */
     @Property(SOURCE_MODE)
     void setSourceMode(boolean sourceMode);
+
+    /**
+     * These additional files will be used to aid in resolving references in the application.
+     */
+    @Adjacency(label = ADDITIONAL_CLASSPATHS, direction = Direction.OUT)
+    Iterable<FileModel> getAdditionalClasspaths();
+
+    /**
+     * These additional files will be used to aid in resolving references in the application.
+     */
+    @Adjacency(label = ADDITIONAL_CLASSPATHS, direction = Direction.OUT)
+    void addAdditionalClasspath(FileModel additionalClassPath);
 
     abstract class Impl implements WindupJavaConfigurationModel, JavaHandlerContext<Vertex>
     {

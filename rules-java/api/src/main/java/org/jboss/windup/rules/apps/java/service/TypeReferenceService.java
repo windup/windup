@@ -3,6 +3,7 @@ package org.jboss.windup.rules.apps.java.service;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jboss.windup.ast.java.data.ResolutionStatus;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -123,7 +124,7 @@ public class TypeReferenceService extends GraphService<JavaTypeReferenceModel>
     }
 
     public JavaTypeReferenceModel createTypeReference(FileModel fileModel, TypeReferenceLocation location,
-                int lineNumber, int columnNumber, int length, String resolvedSource, String line)
+                ResolutionStatus resolutionStatus, int lineNumber, int columnNumber, int length, String resolvedSource, String line)
     {
         ExecutionStatistics.get().begin("TypeReferenceService.createTypeReference(fileModel,location,lineNumber,columnNumber,length,source)");
         JavaTypeReferenceModel model = create();
@@ -135,6 +136,7 @@ public class TypeReferenceService extends GraphService<JavaTypeReferenceModel>
         model.setResolvedSourceSnippit(resolvedSource);
         model.setSourceSnippit(line);
         model.setReferenceLocation(location);
+        model.setResolutionStatus(resolutionStatus);
 
         ExecutionStatistics.get().end("TypeReferenceService.createTypeReference(fileModel,location,lineNumber,columnNumber,length,source)");
         return model;

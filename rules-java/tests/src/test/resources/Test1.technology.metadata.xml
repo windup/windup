@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<java-technology-metadata xmlns="http://windup.jboss.org/schema/jboss-ruleset">
+    <technology id="eap" versionRange="[6.0,6.9]"/>
+    <additional-classpath>lib/api.jar</additional-classpath>
+    <additional-classpath>lib/additional-api.jar</additional-classpath>
+</java-technology-metadata>

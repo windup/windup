@@ -1,5 +1,6 @@
 package org.jboss.windup.rules.java;
 
+import java.nio.file.Path;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.apache.commons.io.FileUtils;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;

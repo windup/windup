@@ -10,7 +10,8 @@
             </when>
             <perform>
                 <iteration over="testVariable">
-                    <hint in="testVariable_instance" message="Rule1">
+                    <hint in="testVariable_instance">
+                        <message>Rule1</message>
                         <link href="http://example.com" title="Description from XML Hint Link" />
                     </hint>
                 </iteration>
@@ -30,7 +31,8 @@
                         </not>
                     </when>
                     <perform>
-                        <hint message="Rule2 catch-all {type}">
+                        <hint>
+                            <message>Rule2 catch-all {type}</message>
                             <link href="http://example.com" title="Description from XML Hint Link" />
                         </hint>
                     </perform>
@@ -52,7 +54,8 @@
                         </not>
                     </when>
                     <perform>
-                        <hint message="Rule3 catch-all">
+                        <hint>
+                            <message>Rule3 catch-all</message>
                             <link href="http://example.com" title="Description from XML Hint Link" />
                         </hint>
                     </perform>
@@ -74,7 +77,8 @@
                         </not>
                     </when>
                     <perform>
-                        <hint message="Rule4 catch-all (should not occur)">
+                        <hint>
+                            <message>Rule4 catch-all (should not occur)</message>
                             <link href="http://example.com" title="Description from XML Hint Link" />
                         </hint>
                     </perform>

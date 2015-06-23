@@ -7,6 +7,7 @@ import org.jboss.windup.config.exception.ConfigurationException;
 import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
+import org.jboss.windup.config.parser.xml.RuleProviderHandler;
 import org.jboss.windup.reporting.config.HasClassification;
 import org.w3c.dom.Element;
 
@@ -21,7 +22,7 @@ import org.w3c.dom.Element;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@NamespaceElementHandler(elementName = "has-classification", namespace = "http://windup.jboss.org/schema/jboss-ruleset")
+@NamespaceElementHandler(elementName = "has-classification", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
 public class HasClassificationHandler implements ElementHandler<HasClassification>
 {
     @Override

@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<java-technology-metadata xmlns="http://windup.jboss.org/schema/jboss-ruleset">
+    <technology id="fakeserver"/>
+    <additional-classpath>lib/commons-io-2.1.jar</additional-classpath>
+</java-technology-metadata>

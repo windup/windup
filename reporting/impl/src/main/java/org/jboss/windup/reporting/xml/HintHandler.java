@@ -10,6 +10,7 @@ import org.jboss.windup.config.exception.ConfigurationException;
 import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
+import org.jboss.windup.config.parser.xml.RuleProviderHandler;
 import org.jboss.windup.reporting.config.Hint;
 import org.jboss.windup.reporting.config.HintText;
 import org.jboss.windup.reporting.config.Link;
@@ -42,7 +43,7 @@ import org.w3c.dom.Element;
  * 
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-@NamespaceElementHandler(elementName = "hint", namespace = "http://windup.jboss.org/schema/jboss-ruleset")
+@NamespaceElementHandler(elementName = "hint", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
 public class HintHandler implements ElementHandler<Hint>
 {
 

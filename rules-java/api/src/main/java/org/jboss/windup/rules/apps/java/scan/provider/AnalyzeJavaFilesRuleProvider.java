@@ -26,6 +26,7 @@ import org.jboss.windup.ast.java.BatchASTFuture;
 import org.jboss.windup.ast.java.BatchASTListener;
 import org.jboss.windup.ast.java.BatchASTProcessor;
 import org.jboss.windup.ast.java.data.ClassReference;
+import org.jboss.windup.ast.java.data.ResolutionStatus;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.ast.java.data.annotations.AnnotationArrayValue;
 import org.jboss.windup.ast.java.data.annotations.AnnotationClassReference;
@@ -34,14 +35,22 @@ import org.jboss.windup.ast.java.data.annotations.AnnotationValue;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.TechnologyMetadata;
+import org.jboss.windup.config.metadata.TechnologyMetadataProvider;
+import org.jboss.windup.config.metadata.TechnologyReference;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.TechnologyReferenceModel;
+import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.service.ClassificationService;
+import org.jboss.windup.rules.apps.java.JavaTechnologyMetadata;
 import org.jboss.windup.rules.apps.java.model.JarArchiveModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
+import org.jboss.windup.rules.apps.java.model.WindupJavaConfigurationModel;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.jboss.windup.rules.apps.java.scan.ast.TypeInterestFactory;
 import org.jboss.windup.rules.apps.java.scan.ast.WindupWildcardImportResolver;
@@ -65,12 +74,17 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  */
 public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
 {
+    private static Object lockObject = new Object();
+
     public static final int COMMIT_INTERVAL = 750;
     public static final int LOG_INTERVAL = 250;
     private static Logger LOG = Logging.get(AnalyzeJavaFilesRuleProvider.class);
 
     @Inject
     private WindupWildcardImportResolver importResolver;
+
+    @Inject
+    private TechnologyMetadataProvider technologyMetadataProvider;
 
     public AnalyzeJavaFilesRuleProvider()
     {
@@ -102,6 +116,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
             {
                 WindupJavaConfigurationService windupJavaConfigurationService = new WindupJavaConfigurationService(
                             event.getGraphContext());
+                WindupJavaConfigurationModel javaConfiguration = WindupJavaConfigurationService.getJavaConfigurationModel(event.getGraphContext());
 
                 GraphService<JavaSourceFileModel> service = new GraphService<>(event.getGraphContext(), JavaSourceFileModel.class);
                 Iterable<JavaSourceFileModel> allJavaSourceModels = service.findAll();
@@ -129,6 +144,25 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
 
                 Iterable<JarArchiveModel> libraries = libraryService.findAll();
                 Set<String> libraryPaths = new HashSet<>();
+
+                WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
+                for (TechnologyReferenceModel target : configurationModel.getTargetTechnologies())
+                {
+                    TechnologyMetadata technologyMetadata = technologyMetadataProvider.getMetadata(event.getGraphContext(),
+                                new TechnologyReference(target));
+                    if (technologyMetadata != null && technologyMetadata instanceof JavaTechnologyMetadata)
+                    {
+                        JavaTechnologyMetadata javaMetadata = (JavaTechnologyMetadata) technologyMetadata;
+                        for (Path additionalClasspath : javaMetadata.getAdditionalClasspaths())
+                            libraryPaths.add(additionalClasspath.toString());
+                    }
+                }
+
+                for (FileModel additionalClasspath : javaConfiguration.getAdditionalClasspaths())
+                {
+                    libraryPaths.add(additionalClasspath.getFilePath());
+                }
+
                 for (JarArchiveModel library : libraries)
                 {
                     if (library.getUnzippedDirectory() != null)
@@ -140,6 +174,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                         libraryPaths.add(library.getFilePath());
                     }
                 }
+
                 ExecutionStatistics.get().begin("AnalyzeJavaFilesRuleProvider.parseFiles");
                 try
                 {
@@ -283,9 +318,12 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
             List<ClassReference> results = new ArrayList<>(references.size());
             for (ClassReference reference : references)
             {
+                boolean shouldKeep = reference.getLocation() == TypeReferenceLocation.TYPE;
+                shouldKeep |= reference.getResolutionStatus() != ResolutionStatus.RESOLVED;
+                shouldKeep |= TypeInterestFactory.matchesAny(reference.getQualifiedName(), reference.getLocation());
+
                 // we are always interested in types + anything that the TypeInterestFactory has registered
-                if (reference.getLocation() == TypeReferenceLocation.TYPE
-                            || TypeInterestFactory.matchesAny(reference.getQualifiedName(), reference.getLocation()))
+                if (shouldKeep)
                 {
                     results.add(reference);
                 }
@@ -301,13 +339,14 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                 JavaSourceFileModel javaSourceModel = getJavaSourceFileModel(context, filePath);
                 JavaTypeReferenceModel typeReference = typeReferenceService.createTypeReference(javaSourceModel,
                             reference.getLocation(),
+                            reference.getResolutionStatus(),
                             reference.getLineNumber(), reference.getColumn(), reference.getLength(),
                             reference.getQualifiedName(),
                             reference.getLine());
                 if (reference instanceof AnnotationClassReference)
                 {
                     Map<String, AnnotationValue> annotationValues = ((AnnotationClassReference) reference).getAnnotationValues();
-                    addAnnotationValues(context, typeReference, annotationValues);
+                    addAnnotationValues(context, javaSourceModel, typeReference, annotationValues);
                 }
             }
         }
@@ -320,7 +359,8 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
         /**
          * Adds parameters contained in the annotation into the annotation type reference
          */
-        private void addAnnotationValues(GraphContext context, JavaTypeReferenceModel typeReference, Map<String, AnnotationValue> annotationValues)
+        private void addAnnotationValues(GraphContext context, JavaSourceFileModel javaSourceFileModel, JavaTypeReferenceModel typeReference,
+                    Map<String, AnnotationValue> annotationValues)
         {
             GraphService<JavaAnnotationTypeReferenceModel> annotationTypeReferenceService = new GraphService<>(context,
                         JavaAnnotationTypeReferenceModel.class);
@@ -330,13 +370,14 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
             Map<String, JavaAnnotationTypeValueModel> valueModels = new HashMap<>();
             for (Map.Entry<String, AnnotationValue> entry : annotationValues.entrySet())
             {
-                valueModels.put(entry.getKey(), getValueModelForAnnotationValue(context, entry.getValue()));
+                valueModels.put(entry.getKey(), getValueModelForAnnotationValue(context, javaSourceFileModel, entry.getValue()));
             }
 
             javaAnnotationTypeReferenceModel.setAnnotationValues(valueModels);
         }
 
-        private JavaAnnotationTypeValueModel getValueModelForAnnotationValue(GraphContext context, AnnotationValue value)
+        private JavaAnnotationTypeValueModel getValueModelForAnnotationValue(GraphContext context, JavaSourceFileModel javaSourceFileModel,
+                    AnnotationValue value)
         {
             JavaAnnotationTypeValueModel result;
 
@@ -361,7 +402,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                 JavaAnnotationListTypeValueModel listModel = listValueService.create();
                 for (AnnotationValue arrayValue : arrayValues.getValues())
                 {
-                    listModel.addItem(getValueModelForAnnotationValue(context, arrayValue));
+                    listModel.addItem(getValueModelForAnnotationValue(context, javaSourceFileModel, arrayValue));
                 }
 
                 result = listModel;
@@ -375,10 +416,11 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                 Map<String, JavaAnnotationTypeValueModel> valueModels = new HashMap<>();
                 for (Map.Entry<String, AnnotationValue> entry : annotationClassReference.getAnnotationValues().entrySet())
                 {
-                    valueModels.put(entry.getKey(), getValueModelForAnnotationValue(context, entry.getValue()));
+                    valueModels.put(entry.getKey(), getValueModelForAnnotationValue(context, javaSourceFileModel, entry.getValue()));
                 }
                 JavaAnnotationTypeReferenceModel annotationTypeReferenceModel = annotationTypeReferenceService.create();
                 annotationTypeReferenceModel.setAnnotationValues(valueModels);
+                attachLocationMetadata(annotationTypeReferenceModel, annotationClassReference, javaSourceFileModel);
 
                 result = annotationTypeReferenceModel;
             }
@@ -387,6 +429,19 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                 throw new WindupException("Unrecognized AnnotationValue subtype: " + value.getClass().getCanonicalName());
             }
             return result;
+        }
+
+        private void attachLocationMetadata(JavaTypeReferenceModel javaTypeReferenceModel, AnnotationClassReference annotationClassReference,
+                    JavaSourceFileModel javaSourceFileModel)
+        {
+            javaTypeReferenceModel.setResolutionStatus(annotationClassReference.getResolutionStatus());
+            javaTypeReferenceModel.setResolvedSourceSnippit(annotationClassReference.getQualifiedName());
+            javaTypeReferenceModel.setSourceSnippit(annotationClassReference.getLine());
+            javaTypeReferenceModel.setReferenceLocation(annotationClassReference.getLocation());
+            javaTypeReferenceModel.setColumnNumber(annotationClassReference.getColumn());
+            javaTypeReferenceModel.setLineNumber(annotationClassReference.getLineNumber());
+            javaTypeReferenceModel.setLength(annotationClassReference.getLength());
+            javaTypeReferenceModel.setFile(javaSourceFileModel);
         }
 
         @Override

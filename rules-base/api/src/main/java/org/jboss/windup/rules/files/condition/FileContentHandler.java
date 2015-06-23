@@ -2,31 +2,33 @@ package org.jboss.windup.rules.files.condition;
 
 import static org.joox.JOOX.$;
 
+import java.util.logging.Logger;
+
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.exception.ConfigurationException;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
+import org.jboss.windup.config.parser.xml.RuleProviderHandler;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Condition;
 import org.w3c.dom.Element;
 
-import java.util.logging.Logger;
-
 /**
  * Represents a {@link FileContent} {@link Condition}.
- * <p/>
+ * 
  * Example:
- * <p/>
+ *
  * <pre>
  * &lt;filecontent pattern="Some example {text}"&gt; filename="{filename}" /&gt;
  * </pre>
- *
+ * 
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
+ *
  */
-@NamespaceElementHandler(elementName = FileContentHandler.ELEM_NAME, namespace = "http://windup.jboss.org/schema/jboss-ruleset")
+@NamespaceElementHandler(elementName = FileContentHandler.ELEM_NAME, namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
 public class FileContentHandler implements ElementHandler<FileContent>
 {
     public static final String ELEM_NAME = "filecontent";

@@ -28,9 +28,11 @@ import org.jboss.windup.exec.rulefilters.AndPredicate;
 import org.jboss.windup.exec.rulefilters.SourceAndTargetPredicate;
 import org.jboss.windup.exec.rulefilters.TaggedRuleProviderPredicate;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.TechnologyReferenceModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.FileService;
+import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.util.Checks;
 import org.jboss.windup.util.ExecutionStatistics;
@@ -67,39 +69,40 @@ public class WindupProcessorImpl implements WindupProcessor
     }
 
     @Override
-    public void execute(WindupConfiguration config)
+    public void execute(WindupConfiguration configuration)
     {
         long startTime = System.currentTimeMillis();
 
-        validateConfig(config);
+        validateConfig(configuration);
 
-        GraphContext context = config.getGraphContext();
-        context.setOptions(config.getOptionMap());
+        GraphContext context = configuration.getGraphContext();
+        context.setOptions(configuration.getOptionMap());
 
-        WindupConfigurationModel configModel = WindupConfigurationService.getConfigurationModel(context);
-        configModel.setInputPath(getFileModel(context, config.getInputPath()));
-        configModel.setOutputPath(getFileModel(context, config.getOutputDirectory()));
-        configModel.setOfflineMode(config.isOffline());
-        for (Path path : config.getAllUserRulesDirectories())
+        WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(context);
+        configurationModel.setInputPath(getFileModel(context, configuration.getInputPath()));
+        configurationModel.setOutputPath(getFileModel(context, configuration.getOutputDirectory()));
+        configurationModel.setOfflineMode(configuration.isOffline());
+        for (Path path : configuration.getAllUserRulesDirectories())
         {
             System.out.println("Using user rules dir: " + path);
             if (path == null)
             {
                 throw new WindupException("Null path found (all paths are: "
-                            + config.getAllUserRulesDirectories() + ")");
+                            + configuration.getAllUserRulesDirectories() + ")");
             }
-            configModel.addUserRulesPath(getFileModel(context, path));
+            configurationModel.addUserRulesPath(getFileModel(context, path));
         }
 
-        for (Path path : config.getAllIgnoreDirectories())
+        for (Path path : configuration.getAllIgnoreDirectories())
         {
-            configModel.addUserIgnorePath(getFileModel(context, path));
+            configurationModel.addUserIgnorePath(getFileModel(context, path));
         }
 
-        configureRuleProviderAndTagFilters(config);
+        addSourceAndTargetInformation(context, configuration, configurationModel);
+        configureRuleProviderAndTagFilters(configuration);
 
         RuleProviderRegistry providerRegistry =
-                    ruleLoader.loadConfiguration(context, config.getRuleProviderFilter());
+                    ruleLoader.loadConfiguration(context, configuration.getRuleProviderFilter());
         Configuration rules = providerRegistry.getConfiguration();
 
         List<RuleLifecycleListener> listeners = new ArrayList<>();
@@ -107,14 +110,14 @@ public class WindupProcessorImpl implements WindupProcessor
         {
             listeners.add(listener);
         }
-        if (config.getProgressMonitor() != null)
-            listeners.add(new DefaultRuleLifecycleListener(config.getProgressMonitor(), rules));
+        if (configuration.getProgressMonitor() != null)
+            listeners.add(new DefaultRuleLifecycleListener(configuration.getProgressMonitor(), rules));
 
         final GraphRewrite event = new GraphRewrite(listeners, context);
         event.getRewriteContext().put(RuleProviderRegistry.class, providerRegistry);
 
         RuleSubset ruleSubset = RuleSubset.create(rules);
-        ruleSubset.setAlwaysHaltOnFailure(config.isAlwaysHaltOnException());
+        ruleSubset.setAlwaysHaltOnFailure(configuration.isAlwaysHaltOnException());
 
         for (RuleLifecycleListener listener : listeners)
         {
@@ -138,9 +141,36 @@ public class WindupProcessorImpl implements WindupProcessor
         long endTime = System.currentTimeMillis();
         long seconds = (endTime - startTime) / 1000L;
         LOG.info("Windup execution took " + seconds + " seconds to execute on input: "
-                    + config.getInputPath() + "!");
+                    + configuration.getInputPath() + "!");
 
         ExecutionStatistics.get().reset();
+    }
+
+    private void addSourceAndTargetInformation(GraphContext context, WindupConfiguration configuration, WindupConfigurationModel configurationModel)
+    {
+        Collection<String> sources = (Collection<String>) configuration.getOptionMap().get(SourceOption.NAME);
+        Collection<String> targets = (Collection<String>) configuration.getOptionMap().get(TargetOption.NAME);
+
+        GraphService<TechnologyReferenceModel> technologyReferenceService = new GraphService<>(context, TechnologyReferenceModel.class);
+        if (sources != null)
+        {
+            for (String sourceID : sources)
+            {
+                TechnologyReferenceModel technologyReferenceModel = technologyReferenceService.create();
+                technologyReferenceModel.setTechnologyID(sourceID);
+                configurationModel.addSourceTechnology(technologyReferenceModel);
+            }
+        }
+
+        if (targets != null)
+        {
+            for (String targetID : targets)
+            {
+                TechnologyReferenceModel technologyReferenceModel = technologyReferenceService.create();
+                technologyReferenceModel.setTechnologyID(targetID);
+                configurationModel.addTargetTechnology(technologyReferenceModel);
+            }
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -150,6 +180,7 @@ public class WindupProcessorImpl implements WindupProcessor
         Collection<String> excludeTags = (Collection<String>) config.getOptionMap().get(ExcludeTagsOption.NAME);
         Collection<String> sources = (Collection<String>) config.getOptionMap().get(SourceOption.NAME);
         Collection<String> targets = (Collection<String>) config.getOptionMap().get(TargetOption.NAME);
+
         if (includeTags != null || excludeTags != null || sources != null || targets != null)
         {
             Predicate<RuleProvider> configuredPredicate = config.getRuleProviderFilter();

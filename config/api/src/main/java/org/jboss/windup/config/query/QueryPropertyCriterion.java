@@ -50,6 +50,8 @@ class QueryPropertyCriterion implements QueryGremlinCriterion
         @Override
         public boolean evaluate(Object first, Object second)
         {
+            if (first == null)
+                return false;
             if (second instanceof Iterable<?>)
             {
                 boolean found = false;

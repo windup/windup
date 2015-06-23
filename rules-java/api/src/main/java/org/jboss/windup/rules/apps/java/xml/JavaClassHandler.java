@@ -11,6 +11,7 @@ import org.jboss.windup.config.exception.ConfigurationException;
 import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
+import org.jboss.windup.config.parser.xml.RuleProviderHandler;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
 import org.jboss.windup.rules.apps.java.condition.JavaClassBuilder;
 import org.jboss.windup.rules.apps.java.condition.JavaClassBuilderAt;
@@ -33,7 +34,7 @@ import org.w3c.dom.Element;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
-@NamespaceElementHandler(elementName = JavaClassHandler.ELEM_NAME, namespace = "http://windup.jboss.org/schema/jboss-ruleset")
+@NamespaceElementHandler(elementName = JavaClassHandler.ELEM_NAME, namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
 public class JavaClassHandler implements ElementHandler<JavaClassBuilderAt>
 {
     public static final String ELEM_NAME = "javaclass";

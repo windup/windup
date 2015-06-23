@@ -22,39 +22,37 @@ public interface FileLocationModel extends FileReferenceModel
     String SOURCE_SNIPPIT = "referenceSourceSnippit";
 
     /**
-     * Set the line number at which this {@link InlineHintModel} should appear in the designated {@link FileModel}.
+     * Set the line number at which this {@link FileLocationModel} should appear in the designated {@link FileModel}.
      */
     @Property(LINE_NUMBER)
     void setLineNumber(int lineNumber);
 
     /**
-     * Get the line number at which this {@link InlineHintModel} should appear in the designated {@link FileModel}.
+     * Get the line number at which this {@link FileLocationModel} should appear in the designated {@link FileModel}.
      */
     @Property(LINE_NUMBER)
     int getLineNumber();
 
     /**
-     * Set the column number at which this {@link InlineHintModel} should appear in the designated {@link FileModel}.
+     * Set the column number at which this {@link FileLocationModel} should appear in the designated {@link FileModel}.
      */
     @Property(COLUMN_NUMBER)
     void setColumnNumber(int startPosition);
 
     /**
-     * Get the column number at which this {@link InlineHintModel} should appear in the designated {@link FileModel}.
+     * Get the column number at which this {@link FileLocationModel} should appear in the designated {@link FileModel}.
      */
     @Property(COLUMN_NUMBER)
     int getColumnNumber();
 
     /**
-     * Set the length of content for which this {@link InlineHintModel} should cover in the designated {@link FileModel}
-     * .
+     * Set the length of content for which this {@link FileLocationModel} should cover in the designated {@link FileModel} .
      */
     @Property(LENGTH)
     void setLength(int length);
 
     /**
-     * Get the length of content for which this {@link InlineHintModel} should cover in the designated {@link FileModel}
-     * .
+     * Get the length of content for which this {@link FileLocationModel} should cover in the designated {@link FileModel} .
      */
     @Property(LENGTH)
     int getLength();

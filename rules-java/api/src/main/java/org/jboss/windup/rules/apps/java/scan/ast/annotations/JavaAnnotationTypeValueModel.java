@@ -7,6 +7,6 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(JavaAnnotationTypeValueModel.TYPE)
 public interface JavaAnnotationTypeValueModel extends WindupVertexFrame
 {
-    public static final String TYPE = "JavaAnnotationTypeValue";
+    String TYPE = "JavaAnnotationTypeValue";
 
 }

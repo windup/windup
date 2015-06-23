@@ -47,6 +47,17 @@ public abstract class AbstractPathConfigurationOption extends AbstractConfigurat
             return ValidationResult.SUCCESS;
         }
 
+        if (fileObject instanceof Iterable)
+        {
+            for (Object listItem : (Iterable) fileObject)
+            {
+                ValidationResult result = validate(listItem);
+                if (result.getLevel() != ValidationResult.Level.SUCCESS)
+                    return result;
+            }
+            return ValidationResult.SUCCESS;
+        }
+
         File file = castToType(fileObject);
         Path path = file.toPath();
         if (mustExist)
@@ -60,6 +71,10 @@ public abstract class AbstractPathConfigurationOption extends AbstractConfigurat
                 return new ValidationResult(ValidationResult.Level.ERROR, getName() + " must exist and be a regular file!");
             }
             else if (getUIType() == InputType.FILE_OR_DIRECTORY && !Files.exists(path))
+            {
+                return new ValidationResult(ValidationResult.Level.ERROR, getName() + " must exist!");
+            }
+            else if (!Files.exists(path))
             {
                 return new ValidationResult(ValidationResult.Level.ERROR, getName() + " must exist!");
             }

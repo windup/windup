@@ -12,6 +12,7 @@ import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
+import org.jboss.windup.config.parser.xml.RuleProviderHandler;
 import org.jboss.windup.rules.apps.xml.condition.XmlFile;
 import org.jboss.windup.rules.apps.xml.condition.XmlFileFrom;
 import org.jboss.windup.rules.apps.xml.condition.XmlFileXpath;
@@ -34,7 +35,7 @@ import org.w3c.dom.Element;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
-@NamespaceElementHandler(elementName = "xmlfile", namespace = "http://windup.jboss.org/schema/jboss-ruleset")
+@NamespaceElementHandler(elementName = "xmlfile", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
 public class XmlFileHandler implements ElementHandler<XmlFile>
 {
 
