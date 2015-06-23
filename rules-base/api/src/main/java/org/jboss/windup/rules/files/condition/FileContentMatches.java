@@ -1,13 +1,13 @@
 package org.jboss.windup.rules.files.condition;
 
+import org.ocpsoft.rewrite.config.ConditionBuilder;
+
 /**
- * This is used to provide a fluent interface for instantiating {@link FileContent}.
- *
+ * Created by mbriskar on 6/24/15.
  */
-public interface FileContentMatches
+public interface FileContentMatches extends ConditionBuilder
 {
-    /**
-     * Match filenames against the provided parameterized string.
-     */
-    FileContent inFilesNamed(String filenamePattern);
+    FileContentFileName inFileNamed(String filenamePattern);
+
+    ConditionBuilder as(String as);
 }
