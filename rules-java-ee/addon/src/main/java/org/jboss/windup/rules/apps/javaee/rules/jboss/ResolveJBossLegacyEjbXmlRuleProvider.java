@@ -26,6 +26,7 @@ import org.jboss.windup.rules.apps.javaee.rules.DiscoverEjbConfigurationXmlRuleP
 import org.jboss.windup.rules.apps.javaee.service.EnvironmentReferenceService;
 import org.jboss.windup.rules.apps.javaee.service.JNDIResourceService;
 import org.jboss.windup.rules.apps.javaee.service.JmsDestinationService;
+import org.jboss.windup.rules.apps.javaee.service.VendorSpecificationExtensionService;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.apps.xml.service.XmlFileService;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
@@ -84,6 +85,10 @@ public class ResolveJBossLegacyEjbXmlRuleProvider extends IteratingRuleProvider<
         ClassificationService classificationService = new ClassificationService(event.getGraphContext());
         classificationService.attachClassification(payload, "JBoss Legacy EJB XML", "JBoss Enterprise Java Bean XML Descriptor prior to EAP 6.");
 
+        VendorSpecificationExtensionService vendorSpecificationService = new VendorSpecificationExtensionService(event.getGraphContext());
+        //mark as vendor extension; create reference to ejb-jar.xml
+        vendorSpecificationService.associateAsVendorExtension(payload, "ejb-jar.xml");
+        
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
         technologyTagService.addTagToFileModel(payload, "JBoss EJB XML", TechnologyTagLevel.IMPORTANT);
 

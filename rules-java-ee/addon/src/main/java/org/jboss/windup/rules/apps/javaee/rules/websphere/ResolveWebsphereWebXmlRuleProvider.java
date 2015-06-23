@@ -18,6 +18,7 @@ import org.jboss.windup.rules.apps.javaee.model.JNDIResourceModel;
 import org.jboss.windup.rules.apps.javaee.rules.DiscoverWebXmlRuleProvider;
 import org.jboss.windup.rules.apps.javaee.service.EnvironmentReferenceService;
 import org.jboss.windup.rules.apps.javaee.service.JNDIResourceService;
+import org.jboss.windup.rules.apps.javaee.service.VendorSpecificationExtensionService;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.apps.xml.service.XmlFileService;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
@@ -64,6 +65,11 @@ public class ResolveWebsphereWebXmlRuleProvider extends IteratingRuleProvider<Xm
 
         Document doc = xmlFileService.loadDocumentQuiet(payload);
 
+
+        VendorSpecificationExtensionService vendorSpecificationService = new VendorSpecificationExtensionService(event.getGraphContext());
+        //mark as vendor extension; create reference to web.xml
+        vendorSpecificationService.associateAsVendorExtension(payload, "web.xml");
+        
         TechnologyTagModel technologyTag = technologyTagService.addTagToFileModel(payload, "Websphere Web XML", TechnologyTagLevel.IMPORTANT);
         for (Element resourceRef : $(doc).find("resRefBindings").get())
         {

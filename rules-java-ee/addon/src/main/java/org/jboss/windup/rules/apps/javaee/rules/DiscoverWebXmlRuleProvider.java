@@ -14,13 +14,14 @@ import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.model.TechnologyTagModel;
+import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.javaee.model.EnvironmentReferenceModel;
 import org.jboss.windup.rules.apps.javaee.model.EnvironmentReferenceTagType;
 import org.jboss.windup.rules.apps.javaee.model.WebXmlModel;
-import org.jboss.windup.rules.apps.javaee.rules.orion.ResolveOrionWebXmlRuleProvider;
 import org.jboss.windup.rules.apps.javaee.service.EnvironmentReferenceService;
 import org.jboss.windup.rules.apps.javaee.service.WebXmlService;
 import org.jboss.windup.rules.apps.xml.model.DoctypeMetaModel;
@@ -33,8 +34,6 @@ import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
-import com.esotericsoftware.minlog.Log;
 
 /**
  * Discovers web.xml files, parses them, and places relevant metadata into the graph.
@@ -128,7 +127,10 @@ public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileMod
 
     private void addWebXmlMetadata(GraphContext context, XmlFileModel xml, Document doc)
     {
+        ClassificationService classificationService = new ClassificationService(context);
         TechnologyTagService technologyTagService = new TechnologyTagService(context);
+        
+        ClassificationModel classificationModel = classificationService.attachClassification(xml, "Web XML", " Web Application Deployment Descriptors");
         TechnologyTagModel technologyTag = technologyTagService.addTagToFileModel(xml, TECH_TAG, TECH_TAG_LEVEL);
         WebXmlService webXmlService = new WebXmlService(context);
 

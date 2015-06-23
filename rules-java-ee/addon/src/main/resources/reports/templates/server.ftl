@@ -58,16 +58,18 @@
 			            <table class="table table-striped table-bordered">
 			        	<tr>
 			        		<th class="col-md-4">JNDI Location</th>
-			        		<th class="col-md-1">Database Type</th>
-			        		<th class="col-md-1">Database Version</th>
+			        		<th class="col-md-2">Database</th>
 			        		<th class="col-md-6">Links</th>
 			        	</tr>
 			        			
 			    		<#list reportModel.relatedResources.datasources.list.iterator() as datasource>
 			    			<tr>
 								<td>${datasource.jndiLocation}</td>
-								<td><#if datasource.databaseTypeName??>${datasource.databaseTypeName}</#if></td>
-								<td><#if datasource.databaseTypeVersion??>${datasource.databaseTypeVersion}</#if></td>
+								<td>
+									<#if datasource.databaseTypeName??>
+										${datasource.databaseTypeName}<#if datasource.databaseTypeVersion??> ${datasource.databaseTypeVersion}</#if>
+									</#if>
+								</td>
 								<td><@render_linkable linkable=datasource layout='horizontal'/></td>
 			    			</tr>
 					    </#list>

@@ -20,10 +20,12 @@ import org.jboss.windup.rules.apps.javaee.model.EjbSessionBeanModel;
 import org.jboss.windup.rules.apps.javaee.model.EnvironmentReferenceModel;
 import org.jboss.windup.rules.apps.javaee.model.JNDIResourceModel;
 import org.jboss.windup.rules.apps.javaee.model.JmsDestinationModel;
+import org.jboss.windup.rules.apps.javaee.model.association.VendorSpecificationExtensionModel;
 import org.jboss.windup.rules.apps.javaee.rules.DiscoverEjbConfigurationXmlRuleProvider;
 import org.jboss.windup.rules.apps.javaee.service.EnvironmentReferenceService;
 import org.jboss.windup.rules.apps.javaee.service.JNDIResourceService;
 import org.jboss.windup.rules.apps.javaee.service.JmsDestinationService;
+import org.jboss.windup.rules.apps.javaee.service.VendorSpecificationExtensionService;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.apps.xml.service.XmlFileService;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
@@ -68,18 +70,26 @@ public class ResolveWebsphereEjbBindingXmlRuleProvider extends IteratingRuleProv
         EnvironmentReferenceService envRefService = new EnvironmentReferenceService(event.getGraphContext());
         JNDIResourceService jndiResourceService = new JNDIResourceService(event.getGraphContext());
         JmsDestinationService jmsDestinationService = new JmsDestinationService(event.getGraphContext());
-        XmlFileService xmlFileService = new XmlFileService(event.getGraphContext());
         GraphService<EjbSessionBeanModel> ejbSessionBeanService = new GraphService<>(event.getGraphContext(), EjbSessionBeanModel.class);
         GraphService<EjbMessageDrivenModel> mdbService = new GraphService<>(event.getGraphContext(), EjbMessageDrivenModel.class);
 
+         
         ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-        classificationService.attachClassification(payload, "Websphere EJB XML", "Websphere Enterprise Java Bean Binding XML Descriptor.");
+        classificationService.attachClassification(payload, "Websphere EJB Binding", "Websphere Enterprise Java Bean Binding XML Descriptor");
 
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
-        technologyTagService.addTagToFileModel(payload, "Websphere EJB XML", TechnologyTagLevel.IMPORTANT);
+        technologyTagService.addTagToFileModel(payload, "Websphere EJB  ", TechnologyTagLevel.IMPORTANT);
 
-        Document doc = xmlFileService.loadDocumentQuiet(payload);
+        Document doc = payload.asDocument();
 
+        if(doc == null) {
+            return;
+        }
+
+        VendorSpecificationExtensionService vendorSpecificationService = new VendorSpecificationExtensionService(event.getGraphContext());
+        //mark as vendor extension; create reference to ejb-jar.xml
+        vendorSpecificationService.associateAsVendorExtension(payload, "ejb-jar.xml");
+        
         // register beans to JNDI
         for (Element resourceRef : $(doc).find("ejbBindings").get())
         {
@@ -149,6 +159,7 @@ public class ResolveWebsphereEjbBindingXmlRuleProvider extends IteratingRuleProv
         }
 
     }
+  
     
     private void processBinding(EnvironmentReferenceService envRefService, JNDIResourceService jndiResourceService, Element resourceRef, String tagName)
     {
