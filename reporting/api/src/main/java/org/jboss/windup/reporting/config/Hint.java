@@ -100,6 +100,7 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
         hintModel.setFileLocationReference(locationModel);
         hintModel.setFile(locationModel.getFile());
         hintModel.setEffort(effort);
+        hintModel.setSeverity(this.severity);
         if (hintTitlePattern != null)
         {
             hintModel.setTitle(hintTitlePattern.getBuilder().build(event, context));
