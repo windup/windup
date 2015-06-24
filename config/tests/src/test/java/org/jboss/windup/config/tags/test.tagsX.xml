@@ -1,0 +1,17 @@
+<tags>
+    <tag name="jboss-eap-5">
+        <contains tag="java-ee-5"/>
+        <contains tag="java-ee"/>
+        <contains tag="jms"/>
+        <contains tag="hibernate-3"/>
+    </tag>
+    <tag name="java-ee">
+        <contains tag="jms"/>
+    </tag>
+    <tag name="hibernate-3">
+        <contains tag="jpa-2"/>
+    </tag>
+    <!-- Keep commented out - not defined - ->
+    <tag name="jms"/>
+    -->
+</tags>

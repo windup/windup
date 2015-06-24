@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<tags>
+    <tag name="a-root" root="true">
+        <tag name="a1">
+            <tag name="a1a"/>
+        </tag>
+        <tag name="a2"/>
+        <tag name="a3"/>
+        <tag name="a4"/>
+    </tag>
+    <tag name="b">
+        <tag name="b1-root" root="true">
+            <tag name="b1a-root" root="true">
+                <tag name="b1a1"/>
+                <tag name="b1a2"/>
+            </tag>
+            <tag name="b1b"/>
+            <tag name="b1c"/>
+            <tag name="b1d"/>
+        </tag>
+    </tag>
+    <tag name="c">
+        <tag name="c1" parents="b1a1">
+            <tag name="c1a"/>
+        </tag>
+    </tag>
+    <!-- Keep commented out - not defined - ->
+    <tag name="d"/>
+    -->
+</tags>
