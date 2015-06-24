@@ -9,9 +9,8 @@ import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependency;
-import org.jboss.forge.arquillian.Dependencies;
-import org.jboss.forge.arquillian.archive.ForgeArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
+import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
@@ -38,23 +37,17 @@ public class InlineHintModelQueryTest
 {
 
     @Deployment
-    @Dependencies({
+    @AddonDependencies({
                 @AddonDependency(name = "org.jboss.windup.config:windup-config"),
                 @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
                 @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static ForgeArchive getDeployment()
+    public static AddonArchive getDeployment()
     {
-        ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
+        AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
                     .addBeansXML()
-                    .addAsResource(new File("src/test/resources/reports"))
-                    .addAsAddonDependencies(
-                                AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
-                                AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
-                                AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
-                                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-                    );
+                    .addAsResource(new File("src/test/resources/reports"));
         return archive;
     }
 

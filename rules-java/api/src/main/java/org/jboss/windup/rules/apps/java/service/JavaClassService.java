@@ -1,6 +1,5 @@
 package org.jboss.windup.rules.apps.java.service;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;

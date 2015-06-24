@@ -17,10 +17,9 @@ import org.apache.commons.io.IOUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependency;
-import org.jboss.forge.arquillian.Dependencies;
-import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.Furnace;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.AbstractRuleProvider;
@@ -49,22 +48,17 @@ public class LoadGroovyRulesTest
     private static final String EXAMPLE_GROOVY_FILE = "/org/jboss/windup/addon/groovy/GroovyExampleRule.windup.groovy";
 
     @Deployment
-    @Dependencies({
+    @AddonDependencies({
                 @AddonDependency(name = "org.jboss.windup.config:windup-config-groovy"),
                 @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static ForgeArchive getDeployment()
+    public static AddonArchive getDeployment()
     {
-        ForgeArchive archive = ShrinkWrap
-                    .create(ForgeArchive.class)
+        AddonArchive archive = ShrinkWrap
+                    .create(AddonArchive.class)
                     .addBeansXML()
-                    .addAsResource(new File("src/test/resources/groovy/GroovyExampleRule.windup.groovy"), EXAMPLE_GROOVY_FILE)
-                    .addAsAddonDependencies(
-                                AddonDependencyEntry.create("org.jboss.windup.config:windup-config-groovy"),
-                                AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
-                                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-                    );
+                    .addAsResource(new File("src/test/resources/groovy/GroovyExampleRule.windup.groovy"), EXAMPLE_GROOVY_FILE);
         return archive;
     }
 
