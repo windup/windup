@@ -24,8 +24,8 @@ import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.test.UITestHarness;
 import org.jboss.forge.arquillian.AddonDependency;
-import org.jboss.forge.arquillian.Dependencies;
-import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -47,7 +47,7 @@ import org.junit.runner.RunWith;
 public class WindupCommandTest
 {
     @Deployment
-    @Dependencies({
+    @AddonDependencies({
                 @AddonDependency(name = "org.jboss.windup.ui:windup-ui"),
                 @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
                 @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
@@ -55,10 +55,10 @@ public class WindupCommandTest
                 @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
                 @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness"),
     })
-    public static ForgeArchive getDeployment()
+    public static AddonArchive getDeployment()
     {
-        ForgeArchive archive = ShrinkWrap
-                    .create(ForgeArchive.class)
+        AddonArchive archive = ShrinkWrap
+                    .create(AddonArchive.class)
                     .addBeansXML()
                     .addAsResource(WindupCommandTest.class.getResource("/test.jar"), "/test.jar")
                     .addAsResource(WindupCommandTest.class.getResource("/ignore/test-windup-ignore.txt"), TEST_IGNORE_FILE)
