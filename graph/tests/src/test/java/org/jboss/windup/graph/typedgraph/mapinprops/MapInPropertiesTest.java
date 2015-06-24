@@ -10,7 +10,6 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.archive.AddonArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
@@ -39,12 +38,7 @@ public class MapInPropertiesTest
                     .addBeansXML()
                     // .addClasses(TestMapPrefixModel.class)
                     // .addClasses(TestMapBlankSubModel.class)
-                    .addPackage("org.jboss.windup.graph.typedgraph.mapinprops")
-                    .addAsAddonDependencies(
-                                AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
-                                AddonDependencyEntry.create("org.jboss.windup.utils:windup-utils"),
-                                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-                    );
+                    .addPackage("org.jboss.windup.graph.typedgraph.mapinprops");
         return archive;
     }
 

@@ -39,13 +39,13 @@ public class MetadataOptionsTest
     public static AddonArchive getDeployment()
     {
         AddonArchive archive = ShrinkWrap
-                    .create(AddonArchive.class)
-                    .addBeansXML()
-                    .addAsAddonDependencies(
-                                AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
-                                AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
-                                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-                    );
+            .create(AddonArchive.class)
+            .addBeansXML()
+            .addAsAddonDependencies(
+                AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
+                AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
+                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
+            );
 
         return archive;
     }

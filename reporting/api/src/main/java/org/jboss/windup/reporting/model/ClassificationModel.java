@@ -1,7 +1,6 @@
 package org.jboss.windup.reporting.model;
 
 import org.jboss.windup.graph.Indexed;
-import org.jboss.windup.graph.model.LinkModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.association.LinkableModel;

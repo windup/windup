@@ -9,7 +9,6 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.Furnace;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.furnace.FurnaceHolder;
@@ -40,13 +39,7 @@ public class RexsterTest
     public static AddonArchive getDeployment()
     {
         final AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-                    .addAsLocalServices(RexsterTest.class)
-                    .addAsAddonDependencies(
-                                AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
-                                AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
-                                AddonDependencyEntry.create("org.jboss.windup.rexster:windup-rexster"),
-                                AddonDependencyEntry.create("org.jboss.forge.furnace.container:simple")
-                    );
+                    .addAsLocalServices(RexsterTest.class);
 
         return archive;
     }

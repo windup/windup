@@ -7,7 +7,6 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.archive.AddonArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
@@ -32,11 +31,7 @@ public class WindupPropertyMethodHandlerTest
     {
         AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
                     .addBeansXML()
-                    .addClasses(TestFooModel.class, TestFooSubModel.class)
-                    .addAsAddonDependencies(
-                                AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
-                                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-                    );
+                    .addClasses(TestFooModel.class, TestFooSubModel.class);
         return archive;
     }
 

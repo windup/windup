@@ -2,9 +2,6 @@ package org.jboss.windup.rules.java;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.RandomStringUtils;
-import org.apache.commons.lang.RandomStringUtils2;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
-import org.jboss.forge.furnace.util.Callables;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 
 @RunWith(Arquillian.class)
@@ -22,14 +19,7 @@ public class JavaClassTestFile2
     {
         final AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
                     .addBeansXML()
-                    .addClass(TestHintsClassificationsTestRuleProvider.class)
-                    .addAsAddonDependencies(
-                                AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
-                                AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
-                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:windup-rules-java"),
-                                AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
-                                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-                    );
+                    .addClass(TestHintsClassificationsTestRuleProvider.class);
 
         return archive;
     }

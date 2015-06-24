@@ -9,7 +9,6 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.archive.AddonArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.engine.predicates.RuleProviderWithDependenciesPredicate;
 import org.jboss.windup.exec.WindupProcessor;
@@ -41,12 +40,7 @@ public class RuleProviderMetadataTest
                     .addClasses(ExecutedProviders.class,
                                 MetadataTestRuleProvider1.class,
                                 MetadataTestRuleProvider2.class,
-                                MetadataTestRuleProvider4.class)
-                    .addAsAddonDependencies(
-                                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                                AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
-                                AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec")
-                    );
+                                MetadataTestRuleProvider4.class);
         return archive;
     }
 

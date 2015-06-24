@@ -1,7 +1,6 @@
 package org.jboss.windup.rules.apps.javaee.model;
 
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;

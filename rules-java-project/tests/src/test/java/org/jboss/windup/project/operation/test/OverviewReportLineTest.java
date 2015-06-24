@@ -56,16 +56,16 @@ public class OverviewReportLineTest
     public static AddonArchive getDeployment()
     {
         final AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addClass(TestProjectProvider.class)
-                    .addAsAddonDependencies(
-                                AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
-                                AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
-                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:windup-rules-java-project"),
-                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:windup-rules-java"),
-                                AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
-                                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-                    );
+            .addBeansXML()
+            .addClass(TestProjectProvider.class)
+            .addAsAddonDependencies(
+                AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
+                AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
+                AddonDependencyEntry.create("org.jboss.windup.rules.apps:windup-rules-java-project"),
+                AddonDependencyEntry.create("org.jboss.windup.rules.apps:windup-rules-java"),
+                AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
+                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
+            );
 
         return archive;
     }
@@ -160,8 +160,8 @@ public class OverviewReportLineTest
         @Override
         public Configuration getConfiguration(GraphContext context)
         {
-            
-            
+
+
             AbstractIterationOperation<ProjectModel> addMatch = new AbstractIterationOperation<ProjectModel>()
             {
                 @Override
