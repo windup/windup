@@ -12,8 +12,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependency;
-import org.jboss.forge.arquillian.Dependencies;
-import org.jboss.forge.arquillian.archive.ForgeArchive;
+import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -33,7 +33,7 @@ public class LineHandlerTest
     private static final String LINEITEM_XML_FILE = "src/test/resources/xml/lineitem.xml";
 
     @Deployment
-    @Dependencies({
+    @AddonDependencies({
                 @AddonDependency(name = "org.jboss.windup.config:windup-config"),
                 @AddonDependency(name = "org.jboss.windup.config:windup-config-xml"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-project"),
@@ -41,10 +41,10 @@ public class LineHandlerTest
                 @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
                 @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi") })
-    public static ForgeArchive getDeployment()
+    public static AddonArchive getDeployment()
     {
-        final ForgeArchive archive = ShrinkWrap
-                    .create(ForgeArchive.class)
+        final AddonArchive archive = ShrinkWrap
+                    .create(AddonArchive.class)
                     .addBeansXML()
                     .addClass(LineHandlerTest.class)
                     .addAsAddonDependencies(
