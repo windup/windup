@@ -101,56 +101,30 @@ public class ResolveJBossLegacyEjbXmlRuleProvider extends IteratingRuleProvider<
             resourceManagerReferences.put(resourceName, resourceJNDI);
             LOG.info("Found Resource Manager: " + resourceName + ", " + resourceJNDI);
         }
+        
 
-        // handle resource-ref
+        // register beans to JNDI: http://grepcode.com/file/repository.jboss.org/nexus/content/repositories/releases/org.jboss.ejb3/jboss-ejb3-core/0.1.0/test/naming/META-INF/jboss1.xml?av=f
         for (Element resourceRef : $(doc).find("resource-ref").get())
         {
-            String jndiLocation = $(resourceRef).child("jndi-name").text();
-            String resourceRefName = $(resourceRef).child("res-ref-name").text();
-            String resourceName = $(resourceRef).child("resource-name").text();
-
-            // resolve jndilocation from resourcename...: https://docs.jboss.org/ejb3/app-server/tutorial/jboss_resource_ref/META-INF/jboss.xml
-            if (StringUtils.isBlank(jndiLocation) && StringUtils.isNotBlank(resourceName))
-            {
-                jndiLocation = resourceManagerReferences.get(resourceName);
-            }
-
-            if (StringUtils.isNotBlank(jndiLocation) && StringUtils.isNotBlank(resourceRefName))
-            {
-                JNDIResourceModel resource = jndiResourceService.createUnique(jndiLocation);
-                LOG.info("JNDI Name: " + jndiLocation + " to Resource: " + resourceRefName);
-                // now, look up the resource which is resolved by DiscoverEjbConfigurationXmlRuleProvider
-                for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceRefName))
-                {
-                    envRefService.associateEnvironmentToJndi(resource, ref);
-                }
-            }
+            processBinding(envRefService, jndiResourceService, resourceManagerReferences, resourceRef, "res-ref-name", "jndi-name");
         }
-
-        // handle resource-env-ref
         for (Element resourceRef : $(doc).find("resource-env-ref").get())
         {
-            String jndiLocation = $(resourceRef).child("jndi-name").text();
-            String resourceRefName = $(resourceRef).child("resource-env-ref-name").text();
-            String resourceName = $(resourceRef).child("resource-name").text();
-
-            // resolve jndilocation from resourcename...: https://docs.jboss.org/ejb3/app-server/tutorial/jboss_resource_ref/META-INF/jboss.xml
-            if (StringUtils.isBlank(jndiLocation) && StringUtils.isNotBlank(resourceName))
-            {
-                jndiLocation = resourceManagerReferences.get(resourceName);
-            }
-
-            if (StringUtils.isNotBlank(jndiLocation) && StringUtils.isNotBlank(resourceRefName))
-            {
-                JNDIResourceModel resource = jndiResourceService.createUnique(jndiLocation);
-                LOG.info("JNDI Name: " + jndiLocation + " to Resource: " + resourceRefName);
-                // now, look up the resource which is resolved by DiscoverEjbConfigurationXmlRuleProvider
-                for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceRefName))
-                {
-                    envRefService.associateEnvironmentToJndi(resource, ref);
-                }
-            }
+            processBinding(envRefService, jndiResourceService, resourceManagerReferences, resourceRef, "resource-env-ref-name", "jndi-name");
         }
+        for (Element resourceRef : $(doc).find("message-destination-ref").get())
+        {
+            processBinding(envRefService, jndiResourceService, resourceManagerReferences, resourceRef, "message-destination-ref-name", "jndi-name");
+        }
+        for (Element resourceRef : $(doc).find("ejb-ref").get())
+        {
+            processBinding(envRefService, jndiResourceService, resourceManagerReferences, resourceRef, "ejb-ref-name", "jndi-name");
+        }
+        for (Element resourceRef : $(doc).find("ejb-local-ref").get())
+        {
+            processBinding(envRefService, jndiResourceService, resourceManagerReferences, resourceRef, "ejb-ref-name", "local-jndi-name");
+        }
+       
 
         for (Element ejbRef : $(doc).find("session").get())
         {
@@ -199,7 +173,35 @@ public class ResolveJBossLegacyEjbXmlRuleProvider extends IteratingRuleProvider<
                 }
             }
         }
+    }
+    
 
+    private void processBinding(EnvironmentReferenceService envRefService, JNDIResourceService jndiResourceService, Map<String, String> resourceManagerReferences, Element resourceRef, String tagName, String tagJndi)
+    {
+        String jndiLocation = $(resourceRef).child(tagJndi).text();
+        String resourceRefName = $(resourceRef).child(tagName).text();
+        String resourceName = $(resourceRef).child("resource-name").text();
+
+        LOG.info("Processing binding: "+$(resourceRef).toString());
+        LOG.info("JNDI Name: " + jndiLocation + " to Resource: " + resourceRefName);
+        
+        // resolve jndilocation from resourcename...: https://docs.jboss.org/ejb3/app-server/tutorial/jboss_resource_ref/META-INF/jboss.xml
+        if (StringUtils.isBlank(jndiLocation) && StringUtils.isNotBlank(resourceName))
+        {
+            jndiLocation = resourceManagerReferences.get(resourceName);
+        }
+
+
+        if (StringUtils.isNotBlank(jndiLocation) && StringUtils.isNotBlank(resourceRefName))
+        {
+            JNDIResourceModel resource = jndiResourceService.createUnique(jndiLocation);
+            LOG.info("JNDI Name: " + jndiLocation + " to Resource: " + resourceRefName);
+            // now, look up the resource which is resolved by DiscoverEjbConfigurationXmlRuleProvider
+            for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceRefName))
+            {
+                envRefService.associateEnvironmentToJndi(resource, ref);
+            }
+        }
     }
 
 }
