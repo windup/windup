@@ -40,6 +40,9 @@ import com.tinkerpop.frames.modules.FrameClassLoaderResolver;
 import com.tinkerpop.frames.modules.Module;
 import com.tinkerpop.frames.modules.gremlingroovy.GremlinGroovyModule;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerModule;
+import java.io.File;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
 
 public class GraphContextImpl implements GraphContext
 {
@@ -249,6 +252,7 @@ public class GraphContextImpl implements GraphContext
         conf.setProperty("index.search.backend", "lucene");
         conf.setProperty("index.search.directory", lucene.toAbsolutePath().toString());
 
+        writeToPropertiesFile(conf, graphDir.resolve("TitanConfiguration.properties").toFile());
         return TitanFactory.open(conf);
     }
 
@@ -339,4 +343,21 @@ public class GraphContextImpl implements GraphContext
         String graphHash = getGraph() == null ? "null" : "" + getGraph().hashCode();
         return "GraphContextImpl(" + hashCode() + "), Graph(" + graphHash + ") + DataDir(" + getGraphDirectory() + ")";
     }
+
+
+    private void writeToPropertiesFile(Configuration conf, File file)
+    {
+        System.out.println("Writing graph config to " + file);
+        try
+        {
+            PropertiesConfiguration propConf = new PropertiesConfiguration(file);
+            propConf.append(conf);
+            propConf.save();
+        }
+        catch( ConfigurationException ex )
+        {
+            throw new RuntimeException("Failed writing Titan config to " + file.getAbsolutePath() + ": " + ex.getMessage(), ex);
+        }
+    }
+
 }
