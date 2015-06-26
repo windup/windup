@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.Variables;
@@ -177,15 +178,11 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
                 final EvaluationStrategy evaluationStrategy)
     {
         final ParameterStore store = DefaultParameterStore.getInstance(context);
-
         final GraphService<FileLocationModel> fileLocationService = new GraphService<>(event.getGraphContext(), FileLocationModel.class);
-        FileService fileModelService = new FileService(event.getGraphContext());
-
-        GraphService<FileModel> fileService = new GraphService<>(event.getGraphContext(), FileModel.class);
 
         // initialize the input
-        List<FileModel> fileModels = new ArrayList<FileModel>();
-        fromInput(fileModels, event, store);
+        List<FileModel> fileModels = new ArrayList<>();
+        fromInput(fileModels, event);
         fileNameInput(fileModels, event, store);
         allInput(fileModels, event, store);
 
@@ -281,14 +278,13 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
     }
 
     /**
-     * Generating the input vertices is quite complex. Therefore there are multiple methods that handles the input vertices
-     * based on the attribute specified in specific order. This method handles the {@link FileContent.from()} attribute.
+     * Generating the input vertices is quite complex. Therefore there are multiple methods that handles the input vertices based on the attribute
+     * specified in specific order. This method handles the {@link FileContent#from(String)} attribute.
      */
-    private void fromInput(List<FileModel> vertices, GraphRewrite event, ParameterStore store)
+    private void fromInput(List<FileModel> vertices, GraphRewrite event)
     {
-        if (vertices.isEmpty() && this.getInputVariablesName() != null && !this.getInputVariablesName().equals(""))
+        if (vertices.isEmpty() && StringUtils.isNotBlank(getInputVariablesName()))
         {
-            List<FileModel> inputVertices = new ArrayList<FileModel>();
             for (WindupVertexFrame windupVertexFrame : Variables.instance(event).findVariable(getInputVariablesName()))
             {
                 if (windupVertexFrame instanceof FileModel)
@@ -300,24 +296,23 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
     }
 
     /**
-     * Generating the input vertices is quite complex. Therefore there are multiple methods that handles the input vertices
-     * based on the attribute specified in specific order. This method handles the {@link FileContent.inFilesNamed()} attribute.
+     * Generating the input vertices is quite complex. Therefore there are multiple methods that handles the input vertices based on the attribute
+     * specified in specific order. This method handles the {@link FileContent#inFileNamed(String)} attribute.
      */
     private void fileNameInput(List<FileModel> vertices, GraphRewrite event, ParameterStore store)
     {
         if (this.filenamePattern != null)
         {
             Pattern filenameRegex = filenamePattern.getCompiledPattern(store);
-            if (vertices.isEmpty())
+            if (vertices.isEmpty() && StringUtils.isBlank(getInputVariablesName()))
             {
-                List<FileModel> inputVertices = new ArrayList<FileModel>();
                 FileService fileModelService = new FileService(event.getGraphContext());
                 for (FileModel fileModel : fileModelService.findAllByPropertyMatchingRegex(FileModel.FILE_NAME, filenameRegex.pattern()))
                 {
                     vertices.add(fileModel);
                 }
             }
-            else if (!vertices.isEmpty())
+            else
             {
                 for (FileModel vertex : vertices)
                 {
@@ -337,7 +332,7 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
      */
     private void allInput(List<FileModel> vertices, GraphRewrite event, ParameterStore store)
     {
-        if (vertices.isEmpty())
+        if (StringUtils.isBlank(getInputVariablesName()) && this.filenamePattern == null)
         {
             FileService fileModelService = new FileService(event.getGraphContext());
             for (FileModel fileModel : fileModelService.findAll())
