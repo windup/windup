@@ -2,24 +2,34 @@ package org.jboss.windup.rules.java;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.RandomStringUtils2;
+import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
+import org.jboss.forge.furnace.util.Callables;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 
 @RunWith(Arquillian.class)
 public class JavaClassTestFile2
 {
     @Deployment
-    @AddonDependencies({
+    @Dependencies({
                 @AddonDependency(name = "org.jboss.windup.config:windup-config"),
                 @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
                 @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
+    public static ForgeArchive getDeployment()
     {
-        final AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
+        final ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                     .addBeansXML()
-                    .addClass(TestHintsClassificationsTestRuleProvider.class);
+                    .addClass(TestHintsClassificationsTestRuleProvider.class)
+                    .addAsAddonDependencies(
+                                AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
+                                AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
+                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:windup-rules-java"),
+                                AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
+                                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
+                    );
 
         return archive;
     }

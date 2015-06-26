@@ -2,25 +2,36 @@ package org.jboss.windup.rules.java;
 
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.apache.commons.io.FileUtils;
+import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
+import org.jboss.forge.furnace.util.Iterators;
+import org.ocpsoft.rewrite.config.Configuration;
+import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 
 @RunWith(Arquillian.class)
 public class JavaClassTestFile1
 {
     @Deployment
-    @AddonDependencies({
+    @Dependencies({
                 @AddonDependency(name = "org.jboss.windup.config:windup-config"),
                 @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
                 @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
-    public static AddonArchive getDeployment()
+    public static ForgeArchive getDeployment()
     {
-        final AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
+        final ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
                     .addBeansXML()
                     .addClass(TestJavaClassTestRuleProvider.class)
-                    .addClass(JavaClassTest.class);
+                    .addClass(JavaClassTest.class)
+                    .addAsAddonDependencies(
+                                AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
+                                AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
+                                AddonDependencyEntry.create("org.jboss.windup.rules.apps:windup-rules-java"),
+                                AddonDependencyEntry.create("org.jboss.windup.reporting:windup-reporting"),
+                                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
+                    );
 
         return archive;
     }
