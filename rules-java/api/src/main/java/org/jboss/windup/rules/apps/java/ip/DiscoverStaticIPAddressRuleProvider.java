@@ -34,7 +34,7 @@ public class DiscoverStaticIPAddressRuleProvider extends AbstractRuleProvider
                     .addRule()
                     // for all files ending in java, properties, and xml,
                     // query for the regular expression {ip}
-                    .when(FileContent.matches("{ip}").inFilesNamed("{*}.{type}"))
+                    .when(FileContent.matches("{ip}").inFileNamed("{*}.{type}"))
                     .perform(new AbstractIterationOperation<FileLocationModel>()
                     {
                         // when a result is found, create an inline hint.
