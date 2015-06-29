@@ -20,10 +20,9 @@ import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.test.UITestHarness;
-import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.AbstractRuleProvider;
@@ -54,28 +53,17 @@ public class WindupCommandRuleFilteringTest
 
     @Deployment
     @AddonDependencies({
-        @AddonDependency(name = "org.jboss.windup.ui:windup-ui"),
-        @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-        @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-        @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
-        @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness"),
+                @AddonDependency(name = "org.jboss.windup.ui:windup-ui"),
+                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+                @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
+                @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness"),
+                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
     })
     public static AddonArchive getDeployment()
     {
-        AddonArchive archive = ShrinkWrap
-            .create(AddonArchive.class)
-            .addBeansXML()
-            .addAsResource(WindupCommandTest.class.getResource("/test.jar"), "/test.jar")
-            .addAsAddonDependencies(
-                AddonDependencyEntry.create("org.jboss.windup.ui:windup-ui"),
-                AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec"),
-                AddonDependencyEntry.create("org.jboss.windup.graph:windup-graph"),
-                AddonDependencyEntry.create("org.jboss.windup.utils:windup-utils"),
-                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                AddonDependencyEntry.create("org.jboss.forge.addon:ui-test-harness")
-            );
-
-        return archive;
+        return ShrinkWrap.create(AddonArchive.class).addBeansXML()
+                    .addAsResource(WindupCommandTest.class.getResource("/test.jar"), "/test.jar");
     }
 
     @Inject
@@ -262,12 +250,14 @@ public class WindupCommandRuleFilteringTest
         {
             return ConfigurationBuilder.begin().addRule()
                         .perform(
-                                new GraphOperation() {
-                                    @Override
-                                    public void perform(GraphRewrite event, EvaluationContext context) {
-                                        executed = true;
+                                    new GraphOperation()
+                                    {
+                                        @Override
+                                        public void perform(GraphRewrite event, EvaluationContext context)
+                                        {
+                                            executed = true;
+                                        }
                                     }
-                                }
                         );
         }
     }

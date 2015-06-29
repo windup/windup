@@ -12,8 +12,8 @@ import javax.inject.Inject;
 import org.apache.commons.io.FileUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.util.Iterators;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -52,7 +52,6 @@ public class GroovyExtensionXmlRulesTest
     {
         final AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
                     .addBeansXML()
-                    .addClass(GroovyExtensionXmlRulesTest.class)
                     .addAsResource(new File("src/test/resources/groovy/GroovyXmlFileClassificationsAndHints.windup.groovy"),
                                 GROOVY_FILE);
 

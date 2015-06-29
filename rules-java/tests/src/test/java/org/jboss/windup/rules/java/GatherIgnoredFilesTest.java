@@ -46,10 +46,7 @@ public class GatherIgnoredFilesTest
     })
     public static AddonArchive getDeployment()
     {
-        final AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addClass(JavaClassTest.class);
-        return archive;
+        return ShrinkWrap.create(AddonArchive.class).addBeansXML();
     }
 
     @Inject

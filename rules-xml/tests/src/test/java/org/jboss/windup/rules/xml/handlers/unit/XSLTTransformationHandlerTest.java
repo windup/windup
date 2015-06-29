@@ -11,8 +11,8 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.Addon;
@@ -43,11 +43,7 @@ public class XSLTTransformationHandlerTest
     })
     public static AddonArchive getDeployment()
     {
-        final AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addClass(XmlFileHandlerTest.class);
-
-        return archive;
+        return ShrinkWrap.create(AddonArchive.class).addBeansXML();
     }
 
     @Inject

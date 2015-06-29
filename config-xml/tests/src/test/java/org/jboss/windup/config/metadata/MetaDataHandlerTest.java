@@ -42,11 +42,7 @@ public class MetaDataHandlerTest
     })
     public static AddonArchive getDeployment()
     {
-        final AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addClass(MetaDataHandlerTest.class);
-
-        return archive;
+        return ShrinkWrap.create(AddonArchive.class).addBeansXML();
     }
 
     @Inject
