@@ -1,16 +1,10 @@
 package org.jboss.windup.ui;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.jboss.forge.addon.maven.resources.MavenModelResource;
 import org.jboss.forge.furnace.versions.SingleVersion;
-import org.jboss.forge.furnace.versions.Version;
-import org.jboss.forge.furnace.versions.Versions;
 
 import java.util.List;
 

@@ -14,7 +14,6 @@ import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
 import org.jboss.windup.rules.apps.java.condition.JavaClassBuilder;
 import org.jboss.windup.rules.apps.java.condition.JavaClassBuilderAt;
-import org.jboss.windup.rules.apps.java.condition.JavaClassBuilderLineMatch;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Condition;
 import org.w3c.dom.Element;

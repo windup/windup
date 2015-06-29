@@ -15,7 +15,6 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.parser.ParserContext;
@@ -45,12 +44,7 @@ public class MetaDataHandlerTest
     {
         final AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
                     .addBeansXML()
-                    .addClass(MetaDataHandlerTest.class)
-                    .addAsAddonDependencies(
-                                AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
-                                AddonDependencyEntry.create("org.jboss.windup.config:windup-config-xml"),
-                                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi")
-                    );
+                    .addClass(MetaDataHandlerTest.class);
 
         return archive;
     }
