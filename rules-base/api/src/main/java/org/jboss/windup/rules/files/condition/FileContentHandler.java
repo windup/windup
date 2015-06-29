@@ -8,21 +8,23 @@ import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
+import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Condition;
 import org.w3c.dom.Element;
 
+import java.util.logging.Logger;
+
 /**
  * Represents a {@link FileContent} {@link Condition}.
- * 
+ * <p/>
  * Example:
- *
+ * <p/>
  * <pre>
  * &lt;filecontent pattern="Some example {text}"&gt; filename="{filename}" /&gt;
  * </pre>
- * 
- * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @NamespaceElementHandler(elementName = FileContentHandler.ELEM_NAME, namespace = "http://windup.jboss.org/schema/jboss-ruleset")
 public class FileContentHandler implements ElementHandler<FileContent>
@@ -30,12 +32,15 @@ public class FileContentHandler implements ElementHandler<FileContent>
     public static final String ELEM_NAME = "filecontent";
     private static final String ATTR_PATTERN = "pattern";
     private static final String ATTR_FILENAME = "filename";
+    private static final String ATTR_FROM = "from";
+    private static final Logger LOG = Logging.get(FileContentHandler.class);
 
     @Override
     public FileContent processElement(ParserContext handlerManager, Element element) throws ConfigurationException
     {
         String contentPattern = $(element).attr(ATTR_PATTERN);
         String filenamePattern = $(element).attr(ATTR_FILENAME);
+        String from = $(element).attr(ATTR_FROM);
         String as = $(element).attr("as");
         if (as == null)
         {
@@ -47,13 +52,61 @@ public class FileContentHandler implements ElementHandler<FileContent>
             throw new WindupException("The '" + ELEM_NAME + "' element must have a non-empty '" + ATTR_PATTERN + "' attribute");
         }
 
-        if (StringUtils.isBlank(filenamePattern))
+        Object obj = null;
+        obj = applyFrom(obj, from);
+        obj = applyMatches(obj, contentPattern);
+        obj = applyFileName(obj, filenamePattern);
+        //At least content or filename pattern should have matched (otherwise exception would be thrown),
+        // so FileContent instance should have been created
+        FileContent f = (FileContent) obj;
+        f.as(as);
+        if (StringUtils.isBlank(from) && StringUtils.isBlank(filenamePattern))
         {
-            throw new WindupException("The '" + ELEM_NAME + "' element must have a non-empty '" + ATTR_FILENAME + "' attribute");
+            LOG.warning("One of the filecontent conditions (" + f.toString() + ") is scanning all the files for a regex. This may have"
+                        + "significant performance overhead.");
         }
 
-        FileContent fileContent = FileContent.matches(contentPattern).inFilesNamed(filenamePattern);
-        fileContent.setOutputVariablesName(as);
-        return fileContent;
+        return f;
+    }
+
+    private Object applyFrom(Object fileContentBuilder, String from)
+    {
+        if (from != null)
+        {
+            fileContentBuilder = FileContent.from(from);
+        }
+        return fileContentBuilder;
+    }
+
+    private Object applyMatches(Object fileContentBuilder, String contentPattern)
+    {
+        if (contentPattern != null)
+        {
+            if (fileContentBuilder == null)
+            {
+                fileContentBuilder = FileContent.matches(contentPattern);
+            }
+            else
+            {
+                fileContentBuilder = ((FileContentFrom) fileContentBuilder).matches(contentPattern);
+            }
+        }
+        return fileContentBuilder;
+    }
+
+    private Object applyFileName(Object fileContentBuilder, String fileName)
+    {
+        if (fileName != null)
+        {
+            if (fileContentBuilder == null)
+            {
+                //We do not support starting with fileName without content. Should use File condition. This should not happen thanks to checks
+            }
+            else
+            {
+                fileContentBuilder = ((FileContent) fileContentBuilder).inFileNamed(fileName);
+            }
+        }
+        return fileContentBuilder;
     }
 }

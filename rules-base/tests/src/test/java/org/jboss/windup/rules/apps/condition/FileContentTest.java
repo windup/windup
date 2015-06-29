@@ -1,16 +1,5 @@
 package org.jboss.windup.rules.apps.condition;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import org.apache.commons.io.FileUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -20,10 +9,13 @@ import org.jboss.forge.arquillian.archive.ForgeArchive;
 import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.operation.Iteration;
+import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.parameters.ParameterizedIterationOperation;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
@@ -36,6 +28,8 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.service.InlineHintService;
+import org.jboss.windup.rules.apps.java.condition.JavaClass;
+import org.jboss.windup.rules.apps.java.scan.provider.AnalyzeJavaFilesRuleProvider;
 import org.jboss.windup.rules.files.condition.FileContent;
 import org.jboss.windup.rules.files.model.FileLocationModel;
 import org.junit.Assert;
@@ -46,6 +40,13 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.param.ParameterStore;
 import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 
 @RunWith(Arquillian.class)
 public class FileContentTest
@@ -185,6 +186,8 @@ public class FileContentTest
                 }
             }
             Assert.assertTrue(foundFile3Needle);
+
+            Assert.assertTrue(provider.count == 1);
         }
     }
 
@@ -195,11 +198,12 @@ public class FileContentTest
         private List<FileLocationModel> rule1ResultModels = new ArrayList<>();
         private List<String> rule2ResultStrings = new ArrayList<>();
         private List<FileLocationModel> rule2ResultModels = new ArrayList<>();
+        public int count = 0;
 
         public FileContentTestRuleProvider()
         {
             super(MetadataBuilder.forProvider(FileContentTestRuleProvider.class)
-                        .setPhase(InitialAnalysisPhase.class));
+                        .setPhase(InitialAnalysisPhase.class).setExecuteAfterIDs(Collections.singletonList("AnalyzeJavaFilesRuleProvider")));
         }
 
         // @formatter:off
@@ -208,7 +212,7 @@ public class FileContentTest
         {
             return ConfigurationBuilder.begin()
             .addRule()
-            .when(FileContent.matches("file {text}.").inFilesNamed("{*}.txt"))
+            .when(FileContent.matches("file {text}.").inFileNamed("{*}.txt"))
             .perform(new ParameterizedIterationOperation<FileLocationModel>() {
                 private RegexParameterizedPatternParser textPattern = new RegexParameterizedPatternParser("{text}");
 
@@ -229,7 +233,7 @@ public class FileContentTest
                 }
             })
             .addRule()
-            .when(FileContent.matches(" THE {needle} IN THE HAYSTACK {*}").inFilesNamed("{*}.txt"))
+            .when(FileContent.matches(" THE {needle} IN THE HAYSTACK {*}").inFileNamed("{*}.txt"))
             .perform(new ParameterizedIterationOperation<FileLocationModel>() {
                 private RegexParameterizedPatternParser textPattern = new RegexParameterizedPatternParser("{needle}");
 
@@ -248,8 +252,19 @@ public class FileContentTest
                 public void setParameterStore(ParameterStore store) {
                     textPattern.setParameterStore(store);
                 }
-            });
-        }
+            })
+            .addRule()
+            .when(JavaClass.references("java.io.IOException").at(TypeReferenceLocation.IMPORT).as("1")
+                                    .and(FileContent.from("1").matches("this is file").as("2")))
+            .perform(Iteration.over("2").perform(new AbstractIterationOperation<FileLocationModel>() {
+
+                     @Override public void perform(GraphRewrite event, EvaluationContext context, FileLocationModel payload)
+                     {
+                        count++;
+                     }}
+            ).endIteration());
+         }
         // @formatter:on
     }
+
 }
