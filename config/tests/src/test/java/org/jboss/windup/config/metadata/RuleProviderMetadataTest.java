@@ -7,9 +7,8 @@ import javax.inject.Inject;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependency;
-import org.jboss.forge.arquillian.Dependencies;
-import org.jboss.forge.arquillian.archive.ForgeArchive;
-import org.jboss.forge.furnace.repositories.AddonDependencyEntry;
+import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.engine.predicates.RuleProviderWithDependenciesPredicate;
 import org.jboss.windup.exec.WindupProcessor;
@@ -29,24 +28,19 @@ public class RuleProviderMetadataTest
 {
 
     @Deployment
-    @Dependencies({
+    @AddonDependencies({
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
                 @AddonDependency(name = "org.jboss.windup.config:windup-config"),
                 @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
     })
-    public static ForgeArchive getDeployment()
+    public static AddonArchive getDeployment()
     {
-        final ForgeArchive archive = ShrinkWrap.create(ForgeArchive.class)
+        final AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
                     .addBeansXML()
                     .addClasses(ExecutedProviders.class,
                                 MetadataTestRuleProvider1.class,
                                 MetadataTestRuleProvider2.class,
-                                MetadataTestRuleProvider4.class)
-                    .addAsAddonDependencies(
-                                AddonDependencyEntry.create("org.jboss.forge.furnace.container:cdi"),
-                                AddonDependencyEntry.create("org.jboss.windup.config:windup-config"),
-                                AddonDependencyEntry.create("org.jboss.windup.exec:windup-exec")
-                    );
+                                MetadataTestRuleProvider4.class);
         return archive;
     }
 
