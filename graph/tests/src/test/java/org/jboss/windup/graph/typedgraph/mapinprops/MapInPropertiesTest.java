@@ -13,32 +13,27 @@ import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
-import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.util.Util;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.service.GraphService;
 
 @RunWith(Arquillian.class)
 public class MapInPropertiesTest
 {
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
+        @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+        @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
+        @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
     public static AddonArchive getDeployment()
     {
         AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    // .addClasses(TestMapPrefixModel.class)
-                    // .addClasses(TestMapBlankSubModel.class)
-                    .addPackage("org.jboss.windup.graph.typedgraph.mapinprops");
+            .addBeansXML()
+            .addPackage("org.jboss.windup.graph.typedgraph.mapinprops");
         return archive;
     }
 
@@ -53,9 +48,7 @@ public class MapInPropertiesTest
             Assert.assertNotNull(context);
             prepareFrame(context, TestMapPrefixModel.class);
 
-            Iterable<Vertex> vertices = context.getFramed().query()
-                        .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, TestMapPrefixModel.class.getAnnotation(TypeValue.class).value()).vertices();
-            Vertex v = Util.getSingle(vertices);
+            Vertex v = new GraphService<>(context, TestMapPrefixModel.class).getUnique().asVertex();
             Assert.assertNotNull(v);
             TestMapPrefixModel framed = (TestMapPrefixModel) context.getFramed().frame(v, TestMapPrefixModel.class);
             checkMap(framed.getMap(), 3);
@@ -64,7 +57,6 @@ public class MapInPropertiesTest
     }
 
     @Test
-    // @Ignore("WINDUP-168")
     public void testMapWithBlankPrefixHandling() throws Exception
     {
         try (GraphContext context = contextFactory.create())
@@ -72,11 +64,9 @@ public class MapInPropertiesTest
             TestMapBlankSubModel frame = prepareFrame(context, TestMapBlankSubModel.class);
             System.out.println("    Frame class: " + frame.getClass());
 
-            Iterable<Vertex> vertices = context.getFramed().query()
-                        .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, TestMapBlankSubModel.class.getAnnotation(TypeValue.class).value())
-                        .vertices();
-            Vertex v = Util.getSingle(vertices);
+            Vertex v = new GraphService<>(context, TestMapBlankSubModel.class).getUnique().asVertex();
             Assert.assertNotNull(v);
+
             v.setProperty("preexistingKey", "still here");
             TestMapBlankSubModel framed = (TestMapBlankSubModel) context.getFramed().frame(v, TestMapBlankSubModel.class);
             checkMap(framed.getMap(), 5);
@@ -108,9 +98,7 @@ public class MapInPropertiesTest
                 System.out.println("      Implements: " + iface.getName());
             }
 
-            Iterable<Vertex> vertices = context.getFramed().query()
-                        .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, TestMapBlankModel.class.getAnnotation(TypeValue.class).value()).vertices();
-            Vertex v = Util.getSingle(vertices);
+            Vertex v = new GraphService<>(context, TestMapBlankModel.class).getUnique().asVertex();
             Assert.assertNotNull(v);
             v.setProperty("preexistingKey", "still here");
             TestMapBlankSubModel framed = (TestMapBlankSubModel) context.getFramed().frame(v, TestMapBlankSubModel.class);

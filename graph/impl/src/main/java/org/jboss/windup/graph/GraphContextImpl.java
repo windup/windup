@@ -135,6 +135,7 @@ public class GraphContextImpl implements GraphContext
                 config.addMethodHandler(new MapInPropertiesHandler());
                 config.addMethodHandler(new MapInAdjacentPropertiesHandler());
                 config.addMethodHandler(new MapInAdjacentVerticesHandler());
+                config.addMethodHandler(new SetInPropertiesHandler());
 
                 return baseGraph;
             }
