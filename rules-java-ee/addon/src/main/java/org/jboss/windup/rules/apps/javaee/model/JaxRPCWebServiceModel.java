@@ -12,8 +12,8 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
  * 
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
-@TypeValue(JaxRPCWebServiceBeanModel.TYPE)
-public interface JaxRPCWebServiceBeanModel extends WebServiceBeanModel
+@TypeValue(JaxRPCWebServiceModel.TYPE)
+public interface JaxRPCWebServiceModel extends WebServiceModel
 {
     public static final String TYPE = "JaxRPCService";
     public static final String JAXRPC_IMPLEMENTATION_CLASS = "jaxrpcImplementationClass";

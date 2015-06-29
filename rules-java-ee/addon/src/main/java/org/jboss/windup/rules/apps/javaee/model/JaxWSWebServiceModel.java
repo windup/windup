@@ -11,8 +11,8 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
  * 
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
-@TypeValue(JaxWSWebServiceBeanModel.TYPE)
-public interface JaxWSWebServiceBeanModel extends WebServiceBeanModel
+@TypeValue(JaxWSWebServiceModel.TYPE)
+public interface JaxWSWebServiceModel extends WebServiceModel
 {
     public static final String TYPE = "JaxWSService";
     public static final String JAXWS_IMPLEMENTATION_CLASS = "jaxwsImplementationClass";

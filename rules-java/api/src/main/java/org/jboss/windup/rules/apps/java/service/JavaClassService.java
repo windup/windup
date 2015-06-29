@@ -1,6 +1,5 @@
 package org.jboss.windup.rules.apps.java.service;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -217,10 +216,6 @@ public class JavaClassService extends GraphService<JavaClassModel>
                 sources.add(classModel.getOriginalSource());
             }
         }
-        
-        
-        
-        
         return sources;
     }
     

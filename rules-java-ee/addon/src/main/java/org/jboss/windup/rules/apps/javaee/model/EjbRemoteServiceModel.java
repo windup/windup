@@ -7,38 +7,38 @@ import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
- * RMI Service marker interface.
+ * Marker interface for Ejb Remote Service.
  * 
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
-@TypeValue(RMIServiceModel.TYPE)
-public interface RMIServiceModel extends RemoteServiceModel
+@TypeValue(EjbRemoteServiceModel.TYPE)
+public interface EjbRemoteServiceModel extends RemoteServiceModel
 {
-    public static final String TYPE = "RMIService";
-    public static final String RMI_IMPLEMENTATION_CLASS = "rmiImplementationClass";
-    public static final String RMI_INTERFACE = "rmiInterface";
+	public static final String TYPE = "EjbRemoteService";
+    public static final String EJB_IMPLEMENTATION_CLASS = "ejbImplementationClass";
+    public static final String EJB_INTERFACE = "ejbRemoteInterface";
     
     /**
      * Contains the RMI implementation class
      */
-    @Adjacency(label = RMI_IMPLEMENTATION_CLASS, direction = Direction.OUT)
+    @Adjacency(label = EJB_IMPLEMENTATION_CLASS, direction = Direction.OUT)
     public void setImplementationClass(JavaClassModel restImplementation);
 
     /**
      * Contains the RMI implementation class
      */
-    @Adjacency(label = RMI_IMPLEMENTATION_CLASS, direction = Direction.OUT)
+    @Adjacency(label = EJB_IMPLEMENTATION_CLASS, direction = Direction.OUT)
     public JavaClassModel getImplementationClass();
 
     /**
      * Contains the RMI implementation class
      */
-    @Adjacency(label = RMI_INTERFACE, direction = Direction.OUT)
+    @Adjacency(label = EJB_INTERFACE, direction = Direction.OUT)
     public void setInterface(JavaClassModel jaxwsInterface);
 
     /**
      * Contains the RMI implementation class
      */
-    @Adjacency(label = RMI_INTERFACE, direction = Direction.OUT)
+    @Adjacency(label = EJB_INTERFACE, direction = Direction.OUT)
     public JavaClassModel getInterface();
 }

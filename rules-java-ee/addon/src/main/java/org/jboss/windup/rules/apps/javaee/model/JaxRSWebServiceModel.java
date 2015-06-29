@@ -4,6 +4,7 @@ import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
+import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
@@ -11,12 +12,27 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
  * 
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
-@TypeValue(JaxRSWebServiceBeanModel.TYPE)
-public interface JaxRSWebServiceBeanModel extends WebServiceBeanModel
+@TypeValue(JaxRSWebServiceModel.TYPE)
+public interface JaxRSWebServiceModel extends WebServiceModel
 {
     public static final String TYPE = "JaxRSWebService";
     public static final String JAXRS_IMPLEMENTATION_CLASS = "jaxrsImplementationClass";
     public static final String JAXRS_INTERFACE = "jaxrsInterface";
+    
+    public static final String PATH = "jaxrsPath";
+    
+
+    /**
+     * Contains the URL path to the JaxRS service.
+     */
+    @Property(PATH)
+    public String getPath();
+
+    /**
+     * Contains the URL path to the JaxRS service.
+     */
+    @Property(PATH)
+    public void setPath(String packageName);
     
     /**
      * Contains the JAX-RS implementation class

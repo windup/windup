@@ -1,7 +1,5 @@
 package org.jboss.windup.rules.apps.javaee.model;
 
-import org.jboss.windup.graph.model.WindupVertexFrame;
-
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
@@ -9,8 +7,8 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
  * 
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
-@TypeValue(WebServiceBeanModel.TYPE)
-public interface WebServiceBeanModel extends WindupVertexFrame
+@TypeValue(WebServiceModel.TYPE)
+public interface WebServiceModel extends RemoteServiceModel
 {
-    public static final String TYPE = "WebServiceBean";
+    public static final String TYPE = "WebService";
 }
