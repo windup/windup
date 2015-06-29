@@ -187,9 +187,9 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
         Assert.assertTrue(util.checkBeanInReport(EJBType.MDB, "MyNameForMessageDrivenBean",
                     "org.windup.examples.ejb.messagedriven.MessageDrivenBean",
                     "jms/MyQueue"));
-        Assert.assertTrue(util.checkBeanInReport(EJBType.STATELESS, "MyNameForSimpleStatelessEJB", "", 
+        Assert.assertTrue(util.checkBeanInReport(EJBType.STATELESS, "MyNameForSimpleStatelessEJB", "",
                     "org.windup.examples.ejb.simplestateless.SimpleStatelessEJB"));
-        Assert.assertTrue(util.checkBeanInReport(EJBType.STATEFUL, "MyNameForSimpleStatefulEJB", "", 
+        Assert.assertTrue(util.checkBeanInReport(EJBType.STATEFUL, "MyNameForSimpleStatefulEJB", "",
                     "org.windup.examples.ejb.simplestateful.SimpleStatefulEJB"));
     }
 
@@ -225,6 +225,7 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
         util.loadPage(appReportPath);
         util.checkFilePathAndTag("src_example", "src/main/resources/test.properties", "Properties");
         util.checkFilePathAndTag("src_example", "src/main/resources/WEB-INF/web.xml", "Web XML 3.0");
+        util.checkFilePathAndTag("src_example", "src/main/resources/WEB-INF/web.xml", "TestTag2"); // WINDUP-679
         util.checkFilePathAndIssues("src_example", "org.windup.examples.servlet.SampleServlet",
                     "References annotation 'javax.servlet.annotation.WebServlet'");
         util.checkFilePathAndIssues("src_example", "src/main/resources/WEB-INF/web.xml", "Container");

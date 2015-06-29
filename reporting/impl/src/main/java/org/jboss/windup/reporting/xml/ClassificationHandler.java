@@ -1,8 +1,10 @@
 package org.jboss.windup.reporting.xml;
 
+import java.util.HashSet;
 import static org.joox.JOOX.$;
 
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.exception.ConfigurationException;
@@ -18,16 +20,17 @@ import org.w3c.dom.Element;
 
 /**
  * Adds the provided {@link Classification} operation to the currently selected items.
- * 
+ *
  * Expected format:
- * 
+ *
  * <pre>
  * &lt;classification; classification="classification text" description="description of classification" effort="8"&gt;
  *  &lt;link href="http://www.foo.com/" description="Helpful text" /&gt;
  * &lt;/classification&gt;
  * </pre>
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
+ * @author <a href="mailto:dynawest@gmail.com">Ondrej Zizka</a>
  */
 @NamespaceElementHandler(elementName = "classification", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
 public class ClassificationHandler implements ElementHandler<Classification>
@@ -45,6 +48,8 @@ public class ClassificationHandler implements ElementHandler<Classification>
         String of = $(element).attr("of");
         String effortStr = $(element).attr("effort");
         String severityStr = $(element).attr("severity");
+
+        Set<String> tags = new HashSet<>();
 
         Classification classification = (Classification) Classification.as(classificationStr);
         if (of != null)
@@ -82,6 +87,14 @@ public class ClassificationHandler implements ElementHandler<Classification>
             Link link = handlerManager.processElement(child);
             classification.with(link);
         }
+
+        children = $(element).children("tag").get();
+        for (Element child : children)
+        {
+            tags.add(child.getTextContent());
+        }
+        classification.withTags(tags);
+
         return classification;
     }
 }

@@ -5,20 +5,12 @@ import org.jboss.windup.reporting.config.Link;
 import org.ocpsoft.rewrite.config.OperationBuilder;
 
 /**
- * Step of the classification to specify more links or effort (effort is the last option).
+ * Step of the classification to specify more tags or effort.
  *
- * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  * @author <a href="mailto:dynawest@gmail.com">Ondrej Zizka</a>
  */
-public interface ClassificationLink  extends OperationBuilder
+public interface ClassificationTags  extends OperationBuilder
 {
-    /**
-     * Specify the link describing the topic more precisely.
-     * @param link the {@link Link} describing the topic more precisely
-     * @return next step of {@link Classification} definition to specify effort
-     */
-    ClassificationLink with(Link link);
-
     /**
      * Specify the link describing the topic more precisely.
      * @param link the {@link Link} describing the topic more precisely

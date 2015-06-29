@@ -10,6 +10,8 @@ import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import java.util.Set;
+import org.jboss.windup.graph.SetInProperties;
 
 /**
  * This classifies files and provides general background information about a specific {@link FileModel}. (For instance,
@@ -75,5 +77,24 @@ public interface ClassificationModel extends EffortReportModel, LinkableModel
      */
     @Property(RULE_ID)
     String getRuleID();
+
+
+    /**
+     * Add a tag associated with this {@link ClassificationModel}
+     */
+    @SetInProperties(propertyPrefix = "tag")
+    InlineHintModel addTag(String tag);
+
+    /**
+     * Set the set of tags associated with this {@link ClassificationModel}
+     */
+    @SetInProperties(propertyPrefix = "tag")
+    InlineHintModel setTags(Set<String> tags);
+
+    /**
+     * Get the set of tags associated with this {@link ClassificationModel}
+     */
+    @SetInProperties(propertyPrefix = "tag")
+    Set<String> getTags();
 
 }

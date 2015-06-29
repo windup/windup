@@ -4,6 +4,7 @@ import static org.joox.JOOX.$;
 
 import java.io.File;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.xml.parsers.DocumentBuilder;
@@ -60,9 +61,11 @@ public class HintHandlerTest
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
         Document doc = dBuilder.parse(fXmlFile);
         List<Element> hintList = $(doc).children("hint").get();
+
+        Assert.assertEquals(3, hintList.size());
+
         Element firstHint = hintList.get(0);
         Hint hint = parser.processElement(firstHint);
-
         Assert.assertEquals("testVariable", hint.getVariableName());
         Assert.assertEquals(5, hint.getEffort());
         Assert.assertEquals(Severity.OPTIONAL, hint.getSeverity());
@@ -71,6 +74,7 @@ public class HintHandlerTest
         List<Link> links = hint.getLinks();
         Assert.assertEquals("someUrl", links.get(0).getLink());
         Assert.assertEquals("someDescription", links.get(0).getTitle());
+
 
         Element secondHint = hintList.get(1);
         hint = parser.processElement(secondHint);
@@ -86,6 +90,13 @@ public class HintHandlerTest
         Assert.assertEquals("description1", links.get(0).getTitle());
         Assert.assertEquals("description2", links.get(1).getTitle());
         Assert.assertEquals("description3", links.get(2).getTitle());
+
+        Set<String> tags = hint.getTags();
+        Assert.assertTrue(tags.contains("java-ee-6"));
+        Assert.assertTrue(tags.contains("jpa-2"));
+        Assert.assertTrue(tags.contains("jpa"));
+        Assert.assertFalse(tags.contains("foo"));
+
 
     }
 

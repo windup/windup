@@ -9,6 +9,9 @@ import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import java.util.Set;
+import org.jboss.windup.graph.Indexed;
+import org.jboss.windup.graph.SetInProperties;
 
 /**
  * This is used to classify lines within application source {@link FileModel} instances, and to provide hints and related data regarding specific
@@ -73,6 +76,24 @@ public interface InlineHintModel extends EffortReportModel,FileLocationModel
      */
     @Adjacency(label = LINKS, direction = Direction.OUT)
     Iterable<LinkModel> getLinks();
+
+    /**
+     * Add a tag associated with this {@link ClassificationModel}
+     */
+    @SetInProperties(propertyPrefix = "tag")
+    InlineHintModel addTag(String tag);
+
+    /**
+     * Set the set of tags associated with this {@link ClassificationModel}
+     */
+    @SetInProperties(propertyPrefix = "tag")
+    InlineHintModel setTags(Set<String> tags);
+
+    /**
+     * Get the set of tags associated with this {@link ClassificationModel}
+     */
+    @SetInProperties(propertyPrefix = "tag")
+    Set<String> getTags();
 
     /**
      * Set the ID of the rule that triggered this particular blacklist entry
