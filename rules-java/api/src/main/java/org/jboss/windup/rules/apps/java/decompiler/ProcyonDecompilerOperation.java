@@ -14,7 +14,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
-import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.decompiler.api.ClassDecompileRequest;
@@ -55,21 +54,6 @@ public class ProcyonDecompilerOperation extends GraphOperation
         super();
     }
 
-    private File getRootDirectoryForClass(JavaClassFileModel fileModel)
-    {
-        String packageName = fileModel.getPackageName();
-        if (StringUtils.isBlank(packageName))
-            return fileModel.asFile().getParentFile();
-
-        String[] packageComponents = packageName.split("\\.");
-        File rootFile = fileModel.asFile().getParentFile();
-        for (int i = 0; i < packageComponents.length; i++)
-        {
-            rootFile = rootFile.getParentFile();
-        }
-        return rootFile;
-    }
-
     @Override
     public void perform(final GraphRewrite event, final EvaluationContext context)
     {
@@ -86,7 +70,7 @@ public class ProcyonDecompilerOperation extends GraphOperation
         {
             if (!classFileModel.getFilePath().contains("$") && configurationService.shouldScanPackage(classFileModel.getPackageName()))
             {
-                File outputDir = getRootDirectoryForClass(classFileModel);
+                File outputDir = DecompilerUtil.getOutputDirectoryForClass(event.getGraphContext(), classFileModel);
                 classesToDecompile.add(new ClassDecompileRequest(outputDir.toPath(), classFileModel.asFile().toPath(), outputDir.toPath()));
             }
         }
