@@ -40,7 +40,7 @@ public class DiscoverHibernateMappingRuleProvider extends IteratingRuleProvider<
     private static final Logger LOG = Logger.getLogger(DiscoverHibernateMappingRuleProvider.class.getSimpleName());
 
     private static final String TECH_TAG = "Hibernate Mapping";
-    private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.IMPORTANT;
+    private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.INFORMATIONAL;
 
     private static final String hibernateRegex = "(?i).*hibernate.mapping.*";
 

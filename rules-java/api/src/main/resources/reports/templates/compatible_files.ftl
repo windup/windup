@@ -4,7 +4,12 @@
 <#assign applicationReportIndexModel = reportModel.applicationReportIndexModel>
 
 <#macro tagRenderer tag>
-  <span class="label label-${tag.level.name()?lower_case}"><#nested/></span>
+	<#if tag.level?? && tag.level == "IMPORTANT">
+		<span class="label label-danger">
+	<#else>
+		<span class="label label-info">
+	</#if>
+		<#nested/></span>
 </#macro>
 
 

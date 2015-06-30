@@ -45,7 +45,7 @@ public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileMod
     private static final Logger LOG = Logger.getLogger(DiscoverWebXmlRuleProvider.class.getSimpleName());
     
     private static final String TECH_TAG = "Web XML";
-    private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.IMPORTANT;
+    private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.INFORMATIONAL;
 
     private static final String dtdRegex = "(?i).*web.application.*";
 

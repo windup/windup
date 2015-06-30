@@ -59,7 +59,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
     private static final Logger LOG = Logger.getLogger(DiscoverEjbConfigurationXmlRuleProvider.class.getSimpleName());
 
     private static final String TECH_TAG = "EJB XML";
-    private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.IMPORTANT;
+    private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.INFORMATIONAL;
 
     private static final String dtdRegex = "(?i).*enterprise.javabeans.*";
 

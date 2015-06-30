@@ -78,7 +78,7 @@ public class ResolveWebsphereEjbBindingXmlRuleProvider extends IteratingRuleProv
         classificationService.attachClassification(payload, "Websphere EJB Binding", "Websphere Enterprise Java Bean Binding XML Descriptor");
 
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
-        technologyTagService.addTagToFileModel(payload, "Websphere EJB  ", TechnologyTagLevel.IMPORTANT);
+        technologyTagService.addTagToFileModel(payload, "Websphere EJB", TechnologyTagLevel.IMPORTANT);
 
         Document doc = payload.asDocument();
 

@@ -24,7 +24,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 public class DiscoverPropertiesFilesRuleProvider extends IteratingRuleProvider<FileModel>
 {
     private static final String TECH_TAG = "Properties";
-    private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.IMPORTANT;
+    private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.INFORMATIONAL;
 
     public DiscoverPropertiesFilesRuleProvider()
     {

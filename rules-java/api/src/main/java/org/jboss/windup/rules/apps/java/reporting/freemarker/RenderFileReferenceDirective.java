@@ -75,36 +75,26 @@ public class RenderFileReferenceDirective implements WindupFreeMarkerTemplateDir
 
         Object model = stringModel.getWrappedObject();
 
-        LayoutType layoutType = LayoutType.HORIZONTAL;
-        SimpleScalar layoutModel = (SimpleScalar) params.get("layout");
-        if (layoutModel != null)
-        {
-            String lt = layoutModel.getAsString();
-            try
-            {
-                LayoutType.valueOf(lt.toUpperCase());
-            }
-            catch (IllegalArgumentException e)
-            {
-                throw new TemplateException("Layout: " + lt + " is not supported.", e, null);
-            }
-        }
+        LayoutType layoutType = resolveLayoutType(params);
+        String cssClass = resolveCssClass(params);
+        
+        
 
         if (model instanceof FileLocationModel)
         {
-            processFileLocationModel(writer, (FileLocationModel) model, defaultText);
+            processFileLocationModel(writer, cssClass, (FileLocationModel) model, defaultText);
         }
         else if (model instanceof FileModel)
         {
-            processFileModel(writer, (FileModel) model, defaultText);
+            processFileModel(writer, cssClass, (FileModel) model, defaultText);
         }
         else if (model instanceof JavaClassModel)
         {
-            processJavaClassModel(writer, layoutType, (JavaClassModel) model, defaultText);
+            processJavaClassModel(writer, layoutType, cssClass, (JavaClassModel) model, defaultText);
         }
         else if (model instanceof LinkableModel)
         {
-            processLinkableModel(writer, layoutType, (LinkableModel) model, defaultText);
+            processLinkableModel(writer, layoutType, cssClass, (LinkableModel) model, defaultText);
         }
         else
         {
@@ -112,7 +102,35 @@ public class RenderFileReferenceDirective implements WindupFreeMarkerTemplateDir
         }
     }
 
-    private void processFileLocationModel(Writer writer, FileLocationModel obj, String defaultText) throws IOException
+
+	private String resolveCssClass(Map params) {
+        SimpleScalar renderStyleModel = (SimpleScalar) params.get("class");
+        if (renderStyleModel != null)
+        {
+            return renderStyleModel.getAsString();
+        }
+		return "";
+	}
+
+	private LayoutType resolveLayoutType(Map params) throws TemplateException {
+		LayoutType layoutType = LayoutType.HORIZONTAL;
+        SimpleScalar layoutModel = (SimpleScalar) params.get("layout");
+        if (layoutModel != null)
+        {
+            String lt = layoutModel.getAsString();
+            try
+            {
+                layoutType = LayoutType.valueOf(lt.toUpperCase());
+            }
+            catch (IllegalArgumentException e)
+            {
+                throw new TemplateException("Layout: " + lt + " is not supported.", e, null);
+            }
+        }
+		return layoutType;
+	}
+
+    private void processFileLocationModel(Writer writer, String cssClass, FileLocationModel obj, String defaultText) throws IOException
     {
         String position = " (" + obj.getLineNumber() + ", " + obj.getColumnNumber() + ")";
         String linkText = StringUtils.isBlank(defaultText) ? getPrettyPathForFile(obj.getFile()) + position : defaultText;
@@ -123,10 +141,10 @@ public class RenderFileReferenceDirective implements WindupFreeMarkerTemplateDir
         {
             writer.write(linkText);
         }
-        renderLink(writer, result.getReportFilename() + "#" + anchor, linkText);
+        renderLink(writer, cssClass, result.getReportFilename() + "#" + anchor, linkText);
     }
 
-    private void processLinkableModel(Writer writer, LayoutType layoutType, LinkableModel obj, String defaultText) throws IOException
+    private void processLinkableModel(Writer writer, LayoutType layoutType, String cssClass, LinkableModel obj, String defaultText) throws IOException
     {
         List<Link> links = new LinkedList<>();
         for (LinkModel model : obj.getLinks())
@@ -134,10 +152,10 @@ public class RenderFileReferenceDirective implements WindupFreeMarkerTemplateDir
             Link l = new Link(model.getLink(), model.getDescription());
             links.add(l);
         }
-        renderLinks(writer, layoutType, links);
+        renderLinks(writer, layoutType, cssClass, links);
     }
 
-    private void processFileModel(Writer writer, FileModel fileModel, String defaultText) throws IOException
+    private void processFileModel(Writer writer, String cssClass, FileModel fileModel, String defaultText) throws IOException
     {
         String linkText = StringUtils.isBlank(defaultText) ? getPrettyPathForFile(fileModel) : defaultText;
 
@@ -148,11 +166,11 @@ public class RenderFileReferenceDirective implements WindupFreeMarkerTemplateDir
         }
         else
         {
-            renderLink(writer, result.getReportFilename(), linkText);
+            renderLink(writer, cssClass, result.getReportFilename(), linkText);
         }
     }
 
-    private void processJavaClassModel(Writer writer, LayoutType layoutType, JavaClassModel clz, String defaultText) throws IOException
+    private void processJavaClassModel(Writer writer, LayoutType layoutType, String cssClass, JavaClassModel clz, String defaultText) throws IOException
     {
         Iterator<JavaSourceFileModel> results = javaClassService.getJavaSource(clz.getQualifiedName()).iterator();
 
@@ -173,7 +191,7 @@ public class RenderFileReferenceDirective implements WindupFreeMarkerTemplateDir
                     }
                     else
                     {
-                        renderLink(writer, result.getReportFilename(), linkText);
+                        renderLink(writer, cssClass, result.getReportFilename(), linkText);
                     }
 
                 }
@@ -188,7 +206,7 @@ public class RenderFileReferenceDirective implements WindupFreeMarkerTemplateDir
                     }
                     else
                     {
-                        renderLink(writer, result.getReportFilename(), " (" + (i + 1) + ")");
+                        renderLink(writer, cssClass, result.getReportFilename(), " (" + (i + 1) + ")");
                     }
 
                 }
@@ -201,7 +219,7 @@ public class RenderFileReferenceDirective implements WindupFreeMarkerTemplateDir
         }
     }
 
-    private void renderLinks(Writer writer, LayoutType layoutType, Iterable<Link> linkIterable) throws IOException
+    private void renderLinks(Writer writer, LayoutType layoutType, String cssClass, Iterable<Link> linkIterable) throws IOException
     {
         Iterator<Link> links = linkIterable.iterator();
         if (layoutType == LayoutType.UL)
@@ -226,10 +244,16 @@ public class RenderFileReferenceDirective implements WindupFreeMarkerTemplateDir
         }
     }
 
-    private void renderLink(Writer writer, String href, String linkText) throws IOException
+    private void renderLink(Writer writer, String cssClass, String href, String linkText) throws IOException
     {
+    	if(cssClass == null) {
+    		cssClass = "";
+    	}
+    	
         writer.append("<a href='" + href + "'>");
+        writer.append("<span class='"+cssClass+"'>");
         writer.append(linkText);
+        writer.append("</span>");
         writer.append("</a>");
     }
 
@@ -365,6 +389,11 @@ public class RenderFileReferenceDirective implements WindupFreeMarkerTemplateDir
     {
         HORIZONTAL, UL, DL, LI, DT
     }
+
+	public enum RenderStyleType {
+		DEFAULT, LABEL
+	}
+
 
     private static class Link
     {
