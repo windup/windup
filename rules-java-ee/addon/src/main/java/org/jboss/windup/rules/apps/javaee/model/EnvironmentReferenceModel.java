@@ -65,13 +65,13 @@ public interface EnvironmentReferenceModel extends WindupVertexFrame
     /**
      * The reference type
      */
-    @Property(REFERENCE_TYPE)
+    @Property(TAG_TYPE)
     public EnvironmentReferenceTagType getReferenceTagType();
 
     /**
      * The reference type
      */
-    @Property(REFERENCE_TYPE)
+    @Property(TAG_TYPE)
     public void setReferenceTagType(EnvironmentReferenceTagType referenceType);
 
     

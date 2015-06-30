@@ -203,7 +203,7 @@ public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileMod
         // find JMS references...
         for (Element resourceRef : $(element).find("resource-ref").get())
         {
-            processElement(environmentReferenceService, resources, resourceRef, "res-type", "res-ref-name", EnvironmentReferenceTagType.RESOURCE_REF);
+            processElement(environmentReferenceService, resources, resourceRef, "res-type", "res-ref-name",  EnvironmentReferenceTagType.RESOURCE_REF);
         }
         for (Element resourceRef : $(element).find("ejb-ref").get())
         {
