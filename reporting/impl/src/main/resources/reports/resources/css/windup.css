@@ -7,6 +7,13 @@ body {
   margin:10px;
 }
 
+.btn-xxs {
+  padding: 2px 8px;
+  margin: 0 3px 0 0;
+  line-height: 1.1;
+  font-size: 10px;
+}
+
 .summaryMargin {
 	padding:16px;
 	border-bottom:1px solid #CCC;

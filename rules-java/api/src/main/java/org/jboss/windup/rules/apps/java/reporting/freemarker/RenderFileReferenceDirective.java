@@ -250,10 +250,8 @@ public class RenderFileReferenceDirective implements WindupFreeMarkerTemplateDir
     		cssClass = "";
     	}
     	
-        writer.append("<a href='" + href + "'>");
-        writer.append("<span class='"+cssClass+"'>");
+        writer.append("<a class='"+cssClass+"' href='" + href + "'>");
         writer.append(linkText);
-        writer.append("</span>");
         writer.append("</a>");
     }
 
