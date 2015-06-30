@@ -24,7 +24,6 @@ import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationTypeR
 import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationTypeValueModel;
 import org.jboss.windup.rules.apps.java.scan.provider.AnalyzeJavaFilesRuleProvider;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
-import org.jboss.windup.rules.apps.javaee.model.JaxRSWebServiceModel;
 import org.jboss.windup.rules.apps.javaee.model.JaxWSWebServiceModel;
 import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -87,6 +86,17 @@ public class DiscoverJaxWsAnnotationsRuleProvider extends AbstractRuleProvider
 
     private void extractMetadata(GraphRewrite event, JavaTypeReferenceModel typeReference)
     {
+        GraphService<JaxWSWebServiceModel> jaxWsService = new GraphService<>(event.getGraphContext(), JaxWSWebServiceModel.class);
+        JavaClassService jcs = new JavaClassService(event.getGraphContext());
+
+        JavaClassModel jcm = getJavaClass(typeReference);
+
+        //first, find out if it implements an interface.
+        //TODO: handle the interface only case, where clients exist but no implementation
+        if(!jcm.getImplements().iterator().hasNext()) {
+        	return;
+        }
+    	
     	LOG.info("Processing: "+typeReference);
         //sets to decompile
     	((SourceFileModel) typeReference.getFile()).setGenerateSourceReport(true);
@@ -94,16 +104,17 @@ public class DiscoverJaxWsAnnotationsRuleProvider extends AbstractRuleProvider
         
         String endpointInterface = getAnnotationLiteralValue(jaxWsAnnotationTypeReference, "endpointInterface");
         
-        GraphService<JaxWSWebServiceModel> jaxWsService = new GraphService<>(event.getGraphContext(), JaxWSWebServiceModel.class);
-        JavaClassService jcs = new JavaClassService(event.getGraphContext());
 
         JaxWSWebServiceModel jaxWebService = jaxWsService.create();
         if(StringUtils.isNotBlank(endpointInterface)) {
         	JavaClassModel epi = jcs.getOrCreatePhantom(endpointInterface);
+        	for(JavaSourceFileModel source : jcs.getJavaSource(epi.getQualifiedName())) {
+        		source.setGenerateSourceReport(true);
+        	}
         	jaxWebService.setInterface(epi);
         }
         
-        JavaClassModel jcm = getJavaClass(typeReference);
+        
         if(jcm != null) {
         	jaxWebService.setImplementationClass(jcm);
         }
