@@ -68,63 +68,72 @@ public class DiscoverRmiRuleProvider extends AbstractRuleProvider
     private void extractMetadata(GraphRewrite event, JavaTypeReferenceModel typeReference)
     {
         JavaClassService jcs = new JavaClassService(event.getGraphContext());
-        
-        //get the rmi interface class from the graph
+
+        // get the rmi interface class from the graph
         JavaClassModel jcm = getJavaClass(typeReference);
-    	
-        if(!isRemote(jcm)) {
-        	LOG.warning("Is not remote: "+jcm.getQualifiedName());
-        	return;
+
+        if (!isRemote(jcm))
+        {
+            LOG.warning("Is not remote: " + jcm.getQualifiedName());
+            return;
         }
-        
-    	LOG.info("Processing: "+typeReference);
-        //sets to decompile
-    	((SourceFileModel) typeReference.getFile()).setGenerateSourceReport(true);
-        
+
+        LOG.info("Processing: " + typeReference);
+        // sets to decompile
+        ((SourceFileModel) typeReference.getFile()).setGenerateSourceReport(true);
+
         GraphService<RMIServiceModel> rmiService = new GraphService<>(event.getGraphContext(), RMIServiceModel.class);
 
-        if(jcm!=null) {
-        	//now, look to see whether it extends Remote
-        	Iterator<JavaClassModel> impls = jcm.getImplementedBy().iterator();
-        	if(impls.hasNext()) {
-        		RMIServiceModel rmiServiceModel = rmiService.create();
-            	rmiServiceModel.setInterface(jcm);
+        if (jcm != null)
+        {
+            // now, look to see whether it extends Remote
+            Iterator<JavaClassModel> impls = jcm.getImplementedBy().iterator();
+            if (impls.hasNext())
+            {
+                RMIServiceModel rmiServiceModel = rmiService.create();
+                rmiServiceModel.setInterface(jcm);
 
-                LOG.info("RMI Interface: "+jcm.getQualifiedName());
-                //find something that implements the interface
-                while(impls.hasNext()) {
-                	JavaClassModel implModel = impls.next();
-                	LOG.info(" -- Impementations: "+implModel.getQualifiedName());
-                	rmiServiceModel.setImplementationClass(implModel);
+                LOG.info("RMI Interface: " + jcm.getQualifiedName());
+                // find something that implements the interface
+                while (impls.hasNext())
+                {
+                    JavaClassModel implModel = impls.next();
+                    LOG.info(" -- Impementations: " + implModel.getQualifiedName());
+                    rmiServiceModel.setImplementationClass(implModel);
 
-                	//create the source report for the RMI Implementation.
-                	
-                	for(JavaSourceFileModel source : jcs.getJavaSource(implModel.getQualifiedName())) {
-                		source.setGenerateSourceReport(true);
-                	}
+                    // create the source report for the RMI Implementation.
+                    for (JavaSourceFileModel source : jcs.getJavaSource(implModel.getQualifiedName()))
+                    {
+                        source.setGenerateSourceReport(true);
+                    }
                 }
-        	}
-        	else {
-        		LOG.info("No implementations for RMI Interface: "+jcm.getQualifiedName());
-        		RMIServiceModel rmiServiceModel = rmiService.create();
-            	rmiServiceModel.setInterface(jcm);
-        	}
+            }
+            else
+            {
+                LOG.info("No implementations for RMI Interface: " + jcm.getQualifiedName());
+                RMIServiceModel rmiServiceModel = rmiService.create();
+                rmiServiceModel.setInterface(jcm);
+            }
         }
     }
-    
-    public boolean isRemote(JavaClassModel jcm) {
-		LOG.info("Class: "+jcm.getQualifiedName());
-    	for(JavaClassModel im : jcm.getImplements()) {
-    		if(StringUtils.equals("java.rmi.Remote",im.getQualifiedName())) {
-    			return true;
-    		}
-			LOG.info(" - Implements: "+im.getQualifiedName());
-		}
-    	if(jcm.getExtends() != null) {
-    		LOG.info(" - Extends: "+jcm.getExtends().getQualifiedName());
-    		return (StringUtils.equals("java.rmi.Remote",jcm.getExtends().getQualifiedName()));
-    	}
-    	return false;
+
+    public boolean isRemote(JavaClassModel jcm)
+    {
+        LOG.info("Class: " + jcm.getQualifiedName());
+        for (JavaClassModel im : jcm.getInterfaces())
+        {
+            if (StringUtils.equals("java.rmi.Remote", im.getQualifiedName()))
+            {
+                return true;
+            }
+            LOG.info(" - Implements: " + im.getQualifiedName());
+        }
+        if (jcm.getExtends() != null)
+        {
+            LOG.info(" - Extends: " + jcm.getExtends().getQualifiedName());
+            return (StringUtils.equals("java.rmi.Remote", jcm.getExtends().getQualifiedName()));
+        }
+        return false;
     }
 
     private JavaClassModel getJavaClass(JavaTypeReferenceModel javaTypeReference)

@@ -5,7 +5,6 @@ import java.util.logging.Logger;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.phase.PostMigrationRulesPhase;
-import org.jboss.windup.config.phase.PreReportGenerationPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
 import org.jboss.windup.graph.service.GraphService;
@@ -44,12 +43,13 @@ public class DiscoverRemoteEjbRuleProvider extends IteratingRuleProvider<EjbSess
 
     public void perform(GraphRewrite event, EvaluationContext context, EjbSessionBeanModel payload)
     {
-    	GraphService<EjbRemoteServiceModel> ejbRemoteService = new GraphService<>(event.getGraphContext(), EjbRemoteServiceModel.class);
-    	
-        if(payload.getEjbRemote() != null) {
-        	 EjbRemoteServiceModel remoteModel = ejbRemoteService.create();
-        	 remoteModel.setInterface(payload.getEjbRemote());
-        	 remoteModel.setImplementationClass(payload.getEjbClass());
+        GraphService<EjbRemoteServiceModel> ejbRemoteService = new GraphService<>(event.getGraphContext(), EjbRemoteServiceModel.class);
+
+        if (payload.getEjbRemote() != null)
+        {
+            EjbRemoteServiceModel remoteModel = ejbRemoteService.create();
+            remoteModel.setInterface(payload.getEjbRemote());
+            remoteModel.setImplementationClass(payload.getEjbClass());
         }
     }
 

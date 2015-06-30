@@ -91,32 +91,34 @@ public class DiscoverJaxWsAnnotationsRuleProvider extends AbstractRuleProvider
 
         JavaClassModel jcm = getJavaClass(typeReference);
 
-        //first, find out if it implements an interface.
-        //TODO: handle the interface only case, where clients exist but no implementation
-        if(!jcm.getImplements().iterator().hasNext()) {
-        	return;
+        // first, find out if it implements an interface.
+        // TODO: handle the interface only case, where clients exist but no implementation
+        if (!jcm.getInterfaces().iterator().hasNext())
+        {
+            return;
         }
-    	
-    	LOG.info("Processing: "+typeReference);
-        //sets to decompile
-    	((SourceFileModel) typeReference.getFile()).setGenerateSourceReport(true);
+
+        LOG.info("Processing: " + typeReference);
+        // sets to decompile
+        ((SourceFileModel) typeReference.getFile()).setGenerateSourceReport(true);
         JavaAnnotationTypeReferenceModel jaxWsAnnotationTypeReference = (JavaAnnotationTypeReferenceModel) typeReference;
-        
+
         String endpointInterface = getAnnotationLiteralValue(jaxWsAnnotationTypeReference, "endpointInterface");
-        
 
         JaxWSWebServiceModel jaxWebService = jaxWsService.create();
-        if(StringUtils.isNotBlank(endpointInterface)) {
-        	JavaClassModel epi = jcs.getOrCreatePhantom(endpointInterface);
-        	for(JavaSourceFileModel source : jcs.getJavaSource(epi.getQualifiedName())) {
-        		source.setGenerateSourceReport(true);
-        	}
-        	jaxWebService.setInterface(epi);
+        if (StringUtils.isNotBlank(endpointInterface))
+        {
+            JavaClassModel epi = jcs.getOrCreatePhantom(endpointInterface);
+            for (JavaSourceFileModel source : jcs.getJavaSource(epi.getQualifiedName()))
+            {
+                source.setGenerateSourceReport(true);
+            }
+            jaxWebService.setInterface(epi);
         }
-        
-        
-        if(jcm != null) {
-        	jaxWebService.setImplementationClass(jcm);
+
+        if (jcm != null)
+        {
+            jaxWebService.setImplementationClass(jcm);
         }
     }
 

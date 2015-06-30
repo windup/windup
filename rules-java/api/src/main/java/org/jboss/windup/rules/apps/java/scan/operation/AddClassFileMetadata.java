@@ -74,6 +74,7 @@ public class AddClassFileMetadata extends AbstractIterationOperation<JavaClassFi
                 javaClassModel.setQualifiedName(qualifiedName);
                 javaClassModel.setClassFile(payload);
                 javaClassModel.setPublic(bcelJavaClass.isPublic());
+                javaClassModel.setInterface(bcelJavaClass.isInterface());
 
                 final String[] interfaceNames = bcelJavaClass.getInterfaceNames();
                 if (interfaceNames != null)
@@ -81,12 +82,12 @@ public class AddClassFileMetadata extends AbstractIterationOperation<JavaClassFi
                     for (final String interfaceName : interfaceNames)
                     {
                         JavaClassModel interfaceModel = javaClassService.getOrCreatePhantom(interfaceName);
-                        javaClassModel.addImplements(interfaceModel);
+                        javaClassService.addInterface(javaClassModel, interfaceModel);
                     }
                 }
 
                 String superclassName = bcelJavaClass.getSuperclassName();
-                if (!StringUtils.isBlank(superclassName))
+                if (!bcelJavaClass.isInterface() && !StringUtils.isBlank(superclassName))
                     javaClassModel.setExtends(javaClassService.getOrCreatePhantom(superclassName));
 
                 payload.setJavaClass(javaClassModel);

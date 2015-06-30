@@ -52,9 +52,7 @@ public class ASTProcessorIntegrationTest
     })
     public static AddonArchive getDeployment()
     {
-        return ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addClass(JavaClassTestRuleProvider.class);
+        return ShrinkWrap.create(AddonArchive.class).addBeansXML();
     }
 
     @Inject

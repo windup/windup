@@ -84,19 +84,20 @@ public class DiscoverJaxRsAnnotationsRuleProvider extends AbstractRuleProvider
 
     private void extractMetadata(GraphRewrite event, JavaTypeReferenceModel typeReference)
     {
-        //sets to decompile
-    	((SourceFileModel) typeReference.getFile()).setGenerateSourceReport(true);
+        // sets to decompile
+        ((SourceFileModel) typeReference.getFile()).setGenerateSourceReport(true);
         JavaAnnotationTypeReferenceModel jaxRSAnnotationTypeReference = (JavaAnnotationTypeReferenceModel) typeReference;
-        
+
         String pathName = getAnnotationLiteralValue(jaxRSAnnotationTypeReference, "value");
-        
+
         GraphService<JaxRSWebServiceModel> jaxRSService = new GraphService<>(event.getGraphContext(), JaxRSWebServiceModel.class);
         JaxRSWebServiceModel jaxWebService = jaxRSService.create();
         jaxWebService.setPath(pathName);
 
         JavaClassModel jcm = getJavaClass(typeReference);
-        if(jcm != null) {
-        	jaxWebService.setImplementationClass(jcm);
+        if (jcm != null)
+        {
+            jaxWebService.setImplementationClass(jcm);
         }
     }
 
