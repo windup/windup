@@ -22,7 +22,7 @@ public interface EjbRemoteServiceModel extends RemoteServiceModel
      * Contains the RMI implementation class
      */
     @Adjacency(label = EJB_IMPLEMENTATION_CLASS, direction = Direction.OUT)
-    public void setImplementationClass(JavaClassModel restImplementation);
+    public void setImplementationClass(JavaClassModel implRef);
 
     /**
      * Contains the RMI implementation class
@@ -34,7 +34,7 @@ public interface EjbRemoteServiceModel extends RemoteServiceModel
      * Contains the RMI implementation class
      */
     @Adjacency(label = EJB_INTERFACE, direction = Direction.OUT)
-    public void setInterface(JavaClassModel jaxwsInterface);
+    public void setInterface(JavaClassModel interfaceRef);
 
     /**
      * Contains the RMI implementation class

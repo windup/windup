@@ -22,7 +22,7 @@ public interface JaxWSWebServiceModel extends WebServiceModel
      * Contains the JAX-WS implementation class
      */
     @Adjacency(label = JAXWS_IMPLEMENTATION_CLASS, direction = Direction.OUT)
-    public void setImplementationClass(JavaClassModel restImplementation);
+    public void setImplementationClass(JavaClassModel implRef);
 
     /**
      * Contains the JAX-WS implementation class
@@ -34,7 +34,7 @@ public interface JaxWSWebServiceModel extends WebServiceModel
      * Contains the JAX-WS implementation class
      */
     @Adjacency(label = JAXWS_INTERFACE, direction = Direction.OUT)
-    public void setInterface(JavaClassModel jaxwsInterface);
+    public void setInterface(JavaClassModel interfaceRef);
 
     /**
      * Contains the JAX-WS implementation class

@@ -24,7 +24,7 @@ public interface JaxRPCWebServiceModel extends WebServiceModel
      * Contains the JAX-WS implementation class
      */
     @Adjacency(label = JAXRPC_IMPLEMENTATION_CLASS, direction = Direction.OUT)
-    public void setImplementationClass(JavaClassModel restImplementation);
+    public void setImplementationClass(JavaClassModel implRef);
 
     /**
      * Contains the JAX-WS implementation class
@@ -36,7 +36,7 @@ public interface JaxRPCWebServiceModel extends WebServiceModel
      * Contains the JAX-WS implementation class
      */
     @Adjacency(label = JAXRPC_INTERFACE, direction = Direction.OUT)
-    public void setInterface(JavaClassModel jaxrpcInterface);
+    public void setInterface(JavaClassModel interfaceRef);
 
     /**
      * Contains the JAX-WS implementation class

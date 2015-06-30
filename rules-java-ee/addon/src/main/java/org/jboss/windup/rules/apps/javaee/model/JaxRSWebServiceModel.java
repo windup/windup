@@ -38,7 +38,7 @@ public interface JaxRSWebServiceModel extends WebServiceModel
      * Contains the JAX-RS implementation class
      */
     @Adjacency(label = JAXRS_IMPLEMENTATION_CLASS, direction = Direction.OUT)
-    public void setImplementationClass(JavaClassModel jaxrsImplementation);
+    public void setImplementationClass(JavaClassModel implRef);
 
     /**
      * Contains the JAX-RS implementation class
@@ -50,7 +50,7 @@ public interface JaxRSWebServiceModel extends WebServiceModel
      * Contains the JAX-RS implementation class
      */
     @Adjacency(label = JAXRS_INTERFACE, direction = Direction.OUT)
-    public void setInterface(JavaClassModel jaxrsInterface);
+    public void setInterface(JavaClassModel interfaceRef);
 
     /**
      * Contains the JAX-RS implementation class
