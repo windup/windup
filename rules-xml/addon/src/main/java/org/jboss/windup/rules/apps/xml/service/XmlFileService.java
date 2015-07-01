@@ -12,6 +12,7 @@ import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.rules.apps.xml.model.XMLDocumentCache;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.util.xml.LocationAwareXmlReader;
+import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -36,7 +37,7 @@ public class XmlFileService extends GraphService<XmlFileModel>
      * 
      * @return Returns either the parsed {@link Document} or null if the {@link Document} could not be parsed
      */
-    public Document loadDocumentQuiet(XmlFileModel model)
+    public Document loadDocumentQuiet(EvaluationContext context, XmlFileModel model)
     {
         ClassificationService classificationService = new ClassificationService(getGraphContext());
         if (model.asFile().length() == 0)
@@ -65,7 +66,7 @@ public class XmlFileService extends GraphService<XmlFileModel>
                 document = null;
                 LOG.log(Level.WARNING,
                             "Failed to parse xml entity: " + model.getFilePath() + ", due to: " + e.getMessage());
-                classificationService.attachClassification(model, XmlFileModel.UNPARSEABLE_XML_CLASSIFICATION,
+                classificationService.attachClassification(context, model, XmlFileModel.UNPARSEABLE_XML_CLASSIFICATION,
                             XmlFileModel.UNPARSEABLE_XML_DESCRIPTION);
             }
             catch (IOException e)
@@ -74,7 +75,7 @@ public class XmlFileService extends GraphService<XmlFileModel>
                 document = null;
                 LOG.log(Level.WARNING,
                             "Failed to parse xml entity: " + model.getFilePath() + ", due to: " + e.getMessage());
-                classificationService.attachClassification(model, XmlFileModel.UNPARSEABLE_XML_CLASSIFICATION,
+                classificationService.attachClassification(context, model, XmlFileModel.UNPARSEABLE_XML_CLASSIFICATION,
                             XmlFileModel.UNPARSEABLE_XML_DESCRIPTION);
             }
         }

@@ -50,7 +50,7 @@ public class ResolveWebsphereEjbExtensionXmlRuleProvider extends IteratingRulePr
     public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
     {
         ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-        classificationService.attachClassification(payload, "Websphere EJB Ext", "Websphere Enterprise Java Bean Extension XML Descriptor.");
+        classificationService.attachClassification(context, payload, "Websphere EJB Ext", "Websphere Enterprise Java Bean Extension XML Descriptor.");
 
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
         technologyTagService.addTagToFileModel(payload, "Websphere EJB Ext", TechnologyTagLevel.IMPORTANT);

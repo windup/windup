@@ -81,22 +81,23 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
 
     public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
     {
-        Document doc = new XmlFileService(event.getGraphContext()).loadDocumentQuiet(payload);
+        Document doc = new XmlFileService(event.getGraphContext()).loadDocumentQuiet(context, payload);
         if (doc == null)
         {
             // failed to parse, skip
             return;
         }
 
-        extractMetadata(event.getGraphContext(), payload, doc);
+        extractMetadata(event, context, payload, doc);
     }
 
-    private void extractMetadata(GraphContext context, XmlFileModel xmlModel, Document doc)
+    private void extractMetadata(GraphRewrite event, EvaluationContext context, XmlFileModel xmlModel, Document doc)
     {
-        ClassificationService classificationService = new ClassificationService(context);
-        TechnologyTagService technologyTagService = new TechnologyTagService(context);
+        ClassificationService classificationService = new ClassificationService(event.getGraphContext());
+        TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
         TechnologyTagModel technologyTag = technologyTagService.addTagToFileModel(xmlModel, TECH_TAG, TECH_TAG_LEVEL);
-        ClassificationModel classification = classificationService.attachClassification(xmlModel, "EJB XML", "Enterprise Java Bean XML Descriptor.");
+        ClassificationModel classification = classificationService.attachClassification(context, xmlModel, "EJB XML",
+                    "Enterprise Java Bean XML Descriptor.");
 
         // otherwise, it is a EJB-JAR XML.
         if (xmlModel.getDoctype() != null)
@@ -108,7 +109,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
                 return;
             }
             String version = processDoctypeVersion(xmlModel.getDoctype());
-            extractMetadata(context, xmlModel, doc, version);
+            extractMetadata(event, context, xmlModel, doc, version);
         }
         else
         {
@@ -137,13 +138,13 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
                 technologyTag.setVersion(version);
             }
 
-            extractMetadata(context, xmlModel, doc, version);
+            extractMetadata(event, context, xmlModel, doc, version);
         }
     }
 
-    private void extractMetadata(GraphContext ctx, XmlFileModel xml, Document doc, String versionInformation)
+    private void extractMetadata(GraphRewrite event, EvaluationContext context, XmlFileModel xml, Document doc, String versionInformation)
     {
-        EjbDeploymentDescriptorModel facet = GraphService.addTypeToModel(ctx, xml, EjbDeploymentDescriptorModel.class);
+        EjbDeploymentDescriptorModel facet = GraphService.addTypeToModel(event.getGraphContext(), xml, EjbDeploymentDescriptorModel.class);
 
         if (StringUtils.isNotBlank(versionInformation))
         {
@@ -153,19 +154,19 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
         // process all session beans...
         for (Element element : $(doc).find("session").get())
         {
-            processSessionBeanElement(ctx, facet, element);
+            processSessionBeanElement(event.getGraphContext(), facet, element);
         }
 
         // process all message driven beans...
         for (Element element : $(doc).find("message-driven").get())
         {
-            processMessageDrivenElement(ctx, facet, element);
+            processMessageDrivenElement(event.getGraphContext(), facet, element);
         }
 
         // process all entity beans...
         for (Element element : $(doc).find("entity").get())
         {
-            processEntityElement(ctx, facet, element);
+            processEntityElement(event.getGraphContext(), facet, element);
         }
     }
 

@@ -5,9 +5,11 @@ import static org.joox.JOOX.$;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jboss.windup.config.metadata.RuleMetadataType;
 import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
+import org.jboss.windup.util.xml.XmlUtil;
 import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.ConfigurationRuleBuilder;
 import org.ocpsoft.rewrite.config.Operation;
@@ -24,9 +26,8 @@ public class RuleHandler implements ElementHandler<Void>
     {
         ConfigurationRuleBuilder rule = (ConfigurationRuleBuilder) context.getBuilder().addRule();
         context.setRule(rule);
-
         processRuleElement(context, rule, element);
-
+        rule.getRuleBuilder().put(RuleMetadataType.RULE_XML, XmlUtil.nodeToString(element));
         return null;
     }
 

@@ -50,7 +50,7 @@ public class ResolveWebsphereWsBindingXmlRuleProvider extends IteratingRuleProvi
     public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
     {
         ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-        classificationService.attachClassification(payload, "Websphere WS Binding", "Websphere Webservice Binding XML Descriptor.");
+        classificationService.attachClassification(context, payload, "Websphere WS Binding", "Websphere Webservice Binding XML Descriptor.");
 
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
         technologyTagService.addTagToFileModel(payload, "Websphere WS Binding", TechnologyTagLevel.IMPORTANT);

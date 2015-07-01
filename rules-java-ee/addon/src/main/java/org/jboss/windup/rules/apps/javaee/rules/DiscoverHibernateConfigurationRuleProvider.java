@@ -100,12 +100,13 @@ public class DiscoverHibernateConfigurationRuleProvider extends IteratingRulePro
 
         for (XmlFileModel xml : payload.getXmlResources())
         {
-            createHibernateConfigurationModel(event.getGraphContext(), xml, versionInformation);
+            createHibernateConfigurationModel(event, context, xml, versionInformation);
         }
     }
 
-    private void createHibernateConfigurationModel(GraphContext graphContext, XmlFileModel xmlFileModel, String versionInformation)
+    private void createHibernateConfigurationModel(GraphRewrite event, EvaluationContext context, XmlFileModel xmlFileModel, String versionInformation)
     {
+        GraphContext graphContext = event.getGraphContext();
         DataSourceService dataSourceService = new DataSourceService(graphContext);
         HibernateConfigurationFileService hibernateConfigurationFileService = new HibernateConfigurationFileService(graphContext);
         GraphService<HibernateSessionFactoryModel> hibernateSessionFactoryService = new GraphService<>(graphContext,
@@ -121,7 +122,7 @@ public class DiscoverHibernateConfigurationRuleProvider extends IteratingRulePro
             hibernateConfigurationModel.setSpecificationVersion(versionInformation);
         }
 
-        Document doc = new XmlFileService(graphContext).loadDocumentQuiet(xmlFileModel);
+        Document doc = new XmlFileService(graphContext).loadDocumentQuiet(context, xmlFileModel);
         for (Element element : $(doc).find("session-factory").get())
         {
             HibernateSessionFactoryModel sessionFactoryModel = hibernateSessionFactoryService.create();

@@ -24,6 +24,7 @@ import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
+import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
@@ -64,6 +65,7 @@ public class DiscoverArchiveLicenseFilesRuleProvider extends
     public void perform(GraphRewrite event, EvaluationContext context,
                 ArchiveModel payload)
     {
+        Rule rule = (Rule) context.get(Rule.class);
         Set<FileModel> licenseFiles = findLicense(payload);
         if (licenseFiles.size() == 0)
         {
@@ -91,7 +93,8 @@ public class DiscoverArchiveLicenseFilesRuleProvider extends
 
                 if (StringUtils.containsIgnoreCase(content, "Apache License, Version 2.0"))
                 {
-                    ClassificationModel classificationModel = tagLicense(classificationService, linkService, licenseService, technologyTagService,
+                    ClassificationModel classificationModel = tagLicense(rule, classificationService, linkService, licenseService,
+                                technologyTagService,
                                 license,
                                 "Apache License 2.0",
                                 "Apache License 2.0 File",
@@ -103,7 +106,8 @@ public class DiscoverArchiveLicenseFilesRuleProvider extends
                 }
                 else if (StringUtils.containsIgnoreCase(content, "Apache Software License, Version 1.1"))
                 {
-                    ClassificationModel classificationModel = tagLicense(classificationService, linkService, licenseService, technologyTagService,
+                    ClassificationModel classificationModel = tagLicense(rule, classificationService, linkService, licenseService,
+                                technologyTagService,
                                 license,
                                 "Apache License 1.1",
                                 "Apache License 1.1 File",
@@ -115,7 +119,8 @@ public class DiscoverArchiveLicenseFilesRuleProvider extends
                 }
                 else if (StringUtils.containsIgnoreCase(content, "Copyright (c) 1995-1999 The Apache Group.  All rights reserved."))
                 {
-                    ClassificationModel classificationModel = tagLicense(classificationService, linkService, licenseService, technologyTagService,
+                    ClassificationModel classificationModel = tagLicense(rule, classificationService, linkService, licenseService,
+                                technologyTagService,
                                 license,
                                 "Apache License 1.0",
                                 "Apache License 1.0 File",
@@ -127,7 +132,8 @@ public class DiscoverArchiveLicenseFilesRuleProvider extends
                 }
                 else if (StringUtils.containsIgnoreCase(content, "GNU General Public License"))
                 {
-                    ClassificationModel classificationModel = tagLicense(classificationService, linkService, licenseService, technologyTagService,
+                    ClassificationModel classificationModel = tagLicense(rule, classificationService, linkService, licenseService,
+                                technologyTagService,
                                 license,
                                 "GNU GPL",
                                 "GNU General Public License File",
@@ -139,7 +145,8 @@ public class DiscoverArchiveLicenseFilesRuleProvider extends
                 }
                 else if (StringUtils.containsIgnoreCase(content, "The MIT License (MIT)"))
                 {
-                    ClassificationModel classificationModel = tagLicense(classificationService, linkService, licenseService, technologyTagService,
+                    ClassificationModel classificationModel = tagLicense(rule, classificationService, linkService, licenseService,
+                                technologyTagService,
                                 license,
                                 "MIT License",
                                 "GNU General Public License File",
@@ -151,7 +158,8 @@ public class DiscoverArchiveLicenseFilesRuleProvider extends
                 }
                 else if (StringUtils.containsIgnoreCase(content, "Mozilla Public License, version 2.0"))
                 {
-                    ClassificationModel classificationModel = tagLicense(classificationService, linkService, licenseService, technologyTagService,
+                    ClassificationModel classificationModel = tagLicense(rule, classificationService, linkService, licenseService,
+                                technologyTagService,
                                 license,
                                 "Mozilla Public License 2.0",
                                 "Mozilla Public License 2.0 File",
@@ -161,7 +169,8 @@ public class DiscoverArchiveLicenseFilesRuleProvider extends
                 }
                 else if (StringUtils.containsIgnoreCase(content, "GNU Lesser General Public License"))
                 {
-                    ClassificationModel classificationModel = tagLicense(classificationService, linkService, licenseService, technologyTagService,
+                    ClassificationModel classificationModel = tagLicense(rule, classificationService, linkService, licenseService,
+                                technologyTagService,
                                 license,
                                 "GNU LGPL",
                                 "GNU LGPL File",
@@ -174,7 +183,8 @@ public class DiscoverArchiveLicenseFilesRuleProvider extends
                 }
                 else if (StringUtils.contains(content, "COMMON DEVELOPMENT AND DISTRIBUTION LICENSE"))
                 {
-                    ClassificationModel classificationModel = tagLicense(classificationService, linkService, licenseService, technologyTagService,
+                    ClassificationModel classificationModel = tagLicense(rule, classificationService, linkService, licenseService,
+                                technologyTagService,
                                 license,
                                 "CDDL",
                                 "CDDL License File",
@@ -187,7 +197,8 @@ public class DiscoverArchiveLicenseFilesRuleProvider extends
                 }
                 else if (StringUtils.containsIgnoreCase(content, "Eclipse Public License"))
                 {
-                    ClassificationModel classificationModel = tagLicense(classificationService, linkService, licenseService, technologyTagService,
+                    ClassificationModel classificationModel = tagLicense(rule, classificationService, linkService, licenseService,
+                                technologyTagService,
                                 license,
                                 "Eclipse Public License 1.0",
                                 "Eclipse Public License 1.0 File",
@@ -198,7 +209,8 @@ public class DiscoverArchiveLicenseFilesRuleProvider extends
                 }
                 else if (StringUtils.containsIgnoreCase(content, "Redistribution and use in source and binary forms"))
                 {
-                    ClassificationModel classificationModel = tagLicense(classificationService, linkService, licenseService, technologyTagService,
+                    ClassificationModel classificationModel = tagLicense(rule, classificationService, linkService, licenseService,
+                                technologyTagService,
                                 license,
                                 "BSD License",
                                 "BSD License File",
@@ -209,7 +221,8 @@ public class DiscoverArchiveLicenseFilesRuleProvider extends
                 }
                 else if (StringUtils.containsIgnoreCase(content, "the work of authorship identified is in the public domain of the country"))
                 {
-                    ClassificationModel classificationModel = tagLicense(classificationService, linkService, licenseService, technologyTagService,
+                    ClassificationModel classificationModel = tagLicense(rule, classificationService, linkService, licenseService,
+                                technologyTagService,
                                 license,
                                 "Public Domain License",
                                 "Creative Commons Public Domain License File",
@@ -223,7 +236,8 @@ public class DiscoverArchiveLicenseFilesRuleProvider extends
                 {
                     LOG.warning("Must be unknown license type: " + license.getFileName());
 
-                    ClassificationModel classificationModel = tagLicense(classificationService, linkService, licenseService, technologyTagService,
+                    ClassificationModel classificationModel = tagLicense(rule, classificationService, linkService, licenseService,
+                                technologyTagService,
                                 license,
                                 "Unknown License", "Unknown License File", "Unknown License File");
                 }
@@ -236,12 +250,12 @@ public class DiscoverArchiveLicenseFilesRuleProvider extends
 
     }
 
-    private ClassificationModel tagLicense(ClassificationService classificationService, LinkService linkService,
+    private ClassificationModel tagLicense(Rule rule, ClassificationService classificationService, LinkService linkService,
                 GraphService<LicenseModel> licenseService,
                 TechnologyTagService technologyTagService, FileModel license,
                 String name, String description, String url)
     {
-        ClassificationModel classification = classificationService.attachClassification(license, name, description);
+        ClassificationModel classification = classificationService.attachClassification(rule, license, name, description);
         LOG.info("Identified: " + license.getFileName() + " as: " + name);
 
         // create license model for future reporting.

@@ -98,7 +98,7 @@ public class AddClassFileMetadata extends AbstractIterationOperation<JavaClassFi
                         "BCEL was unable to parse class file: " + payload.getFilePath() + " due to: " + e.getMessage(),
                         e);
             ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-            classificationService.attachClassification(payload, JavaClassFileModel.UNPARSEABLE_CLASS_CLASSIFICATION,
+            classificationService.attachClassification(context, payload, JavaClassFileModel.UNPARSEABLE_CLASS_CLASSIFICATION,
                         JavaClassFileModel.UNPARSEABLE_CLASS_DESCRIPTION);
         }
         finally

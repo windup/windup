@@ -127,7 +127,7 @@ public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
                 payload.setPackageName(packageName);
                 try (FileInputStream fis = new FileInputStream(payload.getFilePath()))
                 {
-                    addParsedClassToFile(fis, event.getGraphContext(), payload);
+                    addParsedClassToFile(event, context, payload, fis);
                 }
                 catch (FileNotFoundException e)
                 {
@@ -143,7 +143,7 @@ public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
                     LOG.log(Level.WARNING,
                                 "Could not parse java file: " + payload.getFilePath() + " due to: " + e.getMessage(), e);
                     ClassificationService classificationService = new ClassificationService(graphContext);
-                    classificationService.attachClassification(payload,
+                    classificationService.attachClassification(context, payload,
                                 JavaSourceFileModel.UNPARSEABLE_JAVA_CLASSIFICATION,
                                 JavaSourceFileModel.UNPARSEABLE_JAVA_DESCRIPTION);
                     return;
@@ -155,7 +155,7 @@ public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
             }
         }
 
-        private void addParsedClassToFile(FileInputStream fis, GraphContext context, JavaSourceFileModel sourceFileModel)
+        private void addParsedClassToFile(GraphRewrite event, EvaluationContext context, JavaSourceFileModel sourceFileModel, FileInputStream fis)
         {
             JavaSource<?> javaSource;
             try
@@ -164,8 +164,8 @@ public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
             }
             catch (ParserException e)
             {
-                ClassificationService classificationService = new ClassificationService(context);
-                classificationService.attachClassification(sourceFileModel,
+                ClassificationService classificationService = new ClassificationService(event.getGraphContext());
+                classificationService.attachClassification(context, sourceFileModel,
                             JavaSourceFileModel.UNPARSEABLE_JAVA_CLASSIFICATION,
                             JavaSourceFileModel.UNPARSEABLE_JAVA_DESCRIPTION);
                 return;
@@ -181,7 +181,7 @@ public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
             Path rootSourcePath = PathUtil.getRootFolderForSource(sourceFileModel.asFile().toPath(), packageName);
             if (rootSourcePath != null)
             {
-                FileModel rootSourceFileModel = new FileService(context).createByFilePath(rootSourcePath.toString());
+                FileModel rootSourceFileModel = new FileService(event.getGraphContext()).createByFilePath(rootSourcePath.toString());
                 sourceFileModel.setRootSourceFolder(rootSourceFileModel);
             }
 
@@ -193,7 +193,7 @@ public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
                 simpleName = simpleName.substring(packageName.length() + 1);
             }
 
-            JavaClassService javaClassService = new JavaClassService(context);
+            JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
             JavaClassModel javaClassModel = javaClassService.create(qualifiedName);
             javaClassModel.setOriginalSource(sourceFileModel);
             javaClassModel.setSimpleName(simpleName);

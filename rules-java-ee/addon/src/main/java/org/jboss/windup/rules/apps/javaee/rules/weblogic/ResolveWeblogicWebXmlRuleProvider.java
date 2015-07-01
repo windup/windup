@@ -62,7 +62,7 @@ public class ResolveWeblogicWebXmlRuleProvider extends IteratingRuleProvider<Xml
         XmlFileService xmlFileService = new XmlFileService(event.getGraphContext());
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
 
-        Document doc = xmlFileService.loadDocumentQuiet(payload);
+        Document doc = xmlFileService.loadDocumentQuiet(context, payload);
 
         TechnologyTagModel technologyTag = technologyTagService.addTagToFileModel(payload, "Weblogic Web XML", TechnologyTagLevel.IMPORTANT);
         for (Element resourceRef : $(doc).find("resource-description").get())

@@ -21,7 +21,7 @@ import org.ocpsoft.rewrite.config.Rule;
  */
 public class RenderRuleProviderReportRuleProvider extends AbstractRuleProvider
 {
-    private static final String OUTPUT_FILENAME = "windup_ruleproviders.html";
+    public static final String OUTPUT_FILENAME = "windup_ruleproviders.html";
     private static final String TEMPLATE = "/reports/templates/ruleprovidersummary.ftl";
 
     @Inject

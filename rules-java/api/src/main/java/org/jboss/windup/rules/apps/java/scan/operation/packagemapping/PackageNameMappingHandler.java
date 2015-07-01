@@ -3,10 +3,14 @@ package org.jboss.windup.rules.apps.java.scan.operation.packagemapping;
 import static org.joox.JOOX.$;
 
 import org.apache.commons.lang.StringUtils;
+import org.jboss.windup.config.metadata.RuleMetadataType;
 import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.util.exception.WindupException;
+import org.jboss.windup.util.xml.XmlUtil;
+import org.ocpsoft.rewrite.config.Rule;
+import org.ocpsoft.rewrite.context.Context;
 import org.w3c.dom.Element;
 
 /**
@@ -39,7 +43,10 @@ public class PackageNameMappingHandler implements ElementHandler<Void>
             throw new WindupException("The '" + ELEM_NAME + "' element must have a non-empty '" + TO + "' attribute");
         }
 
-        context.getBuilder().addRule(PackageNameMapping.fromPackage(from).toOrganization(to));
+        Rule rule = PackageNameMapping.fromPackage(from).toOrganization(to);
+        if (rule instanceof Context)
+            ((Context) rule).put(RuleMetadataType.RULE_XML, XmlUtil.nodeToString(element));
+        context.getBuilder().addRule(rule);
         return null;
     }
 

@@ -392,7 +392,7 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD, 
                     LOG.fine("XmlFile compiled: " + this.xpathString + " to " + xpathStringWithParameterFunctions);
 
                     XmlFileService xmlFileService = new XmlFileService(graphContext);
-                    Document document = xmlFileService.loadDocumentQuiet(xml);
+                    Document document = xmlFileService.loadDocumentQuiet(context, xml);
                     if (document != null)
                     {
                         final ParameterStore store = DefaultParameterStore.getInstance(context);

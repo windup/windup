@@ -16,6 +16,11 @@ public enum RuleMetadataType
     RULE_PROVIDER,
 
     /**
+     * Contains the raw xml that produced this {@link Rule}.
+     */
+    RULE_XML,
+
+    /**
      * The {@link Rule} origin.
      */
     ORIGIN,

@@ -18,7 +18,10 @@
 
             <#list reportLinesIterable.iterator() as reportLine>
             <tr>
-                <td> ${reportLine.message}</td>
+                <td>
+                	${reportLine.message}
+                	<@render_rule_link ruleID=reportLine.ruleID/>
+				</td>
             </tr>
             </#list>
         </table>

@@ -9,6 +9,8 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.ClassificationModel;
+import org.ocpsoft.rewrite.config.Rule;
+import org.ocpsoft.rewrite.context.EvaluationContext;
 
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Vertex;
@@ -29,8 +31,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
     }
 
     /**
-     * Returns the total effort points in all of the {@link ClassificationModel}s associated with the provided
-     * {@link FileModel}.
+     * Returns the total effort points in all of the {@link ClassificationModel}s associated with the provided {@link FileModel}.
      */
     public int getMigrationEffortPoints(FileModel fileModel)
     {
@@ -62,8 +63,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
     }
 
     /**
-     * Returns the total effort points in all of the {@link ClassificationModel}s associated with the files in this
-     * project.
+     * Returns the total effort points in all of the {@link ClassificationModel}s associated with the files in this project.
      * 
      * If set to recursive, then also include the effort points from child projects.
      */
@@ -93,14 +93,12 @@ public class ClassificationService extends GraphService<ClassificationModel>
     }
 
     /**
-     * Attach a {@link ClassificationModel} with the given classificationText and description to the provided
-     * {@link FileModel}. If an existing Model exists with the provided classificationText, that one will be used
-     * instead.
+     * Attach a {@link ClassificationModel} with the given classificationText and description to the provided {@link FileModel}. If an existing Model
+     * exists with the provided classificationText, that one will be used instead.
      */
-    public ClassificationModel attachClassification(FileModel fileModel, String classificationText, String description)
+    public ClassificationModel attachClassification(Rule rule, FileModel fileModel, String classificationText, String description)
     {
-        ClassificationModel model = getUnique(getTypedQuery()
-                    .has(ClassificationModel.CLASSIFICATION, classificationText));
+        ClassificationModel model = getUnique(getTypedQuery().has(ClassificationModel.CLASSIFICATION, classificationText));
         if (model == null)
         {
             model = create();
@@ -108,6 +106,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
             model.setDescription(description);
             model.setEffort(0);
             model.addFileModel(fileModel);
+            model.setRuleID(rule.getId());
         }
         else
         {
@@ -118,8 +117,18 @@ public class ClassificationService extends GraphService<ClassificationModel>
     }
 
     /**
-     * This method just attaches the {@link ClassificationModel} to the {@link Length.FileMode}. It will only do so if
-     * this link is not already present.
+     * Attach a {@link ClassificationModel} with the given classificationText and description to the provided {@link FileModel}. If an existing Model
+     * exists with the provided classificationText, that one will be used instead.
+     */
+    public ClassificationModel attachClassification(EvaluationContext context, FileModel fileModel, String classificationText, String description)
+    {
+        Rule rule = (Rule) context.get(Rule.class);
+        return attachClassification(rule, fileModel, classificationText, description);
+    }
+
+    /**
+     * This method just attaches the {@link ClassificationModel} to the {@link Length.FileMode}. It will only do so if this link is not already
+     * present.
      */
     public ClassificationModel attachClassification(ClassificationModel classificationModel, FileModel fileModel)
     {

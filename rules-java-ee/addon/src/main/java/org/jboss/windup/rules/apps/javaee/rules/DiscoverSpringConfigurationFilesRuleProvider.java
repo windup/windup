@@ -76,7 +76,7 @@ public class DiscoverSpringConfigurationFilesRuleProvider extends IteratingRuleP
         SpringBeanService springBeanService = new SpringBeanService(event.getGraphContext());
         JNDIResourceService jndiResourceService = new JNDIResourceService(event.getGraphContext());
 
-        Document doc = xmlFileService.loadDocumentQuiet(payload);
+        Document doc = xmlFileService.loadDocumentQuiet(context, payload);
         if (doc == null)
         {
             // skip if the xml failed to load

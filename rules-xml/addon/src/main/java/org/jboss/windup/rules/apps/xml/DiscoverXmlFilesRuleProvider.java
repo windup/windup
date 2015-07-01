@@ -57,7 +57,7 @@ public class DiscoverXmlFilesRuleProvider extends AbstractRuleProvider
                         @Override
                         public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
                         {
-                            addXmlMetaInformation(event.getGraphContext(), payload);
+                            addXmlMetaInformation(event, context, payload);
                         }
 
                         @Override
@@ -68,10 +68,10 @@ public class DiscoverXmlFilesRuleProvider extends AbstractRuleProvider
                     });
     }
 
-    private void addXmlMetaInformation(GraphContext context, XmlFileModel file)
+    private void addXmlMetaInformation(GraphRewrite event, EvaluationContext context, XmlFileModel file)
     {
-        DoctypeMetaService docTypeService = new DoctypeMetaService(context);
-        NamespaceService namespaceService = new NamespaceService(context);
+        DoctypeMetaService docTypeService = new DoctypeMetaService(event.getGraphContext());
+        NamespaceService namespaceService = new NamespaceService(event.getGraphContext());
 
         try
         {
@@ -82,7 +82,7 @@ public class DiscoverXmlFilesRuleProvider extends AbstractRuleProvider
 
             // if this is successful, then we know it is a proper XML file.
             // set it to the graph as an XML file.
-            XmlFileModel xmlResourceModel = GraphService.addTypeToModel(context, file, XmlFileModel.class);
+            XmlFileModel xmlResourceModel = GraphService.addTypeToModel(event.getGraphContext(), file, XmlFileModel.class);
 
             // get and index by the root tag.
             String tagName = $(parsedDocument).tag();
@@ -101,7 +101,7 @@ public class DiscoverXmlFilesRuleProvider extends AbstractRuleProvider
                 }
                 else
                 {
-                    DoctypeMetaModel meta = context.getFramed().addVertex(null, DoctypeMetaModel.class);
+                    DoctypeMetaModel meta = event.getGraphContext().getFramed().addVertex(null, DoctypeMetaModel.class);
                     meta.addXmlResource(xmlResourceModel);
                     meta.setBaseURI(docType.getBaseURI());
                     meta.setName(docType.getName());
@@ -132,7 +132,7 @@ public class DiscoverXmlFilesRuleProvider extends AbstractRuleProvider
                 LOG.log(Level.FINE, "Failed to parse xml entity: " + file.getFilePath() + ", due to: " + e.getMessage(),
                         e);
             }
-            new ClassificationService(context).attachClassification(file, XmlFileModel.UNPARSEABLE_XML_CLASSIFICATION,
+            new ClassificationService(event.getGraphContext()).attachClassification(context, file, XmlFileModel.UNPARSEABLE_XML_CLASSIFICATION,
                         XmlFileModel.UNPARSEABLE_XML_DESCRIPTION);
         }
     }

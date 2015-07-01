@@ -82,11 +82,11 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
                 // get a default name from the parent file (if the maven project doesn't contain one)
                 String defaultName = payload.getParentArchive() == null ? payload.asFile().getParentFile().getName() : payload.getParentArchive()
                             .getFileName();
-                MavenProjectModel mavenProjectModel = extractMavenProjectModel(event, defaultName, payload);
+                MavenProjectModel mavenProjectModel = extractMavenProjectModel(event, context, defaultName, payload);
                 if (mavenProjectModel != null)
                 {
                     // add classification information to file.
-                    classificationService.attachClassification(payload, "Maven POM", "Maven Project Object Model (POM) File");
+                    classificationService.attachClassification(context, payload, "Maven POM", "Maven Project Object Model (POM) File");
                     technologyTagService.addTagToFileModel(payload, "Maven XML", TechnologyTagLevel.INFORMATIONAL);
 
                     ArchiveModel archiveModel = payload.getParentArchive();
@@ -180,10 +180,11 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
         }
     }
 
-    public MavenProjectModel extractMavenProjectModel(GraphRewrite event, String defaultProjectName, XmlFileModel xmlFileModel)
+    public MavenProjectModel extractMavenProjectModel(GraphRewrite event, EvaluationContext context, String defaultProjectName,
+                XmlFileModel xmlFileModel)
     {
         File xmlFile = xmlFileModel.asFile();
-        Document document = new XmlFileService(event.getGraphContext()).loadDocumentQuiet(xmlFileModel);
+        Document document = new XmlFileService(event.getGraphContext()).loadDocumentQuiet(context, xmlFileModel);
         if (document == null)
         {
             LOG.warning("Could not parse pom at: " + xmlFileModel.getFilePath() + " skipping maven project discovery for this.");

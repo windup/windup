@@ -4,14 +4,11 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.LinkModel;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerTemplateDirective;
 import org.jboss.windup.reporting.model.association.LinkableModel;
-import org.jboss.windup.util.Logging;
 
 import freemarker.core.Environment;
 import freemarker.ext.beans.StringModel;
@@ -28,8 +25,7 @@ import freemarker.template.TemplateModel;
  */
 public class LinkableDirective implements WindupFreeMarkerTemplateDirective
 {
-    private static final Logger LOG = Logging.get(LinkableDirective.class);
-    private GraphContext context;
+    public static final String RENDER_LINKABLE = "render_linkable";
 
     @Override
     public String getDescription()
@@ -178,16 +174,16 @@ public class LinkableDirective implements WindupFreeMarkerTemplateDirective
     @Override
     public String getDirectiveName()
     {
-        return "render_linkable";
+        return RENDER_LINKABLE;
     }
 
     @Override
     public void setContext(GraphRewrite event)
     {
-        this.context = event.getGraphContext();
+        // no-op
     }
 
-    private static enum LayoutType
+    private enum LayoutType
     {
         HORIZONTAL, UL, DL, LI, DT
     }

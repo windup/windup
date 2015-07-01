@@ -199,7 +199,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                     {
                         ClassificationService classificationService = new ClassificationService(event.getGraphContext());
                         JavaSourceFileModel sourceFileModel = getJavaSourceFileModel(event.getGraphContext(), path);
-                        classificationService.attachClassification(sourceFileModel, JavaSourceFileModel.UNPARSEABLE_JAVA_CLASSIFICATION,
+                        classificationService.attachClassification(context, sourceFileModel, JavaSourceFileModel.UNPARSEABLE_JAVA_CLASSIFICATION,
                                     JavaSourceFileModel.UNPARSEABLE_JAVA_DESCRIPTION);
                     }
 
@@ -222,7 +222,8 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                                 LOG.log(Level.WARNING, "Failed to process: " + unprocessed + " due to: " + e.getMessage(), e);
                                 ClassificationService classificationService = new ClassificationService(event.getGraphContext());
                                 JavaSourceFileModel sourceFileModel = getJavaSourceFileModel(event.getGraphContext(), unprocessed);
-                                classificationService.attachClassification(sourceFileModel, JavaSourceFileModel.UNPARSEABLE_JAVA_CLASSIFICATION,
+                                classificationService.attachClassification(context, sourceFileModel,
+                                            JavaSourceFileModel.UNPARSEABLE_JAVA_CLASSIFICATION,
                                             JavaSourceFileModel.UNPARSEABLE_JAVA_DESCRIPTION);
                             }
                             estimate.addWork(1);
@@ -240,7 +241,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                         {
                             JavaSourceFileModel sourceFileModel = getJavaSourceFileModel(event.getGraphContext(), unprocessed);
                             message.append("\tFailed to process: " + unprocessed + "\n");
-                            classificationService.attachClassification(sourceFileModel, JavaSourceFileModel.UNPARSEABLE_JAVA_CLASSIFICATION,
+                            classificationService.attachClassification(context, sourceFileModel, JavaSourceFileModel.UNPARSEABLE_JAVA_CLASSIFICATION,
                                         JavaSourceFileModel.UNPARSEABLE_JAVA_DESCRIPTION);
                         }
                         LOG.warning(message.toString());

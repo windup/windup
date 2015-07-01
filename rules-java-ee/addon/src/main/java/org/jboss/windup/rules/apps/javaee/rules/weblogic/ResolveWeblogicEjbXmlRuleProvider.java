@@ -70,12 +70,12 @@ public class ResolveWeblogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
         GraphService<EjbMessageDrivenModel> mdbService = new GraphService<>(event.getGraphContext(), EjbMessageDrivenModel.class);
 
         ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-        classificationService.attachClassification(payload, "Weblogic EJB XML", "Weblogic Enterprise Java Bean XML Descriptor.");
+        classificationService.attachClassification(context, payload, "Weblogic EJB XML", "Weblogic Enterprise Java Bean XML Descriptor.");
 
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
         technologyTagService.addTagToFileModel(payload, "Weblogic EJB XML", TechnologyTagLevel.IMPORTANT);
 
-        Document doc = xmlFileService.loadDocumentQuiet(payload);
+        Document doc = xmlFileService.loadDocumentQuiet(context, payload);
 
         for (Element resourceRef : $(doc).find("resource-description").get())
         {

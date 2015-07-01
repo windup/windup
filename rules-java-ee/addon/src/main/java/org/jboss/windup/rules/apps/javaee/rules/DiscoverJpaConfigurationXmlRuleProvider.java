@@ -73,7 +73,7 @@ public class DiscoverJpaConfigurationXmlRuleProvider extends IteratingRuleProvid
         {
             if (StringUtils.equals(xml.getRootTagName(), "persistence"))
             {
-                Document doc = new XmlFileService(event.getGraphContext()).loadDocumentQuiet(xml);
+                Document doc = new XmlFileService(event.getGraphContext()).loadDocumentQuiet(context, xml);
                 if (doc == null)
                 {
                     // failed to parse, skip
