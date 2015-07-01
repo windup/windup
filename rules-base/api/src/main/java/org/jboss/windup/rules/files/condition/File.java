@@ -1,17 +1,7 @@
 package org.jboss.windup.rules.files.condition;
 
-import java.io.FileReader;
-import java.io.Reader;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Pattern;
-
+import com.github.rwitzel.streamflyer.core.Modifier;
+import com.github.rwitzel.streamflyer.core.ModifyingReader;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.windup.config.GraphRewrite;
@@ -39,48 +29,47 @@ import org.ocpsoft.rewrite.param.ParameterizedPatternResult;
 import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
 import org.ocpsoft.rewrite.util.Maps;
 
-import com.github.rwitzel.streamflyer.core.Modifier;
-import com.github.rwitzel.streamflyer.core.ModifyingReader;
+import java.io.FileReader;
+import java.io.Reader;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Pattern;
 
 /**
- * Matches on file contents based upon parameterization.
+ * Matches on file based upon parameterization. This condition is similar to {@link FileContent} condition, however is concerned only
+ * with the file metadata and not the content inside.
  * <p/>
  * Example:
  * <p/>
  * <pre>
- *   {@link FileContent}.matches("Some example {text}").inFilesNamed("{filename}")
+ *   {@link File}.inFilesNamed("{filename}")
  * </pre>
  *
- * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
+ * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  */
-public class FileContent extends ParameterizedGraphCondition implements FileContentMatches, FileContentFileName
+public class File extends ParameterizedGraphCondition
 {
-    private static Logger LOG = Logging.get(FileContent.class);
+    private static Logger LOG = Logging.get(File.class);
 
-    private RegexParameterizedPatternParser contentPattern;
     private RegexParameterizedPatternParser filenamePattern;
 
-    public FileContent()
+    public File()
     {
     }
 
-    public FileContent(String contentPattern)
+    public static FileFrom from(String from)
     {
-        this.contentPattern = new RegexParameterizedPatternParser(contentPattern);
-    }
-
-    public static FileContentFrom from(String from)
-    {
-        FileContentFromImpl f = new FileContentFromImpl(from);
+        FileFrom f = new FileFrom();
+        f.setFrom(from);
         return f;
     }
 
-    /**
-     * Match file contents against the provided parameterized string.
-     */
-    public static FileContentMatches matches(String contentPattern)
+    public static File inFileNamed(String filenamePattern)
     {
-        return new FileContent(contentPattern);
+        File f = new File();
+        f.filenamePattern = new RegexParameterizedPatternParser(filenamePattern);
+        return f;
     }
 
     /**
@@ -93,26 +82,10 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
         return this;
     }
 
-    /**
-     * Match filenames against the provided parameterized string.
-     */
-    public FileContentFileName inFileNamed(String filenamePattern)
-    {
-        if (filenamePattern != null && !filenamePattern.equals(""))
-        {
-            this.filenamePattern = new RegexParameterizedPatternParser(filenamePattern);
-        }
-        return this;
-    }
-
     @Override
     public Set<String> getRequiredParameterNames()
     {
         Set<String> result = new HashSet<>();
-        if (contentPattern != null)
-        {
-            result.addAll(contentPattern.getRequiredParameterNames());
-        }
         if (filenamePattern != null)
             result.addAll(filenamePattern.getRequiredParameterNames());
         return result;
@@ -121,8 +94,6 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
     @Override
     public void setParameterStore(ParameterStore store)
     {
-        if (contentPattern != null)
-            contentPattern.setParameterStore(store);
         if (filenamePattern != null)
             filenamePattern.setParameterStore(store);
     }
@@ -178,7 +149,7 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
                 final EvaluationStrategy evaluationStrategy)
     {
         final ParameterStore store = DefaultParameterStore.getInstance(context);
-        final GraphService<FileLocationModel> fileLocationService = new GraphService<>(event.getGraphContext(), FileLocationModel.class);
+        final GraphService<FileReferenceModel> fileReferenceService = new GraphService<>(event.getGraphContext(), FileReferenceModel.class);
 
         // initialize the input
         List<FileModel> fileModels = new ArrayList<>();
@@ -186,79 +157,23 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
         fileNameInput(fileModels, event, store);
         allInput(fileModels, event, store);
 
-        final List<FileLocationModel> results = new ArrayList<>();
+        final List<FileReferenceModel> results = new ArrayList<>();
         for (final FileModel fileModel : fileModels)
         {
             if (fileModel.isDirectory())
                 continue;
-            ParameterizedPatternResult parsedFileNamePattern = null;
-            if (filenamePattern != null)
+            final ParameterizedPatternResult parsedFileNamePattern = filenamePattern.parse(fileModel.getFileName());
+            evaluationStrategy.modelMatched();
+            if (parsedFileNamePattern == null || parsedFileNamePattern.submit(event, context))
             {
-                parsedFileNamePattern = filenamePattern.parse(fileModel.getFileName());
-                if (!parsedFileNamePattern.matches())
-                {
-                    continue;
-                }
+                FileReferenceModel fileReferenceModel = fileReferenceService.create();
+                fileReferenceModel.setFile(fileModel);
+                results.add(fileReferenceModel);
+                evaluationStrategy.modelSubmitted(fileReferenceModel);
             }
-            //because it is used in the internal method definition
-            final ParameterizedPatternResult parsedFileNamePattern2 = parsedFileNamePattern;
-            try
+            else
             {
-                Reader reader = new FileReader(fileModel.asFile());
-
-                Pattern fileContentsRegex = contentPattern.getCompiledPattern(store);
-                StreamRegexMatchListener matchListener = new StreamRegexMatchListener()
-                {
-
-                    @Override
-                    public void regexMatched(StreamRegexMatchedEvent matchEvent)
-                    {
-                        String matchedStr = matchEvent.getMatch();
-                        boolean passed = true;
-                        ParameterizedPatternResult contentPatternResult = null;
-                        if (contentPattern != null)
-                        {
-                            contentPatternResult = contentPattern.parse(matchedStr);
-                            passed = passed && contentPatternResult.matches();
-                        }
-                        if (passed)
-                        {
-                            evaluationStrategy.modelMatched();
-                            if (parsedFileNamePattern2 == null || (parsedFileNamePattern2.submit(event, context)
-                                        && (contentPattern == null || contentPatternResult.submit(event, context))))
-                            {
-                                FileLocationModel fileLocationModel = fileLocationService.create();
-                                fileLocationModel.setFile(fileModel);
-                                fileLocationModel.setColumnNumber((int) matchEvent.getColumnNumber());
-                                // increment by one, as the source is 0-based, but the model is 1-based
-                                int lineNumber = (int) (matchEvent.getLineNumber() + 1);
-                                fileLocationModel.setLineNumber(lineNumber);
-                                fileLocationModel.setLength(matchedStr.length());
-                                fileLocationModel.setSourceSnippit(matchedStr);
-                                results.add(fileLocationModel);
-                                evaluationStrategy.modelSubmitted(fileLocationModel);
-                            }
-                            else
-                            {
-                                evaluationStrategy.modelSubmissionRejected();
-                            }
-                        }
-                    }
-                };
-
-                Modifier regexModifier = StreamRegexMatcher.create(fileContentsRegex.pattern(), matchListener);
-                try (ModifyingReader modifyingReader = new ModifyingReader(reader, regexModifier))
-                {
-
-                    char[] buffer = new char[32768];
-                    while (modifyingReader.read(buffer) != -1)
-                        ; // consume the stream
-                }
-            }
-            catch (Exception e)
-            {
-                LOG.log(Level.WARNING, "Error loading and matching contents for file: " + fileModel.getFilePath() + " due to: " + e.getMessage(),
-                            e);
+                evaluationStrategy.modelSubmissionRejected();
             }
         }
 
@@ -271,7 +186,6 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
         StringBuilder builder = new StringBuilder();
         builder.append(this.getClass().getSimpleName());
         builder.append(".from(" + getInputVariablesName() + ")");
-        builder.append(".matches(" + contentPattern + ")");
         builder.append(".inFilesNamed(" + filenamePattern + ")");
         builder.append(".as(" + getVarname() + ")");
         return builder.toString();
@@ -279,7 +193,7 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
 
     /**
      * Generating the input vertices is quite complex. Therefore there are multiple methods that handles the input vertices based on the attribute
-     * specified in specific order. This method handles the {@link FileContent#from(String)} attribute.
+     * specified in specific order. This method handles the {@link File#from(String)} attribute.
      */
     private void fromInput(List<FileModel> vertices, GraphRewrite event)
     {
@@ -297,7 +211,7 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
 
     /**
      * Generating the input vertices is quite complex. Therefore there are multiple methods that handles the input vertices based on the attribute
-     * specified in specific order. This method handles the {@link FileContent#inFileNamed(String)} attribute.
+     * specified in specific order. This method handles the {@link File#inFileNamed(String)} attribute.
      */
     private void fileNameInput(List<FileModel> vertices, GraphRewrite event, ParameterStore store)
     {
@@ -341,5 +255,10 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
                 vertices.add(fileModel);
             }
         }
+    }
+
+    public void setFilenamePattern(RegexParameterizedPatternParser filenamePattern)
+    {
+        this.filenamePattern = filenamePattern;
     }
 }

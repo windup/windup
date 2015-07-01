@@ -135,8 +135,18 @@
 
     <xs:element name="filecontent">
         <xs:complexType>
+            <xs:attribute type="xs:string" name="from" />
             <xs:attribute type="xs:string" name="pattern" />
             <xs:attribute type="xs:string" name="filename" />
+            <xs:attribute type="xs:string" name="as" />
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="file">
+        <xs:complexType>
+            <xs:attribute type="xs:string" name="from" />
+            <xs:attribute type="xs:string" name="filename" />
+            <xs:attribute type="xs:string" name="as" />
         </xs:complexType>
     </xs:element>
 
@@ -259,6 +269,7 @@
             <xs:element ref="xmlfile" minOccurs="0" maxOccurs="unbounded" />
             <xs:element ref="project" minOccurs="0" maxOccurs="unbounded" />
             <xs:element ref="filecontent" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element ref="file" minOccurs="0" maxOccurs="unbounded" />
         </xs:choice>
     </xs:complexType>
 
