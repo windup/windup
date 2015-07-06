@@ -6,8 +6,10 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -19,7 +21,9 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.decompiler.api.ClassDecompileRequest;
 import org.jboss.windup.decompiler.api.DecompilationListener;
+import org.jboss.windup.decompiler.api.DecompilationResult;
 import org.jboss.windup.decompiler.fernflower.FernflowerDecompiler;
+import org.jboss.windup.decompiler.procyon.ProcyonDecompiler;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.FileService;
@@ -107,7 +111,7 @@ public class FernflowerDecompilerOperation extends GraphOperation
 
         ProgressEstimate progressEstimate = new ProgressEstimate(totalWork);
 
-        AddDecompiledItemsToGraph addDecompiledItemsToGraph = new AddDecompiledItemsToGraph(progressEstimate, event);
+        AddDecompiledItemsToGraph addDecompiledItemsToGraph = new AddDecompiledItemsToGraph(classesToDecompile, progressEstimate, event);
         FernflowerDecompiler decompiler = new FernflowerDecompiler();
         decompiler.setExecutorService(Executors.newFixedThreadPool(threads), threads);
         decompiler.decompileClassFiles(classesToDecompile, addDecompiledItemsToGraph);
@@ -127,12 +131,16 @@ public class FernflowerDecompilerOperation extends GraphOperation
         private final ExecutorService executorService = Executors.newSingleThreadExecutor();
         private final AtomicInteger queueSize = new AtomicInteger(0);
 
+        private final Map<String, ClassDecompileRequest> requestMap;
         private final GraphRewrite event;
-        private final AtomicInteger atomicInteger = new AtomicInteger(0);
         private final ProgressEstimate progressEstimate;
+        private final AtomicInteger atomicInteger = new AtomicInteger(0);
 
-        private AddDecompiledItemsToGraph(ProgressEstimate progressEstimate, GraphRewrite event)
+        private AddDecompiledItemsToGraph(List<ClassDecompileRequest> requests, ProgressEstimate progressEstimate, GraphRewrite event)
         {
+            this.requestMap = new HashMap<>(requests.size());
+            for (ClassDecompileRequest request : requests)
+                requestMap.put(request.getClassFile().toString(), request);
             this.progressEstimate = progressEstimate;
             this.event = event;
         }
@@ -163,7 +171,24 @@ public class FernflowerDecompilerOperation extends GraphOperation
         @Override
         public void decompilationFailed(String inputPath, String message)
         {
-            progressEstimate.addWork(1);
+            ClassDecompileRequest request = requestMap.get(inputPath);
+            ProcyonDecompiler procyon = new ProcyonDecompiler();
+
+            DecompilationResult result = procyon.decompileClassFile(request.getRootDirectory(), request.getClassFile(), request.getOutputDirectory());
+            if (!result.getFailures().isEmpty())
+            {
+                LOG.warning("Failsafe Procyon decompilation of " + inputPath + " failed!");
+                progressEstimate.addWork(1);
+            }
+            else
+            {
+                for (Map.Entry<String, String> decompiledFile : result.getDecompiledFiles().entrySet())
+                {
+                    LOG.info("Failsafe Procyon decompilation of " + inputPath + " successful!");
+                    fileDecompiled(decompiledFile.getKey(), decompiledFile.getValue());
+                }
+            }
+
         }
 
         @Override
