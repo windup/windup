@@ -9,6 +9,7 @@ import org.jboss.windup.config.exception.ConfigurationException;
 import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
+import org.jboss.windup.config.parser.xml.RuleProviderHandler;
 import org.jboss.windup.reporting.config.Link;
 import org.jboss.windup.reporting.config.classification.Classification;
 import org.jboss.windup.reporting.model.Severity;
@@ -28,7 +29,7 @@ import org.w3c.dom.Element;
  * 
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-@NamespaceElementHandler(elementName = "classification", namespace = "http://windup.jboss.org/schema/jboss-ruleset")
+@NamespaceElementHandler(elementName = "classification", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
 public class ClassificationHandler implements ElementHandler<Classification>
 {
 

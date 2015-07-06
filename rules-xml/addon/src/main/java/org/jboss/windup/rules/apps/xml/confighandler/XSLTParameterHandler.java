@@ -6,9 +6,10 @@ import org.jboss.windup.config.exception.ConfigurationException;
 import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
+import org.jboss.windup.config.parser.xml.RuleProviderHandler;
 import org.w3c.dom.Element;
 
-@NamespaceElementHandler(elementName = "xslt-parameter", namespace = "http://windup.jboss.org/schema/jboss-ruleset")
+@NamespaceElementHandler(elementName = "xslt-parameter", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
 public class XSLTParameterHandler implements ElementHandler<XSLTParameter>
 {
 

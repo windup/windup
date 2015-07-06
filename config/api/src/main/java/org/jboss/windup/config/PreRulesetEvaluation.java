@@ -12,5 +12,5 @@ public interface PreRulesetEvaluation
     /**
      * The action to be performed before evaluation of the compiled {@link Rule} set.
      */
-    public void preRulesetEvaluation(GraphRewrite event);
+    void preRulesetEvaluation(GraphRewrite event);
 }

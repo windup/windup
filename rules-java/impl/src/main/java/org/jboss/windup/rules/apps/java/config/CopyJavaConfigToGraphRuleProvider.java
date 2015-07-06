@@ -16,6 +16,8 @@ import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.InitializationPhase;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.rules.apps.java.model.WindupJavaConfigurationModel;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.jboss.windup.util.PathUtil;
@@ -56,7 +58,7 @@ public class CopyJavaConfigToGraphRuleProvider extends AbstractRuleProvider
                 @SuppressWarnings("unchecked")
                 final List<String> excludeJavaPackages;
                 if (config.get(ExcludePackagesOption.NAME) == null)
-                    excludeJavaPackages = new ArrayList<String>();
+                    excludeJavaPackages = new ArrayList<>();
                 else
                     excludeJavaPackages = new ArrayList<>((List<String>) config.get(ExcludePackagesOption.NAME));
 
@@ -88,11 +90,22 @@ public class CopyJavaConfigToGraphRuleProvider extends AbstractRuleProvider
                 FileVisit.visit(PathUtil.getUserIgnoreDir().toFile(), predicate, visitor);
                 FileVisit.visit(PathUtil.getWindupIgnoreDir().toFile(), predicate, visitor);
 
-                WindupJavaConfigurationModel javaCfg = WindupJavaConfigurationService.getJavaConfigurationModel(event
+                WindupJavaConfigurationModel javaConfiguration = WindupJavaConfigurationService.getJavaConfigurationModel(event
                             .getGraphContext());
-                javaCfg.setSourceMode(sourceMode == null ? false : sourceMode);
-                javaCfg.setScanJavaPackageList(includeJavaPackages);
-                javaCfg.setExcludeJavaPackageList(excludeJavaPackages);
+                javaConfiguration.setSourceMode(sourceMode == null ? false : sourceMode);
+                javaConfiguration.setScanJavaPackageList(includeJavaPackages);
+                javaConfiguration.setExcludeJavaPackageList(excludeJavaPackages);
+
+                List<File> additionalClasspaths = (List<File>) config.get(AdditionalClasspathOption.NAME);
+                if (additionalClasspaths != null)
+                {
+                    FileService fileService = new FileService(event.getGraphContext());
+                    for (File file : additionalClasspaths)
+                    {
+                        FileModel fileModel = fileService.createByFilePath(file.getAbsolutePath());
+                        javaConfiguration.addAdditionalClasspath(fileModel);
+                    }
+                }
             }
         };
 

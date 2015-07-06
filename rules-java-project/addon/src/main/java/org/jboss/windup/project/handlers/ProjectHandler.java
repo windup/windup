@@ -8,11 +8,12 @@ import org.jboss.windup.config.exception.ConfigurationException;
 import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
+import org.jboss.windup.config.parser.xml.RuleProviderHandler;
 import org.jboss.windup.project.condition.Artifact;
 import org.jboss.windup.project.condition.Project;
 import org.w3c.dom.Element;
 
-@NamespaceElementHandler(elementName = "project", namespace = "http://windup.jboss.org/schema/jboss-ruleset")
+@NamespaceElementHandler(elementName = "project", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
 public class ProjectHandler implements ElementHandler<Project>
 {
 
@@ -26,7 +27,7 @@ public class ProjectHandler implements ElementHandler<Project>
         {
             artifact = handlerManager.processElement(child);
         }
-        
+
         Project project = Project.dependsOnArtifact(artifact);
         return project;
     }

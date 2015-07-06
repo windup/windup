@@ -10,6 +10,7 @@ import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.windup.ast.java.data.ResolutionStatus;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
@@ -70,9 +71,11 @@ public class TypeReferenceServiceTest
         FileModel f2 = context.getFramed().addVertex(null, FileModel.class);
         f2.setFilePath("/f2");
 
-        JavaTypeReferenceModel t1 = typeReferenceService.createTypeReference(f1, TypeReferenceLocation.ANNOTATION, 0, 2, 2,
+        JavaTypeReferenceModel t1 = typeReferenceService.createTypeReference(f1, TypeReferenceLocation.ANNOTATION, ResolutionStatus.RESOLVED, 0, 2,
+                    2,
                     "com.example.Class1", "@Class1");
-        JavaTypeReferenceModel t2 = typeReferenceService.createTypeReference(f1, TypeReferenceLocation.ANNOTATION, 0, 2, 2,
+        JavaTypeReferenceModel t2 = typeReferenceService.createTypeReference(f1, TypeReferenceLocation.ANNOTATION, ResolutionStatus.RESOLVED, 0, 2,
+                    2,
                     "com.example.Class1", "@Class1");
 
         InlineHintModel b1 = inlineHintService.create();

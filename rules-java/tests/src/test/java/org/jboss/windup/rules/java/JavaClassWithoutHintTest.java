@@ -15,16 +15,17 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.windup.engine.predicates.EnumeratedRuleProviderPredicate;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
+import org.jboss.windup.exec.rulefilters.NotPredicate;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
-import org.jboss.windup.graph.model.ProjectModel;
-import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
+import org.jboss.windup.rules.apps.java.scan.provider.FindUnboundJavaReferencesRuleProvider;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -53,42 +54,20 @@ public class JavaClassWithoutHintTest
     @Test
     public void testJavaClassCondition() throws IOException, InstantiationException, IllegalAccessException
     {
-        try (GraphContext context = factory.create(getDefaultPath()))
+        final Path outputPath = getDefaultPath();
+        try (GraphContext context = factory.create(outputPath))
         {
             final String inputDir = "src/test/resources/org/jboss/windup/rules/java";
 
-            final Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(),
-                        "windup_" + RandomStringUtils.randomAlphanumeric(6));
             FileUtils.deleteDirectory(outputPath.toFile());
             Files.createDirectories(outputPath);
-
-            ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
-            pm.setName("Main Project");
-
-            FileModel inputPathFrame = context.getFramed().addVertex(null, FileModel.class);
-            inputPathFrame.setFilePath(inputDir);
-            inputPathFrame.setProjectModel(pm);
-            pm.addFileModel(inputPathFrame);
-
-            pm.setRootFileModel(inputPathFrame);
-
-            FileModel fileModel = context.getFramed().addVertex(null, FileModel.class);
-            fileModel.setFilePath(inputDir + "/JavaClassTestFile1.java");
-            fileModel.setProjectModel(pm);
-            pm.addFileModel(fileModel);
-
-            fileModel = context.getFramed().addVertex(null, FileModel.class);
-            fileModel.setFilePath(inputDir + "/JavaClassTestFile2.java");
-            fileModel.setProjectModel(pm);
-            pm.addFileModel(fileModel);
-
-            context.getGraph().getBaseGraph().commit();
 
             final WindupConfiguration processorConfig = new WindupConfiguration().setOutputDirectory(outputPath);
             processorConfig.setGraphContext(context);
             processorConfig.setInputPath(Paths.get(inputDir));
             processorConfig.setOutputDirectory(outputPath);
             processorConfig.setOptionValue(ScanPackagesOption.NAME, Collections.singletonList(""));
+            processorConfig.setRuleProviderFilter(new NotPredicate(new EnumeratedRuleProviderPredicate(FindUnboundJavaReferencesRuleProvider.class)));
 
             processor.execute(processorConfig);
 
@@ -99,10 +78,10 @@ public class JavaClassWithoutHintTest
             for (JavaTypeReferenceModel ref : typeReferences)
             {
                 String sourceSnippit = ref.getResolvedSourceSnippit();
-                Assert.assertTrue(sourceSnippit.contains("org.jboss"));
-                count++;
+                if (sourceSnippit.contains("org.jboss"))
+                    count++;
             }
-            Assert.assertEquals(9, count);
+            Assert.assertTrue(count > 9);
 
             GraphService<InlineHintModel> hintService = new GraphService<>(context, InlineHintModel.class);
             Iterable<InlineHintModel> hints = hintService.findAll();

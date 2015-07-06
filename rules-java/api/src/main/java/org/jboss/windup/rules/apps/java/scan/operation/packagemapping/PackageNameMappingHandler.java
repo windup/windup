@@ -6,6 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
+import org.jboss.windup.config.parser.xml.RuleProviderHandler;
 import org.jboss.windup.util.exception.WindupException;
 import org.w3c.dom.Element;
 
@@ -18,7 +19,7 @@ import org.w3c.dom.Element;
  * &lt;package-mapping from="org.apache" to="Apache"/&gt;
  * </pre>
  */
-@NamespaceElementHandler(elementName = PackageNameMappingHandler.ELEM_NAME, namespace = "http://windup.jboss.org/schema/jboss-ruleset")
+@NamespaceElementHandler(elementName = PackageNameMappingHandler.ELEM_NAME, namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
 public class PackageNameMappingHandler implements ElementHandler<Void>
 {
     protected static final String ELEM_NAME = "package-mapping";

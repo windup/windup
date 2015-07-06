@@ -1,5 +1,6 @@
 package org.jboss.windup.rules.apps.java.scan.ast;
 
+import org.jboss.windup.ast.java.data.ResolutionStatus;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.graph.IndexType;
 import org.jboss.windup.graph.Indexed;
@@ -18,9 +19,10 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 public interface JavaTypeReferenceModel extends FileLocationModel
 {
 
-    public static final String TYPE = "JavaTypeReference";
-    public static final String REFERENCE_TYPE = "referenceType";
-    public static final String RESOLVED_SOURCE_SNIPPIT = "resolvedSourceSnippit";
+    String TYPE = "JavaTypeReference";
+    String REFERENCE_TYPE = "referenceType";
+    String RESOLVED_SOURCE_SNIPPIT = "resolvedSourceSnippit";
+    String RESOLUTION_STATUS = "resolutionStatus";
 
     /**
      * Gets the snippit referenced by this {@link FileLocationModel}.
@@ -47,6 +49,19 @@ public interface JavaTypeReferenceModel extends FileLocationModel
     @Property(REFERENCE_TYPE)
     @Indexed(IndexType.SEARCH)
     void setReferenceLocation(TypeReferenceLocation type);
+
+    /**
+     * Indicates whether or not we were able to resolve this reference based upon information available on the classpath
+     */
+    @Property(RESOLUTION_STATUS)
+    ResolutionStatus getResolutionStatus();
+
+    /**
+     * Indicates whether or not we were able to resolve this reference based upon information available on the classpath
+     */
+    @Property(RESOLUTION_STATUS)
+    @Indexed
+    void setResolutionStatus(ResolutionStatus status);
 
     /**
      * Gets a human readable description of the location in the file

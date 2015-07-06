@@ -139,7 +139,7 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
             @SuppressWarnings("rawtypes")
             public void modelMatched()
             {
-                this.variables = new LinkedHashMap<String, List<WindupVertexFrame>>();
+                this.variables = new LinkedHashMap<>();
                 frameCreationContext.beginNew((Map) variables);
             }
 

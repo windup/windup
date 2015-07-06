@@ -13,6 +13,7 @@ import org.jboss.windup.config.exception.ConfigurationException;
 import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
+import org.jboss.windup.config.parser.xml.RuleProviderHandler;
 import org.jboss.windup.rules.apps.xml.operation.xslt.XSLTTransformation;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Condition;
@@ -30,7 +31,7 @@ import org.w3c.dom.Element;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
-@NamespaceElementHandler(elementName = "xslt", namespace = "http://windup.jboss.org/schema/jboss-ruleset")
+@NamespaceElementHandler(elementName = "xslt", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
 public class XSLTTransformationHandler implements ElementHandler<XSLTTransformation>
 {
 

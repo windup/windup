@@ -14,8 +14,8 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(JavaAnnotationTypeReferenceModel.TYPE)
 public interface JavaAnnotationTypeReferenceModel extends JavaTypeReferenceModel, JavaAnnotationTypeValueModel
 {
-    public static final String ANNOTATION_VALUE_MAP = "annotationValueMap";
-    public static final String TYPE = "JavaAnnotationTypeReference";
+    String ANNOTATION_VALUE_MAP = "annotationValueMap";
+    String TYPE = "JavaAnnotationTypeReference";
 
     /**
      * Contains the values of attributes specified within the annotation.

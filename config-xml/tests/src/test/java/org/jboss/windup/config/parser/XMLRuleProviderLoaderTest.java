@@ -8,8 +8,8 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.RuleProvider;
@@ -44,10 +44,9 @@ public class XMLRuleProviderLoaderTest
     })
     public static AddonArchive getDeployment()
     {
-        AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
+        return ShrinkWrap.create(AddonArchive.class)
                     .addBeansXML()
                     .addAsResource(new File("src/test/resources/testxml/Test1.windup.xml"));
-        return archive;
     }
 
     @Inject

@@ -31,28 +31,23 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(FileModel.TYPE)
 public interface FileModel extends ResourceModel
 {
-    public static final String ARCHIVE_FILES = "archiveFiles";
+    String TYPE = "FileResource";
 
-    public static final String PARENT_FILE = "parentFile";
-
-    public static final String SHA1_HASH = "sha1Hash";
-
-    public static final String MD5_HASH = "md5Hash";
-
-    public static final String FILE_TO_PROJECT_MODEL = "fileToProjectModel";
-
-    public static final String TYPE = "FileResource";
-
-    public static final String FILE_NAME = "fileName";
-    public static final String FILE_PATH = "filePath";
-    public static final String IS_DIRECTORY = "isDirectory";
+    String ARCHIVE_FILES = "archiveFiles";
+    String PARENT_FILE = "parentFile";
+    String SHA1_HASH = "sha1Hash";
+    String MD5_HASH = "md5Hash";
+    String FILE_TO_PROJECT_MODEL = "fileToProjectModel";
+    String FILE_NAME = "fileName";
+    String FILE_PATH = "filePath";
+    String IS_DIRECTORY = "isDirectory";
 
     /**
      * Contains the File Name (the last component of the path). Eg, a file /tmp/foo/bar/file.txt would have fileName set
      * to "file.txt"
      */
     @Property(FILE_NAME)
-    public String getFileName();
+    String getFileName();
 
     /**
      * Contains the File Name (the last component of the path). Eg, a file /tmp/foo/bar/file.txt would have fileName set
@@ -60,14 +55,14 @@ public interface FileModel extends ResourceModel
      */
     @Indexed
     @Property(FILE_NAME)
-    public void setFileName(String filename);
+    void setFileName(String filename);
 
     /**
      * Contains the full path to the file (eg, /tmp/foo/bar/file.txt)
      */
     @Indexed
     @Property(FILE_PATH)
-    public String getFilePath();
+    String getFilePath();
 
     /**
      * Contains the full path to the file (eg, /tmp/foo/bar/file.txt)
@@ -80,43 +75,43 @@ public interface FileModel extends ResourceModel
      * Indicates whether the file is a directory or not
      */
     @Property(IS_DIRECTORY)
-    public boolean isDirectory();
+    boolean isDirectory();
 
     /**
      * Contains a MD5 Hash of the file
      */
     @Property(MD5_HASH)
-    public String getMD5Hash();
+    String getMD5Hash();
 
     /**
      * Contains a MD5 Hash of the file
      */
     @Property(MD5_HASH)
-    public void setMD5Hash(String md5Hash);
+    void setMD5Hash(String md5Hash);
 
     /**
      * Contains a SHA1 Hash of the file
      */
     @Property(SHA1_HASH)
-    public String getSHA1Hash();
+    String getSHA1Hash();
 
     /**
      * Contains a SHA1 Hash of the file
      */
     @Property(SHA1_HASH)
-    public void setSHA1Hash(String sha1Hash);
+    void setSHA1Hash(String sha1Hash);
 
     /**
      * Parent directory
      */
     @Adjacency(label = PARENT_FILE, direction = Direction.OUT)
-    public FileModel getParentFile();
+    FileModel getParentFile();
 
     /**
      * Parent directory
      */
     @Adjacency(label = PARENT_FILE, direction = Direction.OUT)
-    public void setParentFile(FileModel parentFile);
+    void setParentFile(FileModel parentFile);
 
     /**
      * Files contained within this directory
@@ -124,61 +119,61 @@ public interface FileModel extends ResourceModel
      * @return
      */
     @Adjacency(label = PARENT_FILE, direction = Direction.IN)
-    public Iterable<FileModel> getFilesInDirectory();
+    Iterable<FileModel> getFilesInDirectory();
 
     /**
      * Add a file to this directory
      */
     @Adjacency(label = PARENT_FILE, direction = Direction.IN)
-    public void addFileToDirectory(FileModel fileModel);
+    void addFileToDirectory(FileModel fileModel);
 
     /**
      * Indicates the archive that contained this file
      */
     @Adjacency(label = ARCHIVE_FILES, direction = Direction.IN)
-    public ArchiveModel getParentArchive();
+    ArchiveModel getParentArchive();
 
     /**
      * Sets the archive that contained this file
      */
     @Adjacency(label = ARCHIVE_FILES, direction = Direction.IN)
-    public void setParentArchive(ArchiveModel parentArchive);
+    void setParentArchive(ArchiveModel parentArchive);
 
     /**
      * Gets the ProjectModel that this file is a part of
      */
     @Adjacency(label = FILE_TO_PROJECT_MODEL, direction = Direction.OUT)
-    public ProjectModel getProjectModel();
+    ProjectModel getProjectModel();
 
     /**
      * Sets the ProjectModel that this file is a part of
      */
     @Adjacency(label = FILE_TO_PROJECT_MODEL, direction = Direction.OUT)
-    public void setProjectModel(ProjectModel projectModel);
+    void setProjectModel(ProjectModel projectModel);
 
     /**
      * Gets a {@link File} object representing this file
      */
     @JavaHandler
-    public File asFile() throws RuntimeException;
+    File asFile() throws RuntimeException;
 
     /**
      * Returns an open {@link InputStream} for reading from this file
      */
     @JavaHandler
-    public InputStream asInputStream() throws RuntimeException;
+    InputStream asInputStream() throws RuntimeException;
 
     /**
      * Returns the path of this file within the archive (including all subarchives, etc)
      */
     @JavaHandler
-    public String getPrettyPath();
+    String getPrettyPath();
 
     /**
      * Returns the path of this file within the parent project (format suitable for reporting)
      */
     @JavaHandler
-    public String getPrettyPathWithinProject();
+    String getPrettyPathWithinProject();
 
     abstract class Impl implements FileModel, JavaHandlerContext<Vertex>
     {

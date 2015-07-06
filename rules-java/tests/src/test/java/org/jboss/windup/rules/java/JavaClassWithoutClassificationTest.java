@@ -97,20 +97,23 @@ public class JavaClassWithoutClassificationTest
                         JavaTypeReferenceModel.class);
             Iterable<JavaTypeReferenceModel> typeReferences = typeRefService.findAll();
 
-            int count = 0;
+            boolean foundJBossForgeSnippit = false;
+            boolean foundJavaClassTestFileSnippit = false;
             for (JavaTypeReferenceModel ref : typeReferences)
             {
                 String sourceSnippit = ref.getResolvedSourceSnippit();
-                Assert.assertTrue(sourceSnippit.contains("org.jboss.forge")
-                            || sourceSnippit.contains("org.jboss.windup.rules.java.JavaClassTestFile"));
-                count++;
+                if (sourceSnippit.contains("org.jboss.forge"))
+                    foundJBossForgeSnippit = true;
+                if (sourceSnippit.contains("org.jboss.windup.rules.java.JavaClassTestFile"))
+                    foundJavaClassTestFileSnippit = true;
             }
-            Assert.assertEquals(6, count);
+            Assert.assertTrue(foundJBossForgeSnippit);
+            Assert.assertTrue(foundJavaClassTestFileSnippit);
 
             GraphService<ClassificationModel> classificationService = new GraphService<>(context, ClassificationModel.class);
             Iterable<ClassificationModel> classifications = classificationService.findAll();
 
-            count = 0;
+            int count = 0;
             for (ClassificationModel cModel : classifications)
             {
                 count++;

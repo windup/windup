@@ -12,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
+import org.jboss.windup.config.parser.xml.RuleProviderHandler;
 import org.jboss.windup.graph.GraphTypeManager;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.util.exception.WindupException;
@@ -20,7 +21,7 @@ import org.w3c.dom.Element;
 /**
  * Handles parsing the "file-mapping" element to add rules to the current ruleset.
  */
-@NamespaceElementHandler(elementName = FileMappingHandler.ELEM_NAME, namespace = "http://windup.jboss.org/schema/jboss-ruleset")
+@NamespaceElementHandler(elementName = FileMappingHandler.ELEM_NAME, namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
 public class FileMappingHandler implements ElementHandler<Void>
 {
     protected static final String ELEM_NAME = "file-mapping";

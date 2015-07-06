@@ -6,11 +6,12 @@ import org.jboss.windup.config.exception.ConfigurationException;
 import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
+import org.jboss.windup.config.parser.xml.RuleProviderHandler;
 import org.jboss.windup.project.condition.Artifact;
 import org.jboss.windup.project.condition.Version;
 import org.w3c.dom.Element;
 
-@NamespaceElementHandler(elementName = "artifact", namespace = "http://windup.jboss.org/schema/jboss-ruleset")
+@NamespaceElementHandler(elementName = "artifact", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
 public class ArtifactHandler implements ElementHandler<Artifact>
 {
 

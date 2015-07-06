@@ -2,6 +2,7 @@ package org.jboss.windup.config.metadata;
 
 import org.jboss.forge.furnace.versions.VersionRange;
 import org.jboss.forge.furnace.versions.Versions;
+import org.jboss.windup.graph.model.TechnologyReferenceModel;
 
 /**
  * Represents a technology with a name (id) and {@link VersionRange}.
@@ -13,12 +14,19 @@ public class TechnologyReference
     private String id;
     private VersionRange versionRange;
 
+    public TechnologyReference(TechnologyReferenceModel model)
+    {
+        this(model.getTechnologyID(), model.getVersionRange());
+    }
+
     /**
      * Construct a new {@link TechnologyReference} using the given {@link String} ID and {@link String} version range.
      */
-    public TechnologyReference(String id, String versionrange)
+    public TechnologyReference(String id, String versionRange)
     {
-        this(id, Versions.parseVersionRange(versionrange));
+        this.id = id;
+        if (versionRange != null)
+            this.versionRange = Versions.parseVersionRange(versionRange);
     }
 
     /**

@@ -1,32 +1,40 @@
 package org.jboss.windup.graph.model;
 
-import org.jboss.windup.graph.model.WindupVertexFrame;
-
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
- * Model saves an additional links for the {@link InlineHintModel} or {@link ClassificationModel}.
+ * Model saves additional link information.
  */
-@TypeValue("LinkModel")
+@TypeValue(LinkModel.TYPE)
 public interface LinkModel extends WindupVertexFrame
 {
-    public static final String PROPERTY_LINK = "href";
-    public static final String PROPERTY_DESCRIPTION = "description";
+    String TYPE = "LinkModel";
+    String PROPERTY_LINK = "href";
+    String PROPERTY_DESCRIPTION = "description";
 
     /**
      * The description of the link.
      */
     @Property(PROPERTY_DESCRIPTION)
-    public void setDescription(String description);
+    void setDescription(String description);
 
+    /**
+     * The description of the link.
+     */
     @Property(PROPERTY_DESCRIPTION)
-    public String getDescription();
+    String getDescription();
 
+    /**
+     * The Link URI itself.
+     */
     @Property(PROPERTY_LINK)
-    public void setLink(String link);
+    void setLink(String link);
 
+    /**
+     * The Link URI itself.
+     */
     @Property(PROPERTY_LINK)
-    public String getLink();
+    String getLink();
 
 }

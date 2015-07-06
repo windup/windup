@@ -28,8 +28,6 @@ import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
-import org.jboss.windup.graph.model.ProjectModel;
-import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
 import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
@@ -78,28 +76,6 @@ public class JavaClassCompositeTest
                         "windup_" + RandomStringUtils.randomAlphanumeric(6));
             FileUtils.deleteDirectory(outputPath.toFile());
             Files.createDirectories(outputPath);
-
-            ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
-            pm.setName("Main Project");
-
-            FileModel inputPathFrame = context.getFramed().addVertex(null, FileModel.class);
-            inputPathFrame.setFilePath(inputDir);
-            inputPathFrame.setProjectModel(pm);
-            pm.addFileModel(inputPathFrame);
-
-            pm.setRootFileModel(inputPathFrame);
-
-            FileModel fileModel = context.getFramed().addVertex(null, FileModel.class);
-            fileModel.setFilePath(inputDir + "/JavaClassTestFile1.java");
-            fileModel.setProjectModel(pm);
-            pm.addFileModel(fileModel);
-
-            fileModel = context.getFramed().addVertex(null, FileModel.class);
-            fileModel.setFilePath(inputDir + "/JavaClassTestFile2.java");
-            fileModel.setProjectModel(pm);
-            pm.addFileModel(fileModel);
-
-            context.getGraph().getBaseGraph().commit();
 
             final WindupConfiguration processorConfig = new WindupConfiguration().setOutputDirectory(outputPath);
             processorConfig.setRuleProviderFilter(new RuleProviderWithDependenciesPredicate(

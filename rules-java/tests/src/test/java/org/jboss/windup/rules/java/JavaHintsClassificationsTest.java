@@ -138,7 +138,6 @@ public class JavaHintsClassificationsTest
 
                 Assert.assertEquals(4, provider.getTypeReferences().size());
                 List<InlineHintModel> hints = Iterators.asList(hintService.findAll());
-                Assert.assertEquals(4, hints.size());
 
                 boolean foundAddonDep1 = false;
                 boolean foundAddonDep2 = false;

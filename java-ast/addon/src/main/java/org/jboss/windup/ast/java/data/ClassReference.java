@@ -11,6 +11,7 @@ package org.jboss.windup.ast.java.data;
 public class ClassReference
 {
     private final String qualifiedName;
+    private final ResolutionStatus resolutionStatus;
     private final int lineNumber;
     private final int column;
     private final int length;
@@ -20,14 +21,16 @@ public class ClassReference
     /**
      * Creates the {@link ClassReference} with the given qualfiedName, location, lineNumber, column, and length.
      */
-    public ClassReference(String qualifiedName, TypeReferenceLocation location, int lineNumber, int column, int length, String line)
+    public ClassReference(String qualifiedName, ResolutionStatus resolutionStatus, TypeReferenceLocation location, int lineNumber,
+                int column, int length, String line)
     {
         this.qualifiedName = qualifiedName;
+        this.resolutionStatus = resolutionStatus;
         this.location = location;
         this.lineNumber = lineNumber;
         this.column = column;
         this.length = length;
-        this.line= line;
+        this.line = line;
     }
 
     /**
@@ -87,60 +90,54 @@ public class ClassReference
         return location;
     }
 
-    @Override
-    public int hashCode()
+    public ResolutionStatus getResolutionStatus()
     {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + column;
-        result = prime * result + length;
-        result = prime * result + lineNumber;
-        result = prime * result + ((location == null) ? 0 : location.hashCode());
-        result = prime * result + ((qualifiedName == null) ? 0 : qualifiedName.hashCode());
-        return result;
+        return resolutionStatus;
     }
 
     @Override
-    public boolean equals(Object obj)
+    public boolean equals(Object o)
     {
-        if (this == obj)
+        if (this == o)
             return true;
-        if (obj == null)
+        if (o == null || getClass() != o.getClass())
             return false;
-        if (getClass() != obj.getClass())
+
+        ClassReference that = (ClassReference) o;
+
+        if (lineNumber != that.lineNumber)
             return false;
-        ClassReference other = (ClassReference) obj;
-        if (column != other.column)
+        if (column != that.column)
             return false;
-        if (length != other.length)
+        if (length != that.length)
             return false;
-        if (lineNumber != other.lineNumber)
+        if (qualifiedName != null ? !qualifiedName.equals(that.qualifiedName) : that.qualifiedName != null)
             return false;
-        if(line == null) {
-            if(other.line!=null) {
-                return false;
-            }
-        } else {
-            if(!line.equals(other.line)) {
-                return false;
-            }
-        }
-        if (location != other.location)
+        if (resolutionStatus != that.resolutionStatus)
             return false;
-        if (qualifiedName == null)
-        {
-            if (other.qualifiedName != null)
-                return false;
-        }
-        else if (!qualifiedName.equals(other.qualifiedName))
+        if (location != that.location)
             return false;
-        return true;
+        return !(line != null ? !line.equals(that.line) : that.line != null);
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result = qualifiedName != null ? qualifiedName.hashCode() : 0;
+        result = 31 * result + (resolutionStatus != null ? resolutionStatus.hashCode() : 0);
+        result = 31 * result + lineNumber;
+        result = 31 * result + column;
+        result = 31 * result + length;
+        result = 31 * result + (location != null ? location.hashCode() : 0);
+        result = 31 * result + (line != null ? line.hashCode() : 0);
+        return result;
     }
 
     @Override
     public String toString()
     {
-        return "ClassReference [qualifiedName=" + qualifiedName + ", lineNumber=" + lineNumber + ", column=" + column + ", length=" + length
+        return "ClassReference [qualifiedName=" + qualifiedName + ", resolve status=" + resolutionStatus + ", lineNumber=" + lineNumber + ", column="
+                    + column + ", length=" + length
                     + ", location=" + location + ", line=" + line + "]";
     }
 }

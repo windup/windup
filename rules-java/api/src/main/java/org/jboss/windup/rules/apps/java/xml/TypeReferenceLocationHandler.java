@@ -8,6 +8,7 @@ import org.jboss.windup.config.exception.ConfigurationException;
 import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
+import org.jboss.windup.config.parser.xml.RuleProviderHandler;
 import org.jboss.windup.util.exception.WindupException;
 import org.w3c.dom.Element;
 
@@ -24,10 +25,9 @@ import org.w3c.dom.Element;
  * 
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-@NamespaceElementHandler(elementName = "location", namespace = "http://windup.jboss.org/schema/jboss-ruleset")
+@NamespaceElementHandler(elementName = "location", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
 public class TypeReferenceLocationHandler implements ElementHandler<TypeReferenceLocation>
 {
-
     @Override
     public TypeReferenceLocation processElement(ParserContext handlerManager, Element element)
                 throws ConfigurationException

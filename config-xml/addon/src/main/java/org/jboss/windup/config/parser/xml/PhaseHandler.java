@@ -18,7 +18,7 @@ import org.w3c.dom.Element;
  * 
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-@NamespaceElementHandler(elementName = "phase", namespace = "http://windup.jboss.org/schema/jboss-ruleset")
+@NamespaceElementHandler(elementName = "phase", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
 public class PhaseHandler implements ElementHandler<Void>
 {
 
