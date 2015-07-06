@@ -23,6 +23,7 @@ import org.jboss.windup.rules.apps.javaee.rules.DiscoverEjbConfigurationXmlRuleP
 import org.jboss.windup.rules.apps.javaee.service.EnvironmentReferenceService;
 import org.jboss.windup.rules.apps.javaee.service.JNDIResourceService;
 import org.jboss.windup.rules.apps.javaee.service.JmsDestinationService;
+import org.jboss.windup.rules.apps.javaee.service.VendorSpecificationExtensionService;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.apps.xml.service.XmlFileService;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
@@ -68,9 +69,13 @@ public class ResolveOrionEjbXmlRuleProvider extends IteratingRuleProvider<XmlFil
         XmlFileService xmlFileService = new XmlFileService(event.getGraphContext());
         GraphService<EjbSessionBeanModel> ejbSessionBeanService = new GraphService<>(event.getGraphContext(), EjbSessionBeanModel.class);
         GraphService<EjbMessageDrivenModel> mdbService = new GraphService<>(event.getGraphContext(), EjbMessageDrivenModel.class);
-
+        VendorSpecificationExtensionService vendorSpecificationService = new VendorSpecificationExtensionService(event.getGraphContext());
+        
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
 
+        //mark as vendor extension; create reference to ejb-jar.xml
+        vendorSpecificationService.associateAsVendorExtension(payload, "ejb-jar.xml");
+        
         Document doc = xmlFileService.loadDocumentQuiet(payload);
 
         TechnologyTagModel technologyTag = technologyTagService.addTagToFileModel(payload, "Orion EJB XML", TechnologyTagLevel.IMPORTANT);

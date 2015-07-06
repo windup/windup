@@ -98,29 +98,44 @@ public interface JavaClassModel extends WindupVertexFrame
     Iterable<JavaClassModel> getImports();
 
     /**
-     * Lists classes extended by this class
+     * Lists classes this class extends
      */
     @Adjacency(label = EXTENDS, direction = Direction.OUT)
     JavaClassModel getExtends();
 
+
     /**
      * Lists classes extended by this class
+     */
+    @Adjacency(label = EXTENDS, direction = Direction.IN)
+    JavaClassModel getExtendedBy();
+
+    
+    /**
+     * Sets class this class extends
      */
     @Adjacency(label = EXTENDS, direction = Direction.OUT)
     void setExtends(final JavaClassModel javaFacet);
 
     /**
-     * Lists classes implemented by this class
+     * Lists interfaces implemented by this class
      */
     @Adjacency(label = IMPLEMENTS, direction = Direction.OUT)
     void addImplements(final JavaClassModel javaFacet);
 
     /**
-     * Lists classes implemented by this class
+     * Lists interfaces implemented by this class
      */
     @Adjacency(label = IMPLEMENTS, direction = Direction.OUT)
     Iterable<JavaClassModel> getImplements();
 
+    /**
+     * Lists classes which implement this class
+     */
+    @Adjacency(label = IMPLEMENTS, direction = Direction.IN)
+    Iterable<JavaClassModel> getImplementedBy();
+
+    
     /**
      * Contains the {@link JavaSourceFileModel} of the decompiled version of this file (assuming that it originally was
      * decompiled from a .class file)

@@ -3,11 +3,6 @@
 
 <#assign applicationReportIndexModel = reportModel.applicationReportIndexModel>
 
-<#macro tagRenderer tag>
-    <span class="label label-${tag.level.name()?lower_case}"><#nested/></span>
-</#macro>
-
-
 <#macro staticIpFileRenderer reportModel>
     <div class="panel panel-primary">
     	<div class="panel-heading">

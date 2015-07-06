@@ -40,9 +40,6 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
 {
     private static Logger LOG = Logging.get(DiscoverEjbAnnotationsRuleProvider.class);
 
-    private static final String ENTITY_ANNOTATIONS = "entityAnnotations";
-    private static final String TABLE_ANNOTATIONS_LIST = "tableAnnotations";
-
     public DiscoverEjbAnnotationsRuleProvider()
     {
         super(MetadataBuilder.forProvider(DiscoverEjbAnnotationsRuleProvider.class)

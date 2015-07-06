@@ -4,6 +4,7 @@ import static org.joox.JOOX.$;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
@@ -13,10 +14,13 @@ import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.model.TechnologyTagModel;
+import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.javaee.model.EnvironmentReferenceModel;
+import org.jboss.windup.rules.apps.javaee.model.EnvironmentReferenceTagType;
 import org.jboss.windup.rules.apps.javaee.model.WebXmlModel;
 import org.jboss.windup.rules.apps.javaee.service.EnvironmentReferenceService;
 import org.jboss.windup.rules.apps.javaee.service.WebXmlService;
@@ -38,8 +42,10 @@ import org.w3c.dom.Element;
  */
 public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
 {
+    private static final Logger LOG = Logger.getLogger(DiscoverWebXmlRuleProvider.class.getSimpleName());
+    
     private static final String TECH_TAG = "Web XML";
-    private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.IMPORTANT;
+    private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.INFORMATIONAL;
 
     private static final String dtdRegex = "(?i).*web.application.*";
 
@@ -121,7 +127,10 @@ public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileMod
 
     private void addWebXmlMetadata(GraphContext context, XmlFileModel xml, Document doc)
     {
+        ClassificationService classificationService = new ClassificationService(context);
         TechnologyTagService technologyTagService = new TechnologyTagService(context);
+        
+        ClassificationModel classificationModel = classificationService.attachClassification(xml, "Web XML", " Web Application Deployment Descriptors");
         TechnologyTagModel technologyTag = technologyTagService.addTagToFileModel(xml, TECH_TAG, TECH_TAG_LEVEL);
         WebXmlService webXmlService = new WebXmlService(context);
 
@@ -192,27 +201,50 @@ public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileMod
         List<EnvironmentReferenceModel> resources = new ArrayList<>();
 
         // find JMS references...
-        List<Element> queueReferences = $(element).find("resource-ref").get();
-        for (Element e : queueReferences)
+        for (Element resourceRef : $(element).find("resource-ref").get())
         {
-            String id = $(e).attr("id");
-            String type = $(e).child("res-type").text();
-            String name = $(e).child("res-ref-name").text();
-
-            type = StringUtils.trim(type);
-            name = StringUtils.trim(name);
-
-            EnvironmentReferenceModel ref = environmentReferenceService.findEnvironmentReference(name, type);
-            if (ref == null)
-            {
-                ref = environmentReferenceService.create();
-                ref.setName(name);
-                ref.setReferenceType(type);
-            }
-            ref.setReferenceId(id);
-            resources.add(ref);
+            processElement(environmentReferenceService, resources, resourceRef, "res-type", "res-ref-name",  EnvironmentReferenceTagType.RESOURCE_REF);
         }
-
+        for (Element resourceRef : $(element).find("ejb-ref").get())
+        {
+            processElement(environmentReferenceService, resources, resourceRef, "ejb-ref-type", "ejb-ref-name", EnvironmentReferenceTagType.EJB_REF);
+        }
+        for (Element resourceRef : $(element).find("ejb-local-ref").get())
+        {
+            processElement(environmentReferenceService, resources, resourceRef, "ejb-ref-type", "ejb-ref-name", EnvironmentReferenceTagType.EJB_LOCAL_REF);
+        }
+        for (Element resourceRef : $(element).find("message-destination-ref").get())
+        {
+            processElement(environmentReferenceService, resources, resourceRef, "message-destination-type", "message-destination-ref-name", EnvironmentReferenceTagType.MSG_DESTINATION_REF);
+        }
         return resources;
     }
+
+    private void processElement(EnvironmentReferenceService environmentReferenceService, List<EnvironmentReferenceModel> resources, Element element, String typeLocation, String nameLocation, EnvironmentReferenceTagType refType)
+    {
+        String id = $(element).attr("id");
+        String type = $(element).child(typeLocation).text();
+        String name = $(element).child(nameLocation).text();
+        
+        type = StringUtils.trim(type);
+        name = StringUtils.trim(name);
+
+        EnvironmentReferenceModel ref = environmentReferenceService.findEnvironmentReference(name, type);
+        if (ref == null)
+        {
+            ref = environmentReferenceService.create();
+            ref.setName(name);
+            ref.setReferenceType(type);
+            ref.setReferenceTagType(refType);
+        }
+        else {
+            if(ref.getReferenceTagType() != null && (ref.getReferenceTagType() != refType)) {
+                LOG.warning("Expected type: "+EnvironmentReferenceTagType.RESOURCE_REF +" but actually: "+ref.getReferenceType());
+            }
+        }
+        
+        ref.setReferenceId(id);
+        resources.add(ref);
+    }
+    
 }

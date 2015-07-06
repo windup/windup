@@ -216,10 +216,6 @@ public class JavaClassService extends GraphService<JavaClassModel>
                 sources.add(classModel.getOriginalSource());
             }
         }
-        
-        
-        
-        
         return sources;
     }
     

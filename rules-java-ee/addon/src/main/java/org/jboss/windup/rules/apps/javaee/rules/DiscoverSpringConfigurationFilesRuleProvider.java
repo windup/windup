@@ -45,7 +45,7 @@ public class DiscoverSpringConfigurationFilesRuleProvider extends IteratingRuleP
                 .getSimpleName());
 
     private static final String TECH_TAG = "Spring XML";
-    private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.IMPORTANT;
+    private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.INFORMATIONAL;
 
     public DiscoverSpringConfigurationFilesRuleProvider()
     {

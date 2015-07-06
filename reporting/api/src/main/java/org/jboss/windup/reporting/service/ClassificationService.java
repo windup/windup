@@ -60,6 +60,18 @@ public class ClassificationService extends GraphService<ClassificationModel>
         pipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, ClassificationModel.TYPE);
         return new FramedVertexIterable<ClassificationModel>(getGraphContext().getFramed(), pipeline, ClassificationModel.class);
     }
+    
+    /**
+     * Return all {@link ClassificationModel} instances that are attached to the given {@link FileModel} instance with a specific classification name.
+     */
+    public Iterable<ClassificationModel> getClassificationByName(FileModel model, String classificationName)
+    {
+        GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(model.asVertex());
+        pipeline.in(ClassificationModel.FILE_MODEL);
+        pipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, ClassificationModel.TYPE);
+        pipeline.has(ClassificationModel.CLASSIFICATION, classificationName);
+        return new FramedVertexIterable<ClassificationModel>(getGraphContext().getFramed(), pipeline, ClassificationModel.class);
+    }
 
     /**
      * Returns the total effort points in all of the {@link ClassificationModel}s associated with the files in this

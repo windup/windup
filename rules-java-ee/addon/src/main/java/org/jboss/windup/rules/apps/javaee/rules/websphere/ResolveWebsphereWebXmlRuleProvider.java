@@ -18,6 +18,7 @@ import org.jboss.windup.rules.apps.javaee.model.JNDIResourceModel;
 import org.jboss.windup.rules.apps.javaee.rules.DiscoverWebXmlRuleProvider;
 import org.jboss.windup.rules.apps.javaee.service.EnvironmentReferenceService;
 import org.jboss.windup.rules.apps.javaee.service.JNDIResourceService;
+import org.jboss.windup.rules.apps.javaee.service.VendorSpecificationExtensionService;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.apps.xml.service.XmlFileService;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
@@ -64,26 +65,47 @@ public class ResolveWebsphereWebXmlRuleProvider extends IteratingRuleProvider<Xm
 
         Document doc = xmlFileService.loadDocumentQuiet(payload);
 
+
+        VendorSpecificationExtensionService vendorSpecificationService = new VendorSpecificationExtensionService(event.getGraphContext());
+        //mark as vendor extension; create reference to web.xml
+        vendorSpecificationService.associateAsVendorExtension(payload, "web.xml");
+        
         TechnologyTagModel technologyTag = technologyTagService.addTagToFileModel(payload, "Websphere Web XML", TechnologyTagLevel.IMPORTANT);
         for (Element resourceRef : $(doc).find("resRefBindings").get())
         {
-            String jndiLocation = $(resourceRef).attr("jndiName");
-            String resourceId = $(resourceRef).child("bindingResourceRef").attr("href");
-            resourceId = StringUtils.substringAfter(resourceId, "WEB-INF/web.xml#");
+            processBinding(envRefService, jndiResourceService, resourceRef, "bindingResourceRef");
+        }
+        for (Element resourceRef : $(doc).find("ejbRefBindings").get())
+        {
+            processBinding(envRefService, jndiResourceService, resourceRef, "bindingEjbRef");
+        }
+        for (Element resourceRef : $(doc).find("messageDestinationRefBindings").get())
+        {
+            processBinding(envRefService, jndiResourceService, resourceRef, "bindingMessageDestinationRef");
+        }
+    }
 
-            if (StringUtils.isNotBlank(jndiLocation))
-            {
-                JNDIResourceModel resource = jndiResourceService.createUnique(jndiLocation);
-                LOG.info("JNDI: " + jndiLocation + " Resource: " + resourceId);
-                // now, look up the resource
-                for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.REFERENCE_ID, resourceId))
-                {
-                    envRefService.associateEnvironmentToJndi(resource, ref);
-                }
-            }
-
+    private void processBinding(EnvironmentReferenceService envRefService, JNDIResourceService jndiResourceService, Element resourceRef, String tagName)
+    {
+        String jndiLocation = $(resourceRef).attr("jndiName");
+        String resourceId = $(resourceRef).child(tagName).attr("href");
+        resourceId = StringUtils.substringAfter(resourceId, "WEB-INF/web.xml#");
+        
+        if(StringUtils.isBlank(resourceId)) {
+            LOG.info("Issue Element: "+$(resourceRef).toString());
+            return;
         }
 
+        if (StringUtils.isNotBlank(jndiLocation))
+        {
+            JNDIResourceModel resource = jndiResourceService.createUnique(jndiLocation);
+            LOG.info("JNDI: " + jndiLocation + " Resource: " + resourceId);
+            // now, look up the resource
+            for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.REFERENCE_ID, resourceId))
+            {
+                envRefService.associateEnvironmentToJndi(resource, ref);
+            }
+        }
     }
 
 }

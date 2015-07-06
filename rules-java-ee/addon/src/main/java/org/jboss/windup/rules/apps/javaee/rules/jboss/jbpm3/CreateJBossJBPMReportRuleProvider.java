@@ -1,4 +1,4 @@
-package org.jboss.windup.rules.apps.javaee.rules;
+package org.jboss.windup.rules.apps.javaee.rules.jboss.jbpm3;
 
 import java.util.HashMap;
 import java.util.Map;

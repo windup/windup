@@ -10,6 +10,7 @@ import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.ClassificationService;
@@ -23,6 +24,7 @@ import org.jboss.windup.rules.apps.javaee.rules.DiscoverEjbConfigurationXmlRuleP
 import org.jboss.windup.rules.apps.javaee.service.EnvironmentReferenceService;
 import org.jboss.windup.rules.apps.javaee.service.JNDIResourceService;
 import org.jboss.windup.rules.apps.javaee.service.JmsDestinationService;
+import org.jboss.windup.rules.apps.javaee.service.VendorSpecificationExtensionService;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.apps.xml.service.XmlFileService;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
@@ -66,6 +68,8 @@ public class ResolveWeblogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
         JNDIResourceService jndiResourceService = new JNDIResourceService(event.getGraphContext());
         JmsDestinationService jmsDestinationService = new JmsDestinationService(event.getGraphContext());
         XmlFileService xmlFileService = new XmlFileService(event.getGraphContext());
+        VendorSpecificationExtensionService vendorSpecificationService = new VendorSpecificationExtensionService(event.getGraphContext());
+
         GraphService<EjbSessionBeanModel> ejbSessionBeanService = new GraphService<>(event.getGraphContext(), EjbSessionBeanModel.class);
         GraphService<EjbMessageDrivenModel> mdbService = new GraphService<>(event.getGraphContext(), EjbMessageDrivenModel.class);
 
@@ -76,6 +80,9 @@ public class ResolveWeblogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
         technologyTagService.addTagToFileModel(payload, "Weblogic EJB XML", TechnologyTagLevel.IMPORTANT);
 
         Document doc = xmlFileService.loadDocumentQuiet(payload);
+        
+        //mark as vendor extension; create reference to ejb-jar.xml
+        vendorSpecificationService.associateAsVendorExtension(payload, "ejb-jar.xml");
 
         for (Element resourceRef : $(doc).find("resource-description").get())
         {
@@ -163,6 +170,5 @@ public class ResolveWeblogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
                 }
             }
         }
-
     }
 }

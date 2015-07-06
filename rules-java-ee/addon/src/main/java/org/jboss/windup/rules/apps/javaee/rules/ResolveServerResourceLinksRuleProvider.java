@@ -15,6 +15,7 @@ import org.jboss.windup.graph.service.LinkService;
 import org.jboss.windup.reporting.model.association.LinkableModel;
 import org.jboss.windup.rules.apps.javaee.model.DataSourceModel;
 import org.jboss.windup.rules.apps.javaee.model.JNDIResourceModel;
+import org.jboss.windup.rules.apps.javaee.model.JmsDestinationModel;
 import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -47,6 +48,17 @@ public class ResolveServerResourceLinksRuleProvider extends IteratingRuleProvide
         if(payload instanceof DataSourceModel) {
             processDataSource(event.getGraphContext(), (DataSourceModel)payload);
         }
+        else if(payload instanceof JmsDestinationModel) {
+            processJMSDestination(event.getGraphContext(), (JmsDestinationModel)payload);
+        }
+    }
+    
+    private void processJMSDestination(GraphContext context, JmsDestinationModel destination) {
+        LinkService linkService = new LinkService(context);
+        LinkableModel linkable = GraphService.addTypeToModel(context, destination, LinkableModel.class);
+
+        LinkModel jmsDestinationLink = linkService.getOrCreate("Destination Setup", "https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html/Administration_and_Configuration_Guide/sect-Configuration.html");
+        linkable.addLink(jmsDestinationLink);
     }
     
     private void processDataSource(GraphContext context, DataSourceModel dataSource) {
@@ -54,12 +66,12 @@ public class ResolveServerResourceLinksRuleProvider extends IteratingRuleProvide
         LinkableModel linkable = GraphService.addTypeToModel(context, dataSource, LinkableModel.class);
         if(StringUtils.equals("Oracle", dataSource.getDatabaseTypeName()))
         {
-            LinkModel eap6OracleLink = linkService.getOrCreate("Oracle DataSource Setup", "https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html/Administration_and_Configuration_Guide/Example_Oracle_Datasource.html");
+            LinkModel eap6OracleLink = linkService.getOrCreate("Oracle DataSource Setup", "https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html/Administration_and_Configuration_Guide/sect-Example_Datasources.html#Example_Oracle_Datasource");
             linkable.addLink(eap6OracleLink);
         }
         else if(StringUtils.equals("MySQL", dataSource.getDatabaseTypeName()))
         {
-            LinkModel lnk = linkService.getOrCreate("MySQL DataSource Setup", "https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html/Administration_and_Configuration_Guide/Example_MySQL_Datasource1.html");
+            LinkModel lnk = linkService.getOrCreate("MySQL DataSource Setup", "https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html/Administration_and_Configuration_Guide/sect-Example_Datasources.html#Example_MySQL_Datasource1");
             linkable.addLink(lnk);
         }
         else if(StringUtils.equals("Postgres", dataSource.getDatabaseTypeName()))
@@ -69,17 +81,17 @@ public class ResolveServerResourceLinksRuleProvider extends IteratingRuleProvide
         }
         else if(StringUtils.equals("SqlServer", dataSource.getDatabaseTypeName()))
         {
-            LinkModel lnk = linkService.getOrCreate("SqlServer DataSource Setup", "https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html/Administration_and_Configuration_Guide/Example_Microsoft_SQLServer_Datasource1.html");
+            LinkModel lnk = linkService.getOrCreate("SqlServer DataSource Setup", "https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html/Administration_and_Configuration_Guide/sect-Example_Datasources.html#Example_Microsoft_SQLServer_Datasource1");
             linkable.addLink(lnk);
         }
         else if(StringUtils.equals("DB2", dataSource.getDatabaseTypeName()))
         {
-            LinkModel lnk = linkService.getOrCreate("DB2 DataSource Setup", "https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html/Administration_and_Configuration_Guide/Example_IBM_DB2_Datasource.html");
+            LinkModel lnk = linkService.getOrCreate("DB2 DataSource Setup", "https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html/Administration_and_Configuration_Guide/sect-Example_Datasources.html#Example_IBM_DB2_Datasource");
             linkable.addLink(lnk);
         }
         else if(StringUtils.equals("Sybase", dataSource.getDatabaseTypeName()))
         {
-            LinkModel lnk = linkService.getOrCreate("Sybase DataSource Setup", "https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html/Administration_and_Configuration_Guide/Example_Sybase_Datasource.html");
+            LinkModel lnk = linkService.getOrCreate("Sybase DataSource Setup", "https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html/Administration_and_Configuration_Guide/sect-Example_Datasources.html#Example_Sybase_Datasource");
             linkable.addLink(lnk);
         }
         
