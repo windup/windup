@@ -64,7 +64,7 @@ public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileMod
     public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
     {
         XmlFileService xmlFileService = new XmlFileService(event.getGraphContext());
-        Document doc = xmlFileService.loadDocumentQuiet(payload);
+        Document doc = xmlFileService.loadDocumentQuiet(context, payload);
         if (doc != null && isWebXml(payload, doc))
         {
             addWebXmlMetadata(event.getGraphContext(), payload, doc);

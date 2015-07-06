@@ -71,7 +71,7 @@ public class ResolveOrionEjbXmlRuleProvider extends IteratingRuleProvider<XmlFil
 
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
 
-        Document doc = xmlFileService.loadDocumentQuiet(payload);
+        Document doc = xmlFileService.loadDocumentQuiet(context, payload);
 
         TechnologyTagModel technologyTag = technologyTagService.addTagToFileModel(payload, "Orion EJB XML", TechnologyTagLevel.IMPORTANT);
         for (Element resourceRef : $(doc).find("resource-ref-mapping").get())

@@ -101,7 +101,7 @@ public class DiscoverHibernateMappingRuleProvider extends IteratingRuleProvider<
             // create a facet, and then identify the XML.
             HibernateMappingFileModel hibernateMapping = hibernateMappingFileService.addTypeToModel(xml);
 
-            Document doc = xmlFileService.loadDocumentQuiet(hibernateMapping);
+            Document doc = xmlFileService.loadDocumentQuiet(context, hibernateMapping);
 
             if (!XmlUtil.xpathExists(doc, "/hibernate-mapping", null))
             {

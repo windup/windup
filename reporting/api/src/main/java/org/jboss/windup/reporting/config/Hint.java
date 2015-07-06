@@ -16,6 +16,7 @@ import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.model.Severity;
 import org.jboss.windup.rules.files.model.FileLocationModel;
 import org.ocpsoft.rewrite.config.OperationBuilder;
+import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.param.ParameterStore;
 import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
@@ -94,6 +95,7 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
         GraphService<InlineHintModel> service = new GraphService<>(event.getGraphContext(), InlineHintModel.class);
 
         InlineHintModel hintModel = service.create();
+        hintModel.setRuleID(((Rule) context.get(Rule.class)).getId());
         hintModel.setLineNumber(locationModel.getLineNumber());
         hintModel.setColumnNumber(locationModel.getColumnNumber());
         hintModel.setLength(locationModel.getLength());

@@ -129,7 +129,7 @@ public class ParserContext
     }
 
     /**
-     * Gets a {@link List} of all {@link RuleProviders} found so far.
+     * Gets a {@link List} of all {@link AbstractRuleProvider}s found so far.
      */
     public List<AbstractRuleProvider> getRuleProviders()
     {

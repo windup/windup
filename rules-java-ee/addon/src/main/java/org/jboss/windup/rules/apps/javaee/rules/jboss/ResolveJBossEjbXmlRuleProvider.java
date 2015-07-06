@@ -67,7 +67,7 @@ public class ResolveJBossEjbXmlRuleProvider extends IteratingRuleProvider<XmlFil
         // https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6/html/Development_Guide/jboss-ejb3xml_Deployment_Descriptor_Reference.html
         // check the root tag to make sure it is enterprise-beans
         XmlFileService xmlFileService = new XmlFileService(event.getGraphContext());
-        Document doc = xmlFileService.loadDocumentQuiet(payload);
+        Document doc = xmlFileService.loadDocumentQuiet(context, payload);
 
         if ($(doc).find("enterprise-beans").isEmpty())
         {
@@ -83,7 +83,8 @@ public class ResolveJBossEjbXmlRuleProvider extends IteratingRuleProvider<XmlFil
         GraphService<EjbMessageDrivenModel> mdbService = new GraphService<>(event.getGraphContext(), EjbMessageDrivenModel.class);
 
         ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-        classificationService.attachClassification(payload, "JBoss Legacy EJB XML", "JBoss Enterprise Java Bean XML Descriptor prior to EAP 6.");
+        classificationService.attachClassification(context, payload, "JBoss Legacy EJB XML",
+                    "JBoss Enterprise Java Bean XML Descriptor prior to EAP 6.");
 
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
         technologyTagService.addTagToFileModel(payload, "JBoss EJB XML", TechnologyTagLevel.IMPORTANT);

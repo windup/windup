@@ -130,7 +130,7 @@ public class DiscoverJBossJbpmProcessFilesRuleProvider extends IteratingRuleProv
 
             //check to see if there is a processdefinition.xml in the same directory.
             ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-            classificationService.attachClassification(processDefinitionImage, "JBPM Process Image", "JBPM 3 Process Image.");
+            classificationService.attachClassification(context, processDefinitionImage, "JBPM Process Image", "JBPM 3 Process Image.");
             
             TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
             TechnologyTagModel techTag = technologyTagService.addTagToFileModel(processDefinitionImage, "JBoss Process Image", TechnologyTagLevel.IMPORTANT);

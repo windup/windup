@@ -18,48 +18,42 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(OverviewReportLineMessageModel.TYPE)
 public interface OverviewReportLineMessageModel extends WindupVertexFrame
 {
-    public static final String TYPE = "OverviewReportLineMessageModel";
-    public static final String PROPERTY_RULE_ID = "ruleID";
-    public static final String PROJECT_MODEL = "project";
-    public static final String PROPERTY_MESSAGE = "message";
-    public static final String PROPERTY_EFFORT = "effort";
-    public static final String PROPERTY_LINKS = "links";
-
-    public static final String FILE_MODEL = "classificationModelToFileModel";
+    String TYPE = "OverviewReportLineMessageModel";
+    String PROPERTY_RULE_ID = "ruleID";
+    String PROJECT_MODEL = "project";
+    String PROPERTY_MESSAGE = "message";
 
     @Adjacency(label = PROJECT_MODEL, direction = Direction.OUT)
-    public void setProject(ProjectModel pModel);
+    void setProject(ProjectModel pModel);
 
     /**
      * Get the {@link FileModel} associated with this {@link ClassificationModel}.
      */
     @Adjacency(label = PROJECT_MODEL, direction = Direction.OUT)
-    public ProjectModel getProject();
+    ProjectModel getProject();
 
     /**
      * Set message
      */
     @Property(PROPERTY_MESSAGE)
-    public void setMessage(String message);
+    void setMessage(String message);
 
     /**
      * Get message
      */
     @Property(PROPERTY_MESSAGE)
-    public String getMessage();
+    String getMessage();
 
-    
-    
     /**
      * Set ID of the {@link Rule} that added this {@link ClassificationModel}.
      */
     @Property(PROPERTY_RULE_ID)
-    public void setRuleID(String ruleID);
+    void setRuleID(String ruleID);
 
     /**
      * Get ID of the {@link Rule} that added this {@link ClassificationModel}.
      */
     @Property(PROPERTY_RULE_ID)
-    public String getRuleID();
+    String getRuleID();
 
 }

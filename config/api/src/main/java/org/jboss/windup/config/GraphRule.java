@@ -1,7 +1,11 @@
 package org.jboss.windup.config;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.ocpsoft.rewrite.config.Operation;
 import org.ocpsoft.rewrite.config.Rule;
+import org.ocpsoft.rewrite.context.Context;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.event.Rewrite;
 
@@ -10,8 +14,10 @@ import org.ocpsoft.rewrite.event.Rewrite;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public abstract class GraphRule implements Rule
+public abstract class GraphRule implements Rule, Context
 {
+    private final Map<Object, Object> context = new HashMap<>();
+
     /**
      * Evaluate this rule against the given {@link GraphRewrite} event. If this condition does not apply to the given
      * event, it must return <code>false</code>. If the condition applies and is satisfied, return <code>true</code>.
@@ -22,6 +28,30 @@ public abstract class GraphRule implements Rule
      * Perform the {@link Operation}.
      */
     public abstract void perform(GraphRewrite event, EvaluationContext context);
+
+    @Override
+    public boolean containsKey(Object key)
+    {
+        return context.containsKey(key);
+    }
+
+    @Override
+    public void put(Object key, Object value)
+    {
+        context.put(key, value);
+    }
+
+    @Override
+    public Object get(Object key)
+    {
+        return context.get(key);
+    }
+
+    @Override
+    public void clear()
+    {
+        context.clear();
+    }
 
     @Override
     public final boolean evaluate(Rewrite event, EvaluationContext context)

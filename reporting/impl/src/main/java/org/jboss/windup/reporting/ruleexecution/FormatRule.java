@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.commons.lang.SystemUtils;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.metadata.RuleMetadataType;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.exception.WindupException;
@@ -14,6 +15,7 @@ import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.Operation;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.config.RuleBuilder;
+import org.ocpsoft.rewrite.context.Context;
 
 import freemarker.ext.beans.StringModel;
 import freemarker.template.TemplateModelException;
@@ -58,17 +60,24 @@ public class FormatRule implements WindupFreeMarkerMethod
         Rule rule = (Rule) stringModelArg.getWrappedObject();
 
         ExecutionStatistics.get().end(NAME);
-        return "addRule()" + serializeRule(rule, 0);
+        return serializeRule(rule, 0);
     }
 
     private String serializeRule(final Rule originalRule, int indentLevel)
     {
+        if (originalRule instanceof Context && ((Context) originalRule).containsKey(RuleMetadataType.RULE_XML))
+        {
+            return (String) ((Context) originalRule).get(RuleMetadataType.RULE_XML);
+        }
+
         if (!(originalRule instanceof RuleBuilder))
         {
             return wrap(originalRule.toString(), MAX_WIDTH, indentLevel);
         }
         final RuleBuilder rule = (RuleBuilder) originalRule;
         StringBuilder result = new StringBuilder();
+        if (indentLevel == 0)
+            result.append("addRule()");
 
         for (Condition condition : rule.getConditions())
         {
