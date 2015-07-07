@@ -56,6 +56,7 @@ public class CreateProblemCentricReportRuleProvider extends AbstractRuleProvider
             ApplicationReportModel report = applicationReportService.create();
             report.setReportPriority(110);
             report.setDisplayInApplicationReportIndex(true);
+            report.setReportIconClass("glyphicon glyphicon-question-sign");
             report.setReportName("Migration Issues");
             report.setTemplatePath(TEMPLATE_PATH);
             report.setTemplateType(TemplateType.FREEMARKER);

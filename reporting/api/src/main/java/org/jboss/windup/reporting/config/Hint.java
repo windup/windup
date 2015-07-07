@@ -116,9 +116,7 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
             hintModel.setTitle(locationModel.getDescription());
         }
 
-        String hintTitle = hintModel.getTitle();
         String hintText = hintTextPattern.getBuilder().build(event, context);
-
         hintModel.setHint(hintText);
 
         GraphService<LinkModel> linkService = new GraphService<>(event.getGraphContext(), LinkModel.class);
@@ -133,7 +131,8 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
         if (locationModel.getFile() instanceof SourceFileModel)
             ((SourceFileModel) locationModel.getFile()).setGenerateSourceReport(true);
 
-        log.info("Hint added to " + locationModel.getFile().getPrettyPathWithinProject() + " [" + this.toString(hintTitle, hintText) + "] ");
+        log.info("Hint added to " + locationModel.getFile().getPrettyPathWithinProject() + " [" + this.toString(hintModel.getTitle(), hintText)
+                    + "] ");
     }
 
     @Override

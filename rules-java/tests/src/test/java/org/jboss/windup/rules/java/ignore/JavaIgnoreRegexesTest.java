@@ -19,16 +19,21 @@ import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.util.Iterators;
+import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
+import org.jboss.windup.engine.predicates.EnumeratedRuleProviderPredicate;
 import org.jboss.windup.engine.predicates.RuleProviderWithDependenciesPredicate;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
+import org.jboss.windup.exec.rulefilters.AndPredicate;
+import org.jboss.windup.exec.rulefilters.NotPredicate;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -44,6 +49,7 @@ import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.jboss.windup.rules.apps.java.scan.provider.AnalyzeJavaFilesRuleProvider;
+import org.jboss.windup.rules.apps.java.scan.provider.FindUnboundJavaReferencesRuleProvider;
 import org.jboss.windup.rules.apps.java.scan.provider.IndexJavaSourceFilesRuleProvider;
 import org.junit.Assert;
 import org.junit.Test;
@@ -114,12 +120,15 @@ public class JavaIgnoreRegexesTest
 
             try
             {
+                Predicate<RuleProvider> predicate =
+                            new AndPredicate(
+                                        new RuleProviderWithDependenciesPredicate(JavaIgnoreRegexesTestRuleProvider.class),
+                                        new NotPredicate(new EnumeratedRuleProviderPredicate(FindUnboundJavaReferencesRuleProvider.class))
+                            );
 
                 WindupConfiguration configuration = new WindupConfiguration()
                             .setGraphContext(context)
-                            .setRuleProviderFilter(
-                                        new RuleProviderWithDependenciesPredicate(
-                                                    JavaIgnoreRegexesTestRuleProvider.class))
+                            .setRuleProviderFilter(predicate)
                             .setInputPath(Paths.get(inputPath))
                             .setOutputDirectory(outputPath)
                             .setOptionValue(ScanPackagesOption.NAME, Collections.singletonList(""))
