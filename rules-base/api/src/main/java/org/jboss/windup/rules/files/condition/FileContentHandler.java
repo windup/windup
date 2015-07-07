@@ -58,7 +58,7 @@ public class FileContentHandler implements ElementHandler<FileContent>
         obj = applyFrom(obj, from);
         obj = applyMatches(obj, contentPattern);
         obj = applyFileName(obj, filenamePattern);
-        //At least content or filename pattern should have matched (otherwise exception would be thrown),
+        //At least content pattern should have matched (otherwise exception would be thrown),
         // so FileContent instance should have been created
         FileContent f = (FileContent) obj;
         f.as(as);
