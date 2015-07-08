@@ -14,11 +14,6 @@
     addons by default.</description>
 
     <dependencies>
-        <dependency>
-            <groupId>org.jboss.shrinkwrap</groupId>
-            <artifactId>shrinkwrap-impl-base</artifactId>
-	    <version>1.2.2</version>
-        </dependency>
 	<dependency>
             <groupId>org.jboss.forge.furnace.test</groupId>
             <artifactId>furnace-test-harness</artifactId>
