@@ -1,5 +1,24 @@
 package org.jboss.windup.exec.configuration;
 
+import org.jboss.forge.furnace.Furnace;
+import org.jboss.forge.furnace.addons.Addon;
+import org.jboss.forge.furnace.services.Imported;
+import org.jboss.forge.furnace.util.Predicate;
+import org.jboss.windup.config.ConfigurationOption;
+import org.jboss.windup.config.RuleProvider;
+import org.jboss.windup.config.furnace.FurnaceHolder;
+import org.jboss.windup.exec.WindupProcessor;
+import org.jboss.windup.exec.WindupProgressMonitor;
+import org.jboss.windup.exec.configuration.options.ExportCSVOption;
+import org.jboss.windup.exec.configuration.options.InputPathOption;
+import org.jboss.windup.exec.configuration.options.OfflineModeOption;
+import org.jboss.windup.exec.configuration.options.OutputPathOption;
+import org.jboss.windup.exec.configuration.options.UserIgnorePathOption;
+import org.jboss.windup.exec.configuration.options.UserRulesDirectoryOption;
+import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.util.PathUtil;
+import org.ocpsoft.rewrite.config.Rule;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,24 +32,6 @@ import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.jboss.forge.furnace.Furnace;
-import org.jboss.forge.furnace.addons.Addon;
-import org.jboss.forge.furnace.services.Imported;
-import org.jboss.forge.furnace.util.Predicate;
-import org.jboss.windup.config.ConfigurationOption;
-import org.jboss.windup.config.RuleProvider;
-import org.jboss.windup.config.furnace.FurnaceHolder;
-import org.jboss.windup.exec.WindupProcessor;
-import org.jboss.windup.exec.WindupProgressMonitor;
-import org.jboss.windup.exec.configuration.options.InputPathOption;
-import org.jboss.windup.exec.configuration.options.OfflineModeOption;
-import org.jboss.windup.exec.configuration.options.OutputPathOption;
-import org.jboss.windup.exec.configuration.options.UserIgnorePathOption;
-import org.jboss.windup.exec.configuration.options.UserRulesDirectoryOption;
-import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.util.PathUtil;
-import org.ocpsoft.rewrite.config.Rule;
 
 /**
  * Configuration of WindupProcessor.
@@ -417,5 +418,23 @@ public class WindupConfiguration
     {
         Boolean offline = getOptionValue(OfflineModeOption.NAME);
         return offline == null ? false : offline;
+    }
+
+    /**
+     * Set Windup to export CSV file containing the migration information (classifications, hints).
+     */
+    public WindupConfiguration setExportingCSV(boolean export)
+    {
+        setOptionValue(ExportCSVOption.NAME, export);
+        return this;
+    }
+
+    /**
+     * Returns true if Windup is operating in {@link ExportCSVOption} == true.
+     */
+    public boolean isExportingCSV()
+    {
+        Boolean export = getOptionValue(ExportCSVOption.NAME);
+        return export == null ? false : export;
     }
 }

@@ -1,0 +1,4 @@
+"Rule Id";"Problem type";"Title";"Description";"Links";"Application";"File Name";"File Path";"Line";"Story points"
+"rule1";"hint";"hint1-text";"source1";"[link,description]";"app1";"f1";"/f1";"0";"50"
+"rule1";"hint";"hint1b-text";"";"";"app1";"f1";"/f1";"0";"100"
+"classification1";"classification";"classification1-text";"description-classification";"[link,description]";"app1";"f1";"/f1";"N/A";"30"

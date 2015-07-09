@@ -82,6 +82,7 @@ public class WindupProcessorImpl implements WindupProcessor
         configurationModel.setInputPath(getFileModel(context, configuration.getInputPath()));
         configurationModel.setOutputPath(getFileModel(context, configuration.getOutputDirectory()));
         configurationModel.setOfflineMode(configuration.isOffline());
+        configurationModel.setExportingCSV(configuration.isExportingCSV());
         for (Path path : configuration.getAllUserRulesDirectories())
         {
             System.out.println("Using user rules dir: " + path);

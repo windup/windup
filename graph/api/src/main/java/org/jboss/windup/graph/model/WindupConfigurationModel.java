@@ -22,6 +22,7 @@ public interface WindupConfigurationModel extends WindupVertexFrame
     String OUTPUT_PATH = "outputPath";
     String SOURCE_TECHNOLOGY = "sourceTechnology";
     String TARGET_TECHNOLOGY = "targetTechnology";
+    String CSV_MODE = "csv";
 
     /**
      * The input path to scan
@@ -106,4 +107,16 @@ public interface WindupConfigurationModel extends WindupVertexFrame
      */
     @Adjacency(label = TARGET_TECHNOLOGY, direction = Direction.OUT)
     void addTargetTechnology(TechnologyReferenceModel technology);
+
+    /**
+     * Indicates whether or not to export CSV file
+     */
+    @Property(CSV_MODE)
+    boolean isExportingCSV();
+
+    /**
+     * Indicates whether or not to export CSV file
+     */
+    @Property(CSV_MODE)
+    void setExportingCSV(boolean csv);
 }

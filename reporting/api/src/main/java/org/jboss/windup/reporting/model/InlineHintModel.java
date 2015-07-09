@@ -15,7 +15,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
  * positions within those files.
  */
 @TypeValue(InlineHintModel.TYPE)
-public interface InlineHintModel extends FileLocationModel
+public interface InlineHintModel extends EffortReportModel,FileLocationModel
 {
     static final String TYPE = "InlineHintModel";
     static final String TYPE_PREFIX = TYPE + ":";
@@ -23,7 +23,6 @@ public interface InlineHintModel extends FileLocationModel
     static final String HINT = TYPE_PREFIX + "hint";
     static final String SEVERITY = TYPE_PREFIX + "severity";
     static final String RULE_ID = TYPE_PREFIX + "ruleID";
-    static final String EFFORT = TYPE_PREFIX + "effort";
     static final String LINKS = TYPE_PREFIX + "links";
     static final String FILE_LOCATION_REFERENCE = TYPE_PREFIX + "fileLocationReference";
 
@@ -52,18 +51,6 @@ public interface InlineHintModel extends FileLocationModel
     String getHint();
 
     /**
-     * Contains a severity level that may be used to indicate to the user the severity level of a problem.
-     */
-    @Property(SEVERITY)
-    void setSeverity(Severity severity);
-
-    /**
-     * Contains a severity level that may be used to indicate to the user the severity level of a problem.
-     */
-    @Property(SEVERITY)
-    Severity getSeverity();
-
-    /**
      * Sets the original {@link FileLocationModel} associated with this {@link InlineHintModel}
      */
     @Adjacency(label = FILE_LOCATION_REFERENCE, direction = Direction.OUT)
@@ -74,18 +61,6 @@ public interface InlineHintModel extends FileLocationModel
      */
     @Adjacency(label = FILE_LOCATION_REFERENCE, direction = Direction.OUT)
     FileLocationModel getFileLocationReference();
-
-    /**
-     * Set the effort weight (E.g. How difficult is it to fix the issue?)
-     */
-    @Property(EFFORT)
-    void setEffort(int effort);
-
-    /**
-     * Get the effort weight (E.g. How difficult is it to fix the issue?)
-     */
-    @Property(EFFORT)
-    int getEffort();
 
     /**
      * Add a related {@link Link} to this {@link ClassificationModel}
