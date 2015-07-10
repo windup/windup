@@ -57,7 +57,14 @@
 		</td>
 		<td>
 		  <#if sourceReportModel.sourceFileModel.inlineHints.iterator()?has_content || sourceReportModel.sourceFileModel.classificationModels.iterator()?has_content>
-  		  <b>Warnings: ${sourceReportModel.sourceFileModel.inlineHintCount + sourceReportModel.sourceFileModel.classificationCount} items</b>
+          <#assign warnings = sourceReportModel.sourceFileModel.inlineHintCount + sourceReportModel.sourceFileModel.classificationCount>
+  		  <b>Warnings: ${warnings} 
+            <#if warnings == 1>
+              item
+            <#else>
+              items 
+            </#if> 
+          </b>
           <ul class='notifications'>
 			<#list sourceReportModel.sourceFileModel.classificationModels.iterator() as classification>
 				<#if classification.classification?has_content>
