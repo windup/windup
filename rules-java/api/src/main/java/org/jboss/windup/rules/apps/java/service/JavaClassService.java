@@ -167,6 +167,20 @@ public class JavaClassService extends GraphService<JavaClassModel>
         }
     }
 
+    /**
+     * This simply adds the interface to the provided {@link JavaClassModel} while checking for duplicate entries.
+     */
+    public void addInterface(JavaClassModel jcm, JavaClassModel interfaceJCM)
+    {
+        for (JavaClassModel existingInterface : jcm.getInterfaces())
+        {
+            if (existingInterface.equals(interfaceJCM))
+                return;
+        }
+
+        jcm.addInterface(interfaceJCM);
+    }
+
     public JavaMethodModel addJavaMethod(JavaClassModel jcm, String methodName, JavaClassModel[] params)
     {
         ExecutionStatistics.get().begin("JavaClassService.addJavaMethod(jcm, methodName, params)");

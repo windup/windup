@@ -201,6 +201,7 @@ public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
             javaClassModel.setQualifiedName(qualifiedName);
             javaClassModel.setClassFile(sourceFileModel);
             javaClassModel.setPublic(javaSource.isPublic());
+            javaClassModel.setInterface(javaSource.isInterface());
 
             if (javaSource instanceof InterfaceCapable)
             {
@@ -211,12 +212,12 @@ public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
                     for (String iface : interfaceNames)
                     {
                         JavaClassModel interfaceModel = javaClassService.getOrCreatePhantom(iface);
-                        javaClassModel.addImplements(interfaceModel);
+                        javaClassService.addInterface(javaClassModel, interfaceModel);
                     }
                 }
             }
 
-            if (javaSource instanceof Extendable)
+            if (!javaSource.isInterface() && javaSource instanceof Extendable)
             {
                 Extendable<?> extendable = (Extendable<?>) javaSource;
                 String superclassName = extendable.getSuperType();

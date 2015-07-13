@@ -601,6 +601,9 @@ public class ReferenceResolvingVisitor extends ASTVisitor
         {
             if (List.class.isAssignableFrom(clzInterfaces.getClass()))
             {
+                TypeReferenceLocation typeReferenceLocation = node.isInterface() ? TypeReferenceLocation.INHERITANCE
+                            : TypeReferenceLocation.IMPLEMENTS_TYPE;
+
                 List<?> clzInterfacesList = (List<?>) clzInterfaces;
                 for (Object clzInterface : clzInterfacesList)
                 {
@@ -612,7 +615,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
                         {
                             ResolveClassnameResult result = resolveClassname(simpleType.getName().toString());
                             ResolutionStatus status = result.found ? ResolutionStatus.RECOVERED : ResolutionStatus.UNRESOLVED;
-                            processTypeAsString(result.result, status, TypeReferenceLocation.IMPLEMENTS_TYPE,
+                            processTypeAsString(result.result, status, typeReferenceLocation,
                                         compilationUnit.getLineNumber(node.getStartPosition()),
                                         compilationUnit.getColumnNumber(node.getStartPosition()),
                                         node.getLength(), extractDefinitionLine(node.toString()));
@@ -627,8 +630,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
                             while (!stack.isEmpty())
                             {
                                 resolvedSuperInterface = stack.pop();
-                                processTypeBinding(resolvedSuperInterface, ResolutionStatus.RESOLVED,
-                                            TypeReferenceLocation.IMPLEMENTS_TYPE,
+                                processTypeBinding(resolvedSuperInterface, ResolutionStatus.RESOLVED, typeReferenceLocation,
                                             compilationUnit.getLineNumber(node.getStartPosition()),
                                             compilationUnit.getColumnNumber(node.getStartPosition()), node.getLength(),
                                             extractDefinitionLine(node.toString()));

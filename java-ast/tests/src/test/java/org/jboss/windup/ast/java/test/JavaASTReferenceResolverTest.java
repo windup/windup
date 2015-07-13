@@ -22,10 +22,6 @@ public class JavaASTReferenceResolverTest extends AbstractJavaASTTest
         List<ClassReference> references = ASTProcessor.analyze(getLibraryPaths(), getSourcePaths(),
                     Paths.get("src/test/resources/testclasses/helloworld/HelloWorld.java"));
 
-        for (ClassReference reference : references)
-        {
-            System.out.println("Reference: " + reference);
-        }
         Assert.assertTrue(references.contains(
                     new ClassReference("testclasses.helloworld.HelloWorld", ResolutionStatus.RESOLVED, TypeReferenceLocation.TYPE, 3, 0, 174,
                                 "public class HelloWorld {")));
@@ -56,10 +52,6 @@ public class JavaASTReferenceResolverTest extends AbstractJavaASTTest
         List<ClassReference> references = ASTProcessor.analyze(getLibraryPaths(), getSourcePaths(),
                     Paths.get("src/test/resources/testclasses/simple/Main.java"));
 
-        for (ClassReference reference : references)
-        {
-            System.out.println("Reference: " + reference);
-        }
         Assert.assertTrue(references.contains(
                     new ClassReference("testclasses.simple.MyBClass", ResolutionStatus.RESOLVED, TypeReferenceLocation.VARIABLE_DECLARATION, 9, 8,
                                 28,
@@ -84,11 +76,6 @@ public class JavaASTReferenceResolverTest extends AbstractJavaASTTest
         List<ClassReference> references = ASTProcessor.analyze(getLibraryPaths(), getSourcePaths(),
                     Paths.get("src/test/resources/testclasses/simple/MyBClass.java"));
 
-        for (ClassReference reference : references)
-        {
-            System.out.println("Reference: " + reference);
-        }
-
         Assert.assertTrue(references.contains(
                     new ClassReference("testclasses.simple.MyBClass", ResolutionStatus.RESOLVED, TypeReferenceLocation.TYPE, 4, 0, 161,
                                 "public class MyBClass extends MyAClass {")));
@@ -103,10 +90,6 @@ public class JavaASTReferenceResolverTest extends AbstractJavaASTTest
         List<ClassReference> references = ASTProcessor.analyze(getLibraryPaths(), getSourcePaths(),
                     Paths.get("src/test/resources/testclasses/simple/MyAClass.java"));
 
-        for (ClassReference reference : references)
-        {
-            System.out.println("Reference: " + reference);
-        }
         Assert.assertTrue(references.contains(
                     new ClassReference("testclasses.simple.MyAClass", ResolutionStatus.RESOLVED, TypeReferenceLocation.TYPE, 3, 0, 128,
                                 "public class MyAClass implements SomeInterface {")));
@@ -122,10 +105,6 @@ public class JavaASTReferenceResolverTest extends AbstractJavaASTTest
         List<ClassReference> references = ASTProcessor.analyze(getLibraryPaths(), getSourcePaths(),
                     Paths.get("src/test/resources/testclasses/javalang/JavaLangReferences.java"));
 
-        for (ClassReference reference : references)
-        {
-            System.out.println("Reference: " + reference);
-        }
         Assert.assertTrue(references.contains(
                     new ClassReference("testclasses.javalang.JavaLangReferences", ResolutionStatus.RESOLVED, TypeReferenceLocation.TYPE, 3, 0, 191,
                                 "public class JavaLangReferences {")));
@@ -147,10 +126,6 @@ public class JavaASTReferenceResolverTest extends AbstractJavaASTTest
     {
         List<ClassReference> references = ASTProcessor.analyze(getLibraryPaths(), getSourcePaths(),
                     Paths.get("src/test/resources/testclasses/simple/ExampleWildcardImport.java"));
-        for (ClassReference reference : references)
-        {
-            System.out.println("Reference: " + reference);
-        }
 
         Assert.assertTrue(references.contains(new ClassReference("java.util.*", ResolutionStatus.RESOLVED, TypeReferenceLocation.IMPORT, 10, 7, 9,
                     "import java.util.*;")));
@@ -165,10 +140,6 @@ public class JavaASTReferenceResolverTest extends AbstractJavaASTTest
     {
         List<ClassReference> references = ASTProcessor.analyze(getLibraryPaths(), getSourcePaths(),
                     Paths.get("src/test/resources/testclasses/simple/FullNonImportedFQCNNotOnClasspath.java"));
-        for (ClassReference reference : references)
-        {
-            System.out.println("Reference: " + reference);
-        }
 
         Assert.assertTrue(references.contains(new ClassReference("com.proprietary.Constants.MY_CONSTANT", ResolutionStatus.RECOVERED,
                     TypeReferenceLocation.VARIABLE_INITIALIZER,
@@ -176,5 +147,15 @@ public class JavaASTReferenceResolverTest extends AbstractJavaASTTest
         Assert.assertTrue(references.contains(new ClassReference("OtherConstants.OTHER_CONSTANT", ResolutionStatus.RECOVERED,
                     TypeReferenceLocation.VARIABLE_INITIALIZER,
                     6, 4, 49, "private int foo2=OtherConstants.OTHER_CONSTANT;")));
+    }
+
+    @Test
+    public void testInterfaceExtension()
+    {
+        List<ClassReference> references = ASTProcessor.analyze(getLibraryPaths(), getSourcePaths(),
+                    Paths.get("src/test/resources/testclasses/simple/EventServer.java"));
+
+        Assert.assertTrue(references.contains(new ClassReference("java.rmi.Remote", ResolutionStatus.RESOLVED, TypeReferenceLocation.INHERITANCE,
+                    6, 0, 117, "public interface EventServer extends Remote {")));
     }
 }
