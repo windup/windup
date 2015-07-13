@@ -34,13 +34,9 @@
 
         <!-- Test Dependencies -->
         <dependency>
-            <groupId>org.jboss.forge.furnace.test</groupId>
-            <artifactId>furnace-test-harness</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.forge.furnace.test</groupId>
-            <artifactId>arquillian-furnace-classpath</artifactId>
+            <groupId>org.jboss.windup</groupId>
+            <artifactId>windup-test-harness</artifactId>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
