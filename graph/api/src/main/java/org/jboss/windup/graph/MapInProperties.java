@@ -9,8 +9,8 @@ import java.lang.annotation.RetentionPolicy;
  * Applicable to:
  * <ul>
  * <li><code>Map get*()</code> - materializes the map from the vertex properties.
- * <li><code>void set*(Map&lt;String,String&gt;)</code> - overwrites vertexes properties with values from map, deleting the old ones EXCEPT windup
- * type.
+ * <li><code>void set*(Map&lt;String,String&gt;)</code> - overwrites vertexes properties with values from map, deleting the old ones EXCEPT Windup
+ * frame type and Windup's reserved prefix "w:".
  * <li><code>void put*(Map&lt;String,String&gt;)</code>
  * <li><code>void putAll*(Map&lt;String,String&gt;)</code>
  * </ul>
