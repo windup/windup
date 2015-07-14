@@ -202,7 +202,7 @@ public class RuleLoaderImpl implements RuleLoader
 
     private String generatedRuleID(RuleProvider provider, Rule rule, int idx)
     {
-        String provID = provider.getMetadata().getID().replace("org.jboss.windup.rules.", "w:");
-        return "GeneratedID_" + provID + "_" + idx;
+        String provID = provider.getMetadata().getID();
+        return provID + "_" + idx;
     }
 }

@@ -11,6 +11,7 @@ import org.jboss.windup.rules.files.condition.FileContent;
 import org.jboss.windup.rules.files.model.FileLocationModel;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
+import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
@@ -47,14 +48,14 @@ public class DiscoverStaticIPAddressRuleProvider extends AbstractRuleProvider
                             // graph
                             StaticIPLocationModel location = GraphService.addTypeToModel(event.getGraphContext(), payload,
                                         StaticIPLocationModel.class);
-
+                            location.setRuleID(((Rule) context.get(Rule.class)).getId());
                             location.setTitle("Static IP: " + location.getSourceSnippit());
                             location.setHint("When migrating environments, static IP addresses may need to be modified or eliminated.");
                             location.setEffort(0);
                         }
                     })
                     .where("ip").matches("\\b\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\b")
-                    .where("type").matches("java|properties|xml");
+                    .where("type").matches("java|properties|xml")
+                    .withId(getClass().getSimpleName());
     }
-
 }

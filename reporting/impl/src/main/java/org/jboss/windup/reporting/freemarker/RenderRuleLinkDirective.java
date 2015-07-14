@@ -20,6 +20,7 @@ public class RenderRuleLinkDirective implements WindupFreeMarkerTemplateDirectiv
 {
 
     public static final String RENDER_RULE_LINK = "render_rule_link";
+    public static final String RENDER_TYPE_GLYPH = "glyph";
 
     @Override
     public String getDirectiveName()
@@ -47,10 +48,20 @@ public class RenderRuleLinkDirective implements WindupFreeMarkerTemplateDirectiv
         if (ruleIDStringModel == null || ruleIDStringModel.getAsString() == null)
             return;
 
+        SimpleScalar renderTypeScalar = (SimpleScalar) params.get("renderType");
+        final String renderType;
+        if (renderTypeScalar == null)
+            renderType = RENDER_TYPE_GLYPH;
+        else
+            renderType = renderTypeScalar.getAsString();
+
         String ruleID = ruleIDStringModel.getAsString();
 
         writer.append("<a href='" + RenderRuleProviderReportRuleProvider.OUTPUT_FILENAME + "#" + ruleID + "'>");
-        writer.append("<span title='" + ruleID + "' class='glyphicon glyphicon-link'></span>");
+        if (RENDER_TYPE_GLYPH.equals(renderType))
+            writer.append("<span title='" + ruleID + "' class='glyphicon glyphicon-link'></span>");
+        else
+            writer.append("<span title='" + ruleID + "'>" + ruleID + "</span>");
         writer.append("</a>");
     }
 }
