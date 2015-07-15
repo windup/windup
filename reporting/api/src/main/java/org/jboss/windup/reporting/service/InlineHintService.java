@@ -6,6 +6,7 @@ import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.reporting.model.EffortReportModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.rules.files.model.FileReferenceModel;
 
@@ -83,7 +84,7 @@ public class InlineHintService extends GraphService<InlineHintModel>
         int hintEffort = 0;
         for (Vertex v : inlineHintPipeline)
         {
-            hintEffort += (Integer) v.getProperty(InlineHintModel.EFFORT);
+            hintEffort += (Integer) v.getProperty(EffortReportModel.EFFORT);
         }
 
         if (recursive)

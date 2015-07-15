@@ -17,15 +17,13 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
  * additional information, or auto-translated/generated/updated versions of the source file.
  */
 @TypeValue(ClassificationModel.TYPE)
-public interface ClassificationModel extends WindupVertexFrame, LinkableModel
+public interface ClassificationModel extends EffortReportModel, LinkableModel
 {
     static final String TYPE = "ClassificationModel";
     static final String TYPE_PREFIX = TYPE + ":";
     static final String RULE_ID = TYPE_PREFIX + "ruleID";
     static final String CLASSIFICATION = TYPE_PREFIX + "classification";
-    static final String SEVERITY = TYPE_PREFIX + TYPE_PREFIX + "severity";
     static final String DESCRIPTION = TYPE_PREFIX + "description";
-    static final String EFFORT = TYPE_PREFIX + "effort";
 
     static final String FILE_MODEL = TYPE_PREFIX + "classificationModelToFileModel";
 
@@ -42,18 +40,6 @@ public interface ClassificationModel extends WindupVertexFrame, LinkableModel
     Iterable<FileModel> getFileModels();
 
     /**
-     * Set the effort associated with this {@link ClassificationModel}.
-     */
-    @Property(EFFORT)
-    void setEffort(int effort);
-
-    /**
-     * Get the effort associated with this {@link ClassificationModel}.
-     */
-    @Property(EFFORT)
-    int getEffort();
-
-    /**
      * Set text of this {@link ClassificationModel}.
      */
     @Indexed
@@ -65,18 +51,6 @@ public interface ClassificationModel extends WindupVertexFrame, LinkableModel
      */
     @Property(CLASSIFICATION)
     String getClassification();
-
-    /**
-     * Contains a severity level that may be used to indicate to the user the severity level of a problem.
-     */
-    @Property(SEVERITY)
-    void setSeverity(Severity severity);
-
-    /**
-     * Contains a severity level that may be used to indicate to the user the severity level of a problem.
-     */
-    @Property(SEVERITY)
-    Severity getSeverity();
 
     /**
      * Set the description text of this {@link ClassificationModel}.
