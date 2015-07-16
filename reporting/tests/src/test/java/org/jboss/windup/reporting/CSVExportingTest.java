@@ -165,7 +165,7 @@ public class CSVExportingTest
 
         b2.setEffort(3);
         b2.setRuleID("rule2");
-        b2.setTitle("hint2;-text");
+        b2.setTitle("hint2;\"-text");
         b2.setLineNumber(0);
 
         c2.setRuleID("classification2");
