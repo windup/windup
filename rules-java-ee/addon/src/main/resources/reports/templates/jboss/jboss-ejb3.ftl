@@ -41,6 +41,7 @@
                xmlns:s="urn:security:1.1"
                xmlns:c="urn:clustering:1.0"  
                xmlns:p="urn:ejb-pool:1.0"
+               xmlns:tx="urn:trans-timeout"
                xsi:schemaLocation="http://www.jboss.com/xml/ns/javaee http://www.jboss.org/j2ee/schema/jboss-ejb3-2_0.xsd http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_1.xsd"
                version="3.1"
                impl-version="2.1">
