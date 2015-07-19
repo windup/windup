@@ -39,6 +39,8 @@
                xmlns="http://java.sun.com/xml/ns/javaee"
                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                xmlns:s="urn:security:1.1"
+               xmlns:c="urn:clustering:1.0"  
+               xmlns:p="urn:ejb-pool:1.0"
                xsi:schemaLocation="http://www.jboss.com/xml/ns/javaee http://www.jboss.org/j2ee/schema/jboss-ejb3-2_0.xsd http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_1.xsd"
                version="3.1"
                impl-version="2.1">
@@ -49,7 +51,7 @@
 		<#list reportModel.relatedResources.sessionBeans.list.iterator() as sessionBean>
 		<session> 
             <ejb-name>${sessionBean.beanName}</ejb-name>
-            <session-type>Stateless</session-type>
+            <session-type>${sessionBean.sessionType}</session-type>
             
             <#if iterableHasContent(sessionBean.environmentReferences)>
 	            <#list sessionBean.environmentReferences.iterator() as environmentRef>
@@ -82,4 +84,18 @@
     	</#list>
     	</#if>
     </enterprise-beans>
+
+    	
+	<assembly-descriptor>    
+		  <#if iterableHasContent(reportModel.relatedResources.sessionBeans)>
+			  <#list reportModel.relatedResources.sessionBeans.list.iterator() as sessionBean>
+				  <#if sessionBean.clustered?? && sessionBean.clustered>
+				  <c:clustering>
+			          <ejb-name>${sessionBean.beanName}</ejb-name>  
+			          <c:clustered>true</c:clustered>  
+			      </c:clustering>  
+			      </#if>
+		      </#list>
+        </#if>
+	</assembly-descriptor> 
 </jboss:ejb-jar>

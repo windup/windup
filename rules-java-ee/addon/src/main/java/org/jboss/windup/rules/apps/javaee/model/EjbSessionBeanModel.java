@@ -4,6 +4,7 @@ import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
+import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
@@ -24,6 +25,21 @@ public interface EjbSessionBeanModel extends EjbBeanBaseModel
     public static final String GLOBAL_JNDI = "globalJNDI";
     public static final String MODULE_JNDI = "moduleJNDI";
     public static final String LOCAL_JNDI = "localJNDI";
+
+    public static final String CLUSTERED = "clustered";
+
+
+    /**
+     * Contains the session bean clustering config
+     */
+    @Property(CLUSTERED)
+    public Boolean isClustered();
+
+    /**
+     * Contains the session bean clustering config
+     */
+    @Property(CLUSTERED)
+    public void setClustered(Boolean clustered);
 
     /**
      * Contains the Session bean's local interface
