@@ -84,7 +84,6 @@
     	</#list>
     	</#if>
     </enterprise-beans>
-
     	
 	<assembly-descriptor>    
 		  <#if iterableHasContent(reportModel.relatedResources.sessionBeans)>
