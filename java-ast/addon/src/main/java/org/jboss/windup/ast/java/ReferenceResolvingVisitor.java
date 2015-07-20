@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.Annotation;
+import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
 import org.eclipse.jdt.core.dom.ArrayInitializer;
 import org.eclipse.jdt.core.dom.BooleanLiteral;
 import org.eclipse.jdt.core.dom.CastExpression;
@@ -190,7 +191,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
     {
         if (type == null)
             return null;
-        String sourceString = type.getQualifiedName();
+        String sourceString = getQualifiedName(type);
         return processTypeAsString(sourceString, resolutionStatus, referenceLocation, lineNumber, columnNumber, length, line);
     }
 
@@ -335,10 +336,31 @@ public class ReferenceResolvingVisitor extends ASTVisitor
         if (node.getExpression() instanceof ClassInstanceCreation)
         {
             ClassInstanceCreation cic = (ClassInstanceCreation) node.getExpression();
-            processTypeBinding(cic.getType().resolveBinding(), ResolutionStatus.RESOLVED, TypeReferenceLocation.CONSTRUCTOR_CALL,
+            ITypeBinding typeBinding = cic.getType().resolveBinding();
+            if (typeBinding == null)
+            {
+                String qualifiedClass = cic.getType().toString();
+                ResolveClassnameResult result = resolveClassname(qualifiedClass);
+                qualifiedClass = result.result;
+                ResolutionStatus resolutionStatus = result.found ? ResolutionStatus.RECOVERED : ResolutionStatus.UNRESOLVED;
+
+                processTypeAsString(qualifiedClass, resolutionStatus, TypeReferenceLocation.CONSTRUCTOR_CALL,
+                            compilationUnit.getLineNumber(node.getStartPosition()),
+                            compilationUnit.getColumnNumber(cic.getStartPosition()), cic.getLength(), node.toString());
+            }
+            else
+            {
+                processTypeBinding(typeBinding, ResolutionStatus.RESOLVED, TypeReferenceLocation.CONSTRUCTOR_CALL,
                         compilationUnit.getLineNumber(node.getStartPosition()),
                         compilationUnit.getColumnNumber(cic.getStartPosition()), cic.getLength(), node.toString());
+            }
         }
+        return super.visit(node);
+    }
+
+    @Override
+    public boolean visit(AnonymousClassDeclaration node)
+    {
         return super.visit(node);
     }
 
@@ -838,16 +860,41 @@ public class ReferenceResolvingVisitor extends ASTVisitor
         return super.visit(node);
     }
 
+    private String getQualifiedName(ITypeBinding typeBinding)
+    {
+        if (typeBinding == null)
+            return null;
+
+        String qualifiedName = typeBinding.getQualifiedName();
+
+        if (StringUtils.isEmpty(qualifiedName))
+        {
+            if (typeBinding.isAnonymous())
+            {
+                if (typeBinding.getSuperclass() != null)
+                    qualifiedName = getQualifiedName(typeBinding.getSuperclass());
+                else if (typeBinding instanceof AnonymousClassDeclaration)
+                {
+                    qualifiedName = ((AnonymousClassDeclaration) typeBinding).toString();
+                }
+            }
+            else if (StringUtils.isEmpty(qualifiedName) && typeBinding.isNested())
+                qualifiedName = typeBinding.getName();
+        }
+
+        return qualifiedName;
+    }
+
     @Override
     public boolean visit(ClassInstanceCreation node)
     {
         IMethodBinding constructorBinding = node.resolveConstructorBinding();
         String qualifiedClass = "";
-        List<String> constructorMethodQualifiedArguments = new ArrayList<String>();
+        List<String> constructorMethodQualifiedArguments = new ArrayList<>();
         if (constructorBinding != null && constructorBinding.getDeclaringClass() != null)
         {
             ITypeBinding declaringClass = constructorBinding.getDeclaringClass();
-            qualifiedClass = declaringClass.getQualifiedName();
+            qualifiedClass = getQualifiedName(declaringClass);
             for (ITypeBinding type : constructorBinding.getParameterTypes())
             {
                 constructorMethodQualifiedArguments.add(type.getQualifiedName());

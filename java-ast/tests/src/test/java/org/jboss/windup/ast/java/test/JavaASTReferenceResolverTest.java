@@ -158,4 +158,64 @@ public class JavaASTReferenceResolverTest extends AbstractJavaASTTest
         Assert.assertTrue(references.contains(new ClassReference("java.rmi.Remote", ResolutionStatus.RESOLVED, TypeReferenceLocation.INHERITANCE,
                     6, 0, 117, "public interface EventServer extends Remote {")));
     }
+
+    @Test
+    public void testInnerClassScenarios()
+    {
+        List<ClassReference> references = ASTProcessor.analyze(getLibraryPaths(), getSourcePaths(),
+                    Paths.get("src/test/resources/testclasses/innerclasses/SampleWithInnerClasses.java"));
+
+        boolean foundReturnTypeSimpleNested = false;
+        boolean foundConstructorCallSimpleNested = false;
+        boolean foundUseInnerAnonymous = false;
+        boolean foundDefinedInMethod = false;
+        boolean foundUnresolvedInnerWithoutParen = false;
+        boolean foundUnresolvedInnerWithParen = false;
+
+        for (ClassReference reference : references)
+        {
+            System.out.println("Line: " + reference.getLineNumber() + ", Name: " + reference.getQualifiedName() + ", Resolution Status: "
+                        + reference.getResolutionStatus() + ", Location: " + reference.getLocation());
+            if ("testclasses.innerclasses.SampleWithInnerClasses.SimpleNested".equals(reference.getQualifiedName())
+                        && reference.getLocation() == TypeReferenceLocation.RETURN_TYPE)
+            {
+                foundReturnTypeSimpleNested = true;
+                Assert.assertEquals("This should be a resolved binding", ResolutionStatus.RESOLVED, reference.getResolutionStatus());
+            }
+            else if (reference.getLineNumber() == 12
+                        && "testclasses.innerclasses.SampleWithInnerClasses.SimpleNested".equals(reference.getQualifiedName())
+                        && reference.getLocation() == TypeReferenceLocation.CONSTRUCTOR_CALL)
+            {
+                foundConstructorCallSimpleNested = true;
+                Assert.assertEquals("This should be a resolved binding", ResolutionStatus.RESOLVED, reference.getResolutionStatus());
+            }
+            else if (reference.getQualifiedName().equals("DefinedInside()"))
+            {
+                foundDefinedInMethod = true;
+                Assert.assertEquals("This should be a resolved binding", ResolutionStatus.RESOLVED, reference.getResolutionStatus());
+            }
+            else if (reference.getLineNumber() == 30
+                        && reference.getQualifiedName().equals("testclasses.innerclasses.SampleWithInnerClasses.SimpleNested()"))
+            {
+                foundUseInnerAnonymous = true;
+                Assert.assertEquals("This should be a resolved binding", ResolutionStatus.RESOLVED, reference.getResolutionStatus());
+            }
+            else if (reference.getLineNumber() == 41 && reference.getQualifiedName().equals("ThisClassDoesNotExist()"))
+            {
+                foundUnresolvedInnerWithParen = true;
+                Assert.assertEquals("This should be a resolved binding", ResolutionStatus.UNRESOLVED, reference.getResolutionStatus());
+            }
+            else if (reference.getLineNumber() == 41 && reference.getQualifiedName().equals("ThisClassDoesNotExist"))
+            {
+                foundUnresolvedInnerWithoutParen = true;
+                Assert.assertEquals("This should be a resolved binding", ResolutionStatus.UNRESOLVED, reference.getResolutionStatus());
+            }
+        }
+        Assert.assertTrue(foundReturnTypeSimpleNested);
+        Assert.assertTrue(foundConstructorCallSimpleNested);
+        Assert.assertTrue(foundDefinedInMethod);
+        Assert.assertTrue(foundUseInnerAnonymous);
+        Assert.assertTrue(foundUnresolvedInnerWithoutParen);
+        Assert.assertTrue(foundUnresolvedInnerWithParen);
+    }
 }
