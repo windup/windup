@@ -22,9 +22,7 @@
             </div>
 
             <div class="navbar-collapse collapse navbar-responsive-collapse">
-                <ul class="nav navbar-nav">
-                    <#include "include/navbar.ftl">
-                </ul>
+                <#include "include/navbar.ftl">
             </div><!-- /.nav-collapse -->
         </div>
         <!-- / Navbar -->
@@ -106,7 +104,8 @@
         <script type="text/javascript">
             $(document).ready(function () {
                 $('.problem-link').each(function(index, value) {
-                    $(value).click(function() {
+                    $(value).click(function(e) {
+                        e.preventDefault();
                         $(value).siblings(".problem-file-list").toggle();
                     });
                 });

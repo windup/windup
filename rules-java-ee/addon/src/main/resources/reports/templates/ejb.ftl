@@ -72,9 +72,7 @@
 			</button>
 		</div>
 		<div class="navbar-collapse collapse navbar-responsive-collapse">
-			<ul class="nav navbar-nav">
 			<#include "include/navbar.ftl">
-			</ul>
 		</div><!-- /.nav-collapse -->
 	</div>
 
