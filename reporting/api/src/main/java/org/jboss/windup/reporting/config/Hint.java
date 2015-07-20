@@ -1,10 +1,12 @@
 package org.jboss.windup.reporting.config;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
+import org.apache.commons.collections.set.UnmodifiableSet;
 
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.windup.config.GraphRewrite;
@@ -24,7 +26,7 @@ import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
 /**
  * Used as an intermediate to support the addition of {@link InlineHintModel} objects to the graph via an Operation.
  */
-public class Hint extends ParameterizedIterationOperation<FileLocationModel> implements HintText, HintLink, HintSeverity
+public class Hint extends ParameterizedIterationOperation<FileLocationModel> implements HintText, HintLink, HintSeverity, HintEffort
 {
     private static final Logger log = Logger.getLogger(Hint.class.getName());
 
@@ -35,6 +37,7 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
     private int effort;
     private Severity severity = DEFAULT_SEVERITY;
     private List<Link> links = new ArrayList<>();
+    private Set<String> tags = Collections.EMPTY_SET;
 
     protected Hint(String variable)
     {
@@ -128,6 +131,8 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
             hintModel.addLink(linkModel);
         }
 
+        hintModel.setTags(this.getTags());
+
         if (locationModel.getFile() instanceof SourceFileModel)
             ((SourceFileModel) locationModel.getFile()).setGenerateSourceReport(true);
 
@@ -136,9 +141,16 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
     }
 
     @Override
-    public OperationBuilder withEffort(int effort)
+    public HintEffort withEffort(int effort)
     {
         this.effort = effort;
+        return this;
+    }
+
+    @Override
+    public OperationBuilder withTags(Set<String> tags)
+    {
+        this.tags = tags;
         return this;
     }
 
@@ -175,6 +187,11 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
     public List<Link> getLinks()
     {
         return links;
+    }
+
+    public Set<String> getTags()
+    {
+        return Collections.unmodifiableSet(tags);
     }
 
     @Override
@@ -215,6 +232,8 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
             result.append(".withEffort(" + effort + ")");
         if (links != null && !links.isEmpty())
             result.append(".with(" + links + ")");
+        if (tags != null && !tags.isEmpty())
+            result.append(".withTags(" + tags + ")");
         return result.toString();
     }
 

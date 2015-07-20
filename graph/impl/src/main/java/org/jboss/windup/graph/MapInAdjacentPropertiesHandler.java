@@ -108,8 +108,6 @@ public class MapInAdjacentPropertiesHandler implements MethodHandler<MapInAdjace
         @SuppressWarnings("unchecked")
         Map<String, Serializable> map = (Map<String, Serializable>) args[0];
 
-        // log.finer("Setting map under '"+ann.label()+"': " + StringUtils.join(map.keySet(), ", "));///
-
         // Find or create the map vertex.
         Iterable<Vertex> verts = vertex.getVertices(Direction.OUT, ann.label());
         Vertex mapVertex = null;
@@ -117,7 +115,6 @@ public class MapInAdjacentPropertiesHandler implements MethodHandler<MapInAdjace
         if (!it.hasNext())
         {
             // No map vertex yet.
-            // log.finest("No map vertex yet for: " + ann.label());///
             mapVertex = framedGraph.addVertex(null);
             vertex.addEdge(ann.label(), mapVertex);
         }
@@ -155,7 +152,6 @@ public class MapInAdjacentPropertiesHandler implements MethodHandler<MapInAdjace
         // Add the new entries.
         for (String key : mapKeys)
         {
-            // log.finest("Adding: " + key + " = " + map.get( key ));///
             mapVertex.setProperty(key, map.get(key));
         }
     }

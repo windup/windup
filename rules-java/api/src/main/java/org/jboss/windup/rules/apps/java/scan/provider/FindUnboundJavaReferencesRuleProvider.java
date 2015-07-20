@@ -1,5 +1,6 @@
 package org.jboss.windup.rules.apps.java.scan.provider;
 
+import java.util.Collections;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.MetadataBuilder;
@@ -17,6 +18,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
+ * @author <a href="mailto:dynawest@gmail.com">Ondrej Zizka</a>
  */
 public class FindUnboundJavaReferencesRuleProvider extends AbstractRuleProvider
 {

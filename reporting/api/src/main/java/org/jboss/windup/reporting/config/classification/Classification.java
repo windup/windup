@@ -28,16 +28,19 @@ import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
 
 /**
  * Classifies a {@link FileModel} {@link Iteration} payload.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="mailto:dynawest@gmail.com">Ondrej Zizka</a>
  */
 public class Classification extends ParameterizedIterationOperation<FileModel> implements ClassificationAs, ClassificationEffort,
-            ClassificationDescription, ClassificationLink, ClassificationSeverity
+            ClassificationDescription, ClassificationLink, ClassificationTags, ClassificationSeverity
 {
     public static final Severity DEFAULT_SEVERITY = Severity.OPTIONAL;
     private static final Logger log = Logger.getLogger(Classification.class.getName());
 
     private List<Link> links = new ArrayList<>();
+    private Set<String> tags = new HashSet<>();
+
     private RegexParameterizedPatternParser classificationPattern;
     private RegexParameterizedPatternParser descriptionPattern;
     private int effort;
@@ -56,7 +59,7 @@ public class Classification extends ParameterizedIterationOperation<FileModel> i
     /**
      * Set the payload to the fileModel of the given instance even though the variable is not directly referencing it. This is mainly to simplify the
      * creation of the rule, when the FileModel itself is not being iterated but just a model referencing it.
-     * 
+     *
      */
     @Override
     public FileModel resolvePayload(GraphRewrite event, EvaluationContext context, WindupVertexFrame payload)
@@ -114,6 +117,15 @@ public class Classification extends ParameterizedIterationOperation<FileModel> i
     public ClassificationLink with(Link link)
     {
         this.links.add(link);
+        return this;
+    }
+
+    /**
+     * Add the given tags to this {@link Classification}.
+     */
+    public ClassificationTags withTags(Set<String> tags)
+    {
+        this.tags.addAll(tags);
         return this;
     }
 
