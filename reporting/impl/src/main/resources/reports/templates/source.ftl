@@ -26,9 +26,7 @@
 			</button>
 		</div>
 		<div class="navbar-collapse collapse navbar-responsive-collapse">
-			<ul class="nav navbar-nav">
-				<#include "include/navbar.ftl">
-			</ul>
+			<#include "include/navbar.ftl">
 		</div><!-- /.nav-collapse -->
 	</div>
 	
@@ -179,6 +177,7 @@
 			$(window).sausage({ page: 'li.box' });
 		}); 
 	</script>
-    
+
+
   </body>
 </html>
