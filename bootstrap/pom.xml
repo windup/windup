@@ -35,6 +35,14 @@
             <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>dependencies</artifactId>
+            <version>2.16.2.Final</version>
+        </dependency>
+
+
         <dependency>
             <groupId>org.jboss.forge.furnace</groupId>
             <artifactId>furnace-manager</artifactId>
@@ -51,6 +59,8 @@
             <groupId>org.jboss.forge.furnace</groupId>
             <artifactId>furnace-se</artifactId>
         </dependency>
+
+
         <!-- Optional log manager dependency -->
         <dependency>
             <groupId>org.jboss.logmanager</groupId>

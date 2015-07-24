@@ -1,16 +1,8 @@
 package org.jboss.windup.addon.ui;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-
 import javax.inject.Inject;
-
-import net.lingala.zip4j.core.ZipFile;
-
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.dependencies.DependencyResolver;
@@ -23,11 +15,14 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.ui.RulesetUpdateChecker;
+import org.jboss.windup.exec.updater.RulesetsUpdater;
 import org.jboss.windup.ui.WindupUpdateRulesetCommand;
+import org.jboss.windup.util.PathUtil;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 
 @RunWith(Arquillian.class)
 public class WindupUpdateRulesetCommandTest
@@ -60,42 +55,37 @@ public class WindupUpdateRulesetCommandTest
     @Inject
     private UITestHarness uiTestHarness;
 
-    @Test
-    public void testOutputDirCannotBeParentOfInputDir() throws Exception
+    @Inject
+    private RulesetsUpdater updater;
+
+
+    @Test @Ignore("Command can't be used currently as there's no way to run it from the UI."
+            + " I'm leaving it here in case we needed the command again (maybe from a GUI?).")
+    public void testUpdateRulesetCommand() throws Exception
     {
+        // Extract the windup zip to a temp dir.
         File tempDir = OperatingSystemUtils.createTempDir();
-        File inputFile = File.createTempFile("windup-old-ruleset", ".zip", tempDir);
-        inputFile.deleteOnExit();
-        try (InputStream iStream = getClass().getResourceAsStream(TEST_OLD_WINDUP))
-        {
-            try (OutputStream oStream = new FileOutputStream(inputFile))
-            {
-                IOUtils.copy(iStream, oStream);
-            }
-        }
+        PathUtil.unzipFromResource(WindupUpdateRulesetCommandTest.class, TEST_OLD_WINDUP, tempDir);
+
+        // This may cause FileNotFound in Furnace if it's already running.
+        System.setProperty("windup.home", new File(tempDir, "windup-old-ruleset").getAbsolutePath());
+
         try (CommandController controller = uiTestHarness.createCommandController(WindupUpdateRulesetCommand.class))
         {
-            ZipFile zipFile = new ZipFile(inputFile.getAbsolutePath());
-            String extractedFolderPath = tempDir.getAbsolutePath() + "/extracted-windup";
-            new File(extractedFolderPath).mkdirs();
-            zipFile.extractAll(extractedFolderPath);
-            String windupHome = extractedFolderPath + "/windup-old-ruleset";
-            System.setProperty("windup.home", windupHome);
-            boolean rulesetNeedUpdate = RulesetUpdateChecker.rulesetNeedUpdate(resolver);
-            Assert.assertTrue(rulesetNeedUpdate);
-            try
-            {
-                controller.initialize();
-                Assert.assertTrue(controller.isEnabled());
-                Result result = controller.execute();
-                Assert.assertFalse(result instanceof Failed);
-                rulesetNeedUpdate = RulesetUpdateChecker.rulesetNeedUpdate(resolver);
-                Assert.assertFalse(rulesetNeedUpdate);
-            }
-            finally
-            {
-                FileUtils.deleteDirectory(tempDir);
-            }
+            boolean rulesetNeedUpdate = updater.rulesetsNeedUpdate();
+            Assert.assertTrue("Rulesets should need an update.", rulesetNeedUpdate);
+
+            controller.initialize();
+            Assert.assertTrue(controller.isEnabled());
+            Result result = controller.execute();
+            Assert.assertFalse(result instanceof Failed);
+            rulesetNeedUpdate = updater.rulesetsNeedUpdate();
+            Assert.assertFalse(rulesetNeedUpdate);
+        }
+        finally
+        {
+            FileUtils.deleteDirectory(tempDir);
+            System.getProperties().remove("windup.home");
         }
     }
 

@@ -13,4 +13,5 @@ public enum BootstrapCommand {
     LIST_INSTALLED_ADDONS,
     INSTALL_ADDON,
     REMOVE_ADDON,
+    UPDATE_RULESETS,
 }
