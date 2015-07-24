@@ -17,6 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -26,12 +27,16 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.jboss.forge.addon.dependencies.DependencyResolver;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.impl.addons.AddonRepositoryImpl;
 import org.jboss.forge.furnace.repositories.AddonRepository;
 import org.jboss.forge.furnace.repositories.AddonRepositoryMode;
 import org.jboss.forge.furnace.repositories.MutableAddonRepository;
 import org.jboss.forge.furnace.se.FurnaceFactory;
+import org.jboss.forge.furnace.services.Imported;
+import org.jboss.forge.furnace.util.Assert;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.forge.furnace.versions.EmptyVersion;
 import org.jboss.forge.furnace.versions.SingleVersion;
@@ -46,6 +51,7 @@ import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.exec.configuration.options.InputPathOption;
 import org.jboss.windup.exec.configuration.options.OutputPathOption;
 import org.jboss.windup.exec.configuration.options.OverwriteOption;
+import org.jboss.windup.exec.updater.RulesetsUpdater;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.util.PathUtil;
@@ -148,6 +154,7 @@ public class Bootstrap
             command = BootstrapCommand.DISPLAY_HELP;
         }
         String addonID = null;
+        boolean updateRulesets = false;
 
         List<String> unknownArgs = new ArrayList<>();
         List<File> mutableRepos = new ArrayList<>();
@@ -214,6 +221,10 @@ public class Bootstrap
             {
                 command = BootstrapCommand.GENERATE_COMPLETION_DATA;
             }
+            else if (arg.startsWith("--updateRules"))
+            {
+                updateRulesets = true;
+            }
             else
             {
                 unknownArgs.add(arg);
@@ -228,25 +239,13 @@ public class Bootstrap
         {
             final String arg = arguments.get(i);
             if (unknownArgs.contains(arg))
-            {
-                arguments.set(i, null);
-            }
-        }
-
-        // Make it a List, Get rid of nulls.
-        List<String> argsList = new ArrayList<>(arguments.size() + 2);
-        for (String arg : arguments)
-        {
-            if (arg != null)
-                argsList.add(arg);
+                arguments.remove(i);
         }
 
         // Move Windup arguments to --evaluate '...'
         List<String> windupArguments = new ArrayList<>();
         if (!unknownArgs.isEmpty())
         {
-            setupNonInteractive(furnace);
-
             // Pass unknown arguments to Windup (Forge).
             for (String windupArg : unknownArgs)
                 windupArguments.add(windupArg);
@@ -258,31 +257,32 @@ public class Bootstrap
             furnaceService.getFurnace().addRepository(AddonRepositoryMode.MUTABLE, new File(getUserWindupDir(), "addons"));
         }
 
+        if (command == null && updateRulesets && onlyRulesetsUpdateRequested(arguments))
+            command = BootstrapCommand.UPDATE_RULESETS;
+
         if (command == null && !windupArguments.isEmpty())
             command = BootstrapCommand.RUN_WINDUP;
-        else if (command == null)
+
+        if (command == null)
             command = BootstrapCommand.DISPLAY_HELP;
 
         switch (command)
         {
-        case LIST_INSTALLED_ADDONS:
-            furnaceService.list();
-            break;
-        case INSTALL_ADDON:
-            furnaceService.install(addonID, this.batchMode);
-            break;
-        case REMOVE_ADDON:
-            furnaceService.remove(addonID, this.batchMode);
-            break;
-        case GENERATE_COMPLETION_DATA:
-            break;
-        default:
-            break;
+            case LIST_INSTALLED_ADDONS:
+                furnaceService.list();
+                break;
+            case INSTALL_ADDON:
+                furnaceService.install(addonID, this.batchMode);
+                break;
+            case REMOVE_ADDON:
+                furnaceService.remove(addonID, this.batchMode);
+                break;
         }
 
+        // Start Furnace service if we are going to need it.
         try
         {
-            if (command == BootstrapCommand.RUN_WINDUP)
+            if (command == BootstrapCommand.RUN_WINDUP || command == BootstrapCommand.UPDATE_RULESETS)
                 furnace.addContainerLifecycleListener(new GreetingListener());
             Future<Furnace> future = furnaceService.start(true);
             // use future.get() to wait until it is started
@@ -296,29 +296,55 @@ public class Bootstrap
             e.printStackTrace();
         }
 
+
+        // Update rulesets
+        if (updateRulesets)
+        {
+            // Prevent help from being printed.
+            if(command == null)
+                command = BootstrapCommand.UPDATE_RULESETS;
+
+            System.out.println("Checking for rulesets updates...");
+            try {
+                Imported<DependencyResolver> resolver = furnace.getAddonRegistry().getServices(DependencyResolver.class);
+                //new RulesetsUpdater(resolver.get(), furnace).replaceRulesetsDirectoryWithLatestReleaseIfAny();
+                Imported<RulesetsUpdater> services = furnace.getAddonRegistry().getServices(RulesetsUpdater.class);
+                Assert.notNull(services, "Couldn't find the " + RulesetsUpdater.class.getSimpleName() + " service.");
+                RulesetsUpdater updater = services.get();
+                String newVersion = updater.replaceRulesetsDirectoryWithLatestReleaseIfAny();
+                System.out.println("Updated the rulesets to version " + newVersion + ".");
+            }
+            catch (Throwable ex)
+            {
+                System.err.println("Could not update the rulesets: " + ex.getMessage());
+                ex.printStackTrace(System.err);
+            }
+        }
+
+
         switch (command)
         {
-        case GENERATE_COMPLETION_DATA:
-            generateCompletionData(true);
-            break;
-        case DISPLAY_HELP:
-            displayHelp();
-            break;
-        case LIST_TAGS:
-            listTags();
-            break;
-        case LIST_SOURCE_TECHNOLOGIES:
-            listSourceTechnologies();
-            break;
-        case LIST_TARGET_TECHNOLOGIES:
-            listTargetTechnologies();
-            break;
-        case RUN_WINDUP:
-            runWindup(windupArguments);
-            break;
-        default:
-            displayHelp();
-            break;
+            case GENERATE_COMPLETION_DATA:
+                generateCompletionData(true);
+                break;
+            case LIST_TAGS:
+                listTags();
+                break;
+            case LIST_SOURCE_TECHNOLOGIES:
+                listSourceTechnologies();
+                break;
+            case LIST_TARGET_TECHNOLOGIES:
+                listTargetTechnologies();
+                break;
+            case RUN_WINDUP:
+                runWindup(windupArguments);
+                break;
+            case UPDATE_RULESETS:
+                break;
+            case DISPLAY_HELP:
+            default:
+                displayHelp();
+                break;
         }
     }
 
@@ -374,17 +400,17 @@ public class Bootstrap
             }
             try (FileWriter writer = new FileWriter(completionPath.toFile()))
             {
-                writer.write("listTags:none" + OperatingSystemUtils.getLineSeparator());
-                writer.write("listSourceTechnologies:none" + OperatingSystemUtils.getLineSeparator());
-                writer.write("listTargetTechnologies:none" + OperatingSystemUtils.getLineSeparator());
-                writer.write("install:none" + OperatingSystemUtils.getLineSeparator());
-                writer.write("remote:none" + OperatingSystemUtils.getLineSeparator());
-                writer.write("addonDir:file" + OperatingSystemUtils.getLineSeparator());
-                writer.write("immutableAddonDir:file" + OperatingSystemUtils.getLineSeparator());
-                writer.write("batchMode:none" + OperatingSystemUtils.getLineSeparator());
-                writer.write("debug:none" + OperatingSystemUtils.getLineSeparator());
-                writer.write("help:none" + OperatingSystemUtils.getLineSeparator());
-                writer.write("version:none" + OperatingSystemUtils.getLineSeparator());
+                writer.write("listTags:none" + NEW_LINE);
+                writer.write("listSourceTechnologies:none" + NEW_LINE);
+                writer.write("listTargetTechnologies:none" + NEW_LINE);
+                writer.write("install:none" + NEW_LINE);
+                writer.write("remote:none" + NEW_LINE);
+                writer.write("addonDir:file" + NEW_LINE);
+                writer.write("immutableAddonDir:file" + NEW_LINE);
+                writer.write("batchMode:none" + NEW_LINE);
+                writer.write("debug:none" + NEW_LINE);
+                writer.write("help:none" + NEW_LINE);
+                writer.write("version:none" + NEW_LINE);
 
                 Iterable<ConfigurationOption> optionIterable = WindupConfiguration.getWindupConfigurationOptions(furnaceService.getFurnace());
                 for (ConfigurationOption option : optionIterable)
@@ -402,7 +428,7 @@ public class Bootstrap
                     else
                         line.append("none");
 
-                    line.append(OperatingSystemUtils.getLineSeparator());
+                    line.append(NEW_LINE);
                     writer.write(line.toString());
                 }
             }
@@ -412,6 +438,10 @@ public class Bootstrap
             System.err.println("WARNING: Unable to create bash completion file in \"" + completionPath + "\" due to: " + e.getMessage());
         }
     }
+
+    private static final String NEW_LINE = OperatingSystemUtils.getLineSeparator();
+
+
 
     @SuppressWarnings("unchecked")
     private void runWindup(List<String> arguments)
@@ -454,28 +484,19 @@ public class Bootstrap
 
                     String valueString = arguments.get(i);
                     // lists are space delimited... split them here
-                    if (valueString.contains(" "))
-                    {
-                        for (String value : valueString.split(" "))
-                        {
-                            values.add(convertType(option.getType(), value));
-                        }
-                    }
-                    else
-                    {
-                        values.add(convertType(option.getType(), valueString));
-                    }
+                    for (String value : StringUtils.split(valueString, ' '))
+                        values.add(convertType(option.getType(), value));
 
                     i++;
                 }
 
                 /*
                  * This allows us to support specifying a parameter multiple times.
-                 * 
+                 *
                  * For example:
-                 * 
+                 *
                  * `windup --packages foo --packages bar --packages baz`
-                 * 
+                 *
                  * While this is not necessarily the recommended approach, it would be nice for it to work smoothly if
                  * someone does it this way.
                  */
@@ -822,5 +843,26 @@ public class Bootstrap
             return new SingleVersion(version);
         }
         return EmptyVersion.getInstance();
+    }
+
+
+    private boolean onlyRulesetsUpdateRequested(List<String> arguments)
+    {
+        List<String> nonActionableArguments = Arrays.asList(new String[]{
+            "--debug", "--addonDir", "--immutableAddonDir", "--batchMode"
+        });
+
+        for (String arg : arguments)
+        {
+            if (!arg.startsWith("-"))
+                continue;
+            if (arg.startsWith("--updateRules"))
+                continue;
+            if (nonActionableArguments.contains(arg))
+                continue;
+            return false;
+        }
+
+        return true;
     }
 }

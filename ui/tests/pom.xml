@@ -10,17 +10,21 @@
     <artifactId>windup-ui-tests</artifactId>
     <name>Windup Engine - UI Tests</name>
 
+    <properties>
+        <version.forge>2.16.2.Final</version.forge>
+    </properties>
+
     <dependencies>
-        <!-- Addon Dependencies -->
+        <!-- Windup addons -->
         <dependency>
             <groupId>org.jboss.windup.ui</groupId>
             <artifactId>windup-ui</artifactId>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
-	 <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>maven</artifactId>
+        <dependency>
+            <groupId>org.jboss.windup.utils</groupId>
+            <artifactId>windup-utils</artifactId>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
@@ -31,26 +35,31 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.forge.addon</groupId>
-            <artifactId>dependencies</artifactId>
-            <classifier>forge-addon</classifier>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.jboss.windup.exec</groupId>
             <artifactId>windup-exec</artifactId>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
 
+        <!-- Other addons -->
         <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>ui</artifactId>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>maven</artifactId>
+            <classifier>forge-addon</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>dependencies</artifactId>
+            <classifier>forge-addon</classifier>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>resources</artifactId>
@@ -58,8 +67,8 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>org.jboss.windup.utils</groupId>
-            <artifactId>windup-utils</artifactId>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>addon-manager</artifactId>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
@@ -74,11 +83,19 @@
 
         <!-- Test Dependencies -->
         <dependency>
-                <groupId>org.jboss.windup</groupId>
-                <artifactId>windup-test-harness</artifactId>
-                <version>${project.version}</version>
-		<scope>test</scope>
-        </dependency>  
+            <groupId>org.jboss.windup</groupId>
+            <artifactId>windup-test-harness</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Trying to prevent windup-ui-tests throwing CNFEx with class from org.jboss.forge.addon:maven
+        <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>maven</artifactId>
+            <version>2.16.2.Final</version>
+            <scope>test</scope>
+        </dependency>
+        -->
         <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>ui-test-harness</artifactId>

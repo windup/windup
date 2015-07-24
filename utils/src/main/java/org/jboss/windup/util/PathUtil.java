@@ -1,10 +1,12 @@
 package org.jboss.windup.util;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.logging.Logger;
-
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -18,6 +20,8 @@ public class PathUtil
     private static final Logger LOG = Logger.getLogger(PathUtil.class.getName());
 
     public static final String WINDUP_HOME = "windup.home";
+    public static final String WINDUP_RULESETS_DIR_SYSPROP = "windup.rulesets.dir";
+
     public static final String RULES_DIRECTORY_NAME="rules";
     public static final String IGNORE_DIRECTORY_NAME="ignore";
     public static final String CACHE_DIRECTORY_NAME="cache";
@@ -34,7 +38,7 @@ public class PathUtil
         if (userHome == null)
         {
             Path path = new File("").toPath();
-            LOG.warning("$USER_HOME not set, using [" + path + "] instead.");
+            LOG.warning("$USER_HOME not set, using [" + path.toAbsolutePath().toString() + "] instead.");
             return path;
         }
         return Paths.get(userHome).resolve(".windup");
@@ -49,7 +53,7 @@ public class PathUtil
         if (windupHome == null)
         {
             Path path = new File("").toPath();
-            LOG.warning("$WINDUP_HOME not set, using [" + path + "] instead.");
+            LOG.warning("$WINDUP_HOME not set, using [" + path.toAbsolutePath().toString() + "] instead.");
             return path;
         }
         return Paths.get(windupHome);
@@ -91,7 +95,7 @@ public class PathUtil
     {
         return getWindupSubdirectory(IGNORE_DIRECTORY_NAME);
     }
-    
+
     /**
      * The path $WINDUP_HOME/addons
      */
@@ -113,7 +117,16 @@ public class PathUtil
      */
     public static Path getWindupRulesDir()
     {
-        return getWindupSubdirectory(RULES_DIRECTORY_NAME);
+        String rulesDir = System.getProperty(WINDUP_RULESETS_DIR_SYSPROP);
+        if (rulesDir != null)
+        {
+            Path path = Paths.get(rulesDir);
+            if(!path.toFile().exists())
+                LOG.warning(WINDUP_RULESETS_DIR_SYSPROP + " points to a non-existent directory!" + path.toAbsolutePath().toString());
+            return path;
+        }
+        else
+            return getWindupSubdirectory(RULES_DIRECTORY_NAME);
     }
 
     /**
@@ -154,10 +167,10 @@ public class PathUtil
 
     /**
      * Returns the root path for this source file, based upon the package name.
-     * 
+     *
      * For example, if path is "/project/src/main/java/org/example/Foo.java" and the package is "org.example", then this should return
      * "/project/src/main/java".
-     * 
+     *
      * Returns null if the folder structure does not match the package name.
      */
     public static Path getRootFolderForSource(Path sourceFilePath, String packageName)
@@ -197,5 +210,24 @@ public class PathUtil
         if (windupHome == null)
             return null;
         return windupHome.resolve(subdirectory);
+    }
+
+
+    public static void unzipFromResource(Class clazz, String resourcePath, File extractToPath) throws IOException
+    {
+        File inputFile = File.createTempFile("windup-resource-to-unzip-", ".zip");
+        try
+        {
+            try (final InputStream stream = clazz.getResourceAsStream(resourcePath))
+            {
+                FileUtils.copyInputStreamToFile(stream, inputFile);
+            }
+            extractToPath.mkdirs();
+            ZipUtil.unzipToFolder(inputFile, extractToPath);
+        }
+        finally
+        {
+            inputFile.delete();
+        }
     }
 }
