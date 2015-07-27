@@ -178,7 +178,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                 ExecutionStatistics.get().begin("AnalyzeJavaFilesRuleProvider.parseFiles");
                 try
                 {
-                    WindupWildcardImportResolver.setGraphContext(event.getGraphContext());
+                    WindupWildcardImportResolver.setContext(event.getGraphContext());
 
                     final BlockingQueue<Pair<Path, List<ClassReference>>> processedPaths = new ArrayBlockingQueue<>(ANALYSIS_QUEUE_SIZE);
                     final Set<Path> failedPaths = Sets.getConcurrentSet();
@@ -290,7 +290,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                 }
                 finally
                 {
-                    WindupWildcardImportResolver.setGraphContext(null);
+                    WindupWildcardImportResolver.setContext(null);
                 }
             }
             finally
