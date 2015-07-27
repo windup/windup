@@ -101,15 +101,15 @@ public class CSVExportingTest
                 configuration.setExportingCSV(true);
             }
             processor.execute(configuration);
-            Assert.assertEquals(exportCSV, new File(outputPath + "/app1.export").exists());
-            Assert.assertEquals(exportCSV, new File(outputPath + "/app2.export").exists());
+            Assert.assertEquals(exportCSV, new File(outputPath + "/app1.csv").exists());
+            Assert.assertEquals(exportCSV, new File(outputPath + "/app2.csv").exists());
             if (exportCSV)
             {
-                Path resource = Paths.get("src/test/resources/test-exports/app1.export");
-                Path resource2 = Paths.get("src/test/resources/test-exports/app2.export");
+                Path resource = Paths.get("src/test/resources/test-exports/app1.csv");
+                Path resource2 = Paths.get("src/test/resources/test-exports/app2.csv");
                 try {
-                    Assert.assertTrue(checkFileAreSame(resource.toString(), outputPath + "/app1.export"));
-                    Assert.assertTrue(checkFileAreSame(resource2.toString(), outputPath + "/app2.export"));
+                    Assert.assertTrue(checkFileAreSame(resource.toString(), outputPath + "/app1.csv"));
+                    Assert.assertTrue(checkFileAreSame(resource2.toString(), outputPath + "/app2.csv"));
                 } catch(IOException ex) {
                     Assert.fail("Exception was thrown while checking if the exported CSV file looks like expected. Exception: " + ex);
                 }
