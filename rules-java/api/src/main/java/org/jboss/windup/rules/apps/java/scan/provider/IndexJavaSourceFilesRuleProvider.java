@@ -85,7 +85,7 @@ public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
         @Override
         public void perform(GraphRewrite event, EvaluationContext context, JavaSourceFileModel payload)
         {
-            WindupWildcardImportResolver.setGraphContext(event.getGraphContext());
+            WindupWildcardImportResolver.setContext(event.getGraphContext());
             try
             {
                 TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
@@ -151,7 +151,7 @@ public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
             }
             finally
             {
-                WindupWildcardImportResolver.setGraphContext(null);
+                WindupWildcardImportResolver.setContext(null);
             }
         }
 
