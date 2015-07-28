@@ -21,12 +21,6 @@ or subscribe to the link:https://lists.jboss.org/mailman/listinfo/windup-dev[win
 You may download the link:https://repository.jboss.org/nexus/content/repositories/releases/org/jboss/windup/windup-distribution/[latest Windup release from JBoss.org Maven Repository].
 After that, follow the link:https://github.com/windup/windup/wiki/Execute-Windup[User Guide, Execute Windup].
 
-
-=== Looking for stable Windup 0.68 source code?
-
-Visit https://github.com/windup/windup-legacy 
-
-
 === Project Source Code Format
 
 This project has an agreed upon source format style documented via an 
