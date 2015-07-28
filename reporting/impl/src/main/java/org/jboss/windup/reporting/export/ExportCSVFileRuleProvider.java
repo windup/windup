@@ -16,8 +16,11 @@ import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.service.ProjectService;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
+import org.jboss.windup.reporting.service.ClassificationService;
+import org.jboss.windup.reporting.service.InlineHintService;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -29,9 +32,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 /**
@@ -58,9 +63,7 @@ public class ExportCSVFileRuleProvider extends AbstractRuleProvider
     {
         return ConfigurationBuilder.begin()
             .addRule()
-            .when(Query.fromType(WindupConfigurationModel.class).withProperty(WindupConfigurationModel.CSV_MODE,true)
-                        .and(Query.fromType(ClassificationModel.class).as("classifications")
-                                    .and(Query.fromType(InlineHintModel.class).as("hints"))))
+            .when(Query.fromType(WindupConfigurationModel.class).withProperty(WindupConfigurationModel.CSV_MODE,true))
                     .perform(
                             Iteration.over(Iteration.DEFAULT_VARIABLE_LIST_STRING).perform(
                                         new ExportCSVReportOperation()).endIteration());
@@ -72,97 +75,110 @@ public class ExportCSVFileRuleProvider extends AbstractRuleProvider
         @Override public void perform(GraphRewrite event, EvaluationContext context, WindupConfigurationModel config)
         {
             final Variables variables = Variables.instance(event);
-            final Iterable<InlineHintModel> hints = variables.findVariableOfType(InlineHintModel.class);
-            final Iterable<ClassificationModel> classifications = variables.findVariableOfType(ClassificationModel.class);
-            Map<String, List<String[]>> projectsToReportItems = new HashMap<>();
-            for (InlineHintModel hint : hints)
+            InlineHintService hintService = new InlineHintService(event.getGraphContext());
+            ClassificationService classificationService = new ClassificationService(event.getGraphContext());
+            ProjectService projectService = new ProjectService(event.getGraphContext());
+            final Iterable<InlineHintModel> hints = hintService.findAll();
+            final Iterable<ProjectModel> projects = projectService.findAll();
+            final Iterable<ClassificationModel> classifications =  classificationService.findAll();
+
+            Map<String, CSVWriter> rootProjectWriters = new HashMap<>();
+            //find all the root project models and open an .export file for it
+            for (ProjectModel project : projects)
             {
-                final ProjectModel parentRootProjectModel = hint.getFile().getProjectModel().getRootProjectModel();
-                String links = buildLinkString(hint.getLinks());
-                String ruleId = hint.getRuleID() != null ? hint.getRuleID() : "";
-                String title = hint.getTitle() != null ? hint.getTitle() : "";
-                String description = hint.getDescription() != null ? hint.getDescription() : "";
-                String projectNameString = "";
-                String fileName = "";
-                String filePath = "";
-                if (hint.getFile() != null)
+                ProjectModel root = project.getRootProjectModel();
+                if (!rootProjectWriters.containsKey(root.getName()))
                 {
-                    if (hint.getFile().getProjectModel() != null)
+                    try
                     {
-                        projectNameString = hint.getFile().getProjectModel().getName();
+                        CSVWriter writer = new CSVWriter(
+                                    new FileWriter(config.getOutputPath().getFilePath() + File.separator + root.getName() + ".csv"), ';');
+                        String[] headerLine = new String[] {"Rule Id", "Problem type", "Title", "Description", "Links", "Application", "File Name", "File Path", "Line", "Story points"};
+                        writer.writeNext(headerLine);
+                        rootProjectWriters.put(root.getName(), writer);
                     }
-                    fileName = hint.getFile().getFileName();
-                    filePath = hint.getFile().getFilePath();
-                }
-                String[] strings = new String[] {
-                            ruleId, "hint", title, description, links,
-                            projectNameString,
-                            fileName, filePath, String.valueOf(
-                            hint.getLineNumber()), String.valueOf(hint.getEffort()) };
-                if(projectsToReportItems.containsKey(parentRootProjectModel.getName())) {
-                    projectsToReportItems.get(parentRootProjectModel.getName()).add(strings);
-                } else {
-                    List<String[]> reportLine = new ArrayList<>();
-                    reportLine.add(strings);
-                    projectsToReportItems.put(parentRootProjectModel.getName(),reportLine);
+                    catch (IOException e)
+                    {
+                        e.printStackTrace();
+                    }
+
                 }
             }
-            for (ClassificationModel classification : classifications)
+            //in case something bad happens, we need to close files
+            try
             {
-                for (FileModel fileModel : classification.getFileModels())
+                for (InlineHintModel hint : hints)
                 {
-                    final ProjectModel parentRootProjectModel = fileModel.getProjectModel().getRootProjectModel();
-                    String links = buildLinkString(classification.getLinks());
-                    String ruleId = classification.getRuleID() != null ? classification.getRuleID() : "";
-                    String classifText = classification.getClassification() != null ? classification.getClassification() : "";
-                    String description = classification.getDescription() != null ? classification.getDescription() : "";
+                    final ProjectModel parentRootProjectModel = hint.getFile().getProjectModel().getRootProjectModel();
+                    String links = buildLinkString(hint.getLinks());
+                    String ruleId = hint.getRuleID() != null ? hint.getRuleID() : "";
+                    String title = hint.getTitle() != null ? hint.getTitle() : "";
+                    String description = hint.getDescription() != null ? hint.getDescription() : "";
                     String projectNameString = "";
                     String fileName = "";
                     String filePath = "";
-                    if (fileModel.getProjectModel() != null)
+                    if (hint.getFile() != null)
                     {
-                        projectNameString = fileModel.getProjectModel().getName();
+                        if (hint.getFile().getProjectModel() != null)
+                        {
+                            projectNameString = hint.getFile().getProjectModel().getName();
+                        }
+                        fileName = hint.getFile().getFileName();
+                        filePath = hint.getFile().getFilePath();
                     }
-                    fileName = fileModel.getFileName();
-                    filePath = fileModel.getFilePath();
                     String[] strings = new String[] {
-                                ruleId, "classification", classifText,
-                                description, links,
-                                projectNameString, fileName, filePath, "N/A",
-                                String.valueOf(
-                                            classification.getEffort()) };
-                    if(projectsToReportItems.containsKey(parentRootProjectModel.getName())) {
-                        projectsToReportItems.get(parentRootProjectModel.getName()).add(strings);
-                    } else {
-                        List<String[]> reportLine = new ArrayList<>();
-                        reportLine.add(strings);
-                        projectsToReportItems.put(parentRootProjectModel.getName(),reportLine);
-                    }
+                                ruleId, "hint", title, description, links,
+                                projectNameString,
+                                fileName, filePath, String.valueOf(
+                                hint.getLineNumber()), String.valueOf(hint.getEffort()) };
+                    rootProjectWriters.get(parentRootProjectModel.getName()).writeNext(strings);
 
                 }
-            }
-            for (String projectName : projectsToReportItems.keySet())
-            {
-
-                try (CSVWriter writer = new CSVWriter(
-                            new FileWriter(config.getOutputPath().getFilePath() + File.separator + projectName + ".export"), ';'))
+                for (ClassificationModel classification : classifications)
                 {
-                    String[] headerLine = new String[] {"Rule Id", "Problem type", "Title", "Description", "Links", "Application", "File Name", "File Path", "Line", "Story points"};
-                    writer.writeNext(headerLine);
-                    for (String[] strings : projectsToReportItems.get(projectName))
+                    for (FileModel fileModel : classification.getFileModels())
                     {
-                        writer.writeNext(strings);
-                    }
+                        final ProjectModel parentRootProjectModel = fileModel.getProjectModel().getRootProjectModel();
+                        String links = buildLinkString(classification.getLinks());
+                        String ruleId = classification.getRuleID() != null ? classification.getRuleID() : "";
+                        String classifText = classification.getClassification() != null ? classification.getClassification() : "";
+                        String description = classification.getDescription() != null ? classification.getDescription() : "";
+                        String projectNameString = "";
+                        String fileName = "";
+                        String filePath = "";
+                        if (fileModel.getProjectModel() != null)
+                        {
+                            projectNameString = fileModel.getProjectModel().getName();
+                        }
+                        fileName = fileModel.getFileName();
+                        filePath = fileModel.getFilePath();
+                        String[] strings = new String[] {
+                                    ruleId, "classification", classifText,
+                                    description, links,
+                                    projectNameString, fileName, filePath, "N/A",
+                                    String.valueOf(
+                                                classification.getEffort()) };
+                        rootProjectWriters.get(parentRootProjectModel.getName()).writeNext(strings);
 
+                    }
                 }
-                catch (IOException e)
+            }
+            finally
+            {
+                for (CSVWriter csvWriter : rootProjectWriters.values())
                 {
-                    throw new WindupException(
-                                "Unable to create a reporting csv file " + config.getOutputPath() + File.separator + projectName
-                                            + ".export");
+                    try
+                    {
+                        csvWriter.close();
+                    }
+                    catch (IOException e)
+                    {
+                        e.printStackTrace();
+                    }
                 }
 
             }
+
         }
 
         private void addProjectReportToProject(WindupVertexFrame frame, ProjectModel rootProjectModel, Map<String, LinkedList<WindupVertexFrame>> map)
