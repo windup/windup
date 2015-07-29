@@ -1,10 +1,15 @@
 package org.jboss.windup.reporting.export;
 
-import com.opencsv.CSVWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.logging.Logger;
+
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.Variables;
-import org.jboss.windup.config.condition.GraphCondition;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
@@ -22,22 +27,11 @@ import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.InlineHintService;
 import org.jboss.windup.util.Logging;
-import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Logger;
+import com.opencsv.CSVWriter;
 
 /**
  * RuleProvider generating optional CSV files for every application. This file will contain the main reporting information.
@@ -74,7 +68,6 @@ public class ExportCSVFileRuleProvider extends AbstractRuleProvider
     {
         @Override public void perform(GraphRewrite event, EvaluationContext context, WindupConfigurationModel config)
         {
-            final Variables variables = Variables.instance(event);
             InlineHintService hintService = new InlineHintService(event.getGraphContext());
             ClassificationService classificationService = new ClassificationService(event.getGraphContext());
             ProjectService projectService = new ProjectService(event.getGraphContext());

@@ -1,5 +1,17 @@
 package org.jboss.windup.reporting;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.inject.Inject;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.RandomStringUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -22,7 +34,6 @@ import org.jboss.windup.graph.service.LinkService;
 import org.jboss.windup.graph.service.ProjectService;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
-import org.jboss.windup.reporting.service.ApplicationReportService;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.InlineHintService;
 import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
@@ -30,16 +41,6 @@ import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.inject.Inject;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Collections;
 
 @RunWith(Arquillian.class)
 public class CSVExportingTest
@@ -55,10 +56,7 @@ public class CSVExportingTest
     })
     public static AddonArchive getDeployment()
     {
-        AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addAsResource(new File("src/test/resources/reports"));
-        return archive;
+        return ShrinkWrap.create(AddonArchive.class).addBeansXML();
     }
 
     @Inject
@@ -87,7 +85,6 @@ public class CSVExportingTest
         {
             fillData(context);
             String inputPath = "src/test/resources";
-            ApplicationReportService applicationReportService = new ApplicationReportService(context);
             Predicate<RuleProvider> predicate = new RuleProviderPhasePredicate(ReportGenerationPhase.class);
             WindupConfiguration configuration = new WindupConfiguration()
                         .setGraphContext(context)
@@ -107,14 +104,15 @@ public class CSVExportingTest
             {
                 Path resource = Paths.get("src/test/resources/test-exports/app1.csv");
                 Path resource2 = Paths.get("src/test/resources/test-exports/app2.csv");
-                try {
+                try
+                {
                     Assert.assertTrue(checkFileAreSame(resource.toString(), outputPath + "/app1.csv"));
                     Assert.assertTrue(checkFileAreSame(resource2.toString(), outputPath + "/app2.csv"));
-                } catch(IOException ex) {
+                }
+                catch (IOException ex)
+                {
                     Assert.fail("Exception was thrown while checking if the exported CSV file looks like expected. Exception: " + ex);
                 }
-
-
             }
         }
     }
@@ -180,31 +178,36 @@ public class CSVExportingTest
         c1.addFileModel(f2);
         c2.addFileModel(f2);
 
-
         return projectModel;
     }
 
-    private boolean checkFileAreSame(String filePath1, String filePath) throws IOException
+    private boolean checkFileAreSame(String filePath1, String filePath2) throws IOException
     {
-        try (BufferedReader br = new BufferedReader(new FileReader(new File(filePath))))
-        {
-            try (BufferedReader br2 = new BufferedReader(new FileReader(new File(filePath1))))
-            {
+        Set<String> linesFile1 = loadFile(filePath1);
+        Set<String> linesFile2 = loadFile(filePath2);
+        if (linesFile1.size() != linesFile2.size())
+            return false;
 
-                String lineRead = br.readLine();
-                String lineRead2 = br2.readLine();
-                while (lineRead != null)
-                {
-                    if (!lineRead.equals(lineRead2))
-                    {
-                        return false;
-                    }
-                    lineRead = br.readLine();
-                    lineRead2 = br2.readLine();
-                }
+        for (String line1 : linesFile1)
+        {
+            if (!linesFile2.contains(line1))
+                return false;
+        }
+
+        return true;
+    }
+
+    private Set<String> loadFile(String filePath) throws IOException
+    {
+        HashSet<String> result = new HashSet<>();
+        try (BufferedReader br = new BufferedReader(new FileReader(filePath)))
+        {
+            String line;
+            while ((line = br.readLine()) != null)
+            {
+                result.add(line);
             }
         }
-        return true;
-
+        return result;
     }
 }
