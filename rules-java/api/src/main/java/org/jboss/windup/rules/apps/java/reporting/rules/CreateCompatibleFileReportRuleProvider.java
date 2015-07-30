@@ -71,7 +71,7 @@ public class CreateCompatibleFileReportRuleProvider extends AbstractRuleProvider
         applicationReportModel.setReportPriority(200);
         applicationReportModel.setDisplayInApplicationReportIndex(true);
         applicationReportModel.setReportName("Compatible Files");
-        applicationReportModel.setReportIconClass("glyphicon glyphicon-question-sign");
+        applicationReportModel.setReportIconClass("glyphicon glyphicon-check");
         applicationReportModel.setMainApplicationReport(false);
         applicationReportModel.setProjectModel(projectModel);
         applicationReportModel.setTemplatePath(TEMPLATE_APPLICATION_REPORT);

@@ -82,7 +82,7 @@
 					        			- ${classificationLineItem.description!""}
 					        			</#if>
 					        		</#if>
-					        		<@render_rule_link ruleID=classificationLineItem.ruleID/>
+					        		<@render_rule_link ruleID=classificationLineItem.ruleID />
 					        		<@render_linkable linkable=classificationLineItem layout='ul'/>
 					        	</dd>
 							</#if>
@@ -144,7 +144,7 @@
 								<strong class='notification ${effortPointsToCssClass(hintLine.effort)}'><#t>
 									${hintLine.title?js_string}<#t>
 								</strong><#t>
-								<@render_rule_link ruleID=hintLine.ruleID/><#t>
+								<@render_rule_link ruleID=hintLine.ruleID class='rule-link'/><#t>
 								<#t>
 							</div><#t>
 							<div class='inline-comment-body'><#t>

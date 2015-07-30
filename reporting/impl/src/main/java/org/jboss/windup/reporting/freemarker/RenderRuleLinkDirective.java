@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.reporting.rules.rendering.RenderRuleProviderReportRuleProvider;
 
@@ -54,14 +55,23 @@ public class RenderRuleLinkDirective implements WindupFreeMarkerTemplateDirectiv
             renderType = RENDER_TYPE_GLYPH;
         else
             renderType = renderTypeScalar.getAsString();
+        
+        SimpleScalar cssClassScalar = (SimpleScalar) params.get("class");
+        String cssClass; 
+        if (cssClassScalar == null || StringUtils.isBlank(cssClassScalar.getAsString())) {
+            cssClass = "";
+        } 
+        else {
+            cssClass = cssClassScalar.getAsString();
+        }
 
         String ruleID = ruleIDStringModel.getAsString();
 
         writer.append("<a href='" + RenderRuleProviderReportRuleProvider.OUTPUT_FILENAME + "#" + ruleID + "'>");
         if (RENDER_TYPE_GLYPH.equals(renderType))
-            writer.append("<span title='" + ruleID + "' class='glyphicon glyphicon-link'></span>");
+            writer.append("<span title='View Rule: " + ruleID + "' class='glyphicon glyphicon-link "+cssClass+"'></span>");
         else
-            writer.append("<span title='" + ruleID + "'>" + ruleID + "</span>");
+            writer.append("<span title='View Rule: " + ruleID + "'>"+ ruleID +"</span>");
         writer.append("</a>");
     }
 }
