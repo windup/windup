@@ -1,26 +1,5 @@
 package org.jboss.windup.graph;
 
-import java.lang.reflect.Method;
-import java.nio.file.Path;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Logger;
-
-import org.apache.commons.configuration.BaseConfiguration;
-import org.apache.commons.configuration.Configuration;
-import org.apache.commons.io.FileUtils;
-import org.jboss.forge.furnace.Furnace;
-import org.jboss.forge.furnace.services.Imported;
-import org.jboss.forge.furnace.util.Annotations;
-import org.jboss.windup.graph.frames.TypeAwareFramedGraphQuery;
-import org.jboss.windup.graph.listeners.AfterGraphInitializationListener;
-import org.jboss.windup.graph.listeners.BeforeGraphCloseListener;
-import org.jboss.windup.graph.model.WindupVertexFrame;
-
 import com.thinkaurelius.titan.core.Cardinality;
 import com.thinkaurelius.titan.core.PropertyKey;
 import com.thinkaurelius.titan.core.TitanFactory;
@@ -40,9 +19,29 @@ import com.tinkerpop.frames.modules.FrameClassLoaderResolver;
 import com.tinkerpop.frames.modules.Module;
 import com.tinkerpop.frames.modules.gremlingroovy.GremlinGroovyModule;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerModule;
-import java.io.File;
+import org.apache.commons.configuration.BaseConfiguration;
+import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.io.FileUtils;
+import org.jboss.forge.furnace.Furnace;
+import org.jboss.forge.furnace.services.Imported;
+import org.jboss.forge.furnace.util.Annotations;
+import org.jboss.windup.graph.frames.TypeAwareFramedGraphQuery;
+import org.jboss.windup.graph.listeners.AfterGraphInitializationListener;
+import org.jboss.windup.graph.listeners.BeforeGraphCloseListener;
+import org.jboss.windup.graph.model.WindupVertexFrame;
+
+import java.io.File;
+import java.lang.reflect.Method;
+import java.nio.file.Path;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Logger;
 
 public class GraphContextImpl implements GraphContext
 {
@@ -60,6 +59,12 @@ public class GraphContextImpl implements GraphContext
     private final Path graphDir;
 
     private GraphApiCompositeClassLoaderProvider classLoaderProvider;
+
+    /**
+     * Used to save all the {@link BeforeGraphCloseListener}s that are also {@link AfterGraphInitializationListener}.
+     * This is due a need to call {@link BeforeGraphCloseListener.beforeGraphClose()} on the same instance on which {@link AfterGraphInitializationListener.afterGraphStarted()} was called
+     */
+    private Map<String,BeforeGraphCloseListener> beforeGraphCloseListenerBuffer = new HashMap<>();
 
     public GraphContextImpl(Furnace furnace, GraphTypeRegistry typeRegistry, GraphTypeManager typeManager,
                 GraphApiCompositeClassLoaderProvider classLoaderProvider, Path graphDir)
@@ -106,6 +111,9 @@ public class GraphContextImpl implements GraphContext
             for (AfterGraphInitializationListener listener : afterInitializationListeners)
             {
                 listener.afterGraphStarted(confProps, this);
+                if(listener instanceof BeforeGraphCloseListener) {
+                    beforeGraphCloseListenerBuffer.put(listener.getClass().toString(),(BeforeGraphCloseListener)listener);
+                }
             }
         }
     }
@@ -274,8 +282,14 @@ public class GraphContextImpl implements GraphContext
         Imported<BeforeGraphCloseListener> beforeCloseListeners = furnace.getAddonRegistry().getServices(BeforeGraphCloseListener.class);
         for (BeforeGraphCloseListener listener : beforeCloseListeners)
         {
+            if(!beforeGraphCloseListenerBuffer.containsKey(listener.getClass().toString())) {
+                beforeGraphCloseListenerBuffer.put(listener.getClass().toString(),listener);
+            }
+        }
+        for(BeforeGraphCloseListener listener : beforeGraphCloseListenerBuffer.values()) {
             listener.beforeGraphClose();
         }
+        beforeGraphCloseListenerBuffer.clear();
         this.eventGraph.getBaseGraph().shutdown();
     }
 

@@ -34,6 +34,7 @@ public class RexsterInitializer implements AfterGraphInitializationListener, Bef
     private static final Logger log = Logger.getLogger(RexsterInitializer.class.getName());
     boolean started = false;
     private RexProRexsterServer rexPro;
+    private HttpRexsterServer rexsterServer;
 
     public RexsterInitializer()
     {
@@ -83,7 +84,7 @@ public class RexsterInitializer implements AfterGraphInitializationListener, Bef
             out.flush();
             RexsterProperties properties = new RexsterProperties("rexster.xml");
             configureScriptEngine(properties);
-            HttpRexsterServer rexsterServer = new HttpRexsterServer(properties);
+            rexsterServer = new HttpRexsterServer(properties);
             rexsterServer.start(new DefaultRexsterApplication("main", graph.getBaseGraph()));
 
             rexPro = new RexProRexsterServer(properties, true);
@@ -277,6 +278,9 @@ public class RexsterInitializer implements AfterGraphInitializationListener, Bef
         {
             if(rexPro !=null) {
                rexPro.stop();
+            }
+            if(rexsterServer !=null) {
+                rexsterServer.stop();
             }
         }
         catch (Exception e)
