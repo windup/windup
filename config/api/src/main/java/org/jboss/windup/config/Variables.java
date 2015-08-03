@@ -11,9 +11,7 @@ import java.util.Deque;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Map;;
-import java.util.List;
-import java.util.ArrayList;
+import java.util.Map;
 
 import javax.enterprise.inject.Vetoed;
 
@@ -201,6 +199,7 @@ public class Variables
      * Searches the variables layers, top to bottom, for the iterable having all of it's items of the given type. Return
      * null if not found.
      */
+    @SuppressWarnings("unchecked")
     public <T extends WindupVertexFrame> Iterable<T> findVariableOfType(Class<T> type)
     {
         for (Map<String, Iterable<? extends WindupVertexFrame>> topOfStack : deque)
@@ -213,13 +212,15 @@ public class Variables
                     if (!type.isAssignableFrom(frame.getClass()))
                     {
                         break;
-                    } else {
-                        empty =false;
+                    }
+                    else
+                    {
+                        empty = false;
                     }
                 }
                 // now we know all the frames are of the chosen type
-                if(!empty)
-                    return (Iterable<T>)frames;
+                if (!empty)
+                    return (Iterable<T>) frames;
             }
         }
         return null;

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Logger;
+
 import javax.inject.Inject;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -12,6 +13,7 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
 import org.apache.commons.io.FileUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -42,6 +44,7 @@ import org.jboss.windup.ui.WindupCommand;
 import org.jboss.windup.ui.WindupUpdateDistributionCommand;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.PathUtil;
+import org.jboss.windup.util.ZipUtil;
 import org.jboss.windup.util.exception.WindupException;
 import org.junit.Assert;
 import org.junit.Ignore;
@@ -50,7 +53,6 @@ import org.junit.runner.RunWith;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-
 
 /**
  * @author Ondrej Zizka, ozizka at redhat.com
@@ -66,22 +68,22 @@ public class WindupUpdateDistributionCommandTest
 
     @Deployment
     @AddonDependencies({
-        @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
-        @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
-        @AddonDependency(name = WINDUP_UI_ADDON_NAME),
-        @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-        @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-        @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-        @AddonDependency(name = "org.jboss.forge.addon:maven"),
-        @AddonDependency(name = "org.jboss.forge.addon:addon-manager"),
-        @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness"),
+                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
+                @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
+                @AddonDependency(name = WINDUP_UI_ADDON_NAME),
+                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+                @AddonDependency(name = "org.jboss.forge.addon:maven"),
+                @AddonDependency(name = "org.jboss.forge.addon:addon-manager"),
+                @AddonDependency(name = "org.jboss.forge.addon:ui-test-harness"),
     })
     public static AddonArchive getDeployment()
     {
         AddonArchive archive = ShrinkWrap
-            .create(AddonArchive.class)
-            .addBeansXML()
-            .addAsResource(WindupCommandTest.class.getResource(TEST_RULESET_ZIP), TEST_RULESET_ZIP);
+                    .create(AddonArchive.class)
+                    .addBeansXML()
+                    .addAsResource(WindupCommandTest.class.getResource(TEST_RULESET_ZIP), TEST_RULESET_ZIP);
         return archive;
     }
 
@@ -108,18 +110,18 @@ public class WindupUpdateDistributionCommandTest
     @Inject
     private AddonManager manager;
 
-
-    @Test @Ignore("The current implementation doesn't work as it tampers with addons loaded at the time."
-            + " Even if it replaced all Windup addons, it would still fail on Windows as they keep the .jar's locked.")
+    @Test
+    @Ignore("The current implementation doesn't work as it tampers with addons loaded at the time."
+                + " Even if it replaced all Windup addons, it would still fail on Windows as they keep the .jar's locked.")
     public void testUpdateDistribution() throws Exception
     {
         // Download and unzip an old distribution.
         final CoordinateBuilder coords = CoordinateBuilder.create()
-                .setGroupId("org.jboss.windup")
-                .setArtifactId("windup-distribution")
-                .setClassifier("offline")
-                .setVersion("2.2.0.Final")
-                .setPackaging("zip");
+                    .setGroupId("org.jboss.windup")
+                    .setArtifactId("windup-distribution")
+                    .setClassifier("offline")
+                    .setVersion("2.2.0.Final")
+                    .setPackaging("zip");
         System.out.println("Downloading " + coords + ", may take a while.");
         List<Coordinate> results = resolver.resolveVersions(DependencyQueryBuilder.create(coords));
 
@@ -128,7 +130,6 @@ public class WindupUpdateDistributionCommandTest
         windupDir = DistributionUpdater.getWindupDistributionSubdir(windupDir);
         Assert.assertTrue(windupDir.exists());
         System.setProperty(PathUtil.WINDUP_HOME, windupDir.getAbsolutePath());
-
 
         // Run the upgrader.
         distUpdater.replaceWindupDirectoryWithLatestDistribution();
@@ -157,8 +158,8 @@ public class WindupUpdateDistributionCommandTest
         }
     }
 
-
-    @Test @Ignore("Completely broken now. New Furnace doesn't deal well with setting windup.home like this.")
+    @Test
+    @Ignore("Completely broken now. New Furnace doesn't deal well with setting windup.home like this.")
     public void testUpdateDistributionCommand() throws Exception
     {
 
@@ -167,7 +168,7 @@ public class WindupUpdateDistributionCommandTest
         File tempDir = OperatingSystemUtils.createTempDir();
         tempDir.deleteOnExit();
         File extractedPath = new File(tempDir, "extracted-rulesets");
-        PathUtil.unzipFromResource(getClass(), WindupUpdateDistributionCommandTest.TEST_RULESET_ZIP, extractedPath);
+        ZipUtil.unzipFromClassResource(getClass(), WindupUpdateDistributionCommandTest.TEST_RULESET_ZIP, extractedPath);
 
         String windupDir = extractedPath + "/windup-old-ruleset";
         System.setProperty(PathUtil.WINDUP_RULESETS_DIR_SYSPROP, windupDir);
@@ -175,7 +176,8 @@ public class WindupUpdateDistributionCommandTest
         addonsDir.mkdirs();
 
         String currentUiVersion = getInstalledAddonVersion(addon.getRepository().getRootDirectory().getPath(), WINDUP_UI_ADDON_NAME);
-        installOldAddonVersion(currentUiVersion); //changeUiAddonVersion(addon.getRepository().getRootDirectory(), currentUiVersion);
+        installOldAddonVersion(currentUiVersion); // changeUiAddonVersion(addon.getRepository().getRootDirectory(),
+                                                  // currentUiVersion);
         waitForOldWindupUIAddon(furnace);
 
         boolean rulesetNeedUpdate = updater.rulesetsNeedUpdate();
@@ -202,7 +204,6 @@ public class WindupUpdateDistributionCommandTest
         }
     }
 
-
     private void checkWindupDirectory(String windupDir)
     {
         File addonsHomeNew = new File(windupDir, "addons");
@@ -218,7 +219,6 @@ public class WindupUpdateDistributionCommandTest
         Assert.assertTrue("Library folder does not contain enough libraries (at least 8)", libNew.listFiles().length > 7);
     }
 
-
     private void waitForOldWindupUIAddon(Furnace furnace) throws InterruptedException
     {
         Addon addon = furnace.getAddonRegistry().getAddon(AddonId.from(WINDUP_UI_ADDON_NAME, WINDUP_OLD_VERSION));
@@ -232,8 +232,8 @@ public class WindupUpdateDistributionCommandTest
     }
 
     /**
-     * Uninstalls the current addon and installs the other one.
-     * This fails because we would need to replace all the dependencies as well, effectively, the whole Windup.
+     * Uninstalls the current addon and installs the other one. This fails because we would need to replace all the
+     * dependencies as well, effectively, the whole Windup.
      */
     private void installOldAddonVersion(String currentUiVersion)
     {
@@ -246,15 +246,15 @@ public class WindupUpdateDistributionCommandTest
     }
 
     /**
-     * Changes the org-jboss-windup-ui-windup-ui-* dir name to old version and rewrites the version in installed.xml.
-     * It is a hack to fool Furnace into thinking a new addon was installed.
+     * Changes the org-jboss-windup-ui-windup-ui-* dir name to old version and rewrites the version in installed.xml. It
+     * is a hack to fool Furnace into thinking a new addon was installed.
      */
     private void changeUiAddonVersion(File addonsDir, String currentUiVersion)
     {
         File currentAddonDir = new File(addonsDir,
-                "org-jboss-windup-ui-windup-ui-" + currentUiVersion.replaceAll("\\.", "-"));
+                    "org-jboss-windup-ui-windup-ui-" + currentUiVersion.replaceAll("\\.", "-"));
         File olderVersionAddonDir = new File(addonsDir,
-                "org-jboss-windup-ui-windup-ui-" + WINDUP_OLD_VERSION.replaceAll("\\.", "-"));
+                    "org-jboss-windup-ui-windup-ui-" + WINDUP_OLD_VERSION.replaceAll("\\.", "-"));
         olderVersionAddonDir.mkdirs();
 
         log.warning("Replacing the addon: \n  " + currentAddonDir + "\n  " + olderVersionAddonDir);
@@ -317,7 +317,6 @@ public class WindupUpdateDistributionCommandTest
         }
         return null;
     }
-
 
     /**
      * Writes the version WINDUP_OLD_VERSION into installed.xml in given dir.

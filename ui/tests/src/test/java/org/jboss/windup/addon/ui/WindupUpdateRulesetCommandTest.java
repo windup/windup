@@ -1,11 +1,12 @@
 package org.jboss.windup.addon.ui;
 
 import java.io.File;
+
 import javax.inject.Inject;
+
 import org.apache.commons.io.FileUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.addon.dependencies.DependencyResolver;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.result.Failed;
 import org.jboss.forge.addon.ui.result.Result;
@@ -17,12 +18,11 @@ import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.exec.updater.RulesetsUpdater;
 import org.jboss.windup.ui.WindupUpdateRulesetCommand;
-import org.jboss.windup.util.PathUtil;
+import org.jboss.windup.util.ZipUtil;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 
 @RunWith(Arquillian.class)
 public class WindupUpdateRulesetCommandTest
@@ -50,22 +50,19 @@ public class WindupUpdateRulesetCommandTest
     private static String TEST_OLD_WINDUP = "/windup-old-ruleset.zip";
 
     @Inject
-    private DependencyResolver resolver;
-
-    @Inject
     private UITestHarness uiTestHarness;
 
     @Inject
     private RulesetsUpdater updater;
 
-
-    @Test @Ignore("Command can't be used currently as there's no way to run it from the UI."
-            + " I'm leaving it here in case we needed the command again (maybe from a GUI?).")
+    @Test
+    @Ignore("Command can't be used currently as there's no way to run it from the UI."
+                + " I'm leaving it here in case we needed the command again (maybe from a GUI?).")
     public void testUpdateRulesetCommand() throws Exception
     {
         // Extract the windup zip to a temp dir.
         File tempDir = OperatingSystemUtils.createTempDir();
-        PathUtil.unzipFromResource(WindupUpdateRulesetCommandTest.class, TEST_OLD_WINDUP, tempDir);
+        ZipUtil.unzipFromClassResource(WindupUpdateRulesetCommandTest.class, TEST_OLD_WINDUP, tempDir);
 
         // This may cause FileNotFound in Furnace if it's already running.
         System.setProperty("windup.home", new File(tempDir, "windup-old-ruleset").getAbsolutePath());
