@@ -1,8 +1,8 @@
 package org.jboss.windup.reporting.xml;
 
-import java.util.HashSet;
 import static org.joox.JOOX.$;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -134,12 +134,25 @@ public class HintHandler implements ElementHandler<Hint>
         StringBuilder markdownSB = new StringBuilder();
 
         StringBuilder currentLine = new StringBuilder();
+
+        String firstLineIndent = null;
         for (int i = 0; i < markdown.length(); i++)
         {
             char currentChar = markdown.charAt(i);
             if (currentChar == '\r' || currentChar == '\n')
             {
-                markdownSB.append(currentLine.toString().trim()).append(SystemUtils.LINE_SEPARATOR);
+                String currentLineString = currentLine.toString();
+                if (firstLineIndent == null && !StringUtils.isEmpty(currentLineString))
+                {
+                    int firstNonWhitespaceIndex = StringUtils.indexOfAnyBut(currentLineString, " \t");
+                    if (firstNonWhitespaceIndex != -1)
+                        firstLineIndent = currentLineString.substring(0, firstNonWhitespaceIndex);
+                }
+                if (firstLineIndent != null)
+                    currentLineString = StringUtils.removeStart(currentLineString, firstLineIndent);
+
+                markdownSB.append(currentLineString).append(SystemUtils.LINE_SEPARATOR);
+
                 currentLine.setLength(0);
 
                 // skip the next line separator for \r\n cases

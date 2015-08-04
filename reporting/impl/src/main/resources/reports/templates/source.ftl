@@ -135,7 +135,6 @@
 		<#list reportModel.sourceFileModel.inlineHints.iterator() as hintLine >
 			<#assign lineNumber = hintLine.lineNumber>
 			
-			<#compress>
 			$("<a name='${hintLine.asVertex().getId()?c}' class='windup-file-location'></a><#t>
 				<div class='inline-source-comment green'><#t>
 					<#if hintLine.hint?has_content>
@@ -163,7 +162,6 @@
 					</#if>
 				</div><#t>
 			").appendTo('#${lineNumber?c}-inlines');<#t>
-			</#compress>
 
 		</#list>
 
