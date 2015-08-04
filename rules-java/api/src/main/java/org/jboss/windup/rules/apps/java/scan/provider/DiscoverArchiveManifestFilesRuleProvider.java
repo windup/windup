@@ -69,6 +69,7 @@ public class DiscoverArchiveManifestFilesRuleProvider extends IteratingRuleProvi
 
         JarManifestModel jarManifest = jarManifestService.addTypeToModel(manifestFile);
         jarManifest.setArchive(payload);
+        jarManifest.setGenerateSourceReport(true);
 
         try (InputStream is = manifestFile.asInputStream())
         {

@@ -51,8 +51,8 @@ public class DiscoverPropertiesFilesRuleProvider extends IteratingRuleProvider<F
         ExecutionStatistics.get().begin("DiscoverPropertiesFilesRuleProvider.perform");
         GraphService<PropertiesModel> service = new GraphService<>(event.getGraphContext(), PropertiesModel.class);
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
-        PropertiesModel properties = service.create();
-        properties.setFileResource(payload);
+        PropertiesModel properties = service.addTypeToModel(payload);
+        properties.setGenerateSourceReport(true);
 
         GraphService.addTypeToModel(event.getGraphContext(), payload, SourceFileModel.class);
 
