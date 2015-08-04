@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.forge.furnace.util.Streams;
@@ -25,6 +26,30 @@ public class ZipUtil
 
     private static Set<String> supportedExtensions;
 
+    /**
+     * Unzip a classpath resource using the given {@link Class} as the resource root path.
+     */
+    public static void unzipFromClassResource(Class<?> clazz, String resourcePath, File extractToPath) throws IOException
+    {
+        File inputFile = File.createTempFile("windup-resource-to-unzip-", ".zip");
+        try
+        {
+            try (final InputStream stream = clazz.getResourceAsStream(resourcePath))
+            {
+                FileUtils.copyInputStreamToFile(stream, inputFile);
+            }
+            extractToPath.mkdirs();
+            ZipUtil.unzipToFolder(inputFile, extractToPath);
+        }
+        finally
+        {
+            inputFile.delete();
+        }
+    }
+
+    /**
+     * Unzip the given {@link File} to the specified directory.
+     */
     public static void unzipToFolder(File inputFile, File outputDir) throws IOException
     {
         if (inputFile == null)
@@ -56,33 +81,6 @@ public class ZipUtil
                     }
                 }
             }
-        }
-    }
-
-    public static File unzipToTemp(ZipFile file, ZipEntry entry) throws IOException
-    {
-        InputStream in = null;
-        OutputStream out = null;
-        try
-        {
-            String entryExtension = StringUtils.substringAfterLast(entry.getName(), ".");
-            File temp = new File(OperatingSystemUtils.getTempDirectory(), UUID.randomUUID().toString() + "."
-                        + entryExtension);
-            in = file.getInputStream(entry);
-            out = new FileOutputStream(temp);
-
-            Streams.write(in, out);
-            log.log(Level.INFO, "Extracting entry: " + entry.getName() + " to: " + temp.getAbsolutePath());
-            return temp;
-        }
-        catch (Exception e)
-        {
-            throw new IOException("Exception extracting entry: " + entry.getName(), e);
-        }
-        finally
-        {
-            Streams.closeQuietly(in);
-            Streams.closeQuietly(out);
         }
     }
 

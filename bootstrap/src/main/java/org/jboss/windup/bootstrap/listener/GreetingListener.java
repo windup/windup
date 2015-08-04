@@ -5,7 +5,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.jboss.windup.bootstrap;
+package org.jboss.windup.bootstrap.listener;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.exception.ContainerException;
 import org.jboss.forge.furnace.spi.ContainerLifecycleListener;
+import org.jboss.windup.bootstrap.Bootstrap;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>

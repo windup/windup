@@ -10,31 +10,48 @@
 
     <name>Windup - Bootstrap module</name>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.jboss.windup</groupId>
+                <artifactId>windup-bom</artifactId>
+                <type>pom</type>
+                <scope>import</scope>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <dependency>
             <groupId>org.jboss.windup.config</groupId>
             <artifactId>windup-config-api</artifactId>
-            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.exec</groupId>
             <artifactId>windup-exec-api</artifactId>
-            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.graph</groupId>
             <artifactId>windup-graph-api</artifactId>
-            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.utils</groupId>
             <artifactId>windup-utils</artifactId>
-            <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
             <scope>compile</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>dependencies</artifactId>
+            <classifier>forge-addon</classifier>
+        </dependency>
+
+
         <dependency>
             <groupId>org.jboss.forge.furnace</groupId>
             <artifactId>furnace-manager</artifactId>
@@ -51,6 +68,8 @@
             <groupId>org.jboss.forge.furnace</groupId>
             <artifactId>furnace-se</artifactId>
         </dependency>
+
+
         <!-- Optional log manager dependency -->
         <dependency>
             <groupId>org.jboss.logmanager</groupId>
