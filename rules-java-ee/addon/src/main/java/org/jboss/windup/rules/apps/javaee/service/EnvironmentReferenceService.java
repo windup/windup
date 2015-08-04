@@ -5,6 +5,7 @@ import java.util.logging.Logger;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.javaee.model.EnvironmentReferenceModel;
+import org.jboss.windup.rules.apps.javaee.model.EnvironmentReferenceTagType;
 import org.jboss.windup.rules.apps.javaee.model.JNDIResourceModel;
 
 import com.tinkerpop.blueprints.GraphQuery;
@@ -33,10 +34,10 @@ public class EnvironmentReferenceService extends GraphService<EnvironmentReferen
     /**
      * Finds a {@link EnvironmentReferenceModel} by name and type.
      */
-    public EnvironmentReferenceModel findEnvironmentReference(String name, String type)
+    public EnvironmentReferenceModel findEnvironmentReference(String name, EnvironmentReferenceTagType type)
     {
         GraphQuery query = getTypedQuery().has(EnvironmentReferenceModel.NAME, name).has(
-                    EnvironmentReferenceModel.REFERENCE_TYPE, type);
+                    EnvironmentReferenceModel.TAG_TYPE, type);
         return getUnique(query);
     }
 

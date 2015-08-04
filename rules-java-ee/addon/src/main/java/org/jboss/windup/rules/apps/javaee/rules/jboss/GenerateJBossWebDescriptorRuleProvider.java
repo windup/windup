@@ -99,6 +99,7 @@ public class GenerateJBossWebDescriptorRuleProvider extends AbstractRuleProvider
             WindupVertexListModel environmentReferences = listService.create();
             for (EnvironmentReferenceModel ev : webDescriptor.getEnvironmentReferences())
             {
+                LOG.info("Reference: "+ev);
                 environmentReferences.addItem(ev);
             }
 
@@ -109,7 +110,7 @@ public class GenerateJBossWebDescriptorRuleProvider extends AbstractRuleProvider
             ReportService reportService = new ReportService(context);
             reportService.setUniqueFilename(applicationReportModel, "jboss-web_" + projectModel.getName(), "xml");
 
-            LOG.info("Generated jboss-ejb3.xml for " + webDescriptor.getFilePath() + " at: " + applicationReportModel.getReportFilename());
+            LOG.info("Generated jboss-web.xml for " + webDescriptor.getFilePath() + " at: " + applicationReportModel.getReportFilename());
 
             for (ClassificationModel classificationModel : classificationService.getClassificationByName(webDescriptor, "Web XML"))
             {

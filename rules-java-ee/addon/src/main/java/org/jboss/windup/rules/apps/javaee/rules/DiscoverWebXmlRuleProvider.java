@@ -228,13 +228,15 @@ public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileMod
         type = StringUtils.trim(type);
         name = StringUtils.trim(name);
 
-        EnvironmentReferenceModel ref = environmentReferenceService.findEnvironmentReference(name, type);
+        EnvironmentReferenceModel ref = environmentReferenceService.findEnvironmentReference(name, refType);
         if (ref == null)
         {
             ref = environmentReferenceService.create();
             ref.setName(name);
             ref.setReferenceType(type);
             ref.setReferenceTagType(refType);
+            
+            LOG.info("Added: "+ref);
         }
         else {
             if(ref.getReferenceTagType() != null && (ref.getReferenceTagType() != refType)) {
