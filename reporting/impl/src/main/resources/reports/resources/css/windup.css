@@ -14,6 +14,25 @@ body {
   font-size: 10px;
 }
 
+.rule-link {
+	margin: 3px;
+    color: #000;
+    float: right !important;
+}
+
+.feedback-nav {
+	background: #43ac6a;
+}
+
+.feedback-nav-btn {
+	background: #43ac6a;
+	margin-left: -54px;
+}
+
+.feedback-nav-btn:hover {
+	background: #43ac6a;
+}
+
 .summaryMargin {
 	padding:16px;
 	border-bottom:1px solid #CCC;

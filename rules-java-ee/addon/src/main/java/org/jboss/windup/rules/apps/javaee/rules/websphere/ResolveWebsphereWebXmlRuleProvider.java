@@ -10,8 +10,10 @@ import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
+import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.model.TechnologyTagModel;
+import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.javaee.model.EnvironmentReferenceModel;
 import org.jboss.windup.rules.apps.javaee.model.JNDIResourceModel;
@@ -63,8 +65,11 @@ public class ResolveWebsphereWebXmlRuleProvider extends IteratingRuleProvider<Xm
         XmlFileService xmlFileService = new XmlFileService(event.getGraphContext());
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
 
+        ClassificationService classificationService = new ClassificationService(event.getGraphContext());
+        ClassificationModel classification = classificationService.attachClassification(context, payload, "Websphere Web Binding", "Websphere Web Binding XML Descriptor");
+        classification.setEffort(1);
+        
         Document doc = xmlFileService.loadDocumentQuiet(context, payload);
-
 
         VendorSpecificationExtensionService vendorSpecificationService = new VendorSpecificationExtensionService(event.getGraphContext());
         //mark as vendor extension; create reference to web.xml

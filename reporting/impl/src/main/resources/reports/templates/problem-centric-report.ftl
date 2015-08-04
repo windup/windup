@@ -30,7 +30,7 @@
         <div class="container-fluid" role="main">
             <div class="row">
                 <div class="page-header page-header-no-border">
-                    <h1>Application Report <span class="slash">/</span><small style="margin-left: 20px; font-weight: 100;">${reportModel.projectModel.name}</small></h1>
+                    <h1>Migration Issue Report <span class="slash">/</span><small style="margin-left: 20px; font-weight: 100;">${reportModel.projectModel.name}</small></h1>
                 </div>
             </div>
 
@@ -45,58 +45,49 @@
             <!-- / Breadcrumbs -->
         </div>
 
-        <#macro fileSourceLink fileRef name>
-            <#if fileRef??>
-                <#assign sourceReportModel = fileModelToSourceReport(fileRef)!>
-                <#if sourceReportModel.reportFilename??>
-                    <a class="list-group-item" href="${sourceReportModel.reportFilename}"> ${name!""} </a>
-                <#else>
-                    ${name!""}
-                </#if>
-             <#else>
-                ${name!""}
-             </#if>
-        </#macro>
-
         <div class="row">
-            <div class="panel panel-default panel-primary">
-                <table class="table table-hover table-condensed">
-                    <thead>
-                        <tr>
-                            <th></th>
-                            <th>Rule ID</th>
-                            <th>Issue</th>
-                            <th>Incidents Found</th>
-                            <th>Effort per Incident</th>
-                            <th>Total Effort Points</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <#list getProblemSummaries() as problemSummary>
-                            <tr>
-                                <th class="row">${problemSummary?counter}</th>
-                                <td>
-                                    <@render_rule_link ruleID=problemSummary.ruleID renderType="text"/>
-                                </td>
-                                <td>
-                                    <a href="#" class="problem-link">
-                                        ${problemSummary.issueName}
-                                    </a>
-                                    <div class="problem-file-list list-group" style="display: none;">
-                                        <#list problemSummary.files as file>
-                                            <#assign fileName = getPrettyPathForFile(file)!>
-                                            <@fileSourceLink file fileName/>
-                                        </#list>
-                                    </div>
-                                </td>
-                            <td>${problemSummary.numberFound}</td>
-                            <td>${problemSummary.effortPerIncident}</td>
-                            <td>${problemSummary.numberFound * problemSummary.effortPerIncident}</td>
-                            </tr>
-                        </#list>
-                    </tbody>
-                </table>
-            </div>
+        	<div class="container-fluid theme-showcase" role="main">
+	            <div class="panel panel-default panel-primary">
+	            	<div class="panel-heading">
+                        <h3 class="panel-title">Potential Issues</h3>
+                    </div>
+	                <table class="table table-hover table-condensed">
+	                    <thead>
+	                        <tr>
+	                            <th></th>
+	                            <th>Issue</th>
+	                            <th>Incidents Found</th>
+	                            <th>Effort per Incident</th>
+	                            <th>Total Effort Points</th>
+	                            <th class="col-md-1">Rule</th>
+	                        </tr>
+	                    </thead>
+	                    <tbody>
+	                        <#list getProblemSummaries() as problemSummary>
+	                            <tr>
+	                                <th class="row">${problemSummary?counter}</th>
+	                                <td>
+	                                    <a href="#" class="problem-link">
+	                                        ${problemSummary.issueName}
+	                                    </a>
+	                                    <div class="problem-file-list list-group" style="display: none;">
+	                                        <#list problemSummary.files as file>
+	                                            <@render_link model=file class="list-group-item"/><#t>
+	                                        </#list>
+	                                    </div>
+	                                </td>
+			                        <td>${problemSummary.numberFound}</td>
+			                        <td>${problemSummary.effortPerIncident}</td>
+			                        <td>${problemSummary.numberFound * problemSummary.effortPerIncident}</td>
+			                        <td>
+			                            <@render_rule_link ruleID=problemSummary.ruleID renderType="glyph"/>
+			                        </td>
+	                            </tr>
+	                        </#list>
+	                    </tbody>
+	                </table>
+	            </div>
+	    	</div>
         </div>
 
         <script src="resources/js/jquery-1.10.1.min.js"></script>

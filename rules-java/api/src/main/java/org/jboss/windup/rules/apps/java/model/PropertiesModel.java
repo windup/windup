@@ -4,12 +4,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.SourceFileModel;
 
-import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.modules.javahandler.JavaHandler;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
@@ -21,22 +19,9 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
  * 
  */
 @TypeValue(PropertiesModel.TYPE)
-public interface PropertiesModel extends WindupVertexFrame
+public interface PropertiesModel extends FileModel, SourceFileModel
 {
-    public static final String PROPERTIES_FILE_RESOURCE = "w:windupPropertiesModelToPropertiesFile";
     public static final String TYPE = "PropertiesModel";
-
-    /**
-     * Gets the {@link FileModel} that contains these @{link {@link Properties}
-     */
-    @Adjacency(label = PROPERTIES_FILE_RESOURCE, direction = Direction.OUT)
-    public FileModel getFileResource();
-
-    /**
-     * Sets the {@link FileModel} that contains these @{link {@link Properties}
-     */
-    @Adjacency(label = PROPERTIES_FILE_RESOURCE, direction = Direction.OUT)
-    public void setFileResource(FileModel resource);
 
     /**
      * Gets the contents of the file as a {@link Properties} object.
@@ -44,11 +29,11 @@ public interface PropertiesModel extends WindupVertexFrame
     @JavaHandler
     public Properties getProperties() throws IOException;
 
-    abstract class Impl implements PropertiesModel, JavaHandlerContext<Vertex>
+    abstract class Impl extends FileModel.Impl implements PropertiesModel, JavaHandlerContext<Vertex>
     {
         public Properties getProperties() throws IOException
         {
-            try (InputStream is = getFileResource().asInputStream())
+            try (InputStream is = this.asInputStream())
             {
                 Properties props = new Properties();
                 props.load(is);

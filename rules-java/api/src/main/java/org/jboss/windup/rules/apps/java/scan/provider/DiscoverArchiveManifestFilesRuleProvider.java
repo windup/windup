@@ -33,7 +33,7 @@ public class DiscoverArchiveManifestFilesRuleProvider extends IteratingRuleProvi
     private static final Logger LOG = Logger.getLogger(DiscoverArchiveManifestFilesRuleProvider.class.getSimpleName());
 
     private static final String TECH_TAG = "Manifest";
-    private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.IMPORTANT;
+    private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.INFORMATIONAL;
 
     public DiscoverArchiveManifestFilesRuleProvider()
     {
@@ -69,6 +69,7 @@ public class DiscoverArchiveManifestFilesRuleProvider extends IteratingRuleProvi
 
         JarManifestModel jarManifest = jarManifestService.addTypeToModel(manifestFile);
         jarManifest.setArchive(payload);
+        jarManifest.setGenerateSourceReport(true);
 
         try (InputStream is = manifestFile.asInputStream())
         {
