@@ -405,7 +405,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
             type = StringUtils.trim(type);
             name = StringUtils.trim(name);
 
-            EnvironmentReferenceModel ref = environmentReferenceService.findEnvironmentReference(name, type);
+            EnvironmentReferenceModel ref = environmentReferenceService.findEnvironmentReference(name, EnvironmentReferenceTagType.RESOURCE_REF);
             if (ref == null)
             {
                 ref = environmentReferenceService.create();
@@ -427,14 +427,14 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
             type = StringUtils.trim(type);
             name = StringUtils.trim(name);
 
-            EnvironmentReferenceModel ref = environmentReferenceService.findEnvironmentReference(name, type);
+            EnvironmentReferenceModel ref = environmentReferenceService.findEnvironmentReference(name, EnvironmentReferenceTagType.RESOURCE_ENV_REF);
             if (ref == null)
             {
                 ref = environmentReferenceService.create();
                 ref.setReferenceId(id);
                 ref.setName(name);
                 ref.setReferenceType(type);
-                ref.setReferenceTagType(EnvironmentReferenceTagType.RESOURCE_REF);
+                ref.setReferenceTagType(EnvironmentReferenceTagType.RESOURCE_ENV_REF);
             }
             LOG.info("Reference: " + name + ", Type: " + type + ", Tag: " + ref.getReferenceTagType());
             resources.add(ref);
@@ -449,7 +449,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
             type = StringUtils.trim(type);
             name = StringUtils.trim(name);
 
-            EnvironmentReferenceModel ref = environmentReferenceService.findEnvironmentReference(name, type);
+            EnvironmentReferenceModel ref = environmentReferenceService.findEnvironmentReference(name, EnvironmentReferenceTagType.MSG_DESTINATION_REF);
             if (ref == null)
             {
                 ref = environmentReferenceService.create();
@@ -471,7 +471,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
             type = StringUtils.trim(type);
             name = StringUtils.trim(name);
 
-            EnvironmentReferenceModel ref = environmentReferenceService.findEnvironmentReference(name, type);
+            EnvironmentReferenceModel ref = environmentReferenceService.findEnvironmentReference(name, EnvironmentReferenceTagType.EJB_LOCAL_REF);
             if (ref == null)
             {
                 ref = environmentReferenceService.create();
@@ -493,7 +493,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
             type = StringUtils.trim(type);
             name = StringUtils.trim(name);
 
-            EnvironmentReferenceModel ref = environmentReferenceService.findEnvironmentReference(name, type);
+            EnvironmentReferenceModel ref = environmentReferenceService.findEnvironmentReference(name, EnvironmentReferenceTagType.EJB_REF);
             if (ref == null)
             {
                 ref = environmentReferenceService.create();
