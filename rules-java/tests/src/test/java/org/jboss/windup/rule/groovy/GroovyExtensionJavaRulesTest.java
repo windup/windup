@@ -23,8 +23,10 @@ import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.config.phase.ReportRenderingPhase;
+import org.jboss.windup.engine.predicates.EnumeratedRuleProviderPredicate;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
+import org.jboss.windup.exec.rulefilters.AndPredicate;
 import org.jboss.windup.exec.rulefilters.NotPredicate;
 import org.jboss.windup.exec.rulefilters.RuleProviderPhasePredicate;
 import org.jboss.windup.graph.GraphContext;
@@ -37,6 +39,7 @@ import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
+import org.jboss.windup.rules.apps.java.scan.provider.FindUnboundJavaReferencesRuleProvider;
 import org.jboss.windup.rules.java.JavaHintsClassificationsTest.TestHintsClassificationsTestRuleProvider;
 import org.junit.Assert;
 import org.junit.Test;
@@ -105,9 +108,11 @@ public class GroovyExtensionJavaRulesTest
 
             try
             {
-                Predicate<RuleProvider> predicate = new NotPredicate(
-                            new RuleProviderPhasePredicate(MigrationRulesPhase.class, ReportGenerationPhase.class, ReportRenderingPhase.class)
-                            );
+                Predicate<RuleProvider> predicate = new AndPredicate(
+                            new NotPredicate(
+                                        new RuleProviderPhasePredicate(
+                                                    MigrationRulesPhase.class, ReportGenerationPhase.class, ReportRenderingPhase.class)),
+                            new NotPredicate(new EnumeratedRuleProviderPredicate(FindUnboundJavaReferencesRuleProvider.class)));
                 WindupConfiguration configuration = new WindupConfiguration()
                             .setGraphContext(context)
                             .setRuleProviderFilter(predicate)

@@ -1,7 +1,14 @@
 package org.jboss.windup.rules.files.condition;
 
-import com.github.rwitzel.streamflyer.core.Modifier;
-import com.github.rwitzel.streamflyer.core.ModifyingReader;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Logger;
+import java.util.regex.Pattern;
+
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.windup.config.GraphRewrite;
@@ -15,9 +22,6 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.GraphService;
-import org.jboss.windup.rules.files.condition.regex.StreamRegexMatchListener;
-import org.jboss.windup.rules.files.condition.regex.StreamRegexMatchedEvent;
-import org.jboss.windup.rules.files.condition.regex.StreamRegexMatcher;
 import org.jboss.windup.rules.files.model.FileLocationModel;
 import org.jboss.windup.rules.files.model.FileReferenceModel;
 import org.jboss.windup.util.Logging;
@@ -28,13 +32,6 @@ import org.ocpsoft.rewrite.param.ParameterStore;
 import org.ocpsoft.rewrite.param.ParameterizedPatternResult;
 import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
 import org.ocpsoft.rewrite.util.Maps;
-
-import java.io.FileReader;
-import java.io.Reader;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Pattern;
 
 /**
  * Matches on file based upon parameterization. This condition is similar to {@link FileContent} condition, however is concerned only
@@ -149,7 +146,7 @@ public class File extends ParameterizedGraphCondition
                 final EvaluationStrategy evaluationStrategy)
     {
         final ParameterStore store = DefaultParameterStore.getInstance(context);
-        final GraphService<FileReferenceModel> fileReferenceService = new GraphService<>(event.getGraphContext(), FileReferenceModel.class);
+        final GraphService<FileLocationModel> fileLocationService = new GraphService<>(event.getGraphContext(), FileLocationModel.class);
 
         // initialize the input
         List<FileModel> fileModels = new ArrayList<>();
@@ -157,7 +154,7 @@ public class File extends ParameterizedGraphCondition
         fileNameInput(fileModels, event, store);
         allInput(fileModels, event, store);
 
-        final List<FileReferenceModel> results = new ArrayList<>();
+        final List<FileLocationModel> results = new ArrayList<>();
         for (final FileModel fileModel : fileModels)
         {
             if (fileModel.isDirectory())
@@ -166,10 +163,16 @@ public class File extends ParameterizedGraphCondition
             evaluationStrategy.modelMatched();
             if (parsedFileNamePattern == null || parsedFileNamePattern.submit(event, context))
             {
-                FileReferenceModel fileReferenceModel = fileReferenceService.create();
-                fileReferenceModel.setFile(fileModel);
-                results.add(fileReferenceModel);
-                evaluationStrategy.modelSubmitted(fileReferenceModel);
+                // Use a file location model to make attaching hints possible
+                FileLocationModel fileLocationModel = fileLocationService.create();
+                fileLocationModel.setFile(fileModel);
+                fileLocationModel.setColumnNumber(1);
+                fileLocationModel.setLineNumber(1);
+                fileLocationModel.setLength(1);
+                fileLocationModel.setSourceSnippit("File Match");
+
+                results.add(fileLocationModel);
+                evaluationStrategy.modelSubmitted(fileLocationModel);
             }
             else
             {
