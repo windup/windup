@@ -737,8 +737,8 @@ Windup Rules Development Guide</a> for detailed instructions.</p>
 <p>The command to run Windup uses the following syntax.</p>
 <div class="listingblock">
 <div class="content">
-<pre class="nowrap">For Linux:     $ WINDUP_HOME/bin/windup --input INPUT_ARCHIVE --output OUTPUT_REPORT --packages PACKAGE_1 PACKAGE_2 PACKAGE_N
-For Windows:   &gt; WINDUP_HOME\bin\windup.bat --input INPUT_ARCHIVE --output OUTPUT_REPORT --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
+<pre class="nowrap">For Linux:     $ bin/windup --input INPUT_ARCHIVE --output OUTPUT_REPORT --packages PACKAGE_1 PACKAGE_2 PACKAGE_N
+For Windows:   &gt; bin\windup.bat --input INPUT_ARCHIVE --output OUTPUT_REPORT --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
 </div>
 </div>
 </li>
@@ -801,7 +801,7 @@ For Windows:   &gt; WINDUP_HOME\bin\windup.bat --input INPUT_ARCHIVE --output OU
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="nowrap">WINDUP_HOME/bin/windup --listSourceTechnologies</pre>
+<pre class="nowrap">bin/windup --listSourceTechnologies</pre>
 </div>
 </div>
 </td>
@@ -824,7 +824,7 @@ For Windows:   &gt; WINDUP_HOME\bin\windup.bat --input INPUT_ARCHIVE --output OU
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="nowrap">WINDUP_HOME/bin/windup --listTargetTechnologies</pre>
+<pre class="nowrap">bin/windup --listTargetTechnologies</pre>
 </div>
 </div>
 </td>
@@ -884,7 +884,7 @@ If you omit the <code>--packages</code> argument, every package in the applicati
 <p>To override the default <em>Fernflower</em> decompiler, pass the <code>-Dwindup.decompiler</code> argument on the command line. For example, to use the <em>Procyon</em> compiler, use the following syntax:</p>
 <div class="listingblock">
 <div class="content">
-<pre class="nowrap">WINDUP_HOME/bin/windup -Dwindup.decompiler=procyon INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
+<pre class="nowrap">bin/windup -Dwindup.decompiler=procyon INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
 </div>
 </div>
 </li>
@@ -892,7 +892,7 @@ If you omit the <code>--packages</code> argument, every package in the applicati
 <p>To evaluate an application archive, use the following syntax:</p>
 <div class="listingblock">
 <div class="content">
-<pre class="nowrap">WINDUP_HOME/bin/windup --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
+<pre class="nowrap">bin/windup --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -900,7 +900,7 @@ If you omit the <code>--packages</code> argument, every package in the applicati
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="nowrap">WINDUP_HOME/bin/windup  --sourceMode --source SOURCE_TECHNOLOGY --target TARGET_TECHNOLOGY --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
+<pre class="nowrap">bin/windup  --sourceMode --source SOURCE_TECHNOLOGY --target TARGET_TECHNOLOGY --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -951,11 +951,11 @@ The following subdirectories in the <code>OUTPUT_REPORT_DIRECTORY</code> contain
 <div class="sect3">
 <h4 id="_windup_help">2.2.3. Windup Help</h4>
 <div class="paragraph">
-<p>To see the complete list of available arguments for the <code>windup</code> command, execute the following command in the terminal:</p>
+<p>To see the complete list of available arguments for the <code>windup</code> command, open a terminal, navigate to the WINDUP_HOME directory, and execute the following command:</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>WINDUP_HOME/bin/windup --help</pre>
+<pre>bin/windup --help</pre>
 </div>
 </div>
 </div>
@@ -971,7 +971,7 @@ The following subdirectories in the <code>OUTPUT_REPORT_DIRECTORY</code> contain
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>WINDUP_HOME/bin/windup --sourceMode --input /home/username/windup-source/test-files/seam-booking-5.2/ --output /home/username/windup-reports/seam-booking-report --source eap4,eap5 --target eap6 --packages org.jboss.seam</pre>
+<pre>bin/windup --sourceMode --input /home/username/windup-source/test-files/seam-booking-5.2/ --output /home/username/windup-reports/seam-booking-report --source eap4,eap5 --target eap6 --packages org.jboss.seam</pre>
 </div>
 </div>
 </div>
@@ -982,7 +982,7 @@ The following subdirectories in the <code>OUTPUT_REPORT_DIRECTORY</code> contain
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>WINDUP_HOME/bin/windup  --input /home/username/windup-source/test-files/jee-example-app-1.0.0.ear/ --output /home/username/windup-reports/jee-example-app-1.0.0.ear-report --source eap4,eap5 --target eap6 --packages com.acme org.apache</pre>
+<pre>bin/windup  --input /home/username/windup-source/test-files/jee-example-app-1.0.0.ear/ --output /home/username/windup-reports/jee-example-app-1.0.0.ear-report --source eap4,eap5 --target eap6 --packages com.acme org.apache</pre>
 </div>
 </div>
 </div>
@@ -1257,6 +1257,9 @@ The estimated Story Points change as new rules are added to Windup. The values h
 <p><span class="image"><img src="images/report-directory-file-list.png" alt="Report Directory File List" width="500"></span></p>
 </div>
 </div>
+</div>
+<div class="paragraph">
+<p>#include::Export-the-Report-for-Use-by-Spreadsheet-Programs[tabsize=4]</p>
 </div>
 </div>
 </div>
@@ -1653,7 +1656,7 @@ The estimated Story Points change as new rules are added to Windup. The values h
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-07-06 08:51:41 EDT
+Last updated 2015-08-06 10:50:22 EDT
 </div>
 </div>
 </body>

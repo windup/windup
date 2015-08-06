@@ -3305,11 +3305,11 @@ Windup building elements.</p>
 <div class="sect3">
 <h4 id="add-the-rule-to-windup">6.3.5. Add the Rule to Windup</h4>
 <div class="paragraph">
-<p>The command to install the rule in Windup uses the Maven GAV (groupId, artifactId, and version) to locate the rule in the Maven repository. The command uses the following syntax:</p>
+<p>Windup uses the Maven GAV (groupId, artifactId, and version) that is specified in the project POM file to locate the installed rule in the local Maven repository. The command to add the rule to Windup is executed in a terminal from the <code>WINDUP_HOME</code> directory and uses the following syntax.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="nowrap">WINDUP_HOME/bin/windup --install GROUP_ID:ARTIFACT_ID[,VERSION]</pre>
+<pre class="nowrap">bin/windup --install GROUP_ID:ARTIFACT_ID[,VERSION]</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -3334,7 +3334,7 @@ Windup building elements.</p>
 <p>Type the following command, replacing the example rule GAV values with your project values.</p>
 <div class="listingblock">
 <div class="content">
-<pre>WINDUP_HOME/bin/windup --install org.example.rules:my-custom-rule-provider,1.0.0-SNAPSHOT</pre>
+<pre>bin/windup --install org.example.rules:my-custom-rule-provider,1.0.0-SNAPSHOT</pre>
 </div>
 </div>
 </li>
@@ -3363,14 +3363,14 @@ Windup building elements.</p>
 <div class="sect3">
 <h4 id="_test_the_java_based_rule_add_on">6.3.6. Test the Java-based Rule Add-on</h4>
 <div class="paragraph">
-<p>Test the Java-based rule add-on against your application file by running Windup in a terminal.</p>
+<p>Test the Java-based rule add-on against your application file by running Windup from the WINDUP_HOME directory in a terminal.</p>
 </div>
 <div class="paragraph">
 <p>The command uses this syntax:</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>WINDUP_HOME/bin/windup [--sourceMode] --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
+<pre>bin/windup [--sourceMode] --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -3853,7 +3853,7 @@ Useful Commands: #action #agreed #help #info #idea #link #topic.</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-07-06 08:51:41 EDT
+Last updated 2015-08-06 10:51:09 EDT
 </div>
 </div>
 </body>
