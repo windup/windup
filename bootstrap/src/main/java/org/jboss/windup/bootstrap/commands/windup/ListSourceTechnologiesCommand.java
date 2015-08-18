@@ -16,7 +16,7 @@ public class ListSourceTechnologiesCommand extends AbstractListCommand implement
     public CommandResult execute()
     {
         RuleProviderRegistryCache ruleProviderRegistryCache = getFurnace().getAddonRegistry().getServices(RuleProviderRegistryCache.class).get();
-        printValuesSorted("Available source technologies", ruleProviderRegistryCache.getAvailableTargetTechnologies());
+        printValuesSorted("Available source technologies", ruleProviderRegistryCache.getAvailableSourceTechnologies());
         return CommandResult.EXIT;
     }
 

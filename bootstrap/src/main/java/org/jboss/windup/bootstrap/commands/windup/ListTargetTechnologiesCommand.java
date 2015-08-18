@@ -16,7 +16,7 @@ public class ListTargetTechnologiesCommand extends AbstractListCommand implement
     public CommandResult execute()
     {
         RuleProviderRegistryCache ruleProviderRegistryCache = getFurnace().getAddonRegistry().getServices(RuleProviderRegistryCache.class).get();
-        printValuesSorted("Available target technologies", ruleProviderRegistryCache.getAvailableSourceTechnologies());
+        printValuesSorted("Available target technologies", ruleProviderRegistryCache.getAvailableTargetTechnologies());
         return CommandResult.EXIT;
     }
 
