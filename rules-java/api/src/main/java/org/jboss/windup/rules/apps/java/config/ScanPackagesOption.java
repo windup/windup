@@ -55,10 +55,18 @@ public class ScanPackagesOption extends AbstractConfigurationOption
     @SuppressWarnings("unchecked")
     public ValidationResult validate(Object value)
     {
-        if (tooGeneralOrMissing((List<String>) value))
+        if (packagesNotSpecified((List<String>) value))
         {
             String message = "No packages were set in --" + ScanPackagesOption.NAME
                         + ". This will cause all .jar files to be decompiled and can possibly take a long time. "
+                        + "Check the Windup User Guide for performance tips.";
+
+            return new ValidationResult(ValidationResult.Level.WARNING, message);
+        }
+        else if (packagesTooGeneral((List<String>) value))
+        {
+            String message = "The packages specified to scan are very broad. This may cause many .jar files to be "
+                        + "decompiled and can possibly take a long time. "
                         + "Check the Windup User Guide for performance tips.";
 
             return new ValidationResult(ValidationResult.Level.WARNING, message);
@@ -67,24 +75,25 @@ public class ScanPackagesOption extends AbstractConfigurationOption
         return ValidationResult.SUCCESS;
     }
 
+    private boolean packagesTooGeneral(List<String> includeJavaPackages)
+    {
+        List<String> generalPackages = Arrays.asList("com", "org", "net");
+        for (String packge : includeJavaPackages)
+        {
+            if (generalPackages.contains(packge))
+                continue;
+
+            return false;
+        }
+        return true;
+    }
+
     /**
      * @return <code>true</code> if the given packages are too general, or not set at all.
      */
-    private boolean tooGeneralOrMissing(List<String> includeJavaPackages)
+    private boolean packagesNotSpecified(List<String> includeJavaPackages)
     {
-        if (includeJavaPackages != null)
-        {
-            List<String> generalPackages = Arrays.asList("com", "org", "net");
-            for (String packge : includeJavaPackages)
-            {
-                if (generalPackages.contains(packge))
-                    continue;
-
-                return false;
-            }
-        }
-
-        return true;
+        return includeJavaPackages == null || includeJavaPackages.isEmpty();
     }
 
 }
