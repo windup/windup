@@ -41,7 +41,7 @@ public class CreateSpringBeanReportRuleProvider extends AbstractRuleProvider
     public CreateSpringBeanReportRuleProvider()
     {
         super(MetadataBuilder.forProvider(CreateSpringBeanReportRuleProvider.class, "Create Spring Bean Report")
-                    .setPhase(ReportGenerationPhase.class).addSourceTechnology(new TechnologyReference("Spring", new EmptyVersionRange())));
+                    .setPhase(ReportGenerationPhase.class).addSourceTechnology(new TechnologyReference("spring", new EmptyVersionRange())));
     }
 
     @Override

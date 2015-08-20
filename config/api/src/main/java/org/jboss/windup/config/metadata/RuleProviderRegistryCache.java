@@ -12,6 +12,11 @@ import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.loader.RuleLoader;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
+import org.jboss.windup.graph.model.WindupConfigurationModel;
+import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.service.FileService;
+import org.jboss.windup.graph.service.WindupConfigurationService;
+import org.jboss.windup.util.PathUtil;
 
 /**
  * This class provides convenience methods for retrieving a {@link RuleProviderRegistry}. The registry is cached for a period of time in order to
@@ -95,6 +100,10 @@ public class RuleProviderRegistryCache
             {
                 try (GraphContext graphContext = graphContextFactory.create())
                 {
+                    WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(graphContext);
+                    FileModel windupRulesPath = new FileService(graphContext).createByFilePath(PathUtil.getWindupRulesDir().toString());
+                    configurationModel.addUserRulesPath(windupRulesPath);
+
                     this.cachedRegistry = ruleLoader.loadConfiguration(graphContext, null);
                     this.cacheRefreshTime = System.currentTimeMillis();
                     graphContext.clear();
