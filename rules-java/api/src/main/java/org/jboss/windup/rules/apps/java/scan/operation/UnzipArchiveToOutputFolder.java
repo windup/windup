@@ -266,6 +266,9 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
                         event.getGraphContext().getGraph().getBaseGraph().commit();
                     }
 
+                    for (FileDiscoveredListener listener : listeners)
+                        listener.fileModelCreated(event, context, subFileModel);
+
                     if (subFile.isFile() && ZipUtil.endsWithZipExtension(subFileModel.getFilePath()))
                     {
                         File newZipFile = subFileModel.asFile();

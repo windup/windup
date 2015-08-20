@@ -44,13 +44,14 @@ public class RecurseDirectoryAndAddFiles extends AbstractIterationOperation<File
         Iterable<FileDiscoveredListener> listeners = FurnaceHolder.getFurnace().getAddonRegistry().getServices(FileDiscoveredListener.class);
 
         FileService fileModelService = new FileService(event.getGraphContext());
-        recurseAndAddFiles(listeners, event, fileModelService, resourceModel);
+        recurseAndAddFiles(event, context, listeners, fileModelService, resourceModel);
     }
 
     /**
      * Recurses the given folder and adds references to these files to the graph as FileModels
      */
-    private void recurseAndAddFiles(Iterable<FileDiscoveredListener> listeners, GraphRewrite event, FileService fileService, FileModel file)
+    private void recurseAndAddFiles(GraphRewrite event, EvaluationContext context, Iterable<FileDiscoveredListener> listeners,
+                FileService fileService, FileModel file)
     {
         String filePath = file.getFilePath();
         File fileReference = new File(filePath);
@@ -67,8 +68,8 @@ public class RecurseDirectoryAndAddFiles extends AbstractIterationOperation<File
 
                     FileModel subFile = fileService.createByFilePath(file, reference.getAbsolutePath());
                     for (FileDiscoveredListener listener : listeners)
-                        listener.fileModelCreated(event.getGraphContext(), subFile);
-                    recurseAndAddFiles(listeners, event, fileService, subFile);
+                        listener.fileModelCreated(event, context, subFile);
+                    recurseAndAddFiles(event, context, listeners, fileService, subFile);
                 }
             }
         }
