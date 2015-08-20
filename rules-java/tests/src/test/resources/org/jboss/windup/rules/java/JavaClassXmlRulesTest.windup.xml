@@ -9,7 +9,8 @@
             </when>
             <perform>
                 <iteration over="testVariable">
-                    <hint in="testVariable_instance" message="Rule1">
+                    <hint in="testVariable_instance">
+                        <message>Rule1</message>
                         <link href="http://example.com" title="Description from XML Hint Link" />
                     </hint>
                 </iteration>
@@ -22,7 +23,8 @@
                 </javaclass>
             </when>
             <perform>
-                <hint message="Rule2">
+                <hint>
+                    <message>Rule2</message>
                     <link href="http://example.com" title="Description from XML Hint Link" />
                 </hint>
             </perform>

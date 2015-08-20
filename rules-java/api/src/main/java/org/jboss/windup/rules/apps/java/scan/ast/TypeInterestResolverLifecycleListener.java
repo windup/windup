@@ -10,18 +10,12 @@ import org.jboss.windup.config.RuleLifecycleListener;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
-public class TypeInterestFactoryLifecycleListener extends AbstractRuleLifecycleListener implements RuleLifecycleListener
+public class TypeInterestResolverLifecycleListener extends AbstractRuleLifecycleListener implements RuleLifecycleListener
 {
-    @Override
-    public void beforeExecution(GraphRewrite event)
-    {
-        TypeInterestFactory.clear();
-    }
-
     @Override
     public void afterExecution(GraphRewrite event)
     {
-        TypeInterestFactory.clear();
+        TypeInterestResolver.defaultInstance().clear();
     }
 
 }

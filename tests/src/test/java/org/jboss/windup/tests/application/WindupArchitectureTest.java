@@ -20,6 +20,8 @@ import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.rules.apps.java.config.ExcludePackagesOption;
 import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
+import org.jboss.windup.rules.apps.java.scan.ast.TypeInterest;
+import org.jboss.windup.rules.apps.java.scan.ast.TypeInterestResolver;
 import org.junit.Assert;
 
 /**
@@ -83,6 +85,15 @@ public abstract class WindupArchitectureTest
                 final List<String> includePackages,
                 final List<String> excludePackages) throws Exception
     {
+        TypeInterestResolver typeInterestResolver = TypeInterestResolver.defaultInstance();
+        typeInterestResolver.addTypeInterest(new TypeInterest("javax.servlet.annotation", "WebServlet"));
+        typeInterestResolver.addTypeInterest(new TypeInterest("javax.servlet.http"));
+
+        typeInterestResolver.addTypeInterest(new TypeInterest("java.lang", "StringBuilder"));
+        typeInterestResolver.addTypeInterest(new TypeInterest("java.net", "URL"));
+        typeInterestResolver.addTypeInterest(new TypeInterest("java.io", "InputStream"));
+        typeInterestResolver.addTypeInterest(new TypeInterest("java.io", "OutputStream"));
+        typeInterestResolver.addTypeInterest(new TypeInterest("weblogic"));
 
         WindupConfiguration wpc = new WindupConfiguration().setGraphContext(graphContext);
         wpc.setAlwaysHaltOnException(true);

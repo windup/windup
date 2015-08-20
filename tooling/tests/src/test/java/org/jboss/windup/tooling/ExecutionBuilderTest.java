@@ -27,6 +27,8 @@ import org.jboss.windup.reporting.config.classification.Classification;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.rules.apps.java.model.WindupJavaConfigurationModel;
+import org.jboss.windup.rules.apps.java.scan.ast.TypeInterest;
+import org.jboss.windup.rules.apps.java.scan.ast.TypeInterestResolver;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.junit.Assert;
 import org.junit.Test;
@@ -109,6 +111,8 @@ public class ExecutionBuilderTest
         @Override
         public Configuration getConfiguration(GraphContext context)
         {
+            TypeInterestResolver.defaultInstance().addTypeInterest(new TypeInterest("javax."));
+
             return ConfigurationBuilder.begin()
                         .addRule()
                         .when(JavaClass.references("javax.{*}"))

@@ -118,6 +118,8 @@ public class ASTProcessorIntegrationTest
         @Override
         public Configuration getConfiguration(GraphContext context)
         {
+            TypeInterestResolver.defaultInstance().addTypeInterest(new TypeInterest("simple"));
+
             return ConfigurationBuilder.begin()
             .addRule().when(
                 JavaClass.references("simple.MyAClass").at(TypeReferenceLocation.TYPE)

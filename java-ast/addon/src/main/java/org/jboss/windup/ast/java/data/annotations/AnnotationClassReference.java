@@ -21,9 +21,10 @@ public class AnnotationClassReference extends ClassReference implements Annotati
     /**
      * Indicates that an annotation with the give qualified name is specified at the given line, column, and of the provided length.
      */
-    public AnnotationClassReference(String qualifiedName, ResolutionStatus resolutionStatus, int lineNumber, int column, int length, String line)
+    public AnnotationClassReference(String qualifiedName, String packageName, String className, ResolutionStatus resolutionStatus, int lineNumber,
+                int column, int length, String line)
     {
-        super(qualifiedName, resolutionStatus, TypeReferenceLocation.ANNOTATION, lineNumber, column, length, line);
+        super(qualifiedName, packageName, className, null, resolutionStatus, TypeReferenceLocation.ANNOTATION, lineNumber, column, length, line);
     }
 
     /**

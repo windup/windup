@@ -41,6 +41,8 @@ import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.service.InlineHintService;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
+import org.jboss.windup.rules.apps.java.scan.ast.TypeInterest;
+import org.jboss.windup.rules.apps.java.scan.ast.TypeInterestResolver;
 import org.jboss.windup.rules.files.condition.FileContent;
 import org.jboss.windup.rules.files.model.FileLocationModel;
 import org.junit.Assert;
@@ -206,6 +208,8 @@ public class FileContentTest
         @Override
         public Configuration getConfiguration(GraphContext context)
         {
+            TypeInterestResolver.defaultInstance().addTypeInterest(new TypeInterest("java.io", "IOException"));
+
             return ConfigurationBuilder.begin()
             .addRule()
             .when(FileContent.matches("file {text}.").inFileNamed("{*}.txt"))
