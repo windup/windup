@@ -136,7 +136,7 @@ public final class TypeInterestFactory
                 }
 
                 boolean shouldAdd = false;
-                if (entryLocations == null || entryLocations.length == 0)
+                if (typeReferenceLocation == null || entryLocations == null || entryLocations.length == 0)
                 {
                     shouldAdd = true;
                 }
