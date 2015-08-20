@@ -7,12 +7,23 @@ import org.jboss.windup.bootstrap.commands.CommandResult;
 
 public class DisplayVersionCommand implements Command
 {
+    private final CommandResult result;
+
+    public DisplayVersionCommand()
+    {
+        result = CommandResult.EXIT;
+    }
+
+    public DisplayVersionCommand(CommandResult result)
+    {
+        this.result = result;
+    }
 
     @Override
     public CommandResult execute()
     {
         System.out.println(Bootstrap.getVersionString());
-        return CommandResult.EXIT;
+        return result;
     }
 
     @Override

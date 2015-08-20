@@ -263,6 +263,7 @@ public class Bootstrap
         List<String> windupArguments = new ArrayList<>(unknownArgs);
         if (!windupArguments.isEmpty())
         {
+            commands.add(new DisplayVersionCommand(CommandResult.CONTINUE));
             commands.add(new RunWindupCommand(windupArguments, batchMode));
         }
 
