@@ -76,11 +76,14 @@ public class FernflowerDecompilerOperation extends GraphOperation
             File outputDir = DecompilerUtil.getOutputDirectoryForClass(event.getGraphContext(), classFileModel);
             if (configurationService.shouldScanPackage(classFileModel.getPackageName()))
             {
-                classesToDecompile.add(new ClassDecompileRequest(outputDir.toPath(), classFileModel.asFile().toPath(), outputDir.toPath()));
-                if (!classFileModel.getFilePath().contains("$"))
+                if (classFileModel.getSkipDecompilation() == null || !classFileModel.getSkipDecompilation())
                 {
-                    // it only counts as a work unit if it is not an inner class (as inner classes are grouped together)
-                    totalWork++;
+                    classesToDecompile.add(new ClassDecompileRequest(outputDir.toPath(), classFileModel.asFile().toPath(), outputDir.toPath()));
+                    if (!classFileModel.getFilePath().contains("$"))
+                    {
+                        // it only counts as a work unit if it is not an inner class (as inner classes are grouped together)
+                        totalWork++;
+                    }
                 }
             }
         }

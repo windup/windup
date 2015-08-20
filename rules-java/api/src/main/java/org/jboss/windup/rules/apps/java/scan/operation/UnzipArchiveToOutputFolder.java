@@ -32,7 +32,7 @@ import org.jboss.windup.rules.apps.java.archives.model.IdentifiedArchiveModel;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.jboss.windup.rules.files.FileDiscoveredEvent;
 import org.jboss.windup.rules.files.FileDiscoveredListener;
-import org.jboss.windup.rules.files.FileDiscoveredResult;
+import org.jboss.windup.rules.files.FileDiscoveredListenerUtil;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.ZipUtil;
 import org.jboss.windup.util.exception.WindupException;
@@ -202,21 +202,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
                         }
                     };
 
-                    boolean skipFile = false;
-                    for (FileDiscoveredListener listener : listeners)
-                    {
-                        FileDiscoveredResult result = listener.fileDiscovered(event);
-                        if (result == FileDiscoveredResult.KEEP)
-                        {
-                            skipFile = false;
-                            break;
-                        }
-                        else if (result == FileDiscoveredResult.DISCARD)
-                        {
-                            skipFile = true;
-                        }
-                    }
-
+                    boolean skipFile = FileDiscoveredListenerUtil.shouldSkip(listeners, event);
                     if (skipFile)
                         continue;
 
@@ -243,6 +229,8 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
                 FileService fileService, ArchiveModel archiveModel,
                 FileModel parentFileModel)
     {
+        int numberAdded = 0;
+
         FileFilter filter = TrueFileFilter.TRUE;
         if (archiveModel instanceof IdentifiedArchiveModel)
         {
@@ -270,6 +258,12 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
                     if (checkIfIgnored(event.getGraphContext(), subFileModel, windupJavaConfigurationService.getIgnoredFileRegexes()))
                     {
                         continue;
+                    }
+
+                    numberAdded++;
+                    if (numberAdded % 250 == 0)
+                    {
+                        event.getGraphContext().getGraph().getBaseGraph().commit();
                     }
 
                     if (subFile.isFile() && ZipUtil.endsWithZipExtension(subFileModel.getFilePath()))

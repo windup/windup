@@ -68,7 +68,11 @@ public class ProcyonDecompilerOperation extends GraphOperation
         List<ClassDecompileRequest> classesToDecompile = new ArrayList<>(10000); // Just a guess as to the average size
         for (JavaClassFileModel classFileModel : allClasses)
         {
-            if (!classFileModel.getFilePath().contains("$") && configurationService.shouldScanPackage(classFileModel.getPackageName()))
+            if (classFileModel.getSkipDecompilation() != null && classFileModel.getSkipDecompilation())
+                continue;
+
+            if (!classFileModel.getFilePath().contains("$")
+                        && configurationService.shouldScanPackage(classFileModel.getPackageName()))
             {
                 File outputDir = DecompilerUtil.getOutputDirectoryForClass(event.getGraphContext(), classFileModel);
                 classesToDecompile.add(new ClassDecompileRequest(outputDir.toPath(), classFileModel.asFile().toPath(), outputDir.toPath()));
