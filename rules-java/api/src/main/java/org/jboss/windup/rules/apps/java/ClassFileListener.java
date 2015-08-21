@@ -51,7 +51,6 @@ public class ClassFileListener implements FileDiscoveredListener
             try (InputStream is = fileModel.asInputStream())
             {
                 ClassReader classReader = new ClassReader(is);
-                addClassFileMetadata(event, context, fileModel);
 
                 // keep inner classes (we may need them for decompilation purposes)
                 if (fileModel.getFileName().contains("$"))
@@ -63,6 +62,8 @@ public class ClassFileListener implements FileDiscoveredListener
                     fileModel.asVertex().setProperty(JavaClassFileModel.SKIP_DECOMPILATION, true);
                     return;
                 }
+                addClassFileMetadata(event, context, fileModel);
+
                 DependencyVisitor dependencyVisitor = new DependencyVisitor();
 
                 classReader.accept(dependencyVisitor, 0);
