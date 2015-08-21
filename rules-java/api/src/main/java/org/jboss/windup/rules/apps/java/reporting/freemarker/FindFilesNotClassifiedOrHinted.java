@@ -10,6 +10,7 @@ import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.query.FindFilesNotClassifiedOrHintedGremlinCriterion;
+import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.files.model.FileLocationModel;
@@ -66,7 +67,7 @@ public class FindFilesNotClassifiedOrHinted implements WindupFreeMarkerMethod
         for (Vertex v : result)
         {
             FileModel f = context.getFramed().frame(v, FileModel.class);
-            if (f instanceof JavaSourceFileModel || f instanceof XmlFileModel)
+            if (f instanceof JavaSourceFileModel || f instanceof XmlFileModel || f instanceof JavaClassFileModel)
             {
                 resultModels.add(f);
             }

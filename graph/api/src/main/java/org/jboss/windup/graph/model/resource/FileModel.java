@@ -2,20 +2,12 @@ package org.jboss.windup.graph.model.resource;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.ProjectModel;
-import org.jboss.windup.util.exception.WindupException;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Vertex;
@@ -46,15 +38,13 @@ public interface FileModel extends ResourceModel
     String PRETTY_PATH_WITHIN_PROJECT = "fileModelPrettyPathWithinProject";
 
     /**
-     * Contains the File Name (the last component of the path). Eg, a file /tmp/foo/bar/file.txt would have fileName set
-     * to "file.txt"
+     * Contains the File Name (the last component of the path). Eg, a file /tmp/foo/bar/file.txt would have fileName set to "file.txt"
      */
     @Property(FILE_NAME)
     String getFileName();
 
     /**
-     * Contains the File Name (the last component of the path). Eg, a file /tmp/foo/bar/file.txt would have fileName set
-     * to "file.txt"
+     * Contains the File Name (the last component of the path). Eg, a file /tmp/foo/bar/file.txt would have fileName set to "file.txt"
      */
     @Indexed
     @Property(FILE_NAME)
@@ -215,9 +205,6 @@ public interface FileModel extends ResourceModel
                     String parentPrettyPath = getParentFile().getPrettyPathWithinProject();
                     result = StringUtils.isEmpty(parentPrettyPath) ? filename : parentPrettyPath + "/" + filename;
                 }
-
-                List<String> paths = generatePathList(projectPath);
-                return generatePathString(paths);
             }
             it().setProperty(PRETTY_PATH_WITHIN_PROJECT, result);
             return result;

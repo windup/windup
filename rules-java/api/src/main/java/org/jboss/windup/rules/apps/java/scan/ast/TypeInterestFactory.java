@@ -166,7 +166,7 @@ public final class TypeInterestFactory
         return result;
     }
 
-    public static boolean matchesAny(String text, TypeReferenceLocation typeReferenceLocation)
+    public static synchronized boolean matchesAny(String text, TypeReferenceLocation typeReferenceLocation)
     {
         ExecutionStatistics.get().begin("TypeInterestFactory.matchesAny(text)");
         synchronized (prescanMap)
