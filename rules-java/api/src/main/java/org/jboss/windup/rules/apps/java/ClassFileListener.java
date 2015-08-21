@@ -149,12 +149,6 @@ public class ClassFileListener implements FileDiscoveredListener
             classificationService.attachClassification(context, fileModel, JavaClassFileModel.UNPARSEABLE_CLASS_CLASSIFICATION,
                         JavaClassFileModel.UNPARSEABLE_CLASS_DESCRIPTION);
         }
-        finally
-
-        {
-            ExecutionStatistics.get().end("AddClassFileMetadata.perform()");
-        }
-
     }
 
     private boolean shouldKeep(String typeReference)
