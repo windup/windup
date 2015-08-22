@@ -63,12 +63,16 @@ public class TargetOption extends AbstractConfigurationOption
 
     public boolean isRequired()
     {
-        return false;
+        return true;
     }
 
     @Override
     public ValidationResult validate(Object value)
     {
+        if (value == null)
+        {
+            return new ValidationResult(ValidationResult.Level.ERROR, NAME + " parameter is required!");
+        }
         return ValidationResult.SUCCESS;
     }
 

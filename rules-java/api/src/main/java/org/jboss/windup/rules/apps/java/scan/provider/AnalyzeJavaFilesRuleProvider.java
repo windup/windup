@@ -116,7 +116,9 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
             {
                 WindupJavaConfigurationService windupJavaConfigurationService = new WindupJavaConfigurationService(
                             event.getGraphContext());
-                WindupJavaConfigurationModel javaConfiguration = WindupJavaConfigurationService.getJavaConfigurationModel(event.getGraphContext());
+                final WindupJavaConfigurationModel javaConfiguration = WindupJavaConfigurationService
+                            .getJavaConfigurationModel(event.getGraphContext());
+                final boolean classNotFoundAnalysisEnabled = javaConfiguration.isClassNotFoundAnalysisEnabled();
 
                 GraphService<JavaSourceFileModel> service = new GraphService<>(event.getGraphContext(), JavaSourceFileModel.class);
                 Iterable<JavaSourceFileModel> allJavaSourceModels = service.findAll();
@@ -165,14 +167,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
 
                 for (JarArchiveModel library : libraries)
                 {
-                    if (library.getUnzippedDirectory() != null)
-                    {
-                        libraryPaths.add(library.getUnzippedDirectory().getFilePath());
-                    }
-                    else
-                    {
-                        libraryPaths.add(library.getFilePath());
-                    }
+                    libraryPaths.add(library.getFilePath());
                 }
 
                 ExecutionStatistics.get().begin("AnalyzeJavaFilesRuleProvider.parseFiles");
@@ -189,7 +184,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                         {
                             try
                             {
-                                processedPaths.put(new ImmutablePair<>(filePath, filterClassReferences(references)));
+                                processedPaths.put(new ImmutablePair<>(filePath, filterClassReferences(references, classNotFoundAnalysisEnabled)));
                             }
                             catch (InterruptedException e)
                             {
@@ -249,7 +244,8 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                             try
                             {
                                 List<ClassReference> references = ASTProcessor.analyze(importResolver, libraryPaths, sourcePaths, unprocessed);
-                                processReferences(event.getGraphContext(), unprocessed, filterClassReferences(references));
+                                processReferences(event.getGraphContext(), unprocessed,
+                                            filterClassReferences(references, classNotFoundAnalysisEnabled));
                                 filesToProcess.remove(unprocessed);
                             }
                             catch (Exception e)
@@ -314,13 +310,13 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
             }
         }
 
-        private List<ClassReference> filterClassReferences(List<ClassReference> references)
+        private List<ClassReference> filterClassReferences(List<ClassReference> references, boolean classNotFoundAnalysisEnabled)
         {
             List<ClassReference> results = new ArrayList<>(references.size());
             for (ClassReference reference : references)
             {
                 boolean shouldKeep = reference.getLocation() == TypeReferenceLocation.TYPE;
-                shouldKeep |= reference.getResolutionStatus() != ResolutionStatus.RESOLVED;
+                shouldKeep |= classNotFoundAnalysisEnabled && reference.getResolutionStatus() != ResolutionStatus.RESOLVED;
                 shouldKeep |= TypeInterestFactory.matchesAny(reference.getQualifiedName(), reference.getLocation());
 
                 // we are always interested in types + anything that the TypeInterestFactory has registered

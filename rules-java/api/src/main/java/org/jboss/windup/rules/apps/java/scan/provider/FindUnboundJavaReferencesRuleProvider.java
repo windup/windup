@@ -8,6 +8,7 @@ import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.DependentPhase;
 import org.jboss.windup.config.phase.PostMigrationRulesPhase;
 import org.jboss.windup.config.phase.PreReportGenerationPhase;
+import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.SourceFileModel;
@@ -16,6 +17,7 @@ import org.jboss.windup.reporting.config.HasHint;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.model.Severity;
 import org.jboss.windup.reporting.service.InlineHintService;
+import org.jboss.windup.rules.apps.java.model.WindupJavaConfigurationModel;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -50,6 +52,7 @@ public class FindUnboundJavaReferencesRuleProvider extends AbstractRuleProvider
     {
         return ConfigurationBuilder.begin()
                 .addRule()
+                .when(Query.fromType(WindupJavaConfigurationModel.class).withProperty(WindupJavaConfigurationModel.CLASS_NOT_FOUND_ANALYSIS_ENABLED, true))
                 .perform(new AttachHintOperation())
                 .withId(RULE_ID);
     }

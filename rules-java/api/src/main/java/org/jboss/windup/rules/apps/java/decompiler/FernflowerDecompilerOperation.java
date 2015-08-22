@@ -60,7 +60,7 @@ public class FernflowerDecompilerOperation extends GraphOperation
     @Override
     public void perform(final GraphRewrite event, final EvaluationContext context)
     {
-        ExecutionStatistics.get().begin("ProcyonDecompilationOperation.perform");
+        ExecutionStatistics.get().begin("FernflowerDecompilationOperation.perform");
         int totalCores = Runtime.getRuntime().availableProcessors();
         int threads = totalCores == 0 ? 1 : totalCores;
         LOG.info("Decompiling with " + threads + " threads");
@@ -101,7 +101,7 @@ public class FernflowerDecompilerOperation extends GraphOperation
         decompiler.decompileClassFiles(classesToDecompile, addDecompiledItemsToGraph);
         decompiler.close();
 
-        ExecutionStatistics.get().end("ProcyonDecompilationOperation.perform");
+        ExecutionStatistics.get().end("FernflowerDecompilationOperation.perform");
     }
 
     /**

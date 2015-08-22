@@ -28,6 +28,7 @@ import org.jboss.windup.exec.configuration.options.OutputPathOption;
 import org.jboss.windup.exec.configuration.options.OverwriteOption;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
+import org.jboss.windup.util.exception.WindupException;
 
 public class RunWindupCommand implements Command, FurnaceDependent
 {
@@ -232,8 +233,16 @@ public class RunWindupCommand implements Command, FurnaceDependent
             File inputFile = (File) optionValues.get(InputPathOption.NAME);
             if (inputFile != null)
             {
-                File outputFile = new File(inputFile.getAbsoluteFile().getParentFile(), inputFile.getName() + ".report");
-                optionValues.put(OutputPathOption.NAME, outputFile);
+                try
+                {
+                    File canonicalInputFile = inputFile.getCanonicalFile();
+                    File outputFile = new File(canonicalInputFile.getParentFile(), canonicalInputFile.getName() + ".report");
+                    optionValues.put(OutputPathOption.NAME, outputFile);
+                }
+                catch (IOException e)
+                {
+                    throw new WindupException("Failed to get canonical path for input file: " + inputFile);
+                }
             }
         }
     }
