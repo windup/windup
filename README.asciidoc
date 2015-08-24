@@ -19,7 +19,7 @@ or subscribe to the link:https://lists.jboss.org/mailman/listinfo/windup-dev[win
 === Installation and Usage
 
 You may download the link:https://repository.jboss.org/nexus/content/repositories/releases/org/jboss/windup/windup-distribution/[latest Windup release from JBoss.org Maven Repository].
-After that, follow the link:https://github.com/windup/windup/wiki/Execute-Windup[User Guide, Execute Windup].
+After that, follow the link:https://github.com/windup/windup/wiki/Execute[User Guide, Execute Windup].
 
 === Project Source Code Format
 
