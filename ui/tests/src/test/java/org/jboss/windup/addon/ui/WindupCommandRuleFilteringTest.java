@@ -96,9 +96,9 @@ public class WindupCommandRuleFilteringTest
     @Test
     public void testRuleFilteringSourceGlassfish() throws Exception
     {
-        setupAndRun(null, null, Collections.singleton("glassfish"), null);
+        setupAndRun(null, null, Collections.singleton("glassfish"), Collections.singleton("jboss"));
         Assert.assertTrue(this.tag1SourceGlassfishRuleProvider.executed);
-        Assert.assertTrue(this.tag1SourceGlassfishTargetFooRuleProvider.executed);
+        Assert.assertFalse(this.tag1SourceGlassfishTargetFooRuleProvider.executed);
         Assert.assertTrue(this.tag2SourceGlassfishTargetJBossRuleProvider.executed);
         Assert.assertFalse(this.tag3SourceOrionServerRuleProvider.executed);
     }
@@ -116,17 +116,17 @@ public class WindupCommandRuleFilteringTest
     @Test
     public void testRuleFilteringExcludeTag3() throws Exception
     {
-        setupAndRun(null, Collections.singleton("tag3"), null, null);
-        Assert.assertTrue(this.tag1SourceGlassfishRuleProvider.executed);
+        setupAndRun(null, Collections.singleton("tag3"), Collections.singleton("glassfish"), Collections.singleton("foo"));
+        Assert.assertFalse(this.tag1SourceGlassfishRuleProvider.executed);
         Assert.assertTrue(this.tag1SourceGlassfishTargetFooRuleProvider.executed);
-        Assert.assertTrue(this.tag2SourceGlassfishTargetJBossRuleProvider.executed);
+        Assert.assertFalse(this.tag2SourceGlassfishTargetJBossRuleProvider.executed);
         Assert.assertFalse(this.tag3SourceOrionServerRuleProvider.executed);
     }
 
     @Test
     public void testRuleFilteringIncludeTag2() throws Exception
     {
-        setupAndRun(Collections.singleton("tag2"), null, null, null);
+        setupAndRun(Collections.singleton("tag2"), null, null, Collections.singleton("jboss"));
         Assert.assertFalse(this.tag1SourceGlassfishRuleProvider.executed);
         Assert.assertFalse(this.tag1SourceGlassfishTargetFooRuleProvider.executed);
         Assert.assertTrue(this.tag2SourceGlassfishTargetJBossRuleProvider.executed);
@@ -164,12 +164,10 @@ public class WindupCommandRuleFilteringTest
                 controller.initialize();
                 Assert.assertTrue(controller.isEnabled());
                 controller.setValueFor("input", inputFile);
-                Assert.assertTrue(controller.canExecute());
                 if (outputFile != null)
                 {
                     controller.setValueFor("output", outputFile);
                 }
-                Assert.assertTrue(controller.canExecute());
 
                 if (includeTags != null)
                 {
@@ -190,6 +188,7 @@ public class WindupCommandRuleFilteringTest
                 {
                     controller.setValueFor(TargetOption.NAME, targets);
                 }
+                Assert.assertTrue(controller.canExecute());
 
                 Result result = controller.execute();
                 final String msg = "controller.execute() 'Failed': " + result.getMessage();
@@ -212,7 +211,8 @@ public class WindupCommandRuleFilteringTest
         {
             super(MetadataBuilder.forProvider(Tag1SourceGlassfishRuleProvider.class)
                         .addTag("tag1")
-                        .addSourceTechnology(new TechnologyReference("glassfish", "[1.0,)")));
+                        .addSourceTechnology(new TechnologyReference("glassfish", "[1.0,)"))
+                        .addTargetTechnology(new TechnologyReference("jboss", "[1.0,)")));
         }
 
         @Override
@@ -301,7 +301,8 @@ public class WindupCommandRuleFilteringTest
         {
             super(MetadataBuilder.forProvider(Tag3SourceOrionServerRuleProvider.class)
                         .addTag("tag3")
-                        .addSourceTechnology(new TechnologyReference("orion", "[1.0,)")));
+                        .addSourceTechnology(new TechnologyReference("orion", "[1.0,)"))
+                        .addTargetTechnology(new TechnologyReference("foo", "[1.0,)")));
         }
 
         @Override

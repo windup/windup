@@ -51,6 +51,7 @@ public class CopyJavaConfigToGraphRuleProvider extends AbstractRuleProvider
             {
                 Map<String, Object> config = event.getGraphContext().getOptionMap();
                 Boolean sourceMode = (Boolean) config.get(SourceModeOption.NAME);
+                Boolean enableClassFoundFoundAnalysis = (Boolean) config.get(EnableClassNotFoundAnalysisOption.NAME);
 
                 @SuppressWarnings("unchecked")
                 List<String> includeJavaPackages = (List<String>) config.get(ScanPackagesOption.NAME);
@@ -95,6 +96,7 @@ public class CopyJavaConfigToGraphRuleProvider extends AbstractRuleProvider
                 javaConfiguration.setSourceMode(sourceMode == null ? false : sourceMode);
                 javaConfiguration.setScanJavaPackageList(includeJavaPackages);
                 javaConfiguration.setExcludeJavaPackageList(excludeJavaPackages);
+                javaConfiguration.setClassNotFoundAnalysisEnabled(enableClassFoundFoundAnalysis == null ? false : enableClassFoundFoundAnalysis);
 
                 List<File> additionalClasspaths = (List<File>) config.get(AdditionalClasspathOption.NAME);
                 if (additionalClasspaths != null)

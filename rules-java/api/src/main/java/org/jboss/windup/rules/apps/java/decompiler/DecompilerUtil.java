@@ -8,6 +8,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
+import org.jboss.windup.util.PathUtil;
 
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
@@ -26,8 +27,8 @@ public class DecompilerUtil
     {
         final File result;
         WindupConfigurationModel configuration = WindupConfigurationService.getConfigurationModel(context);
-        String inputPath = configuration.getInputPath().getFilePath();
-        if (fileModel.getFilePath().startsWith(inputPath))
+        File inputPath = configuration.getInputPath().asFile();
+        if (PathUtil.isInSubDirectory(inputPath, fileModel.asFile()))
         {
             String outputPath = configuration.getOutputPath().getFilePath();
             result = Paths.get(outputPath).resolve("classes").toFile();

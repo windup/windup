@@ -192,6 +192,25 @@ public class PathUtil
         return currentPath;
     }
 
+    /**
+     * Returns true if "file" is a subfile or subdirectory of "dir".
+     *
+     * For example with the directory /path/to/a, the following return values would occur:
+     *
+     * /path/to/a/foo.txt - true /path/to/a/bar/zoo/boo/team.txt - true /path/to/b/foo.txt - false
+     *
+     */
+    public static boolean isInSubDirectory(File dir, File file)
+    {
+        if (file == null)
+            return false;
+
+        if (file.equals(dir))
+            return true;
+
+        return isInSubDirectory(dir, file.getParentFile());
+    }
+
     /*
      * Helpers
      */

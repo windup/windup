@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -29,6 +30,7 @@ import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
+import org.jboss.windup.exec.configuration.options.TargetOption;
 import org.jboss.windup.exec.configuration.options.UserIgnorePathOption;
 import org.jboss.windup.exec.configuration.options.UserRulesDirectoryOption;
 import org.jboss.windup.graph.GraphContext;
@@ -101,6 +103,7 @@ public class WindupCommandTest
             {
                 controller.initialize();
                 Assert.assertTrue(controller.isEnabled());
+                controller.setValueFor(TargetOption.NAME, Collections.singletonList("jboss"));
                 controller.setValueFor("input", inputFile);
                 Assert.assertTrue(controller.canExecute());
                 controller.setValueFor("output", tempDir);
@@ -490,11 +493,11 @@ public class WindupCommandTest
         controller.initialize();
         Assert.assertTrue(controller.isEnabled());
         controller.setValueFor("input", inputFile);
-        Assert.assertTrue(controller.canExecute());
         if (outputFile != null)
         {
             controller.setValueFor("output", outputFile);
         }
+        controller.setValueFor(TargetOption.NAME, Collections.singletonList("jboss"));
         Assert.assertTrue(controller.canExecute());
         controller.setValueFor("packages", "org.jboss");
         Assert.assertTrue(controller.canExecute());
