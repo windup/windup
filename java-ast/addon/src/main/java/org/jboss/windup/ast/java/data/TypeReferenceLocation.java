@@ -23,7 +23,7 @@ public enum TypeReferenceLocation
     METHOD("Declares method"),
 
     /**
-     * A Java class inherits the specified type.
+     * A Java class inherits the specified type; works transitively.
      */
     INHERITANCE("Inherits type"),
 
@@ -53,7 +53,7 @@ public enum TypeReferenceLocation
     RETURN_TYPE("Returns type"),
 
     /**
-     * A Java class of the specified type is used in an instanceof statement.
+     * A Java class of the specified type is used in an <code>instanceof</code> statement.
      */
     INSTANCE_OF("Instance of type"),
 
@@ -83,14 +83,16 @@ public enum TypeReferenceLocation
     VARIABLE_DECLARATION("Declares variable"),
 
     /**
-     * A Java class implements the specified type.
+     * A Java class implements the specified type; works transitively.
      */
     IMPLEMENTS_TYPE("Implements type"),
 
     /**
      * A variable initalization expression value. For example, this would resolve to "mypackage.MyConstants.FOO" for the following field declaration:
      *
+     * <pre>
      * int foo = mypackage.MyConstants.FOO;
+     * </pre>
      */
     VARIABLE_INITIALIZER("Variable Initializer");
 
