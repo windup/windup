@@ -13,7 +13,7 @@ import org.ocpsoft.rewrite.config.And;
 import org.ocpsoft.rewrite.config.Condition;
 import org.w3c.dom.Element;
 
-@NamespaceElementHandler(elementName = "and", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
+@NamespaceElementHandler(elementName = "all", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
 public class AndHandler implements ElementHandler<And>
 {
    @Override
