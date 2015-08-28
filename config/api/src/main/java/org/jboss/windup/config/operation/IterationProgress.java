@@ -25,6 +25,7 @@ public class IterationProgress extends AbstractIterationOperation<WindupVertexFr
     private int totalIterations = -1;
     private boolean estimateTimeRemaining = true;
     private ProgressEstimate progressEstimate;
+    private String variableListName = Iteration.DEFAULT_VARIABLE_LIST_STRING;
 
     public IterationProgress(String messagePrefix, int interval)
     {
@@ -35,6 +36,11 @@ public class IterationProgress extends AbstractIterationOperation<WindupVertexFr
     public static IterationProgress monitoring(String messagePrefix, int interval)
     {
         return new IterationProgress(messagePrefix, interval);
+    }
+
+    public IterationProgress over(String iterableName) {
+        variableListName = iterableName;
+        return this;
     }
 
     public IterationProgress disableTimeEstimation()
@@ -50,7 +56,7 @@ public class IterationProgress extends AbstractIterationOperation<WindupVertexFr
         {
             @SuppressWarnings("unchecked")
             Iterable<WindupVertexFrame> frames = (Iterable<WindupVertexFrame>) event.getRewriteContext().get(
-                        Iteration.DEFAULT_VARIABLE_LIST_STRING);
+                    variableListName);
             totalIterations = Iterators.asList(frames).size();
             progressEstimate = new ProgressEstimate(totalIterations);
         }
