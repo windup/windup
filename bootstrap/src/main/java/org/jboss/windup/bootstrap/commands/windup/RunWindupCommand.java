@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +14,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.forge.furnace.Furnace;
+import org.jboss.windup.bootstrap.Bootstrap;
 import org.jboss.windup.bootstrap.ConsoleProgressMonitor;
 import org.jboss.windup.bootstrap.commands.Command;
 import org.jboss.windup.bootstrap.commands.CommandPhase;
@@ -20,12 +23,14 @@ import org.jboss.windup.bootstrap.commands.FurnaceDependent;
 import org.jboss.windup.config.ConfigurationOption;
 import org.jboss.windup.config.InputType;
 import org.jboss.windup.config.ValidationResult;
+import org.jboss.windup.config.metadata.RuleProviderRegistryCache;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.WindupProgressMonitor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.exec.configuration.options.InputPathOption;
 import org.jboss.windup.exec.configuration.options.OutputPathOption;
 import org.jboss.windup.exec.configuration.options.OverwriteOption;
+import org.jboss.windup.exec.configuration.options.TargetOption;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.util.exception.WindupException;
@@ -136,6 +141,17 @@ public class RunWindupCommand implements Command, FurnaceDependent
         }
 
         setDefaultOutputPath(optionValues);
+
+        RuleProviderRegistryCache ruleProviderRegistryCache = furnace.getAddonRegistry().getServices(RuleProviderRegistryCache.class).get();
+
+        Collection<String> targets = (Collection<String>) optionValues.get(TargetOption.NAME);
+        if ((targets == null || targets.isEmpty()) && !batchMode.get())
+        {
+            String target = Bootstrap.promptForListItem("Please select a target:", ruleProviderRegistryCache.getAvailableTargetTechnologies(), "eap");
+            targets = Collections.singleton(target);
+            optionValues.put(TargetOption.NAME, targets);
+        }
+
         boolean validationSuccess = validateOptionValues(options, optionValues);
         if (!validationSuccess)
             return;
@@ -167,7 +183,7 @@ public class RunWindupCommand implements Command, FurnaceDependent
         {
             String promptMsg = "Overwrite all contents of \"" + windupConfiguration.getOutputDirectory().toString()
                         + "\" (anything already in the directory will be deleted)?";
-            if (!prompt(promptMsg, false))
+            if (!Bootstrap.prompt(promptMsg, false, batchMode.get()))
             {
                 String outputPath = windupConfiguration.getOutputDirectory().toString();
                 System.err.println("Files exist in " + outputPath + ", but --overwrite not specified. Aborting!");
@@ -213,7 +229,7 @@ public class RunWindupCommand implements Command, FurnaceDependent
                 System.err.println("ERROR: " + result.getMessage());
                 return false;
             case PROMPT_TO_CONTINUE:
-                if (!prompt(result.getMessage(), result.getPromptDefault()))
+                if (!Bootstrap.prompt(result.getMessage(), result.getPromptDefault(), batchMode.get()))
                     return false;
                 break;
             case WARNING:
@@ -267,23 +283,7 @@ public class RunWindupCommand implements Command, FurnaceDependent
         }
     }
 
-    private boolean prompt(String message, boolean defaultValue)
-    {
-        if (batchMode.get())
-        {
-            return defaultValue;
-        }
-        else
-        {
-            String defaultMessage = defaultValue ? " [Y,n] " : " [y,N] ";
-            String line = System.console().readLine(message + defaultMessage).trim();
-            if ("y".equalsIgnoreCase(line))
-                return true;
-            if ("n".equalsIgnoreCase(line))
-                return false;
-            return defaultValue;
-        }
-    }
+
 
     private boolean pathNotEmpty(File f)
     {
