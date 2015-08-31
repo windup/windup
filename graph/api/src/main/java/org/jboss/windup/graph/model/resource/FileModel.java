@@ -2,19 +2,12 @@ package org.jboss.windup.graph.model.resource;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.ProjectModel;
-import org.jboss.windup.util.exception.WindupException;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Vertex;
@@ -41,6 +34,8 @@ public interface FileModel extends ResourceModel
     String FILE_NAME = "fileName";
     String FILE_PATH = "filePath";
     String IS_DIRECTORY = "isDirectory";
+    String PRETTY_PATH = "fileModelPrettyPath";
+    String PRETTY_PATH_WITHIN_PROJECT = "fileModelPrettyPathWithinProject";
 
     /**
      * Contains the File Name (the last component of the path). Eg, a file /tmp/foo/bar/file.txt would have fileName set
@@ -179,97 +174,68 @@ public interface FileModel extends ResourceModel
     {
         public String getPrettyPathWithinProject()
         {
+            if (it().getProperty(PRETTY_PATH_WITHIN_PROJECT) != null)
+                return it().getProperty(PRETTY_PATH_WITHIN_PROJECT);
+
+            String result;
             ProjectModel projectModel = getProjectModel();
             if (projectModel == null)
             {
                 // no project, just return the whole path
-                return getPrettyPath();
+                result = getPrettyPath();
+            }
+            else if (projectModel.getRootFileModel().getFilePath().equals(getFilePath()))
+            {
+                result = "";
             }
             else
             {
-                FileModel projectModelFileModel = projectModel.getRootFileModel();
-                Path projectPath;
-                if (projectModelFileModel instanceof ArchiveModel)
+                String filename = getFileName();
+                if (getParentFile() == null)
                 {
-                    ArchiveModel archiveModelForProject = (ArchiveModel) projectModelFileModel;
-                    projectPath = Paths.get(archiveModelForProject.getUnzippedDirectory().getFilePath());
-                }
-                else
-                {
-                    projectPath = Paths.get(projectModelFileModel.getFilePath());
-                }
-
-                List<String> paths = generatePathList(projectPath);
-                return generatePathString(paths);
-            }
-        }
-
-        public String getPrettyPath()
-        {
-            List<String> paths = generatePathList(null);
-            return generatePathString(paths);
-        }
-
-        private String generatePathString(List<String> paths)
-        {
-            StringBuilder sb = new StringBuilder();
-            for (String path : paths)
-            {
-                if (sb.length() != 0)
-                    sb.append("/");
-                sb.append(path);
-            }
-
-            return sb.toString();
-        }
-
-        /**
-         * Returns a list of paths from the rootmost path, down to the current path
-         */
-        private List<String> generatePathList(Path stopPath)
-        {
-            List<String> paths = new ArrayList<>(16); // Average dir depth.
-
-            // create list of paths from bottom to top
-            appendPath(paths, stopPath, this);
-            Collections.reverse(paths);
-            return paths;
-        }
-
-        private void appendPath(List<String> paths, Path stopPath, FileModel fileModel)
-        {
-            try
-            {
-                if (stopPath != null && Files.isSameFile(stopPath, Paths.get(fileModel.getFilePath())))
-                {
-                    return;
-                }
-
-                if (fileModel.getParentFile() != null)
-                {
-                    paths.add(fileModel.getFileName());
-                    FileModel parent = fileModel.getParentFile();
-                    appendPath(paths, stopPath, parent);
-                }
-                else if (fileModel.getParentArchive() != null)
-                {
-                    ArchiveModel parent = fileModel.getParentArchive();
-                    paths.add(parent.getFileName());
-
-                    if (parent.getParentFile() != null)
+                    if (getParentArchive() != null)
                     {
-                        appendPath(paths, stopPath, parent.getParentFile());
+                        result = getParentArchive().getPrettyPathWithinProject();
+                    }
+                    else
+                    {
+                        result = filename;
                     }
                 }
                 else
                 {
-                    paths.add(fileModel.getFileName());
+                    String parentPrettyPath = getParentFile().getPrettyPathWithinProject();
+                    result = StringUtils.isEmpty(parentPrettyPath) ? filename : parentPrettyPath + "/" + filename;
                 }
             }
-            catch (IOException e)
+            it().setProperty(PRETTY_PATH_WITHIN_PROJECT, result);
+            return result;
+        }
+
+        public String getPrettyPath()
+        {
+            if (it().getProperty(PRETTY_PATH) != null)
+                return it().getProperty(PRETTY_PATH);
+
+            String filename = getFileName();
+            String result;
+            if (getParentFile() == null)
             {
-                throw new WindupException("IOException due to: " + e.getMessage(), e);
+                if (getParentArchive() != null)
+                {
+                    result = getParentArchive().getPrettyPath();
+                }
+                else
+                {
+                    result = filename;
+                }
             }
+            else
+            {
+                result = getParentFile().getPrettyPath() + "/" + filename;
+            }
+            it().setProperty(PRETTY_PATH, result);
+            return result;
         }
 
         public void setFilePath(String filePath)

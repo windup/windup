@@ -15,11 +15,14 @@ import java.io.InputStreamReader;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.impl.addons.AddonRepositoryImpl;
 import org.jboss.forge.furnace.repositories.AddonRepository;
@@ -300,6 +303,49 @@ public class Bootstrap
             }
         }
         return result;
+    }
+
+    public static String promptForListItem(String message, Collection<String> items, String defaultValue)
+    {
+        while (true)
+        {
+            List<String> sorted = new ArrayList<>(items);
+            Collections.sort(sorted);
+
+            System.out.println();
+            System.out.println(message);
+            for (String item : items)
+            {
+                System.out.println("\t" + item);
+            }
+
+            String promptMessage = "Please enter the item you would like to choose[" + defaultValue + "]: ";
+            String item = System.console().readLine(promptMessage).trim();
+            if (StringUtils.isNotBlank(item))
+                return item;
+            else if (StringUtils.isNotBlank(defaultValue))
+                return defaultValue;
+            else
+                System.out.println("A selection is required. Please select one of the available items.");
+        }
+    }
+
+    public static boolean prompt(String message, boolean defaultValue, boolean batchMode)
+    {
+        if (batchMode)
+        {
+            return defaultValue;
+        }
+        else
+        {
+            String defaultMessage = defaultValue ? " [Y,n] " : " [y,N] ";
+            String line = System.console().readLine(message + defaultMessage).trim();
+            if ("y".equalsIgnoreCase(line))
+                return true;
+            if ("n".equalsIgnoreCase(line))
+                return false;
+            return defaultValue;
+        }
     }
 
     private static String getServiceName(final ClassLoader classLoader, final String className)
