@@ -11,6 +11,9 @@ package org.jboss.windup.ast.java.data;
 public class ClassReference
 {
     private final String qualifiedName;
+    private final String packageName;
+    private final String className;
+    private final String methodName;
     private final ResolutionStatus resolutionStatus;
     private final int lineNumber;
     private final int column;
@@ -21,10 +24,14 @@ public class ClassReference
     /**
      * Creates the {@link ClassReference} with the given qualfiedName, location, lineNumber, column, and length.
      */
-    public ClassReference(String qualifiedName, ResolutionStatus resolutionStatus, TypeReferenceLocation location, int lineNumber,
+    public ClassReference(String qualifiedName, String packageName, String className, String methodName, ResolutionStatus resolutionStatus,
+                TypeReferenceLocation location, int lineNumber,
                 int column, int length, String line)
     {
         this.qualifiedName = qualifiedName;
+        this.packageName = packageName;
+        this.className = className;
+        this.methodName = methodName;
         this.resolutionStatus = resolutionStatus;
         this.location = location;
         this.lineNumber = lineNumber;
@@ -55,6 +62,30 @@ public class ClassReference
     public String getQualifiedName()
     {
         return qualifiedName;
+    }
+
+    /**
+     * Gets the package name (eg, com.example.foo).
+     */
+    public String getPackageName()
+    {
+        return packageName;
+    }
+
+    /**
+     * Gets the simple class name (eg, Foo).
+     */
+    public String getClassName()
+    {
+        return className;
+    }
+
+    /**
+     * Gets the method name (eg, println).
+     */
+    public String getMethodName()
+    {
+        return methodName;
     }
 
     /**
@@ -103,21 +134,22 @@ public class ClassReference
         if (o == null || getClass() != o.getClass())
             return false;
 
-        ClassReference that = (ClassReference) o;
+        ClassReference reference = (ClassReference) o;
 
-        if (lineNumber != that.lineNumber)
+        if (lineNumber != reference.lineNumber)
             return false;
-        if (column != that.column)
+        if (column != reference.column)
             return false;
-        if (length != that.length)
+        if (length != reference.length)
             return false;
-        if (qualifiedName != null ? !qualifiedName.equals(that.qualifiedName) : that.qualifiedName != null)
+        if (qualifiedName != null ? !qualifiedName.equals(reference.qualifiedName) : reference.qualifiedName != null)
             return false;
-        if (resolutionStatus != that.resolutionStatus)
+        if (resolutionStatus != reference.resolutionStatus)
             return false;
-        if (location != that.location)
+        if (location != reference.location)
             return false;
-        return !(line != null ? !line.equals(that.line) : that.line != null);
+        return !(line != null ? !line.equals(reference.line) : reference.line != null);
+
     }
 
     @Override
@@ -136,8 +168,14 @@ public class ClassReference
     @Override
     public String toString()
     {
-        return "ClassReference [qualifiedName=" + qualifiedName + ", resolve status=" + resolutionStatus + ", lineNumber=" + lineNumber + ", column="
-                    + column + ", length=" + length
-                    + ", location=" + location + ", line=" + line + "]";
+        return "ClassReference{" +
+                    "qualifiedName='" + qualifiedName + '\'' +
+                    ", resolutionStatus=" + resolutionStatus +
+                    ", lineNumber=" + lineNumber +
+                    ", column=" + column +
+                    ", length=" + length +
+                    ", location=" + location +
+                    ", line='" + line + '\'' +
+                    '}';
     }
 }

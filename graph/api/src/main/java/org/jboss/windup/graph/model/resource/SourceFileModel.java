@@ -13,8 +13,8 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(SourceFileModel.TYPE)
 public interface SourceFileModel extends WindupVertexFrame
 {
-    public static final String TYPE = "SourceFileModel";
-    public static final String GENERATE_SOURCE_REPORT = "generateSourceReport";
+    String TYPE = "SourceFileModel";
+    String GENERATE_SOURCE_REPORT = "generateSourceReport";
 
     /**
      * Contains a boolean indicating that the reporting system should generate a source report for this {@link SourceFileModel}.

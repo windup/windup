@@ -1,18 +1,13 @@
-import org.jboss.windup.config.operation.GraphOperation;
+import org.jboss.windup.ast.java.data.TypeReferenceLocation
+import org.jboss.windup.config.phase.PostMigrationRulesPhase
+import org.jboss.windup.reporting.config.Hint
+import org.jboss.windup.reporting.config.Link
+import org.jboss.windup.reporting.config.classification.Classification
+import org.jboss.windup.rules.apps.java.condition.JavaClass
+import org.jboss.windup.rules.apps.java.scan.ast.TypeInterest
+import org.jboss.windup.rules.apps.java.scan.ast.TypeInterestResolver
 
-import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.phase.RulePhase;
-import org.jboss.windup.config.phase.PostMigrationRulesPhase;
-import org.jboss.windup.config.metadata.RuleMetadataType;
-import org.jboss.windup.reporting.config.classification.Classification;
-import org.jboss.windup.reporting.config.Hint;
-import org.jboss.windup.reporting.config.Link;
-import org.jboss.windup.rules.apps.java.condition.JavaClass;
-import org.jboss.windup.ast.java.data.TypeReferenceLocation;
-import org.jboss.windup.util.Logging;
-import org.ocpsoft.rewrite.config.True;
-import org.ocpsoft.rewrite.context.EvaluationContext;
-
+TypeInterestResolver.defaultInstance().addTypeInterest(new TypeInterest("org.jboss.forge.furnace"));
 
 ruleSet("ExampleJavaGroovy").setPhase(PostMigrationRulesPhase.class)
 

@@ -18,7 +18,7 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
-import org.jboss.windup.rules.apps.java.scan.ast.TypeInterestFactory;
+import org.jboss.windup.rules.apps.java.scan.ast.TypeInterestResolver;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.jboss.windup.rules.files.FileDiscoveredEvent;
@@ -52,6 +52,8 @@ public class ClassFileListener implements FileDiscoveredListener
             {
                 ClassReader classReader = new ClassReader(is);
 
+                addClassFileMetadata(event, context, fileModel);
+
                 // keep inner classes (we may need them for decompilation purposes)
                 if (fileModel.getFileName().contains("$"))
                     return;
@@ -62,14 +64,13 @@ public class ClassFileListener implements FileDiscoveredListener
                     fileModel.asVertex().setProperty(JavaClassFileModel.SKIP_DECOMPILATION, true);
                     return;
                 }
-                addClassFileMetadata(event, context, fileModel);
 
                 DependencyVisitor dependencyVisitor = new DependencyVisitor();
 
                 classReader.accept(dependencyVisitor, 0);
-                for (String className : dependencyVisitor.classes)
+                for (String typeReference : dependencyVisitor.classes)
                 {
-                    if (shouldKeep(className))
+                    if (shouldKeep(typeReference))
                         return;
                 }
 
@@ -155,7 +156,12 @@ public class ClassFileListener implements FileDiscoveredListener
     private boolean shouldKeep(String typeReference)
     {
         typeReference = typeReference.replace('/', '.').replace('\\', '.');
-        return (TypeInterestFactory.matchesAny(typeReference, null));
+
+        int lastDot = typeReference.lastIndexOf(".");
+        String packageName = lastDot == -1 ? "" : typeReference.substring(0, lastDot);
+        String className = lastDot == -1 ? typeReference : typeReference.substring(lastDot + 1);
+
+        return TypeInterestResolver.defaultInstance().isInteresting(packageName, className, null);
     }
 
     @Override

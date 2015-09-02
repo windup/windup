@@ -52,7 +52,7 @@ import org.jboss.windup.rules.apps.java.model.JarArchiveModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.model.WindupJavaConfigurationModel;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
-import org.jboss.windup.rules.apps.java.scan.ast.TypeInterestFactory;
+import org.jboss.windup.rules.apps.java.scan.ast.TypeInterestResolver;
 import org.jboss.windup.rules.apps.java.scan.ast.WindupWildcardImportResolver;
 import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationListTypeValueModel;
 import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationLiteralTypeValueModel;
@@ -317,7 +317,8 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
             {
                 boolean shouldKeep = reference.getLocation() == TypeReferenceLocation.TYPE;
                 shouldKeep |= classNotFoundAnalysisEnabled && reference.getResolutionStatus() != ResolutionStatus.RESOLVED;
-                shouldKeep |= TypeInterestFactory.matchesAny(reference.getQualifiedName(), reference.getLocation());
+                shouldKeep |= TypeInterestResolver.defaultInstance().isInteresting(reference.getPackageName(), reference.getClassName(),
+                            reference.getMethodName());
 
                 // we are always interested in types + anything that the TypeInterestFactory has registered
                 if (shouldKeep)

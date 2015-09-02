@@ -2,6 +2,7 @@ package org.jboss.windup.rules.apps.javaee.rules;
 
 import static org.joox.JOOX.$;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -21,7 +22,9 @@ import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.model.TechnologyTagModel;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.TechnologyTagService;
+import org.jboss.windup.rules.apps.java.decompiler.FernflowerDecompilerOperation;
 import org.jboss.windup.rules.apps.java.model.AmbiguousJavaClassModel;
+import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.model.PhantomJavaClassModel;
@@ -156,19 +159,19 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
         // process all session beans...
         for (Element element : $(doc).find("session").get())
         {
-            processSessionBeanElement(event.getGraphContext(), facet, element);
+            processSessionBeanElement(event, context, facet, element);
         }
 
         // process all message driven beans...
         for (Element element : $(doc).find("message-driven").get())
         {
-            processMessageDrivenElement(event.getGraphContext(), facet, element);
+            processMessageDrivenElement(event, context, facet, element);
         }
 
         // process all entity beans...
         for (Element element : $(doc).find("entity").get())
         {
-            processEntityElement(event.getGraphContext(), facet, element);
+            processEntityElement(event, context, facet, element);
         }
     }
 
@@ -203,9 +206,9 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
         return versionInformation;
     }
 
-    private void processSessionBeanElement(GraphContext ctx, EjbDeploymentDescriptorModel ejbConfig, Element element)
+    private void processSessionBeanElement(GraphRewrite event, EvaluationContext context, EjbDeploymentDescriptorModel ejbConfig, Element element)
     {
-        JavaClassService javaClassService = new JavaClassService(ctx);
+        JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
 
         JavaClassModel home = null;
         JavaClassModel localHome = null;
@@ -221,41 +224,41 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
         String localClz = extractChildTagAndTrim(element, "local");
         if (localClz != null)
         {
-            local = getOrCreatePhantom(javaClassService, localClz);
+            local = getOrCreatePhantom(event, context, javaClassService, localClz);
         }
 
         // get local home class.
         String localHomeClz = extractChildTagAndTrim(element, "local-home");
         if (localHomeClz != null)
         {
-            localHome = getOrCreatePhantom(javaClassService, localHomeClz);
+            localHome = getOrCreatePhantom(event, context, javaClassService, localHomeClz);
         }
 
         // get home class.
         String homeClz = extractChildTagAndTrim(element, "home");
         if (homeClz != null)
         {
-            home = getOrCreatePhantom(javaClassService, homeClz);
+            home = getOrCreatePhantom(event, context, javaClassService, homeClz);
         }
 
         // get remote class.
         String remoteClz = extractChildTagAndTrim(element, "remote");
         if (remoteClz != null)
         {
-            remote = getOrCreatePhantom(javaClassService, remoteClz);
+            remote = getOrCreatePhantom(event, context, javaClassService, remoteClz);
         }
 
         // get the ejb class.
         String ejbClz = extractChildTagAndTrim(element, "ejb-class");
         if (ejbClz != null)
         {
-            ejb = getOrCreatePhantom(javaClassService, ejbClz);
+            ejb = getOrCreatePhantom(event, context, javaClassService, ejbClz);
         }
 
         String sessionType = extractChildTagAndTrim(element, "session-type");
         String transactionType = extractChildTagAndTrim(element, "transaction-type");
 
-        Service<EjbSessionBeanModel> sessionBeanService = new GraphService<>(ctx, EjbSessionBeanModel.class);
+        Service<EjbSessionBeanModel> sessionBeanService = new GraphService<>(event.getGraphContext(), EjbSessionBeanModel.class);
         EjbSessionBeanModel sessionBean = sessionBeanService.create();
         sessionBean.setEjbId(ejbId);
         sessionBean.setDisplayName(displayName);
@@ -268,7 +271,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
         sessionBean.setSessionType(sessionType);
         sessionBean.setTransactionType(transactionType);
 
-        List<EnvironmentReferenceModel> refs = processEnvironmentReference(ctx, element);
+        List<EnvironmentReferenceModel> refs = processEnvironmentReference(event.getGraphContext(), element);
         for (EnvironmentReferenceModel ref : refs)
         {
             sessionBean.addEnvironmentReference(ref);
@@ -277,9 +280,9 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
         ejbConfig.addEjbSessionBean(sessionBean);
     }
 
-    private void processMessageDrivenElement(GraphContext ctx, EjbDeploymentDescriptorModel ejbConfig, Element element)
+    private void processMessageDrivenElement(GraphRewrite event, EvaluationContext context, EjbDeploymentDescriptorModel ejbConfig, Element element)
     {
-        JavaClassService javaClassService = new JavaClassService(ctx);
+        JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
         JavaClassModel ejb = null;
 
         String ejbId = extractAttributeAndTrim(element, "id");
@@ -290,7 +293,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
         String ejbClz = extractChildTagAndTrim(element, "ejb-class");
         if (ejbClz != null)
         {
-            ejb = getOrCreatePhantom(javaClassService, ejbClz);
+            ejb = getOrCreatePhantom(event, context, javaClassService, ejbClz);
         }
 
         String sessionType = extractChildTagAndTrim(element, "session-type");
@@ -309,7 +312,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
 
         destination = StringUtils.trimToNull(destination);
 
-        Service<EjbMessageDrivenModel> sessionBeanService = new GraphService<>(ctx, EjbMessageDrivenModel.class);
+        Service<EjbMessageDrivenModel> sessionBeanService = new GraphService<>(event.getGraphContext(), EjbMessageDrivenModel.class);
         EjbMessageDrivenModel mdb = sessionBeanService.create();
         mdb.setEjbClass(ejb);
         mdb.setBeanName(ejbName);
@@ -320,12 +323,12 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
 
         if (StringUtils.isNotBlank(destination))
         {
-            JmsDestinationService jmsDestinationService = new JmsDestinationService(ctx);
+            JmsDestinationService jmsDestinationService = new JmsDestinationService(event.getGraphContext());
             JmsDestinationModel jndiRef = jmsDestinationService.createUnique(destination);
             mdb.setDestination(jndiRef);
         }
 
-        List<EnvironmentReferenceModel> refs = processEnvironmentReference(ctx, element);
+        List<EnvironmentReferenceModel> refs = processEnvironmentReference(event.getGraphContext(), element);
         for (EnvironmentReferenceModel ref : refs)
         {
             mdb.addEnvironmentReference(ref);
@@ -334,9 +337,9 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
         ejbConfig.addMessageDriven(mdb);
     }
 
-    private void processEntityElement(GraphContext ctx, EjbDeploymentDescriptorModel ejbConfig, Element element)
+    private void processEntityElement(GraphRewrite event, EvaluationContext context, EjbDeploymentDescriptorModel ejbConfig, Element element)
     {
-        JavaClassService javaClassService = new JavaClassService(ctx);
+        JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
         JavaClassModel localHome = null;
         JavaClassModel local = null;
         JavaClassModel ejb = null;
@@ -350,27 +353,27 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
         String localClz = extractChildTagAndTrim(element, "local");
         if (localClz != null)
         {
-            local = getOrCreatePhantom(javaClassService, localClz);
+            local = getOrCreatePhantom(event, context, javaClassService, localClz);
         }
 
         // get local home class.
         String localHomeClz = extractChildTagAndTrim(element, "local-home");
         if (localHomeClz != null)
         {
-            localHome = getOrCreatePhantom(javaClassService, localHomeClz);
+            localHome = getOrCreatePhantom(event, context, javaClassService, localHomeClz);
         }
 
         // get the ejb class.
         String ejbClz = extractChildTagAndTrim(element, "ejb-class");
         if (ejbClz != null)
         {
-            ejb = getOrCreatePhantom(javaClassService, ejbClz);
+            ejb = getOrCreatePhantom(event, context, javaClassService, ejbClz);
         }
 
         String persistenceType = extractChildTagAndTrim(element, "persistence-type");
 
         // create new entity facet.
-        Service<EjbEntityBeanModel> ejbEntityService = new GraphService<>(ctx, EjbEntityBeanModel.class);
+        Service<EjbEntityBeanModel> ejbEntityService = new GraphService<>(event.getGraphContext(), EjbEntityBeanModel.class);
         EjbEntityBeanModel entity = ejbEntityService.create();
         entity.setPersistenceType(persistenceType);
         entity.setEjbId(ejbId);
@@ -381,7 +384,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
         entity.setEjbLocalHome(localHome);
         entity.setEjbLocal(local);
 
-        List<EnvironmentReferenceModel> refs = processEnvironmentReference(ctx, element);
+        List<EnvironmentReferenceModel> refs = processEnvironmentReference(event.getGraphContext(), element);
         for (EnvironmentReferenceModel ref : refs)
         {
             entity.addEnvironmentReference(ref);
@@ -509,27 +512,48 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
         return resources;
     }
 
-    private JavaClassModel getOrCreatePhantom(JavaClassService service, String fqcn)
+    private JavaClassModel getOrCreatePhantom(GraphRewrite event, EvaluationContext context, JavaClassService service, String fqcn)
     {
         JavaClassModel classModel = service.getOrCreatePhantom(fqcn);
         if (classModel instanceof AmbiguousJavaClassModel)
         {
             for (JavaClassModel reference : ((AmbiguousJavaClassModel) classModel).getReferences())
             {
-                markAsReportReportable(reference);
+                markAsReportReportable(event, context, reference);
             }
         }
         else if (!(classModel instanceof PhantomJavaClassModel))
         {
-            markAsReportReportable(classModel);
+            markAsReportReportable(event, context, classModel);
         }
         return classModel;
     }
 
-    private void markAsReportReportable(JavaClassModel reference)
+    private void markAsReportReportable(GraphRewrite event, EvaluationContext context, JavaClassModel reference)
     {
         JavaSourceFileModel originalSource = reference.getOriginalSource();
         JavaSourceFileModel decompiledSource = reference.getDecompiledSource();
+        if (originalSource == null && decompiledSource == null && reference.getClassFile() != null
+                    && reference.getClassFile() instanceof JavaClassFileModel)
+        {
+            JavaClassFileModel javaClassFileModel = (JavaClassFileModel) reference.getClassFile();
+            javaClassFileModel.setSkipDecompilation(false);
+
+            // try to decompile it
+            FernflowerDecompilerOperation decompilerOperation = new FernflowerDecompilerOperation();
+            decompilerOperation.setFilesToDecompile(Collections.singletonList(javaClassFileModel));
+            decompilerOperation.perform(event, context);
+
+            // Commit to ensure that we are using the latest data (otherwise data from other threads may not
+            // be visible).
+            event.getGraphContext().getGraph().getBaseGraph().commit();
+
+            if (reference.getDecompiledSource() != null)
+            {
+                reference.getDecompiledSource().setGenerateSourceReport(true);
+            }
+        }
+
         if (originalSource != null)
             originalSource.setGenerateSourceReport(true);
         if (decompiledSource != null)
