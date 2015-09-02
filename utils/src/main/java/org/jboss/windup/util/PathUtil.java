@@ -130,6 +130,7 @@ public class PathUtil
     /**
      * Conservative approach to insuring that a given filename only contains characters that are legal for use in
      * filenames on the disk. Other characters are replaced with underscore _ .
+     * Note that this should only be used with the filename itself, not the entire path, because it removes the '/' characters as well.
      */
     public static String cleanFileName(String badFileName)
     {
