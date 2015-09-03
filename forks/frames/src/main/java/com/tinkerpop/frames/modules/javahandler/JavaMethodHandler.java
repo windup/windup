@@ -21,8 +21,6 @@ class JavaMethodHandler implements
 		return JavaHandler.class;
 	}
 
-
-
 	@Override
 	public Object processElement(Object framedElement, Method method,
 			Object[] arguments, JavaHandler annotation,
