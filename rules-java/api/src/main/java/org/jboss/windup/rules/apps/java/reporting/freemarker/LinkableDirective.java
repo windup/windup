@@ -19,9 +19,9 @@ import freemarker.template.TemplateModel;
 
 /**
  * Renders linkable elements as a list of links
- * 
+ *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
- * 
+ *
  */
 public class LinkableDirective implements WindupFreeMarkerTemplateDirective
 {
@@ -38,13 +38,13 @@ public class LinkableDirective implements WindupFreeMarkerTemplateDirective
                 TemplateDirectiveBody body)
                 throws TemplateException, IOException
     {
-        
+
         final Writer writer = env.getOut();
 
         StringModel projectStringModel = (StringModel) params.get("linkable");
         Object obj = projectStringModel.getWrappedObject();
 
-        if (!(obj instanceof LinkableModel)) 
+        if (!(obj instanceof LinkableModel))
         {
             return;
         }
@@ -66,7 +66,7 @@ public class LinkableDirective implements WindupFreeMarkerTemplateDirective
         }
 
         LinkableModel linkable = (LinkableModel) obj;
-        
+
         if(layoutType == LayoutType.UL) {
             renderAsUL(writer, linkable);
         }
@@ -97,21 +97,19 @@ public class LinkableDirective implements WindupFreeMarkerTemplateDirective
             writer.append("</ul>");
         }
     }
-    
+
     /*
      * Renders only LI tags
      */
     private void renderAsLI(Writer writer, LinkableModel linkable) throws IOException
     {
         Iterator<LinkModel> links = linkable.getLinks().iterator();
-        if(links.hasNext()) {
-            while (links.hasNext())
-            {
-                LinkModel link = links.next();
-                writer.append("<li>");
-                renderLink(writer, link);
-                writer.append("</li>");
-            }
+        while (links.hasNext())
+        {
+            LinkModel link = links.next();
+            writer.append("<li>");
+            renderLink(writer, link);
+            writer.append("</li>");
         }
     }
 
@@ -127,7 +125,7 @@ public class LinkableDirective implements WindupFreeMarkerTemplateDirective
             writer.append("</dl>");
         }
     }
-    
+
     /*
      * Renders as DT elements
      */
@@ -148,7 +146,7 @@ public class LinkableDirective implements WindupFreeMarkerTemplateDirective
         }
     }
 
-    
+
     private void renderAsHorizontal(Writer writer, LinkableModel linkable) throws IOException
     {
         Iterator<LinkModel> links = linkable.getLinks().iterator();
