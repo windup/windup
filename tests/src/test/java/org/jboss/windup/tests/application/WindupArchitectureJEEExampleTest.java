@@ -77,8 +77,13 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
         Assert.assertTrue(models.hasNext());
         EjbDeploymentDescriptorModel model = models.next();
 
-        // and only one file
+        // and only two files
+        EjbDeploymentDescriptorModel model2 = models.next();
         Assert.assertFalse(models.hasNext());
+
+        // We don't know which one will come first, and the beans are only in one of them.
+        if (!model.getEjbSessionBeans().iterator().hasNext())
+            model = model2;
 
         int sessionBeansFound = 0;
         for (EjbSessionBeanModel sessionBean : model.getEjbSessionBeans())
