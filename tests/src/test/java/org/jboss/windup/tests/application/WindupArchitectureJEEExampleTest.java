@@ -4,6 +4,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Iterator;
+import java.util.List;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -15,7 +16,9 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.Service;
 import org.jboss.windup.reporting.model.ReportModel;
+import org.jboss.windup.reporting.model.source.SourceReportModel;
 import org.jboss.windup.reporting.service.ReportService;
+import org.jboss.windup.reporting.service.SourceReportService;
 import org.jboss.windup.rules.apps.java.reporting.rules.CreateJavaApplicationOverviewReportRuleProvider;
 import org.jboss.windup.rules.apps.javaee.model.EjbDeploymentDescriptorModel;
 import org.jboss.windup.rules.apps.javaee.model.EjbMessageDrivenModel;
@@ -61,6 +64,7 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
 
             validateEjbXmlReferences(context);
             validateReports(context);
+            validateParentOfSourceReports(context);
         }
     }
 
@@ -160,5 +164,17 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
                     "EJB XML 2.1");
 
         validateEJBBeanReport(context);
+    }
+
+    private void validateParentOfSourceReports(GraphContext context)
+    {
+        SourceReportService reportService = new SourceReportService(context);
+        for (SourceReportModel sourceReportModel : reportService.findAll())
+        {
+            List<ReportModel> parents = sourceReportModel.getAllParentsInReversedOrder();
+            Assert.assertTrue(parents.size() == 2);
+            Assert.assertTrue(parents.get(0).getReportName().equals("Overview"));
+            Assert.assertTrue(parents.get(0).getReportFilename().contains("JEE_Example_App__"));
+        }
     }
 }

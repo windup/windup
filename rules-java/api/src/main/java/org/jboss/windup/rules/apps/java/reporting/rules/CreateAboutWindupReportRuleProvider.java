@@ -85,7 +85,7 @@ public class CreateAboutWindupReportRuleProvider extends AbstractRuleProvider
         applicationReportModel.setDisplayInApplicationReportIndex(true);
         applicationReportModel.setReportName(REPORT_NAME);
         applicationReportModel.setReportIconClass("glyphicon glyphicon-info-sign");
-        applicationReportModel.setMainApplicationReport(true);
+        applicationReportModel.setMainApplicationReport(false);
         applicationReportModel.setProjectModel(projectModel);
         applicationReportModel.setTemplatePath(TEMPLATE_APPLICATION_REPORT);
         applicationReportModel.setTemplateType(TemplateType.FREEMARKER);
