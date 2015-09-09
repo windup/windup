@@ -53,34 +53,25 @@ public class LinkableDirective implements WindupFreeMarkerTemplateDirective
         SimpleScalar layoutModel = (SimpleScalar) params.get("layout");
         if (layoutModel != null)
         {
-            String lt = layoutModel.getAsString();
+            String layoutParam = layoutModel.getAsString();
             try
             {
-                LayoutType.valueOf(lt.toUpperCase());
-
+                layoutType = LayoutType.valueOf(layoutParam.toUpperCase());
             }
             catch (IllegalArgumentException e)
             {
-                throw new TemplateException("Layout: " + lt + " is not supported.", e, null);
+                throw new TemplateException("Layout: " + layoutParam + " is not supported.", e, null);
             }
         }
 
         LinkableModel linkable = (LinkableModel) obj;
-
-        if(layoutType == LayoutType.UL) {
-            renderAsUL(writer, linkable);
-        }
-        if(layoutType == LayoutType.LI) {
-            renderAsLI(writer, linkable);
-        }
-        else if(layoutType == LayoutType.DL) {
-            renderAsDL(writer, linkable);
-        }
-        else if(layoutType == LayoutType.DT) {
-            renderAsDT(writer, linkable);
-        }
-        else {
-            renderAsHorizontal(writer, linkable);
+        switch(layoutType)
+        {
+            case UL: renderAsUL(writer, linkable); break;
+            case LI: renderAsLI(writer, linkable); break;
+            case DL: renderAsDL(writer, linkable); break;
+            case DT: renderAsDT(writer, linkable); break;
+            default: renderAsHorizontal(writer, linkable); break;
         }
 
     }
