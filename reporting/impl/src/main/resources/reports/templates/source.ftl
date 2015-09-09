@@ -5,18 +5,18 @@
 <#assign applicationReportIndexModel = projectModelToApplicationIndex(reportModel.sourceFileModel.projectModel)>
 </#if>
 
-  <head>
+<head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>Source Report for ${reportModel.reportName}</title>
     <link href="resources/css/bootstrap.min.css" rel="stylesheet">
     <link href="resources/css/windup.css" rel="stylesheet" media="screen">
-	  <link rel='stylesheet' type='text/css' href='resources/libraries/snippet/jquery.snippet.min.css' />
-	  <link rel='stylesheet' type='text/css' href='resources/css/windup-source.css' />
-	  <link rel='stylesheet' type='text/css' href='resources/libraries/sausage/sausage.css' />
-  </head>
-  <body role="document">
-	    
+    <link rel='stylesheet' type='text/css' href='resources/libraries/snippet/jquery.snippet.min.css' />
+    <link rel='stylesheet' type='text/css' href='resources/css/windup-source.css' />
+    <link rel='stylesheet' type='text/css' href='resources/libraries/sausage/sausage.css' />
+</head>
+<body role="document" class="source-report">
+
 	<div class="navbar navbar-default navbar-fixed-top">
 		<div class="navbar-header">
 			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
@@ -29,22 +29,25 @@
 			<#include "include/navbar.ftl">
 		</div><!-- /.nav-collapse -->
 	</div>
-	
-	
+
+
 	<div class="container-fluid" role="main">
 		<div class="row">
 			<div class="page-header page-header-no-border">
-				<h1>Source Report <span class="slash">/</span><small style="margin-left: 20px; font-weight: 100;">${reportModel.sourceFileModel.prettyPath}</small></h1>
+                <h1>
+                    <div class="main">Source report</div>
+                    <div class="path">${reportModel.sourceFileModel.prettyPath}</div>
+                </h1>
 			</div>
 		</div>
-		
+
 		<div class="row">
 			<!-- Breadcrumbs -->
 			<div class="container-fluid">
 				<ol class="breadcrumb top-menu">
 					<li><a href="../index.html">All Applications</a></li>
 					<#include "include/breadcrumbs.ftl">
-				</ol> 
+				</ol>
 			</div>
 			<!-- / Breadcrumbs -->
 		</div>
@@ -53,57 +56,60 @@
 		<div class="row">
     		<div class="container-fluid theme-showcase" role="main">
 
-			  <#if reportModel.sourceFileModel.classificationModels.iterator()?has_content || getTechnologyTagsForFile(reportModel.sourceFileModel).iterator()?has_content>
+                <#if reportModel.sourceFileModel.classificationModels.iterator()?has_content || getTechnologyTagsForFile(reportModel.sourceFileModel).iterator()?has_content>
 			    <div class="panel panel-primary">
 			    	<div class="panel-heading">
 			    		<h3 class="panel-title">Information</h3>
 			    	</div>
 			    	<div class="panel-body">
-				        <dl class="dl-horizontal small">
-				        	<dt>Estimated Story Points</dt>
-				        	<dd>${getMigrationEffortPointsForFile(reportModel.sourceFileModel)}</dd>
-				        	
+
+                        <div class="points" style="float: left; text-align: center; color: #863333">
+                            <div class="number">${getMigrationEffortPointsForFile(reportModel.sourceFileModel)}</div>
+                            <div>Story points<br/>(estimated)</div>
+                        </div>
+
+				        <div class="info" style="margin-left: 95pt;">
+
 				        	<#if getTechnologyTagsForFile(reportModel.sourceFileModel).iterator()?has_content>
-				        	<dt>Technologies</dt>
-				        	<dd>
+                            <h4>Technologies</h4>
+				        	<div>
 				        		<#list getTechnologyTagsForFile(reportModel.sourceFileModel).iterator() as techTag>
 				              		<span class="label label-info">${techTag.name}</span>
 				            	</#list>
-				        	</dd>
+				        	</div>
 				        	</#if>
-				        	
-				        	<#list reportModel.sourceFileModel.classificationModels.iterator() as classificationLineItem>
-				        	<dt>Classification</dt>
-				        	<#if classificationLineItem.classification??>	
-					        	<dd>
-					        		<#if classificationLineItem.classification??>
-					        		${classificationLineItem.classification!""}
-					        			<#if classificationLineItem.description??>
-					        			- ${classificationLineItem.description!""}
-					        			</#if>
-					        		</#if>
-					        		<@render_rule_link ruleID=classificationLineItem.ruleID />
-					        		<@render_linkable linkable=classificationLineItem layout='ul'/>
-					        	</dd>
-							</#if>
-							</#list>
-						</dl>
-					</div>
-			      </div>
-			    </#if>  
-    
-    
 
-				<pre id='source'><#t><#rt>
-					${reportModel.sourceBody?html}<#t><#rt>
-				</pre><#t><#rt>
-	
+				        	<h4>Classifications</h4>
+                            <ul>
+                                <#list reportModel.sourceFileModel.classificationModels.iterator() as item>
+                                <#if item.classification??>
+                                    <li>
+                                        <em>${item.classification!}</em>
+                                        <@render_rule_link renderType='tag' ruleID=item.ruleID class='rule-link tag'/><#-- Link to the rule -->
+                                        <#if item.description??> - ${item.description}</#if>
+                                        <@render_linkable linkable=item layout='ul'/><#-- Link contained in classification -->
+                                    </li>
+                                </#if>
+                                </#list>
+                            </ul>
+						</div>
+					</div>
+                </div>
+			    </#if>
+
+
+
+				<pre id='source'><#t>
+					${reportModel.sourceBody?html}<#t>
+				</pre><#t>
+
     		</div> <!-- /container -->
     	</div><!-- /row-->
     </div><!-- /container main-->
+
     <script src="resources/js/jquery-1.7.min.js"></script>
     <script src="resources/js/bootstrap.min.js"></script>
-    
+
 	<script type='text/javascript' src='resources/libraries/jquery-ui/jquery.ui.widget.js'></script>
 	<script type='text/javascript' src='resources/libraries/snippet/jquery.snippet.min.js'></script>
 	<script type='text/javascript' src='resources/libraries/snippet/jquery.snippet.java-properties.js'></script>
@@ -111,7 +117,7 @@
 	<script type='text/javascript' src='resources/libraries/sausage/jquery.sausage.min.js'></script>
 
 
-	    
+
 	<script type='text/javascript'>
 		$(window).on("hashchange", function () {
 		    window.scrollTo(window.scrollX, window.scrollY - 50);
@@ -126,15 +132,15 @@
 		}, 1);
 		$(document).ready(function(){
 			$('pre').snippet('${reportModel.sourceType}',{style:'ide-eclipse', showNum:true,boxFill:'#ffeeb9', box: '${reportModel.sourceBlock}' });
-	
+
 		<#list reportModel.sourceFileModel.inlineHints.iterator() as hintLine>
 			<#assign lineNumber = hintLine.lineNumber>
 			$("<div id='${lineNumber?c}-inlines' class='inline-source-hint-group'/>").appendTo('ol.snippet-num li:nth-child(${lineNumber?c})');
 		</#list>
-		
+
 		<#list reportModel.sourceFileModel.inlineHints.iterator() as hintLine >
 			<#assign lineNumber = hintLine.lineNumber>
-			
+
 			$("<a name='${hintLine.asVertex().getId()?c}' class='windup-file-location'></a><#t>
 				<div class='inline-source-comment green'><#t>
 					<#if hintLine.hint?has_content>
@@ -173,7 +179,7 @@
 		         }
 			});
 			$(window).sausage({ page: 'li.box' });
-		}); 
+		});
 	</script>
 
 

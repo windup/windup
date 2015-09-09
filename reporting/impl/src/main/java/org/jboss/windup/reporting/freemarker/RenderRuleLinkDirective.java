@@ -22,6 +22,7 @@ public class RenderRuleLinkDirective implements WindupFreeMarkerTemplateDirectiv
 
     public static final String RENDER_RULE_LINK = "render_rule_link";
     public static final String RENDER_TYPE_GLYPH = "glyph";
+    public static final String RENDER_TYPE_TAG = "tag";
 
     @Override
     public String getDirectiveName()
@@ -52,15 +53,15 @@ public class RenderRuleLinkDirective implements WindupFreeMarkerTemplateDirectiv
         SimpleScalar renderTypeScalar = (SimpleScalar) params.get("renderType");
         final String renderType;
         if (renderTypeScalar == null)
-            renderType = RENDER_TYPE_GLYPH;
+            renderType = RENDER_TYPE_TAG;
         else
             renderType = renderTypeScalar.getAsString();
-        
+
         SimpleScalar cssClassScalar = (SimpleScalar) params.get("class");
-        String cssClass; 
+        String cssClass;
         if (cssClassScalar == null || StringUtils.isBlank(cssClassScalar.getAsString())) {
             cssClass = "";
-        } 
+        }
         else {
             cssClass = cssClassScalar.getAsString();
         }
@@ -70,8 +71,10 @@ public class RenderRuleLinkDirective implements WindupFreeMarkerTemplateDirectiv
         writer.append("<a href='" + RenderRuleProviderReportRuleProvider.OUTPUT_FILENAME + "#" + ruleID + "'>");
         if (RENDER_TYPE_GLYPH.equals(renderType))
             writer.append("<span title='View Rule: " + ruleID + "' class='glyphicon glyphicon-link "+cssClass+"'></span>");
+        else if (RENDER_TYPE_TAG.equals(renderType))
+            writer.append("<span title='View Rule: " + ruleID + "' class='"+cssClass+"'>&lt;rule/></span>");
         else
-            writer.append("<span title='View Rule: " + ruleID + "'>"+ ruleID +"</span>");
+            writer.append("<span title='View Rule: " + ruleID + "' class='"+cssClass+"'>"+ ruleID +"</span>");
         writer.append("</a>");
     }
 }

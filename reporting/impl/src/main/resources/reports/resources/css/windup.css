@@ -15,9 +15,7 @@ body {
 }
 
 .rule-link {
-	margin: 3px;
-    color: #000;
-    float: right !important;
+    color: #00b800;
 }
 
 .feedback-nav {
@@ -38,30 +36,53 @@ body {
 	border-bottom:1px solid #CCC;
 }
 .theme-dropdown .dropdown-menu {
-  display: block;
-  position: static;
-  margin-bottom: 20px;
-}
-
-.nav i.glyphicon {
-	height: 13px; 
-	width: 13px;
+    display: block;
+    position: static;
+    margin-bottom: 20px;
 }
 
 .theme-showcase > p > .btn {
-  margin: 5px 0;
+    margin: 5px 0;
 }
 
+.panel.panel-primary {
+    border-radius: 8pt;
+}
+.panel.panel-primary > .panel-heading {
+    border-radius: 8px 8px 0 0 !important;
+    border-color: #00255D;
+}
+
+.panel.panel-primary h3 {
+    font-weight: bold;
+}
+
+h3.panel-title { font-size: 14pt; font-weight: bold; }
+body.source-report
+h3.panel-title { font-size: 20pt }
 h3.panel-title span.s {
 	margin:0 10px
 }
+
+.panel .panel-body .points { float: left; text-align: center; color: #863333; }
+.panel .panel-body .points .number { font-size: 50pt; width: 1.5em; }
+.panel .panel-body .info h4 { font-weight: bold; font-size: 11pt; margin: 6pt 0 4pt 0; }
+.panel .panel-body .info h4:first-child { margin-top: 0; }
+.panel .panel-body .info .rule-link.tag { font-variant-position: super; font-weight: normal; position: relative; top: -0.4ex; left: -0.2em; }
+
+
 
 dl:last-child {
 	margin-bottom:0;
 }
 
 .label {
-	margin:2px;
+    border-radius: 4px;
+    box-shadow: 3px 2px 2px #00255D;
+    padding: 4px 8px 1px;
+    font-weight: bold;
+    border: 1px inset white;
+    margin: 2px 4px 6px 0px;
 }
 a.windup-file-location {
 	display: block; position: relative; top: -40px; visibility: hidden;
@@ -89,7 +110,8 @@ a.windup-file-location {
 	color: #008CBA;
 }
 
-.breadcrumb {
+.breadcrumb li a {
+    font-size: 13px;
 }
 
 .page-header h1 span.slash {
