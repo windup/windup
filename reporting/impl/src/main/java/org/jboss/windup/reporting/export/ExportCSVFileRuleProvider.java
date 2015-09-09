@@ -188,7 +188,7 @@ public class ExportCSVFileRuleProvider extends AbstractRuleProvider
             try
             {
                 CSVWriter writer = new CSVWriter(
-                            new FileWriter(path), ';');
+                            new FileWriter(path), ',');
                 String[] headerLine = new String[] { "Rule Id", "Problem type", "Title", "Description", "Links", "Application", "File Name",
                             "File Path", "Line", "Story points" };
                 writer.writeNext(headerLine);
