@@ -603,10 +603,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>This guide is for developers who plan to contribute to the Windup source code base or provide Java-based rule add-ons.</p>
 </div>
 <div class="paragraph">
-<p>If you are new to Windup, it is recommended that you start with the <a href="https://access.redhat.com/documentation/en/red-hat-jboss-migration-toolkit-windup/version-2.4/windup-user-guide">Windup User Guide</a>. It provides detailed information about system requirements and detailed instructions on how to install and execute Windup. It also contains tips to optimize performance and provides links to other sources of information about Windup.</p>
+<p>If you are new to Windup, it is recommended that you start with the <a href="http://windup.github.io/windup/docs/latest/html/WindupUserGuide.html">Windup User Guide</a>. It provides detailed information about system requirements and detailed instructions on how to install and execute Windup. It also contains tips to optimize performance and provides links to other sources of information about Windup.</p>
 </div>
 <div class="paragraph">
-<p>If you would like to create custom XML-based rules for Windup, see the <a href="https://access.redhat.com/documentation/en/red-hat-jboss-migration-toolkit-windup/version-2.4/windup-rules-development-guide">Windup Rules Development Guide</a>.</p>
+<p>If you would like to create custom XML-based rules for Windup, see the <a href="http://windup.github.io/windup/docs/latest/html/WindupRulesDevelopmentGuide.html">Windup Rules Development Guide</a>.</p>
 </div>
 </div>
 </div>
@@ -1863,7 +1863,7 @@ related to the rules or the core code base.</p>
 <p>The next step in the process is the execution of the migration rules. In this phase, the rules typically do not execute against the application input files. Instead, they execute against the graph database model. Windup rules are independent and decoupled and they communicate with each other using the graph database model. Rules query the graph database to obtain information needed to test the rule condition. They also update the data model with information based on the result of the rule execution. This allows rules to easily interact with other rules and enables the creation of very complex rules.</p>
 </div>
 <div class="paragraph">
-<p>The Windup distribution contains a large number of migration rules, but in some cases, you may need to create additional custom rules for your specific implementation. Windup is architected to allow you to create Java-based rule addons or XML rules and add easily add them to Windup. Custom rule creation is covered in the <a href="https://access.redhat.com/documentation/en/red-hat-jboss-migration-toolkit-windup/version-2.4/windup-rules-development-guide">Windup Rules Development Guide</a>.</p>
+<p>The Windup distribution contains a large number of migration rules, but in some cases, you may need to create additional custom rules for your specific implementation. Windup is architected to allow you to create Java-based rule addons or XML rules and add easily add them to Windup. Custom rule creation is covered in the <a href="http://windup.github.io/windup/docs/latest/html/WindupRulesDevelopmentGuide.html">Windup Rules Development Guide</a>.</p>
 </div>
 </div>
 <div class="sect3">
@@ -2288,7 +2288,7 @@ FooModel = fooService.create();
 <div class="sect3">
 <h4 id="_which_one_to_choose">5.6.2. Which one to choose?</h4>
 <div class="paragraph">
-<p><em>XML-based</em> rules provide a quick, simple way to create rules to analyze Java, XML, and properties files. If you simply need to highlight a specific section of Java code or XML file content and provide migration hints for it, creation of <em>XML-based</em> rules is the recommended approach. Creation of custom <em>XML-based</em> rules is covered in the <a href="https://access.redhat.com/documentation/en/red-hat-jboss-migration-toolkit-windup/version-2.4/windup-rules-development-guide">Windup Rules Development Guide</a>.</p>
+<p><em>XML-based</em> rules provide a quick, simple way to create rules to analyze Java, XML, and properties files. If you simply need to highlight a specific section of Java code or XML file content and provide migration hints for it, creation of <em>XML-based</em> rules is the recommended approach. Creation of custom <em>XML-based</em> rules is covered in the <a href="http://windup.github.io/windup/docs/latest/html/WindupRulesDevelopmentGuide.html">Windup Rules Development Guide</a>.</p>
 </div>
 <div class="paragraph">
 <p><em>Java-based</em> rule add-ons provide the ability to create very complex rules, manipulate the shared data model graph, and customize the resulting reports. If you need to test or perform complex conditions and operations or want to manipulate the shared data model graph, create custom reports, or extend the functionality in any other way beyond what the <em>XML-based</em> rules provide, you must create <em>Java-based</em> rules. Creation of custom <em>Java-based</em> rules is covered in the <a href="http://windup.github.io/windup/docs/latest/html/WindupCoreDevelopmentGuide.html">Windup Core Development Guide</a>.</p>
@@ -2508,7 +2508,7 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
 <h2 id="_create_and_test_java_rule_add_ons">6. Create and Test Java Rule Add-ons</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>This guide focuses on how to create Java-based rule add-ons. For instructions on how to create XML-based rules, see the <a href="https://access.redhat.com/documentation/en/red-hat-jboss-migration-toolkit-windup/version-2.4/windup-rules-development-guide">Windup Rules Development Guide</a>.</p>
+<p>This guide focuses on how to create Java-based rule add-ons. For instructions on how to create XML-based rules, see the <a href="http://windup.github.io/windup/docs/latest/html/WindupRulesDevelopmentGuide.html">Windup Rules Development Guide</a>.</p>
 </div>
 <div class="sect2">
 <h3 id="Rules-Java-based-Rule-Structure">6.1. Java-based Rule Structure</h3>
@@ -3398,7 +3398,7 @@ Windup building elements.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>For more detailed instructions on how to execute Windup, see the <a href="https://access.redhat.com/documentation/en/red-hat-jboss-migration-toolkit-windup/version-2.4/windup-user-guide">Windup User Guide</a>.</p>
+<p>For more detailed instructions on how to execute Windup, see the <a href="http://windup.github.io/windup/docs/latest/html/WindupUserGuide.html">Windup User Guide</a>.</p>
 </div>
 </div>
 <div class="sect3">
@@ -3869,7 +3869,7 @@ Useful Commands: #action #agreed #help #info #idea #link #topic.</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-09-03 11:23:18 EDT
+Last updated 2015-09-09 14:32:24 EDT
 </div>
 </div>
 </body>
