@@ -7,6 +7,13 @@ body {
   margin:10px;
 }
 
+.tablesorter thead tr th {
+  cursor:pointer;
+  background-position: left center;
+  padding-left: 20px;
+  background: url(../img/styles/table-sort-bg.gif) no-repeat 0%;
+}
+
 .btn-xxs {
   padding: 2px 8px;
   margin: 0 3px 0 0;
