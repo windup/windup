@@ -27,7 +27,7 @@ public class IterationProgress extends AbstractIterationOperation<WindupVertexFr
     private ProgressEstimate progressEstimate;
     private String variableListName = Iteration.DEFAULT_VARIABLE_LIST_STRING;
 
-    public IterationProgress(String messagePrefix, int interval)
+    private IterationProgress(String messagePrefix, int interval)
     {
         this.messagePrefix = messagePrefix;
         this.interval = interval;

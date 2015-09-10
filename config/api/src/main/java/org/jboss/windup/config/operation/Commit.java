@@ -22,7 +22,7 @@ public class Commit extends GraphOperation
     public void perform(GraphRewrite event, EvaluationContext context)
     {
         uncommittedIterations++;
-        if (uncommittedIterations > period)
+        if (uncommittedIterations >= period)
         {
             event.getGraphContext().getGraph().getBaseGraph().commit();
             uncommittedIterations = 0;

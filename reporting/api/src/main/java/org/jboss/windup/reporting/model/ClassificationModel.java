@@ -1,6 +1,9 @@
 package org.jboss.windup.reporting.model;
 
+import java.util.Set;
+
 import org.jboss.windup.graph.Indexed;
+import org.jboss.windup.graph.SetInProperties;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.association.LinkableModel;
 import org.ocpsoft.rewrite.config.Rule;
@@ -9,8 +12,6 @@ import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
-import java.util.Set;
-import org.jboss.windup.graph.SetInProperties;
 
 /**
  * This classifies files and provides general background information about a specific {@link FileModel}. (For instance,
@@ -20,13 +21,13 @@ import org.jboss.windup.graph.SetInProperties;
 @TypeValue(ClassificationModel.TYPE)
 public interface ClassificationModel extends EffortReportModel, LinkableModel
 {
-    static final String TYPE = "ClassificationModel";
-    static final String TYPE_PREFIX = TYPE + ":";
-    static final String RULE_ID = TYPE_PREFIX + "ruleID";
-    static final String CLASSIFICATION = TYPE_PREFIX + "classification";
-    static final String DESCRIPTION = TYPE_PREFIX + "description";
+    String TYPE = "ClassificationModel";
+    String TYPE_PREFIX = TYPE + ":";
+    String RULE_ID = TYPE_PREFIX + "ruleID";
+    String CLASSIFICATION = TYPE_PREFIX + "classification";
+    String DESCRIPTION = TYPE_PREFIX + "description";
 
-    static final String FILE_MODEL = TYPE_PREFIX + "classificationModelToFileModel";
+    String FILE_MODEL = TYPE_PREFIX + "classificationModelToFileModel";
 
     /**
      * Add a {@link FileModel} associated with this {@link ClassificationModel}.

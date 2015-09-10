@@ -138,21 +138,23 @@ public class ClassificationService extends GraphService<ClassificationModel>
         return attachClassification(rule, fileModel, classificationText, description);
     }
 
+    private boolean isClassificationLinkedToFileModel(ClassificationModel classificationModel, FileModel fileModel)
+    {
+        return ClassificationServiceCache.isClassificationLinkedToFileModel(classificationModel, fileModel);
+    }
+
     /**
      * This method just attaches the {@link ClassificationModel} to the {@link Length.FileMode}. It will only do so if this link is not already
      * present.
      */
     public ClassificationModel attachClassification(ClassificationModel classificationModel, FileModel fileModel)
     {
-        // check for duplicates
-        for (FileModel existingFileModel : classificationModel.getFileModels())
+        if (!isClassificationLinkedToFileModel(classificationModel, fileModel))
         {
-            if (existingFileModel.equals(fileModel))
-            {
-                return classificationModel;
-            }
+            classificationModel.addFileModel(fileModel);
         }
-        classificationModel.addFileModel(fileModel);
+        ClassificationServiceCache.cacheClassificationFileModel(classificationModel, fileModel, true);
+
         return classificationModel;
     }
 

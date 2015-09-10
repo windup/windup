@@ -13,6 +13,7 @@ import java.util.TreeSet;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -76,7 +77,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
 {
     private static Object lockObject = new Object();
 
-    public static final int COMMIT_INTERVAL = 750;
+    public static final int COMMIT_INTERVAL = 500;
     public static final int LOG_INTERVAL = 250;
     private static Logger LOG = Logging.get(AnalyzeJavaFilesRuleProvider.class);
 
@@ -205,6 +206,9 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                     BatchASTFuture future = BatchASTProcessor.analyze(listener, importResolver, libraryPaths, sourcePaths, filesToProcess);
                     ProgressEstimate estimate = new ProgressEstimate(filesToProcess.size());
 
+                    // This tracks the number of items added to the graph
+                    AtomicInteger referenceCount = new AtomicInteger(0);
+
                     while (!future.isDone() || !processedPaths.isEmpty())
                     {
                         if (processedPaths.size() > (ANALYSIS_QUEUE_SIZE / 2))
@@ -213,15 +217,11 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                         if (pair == null)
                             continue;
 
-                        processReferences(event.getGraphContext(), pair.getKey(), pair.getValue());
+                        processReferences(event.getGraphContext(), referenceCount, pair.getKey(), pair.getValue());
 
                         estimate.addWork(1);
                         printProgressEstimate(event, estimate);
 
-                        if (estimate.getWorked() % COMMIT_INTERVAL == 0)
-                        {
-                            event.getGraphContext().getGraph().getBaseGraph().commit();
-                        }
                         filesToProcess.remove(pair.getKey());
                     }
 
@@ -244,7 +244,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                             try
                             {
                                 List<ClassReference> references = ASTProcessor.analyze(importResolver, libraryPaths, sourcePaths, unprocessed);
-                                processReferences(event.getGraphContext(), unprocessed,
+                                processReferences(event.getGraphContext(), referenceCount, unprocessed,
                                             filterClassReferences(references, classNotFoundAnalysisEnabled));
                                 filesToProcess.remove(unprocessed);
                             }
@@ -295,6 +295,12 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
             }
         }
 
+        private void commitIfNeeded(GraphContext context, int numberAddedToGraph)
+        {
+            if (numberAddedToGraph % COMMIT_INTERVAL == 0)
+                context.getGraph().getBaseGraph().commit();
+        }
+
         private void printProgressEstimate(GraphRewrite event, ProgressEstimate estimate)
         {
             if (estimate.getWorked() % LOG_INTERVAL == 0)
@@ -328,7 +334,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
             return results;
         }
 
-        private void processReferences(GraphContext context, Path filePath, List<ClassReference> references)
+        private void processReferences(GraphContext context, AtomicInteger referenceCount, Path filePath, List<ClassReference> references)
         {
             TypeReferenceService typeReferenceService = new TypeReferenceService(context);
             for (ClassReference reference : references)
@@ -345,6 +351,8 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                     Map<String, AnnotationValue> annotationValues = ((AnnotationClassReference) reference).getAnnotationValues();
                     addAnnotationValues(context, javaSourceModel, typeReference, annotationValues);
                 }
+                referenceCount.incrementAndGet();
+                commitIfNeeded(context, referenceCount.get());
             }
         }
 
