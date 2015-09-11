@@ -51,10 +51,9 @@
 	            	<div class="panel-heading">
                         <h3 class="panel-title">Potential Issues</h3>
                     </div>
-	                <table class="table table-hover table-condensed">
+	                <table id="issues_table" class="table table-hover table-condensed tablesorter">
 	                    <thead>
 	                        <tr>
-	                            <th></th>
 	                            <th>Issue</th>
 	                            <th>Incidents Found</th>
 	                            <th>Effort per Incident</th>
@@ -65,7 +64,6 @@
 	                    <tbody>
 	                        <#list getProblemSummaries() as problemSummary>
 	                            <tr>
-	                                <th class="row">${problemSummary?counter}</th>
 	                                <td>
 	                                    <a href="#" class="problem-link">
 	                                        ${problemSummary.issueName}
@@ -92,6 +90,7 @@
 
         <script src="resources/js/jquery-1.10.1.min.js"></script>
         <script src="resources/js/bootstrap.min.js"></script>
+        <script src="resources/js/jquery.tablesorter.min.js"></script> 
         <script type="text/javascript">
             $(document).ready(function () {
                 $('.problem-link').each(function(index, value) {
@@ -101,6 +100,28 @@
                     });
                 });
             });
+            // we need this parser because we are using comma to separate thousands
+            $.tablesorter.addParser({ 
+   		 id: 'thousands',
+   		 is: function(s) { 
+  		      return true; 
+   		 }, 
+ 		 format: function(s) {
+   		     return s.replace('$','').replace(/,/g,'');
+   		 }, 
+  		 type: 'numeric' 
+	    }); 
+            $(document).ready(function() { 
+                $("#issues_table").tablesorter({
+                sortList: [[3,1]],
+        	headers: {
+                  // 3rd,4th,5th columns are parsed using thousands parser
+          	  2: {sorter:'thousands'},
+                  3: {sorter:'thousands'},
+                  4: {sorter:'thousands'}
+                  }
+                });
+   	    }); 
         </script>
     </body>
 </html>
