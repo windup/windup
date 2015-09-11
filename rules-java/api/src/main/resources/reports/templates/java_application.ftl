@@ -60,28 +60,32 @@
 		</td>
         <#-- Issues -->
 		<td>
-		  <#if sourceReportModel.sourceFileModel.inlineHints.iterator()?has_content || sourceReportModel.sourceFileModel.classificationModels.iterator()?has_content>
+        <#if sourceReportModel.sourceFileModel.inlineHints.iterator()?has_content || sourceReportModel.sourceFileModel.classificationModels.iterator()?has_content>
           <#assign warnings = sourceReportModel.sourceFileModel.inlineHintCount + sourceReportModel.sourceFileModel.classificationCount>
-  		  <b>Warnings: ${warnings}
-            <#if warnings == 1>
-              item
-            <#else>
-              items
-            </#if>
-          </b>
-          <ul class='notifications'>
-			<#list sourceReportModel.sourceFileModel.classificationModels.iterator() as classification>
-				<#if classification.classification?has_content>
-				<li class='warning'>${classification.classification}</li>
-				</#if>
-			</#list>
-            <#list sourceReportModel.sourceFileModel.inlineHints.iterator() as hintLine>
-              <#if hintLine.hint?has_content>
-                <li class='warning'>${hintLine.title}</li>
-              </#if>
+          <#if warnings gt 1>
+            <b>Warnings: ${warnings} items</b>
+            <ul class='notifications'>
+          </#if>
+          <#list sourceReportModel.sourceFileModel.classificationModels.iterator()>
+            <#items as classification>
+               <#if warnings == 1 >
+                  ${classification.classification}
+               <#else>
+                  <li class='warning'>${classification.classification}</li>
+               </#if>
+            </#items>
+           </#list>
+            <#list sourceReportModel.sourceFileModel.inlineHints.iterator()>
+              <#items as hintLine>
+                <#if warnings == 1 >
+                  ${hintLine.title}
+                <#else>
+                  <li class='warning'>${hintLine.title}</li>
+                </#if>
+              </#items>
             </#list>
           </ul>
-      </#if>
+        </#if>
 		</td>
         <#-- Story points -->
 		<td>
