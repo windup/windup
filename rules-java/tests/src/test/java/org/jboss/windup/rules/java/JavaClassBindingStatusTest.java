@@ -39,6 +39,8 @@ import org.jboss.windup.rules.apps.java.condition.JavaClass;
 import org.jboss.windup.rules.apps.java.config.EnableClassNotFoundAnalysisOption;
 import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
+import org.jboss.windup.rules.apps.java.scan.ast.TypeInterest;
+import org.jboss.windup.rules.apps.java.scan.ast.TypeInterestResolver;
 import org.jboss.windup.rules.apps.java.scan.provider.AnalyzeJavaFilesRuleProvider;
 import org.junit.Assert;
 import org.junit.Test;
@@ -183,6 +185,9 @@ public class JavaClassBindingStatusTest
         @Override
         public Configuration getConfiguration(GraphContext context)
         {
+            TypeInterestResolver.defaultInstance().addTypeInterest(new TypeInterest("org.apache.commons.io"));
+            TypeInterestResolver.defaultInstance().addTypeInterest(new TypeInterest("java.nio.file"));
+
             return ConfigurationBuilder.begin()
                     .addRule()
                     .when(

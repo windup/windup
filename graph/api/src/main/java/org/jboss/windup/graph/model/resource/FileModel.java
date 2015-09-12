@@ -38,15 +38,13 @@ public interface FileModel extends ResourceModel
     String PRETTY_PATH_WITHIN_PROJECT = "fileModelPrettyPathWithinProject";
 
     /**
-     * Contains the File Name (the last component of the path). Eg, a file /tmp/foo/bar/file.txt would have fileName set
-     * to "file.txt"
+     * Contains the File Name (the last component of the path). Eg, a file /tmp/foo/bar/file.txt would have fileName set to "file.txt"
      */
     @Property(FILE_NAME)
     String getFileName();
 
     /**
-     * Contains the File Name (the last component of the path). Eg, a file /tmp/foo/bar/file.txt would have fileName set
-     * to "file.txt"
+     * Contains the File Name (the last component of the path). Eg, a file /tmp/foo/bar/file.txt would have fileName set to "file.txt"
      */
     @Indexed
     @Property(FILE_NAME)

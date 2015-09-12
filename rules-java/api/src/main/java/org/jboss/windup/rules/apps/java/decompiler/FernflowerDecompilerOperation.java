@@ -23,6 +23,7 @@ import org.jboss.windup.decompiler.api.DecompilationListener;
 import org.jboss.windup.decompiler.api.DecompilationResult;
 import org.jboss.windup.decompiler.fernflower.FernflowerDecompiler;
 import org.jboss.windup.decompiler.procyon.ProcyonDecompiler;
+import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.FileService;
@@ -49,12 +50,29 @@ public class FernflowerDecompilerOperation extends GraphOperation
     private static final String TECH_TAG = "Decompiled Java File";
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.INFORMATIONAL;
 
+    private Iterable<JavaClassFileModel> filesToDecompile;
+
     /**
      * Let the variable name to be set by the current Iteration.
      */
     public FernflowerDecompilerOperation()
     {
         super();
+    }
+
+    public void setFilesToDecompile(Iterable<JavaClassFileModel> filesToDecompile)
+    {
+        this.filesToDecompile = filesToDecompile;
+    }
+
+    private Iterable<JavaClassFileModel> getFilesToDecompile(GraphContext context)
+    {
+        if (this.filesToDecompile == null)
+        {
+            GraphService<JavaClassFileModel> classFileService = new GraphService<>(context, JavaClassFileModel.class);
+            return classFileService.findAll();
+        }
+        return filesToDecompile;
     }
 
     @Override
@@ -66,21 +84,23 @@ public class FernflowerDecompilerOperation extends GraphOperation
         LOG.info("Decompiling with " + threads + " threads");
 
         WindupJavaConfigurationService configurationService = new WindupJavaConfigurationService(event.getGraphContext());
-        GraphService<JavaClassFileModel> classFileService = new GraphService<>(event.getGraphContext(), JavaClassFileModel.class);
-        Iterable<JavaClassFileModel> allClasses = classFileService.findAll();
+        Iterable<JavaClassFileModel> filesToDecompile = getFilesToDecompile(event.getGraphContext());
 
         int totalWork = 0;
         List<ClassDecompileRequest> classesToDecompile = new ArrayList<>(10000); // Just a guess as to the average size
-        for (JavaClassFileModel classFileModel : allClasses)
+        for (JavaClassFileModel classFileModel : filesToDecompile)
         {
             File outputDir = DecompilerUtil.getOutputDirectoryForClass(event.getGraphContext(), classFileModel);
             if (configurationService.shouldScanPackage(classFileModel.getPackageName()))
             {
-                classesToDecompile.add(new ClassDecompileRequest(outputDir.toPath(), classFileModel.asFile().toPath(), outputDir.toPath()));
-                if (!classFileModel.getFilePath().contains("$"))
+                if (classFileModel.getSkipDecompilation() == null || !classFileModel.getSkipDecompilation())
                 {
-                    // it only counts as a work unit if it is not an inner class (as inner classes are grouped together)
-                    totalWork++;
+                    classesToDecompile.add(new ClassDecompileRequest(outputDir.toPath(), classFileModel.asFile().toPath(), outputDir.toPath()));
+                    if (!classFileModel.getFilePath().contains("$"))
+                    {
+                        // it only counts as a work unit if it is not an inner class (as inner classes are grouped together)
+                        totalWork++;
+                    }
                 }
             }
         }

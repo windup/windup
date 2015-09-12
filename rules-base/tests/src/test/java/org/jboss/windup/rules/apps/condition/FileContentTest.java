@@ -1,10 +1,22 @@
 package org.jboss.windup.rules.apps.condition;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.apache.commons.io.FileUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -28,7 +40,8 @@ import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.service.InlineHintService;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
-import org.jboss.windup.rules.apps.java.scan.provider.AnalyzeJavaFilesRuleProvider;
+import org.jboss.windup.rules.apps.java.scan.ast.TypeInterest;
+import org.jboss.windup.rules.apps.java.scan.ast.TypeInterestResolver;
 import org.jboss.windup.rules.files.condition.FileContent;
 import org.jboss.windup.rules.files.model.FileLocationModel;
 import org.junit.Assert;
@@ -39,13 +52,6 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.param.ParameterStore;
 import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
 
 @RunWith(Arquillian.class)
 public class FileContentTest
@@ -177,7 +183,7 @@ public class FileContentTest
             }
             Assert.assertTrue(foundFile3Needle);
 
-            Assert.assertTrue(provider.count == 1);
+            Assert.assertEquals(1, provider.count);
         }
     }
 
@@ -200,6 +206,8 @@ public class FileContentTest
         @Override
         public Configuration getConfiguration(GraphContext context)
         {
+            TypeInterestResolver.defaultInstance().addTypeInterest(new TypeInterest("java.io", "IOException"));
+
             return ConfigurationBuilder.begin()
             .addRule()
             .when(FileContent.matches("file {text}.").inFileNamed("{*}.txt"))
