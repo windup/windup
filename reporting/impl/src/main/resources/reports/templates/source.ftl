@@ -92,7 +92,16 @@
                                 </#if>
                                 </#list>
                             </ul>
-						</div>
+
+                            <#list reportModel.sourceFileModel.linksToTransformedFiles.iterator() >
+				        	<h4>Files transformed from this one</h4>
+                            <ul>
+                                <#items as link>
+                                    <li><a href="${link.link}">${link.description!}</a></li>
+                                </#items>
+                            </ul>
+                            </#list>
+                        </div>
 					</div>
                 </div>
 			    </#if>

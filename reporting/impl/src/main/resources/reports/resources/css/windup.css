@@ -152,6 +152,22 @@ p.windup-contributors  {
 	margin: 10px 0 0 0;
 }
 
+
+/** Bootstrap overrides **/
+
+
+/** Wider <dd> **/
+.dl-horizontal dt {
+    width: 198px;
+}
+.dl-horizontal dd {
+    margin-left: 210px;
+}
+
+/** Bootstrap overrides END **/
+
+
+
 /** Navigation **/
 .nav .glyphicon {
 	height: 13px;
