@@ -61,30 +61,30 @@
         <#-- Issues -->
 		<td>
         <#if sourceReportModel.sourceFileModel.inlineHints.iterator()?has_content || sourceReportModel.sourceFileModel.classificationModels.iterator()?has_content>
-          <#assign warnings = sourceReportModel.sourceFileModel.inlineHintCount + sourceReportModel.sourceFileModel.classificationCount>
-          <#if warnings gt 1>
-            <b>Warnings: ${warnings} items</b>
-            <ul class='notifications'>
-          </#if>
-          <#list sourceReportModel.sourceFileModel.classificationModels.iterator()>
-            <#items as classification>
-               <#if warnings == 1 >
-                  ${classification.classification}
-               <#else>
-                  <li class='warning'>${classification.classification}</li>
-               </#if>
-            </#items>
-           </#list>
-            <#list sourceReportModel.sourceFileModel.inlineHints.iterator()>
-              <#items as hintLine>
-                <#if warnings == 1 >
-                  ${hintLine.title}
-                <#else>
-                  <li class='warning'>${hintLine.title}</li>
-                </#if>
-              </#items>
+            <#assign warnings = sourceReportModel.sourceFileModel.inlineHintCount + sourceReportModel.sourceFileModel.classificationCount>
+            <#if warnings gt 1>
+                <b>Warnings: ${warnings} items</b>
+                <ul class='notifications'>
+            </#if>
+            <#list sourceReportModel.sourceFileModel.classificationModels.iterator()>
+                <#items as classification>
+                    <#if warnings == 1 >
+                        ${classification.classification}
+                    <#else>
+                        <li class='warning'>${classification.classification}</li>
+                    </#if>
+                </#items>
             </#list>
-          </ul>
+            <#list sourceReportModel.sourceFileModel.inlineHints.iterator()>
+                <#items as hintLine>
+                    <#if warnings == 1 >
+                        ${hintLine.title}
+                    <#else>
+                        <li class='warning'>${hintLine.title}</li>
+                    </#if>
+                </#items>
+            </#list>
+            </ul>
         </#if>
 		</td>
         <#-- Story points -->
