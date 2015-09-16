@@ -8,7 +8,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Source Report for ${reportModel.reportName}</title>
+    <title>Source Report for ${reportModel.reportName?html}</title>
     <link href="resources/css/bootstrap.min.css" rel="stylesheet">
     <link href="resources/css/windup.css" rel="stylesheet" media="screen">
     <link rel='stylesheet' type='text/css' href='resources/libraries/snippet/jquery.snippet.min.css' />
@@ -36,7 +36,7 @@
 			<div class="page-header page-header-no-border">
                 <h1>
                     <div class="main">Source report</div>
-                    <div class="path">${reportModel.sourceFileModel.prettyPath}</div>
+                    <div class="path">${reportModel.sourceFileModel.prettyPath?html}</div>
                 </h1>
 			</div>
 		</div>
@@ -70,14 +70,14 @@
 
 				        <div class="info" style="margin-left: 95pt;">
 
-				        	<#if getTechnologyTagsForFile(reportModel.sourceFileModel).iterator()?has_content>
+                            <#list getTechnologyTagsForFile(reportModel.sourceFileModel).iterator()>
                             <h4>Technologies</h4>
 				        	<div>
-				        		<#list getTechnologyTagsForFile(reportModel.sourceFileModel).iterator() as techTag>
+				        		<#items as techTag>
 				              		<span class="label label-info">${techTag.name}</span>
-				            	</#list>
+				            	</#items>
 				        	</div>
-				        	</#if>
+                            </#list>
 
 				        	<h4>Classifications</h4>
                             <ul>
