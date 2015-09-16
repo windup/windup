@@ -1,5 +1,6 @@
 package org.jboss.windup.rules.apps.java.ip;
 
+import org.apache.commons.validator.routines.InetAddressValidator;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.MetadataBuilder;
@@ -46,12 +47,23 @@ public class DiscoverStaticIPAddressRuleProvider extends AbstractRuleProvider
                             // for all file location models that match the regular expression in the where clause, add
                             // the IP Location Model to the
                             // graph
-                            StaticIPLocationModel location = GraphService.addTypeToModel(event.getGraphContext(), payload,
+                            if (InetAddressValidator.getInstance().isValid(payload.getSourceSnippit()))
+                            {
+                                StaticIPLocationModel location = GraphService.addTypeToModel(event.getGraphContext(), payload,
                                         StaticIPLocationModel.class);
-                            location.setRuleID(((Rule) context.get(Rule.class)).getId());
-                            location.setTitle("Static IP: " + location.getSourceSnippit());
-                            location.setHint("When migrating environments, static IP addresses may need to be modified or eliminated.");
-                            location.setEffort(0);
+                                location.setRuleID(((Rule) context.get(Rule.class)).getId());
+                                location.setTitle("Static IP Address Detected");
+
+                                StringBuilder hintBody = new StringBuilder("**Static IP: ");
+                                hintBody.append(payload.getSourceSnippit());
+                                hintBody.append("**");
+
+                                hintBody.append("\n\n");
+                                hintBody.append("When migrating environments, static IP addresses may need to be modified or eliminated.");
+                                location.setHint(hintBody.toString());
+
+                                location.setEffort(0);
+                            }
                         }
                     })
                     .where("ip").matches("\\b\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\b")
