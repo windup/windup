@@ -6,8 +6,8 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -50,14 +50,9 @@ public class RuleIterationOverAllSpecifiedTest
     })
     public static AddonArchive getDeployment()
     {
-        final AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
+        return ShrinkWrap.create(AddonArchive.class)
                     .addBeansXML()
-                    .addClasses(
-                                TestRuleIterationOverAllSpecifiedProvider.class,
-                                TestRuleIterationOverAllSpecifiedWithExceptionProvider.class,
-                                TestSimple1Model.class,
-                                TestSimple2Model.class);
-        return archive;
+                    .addClasses(TestSimple1Model.class, TestSimple2Model.class);
     }
 
     @Inject
@@ -241,7 +236,7 @@ public class RuleIterationOverAllSpecifiedTest
                         );
             return configuration;
         }
-        // @formatter:off
+        // @formatter:on
 
     }
 
