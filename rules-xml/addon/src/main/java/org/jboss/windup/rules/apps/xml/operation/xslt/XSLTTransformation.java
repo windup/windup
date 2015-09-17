@@ -274,7 +274,8 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
             LinkModel linkModel = linkService.create();
             linkModel.setDescription(description);
             linkModel.setLink(XsltTransformationService.TRANSFORMEDXML_DIR_NAME + "/" + fileName);
-            classificationModel.addLink(linkModel);
+            payload.addLinkToTransformedFile(linkModel);
+            // classificationModel.addLink(linkModel);
         }
         catch (TransformerException e)
         {
