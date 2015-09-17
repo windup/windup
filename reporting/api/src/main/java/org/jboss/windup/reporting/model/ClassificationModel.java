@@ -83,13 +83,13 @@ public interface ClassificationModel extends EffortReportModel, LinkableModel
      * Add a tag associated with this {@link ClassificationModel}
      */
     @SetInProperties(propertyPrefix = "tag")
-    InlineHintModel addTag(String tag);
+    ClassificationModel addTag(String tag);
 
     /**
      * Set the set of tags associated with this {@link ClassificationModel}
      */
     @SetInProperties(propertyPrefix = "tag")
-    InlineHintModel setTags(Set<String> tags);
+    ClassificationModel setTags(Set<String> tags);
 
     /**
      * Get the set of tags associated with this {@link ClassificationModel}

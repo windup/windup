@@ -19,7 +19,6 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.LinkService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
-import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.TemplateType;
 import org.jboss.windup.reporting.model.WindupVertexListModel;
 import org.jboss.windup.reporting.service.ApplicationReportService;
@@ -125,8 +124,9 @@ public class GenerateJBossEjbDescriptorRuleProvider extends AbstractRuleProvider
             for (VendorSpecificationExtensionModel vendorSpecificExtension : vendorSpecificService.getVendorSpecificationExtensions(ejbDescriptor))
             {
                 LOG.info("Vendor specific: " + vendorSpecificExtension.getFileName());
-                ClassificationModel classification = classificationService.attachClassification(evaluationContext, vendorSpecificExtension,
-                            "EJB Specification Extension", "Vendor Specific EJB Specification Extension");
+                classificationService.attachClassification(evaluationContext, vendorSpecificExtension, "EJB Specification Extension",
+                            "Vendor Specific EJB Specification Extension");
+                vendorSpecificExtension.addLinkToTransformedFile(newDescriptorLink);
             }
 
             // Link up with the generated XML.
