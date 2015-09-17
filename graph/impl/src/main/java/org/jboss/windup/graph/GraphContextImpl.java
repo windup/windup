@@ -1,5 +1,30 @@
 package org.jboss.windup.graph;
 
+import java.io.File;
+import java.lang.reflect.Method;
+import java.nio.file.Path;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Logger;
+
+import org.apache.commons.configuration.BaseConfiguration;
+import org.apache.commons.configuration.Configuration;
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.RandomStringUtils;
+import org.jboss.forge.furnace.Furnace;
+import org.jboss.forge.furnace.services.Imported;
+import org.jboss.forge.furnace.util.Annotations;
+import org.jboss.windup.graph.frames.TypeAwareFramedGraphQuery;
+import org.jboss.windup.graph.listeners.AfterGraphInitializationListener;
+import org.jboss.windup.graph.listeners.BeforeGraphCloseListener;
+import org.jboss.windup.graph.model.WindupVertexFrame;
+
 import com.thinkaurelius.titan.core.Cardinality;
 import com.thinkaurelius.titan.core.PropertyKey;
 import com.thinkaurelius.titan.core.TitanFactory;
@@ -19,29 +44,6 @@ import com.tinkerpop.frames.modules.FrameClassLoaderResolver;
 import com.tinkerpop.frames.modules.Module;
 import com.tinkerpop.frames.modules.gremlingroovy.GremlinGroovyModule;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerModule;
-import org.apache.commons.configuration.BaseConfiguration;
-import org.apache.commons.configuration.Configuration;
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.commons.io.FileUtils;
-import org.jboss.forge.furnace.Furnace;
-import org.jboss.forge.furnace.services.Imported;
-import org.jboss.forge.furnace.util.Annotations;
-import org.jboss.windup.graph.frames.TypeAwareFramedGraphQuery;
-import org.jboss.windup.graph.listeners.AfterGraphInitializationListener;
-import org.jboss.windup.graph.listeners.BeforeGraphCloseListener;
-import org.jboss.windup.graph.model.WindupVertexFrame;
-
-import java.io.File;
-import java.lang.reflect.Method;
-import java.nio.file.Path;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-import java.util.logging.Logger;
 
 public class GraphContextImpl implements GraphContext
 {
@@ -61,10 +63,11 @@ public class GraphContextImpl implements GraphContext
     private GraphApiCompositeClassLoaderProvider classLoaderProvider;
 
     /**
-     * Used to save all the {@link BeforeGraphCloseListener}s that are also {@link AfterGraphInitializationListener}.
-     * This is due a need to call {@link BeforeGraphCloseListener.beforeGraphClose()} on the same instance on which {@link AfterGraphInitializationListener.afterGraphStarted()} was called
+     * Used to save all the {@link BeforeGraphCloseListener}s that are also {@link AfterGraphInitializationListener}. This is due a need to call
+     * {@link BeforeGraphCloseListener.beforeGraphClose()} on the same instance on which {@link AfterGraphInitializationListener.afterGraphStarted()}
+     * was called
      */
-    private Map<String,BeforeGraphCloseListener> beforeGraphCloseListenerBuffer = new HashMap<>();
+    private Map<String, BeforeGraphCloseListener> beforeGraphCloseListenerBuffer = new HashMap<>();
 
     public GraphContextImpl(Furnace furnace, GraphTypeRegistry typeRegistry, GraphTypeManager typeManager,
                 GraphApiCompositeClassLoaderProvider classLoaderProvider, Path graphDir)
@@ -111,8 +114,9 @@ public class GraphContextImpl implements GraphContext
             for (AfterGraphInitializationListener listener : afterInitializationListeners)
             {
                 listener.afterGraphStarted(confProps, this);
-                if(listener instanceof BeforeGraphCloseListener) {
-                    beforeGraphCloseListenerBuffer.put(listener.getClass().toString(),(BeforeGraphCloseListener)listener);
+                if (listener instanceof BeforeGraphCloseListener)
+                {
+                    beforeGraphCloseListenerBuffer.put(listener.getClass().toString(), (BeforeGraphCloseListener) listener);
                 }
             }
         }
@@ -151,8 +155,8 @@ public class GraphContextImpl implements GraphContext
 
         FramedGraphFactory factory = new FramedGraphFactory(
                     addModules,
-                    new JavaHandlerModule(), // Supports @JavaHandler
-                    graphTypeRegistry.build(), // Adds detected WindupVertexFrame/Model classes
+                    new JavaHandlerModule(),   // Supports @JavaHandler
+                    graphTypeRegistry.build(),   // Adds detected WindupVertexFrame/Model classes
                     new GremlinGroovyModule() // Supports @Gremlin
         );
 
@@ -199,8 +203,8 @@ public class GraphContextImpl implements GraphContext
         }
 
         /*
-         * This is the root Model index that enables us to query on frame-type (by subclass type, etc.) Without this,
-         * every typed query would be slow. Do not remove this unless something really paradigm-shifting has happened.
+         * This is the root Model index that enables us to query on frame-type (by subclass type, etc.) Without this, every typed query would be slow.
+         * Do not remove this unless something really paradigm-shifting has happened.
          */
         listIndexKeys.add(WindupVertexFrame.TYPE_PROP);
 
@@ -239,6 +243,10 @@ public class GraphContextImpl implements GraphContext
 
         // TODO: Externalize this.
         conf = new BaseConfiguration();
+
+        // Sets a unique id in order to fix WINDUP-697. This causes Titan to not attempt to generate and ID,
+        // as the Titan id generation code fails on machines with broken network configurations.
+        conf.setProperty("graph.unique-instance-id", "windup_" + System.nanoTime() + "_" + RandomStringUtils.random(6));
         conf.setProperty("storage.directory", berkeley.toAbsolutePath().toString());
         conf.setProperty("storage.backend", "berkeleyje");
 
@@ -282,11 +290,13 @@ public class GraphContextImpl implements GraphContext
         Imported<BeforeGraphCloseListener> beforeCloseListeners = furnace.getAddonRegistry().getServices(BeforeGraphCloseListener.class);
         for (BeforeGraphCloseListener listener : beforeCloseListeners)
         {
-            if(!beforeGraphCloseListenerBuffer.containsKey(listener.getClass().toString())) {
-                beforeGraphCloseListenerBuffer.put(listener.getClass().toString(),listener);
+            if (!beforeGraphCloseListenerBuffer.containsKey(listener.getClass().toString()))
+            {
+                beforeGraphCloseListenerBuffer.put(listener.getClass().toString(), listener);
             }
         }
-        for(BeforeGraphCloseListener listener : beforeGraphCloseListenerBuffer.values()) {
+        for (BeforeGraphCloseListener listener : beforeGraphCloseListenerBuffer.values())
+        {
             listener.beforeGraphClose();
         }
         beforeGraphCloseListenerBuffer.clear();
@@ -359,7 +369,6 @@ public class GraphContextImpl implements GraphContext
         return "GraphContextImpl(" + hashCode() + "), Graph(" + graphHash + ") + DataDir(" + getGraphDirectory() + ")";
     }
 
-
     private void writeToPropertiesFile(Configuration conf, File file)
     {
         System.out.println("Writing graph config to " + file);
@@ -369,7 +378,7 @@ public class GraphContextImpl implements GraphContext
             propConf.append(conf);
             propConf.save();
         }
-        catch( ConfigurationException ex )
+        catch (ConfigurationException ex)
         {
             throw new RuntimeException("Failed writing Titan config to " + file.getAbsolutePath() + ": " + ex.getMessage(), ex);
         }
