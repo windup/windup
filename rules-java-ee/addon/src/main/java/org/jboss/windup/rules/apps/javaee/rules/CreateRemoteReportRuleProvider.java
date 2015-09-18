@@ -84,7 +84,7 @@ public class CreateRemoteReportRuleProvider extends AbstractRuleProvider
         applicationReportModel.setTemplatePath(TEMPLATE_EJB_REPORT);
         applicationReportModel.setTemplateType(TemplateType.FREEMARKER);
 
-        GraphService<RemoteServiceModel> remoteServices = new GraphService<RemoteServiceModel>(context, RemoteServiceModel.class);
+        GraphService<RemoteServiceModel> remoteServices = new GraphService<>(context, RemoteServiceModel.class);
         GraphService<WindupVertexListModel> listService = new GraphService<>(context, WindupVertexListModel.class);
 
         WindupVertexListModel<JaxRSWebServiceModel> jaxRsList = listService.create();

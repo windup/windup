@@ -12,11 +12,8 @@ import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
-import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
@@ -98,7 +95,7 @@ public class DiscoverJPAAnnotationsRuleProvider extends AbstractRuleProvider
 
     private void extractEntityBeanMetadata(GraphRewrite event, JavaTypeReferenceModel entityTypeReference)
     {
-        ((SourceFileModel) entityTypeReference.getFile()).setGenerateSourceReport(true);
+        entityTypeReference.getFile().setGenerateSourceReport(true);
         JavaAnnotationTypeReferenceModel entityAnnotationTypeReference = (JavaAnnotationTypeReferenceModel) entityTypeReference;
         JavaAnnotationTypeReferenceModel tableAnnotationTypeReference = null;
         for (WindupVertexFrame annotationTypeReferenceBase : Variables.instance(event).findVariable(TABLE_ANNOTATIONS_LIST))
@@ -205,33 +202,21 @@ public class DiscoverJPAAnnotationsRuleProvider extends AbstractRuleProvider
     private JavaClassModel getJavaClass(JavaTypeReferenceModel javaTypeReference)
     {
         JavaClassModel result = null;
-        FileModel originalFile = javaTypeReference.getFile();
-        if (originalFile instanceof JavaSourceFileModel)
+        JavaSourceFileModel javaSource = javaTypeReference.getFile();
+        for (JavaClassModel javaClassModel : javaSource.getJavaClasses())
         {
-            JavaSourceFileModel javaSource = (JavaSourceFileModel) originalFile;
-            for (JavaClassModel javaClassModel : javaSource.getJavaClasses())
+            // there can be only one public one, and the annotated class should be public
+            if (javaClassModel.isPublic() != null && javaClassModel.isPublic())
             {
-                // there can be only one public one, and the annotated class should be public
-                if (javaClassModel.isPublic() != null && javaClassModel.isPublic())
-                {
-                    result = javaClassModel;
-                    break;
-                }
+                result = javaClassModel;
+                break;
             }
+        }
 
-            if (result == null)
-            {
-                // no public classes found, so try to find any class (even non-public ones)
-                result = javaSource.getJavaClasses().iterator().next();
-            }
-        }
-        else if (originalFile instanceof JavaClassFileModel)
+        if (result == null)
         {
-            result = ((JavaClassFileModel) originalFile).getJavaClass();
-        }
-        else
-        {
-            LOG.warning("Unrecognized file type with annotation found at: \"" + originalFile.getFilePath() + "\"");
+            // no public classes found, so try to find any class (even non-public ones)
+            result = javaSource.getJavaClasses().iterator().next();
         }
         return result;
     }

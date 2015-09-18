@@ -14,31 +14,31 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(RMIServiceModel.TYPE)
 public interface RMIServiceModel extends RemoteServiceModel
 {
-    public static final String TYPE = "RMIService";
-    public static final String RMI_IMPLEMENTATION_CLASS = "rmiImplementationClass";
-    public static final String RMI_INTERFACE = "rmiInterface";
+    String TYPE = "RMIService";
+    String RMI_IMPLEMENTATION_CLASS = "rmiImplementationClass";
+    String RMI_INTERFACE = "rmiInterface";
     
     /**
      * Contains the RMI implementation class
      */
     @Adjacency(label = RMI_IMPLEMENTATION_CLASS, direction = Direction.OUT)
-    public void setImplementationClass(JavaClassModel implRef);
+    void setImplementationClass(JavaClassModel implRef);
 
     /**
      * Contains the RMI implementation class
      */
     @Adjacency(label = RMI_IMPLEMENTATION_CLASS, direction = Direction.OUT)
-    public JavaClassModel getImplementationClass();
+    JavaClassModel getImplementationClass();
 
     /**
      * Contains the RMI implementation class
      */
     @Adjacency(label = RMI_INTERFACE, direction = Direction.OUT)
-    public void setInterface(JavaClassModel interfaceRef);
+    void setInterface(JavaClassModel interfaceRef);
 
     /**
      * Contains the RMI implementation class
      */
     @Adjacency(label = RMI_INTERFACE, direction = Direction.OUT)
-    public JavaClassModel getInterface();
+    JavaClassModel getInterface();
 }

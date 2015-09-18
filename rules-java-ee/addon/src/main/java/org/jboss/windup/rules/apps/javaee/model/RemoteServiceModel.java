@@ -12,5 +12,5 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(RemoteServiceModel.TYPE)
 public interface RemoteServiceModel extends WindupVertexFrame
 {
-    public static final String TYPE = "RemoteService";
+    String TYPE = "RemoteService";
 }

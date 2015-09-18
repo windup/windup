@@ -11,12 +11,9 @@ import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.Service;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
-import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
@@ -93,17 +90,17 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
 
     private void extractEJBMetadata(GraphRewrite event, JavaTypeReferenceModel javaTypeReference)
     {
-        ((SourceFileModel) javaTypeReference.getFile()).setGenerateSourceReport(true);
+        javaTypeReference.getFile().setGenerateSourceReport(true);
         JavaAnnotationTypeReferenceModel annotationTypeReference = (JavaAnnotationTypeReferenceModel) javaTypeReference;
 
         JavaClassModel ejbClass = getJavaClass(javaTypeReference);
 
         String ejbName = getAnnotationLiteralValue(annotationTypeReference, "name");
-        if(Strings.isNullOrEmpty(ejbName))
+        if (Strings.isNullOrEmpty(ejbName))
         {
             ejbName = ejbClass.getClassName();
         }
-        
+
         String sessionType = javaTypeReference.getResolvedSourceSnippit()
                     .substring(javaTypeReference.getResolvedSourceSnippit().lastIndexOf(".") + 1);
 
@@ -116,17 +113,17 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
 
     private void extractMessageDrivenMetadata(GraphRewrite event, JavaTypeReferenceModel javaTypeReference)
     {
-        ((SourceFileModel) javaTypeReference.getFile()).setGenerateSourceReport(true);
+        javaTypeReference.getFile().setGenerateSourceReport(true);
         JavaAnnotationTypeReferenceModel annotationTypeReference = (JavaAnnotationTypeReferenceModel) javaTypeReference;
 
         JavaClassModel ejbClass = getJavaClass(javaTypeReference);
 
         String ejbName = getAnnotationLiteralValue(annotationTypeReference, "name");
-        if(Strings.isNullOrEmpty(ejbName))
+        if (Strings.isNullOrEmpty(ejbName))
         {
             ejbName = ejbClass.getClassName();
         }
-        
+
         String destination = getAnnotationLiteralValue(annotationTypeReference, "mappedName");
         if (StringUtils.isBlank(destination))
         {
@@ -200,33 +197,21 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
     private JavaClassModel getJavaClass(JavaTypeReferenceModel javaTypeReference)
     {
         JavaClassModel result = null;
-        FileModel originalFile = javaTypeReference.getFile();
-        if (originalFile instanceof JavaSourceFileModel)
+        JavaSourceFileModel javaSource = javaTypeReference.getFile();
+        for (JavaClassModel javaClassModel : javaSource.getJavaClasses())
         {
-            JavaSourceFileModel javaSource = (JavaSourceFileModel) originalFile;
-            for (JavaClassModel javaClassModel : javaSource.getJavaClasses())
+            // there can be only one public one, and the annotated class should be public
+            if (javaClassModel.isPublic() != null && javaClassModel.isPublic())
             {
-                // there can be only one public one, and the annotated class should be public
-                if (javaClassModel.isPublic() != null && javaClassModel.isPublic())
-                {
-                    result = javaClassModel;
-                    break;
-                }
+                result = javaClassModel;
+                break;
             }
+        }
 
-            if (result == null)
-            {
-                // no public classes found, so try to find any class (even non-public ones)
-                result = javaSource.getJavaClasses().iterator().next();
-            }
-        }
-        else if (originalFile instanceof JavaClassFileModel)
+        if (result == null)
         {
-            result = ((JavaClassFileModel) originalFile).getJavaClass();
-        }
-        else
-        {
-            LOG.warning("Unrecognized file type with annotation found at: \"" + originalFile.getFilePath() + "\"");
+            // no public classes found, so try to find any class (even non-public ones)
+            result = javaSource.getJavaClasses().iterator().next();
         }
         return result;
     }

@@ -14,31 +14,31 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(JaxWSWebServiceModel.TYPE)
 public interface JaxWSWebServiceModel extends WebServiceModel
 {
-    public static final String TYPE = "JaxWSService";
-    public static final String JAXWS_IMPLEMENTATION_CLASS = "jaxwsImplementationClass";
-    public static final String JAXWS_INTERFACE = "jaxwsInterface";
+    String TYPE = "JaxWSService";
+    String JAXWS_IMPLEMENTATION_CLASS = "jaxwsImplementationClass";
+    String JAXWS_INTERFACE = "jaxwsInterface";
      
     /**
      * Contains the JAX-WS implementation class
      */
     @Adjacency(label = JAXWS_IMPLEMENTATION_CLASS, direction = Direction.OUT)
-    public void setImplementationClass(JavaClassModel implRef);
+    void setImplementationClass(JavaClassModel implRef);
 
     /**
      * Contains the JAX-WS implementation class
      */
     @Adjacency(label = JAXWS_IMPLEMENTATION_CLASS, direction = Direction.OUT)
-    public JavaClassModel getImplementationClass();
+    JavaClassModel getImplementationClass();
 
     /**
      * Contains the JAX-WS implementation class
      */
     @Adjacency(label = JAXWS_INTERFACE, direction = Direction.OUT)
-    public void setInterface(JavaClassModel interfaceRef);
+    void setInterface(JavaClassModel interfaceRef);
 
     /**
      * Contains the JAX-WS implementation class
      */
     @Adjacency(label = JAXWS_INTERFACE, direction = Direction.OUT)
-    public JavaClassModel getInterface();
+    JavaClassModel getInterface();
 }

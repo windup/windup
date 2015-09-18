@@ -1,6 +1,5 @@
 package org.jboss.windup.rules.apps.javaee.rules;
 
-import java.util.Iterator;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
@@ -12,16 +11,13 @@ import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.model.resource.SourceFileModel;
-import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
-import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.jboss.windup.rules.apps.javaee.model.RMIServiceModel;
+import org.jboss.windup.rules.apps.javaee.service.RMIServiceModelService;
 import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -67,58 +63,39 @@ public class DiscoverRmiRuleProvider extends AbstractRuleProvider
 
     private void extractMetadata(GraphRewrite event, JavaTypeReferenceModel typeReference)
     {
-        JavaClassService jcs = new JavaClassService(event.getGraphContext());
-
         // get the rmi interface class from the graph
-        JavaClassModel jcm = getJavaClass(typeReference);
+        JavaClassModel javaClassModel = getJavaClass(typeReference);
 
-        if (!isRemote(jcm))
+        if (!isRemoteInterface(javaClassModel))
         {
-            LOG.warning("Is not remote: " + jcm.getQualifiedName());
+            LOG.warning("Is not remote: " + javaClassModel.getQualifiedName());
             return;
         }
 
         LOG.info("Processing: " + typeReference);
-        // sets to decompile
-        ((SourceFileModel) typeReference.getFile()).setGenerateSourceReport(true);
+        // Make sure we create a source report for the interface source
+        typeReference.getFile().setGenerateSourceReport(true);
 
-        GraphService<RMIServiceModel> rmiService = new GraphService<>(event.getGraphContext(), RMIServiceModel.class);
+        RMIServiceModelService rmiService = new RMIServiceModelService(event.getGraphContext());
 
-        if (jcm != null)
+        if (javaClassModel != null)
         {
-            // now, look to see whether it extends Remote
-            Iterator<JavaClassModel> impls = jcm.getImplementedBy().iterator();
-            if (impls.hasNext())
-            {
-                RMIServiceModel rmiServiceModel = rmiService.create();
-                rmiServiceModel.setInterface(jcm);
+            RMIServiceModel rmiServiceModel = rmiService.getOrCreate(javaClassModel);
 
-                LOG.info("RMI Interface: " + jcm.getQualifiedName());
-                // find something that implements the interface
-                while (impls.hasNext())
-                {
-                    JavaClassModel implModel = impls.next();
-                    LOG.info(" -- Impementations: " + implModel.getQualifiedName());
-                    rmiServiceModel.setImplementationClass(implModel);
-
-                    // create the source report for the RMI Implementation.
-                    for (JavaSourceFileModel source : jcs.getJavaSource(implModel.getQualifiedName()))
-                    {
-                        source.setGenerateSourceReport(true);
-                    }
-                }
-            }
-            else
+            // Create the source report for the RMI Implementation.
+            JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
+            for (JavaSourceFileModel source : javaClassService.getJavaSource(rmiServiceModel.getImplementationClass().getQualifiedName()))
             {
-                LOG.info("No implementations for RMI Interface: " + jcm.getQualifiedName());
-                RMIServiceModel rmiServiceModel = rmiService.create();
-                rmiServiceModel.setInterface(jcm);
+                source.setGenerateSourceReport(true);
             }
         }
     }
 
-    public boolean isRemote(JavaClassModel jcm)
+    public boolean isRemoteInterface(JavaClassModel jcm)
     {
+        if (!jcm.isInterface())
+            return false;
+
         LOG.info("Class: " + jcm.getQualifiedName());
         for (JavaClassModel im : jcm.getInterfaces())
         {
@@ -139,33 +116,22 @@ public class DiscoverRmiRuleProvider extends AbstractRuleProvider
     private JavaClassModel getJavaClass(JavaTypeReferenceModel javaTypeReference)
     {
         JavaClassModel result = null;
-        FileModel originalFile = javaTypeReference.getFile();
-        if (originalFile instanceof JavaSourceFileModel)
-        {
-            JavaSourceFileModel javaSource = (JavaSourceFileModel) originalFile;
-            for (JavaClassModel javaClassModel : javaSource.getJavaClasses())
-            {
-                // there can be only one public one, and the annotated class should be public
-                if (javaClassModel.isPublic() != null && javaClassModel.isPublic())
-                {
-                    result = javaClassModel;
-                    break;
-                }
-            }
+        JavaSourceFileModel javaSource = javaTypeReference.getFile();
 
-            if (result == null)
+        for (JavaClassModel javaClassModel : javaSource.getJavaClasses())
+        {
+            // there can be only one public one, and the annotated class should be public
+            if (javaClassModel.isPublic() != null && javaClassModel.isPublic())
             {
-                // no public classes found, so try to find any class (even non-public ones)
-                result = javaSource.getJavaClasses().iterator().next();
+                result = javaClassModel;
+                break;
             }
         }
-        else if (originalFile instanceof JavaClassFileModel)
+
+        if (result == null)
         {
-            result = ((JavaClassFileModel) originalFile).getJavaClass();
-        }
-        else
-        {
-            LOG.warning("Unrecognized file type with annotation found at: \"" + originalFile.getFilePath() + "\"");
+            // no public classes found, so try to find any class (even non-public ones)
+            result = javaSource.getJavaClasses().iterator().next();
         }
         return result;
     }

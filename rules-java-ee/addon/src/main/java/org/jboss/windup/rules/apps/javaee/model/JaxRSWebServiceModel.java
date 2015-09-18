@@ -1,5 +1,6 @@
 package org.jboss.windup.rules.apps.javaee.model;
 
+import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 
 import com.tinkerpop.blueprints.Direction;
@@ -15,46 +16,47 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(JaxRSWebServiceModel.TYPE)
 public interface JaxRSWebServiceModel extends WebServiceModel
 {
-    public static final String TYPE = "JaxRSWebService";
-    public static final String JAXRS_IMPLEMENTATION_CLASS = "jaxrsImplementationClass";
-    public static final String JAXRS_INTERFACE = "jaxrsInterface";
+    String TYPE = "JaxRSWebService";
+    String JAXRS_IMPLEMENTATION_CLASS = "jaxrsImplementationClass";
+    String JAXRS_INTERFACE = "jaxrsInterface";
     
-    public static final String PATH = "jaxrsPath";
+    String PATH = "jaxrsPath";
     
 
     /**
      * Contains the URL path to the JaxRS service.
      */
     @Property(PATH)
-    public String getPath();
+    @Indexed
+    String getPath();
 
     /**
      * Contains the URL path to the JaxRS service.
      */
     @Property(PATH)
-    public void setPath(String packageName);
+    void setPath(String packageName);
     
     /**
      * Contains the JAX-RS implementation class
      */
     @Adjacency(label = JAXRS_IMPLEMENTATION_CLASS, direction = Direction.OUT)
-    public void setImplementationClass(JavaClassModel implRef);
+    void setImplementationClass(JavaClassModel implRef);
 
     /**
      * Contains the JAX-RS implementation class
      */
     @Adjacency(label = JAXRS_IMPLEMENTATION_CLASS, direction = Direction.OUT)
-    public JavaClassModel getImplementationClass();
+    JavaClassModel getImplementationClass();
 
     /**
      * Contains the JAX-RS implementation class
      */
     @Adjacency(label = JAXRS_INTERFACE, direction = Direction.OUT)
-    public void setInterface(JavaClassModel interfaceRef);
+    void setInterface(JavaClassModel interfaceRef);
 
     /**
      * Contains the JAX-RS implementation class
      */
     @Adjacency(label = JAXRS_INTERFACE, direction = Direction.OUT)
-    public JavaClassModel getInterface();
+    JavaClassModel getInterface();
 }

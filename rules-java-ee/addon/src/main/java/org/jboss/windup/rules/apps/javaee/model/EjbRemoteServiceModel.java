@@ -14,31 +14,31 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(EjbRemoteServiceModel.TYPE)
 public interface EjbRemoteServiceModel extends RemoteServiceModel
 {
-    public static final String TYPE = "EjbRemoteService";
-    public static final String EJB_IMPLEMENTATION_CLASS = "ejbImplementationClass";
-    public static final String EJB_INTERFACE = "ejbRemoteInterface";
+    String TYPE = "EjbRemoteService";
+    String EJB_IMPLEMENTATION_CLASS = "ejbImplementationClass";
+    String EJB_INTERFACE = "ejbRemoteInterface";
     
     /**
      * Contains the RMI implementation class
      */
     @Adjacency(label = EJB_IMPLEMENTATION_CLASS, direction = Direction.OUT)
-    public void setImplementationClass(JavaClassModel implRef);
+    void setImplementationClass(JavaClassModel implRef);
 
     /**
      * Contains the RMI implementation class
      */
     @Adjacency(label = EJB_IMPLEMENTATION_CLASS, direction = Direction.OUT)
-    public JavaClassModel getImplementationClass();
+    JavaClassModel getImplementationClass();
 
     /**
      * Contains the RMI implementation class
      */
     @Adjacency(label = EJB_INTERFACE, direction = Direction.OUT)
-    public void setInterface(JavaClassModel interfaceRef);
+    void setInterface(JavaClassModel interfaceRef);
 
     /**
      * Contains the RMI implementation class
      */
     @Adjacency(label = EJB_INTERFACE, direction = Direction.OUT)
-    public JavaClassModel getInterface();
+    JavaClassModel getInterface();
 }
