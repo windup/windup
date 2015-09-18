@@ -17,6 +17,10 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+
+/**
+ * Adds the vertex types to ArchiveModels as per the file's extension.
+ */
 public class ConfigureArchiveTypes extends AbstractIterationOperation<ArchiveModel>
 {
 

@@ -19,6 +19,10 @@ import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
+
+/**
+ * Adds the getPackageUseFrequencies() and createTypeReference().
+ */
 public class TypeReferenceService extends GraphService<JavaTypeReferenceModel>
 {
     public TypeReferenceService(GraphContext context)
@@ -29,7 +33,7 @@ public class TypeReferenceService extends GraphService<JavaTypeReferenceModel>
     /**
      * Returns the list of most frequently hinted packages (based upon JavaInlineHintModel references) within the given ProjectModel. If recursive is
      * set to true, then also include child projects.
-     * 
+     *
      * nameDepth controls how many package levels to include (com.* vs com.example.* vs com.example.sub.*)
      */
     public Map<String, Integer> getPackageUseFrequencies(ProjectModel projectModel, int nameDepth, boolean recursive)

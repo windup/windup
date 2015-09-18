@@ -17,6 +17,10 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+
+/**
+ * Runs Tattletale on the Windup's input.
+ */
 public class TattletaleRuleProvider extends AbstractRuleProvider
 {
     private static final String TATTLETALE_REPORT_SUBDIR = "tattletale";

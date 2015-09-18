@@ -1,10 +1,13 @@
 package org.jboss.windup.util.xml;
 
+/**
+ * Used while parsing XML-related rules.
+ */
 public class NamespaceEntry {
 
 	private final String prefix;
 	private final String namespaceURI;
-	
+
 	public NamespaceEntry(String prefix, String namespaceURI) {
 		this.prefix = prefix;
 		this.namespaceURI = namespaceURI;

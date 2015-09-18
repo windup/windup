@@ -28,6 +28,11 @@ import org.jboss.windup.util.ZipUtil;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+
+
+/**
+ * This Operation unzips the file pointed to by payload (ArchiveModel) to a temporary folder.
+ */
 public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<ArchiveModel>
 {
     private static final String MALFORMED_ARCHIVE = "Malformed archive";

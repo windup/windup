@@ -24,6 +24,8 @@ import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.windup.util.PathUtil;
 
 /**
+ * Utility methods for searching all reachable resources provided by Furnace class loaders.
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>

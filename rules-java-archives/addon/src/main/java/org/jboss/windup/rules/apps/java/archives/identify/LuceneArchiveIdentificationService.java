@@ -23,6 +23,8 @@ import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
 
 /**
+ * Identifies archives by their hash, using pre-created Lucene index. See the nexus-repository-indexer project.
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public class LuceneArchiveIdentificationService implements ArchiveIdentificationService, Closeable

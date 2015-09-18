@@ -19,6 +19,10 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+
+/**
+ * Creates the report HTML page for compatible files - "lift and shift" files.
+ */
 public class CreateCompatibleFileReportRuleProvider extends AbstractRuleProvider
 {
     private static final String TEMPLATE_APPLICATION_REPORT = "/reports/templates/compatible_files.ftl";
@@ -48,7 +52,7 @@ public class CreateCompatibleFileReportRuleProvider extends AbstractRuleProvider
                 }
                 createApplicationReport(event.getGraphContext(), projectModel);
             }
-            
+
             @Override
             public String toString()
             {

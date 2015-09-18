@@ -4,6 +4,9 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.xml.model.NamespaceMetaModel;
 
+/**
+ * Adds createNamespaceSchemaLocation().
+ */
 public class NamespaceService extends GraphService<NamespaceMetaModel>
 {
     public NamespaceService(GraphContext context)

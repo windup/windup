@@ -9,6 +9,9 @@ import org.jboss.windup.rules.apps.xml.model.DoctypeMetaModel;
 
 import com.tinkerpop.frames.FramedGraphQuery;
 
+/**
+ * Adds findByPublicIdAndSystemId().
+ */
 public class DoctypeMetaService extends GraphService<DoctypeMetaModel>
 {
     public DoctypeMetaService(GraphContext context)

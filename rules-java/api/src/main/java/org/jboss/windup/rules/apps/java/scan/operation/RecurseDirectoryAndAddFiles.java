@@ -1,13 +1,15 @@
 package org.jboss.windup.rules.apps.java.scan.operation;
 
 import java.io.File;
-
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.FileService;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+    /**
+     * Recurses the given folder and creates the FileModels vertices for the child files to the graph.
+     */
 public class RecurseDirectoryAndAddFiles extends AbstractIterationOperation<FileModel>
 {
     private RecurseDirectoryAndAddFiles(String variableName)
@@ -42,7 +44,7 @@ public class RecurseDirectoryAndAddFiles extends AbstractIterationOperation<File
     }
 
     /**
-     * Recurses the given folder and adds references to these files to the graph as FileModels
+     * Recurses the given folder and creates the FileModels vertices for the child files to the graph.
      */
     private void recurseAndAddFiles(FileService fileService, FileModel file)
     {

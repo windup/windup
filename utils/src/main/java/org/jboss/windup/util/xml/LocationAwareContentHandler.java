@@ -1,11 +1,11 @@
 /*
  * Copyright (c) 2013 Red Hat, Inc. and/or its affiliates.
- *  
+ *
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- *  
+ *
  *  Contributors:
  *      Brad Davis - bradsdavis@gmail.com - Initial API and implementation
 */
@@ -27,23 +27,28 @@ import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.ext.DefaultHandler2;
 
-public class LocationAwareContentHandler extends DefaultHandler2 {
+
+/**
+ * A SAX ContentHandler which stores the location of each node into that node's <code>setUserData()</code>.
+ */
+public class LocationAwareContentHandler extends DefaultHandler2
+{
 	final public static String LINE_NUMBER_KEY_NAME = "ln";
 	final public static String COLUMN_NUMBER_KEY_NAME = "cn";
 	final public static String DOCTYPE_KEY_NAME = "dt";
 	final public static String NAMESPACE_KEY_NAME = "nsuri";
-	
-	
-	private final Set<String> namespaceURIs = new HashSet<String>();
+
+
+	private final Set<String> namespaceURIs = new HashSet<>();
 	private final Document doc;
 	private Locator locator;
 	private Element current;
 	private Doctype doctype;
-	
+
 	@Override
 	public InputSource resolveEntity(String name, String publicId, String baseURI, String systemId) throws SAXException, IOException {
 		doctype = new Doctype(name, publicId, systemId, baseURI);
-		
+
 		return new InputSource(new ByteArrayInputStream(new byte[0]));
 	}
 
@@ -65,16 +70,16 @@ public class LocationAwareContentHandler extends DefaultHandler2 {
 		else {
 			e = doc.createElement(qName);
 		}
-		
+
 		storeLineInformation(e);
 		if(StringUtils.isNotBlank(uri)) {
 			namespaceURIs.add(uri);
 		}
-		
+
 		if(doc.getUserData(NAMESPACE_KEY_NAME) == null) {
 			doc.setUserData(NAMESPACE_KEY_NAME, namespaceURIs, null);
 		}
-		
+
 		if (current == null) {
 			doc.appendChild(e);
 		}
@@ -119,7 +124,7 @@ public class LocationAwareContentHandler extends DefaultHandler2 {
 			current = (Element) current.getParentNode();
 		}
 	}
-	
+
 	private void storeLineInformation(Node e) {
 	    e.setUserData(LINE_NUMBER_KEY_NAME, this.locator.getLineNumber(), null);
         e.setUserData(COLUMN_NUMBER_KEY_NAME, this.locator.getColumnNumber(), null);

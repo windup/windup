@@ -8,6 +8,11 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * A composite class loader which looks for classes and resources in a list of class loaders.
+ *
+ * @author Ondrej Zizka, ozizka at redhat.com
+ */
 public class FurnaceCompositeClassLoader extends ClassLoader
 {
     private final Set<ClassLoader> loaders = new LinkedHashSet<ClassLoader>();
