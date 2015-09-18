@@ -27,11 +27,15 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+
+/**
+ * Create a report HTML page about Windup.
+ */
 public class CreateAboutWindupReportRuleProvider extends AbstractRuleProvider
 {
-	
+
 	@Inject Addon addon;
-	
+
     public static final String REPORT_NAME = "About";
     public static final String TEMPLATE_APPLICATION_REPORT = "/reports/templates/about_windup.ftl";
 
@@ -60,7 +64,7 @@ public class CreateAboutWindupReportRuleProvider extends AbstractRuleProvider
                 }
                 createApplicationReport(event.getGraphContext(), projectModel);
             }
-            
+
             @Override
             public String toString()
             {
@@ -80,7 +84,7 @@ public class CreateAboutWindupReportRuleProvider extends AbstractRuleProvider
     {
     	ApplicationReportService applicationReportService = new ApplicationReportService(context);
     	ApplicationReportModel applicationReportModel = applicationReportService.create();
-    	
+
     	applicationReportModel.setReportPriority(10000);
         applicationReportModel.setDisplayInApplicationReportIndex(true);
         applicationReportModel.setReportName(REPORT_NAME);
@@ -92,19 +96,19 @@ public class CreateAboutWindupReportRuleProvider extends AbstractRuleProvider
 
         Map<String, WindupVertexFrame> related = new HashMap<String, WindupVertexFrame>();
         AboutWindupModel aboutWindupModel = context.getFramed().addVertex(null, AboutWindupModel.class);
-        
+
         aboutWindupModel.setWindupRuntimeVersion(addon.getId().getVersion().toString());
         related.put("windupAbout", aboutWindupModel);
-        
+
         applicationReportModel.setRelatedResource(related);
-        
+
         // Set the filename for the report
         ReportService reportService = new ReportService(context);
         reportService.setUniqueFilename(applicationReportModel, "about_"+projectModel.getName(), "html");
 
         return applicationReportModel;
     }
-    
+
 }
 
 

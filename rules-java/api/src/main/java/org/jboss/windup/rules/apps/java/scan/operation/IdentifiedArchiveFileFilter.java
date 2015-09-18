@@ -8,6 +8,10 @@ import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.util.Logging;
 
+
+/**
+ * Accepts certain known files from an archive, like MANIFEST.MF, Maven related, and licenses.
+ */
 public class IdentifiedArchiveFileFilter implements FileFilter
 {
     private static final Logger LOG = Logging.get(IdentifiedArchiveFileFilter.class);

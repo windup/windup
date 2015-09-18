@@ -4,6 +4,9 @@ import org.jboss.windup.config.AbstractConfigurationOption;
 import org.jboss.windup.config.InputType;
 import org.jboss.windup.config.ValidationResult;
 
+/**
+ * Windup option for excluding packages.s
+ */
 public class ExcludePackagesOption extends AbstractConfigurationOption
 {
 

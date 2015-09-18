@@ -18,6 +18,8 @@ import org.jboss.windup.rules.apps.java.JavaTechnologyMetadata;
 import org.w3c.dom.Element;
 
 /**
+ * Handler for the <java-technology-metadata> element.
+ * 
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @NamespaceElementHandler(elementName = JavaTechnologyMetadataHandler.ELEM_NAME, namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)

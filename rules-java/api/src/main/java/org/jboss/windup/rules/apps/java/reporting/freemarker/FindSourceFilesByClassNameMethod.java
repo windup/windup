@@ -13,6 +13,10 @@ import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import freemarker.template.SimpleScalar;
 import freemarker.template.TemplateModelException;
 
+
+/**
+ * A Freemarker method for finding a source for a class by it's name.
+ */
 public class FindSourceFilesByClassNameMethod implements WindupFreeMarkerMethod
 {
     private static final String NAME = "findSourceFilesByClassName";

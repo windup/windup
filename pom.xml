@@ -278,7 +278,7 @@
                                     <dependencySourceExcludes>
                                         <dependencySourceExclude>com.tinkerpop.frames:frames</dependencySourceExclude>
                                     </dependencySourceExcludes>
-                                    <excludePackageNames>com.tinkerpop.frames:com.tinkerpop.frames.*</excludePackageNames>
+                                    <excludePackageNames>com.tinkerpop.frames,com.tinkerpop.frames.*,com.strobel.*,org.eclipse.*,org.jetbrains.*</excludePackageNames>
 
                                     <groups>
                                         <group>

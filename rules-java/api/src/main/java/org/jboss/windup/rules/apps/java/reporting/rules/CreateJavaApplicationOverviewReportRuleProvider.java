@@ -23,6 +23,10 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+
+/**
+ * Creates the main report HTML page for a Java application.
+ */
 public class CreateJavaApplicationOverviewReportRuleProvider extends AbstractRuleProvider
 {
     public static final String OVERVIEW = "Overview";
@@ -53,7 +57,7 @@ public class CreateJavaApplicationOverviewReportRuleProvider extends AbstractRul
                 }
                 createApplicationReport(event.getGraphContext(), projectModel);
             }
-            
+
             @Override
             public String toString()
             {

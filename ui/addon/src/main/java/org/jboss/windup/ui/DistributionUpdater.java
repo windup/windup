@@ -21,8 +21,10 @@ import org.jboss.windup.util.PathUtil;
 import org.jboss.windup.util.exception.WindupException;
 
 /**
+ * Performs the update of Windup distribution, currently by replacing a Windup directory
+ * with the content of a new Windup version offline distribution archive.
  *
- *  @author Ondrej Zizka, ozizka at redhat.com
+ * @author Ondrej Zizka, ozizka at redhat.com
  */
 public class DistributionUpdater
 {

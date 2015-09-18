@@ -1,11 +1,11 @@
 /*
  * Copyright (c) 2013 Red Hat, Inc. and/or its affiliates.
- *  
+ *
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
  *  http://www.eclipse.org/legal/epl-v10.html
- *  
+ *
  *  Contributors:
  *      Brad Davis - bradsdavis@gmail.com - Initial API and implementation
 */
@@ -21,8 +21,12 @@ import java.util.Set;
 
 import javax.xml.namespace.NamespaceContext;
 
-public class NamespaceMapContext implements NamespaceContext {
-	private final Map<String, String> context = new HashMap<String, String>();
+/**
+ * A simple map-based implementation of NamespaceContext.
+ */
+public class NamespaceMapContext implements NamespaceContext
+{
+	private final Map<String, String> context = new HashMap<>();
 
 	public NamespaceMapContext() {
 
@@ -33,15 +37,15 @@ public class NamespaceMapContext implements NamespaceContext {
 			context.putAll(in);
 		}
 	}
-	
+
 	public void addNamespaceEntry(NamespaceEntry entry) {
 		context.put(entry.getPrefix(), entry.getNamespaceURI());
 	}
-	
+
 	public void addPrefix(String prefix, String namespaceURI) {
 		context.put(prefix, namespaceURI);
 	}
-	
+
 	public Set<String> getNamespaceURIs() {
 		return new HashSet<String>(context.values());
 	}

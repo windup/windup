@@ -9,6 +9,12 @@ import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.event.PostStartup;
 
 
+/**
+ * Upon the <code>PostStartup</code> CDI event, this checks whether
+ * a Windup core ruleset update is available.
+ *
+ * @author Ondrej Zizka, ozizka at redhat.com
+ */
 @Singleton
 public class RulesetUpdateChecker
 {

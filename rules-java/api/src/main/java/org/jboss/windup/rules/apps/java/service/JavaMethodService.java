@@ -7,6 +7,10 @@ import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaMethodModel;
 import org.jboss.windup.rules.apps.java.model.JavaParameterModel;
 
+
+/**
+ * Adds createJavaMethod() and methodParametersMatch().
+ */
 public class JavaMethodService extends GraphService<JavaMethodModel>
 {
     private final JavaParameterService paramService;

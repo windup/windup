@@ -18,8 +18,7 @@ import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
- * Represents a File on disk
- *
+ * Represents a File on disk.
  */
 @TypeValue(FileModel.TYPE)
 public interface FileModel extends ResourceModel

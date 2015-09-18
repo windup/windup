@@ -1,8 +1,8 @@
 == Windup 2.0
 
-NOTE:: The Windup 2.0 project is currently under development.
+Windup is an automated application migration and assessment tool.
 If you want to contribute or participate in developer discussions,
-join us on the `irc.freenode.net` `#windup` channel 
+join us on the `irc.freenode.net` `#windup` channel
 or subscribe to the link:https://lists.jboss.org/mailman/listinfo/windup-dev[windup-dev mailing list].
 
 == Get involved
@@ -23,7 +23,7 @@ After that, follow the link:https://github.com/windup/windup/wiki/Execute[User G
 
 === Project Source Code Format
 
-This project has an agreed upon source format style documented via an 
+This project has an agreed upon source format style documented via an
 link:https://github.com/windup/windup/blob/master/ide-config/Eclipse_Code_Format_Profile.xml[Eclipse code formatter profile].
 If using an alternate IDE, plugins are available to allow use of this profile (see below).
 All contributions should be formatted using this profile before submission.
