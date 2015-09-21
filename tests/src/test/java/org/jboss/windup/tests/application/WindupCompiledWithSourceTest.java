@@ -1,5 +1,10 @@
 package org.jboss.windup.tests.application;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
@@ -7,17 +12,16 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.ProjectModel;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.graph.service.ProjectService;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.io.File;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import com.google.common.collect.Iterables;
 
 /**
  * Test and application that contains .java and .class sources for the same file.
@@ -56,8 +60,9 @@ public class WindupCompiledWithSourceTest extends WindupArchitectureTest
             List<String> includeList = Collections.emptyList();
             List<String> excludeList = Collections.emptyList();
             super.runTest(context, path, null, false, includeList, excludeList);
-            String duplicate=findDuplicateJavaFile(context);
-            if(duplicate != null) {
+            String duplicate = findDuplicateJavaFile(context);
+            if (duplicate != null)
+            {
                 Assert.fail("Windup registered twice the same java class " + duplicate);
             }
         }
@@ -73,31 +78,61 @@ public class WindupCompiledWithSourceTest extends WindupArchitectureTest
             List<String> includeList = Collections.emptyList();
             List<String> excludeList = Collections.emptyList();
             super.runTest(context, path, null, false, includeList, excludeList);
-            String duplicate=findDuplicateJavaFile(context);
-            if(duplicate == null) {
-                Assert.fail("Windup should have registered multiple versions of the same java file, but it did not.");
+            String duplicate = findDuplicateJavaFile(context);
+            if (duplicate != null)
+            {
+                Assert.fail("Windup registered twice the same java class " + duplicate);
             }
 
         }
     }
 
+    @Test
+    public void testRunWindupOnJarWithSourceAndClassFiles() throws Exception
+    {
+        try (GraphContext context = super.createGraphContext())
+        {
+            final String path = "../test-files/rexster/jar-with-source-and-class/rexster.jar";
+
+            List<String> includeList = Collections.emptyList();
+            List<String> excludeList = Collections.emptyList();
+            super.runTest(context, path, null, false, includeList, excludeList);
+
+            Iterable<ProjectModel> models = new ProjectService(context).findAll();
+            Assert.assertEquals(1, Iterables.size(models));
+
+            ProjectModel project = models.iterator().next();
+            Set<FileModel> duplicateCheck = new HashSet<>();
+            for (FileModel fileModel : project.getFileModels())
+            {
+                if (duplicateCheck.contains(fileModel))
+                    Assert.fail("Duplicate model detected, aborting");
+                else
+                    duplicateCheck.add(fileModel);
+            }
+        }
+    }
+
     /**
      * There shouldn't be multiple .java files registered for the same {package}{className}
+     * 
      * @param context
      */
     private String findDuplicateJavaFile(GraphContext context)
     {
-        GraphService<JavaSourceFileModel> javaFileService = new GraphService<JavaSourceFileModel>(context, JavaSourceFileModel.class);
-        Set<String> foundJavaClasses = new HashSet<String>();
+        GraphService<JavaSourceFileModel> javaFileService = new GraphService<>(context, JavaSourceFileModel.class);
+        Set<String> foundJavaClasses = new HashSet<>();
         for (JavaSourceFileModel javaSourceFileModel : javaFileService.findAll())
         {
             String javaClassIdentififer = javaSourceFileModel.getPackageName() + "." + javaSourceFileModel.getFileName();
-            if(foundJavaClasses.contains(javaClassIdentififer)) {
+            if (foundJavaClasses.contains(javaClassIdentififer))
+            {
                 return javaClassIdentififer;
-            } else {
+            }
+            else
+            {
                 foundJavaClasses.add(javaClassIdentififer);
             }
-
         }
         return null;
     }

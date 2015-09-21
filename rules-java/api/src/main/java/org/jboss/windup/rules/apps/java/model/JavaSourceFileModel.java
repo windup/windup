@@ -85,7 +85,7 @@ public interface JavaSourceFileModel extends FileModel, SourceFileModel
      * Specifies if the given .java file was decompiled from a .class file
      */
     @Property(IS_DECOMPILED)
-    boolean isDecompiled();
+    Boolean isDecompiled();
 
     /**
      * Specifies if the given .java file was decompiled from a .class file

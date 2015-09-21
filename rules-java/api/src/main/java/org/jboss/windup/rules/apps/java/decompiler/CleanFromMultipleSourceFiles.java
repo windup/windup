@@ -1,19 +1,21 @@
 package org.jboss.windup.rules.apps.java.decompiler;
 
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
-import com.tinkerpop.pipes.PipeFunction;
-import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.operation.GraphOperation;
-import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
-import org.ocpsoft.rewrite.context.EvaluationContext;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+
+import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.operation.GraphOperation;
+import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.ProjectModel;
+import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
+import org.ocpsoft.rewrite.context.EvaluationContext;
+
+import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.gremlin.java.GremlinPipeline;
+import com.tinkerpop.pipes.PipeFunction;
 
 /**
  * Removes all the duplicates of .java file within a projectModel. There may be multiple especially in cases where .class is bundled with .java files.
@@ -35,9 +37,7 @@ public class CleanFromMultipleSourceFiles extends GraphOperation
             {
                 gContext.getGraph().removeVertex(javaSourceFileModel.asVertex());
             }
-
         }
-
     }
 
     // helping methods
@@ -50,7 +50,11 @@ public class CleanFromMultipleSourceFiles extends GraphOperation
             {
                 JavaSourceFileModel javaModel = context.getFramed().frame(vertex, JavaSourceFileModel.class);
                 // String that identifies 3 properties - projectModel + packageName + className that must be the same for vertices
-                return javaModel.getProjectModel().getRootFileModel().getFilePath() + javaModel.getPackageName() + javaModel.getFileName();
+                ProjectModel projectModel = javaModel.getProjectModel();
+                String projectModelID = projectModel == null ? "" : projectModel.asVertex().getId().toString();
+                String packageName = javaModel.getPackageName() == null ? "" : javaModel.getPackageName();
+
+                return projectModelID + "_" + packageName + "_" + javaModel.getFileName();
             }
         };
     }
@@ -82,7 +86,7 @@ public class CleanFromMultipleSourceFiles extends GraphOperation
                 while (iterator.hasNext())
                 {
                     JavaSourceFileModel javaModel = iterator.next();
-                    if (javaModel.isDecompiled() && !uniqueClassFound)
+                    if (javaModel.isDecompiled() != null && javaModel.isDecompiled() && !uniqueClassFound)
                     {
                         uniqueClassFound = true;
                     }

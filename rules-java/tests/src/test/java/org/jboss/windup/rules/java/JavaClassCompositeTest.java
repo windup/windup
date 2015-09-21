@@ -31,6 +31,7 @@ import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
 import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
+import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.jboss.windup.rules.apps.java.scan.provider.AnalyzeJavaFilesRuleProvider;
 import org.junit.Assert;
@@ -84,6 +85,7 @@ public class JavaClassCompositeTest
             processorConfig.setInputPath(Paths.get(inputDir));
             processorConfig.setOutputDirectory(outputPath);
             processorConfig.setOptionValue(ScanPackagesOption.NAME, Collections.singletonList(""));
+            processorConfig.setOptionValue(SourceModeOption.NAME, true);
 
             processor.execute(processorConfig);
 

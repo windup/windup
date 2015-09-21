@@ -7,6 +7,7 @@ import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.DecompilationPhase;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.rules.apps.java.condition.SourceMode;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -44,9 +45,12 @@ public class DecompileClassesRuleProvider extends AbstractRuleProvider
     {
         return ConfigurationBuilder.begin()
         .addRule()
+        .when(SourceMode.isDisabled())
         .perform(new DecompileCondition())
         .addRule()
+        .when(SourceMode.isDisabled())
         .perform(new CleanFromMultipleSourceFiles());
+
     }
     // @formatter:on
 

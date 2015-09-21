@@ -1,27 +1,15 @@
 package org.jboss.windup.graph.model;
 
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.frames.modules.javahandler.JavaHandler;
-import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import org.jboss.windup.graph.model.resource.FileModel;
 
 import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.annotations.gremlin.GremlinGroovy;
+import com.tinkerpop.frames.modules.javahandler.JavaHandler;
+import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
-import org.jboss.windup.util.exception.WindupException;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Base interface representing an abstract project model with a project name, version, type, and location on disk. Projects may be source-based or

@@ -38,6 +38,7 @@ import org.jboss.windup.reporting.config.Hint;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
 import org.jboss.windup.rules.apps.java.config.EnableClassNotFoundAnalysisOption;
 import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
+import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.jboss.windup.rules.apps.java.scan.provider.AnalyzeJavaFilesRuleProvider;
 import org.junit.Assert;
@@ -121,6 +122,7 @@ public class JavaClassBindingStatusTest
             processorConfig.setOutputDirectory(outputPath);
             processorConfig.setOptionValue(ScanPackagesOption.NAME, Collections.singletonList(""));
             processorConfig.setOptionValue(EnableClassNotFoundAnalysisOption.NAME, true);
+            processorConfig.setOptionValue(SourceModeOption.NAME, true);
 
             processor.execute(processorConfig);
 
