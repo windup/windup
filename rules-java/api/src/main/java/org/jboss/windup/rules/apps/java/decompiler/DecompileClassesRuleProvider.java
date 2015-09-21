@@ -14,10 +14,9 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * This will decompile all Java .class files found in the incoming application.
- *
+ * 
  * This will use the Fernflower decompiler by default, however this can be overridden with a system property (
  * {@link DecompileClassesRuleProvider#DECOMPILER_PROPERTY}).
- *
  */
 public class DecompileClassesRuleProvider extends AbstractRuleProvider
 {
@@ -45,7 +44,9 @@ public class DecompileClassesRuleProvider extends AbstractRuleProvider
     {
         return ConfigurationBuilder.begin()
         .addRule()
-        .perform(new DecompileCondition());
+        .perform(new DecompileCondition())
+        .addRule()
+        .perform(new CleanFromMultipleSourceFiles());
     }
     // @formatter:on
 
@@ -78,4 +79,6 @@ public class DecompileClassesRuleProvider extends AbstractRuleProvider
             }
         }
     }
+
+
 }
