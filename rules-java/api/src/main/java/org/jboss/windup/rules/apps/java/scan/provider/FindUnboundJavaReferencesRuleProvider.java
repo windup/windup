@@ -11,7 +11,6 @@ import org.jboss.windup.config.phase.PreReportGenerationPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.config.HasHint;
 import org.jboss.windup.reporting.model.InlineHintModel;
@@ -96,8 +95,7 @@ public class FindUnboundJavaReferencesRuleProvider extends AbstractRuleProvider
                 hint.setTitle(TITLE);
                 hint.setHint("This class reference (" + typeReference.getDescription() + ") could not be found on the classpath");
 
-                if (typeReference.getFile() instanceof SourceFileModel)
-                    ((SourceFileModel) typeReference.getFile()).setGenerateSourceReport(true);
+                typeReference.getFile().setGenerateSourceReport(true);
 
                 count++;
                 if (count % 1000 == 0)
