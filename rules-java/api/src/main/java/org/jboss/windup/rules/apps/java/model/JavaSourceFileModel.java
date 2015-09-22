@@ -24,6 +24,7 @@ public interface JavaSourceFileModel extends FileModel, SourceFileModel
     public static final String PACKAGE_NAME = "packageName";
     public static final String JAVA_CLASS_MODEL = "javaClass";
     public static final String ROOT_SOURCE_FOLDER = "rootSourceFolder";
+    public static final String IS_DECOMPILED = "decompiled";
 
     /**
      * This is the "root" directory for this source file.
@@ -79,4 +80,16 @@ public interface JavaSourceFileModel extends FileModel, SourceFileModel
      */
     @Adjacency(label = JAVA_CLASS_MODEL, direction = Direction.OUT)
     void addJavaClass(JavaClassModel javaClassModel);
+
+    /**
+     * Specifies if the given .java file was decompiled from a .class file
+     */
+    @Property(IS_DECOMPILED)
+    Boolean isDecompiled();
+
+    /**
+     * Specifies if the given .java file was decompiled from a .class file
+     */
+    @Property(IS_DECOMPILED)
+    void setDecompiled(boolean decompiled);
 }

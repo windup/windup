@@ -13,8 +13,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.AbstractRuleProvider;
@@ -37,6 +37,7 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.config.Hint;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
+import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.rules.apps.xml.condition.XmlFile;
 import org.jboss.windup.rules.files.model.FileLocationModel;
 import org.junit.Assert;
@@ -101,6 +102,7 @@ public class XmlAndJavaParameterizedTest
                         .setGraphContext(context);
             windupConfiguration.setInputPath(Paths.get(inputPath.getFilePath()));
             windupConfiguration.setOutputDirectory(outputPath);
+            windupConfiguration.setOptionValue(SourceModeOption.NAME, true);
             processor.execute(windupConfiguration);
 
             GraphService<InlineHintModel> hintService = new GraphService<>(context, InlineHintModel.class);

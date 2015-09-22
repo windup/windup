@@ -31,6 +31,7 @@ import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
+import org.jboss.windup.rules.apps.java.scan.provider.IndexJavaSourceFilesRuleProvider;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.Logging;
@@ -236,12 +237,16 @@ public class FernflowerDecompilerOperation extends GraphOperation
                     {
                         if (!(decompiledFileModel instanceof JavaSourceFileModel))
                         {
-                            decompiledFileModel = new GraphService<JavaSourceFileModel>(event.getGraphContext(), JavaSourceFileModel.class)
+                            decompiledFileModel = new GraphService<>(event.getGraphContext(), JavaSourceFileModel.class)
                                         .addTypeToModel(decompiledFileModel);
                         }
                         JavaSourceFileModel decompiledSourceFileModel = (JavaSourceFileModel) decompiledFileModel;
                         TechnologyTagService techTagService = new TechnologyTagService(event.getGraphContext());
                         techTagService.addTagToFileModel(decompiledSourceFileModel, TECH_TAG, TECH_TAG_LEVEL);
+
+                        // Don't also tag it as a regular source model (only tag it as decompiled).
+                        // This can happen if the source file was already there, but tagged as something else before.
+                        techTagService.removeTagFromFileModel(decompiledSourceFileModel, IndexJavaSourceFilesRuleProvider.TECH_TAG);
 
                         FileModel classFileModel = fileService.getUniqueByProperty(
                                     FileModel.FILE_PATH, classFilePath.toAbsolutePath().toString());
@@ -249,8 +254,13 @@ public class FernflowerDecompilerOperation extends GraphOperation
                         {
                             decompiledFileModel.setParentArchive(classFileModel.getParentArchive());
                             ProjectModel projectModel = classFileModel.getProjectModel();
-                            decompiledFileModel.setProjectModel(projectModel);
-                            projectModel.addFileModel(decompiledFileModel);
+
+                            // only add it to the project model if it is not already there
+                            if (decompiledFileModel.getProjectModel() == null || !decompiledFileModel.getProjectModel().equals(projectModel))
+                            {
+                                decompiledFileModel.setProjectModel(projectModel);
+                                projectModel.addFileModel(decompiledFileModel);
+                            }
 
                             if (decompiledFileModel.getParentArchive() != null)
                                 decompiledFileModel.getParentArchive().addDecompiledFileModel(decompiledFileModel);
@@ -258,6 +268,7 @@ public class FernflowerDecompilerOperation extends GraphOperation
                             JavaClassFileModel classModel = (JavaClassFileModel) classFileModel;
                             classModel.getJavaClass().setDecompiledSource(decompiledSourceFileModel);
                             decompiledSourceFileModel.setPackageName(classModel.getPackageName());
+                            decompiledSourceFileModel.setDecompiled(true);
 
                             // Set the root path of this source file (if possible). Procyon should always be placing the file
                             // into a location that is appropriate for the package name, so this should always yield
@@ -309,4 +320,5 @@ public class FernflowerDecompilerOperation extends GraphOperation
             return "DecompileWithProcyon";
         }
     }
+
 }

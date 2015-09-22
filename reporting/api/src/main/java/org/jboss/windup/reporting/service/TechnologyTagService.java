@@ -40,15 +40,29 @@ public class TechnologyTagService extends GraphService<TechnologyTagModel>
     {
         FramedGraphQuery q = getGraphContext().getQuery().type(TechnologyTagModel.class)
                     .has(TechnologyTagModel.NAME, tagName);
-        TechnologyTagModel m = super.getUnique(q);
-        if (m == null)
+        TechnologyTagModel technologyTag = super.getUnique(q);
+        if (technologyTag == null)
         {
-            m = create();
-            m.setName(tagName);
-            m.setLevel(level);
+            technologyTag = create();
+            technologyTag.setName(tagName);
+            technologyTag.setLevel(level);
         }
-        m.addFileModel(fileModel);
-        return m;
+        technologyTag.addFileModel(fileModel);
+        return technologyTag;
+    }
+
+    /**
+     * Removes the provided tag from the provided {@link FileModel}. If a {@link TechnologyTagModel} cannot be found with the provided name, then this
+     * operation will do nothing.
+     */
+    public void removeTagFromFileModel(FileModel fileModel, String tagName)
+    {
+        FramedGraphQuery q = getGraphContext().getQuery().type(TechnologyTagModel.class)
+                    .has(TechnologyTagModel.NAME, tagName);
+        TechnologyTagModel technologyTag = super.getUnique(q);
+
+        if (technologyTag != null)
+            technologyTag.removeFileModel(fileModel);
     }
 
     /**

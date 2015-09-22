@@ -27,6 +27,7 @@ import org.jboss.windup.exec.rulefilters.NotPredicate;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
+import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.rules.apps.java.decompiler.DecompileClassesRuleProvider;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
@@ -81,6 +82,7 @@ public class ClassMetadataTest
             Files.createDirectories(outputPath);
 
             final WindupConfiguration processorConfig = new WindupConfiguration();
+            processorConfig.setOptionValue(SourceModeOption.NAME, true);
 
             Predicate<RuleProvider> ruleFilter = new AndPredicate(new RuleProviderWithDependenciesPredicate(MigrationRulesPhase.class),
                         new NotPredicate(new EnumeratedRuleProviderPredicate(DecompileClassesRuleProvider.class)));

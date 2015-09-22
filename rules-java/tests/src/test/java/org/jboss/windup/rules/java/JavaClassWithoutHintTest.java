@@ -25,6 +25,7 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.rules.apps.java.config.EnableClassNotFoundAnalysisOption;
 import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
+import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.jboss.windup.rules.apps.java.scan.provider.FindUnboundJavaReferencesRuleProvider;
 import org.junit.Assert;
@@ -70,6 +71,7 @@ public class JavaClassWithoutHintTest
             processorConfig.setOptionValue(ScanPackagesOption.NAME, Collections.singletonList(""));
             processorConfig.setOptionValue(EnableClassNotFoundAnalysisOption.NAME, true);
             processorConfig.setRuleProviderFilter(new NotPredicate(new EnumeratedRuleProviderPredicate(FindUnboundJavaReferencesRuleProvider.class)));
+            processorConfig.setOptionValue(SourceModeOption.NAME, true);
 
             processor.execute(processorConfig);
 

@@ -246,7 +246,7 @@ public class GraphContextImpl implements GraphContext
 
         // Sets a unique id in order to fix WINDUP-697. This causes Titan to not attempt to generate and ID,
         // as the Titan id generation code fails on machines with broken network configurations.
-        conf.setProperty("graph.unique-instance-id", "windup_" + System.nanoTime() + "_" + RandomStringUtils.random(6));
+        conf.setProperty("graph.unique-instance-id", "windup_" + System.nanoTime() + "_" + RandomStringUtils.randomAlphabetic(6));
         conf.setProperty("storage.directory", berkeley.toAbsolutePath().toString());
         conf.setProperty("storage.backend", "berkeleyje");
 

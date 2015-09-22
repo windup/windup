@@ -32,6 +32,7 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.TechnologyTagService;
+import org.jboss.windup.rules.apps.java.condition.SourceMode;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.scan.ast.WindupWildcardImportResolver;
@@ -52,7 +53,7 @@ public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
 {
     private static Logger LOG = Logging.get(IndexJavaSourceFilesRuleProvider.class);
 
-    private static final String TECH_TAG = "Java Source";
+    public static final String TECH_TAG = "Java Source";
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.INFORMATIONAL;
 
     public IndexJavaSourceFilesRuleProvider()
@@ -69,8 +70,7 @@ public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
                     .when(Query.fromType(JavaSourceFileModel.class))
                     .perform(new IndexJavaFileIterationOperator()
                                 .and(Commit.every(100))
-                                .and(IterationProgress.monitoring("Index Java Source Files", 250))
-                    );
+                                .and(IterationProgress.monitoring("Index Java Source Files", 250)));
     }
 
     private final class IndexJavaFileIterationOperator extends AbstractIterationOperation<JavaSourceFileModel>
@@ -85,6 +85,13 @@ public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
         @Override
         public void perform(GraphRewrite event, EvaluationContext context, JavaSourceFileModel payload)
         {
+            // If we are in binary mode, then we ignore java sources. Just remove them from the graph
+            if (SourceMode.isDisabled().evaluate(event, context))
+            {
+                payload.asVertex().remove();
+                return;
+            }
+
             WindupWildcardImportResolver.setContext(event.getGraphContext());
             try
             {
@@ -123,7 +130,7 @@ public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
 
                 // make sure we mark this as a Java file
                 technologyTagService.addTagToFileModel(payload, TECH_TAG, TECH_TAG_LEVEL);
-
+                payload.setDecompiled(false);
                 payload.setPackageName(packageName);
                 try (FileInputStream fis = new FileInputStream(payload.getFilePath()))
                 {
