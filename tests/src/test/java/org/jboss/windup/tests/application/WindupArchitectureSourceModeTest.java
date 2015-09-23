@@ -233,7 +233,7 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
         util.checkFilePathAndIssues("src_example", "src/main/resources/WEB-INF/web.xml", "title from user script");
 
         util.checkFilePathAndIssues("src_example", "org.windup.examples.servlet.SampleServlet",
-                    "Method parameter 'javax.servlet.http.HttpServletRequest'");
+                    "javax.servlet.http.HttpServletRequest usage");
 
         XsltTransformationService xsltService = new XsltTransformationService(context);
         Assert.assertTrue(Files.isRegularFile(xsltService.getTransformedXSLTPath().resolve(

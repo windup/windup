@@ -1,16 +1,8 @@
-import org.ocpsoft.rewrite.context.EvaluationContext;
-import org.jboss.windup.config.operation.GraphOperation;
-import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.phase.RulePhase;
-import org.jboss.windup.config.query.Query;
-import org.jboss.windup.config.metadata.RuleMetadataType
-import org.jboss.windup.config.operation.Iteration;
-import org.jboss.windup.reporting.config.Hint;
-import org.jboss.windup.reporting.config.Link;
+import org.jboss.windup.ast.java.data.TypeReferenceLocation
+import org.jboss.windup.reporting.config.Hint
+import org.jboss.windup.reporting.config.Link
 import org.jboss.windup.rules.apps.java.condition.JavaClass
-import org.jboss.windup.rules.apps.java.model.JavaClassModel;
-import org.jboss.windup.ast.java.data.TypeReferenceLocation;
-import org.jboss.windup.rules.apps.xml.condition.XmlFile;
+import org.jboss.windup.rules.apps.xml.condition.XmlFile
 
 ruleSet("Example Servlet Rule")
     .addRule()
@@ -53,4 +45,4 @@ ruleSet("Example Servlet Rule")
 
     .addRule()
     .when(XmlFile.matchesXpath("/w:web-app").namespace("w", "http://java.sun.com/xml/ns/javaee"))
-    .perform(Hint.withText("This is a web descriptor").withEffort(2))
+    .perform(Hint.titled("Container").withText("This is a web descriptor").withEffort(2))
