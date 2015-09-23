@@ -16,7 +16,6 @@
 
 <#macro reportLineRenderer reportLinesIterable>
 <#if reportLinesIterable.iterator()?has_content>
-
     <div class="panel panel-primary">
         <div class="panel-heading">
             <h3 class="panel-title">Application Messages</h3>
@@ -33,7 +32,6 @@
             </#list>
         </table>
     </div>
-
 </#if>
 </#macro>
 
@@ -61,30 +59,31 @@
         <#-- Issues -->
 		<td>
         <#if sourceReportModel.sourceFileModel.inlineHints.iterator()?has_content || sourceReportModel.sourceFileModel.classificationModels.iterator()?has_content>
-          <#assign warnings = sourceReportModel.sourceFileModel.inlineHintCount + sourceReportModel.sourceFileModel.classificationCount>
-          <#if warnings gt 1>
-            <b>Warnings: ${warnings} items</b>
-            <ul class='notifications'>
-          </#if>
-          <#list sourceReportModel.sourceFileModel.classificationModels.iterator()>
-            <#items as classification>
-               <#if warnings == 1 >
-                  ${classification.classification}
-               <#else>
-                  <li class='warning'>${classification.classification}</li>
-               </#if>
-            </#items>
-           </#list>
-            <#list sourceReportModel.sourceFileModel.inlineHints.iterator()>
-              <#items as hintLine>
-                <#if warnings == 1 >
-                  ${hintLine.title}
-                <#else>
-                  <li class='warning'>${hintLine.title}</li>
-                </#if>
-              </#items>
+            <#assign warnings = sourceReportModel.sourceFileModel.inlineHintCount + sourceReportModel.sourceFileModel.classificationCount>
+            <!-- TODO: Move the different rendering to CSS. -->
+            <#if warnings gt 1>
+                <b>Warnings: ${warnings} items</b>
+                <ul class='notifications'>
+            </#if>
+            <#list sourceReportModel.sourceFileModel.classificationModels.iterator()>
+                <#items as classification>
+                    <#if warnings == 1 >
+                        ${classification.classification}
+                    <#else>
+                        <li class='warning clsf'>${classification.classification?html}</li>
+                    </#if>
+                </#items>
             </#list>
-          </ul>
+            <#list sourceReportModel.sourceFileModel.inlineHints.iterator()>
+                <#items as hintLine>
+                    <#if warnings == 1 >
+                        ${hintLine.title?html}
+                    <#else>
+                        <li class='warning hint'>${hintLine.title?html}</li>
+                    </#if>
+                </#items>
+            </#list>
+            <#if warnings gt 1></ul></#if>
         </#if>
 		</td>
         <#-- Story points -->
@@ -99,7 +98,7 @@
 <#macro projectModelRenderer projectModel>
     <div class="panel panel-primary">
         <div class="panel-heading">
-            <h3 class="panel-title">${projectModel.rootFileModel.prettyPath}</h3>
+            <h3 class="panel-title">${projectModel.rootFileModel.prettyPath?html}</h3>
         </div>
         <div class="container-fluid summaryMargin">
             <div class='col-md-3 text-right totalSummary'>
@@ -126,21 +125,21 @@
 
 						<#if iterableHasContent(organizations)>
 							<#list organizations.iterator() as organization>
-								${organization.name}
+								${organization.name?html}
 							</#list>
 						</#if>
 						</td>
 
-						<td>${projectModel.name!""}</td>
+						<td>${projectModel.name!""?html}</td>
 						<td>
 							<#if projectModel.url?has_content>
-								<a href="${projectModel.url}">Project Site</a>
+								<a href="${projectModel.url?html}">Project Site</a>
 							</#if>
 
 							<#if projectModelSha1Archive(projectModel)?has_content>
 								<#assign sha1URL = '|ga|1|1:"' + projectModelSha1Archive(projectModel) + '"'>
 								<#assign sha1URL = 'http://search.maven.org/#search' + sha1URL?url('ISO-8859-1')>
-								<a href="${sha1URL}">Maven Central</a>
+								<a href="${sha1URL?html}">Maven Central</a>
 							</#if>
 						</td>
 					</tr>
@@ -175,7 +174,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>${reportModel.projectModel.name} - Application Report</title>
+        <title>${reportModel.projectModel.name?html} - Application Report</title>
         <link href="resources/css/bootstrap.min.css" rel="stylesheet">
         <link href="resources/css/windup.css" rel="stylesheet" media="screen">
         <link href="resources/css/windup.java.css" rel="stylesheet" media="screen">

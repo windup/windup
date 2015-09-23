@@ -10,7 +10,6 @@ import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import java.util.Set;
-import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.SetInProperties;
 
 /**
@@ -20,7 +19,7 @@ import org.jboss.windup.graph.SetInProperties;
 @TypeValue(InlineHintModel.TYPE)
 public interface InlineHintModel extends EffortReportModel,FileLocationModel
 {
-    static final String TYPE = "InlineHintModel";
+    static final String TYPE = "Hint";
     static final String TYPE_PREFIX = TYPE + ":";
     static final String TITLE = TYPE_PREFIX + "title";
     static final String HINT = TYPE_PREFIX + "hint";

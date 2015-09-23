@@ -112,10 +112,8 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
         }
         else
         {
-            /*
-             * if there is no title, just use the description of the location (eg, 'Constructing
-             * com.otherproduct.Foo()')
-             */
+            // If there is no title, just use the description of the location
+            // (eg, 'Constructing com.otherproduct.Foo()')
             hintModel.setTitle(locationModel.getDescription());
         }
 
