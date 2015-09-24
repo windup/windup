@@ -2,13 +2,9 @@ package org.jboss.windup.rules.apps.java.scan.operation;
 
 import java.io.File;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.furnace.FurnaceHolder;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.FileService;
-import org.jboss.windup.rules.files.DefaultFileDiscoveredEvent;
-import org.jboss.windup.rules.files.FileDiscoveredListener;
-import org.jboss.windup.rules.files.FileDiscoveredListenerUtil;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
     /**
@@ -43,16 +39,14 @@ public class RecurseDirectoryAndAddFiles extends AbstractIterationOperation<File
     @Override
     public void perform(GraphRewrite event, EvaluationContext context, FileModel resourceModel)
     {
-        Iterable<FileDiscoveredListener> listeners = FurnaceHolder.getFurnace().getAddonRegistry().getServices(FileDiscoveredListener.class);
-
         FileService fileModelService = new FileService(event.getGraphContext());
-        recurseAndAddFiles(event, context, listeners, fileModelService, resourceModel);
+        recurseAndAddFiles(event, context,  fileModelService, resourceModel);
     }
 
     /**
      * Recurses the given folder and creates the FileModels vertices for the child files to the graph.
      */
-    private void recurseAndAddFiles(GraphRewrite event, EvaluationContext context, Iterable<FileDiscoveredListener> listeners,
+    private void recurseAndAddFiles(GraphRewrite event, EvaluationContext context,
                 FileService fileService, FileModel file)
     {
         String filePath = file.getFilePath();
@@ -65,13 +59,8 @@ public class RecurseDirectoryAndAddFiles extends AbstractIterationOperation<File
             {
                 for (File reference : subFiles)
                 {
-                    if (FileDiscoveredListenerUtil.shouldSkip(listeners, new DefaultFileDiscoveredEvent(reference.getAbsolutePath())))
-                        continue;
-
                     FileModel subFile = fileService.createByFilePath(file, reference.getAbsolutePath());
-                    for (FileDiscoveredListener listener : listeners)
-                        listener.fileModelCreated(event, context, subFile);
-                    recurseAndAddFiles(event, context, listeners, fileService, subFile);
+                    recurseAndAddFiles(event, context, fileService, subFile);
                 }
             }
         }

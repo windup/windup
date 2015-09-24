@@ -44,14 +44,12 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class FernflowerDecompilerOperation extends GraphOperation
+public class FernflowerDecompilerOperation extends AbstractDecompilerOperation
 {
     private static Logger LOG = Logging.get(FernflowerDecompilerOperation.class);
 
     private static final String TECH_TAG = "Decompiled Java File";
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.INFORMATIONAL;
-
-    private Iterable<JavaClassFileModel> filesToDecompile;
 
     /**
      * Let the variable name to be set by the current Iteration.
@@ -59,21 +57,6 @@ public class FernflowerDecompilerOperation extends GraphOperation
     public FernflowerDecompilerOperation()
     {
         super();
-    }
-
-    public void setFilesToDecompile(Iterable<JavaClassFileModel> filesToDecompile)
-    {
-        this.filesToDecompile = filesToDecompile;
-    }
-
-    private Iterable<JavaClassFileModel> getFilesToDecompile(GraphContext context)
-    {
-        if (this.filesToDecompile == null)
-        {
-            GraphService<JavaClassFileModel> classFileService = new GraphService<>(context, JavaClassFileModel.class);
-            return classFileService.findAll();
-        }
-        return filesToDecompile;
     }
 
     @Override
@@ -94,14 +77,11 @@ public class FernflowerDecompilerOperation extends GraphOperation
             File outputDir = DecompilerUtil.getOutputDirectoryForClass(event.getGraphContext(), classFileModel);
             if (configurationService.shouldScanPackage(classFileModel.getPackageName()))
             {
-                if (classFileModel.getSkipDecompilation() == null || !classFileModel.getSkipDecompilation())
+                classesToDecompile.add(new ClassDecompileRequest(outputDir.toPath(), classFileModel.asFile().toPath(), outputDir.toPath()));
+                if (!classFileModel.getFilePath().contains("$"))
                 {
-                    classesToDecompile.add(new ClassDecompileRequest(outputDir.toPath(), classFileModel.asFile().toPath(), outputDir.toPath()));
-                    if (!classFileModel.getFilePath().contains("$"))
-                    {
-                        // it only counts as a work unit if it is not an inner class (as inner classes are grouped together)
-                        totalWork++;
-                    }
+                    // it only counts as a work unit if it is not an inner class (as inner classes are grouped together)
+                    totalWork++;
                 }
             }
         }
@@ -129,7 +109,6 @@ public class FernflowerDecompilerOperation extends GraphOperation
      * This listens for decompiled files and writes the results to disk in a background thread.
      *
      * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
-     *
      */
     private class AddDecompiledItemsToGraph implements DecompilationListener
     {

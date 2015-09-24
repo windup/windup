@@ -33,6 +33,7 @@ import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
+import org.jboss.windup.rules.apps.java.scan.ast.TypeInterestFactory;
 import org.jboss.windup.rules.files.model.FileReferenceModel;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.ocpsoft.rewrite.config.Condition;
@@ -329,6 +330,22 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
     @Override
     public void setParameterStore(ParameterStore store)
     {
+        if (locations != null && !locations.isEmpty())
+        {
+            TypeInterestFactory.registerInterest(
+                        this.uniqueID,
+                        referencePattern.getCompiledPattern(store).pattern(),
+                        referencePattern.getPattern(),
+                        locations);
+        }
+        else
+        {
+            TypeInterestFactory.registerInterest(
+                        this.uniqueID,
+                        referencePattern.getCompiledPattern(store).pattern(),
+                        referencePattern.getPattern());
+        }
+
         referencePattern.setParameterStore(store);
         if (typeFilterPattern != null)
             typeFilterPattern.setParameterStore(store);

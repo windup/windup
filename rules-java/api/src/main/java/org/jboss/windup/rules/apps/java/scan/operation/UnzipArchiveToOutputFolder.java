@@ -17,7 +17,6 @@ import java.util.zip.ZipFile;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.jboss.forge.furnace.util.Streams;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.furnace.FurnaceHolder;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
@@ -30,9 +29,6 @@ import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.rules.apps.java.archives.model.IdentifiedArchiveModel;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
-import org.jboss.windup.rules.files.FileDiscoveredEvent;
-import org.jboss.windup.rules.files.FileDiscoveredListener;
-import org.jboss.windup.rules.files.FileDiscoveredListenerUtil;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.ZipUtil;
 import org.jboss.windup.util.exception.WindupException;
@@ -72,8 +68,6 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
     @Override
     public void perform(GraphRewrite event, EvaluationContext context, ArchiveModel payload)
     {
-        Iterable<FileDiscoveredListener> listeners = FurnaceHolder.getFurnace().getAddonRegistry().getServices(FileDiscoveredListener.class);
-
         LOG.info("Unzipping archive: " + payload.toPrettyString());
         File zipFile = payload.asFile();
 
@@ -99,7 +93,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
                             + " due to: " + e.getMessage(), e);
             }
         }
-        unzipToTempDirectory(event, context, listeners, windupTempUnzippedArchiveFolder, zipFile, payload);
+        unzipToTempDirectory(event, context, windupTempUnzippedArchiveFolder, zipFile, payload);
     }
 
     private Path getAppArchiveFolder(Path tempFolder, String appArchiveName)
@@ -117,7 +111,6 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
     }
 
     private void unzipToTempDirectory(final GraphRewrite event, EvaluationContext context,
-                Iterable<FileDiscoveredListener> listeners,
                 final Path tempFolder, final File inputZipFile,
                 final ArchiveModel archiveModel)
     {
@@ -146,7 +139,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
 
         try
         {
-            unzipToFolder(inputZipFile, appArchiveFolder.toFile(), listeners);
+            unzipToFolder(inputZipFile, appArchiveFolder.toFile());
         }
         catch (Throwable e)
         {
@@ -163,13 +156,13 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
         newFileModel.setParentArchive(archiveModel);
 
         // add all unzipped files, and make sure their parent archive is set
-        recurseAndAddFiles(event, context, listeners, tempFolder, fileService, archiveModel, newFileModel);
+        recurseAndAddFiles(event, context, tempFolder, fileService, archiveModel, newFileModel);
     }
 
     /**
      * Unzip the given {@link File} to the specified directory.
      */
-    private void unzipToFolder(File inputFile, File outputDir, Iterable<FileDiscoveredListener> listeners) throws IOException
+    private void unzipToFolder(File inputFile, File outputDir) throws IOException
     {
         if (inputFile == null)
             throw new IllegalArgumentException("Argument inputFile is null.");
@@ -192,25 +185,6 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
                         throw new WindupException("Unable to create directory: " + parentDir.getAbsolutePath());
                     }
 
-                    FileDiscoveredEvent event = new FileDiscoveredEvent()
-                    {
-                        @Override
-                        public String getFilename()
-                        {
-                            return entry.getName();
-                        }
-
-                        @Override
-                        public InputStream getInputStream() throws IOException
-                        {
-                            return zipFile.getInputStream(entry);
-                        }
-                    };
-
-                    boolean skipFile = FileDiscoveredListenerUtil.shouldSkip(listeners, event);
-                    if (skipFile)
-                        continue;
-
                     try (InputStream zipInputStream = zipFile.getInputStream(entry))
                     {
                         try (FileOutputStream outputStream = new FileOutputStream(destFile))
@@ -230,7 +204,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
      * "root.zip/pom.xml" - the parent for pom.xml is root.zip, not the directory temporary directory that happens to hold it.
      */
     private void recurseAndAddFiles(GraphRewrite event, EvaluationContext context,
-                Iterable<FileDiscoveredListener> listeners, Path tempFolder,
+                Path tempFolder,
                 FileService fileService, ArchiveModel archiveModel,
                 FileModel parentFileModel)
     {
@@ -271,9 +245,6 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
                         event.getGraphContext().getGraph().getBaseGraph().commit();
                     }
 
-                    for (FileDiscoveredListener listener : listeners)
-                        listener.fileModelCreated(event, context, subFileModel);
-
                     if (subFile.isFile() && ZipUtil.endsWithZipExtension(subFileModel.getFilePath()))
                     {
                         File newZipFile = subFileModel.asFile();
@@ -286,12 +257,12 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
                          * New archive must be reloaded in case the archive should be ignored
                          */
                         newArchiveModel = GraphService.refresh(event.getGraphContext(), newArchiveModel);
-                        unzipToTempDirectory(event, context, listeners, tempFolder, newZipFile, newArchiveModel);
+                        unzipToTempDirectory(event, context, tempFolder, newZipFile, newArchiveModel);
                     }
 
                     if (subFile.isDirectory())
                     {
-                        recurseAndAddFiles(event, context, listeners, tempFolder, fileService, archiveModel, subFileModel);
+                        recurseAndAddFiles(event, context, tempFolder, fileService, archiveModel, subFileModel);
                     }
                 }
             }

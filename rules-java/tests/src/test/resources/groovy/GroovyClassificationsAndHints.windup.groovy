@@ -4,10 +4,7 @@ import org.jboss.windup.reporting.config.Hint
 import org.jboss.windup.reporting.config.Link
 import org.jboss.windup.reporting.config.classification.Classification
 import org.jboss.windup.rules.apps.java.condition.JavaClass
-import org.jboss.windup.rules.apps.java.scan.ast.TypeInterest
-import org.jboss.windup.rules.apps.java.scan.ast.TypeInterestResolver
 
-TypeInterestResolver.defaultInstance().addTypeInterest(new TypeInterest("org.jboss.forge.furnace"));
 
 ruleSet("ExampleJavaGroovy").setPhase(PostMigrationRulesPhase.class)
 

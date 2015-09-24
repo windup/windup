@@ -17,8 +17,6 @@ import org.jboss.windup.rules.apps.java.condition.JavaClass;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
-import org.jboss.windup.rules.apps.java.scan.ast.TypeInterest;
-import org.jboss.windup.rules.apps.java.scan.ast.TypeInterestResolver;
 import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationListTypeValueModel;
 import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationLiteralTypeValueModel;
 import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationTypeReferenceModel;
@@ -49,9 +47,6 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        TypeInterestResolver.defaultInstance().addTypeInterest(new TypeInterest("javax.ejb", "Stateless"));
-        TypeInterestResolver.defaultInstance().addTypeInterest(new TypeInterest("javax.ejb", "Stateful"));
-        TypeInterestResolver.defaultInstance().addTypeInterest(new TypeInterest("javax.ejb", "MessageDriven"));
 
         String ruleIDPrefix = getClass().getSimpleName();
         return ConfigurationBuilder.begin()

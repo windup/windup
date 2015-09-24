@@ -27,8 +27,6 @@ import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
-import org.jboss.windup.rules.apps.java.scan.ast.TypeInterest;
-import org.jboss.windup.rules.apps.java.scan.ast.TypeInterestResolver;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -62,8 +60,6 @@ public class JavaClassXmlRulesTest
     {
         try (GraphContext context = factory.create(getDefaultPath()))
         {
-            TypeInterestResolver.defaultInstance().addTypeInterest(new TypeInterest("org.apache.commons"));
-
             final String inputDir = "src/test/resources/org/jboss/windup/rules/java";
 
             final Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(),

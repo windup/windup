@@ -33,8 +33,6 @@ import org.jboss.windup.rules.apps.java.condition.JavaClass;
 import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
-import org.jboss.windup.rules.apps.java.scan.ast.TypeInterest;
-import org.jboss.windup.rules.apps.java.scan.ast.TypeInterestResolver;
 import org.jboss.windup.rules.apps.java.scan.provider.AnalyzeJavaFilesRuleProvider;
 import org.junit.Assert;
 import org.junit.Test;
@@ -136,7 +134,6 @@ public class JavaClassSourceMatchTest
         @Override
         public Configuration getConfiguration(GraphContext context)
         {
-            TypeInterestResolver.defaultInstance().addTypeInterest(new TypeInterest("org.jboss.windup"));
 
             return ConfigurationBuilder.begin()
             .addRule().when(JavaClass.references("org.jboss.windup.graph.model.resource.FileModel.setFilePath{*}").matchesSource("{*}/JavaHintsClassificationsTest.java{*}").inType("{*}").at(TypeReferenceLocation.METHOD_CALL))
