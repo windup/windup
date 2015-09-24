@@ -36,71 +36,72 @@
 			</div>
 		</div>
 
-    	<div class="row">
+    	<div class="row container-fluid">
+
 			<!-- All Rule Providers -->
-			<div class="panel panel-primary">
-				<#list getAllRuleProviders() as ruleProvider>
-	                <#if isRulePhase(ruleProvider)>
-	                    <div class="panel-heading">
-	                        <h3 class="panel-title">Phase: ${ruleProvider.metadata.ID}</h3>
-					    </div>
-	                <#else>
-					<div class="panel-heading">
-					    <h3 class="panel-title">${ruleProvider.metadata.ID}</h3>
-					    Phase: ${ruleProvider.metadata.phase.simpleName}
-					</div>
-					<table class="table table-striped table-bordered">
-					  	<tr>
-				    		<th>Rule-ID</th>			    		
-				    		<th>Rule</th>			    		
-				    		<th>Statistics</th>
-				    		<th>Status?</th>
-				    		<th>Result?</th>
-				    		<th>Failure Cause</th>
-			  			</tr>
-				  		<#list getRuleExecutionResults(ruleProvider) as ruleExecutionInfo>
-							<#if ruleExecutionInfo??>
-							<tr>
-								<td>
-									${ruleExecutionInfo.rule.id}
-								</td>
-								<td>
-									<a name="${ruleExecutionInfo.rule.id}" class="anchor"></a>
-									<span style="white-space: pre">${formatRule(ruleExecutionInfo.rule)?html}</span>
-								</td>
-								<td>
-									<div>Vertices Created: ${ruleExecutionInfo.vertexIDsAdded}</div>
-									<div>Edges Created: ${ruleExecutionInfo.edgeIDsAdded}</div>
-									<div>Vertices Removed: ${ruleExecutionInfo.vertexIDsRemoved}</div>
-									<div>Edges Removed: ${ruleExecutionInfo.edgeIDsRemoved}</div>
-								</td>					
-								<td>
-									${ruleExecutionInfo.executed?string("executed", "not-executed")}
-								</td>
-								<td>
-									${ruleExecutionInfo.failed?string("failed", "success")}
-								</td>
-								<td>
-									<#if ruleExecutionInfo.failureCause?? && ruleExecutionInfo.failureCause.message??>
-										${ruleExecutionInfo.failureCause.message}
-									</#if>
-								</td>
-							</tr>
-							<#else>
+			<#list getAllRuleProviders() as ruleProvider>
+                <#if isRulePhase(ruleProvider)>
+                    <div class="alert alert-info">
+                        <h3 class="panel-title">Phase: ${ruleProvider.metadata.ID}</h3>
+				    </div>
+                <#else>
+					<div class="panel panel-primary">
+						<div class="panel-heading">
+						    <h3 class="panel-title">${ruleProvider.metadata.ID}</h3>
+						    Phase: ${ruleProvider.metadata.phase.simpleName}
+						</div>
+						<table class="table table-striped table-bordered">
+						  	<tr>
+					    		<th>Rule-ID</th>			    		
+					    		<th>Rule</th>			    		
+					    		<th>Statistics</th>
+					    		<th>Status?</th>
+					    		<th>Result?</th>
+					    		<th>Failure Cause</th>
+				  			</tr>
+					  		<#list getRuleExecutionResults(ruleProvider) as ruleExecutionInfo>
+								<#if ruleExecutionInfo??>
 								<tr>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td></td>
-									<td></td>
+									<td>
+										${ruleExecutionInfo.rule.id}
+									</td>
+									<td>
+										<a name="${ruleExecutionInfo.rule.id}" class="anchor"></a>
+										<span style="white-space: pre">${formatRule(ruleExecutionInfo.rule)?html}</span>
+									</td>
+									<td>
+										<div>Vertices Created: ${ruleExecutionInfo.vertexIDsAdded}</div>
+										<div>Edges Created: ${ruleExecutionInfo.edgeIDsAdded}</div>
+										<div>Vertices Removed: ${ruleExecutionInfo.vertexIDsRemoved}</div>
+										<div>Edges Removed: ${ruleExecutionInfo.edgeIDsRemoved}</div>
+									</td>					
+									<td>
+										${ruleExecutionInfo.executed?string("executed", "not-executed")}
+									</td>
+									<td>
+										${ruleExecutionInfo.failed?string("failed", "success")}
+									</td>
+									<td>
+										<#if ruleExecutionInfo.failureCause?? && ruleExecutionInfo.failureCause.message??>
+											${ruleExecutionInfo.failureCause.message}
+										</#if>
+									</td>
 								</tr>
-							</#if>
-						</#list>
-		    		</table>
-	                </#if>
-		    	</#list>
-			</div>
+								<#else>
+									<tr>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+										<td></td>
+									</tr>
+								</#if>
+							</#list>
+			    		</table>
+			    	</div>
+	            </#if>
+			</#list>
     	</div> <!-- /row -->
 	</div> <!-- /container main -->
 

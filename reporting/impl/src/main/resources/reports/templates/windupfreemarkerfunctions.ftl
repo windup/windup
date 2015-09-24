@@ -36,7 +36,7 @@
 			</div>
 		</div>
 	
-	    <div class="row">
+	    <div class="row container-fluid">
 			<div class="panel panel-primary">
 				<div class="panel-heading">
 				    Functions
