@@ -29,6 +29,7 @@ import org.jboss.windup.config.query.QueryGremlinCriterion;
 import org.jboss.windup.config.query.QueryPropertyComparisonType;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.rules.apps.java.model.AbstractJavaSourceModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
@@ -239,8 +240,8 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
                 {
                     FileModel fileModel = ((FileReferenceModel) frame).getFile();
                     Iterable<JavaClassModel> javaClasses = null;
-                    if (fileModel instanceof JavaSourceFileModel)
-                        javaClasses = ((JavaSourceFileModel) fileModel).getJavaClasses();
+                    if (fileModel instanceof AbstractJavaSourceModel)
+                        javaClasses = ((AbstractJavaSourceModel) fileModel).getJavaClasses();
                     else if (fileModel instanceof JavaClassFileModel)
                         javaClasses = Arrays.asList(((JavaClassFileModel) fileModel).getJavaClass());
 

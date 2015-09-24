@@ -4,6 +4,7 @@ import org.jboss.windup.ast.java.data.ResolutionStatus;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.graph.IndexType;
 import org.jboss.windup.graph.Indexed;
+import org.jboss.windup.rules.apps.java.model.AbstractJavaSourceModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.files.model.FileLocationModel;
 
@@ -32,7 +33,7 @@ public interface JavaTypeReferenceModel extends FileLocationModel
      */
     @Override
     @Adjacency(label = FILE_MODEL, direction = Direction.OUT)
-    JavaSourceFileModel getFile();
+    AbstractJavaSourceModel getFile();
 
     /**
      * Gets the snippit referenced by this {@link FileLocationModel}.
