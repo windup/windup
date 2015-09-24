@@ -12,6 +12,7 @@ import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
+import org.jboss.windup.rules.apps.java.model.AbstractJavaSourceModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
@@ -99,7 +100,7 @@ public class DiscoverJaxWSAnnotationsRuleProvider extends AbstractRuleProvider
     private JavaClassModel getJavaClass(JavaTypeReferenceModel javaTypeReference)
     {
         JavaClassModel result = null;
-        JavaSourceFileModel javaSource = javaTypeReference.getFile();
+        AbstractJavaSourceModel javaSource = javaTypeReference.getFile();
         for (JavaClassModel javaClassModel : javaSource.getJavaClasses())
         {
             // there can be only one public one, and the annotated class should be public

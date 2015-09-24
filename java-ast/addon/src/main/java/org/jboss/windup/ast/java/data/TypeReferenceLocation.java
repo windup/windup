@@ -97,7 +97,12 @@ public enum TypeReferenceLocation
      * int foo = mypackage.MyConstants.FOO;
      * </pre>
      */
-    VARIABLE_INITIALIZER("Variable Initializer");
+    VARIABLE_INITIALIZER("Variable Initializer"),
+
+    /**
+     * This is only relevant for JSP sources and represents the import of a taglib into the JSP source file.
+     */
+    TAGLIB_IMPORT("Taglib Import");
 
     private String readablePrefix;
 
