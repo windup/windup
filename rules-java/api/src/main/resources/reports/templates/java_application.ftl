@@ -216,7 +216,7 @@
                 <!-- / Breadcrumbs -->
             </div>
 
-            <div class="row">
+            <div class="row container-fluid">
                 <div class='container mainGraphContainer'>
                     <div class='col-md-3 text-right totalSummary'>
                         <div class='totalLoe'>
@@ -230,8 +230,8 @@
                 </div>
             </div>
 
-            <div class="row">
-                <div class="container-fluid theme-showcase" role="main">
+            <div class="row container-fluid">
+                <div class="theme-showcase" role="main">
                     <@reportLineRenderer reportModel.applicationReportLines />
                     <@projectModelRenderer reportModel.projectModel />
                 </div> <!-- /container -->

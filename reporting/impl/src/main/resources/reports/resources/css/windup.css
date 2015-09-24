@@ -52,6 +52,14 @@ body {
     margin: 5px 0;
 }
 
+.table.table-striped.table-bordered tr:last-child td:first-child {
+	border-bottom-left-radius: 8pt; 
+}
+
+.table.table-striped.table-bordered tr:last-child td:last-child {
+	border-bottom-right-radius: 8pt; 
+}
+
 .panel.panel-primary {
     border-radius: 8pt;
 }
