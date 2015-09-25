@@ -442,15 +442,14 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#overview">2.2.1. Overview</a></li>
 <li><a href="#run-windup">2.2.2. Run Windup</a></li>
 <li><a href="#_windup_help">2.2.3. Windup Help</a></li>
-<li><a href="#command-examples">2.2.4. Windup Command Examples</a></li>
+<li><a href="#command-line-arguments">2.2.4. Windup Command Line Arguments</a></li>
+<li><a href="#command-examples">2.2.5. Windup Command Examples</a></li>
 </ul>
 </li>
 <li><a href="#Review-the-Report">2.3. Review the Report</a>
 <ul class="sectlevel3">
 <li><a href="#_about_the_report">2.3.1. About the Report</a></li>
-<li><a href="#_open_the_report">2.3.2. Open the Report</a></li>
-<li><a href="#_report_sections">2.3.3. Report Sections</a></li>
-<li><a href="#_additional_reports">2.3.4. Additional Reports</a></li>
+<li><a href="#_access_the_reports">2.3.2. Access the Reports</a></li>
 </ul>
 </li>
 <li><a href="#Export-the-Report-for-Use-by-Spreadsheet-Programs">2.4. Export the Report for Use by Spreadsheet Programs</a>
@@ -714,9 +713,6 @@ Windup Rules Development Guide</a> for detailed instructions.</p>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>If you installed previous versions of Windup, delete the <code>${user.home}/.windup/</code> directory. Otherwise you may see errors when you execute Windup.</p>
-</li>
-<li>
 <p>Download the latest <a href="https://repository.jboss.org/nexus/service/local/artifact/maven/redirect?r=releases&amp;g=org.jboss.windup&amp;a=windup-distribution&amp;v=LATEST&amp;e=zip&amp;c=offline">Windup ZIP distribution</a>.</p>
 </li>
 <li>
@@ -741,21 +737,114 @@ Windup Rules Development Guide</a> for detailed instructions.</p>
 <p>Open a terminal and navigate to the WINDUP_HOME directory.</p>
 </li>
 <li>
-<p>The command to run Windup uses the following syntax.</p>
+<p>Run Windup against the application using the appropriate command.</p>
+<div class="paragraph">
+<p>See <a href="#command-line-arguments">Windup Command Line Arguments</a> below for a detailed description of the available command line arguments.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The basic command to run Windup uses the following syntax.</p>
 <div class="listingblock">
 <div class="content">
-<pre class="nowrap">For Linux:     $ bin/windup --input INPUT_ARCHIVE --output OUTPUT_REPORT --packages PACKAGE_1 PACKAGE_2 PACKAGE_N
-For Windows:   &gt; bin\windup.bat --input INPUT_ARCHIVE --output OUTPUT_REPORT --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
+<pre class="nowrap">For Linux:     $ bin/windup --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY --source SOURCE_TECHNOLOGY --target TARGET_TECHNOLOGY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N
+For Windows:   &gt; bin\windup.bat --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY --source SOURCE_TECHNOLOGY --target TARGET_TECHNOLOGY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
 </div>
 </div>
 </li>
 <li>
-<p>This command takes arbitrary options processed by different add-ons. The list of options in the core Windup distribution can be found in the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/config/ConfigurationOption.html">Javadoc</a>. Most commonly used command line arguments are:</p>
+<p>To evaluate an application archive, use the following syntax:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">bin/windup --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY --source SOURCE_TECHNOLOGY --target TARGET_TECHNOLOGY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N --target eap</pre>
+</div>
+</div>
+</li>
+<li>
+<p>To run Windup against application source code, add the <code>--sourceMode</code> argument:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">bin/windup  --sourceMode --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY --source SOURCE_TECHNOLOGY --target TARGET_TECHNOLOGY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
+</div>
+</div>
+</li>
+<li>
+<p>To override the default <em>Fernflower</em> decompiler, pass the <code>-Dwindup.decompiler</code> argument on the command line. For example, to use the <em>Procyon</em> compiler, use the following syntax:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">bin/windup -Dwindup.decompiler=procyon --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY --source SOURCE_TECHNOLOGY --target TARGET_TECHNOLOGY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>See <a href="#command-examples">Windup Command Examples</a> below for concrete examples of commands that use source code directories and archives located in the Windup GitHub repository.</p>
+</div>
+</li>
+<li>
+<p>You should see the following result upon completion of the command:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">**SUCCESS*** Windup report created: PATH_TO_REPORTS/index.html
+              Access it at this URL: file:///home/username/PATH_TO_REPORTS/index.html</pre>
+</div>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Warning</div>
+</td>
+<td class="content">
+Depending on the size of the application and the hardware Windup is running on, this command can take a very long time. For tips on how to improve performance, see <a href="#Optimize-Performance">Optimize Windup Performance</a>.
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>Open the <code>OUTPUT_REPORT_DIRECTORY/index.html</code> file in a browser to access the report.
+The following subdirectories in the <code>OUTPUT_REPORT_DIRECTORY</code> contain the supporting information for the report:</p>
+<div class="literalblock">
+<div class="content">
+<pre>OUTPUT_REPORT_DIRECTORY/
+├── archives/
+├── graph/
+├── reports/
+├── stats/
+├── index.html
+├── OPTIONAL_EXPORTED_CSV_FILE.csv</pre>
+</div>
+</div>
+</li>
+<li>
+<p>For details on how to evaluate the report data, see <a href="#Review-the-Report">Review the Report</a>.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_windup_help">2.2.3. Windup Help</h4>
+<div class="paragraph">
+<p>To see the complete list of available arguments for the <code>windup</code> command, open a terminal, navigate to the WINDUP_HOME directory, and execute the following command:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>bin/windup --help</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="command-line-arguments">2.2.4. Windup Command Line Arguments</h4>
+<div class="paragraph">
+<p>The following is a detailed description of the available Windup command line arguments.</p>
+</div>
 <div class="dlist">
 <dl>
 <dt class="hdlist1">--input <strong>INPUT_ARCHIVE_OR_FOLDER</strong></dt>
 <dd>
-<p>This is the fully qualified path of the application archive or folder you plan to migrate.</p>
+<p>This is the fully qualified path of the application archive or folder you plan to migrate. This argument is required.</p>
 </dd>
 <dt class="hdlist1">--output <strong>OUTPUT_REPORT_DIRECTORY</strong> (optional)</dt>
 <dd>
@@ -793,13 +882,13 @@ For Windows:   &gt; bin\windup.bat --input INPUT_ARCHIVE --output OUTPUT_REPORT 
 </ul>
 </div>
 </dd>
-<dt class="hdlist1">--exportCSV (optional)</dt>
+<dt class="hdlist1">--sourceMode (optional)</dt>
 <dd>
-<p>Export the report data to a CSV formatted file on your local file system. Windup creates the file in the folder specified by the <code>--output</code> argument. The CSV file can be imported into your favorite spreadsheet program for data manipulation and analysis. For details, see <a href="#Export-the-Report-for-Use-by-Spreadsheet-Programs">Export the Report for Use by Spreadsheet Programs</a>.</p>
+<p>If specified, indicates the application to be evaluated contains source files rather than compiled binaries.</p>
 </dd>
-<dt class="hdlist1">--source (optional)</dt>
+<dt class="hdlist1">--source SOURCE_1 SOURCE_2 (optional)</dt>
 <dd>
-<p>One or more source technologies, servers, platforms, or frameworks to migrate from.</p>
+<p>A space delimited list of one or more source technologies, servers, platforms, or frameworks to migrate from.</p>
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -820,9 +909,9 @@ For Windows:   &gt; bin\windup.bat --input INPUT_ARCHIVE --output OUTPUT_REPORT 
 </table>
 </div>
 </dd>
-<dt class="hdlist1">--target</dt>
+<dt class="hdlist1">--target TARGET_1 TARGET_2 (optional)</dt>
 <dd>
-<p>One or more source technologies, servers, platforms, or frameworks to migrate to. If you do not make this selection, interactive mode will prompt you for a choice.</p>
+<p>A space delimited list of one or more target technologies, servers, platforms, or frameworks to migrate to. If you do not specify this option, you are prompted to select a target. The default target technology is <code>eap</code>.</p>
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -843,17 +932,98 @@ For Windows:   &gt; bin\windup.bat --input INPUT_ARCHIVE --output OUTPUT_REPORT 
 </table>
 </div>
 </dd>
+<dt class="hdlist1">--packages <strong>PACKAGE_1</strong> <strong>PACKAGE_2</strong> <strong>PACKAGE_N</strong> (optional)</dt>
+<dd>
+<p>A space delimited list of the packages to be evaluated by Windup.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>In most cases, you are interested only in evaluating custom application class packages and not standard Java EE or 3rd party packages. For example, if the <em>MyCustomApp</em> application uses the package <code>com.mycustomapp</code>, you provide that package using the <code>--packages</code> argument on the command line.</p>
+</li>
+<li>
+<p>It is not necessary to provide the standard Java EE packages, like <code>java.util</code> or <code>javax.ejb</code>.</p>
+</li>
+<li>
+<p>While you can provide package names for standard Java EE 3rd party software like <code>org.apache</code>, it is usually best not to include them as they should not impact the migration effort.</p>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Warning</div>
+</td>
+<td class="content">
+If you omit the <code>--packages</code> argument, every package in the application is scanned, which can impact performance. It is best to provide this argument with one or more packages.
+</td>
+</tr>
+</table>
+</div>
+</li>
+</ul>
+</div>
+</dd>
 <dt class="hdlist1">--overwrite (optional)</dt>
 <dd>
-<p>Specify this optional argument only if you are certain you want to force Windup to delete the existing <strong>OUTPUT_REPORT_DIRECTORY</strong> folder. The default value is <code>false</code>.</p>
+<p>Specify this argument only if you are certain you want to force Windup to delete the existing <strong>OUTPUT_REPORT_DIRECTORY</strong> folder. If you do not specify this argument and the <code>--output</code> folder exists, you are prompted to choose whether to overwrite the contents.</p>
 </dd>
-<dt class="hdlist1">--batchMode (optional)</dt>
+<dt class="hdlist1">--includeTags TAG_1 TAG_2 (optional)</dt>
 <dd>
-<p>Specifies that Windup should be run in a non-interactive mode that will not prompt for anything. This will take the default values for any parameters not passed in via the command line. The default value is 'false'.</p>
+<p>Limit processing to rules that contain the specified tags. If this option is not specified, all tags are processed. Multiple tags are delimited by spaces.</p>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>For the list of the available tags, use the <code>--listTags</code> argument on the <code>windup</code> command line as in the following example.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">bin/windup --listTag</pre>
+</div>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</dd>
+<dt class="hdlist1">--excludeTags TAG_1 TAG_2 (optional)</dt>
+<dd>
+<p>Do not process rules that contain the specified tags. If this option is not specified, all tags are processed.</p>
+</dd>
+<dt class="hdlist1">--userRulesDirectory CUSTOM_RULES_DIRECTORY (optional)</dt>
+<dd>
+<p>By default, Windup looks for rules in the <code>${user.home}/.windup/rules/</code> directory. This option allows you to provide the fully qualified path to a user directory containing additional custom XML rules that should be loaded and executed by Windup. The XML ruleset files must use one of the following extensions:  <code>*.windup.groovy</code> or <code>*.windup.xml</code>.</p>
+</dd>
+<dt class="hdlist1">--userIgnorePath CUSTOM_IGNORE_DIRECTORY (optional)</dt>
+<dd>
+<p>Windup looks for file names matching the pattern <code>*windup-ignore.txt</code> to identify files that should be ignored. By default, it looks for these files in the <code>~/.windup/ignore/</code> and <code>WINDUP_HOME/ignore/</code> directories, but this option allows you to create files with this pattern name in a different directory.</p>
+</dd>
+<dt class="hdlist1">--exportCSV (optional)</dt>
+<dd>
+<p>Export the report data to a CSV formatted file on your local file system. Windup creates the file in the folder specified by the <code>--output</code> argument. The CSV file can be imported into your favorite spreadsheet program for data manipulation and analysis. For details, see <a href="#Export-the-Report-for-Use-by-Spreadsheet-Programs">Export the Report for Use by Spreadsheet Programs</a>.</p>
+</dd>
+<dt class="hdlist1">--additionalClassPath JAR_OR_DIRECTORY_1 JAR_OR_DIRECTORY_2 (optional)</dt>
+<dd>
+<p>Use this option to add additional JAR files or directories to the classpath. For example:</p>
+<div class="listingblock">
+<div class="content">
+<pre>--additionalClassPath MyClasses.jar com/mycompany/</pre>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">--excludePackages <strong>PACKAGE_1</strong> <strong>PACKAGE_2</strong> <strong>PACKAGE_N</strong> (optional)</dt>
+<dd>
+<p>This is a space-delimited list of the packages to be excluded by Windup.</p>
+</dd>
+<dt class="hdlist1">--offline (optional)</dt>
+<dd>
+<p>If specified, do all processing offline and do not fetch information from the internet.</p>
 </dd>
 <dt class="hdlist1">--updateRulesets (optional)</dt>
 <dd>
-<p>Update the core rulesets distributed with Windup. First, it checks for an existence of newer release, and if found, replaces the current rulesets directory with the new one.</p>
+<p>Update the core rulesets distributed with Windup. It first checks for the existence of newer release, and if found, replaces the current rulesets directory with the new one.</p>
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -874,135 +1044,15 @@ For Windows:   &gt; bin\windup.bat --input INPUT_ARCHIVE --output OUTPUT_REPORT 
 </table>
 </div>
 </dd>
-<dt class="hdlist1">--userRulesDirectory (optional)</dt>
+<dt class="hdlist1">--batchMode (optional)</dt>
 <dd>
-<p>The fully qualified path to a user directory containing custom XML rules that should be loaded and executed by Windup. The XML ruleset files must use one of the following extensions:  <code>*.windup.groovy</code> or <code>*.windup.xml</code>.</p>
-</dd>
-<dt class="hdlist1">--packages <strong>PACKAGE_1</strong>, <strong>PACKAGE_2</strong>, <strong>PACKAGE_N</strong> (optional)</dt>
-<dd>
-<p>This is a comma-delimited list of the packages to be evaluated by Windup.</p>
-<div class="ulist">
-<ul>
-<li>
-<p>In most cases, you are interested only in evaluating the custom application class packages and not the standard Java EE or 3rd party packages. For example, if the <em>MyCustomApp</em> application uses the package <code>com.mycustomapp</code>, you provide that package using the <code>--packages</code> argument on the command line.</p>
-</li>
-<li>
-<p>It is not necessary to provide the standard Java EE packages, like <code>java.util</code> or <code>javax.ejb</code>.</p>
-</li>
-<li>
-<p>While you can provide package names for standard Java EE 3rd party software like <code>org.apache</code>, it is usually best not to include them as they should not impact the migration effort.</p>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<div class="title">Warning</div>
-</td>
-<td class="content">
-If you omit the <code>--packages</code> argument, every package in the application is scanned, resulting in very slow performance. It is best to provide the argument with one or more packages.
-</td>
-</tr>
-</table>
-</div>
-</li>
-</ul>
-</div>
-</dd>
-<dt class="hdlist1">--excludePackages <strong>PACKAGE_1</strong>, <strong>PACKAGE_2</strong>, <strong>PACKAGE_N</strong> (optional)</dt>
-<dd>
-<p>This is a comma-delimited list of the packages to be excluded by Windup.</p>
-</dd>
-<dt class="hdlist1">--sourceMode (optional)</dt>
-<dd>
-<p>This argument is optional and is only required if the application to be evaluated contains source files rather than compiled binaries. The default value is <code>false</code>.</p>
-</dd>
-<dt class="hdlist1">--additionalClasspath JAR_OR_DIRECTORY (optional)</dt>
-<dd>
-<p>This argument is optional and will add an additional jar to the classpath of the given application. This will assist in determining class reachability for the application itself. The parameter can be specified multiple times.</p>
+<p>Specifies that Windup should be run in a non-interactive mode without prompting for confirmation. This mode takes the default values for any parameters not passed in via the command line.</p>
 </dd>
 </dl>
 </div>
-</li>
-<li>
-<p>To override the default <em>Fernflower</em> decompiler, pass the <code>-Dwindup.decompiler</code> argument on the command line. For example, to use the <em>Procyon</em> compiler, use the following syntax:</p>
-<div class="listingblock">
-<div class="content">
-<pre class="nowrap">bin/windup -Dwindup.decompiler=procyon INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
-</div>
-</div>
-</li>
-<li>
-<p>To evaluate an application archive, use the following syntax:</p>
-<div class="listingblock">
-<div class="content">
-<pre class="nowrap">bin/windup --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>To run Windup against application source code, you must add the <code>--sourceMode</code> argument:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="nowrap">bin/windup  --sourceMode --source SOURCE_TECHNOLOGY --target TARGET_TECHNOLOGY --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>See <a href="#command-examples">Windup Command Examples</a> below for concrete examples of commands that use source code directories and archives located in the Windup GitHub repository.</p>
-</div>
-</li>
-<li>
-<p>You should see the following result upon completion of the command:</p>
-<div class="listingblock">
-<div class="content">
-<pre class="nowrap">**SUCCESS*** Windup report created: PATH_TO_REPORTS/index.html
-              Access it at this URL: file:///home/username/PATH_TO_REPORTS/index.html</pre>
-</div>
-</div>
-<div class="admonitionblock warning">
-<table>
-<tr>
-<td class="icon">
-<div class="title">Warning</div>
-</td>
-<td class="content">
-Depending on the size of the application and the hardware Windup is running on, this command can take a very long time. For tips on how to improve performance, see <a href="#Optimize-Performance">Optimize Windup Performance</a>.
-</td>
-</tr>
-</table>
-</div>
-</li>
-<li>
-<p>Open the <code>OUTPUT_REPORT_DIRECTORY/index.html</code> file in a browser to access the report.
-The following subdirectories in the <code>OUTPUT_REPORT_DIRECTORY</code> contain the supporting information for the report:</p>
-<div class="literalblock">
-<div class="content">
-<pre>OUTPUT_REPORT_DIRECTORY/
-    graph/
-    renderedGraph/
-    reports/
-    stats/
-    index.html</pre>
-</div>
-</div>
-</li>
-<li>
-<p>For details on how to evaluate the report data, see <a href="#Review-the-Report">Review the Report</a>.</p>
-</li>
-</ol>
-</div>
 </div>
 <div class="sect3">
-<h4 id="_windup_help">2.2.3. Windup Help</h4>
-<div class="paragraph">
-<p>To see the complete list of available arguments for the <code>windup</code> command, open a terminal, navigate to the WINDUP_HOME directory, and execute the following command:</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>bin/windup --help</pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="command-examples">2.2.4. Windup Command Examples</h4>
+<h4 id="command-examples">2.2.5. Windup Command Examples</h4>
 <div class="paragraph">
 <p>The following examples report against applications located in the Windup source <a href="https://github.com/windup/windup/tree/master/test-files">test-files</a> directory.</p>
 </div>
@@ -1013,7 +1063,7 @@ The following subdirectories in the <code>OUTPUT_REPORT_DIRECTORY</code> contain
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>bin/windup --sourceMode --input /home/username/windup-source/test-files/seam-booking-5.2/ --output /home/username/windup-reports/seam-booking-report --source spring --target eap --packages org.jboss.seam</pre>
+<pre>bin/windup --sourceMode --input /home/username/windup-source/test-files/seam-booking-5.2/ --output /home/username/windup-reports/seam-booking-report --target eap --packages org.jboss.seam</pre>
 </div>
 </div>
 </div>
@@ -1024,7 +1074,7 @@ The following subdirectories in the <code>OUTPUT_REPORT_DIRECTORY</code> contain
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>bin/windup  --input /home/username/windup-source/test-files/jee-example-app-1.0.0.ear/ --output /home/username/windup-reports/jee-example-app-1.0.0.ear-report --source java-ee --target eap --packages com.acme org.apache</pre>
+<pre>bin/windup  --input /home/username/windup-source/test-files/jee-example-app-1.0.0.ear/ --output /home/username/windup-reports/jee-example-app-1.0.0.ear-report --target eap --packages com.acme org.apache</pre>
 </div>
 </div>
 </div>
@@ -1046,76 +1096,82 @@ The following subdirectories in the <code>OUTPUT_REPORT_DIRECTORY</code> contain
 <div class="paragraph">
 <p>When you execute Windup, the report is generated in the <code>OUTPUT_REPORT_DIRECTORY</code> you specify for the <code>--output</code> argument in the command line. This output directory contains the following files and subdirectories:</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>index.html</code>: This is the landing page for the report.</p>
-</li>
-<li>
-<p><code>archives/</code>: Contains the archives extracted from the application</p>
-</li>
-<li>
-<p><code>graph/</code>: Contains binary graph database files</p>
-</li>
-<li>
-<p><code>reports/</code>: This directory contains the generated HTML report files</p>
-</li>
-<li>
-<p><code>stats/</code>: Contains Windup performance statistics</p>
-</li>
-</ul>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">OUTPUT_REPORT_DIRECTORY/
+├── index.html          (landing page for the report)
+├── EXPORT_FILE.csv     (optional export of data in CSV format)
+├── archives/           (archives extracted from the application, for information only)
+├── graph/              (binary graph database files generated during the run, for information only)
+├── reports/            (generated HTML reports)
+├── stats/              (performance statistics)</pre>
+</div>
 </div>
 <div class="paragraph">
-<p>The examples below use the <a href="https://github.com/windup/windup/blob/master/test-files/jee-example-app-1.0.0.ear">test-files/jee-example-app-1.0.0.ear</a> located in the Windup GitHub source repository for input and specify the <code>com.acme</code> and <code>org.apache</code> package name prefixes to scan. For example:</p>
+<p>The report examples shown are a result of analyzing <code>com.acme</code> and <code>org.apache</code> packages in the <a href="https://github.com/windup/windup/blob/master/test-files/jee-example-app-1.0.0.ear">test-files/jee-example-app-1.0.0.ear</a> application, which is located in the Windup core source repository. The report was generated using the  using the following command.</p>
 </div>
-<div class="literalblock">
+<div class="listingblock">
 <div class="content">
-<pre>WINDUP_HOME/bin/windup --input /home/username/windup-source/test-files/jee-example-app-1.0.0.ear/ --output /home/username/windup-reports/jee-example-app-1.0.0.ear-report --packages com.acme org.apache</pre>
+<pre class="nowrap">WINDUP_HOME/bin/windup --input /home/username/windup-source/test-files/jee-example-app-1.0.0.ear/ --output /home/username/windup-reports/jee-example-app-1.0.0.ear-report --target eap --packages com.acme org.apache</pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_open_the_report">2.3.2. Open the Report</h4>
+<h4 id="_access_the_reports">2.3.2. Access the Reports</h4>
 <div class="paragraph">
 <p>Use your favorite browser to open the <code>index.html</code> file located in the output report directory. You should see something like the following:</p>
 </div>
 <div class="exampleblock">
 <div class="content">
 <div class="paragraph">
-<p><strong><em>Windup Report: Overview</em></strong></p>
-</div>
-<div class="paragraph">
-<p><span class="image"><img src="images/report-index-page.png" alt="Report Index Page" width="500"></span></p>
+<p><strong>Windup Report: Index Page</strong>
+<span class="image"><img src="images/report-jee-example-index-page.png" alt="Report Index Page" width="600"></span></p>
 </div>
 </div>
 </div>
 <div class="paragraph">
-<p>This page lists the applications that were processed along with the technologies that were encountered.</p>
+<p>This page lists the application that was processed along with the technologies that were encountered. It also provides links to the following additional reports.</p>
 </div>
-<div class="paragraph">
-<p>Click on the link under the <strong>Name</strong> column to view the Windup application report page.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_report_sections">2.3.3. Report Sections</h4>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Report</th>
+<th class="tableblock halign-left valign-top">How to Access the Report</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#review-the-report-application-report">Application Report</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Click on the link under the <code>Name</code> column to view this report.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#review-the-report-rule-provider-executions-report">Rule Provider Executions Report</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Click on the <code>All Rules</code> link at the bottom of the index page.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#review-the-report-freemarker-report">Windup Freemarker Functions and Directives Report</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Click on the <code>Windup FreeMarker Methods</code> link at the bottom of the index page.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#review-the-report-send-feedback">Send Feedback Form</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Click on the <code>Send Feedback</code> link at the bottom of the index page to open a form that allows you to provide feedback to the Windup team. .</p></td>
+</tr>
+</tbody>
+</table>
 <div class="sect4">
-<h5 id="_application_report_page">Application Report Page</h5>
+<h5 id="review-the-report-application-report">Application Report</h5>
+<div class="sect5">
+<h6 id="_overview_and_application_messages">Overview and Application Messages</h6>
 <div class="paragraph">
-<p>The first section of the application report page summarizes the migration effort. It displays the following information both graphically and in list form by application artifact for each file that is analyzed.</p>
+<p>The first section of the application report page summarizes the entire application migration effort by technology type both graphically and in list format. This is followed by the <code>Application Messages</code> section, which contains useful information about general migration requirements for the application, such as the need to replace deprecated libraries or the need to resolve potential class loading issues.</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p>The file name</p>
-</li>
-<li>
-<p>The file type</p>
-</li>
-<li>
-<p>A list of issues, if any, that were found in the file</p>
-</li>
-<li>
-<p>The estimated total <em>Story Points</em> to migrate the file. <em>Story Points</em> are covered in more detail in the <a href="http://windup.github.io/windup/docs/latest/html/WindupRulesDevelopmentGuide.html">Windup Rules Development Guide</a>.</p>
+<div class="paragraph">
+<p>In the following example, the "JEE Example App" is assigned 102 story points related to 10 different technologies. It also displays one application message.</p>
+</div>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -1128,97 +1184,71 @@ The estimated Story Points change as new rules are added to Windup. The values h
 </tr>
 </table>
 </div>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>In the following  Windup Application Report example, the migration of the <strong>JEE Example App</strong> EAR is assigned a total of 34 story points. A pie chart shows the breakdown of story points by package. This is followed by a section for each of the archives contained in the EAR. It provides the total of the story points assigned to the archive and lists the files contained in archive along with the warnings and story point assigned to each file.</p>
-</div>
 <div class="exampleblock">
 <div class="content">
 <div class="paragraph">
-<p><strong><em>Windup Report: Application Report</em></strong></p>
+<p><strong>Windup Report: Overview and Application Messages</strong>
+<span class="image"><img src="images/report-jee-example-application-overview.png" alt="Report Overview and Application Messages" width="600"></span></p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_archive_analysis_sections">Archive Analysis Sections</h6>
+<div class="paragraph">
+<p>Depending on whether you run Windup against source or compiled code, the report next provides details by file, or by file within each archive. Each archive summary begins with a total of the story points assigned to its migration, followed by a table detailing the changes required for each file in the archive. The report contains the following columns.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Column Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Name</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The name of the file being analyzed.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Technology</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The type of file being analyzed, for example: Java Source, Decompiled Java File, Manifest, Properties, EJB XML, Spring XML, Web XML, Hibernate Cfg, Hibernate Mapping</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Issues</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Warnings about areas of code that need review or changes.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Estimated Story Points</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Level of effort required to migrate the file.</p>
 </div>
 <div class="paragraph">
-<p><span class="image"><img src="images/report-javaee-ear-summary.png" alt="Report Summary Page" width="500"></span></p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect4">
-<h5 id="_archive_analysis_sections">Archive Analysis Sections</h5>
-<div class="paragraph">
-<p>Each archive summary begins with a total of the story points assigned to its migration, followed by a table detailing the changes required for each file in the archive. The report contains the following columns.</p>
-</div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">Name</dt>
-<dd>
-<p>The name of the file being analyzed</p>
-</dd>
-<dt class="hdlist1">Technology</dt>
-<dd>
-<p>The type of file being analyzed. For example:</p>
-<div class="ulist">
-<ul>
-<li>
-<p>Java Source</p>
-</li>
-<li>
-<p>Decompiled Java File</p>
-</li>
-<li>
-<p>Manifest</p>
-</li>
-<li>
-<p>Properties</p>
-</li>
-<li>
-<p>EJB XML</p>
-</li>
-<li>
-<p>Spring XML</p>
-</li>
-<li>
-<p>Web XML</p>
-</li>
-<li>
-<p>Hibernate Cfg</p>
-</li>
-<li>
-<p>Hibernate Mapping</p>
-</li>
-</ul>
-</div>
-</dd>
-<dt class="hdlist1">Issues</dt>
-<dd>
-<p>Warnings about areas of code that need review or changes.</p>
-</dd>
-<dt class="hdlist1">Estimated Story Points</dt>
-<dd>
-<p>Level of effort required for migrating the file.</p>
-</dd>
-</dl>
-</div>
+<p><em>Story Points</em> are covered in more detail in the <a href="http://windup.github.io/windup/docs/latest/html/WindupRulesDevelopmentGuide.html#Rules-Rule-Story-Points">Windup Rules Development Guide</a>.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>The following is an example of the archive analysis summary section of a Windup Report. The following is an the analysis of the <code>WINDUP_SOURCE/test-files/jee-example-app-1.0.0.ear/jee-example-services.jar</code>.</p>
 </div>
 <div class="exampleblock">
 <div class="content">
 <div class="paragraph">
-<p><strong><em>Windup Report: Application Report (jee-example-app-1.0.0.ear/jee-example-services.jar)</em></strong></p>
+<p><strong>Windup Report: Archive Detail</strong>
+<span class="image"><img src="images/report-jee-example-services-jar.png" alt="Report Archive Detail" width="600"></span></p>
 </div>
+</div>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_file_analysis_pages">File Analysis Pages</h6>
 <div class="paragraph">
-<p><span class="image"><img src="images/report-javaee-ear-03-services-jar.png" alt="Report Archive Page" width="500"></span></p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect4">
-<h5 id="_file_analysis_pages">File Analysis Pages</h5>
-<div class="paragraph">
-<p>The analysis of the <code>jee-example-services.jar</code> lists the files in the JAR and the warnings and story points assigned to each one. Notice the <code>com.acme.anvil.listener.AnvilWebLifecycleListener</code> file, at the time of this test, has 6 warnings and is assigned 16 story points. Click on the file to see the detail.</p>
+<p>The analysis of the <code>jee-example-services.jar</code> lists the files in the JAR and the warnings and story points assigned to each one. Notice the <code>com.acme.anvil.listener.AnvilWebLifecycleListener</code> file, at the time of this test, has 23 warnings and is assigned 21 story points. Click on the file to see the detail.</p>
 </div>
 <div class="ulist">
 <ul>
@@ -1231,72 +1261,105 @@ The estimated Story Points change as new rules are added to Windup. The values h
 </ul>
 </div>
 <div class="paragraph">
-<p>In this example, warnings appear at the import of <code>weblogic.application.ApplicationLifecycleEvent</code> and report that the class is proprietary to WebLogic and must be removed.</p>
+<p>In this example, warnings appear at various import statements, declarations, and method calls. Each warning describes the issue and the action that should be taken.</p>
 </div>
 <div class="exampleblock">
 <div class="content">
 <div class="paragraph">
-<p><strong><em>Windup Report: Source Report - Part 1</em></strong></p>
-</div>
-<div class="paragraph">
-<p><span class="image"><img src="images/report-javaee-ear-file-detail-part1.png" alt="File Detail - Part 1" width="500"></span></p>
+<p><strong>Windup Report: Source Report - Part 1</strong>
+<span class="image"><img src="images/report-jee-example-source-1.png" alt="File Detail - Part 1" width="600"></span></p>
 </div>
 </div>
 </div>
 <div class="paragraph">
-<p>Later in the code, warnings appear for the creation of the InitialContext and for the object name when registering and unregistering an MBeans</p>
+<p>Later in the source code, warnings appear for the creation of the InitialContext and for JNDI lookup names.</p>
 </div>
 <div class="exampleblock">
 <div class="content">
 <div class="paragraph">
-<p><strong><em>Windup Report: Source Report - Part 2</em></strong></p>
+<p><strong>Windup Report: Source Report - Part 2</strong>
+<span class="image"><img src="images/report-jee-example-source-2.png" alt="File Detail - Part 2" width="600"></span></p>
 </div>
-<div class="paragraph">
-<p><span class="image"><img src="images/report-javaee-ear-file-detail-part2.png" alt="File Detail - Part 2" width="500"></span></p>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_additional_reports">2.3.4. Additional Reports</h4>
-<div class="paragraph">
-<p>Explore the Windup <code>OUTPUT_REPORT_DIRECTORY/reports</code> folder to find additional reporting information.</p>
-</div>
-<div class="sect4">
-<h5 id="_rule_provider_execution_report">Rule Provider Execution Report</h5>
-<div class="paragraph">
-<p>The <code>OUTPUT_REPORT_DIRECTORY/reports/windup_ruleproviders.html</code> page provides the list of rule providers that executed when running the Windup migration command against the application.</p>
-</div>
-<div class="exampleblock">
-<div class="content">
-<div class="paragraph">
-<p><strong><em>Windup Report: Rule Provider Report</em></strong></p>
-</div>
-<div class="paragraph">
-<p><span class="image"><img src="images/report-javaee-ear-ruleprovider.png" alt="RuleProvider Report" width="500"></span></p>
 </div>
 </div>
 </div>
 </div>
 <div class="sect4">
-<h5 id="_rule_provider_execution_report_2">Rule Provider Execution Report</h5>
+<h5 id="review-the-report-rule-provider-executions-report">Rule Provider Execution Report</h5>
 <div class="paragraph">
-<p>The <code>OUTPUT_REPORT_DIRECTORY/reports/windup_ruleproviders.html</code> page provides the list of rule providers that executed when running the Windup migration command against the application.</p>
+<p>This report provides the list of rule providers that executed when running the Windup migration command against the application. The report contains the following columns.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 75%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Column Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rule-ID</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The Rule ID</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rule</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The Java code for the rule</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Statistics</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Statistics behind the graph</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Status?</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Whether the rule execute or not</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Result?</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Whether the execution was successful or not</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Failure Cause</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The reason for an execution failure</p></td>
+</tr>
+</tbody>
+</table>
+<div class="exampleblock">
+<div class="content">
+<div class="paragraph">
+<p><strong>Windup Report: Rule Provider Report</strong>
+<span class="image"><img src="images/report-jee-example-ruleprovider.png" alt="RuleProvider Report" width="600"></span></p>
+</div>
+</div>
 </div>
 </div>
 <div class="sect4">
-<h5 id="_individual_file_analysis_reports">Individual File Analysis Reports</h5>
+<h5 id="review-the-report-freemarker-report">Windup FreeMarker Functions and Directives Report</h5>
 <div class="paragraph">
-<p>You can directly access the the file analysis report pages described above by browsing for them by name in the <code>OUTPUT_REPORT_DIRECTORY/reports/</code> directory. Because the same common file names can exist in multiple archives, for example "manifest.mf" or "web.xml", Windup adds a unique numeric suffix to each report file name.</p>
+<p>Access this report from the <code>Windup FreeMarker Methods</code> link on the initial index page. This report lists all the registered functions and directives that were used to build the report. It is useful if you plan to build your own custom report or for debugging purposes.</p>
 </div>
 <div class="exampleblock">
 <div class="content">
 <div class="paragraph">
-<p><strong><em>Windup Report: Report Directory List</em></strong></p>
+<p><strong>Windup Report: FreeMarker Functions and Directives</strong>
+<span class="image"><img src="images/report-jee-example-freemarker.png" alt="FreeMarker Functions and Directives" width="600"></span></p>
 </div>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="review-the-report-send-feedback">Send Feedback Form</h5>
 <div class="paragraph">
-<p><span class="image"><img src="images/report-directory-file-list.png" alt="Report Directory File List" width="500"></span></p>
+<p>Access the feedback form by clicking on the <code>Send Feedback</code> link on the initial index page. The form allows you to rate the product, talk about what you like and what needs to be improved. You can also attach a file.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="paragraph">
+<p><strong>Send Feedback Form</strong>
+<span class="image"><img src="images/report-jee-example-send-feedback.png" alt="Form to send feedback" width="600"></span></p>
 </div>
 </div>
 </div>
@@ -1306,7 +1369,7 @@ The estimated Story Points change as new rules are added to Windup. The values h
 <div class="sect2">
 <h3 id="Export-the-Report-for-Use-by-Spreadsheet-Programs">2.4. Export the Report for Use by Spreadsheet Programs</h3>
 <div class="paragraph">
-<p>Windup provides the ability to export the report data, including the <strong>Classifications</strong> and <strong>Hints</strong>, to a flat file on your local file system.  The export function currently supports the CSV file format, which presents the report data as fields delimited by a semicolon (;) separator.</p>
+<p>Windup provides the ability to export the report data, including the <strong>Classifications</strong> and <strong>Hints</strong>, to a flat file on your local file system.  The export function currently supports the CSV file format, which presents the report data as fields delimited by a comma (,) separator.</p>
 </div>
 <div class="paragraph">
 <p>Windup follows the <a href="https://tools.ietf.org/html/rfc4180">Common Format and MIME Type for Comma-Separated Values (CSV) Files</a> standard for escaping special characters contained within each field in the file. The exported file has the following characteristics.</p>
@@ -1320,7 +1383,7 @@ The estimated Story Points change as new rules are added to Windup. The values h
 <p>The first row is a header listing the names of the fields.</p>
 <div class="listingblock">
 <div class="content">
-<pre class="nowrap">"Rule Id";"Problem type";"Title";"Description";"Links";"Application";"File Name";"File Path";"Line";"Story points"</pre>
+<pre class="nowrap">"Rule Id","Problem type","Title","Description","Links","Application","File Name","File Path","Line","Story points"</pre>
 </div>
 </div>
 </li>
@@ -1328,7 +1391,7 @@ The estimated Story Points change as new rules are added to Windup. The values h
 <p>Each field is enclosed in double quotes (").</p>
 <div class="listingblock">
 <div class="content">
-<pre class="nowrap">"FindUnboundJavaReferencesRuleProvider";"hint";"Unresolved Class Binding";"";"";"JEE Example EJB Services (org.windup.example:jee-example-services:1.0.0)";"ProductCatalogLocalHome.java";"/home/username/windup-reports/jee-example-app-1.0.0.ear-report/archives/jee-example-services.jar/com/acme/anvil/service/ProductCatalogLocalHome.java";"9";"5"</pre>
+<pre class="nowrap">"FindUnboundJavaReferencesRuleProvider","hint","Unresolved Class Binding","","","JEE Example EJB Services (org.windup.example:jee-example-services:1.0.0)","ProductCatalogLocalHome.java","/home/username/windup-reports/jee-example-app-1.0.0.ear-report/archives/jee-example-services.jar/com/acme/anvil/service/ProductCatalogLocalHome.java","9","5"</pre>
 </div>
 </div>
 </li>
@@ -1336,7 +1399,7 @@ The estimated Story Points change as new rules are added to Windup. The values h
 <p>Any double quote (") appearing within a field is preceded with another double quote.</p>
 <div class="listingblock">
 <div class="content">
-<pre class="nowrap">"MyWindupRule";"hint";""Replace the ""foo"" class";"Replace the ""foo"" class instances with ""bar""";;"MyApp";"MyApp.java";"home/username/MyApp";"200";"8"</pre>
+<pre class="nowrap">"MyWindupRule","hint",""Replace the ""foo"" class","Replace the ""foo"" class instances with ""bar""",,"MyApp","MyApp.java","home/username/MyApp","200","8"</pre>
 </div>
 </div>
 </li>
@@ -1363,9 +1426,6 @@ The estimated Story Points change as new rules are added to Windup. The values h
 </li>
 <li>
 <p>Navigate to the CSV exported file and select it.</p>
-</li>
-<li>
-<p>Under <code>Separator options, be sure to check `Semicolon</code>. Keep the rest of the defaults and click <code>OK</code>.</p>
 </li>
 <li>
 <p>The data is now ready to analyze in the spreadsheet software.</p>
@@ -1576,7 +1636,17 @@ The estimated Story Points change as new rules are added to Windup. The values h
 <p>Windup forums: <a href="https://community.jboss.org/en/windup" class="bare">https://community.jboss.org/en/windup</a></p>
 </li>
 <li>
-<p>Windup issue tracker: <a href="https://issues.jboss.org/browse/WINDUP" class="bare">https://issues.jboss.org/browse/WINDUP</a></p>
+<p>Windup JIRA issue trackers</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Core Windup: <a href="https://issues.jboss.org/browse/WINDUP" class="bare">https://issues.jboss.org/browse/WINDUP</a></p>
+</li>
+<li>
+<p>Windup Rules: <a href="https://issues.jboss.org/browse/WINDUPRULE" class="bare">https://issues.jboss.org/browse/WINDUPRULE</a></p>
+</li>
+</ul>
+</div>
 </li>
 <li>
 <p>Windup users mailing List: <a href="mailto:windup-users@lists.jboss.org">windup-users@lists.jboss.org</a></p>
@@ -1648,7 +1718,13 @@ The estimated Story Points change as new rules are added to Windup. The values h
 <div class="ulist">
 <ul>
 <li>
-<p><strong>Project</strong>:  <em>Windup</em></p>
+<p><strong>Project</strong></p>
+<div class="paragraph">
+<p>For core Windup issues, choose <em>Windup: (WINDUP)</em>.</p>
+</div>
+<div class="paragraph">
+<p>For issues with Windup rules, choose: <em>Windup rules (WINDUPRULES)</em>.</p>
+</div>
 </li>
 <li>
 <p><strong>Issue Type</strong>:  <em>Bug</em></p>
@@ -1695,21 +1771,23 @@ The estimated Story Points change as new rules are added to Windup. The values h
 <dl>
 <dt class="hdlist1">Rule</dt>
 <dd>
-<p>A piece of code that performs a single unit of work during the migration process. Depending on the complexity of the rule, it may or may not include configuration data. Extensive configuration information may be externalized into external configuration, for example, a custom XML file. The following is an example of a Java-based rule added to the <code>JDKConfig</code> RuleProvider class.</p>
-</dd>
-</dl>
-</div>
+<p>A piece of code that performs a single unit of work during the migration process. The following is an example of am XML-based rule that finds and reports on instances of <code>weblogic-ejb-jar</code> XML files and provides a link to a article on the Red Hat Customer Portal that describes how to migrate the file.</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-java" data-lang="java">.addRule()
-    .when(JavaClass.references("java.lang.ClassLoader$").at(TypeReferenceLocation.TYPE))
-    .perform(Classification.as("Java Classloader, must be migrated.")
-    .with(Link.to("Red Hat Customer Portal: How to get resources via the ClassLoader in a JavaEE application in JBoss EAP",  "https://access.redhat.com/knowledge/solutions/239033"))
-     .withEffort(1))</code></pre>
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;rule id="weblogic-xml-descriptor-04000"&gt;
+    &lt;when&gt;
+        &lt;xmlfile matches="/weblogic-ejb-jar" /&gt;
+    &lt;/when&gt;
+    &lt;perform&gt;
+        &lt;classification title="WebLogic EJB XML" severity="mandatory" effort="3"&gt;
+            &lt;link href="https://access.redhat.com/articles/1326823" title="Map weblogic-ejb-jar.xml Elements to the jboss-ejb3.xml Descriptor" /&gt;
+            &lt;tag&gt;ejb&lt;/tag&gt;
+        &lt;/classification&gt;
+    &lt;/perform&gt;
+&lt;/rule&gt;</code></pre>
 </div>
 </div>
-<div class="dlist">
-<dl>
+</dd>
 <dt class="hdlist1">RuleProvider</dt>
 <dd>
 <p>An implementation of OCPSoft ConfigurationProvider class specifically for Windup. It provides Rule instances and the relevant RuleProviderMetadata for those Java-based and XML-based Rule instances.</p>
@@ -1790,6 +1868,9 @@ The estimated Story Points change as new rules are added to Windup. The values h
 <li>
 <p>Add additional proprietary packages that should not be processed to the <code>ignore/proprietary.package-ignore.txt</code> file in the Windup distribution directory. Windup can still find the references to the packages in the application source code, but avoids the need to decompile and analyze the proprietary classes.</p>
 </li>
+<li>
+<p>If you have access to a server that has better resources than your laptop or desktop machine, you may want to consider running Windup on that server.</p>
+</li>
 </ul>
 </div>
 </div>
@@ -1800,6 +1881,9 @@ The estimated Story Points change as new rules are added to Windup. The values h
 </div>
 <div class="ulist">
 <ul>
+<li>
+<p>If you have access to a server that has better resources than your laptop/desktop, than you may want to consider running Windup on that server.</p>
+</li>
 <li>
 <p>Very large applications that require decompilation have large memory requirements. 8 GB RAM is recommended. This allows 3 - 4 GB RAM for use by the JVM.</p>
 </li>
@@ -1819,7 +1903,7 @@ The estimated Story Points change as new rules are added to Windup. The values h
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-09-09 16:15:24 EDT
+Last updated 2015-09-25 16:11:28 EDT
 </div>
 </div>
 </body>

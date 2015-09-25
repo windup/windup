@@ -622,8 +622,8 @@ $ mkdir -p migration-rules/data</pre>
         &lt;description&gt;
             &lt;!-- Ruleset Description --&gt;
         &lt;/description&gt;
-        &lt;sourceTechnology id="SOURCE_ID" versionRange="VERSION-RANGE"/&gt;
-        &lt;targetTechnology id="TARGET_ID" versionRange="VERSION-RANGE"/&gt;
+        &lt;sourceTechnology id="SOURCE_ID" versionRange="VERSION_RANGE"/&gt;
+        &lt;targetTechnology id="TARGET_ID" versionRange="VERSION_RANGE"/&gt;
         &lt;tag&gt;Reviewed-2015-05-01&lt;/tag&gt;
     &lt;/metadata&gt;
     &lt;rules&gt;
@@ -657,10 +657,29 @@ Windup identifies files with the <code>.windup.xml</code> extension as XML-based
 <div class="ulist">
 <ul>
 <li>
-<p>Replace the UNIQUE_RULESET_ID with the file name: "JBoss5-web-class-loading"</p>
+<p>Replace the <code>UNIQUE_RULESET_ID</code> with the file name: "JBoss5-web-class-loading"</p>
 </li>
 <li>
-<p>Replace the UNIQUE_RULE_ID with the ruleset ID appended with '_001': "JBoss5-web-class-loading_001"</p>
+<p>Replace the <code>UNIQUE_RULE_ID</code> with the ruleset ID appended with '_001': "JBoss5-web-class-loading_001"</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Add the source and target technologies.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Replace the sourceTechnology <code>SOURCE_ID</code> with: "eap"</p>
+</li>
+<li>
+<p>Replace the targetTechnology <code>TARGET_ID</code> with: "eap"</p>
+</li>
+<li>
+<p>Replace the sourceTechnology <code>VERSION_RANGE</code> with: "(4,5)"</p>
+</li>
+<li>
+<p>Replace the targetTechnology <code>VERSION_RANGE</code> with: "[6,)"</p>
 </li>
 </ul>
 </div>
@@ -701,9 +720,9 @@ Windup identifies files with the <code>.windup.xml</code> extension as XML-based
 <div class="content">
 <pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;perform&gt;
     &lt;iteration&gt;
-        &lt;classification classification="JBoss Web Application Descriptor" effort="0"/&gt;
+        &lt;classification title="JBoss Web Application Descriptor" effort="0"/&gt;
         &lt;hint message="The class-loading element is no longer valid in the jboss-web.xml file." effort="1"&gt;
-            &lt;link href="https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html-single/Migration_Guide/index.html#Create_or_Modify_Files_That_Control_Class_Loading_in_JBoss_Enterprise_Application_Platform_6" description="Create or Modify Files That Control Class Loading in JBoss EAP 6"/&gt;
+            &lt;link href="https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html-single/Migration_Guide/index.html#Create_or_Modify_Files_That_Control_Class_Loading_in_JBoss_Enterprise_Application_Platform_6" title="Create or Modify Files That Control Class Loading in JBoss EAP 6"/&gt;
         &lt;/hint&gt;
     &lt;/iteration&gt;
 &lt;/perform&gt;</code></pre>
@@ -736,9 +755,9 @@ Windup identifies files with the <code>.windup.xml</code> extension as XML-based
             &lt;/when&gt;
             &lt;perform&gt;
                 &lt;iteration&gt;
-                    &lt;classification classification="JBoss Web Application Descriptor" effort="0"/&gt;
+                    &lt;classification title="JBoss Web Application Descriptor" effort="0"/&gt;
                     &lt;hint message="The class-loading element is no longer valid in the jboss-web.xml file." effort="1"&gt;
-                        &lt;link href="https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html-single/Migration_Guide/index.html#Create_or_Modify_Files_That_Control_Class_Loading_in_JBoss_Enterprise_Application_Platform_6" description="Create or Modify Files That Control Class Loading in JBoss EAP 6"/&gt;
+                        &lt;link href="https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html-single/Migration_Guide/index.html#Create_or_Modify_Files_That_Control_Class_Loading_in_JBoss_Enterprise_Application_Platform_6" title="Create or Modify Files That Control Class Loading in JBoss EAP 6"/&gt;
                     &lt;/hint&gt;
                 &lt;/iteration&gt;
             &lt;/perform&gt;
@@ -783,8 +802,8 @@ For Windows: "\Documents and Settings\USER_NAME\.windup\rules\" or "\Users\USER_
 <p>Type the following command to test the rule in Windup, passing the test file as an input argument and a directory for the output report.</p>
 <div class="listingblock">
 <div class="content">
-<pre class="nowrap">For Linux:    WINDUP_HOME/bin/windup --sourceMode --input ~/migration-rules/data --output ~/migration-rules/reports
-For Windows:  WINDUP_HOME\bin\windup.bat --sourceMode --input migration-rules\data --output migration-rules\reports</pre>
+<pre class="nowrap">For Linux:    WINDUP_HOME/bin/windup --sourceMode --input ~/migration-rules/data --output ~/migration-rules/reports --source eap --target eap
+For Windows:  WINDUP_HOME\bin\windup.bat --sourceMode --input migration-rules\data --output migration-rules\reports --source eap --target eap</pre>
 </div>
 </div>
 </li>
@@ -808,13 +827,13 @@ For Windows:  WINDUP_HOME\bin\windup.bat --sourceMode --input migration-rules\da
 </div>
 </li>
 <li>
-<p>Drill down into the <em>Application Report</em> detail by clicking on the "data" link. This report displays the <strong>Name</strong> of the file, "jboss-web.xml", the warning "seam.jboss.org:loader=@projectName@ java2ParentDelegation=false" in the <strong>Issues</strong> column, and displays "1" *Estimated Story Points", as expected.</p>
+<p>Drill down into the <em>Application Report</em> detail by clicking on the "data" link under the <code>Name</code> column. This report displays a link for the name of the file, "jboss-web.xml", the warning "seam.jboss.org:loader=@projectName@ java2ParentDelegation=false" in the <strong>Issues</strong> column, and displays "1" *Estimated Story Points", as expected.</p>
 <div class="paragraph">
 <p><span class="image"><img src="images/CreateYourFirstRule-ReportApplication.png" alt="Overview" width="500"></span></p>
 </div>
 </li>
 <li>
-<p>Drill down into <em>Source Report</em> by clicking on the "jboss-web.xml" file link. This report provides information about the file and summarizes the story points. It also highlights the <code>&lt;class-loading&gt;</code> line in the <code>jboss-web.xml</code> file, provides the message "The class-loading element is no longer valid in the jboss-web.xml file.", and provides a link to the <a href="https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html-single/Migration_Guide/index.html#Create_or_Modify_Files_That_Control_Class_Loading_in_JBoss_Enterprise_Application_Platform_6">Create or Modify Files That Control Class Loading in JBoss EAP 6</a> topic in the JBoss EAP 6 Migration Guide. Click on the link to be sure the link is valid.</p>
+<p>Drill down into <em>Source Report</em> file detail by clicking on the "jboss-web.xml" file link. This report provides information about the file and summarizes the story points. It also highlights the <code>&lt;class-loading&gt;</code> line in the <code>jboss-web.xml</code> file, provides the message "The class-loading element is no longer valid in the jboss-web.xml file.", and provides a link to the <a href="https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html-single/Migration_Guide/index.html#Create_or_Modify_Files_That_Control_Class_Loading_in_JBoss_Enterprise_Application_Platform_6">Create or Modify Files That Control Class Loading in JBoss EAP 6</a> topic in the JBoss EAP 6 Migration Guide. Click on the link to be sure the link is valid.</p>
 <div class="paragraph">
 <p><span class="image"><img src="images/CreateYourFirstRule-ReportSource.png" alt="Overview" width="500"></span></p>
 </div>
@@ -842,7 +861,7 @@ For Windows:  WINDUP_HOME\bin\windup.bat --sourceMode --input migration-rules\da
 <div class="sect3">
 <h4 id="_which_one_to_choose">3.1.2. Which one to choose?</h4>
 <div class="paragraph">
-<p><em>XML-based</em> rules provide a quick, simple way to create rules to analyze Java, XML, and properties files. If you simply need to highlight a specific section of Java code or XML file content and provide migration hints for it, creation of <em>XML-based</em> rules is the recommended approach. Creation of custom <em>XML-based</em> rules is covered in the <a href="http://windup.github.io/windup/docs/latest/html/WindupRulesDevelopmentGuide.html">Windup Rules Development Guide</a>.</p>
+<p><em>XML-based</em> rules provide a quick, simple way to create rules to analyze Java, XML, and properties files. If you simply need to highlight a specific section of Java code or XML file content and provide migration hints for it, creation of <em>XML-based</em> rules is the recommended approach. Creation of custom <em>XML-based</em> rules is covered in this guide.</p>
 </div>
 <div class="paragraph">
 <p><em>Java-based</em> rule add-ons provide the ability to create very complex rules, manipulate the shared data model graph, and customize the resulting reports. If you need to test or perform complex conditions and operations or want to manipulate the shared data model graph, create custom reports, or extend the functionality in any other way beyond what the <em>XML-based</em> rules provide, you must create <em>Java-based</em> rules. Creation of custom <em>Java-based</em> rules is covered in the <a href="http://windup.github.io/windup/docs/latest/html/WindupCoreDevelopmentGuide.html">Windup Core Development Guide</a>.</p>
@@ -945,7 +964,7 @@ For Windows:  WINDUP_HOME\bin\windup.bat --sourceMode --input migration-rules\da
             &lt;/when&gt;
             &lt;perform&gt;
                 &lt;iteration&gt;
-                    &lt;classification classification="JPA Entity" effort="0"/&gt;
+                    &lt;classification title="JPA Entity" effort="0"/&gt;
                 &lt;/iteration&gt;
             &lt;/perform&gt;
         &lt;/rule&gt;
@@ -2298,7 +2317,7 @@ which may have useful side effects, like setting the matched value on the rule v
     &lt;/when&gt;
     &lt;perform&gt;
         &lt;iteration&gt;
-            &lt;hint effort="3"&gt;
+            &lt;hint title="Proprietary web-service" severity="mandatory" effort="3"&gt;
                 &lt;message&gt;Replace proprietary web-service authentication with JAX-WS standards.&lt;/message&gt;
                 &lt;link href="http://java-x.blogspot.com/2009/03/invoking-web-services-through-proxy.html" title="JAX-WS Proxy Password Example"/&gt;
             &lt;/hint&gt;
@@ -2328,7 +2347,7 @@ which may have useful side effects, like setting the matched value on the rule v
 <td class="tableblock halign-left valign-top"><p class="tableblock">title</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p>Title this hint using the specified string.</p>
+<p>Title this hint using the specified string. Title is required attribute.</p>
 </div>
 <div class="paragraph">
 <p><em>Example:</em></p>
@@ -3069,7 +3088,7 @@ For Windows: "\Documents and Settings\USER_NAME\.windup\rules\"  -or-  "\Users\U
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-09-09 16:15:24 EDT
+Last updated 2015-09-25 16:11:28 EDT
 </div>
 </div>
 </body>
