@@ -135,7 +135,7 @@ public class Bootstrap
 
             if (!containsMutableRepository(furnace.getRepositories()))
             {
-                furnace.addRepository(AddonRepositoryMode.MUTABLE, getWindupAddonsDir());
+                furnace.addRepository(AddonRepositoryMode.MUTABLE, getUserAddonsDir());
             }
 
             if (commands.isEmpty())
@@ -417,6 +417,11 @@ public class Bootstrap
             return path.toFile();
         }
         return Paths.get(userHome).resolve(".windup").toFile();
+    }
+
+    private static File getUserAddonsDir()
+    {
+        return getUserWindupDir().toPath().resolve(".addons").toFile();
     }
 
     private File getWindupAddonsDir()
