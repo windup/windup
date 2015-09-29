@@ -1,5 +1,8 @@
 package org.jboss.windup.reporting.model;
 
+import java.util.Set;
+
+import org.jboss.windup.graph.SetInProperties;
 import org.jboss.windup.graph.model.LinkModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.config.Link;
@@ -9,8 +12,6 @@ import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
-import java.util.Set;
-import org.jboss.windup.graph.SetInProperties;
 
 /**
  * This is used to classify lines within application source {@link FileModel} instances, and to provide hints and related data regarding specific
@@ -19,14 +20,15 @@ import org.jboss.windup.graph.SetInProperties;
 @TypeValue(InlineHintModel.TYPE)
 public interface InlineHintModel extends EffortReportModel,FileLocationModel
 {
-    static final String TYPE = "Hint";
-    static final String TYPE_PREFIX = TYPE + ":";
-    static final String TITLE = TYPE_PREFIX + "title";
-    static final String HINT = TYPE_PREFIX + "hint";
-    static final String SEVERITY = TYPE_PREFIX + "severity";
-    static final String RULE_ID = TYPE_PREFIX + "ruleID";
-    static final String LINKS = TYPE_PREFIX + "links";
-    static final String FILE_LOCATION_REFERENCE = TYPE_PREFIX + "fileLocationReference";
+    String TYPE = "Hint";
+    String TYPE_PREFIX = TYPE + ":";
+    String TITLE = TYPE_PREFIX + "title";
+    String HINT = TYPE_PREFIX + "hint";
+    String SEVERITY = TYPE_PREFIX + "severity";
+    String RULE_ID = TYPE_PREFIX + "ruleID";
+    String LINKS = TYPE_PREFIX + "links";
+    String FILE_LOCATION_REFERENCE = TYPE_PREFIX + "fileLocationReference";
+    String TAG = "tag";
 
     /**
      * A short descriptive text describing the problem covered by this hint
@@ -65,33 +67,33 @@ public interface InlineHintModel extends EffortReportModel,FileLocationModel
     FileLocationModel getFileLocationReference();
 
     /**
-     * Add a related {@link Link} to this {@link ClassificationModel}
+     * Add a related {@link Link} to this {@link InlineHintModel}
      */
     @Adjacency(label = LINKS, direction = Direction.OUT)
     void addLink(LinkModel linkDecorator);
 
     /**
-     * Get the related {@link Link} instances associated with this {@link ClassificationModel}
+     * Get the related {@link Link} instances associated with this {@link InlineHintModel}
      */
     @Adjacency(label = LINKS, direction = Direction.OUT)
     Iterable<LinkModel> getLinks();
 
     /**
-     * Add a tag associated with this {@link ClassificationModel}
+     * Add a tag associated with this {@link InlineHintModel}
      */
-    @SetInProperties(propertyPrefix = "tag")
+    @SetInProperties(propertyPrefix = TAG)
     InlineHintModel addTag(String tag);
 
     /**
-     * Set the set of tags associated with this {@link ClassificationModel}
+     * Set the set of tags associated with this {@link InlineHintModel}
      */
-    @SetInProperties(propertyPrefix = "tag")
+    @SetInProperties(propertyPrefix = TAG)
     InlineHintModel setTags(Set<String> tags);
 
     /**
-     * Get the set of tags associated with this {@link ClassificationModel}
+     * Get the set of tags associated with this {@link InlineHintModel}
      */
-    @SetInProperties(propertyPrefix = "tag")
+    @SetInProperties(propertyPrefix = TAG)
     Set<String> getTags();
 
     /**

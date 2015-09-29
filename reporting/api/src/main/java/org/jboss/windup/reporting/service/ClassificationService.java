@@ -1,5 +1,7 @@
 package org.jboss.windup.reporting.service;
 
+import java.util.Set;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.tools.ant.taskdefs.Length;
 import org.jboss.windup.graph.GraphContext;
@@ -8,6 +10,7 @@ import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.reporting.TagUtil;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -79,7 +82,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
      * 
      * If set to recursive, then also include the effort points from child projects.
      */
-    public int getMigrationEffortPoints(ProjectModel projectModel, boolean recursive)
+    public int getMigrationEffortPoints(ProjectModel projectModel, Set<String> includeTags, Set<String> excludeTags, boolean recursive)
     {
         GremlinPipeline<Vertex, Vertex> classificationPipeline = new GremlinPipeline<>(projectModel.asVertex());
         classificationPipeline.out(ProjectModel.PROJECT_MODEL_TO_FILE).in(ClassificationModel.FILE_MODEL);
@@ -89,6 +92,15 @@ public class ClassificationService extends GraphService<ClassificationModel>
         for (Vertex v : classificationPipeline)
         {
             Integer migrationEffort = v.getProperty(ClassificationModel.EFFORT);
+
+            // only check tags if we have some passed in
+            if (!includeTags.isEmpty() || !excludeTags.isEmpty())
+            {
+                ClassificationModel classificationModel = frame(v);
+                if (!TagUtil.includeTag(classificationModel.getTags(), includeTags, excludeTags))
+                    continue;
+            }
+
             if (migrationEffort != null)
             {
                 classificationEffort += migrationEffort;
@@ -98,7 +110,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
         {
             for (ProjectModel childProject : projectModel.getChildProjects())
             {
-                classificationEffort += getMigrationEffortPoints(childProject, recursive);
+                classificationEffort += getMigrationEffortPoints(childProject, includeTags, excludeTags, recursive);
             }
         }
         return classificationEffort;

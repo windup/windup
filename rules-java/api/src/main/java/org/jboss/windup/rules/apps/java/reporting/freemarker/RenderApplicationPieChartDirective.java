@@ -6,16 +6,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
+import org.jboss.windup.reporting.freemarker.FreeMarkerUtil;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerTemplateDirective;
 import org.jboss.windup.rules.apps.java.service.TypeReferenceService;
 
 import freemarker.core.Environment;
 import freemarker.ext.beans.StringModel;
 import freemarker.template.SimpleScalar;
+import freemarker.template.SimpleSequence;
 import freemarker.template.TemplateBooleanModel;
 import freemarker.template.TemplateDirectiveBody;
 import freemarker.template.TemplateException;
@@ -48,15 +51,17 @@ public class RenderApplicationPieChartDirective implements WindupFreeMarkerTempl
     {
         StringModel projectStringModel = (StringModel) params.get("project");
         ProjectModel projectModel = (ProjectModel) projectStringModel.getWrappedObject();
-        String filename = projectModel.getRootFileModel().getPrettyPath();
 
         TemplateBooleanModel recursiveBooleanModel = (TemplateBooleanModel) params.get("recursive");
         boolean recursive = recursiveBooleanModel.getAsBoolean();
         SimpleScalar elementIDStringModel = (SimpleScalar) params.get("elementID");
         String elementID = elementIDStringModel.getAsString();
 
+        Set<String> includeTags = FreeMarkerUtil.simpleSequenceToSet((SimpleSequence) params.get("includeTags"));
+        Set<String> excludeTags = FreeMarkerUtil.simpleSequenceToSet((SimpleSequence) params.get("excludeTags"));
+
         TypeReferenceService typeReferenceService = new TypeReferenceService(context);
-        Map<String, Integer> data = typeReferenceService.getPackageUseFrequencies(projectModel, 2, recursive);
+        Map<String, Integer> data = typeReferenceService.getPackageUseFrequencies(projectModel, includeTags, excludeTags, 2, recursive);
         if (data.keySet().size() > 0)
         {
             drawPie(env.getOut(), data, elementID);
