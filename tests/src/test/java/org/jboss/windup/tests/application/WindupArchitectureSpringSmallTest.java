@@ -16,7 +16,6 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.model.ReportModel;
 import org.jboss.windup.reporting.service.ReportService;
-import org.jboss.windup.rules.apps.java.reporting.rules.CreateJavaApplicationOverviewReportRuleProvider;
 import org.jboss.windup.rules.apps.javaee.model.SpringBeanModel;
 import org.jboss.windup.rules.apps.javaee.model.SpringConfigurationFileModel;
 import org.jboss.windup.rules.apps.javaee.model.association.JNDIReferenceModel;
@@ -134,9 +133,7 @@ public class WindupArchitectureSpringSmallTest extends WindupArchitectureTest
     private void validateReports(GraphContext context)
     {
         ReportService reportService = new ReportService(context);
-        ReportModel reportModel = reportService.getUniqueByProperty(
-                    ReportModel.TEMPLATE_PATH,
-                    CreateJavaApplicationOverviewReportRuleProvider.TEMPLATE_APPLICATION_REPORT);
+        ReportModel reportModel = getMainApplicationReport(context);
         Path appReportPath = Paths.get(reportService.getReportDirectory(), reportModel.getReportFilename());
 
         TestJavaApplicationOverviewUtil util = new TestJavaApplicationOverviewUtil();

@@ -1,11 +1,14 @@
 package org.jboss.windup.reporting.service;
 
+import java.util.Set;
+
 import org.apache.tools.ant.taskdefs.Length.FileMode;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.reporting.TagUtil;
 import org.jboss.windup.reporting.model.EffortReportModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.rules.files.model.FileReferenceModel;
@@ -75,7 +78,7 @@ public class InlineHintService extends GraphService<InlineHintModel>
      * If set to recursive, then also include the effort points from child projects.
      * 
      */
-    public int getMigrationEffortPoints(ProjectModel projectModel, boolean recursive)
+    public int getMigrationEffortPoints(ProjectModel projectModel, Set<String> includeTags, Set<String> excludeTags, boolean recursive)
     {
         GremlinPipeline<Vertex, Vertex> inlineHintPipeline = new GremlinPipeline<>(projectModel.asVertex());
         inlineHintPipeline.out(ProjectModel.PROJECT_MODEL_TO_FILE).in(InlineHintModel.FILE_MODEL);
@@ -84,6 +87,14 @@ public class InlineHintService extends GraphService<InlineHintModel>
         int hintEffort = 0;
         for (Vertex v : inlineHintPipeline)
         {
+            // only check tags if we have some passed in
+            if (!includeTags.isEmpty() || !excludeTags.isEmpty())
+            {
+                InlineHintModel hintModel = frame(v);
+                if (!TagUtil.includeTag(hintModel.getTags(), includeTags, excludeTags))
+                    continue;
+            }
+
             hintEffort += (Integer) v.getProperty(EffortReportModel.EFFORT);
         }
 
@@ -91,7 +102,7 @@ public class InlineHintService extends GraphService<InlineHintModel>
         {
             for (ProjectModel childProject : projectModel.getChildProjects())
             {
-                hintEffort += getMigrationEffortPoints(childProject, recursive);
+                hintEffort += getMigrationEffortPoints(childProject, includeTags, excludeTags, recursive);
             }
         }
         return hintEffort;

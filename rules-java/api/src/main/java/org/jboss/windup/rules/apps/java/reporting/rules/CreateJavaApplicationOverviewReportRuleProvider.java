@@ -1,5 +1,6 @@
 package org.jboss.windup.rules.apps.java.reporting.rules;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -13,10 +14,10 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.service.GraphService;
-import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.jboss.windup.reporting.model.OverviewReportLineMessageModel;
 import org.jboss.windup.reporting.model.TemplateType;
 import org.jboss.windup.reporting.service.ReportService;
+import org.jboss.windup.rules.apps.java.model.JavaApplicationOverviewReportModel;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -30,7 +31,9 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 public class CreateJavaApplicationOverviewReportRuleProvider extends AbstractRuleProvider
 {
     public static final String OVERVIEW = "Overview";
+    public static final String CATCHALL_REPORT = "Catchall";
     public static final String TEMPLATE_APPLICATION_REPORT = "/reports/templates/java_application.ftl";
+    public static final String TAG_CATCHALL = "catchall";
 
     public CreateJavaApplicationOverviewReportRuleProvider()
     {
@@ -73,19 +76,29 @@ public class CreateJavaApplicationOverviewReportRuleProvider extends AbstractRul
     }
     // @formatter:on
 
-    private ApplicationReportModel createApplicationReport(GraphContext context, ProjectModel projectModel)
+    private void createApplicationReport(GraphContext context, ProjectModel projectModel)
     {
-        ApplicationReportModel applicationReportModel =
-                    context.getFramed().addVertex(null, ApplicationReportModel.class);
-        applicationReportModel.setReportPriority(100);
+        createMainApplicationOverviewReport(context, projectModel, 100, true, OVERVIEW, Collections.EMPTY_SET, Collections.singleton(TAG_CATCHALL));
+        createMainApplicationOverviewReport(context, projectModel, 101, false, CATCHALL_REPORT, Collections.singleton(TAG_CATCHALL),
+                    Collections.EMPTY_SET);
+    }
+
+    private void createMainApplicationOverviewReport(GraphContext context, ProjectModel projectModel, int priority, boolean main, String name,
+                Set<String> includeTags, Set<String> excludeTags)
+    {
+        GraphService<JavaApplicationOverviewReportModel> service = new GraphService<>(context, JavaApplicationOverviewReportModel.class);
+        JavaApplicationOverviewReportModel applicationReportModel = service.create();
+        applicationReportModel.setReportPriority(priority);
         applicationReportModel.setDisplayInApplicationReportIndex(true);
-        applicationReportModel.setReportName(OVERVIEW);
+        applicationReportModel.setReportName(name);
         applicationReportModel.setReportIconClass("glyphicon glyphicon-home");
-        applicationReportModel.setMainApplicationReport(true);
+        applicationReportModel.setMainApplicationReport(main);
         applicationReportModel.setProjectModel(projectModel);
         applicationReportModel.setTemplatePath(TEMPLATE_APPLICATION_REPORT);
         applicationReportModel.setTemplateType(TemplateType.FREEMARKER);
-        applicationReportModel.setDisplayInApplicationList(true);
+        applicationReportModel.setDisplayInApplicationList(main);
+        applicationReportModel.setIncludeTags(includeTags);
+        applicationReportModel.setExcludeTags(excludeTags);
         GraphService<OverviewReportLineMessageModel> lineNotesService = new GraphService<>(context, OverviewReportLineMessageModel.class);
         Iterable<OverviewReportLineMessageModel> allLines = lineNotesService.findAll();
         Set<String> dupeCheck = new HashSet<>();
@@ -123,8 +136,6 @@ public class CreateJavaApplicationOverviewReportRuleProvider extends AbstractRul
         }
         // Set the filename for the report
         ReportService reportService = new ReportService(context);
-        reportService.setUniqueFilename(applicationReportModel, projectModel.getName(), "html");
-
-        return applicationReportModel;
+        reportService.setUniqueFilename(applicationReportModel, name + "_" + projectModel.getName(), "html");
     }
 }

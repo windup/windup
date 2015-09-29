@@ -1,5 +1,11 @@
 package org.jboss.windup.reporting;
 
+import java.io.File;
+import java.util.Collections;
+import java.util.Set;
+
+import javax.inject.Inject;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
@@ -15,9 +21,6 @@ import org.jboss.windup.reporting.service.ClassificationService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.inject.Inject;
-import java.io.File;
 
 @RunWith(Arquillian.class)
 public class ClassificationServiceTest
@@ -49,7 +52,8 @@ public class ClassificationServiceTest
             ClassificationService classificationService = new ClassificationService(context);
 
             ProjectModel projectModel = fillData(context);
-            int totalEffort = classificationService.getMigrationEffortPoints(projectModel, true);
+            Set<String> emptySet = Collections.emptySet();
+            int totalEffort = classificationService.getMigrationEffortPoints(projectModel, emptySet, emptySet, true);
             Assert.assertEquals(143, totalEffort);
 
             boolean foundF1Effort = false;

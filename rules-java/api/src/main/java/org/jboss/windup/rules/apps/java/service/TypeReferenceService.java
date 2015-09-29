@@ -2,6 +2,7 @@ package org.jboss.windup.rules.apps.java.service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.jboss.windup.ast.java.data.ResolutionStatus;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
@@ -10,7 +11,9 @@ import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.reporting.TagUtil;
 import org.jboss.windup.reporting.model.InlineHintModel;
+import org.jboss.windup.reporting.service.InlineHintService;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.jboss.windup.rules.files.model.FileLocationModel;
 import org.jboss.windup.util.ExecutionStatistics;
@@ -36,19 +39,23 @@ public class TypeReferenceService extends GraphService<JavaTypeReferenceModel>
      *
      * nameDepth controls how many package levels to include (com.* vs com.example.* vs com.example.sub.*)
      */
-    public Map<String, Integer> getPackageUseFrequencies(ProjectModel projectModel, int nameDepth, boolean recursive)
+    public Map<String, Integer> getPackageUseFrequencies(ProjectModel projectModel, Set<String> includeTags, Set<String> excludeTags, int nameDepth,
+                boolean recursive)
     {
         ExecutionStatistics.get().begin("TypeReferenceService.getPackageUseFrequencies(projectModel,nameDepth,recursive)");
         Map<String, Integer> packageUseCount = new HashMap<>();
-        getPackageUseFrequencies(packageUseCount, projectModel, nameDepth, recursive);
+        getPackageUseFrequencies(packageUseCount, projectModel, includeTags, excludeTags, nameDepth, recursive);
         ExecutionStatistics.get().end("TypeReferenceService.getPackageUseFrequencies(projectModel,nameDepth,recursive)");
         return packageUseCount;
     }
 
-    private void getPackageUseFrequencies(Map<String, Integer> data, ProjectModel projectModel, int nameDepth,
-                boolean recursive)
+    private void getPackageUseFrequencies(Map<String, Integer> data, ProjectModel projectModel, Set<String> includeTags, Set<String> excludeTags,
+                int nameDepth, boolean recursive)
     {
         ExecutionStatistics.get().begin("TypeReferenceService.getPackageUseFrequencies(data,projectModel,nameDepth,recursive)");
+
+        InlineHintService hintService = new InlineHintService(getGraphContext());
+
         // 1. Get all JavaHints for the given project
         GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(projectModel.asVertex());
         pipeline.in(FileModel.FILE_TO_PROJECT_MODEL).in(InlineHintModel.FILE_MODEL);
@@ -63,8 +70,13 @@ public class TypeReferenceService extends GraphService<JavaTypeReferenceModel>
         // summarize results.
         for (Vertex inlineHintVertex : pipeline)
         {
-            InlineHintModel javaInlineHint = getGraphContext().getFramed().frame(inlineHintVertex,
-                        InlineHintModel.class);
+            InlineHintModel javaInlineHint = hintService.frame(inlineHintVertex);
+            // only check tags if we have some passed in
+            if (!includeTags.isEmpty() || !excludeTags.isEmpty())
+            {
+                if (!TagUtil.includeTag(javaInlineHint.getTags(), includeTags, excludeTags))
+                    continue;
+            }
 
             int val = 1;
             FileLocationModel fileLocationModel = javaInlineHint.getFileLocationReference();
@@ -120,7 +132,7 @@ public class TypeReferenceService extends GraphService<JavaTypeReferenceModel>
             for (ProjectModel childProject : projectModel.getChildProjects())
             {
                 ExecutionStatistics.get().end("TypeReferenceService.getPackageUseFrequencies(data,projectModel,nameDepth,recursive)");
-                getPackageUseFrequencies(data, childProject, nameDepth, recursive);
+                getPackageUseFrequencies(data, childProject, includeTags, excludeTags, nameDepth, recursive);
                 ExecutionStatistics.get().begin("TypeReferenceService.getPackageUseFrequencies(data,projectModel,nameDepth,recursive)");
             }
         }
