@@ -16,6 +16,7 @@ import org.jboss.windup.reporting.model.ReportModel;
 import org.jboss.windup.reporting.model.WindupVertexListModel;
 import org.jboss.windup.util.exception.WindupException;
 
+import freemarker.template.SimpleScalar;
 import freemarker.template.SimpleSequence;
 
 /**
@@ -29,14 +30,22 @@ public class FreeMarkerUtil
      * Converts a FreeMarker {@link SimpleSequence} to a {@link Set}.
      *
      */
-    public static <T extends Object> Set<T> simpleSequenceToSet(SimpleSequence simpleSequence)
+    public static Set<String> simpleSequenceToSet(SimpleSequence simpleSequence)
     {
-        Set<T> result = new HashSet<>();
+        Set<String> result = new HashSet<>();
         for (int i = 0; i < simpleSequence.size(); i++)
         {
             try
             {
-                result.add((T) simpleSequence.get(i));
+                Object sequenceEntry = simpleSequence.get(i);
+                if (sequenceEntry instanceof SimpleScalar)
+                {
+                    result.add(((SimpleScalar) sequenceEntry).getAsString());
+                }
+                else
+                {
+                    result.add(simpleSequence.get(i).toString());
+                }
             }
             catch (Exception e)
             {
