@@ -1,3 +1,4 @@
+
 package org.jboss.windup.rules.apps.java.scan.ast;
 
 import org.jboss.windup.config.AbstractRuleLifecycleListener;
@@ -6,7 +7,7 @@ import org.jboss.windup.config.RuleLifecycleListener;
 
 /**
  * Makes sure to clear the {@link TypeInterestFactory} before and after each execution of Windup.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */

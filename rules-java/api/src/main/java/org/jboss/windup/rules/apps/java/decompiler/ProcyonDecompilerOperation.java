@@ -40,7 +40,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 /**
  * Decompile all .class files that match the requested package filter.
  */
-public class ProcyonDecompilerOperation extends GraphOperation
+public class ProcyonDecompilerOperation extends AbstractDecompilerOperation
 {
     private static Logger LOG = Logging.get(ProcyonDecompilerOperation.class);
 
@@ -64,12 +64,12 @@ public class ProcyonDecompilerOperation extends GraphOperation
         LOG.info("Decompiling with " + threads + " threads");
 
         WindupJavaConfigurationService configurationService = new WindupJavaConfigurationService(event.getGraphContext());
-        GraphService<JavaClassFileModel> classFileService = new GraphService<>(event.getGraphContext(), JavaClassFileModel.class);
-        Iterable<JavaClassFileModel> allClasses = classFileService.findAll();
+        Iterable<JavaClassFileModel> allClasses = getFilesToDecompile(event.getGraphContext());
         List<ClassDecompileRequest> classesToDecompile = new ArrayList<>(10000); // Just a guess as to the average size
         for (JavaClassFileModel classFileModel : allClasses)
         {
-            if (!classFileModel.getFilePath().contains("$") && configurationService.shouldScanPackage(classFileModel.getPackageName()))
+            if (!classFileModel.getFilePath().contains("$")
+                        && configurationService.shouldScanPackage(classFileModel.getPackageName()))
             {
                 File outputDir = DecompilerUtil.getOutputDirectoryForClass(event.getGraphContext(), classFileModel);
                 classesToDecompile.add(new ClassDecompileRequest(outputDir.toPath(), classFileModel.asFile().toPath(), outputDir.toPath()));

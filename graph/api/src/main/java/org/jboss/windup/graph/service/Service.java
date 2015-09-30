@@ -70,6 +70,18 @@ public interface Service<FRAMETYPE extends VertexFrame>
     Iterable<FRAMETYPE> findAllByProperty(String key, Object value);
 
     /**
+     * Find all instances of the {@link WindupVertexFrame} type on which this {@link Service} operates with the given
+     * property not set to the given value.
+     */
+    Iterable<FRAMETYPE> findAllByWithoutProperty(final String key, final Object value);
+
+    /**
+     * Find all instances of the {@link WindupVertexFrame} type on which this {@link Service} operates with the given
+     * property.
+     */
+    Iterable<FRAMETYPE> findAllByWithoutProperty(final String key);
+
+    /**
      * Find all instances of the {@link WindupVertexFrame} type on which this {@link Service} operates with the
      * specified property matching the given regexes.
      */

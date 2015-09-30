@@ -206,6 +206,7 @@ public class FileContentTest
         @Override
         public Configuration getConfiguration(GraphContext context)
         {
+
             return ConfigurationBuilder.begin()
             .addRule()
             .when(FileContent.matches("file {text}.").inFileNamed("{*}.txt"))

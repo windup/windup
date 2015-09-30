@@ -121,8 +121,8 @@ public class JavaClassCompositeTest
         @Override
         public Configuration getConfiguration(GraphContext context)
         {
+
             return ConfigurationBuilder.begin()
-            
             .addRule().when(
                 JavaClass.references("org.apache.commons.{*}").inType("{type}2").at(TypeReferenceLocation.IMPORT)
                 .and(JavaClass.references("org.ocpsoft.rewrite.{*}").inType("{type}1").at(TypeReferenceLocation.IMPORT).as("2"))

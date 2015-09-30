@@ -141,6 +141,7 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
         });
     }
 
+
     @Override
     public Iterable<T> findAllByProperty(final String key, final Object value)
     {
@@ -150,6 +151,32 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
             public Iterable<T> execute() throws BuildException
             {
                 return context.getFramed().getVertices(key, value, type);
+            }
+        });
+    }
+
+    @Override
+    public Iterable<T> findAllByWithoutProperty(final String key, final Object value)
+    {
+        return ExecutionStatistics.performBenchmarked("GraphService.findAllByPropertyNotSetTo(" + key + ")", new Task<Iterable<T>>()
+        {
+            @Override
+            public Iterable<T> execute() throws BuildException
+            {
+                return findAllQuery().hasNot(key, value).vertices(type);
+            }
+        });
+    }
+
+    @Override
+    public Iterable<T> findAllByWithoutProperty(final String key)
+    {
+        return ExecutionStatistics.performBenchmarked("GraphService.findAllByWithoutProperty(" + key + ")", new Task<Iterable<T>>()
+        {
+            @Override
+            public Iterable<T> execute() throws BuildException
+            {
+                return findAllQuery().hasNot(key).vertices(type);
             }
         });
     }

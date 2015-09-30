@@ -54,9 +54,7 @@ public class DiscoverFilesAndTypesRuleProvider extends AbstractRuleProvider
         .addRule()
         .when(Query.fromType(FileModel.class)
             .withProperty(FileModel.IS_DIRECTORY, false)
-            .withProperty(FileModel.FILE_PATH,
-                QueryPropertyComparisonType.REGEX,
-                ZipUtil.getEndsWithZipRegularExpression())
+            .withProperty(FileModel.FILE_PATH, QueryPropertyComparisonType.REGEX, ZipUtil.getEndsWithZipRegularExpression())
         )
         .perform(
            new AddArchiveReferenceInformation()

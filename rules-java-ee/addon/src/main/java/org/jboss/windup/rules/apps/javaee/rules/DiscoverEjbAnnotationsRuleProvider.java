@@ -47,6 +47,7 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
+
         String ruleIDPrefix = getClass().getSimpleName();
         return ConfigurationBuilder.begin()
                     .addRule()

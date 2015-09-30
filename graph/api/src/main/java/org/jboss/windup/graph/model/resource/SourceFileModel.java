@@ -32,7 +32,6 @@ public interface SourceFileModel extends WindupVertexFrame
     @Adjacency(label = TRANSFORMED_TO, direction = Direction.OUT)
     void addLinkToTransformedFile(LinkModel link);
 
-
     /**
      * Contains a boolean indicating that the reporting system should generate a source report for this {@link SourceFileModel}.
      */
