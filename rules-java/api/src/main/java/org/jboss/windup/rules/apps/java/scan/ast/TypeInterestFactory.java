@@ -36,8 +36,6 @@ public final class TypeInterestFactory
     // The full list of patterns, organized by location (including null for the case of no location specified)
     private static Map<TypeReferenceLocation, TypeInterestFactoryTrie> trieByLocation = new HashMap<>();
 
-    private static Map<TypeReferenceLocation, Map<String, Pattern>> patternsByLocation = new HashMap<>();
-
     private static Set<String> ignorePatternSet = Collections.synchronizedSet(new HashSet<String>());
 
     static
@@ -76,7 +74,7 @@ public final class TypeInterestFactory
     static void clear()
     {
         patternsBySource.clear();
-        patternsByLocation.clear();
+        trieByLocation.clear();
         resultsCache.clear();
         cacheLookupCount.set(0);
         cacheHitCount.set(0);
