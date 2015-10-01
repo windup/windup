@@ -9,15 +9,21 @@ import org.jboss.windup.reporting.model.ApplicationReportModel;
 
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.jboss.windup.util.Logging;
+
+import java.util.logging.Logger;
 
 /**
  * This class provides helpful utility methods for creating and finding {@link ApplicationReportModel} vertices.
  * 
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
+ * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  * 
  */
 public class ApplicationReportService extends GraphService<ApplicationReportModel>
 {
+    private static final Logger LOG = Logging.get(ApplicationReportService.class);
+
     public ApplicationReportService(GraphContext context)
     {
         super(context, ApplicationReportModel.class);
@@ -36,6 +42,12 @@ public class ApplicationReportService extends GraphService<ApplicationReportMode
         return applicationReportModel;
     }
 
+    /**
+     * Takes the first {@link ApplicationReportModel} that has set boolean value {@link ApplicationReportModel.MAIN_APPLICATION_REPORT} to true and whose
+     * projectModel is the same as the rootProjectModel of the given file
+     * @param fileModel A FileModel for which we are looking for the main application report to link to.
+     * @return
+     */
     public ApplicationReportModel getMainApplicationReportForFile(FileModel fileModel)
     {
         GremlinPipeline<Vertex, Vertex> pipe = new GremlinPipeline<>(getGraphContext().getGraph());
@@ -50,9 +62,9 @@ public class ApplicationReportService extends GraphService<ApplicationReportMode
         {
             return null;
         }
-        while (rootProjectModel.getParentProject() != null)
+        else
         {
-            rootProjectModel = rootProjectModel.getParentProject();
+            rootProjectModel = rootProjectModel.getRootProjectModel();
         }
         String rootFilePath = rootProjectModel.getRootFileModel().getFilePath();
         pipe.out(ProjectModel.ROOT_FILE_MODEL);
@@ -64,6 +76,10 @@ public class ApplicationReportService extends GraphService<ApplicationReportMode
         {
             Vertex v = pipe.iterator().next();
             ApplicationReportModel mainAppReport = frame(v);
+            if(pipe.iterator().hasNext()) {
+                LOG.warning("There are multiple ApplicationReportModels for a single file " + fileModel.getFilePath() +". This may cause some broken"
+                            + "links in the report file");
+            }
             return mainAppReport;
         }
         return null;

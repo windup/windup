@@ -4,11 +4,11 @@
 
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <title>${reportModel.projectModel.name} - ${reportModel.reportProperties.embeddedTitle}</title>
-    <link href="resources/css/bootstrap.min.css" rel="stylesheet">
-    <link href="resources/css/windup.css" rel="stylesheet" media="screen">
+    <link href="resources/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="resources/css/windup.css" rel="stylesheet" media="screen"/>
   </head>
   <body role="document">
 	
@@ -22,9 +22,7 @@
 			</button>
 		</div>				
 		<div class="navbar-collapse collapse navbar-responsive-collapse">
-			<ul class="nav navbar-nav">
-				<#include "include/navbar.ftl">
-			</ul>
+			<#include "include/navbar.ftl">
 		</div>
 	</div>
 	<!-- / Navbar -->

@@ -3,7 +3,9 @@ package org.jboss.windup.ast.java;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -84,6 +86,7 @@ public class BatchASTProcessor
                     options.put(JavaCore.CORE_JAVA_BUILD_INVALID_CLASSPATH, "ignore");
                     options.put(JavaCore.COMPILER_PB_NULL_ANNOTATION_INFERENCE_CONFLICT, "warning");
                     options.put(JavaCore.CORE_OUTPUT_LOCATION_OVERLAPPING_ANOTHER_SOURCE, "warning");
+                    options.put(JavaCore.CORE_JAVA_BUILD_DUPLICATE_RESOURCE, "warning");
 
                     parser.setCompilerOptions(options);
 
@@ -110,19 +113,35 @@ public class BatchASTProcessor
         };
     }
 
-    private static List<List<String>> createBatches(Set<Path> sourceFiles)
+    private static List<List<String>> createBatches(Set<Path> sourceSet)
     {
         List<List<String>> result = new ArrayList<>();
-        List<String> batch = new ArrayList<>(BATCH_SIZE);
-        for (Path path : sourceFiles)
-        {
-            if (batch.size() == BATCH_SIZE)
-            {
-                result.add(batch);
-                batch = new ArrayList<>(BATCH_SIZE);
-            }
 
-            batch.add(path.toAbsolutePath().toString());
+        List<Path> sourceFiles = new ArrayList<>(sourceSet);
+
+        while (!sourceFiles.isEmpty())
+        {
+            ListIterator<Path> sourceFileIterator = sourceFiles.listIterator();
+            Set<String> batchDupeCheck = new HashSet<>();
+            List<String> batch = new ArrayList<>(BATCH_SIZE);
+            result.add(batch);
+            while (sourceFileIterator.hasNext())
+            {
+                if (batch.size() == BATCH_SIZE)
+                {
+                    batch = new ArrayList<>(BATCH_SIZE);
+                    result.add(batch);
+                    batchDupeCheck.clear();
+                }
+                Path path = sourceFileIterator.next();
+
+                if (!batchDupeCheck.contains(path.getFileName().toString()))
+                {
+                    batch.add(path.toAbsolutePath().toString());
+                    batchDupeCheck.add(path.getFileName().toString());
+                    sourceFileIterator.remove();
+                }
+            }
         }
         return result;
     }

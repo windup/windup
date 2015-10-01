@@ -79,13 +79,15 @@ public interface ApplicationReportModel extends ReportModel
     public void setDisplayInApplicationReportIndex(Boolean displayInIndex);
 
     /**
-     * Indicates whether or not this is the main report for the application.
+     * Indicates whether or not this is the main report for the application. This boolean flag means this report will be referenced from all the filemodels within application.
+     * Only one report per application must have this set to true.
      */
     @Property(MAIN_APPLICATION_REPORT)
     public Boolean isMainApplicationReport();
 
     /**
-     * Indicates whether or not this is the main report for the application.
+     * Indicates whether or not this is the main report for the application. This boolean flag means this report will be referenced from all the filemodels within application.
+     * Only one report per application must have this set to true.
      */
     @Property(MAIN_APPLICATION_REPORT)
     public void setMainApplicationReport(Boolean mainApplicationReport);

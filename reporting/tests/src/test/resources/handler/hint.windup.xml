@@ -3,18 +3,22 @@
 	<hint effort="5" message="test message" in="testVariable">
 		<link href="someUrl" title="someDescription"/>
 	</hint>
-	
+
 	<hint message="test-message" severity="mandatory">
 		<link href="url1" title="description1"/>
 		<link href="url2" title="description2"/>
 		<link href="url3" title="description3"/>
+        <tag>java-ee-6</tag>
+        <tag>jpa-2</tag>
+        <tag>jpa</tag>
 	</hint>
-	
-	<hint effort="asadsa" message="test message" in="testVariable">
+
+	<hint effort="asadsa" message="TEST MESSAGE" in="testVariable">
 		<link href="url1" title="description1"/>
 		<link href="url2" title="description2"/>
 		<link href="url3" title="description3"/>
+        <tag>foo</tag>
 	</hint>
-	
+
 </test>
-            
+

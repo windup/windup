@@ -10,19 +10,15 @@ import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.model.resource.SourceFileModel;
-import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
-import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
+import org.jboss.windup.rules.apps.java.model.AbstractJavaSourceModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
-import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationLiteralTypeValueModel;
 import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationTypeReferenceModel;
 import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationTypeValueModel;
 import org.jboss.windup.rules.apps.java.scan.provider.AnalyzeJavaFilesRuleProvider;
-import org.jboss.windup.rules.apps.javaee.model.JaxRSWebServiceModel;
+import org.jboss.windup.rules.apps.javaee.service.JaxRSWebServiceModelService;
 import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -68,6 +64,18 @@ public class DiscoverJaxRsAnnotationsRuleProvider extends AbstractRuleProvider
                     .withId(ruleIDPrefix + "_JAXRSAnnotationRule");
     }
 
+    private void extractMetadata(GraphRewrite event, JavaTypeReferenceModel typeReference)
+    {
+        typeReference.getFile().setGenerateSourceReport(true);
+        JavaAnnotationTypeReferenceModel jaxRSAnnotationTypeReference = (JavaAnnotationTypeReferenceModel) typeReference;
+
+        String path = getAnnotationLiteralValue(jaxRSAnnotationTypeReference, "value");
+        JavaClassModel implementationClass = getJavaClass(typeReference);
+
+        JaxRSWebServiceModelService service = new JaxRSWebServiceModelService(event.getGraphContext());
+        service.getOrCreate(path, implementationClass);
+    }
+
     private String getAnnotationLiteralValue(JavaAnnotationTypeReferenceModel model, String name)
     {
         JavaAnnotationTypeValueModel valueModel = model.getAnnotationValues().get(name);
@@ -82,56 +90,26 @@ public class DiscoverJaxRsAnnotationsRuleProvider extends AbstractRuleProvider
         }
     }
 
-    private void extractMetadata(GraphRewrite event, JavaTypeReferenceModel typeReference)
-    {
-        // sets to decompile
-        ((SourceFileModel) typeReference.getFile()).setGenerateSourceReport(true);
-        JavaAnnotationTypeReferenceModel jaxRSAnnotationTypeReference = (JavaAnnotationTypeReferenceModel) typeReference;
-
-        String pathName = getAnnotationLiteralValue(jaxRSAnnotationTypeReference, "value");
-
-        GraphService<JaxRSWebServiceModel> jaxRSService = new GraphService<>(event.getGraphContext(), JaxRSWebServiceModel.class);
-        JaxRSWebServiceModel jaxWebService = jaxRSService.create();
-        jaxWebService.setPath(pathName);
-
-        JavaClassModel jcm = getJavaClass(typeReference);
-        if (jcm != null)
-        {
-            jaxWebService.setImplementationClass(jcm);
-        }
-    }
-
     private JavaClassModel getJavaClass(JavaTypeReferenceModel javaTypeReference)
     {
         JavaClassModel result = null;
-        FileModel originalFile = javaTypeReference.getFile();
-        if (originalFile instanceof JavaSourceFileModel)
+        AbstractJavaSourceModel javaSource = javaTypeReference.getFile();
+        for (JavaClassModel javaClassModel : javaSource.getJavaClasses())
         {
-            JavaSourceFileModel javaSource = (JavaSourceFileModel) originalFile;
-            for (JavaClassModel javaClassModel : javaSource.getJavaClasses())
+            // there can be only one public one, and the annotated class should be public
+            if (javaClassModel.isPublic() != null && javaClassModel.isPublic())
             {
-                // there can be only one public one, and the annotated class should be public
-                if (javaClassModel.isPublic() != null && javaClassModel.isPublic())
-                {
-                    result = javaClassModel;
-                    break;
-                }
+                result = javaClassModel;
+                break;
             }
+        }
 
-            if (result == null)
-            {
-                // no public classes found, so try to find any class (even non-public ones)
-                result = javaSource.getJavaClasses().iterator().next();
-            }
-        }
-        else if (originalFile instanceof JavaClassFileModel)
+        if (result == null)
         {
-            result = ((JavaClassFileModel) originalFile).getJavaClass();
+            // no public classes found, so try to find any class (even non-public ones)
+            result = javaSource.getJavaClasses().iterator().next();
         }
-        else
-        {
-            LOG.warning("Unrecognized file type with annotation found at: \"" + originalFile.getFilePath() + "\"");
-        }
+
         return result;
     }
 

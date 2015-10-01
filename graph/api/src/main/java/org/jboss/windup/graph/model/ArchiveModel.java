@@ -12,6 +12,7 @@ public interface ArchiveModel extends FileModel
 {
     public static String TYPE = "ArchiveModel:";
     public static String ARCHIVE_NAME = TYPE + "archiveName";
+    String DECOMPILED_FILES = "decompiledFiles";
 
     @Adjacency(label = "parentArchive", direction = Direction.IN)
     public ArchiveModel getParentArchive();
@@ -46,10 +47,10 @@ public interface ArchiveModel extends FileModel
     @Adjacency(label = FileModel.ARCHIVE_FILES, direction = Direction.OUT)
     public void addContainedFileModel(FileModel archiveFile);
 
-    @Adjacency(label = "decompiledFiles", direction = Direction.OUT)
+    @Adjacency(label = DECOMPILED_FILES, direction = Direction.OUT)
     public Iterable<FileModel> getDecompiledFileModels();
 
-    @Adjacency(label = "decompiledFiles", direction = Direction.OUT)
+    @Adjacency(label = DECOMPILED_FILES, direction = Direction.OUT)
     public void addDecompiledFileModel(FileModel archiveFile);
     
     @Adjacency(label = OrganizationModel.ARCHIVE_MODEL, direction = Direction.IN)

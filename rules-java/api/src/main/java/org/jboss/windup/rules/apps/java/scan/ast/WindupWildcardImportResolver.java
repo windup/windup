@@ -22,7 +22,7 @@ import org.jboss.windup.rules.apps.java.service.JavaClassService;
  */
 public class WindupWildcardImportResolver implements WildcardImportResolver, org.jboss.windup.ast.java.WildcardImportResolver
 {
-    private static ThreadLocal<GraphContext> graphContextTL = new ThreadLocal<>();
+    private static GraphContext context;
 
     /**
      * Contains a map of class short names (eg, MyClass) to qualified names (eg, com.example.MyClass)
@@ -36,9 +36,30 @@ public class WindupWildcardImportResolver implements WildcardImportResolver, org
     private final Set<String> classNameLookedUp = Collections.synchronizedSet(new HashSet<String>());
 
     @Override
+    public String resolve(JavaType<?> source, String type)
+    {
+        GraphContext graphContext = getContext();
+        if (graphContext == null)
+        {
+            return type;
+        }
+
+        Importer<?> importer = (Importer<?>) source;
+        List<String> wildcardImports = new ArrayList<>();
+        for (Import importDeclaration : importer.getImports())
+        {
+            if (importDeclaration.isWildcard())
+            {
+                wildcardImports.add(importDeclaration.getQualifiedName());
+            }
+        }
+        return resolve(wildcardImports, type);
+    }
+
+    @Override
     public String resolve(List<String> wildcardImports, String type)
     {
-        GraphContext graphContext = getGraphContext();
+        GraphContext graphContext = getContext();
         // If the type contains a "." assume that it is fully qualified.
         // FIXME - This is a carryover from the original Windup code, and I don't think
         // that this assumption is valid.
@@ -84,7 +105,7 @@ public class WindupWildcardImportResolver implements WildcardImportResolver, org
     @Override
     public String[] resolve(String wildcardImportPackageName)
     {
-        JavaClassService javaClassService = new JavaClassService(getGraphContext());
+        JavaClassService javaClassService = new JavaClassService(getContext());
         Iterable<JavaClassModel> classModels = javaClassService.findByJavaPackage(wildcardImportPackageName);
         List<String> results = new ArrayList<>();
         for (JavaClassModel classModel : classModels)
@@ -94,34 +115,13 @@ public class WindupWildcardImportResolver implements WildcardImportResolver, org
         return results.toArray(new String[results.size()]);
     }
 
-    @Override
-    public String resolve(JavaType<?> source, String type)
+    private GraphContext getContext()
     {
-        GraphContext graphContext = getGraphContext();
-        if (graphContext == null)
-        {
-            return type;
-        }
-
-        Importer<?> importer = (Importer<?>) source;
-        List<String> wildcardImports = new ArrayList<>();
-        for (Import importDeclaration : importer.getImports())
-        {
-            if (importDeclaration.isWildcard())
-            {
-                wildcardImports.add(importDeclaration.getQualifiedName());
-            }
-        }
-        return resolve(wildcardImports, type);
+        return WindupWildcardImportResolver.context;
     }
 
-    private GraphContext getGraphContext()
+    public static void setContext(GraphContext context)
     {
-        return graphContextTL.get();
-    }
-
-    public static void setGraphContext(GraphContext graphContext)
-    {
-        graphContextTL.set(graphContext);
+        WindupWildcardImportResolver.context = context;
     }
 }

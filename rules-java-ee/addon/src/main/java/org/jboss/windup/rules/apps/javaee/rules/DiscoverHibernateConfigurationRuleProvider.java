@@ -50,7 +50,7 @@ public class DiscoverHibernateConfigurationRuleProvider extends IteratingRulePro
     private static final Logger LOG = Logging.get(DiscoverHibernateConfigurationRuleProvider.class);
 
     private static final String TECH_TAG = "Hibernate Cfg";
-    private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.INFORMATIONAL;
+    private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.IMPORTANT;
 
     private static final String hibernateRegex = "(?i).*hibernate.configuration.*";
 

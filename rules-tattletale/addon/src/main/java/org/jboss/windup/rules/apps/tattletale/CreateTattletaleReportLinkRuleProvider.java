@@ -23,10 +23,14 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+
+/**
+ * Adds a link to the Tattletale report to the applicationReportModel.
+ */
 public class CreateTattletaleReportLinkRuleProvider extends AbstractRuleProvider
 {
     private static final Logger LOG = Logging.get(CreateTattletaleReportLinkRuleProvider.class);
-    
+
     public static final String REPORT_TEMPLATE = "/reports/templates/embedded.ftl";
     private static final String TATTLETALE_INDEX_HTML = "tattletale/index.html";
 
@@ -58,24 +62,24 @@ public class CreateTattletaleReportLinkRuleProvider extends AbstractRuleProvider
             applicationReportModel.setReportName("Tattletale");
             applicationReportModel.setReportIconClass("glyphicon tattletale-nav-logo");
             applicationReportModel.setReportPriority(500);
-            
+
             applicationReportModel.setDisplayInApplicationReportIndex(true);
             applicationReportModel.setProjectModel(inputProjectModel);
             applicationReportModel.setReportFilename(TATTLETALE_INDEX_HTML);
             applicationReportModel.setTemplatePath(REPORT_TEMPLATE);
             applicationReportModel.setTemplateType(TemplateType.FREEMARKER);
 
-            
+
             Map<String, String> reportProperties = new HashMap<>();
             reportProperties.put("embeddedTitle", "Tattletale Report");
             reportProperties.put("embeddedUrl", "tattletale/index.html");
-            
+
             applicationReportModel.setReportProperties(reportProperties);
-            
-            
+
+
             LOG.info("Title: "+applicationReportModel.getReportProperties().get("embeddedTitle"));
             LOG.info("URL: "+applicationReportModel.getReportProperties().get("embeddedUrl"));
-            
+
             ReportService reportService = new ReportService(event.getGraphContext());
             reportService.setUniqueFilename(applicationReportModel, "tattletale"+"_"+inputProjectModel.getName(), "html");
         }

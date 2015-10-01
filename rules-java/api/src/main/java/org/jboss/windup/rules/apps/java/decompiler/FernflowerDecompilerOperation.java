@@ -23,6 +23,7 @@ import org.jboss.windup.decompiler.api.DecompilationListener;
 import org.jboss.windup.decompiler.api.DecompilationResult;
 import org.jboss.windup.decompiler.fernflower.FernflowerDecompiler;
 import org.jboss.windup.decompiler.procyon.ProcyonDecompiler;
+import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.FileService;
@@ -31,6 +32,7 @@ import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
+import org.jboss.windup.rules.apps.java.scan.provider.IndexJavaSourceFilesRuleProvider;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.Logging;
@@ -42,7 +44,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class FernflowerDecompilerOperation extends GraphOperation
+public class FernflowerDecompilerOperation extends AbstractDecompilerOperation
 {
     private static Logger LOG = Logging.get(FernflowerDecompilerOperation.class);
 
@@ -60,18 +62,17 @@ public class FernflowerDecompilerOperation extends GraphOperation
     @Override
     public void perform(final GraphRewrite event, final EvaluationContext context)
     {
-        ExecutionStatistics.get().begin("ProcyonDecompilationOperation.perform");
+        ExecutionStatistics.get().begin("FernflowerDecompilationOperation.perform");
         int totalCores = Runtime.getRuntime().availableProcessors();
         int threads = totalCores == 0 ? 1 : totalCores;
         LOG.info("Decompiling with " + threads + " threads");
 
         WindupJavaConfigurationService configurationService = new WindupJavaConfigurationService(event.getGraphContext());
-        GraphService<JavaClassFileModel> classFileService = new GraphService<>(event.getGraphContext(), JavaClassFileModel.class);
-        Iterable<JavaClassFileModel> allClasses = classFileService.findAll();
+        Iterable<JavaClassFileModel> filesToDecompile = getFilesToDecompile(event.getGraphContext());
 
         int totalWork = 0;
         List<ClassDecompileRequest> classesToDecompile = new ArrayList<>(10000); // Just a guess as to the average size
-        for (JavaClassFileModel classFileModel : allClasses)
+        for (JavaClassFileModel classFileModel : filesToDecompile)
         {
             File outputDir = DecompilerUtil.getOutputDirectoryForClass(event.getGraphContext(), classFileModel);
             if (configurationService.shouldScanPackage(classFileModel.getPackageName()))
@@ -101,14 +102,13 @@ public class FernflowerDecompilerOperation extends GraphOperation
         decompiler.decompileClassFiles(classesToDecompile, addDecompiledItemsToGraph);
         decompiler.close();
 
-        ExecutionStatistics.get().end("ProcyonDecompilationOperation.perform");
+        ExecutionStatistics.get().end("FernflowerDecompilationOperation.perform");
     }
 
     /**
      * This listens for decompiled files and writes the results to disk in a background thread.
      *
      * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
-     *
      */
     private class AddDecompiledItemsToGraph implements DecompilationListener
     {
@@ -236,12 +236,16 @@ public class FernflowerDecompilerOperation extends GraphOperation
                     {
                         if (!(decompiledFileModel instanceof JavaSourceFileModel))
                         {
-                            decompiledFileModel = new GraphService<JavaSourceFileModel>(event.getGraphContext(), JavaSourceFileModel.class)
+                            decompiledFileModel = new GraphService<>(event.getGraphContext(), JavaSourceFileModel.class)
                                         .addTypeToModel(decompiledFileModel);
                         }
                         JavaSourceFileModel decompiledSourceFileModel = (JavaSourceFileModel) decompiledFileModel;
                         TechnologyTagService techTagService = new TechnologyTagService(event.getGraphContext());
                         techTagService.addTagToFileModel(decompiledSourceFileModel, TECH_TAG, TECH_TAG_LEVEL);
+
+                        // Don't also tag it as a regular source model (only tag it as decompiled).
+                        // This can happen if the source file was already there, but tagged as something else before.
+                        techTagService.removeTagFromFileModel(decompiledSourceFileModel, IndexJavaSourceFilesRuleProvider.TECH_TAG);
 
                         FileModel classFileModel = fileService.getUniqueByProperty(
                                     FileModel.FILE_PATH, classFilePath.toAbsolutePath().toString());
@@ -249,8 +253,13 @@ public class FernflowerDecompilerOperation extends GraphOperation
                         {
                             decompiledFileModel.setParentArchive(classFileModel.getParentArchive());
                             ProjectModel projectModel = classFileModel.getProjectModel();
-                            decompiledFileModel.setProjectModel(projectModel);
-                            projectModel.addFileModel(decompiledFileModel);
+
+                            // only add it to the project model if it is not already there
+                            if (decompiledFileModel.getProjectModel() == null || !decompiledFileModel.getProjectModel().equals(projectModel))
+                            {
+                                decompiledFileModel.setProjectModel(projectModel);
+                                projectModel.addFileModel(decompiledFileModel);
+                            }
 
                             if (decompiledFileModel.getParentArchive() != null)
                                 decompiledFileModel.getParentArchive().addDecompiledFileModel(decompiledFileModel);
@@ -258,6 +267,7 @@ public class FernflowerDecompilerOperation extends GraphOperation
                             JavaClassFileModel classModel = (JavaClassFileModel) classFileModel;
                             classModel.getJavaClass().setDecompiledSource(decompiledSourceFileModel);
                             decompiledSourceFileModel.setPackageName(classModel.getPackageName());
+                            decompiledSourceFileModel.setDecompiled(true);
 
                             // Set the root path of this source file (if possible). Procyon should always be placing the file
                             // into a location that is appropriate for the package name, so this should always yield
@@ -309,4 +319,5 @@ public class FernflowerDecompilerOperation extends GraphOperation
             return "DecompileWithProcyon";
         }
     }
+
 }

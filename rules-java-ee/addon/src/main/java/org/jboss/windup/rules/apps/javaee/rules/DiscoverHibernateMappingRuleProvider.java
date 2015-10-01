@@ -35,12 +35,16 @@ import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.FramedGraphQuery;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
+
+/**
+ * Discovers the hibernate.hbm.xml files.
+ */
 public class DiscoverHibernateMappingRuleProvider extends IteratingRuleProvider<DoctypeMetaModel>
 {
     private static final Logger LOG = Logger.getLogger(DiscoverHibernateMappingRuleProvider.class.getSimpleName());
 
     private static final String TECH_TAG = "Hibernate Mapping";
-    private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.INFORMATIONAL;
+    private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.IMPORTANT;
 
     private static final String hibernateRegex = "(?i).*hibernate.mapping.*";
 

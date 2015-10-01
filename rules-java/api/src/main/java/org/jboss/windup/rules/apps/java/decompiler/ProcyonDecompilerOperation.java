@@ -28,6 +28,7 @@ import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
+import org.jboss.windup.rules.apps.java.scan.provider.IndexJavaSourceFilesRuleProvider;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.Logging;
@@ -39,7 +40,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 /**
  * Decompile all .class files that match the requested package filter.
  */
-public class ProcyonDecompilerOperation extends GraphOperation
+public class ProcyonDecompilerOperation extends AbstractDecompilerOperation
 {
     private static Logger LOG = Logging.get(ProcyonDecompilerOperation.class);
 
@@ -63,12 +64,12 @@ public class ProcyonDecompilerOperation extends GraphOperation
         LOG.info("Decompiling with " + threads + " threads");
 
         WindupJavaConfigurationService configurationService = new WindupJavaConfigurationService(event.getGraphContext());
-        GraphService<JavaClassFileModel> classFileService = new GraphService<>(event.getGraphContext(), JavaClassFileModel.class);
-        Iterable<JavaClassFileModel> allClasses = classFileService.findAll();
+        Iterable<JavaClassFileModel> allClasses = getFilesToDecompile(event.getGraphContext());
         List<ClassDecompileRequest> classesToDecompile = new ArrayList<>(10000); // Just a guess as to the average size
         for (JavaClassFileModel classFileModel : allClasses)
         {
-            if (!classFileModel.getFilePath().contains("$") && configurationService.shouldScanPackage(classFileModel.getPackageName()))
+            if (!classFileModel.getFilePath().contains("$")
+                        && configurationService.shouldScanPackage(classFileModel.getPackageName()))
             {
                 File outputDir = DecompilerUtil.getOutputDirectoryForClass(event.getGraphContext(), classFileModel);
                 classesToDecompile.add(new ClassDecompileRequest(outputDir.toPath(), classFileModel.asFile().toPath(), outputDir.toPath()));
@@ -205,12 +206,16 @@ public class ProcyonDecompilerOperation extends GraphOperation
                     {
                         if (!(decompiledFileModel instanceof JavaSourceFileModel))
                         {
-                            decompiledFileModel = new GraphService<JavaSourceFileModel>(event.getGraphContext(), JavaSourceFileModel.class)
+                            decompiledFileModel = new GraphService<>(event.getGraphContext(), JavaSourceFileModel.class)
                                         .addTypeToModel(decompiledFileModel);
                         }
                         JavaSourceFileModel decompiledSourceFileModel = (JavaSourceFileModel) decompiledFileModel;
                         TechnologyTagService techTagService = new TechnologyTagService(event.getGraphContext());
                         techTagService.addTagToFileModel(decompiledSourceFileModel, TECH_TAG, TECH_TAG_LEVEL);
+
+                        // Don't also tag it as a regular source model (only tag it as decompiled).
+                        // This can happen if the source file was already there, but tagged as something else before.
+                        techTagService.removeTagFromFileModel(decompiledSourceFileModel, IndexJavaSourceFilesRuleProvider.TECH_TAG);
 
                         FileModel classFileModel = fileService.getUniqueByProperty(
                                     FileModel.FILE_PATH, classFilePath.toAbsolutePath().toString());
@@ -218,8 +223,13 @@ public class ProcyonDecompilerOperation extends GraphOperation
                         {
                             decompiledFileModel.setParentArchive(classFileModel.getParentArchive());
                             ProjectModel projectModel = classFileModel.getProjectModel();
-                            decompiledFileModel.setProjectModel(projectModel);
-                            projectModel.addFileModel(decompiledFileModel);
+
+                            // only add it to the project model if it is not already there
+                            if (decompiledFileModel.getProjectModel() == null || !decompiledFileModel.getProjectModel().equals(projectModel))
+                            {
+                                decompiledFileModel.setProjectModel(projectModel);
+                                projectModel.addFileModel(decompiledFileModel);
+                            }
 
                             if (decompiledFileModel.getParentArchive() != null)
                                 decompiledFileModel.getParentArchive().addDecompiledFileModel(decompiledFileModel);
@@ -227,6 +237,7 @@ public class ProcyonDecompilerOperation extends GraphOperation
                             JavaClassFileModel classModel = (JavaClassFileModel) classFileModel;
                             classModel.getJavaClass().setDecompiledSource(decompiledSourceFileModel);
                             decompiledSourceFileModel.setPackageName(classModel.getPackageName());
+                            decompiledSourceFileModel.setDecompiled(true);
 
                             // Set the root path of this source file (if possible). Procyon should always be placing the file
                             // into a location that is appropriate for the package name, so this should always yield

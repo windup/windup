@@ -14,6 +14,9 @@ import org.jboss.windup.rules.apps.java.scan.operation.ConfigureArchiveTypes;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 
+/**
+ * Iterates over discovered archives and sets their vertices' types.
+ */
 public class DiscoverArchiveTypesRuleProvider extends AbstractRuleProvider
 {
     @Inject

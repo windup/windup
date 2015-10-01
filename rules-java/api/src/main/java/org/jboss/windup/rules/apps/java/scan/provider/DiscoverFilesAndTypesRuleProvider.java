@@ -19,6 +19,10 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
+
+/**
+ * Recurses into directories under Windup input(s) and creates FileModel vertices for them in the graph.
+ */
 public class DiscoverFilesAndTypesRuleProvider extends AbstractRuleProvider
 {
     public DiscoverFilesAndTypesRuleProvider()
@@ -35,26 +39,22 @@ public class DiscoverFilesAndTypesRuleProvider extends AbstractRuleProvider
 
         .addRule()
         .when(Query.fromType(WindupConfigurationModel.class)
-                    .piped(new QueryGremlinCriterion()
-                    {
-                        
-                        @Override
-                        public void query(GraphRewrite event, GremlinPipeline<Vertex, Vertex> pipeline)
-                        {
-                            pipeline.out(WindupConfigurationModel.INPUT_PATH);
-                            pipeline.has(FileModel.IS_DIRECTORY, true);
-                        }
-                    })
+            .piped(new QueryGremlinCriterion()
+            {
+                @Override
+                public void query(GraphRewrite event, GremlinPipeline<Vertex, Vertex> pipeline)
+                {
+                    pipeline.out(WindupConfigurationModel.INPUT_PATH);
+                    pipeline.has(FileModel.IS_DIRECTORY, true);
+                }
+            })
         )
-        .perform(new RecurseDirectoryAndAddFiles()
-        )
+        .perform(new RecurseDirectoryAndAddFiles())
 
         .addRule()
         .when(Query.fromType(FileModel.class)
             .withProperty(FileModel.IS_DIRECTORY, false)
-            .withProperty(FileModel.FILE_PATH,
-                QueryPropertyComparisonType.REGEX,
-                ZipUtil.getEndsWithZipRegularExpression())
+            .withProperty(FileModel.FILE_PATH, QueryPropertyComparisonType.REGEX, ZipUtil.getEndsWithZipRegularExpression())
         )
         .perform(
            new AddArchiveReferenceInformation()

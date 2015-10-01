@@ -18,10 +18,12 @@ public class PathUtil
     private static final Logger LOG = Logger.getLogger(PathUtil.class.getName());
 
     public static final String WINDUP_HOME = "windup.home";
-    public static final String RULES_DIRECTORY_NAME="rules";
-    public static final String IGNORE_DIRECTORY_NAME="ignore";
-    public static final String CACHE_DIRECTORY_NAME="cache";
-    public static final String ADDONS_DIRECTORY_NAME="addons";
+    public static final String WINDUP_RULESETS_DIR_SYSPROP = "windup.rulesets.dir";
+
+    public static final String RULES_DIRECTORY_NAME = "rules";
+    public static final String IGNORE_DIRECTORY_NAME = "ignore";
+    public static final String CACHE_DIRECTORY_NAME = "cache";
+    public static final String ADDONS_DIRECTORY_NAME = "addons";
     public static String LIBRARY_DIRECTORY_NAME = "lib";
     public static String BINARY_DIRECTORY_NAME = "bin";
 
@@ -34,7 +36,7 @@ public class PathUtil
         if (userHome == null)
         {
             Path path = new File("").toPath();
-            LOG.warning("$USER_HOME not set, using [" + path + "] instead.");
+            LOG.warning("$USER_HOME not set, using [" + path.toAbsolutePath().toString() + "] instead.");
             return path;
         }
         return Paths.get(userHome).resolve(".windup");
@@ -49,7 +51,7 @@ public class PathUtil
         if (windupHome == null)
         {
             Path path = new File("").toPath();
-            LOG.warning("$WINDUP_HOME not set, using [" + path + "] instead.");
+            LOG.warning("$WINDUP_HOME not set, using [" + path.toAbsolutePath().toString() + "] instead.");
             return path;
         }
         return Paths.get(windupHome);
@@ -91,7 +93,7 @@ public class PathUtil
     {
         return getWindupSubdirectory(IGNORE_DIRECTORY_NAME);
     }
-    
+
     /**
      * The path $WINDUP_HOME/addons
      */
@@ -113,12 +115,22 @@ public class PathUtil
      */
     public static Path getWindupRulesDir()
     {
-        return getWindupSubdirectory(RULES_DIRECTORY_NAME);
+        String rulesDir = System.getProperty(WINDUP_RULESETS_DIR_SYSPROP);
+        if (rulesDir != null)
+        {
+            Path path = Paths.get(rulesDir);
+            if (!path.toFile().exists())
+                LOG.warning(WINDUP_RULESETS_DIR_SYSPROP + " points to a non-existent directory!" + path.toAbsolutePath().toString());
+            return path;
+        }
+        else
+            return getWindupSubdirectory(RULES_DIRECTORY_NAME);
     }
 
     /**
-     * Conservative approach to insuring that a given filename only contains characters that are legal for use in filenames on the disk. Other
-     * characters are replaced with underscore _ .
+     * Conservative approach to insuring that a given filename only contains characters that are legal for use in
+     * filenames on the disk. Other characters are replaced with underscore _ .
+     * Note that this should only be used with the filename itself, not the entire path, because it removes the '/' characters as well.
      */
     public static String cleanFileName(String badFileName)
     {
@@ -138,7 +150,8 @@ public class PathUtil
     }
 
     /**
-     * Converts a path to a class file (like "foo/bar/My.class" or "foo\\bar\\My.class") to a fully qualified class name (like "foo.bar.My").
+     * Converts a path to a class file (like "foo/bar/My.class" or "foo\\bar\\My.class") to a fully qualified class name
+     * (like "foo.bar.My").
      */
     public static String classFilePathToClassname(String classFilePath)
     {
@@ -154,10 +167,10 @@ public class PathUtil
 
     /**
      * Returns the root path for this source file, based upon the package name.
-     * 
-     * For example, if path is "/project/src/main/java/org/example/Foo.java" and the package is "org.example", then this should return
-     * "/project/src/main/java".
-     * 
+     *
+     * For example, if path is "/project/src/main/java/org/example/Foo.java" and the package is "org.example", then this
+     * should return "/project/src/main/java".
+     *
      * Returns null if the folder structure does not match the package name.
      */
     public static Path getRootFolderForSource(Path sourceFilePath, String packageName)
@@ -178,6 +191,25 @@ public class PathUtil
             currentPath = currentPath.getParent();
         }
         return currentPath;
+    }
+
+    /**
+     * Returns true if "file" is a subfile or subdirectory of "dir".
+     *
+     * For example with the directory /path/to/a, the following return values would occur:
+     *
+     * /path/to/a/foo.txt - true /path/to/a/bar/zoo/boo/team.txt - true /path/to/b/foo.txt - false
+     *
+     */
+    public static boolean isInSubDirectory(File dir, File file)
+    {
+        if (file == null)
+            return false;
+
+        if (file.equals(dir))
+            return true;
+
+        return isInSubDirectory(dir, file.getParentFile());
     }
 
     /*

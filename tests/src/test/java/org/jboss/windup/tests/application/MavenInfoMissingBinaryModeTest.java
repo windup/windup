@@ -35,4 +35,5 @@ public class MavenInfoMissingBinaryModeTest extends WindupArchitectureTest
     {
         super.runTest("../test-files/maven-info-missing.war", false);
     }
+
 }

@@ -1,7 +1,9 @@
 package org.jboss.windup.reporting.model;
 
+import java.util.Set;
+
 import org.jboss.windup.graph.Indexed;
-import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.graph.SetInProperties;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.association.LinkableModel;
 import org.ocpsoft.rewrite.config.Rule;
@@ -19,13 +21,13 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(ClassificationModel.TYPE)
 public interface ClassificationModel extends EffortReportModel, LinkableModel
 {
-    static final String TYPE = "ClassificationModel";
-    static final String TYPE_PREFIX = TYPE + ":";
-    static final String RULE_ID = TYPE_PREFIX + "ruleID";
-    static final String CLASSIFICATION = TYPE_PREFIX + "classification";
-    static final String DESCRIPTION = TYPE_PREFIX + "description";
+    String TYPE = "ClassificationModel";
+    String TYPE_PREFIX = TYPE + ":";
+    String RULE_ID = TYPE_PREFIX + "ruleID";
+    String CLASSIFICATION = TYPE_PREFIX + "classification";
+    String DESCRIPTION = TYPE_PREFIX + "description";
 
-    static final String FILE_MODEL = TYPE_PREFIX + "classificationModelToFileModel";
+    String FILE_MODEL = TYPE_PREFIX + "classificationModelToFileModel";
 
     /**
      * Add a {@link FileModel} associated with this {@link ClassificationModel}.
@@ -75,5 +77,24 @@ public interface ClassificationModel extends EffortReportModel, LinkableModel
      */
     @Property(RULE_ID)
     String getRuleID();
+
+
+    /**
+     * Add a tag associated with this {@link ClassificationModel}
+     */
+    @SetInProperties(propertyPrefix = "tag")
+    ClassificationModel addTag(String tag);
+
+    /**
+     * Set the set of tags associated with this {@link ClassificationModel}
+     */
+    @SetInProperties(propertyPrefix = "tag")
+    ClassificationModel setTags(Set<String> tags);
+
+    /**
+     * Get the set of tags associated with this {@link ClassificationModel}
+     */
+    @SetInProperties(propertyPrefix = "tag")
+    Set<String> getTags();
 
 }

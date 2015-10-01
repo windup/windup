@@ -19,12 +19,12 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(TechnologyTagModel.TYPE)
 public interface TechnologyTagModel extends WindupVertexFrame
 {
-    public static final String TYPE = "TechnologyTag";
+    String TYPE = "TechnologyTag";
 
-    public static final String TECH_TAG_TO_FILE_MODEL = "techTagToFileModel";
-    public static final String NAME = "name";
-    public static final String VERSION = "version";
-    public static final String LEVEL = "level";
+    String TECH_TAG_TO_FILE_MODEL = "techTagToFileModel";
+    String NAME = "name";
+    String VERSION = "version";
+    String LEVEL = "level";
 
     /**
      * This should be a short tag representing the technology (eg, EJB)
@@ -67,11 +67,17 @@ public interface TechnologyTagModel extends WindupVertexFrame
      * References the {@link FileModel}s that use this technology.
      */
     @Adjacency(label = TECH_TAG_TO_FILE_MODEL, direction = Direction.OUT)
-    public void addFileModel(FileModel fileModel);
+    void addFileModel(FileModel fileModel);
 
     /**
      * References the {@link FileModel}s that use this technology.
      */
     @Adjacency(label = TECH_TAG_TO_FILE_MODEL, direction = Direction.OUT)
-    public Iterable<FileModel> getFileModels();
+    void removeFileModel(FileModel fileModel);
+
+    /**
+     * References the {@link FileModel}s that use this technology.
+     */
+    @Adjacency(label = TECH_TAG_TO_FILE_MODEL, direction = Direction.OUT)
+    Iterable<FileModel> getFileModels();
 }

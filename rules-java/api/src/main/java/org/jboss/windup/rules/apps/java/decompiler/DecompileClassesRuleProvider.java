@@ -7,6 +7,7 @@ import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.DecompilationPhase;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.rules.apps.java.condition.SourceMode;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -14,10 +15,9 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * This will decompile all Java .class files found in the incoming application.
- *
+ * 
  * This will use the Fernflower decompiler by default, however this can be overridden with a system property (
  * {@link DecompileClassesRuleProvider#DECOMPILER_PROPERTY}).
- *
  */
 public class DecompileClassesRuleProvider extends AbstractRuleProvider
 {
@@ -36,7 +36,7 @@ public class DecompileClassesRuleProvider extends AbstractRuleProvider
     public DecompileClassesRuleProvider()
     {
         super(MetadataBuilder.forProvider(DecompileClassesRuleProvider.class)
-                    .setPhase(DecompilationPhase.class));
+                    .setPhase(DecompilationPhase.class).addExecuteAfter(BeforeDecompileClassesRuleProvider.class));
     }
 
     // @formatter:off
@@ -45,7 +45,12 @@ public class DecompileClassesRuleProvider extends AbstractRuleProvider
     {
         return ConfigurationBuilder.begin()
         .addRule()
-        .perform(new DecompileCondition());
+        .when(SourceMode.isDisabled())
+        .perform(new DecompileCondition())
+        .addRule()
+        .when(SourceMode.isDisabled())
+        .perform(new CleanFromMultipleSourceFiles());
+
     }
     // @formatter:on
 
@@ -78,4 +83,6 @@ public class DecompileClassesRuleProvider extends AbstractRuleProvider
             }
         }
     }
+
+
 }

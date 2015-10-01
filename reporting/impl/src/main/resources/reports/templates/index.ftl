@@ -35,13 +35,13 @@
 </#macro>
 
 	<head>
-		<meta charset="utf-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8"/>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 		<title>Overview - Profiled by Windup</title>
 
 		<!-- Bootstrap -->
-		<link href="reports/resources/css/bootstrap.min.css" rel="stylesheet">
-		<link href="reports/resources/css/windup.css" rel="stylesheet" media="screen">
+		<link href="reports/resources/css/bootstrap.min.css" rel="stylesheet"/>
+		<link href="reports/resources/css/windup.css" rel="stylesheet" media="screen"/>
 
 		<style>
 
@@ -87,10 +87,22 @@
 			<a href="reports/windup_ruleproviders.html">All Rules</a>
 				|
 			<a href="reports/windup_freemarkerfunctions.html">Windup FreeMarker Methods</a>
+			    |
+			<a href="#" id="jiraFeedbackTrigger">Send Feedback</a>
+            <script type="text/javascript" src="https://issues.jboss.org/s/f215932e68571747ac58d0f5d554396f-T/en_US-r7luaf/6346/82/1.4.16/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=en-US&amp;collectorId=8b9e338b"></script>
+            <script type="text/javascript">
+                window.ATL_JQ_PAGE_PROPS = {
+                    "triggerFunction": function(showCollectorDialog) {
+                        jQuery("#jiraFeedbackTrigger").click(function(e) {
+                            e.preventDefault();
+                            showCollectorDialog();
+                        });
+                    }
+                };
+            </script>
 		</div>
+
     </div> <!-- /container -->
-
-
     <script src="reports/resources/js/jquery-1.10.1.min.js"></script>
     <script src="reports/resources/js/bootstrap.min.js"></script>
   </body>

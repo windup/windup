@@ -2,7 +2,9 @@ package org.jboss.windup.reporting.xml;
 
 import static org.joox.JOOX.$;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
@@ -21,16 +23,16 @@ import org.w3c.dom.Element;
 
 /**
  * Adds the provided {@link Classification} operation to the currently selected items.
- * 
+ *
  * Expected format:
- * 
+ *
  * <pre>
  * &lt;hint message="hint" effort="8" severity="INFO"&gt;
  * &lt;/hint&gt;
  * </pre>
- * 
+ *
  * Alternatively, the hint message can be in its own element. This is primary useful for longer hint content:
- * 
+ *
  * <pre>
  * &lt;hint title="Short description" effort="8"&gt;
  *  &lt;message&gt;
@@ -38,9 +40,9 @@ import org.w3c.dom.Element;
  *  &lt;/message&gt;
  * &lt;/hint&gt;
  * </pre>
- * 
+ *
  * Also note that markdown formatting is fully supported via the <a href="http://www.pegdown.org/">Pegdown</a> library.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @NamespaceElementHandler(elementName = "hint", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
@@ -54,6 +56,7 @@ public class HintHandler implements ElementHandler<Hint>
         String severityStr = $(element).attr("severity");
         String message = $(element).attr("message");
         String in = $(element).attr("in");
+        Set<String> tags = new HashSet<>();
 
         if (StringUtils.isBlank(message))
         {
@@ -110,26 +113,46 @@ public class HintHandler implements ElementHandler<Hint>
         List<Element> children = $(element).children().get();
         for (Element child : children)
         {
-            if (child.getNodeName().equals("link"))
-            {
-                Link link = handlerManager.processElement(child);
-                hint.with(link);
+            switch(child.getNodeName()){
+                case "link":
+                    Link link = handlerManager.processElement(child);
+                    hint.with(link);
+                    break;
+                case "tag":
+                    tags.add(child.getTextContent());
+                    break;
             }
         }
+
+        hint.withTags(tags);
+
         return (Hint) hint;
     }
 
-    private String trimLeadingAndTrailingSpaces(String markdown)
+    public static String trimLeadingAndTrailingSpaces(String markdown)
     {
         StringBuilder markdownSB = new StringBuilder();
 
         StringBuilder currentLine = new StringBuilder();
+
+        String firstLineIndent = null;
         for (int i = 0; i < markdown.length(); i++)
         {
             char currentChar = markdown.charAt(i);
             if (currentChar == '\r' || currentChar == '\n')
             {
-                markdownSB.append(currentLine.toString().trim()).append(SystemUtils.LINE_SEPARATOR);
+                String currentLineString = currentLine.toString();
+                if (firstLineIndent == null && !StringUtils.isEmpty(currentLineString))
+                {
+                    int firstNonWhitespaceIndex = StringUtils.indexOfAnyBut(currentLineString, " \t");
+                    if (firstNonWhitespaceIndex != -1)
+                        firstLineIndent = currentLineString.substring(0, firstNonWhitespaceIndex);
+                }
+                if (firstLineIndent != null)
+                    currentLineString = StringUtils.removeStart(currentLineString, firstLineIndent);
+
+                markdownSB.append(currentLineString).append(SystemUtils.LINE_SEPARATOR);
+
                 currentLine.setLength(0);
 
                 // skip the next line separator for \r\n cases

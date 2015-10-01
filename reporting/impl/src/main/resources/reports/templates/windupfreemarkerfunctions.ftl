@@ -2,12 +2,12 @@
 <html lang="en">
 
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <title>Windup FreeMarker Functions and Directives</title>
-    <link href="resources/css/bootstrap.min.css" rel="stylesheet">
-    <link href="resources/css/windup.css" rel="stylesheet" media="screen">
-    <link href="resources/css/windup.java.css" rel="stylesheet" media="screen">
+    <link href="resources/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="resources/css/windup.css" rel="stylesheet" media="screen"/>
+    <link href="resources/css/windup.java.css" rel="stylesheet" media="screen"/>
   </head>
   <body role="document">
 
@@ -36,7 +36,7 @@
 			</div>
 		</div>
 	
-	    <div class="row">
+	    <div class="row container-fluid">
 			<div class="panel panel-primary">
 				<div class="panel-heading">
 				    Functions

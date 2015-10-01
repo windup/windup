@@ -28,6 +28,7 @@ public interface WindupJavaConfigurationModel extends WindupVertexFrame
     String SCAN_JAVA_PACKAGES = "scanJavaPackages";
     String IGNORED_FILES = "ignoredFiles";
     String ADDITIONAL_CLASSPATHS = "additionalClasspath";
+    String CLASS_NOT_FOUND_ANALYSIS_ENABLED = "classNotFoundAnalysisEnabled";
 
     /**
      * Specifies which Java packages should be scanned by windup
@@ -100,6 +101,18 @@ public interface WindupJavaConfigurationModel extends WindupVertexFrame
      */
     @Property(SOURCE_MODE)
     void setSourceMode(boolean sourceMode);
+
+    /**
+     * Indicates that we should skip analyzing which classes will not be available at runtime for this application.
+     */
+    @Property(CLASS_NOT_FOUND_ANALYSIS_ENABLED)
+    boolean isClassNotFoundAnalysisEnabled();
+
+    /**
+     * Indicates that we should skip analyzing which classes will not be available at runtime for this application.
+     */
+    @Property(CLASS_NOT_FOUND_ANALYSIS_ENABLED)
+    void setClassNotFoundAnalysisEnabled(boolean classNotFoundAnalysisEnabled);
 
     /**
      * These additional files will be used to aid in resolving references in the application.

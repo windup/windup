@@ -37,10 +37,13 @@ import org.ocpsoft.rewrite.config.CompositeOperation;
 import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.ConfigurationRuleBuilder;
 import org.ocpsoft.rewrite.config.DefaultOperationBuilder;
+import org.ocpsoft.rewrite.config.NoOp;
 import org.ocpsoft.rewrite.config.Operation;
 import org.ocpsoft.rewrite.config.Perform;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.event.Rewrite;
+
+import com.google.common.collect.Iterables;
 
 /**
  * Used to iterate over an implicit or explicit variable defined within the corresponding {@link ConfigurationRuleBuilder#when(Condition)} clause in
@@ -208,6 +211,30 @@ public class Iteration extends DefaultOperationBuilder
     {
         Variables variables = Variables.instance(event);
         Iterable<? extends WindupVertexFrame> frames = getSelectionManager().getFrames(event, context);
+
+        boolean hasCommitOperation = OperationUtil.hasCommitOperation(operationPerform) || OperationUtil.hasCommitOperation(operationOtherwise);
+        boolean hasIterationOperation = OperationUtil.hasIterationProgress(operationPerform)
+                    || OperationUtil.hasIterationProgress(operationOtherwise);
+        DefaultOperationBuilder commit = new NoOp();
+        DefaultOperationBuilder iterationProgressOperation = new NoOp();
+
+        if (!hasCommitOperation || !hasIterationOperation)
+        {
+            int frameCount = Iterables.size(frames);
+            if (frameCount > 100)
+            {
+                if (!hasCommitOperation)
+                    commit = Commit.every(100);
+
+                if (!hasIterationOperation)
+                {
+                    // Use 500 here as 100 might be noisy.
+                    iterationProgressOperation = IterationProgress.monitoring("Rule Progress", 500);
+                }
+            }
+        }
+        Operation commitAndProgress = commit.and(iterationProgressOperation);
+
         event.getRewriteContext().put(DEFAULT_VARIABLE_LIST_STRING, frames); // set the current frames
         for (WindupVertexFrame frame : frames)
         {
@@ -243,6 +270,8 @@ public class Iteration extends DefaultOperationBuilder
                     operationOtherwise.perform(event, context);
                 }
             }
+            commitAndProgress.perform(event, context);
+
             getPayloadManager().removeCurrentPayload(variables);
             // remove the perform layer
             variables.pop();

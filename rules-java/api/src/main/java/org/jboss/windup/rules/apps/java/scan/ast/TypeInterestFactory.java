@@ -21,7 +21,7 @@ import org.jboss.windup.util.Logging;
 
 /**
  * Static store for type interest information. E.g. Which classes to scan and report on.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public final class TypeInterestFactory
@@ -32,9 +32,10 @@ public final class TypeInterestFactory
     private static Map<String, PatternAndLocation> patternsBySource = new HashMap<>();
 
     // The full list of patterns, organized by location (including null for the case of no location specified)
-    private static Map<TypeReferenceLocation, Map<String, Pattern>> patternsByLocation = new HashMap<>();
+    private static Map<TypeReferenceLocation, TypeInterestFactoryTrie> trieByLocation = new HashMap<>();
 
     private static Set<String> ignorePatternSet = Collections.synchronizedSet(new HashSet<String>());
+
     static
     {
         ignorePatternSet.add("void");
@@ -71,7 +72,7 @@ public final class TypeInterestFactory
     static void clear()
     {
         patternsBySource.clear();
-        patternsByLocation.clear();
+        trieByLocation.clear();
         resultsCache.clear();
         cacheLookupCount.set(0);
         cacheHitCount.set(0);
@@ -83,17 +84,17 @@ public final class TypeInterestFactory
     /**
      * Register a regex pattern to filter interest in certain Java types.
      */
-    public static void registerInterest(String sourceKey, String regex, String pattern, List<TypeReferenceLocation> locations)
+    public static void registerInterest(String sourceKey, String regex, String rewritePattern, List<TypeReferenceLocation> locations)
     {
-        registerInterest(sourceKey, regex, pattern, locations.toArray(new TypeReferenceLocation[locations.size()]));
+        registerInterest(sourceKey, regex, rewritePattern, locations.toArray(new TypeReferenceLocation[locations.size()]));
     }
 
     /**
      * Register a regex pattern to filter interest in certain Java types.
      */
-    public static void registerInterest(String sourceKey, String regex, String pattern, TypeReferenceLocation... locations)
+    public static void registerInterest(String sourceKey, String regex, String rewritePattern, TypeReferenceLocation... locations)
     {
-        patternsBySource.put(sourceKey, new PatternAndLocation(locations, regex, pattern));
+        patternsBySource.put(sourceKey, new PatternAndLocation(locations, regex, rewritePattern));
     }
 
     private static String getCacheKey(TypeReferenceLocation location, String text)
@@ -120,20 +121,22 @@ public final class TypeInterestFactory
         return cachedResult;
     }
 
-    private static Map<String, Pattern> getPatternsByLocation(TypeReferenceLocation typeReferenceLocation)
+    private static TypeInterestFactoryTrie getTrieByLocation(TypeReferenceLocation typeReferenceLocation)
     {
-        Map<String, Pattern> result = patternsByLocation.get(typeReferenceLocation);
+        TypeInterestFactoryTrie result = trieByLocation.get(typeReferenceLocation);
         if (result == null)
         {
-            result = new HashMap<>();
+            result = TypeInterestFactoryTrie.newDefaultInstance();
             for (PatternAndLocation patternKey : patternsBySource.values())
             {
                 String entryRegex = patternKey.regex;
                 TypeReferenceLocation[] entryLocations = patternKey.locations;
-                if (result.containsKey(entryRegex))
+                String rewritePattern = patternKey.rewritePattern;
+                /*if (result.containsKey(entryRegex))
                 {
+                TODO
                     continue;
-                }
+                }*/
 
                 boolean shouldAdd = false;
                 if (entryLocations == null || entryLocations.length == 0)
@@ -154,14 +157,10 @@ public final class TypeInterestFactory
 
                 if (shouldAdd)
                 {
-                    /*
-                     * For now, surround with .* to ensure that regexes will match some of the messier references that
-                     * the type visitor report.
-                     */
-                    result.put(entryRegex, Pattern.compile(".*" + entryRegex + ".*"));
+                    result.addInterest(new RewritePatternToRegex(rewritePattern, Pattern.compile(entryRegex)));
                 }
             }
-            patternsByLocation.put(typeReferenceLocation, result);
+            trieByLocation.put(typeReferenceLocation, result);
         }
         return result;
     }
@@ -175,7 +174,8 @@ public final class TypeInterestFactory
             {
                 for (PatternAndLocation patternKey : patternsBySource.values())
                 {
-                    String pattern = patternKey.pattern;
+                    String pattern = patternKey.rewritePattern;
+                    pattern = replaceRegexWithDot(pattern);
                     StringTokenizer stk = new StringTokenizer(pattern, ".");
                     while (stk.hasMoreTokens())
                     {
@@ -232,13 +232,11 @@ public final class TypeInterestFactory
             ExecutionStatistics.get().begin("TypeInterestFactory.matchesAny(text).manualSearch");
             try
             {
-                for (Pattern pattern : getPatternsByLocation(typeReferenceLocation).values())
+                //TODO: Improve this with trie structure for every location
+                if (getTrieByLocation(typeReferenceLocation).matches(text))
                 {
-                    if (pattern.matcher(text).matches())
-                    {
-                        resultsCache.put(text, true);
-                        return true;
-                    }
+                    resultsCache.put(text, true);
+                    return true;
                 }
                 resultsCache.put(getCacheKey(typeReferenceLocation, text), false);
                 return false;
@@ -254,17 +252,22 @@ public final class TypeInterestFactory
         }
     }
 
+    private static String replaceRegexWithDot(String input)
+    {
+        return input.replaceAll("\\{.*\\}", ".");
+    }
+
     private static class PatternAndLocation
     {
         private TypeReferenceLocation[] locations;
         private String regex;
-        private String pattern;
+        private String rewritePattern;
 
-        private PatternAndLocation(TypeReferenceLocation[] locations, String regex, String pattern)
+        private PatternAndLocation(TypeReferenceLocation[] locations, String regex, String rewritePattern)
         {
             this.locations = locations;
             this.regex = regex;
-            this.pattern = pattern;
+            this.rewritePattern = rewritePattern;
         }
 
         @Override
@@ -299,4 +302,5 @@ public final class TypeInterestFactory
             return true;
         }
     }
+
 }

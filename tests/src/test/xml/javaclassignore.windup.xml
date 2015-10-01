@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<ruleset xmlns="http://windup.jboss.org/schema/jboss-ruleset" id="ignoreFiles">
+    <rules>
+        <javaclass-ignore reference-prefix="com.acme.anvil.listener" />
+    </rules>
+</ruleset>

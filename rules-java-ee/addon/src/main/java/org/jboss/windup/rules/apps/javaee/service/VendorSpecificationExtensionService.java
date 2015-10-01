@@ -38,8 +38,7 @@ public class VendorSpecificationExtensionService extends GraphService<VendorSpec
         GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(model.asVertex());
         pipeline.out(VendorSpecificationExtensionModel.REF);
         pipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, VendorSpecificationExtensionModel.TYPE);
-        return new FramedVertexIterable<VendorSpecificationExtensionModel>(getGraphContext().getFramed(), pipeline,
-                    VendorSpecificationExtensionModel.class);
+        return new FramedVertexIterable<>(getGraphContext().getFramed(), pipeline, VendorSpecificationExtensionModel.class);
     }
 
     /**

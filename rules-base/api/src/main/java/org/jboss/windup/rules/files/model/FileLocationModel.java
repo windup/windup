@@ -7,6 +7,8 @@ import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.javahandler.JavaHandler;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Refers to a specific portion of a File and contains a reference to the code involved.
@@ -77,10 +79,15 @@ public interface FileLocationModel extends FileReferenceModel
 
     abstract class Impl implements FileLocationModel, JavaHandlerContext<Vertex>
     {
+        private static final int MAX_DESC_WIDTH = 90;
+
         @Override
         public String getDescription()
         {
-            return getSourceSnippit();
+            if (null == getSourceSnippit())
+                return "";
+            return StringEscapeUtils.escapeHtml4(
+                    StringUtils.substringBefore(StringUtils.abbreviate(getSourceSnippit().trim(), MAX_DESC_WIDTH), "\n"));
         }
     }
 }

@@ -25,6 +25,7 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
+import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.junit.Assert;
 import org.junit.Test;
@@ -93,6 +94,7 @@ public class JavaClassXmlRulesTest
             processorConfig.setInputPath(Paths.get(inputDir));
             processorConfig.setOutputDirectory(outputPath);
             processorConfig.setOptionValue(ScanPackagesOption.NAME, Collections.singletonList(""));
+            processorConfig.setOptionValue(SourceModeOption.NAME, true);
 
             processor.execute(processorConfig);
 

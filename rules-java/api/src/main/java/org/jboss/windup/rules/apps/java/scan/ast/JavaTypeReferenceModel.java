@@ -4,9 +4,13 @@ import org.jboss.windup.ast.java.data.ResolutionStatus;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.graph.IndexType;
 import org.jboss.windup.graph.Indexed;
+import org.jboss.windup.rules.apps.java.model.AbstractJavaSourceModel;
+import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.files.model.FileLocationModel;
 
+import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.javahandler.JavaHandler;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
@@ -23,6 +27,13 @@ public interface JavaTypeReferenceModel extends FileLocationModel
     String REFERENCE_TYPE = "referenceType";
     String RESOLVED_SOURCE_SNIPPIT = "resolvedSourceSnippit";
     String RESOLUTION_STATUS = "resolutionStatus";
+
+    /**
+     * Overrides the default behavior to get the {@link JavaSourceFileModel} directly.
+     */
+    @Override
+    @Adjacency(label = FILE_MODEL, direction = Direction.OUT)
+    AbstractJavaSourceModel getFile();
 
     /**
      * Gets the snippit referenced by this {@link FileLocationModel}.

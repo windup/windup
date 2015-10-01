@@ -13,8 +13,6 @@ public class ConsoleProgressMonitor implements WindupProgressMonitor
 {
     private static Logger LOG = Logger.getLogger(ConsoleProgressMonitor.class.getName());
 
-    private String task;
-    private String subTask;
     private int totalWork;
     private int currentWork;
     private boolean cancelled;
@@ -22,7 +20,6 @@ public class ConsoleProgressMonitor implements WindupProgressMonitor
     @Override
     public void beginTask(String name, int totalWork)
     {
-        this.task = name;
         this.totalWork = totalWork;
 
         String message = String.format("[%d/%d] %s", currentWork, totalWork, name);
@@ -50,8 +47,6 @@ public class ConsoleProgressMonitor implements WindupProgressMonitor
     @Override
     public void setTaskName(String name)
     {
-        this.task = name;
-
         String message = String.format("[%d/%d] \t", currentWork, totalWork, name);
         System.out.println(message);
         LOG.info(message);
@@ -60,8 +55,6 @@ public class ConsoleProgressMonitor implements WindupProgressMonitor
     @Override
     public void subTask(String subTask)
     {
-        this.subTask = subTask;
-
         String message = String.format("[%d/%d] %s", currentWork, totalWork, subTask);
         System.out.println(message);
         LOG.info(message);

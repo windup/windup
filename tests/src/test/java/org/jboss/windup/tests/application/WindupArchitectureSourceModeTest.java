@@ -39,6 +39,7 @@ import org.jboss.windup.testutil.html.TestEJBReportUtil;
 import org.jboss.windup.testutil.html.TestEJBReportUtil.EJBType;
 import org.jboss.windup.testutil.html.TestJPAReportUtil;
 import org.jboss.windup.testutil.html.TestJavaApplicationOverviewUtil;
+import org.jboss.windup.testutil.html.TestMigrationIssuesReportUtil;
 import org.jboss.windup.testutil.html.TestSpringBeanReportUtil;
 import org.junit.Assert;
 import org.junit.Test;
@@ -187,9 +188,9 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
         Assert.assertTrue(util.checkBeanInReport(EJBType.MDB, "MyNameForMessageDrivenBean",
                     "org.windup.examples.ejb.messagedriven.MessageDrivenBean",
                     "jms/MyQueue"));
-        Assert.assertTrue(util.checkBeanInReport(EJBType.STATELESS, "MyNameForSimpleStatelessEJB", "", 
+        Assert.assertTrue(util.checkBeanInReport(EJBType.STATELESS, "MyNameForSimpleStatelessEJB", "",
                     "org.windup.examples.ejb.simplestateless.SimpleStatelessEJB"));
-        Assert.assertTrue(util.checkBeanInReport(EJBType.STATEFUL, "MyNameForSimpleStatefulEJB", "", 
+        Assert.assertTrue(util.checkBeanInReport(EJBType.STATEFUL, "MyNameForSimpleStatefulEJB", "",
                     "org.windup.examples.ejb.simplestateful.SimpleStatefulEJB"));
     }
 
@@ -210,6 +211,22 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
                     "org.windup.examples.ejb.entitybean.SimpleEntityNoTableName", "SimpleEntityNoTableName"));
     }
 
+    private void validateMigrationIssuesReport(GraphContext context)
+    {
+        TestMigrationIssuesReportUtil util = new TestMigrationIssuesReportUtil();
+
+        ReportService reportService = new ReportService(context);
+        ReportModel reportModel = reportService.getUniqueByProperty(
+                    ReportModel.TEMPLATE_PATH,
+                    "/reports/templates/migration-issues.ftl");
+        Path reportPath = Paths.get(reportService.getReportDirectory(), reportModel.getReportFilename());
+        util.loadPage(reportPath);
+
+        Assert.assertTrue(util.checkIssue("Classification ActivationConfigProperty", 2, 8, 16));
+        Assert.assertTrue(util.checkIssue("Title for Hint from XML", 1, 0, 0));
+        Assert.assertTrue(util.checkIssue("Web Servlet", 1, 0, 0));
+    }
+
     /**
      * Validate that the report pages were generated correctly
      */
@@ -225,6 +242,7 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
         util.loadPage(appReportPath);
         util.checkFilePathAndTag("src_example", "src/main/resources/test.properties", "Properties");
         util.checkFilePathAndTag("src_example", "src/main/resources/WEB-INF/web.xml", "Web XML 3.0");
+        util.checkFilePathAndTag("src_example", "src/main/resources/WEB-INF/web.xml", "TestTag2"); // WINDUP-679
         util.checkFilePathAndIssues("src_example", "org.windup.examples.servlet.SampleServlet",
                     "References annotation 'javax.servlet.annotation.WebServlet'");
         util.checkFilePathAndIssues("src_example", "src/main/resources/WEB-INF/web.xml", "Container");
@@ -232,7 +250,7 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
         util.checkFilePathAndIssues("src_example", "src/main/resources/WEB-INF/web.xml", "title from user script");
 
         util.checkFilePathAndIssues("src_example", "org.windup.examples.servlet.SampleServlet",
-                    "Method parameter 'javax.servlet.http.HttpServletRequest'");
+                    "javax.servlet.http.HttpServletRequest usage");
 
         XsltTransformationService xsltService = new XsltTransformationService(context);
         Assert.assertTrue(Files.isRegularFile(xsltService.getTransformedXSLTPath().resolve(
@@ -243,5 +261,6 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
         validateSpringBeanReport(context);
         validateEJBReport(context);
         validateJPAReport(context);
+        validateMigrationIssuesReport(context);
     }
 }

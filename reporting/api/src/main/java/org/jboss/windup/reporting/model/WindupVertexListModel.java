@@ -20,23 +20,48 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(WindupVertexListModel.TYPE)
 public interface WindupVertexListModel<T extends WindupVertexFrame> extends WindupVertexFrame, Iterable<T>
 {
-    public static final String TYPE = "WindupVertexListModel";
+    String TYPE = "WindupVertexListModel";
 
+    /**
+     * Returns the list as an {@link Iterable<T>}.
+     */
     @Adjacency(label = "list", direction = Direction.OUT)
     Iterable<T> getList();
 
+    /**
+     * Sets the items in the list.
+     */
     @Adjacency(label = "list", direction = Direction.OUT)
     Iterable<T> setList(Iterable<T> list);
 
+    /**
+     * Adds the provided item to the list.
+     */
     @Adjacency(label = "list", direction = Direction.OUT)
     void addItem(T item);
 
+    /**
+     * Adds all of the items to the list.
+     */
+    @JavaHandler
+    void addAll(Iterable<T> items);
+
+    /**
+     * Returns an {@link Iterator} for this list.
+     */
     @Override
     @JavaHandler
     Iterator<T> iterator();
 
     abstract class Impl<T extends WindupVertexFrame> implements WindupVertexListModel<T>, JavaHandlerContext<Vertex>
     {
+        @Override
+        public void addAll(Iterable<T> items)
+        {
+            for (T item : items)
+                addItem(item);
+        }
+
         @Override
         public Iterator<T> iterator()
         {

@@ -10,7 +10,7 @@
 
     <groupId>org.jboss.windup</groupId>
     <artifactId>windup-parent</artifactId>
-    <version>2.3.1-SNAPSHOT</version>
+    <version>2.4.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Windup Parent</name>
@@ -59,9 +59,10 @@
 
     <modules>
         <module>bom</module>
-	<module>windup-test-harness</module>
+        <module>windup-test-harness</module>
         <module>forks/fernflower</module>
         <module>forks/frames</module>
+        <module>forks/jdt</module>
         <module>forks/procyon</module>
         <module>rexster</module>
         <module>graph</module>
@@ -277,7 +278,7 @@
                                     <dependencySourceExcludes>
                                         <dependencySourceExclude>com.tinkerpop.frames:frames</dependencySourceExclude>
                                     </dependencySourceExcludes>
-                                    <excludePackageNames>com.tinkerpop.frames:com.tinkerpop.frames.*</excludePackageNames>
+                                    <excludePackageNames>com.tinkerpop.frames,com.tinkerpop.frames.*,com.strobel.*,org.eclipse.*,org.jetbrains.*</excludePackageNames>
 
                                     <groups>
                                         <group>

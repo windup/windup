@@ -33,6 +33,9 @@ import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.logmanager.ConfigurationLocator;
 
 /**
+ * Looks for configuration files, currently <code>logging.properties</code>
+ * in Windup directory, Windup user's directory, or what's in the "logging.configuration" sysprop.
+ *
  * @author <a href="mailto:jperkins@redhat.com">James R. Perkins</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */

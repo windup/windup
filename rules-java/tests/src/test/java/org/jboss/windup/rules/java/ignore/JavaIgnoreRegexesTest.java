@@ -224,7 +224,7 @@ public class JavaIgnoreRegexesTest
                     typeReferences.add(payload);
                 }
             };
-            
+
             return ConfigurationBuilder.begin()
             .addRule()
             .when(JavaClass.references("org.jboss.forge.furnace.{name}").inType("{file}{suffix}").at(TypeReferenceLocation.IMPORT))

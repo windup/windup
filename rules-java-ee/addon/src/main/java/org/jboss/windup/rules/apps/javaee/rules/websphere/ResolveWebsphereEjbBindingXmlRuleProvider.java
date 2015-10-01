@@ -12,6 +12,7 @@ import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.TechnologyTagService;
@@ -76,8 +77,9 @@ public class ResolveWebsphereEjbBindingXmlRuleProvider extends IteratingRuleProv
 
          
         ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-        classificationService.attachClassification(context, payload, "Websphere EJB Binding", "Websphere Enterprise Java Bean Binding XML Descriptor");
-
+        ClassificationModel classification = classificationService.attachClassification(context, payload, "Websphere EJB Binding", "Websphere Enterprise Java Bean Binding XML Descriptor");
+        classification.setEffort(1);
+        
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
         technologyTagService.addTagToFileModel(payload, "Websphere EJB", TechnologyTagLevel.IMPORTANT);
 

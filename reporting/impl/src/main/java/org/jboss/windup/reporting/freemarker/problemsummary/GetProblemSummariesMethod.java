@@ -41,6 +41,10 @@ public class GetProblemSummariesMethod implements WindupFreeMarkerMethod
     @Override
     public Object exec(List arguments) throws TemplateModelException
     {
+        // get all classifications
+        // get all hints
+        // group them by title (classification and hint title)
+
         List<ProblemSummary> results = new ArrayList<>();
         Map<RuleSummaryKey, ProblemSummary> ruleIDToSummary = new HashMap<>();
 
@@ -70,16 +74,18 @@ public class GetProblemSummariesMethod implements WindupFreeMarkerMethod
             ProblemSummary summary = ruleIDToSummary.get(key);
             if (summary == null)
             {
-                summary = new ProblemSummary(classification.getRuleID(), classification.getClassification(), 1, classification.getEffort());
+                summary = new ProblemSummary(classification.getRuleID(), classification.getClassification(), 0, classification.getEffort());
                 ruleIDToSummary.put(key, summary);
                 results.add(summary);
             }
-            else
-            {
-                summary.setNumberFound(summary.getNumberFound() + 1);
-            }
+
+            int fileCount = summary.getNumberFound();
             for (FileModel file : classification.getFileModels())
+            {
+                fileCount++;
                 summary.addFile(file);
+            }
+            summary.setNumberFound(fileCount);
         }
 
         return results;

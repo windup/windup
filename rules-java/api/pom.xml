@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.jboss.windup.rules.apps</groupId>
         <artifactId>windup-rules-java-parent</artifactId>
-        <version>2.3.1-SNAPSHOT</version>
+        <version>2.4.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>windup-rules-java-api</artifactId>
@@ -24,6 +24,16 @@
             <artifactId>bcel</artifactId>
             <version>5.2</version>
         </dependency>
+        <dependency>
+            <groupId>commons-validator</groupId>
+            <artifactId>commons-validator</artifactId>
+            <version>1.4.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-all</artifactId>
+            <version>5.0.4</version>
+        </dependency>
 
         <!-- Addon Dependencies -->
         <dependency>
@@ -35,7 +45,7 @@
         <dependency>
             <groupId>org.jboss.windup.decompiler</groupId>
             <artifactId>decompiler-fernflower</artifactId>
-            <version>2.3.1-SNAPSHOT</version>
+            <version>2.4.0-SNAPSHOT</version>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
