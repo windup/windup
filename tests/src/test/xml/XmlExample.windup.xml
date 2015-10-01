@@ -30,5 +30,20 @@
                 <xslt title="Example XSLT Conversion" extension="-converted-example.xml" template="/exampleconversion.xsl"/>
             </perform>
         </rule>
+
+        <!-- for jsp test -->
+        <rule>
+            <when>
+                <javaclass references="http://www.example.com/othertaglib">
+                    <location>TAGLIB_IMPORT</location>
+                </javaclass>
+            </when>
+            <perform>
+                <hint title="Other Taglib Import">
+                    <message>This is importing another taglib</message>
+                    <tag>taglib</tag>
+                </hint>
+            </perform>
+        </rule>
     </rules>
 </ruleset>
