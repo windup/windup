@@ -40,13 +40,14 @@ public class RecurseDirectoryAndAddFiles extends AbstractIterationOperation<File
     public void perform(GraphRewrite event, EvaluationContext context, FileModel resourceModel)
     {
         FileService fileModelService = new FileService(event.getGraphContext());
-        recurseAndAddFiles(fileModelService, resourceModel);
+        recurseAndAddFiles(event, context,  fileModelService, resourceModel);
     }
 
     /**
      * Recurses the given folder and creates the FileModels vertices for the child files to the graph.
      */
-    private void recurseAndAddFiles(FileService fileService, FileModel file)
+    private void recurseAndAddFiles(GraphRewrite event, EvaluationContext context,
+                FileService fileService, FileModel file)
     {
         String filePath = file.getFilePath();
         File fileReference = new File(filePath);
@@ -59,7 +60,7 @@ public class RecurseDirectoryAndAddFiles extends AbstractIterationOperation<File
                 for (File reference : subFiles)
                 {
                     FileModel subFile = fileService.createByFilePath(file, reference.getAbsolutePath());
-                    recurseAndAddFiles(fileService, subFile);
+                    recurseAndAddFiles(event, context, fileService, subFile);
                 }
             }
         }

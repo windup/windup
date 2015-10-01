@@ -344,7 +344,10 @@ public class RenderFileReferenceDirective implements WindupFreeMarkerTemplateDir
         if (fileModel instanceof JavaClassFileModel)
         {
             JavaClassFileModel jcfm = (JavaClassFileModel) fileModel;
-            return jcfm.getJavaClass().getQualifiedName();
+            if (jcfm.getJavaClass() == null)
+                return fileModel.getPrettyPathWithinProject();
+            else
+                return jcfm.getJavaClass().getQualifiedName();
         }
         else if (fileModel instanceof ReportResourceFileModel)
         {

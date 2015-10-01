@@ -5,7 +5,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
-import java.util.logging.Logger;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -21,7 +20,6 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.RuleSubset;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
@@ -122,8 +120,6 @@ public class JavaClassSourceMatchTest
     @Singleton
     public static class JavaClassTestRuleProvider extends AbstractRuleProvider
     {
-        private static Logger log = Logger.getLogger(RuleSubset.class.getName());
-
         private int thirdRuleMatchCount = 0;
         private int firstRuleMatchCount = 0;
         private int secondRuleMatchCount = 0;
@@ -138,6 +134,7 @@ public class JavaClassSourceMatchTest
         @Override
         public Configuration getConfiguration(GraphContext context)
         {
+
             return ConfigurationBuilder.begin()
             .addRule().when(JavaClass.references("org.jboss.windup.graph.model.resource.FileModel.setFilePath{*}").matchesSource("{*}/JavaHintsClassificationsTest.java{*}").inType("{*}").at(TypeReferenceLocation.METHOD_CALL))
             .perform( Iteration.over().perform(new AbstractIterationOperation<JavaTypeReferenceModel>()

@@ -36,7 +36,7 @@ public class DecompileClassesRuleProvider extends AbstractRuleProvider
     public DecompileClassesRuleProvider()
     {
         super(MetadataBuilder.forProvider(DecompileClassesRuleProvider.class)
-                    .setPhase(DecompilationPhase.class));
+                    .setPhase(DecompilationPhase.class).addExecuteAfter(BeforeDecompileClassesRuleProvider.class));
     }
 
     // @formatter:off

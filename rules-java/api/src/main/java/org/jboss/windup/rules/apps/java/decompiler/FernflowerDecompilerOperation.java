@@ -23,6 +23,7 @@ import org.jboss.windup.decompiler.api.DecompilationListener;
 import org.jboss.windup.decompiler.api.DecompilationResult;
 import org.jboss.windup.decompiler.fernflower.FernflowerDecompiler;
 import org.jboss.windup.decompiler.procyon.ProcyonDecompiler;
+import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.FileService;
@@ -43,7 +44,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class FernflowerDecompilerOperation extends GraphOperation
+public class FernflowerDecompilerOperation extends AbstractDecompilerOperation
 {
     private static Logger LOG = Logging.get(FernflowerDecompilerOperation.class);
 
@@ -67,12 +68,11 @@ public class FernflowerDecompilerOperation extends GraphOperation
         LOG.info("Decompiling with " + threads + " threads");
 
         WindupJavaConfigurationService configurationService = new WindupJavaConfigurationService(event.getGraphContext());
-        GraphService<JavaClassFileModel> classFileService = new GraphService<>(event.getGraphContext(), JavaClassFileModel.class);
-        Iterable<JavaClassFileModel> allClasses = classFileService.findAll();
+        Iterable<JavaClassFileModel> filesToDecompile = getFilesToDecompile(event.getGraphContext());
 
         int totalWork = 0;
         List<ClassDecompileRequest> classesToDecompile = new ArrayList<>(10000); // Just a guess as to the average size
-        for (JavaClassFileModel classFileModel : allClasses)
+        for (JavaClassFileModel classFileModel : filesToDecompile)
         {
             File outputDir = DecompilerUtil.getOutputDirectoryForClass(event.getGraphContext(), classFileModel);
             if (configurationService.shouldScanPackage(classFileModel.getPackageName()))
@@ -109,7 +109,6 @@ public class FernflowerDecompilerOperation extends GraphOperation
      * This listens for decompiled files and writes the results to disk in a background thread.
      *
      * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
-     *
      */
     private class AddDecompiledItemsToGraph implements DecompilationListener
     {

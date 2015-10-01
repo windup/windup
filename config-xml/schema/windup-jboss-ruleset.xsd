@@ -53,6 +53,7 @@
                 </xs:element>
                 <xs:element name="package-mapping" type="mapping" minOccurs="0" maxOccurs="unbounded" />
                 <xs:element name="file-mapping" type="mapping" minOccurs="0" maxOccurs="unbounded" />
+                <xs:element name="javaclass-ignore" type="javaclass-ignore" minOccurs="0" maxOccurs="unbounded" />
             </xs:sequence>
             <xs:attribute type="xs:string" name="id" use="optional" />
         </xs:complexType>
@@ -186,7 +187,7 @@
                 <xs:element ref="link" minOccurs="0" maxOccurs="unbounded" />
                 <xs:element name="tag" minOccurs="0" maxOccurs="unbounded" type="xs:string" />
             </xs:sequence>
-            <xs:attribute type="xs:string" name="title" />
+            <xs:attribute type="xs:string" name="title" use="required"/>
             <xs:attribute type="xs:byte" name="effort" use="optional" />
             <xs:attribute type="xs:string" name="severity" use="optional" />
             <xs:attribute type="xs:string" name="of" use="optional" />
@@ -324,6 +325,10 @@
     <xs:complexType name="mapping">
         <xs:attribute type="xs:string" name="from" use="optional" />
         <xs:attribute type="xs:string" name="to" use="optional" />
+    </xs:complexType>
+
+    <xs:complexType name="javaclass-ignore">
+        <xs:attribute type="xs:string" name="reference-prefix" use="required" />
     </xs:complexType>
 
 </xs:schema>
