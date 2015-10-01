@@ -167,7 +167,7 @@ public class AnalyzeJSPFileRuleProvider extends AbstractRuleProvider
         int column = lines[lines.length - 1].indexOf(source.substring(startPosition));
         int length = reference.length();
 
-        return new ClassReference(reference, ResolutionStatus.UNKNOWN, location, lineNumber, column, length,
+        return new ClassReference(reference, null, null, null, ResolutionStatus.UNKNOWN, location, lineNumber, column, length,
                     reference);
     }
 
