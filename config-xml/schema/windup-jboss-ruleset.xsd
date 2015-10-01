@@ -48,6 +48,7 @@
                             <xs:element name="rule" minOccurs="0" maxOccurs="unbounded" type="rule" />
                             <xs:element name="file-mapping" type="mapping" minOccurs="0" maxOccurs="unbounded" />
                             <xs:element name="package-mapping" type="mapping" minOccurs="0" maxOccurs="unbounded" />
+                            <xs:element name="javaclass-ignore" type="javaclass-ignore" minOccurs="0" maxOccurs="unbounded" />
                         </xs:sequence>
                     </xs:complexType>
                 </xs:element>
