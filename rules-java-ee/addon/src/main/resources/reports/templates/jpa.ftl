@@ -89,7 +89,7 @@
 									<td class="col-md-6">${dataSource.jndiLocation!""}</td>
 									<td class="col-md-6">${dataSource.databaseTypeName!""}</td>
 								</tr>
-`							</#list>
+							</#list>
 							</table>
 						</#if>
 		            </div>
