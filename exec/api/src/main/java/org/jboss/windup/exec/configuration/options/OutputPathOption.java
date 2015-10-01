@@ -1,7 +1,11 @@
 package org.jboss.windup.exec.configuration.options;
 
+import java.io.File;
+import java.nio.file.Path;
+
 import org.jboss.windup.config.AbstractPathConfigurationOption;
 import org.jboss.windup.config.InputType;
+import org.jboss.windup.config.ValidationResult;
 
 /**
  * Indicates that output path for the windup report and other data produced by a Windup execution.
@@ -52,5 +56,51 @@ public class OutputPathOption extends AbstractPathConfigurationOption
     public int getPriority()
     {
         return 9000;
+    }
+
+    /**
+     * <p>
+     * This validates that the input and output options are compatible.
+     * </p>
+     * <p>
+     * Examples of incompatibilities would include:
+     * </p>
+     * <ul>
+     * <li>Input and Output path are the same</li>
+     * <li>Input is a subdirectory of the output</li>
+     * <li>Output is a subdirectory of the input</li>
+     * </ul>
+     */
+    public static ValidationResult validateInputAndOutputPath(Path inputPath, Path outputPath)
+    {
+        File inputFile = inputPath.toFile();
+        File outputFile = outputPath.toFile();
+
+        if (inputFile.equals(outputFile))
+        {
+            return new ValidationResult(ValidationResult.Level.ERROR, "Output file cannot be the same as the input file.");
+        }
+
+        File inputParent = inputFile.getParentFile();
+        while (inputParent != null)
+        {
+            if (inputParent.equals(outputFile))
+            {
+                return new ValidationResult(ValidationResult.Level.ERROR, "Output path must not be a parent of input path.");
+            }
+            inputParent = inputParent.getParentFile();
+        }
+
+        File outputParent = outputFile.getParentFile();
+        while (outputParent != null)
+        {
+            if (outputParent.equals(inputFile))
+            {
+                return new ValidationResult(ValidationResult.Level.ERROR, "Input path must not be a parent of output path.");
+            }
+            outputParent = outputParent.getParentFile();
+        }
+
+        return ValidationResult.SUCCESS;
     }
 }
