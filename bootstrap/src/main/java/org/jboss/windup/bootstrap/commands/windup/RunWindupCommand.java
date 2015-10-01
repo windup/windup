@@ -163,6 +163,9 @@ public class RunWindupCommand implements Command, FurnaceDependent
             windupConfiguration.setOptionValue(option.getName(), optionValues.get(option.getName()));
         }
 
+        if (!validateInputAndOutputPath(windupConfiguration.getInputPath(), windupConfiguration.getOutputDirectory()))
+            return;
+
         try
         {
             windupConfiguration.useDefaultDirectories();
@@ -213,6 +216,21 @@ public class RunWindupCommand implements Command, FurnaceDependent
         {
             System.err.println("Windup Execution failed due to: " + e.getMessage());
             e.printStackTrace();
+        }
+    }
+
+    private boolean validateInputAndOutputPath(Path inputPath, Path outputPath)
+    {
+        ValidationResult validationResult = OutputPathOption.validateInputAndOutputPath(inputPath, outputPath);
+        switch (validationResult.getLevel())
+        {
+        case ERROR:
+            System.err.println("ERROR: " + validationResult.getMessage());
+            return false;
+        case WARNING:
+            System.err.println("WARNING: " + validationResult.getMessage());
+        default:
+            return true;
         }
     }
 
