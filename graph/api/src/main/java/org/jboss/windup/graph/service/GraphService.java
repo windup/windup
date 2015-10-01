@@ -141,7 +141,6 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
         });
     }
 
-
     @Override
     public Iterable<T> findAllByProperty(final String key, final Object value)
     {
@@ -156,9 +155,9 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     }
 
     @Override
-    public Iterable<T> findAllByWithoutProperty(final String key, final Object value)
+    public Iterable<T> findAllWithoutProperty(final String key, final Object value)
     {
-        return ExecutionStatistics.performBenchmarked("GraphService.findAllByPropertyNotSetTo(" + key + ")", new Task<Iterable<T>>()
+        return ExecutionStatistics.performBenchmarked("GraphService.findAllWithoutProperty(" + key + ")", new Task<Iterable<T>>()
         {
             @Override
             public Iterable<T> execute() throws BuildException
@@ -169,9 +168,9 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     }
 
     @Override
-    public Iterable<T> findAllByWithoutProperty(final String key)
+    public Iterable<T> findAllWithoutProperty(final String key)
     {
-        return ExecutionStatistics.performBenchmarked("GraphService.findAllByWithoutProperty(" + key + ")", new Task<Iterable<T>>()
+        return ExecutionStatistics.performBenchmarked("GraphService.findAllWithoutProperty(" + key + ")", new Task<Iterable<T>>()
         {
             @Override
             public Iterable<T> execute() throws BuildException

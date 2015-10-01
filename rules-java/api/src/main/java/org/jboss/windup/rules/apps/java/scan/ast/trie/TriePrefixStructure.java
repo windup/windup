@@ -75,8 +75,6 @@ public class TriePrefixStructure<SAVE_TYPE, SEARCH_TYPE>
         return resolver.matches(prefix, search,currentIndex + 1);
     }
 
-
-
     public void addInterest(SAVE_TYPE save)
     {
         String prefix = relation.getStringPrefixToSaveSaveType(save);

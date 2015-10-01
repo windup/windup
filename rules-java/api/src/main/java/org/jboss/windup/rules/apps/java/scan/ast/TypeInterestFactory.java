@@ -16,8 +16,6 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.collections.map.LRUMap;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
-import org.jboss.windup.rules.apps.java.scan.ast.trie.TriePrefixStructure;
-import org.jboss.windup.rules.apps.java.scan.ast.trie.TrieStructureTypeRelation;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.Logging;
 
@@ -86,17 +84,17 @@ public final class TypeInterestFactory
     /**
      * Register a regex pattern to filter interest in certain Java types.
      */
-    public static void registerInterest(String sourceKey, String regex, String windupRegex, List<TypeReferenceLocation> locations)
+    public static void registerInterest(String sourceKey, String regex, String rewritePattern, List<TypeReferenceLocation> locations)
     {
-        registerInterest(sourceKey, regex, windupRegex, locations.toArray(new TypeReferenceLocation[locations.size()]));
+        registerInterest(sourceKey, regex, rewritePattern, locations.toArray(new TypeReferenceLocation[locations.size()]));
     }
 
     /**
      * Register a regex pattern to filter interest in certain Java types.
      */
-    public static void registerInterest(String sourceKey, String regex, String windupRegex, TypeReferenceLocation... locations)
+    public static void registerInterest(String sourceKey, String regex, String rewritePattern, TypeReferenceLocation... locations)
     {
-        patternsBySource.put(sourceKey, new PatternAndLocation(locations, regex, windupRegex));
+        patternsBySource.put(sourceKey, new PatternAndLocation(locations, regex, rewritePattern));
     }
 
     private static String getCacheKey(TypeReferenceLocation location, String text)
@@ -133,7 +131,7 @@ public final class TypeInterestFactory
             {
                 String entryRegex = patternKey.regex;
                 TypeReferenceLocation[] entryLocations = patternKey.locations;
-                String windupRegex = patternKey.windupRegex;
+                String rewritePattern = patternKey.rewritePattern;
                 /*if (result.containsKey(entryRegex))
                 {
                 TODO
@@ -159,7 +157,7 @@ public final class TypeInterestFactory
 
                 if (shouldAdd)
                 {
-                    result.addInterest(new WindupRegexToRegex(windupRegex, Pattern.compile(entryRegex)));
+                    result.addInterest(new RewritePatternToRegex(rewritePattern, Pattern.compile(entryRegex)));
                 }
             }
             trieByLocation.put(typeReferenceLocation, result);
@@ -176,7 +174,7 @@ public final class TypeInterestFactory
             {
                 for (PatternAndLocation patternKey : patternsBySource.values())
                 {
-                    String pattern = patternKey.windupRegex;
+                    String pattern = patternKey.rewritePattern;
                     pattern = replaceRegexWithDot(pattern);
                     StringTokenizer stk = new StringTokenizer(pattern, ".");
                     while (stk.hasMoreTokens())
@@ -263,13 +261,13 @@ public final class TypeInterestFactory
     {
         private TypeReferenceLocation[] locations;
         private String regex;
-        private String windupRegex;
+        private String rewritePattern;
 
-        private PatternAndLocation(TypeReferenceLocation[] locations, String regex, String windupRegex)
+        private PatternAndLocation(TypeReferenceLocation[] locations, String regex, String rewritePattern)
         {
             this.locations = locations;
             this.regex = regex;
-            this.windupRegex = windupRegex;
+            this.rewritePattern = rewritePattern;
         }
 
         @Override

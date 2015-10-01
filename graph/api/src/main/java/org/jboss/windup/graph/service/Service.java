@@ -37,8 +37,8 @@ public interface Service<FRAMETYPE extends VertexFrame>
     FRAMETYPE createInMemory();
 
     /**
-     * Create a new instance of the {@link WindupVertexFrame} type on which this {@link Service} operates. The returned
-     * instance will already be persisted in the graph.
+     * Create a new instance of the {@link WindupVertexFrame} type on which this {@link Service} operates. The returned instance will already be
+     * persisted in the graph.
      */
     FRAMETYPE create();
 
@@ -58,32 +58,29 @@ public interface Service<FRAMETYPE extends VertexFrame>
     Iterable<FRAMETYPE> findAll();
 
     /**
-     * Find all instances of the {@link WindupVertexFrame} type on which this {@link Service} operates with the given
-     * properties.
+     * Find all instances of the {@link WindupVertexFrame} type on which this {@link Service} operates with the given properties.
      */
     Iterable<FRAMETYPE> findAllByProperties(String[] keys, String[] vals);
 
     /**
-     * Find all instances of the {@link WindupVertexFrame} type on which this {@link Service} operates with the given
-     * property.
+     * Find all instances of the {@link WindupVertexFrame} type on which this {@link Service} operates with the given property.
      */
     Iterable<FRAMETYPE> findAllByProperty(String key, Object value);
 
     /**
-     * Find all instances of the {@link WindupVertexFrame} type on which this {@link Service} operates with the given
-     * property not set to the given value.
+     * Find all instances of the {@link WindupVertexFrame} type on which this {@link Service} operates with the given property not set to the given
+     * value.
      */
-    Iterable<FRAMETYPE> findAllByWithoutProperty(final String key, final Object value);
+    Iterable<FRAMETYPE> findAllWithoutProperty(final String key, final Object value);
 
     /**
-     * Find all instances of the {@link WindupVertexFrame} type on which this {@link Service} operates with the given
-     * property.
+     * Find all instances of the {@link WindupVertexFrame} type on which this {@link Service} operates with the given property.
      */
-    Iterable<FRAMETYPE> findAllByWithoutProperty(final String key);
+    Iterable<FRAMETYPE> findAllWithoutProperty(final String key);
 
     /**
-     * Find all instances of the {@link WindupVertexFrame} type on which this {@link Service} operates with the
-     * specified property matching the given regexes.
+     * Find all instances of the {@link WindupVertexFrame} type on which this {@link Service} operates with the specified property matching the given
+     * regexes.
      */
     Iterable<FRAMETYPE> findAllByPropertyMatchingRegex(String key, String... regex);
 
@@ -98,8 +95,7 @@ public interface Service<FRAMETYPE extends VertexFrame>
     FRAMETYPE getUnique() throws NonUniqueResultException;
 
     /**
-     * Search the graph for a model of the appropriate type with the given property name and value. Return
-     * <code>null</code> if not found.
+     * Search the graph for a model of the appropriate type with the given property name and value. Return <code>null</code> if not found.
      */
     FRAMETYPE getUniqueByProperty(String property, Object value) throws NonUniqueResultException;
 
@@ -118,8 +114,8 @@ public interface Service<FRAMETYPE extends VertexFrame>
     /**
      * Return the given {@link Vertex} as a {@link WindupVertexFrame} (if possible.)
      * <p>
-     * <b>Note:</b> This method will always succeed! Even if the given {@link Vertex} is not actually the specified
-     * {@link WindupVertexFrame} type. Call {@link GraphTypeManager#hasType(Class, Vertex)} <b>before</b> using this!
+     * <b>Note:</b> This method will always succeed! Even if the given {@link Vertex} is not actually the specified {@link WindupVertexFrame} type.
+     * Call {@link GraphTypeManager#hasType(Class, Vertex)} <b>before</b> using this!
      */
     FRAMETYPE frame(Vertex vertex);
 }

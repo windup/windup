@@ -35,7 +35,7 @@ abstract public class AbstractDecompilerOperation extends GraphOperation
 
     private Iterable<JavaClassFileModel> getDefaultFilesToDecompile(GraphContext context) {
         GraphService<JavaClassFileModel> classFileService = new GraphService<>(context, JavaClassFileModel.class);
-        return classFileService.findAllByWithoutProperty(JavaClassFileModel.SKIP_DECOMPILATION, true);
+        return classFileService.findAllWithoutProperty(JavaClassFileModel.SKIP_DECOMPILATION, true);
     }
 
 }
