@@ -1,8 +1,5 @@
 package org.jboss.windup.reporting.rules.generation;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.MetadataBuilder;
@@ -10,7 +7,6 @@ import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
-import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.jboss.windup.reporting.model.TemplateType;
@@ -23,14 +19,14 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class CreateProblemCentricReportRuleProvider extends AbstractRuleProvider
+public class CreateMigrationIssuesReportRuleProvider extends AbstractRuleProvider
 {
 
-    public static final String TEMPLATE_PATH = "/reports/templates/problem-centric-report.ftl";
+    public static final String TEMPLATE_PATH = "/reports/templates/migration-issues.ftl";
 
-    public CreateProblemCentricReportRuleProvider()
+    public CreateMigrationIssuesReportRuleProvider()
     {
-        super(MetadataBuilder.forProvider(CreateProblemCentricReportRuleProvider.class)
+        super(MetadataBuilder.forProvider(CreateMigrationIssuesReportRuleProvider.class)
                     .setPhase(ReportGenerationPhase.class));
     }
 
@@ -47,11 +43,6 @@ public class CreateProblemCentricReportRuleProvider extends AbstractRuleProvider
         @Override
         public void perform(GraphRewrite event, EvaluationContext context)
         {
-            // get all classifications
-            // get all hints
-            // group them by a title of some kind (classification and hint title)
-            // do something interesting with this information :)
-
             ApplicationReportService applicationReportService = new ApplicationReportService(event.getGraphContext());
             ApplicationReportModel report = applicationReportService.create();
             report.setReportPriority(110);
@@ -63,9 +54,6 @@ public class CreateProblemCentricReportRuleProvider extends AbstractRuleProvider
 
             ProjectModel projectModel = WindupConfigurationService.getConfigurationModel(event.getGraphContext()).getInputPath().getProjectModel();
             report.setProjectModel(projectModel);
-
-            Map<String, WindupVertexFrame> additionalData = new HashMap<>(4);
-            report.setRelatedResource(additionalData);
 
             ReportService reportService = new ReportService(event.getGraphContext());
             reportService.setUniqueFilename(report, "problem_centric_report", "html");

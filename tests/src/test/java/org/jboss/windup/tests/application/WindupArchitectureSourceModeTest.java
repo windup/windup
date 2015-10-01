@@ -39,6 +39,7 @@ import org.jboss.windup.testutil.html.TestEJBReportUtil;
 import org.jboss.windup.testutil.html.TestEJBReportUtil.EJBType;
 import org.jboss.windup.testutil.html.TestJPAReportUtil;
 import org.jboss.windup.testutil.html.TestJavaApplicationOverviewUtil;
+import org.jboss.windup.testutil.html.TestMigrationIssuesReportUtil;
 import org.jboss.windup.testutil.html.TestSpringBeanReportUtil;
 import org.junit.Assert;
 import org.junit.Test;
@@ -210,6 +211,22 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
                     "org.windup.examples.ejb.entitybean.SimpleEntityNoTableName", "SimpleEntityNoTableName"));
     }
 
+    private void validateMigrationIssuesReport(GraphContext context)
+    {
+        TestMigrationIssuesReportUtil util = new TestMigrationIssuesReportUtil();
+
+        ReportService reportService = new ReportService(context);
+        ReportModel reportModel = reportService.getUniqueByProperty(
+                    ReportModel.TEMPLATE_PATH,
+                    "/reports/templates/migration-issues.ftl");
+        Path reportPath = Paths.get(reportService.getReportDirectory(), reportModel.getReportFilename());
+        util.loadPage(reportPath);
+
+        Assert.assertTrue(util.checkIssue("Classification ActivationConfigProperty", 2, 8, 16));
+        Assert.assertTrue(util.checkIssue("Title for Hint from XML", 1, 0, 0));
+        Assert.assertTrue(util.checkIssue("Web Servlet", 1, 0, 0));
+    }
+
     /**
      * Validate that the report pages were generated correctly
      */
@@ -244,5 +261,6 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
         validateSpringBeanReport(context);
         validateEJBReport(context);
         validateJPAReport(context);
+        validateMigrationIssuesReport(context);
     }
 }
