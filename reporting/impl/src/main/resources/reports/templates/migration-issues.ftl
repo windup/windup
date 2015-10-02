@@ -56,8 +56,8 @@
 	                        <tr>
 	                            <th>Issue</th>
 	                            <th>Incidents Found</th>
-	                            <th>Effort per Incident</th>
-	                            <th>Total Effort Points</th>
+	                            <th>Story Points per Incident</th>
+	                            <th>Total Story Points</th>
 	                            <th class="col-md-1">Rule</th>
 	                        </tr>
 	                    </thead>
