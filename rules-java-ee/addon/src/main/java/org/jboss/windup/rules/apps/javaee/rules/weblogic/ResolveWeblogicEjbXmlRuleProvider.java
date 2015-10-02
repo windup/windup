@@ -2,6 +2,8 @@ package org.jboss.windup.rules.apps.javaee.rules.weblogic;
 
 import static org.joox.JOOX.$;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
@@ -124,13 +126,14 @@ public class ResolveWeblogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
         }
 
         // bind the EJB beans to JNDI.
-        for (Element resourceRef : $(doc).find("weblogic-enterprise-bean").get())
+        for (Element enterpriseBeanTag : $(doc).find("weblogic-enterprise-bean").get())
         {
 
             // register the EJB to the JNDI location, if it exists.
-            String localJndiLocation = $(resourceRef).child("local-jndi-name").text();
-            String jndiLocation = $(resourceRef).child("jndi-name").text();
-            String ejbName = $(resourceRef).child("ejb-name").text();
+            String localJndiLocation = $(enterpriseBeanTag).child("local-jndi-name").text();
+            String jndiLocation = $(enterpriseBeanTag).child("jndi-name").text();
+            String ejbName = $(enterpriseBeanTag).child("ejb-name").text();
+            Map<String, Integer> txTimeouts = parseTxTimeout(enterpriseBeanTag, ejbName);
 
             if (StringUtils.isNotBlank(jndiLocation) && StringUtils.isNotBlank(ejbName))
             {
@@ -154,9 +157,15 @@ public class ResolveWeblogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
                     sessionBean.setLocalJndiReference(localJndiRef);
                 }
             }
+            
+            if(txTimeouts.size() > 0 && StringUtils.isNotBlank(ejbName)) {
+                for (EjbSessionBeanModel sessionBean : ejbSessionBeanService.findAllByProperty(EjbSessionBeanModel.EJB_BEAN_NAME, ejbName)) {
+                    sessionBean.setTxTimeouts(txTimeouts);
+                }
+            }
 
             // extract the JNDI location of any message driven beans.
-            for (Element messageDrivenDescriptor : $(resourceRef).find("message-driven-descriptor").get())
+            for (Element messageDrivenDescriptor : $(enterpriseBeanTag).find("message-driven-descriptor").get())
             {
                 for (EjbMessageDrivenModel mdb : mdbService.findAllByProperty(EjbMessageDrivenModel.EJB_BEAN_NAME, ejbName))
                 {
@@ -166,8 +175,36 @@ public class ResolveWeblogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
                         JmsDestinationModel jndiRef = jmsDestinationService.createUnique(destination);
                         mdb.setDestination(jndiRef);
                     }
+                    
+                    if(txTimeouts.size() > 0) {
+                        mdb.setTxTimeouts(txTimeouts);
+                    }
                 }
             }
+            
+            
         }
+        
+        
     }
+
+    private Map<String, Integer> parseTxTimeout(Element enterpriseBeanTag, String ejbName)
+    {
+        Map<String, Integer> transactionTimeouts = new HashMap<String, Integer>();
+        String transactionTimeoutSeconds = $(enterpriseBeanTag).child("transaction-descriptor").child("trans-timeout-seconds").text();
+        String methodName = "*";
+        if(StringUtils.isNotBlank(transactionTimeoutSeconds))
+        {
+            try {
+                Integer txTimeout = Integer.parseInt(transactionTimeoutSeconds);
+                transactionTimeouts.put(methodName, txTimeout);
+            }
+            catch(Exception e) {
+                LOG.info("EJB: "+ejbName+" contains bad reference to TX Timeout on Method: "+methodName);
+            }
+        }
+        
+        return transactionTimeouts;
+    }
+
 }

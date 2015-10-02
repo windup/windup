@@ -125,12 +125,15 @@ public class ResolveJBossLegacyEjbXmlRuleProvider extends IteratingRuleProvider<
         {
             processBinding(envRefService, jndiResourceService, resourceManagerReferences, resourceRef, "ejb-ref-name", "local-jndi-name");
         }
-       
+        
 
         for (Element ejbRef : $(doc).find("session").get())
         {
             String ejbName = $(ejbRef).child("ejb-name").content();
 
+            //transaction timeout
+            Map<String, Integer> txTimeouts = parseTxTimeout(ejbRef, ejbName);
+            
             if (StringUtils.isNotBlank(ejbName))
             {
                 LOG.info("Looking up name: " + ejbName);
@@ -149,6 +152,8 @@ public class ResolveJBossLegacyEjbXmlRuleProvider extends IteratingRuleProvider<
                         JNDIResourceModel jndiRef = jndiResourceService.createUnique(localJNDI);
                         ejb.setLocalJndiReference(jndiRef);
                     }
+                    
+                    ejb.setTxTimeouts(txTimeouts);
                 }
             }
         }
@@ -159,6 +164,8 @@ public class ResolveJBossLegacyEjbXmlRuleProvider extends IteratingRuleProvider<
             // register the EJB to the JNDI location, if it exists.
             String ejbName = $(messageDrivenRef).child("ejb-name").text();
 
+            Map<String, Integer> txTimeouts = parseTxTimeout(messageDrivenRef, ejbName);
+            
             LOG.info("Found MDB: " + ejbName);
             if (StringUtils.isNotBlank(ejbName))
             {
@@ -171,9 +178,31 @@ public class ResolveJBossLegacyEjbXmlRuleProvider extends IteratingRuleProvider<
                         JmsDestinationModel jndiRef = jmsDestinationService.createUnique(destination);
                         mdb.setDestination(jndiRef);
                     }
+                    mdb.setTxTimeouts(txTimeouts);
                 }
             }
         }
+    }
+
+    private Map<String, Integer> parseTxTimeout(Element elementRef, String ejbName)
+    {
+        Map<String, Integer> transactionTimeouts = new HashMap<String, Integer>();
+        for (Element methodRef : $(elementRef).child("method-attributes").find("method").get())
+        {
+            String methodName = $(methodRef).child("method-name").content();
+            String transactionTimeout = $(methodRef).child("transaction-timeout").content();
+            if(StringUtils.isNotBlank(transactionTimeout)) {
+                try {
+                    Integer txTimeout = Integer.parseInt(transactionTimeout);
+                    transactionTimeouts.put(methodName, txTimeout);
+                }
+                catch(Exception e) {
+                    LOG.info("EJB: "+ejbName+" contains bad reference to TX Timeout on Method: "+methodName);
+                }
+            }
+        }
+        
+        return transactionTimeouts;
     }
     
 

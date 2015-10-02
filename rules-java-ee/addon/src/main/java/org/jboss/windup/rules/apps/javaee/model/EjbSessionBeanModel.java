@@ -1,5 +1,8 @@
 package org.jboss.windup.rules.apps.javaee.model;
 
+import java.util.Map;
+
+import org.jboss.windup.graph.MapInProperties;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 
 import com.tinkerpop.blueprints.Direction;
@@ -114,5 +117,17 @@ public interface EjbSessionBeanModel extends EjbBeanBaseModel
      */
     @Adjacency(label = LOCAL_JNDI, direction = Direction.OUT)
     public JNDIResourceModel getLocalJndiReference();
+
+    /**
+     * Timeouts for each method pattern in seconds, * is wildcard
+     */
+    @MapInProperties(propertyPrefix = "txTimeouts", propertyType = Integer.class)
+    Map<String, Integer> getTxTimeouts();
+
+    /**
+     * Timeouts for each method pattern, * is wildcard
+     */
+    @MapInProperties(propertyPrefix = "txTimeouts", propertyType = Integer.class)
+    void setTxTimeouts(Map<String, Integer> map);
 
 }

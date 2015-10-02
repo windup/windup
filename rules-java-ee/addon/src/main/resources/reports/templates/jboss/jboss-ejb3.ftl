@@ -35,11 +35,32 @@
 		<!-- Unhandled type: ${environmentRef.referenceTagType} -->
 	</#switch>
 </#macro>
+
+<#macro processTxTimeout bean>
+	<#if bean.txTimeouts??>
+    	<#list bean.txTimeouts?keys as txMethodPattern>
+    		<container-transaction>
+	            <method>
+	                <ejb-name>${bean.beanName}</ejb-name>
+	                <method-name>${txMethodPattern}</method-name>
+	                <method-intf>Local</method-intf>
+	            </method>
+	            <tx:trans-timeout>
+	                <tx:timeout>${bean.txTimeouts[txMethodPattern]}</tx:timeout>
+	                <tx:unit>Seconds</tx:unit>
+	            </tx:trans-timeout>
+	        </container-transaction>
+		</#list> 
+ 	</#if>
+</#macro>
+
 <jboss:ejb-jar xmlns:jboss="http://www.jboss.com/xml/ns/javaee"
                xmlns="http://java.sun.com/xml/ns/javaee"
                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                xmlns:s="urn:security:1.1"
-               xsi:schemaLocation="http://www.jboss.com/xml/ns/javaee http://www.jboss.org/j2ee/schema/jboss-ejb3-2_0.xsd http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_1.xsd"
+               xmlns:tx="urn:trans-timeout"
+               xsi:schemaLocation="http://www.jboss.com/xml/ns/javaee http://www.jboss.org/j2ee/schema/jboss-ejb3-2_0.xsd http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_1.xsd
+               urn:trans-timeout http://www.jboss.org/j2ee/schema/trans-timeout-1_0.xsd"
                version="3.1"
                impl-version="2.1">
                
@@ -82,4 +103,19 @@
     	</#list>
     	</#if>
     </enterprise-beans>
+   <assembly-descriptor>   
+     <#if iterableHasContent(reportModel.relatedResources.sessionBeans)>
+         <#list reportModel.relatedResources.sessionBeans.list.iterator() as sessionBean>
+                 <@processTxTimeout sessionBean />
+         </#list>
+    </#if>
+    <#if reportModel.relatedResources.messageDriven.list.iterator()?has_content>
+    	<#list reportModel.relatedResources.messageDriven.list.iterator() as mdb>
+    	        <@processTxTimeout mdb />
+         </#list>
+    </#if>	
+    	
+   </assembly-descriptor>
+    
+    
 </jboss:ejb-jar>
