@@ -29,6 +29,15 @@
 			<transaction-type>Container</transaction-type>
 		</session>
 		
+		<session id="WindupStatefulClusteredService">
+			<ejb-name>WindupStatefulClusteredService</ejb-name>
+			<local-home>org.jboss.windup.test.ejb.WindupStatefulClusteredServiceLocalHome</local-home>
+			<local>org.jboss.windup.test.ejb.WindupStatefulClusteredServiceLocal</local>
+			<ejb-class>org.jboss.windup.test.ejb.WindupStatefulClusteredServiceBean</ejb-class>
+			<session-type>Stateful</session-type>
+			<transaction-type>Container</transaction-type>
+		</session>
+		
 		<session id="WindupAnotherExampleService">
 			<ejb-name>WindupAnotherExampleService</ejb-name>
 			<local-home>org.jboss.windup.test.ejb.WindupAnotherExampleServiceLocalHome</local-home>

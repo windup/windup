@@ -20,6 +20,18 @@
             <method-attributes />
         </session>
         
+        <session>
+            <ejb-name>WindupStatefulClusteredService</ejb-name>
+            <clustered>true</clustered>
+			<cluster-config>
+				<partition-name>FooPartition</partition-name>
+				<load-balance-policy>org.jboss.ha.framework.interfaces.RandomRobin</load-balance-policy>
+			</cluster-config>
+            <jndi-name>session/service/WindupStatefulClusteredServiceLocalHome</jndi-name>
+            <local-jndi-name>WindupStatefulClusteredServiceLocal</local-jndi-name>
+            <method-attributes />
+        </session>
+        
 		<session>
             <ejb-name>WindupAnotherExampleService</ejb-name>
             <clustered>true</clustered>

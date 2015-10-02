@@ -81,9 +81,10 @@ public class EjbXmlParsingTest
             Set<String> clusteredEjbNames = new HashSet<>();
             clusteredEjbNames.add("WindupExampleService");
             clusteredEjbNames.add("WindupAnotherExampleService");
+            clusteredEjbNames.add("WindupStatefulClusteredService");
             testClusterdEjb(context, clusteredEjbNames);
             
-            Assert.assertEquals("Directory " + WEBLOGIC_TEST_EJB_XMLS + " didn't register expected number of JNDIs for EJBs.", 12, returnedJNDI);
+            Assert.assertEquals("Directory " + WEBLOGIC_TEST_EJB_XMLS + " didn't register expected number of JNDIs for EJBs.", 14, returnedJNDI);
         }
     }
 
@@ -162,12 +163,13 @@ public class EjbXmlParsingTest
             Set<String> clusteredEjbNames = new HashSet<>();
             clusteredEjbNames.add("WindupExampleService");
             clusteredEjbNames.add("WindupAnotherExampleService");
+            clusteredEjbNames.add("WindupStatefulClusteredService");
             testClusterdEjb(context, clusteredEjbNames);
             
             //test <resource-ref-mapping>
             int foundJndi = testResourceRef(context);
 
-            Assert.assertEquals("Directory " + JBOSS_TEST_EJB_XMLS + " didn't register expected number of JNDIs for EJBs.", 12, foundJndi);
+            Assert.assertEquals("Directory " + JBOSS_TEST_EJB_XMLS + " didn't register expected number of JNDIs for EJBs.", 14, foundJndi);
             int msgDrivenFound = 0;
         }
     }
