@@ -9,7 +9,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
  * This extends SourceReportModel with some functions that are used by our source rendering template.
- * 
+ *
  */
 @TypeValue(FreeMarkerSourceReportModel.TYPE)
 public interface FreeMarkerSourceReportModel extends SourceReportModel
@@ -23,6 +23,7 @@ public interface FreeMarkerSourceReportModel extends SourceReportModel
     @JavaHandler
     public String getSourceBlock();
 
+    
     abstract class Impl implements FreeMarkerSourceReportModel, JavaHandlerContext<Vertex>
     {
         public String getSourceBlock()

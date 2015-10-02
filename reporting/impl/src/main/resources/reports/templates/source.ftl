@@ -149,9 +149,10 @@
 
 		<#list reportModel.sourceFileModel.inlineHints.iterator() as hintLine >
 			<#assign lineNumber = hintLine.lineNumber>
+			<#assign hintClasses = hintLine.tags?join(" tag-","none")>
 
 			$("<a name='${hintLine.asVertex().getId()?c}' class='windup-file-location'></a><#t>
-				<div class='inline-source-comment green'><#t>
+				<div class='inline-source-comment green tag-${hintClasses}'><#t>
 					<#if hintLine.hint?has_content>
 						<div class='inline-comment'><#t>
 							<div class='inline-comment-heading'><#t>

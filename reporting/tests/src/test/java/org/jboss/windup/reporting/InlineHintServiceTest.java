@@ -1,13 +1,15 @@
 package org.jboss.windup.reporting;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.Set;
 
 import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
@@ -50,7 +52,8 @@ public class InlineHintServiceTest
             InlineHintService inlineHintService = new InlineHintService(context);
 
             ProjectModel projectModel = fillData(context);
-            int totalEffort = inlineHintService.getMigrationEffortPoints(projectModel, true);
+            Set<String> emptySet = Collections.emptySet();
+            int totalEffort = inlineHintService.getMigrationEffortPoints(projectModel, emptySet, emptySet, true);
             Assert.assertEquals(153, totalEffort);
 
             boolean foundF1Effort = false;

@@ -36,8 +36,13 @@
 </#macro>
 
 <#macro fileModelRenderer fileModel>
+    <#if !isReportableFile(fileModel, reportModel.includeTags, reportModel.excludeTags) >
+        <#return>
+    </#if>
+
     <#assign sourceReportModel = fileModelToSourceReport(fileModel)!>
-    <#if sourceReportModel.reportFilename??>
+    <#if sourceReportModel.reportFilename?? >
+
 	<tr>
         <#-- Name -->
         <td>
@@ -56,10 +61,13 @@
         		<span class="label label-info tag">${tag}</span>
             </#list>
 		</td>
+
         <#-- Issues -->
 		<td>
-        <#if sourceReportModel.sourceFileModel.inlineHints.iterator()?has_content || sourceReportModel.sourceFileModel.classificationModels.iterator()?has_content>
-            <#assign warnings = sourceReportModel.sourceFileModel.inlineHintCount + sourceReportModel.sourceFileModel.classificationCount>
+        <#assign warnings = sourceReportModel.sourceFileModel.inlineHintCount + sourceReportModel.sourceFileModel.classificationCount>
+        <#-- The ~Count are, in fact, Gremlin queries. Don't call more than once. -->
+
+        <#if warnings != 0 >
             <!-- TODO: Move the different rendering to CSS. -->
             <#if warnings gt 1>
                 <b>Warnings: ${warnings} items</b>
@@ -86,6 +94,7 @@
             <#if warnings gt 1></ul></#if>
         </#if>
 		</td>
+
         <#-- Story points -->
 		<td>
             <#assign fileEffort = getMigrationEffortPointsForFile(sourceReportModel.sourceFileModel)>
@@ -103,7 +112,7 @@
         <div class="container-fluid summaryMargin">
             <div class='col-md-3 text-right totalSummary'>
                 <div class='totalLoe'>
-                    ${getMigrationEffortPoints(projectModel, false)}
+                    ${getMigrationEffortPoints(projectModel, false, reportModel.includeTags, reportModel.excludeTags)}
                 </div>
                 <div class='totalDesc'>Story Points</div>
             </div>
@@ -157,18 +166,18 @@
         </div>
         <#if iterableHasContent(projectModel.fileModelsNoDirectories)>
         <table class="table table-striped table-bordered">
-          <tr>
-            <th class="col-md-6">Name</th><th class="col-md-1">Technology</th><th>Issues</th><th class="col-md-1">Story Points</th>
-          </tr>
-          <#list sortFilesByPathAscending(projectModel.fileModelsNoDirectories) as fileModel>
-             <@fileModelRenderer fileModel/>
-          </#list>
+            <tr>
+                <th class="col-md-6">Name</th><th class="col-md-1">Technology</th><th>Issues</th><th class="col-md-1">Story Points</th>
+            </tr>
+            <#list sortFilesByPathAscending(projectModel.fileModelsNoDirectories) as fileModel>
+                <@fileModelRenderer fileModel/>
+            </#list>
         </table>
         </#if>
     </div>
-  <#list sortProjectsByPathAscending(projectModel.childProjects) as childProject>
-    <@projectModelRenderer childProject/>
-  </#list>
+    <#list sortProjectsByPathAscending(projectModel.childProjects) as childProject>
+        <@projectModelRenderer childProject/>
+    </#list>
 </#macro>
 
     <head>
@@ -220,7 +229,7 @@
                 <div class='container mainGraphContainer'>
                     <div class='col-md-3 text-right totalSummary'>
                         <div class='totalLoe'>
-                          ${getMigrationEffortPoints(reportModel.projectModel, true)}
+                          ${getMigrationEffortPoints(reportModel.projectModel, true, reportModel.includeTags, reportModel.excludeTags)}
                         </div>
                         <div class='totalDesc'>Story Points</div>
                     </div>
@@ -245,11 +254,11 @@
 
             <script src="resources/js/bootstrap.min.js"></script>
 
-            <@render_pie project=reportModel.projectModel recursive=true elementID="application_pie"/>
+            <@render_pie project=reportModel.projectModel recursive=true elementID="application_pie" includeTags=reportModel.includeTags excludeTags=reportModel.excludeTags />
 
 
             <#macro projectPieRenderer projectModel>
-                <@render_pie project=projectModel recursive=false elementID="project_${projectModel.asVertex().getId()?string(\"0\")}_pie"/>
+                <@render_pie project=projectModel recursive=false elementID="project_${projectModel.asVertex().getId()?string(\"0\")}_pie" includeTags=reportModel.includeTags excludeTags=reportModel.excludeTags />
 
                 <#list projectModel.childProjects.iterator() as childProject>
                     <@projectPieRenderer childProject />

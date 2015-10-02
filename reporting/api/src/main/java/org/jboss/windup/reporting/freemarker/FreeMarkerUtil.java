@@ -1,7 +1,9 @@
 package org.jboss.windup.reporting.freemarker;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.services.Imported;
@@ -14,12 +16,44 @@ import org.jboss.windup.reporting.model.ReportModel;
 import org.jboss.windup.reporting.model.WindupVertexListModel;
 import org.jboss.windup.util.exception.WindupException;
 
+import freemarker.template.SimpleScalar;
+import freemarker.template.SimpleSequence;
+
 /**
  * This class contains several useful utility functions that can be used for rendering a freemarker template within Windup.
  * 
  */
 public class FreeMarkerUtil
 {
+
+    /**
+     * Converts a FreeMarker {@link SimpleSequence} to a {@link Set}.
+     *
+     */
+    public static Set<String> simpleSequenceToSet(SimpleSequence simpleSequence)
+    {
+        Set<String> result = new HashSet<>();
+        for (int i = 0; i < simpleSequence.size(); i++)
+        {
+            try
+            {
+                Object sequenceEntry = simpleSequence.get(i);
+                if (sequenceEntry instanceof SimpleScalar)
+                {
+                    result.add(((SimpleScalar) sequenceEntry).getAsString());
+                }
+                else
+                {
+                    result.add(simpleSequence.get(i).toString());
+                }
+            }
+            catch (Exception e)
+            {
+                throw new RuntimeException(e);
+            }
+        }
+        return result;
+    }
 
     /**
      * Gets freemarker extensions (eg, custom functions) provided by furnace addons
