@@ -116,6 +116,16 @@ public abstract class WindupArchitectureTest
 
     JavaApplicationOverviewReportModel getMainApplicationReport(GraphContext context)
     {
+        return getApplicationOverviewReportByName(context, CreateJavaApplicationOverviewReportRuleProvider.OVERVIEW);
+    }
+
+    JavaApplicationOverviewReportModel getCatchallApplicationReport(GraphContext context)
+    {
+        return getApplicationOverviewReportByName(context, CreateJavaApplicationOverviewReportRuleProvider.CATCHALL_REPORT);
+    }
+
+    JavaApplicationOverviewReportModel getApplicationOverviewReportByName(GraphContext context, String name)
+    {
         ReportService reportService = new ReportService(context);
         Iterable<ReportModel> reportModels = reportService.findAllByProperty(
                     ReportModel.TEMPLATE_PATH,
@@ -123,7 +133,7 @@ public abstract class WindupArchitectureTest
         ReportModel reportModel = null;
         for (ReportModel candidateModel : reportModels)
         {
-            if (StringUtils.equals(candidateModel.getReportName(), CreateJavaApplicationOverviewReportRuleProvider.OVERVIEW))
+            if (StringUtils.equals(candidateModel.getReportName(), name))
             {
                 reportModel = candidateModel;
                 break;
