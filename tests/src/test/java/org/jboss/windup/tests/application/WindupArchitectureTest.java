@@ -11,15 +11,20 @@ import javax.inject.Inject;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.WindupProgressMonitor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.exec.configuration.options.UserRulesDirectoryOption;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
+import org.jboss.windup.reporting.model.ReportModel;
+import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.rules.apps.java.config.ExcludePackagesOption;
 import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
+import org.jboss.windup.rules.apps.java.model.JavaApplicationOverviewReportModel;
+import org.jboss.windup.rules.apps.java.reporting.rules.CreateJavaApplicationOverviewReportRuleProvider;
 import org.junit.Assert;
 
 /**
@@ -107,6 +112,26 @@ public abstract class WindupArchitectureTest
         Assert.assertTrue(progressMonitor.getTotalWork() > 0);
         Assert.assertTrue(progressMonitor.getCompletedWork() > 0);
         Assert.assertEquals(progressMonitor.getTotalWork(), progressMonitor.getCompletedWork());
+    }
+
+    JavaApplicationOverviewReportModel getMainApplicationReport(GraphContext context)
+    {
+        ReportService reportService = new ReportService(context);
+        Iterable<ReportModel> reportModels = reportService.findAllByProperty(
+                    ReportModel.TEMPLATE_PATH,
+                    CreateJavaApplicationOverviewReportRuleProvider.TEMPLATE_APPLICATION_REPORT);
+        ReportModel reportModel = null;
+        for (ReportModel candidateModel : reportModels)
+        {
+            if (StringUtils.equals(candidateModel.getReportName(), CreateJavaApplicationOverviewReportRuleProvider.OVERVIEW))
+            {
+                reportModel = candidateModel;
+                break;
+            }
+        }
+        Assert.assertNotNull(reportModel);
+
+        return (JavaApplicationOverviewReportModel) reportModel;
     }
 
     /*

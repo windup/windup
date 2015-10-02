@@ -36,8 +36,13 @@
 </#macro>
 
 <#macro fileModelRenderer fileModel>
+    <#if !isReportableFile(fileModel, reportModel.includeTags, reportModel.excludeTags) >
+        <#return>
+    </#if>
+
     <#assign sourceReportModel = fileModelToSourceReport(fileModel)!>
-    <#if sourceReportModel.reportFilename??>
+    <#if sourceReportModel.reportFilename?? >
+
 	<tr>
         <#-- Name -->
         <td>
@@ -103,7 +108,7 @@
         <div class="container-fluid summaryMargin">
             <div class='col-md-3 text-right totalSummary'>
                 <div class='totalLoe'>
-                    ${getMigrationEffortPoints(projectModel, false)}
+                    ${getMigrationEffortPoints(projectModel, false, reportModel.includeTags, reportModel.excludeTags)}
                 </div>
                 <div class='totalDesc'>Story Points</div>
             </div>
@@ -220,7 +225,7 @@
                 <div class='container mainGraphContainer'>
                     <div class='col-md-3 text-right totalSummary'>
                         <div class='totalLoe'>
-                          ${getMigrationEffortPoints(reportModel.projectModel, true)}
+                          ${getMigrationEffortPoints(reportModel.projectModel, true, reportModel.includeTags, reportModel.excludeTags)}
                         </div>
                         <div class='totalDesc'>Story Points</div>
                     </div>
@@ -245,11 +250,11 @@
 
             <script src="resources/js/bootstrap.min.js"></script>
 
-            <@render_pie project=reportModel.projectModel recursive=true elementID="application_pie"/>
+            <@render_pie project=reportModel.projectModel recursive=true elementID="application_pie" includeTags=reportModel.includeTags excludeTags=reportModel.excludeTags />
 
 
             <#macro projectPieRenderer projectModel>
-                <@render_pie project=projectModel recursive=false elementID="project_${projectModel.asVertex().getId()?string(\"0\")}_pie"/>
+                <@render_pie project=projectModel recursive=false elementID="project_${projectModel.asVertex().getId()?string(\"0\")}_pie" includeTags=reportModel.includeTags excludeTags=reportModel.excludeTags />
 
                 <#list projectModel.childProjects.iterator() as childProject>
                     <@projectPieRenderer childProject />

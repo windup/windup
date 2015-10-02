@@ -1,6 +1,8 @@
 package org.jboss.windup.rules.apps.java.service;
 
+import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -55,7 +57,8 @@ public class TypeReferenceServiceTest
 
             ProjectModel projectModel = fillData(context);
 
-            Map<String, Integer> data = typeReferenceService.getPackageUseFrequencies(projectModel, 2, false);
+            Set<String> emptySet = Collections.emptySet();
+            Map<String, Integer> data = typeReferenceService.getPackageUseFrequencies(projectModel, emptySet, emptySet, 2, false);
             Assert.assertEquals(1, data.size());
             Assert.assertEquals("com.example.*", data.keySet().iterator().next());
             Assert.assertEquals(Integer.valueOf(2), data.values().iterator().next());

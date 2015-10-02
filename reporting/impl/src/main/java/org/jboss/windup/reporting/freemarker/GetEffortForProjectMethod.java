@@ -1,6 +1,8 @@
 package org.jboss.windup.reporting.freemarker;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -9,6 +11,7 @@ import org.jboss.windup.reporting.service.InlineHintService;
 import org.jboss.windup.util.ExecutionStatistics;
 
 import freemarker.ext.beans.StringModel;
+import freemarker.template.SimpleSequence;
 import freemarker.template.TemplateBooleanModel;
 import freemarker.template.TemplateModelException;
 
@@ -54,10 +57,10 @@ public class GetEffortForProjectMethod implements WindupFreeMarkerMethod
     public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
     {
         ExecutionStatistics.get().begin(NAME);
-        if (arguments.size() != 2)
+        if (arguments.size() < 2)
         {
             throw new TemplateModelException(
-                        "Error, method expects two arguments (projectModel:ProjectModel, recursive:Boolean)");
+                        "Error, method expects at least two arguments (projectModel:ProjectModel, recursive:Boolean, [includeTags:Set<String>]. [excludeTags:Set<String>])");
         }
         StringModel projectModelArg = (StringModel) arguments.get(0);
         ProjectModel projectModel = (ProjectModel) projectModelArg.getWrappedObject();
@@ -65,8 +68,20 @@ public class GetEffortForProjectMethod implements WindupFreeMarkerMethod
         TemplateBooleanModel recursiveBooleanModel = (TemplateBooleanModel) arguments.get(1);
         boolean recursive = recursiveBooleanModel.getAsBoolean();
 
-        Object result = classificationService.getMigrationEffortPoints(projectModel, recursive)
-                    + inlineHintService.getMigrationEffortPoints(projectModel, recursive);
+        Set<String> includeTags = Collections.emptySet();
+        if (arguments.size() >= 3)
+        {
+            includeTags = FreeMarkerUtil.simpleSequenceToSet((SimpleSequence) arguments.get(2));
+        }
+
+        Set<String> excludeTags = Collections.emptySet();
+        if (arguments.size() >= 4)
+        {
+            excludeTags = FreeMarkerUtil.simpleSequenceToSet((SimpleSequence) arguments.get(3));
+        }
+
+        Object result = classificationService.getMigrationEffortPoints(projectModel, includeTags, excludeTags, recursive)
+                    + inlineHintService.getMigrationEffortPoints(projectModel, includeTags, excludeTags, recursive);
         ExecutionStatistics.get().end(NAME);
         return result;
     }
