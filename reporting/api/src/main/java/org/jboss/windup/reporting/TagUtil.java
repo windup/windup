@@ -36,7 +36,7 @@ public class TagUtil
      * Otherwise, it will return false.
      * </p>
      */
-    public static boolean includeTag(String tag, Set<String> includeTags, Set<String> excludeTags)
+    public static boolean isTagsMatch(String tag, Set<String> includeTags, Set<String> excludeTags)
     {
         if (excludeTags.contains(tag))
             return false;
@@ -45,6 +45,15 @@ public class TagUtil
             return true;
 
         return includeTags.contains(tag);
+    }
+
+
+    /**
+     * @see includeTag(), only with strictExclude = true.
+     */
+    public static boolean isTagsMatch(Collection<String> tags, Set<String> includeTags, Set<String> excludeTags)
+    {
+        return TagUtil.isTagsMatch(tags, includeTags, excludeTags, true);
     }
 
     /**
@@ -59,7 +68,7 @@ public class TagUtil
      * Otherwise, return false.
      * </p>
      */
-    public static boolean includeTag(Collection<String> tags, Set<String> includeTags, Set<String> excludeTags)
+    public static boolean isTagsMatch(Collection<String> tags, Set<String> includeTags, Set<String> excludeTags, boolean strictExclude)
     {
         boolean foundIncludeMatch = false;
 
@@ -69,7 +78,12 @@ public class TagUtil
         for (String tag : tags)
         {
             if (excludeTags.contains(tag))
-                return false;
+                // If strict, seeing an excluded tag means this set of tags didn't meet the criteria.
+                if (strictExclude)
+                    return false;
+                // If not strict, only ignore the excluded tags.
+                else
+                    continue;
 
             if (includeTags.isEmpty() || includeTags.contains(tag))
                 foundIncludeMatch = true;
@@ -79,20 +93,24 @@ public class TagUtil
 
     public static boolean hasHintsOrClassificationsWithRelevantTags(ReportFileModel reportFileModel, Set<String> includeTags, Set<String> excludeTags)
     {
-        Set<String> allTags = new HashSet<>();
+        Set<String> allTags = gatherReportFileTags(reportFileModel);
+        return TagUtil.isTagsMatch(allTags, includeTags, excludeTags, false);
+    }
 
+
+    public static Set<String> gatherReportFileTags(ReportFileModel reportFileModel)
+    {
+        Set<String> allTags = new HashSet<>();
         for (ClassificationModel classificationModel : reportFileModel.getClassificationModels())
         {
             for (String tag : classificationModel.getTags())
                 allTags.add(tag);
         }
-
         for (InlineHintModel inlineHintModel : reportFileModel.getInlineHints())
         {
             for (String tag : inlineHintModel.getTags())
                 allTags.add(tag);
         }
-
-        return includeTag(allTags, includeTags, excludeTags);
+        return allTags;
     }
 }

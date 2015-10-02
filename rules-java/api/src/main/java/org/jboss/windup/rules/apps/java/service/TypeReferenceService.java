@@ -74,7 +74,7 @@ public class TypeReferenceService extends GraphService<JavaTypeReferenceModel>
             // only check tags if we have some passed in
             if (!includeTags.isEmpty() || !excludeTags.isEmpty())
             {
-                if (!TagUtil.includeTag(javaInlineHint.getTags(), includeTags, excludeTags))
+                if (!TagUtil.isTagsMatch(javaInlineHint.getTags(), includeTags, excludeTags))
                     continue;
             }
 

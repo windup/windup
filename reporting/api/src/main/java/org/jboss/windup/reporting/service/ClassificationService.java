@@ -97,7 +97,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
             if (!includeTags.isEmpty() || !excludeTags.isEmpty())
             {
                 ClassificationModel classificationModel = frame(v);
-                if (!TagUtil.includeTag(classificationModel.getTags(), includeTags, excludeTags))
+                if (!TagUtil.isTagsMatch(classificationModel.getTags(), includeTags, excludeTags))
                     continue;
             }
 

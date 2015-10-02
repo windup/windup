@@ -61,10 +61,13 @@
         		<span class="label label-info tag">${tag}</span>
             </#list>
 		</td>
+
         <#-- Issues -->
 		<td>
-        <#if sourceReportModel.sourceFileModel.inlineHints.iterator()?has_content || sourceReportModel.sourceFileModel.classificationModels.iterator()?has_content>
-            <#assign warnings = sourceReportModel.sourceFileModel.inlineHintCount + sourceReportModel.sourceFileModel.classificationCount>
+        <#assign warnings = sourceReportModel.sourceFileModel.inlineHintCount + sourceReportModel.sourceFileModel.classificationCount>
+        <#-- The ~Count are, in fact, Gremlin queries. Don't call more than once. -->
+
+        <#if warnings != 0 >
             <!-- TODO: Move the different rendering to CSS. -->
             <#if warnings gt 1>
                 <b>Warnings: ${warnings} items</b>
@@ -91,6 +94,7 @@
             <#if warnings gt 1></ul></#if>
         </#if>
 		</td>
+
         <#-- Story points -->
 		<td>
             <#assign fileEffort = getMigrationEffortPointsForFile(sourceReportModel.sourceFileModel)>
@@ -162,18 +166,18 @@
         </div>
         <#if iterableHasContent(projectModel.fileModelsNoDirectories)>
         <table class="table table-striped table-bordered">
-          <tr>
-            <th class="col-md-6">Name</th><th class="col-md-1">Technology</th><th>Issues</th><th class="col-md-1">Story Points</th>
-          </tr>
-          <#list sortFilesByPathAscending(projectModel.fileModelsNoDirectories) as fileModel>
-             <@fileModelRenderer fileModel/>
-          </#list>
+            <tr>
+                <th class="col-md-6">Name</th><th class="col-md-1">Technology</th><th>Issues</th><th class="col-md-1">Story Points</th>
+            </tr>
+            <#list sortFilesByPathAscending(projectModel.fileModelsNoDirectories) as fileModel>
+                <@fileModelRenderer fileModel/>
+            </#list>
         </table>
         </#if>
     </div>
-  <#list sortProjectsByPathAscending(projectModel.childProjects) as childProject>
-    <@projectModelRenderer childProject/>
-  </#list>
+    <#list sortProjectsByPathAscending(projectModel.childProjects) as childProject>
+        <@projectModelRenderer childProject/>
+    </#list>
 </#macro>
 
     <head>
