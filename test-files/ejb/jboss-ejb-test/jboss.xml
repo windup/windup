@@ -3,13 +3,30 @@
 	<enterprise-beans>
 		<session>
             <ejb-name>WindupExampleService</ejb-name>
+            <clustered>true</clustered>
+			<cluster-config>
+				<partition-name>FooPartition</partition-name>
+				<load-balance-policy>org.jboss.ha.framework.interfaces.RandomRobin</load-balance-policy>
+			</cluster-config>
             <jndi-name>session/service/WindupExampleServiceLocalHome</jndi-name>
             <local-jndi-name>WindupExampleServiceLocal</local-jndi-name>
             <method-attributes />
         </session>
 
 		<session>
+            <ejb-name>WindupNonClusteredService</ejb-name>
+            <jndi-name>session/service/WindupNonClusteredServiceLocalHome</jndi-name>
+            <local-jndi-name>WindupNonClusteredServiceLocal</local-jndi-name>
+            <method-attributes />
+        </session>
+        
+		<session>
             <ejb-name>WindupAnotherExampleService</ejb-name>
+            <clustered>true</clustered>
+			<cluster-config>
+				<partition-name>FooPartition</partition-name>
+				<load-balance-policy>org.jboss.ha.framework.interfaces.RandomRobin</load-balance-policy>
+			</cluster-config>
             <jndi-name>session/service/WindupAnotherExampleServiceLocalHome</jndi-name>
             <local-jndi-name>WindupAnotherExampleServiceLocal</local-jndi-name>
             <method-attributes />

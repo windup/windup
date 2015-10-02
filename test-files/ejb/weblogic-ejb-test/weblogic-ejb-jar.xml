@@ -40,6 +40,12 @@
      <jndi-name>session/service/WindupAnotherExampleServiceLocalHome</jndi-name>
      <local-jndi-name>ejb/WindupAnotherExampleServiceLocalHome</local-jndi-name>
    </weblogic-enterprise-bean>
+   
+   <weblogic-enterprise-bean>
+     <ejb-name>WindupNonClusteredService</ejb-name>
+     <jndi-name>session/service/WindupNonClusteredServiceLocalHome</jndi-name>
+     <local-jndi-name>ejb/WindupNonClusteredServiceLocalHome</local-jndi-name>
+   </weblogic-enterprise-bean>
 
    <weblogic-enterprise-bean>
       <ejb-name>WindupMLBean</ejb-name>

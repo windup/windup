@@ -1,6 +1,19 @@
 package org.jboss.windup.rules.apps.javaee.tests;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+
+import javax.inject.Inject;
+
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
@@ -21,15 +34,6 @@ import org.jboss.windup.rules.apps.javaee.service.EnvironmentReferenceService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import javax.inject.Inject;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 
 /**
  * Test XML parsing of different vendors.
@@ -73,8 +77,30 @@ public class EjbXmlParsingTest
             int jndiCount = 0;
             Map<String, String> jndiHandler = new HashMap<>();
             int returnedJNDI = testResourceRef(context);
-            Assert.assertEquals("Directory " + WEBLOGIC_TEST_EJB_XMLS + " didn't register expected number of JNDIs for EJBs.", 10, returnedJNDI);
+
+            Set<String> clusteredEjbNames = new HashSet<>();
+            clusteredEjbNames.add("WindupExampleService");
+            clusteredEjbNames.add("WindupAnotherExampleService");
+            testClusterdEjb(context, clusteredEjbNames);
+            
+            Assert.assertEquals("Directory " + WEBLOGIC_TEST_EJB_XMLS + " didn't register expected number of JNDIs for EJBs.", 12, returnedJNDI);
         }
+    }
+
+    private void testClusterdEjb(GraphContext context, Set<String> ejbNames)
+    {
+        GraphService<EjbSessionBeanModel> ejbService = new GraphService<>(context, EjbSessionBeanModel.class);
+        for(EjbSessionBeanModel sessionBean : ejbService.findAll()) {
+            if(sessionBean.isClustered() != null && sessionBean.isClustered()) {
+                Assert.assertTrue("EJB: ["+sessionBean.getBeanName()+"] is not expected to be clustered.", ejbNames.remove(sessionBean.getBeanName()));
+            }
+        }
+        
+        if(!ejbNames.isEmpty()) {
+            String results = StringUtils.join(ejbNames, ", ");
+            Assert.fail("EJB(s) should be clustered but aren't: ["+results+"]");
+        }
+            
     }
 
     @Test
@@ -133,10 +159,15 @@ public class EjbXmlParsingTest
             Assert.assertEquals("Message driven bean destination was not loaded correctly for JBoss.", mdb.getDestination().getJndiLocation(),
                         "queue/WindupMLQueue");
 
+            Set<String> clusteredEjbNames = new HashSet<>();
+            clusteredEjbNames.add("WindupExampleService");
+            clusteredEjbNames.add("WindupAnotherExampleService");
+            testClusterdEjb(context, clusteredEjbNames);
+            
             //test <resource-ref-mapping>
             int foundJndi = testResourceRef(context);
 
-            Assert.assertEquals("Directory " + JBOSS_TEST_EJB_XMLS + " didn't register expected number of JNDIs for EJBs.", 10, foundJndi);
+            Assert.assertEquals("Directory " + JBOSS_TEST_EJB_XMLS + " didn't register expected number of JNDIs for EJBs.", 12, foundJndi);
             int msgDrivenFound = 0;
         }
     }
