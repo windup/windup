@@ -24,6 +24,7 @@ public interface EjbSessionBeanModel extends EjbBeanBaseModel
     public static final String GLOBAL_JNDI = "globalJNDI";
     public static final String MODULE_JNDI = "moduleJNDI";
     public static final String LOCAL_JNDI = "localJNDI";
+    public static final String THREAD_POOL = "threadPool";
 
     /**
      * Contains the Session bean's local interface
@@ -114,5 +115,17 @@ public interface EjbSessionBeanModel extends EjbBeanBaseModel
      */
     @Adjacency(label = LOCAL_JNDI, direction = Direction.OUT)
     public JNDIResourceModel getLocalJndiReference();
+
+    /**
+     * References the thread pool, if defined.
+     */
+    @Adjacency(label = THREAD_POOL, direction = Direction.OUT)
+    void setThreadPool(ThreadPoolModel threadPool);
+
+    /**
+     * References the thread pool, if defined.
+     */
+    @Adjacency(label = THREAD_POOL, direction = Direction.OUT)
+    public ThreadPoolModel getThreadPool();
 
 }

@@ -35,10 +35,19 @@
 		<!-- Unhandled type: ${environmentRef.referenceTagType} -->
 	</#switch>
 </#macro>
+<#macro processPool bean>
+	<#if bean.threadPool??>
+		<p:pool>
+			<ejb-name>${bean.beanName}</ejb-name>
+			<p:bean-instance-pool-ref>${bean.threadPool.poolName}</p:bean-instance-pool-ref>
+        </p:pool>
+	</#if>
+</#macro>
 <jboss:ejb-jar xmlns:jboss="http://www.jboss.com/xml/ns/javaee"
                xmlns="http://java.sun.com/xml/ns/javaee"
                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                xmlns:s="urn:security:1.1"
+               xmlns:p="urn:ejb-pool:1.0"
                xsi:schemaLocation="http://www.jboss.com/xml/ns/javaee http://www.jboss.org/j2ee/schema/jboss-ejb3-2_0.xsd http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_1.xsd"
                version="3.1"
                impl-version="2.1">
@@ -81,5 +90,19 @@
     	</message-driven>
     	</#list>
     	</#if>
+    	
+    	
+    	<assembly-descriptor>
+    	<#if iterableHasContent(reportModel.relatedResources.sessionBeans)>
+	         <#list reportModel.relatedResources.sessionBeans.list.iterator() as sessionBean>
+	                 <@processPool sessionBean />
+	         </#list>
+	    </#if>
+	    <#if reportModel.relatedResources.messageDriven.list.iterator()?has_content>
+	    	<#list reportModel.relatedResources.messageDriven.list.iterator() as mdb>
+	    	        <@processPool mdb />
+	         </#list>
+	    </#if>	
+    	</assembly-descriptor>
     </enterprise-beans>
 </jboss:ejb-jar>

@@ -120,6 +120,32 @@
 			    	</div>
 			</#if>
 			
+			<#if reportModel.relatedResources.threadPools.list.iterator()?has_content>
+					<div class="panel panel-primary">
+			            <div class="panel-heading">
+			                <h3 class="panel-title">Thread Pools</h3>
+			            </div>
+			            <table class="table table-striped table-bordered">
+			        	<tr>
+			        		<th class="col-md-4">Pool Name</th>
+			        		<th class="col-md-1">Max Size</th>
+			        		<th class="col-md-1">Min Size</th>
+			        		<th class="col-md-6">Links</th>
+			        	</tr>
+			        			
+			    		<#list reportModel.relatedResources.threadPools.list.iterator() as threadPool>
+			    			<tr>
+								<td>${threadPool.poolName}</td>
+								<td>${threadPool.maxPoolSize}</td>
+								<td>${threadPool.minPoolSize}</td>
+								<td><@render_linkable linkable=threadPool layout='horizontal'/></td>
+			    			</tr>
+					    </#list>
+			    		</table>
+			    	</div>
+			</#if>
+			
+			
 			<#if reportModel.relatedResources.otherResources.list.iterator()?has_content>
 					<div class="panel panel-primary">
 			            <div class="panel-heading">

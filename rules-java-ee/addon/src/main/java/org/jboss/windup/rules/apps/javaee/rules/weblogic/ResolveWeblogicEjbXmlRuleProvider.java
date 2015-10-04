@@ -19,6 +19,7 @@ import org.jboss.windup.rules.apps.javaee.model.EjbSessionBeanModel;
 import org.jboss.windup.rules.apps.javaee.model.EnvironmentReferenceModel;
 import org.jboss.windup.rules.apps.javaee.model.JNDIResourceModel;
 import org.jboss.windup.rules.apps.javaee.model.JmsDestinationModel;
+import org.jboss.windup.rules.apps.javaee.model.ThreadPoolModel;
 import org.jboss.windup.rules.apps.javaee.rules.DiscoverEjbConfigurationXmlRuleProvider;
 import org.jboss.windup.rules.apps.javaee.service.EnvironmentReferenceService;
 import org.jboss.windup.rules.apps.javaee.service.JNDIResourceService;
@@ -69,6 +70,7 @@ public class ResolveWeblogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
         XmlFileService xmlFileService = new XmlFileService(event.getGraphContext());
         VendorSpecificationExtensionService vendorSpecificationService = new VendorSpecificationExtensionService(event.getGraphContext());
 
+        GraphService<ThreadPoolModel> threadPoolService = new GraphService<>(event.getGraphContext(), ThreadPoolModel.class);
         GraphService<EjbSessionBeanModel> ejbSessionBeanService = new GraphService<>(event.getGraphContext(), EjbSessionBeanModel.class);
         GraphService<EjbMessageDrivenModel> mdbService = new GraphService<>(event.getGraphContext(), EjbMessageDrivenModel.class);
 
@@ -131,6 +133,45 @@ public class ResolveWeblogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
             String localJndiLocation = $(resourceRef).child("local-jndi-name").text();
             String jndiLocation = $(resourceRef).child("jndi-name").text();
             String ejbName = $(resourceRef).child("ejb-name").text();
+            
+            // parse thread pool information
+            ThreadPoolModel threadPoolModel = null;
+            for (Element poolDescriptor : $(resourceRef).find("pool").get()) {
+                String maxSize = $(poolDescriptor).child("max-beans-in-free-pool").text();
+                String minSize = $(poolDescriptor).child("initial-beans-in-free-pool").text();
+                threadPoolModel = threadPoolService.create();
+                threadPoolModel.setPoolName(ejbName+"-ThreadPool");
+                
+                if(StringUtils.isNotBlank(maxSize)) {
+                    try {
+                        threadPoolModel.setMaxPoolSize(Integer.parseInt(maxSize));
+                    }
+                    catch(Exception e) {
+                        LOG.warning("Unable to parse max pool size: "+maxSize);
+                    }
+                }
+                
+                if(StringUtils.isNotBlank(minSize)) {
+                    try {
+                        threadPoolModel.setMinPoolSize(Integer.parseInt(minSize));
+                    }
+                    catch(Exception e) {
+                        LOG.warning("Unable to parse min pool size: "+minSize);
+                    }
+                }
+                break;
+            }
+            //set thread pool
+            if(threadPoolModel != null) {
+                for (EjbSessionBeanModel sessionBean : ejbSessionBeanService.findAllByProperty(EjbSessionBeanModel.EJB_BEAN_NAME, ejbName)) 
+                {
+                    sessionBean.setThreadPool(threadPoolModel);
+                }
+                for (EjbMessageDrivenModel mdb : mdbService.findAllByProperty(EjbMessageDrivenModel.EJB_BEAN_NAME, ejbName))
+                {
+                    mdb.setThreadPool(threadPoolModel);
+                }
+            }
 
             if (StringUtils.isNotBlank(jndiLocation) && StringUtils.isNotBlank(ejbName))
             {
@@ -168,6 +209,8 @@ public class ResolveWeblogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
                     }
                 }
             }
+            
+            
         }
     }
 }

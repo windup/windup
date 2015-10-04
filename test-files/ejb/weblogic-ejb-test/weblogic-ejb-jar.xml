@@ -46,6 +46,7 @@
       <message-driven-descriptor>
          <pool>
             <max-beans-in-free-pool>5</max-beans-in-free-pool>
+            <initial-beans-in-free-pool>2</initial-beans-in-free-pool>
          </pool>
          <destination-jndi-name>queue/WindupMLQueue</destination-jndi-name>
       </message-driven-descriptor>
