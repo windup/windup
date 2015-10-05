@@ -115,10 +115,10 @@
                 $("#issues_table").tablesorter({
                 sortList: [[3,1]],
         	headers: {
-                  // 3rd,4th,5th columns are parsed using thousands parser
-          	  2: {sorter:'thousands'},
-                  3: {sorter:'thousands'},
-                  4: {sorter:'thousands'}
+                  // 2nd,3rd,4th columns are parsed using thousands parser
+          	      1: {sorter:'thousands'},
+                  2: {sorter:'thousands'},
+                  3: {sorter:'thousands'}
                   }
                 });
    	    }); 
