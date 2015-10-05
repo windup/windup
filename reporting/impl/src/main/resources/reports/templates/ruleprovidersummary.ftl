@@ -76,7 +76,7 @@
 										<div>Edges Removed: ${ruleExecutionInfo.edgeIDsRemoved}</div>
 									</td>					
 									<td>
-										${ruleExecutionInfo.executed?string("Satisfied and performed.", "Condition not satisfied.")}
+										${ruleExecutionInfo.executed?string("Condition met.", "Condition not met.")}
 									</td>
 									<td>
 										${ruleExecutionInfo.failed?string("failed", "success")}
