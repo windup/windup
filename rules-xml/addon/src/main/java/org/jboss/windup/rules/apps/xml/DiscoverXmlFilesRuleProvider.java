@@ -50,6 +50,8 @@ public class DiscoverXmlFilesRuleProvider extends AbstractRuleProvider
 
                     .addRule(FileMapping.from(".*\\.xml$").to(XmlFileModel.class))
                     .addRule(FileMapping.from(".*\\.xmi$").to(XmlFileModel.class))
+                    .addRule(FileMapping.from(".*\\.jsf$").to(XmlFileModel.class))
+                    .addRule(FileMapping.from(".*\\.xhtml$").to(XmlFileModel.class))
                     .addRule()
                     .when(Query.fromType(XmlFileModel.class))
                     .perform(new AbstractIterationOperation<XmlFileModel>()
