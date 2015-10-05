@@ -15,12 +15,12 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 
 /**
  * 
- * This renders an overview page listing all applications analyzed by the current execution of windup.
+ * This renders an application index page listing all applications analyzed by the current execution of windup.
  * 
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
  */
-public class RenderOverviewPageRuleProvider extends AbstractRuleProvider
+public class RenderIndexPageRuleProvider extends AbstractRuleProvider
 {
     private static final String VAR_APPLICATION_REPORTS = "applicationReports";
     private static final String OUTPUT_FILENAME = "../index.html";
@@ -29,9 +29,9 @@ public class RenderOverviewPageRuleProvider extends AbstractRuleProvider
     @Inject
     private Furnace furnace;
 
-    public RenderOverviewPageRuleProvider()
+    public RenderIndexPageRuleProvider()
     {
-        super(MetadataBuilder.forProvider(RenderOverviewPageRuleProvider.class)
+        super(MetadataBuilder.forProvider(RenderIndexPageRuleProvider.class)
                     .setPhase(ReportRenderingPhase.class));
     }
 

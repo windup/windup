@@ -6,7 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
-import org.apache.commons.collections.set.UnmodifiableSet;
+import org.apache.commons.lang.StringUtils;
 
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.windup.config.GraphRewrite;
@@ -134,8 +134,9 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
         if (locationModel.getFile() instanceof SourceFileModel)
             ((SourceFileModel) locationModel.getFile()).setGenerateSourceReport(true);
 
-        log.info("Hint added to " + locationModel.getFile().getPrettyPathWithinProject() + " [" + this.toString(hintModel.getTitle(), hintText)
-                    + "] ");
+        log.info("Hint added to " + locationModel.getFile().getPrettyPathWithinProject()
+                + " [" + this.toString(hintModel.getTitle(), hintText) + "] ");
+        log.info("Tags: " + StringUtils.join(this.getTags(), " "));
     }
 
     @Override

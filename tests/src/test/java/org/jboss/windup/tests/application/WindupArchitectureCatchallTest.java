@@ -1,8 +1,10 @@
 package org.jboss.windup.tests.application;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -13,28 +15,24 @@ import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.config.AbstractRuleProvider;
-import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.MetadataBuilder;
-import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.reporting.config.Hint;
 import org.jboss.windup.reporting.model.ReportModel;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
-import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
-import org.jboss.windup.rules.apps.javaee.model.JspSourceFileModel;
 import org.jboss.windup.testutil.html.TestJavaApplicationOverviewUtil;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
-import org.ocpsoft.rewrite.context.EvaluationContext;
 
+/**
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
+ */
 @RunWith(Arquillian.class)
-public class WindupArchitectureJspTest extends WindupArchitectureTest
+public class WindupArchitectureCatchallTest extends WindupArchitectureTest
 {
 
     @Deployment
@@ -52,7 +50,6 @@ public class WindupArchitectureJspTest extends WindupArchitectureTest
     {
         return ShrinkWrap.create(AddonArchive.class)
                     .addBeansXML()
-                    .addAsResource(new File("src/test/xml/XmlExample.windup.xml"))
                     .addClass(WindupArchitectureTest.class);
     }
 
@@ -62,14 +59,11 @@ public class WindupArchitectureJspTest extends WindupArchitectureTest
     @Test
     public void testRunWindupJsp() throws Exception
     {
-        final String path = "../test-files/jsptest";
+        final String path = "../test-files/catchalltest";
 
         try (GraphContext context = createGraphContext())
         {
-            super.runTest(context, path, false);
-
-            Assert.assertEquals(1, provider.taglibsFound);
-            Assert.assertEquals(2, provider.enumerationRuleHitCount);
+            super.runTest(context, path, true);
 
             validateReports(context);
         }
@@ -81,20 +75,25 @@ public class WindupArchitectureJspTest extends WindupArchitectureTest
     private void validateReports(GraphContext context)
     {
         ReportService reportService = new ReportService(context);
-        ReportModel reportModel = super.getMainApplicationReport(context);
-        Path appReportPath = Paths.get(reportService.getReportDirectory(), reportModel.getReportFilename());
+        ReportModel mainApplicationReportModel = getMainApplicationReport(context);
+        Path mainAppReport = Paths.get(reportService.getReportDirectory(), mainApplicationReportModel.getReportFilename());
+
+        ReportModel catchallApplicationReportModel = getCatchallApplicationReport(context);
+        Path catchallAppReport = Paths.get(reportService.getReportDirectory(), catchallApplicationReportModel.getReportFilename());
 
         TestJavaApplicationOverviewUtil util = new TestJavaApplicationOverviewUtil();
-        util.loadPage(appReportPath);
-        util.checkFilePathAndIssues("jsptest", "src/example-with-taglib.jsp", "Other Taglib Import");
+        util.loadPage(mainAppReport);
+        util.checkFilePathEffort("catchalltest", "FileWithoutCatchallHits", 13);
+        util.checkFilePathEffort("catchalltest", "FileWithBoth", 27);
+
+        util.loadPage(catchallAppReport);
+        util.checkFilePathEffort("catchalltest", "FileWithBoth", 27);
+        util.checkFilePathEffort("catchalltest", "FileWithCatchallHits", 14);
     }
 
     @Singleton
     public static class JspRulesProvider extends AbstractRuleProvider
     {
-        private int taglibsFound = 0;
-        private int enumerationRuleHitCount = 0;
-
         public JspRulesProvider()
         {
             super(MetadataBuilder.forProvider(JspRulesProvider.class)
@@ -104,34 +103,20 @@ public class WindupArchitectureJspTest extends WindupArchitectureTest
         @Override
         public Configuration getConfiguration(GraphContext context)
         {
+            Set<String> catchallTags = Collections.singleton("catchall");
+            Set<String> otherTags = new HashSet<>();
+            otherTags.add("tag1");
+            otherTags.add("tag2");
+            otherTags.add("tag3");
+
             return ConfigurationBuilder.begin()
                         .addRule()
-                        .when(JavaClass.references("http://www.example.com/custlib").at(TypeReferenceLocation.TAGLIB_IMPORT))
-                        .perform(
-                                    new AbstractIterationOperation<JavaTypeReferenceModel>()
-                                    {
-                                        @Override
-                                        public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
-                                        {
-                                            FileModel source = payload.getFile();
-                                            if (!(source instanceof JspSourceFileModel))
-                                                Assert.fail("File was not a jsp file!");
-                                            taglibsFound++;
-                                        }
-                                    })
+                        .when(JavaClass.references("java.util.{*}"))
+                        .perform(Hint.titled("java.util.* found").withText("Catchall hint is here").withEffort(7).withTags(catchallTags))
                         .addRule()
-                        .when(JavaClass.references("java.util.Enumeration").at(TypeReferenceLocation.IMPORT))
-                        .perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
-                        {
-                            @Override
-                            public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
-                            {
-                                FileModel source = payload.getFile();
-                                if (!(source instanceof JspSourceFileModel))
-                                    Assert.fail("File was not a jsp file!");
-                                enumerationRuleHitCount++;
-                            }
-                        });
+                        .when(JavaClass.references("java.net.URL"))
+                        .perform(Hint.titled("java.net.URL").withText("Java Net URL is here (no catchall").withEffort(13).withTags(otherTags));
         }
     }
+
 }
