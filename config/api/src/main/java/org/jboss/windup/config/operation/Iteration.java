@@ -48,7 +48,7 @@ import com.google.common.collect.Iterables;
 /**
  * Used to iterate over an implicit or explicit variable defined within the corresponding {@link ConfigurationRuleBuilder#when(Condition)} clause in
  * the current rule.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class Iteration extends DefaultOperationBuilder
@@ -300,10 +300,11 @@ public class Iteration extends DefaultOperationBuilder
     {
         Variables variables = Variables.instance(event);
         Map<String, Iterable<? extends WindupVertexFrame>> topLayer = variables.peek();
-        if (!topLayer.keySet().iterator().hasNext() || topLayer.keySet().size() > 1)
+        //if (!topLayer.keySet().iterator().hasNext() || topLayer.keySet().size() > 1)
+        if (topLayer.keySet().size() != 1)
         {
-            throw new IllegalStateException("Cannot determined Iteration payload variable name because the top "
-                        + "layer of Variables stack contains multiple variables [" + topLayer.keySet() + ".");
+            throw new IllegalStateException("Cannot determine Iteration payload variable name because the top "
+                + "layer of " + Variables.class.getSimpleName() + " stack contains no or multiple variables: " + topLayer.keySet());
         }
         String name = topLayer.keySet().iterator().next();
         return name;

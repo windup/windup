@@ -273,6 +273,7 @@ public class Bootstrap
         return commands;
     }
 
+    
     private boolean executePhase(CommandPhase phase, CopyOnWriteArrayList<Command> commands)
     {
         for (Command command : commands)

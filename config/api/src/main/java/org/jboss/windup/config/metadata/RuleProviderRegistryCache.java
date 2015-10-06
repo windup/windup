@@ -17,6 +17,7 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.util.PathUtil;
+import org.jboss.windup.util.exception.WindupException;
 
 /**
  * This class provides convenience methods for retrieving a {@link RuleProviderRegistry}. The registry is cached for a period of time in order to

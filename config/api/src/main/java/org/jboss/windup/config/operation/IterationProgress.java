@@ -12,7 +12,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * Provides a simplistic way of printing a message to the log every {@link IterationProgress#interval} iterations.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
@@ -20,8 +20,8 @@ public class IterationProgress extends AbstractIterationOperation<WindupVertexFr
 {
     private static final Logger LOG = Logging.get(IterationProgress.class);
 
-    private String messagePrefix;
-    private int interval;
+    private final String messagePrefix;
+    private final int interval;
     private int totalIterations = -1;
     private boolean estimateTimeRemaining = true;
     private ProgressEstimate progressEstimate;
@@ -71,5 +71,12 @@ public class IterationProgress extends AbstractIterationOperation<WindupVertexFr
             }
             LOG.info(messagePrefix + ": " + progressEstimate.getWorked() + " / " + totalIterations);
         }
+    }
+
+
+    @Override
+    public String toString()
+    {
+        return "IterationProgress{msg=" + messagePrefix + ", int=" + interval + ", est=" + estimateTimeRemaining + ", variableListName=" + variableListName + '}';
     }
 }
