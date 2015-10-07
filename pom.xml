@@ -21,6 +21,7 @@
         <version.titangraph>0.5.4</version.titangraph>
         <version.tinkerpop.blueprints>2.5.0</version.tinkerpop.blueprints>
         <version.freemarker>2.3.23</version.freemarker>
+        <version.jacoco>0.7.5.201505241946</version.jacoco>
 
         <windup.scm.connection>scm:git:https://github.com/windup/windup.git</windup.scm.connection>
         <windup.developer.connection>scm:git:git@github.com:windup/windup.git</windup.developer.connection>
@@ -31,6 +32,7 @@
 
         <skipDeleteDeps>true</skipDeleteDeps> <!-- Don't delete deps from local repo by default. -->
         <forkCount>.5C</forkCount>
+        <jacoco.argLine></jacoco.argLine> <!-- Will be set by the JaCoCo Maven plugin when active. -->
     </properties>
 
     <scm>
@@ -124,7 +126,8 @@
                     <excludes>
                         <exclude>${testExcludeString}</exclude>
                     </excludes>
-                    <argLine>-Xms512m -Xmx2048m -XX:MaxPermSize=768m -XX:ReservedCodeCacheSize=128m</argLine>
+                    <!-- http://maven.apache.org/surefire/maven-surefire-plugin/faq.html#late-property-evaluation -->
+                    <argLine>-Xms512m -Xmx2048m -XX:MaxPermSize=768m -XX:ReservedCodeCacheSize=128m @{jacoco.argLine}</argLine>
                     <reuseForks>false</reuseForks>
                 </configuration>
             </plugin>
@@ -290,6 +293,38 @@
                                             <packages>org.jboss.windup.*</packages>
                                         </group>
                                     </groups>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>jacoco</id>
+            <modules>
+                <!-- Relying on Maven to build this module as the last one. -->
+                <module>coverage-report</module>
+            </modules>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <version>${version.jacoco}</version>
+                        <executions>
+                            <execution>
+                                <id>default-prepare-agent</id>
+                                <phase>initialize</phase>
+                                <goals>
+                                    <goal>prepare-agent</goal>
+                                </goals>
+                                <configuration>
+                                    <includes>
+                                        <include>org.jboss.windup.*</include>
+                                    </includes>
+                                    <propertyName>jacoco.argLine</propertyName>
                                 </configuration>
                             </execution>
                         </executions>
