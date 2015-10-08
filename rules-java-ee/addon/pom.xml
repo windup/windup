@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.jboss.windup.rules.apps</groupId>
         <artifactId>windup-rules-java-ee-parent</artifactId>
-        <version>2.4.0-SNAPSHOT</version>
+        <version>2.4.0.CR3</version>
     </parent>
     <artifactId>windup-rules-java-ee</artifactId>
 
