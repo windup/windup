@@ -64,9 +64,9 @@
 			    	<div class="panel-body" style="overflow: auto;">
 
                         <!--<div style="height: 120pt; float:left;"></div> Keeps the minimal height. -->
-                        <div class="points" style="text-align: center; color: #863333; padding-bottom: 1ex;">
+                        <div class="points" style="text-align: center; color: #00254b; padding-bottom: 1ex;">
                             <div class="number">${getMigrationEffortPointsForFile(reportModel.sourceFileModel)}</div>
-                            <div>Story Points<br/>(estimated)</div>
+                            <div>Story Points</div>
                         </div>
 
 				        <div class="info" style="margin-left: 95pt;">
@@ -80,21 +80,22 @@
 				        	</div>
                             </#list>
 
-				        	<h4>Classifications</h4>
-                            <ul class='classifications'>
-                                <#list reportModel.sourceFileModel.classificationModels.iterator() as item>
-                                <#if item.classification??>
-                                    <li>
-                                        <div class='title'>
-                                            <em>${item.classification!}</em>
-                                            <@render_rule_link renderType='glyph' ruleID=item.ruleID class='rule-link'/><#-- Link to the rule -->
-                                        </div>
-                                        <#if item.description??><div class='desc'>${item.description}</div></#if>
-                                        <@render_linkable linkable=item layout='ul'/><#-- Link contained in classification -->
-                                    </li>
-                                </#if>
-                                </#list>
-                            </ul>
+                            <#list reportModel.sourceFileModel.classificationModels.iterator()>
+                                <ul class='classifications'>
+                                    <#items as item>
+                                        <#if item.classification??>
+                                            <li>
+                                                <div class='title'>
+                                                    <em>${item.classification!}</em>
+                                                    <@render_rule_link renderType='glyph' ruleID=item.ruleID class='rule-link'/><#-- Link to the rule -->
+                                                </div>
+                                                <#if item.description??><div class='desc'>${item.description}</div></#if>
+                                                <@render_linkable linkable=item layout='ul'/><#-- Link contained in classification -->
+                                            </li>
+                                        </#if>
+                                    </#items>
+                                </ul>
+                            </#list>
 
                             <#list reportModel.sourceFileModel.linksToTransformedFiles.iterator() >
 				        	<h4>Automatically Translated Files</h4>

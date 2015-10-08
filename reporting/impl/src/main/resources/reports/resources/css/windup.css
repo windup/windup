@@ -87,7 +87,7 @@ h3.panel-title span.s {
 
 .mainGraphContainer .points,
 .projectBox         .points,
-.panel .panel-body  .points { float: left; text-align: center; color: #863333; }
+.panel .panel-body  .points { float: left; text-align: center; color: #00254b; }
 
 .mainGraphContainer .points .number  { font-size: 85pt; width: 1.5em; }
 .projectBox         .points          { width: 49%; }
@@ -163,7 +163,6 @@ a.windup-file-location {
     margin-left: 2em;
     font-weight: normal;
     font-size: 14pt;
-    font-family: monospace;
 }
 
 .windup-header {

@@ -113,7 +113,7 @@
         <div class="container-fluid summaryMargin">
 
             <!-- Points -->
-            <div class="points" style="text-align: center; color: #863333; padding-bottom: 1ex;">
+            <div class="points" style="text-align: center; color: #00254b; padding-bottom: 1ex;">
                 <div class="number">${getMigrationEffortPoints(reportModel.projectModel, true, reportModel.includeTags, reportModel.excludeTags)}</div>
                 <div>Story Points</div>
             </div>
@@ -241,7 +241,7 @@
                         <div class='totalDesc'>Story Points</div>
                     </div>
                     -->
-                    <div class="points" style="text-align: center; color: #863333; padding-bottom: 1ex;">
+                    <div class="points" style="text-align: center; color: #00254b; padding-bottom: 1ex;">
                         <div class="number">${getMigrationEffortPoints(reportModel.projectModel, true, reportModel.includeTags, reportModel.excludeTags)}</div>
                         <div>Story Points</div>
                     </div>
