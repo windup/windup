@@ -72,13 +72,14 @@
 	                                        <#list problemSummary.files as file>
 	                                            <@render_link model=file class="list-group-item"/><#t>
 	                                        </#list>
+                                            <div style="clear: both;"/>
 	                                    </div>
 	                                </td>
 			                        <td>${problemSummary.numberFound}</td>
 			                        <td>${problemSummary.effortPerIncident}</td>
 			                        <td>${problemSummary.numberFound * problemSummary.effortPerIncident}</td>
 			                        <td>
-			                            <@render_rule_link ruleID=problemSummary.ruleID renderType="glyph"/>
+			                            <@render_rule_link renderType="glyph" ruleID=problemSummary.ruleID/>
 			                        </td>
 	                            </tr>
 	                        </#list>
@@ -90,7 +91,7 @@
 
         <script src="resources/js/jquery-1.10.1.min.js"></script>
         <script src="resources/js/bootstrap.min.js"></script>
-        <script src="resources/js/jquery.tablesorter.min.js"></script> 
+        <script src="resources/js/jquery.tablesorter.min.js"></script>
         <script type="text/javascript">
             $(document).ready(function () {
                 $('.problem-link').each(function(index, value) {
@@ -101,17 +102,17 @@
                 });
             });
             // we need this parser because we are using comma to separate thousands
-            $.tablesorter.addParser({ 
+            $.tablesorter.addParser({
    		 id: 'thousands',
-   		 is: function(s) { 
-  		      return true; 
-   		 }, 
+   		 is: function(s) {
+  		      return true;
+   		 },
  		 format: function(s) {
    		     return s.replace('$','').replace(/,/g,'');
-   		 }, 
-  		 type: 'numeric' 
-	    }); 
-            $(document).ready(function() { 
+   		 },
+  		 type: 'numeric'
+	    });
+            $(document).ready(function() {
                 $("#issues_table").tablesorter({
                 sortList: [[3,1]],
         	headers: {
@@ -121,7 +122,7 @@
                   3: {sorter:'thousands'}
                   }
                 });
-   	    }); 
+   	    });
         </script>
     </body>
 </html>

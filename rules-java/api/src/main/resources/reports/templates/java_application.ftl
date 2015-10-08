@@ -26,7 +26,7 @@
             <tr>
                 <td>
                     ${reportLine.message}
-                    <@render_rule_link ruleID=reportLine.ruleID/>
+                    <@render_rule_link renderType="glyph" ruleID=reportLine.ruleID class="rule-link"/>
                 </td>
             </tr>
             </#list>
@@ -60,6 +60,7 @@
 			<#list getTagsFromFileClassificationsAndHints(fileModel) as tag>
         		<span class="label label-info tag">${tag}</span>
             </#list>
+            <div style="clear: both;"/>
 		</td>
 
         <#-- Issues -->

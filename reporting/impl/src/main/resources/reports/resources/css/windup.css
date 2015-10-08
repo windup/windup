@@ -22,7 +22,11 @@ body {
 }
 
 .rule-link {
-    color: #00b800;
+    color: #008800;
+}
+.rule-link.floatRight {
+    padding: 4pt 4pt 0 0;
+    font-size: 8pt;
 }
 
 .feedback-nav {
@@ -83,7 +87,7 @@ h3.panel-title span.s {
 .panel .panel-body .points .number { font-size: 50pt; width: 1.5em; }
 .panel .panel-body .info h4 { font-weight: bold; font-size: 11pt; margin: 6pt 0 4pt 0; }
 .panel .panel-body .info h4:first-child { margin-top: 0; }
-.panel .panel-body .info .rule-link.tag { font-variant-position: super; font-weight: normal; position: relative; top: -0.4ex; left: -0.2em; }
+.panel .panel-body .info .rule-link.tag { font-variant-position: super; font-weight: normal; position: relative; top: -0.3ex; }
 
 
 
@@ -206,3 +210,10 @@ p.windup-contributors  {
 	background: url(../img/styles/tattletale-small-white-icon.png);
 }
 /** /Navigation **/
+
+
+
+/** General rules */
+.floatRight {
+    float: right;
+}
