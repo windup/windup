@@ -14,7 +14,6 @@ import java.util.Queue;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.jar.JarEntry;
@@ -53,6 +52,7 @@ import com.strobel.decompiler.languages.LineNumberPosition;
 import com.strobel.decompiler.languages.TypeDecompilationResults;
 import com.strobel.decompiler.languages.java.JavaFormattingOptions;
 import com.strobel.io.PathHelper;
+import org.jboss.windup.util.threading.WindupExecutors;
 
 /**
  * Decompiles Java classes with Procyon Decompiler. See https://bitbucket.org/mstrobel/procyon
@@ -62,7 +62,7 @@ import com.strobel.io.PathHelper;
  */
 public class ProcyonDecompiler implements Decompiler
 {
-    private ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private ExecutorService executorService = WindupExecutors.newSingleThreadExecutor();
     private int numberOfThreads = 1;
     private static final Logger log = Logger.getLogger(ProcyonDecompiler.class.getName());
     private final ProcyonConfiguration procyonConf;
