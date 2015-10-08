@@ -35,7 +35,7 @@
 		<div class="row">
 			<div class="page-header page-header-no-border">
                 <h1>
-                    <div class="main">Source report</div>
+                    <div class="main">Source Report</div>
                     <div class="path">${reportModel.sourceFileModel.prettyPath?html}</div>
                 </h1>
 			</div>
@@ -66,7 +66,7 @@
                         <!--<div style="height: 120pt; float:left;"></div> Keeps the minimal height. -->
                         <div class="points" style="text-align: center; color: #863333; padding-bottom: 1ex;">
                             <div class="number">${getMigrationEffortPointsForFile(reportModel.sourceFileModel)}</div>
-                            <div>Story points<br/>(estimated)</div>
+                            <div>Story Points<br/>(estimated)</div>
                         </div>
 
 				        <div class="info" style="margin-left: 95pt;">

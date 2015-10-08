@@ -6,9 +6,9 @@
 
 <#macro tagRenderer tag>
 	<#if tag.level?? && tag.level == "IMPORTANT">
-		<span class="label label-danger">
+		<span class="label label-danger tag-${tag.name}">
 	<#else>
-		<span class="label label-info">
+		<span class="label label-info tag-${tag.name}">
 	</#if>
             <#nested/>
         </span>
@@ -106,23 +106,25 @@
 </#macro>
 
 <#macro projectModelRenderer projectModel>
-    <div class="panel panel-primary">
+    <div class="panel panel-primary projectBox">
         <div class="panel-heading">
             <h3 class="panel-title">${projectModel.rootFileModel.prettyPath?html}</h3>
         </div>
         <div class="container-fluid summaryMargin">
-            <div class='col-md-3 text-right totalSummary'>
-                <div class='totalLoe'>
-                    ${getMigrationEffortPoints(projectModel, false, reportModel.includeTags, reportModel.excludeTags)}
-                </div>
-                <div class='totalDesc'>Story Points</div>
+
+            <!-- Points -->
+            <div class="points" style="text-align: center; color: #863333; padding-bottom: 1ex;">
+                <div class="number">${getMigrationEffortPoints(reportModel.projectModel, true, reportModel.includeTags, reportModel.excludeTags)}</div>
+                <div>Story Points</div>
             </div>
 
-            <div class='col-md-6 pull-right windupPieGraph archiveGraphContainer'>
-                <div id="project_${projectModel.asVertex().getId()?string("0")}_pie" class='windupPieGraph'></div>
+            <!-- Pie chart -->
+            <div class='pieChart col-md-6 pull-right windupPieGraph archiveGraphContainer'>
+                <div id="project_${projectModel.asVertex().id?c}_pie" class='windupPieGraph'></div>
             </div>
 
-			<div class="col-md-6 pull-right">
+            <!-- Basic info -->
+			<div class="basicInfo col-md-6 pull-right">
 				<table class="table">
 					<tr>
 						<th>Organization</th>
@@ -189,7 +191,7 @@
         <link href="resources/css/windup.css" rel="stylesheet" media="screen">
         <link href="resources/css/windup.java.css" rel="stylesheet" media="screen">
     </head>
-    <body role="document">
+    <body role="document" class="java-application">
 
         <!-- Navbar -->
         <div class="navbar navbar-default navbar-fixed-top">
@@ -211,7 +213,10 @@
 
             <div class="row">
                 <div class="page-header page-header-no-border">
-                    <h1>Application Report <span class="slash">/</span><small style="margin-left: 20px; font-weight: 100;">${reportModel.projectModel.name}</small></h1>
+                    <h1>
+                        <div class="main">Application Report</div>
+                        <div class="path">${reportModel.projectModel.name?html}</div>
+                    </h1>
                 </div>
             </div>
 
@@ -228,11 +233,17 @@
 
             <div class="row container-fluid">
                 <div class='container mainGraphContainer'>
+                    <!--
                     <div class='col-md-3 text-right totalSummary'>
                         <div class='totalLoe'>
                           ${getMigrationEffortPoints(reportModel.projectModel, true, reportModel.includeTags, reportModel.excludeTags)}
                         </div>
                         <div class='totalDesc'>Story Points</div>
+                    </div>
+                    -->
+                    <div class="points" style="text-align: center; color: #863333; padding-bottom: 1ex;">
+                        <div class="number">${getMigrationEffortPoints(reportModel.projectModel, true, reportModel.includeTags, reportModel.excludeTags)}</div>
+                        <div>Story Points</div>
                     </div>
                     <div class='col-md-6 pull-right windupPieGraph'>
                         <div id='application_pie' class='windupPieGraph'/>
