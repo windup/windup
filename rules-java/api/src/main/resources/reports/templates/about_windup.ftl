@@ -12,7 +12,7 @@
     <link href="resources/css/windup.java.css" rel="stylesheet" media="screen">
 </head>
 <body role="document">
-	
+
 	<!-- Navbar -->
 	<div class="navbar navbar-default navbar-fixed-top">
         <div class="navbar-header">
@@ -27,22 +27,24 @@
         </div>
     </div>
     <!-- / Navbar -->
-    
-    
+
+
     <div class="container-fluid" role="main">
         <div class="row">
             <div class="page-header page-header-no-border">
-                <h1>About Windup</h1>
+                <h1>
+                    <div class="main">About Windup</div>
+                </h1>
             </div>
         </div>
-		
+
 		<div class="row">
 			<!-- Breadcrumbs -->
 			<div class="container-fluid">
 		        <ol class="breadcrumb top-menu">
 			      <li><a href="../index.html">All Applications</a></li>
 				  <#include "include/breadcrumbs.ftl">
-		        </ol> 
+		        </ol>
           	</div>
           	<!-- / Breadcrumbs -->
 		</div>
@@ -53,7 +55,7 @@
 					<div class="panel-heading">
 				        <h3 class="panel-title">About Windup</h3>
 				    </div>
-				
+
 				    <div class="panel-body">
 						<dl class="dl-horizontal">
 		        		  <#if reportModel.relatedResources.windupAbout.windupRuntimeVersion?has_content>
@@ -62,32 +64,32 @@
 						  </#if>
 						  <dt>Follow / Twitter</dt>
 						  <dd><a href="http://twitter.com/jbosswindup">@jbosswindup</a></dd>
-						  
+
 						  <dt>Website</dt>
 						  <dd><a href="http://windup.jboss.org">http://windup.jboss.org</a></dd>
-						  
+
 						  <dt>Source / Github</dt>
 						  <dd><a href="https://github.com/windup/windup">https://github.com/windup/windup</a></dd>
-						  
+
 						  <dt>Wiki / Documentation</dt>
 						  <dd><a href="https://github.com/windup/windup/wiki">https://github.com/windup/windup/wiki</a></dd>
-						  
+
 						  <dt>Discussion Forum</dt>
 						  <dd><a href="https://community.jboss.org/en/windup?view=discussions">https://community.jboss.org/en/windup</a></dd>
-						  
+
 						  <dt>Mailing List</dt>
 						  <dd><a href="https://lists.jboss.org/mailman/listinfo/windup-dev">https://lists.jboss.org/mailman/listinfo/windup-dev</a></dd>
-						  
+
 						  <dt>Issues Tracking</dt>
 						  <dd><a href="https://issues.jboss.org/browse/WINDUP">https://issues.jboss.org/browse/WINDUP</a></dd>
-						  
+
 						</dl>
 				    </div>
 				</div>
-	        	
+
 	        </div>
 	    </div>
-	    
+
 	    <div class="row">
 	        <div class="container-fluid theme-showcase" role="main">
 	        	<div class="panel panel-primary">
@@ -101,7 +103,7 @@
 				</div>
 	        </div>
 	    </div>
-	    
+
     </div> <!-- /container -->
 
 
@@ -109,7 +111,7 @@
     <script src="resources/libraries/flot/jquery.flot.min.js"></script>
     <script src="resources/libraries/flot/jquery.flot.pie.min.js"></script>
     <script src="resources/js/bootstrap.min.js"></script>
-    
+
     <script type="text/javascript">
     	var divTarget = $("#windup-contributors");
 		$.getJSON( "https://api.github.com/repos/windup/windup/contributors", function( data ) {

@@ -35,7 +35,7 @@
 		<div class="row">
 			<div class="page-header page-header-no-border">
                 <h1>
-                    <div class="main">Source report</div>
+                    <div class="main">Source Report</div>
                     <div class="path">${reportModel.sourceFileModel.prettyPath?html}</div>
                 </h1>
 			</div>
@@ -61,37 +61,41 @@
 			    	<div class="panel-heading">
 			    		<h3 class="panel-title">Information</h3>
 			    	</div>
-			    	<div class="panel-body">
+			    	<div class="panel-body" style="overflow: auto;">
 
-                        <div class="points" style="float: left; text-align: center; color: #863333">
+                        <!--<div style="height: 120pt; float:left;"></div> Keeps the minimal height. -->
+                        <div class="points" style="text-align: center; color: #00254b; padding-bottom: 1ex;">
                             <div class="number">${getMigrationEffortPointsForFile(reportModel.sourceFileModel)}</div>
-                            <div>Story points<br/>(estimated)</div>
+                            <div>Story Points</div>
                         </div>
 
 				        <div class="info" style="margin-left: 95pt;">
 
                             <#list getTechnologyTagsForFile(reportModel.sourceFileModel).iterator()>
                             <h4>Technologies</h4>
-				        	<div>
+				        	<div class="technologies" style="overflow: auto"><!-- "auto" to contain all the tags. -->
 				        		<#items as techTag>
 				              		<span class="label label-info">${techTag.name}</span>
 				            	</#items>
 				        	</div>
                             </#list>
 
-				        	<h4>Classifications</h4>
-                            <ul>
-                                <#list reportModel.sourceFileModel.classificationModels.iterator() as item>
-                                <#if item.classification??>
-                                    <li>
-                                        <em>${item.classification!}</em>
-                                        <@render_rule_link renderType='tag' ruleID=item.ruleID class='rule-link tag'/><#-- Link to the rule -->
-                                        <#if item.description??> - ${item.description}</#if>
-                                        <@render_linkable linkable=item layout='ul'/><#-- Link contained in classification -->
-                                    </li>
-                                </#if>
-                                </#list>
-                            </ul>
+                            <#list reportModel.sourceFileModel.classificationModels.iterator()>
+                                <ul class='classifications'>
+                                    <#items as item>
+                                        <#if item.classification??>
+                                            <li>
+                                                <div class='title'>
+                                                    <em>${item.classification!}</em>
+                                                    <@render_rule_link renderType='glyph' ruleID=item.ruleID class='rule-link'/><#-- Link to the rule -->
+                                                </div>
+                                                <#if item.description??><div class='desc'>${item.description}</div></#if>
+                                                <@render_linkable linkable=item layout='ul'/><#-- Link contained in classification -->
+                                            </li>
+                                        </#if>
+                                    </#items>
+                                </ul>
+                            </#list>
 
                             <#list reportModel.sourceFileModel.linksToTransformedFiles.iterator() >
 				        	<h4>Automatically Translated Files</h4>
@@ -101,7 +105,9 @@
                                 </#items>
                             </ul>
                             </#list>
-                        </div>
+
+                            <div style="clear: both;"/><!-- Snaps under the height keeper. Yes, the same effect could be achieved by a table. -->
+                        </div><!-- .info -->
 					</div>
                 </div>
 			    </#if>
@@ -159,7 +165,7 @@
 								<strong class='notification ${effortPointsToCssClass(hintLine.effort)}'><#t>
 									${hintLine.title?js_string}<#t>
 								</strong><#t>
-								<@render_rule_link ruleID=hintLine.ruleID class='rule-link'/><#t>
+								<@render_rule_link renderType='glyph' ruleID=hintLine.ruleID class='rule-link floatRight'/><#t>
 								<#t>
 							</div><#t>
 							<div class='inline-comment-body'><#t>

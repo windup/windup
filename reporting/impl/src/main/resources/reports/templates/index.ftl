@@ -17,10 +17,10 @@
 				<a href="reports/${applicationReport.reportFilename}">${applicationReport.projectModel.name}</a>
 			</td>
 			<td>
-				
+
 				<#list getTechnologyTagsForProject(applicationReport.projectModel) as tag>
 					<@tagRenderer tag>
-						<#if tag.version?has_content> ${tag.name} ${tag.version} 
+						<#if tag.version?has_content> ${tag.name} ${tag.version}
 						<#else>
 							${tag.name}
 						</#if>
@@ -42,10 +42,6 @@
 		<!-- Bootstrap -->
 		<link href="reports/resources/css/bootstrap.min.css" rel="stylesheet"/>
 		<link href="reports/resources/css/windup.css" rel="stylesheet" media="screen"/>
-
-		<style>
-
-		</style>
 	</head>
 	<body role="document">
 
@@ -62,7 +58,10 @@
 
         <div class="row">
             <div class="page-header">
-                <h1>Overview <span class="slash">/</span><small style="margin-left: 20px; font-weight: 100;">Profiled by Windup</small></h1>
+                <h1>
+                    <div class="main">Overview</div>
+                    <div class="path">Profiled by Windup</div>
+                </h1>
             </div>
         </div>
     </div>

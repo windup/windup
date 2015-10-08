@@ -68,13 +68,13 @@ public class RenderRuleLinkDirective implements WindupFreeMarkerTemplateDirectiv
 
         String ruleID = ruleIDStringModel.getAsString();
 
-        writer.append("<a href='" + RenderRuleProviderReportRuleProvider.OUTPUT_FILENAME + "#" + ruleID + "'>");
+        writer.append("<a title='View Rule: " + ruleID + "' href='" + RenderRuleProviderReportRuleProvider.OUTPUT_FILENAME + "#" + ruleID + "'>");
         if (RENDER_TYPE_GLYPH.equals(renderType))
-            writer.append("<span title='View Rule: " + ruleID + "' class='glyphicon glyphicon-link "+cssClass+"'></span>");
+            writer.append("<span class='glyphicon glyphicon-link "+cssClass+"'></span>");
         else if (RENDER_TYPE_TAG.equals(renderType))
-            writer.append("<span title='View Rule: " + ruleID + "' class='"+cssClass+"'>&lt;rule/></span>");
+            writer.append("<span class='tag "+cssClass+"'>&lt;rule/></span>");
         else
-            writer.append("<span title='View Rule: " + ruleID + "' class='"+cssClass+"'>"+ ruleID +"</span>");
+            writer.append("<span class='plain "+cssClass+"'>"+ ruleID +"</span>");
         writer.append("</a>");
     }
 }

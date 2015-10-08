@@ -8,7 +8,7 @@
     	<div class="panel-heading">
             <h3 class="panel-title">Static IP Addresses</h3>
         </div>
-		
+
 		<#if iterableHasContent(reportModel.relatedResources.staticIPLocations)>
 	        <table class="table table-striped table-bordered" id="staticIPTable">
 	            <tr>
@@ -16,7 +16,7 @@
 					<th>Location</th>
 					<th>IP Address</th>
 	            </tr>
-	
+
 	            <#list reportModel.relatedResources.staticIPLocations.list.iterator() as staticIpRef>
 	            <tr>
 	                <td>
@@ -44,7 +44,7 @@
     <link href="resources/css/windup.java.css" rel="stylesheet" media="screen">
 </head>
 <body role="document">
-	
+
 	<!-- Navbar -->
 	<div class="navbar navbar-default navbar-fixed-top">
         <div class="navbar-header">
@@ -59,22 +59,25 @@
         </div>
     </div>
     <!-- / Navbar -->
-    
-    
+
+
     <div class="container-fluid" role="main">
         <div class="row">
             <div class="page-header page-header-no-border">
-                <h1>Static IP Report <span class="slash">/</span><small style="margin-left: 20px; font-weight: 100;">${reportModel.projectModel.name}</small></h1>
+                <h1>
+                    <div class="main">Static IP Report</div>
+                    <div class="path">${reportModel.projectModel.name?html}</div>
+                </h1>
             </div>
         </div>
-		
+
 		<div class="row">
 			<!-- Breadcrumbs -->
 			<div class="container-fluid">
 		        <ol class="breadcrumb top-menu">
 			      <li><a href="../index.html">All Applications</a></li>
 				  <#include "include/breadcrumbs.ftl">
-		        </ol> 
+		        </ol>
           	</div>
           	<!-- / Breadcrumbs -->
 		</div>

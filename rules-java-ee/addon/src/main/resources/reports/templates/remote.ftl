@@ -11,7 +11,7 @@
     <link href="resources/css/windup.css" rel="stylesheet" media="screen">
   </head>
   <body role="document">
-	
+
 	<!-- Navbar -->
 	<div class="navbar navbar-default navbar-fixed-top">
 		<div class="navbar-header">
@@ -26,21 +26,24 @@
 		</div><!-- /.nav-collapse -->
 	</div>
 	<!-- / Navbar -->
-	
+
 	<div class="container-fluid" role="main">
 		<div class="row">
 			<div class="page-header page-header-no-border">
-				<h1>Remote Service Report <span class="slash">/</span><small style="margin-left: 20px; font-weight: 100;">${reportModel.projectModel.name}</small></h1>
+                <h1>
+                    <div class="main">Remote Service Report</div>
+                    <div class="path">${reportModel.projectModel.name?html}</div>
+                </h1>
 			</div>
 		</div>
-	
+
 		<div class="row">
 			<!-- Breadcrumbs -->
 			<div class="container-fluid">
 				<ol class="breadcrumb top-menu">
 					<li><a href="../index.html">All Applications</a></li>
 					<#include "include/breadcrumbs.ftl">
-				</ol> 
+				</ol>
 			</div>
 			<!-- / Breadcrumbs -->
 		</div>
@@ -68,7 +71,7 @@
 		            </table>
 		        </div>
 		    </#if>
-		    
+
 		    <#if reportModel.relatedResources.jaxWsServices.list.iterator()?has_content>
 		        <div class="panel panel-primary">
 		            <div class="panel-heading">
@@ -91,7 +94,7 @@
 		            </table>
 		        </div>
 		    </#if>
-		    
+
 		    <#if reportModel.relatedResources.ejbRemoteServices.list.iterator()?has_content>
 		        <div class="panel panel-primary">
 		            <div class="panel-heading">
@@ -114,7 +117,7 @@
 		            </table>
 		        </div>
 		    </#if>
-			
+
 			<#if reportModel.relatedResources.rmiServices.list.iterator()?has_content>
 		        <div class="panel panel-primary">
 		            <div class="panel-heading">
@@ -137,10 +140,10 @@
 		            </table>
 		        </div>
 		    </#if>
-		    
+
 	    </div> <!-- /container -->
 	</div><!--/row-->
-	
+
 	</div><!-- /container main-->
 
     <script src="resources/js/jquery-1.10.1.min.js"></script>

@@ -79,7 +79,10 @@
 	<div class="container-fluid" role="main">
 		<div class="row">
 			<div class="page-header page-header-no-border">
-				<h1>EJB Report <span class="slash">/</span><small style="margin-left: 20px; font-weight: 100;">${reportModel.projectModel.name}</small></h1>
+                <h1>
+                    <div class="main">EJB Report</div>
+                    <div class="path">${reportModel.projectModel.name?html}</div>
+                </h1>
 			</div>
 		</div>
 
