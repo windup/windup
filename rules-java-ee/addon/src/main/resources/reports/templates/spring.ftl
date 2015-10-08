@@ -1,18 +1,17 @@
-
 <!DOCTYPE html>
 
 <#assign applicationReportIndexModel = reportModel.applicationReportIndexModel>
 
 <html lang="en">
-  <head>
+<head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>${reportModel.projectModel.name} - Spring Report</title>
     <link href="resources/css/bootstrap.min.css" rel="stylesheet">
     <link href="resources/css/windup.css" rel="stylesheet" media="screen">
-  </head>
-  <body role="document">
-	
+</head>
+<body role="document">
+
 	<!-- Navbar -->
 	<div class="navbar navbar-default navbar-fixed-top">
 		<div class="navbar-header">
@@ -21,27 +20,30 @@
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 			</button>
-		</div>				
+		</div>
 		<div class="navbar-collapse collapse navbar-responsive-collapse">
 			<#include "include/navbar.ftl">
 		</div>
 	</div>
 	<!-- / Navbar -->
-	
+
 	<div class="container-fluid" role="main">
 		<div class="row">
 			<div class="page-header page-header-no-border">
-				<h1>Spring Bean Report <span class="slash">/</span><small style="margin-left: 20px; font-weight: 100;">${reportModel.projectModel.name}</small></h1>
+                <h1>
+                    <div class="main">Spring Bean Report</div>
+                    <div class="path">${reportModel.projectModel.name?html}</div>
+                </h1>
 			</div>
 		</div>
-		
+
 		<div class="row">
 			<!-- Breadcrumbs -->
 			<div class="container-fluid">
 				<ol class="breadcrumb top-menu">
 					<li><a href="../index.html">All Applications</a></li>
 					<#include "include/breadcrumbs.ftl">
-				</ol> 
+				</ol>
 			</div>
 			<!-- / Breadcrumbs -->
 		</div>
@@ -52,7 +54,7 @@
 					<div class="panel-heading">
 					    <h3 class="panel-title">Spring Beans</h3>
 					</div>
-					
+
 				    <#if !iterableHasContent(reportModel.relatedResources.springBeans)>
 				    <div class="panel-body">
 				        No Spring Beans Found!

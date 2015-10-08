@@ -13,7 +13,7 @@
     <link href="resources/css/windup.css" rel="stylesheet" media="screen">
   </head>
   <body role="document">
-	
+
 	<!-- Navbar -->
 	<div class="navbar navbar-default navbar-fixed-top">
 		<div class="navbar-header">
@@ -22,39 +22,42 @@
 				<span class="icon-bar"></span>
 				<span class="icon-bar"></span>
 			</button>
-		</div>				
+		</div>
 		<div class="navbar-collapse collapse navbar-responsive-collapse">
 			<#include "include/navbar.ftl">
 		</div>
 	</div>
 	<!-- / Navbar -->
-	
+
 	<div class="container-fluid" role="main">
 		<div class="row">
 			<div class="page-header page-header-no-border">
-				<h1>JBPM Process Report <span class="slash">/</span><small style="margin-left: 20px; font-weight: 100;">${reportModel.projectModel.name}</small></h1>
+                <h1>
+                    <div class="main">JBPM Process Report</div>
+                    <div class="path">${reportModel.projectModel.name?html}</div>
+                </h1>
 			</div>
 		</div>
-		
+
 		<div class="row">
 			<!-- Breadcrumbs -->
 			<div class="container-fluid">
 				<ol class="breadcrumb top-menu">
 					<li><a href="../index.html">All Applications</a></li>
 					<#include "include/breadcrumbs.ftl">
-				</ol> 
+				</ol>
 			</div>
 			<!-- / Breadcrumbs -->
 		</div>
 
 	    <#if iterableHasContent(reportModel.relatedResources.processes)>
 		    <#list reportModel.relatedResources.processes.list.iterator() as process>
-		    
+
 			<div class="row">
 	    		<div class="container-fluid theme-showcase" role="main">
 					<div class="panel panel-primary">
 						<div class="panel-heading">
-						    <h3 class="panel-title">Process: 
+						    <h3 class="panel-title">Process:
 						    	<#if process.processName??>${process.processName}<#else>${process.fileName}</#if>
 						    </h3>
 						</div>
@@ -62,43 +65,43 @@
 								<dl class="dl-horizontal small">
 						        	<dt>Process</dt>
 						        	<dd><@render_link model=process /></dd>
-						        	
+
 						        	<#if process.processName??>
 						        	<dt>Name</dt>
 						        	<dd>${process.processName}</dd>
 						        	</#if>
-						        	
+
 						        	<#if process.nodeCount &gt; 0>
 							        	<dt>Nodes</dt>
 							        	<dd>${process.nodeCount}</dd>
 						        	</#if>
-						        	
+
 						        	<#if process.decisionCount &gt; 0>
 							        	<dt>Decisions</dt>
 							        	<dd>${process.decisionCount}</dd>
 						        	</#if>
-						        	
+
 						        	<#if process.stateCount &gt; 0>
 							        	<dt>States</dt>
 							        	<dd>${process.stateCount}</dd>
 						        	</#if>
-						        	
+
 						        	<#if process.taskCount &gt; 0>
 							        	<dt>Tasks</dt>
 							        	<dd>${process.taskCount}</dd>
 						        	</#if>
-						        	
+
 						        	<#if process.subProcessCount &gt; 0>
 							        	<dt>Sub-Processes</dt>
 							        	<dd>${process.subProcessCount}</dd>
 						        	</#if>
 								</dl>
-								<#if process.processImage??> 
+								<#if process.processImage??>
 								<div class="thumbnail">
 								<img src="${getPrettyPathForFile(process.processImage)}"/>
 								</div>
 								</#if>
-								
+
 								<#if process.actionHandlers.iterator()?has_content>
 									<table class="table table-striped table-bordered">
 							            <tr>
@@ -111,7 +114,7 @@
 								        </#list>
 							        </table>
 						        </#if>
-						        
+
 						        <#if process.decisionHandlers.iterator()?has_content>
 									<table class="table table-striped table-bordered">
 							            <tr>
@@ -124,8 +127,8 @@
 								        </#list>
 							        </table>
 						        </#if>
-								
-								
+
+
 							</div>
 					</div><!--end of panel-->
 	    		</div> <!-- /container -->

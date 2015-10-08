@@ -11,32 +11,35 @@
 
     <div class="container-fluid" role="main">
         <div class="row">
-          <div class="page-header page-header-no-border">
-            <h1>Server Resource Report <span class="slash">/</span><small style="margin-left: 20px; font-weight: 100;">${application.applicationName}</small></h1>
-             <div class="navbar navbar-default">
-            <div class="navbar-header">
-              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-              </button>
+            <div class="page-header page-header-no-border">
+                <h1>
+                    <div class="main">Server Resource Report</div>
+                    <div class="path">${application.applicationName?html}</div>
+                </h1>
+                <div class="navbar navbar-default">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                    </div>
+                    <div class="navbar-collapse collapse navbar-responsive-collapse">
+                        <ul class="nav navbar-nav">
+                            <li><a href="index.html">Application</a></li>
+                            <li><a href="ejbs.html">EJBs</a></li>
+                            <li><a href="hibernate.html">Hibernate</a></li>
+                            <li><a href="spring.html">Spring</a></li>
+                            <li><a href="server-resources.html">Server Resources</a></li>
+                            <li><a href="classloader-blacklists.html">Blacklists</a></li>
+                            <li><a href="classloader-duplicate.html">Duplicates</a></li>
+                            <li><a href="classloader-notfound.html">Not Found</a></li>
+                        </ul>
+                    </div><!-- /.nav-collapse -->
+                </div>
             </div>
-            <div class="navbar-collapse collapse navbar-responsive-collapse">
-              <ul class="nav navbar-nav">
-                <li><a href="index.html">Application</a></li>
-                <li><a href="ejbs.html">EJBs</a></li>
-                <li><a href="hibernate.html">Hibernate</a></li>
-                <li><a href="spring.html">Spring</a></li>
-                <li><a href="server-resources.html">Server Resources</a></li>
-                <li><a href="classloader-blacklists.html">Blacklists</a></li>
-                <li><a href="classloader-duplicate.html">Duplicates</a></li>
-                <li><a href="classloader-notfound.html">Not Found</a></li>
-              </ul>
-            </div><!-- /.nav-collapse -->
-            </div>
-          </div>
         </div>
-       
+
     </div>
 
 
@@ -72,7 +75,7 @@
         </div>
       </div>
 	</#if>
-	
+
 	<#if server.queues?has_content>
     <div class="panel panel-primary">
         <div class="panel-heading">
@@ -100,7 +103,7 @@
         </div>
     </div>
     </#if>
-    
+
     <#if server.jmxBeans?has_content>
     <div class="panel panel-primary">
         <div class="panel-heading">
@@ -129,7 +132,7 @@
       </div>
     </#if>
 
-        
+
     </div> <!-- /container -->
 
 

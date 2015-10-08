@@ -28,14 +28,16 @@
 			<ul class="nav navbar-nav"></ul>
 		</div><!-- /.nav-collapse -->
 	</div>
-	
+
 	<div class="container-fluid" role="main">
 		<div class="row">
 			<div class="page-header page-header-no-border">
-				<h1>Windup FreeMarker Functions and Directives</h1>
+                <h1>
+                    <div class="main">Windup FreeMarker Functions and Directives</div>
+                </h1>
 			</div>
 		</div>
-	
+
 	    <div class="row container-fluid">
 			<div class="panel panel-primary">
 				<div class="panel-heading">
@@ -43,7 +45,7 @@
 				</div>
 				<table class="table table-striped table-bordered">
 				  	<tr>
-			    		<th>Function Name</th>			    		
+			    		<th>Function Name</th>
 			    		<th>Description</th>
 		  			</tr>
 		  			<#list getAllFreeMarkerMethods() as freeMarkerMethod>
@@ -54,14 +56,14 @@
 					</#list>
 		  		</table>
 			</div>
-	
+
 			<div class="panel panel-primary">
 				<div class="panel-heading">
 				    Directives
 				</div>
 				<table class="table table-striped table-bordered">
 				  	<tr>
-			    		<th>Directive Name</th>			    		
+			    		<th>Directive Name</th>
 			    		<th>Description</th>
 		  			</tr>
 					<#list getAllFreeMarkerDirectives() as freeMarkerDirective>
@@ -78,10 +80,10 @@
 	</div> <!-- /container main -->
 
     <script src="resources/js/jquery-1.10.1.min.js"></script>
-    
+
     <script src="resources/libraries/flot/jquery.flot.min.js"></script>
     <script src="resources/libraries/flot/jquery.flot.pie.min.js"></script>
-    
+
     <script src="resources/js/bootstrap.min.js"></script>
   </body>
 </html>

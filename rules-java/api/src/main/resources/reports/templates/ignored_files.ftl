@@ -19,19 +19,18 @@
             <tr>
                 <th>File</th>
                 <th>Path</th>
-		<th>Ignored by regex</th>
+                <th>Ignored by regex</th>
             </tr>
 
             <#list reportModel.ignoredFiles.iterator() as file>
             <tr>
                 <td> <#if file.fileName?has_content> ${file.fileName} </#if> </td>
                 <td> <#if file.filePath?has_content> ${file.filePath} </#if> </td>
-		<td> <#if file.ignoredRegex?has_content> ${file.ignoredRegex} </#if> </td>
+        		<td> <#if file.ignoredRegex?has_content> ${file.ignoredRegex} </#if> </td>
             </tr>
             </#list>
         </table>
     </div>
-
 </#macro>
 
 
@@ -53,7 +52,6 @@
             </#list>
         </table>
     </div>
-
 </#macro>
 
 <head>
@@ -84,10 +82,13 @@
     <div class="container-fluid" role="main">
         <div class="row">
             <div class="page-header page-header-no-border">
-                <h1>Ignored Files Report <span class="slash">/</span><small style="margin-left: 20px; font-weight: 100;">${reportModel.projectModel.name}</small></h1>
+                <h1>
+                    <div class="main">Ignored Files Report</div>
+                    <div class="path">${reportModel.projectModel.name?html}</div>
+                </h1>
             </div>
         </div>
-        
+
         <div class="row">
         <!-- Breadcrumbs -->
 	        <div class="container-fluid">
@@ -98,7 +99,7 @@
 	        </div>
         <!-- / Breadcrumbs -->
 		</div>
-		
+
 		<div class="row">
 	        <div class="container-fluid theme-showcase" role="main">
 	            <@fileRegexesRenderer reportModel />

@@ -50,6 +50,8 @@ div.totalDesc {
 	margin-top: -10px;
 }
 
+.source-report .info .classifications .desc { padding-left: 3ex; }
+
 
 span.jreVersion {
 	border: 2px solid #146B90;
@@ -118,10 +120,6 @@ tr th:nth-child(2) {
 
 tr td:nth-child(2) {
 	width: 70px;
-}
-
-h1 > small {
-	font-size: 24px !important;
 }
 
 pre {

@@ -11,7 +11,7 @@
     <link href="resources/css/windup.css" rel="stylesheet" media="screen">
   </head>
   <body role="document">
-	
+
 	<!-- Navbar -->
 	<div class="navbar navbar-default navbar-fixed-top">
 		<div class="navbar-header">
@@ -26,21 +26,24 @@
 		</div><!-- /.nav-collapse -->
 	</div>
 	<!-- / Navbar -->
-	
+
 	<div class="container-fluid" role="main">
 		<div class="row">
 			<div class="page-header page-header-no-border">
-				<h1>JPA Report <span class="slash">/</span><small style="margin-left: 20px; font-weight: 100;">${reportModel.projectModel.name}</small></h1>
+                <h1>
+                    <div class="main">JPA Report</div>
+                    <div class="path">${reportModel.projectModel.name?html}</div>
+                </h1>
 			</div>
 		</div>
-	
+
 		<div class="row">
 			<!-- Breadcrumbs -->
 			<div class="container-fluid">
 				<ol class="breadcrumb top-menu">
 					<li><a href="../index.html">All Applications</a></li>
 					<#include "include/breadcrumbs.ftl">
-				</ol> 
+				</ol>
 			</div>
 			<!-- / Breadcrumbs -->
 		</div>
@@ -58,13 +61,13 @@
 						<dl class="dl-horizontal small">
 							<dt>JPA Configuration</dt>
 							<dd>${jpaConfiguration.prettyPath}</dd>
-							
+
 							<#if jpaConfiguration.specificationVersion??>
 								<dt>JPA Version</dt>
 								<dd>${jpaConfiguration.specificationVersion}</dd>
 							</#if>
 						</dl>
-						
+
 						<#if persistenceUnit.properties?has_content>
 			                <table class="table table-striped table-bordered" id="persistenceUnitPropertiesTable">
 		                        <tr>
@@ -78,7 +81,7 @@
 		                        </#list>
 				            </table>
 			            </#if>
-			            
+
 						<#if iterableHasContent(persistenceUnit.dataSources)>
 							<table class="table table-striped table-bordered">
 		                        <tr>
@@ -118,7 +121,7 @@
 		            </table>
 		        </div>
 		    </#if>
-		    
+
 		    <#if reportModel.relatedResources.jpaNamedQueries.list.iterator()?has_content>
 		        <div class="panel panel-primary">
 		            <div class="panel-heading">
@@ -140,7 +143,7 @@
 		    </#if>
 	    </div> <!-- /container -->
 	</div><!--/row-->
-	
+
 	</div><!-- /container main-->
 
     <script src="resources/js/jquery-1.10.1.min.js"></script>
