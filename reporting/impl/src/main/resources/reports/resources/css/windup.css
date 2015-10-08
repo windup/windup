@@ -53,11 +53,11 @@ body {
 }
 
 .table.table-striped.table-bordered tr:last-child td:first-child {
-	border-bottom-left-radius: 8pt; 
+	border-bottom-left-radius: 8pt;
 }
 
 .table.table-striped.table-bordered tr:last-child td:last-child {
-	border-bottom-right-radius: 8pt; 
+	border-bottom-right-radius: 8pt;
 }
 
 .panel.panel-primary {
@@ -92,12 +92,13 @@ dl:last-child {
 }
 
 .label {
+    display: block;
+    float: left;
     border-radius: 4px;
-    box-shadow: 3px 2px 2px #00255D;
+    box-shadow: 1px 1px 1px #444;
     padding: 4px 8px 1px;
-    font-weight: bold;
-    border: 1px inset white;
     margin: 2px 4px 6px 0px;
+    font-weight: bold;
 }
 a.windup-file-location {
 	display: block; position: relative; top: -40px; visibility: hidden;
