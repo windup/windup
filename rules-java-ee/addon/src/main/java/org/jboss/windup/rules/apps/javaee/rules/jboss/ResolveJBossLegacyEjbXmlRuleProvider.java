@@ -131,6 +131,7 @@ public class ResolveJBossLegacyEjbXmlRuleProvider extends IteratingRuleProvider<
         {
             String ejbName = $(ejbRef).child("ejb-name").content();
             String sessionClustered = $(ejbRef).child("clustered").content();
+            sessionClustered = StringUtils.trim(sessionClustered);
             
             
             if (StringUtils.isNotBlank(ejbName))

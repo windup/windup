@@ -3,7 +3,9 @@
 	<enterprise-beans>
 		<session>
             <ejb-name>WindupExampleService</ejb-name>
-            <clustered>true</clustered>
+			<clustered>
+				true
+			</clustered>
 			<cluster-config>
 				<partition-name>FooPartition</partition-name>
 				<load-balance-policy>org.jboss.ha.framework.interfaces.RandomRobin</load-balance-policy>

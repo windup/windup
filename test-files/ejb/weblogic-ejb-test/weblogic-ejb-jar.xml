@@ -10,7 +10,9 @@
 				<initial-beans-in-free-pool>6</initial-beans-in-free-pool>
 			</pool>
 			<stateless-clustering>
-				<stateless-bean-is-clusterable>true</stateless-bean-is-clusterable>
+				<stateless-bean-is-clusterable>
+					true
+				</stateless-bean-is-clusterable>
 				<stateless-bean-load-algorithm>round-robin</stateless-bean-load-algorithm>
 				<stateless-bean-methods-are-idempotent>false</stateless-bean-methods-are-idempotent>
 			</stateless-clustering>

@@ -4,7 +4,6 @@ import static org.joox.JOOX.$;
 
 import java.util.logging.Logger;
 
-import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.MetadataBuilder;
@@ -135,9 +134,11 @@ public class ResolveWeblogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
             
             //resolve cluster values
             String sessionClustered = $(resourceRef).find("stateless-bean-is-clusterable").text();
+            sessionClustered = StringUtils.trim(sessionClustered);
             if(StringUtils.isBlank(sessionClustered)) {
-                //not statelss or not set.
+                // not stateless or not set.
                 sessionClustered = $(resourceRef).find("home-is-clusterable").text();
+                sessionClustered = StringUtils.trim(sessionClustered);
             }
             
             if (StringUtils.isNotBlank(jndiLocation) && StringUtils.isNotBlank(ejbName))
