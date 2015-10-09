@@ -106,16 +106,11 @@ public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTe
 
     }
 
-    /**
-     * Validate that the report pages were generated correctly
-     */
-    private void validateReports(GraphContext context)
+    private void validateOverviewReport(GraphContext context)
     {
         ReportService reportService = new ReportService(context);
         ReportModel reportModel = getMainApplicationReport(context);
-
         Path appReportPath = Paths.get(reportService.getReportDirectory(), reportModel.getReportFilename());
-
         TestJavaApplicationOverviewUtil util = new TestJavaApplicationOverviewUtil();
         util.loadPage(appReportPath);
         util.checkFilePathAndTag("Windup1x-javaee-example.war", "META-INF/maven/javaee/javaee/pom.properties",
@@ -123,6 +118,20 @@ public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTe
         util.checkFilePathEffort("Windup1x-javaee-example.war", "META-INF/maven/javaee/javaee/pom.properties", 0);
         util.checkFilePathEffort("Windup1x-javaee-example.war/WEB-INF/lib/joda-time-2.0.jar",
                     "org.joda.time.tz.DateTimeZoneBuilder", 32);
+        util.checkMainEffort(2210);
+        util.checkAppSectionEffort("Windup1x-javaee-example.war", 2);
+        util.checkAppSectionEffort("Windup1x-javaee-example.war/WEB-INF/lib/joda-time-2.0.jar", 64);
+        util.checkAppSectionEffort("Windup1x-javaee-example.war/WEB-INF/lib/slf4j-api-1.6.1.jar", 16);
+        util.checkAppSectionEffort("Windup1x-javaee-example.war/WEB-INF/lib/wicket-devutils-1.5.10.jar", 0);
+        util.checkAppSectionEffort("Windup1x-javaee-example.war/WEB-INF/lib/wicket-request-1.5.10.jar", 24);
+    }
+
+    /**
+     * Validate that the report pages were generated correctly
+     */
+    private void validateReports(GraphContext context)
+    {
+        validateOverviewReport(context);
         validateStaticIPReport(context);
     }
 }

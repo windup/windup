@@ -114,7 +114,7 @@
 
             <!-- Points -->
             <div class="points" style="text-align: center; color: #00254b; padding-bottom: 1ex;">
-                <div class="number">${getMigrationEffortPoints(reportModel.projectModel, true, reportModel.includeTags, reportModel.excludeTags)}</div>
+                <div class="number">${getMigrationEffortPoints(projectModel, false, reportModel.includeTags, reportModel.excludeTags)}</div>
                 <div>Story Points</div>
             </div>
 

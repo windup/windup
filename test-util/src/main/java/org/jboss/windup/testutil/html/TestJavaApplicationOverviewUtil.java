@@ -13,6 +13,51 @@ import org.openqa.selenium.WebElement;
  */
 public class TestJavaApplicationOverviewUtil extends TestReportUtil
 {
+    public void checkMainEffort(int expectedEffort)
+    {
+        WebElement effortElement = getDriver()
+                    .findElement(By.xpath(
+                                ".//div[contains(@class, 'container') and contains(@class, 'mainGraphContainer')]/div[@class = 'points']/div[@class = 'number']"));
+        String effortString = effortElement.getText().trim();
+        effortString = effortString.replace(",", "");
+
+        try
+        {
+            int effort = Integer.parseInt(effortString);
+            if (effort != expectedEffort)
+                throw new CheckFailedException("Effort was " + effort + " but was expected to be " + expectedEffort);
+        }
+        catch (Exception e)
+        {
+            throw new CheckFailedException("Effort: " + effortString + " could not be parsed as numeric!");
+        }
+    }
+
+    public void checkAppSectionEffort(String appSection, int expectedEffort)
+    {
+        WebElement appSectionEl = getAppSectionElement(appSection);
+        if (appSectionEl == null)
+        {
+            throw new CheckFailedException("Unable to find app section with name: " + appSection);
+        }
+
+        WebElement effortElement = appSectionEl.findElement(By.xpath(
+                    "../..//div[@class = 'points']/div[text() = 'Story Points']/../div[@class = 'number']"));
+        String effortString = effortElement.getText().trim();
+        effortString = effortString.replace(",", "");
+
+        try
+        {
+            int effort = Integer.parseInt(effortString);
+            if (effort != expectedEffort)
+                throw new CheckFailedException("Effort was " + effort + " but was expected to be " + expectedEffort);
+        }
+        catch (Exception e)
+        {
+            throw new CheckFailedException("Effort: " + effortString + " could not be parsed as numeric!");
+        }
+    }
+
     /**
      * Checks if the given App section, filepath, and effort level can be seen in the report.
      * 
