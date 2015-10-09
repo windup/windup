@@ -1,15 +1,17 @@
 package com.tinkerpop.frames;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.util.ElementHelper;
 import com.tinkerpop.frames.annotations.AnnotationHandler;
 import com.tinkerpop.frames.modules.MethodHandler;
-
-import java.lang.annotation.Annotation;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.util.Map;
 
 /**
  * The proxy class of a framed element.
@@ -26,7 +28,8 @@ public class FramedElement implements InvocationHandler {
     private static Method toStringMethod;
     private static Method asVertexMethod;
     private static Method asEdgeMethod;
-
+    private static Map<MethodCallEntry, MethodHandlerEntry> methocCallCache = Collections
+                .synchronizedMap(new HashMap<MethodCallEntry, MethodHandlerEntry>());
 
     static {
         try {
@@ -62,44 +65,71 @@ public class FramedElement implements InvocationHandler {
     }
 
     public Object invoke(final Object proxy, final Method originalMethod, final Object[] arguments) {
+        MethodCallEntry methodCallEntry = new MethodCallEntry(proxy.getClass(), originalMethod);
+
+        MethodHandlerEntry methodHandlerEntry = methocCallCache.get(methodCallEntry);
+        if (methodHandlerEntry != null)
+        {
+            // hitCount.incrementAndGet();
+            if (methodHandlerEntry.methodHandler != null)
+                return methodHandlerEntry.methodHandler.processElement(proxy, methodHandlerEntry.method, arguments, methodHandlerEntry.annotation,
+                            this.framedGraph,
+                            this.element);
+            else if (methodHandlerEntry.annotationHandler != null)
+                return methodHandlerEntry.annotationHandler.processElement(methodHandlerEntry.annotation, methodHandlerEntry.method, arguments,
+                            this.framedGraph, this.element,
+                            this.direction);
+        }
         Method method = null;
         Class<?> methodInterface = null;
-        
+
         // try to find the method on one of the proxy's interfaces
         // (the passed in Method is often from a superclass or from the {@link Proxy} object itself,
-        //  so we need to make sure we find the method that the user actually intended)
-        for (Class<?> c : proxy.getClass().getInterfaces()) {
-            if (method != null && c.isAssignableFrom(methodInterface)) {
-        	// don't search this class if we already have found a method from a subclass of it
-        	continue;
+        // so we need to make sure we find the method that the user actually intended)
+        for (Class<?> c : proxy.getClass().getInterfaces())
+        {
+            if (method != null && c.isAssignableFrom(methodInterface))
+            {
+                // don't search this class if we already have found a method from a subclass of it
+                continue;
             }
-            
-            for (Method interfaceMethod : c.getMethods()) {
-                if (compareMethods(originalMethod, interfaceMethod)) {
-                    if (interfaceMethod.getAnnotations().length > 0) {
-                	method = interfaceMethod;
-                	methodInterface = c;
+
+            for (Method interfaceMethod : c.getMethods())
+            {
+                if (compareMethods(originalMethod, interfaceMethod))
+                {
+                    if (interfaceMethod.getAnnotations().length > 0)
+                    {
+                        method = interfaceMethod;
+                        methodInterface = c;
                     }
                     break;
                 }
             }
         }
-        if (method == null) {
+        if (method == null)
+        {
             method = originalMethod;
         }
-        
+
         Annotation[] annotations = method.getAnnotations();
         Map<Class<? extends Annotation>, AnnotationHandler<?>> annotationHandlers = this.framedGraph.getConfig().getAnnotationHandlers();
         Map<Class<? extends Annotation>, MethodHandler<?>> methodHandlers = this.framedGraph.getConfig().getMethodHandlers();
-        for (final Annotation annotation : annotations) {
-			MethodHandler methodHandler = methodHandlers.get(annotation.annotationType());
-            if (methodHandler != null) {
+        for (final Annotation annotation : annotations)
+        {
+            MethodHandler methodHandler = methodHandlers.get(annotation.annotationType());
+            if (methodHandler != null)
+            {
+                methocCallCache.put(methodCallEntry, new MethodHandlerEntry(method, annotation, methodHandler));
                 return methodHandler.processElement(proxy, method, arguments, annotation, this.framedGraph, this.element);
             }
         }
-        for (final Annotation annotation : annotations) {
-			AnnotationHandler annotationHandler = annotationHandlers.get(annotation.annotationType());
-            if (annotationHandler != null) {
+        for (final Annotation annotation : annotations)
+        {
+            AnnotationHandler annotationHandler = annotationHandlers.get(annotation.annotationType());
+            if (annotationHandler != null)
+            {
+                methocCallCache.put(methodCallEntry, new MethodHandlerEntry(method, annotation, annotationHandler));
                 return annotationHandler.processElement(annotation, method, arguments, this.framedGraph, this.element, this.direction);
             }
         }
@@ -159,5 +189,63 @@ public class FramedElement implements InvocationHandler {
 
     public Element getElement() {
         return this.element;
+    }
+
+    private class MethodCallEntry
+    {
+        private Class clazz;
+        private Method method;
+
+        public MethodCallEntry(Class clazz, Method method)
+        {
+            this.clazz = clazz;
+            this.method = method;
+        }
+
+        @Override
+        public boolean equals(Object o)
+        {
+            if (this == o)
+                return true;
+            if (o == null || getClass() != o.getClass())
+                return false;
+
+            MethodCallEntry that = (MethodCallEntry) o;
+
+            if (clazz != null ? !clazz.equals(that.clazz) : that.clazz != null)
+                return false;
+            return !(method != null ? !method.equals(that.method) : that.method != null);
+
+        }
+
+        @Override
+        public int hashCode()
+        {
+            int result = clazz != null ? clazz.hashCode() : 0;
+            result = 31 * result + (method != null ? method.hashCode() : 0);
+            return result;
+        }
+    }
+
+    private class MethodHandlerEntry
+    {
+        private final Method method;
+        private final Annotation annotation;
+        private MethodHandler methodHandler;
+        private AnnotationHandler annotationHandler;
+
+        public MethodHandlerEntry(Method method, Annotation annotation, MethodHandler<?> methodHandler)
+        {
+            this.method = method;
+            this.annotation = annotation;
+            this.methodHandler = methodHandler;
+        }
+
+        public MethodHandlerEntry(Method method, Annotation annotation, AnnotationHandler<?> annotationHandler)
+        {
+            this.method = method;
+            this.annotation = annotation;
+            this.annotationHandler = annotationHandler;
+        }
     }
 }

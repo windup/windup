@@ -1,9 +1,9 @@
 package org.jboss.windup.reporting.freemarker;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.model.comparator.FilePathComparator;
@@ -62,24 +62,26 @@ public class SortFilesByPathMethod implements WindupFreeMarkerMethod
             throw new TemplateModelException("Error, method expects one argument (Iterable<FileModel>)");
         }
         Iterable<FileModel> fileModelIterable = getList(arguments.get(0));
-        List<FileModel> fileModelList = new ArrayList<>();
-        for (FileModel fm : fileModelIterable)
-        {
-            fileModelList.add(fm);
-        }
 
-        final FilePathComparator filePathComparator = new FilePathComparator();
-        Collections.sort(fileModelList, new Comparator<FileModel>()
+        Comparator<FileModel> fileModelComparator = new Comparator<FileModel>()
         {
+            final FilePathComparator filePathComparator = new FilePathComparator();
+
             @Override
             public int compare(FileModel o1, FileModel o2)
             {
                 return filePathComparator.compare(o1.getFilePath(), o2.getFilePath());
             }
-        });
+        };
+
+        SortedSet<FileModel> fileModelSet = new TreeSet<>(fileModelComparator);
+        for (FileModel fm : fileModelIterable)
+        {
+            fileModelSet.add(fm);
+        }
 
         ExecutionStatistics.get().end(NAME);
-        return fileModelList;
+        return fileModelSet;
     }
 
     @SuppressWarnings("unchecked")
