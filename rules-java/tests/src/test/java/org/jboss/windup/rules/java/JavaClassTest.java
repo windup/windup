@@ -122,6 +122,7 @@ public class JavaClassTest
 
             Assert.assertEquals(4, provider.getFirstRuleMatchCount());
             Assert.assertEquals(2, provider.getSecondRuleMatchCount());
+            Assert.assertEquals(13, provider.getThirdRuleMatchCount());
         }
     }
 
@@ -149,6 +150,8 @@ public class JavaClassTest
 
         private int firstRuleMatchCount = 0;
         private int secondRuleMatchCount = 0;
+        private int thirdRuleMatchCount = 0;
+
 
         public JavaClassTestRuleProvider()
         {
@@ -162,9 +165,11 @@ public class JavaClassTest
         {
             return ConfigurationBuilder.begin()
             .addRule().when(
-                JavaClass.references("org.jboss.forge.furnace.{*}").inType("{*}").at(TypeReferenceLocation.IMPORT)
+                JavaClass.references("org.jboss.forge.furnace.{*}").inType("{*}").at(TypeReferenceLocation.IMPORT).as("1").and(
+                            JavaClass.from("1").references("org{*}").at(TypeReferenceLocation.IMPORT).as("2")
+                )
             ).perform(
-                Iteration.over().perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
+                Iteration.over("1").perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
                 {
                     @Override
                     public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
@@ -174,7 +179,7 @@ public class JavaClassTest
                     }
                 }).endIteration()
             )
-                    
+
             .addRule().when(
                 JavaClass.references("org.jboss.forge.furnace.{*}").inType("{*}JavaClassTestFile1").at(TypeReferenceLocation.IMPORT)
             ).perform(
@@ -184,6 +189,23 @@ public class JavaClassTest
                     public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
                     {
                         secondRuleMatchCount++;
+                    }
+                }).endIteration()
+            )
+
+                        //test iteration over matched file
+            .addRule().when(
+                JavaClass.references("org.jboss.forge.furnace.{*}").inType("{*}").at(TypeReferenceLocation.IMPORT).as("1").and(
+                JavaClass.from("1").references("org{*}").at(TypeReferenceLocation.IMPORT).as("2")
+                )
+            ).perform(
+                Iteration.over("2").perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
+                {
+                    @Override
+                    public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
+                    {
+                        thirdRuleMatchCount++;
+                        log.info("First rule matched: " + payload.getFile().getFilePath());
                     }
                 }).endIteration()
             );
@@ -198,6 +220,10 @@ public class JavaClassTest
         public int getSecondRuleMatchCount()
         {
             return secondRuleMatchCount;
+        }
+        public int getThirdRuleMatchCount()
+        {
+            return thirdRuleMatchCount;
         }
 
     }
