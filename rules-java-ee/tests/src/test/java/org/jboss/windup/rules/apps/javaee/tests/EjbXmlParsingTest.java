@@ -1,6 +1,19 @@
 package org.jboss.windup.rules.apps.javaee.tests;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+
+import javax.inject.Inject;
+
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
@@ -22,17 +35,9 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
 /**
  * Test XML parsing of different vendors.
+ * 
  * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  */
 @RunWith(Arquillian.class)
@@ -65,7 +70,8 @@ public class EjbXmlParsingTest
             startWindup(WEBLOGIC_TEST_EJB_XMLS, context);
             EnvironmentReferenceService envRefService = new EnvironmentReferenceService(context);
             GraphService<EjbSessionBeanModel> ejbSessionBeanService = new GraphService<>(context, EjbSessionBeanModel.class);
-            EjbSessionBeanModel exampleService=ejbSessionBeanService.getUniqueByProperty(EjbMessageDrivenModel.EJB_BEAN_NAME, "WindupAnotherExampleService");
+            EjbSessionBeanModel exampleService = ejbSessionBeanService.getUniqueByProperty(EjbMessageDrivenModel.EJB_BEAN_NAME,
+                        "WindupAnotherExampleService");
 
             Assert.assertEquals(exampleService.getGlobalJndiReference().getJndiLocation(), "session/service/WindupAnotherExampleServiceLocalHome");
             Assert.assertEquals(exampleService.getLocalJndiReference().getJndiLocation(), "ejb/WindupAnotherExampleServiceLocalHome");
@@ -73,8 +79,35 @@ public class EjbXmlParsingTest
             int jndiCount = 0;
             Map<String, String> jndiHandler = new HashMap<>();
             int returnedJNDI = testResourceRef(context);
-            Assert.assertEquals("Directory " + WEBLOGIC_TEST_EJB_XMLS + " didn't register expected number of JNDIs for EJBs.", 10, returnedJNDI);
+
+            Set<String> clusteredEjbNames = new HashSet<>();
+            clusteredEjbNames.add("WindupExampleService");
+            clusteredEjbNames.add("WindupAnotherExampleService");
+            clusteredEjbNames.add("WindupStatefulClusteredService");
+            testClusterdEjb(context, clusteredEjbNames);
+
+            Assert.assertEquals("Directory " + WEBLOGIC_TEST_EJB_XMLS + " didn't register expected number of JNDIs for EJBs.", 14, returnedJNDI);
         }
+    }
+
+    private void testClusterdEjb(GraphContext context, Set<String> ejbNames)
+    {
+        GraphService<EjbSessionBeanModel> ejbService = new GraphService<>(context, EjbSessionBeanModel.class);
+        for (EjbSessionBeanModel sessionBean : ejbService.findAll())
+        {
+            if (sessionBean.isClustered() != null && sessionBean.isClustered())
+            {
+                Assert.assertTrue("EJB: [" + sessionBean.getBeanName() + "] is not expected to be clustered.",
+                            ejbNames.remove(sessionBean.getBeanName()));
+            }
+        }
+
+        if (!ejbNames.isEmpty())
+        {
+            String results = StringUtils.join(ejbNames, ", ");
+            Assert.fail("EJB(s) should be clustered but aren't: [" + results + "]");
+        }
+
     }
 
     @Test
@@ -100,19 +133,23 @@ public class EjbXmlParsingTest
             startWindup(ORION_TEST_EJB_XMLS, context);
             GraphService<EjbSessionBeanModel> ejbSessionBeanService = new GraphService<>(context, EjbSessionBeanModel.class);
 
-            //test that session beans have set JNDI by <<session-deployment>
-            EjbSessionBeanModel exampleService=ejbSessionBeanService.getUniqueByProperty(EjbMessageDrivenModel.EJB_BEAN_NAME, "WindupExampleService");
+            // test that session beans have set JNDI by <<session-deployment>
+            EjbSessionBeanModel exampleService = ejbSessionBeanService.getUniqueByProperty(EjbMessageDrivenModel.EJB_BEAN_NAME,
+                        "WindupExampleService");
             Assert.assertEquals(exampleService.getGlobalJndiReference().getJndiLocation(), "session/service/WindupExampleServiceLocalHome");
 
-            EjbSessionBeanModel anotherExampleService = ejbSessionBeanService.getUniqueByProperty(EjbMessageDrivenModel.EJB_BEAN_NAME, "WindupAnotherExampleService");
-            Assert.assertEquals(anotherExampleService.getGlobalJndiReference().getJndiLocation(),"session/service/WindupAnotherExampleServiceLocalHome");
+            EjbSessionBeanModel anotherExampleService = ejbSessionBeanService.getUniqueByProperty(EjbMessageDrivenModel.EJB_BEAN_NAME,
+                        "WindupAnotherExampleService");
+            Assert.assertEquals(anotherExampleService.getGlobalJndiReference().getJndiLocation(),
+                        "session/service/WindupAnotherExampleServiceLocalHome");
 
-            //test <message-driven-deployment>
+            // test <message-driven-deployment>
             GraphService<EjbMessageDrivenModel> mdbService = new GraphService<>(context, EjbMessageDrivenModel.class);
             EjbMessageDrivenModel mdb = mdbService.getUniqueByProperty(EjbMessageDrivenModel.EJB_BEAN_NAME, "WindupMLBean");
-            Assert.assertEquals("Message driven bean destination was not loaded correctly for Orion.",mdb.getDestination().getJndiLocation(),"queue/WindupMLQueue");
+            Assert.assertEquals("Message driven bean destination was not loaded correctly for Orion.", mdb.getDestination().getJndiLocation(),
+                        "queue/WindupMLQueue");
 
-            //test <resource-ref-mapping>
+            // test <resource-ref-mapping>
             int foundJndi = testResourceRef(context);
 
             Assert.assertEquals("Directory " + ORION_TEST_EJB_XMLS + " didn't register expected number of JNDIs for EJBs.", 8, foundJndi);
@@ -127,21 +164,28 @@ public class EjbXmlParsingTest
             startWindup(JBOSS_TEST_EJB_XMLS, context);
             GraphService<EjbSessionBeanModel> ejbSessionBeanService = new GraphService<>(context, EjbSessionBeanModel.class);
 
-            //test <message-driven>
+            // test <message-driven>
             GraphService<EjbMessageDrivenModel> mdbService = new GraphService<>(context, EjbMessageDrivenModel.class);
             EjbMessageDrivenModel mdb = mdbService.getUniqueByProperty(EjbMessageDrivenModel.EJB_BEAN_NAME, "WindupMLBean");
             Assert.assertEquals("Message driven bean destination was not loaded correctly for JBoss.", mdb.getDestination().getJndiLocation(),
                         "queue/WindupMLQueue");
 
-            //test <resource-ref-mapping>
+            Set<String> clusteredEjbNames = new HashSet<>();
+            clusteredEjbNames.add("WindupExampleService");
+            clusteredEjbNames.add("WindupAnotherExampleService");
+            clusteredEjbNames.add("WindupStatefulClusteredService");
+            testClusterdEjb(context, clusteredEjbNames);
+
+            // test <resource-ref-mapping>
             int foundJndi = testResourceRef(context);
 
-            Assert.assertEquals("Directory " + JBOSS_TEST_EJB_XMLS + " didn't register expected number of JNDIs for EJBs.", 10, foundJndi);
+            Assert.assertEquals("Directory " + JBOSS_TEST_EJB_XMLS + " didn't register expected number of JNDIs for EJBs.", 14, foundJndi);
             int msgDrivenFound = 0;
         }
     }
 
-    private int testResourceRef(GraphContext context, Map<String,String> jndiToEnv) {
+    private int testResourceRef(GraphContext context, Map<String, String> jndiToEnv)
+    {
         GraphService<JNDIResourceModel> jndiResources = new GraphService<>(context, JNDIResourceModel.class);
         EnvironmentReferenceService envRefService = new EnvironmentReferenceService(context);
         int jndiCount = 0;
@@ -164,10 +208,11 @@ public class EjbXmlParsingTest
         }
         return jndiCount;
     }
+
     /**
      * Tests that the jndiHandlers are correctly mapped to environment resources and returns the number of jndi Handlers registered
+     * 
      * @param context
-     * @param jndiHandler
      * @return
      */
     private int testResourceRef(GraphContext context)
@@ -176,7 +221,7 @@ public class EjbXmlParsingTest
         jndiHandler.put("/WindupMail", "smtp/WindupMail");
         jndiHandler.put("jdbc/WindupDS", "jdbc/WindupDataSource");
         jndiHandler.put("/ConnectionFactory", "jms/WindupTopicConnectionFactory");
-        return testResourceRef(context,jndiHandler);
+        return testResourceRef(context, jndiHandler);
 
     }
 

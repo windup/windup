@@ -130,7 +130,10 @@ public class ResolveJBossLegacyEjbXmlRuleProvider extends IteratingRuleProvider<
         for (Element ejbRef : $(doc).find("session").get())
         {
             String ejbName = $(ejbRef).child("ejb-name").content();
-
+            String sessionClustered = $(ejbRef).child("clustered").content();
+            sessionClustered = StringUtils.trim(sessionClustered);
+            
+            
             if (StringUtils.isNotBlank(ejbName))
             {
                 LOG.info("Looking up name: " + ejbName);
@@ -148,6 +151,10 @@ public class ResolveJBossLegacyEjbXmlRuleProvider extends IteratingRuleProvider<
                     {
                         JNDIResourceModel jndiRef = jndiResourceService.createUnique(localJNDI);
                         ejb.setLocalJndiReference(jndiRef);
+                    }
+                    
+                    if(StringUtils.equalsIgnoreCase("true", sessionClustered)) {
+                        ejb.setClustered(true);
                     }
                 }
             }

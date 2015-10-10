@@ -131,7 +131,16 @@ public class ResolveWeblogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
             String localJndiLocation = $(resourceRef).child("local-jndi-name").text();
             String jndiLocation = $(resourceRef).child("jndi-name").text();
             String ejbName = $(resourceRef).child("ejb-name").text();
-
+            
+            //resolve cluster values
+            String sessionClustered = $(resourceRef).find("stateless-bean-is-clusterable").text();
+            sessionClustered = StringUtils.trim(sessionClustered);
+            if(StringUtils.isBlank(sessionClustered)) {
+                // not stateless or not set.
+                sessionClustered = $(resourceRef).find("home-is-clusterable").text();
+                sessionClustered = StringUtils.trim(sessionClustered);
+            }
+            
             if (StringUtils.isNotBlank(jndiLocation) && StringUtils.isNotBlank(ejbName))
             {
                 JNDIResourceModel jndiRef = jndiResourceService.createUnique(jndiLocation);
@@ -168,6 +177,19 @@ public class ResolveWeblogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
                     }
                 }
             }
+            
+            //sets the clustered value to the session bean.
+            if(StringUtils.equalsIgnoreCase("true", sessionClustered))
+            {
+                for (EjbSessionBeanModel sessionBean : ejbSessionBeanService.findAllByProperty(EjbSessionBeanModel.EJB_BEAN_NAME, ejbName))
+                {
+                    LOG.info("Setting bean as clustered: " + ejbName);
+                    sessionBean.setClustered(true);
+                }
+            }
+            
+            
+            
         }
     }
 }
