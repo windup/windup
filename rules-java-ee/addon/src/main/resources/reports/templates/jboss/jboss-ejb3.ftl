@@ -39,8 +39,10 @@
                xmlns="http://java.sun.com/xml/ns/javaee"
                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                xmlns:s="urn:security:1.1"
+               xmlns:tx="urn:trans-timeout"
                xmlns:c="urn:clustering:1.0"  
-               xsi:schemaLocation="http://www.jboss.com/xml/ns/javaee http://www.jboss.org/j2ee/schema/jboss-ejb3-2_0.xsd http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_1.xsd"
+               xsi:schemaLocation="http://www.jboss.com/xml/ns/javaee http://www.jboss.org/j2ee/schema/jboss-ejb3-2_0.xsd http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_1.xsd
+               urn:trans-timeout http://www.jboss.org/j2ee/schema/trans-timeout-1_0.xsd"
                version="3.1"
                impl-version="2.1">
                
@@ -83,17 +85,25 @@
     	</#list>
     	</#if>
     </enterprise-beans>
+   <assembly-descriptor>   
+     <#if iterableHasContent(reportModel.relatedResources.sessionBeans)>
+         <#list reportModel.relatedResources.sessionBeans.list.iterator() as sessionBean>
+                 <@processTxTimeout sessionBean />
+		  <#if sessionBean.clustered?? && sessionBean.clustered>
+		      <c:clustering>
+		          <ejb-name>${sessionBean.beanName}</ejb-name>  
+		          <c:clustered>true</c:clustered>  
+   		      </c:clustering>  
+		  </#if>
+         </#list>
+    </#if>
+    <#if reportModel.relatedResources.messageDriven.list.iterator()?has_content>
+    	<#list reportModel.relatedResources.messageDriven.list.iterator() as mdb>
+    	        <@processTxTimeout mdb />
+         </#list>
+    </#if>	
     	
-	<assembly-descriptor>    
-		  <#if iterableHasContent(reportModel.relatedResources.sessionBeans)>
-			  <#list reportModel.relatedResources.sessionBeans.list.iterator() as sessionBean>
-				  <#if sessionBean.clustered?? && sessionBean.clustered>
-				  <c:clustering>
-			          <ejb-name>${sessionBean.beanName}</ejb-name>  
-			          <c:clustered>true</c:clustered>  
-			      </c:clustering>  
-			      </#if>
-		      </#list>
-        </#if>
-	</assembly-descriptor> 
+   </assembly-descriptor>
+
+
 </jboss:ejb-jar>

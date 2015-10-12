@@ -12,7 +12,12 @@
 			</cluster-config>
             <jndi-name>session/service/WindupExampleServiceLocalHome</jndi-name>
             <local-jndi-name>WindupExampleServiceLocal</local-jndi-name>
-            <method-attributes />
+            <method-attributes>
+	        	<method>
+	          		<method-name>*</method-name>
+	          		<transaction-timeout>3600</transaction-timeout>
+	        	</method>
+	      	</method-attributes>
         </session>
 
 		<session>
