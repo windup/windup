@@ -25,6 +25,7 @@ import org.jboss.windup.config.parameters.FrameCreationContext;
 import org.jboss.windup.config.parameters.ParameterizedGraphCondition;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryBuilderFrom;
+import org.jboss.windup.config.query.QueryBuilderPiped;
 import org.jboss.windup.config.query.QueryGremlinCriterion;
 import org.jboss.windup.config.query.QueryPropertyComparisonType;
 import org.jboss.windup.graph.model.WindupVertexFrame;
@@ -169,7 +170,7 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
 
         return result;
     }
-
+    /** Used to alter the regex so it will be compatible with lucene **/
     private String titanify(Pattern pattern)
     {
         return pattern.pattern().replace("\\Q", "\"").replace("\\E", "\"").replace("?:", "");
@@ -190,17 +191,24 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
             String initialQueryID = null;
 
             QueryBuilderFrom query;
+            initialQueryID = "iqi." + UUID.randomUUID().toString();
 
+            //prepare initialQueryID
             if (!StringUtils.isBlank(getInputVariablesName()))
             {
-                query = Query.from(getInputVariablesName());
-
-                query.withProperty(JavaTypeReferenceModel.RESOLVED_SOURCE_SNIPPIT, QueryPropertyComparisonType.REGEX, titanify(compiledPattern));
+                QueryBuilderFrom fromQuery = Query.from(getInputVariablesName());
+                QueryBuilderPiped piped = fromQuery.piped(new QueryGremlinCriterion()
+                {
+                    @Override public void query(GraphRewrite event, GremlinPipeline<Vertex, Vertex> pipeline)
+                    {
+                        pipeline.out(FileReferenceModel.FILE_MODEL).in(FileReferenceModel.FILE_MODEL)
+                                    .has(JavaTypeReferenceModel.RESOLVED_SOURCE_SNIPPIT, Text.REGEX, compiledPattern.toString());
+                    }
+                });
+                piped.as(initialQueryID).evaluate(event,context);
             }
             else
             {
-                initialQueryID = "iqi." + UUID.randomUUID().toString();
-
                 GremlinPipeline<Vertex, Vertex> resolvedTextSearch = new GremlinPipeline<>(event.getGraphContext().getGraph());
                 resolvedTextSearch.V();
                 resolvedTextSearch.has(JavaTypeReferenceModel.RESOLVED_SOURCE_SNIPPIT, Text.REGEX, titanify(compiledPattern));
@@ -213,8 +221,8 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
                             initialQueryID,
                             new FramedVertexIterable<>(event.getGraphContext().getFramed(), resolvedTextSearch,
                                         JavaTypeReferenceModel.class));
-                query = Query.from(initialQueryID);
             }
+            query = Query.from(initialQueryID);
 
             if (lineMatchPattern != null)
             {
