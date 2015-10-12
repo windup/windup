@@ -1,5 +1,7 @@
 package org.jboss.windup.rules.apps.tattletale;
 
+import java.io.File;
+import java.io.PrintStream;
 import java.nio.file.Paths;
 
 import org.jboss.tattletale.Main;
@@ -40,6 +42,7 @@ public class TattletaleRuleProvider extends AbstractRuleProvider
 
     private class TattletaleOperation extends GraphOperation
     {
+        private static final String TTALE_CONFIG_FILE_NAME = "tattletale-config.properties";
 
         @Override
         public void perform(GraphRewrite event, EvaluationContext context)
@@ -53,8 +56,20 @@ public class TattletaleRuleProvider extends AbstractRuleProvider
             Main main = new Main();
             main.setSource(inputPath);
             main.setDestination(tattletaleDir);
+
+
+
             try
             {
+                // The only way Tattletale accepts configuration is through a file.
+                new File(tattletaleDir).mkdirs();
+                File configPath = new File(tattletaleDir, TTALE_CONFIG_FILE_NAME);
+                PrintStream str = new PrintStream(configPath);
+                str.append("enableDot=false\n"); // Whether to generate .dot and .png
+                str.append("graphvizDot=dot\n"); // Dot executable
+                str.close();
+                main.setConfiguration(configPath.getAbsolutePath());
+
                 main.execute();
             }
             catch (Exception e)
