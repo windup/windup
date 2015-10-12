@@ -17,6 +17,12 @@
 				<stateless-bean-methods-are-idempotent>false</stateless-bean-methods-are-idempotent>
 			</stateless-clustering>
 		</stateless-session-descriptor>
+
+	<transaction-descriptor>
+		<trans-timeout-seconds>3600</trans-timeout-seconds>
+	</transaction-descriptor>
+
+
 		<reference-descriptor>
 			<ejb-local-reference-description>
 				<ejb-ref-name>ejb/WindupAnotherExampleService</ejb-ref-name>

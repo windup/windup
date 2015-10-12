@@ -32,4 +32,5 @@ public @interface MapInProperties
      * By setting different prefixes, a Model can contain multiple maps.
      */
     public String propertyPrefix() default "map";
+    public Class propertyType() default String.class;
 }

@@ -37,7 +37,6 @@ import org.junit.runner.RunWith;
 
 /**
  * Test XML parsing of different vendors.
- * 
  * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  */
 @RunWith(Arquillian.class)
@@ -70,14 +69,16 @@ public class EjbXmlParsingTest
             startWindup(WEBLOGIC_TEST_EJB_XMLS, context);
             EnvironmentReferenceService envRefService = new EnvironmentReferenceService(context);
             GraphService<EjbSessionBeanModel> ejbSessionBeanService = new GraphService<>(context, EjbSessionBeanModel.class);
-            EjbSessionBeanModel exampleService = ejbSessionBeanService.getUniqueByProperty(EjbMessageDrivenModel.EJB_BEAN_NAME,
-                        "WindupAnotherExampleService");
+            EjbSessionBeanModel exampleService=ejbSessionBeanService.getUniqueByProperty(EjbMessageDrivenModel.EJB_BEAN_NAME, "WindupAnotherExampleService");
 
             Assert.assertEquals(exampleService.getGlobalJndiReference().getJndiLocation(), "session/service/WindupAnotherExampleServiceLocalHome");
             Assert.assertEquals(exampleService.getLocalJndiReference().getJndiLocation(), "ejb/WindupAnotherExampleServiceLocalHome");
             GraphService<JNDIResourceModel> jndiResources = new GraphService<>(context, JNDIResourceModel.class);
             int jndiCount = 0;
             Map<String, String> jndiHandler = new HashMap<>();
+            
+            testEjbSessionBeanTimeout(context, "WindupExampleService", "*", 3600);
+            
             int returnedJNDI = testResourceRef(context);
 
             Set<String> clusteredEjbNames = new HashSet<>();
@@ -164,7 +165,7 @@ public class EjbXmlParsingTest
             startWindup(JBOSS_TEST_EJB_XMLS, context);
             GraphService<EjbSessionBeanModel> ejbSessionBeanService = new GraphService<>(context, EjbSessionBeanModel.class);
 
-            // test <message-driven>
+            //test <message-driven>
             GraphService<EjbMessageDrivenModel> mdbService = new GraphService<>(context, EjbMessageDrivenModel.class);
             EjbMessageDrivenModel mdb = mdbService.getUniqueByProperty(EjbMessageDrivenModel.EJB_BEAN_NAME, "WindupMLBean");
             Assert.assertEquals("Message driven bean destination was not loaded correctly for JBoss.", mdb.getDestination().getJndiLocation(),
@@ -175,6 +176,8 @@ public class EjbXmlParsingTest
             clusteredEjbNames.add("WindupAnotherExampleService");
             clusteredEjbNames.add("WindupStatefulClusteredService");
             testClusterdEjb(context, clusteredEjbNames);
+
+            testEjbSessionBeanTimeout(context, "WindupExampleService", "*", 3600);
 
             // test <resource-ref-mapping>
             int foundJndi = testResourceRef(context);
@@ -213,6 +216,7 @@ public class EjbXmlParsingTest
      * Tests that the jndiHandlers are correctly mapped to environment resources and returns the number of jndi Handlers registered
      * 
      * @param context
+     * @param jndiHandler
      * @return
      */
     private int testResourceRef(GraphContext context)
@@ -221,8 +225,40 @@ public class EjbXmlParsingTest
         jndiHandler.put("/WindupMail", "smtp/WindupMail");
         jndiHandler.put("jdbc/WindupDS", "jdbc/WindupDataSource");
         jndiHandler.put("/ConnectionFactory", "jms/WindupTopicConnectionFactory");
-        return testResourceRef(context, jndiHandler);
-
+        return testResourceRef(context,jndiHandler);
+    }
+    
+    private void testEjbSessionBeanTimeout(GraphContext context, String ejbName, String patternExpected, Integer timeoutInSecondsExpected) {
+        GraphService<EjbSessionBeanModel> service = new GraphService<>(context, EjbSessionBeanModel.class);
+        boolean found = false;
+        
+        EjbSessionBeanModel result = service.getUniqueByProperty(EjbSessionBeanModel.EJB_BEAN_NAME, ejbName);
+        if(result != null) {
+            if(result.getTxTimeouts().containsKey(patternExpected)) {
+                Integer val = result.getTxTimeouts().get(patternExpected);
+                found = true;
+                Assert.assertTrue("For EJB: ["+ejbName+"] with pattern: ["+patternExpected+"] expected EJB timeout: ["+timeoutInSecondsExpected+"] actually ["+val+"]", timeoutInSecondsExpected.equals(val));
+            }
+        }
+        Assert.assertTrue("Expected EJB: ["+ejbName+"] with pattern: ["+patternExpected+"] and timeout ["+timeoutInSecondsExpected+"]", found);
+    }
+    
+    private void testMdbSessionBeanTimeout(GraphContext context, String mdbName, String patternExpected, Integer timeoutInSecondsExpected) {
+        GraphService<EjbMessageDrivenModel> service = new GraphService<>(context, EjbMessageDrivenModel.class);
+        
+        boolean found = false;
+        
+        EjbMessageDrivenModel result = service.getUniqueByProperty(EjbMessageDrivenModel.EJB_BEAN_NAME, mdbName);
+        if(result != null) {
+            if(result.getTxTimeouts().containsKey(patternExpected)) {
+                Integer val = result.getTxTimeouts().get(patternExpected);
+                found = true;
+                Assert.assertTrue("For MDB: ["+mdbName+"] with pattern: ["+patternExpected+"] expected EJB timeout: ["+timeoutInSecondsExpected+"] actually ["+val+"]", timeoutInSecondsExpected.equals(val));
+            }
+        }
+        Assert.assertTrue("Expected MDB: [" + mdbName + "] with pattern: [" + patternExpected + "] and timeout [" + timeoutInSecondsExpected + "]",
+                    found);
+        
     }
 
     private void startWindup(String xmlFilePath, GraphContext context) throws IOException

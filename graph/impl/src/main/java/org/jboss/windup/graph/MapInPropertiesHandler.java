@@ -54,12 +54,12 @@ public class MapInPropertiesHandler implements MethodHandler<MapInProperties>
     /**
      * Getter
      */
-    private Map<String, String> handleGetter(Vertex vertex, Method method, Object[] args, MapInProperties ann, FramedGraph<?> framedGraph)
+    private Map<String, Object> handleGetter(Vertex vertex, Method method, Object[] args, MapInProperties ann, FramedGraph<?> framedGraph)
     {
         if (args != null && args.length != 0)
             throw new WindupException("Method must take zero arguments");
 
-        Map<String, String> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         String prefix = preparePrefix(ann);
 
         Set<String> keys = vertex.getPropertyKeys();
@@ -68,12 +68,12 @@ public class MapInPropertiesHandler implements MethodHandler<MapInProperties>
             if (!key.startsWith(prefix))
                 continue;
             final Object val = vertex.getProperty(key);
-            if (!(val instanceof String))
+            if (!ann.propertyType().isAssignableFrom(val.getClass()))
             {
-                log.warning("@InProperties is meant for Map<String,String>, but the value was: " + val.getClass());
+                log.warning("@InProperties is meant for Map<String,"+ann.propertyType().getName()+">, but the value was: " + val.getClass());
             }
 
-            map.put(key.substring(prefix.length()), "" + val);
+            map.put(key.substring(prefix.length()), val);
         }
 
         return map;
@@ -92,7 +92,7 @@ public class MapInPropertiesHandler implements MethodHandler<MapInProperties>
             throw new WindupException("Argument of " + method.getName() + " must be a Map, but is: " + args[0].getClass());
 
         @SuppressWarnings("unchecked")
-        Map<String, String> map = (Map<String, String>) args[0];
+        Map<String, Object> map = (Map<String, Object>) args[0];
 
         String prefix = preparePrefix(ann);
 
@@ -109,9 +109,9 @@ public class MapInPropertiesHandler implements MethodHandler<MapInProperties>
                 continue;
 
             final Object val = vertex.getProperty(key);
-            if (!(val instanceof String))
+            if (!ann.propertyType().isAssignableFrom(val.getClass()))
             {
-                log.warning("@InProperties is meant for Map<String,String>, but the value was: " + val.getClass());
+                log.warning("@InProperties is meant for Map<String,"+ann.propertyType().getName()+">, but the value was: " + val.getClass());
             }
             String subKey = key.substring(prefix.length());
             // ...either change to new value,
@@ -146,10 +146,10 @@ public class MapInPropertiesHandler implements MethodHandler<MapInProperties>
 
         // Argument.
         @SuppressWarnings("unchecked")
-        Map<String, String> map = (Map<String, String>) args[0];
+        Map<String, Object> map = (Map<String, Object>) args[0];
 
         // Store all map entries in vertex'es properties.
-        for (Map.Entry<String, String> entry : map.entrySet())
+        for (Map.Entry<String, Object> entry : map.entrySet())
         {
             vertex.setProperty(prefix + entry.getKey(), entry.getValue());
         }
