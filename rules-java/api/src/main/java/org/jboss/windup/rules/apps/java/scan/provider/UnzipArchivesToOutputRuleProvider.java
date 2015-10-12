@@ -15,7 +15,7 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 
 /**
  * Unzip archives from the input application.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
@@ -32,9 +32,10 @@ public class UnzipArchivesToOutputRuleProvider extends AbstractRuleProvider
     {
         return ConfigurationBuilder.begin().addRule()
                     .when(Query.fromType(ArchiveModel.class).excludingType(IgnoredArchiveModel.class))
-                    .perform(UnzipArchiveToOutputFolder.unzip()
-                                .and(IterationProgress.monitoring("Unzipped archive", 1))
-                                .and(Commit.every(1))
+                    .perform(
+                        UnzipArchiveToOutputFolder.unzip(),
+                        IterationProgress.monitoring("Unzipped archive", 1),
+                        Commit.every(1)
                     );
     }
 }

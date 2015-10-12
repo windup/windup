@@ -2,6 +2,7 @@ package org.jboss.windup.bootstrap.commands.windup;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,6 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -28,18 +31,26 @@ import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.WindupProgressMonitor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.exec.configuration.options.InputPathOption;
+import org.jboss.windup.config.KeepWorkDirsOption;
 import org.jboss.windup.exec.configuration.options.OutputPathOption;
 import org.jboss.windup.exec.configuration.options.OverwriteOption;
 import org.jboss.windup.exec.configuration.options.TargetOption;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
+import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
+
 
 public class RunWindupCommand implements Command, FurnaceDependent
 {
+    private static final Logger log = Logging.get(RunWindupCommand.class);
+
+    private static final String GRAPH_DATA_SUBDIR = "graph";
+
+
     private Furnace furnace;
-    private List<String> arguments;
-    private AtomicBoolean batchMode;
+    private final List<String> arguments;
+    private final AtomicBoolean batchMode;
 
     public RunWindupCommand(List<String> arguments, AtomicBoolean batchMode)
     {
@@ -115,11 +126,11 @@ public class RunWindupCommand implements Command, FurnaceDependent
 
                 /*
                  * This allows us to support specifying a parameter multiple times.
-                 * 
+                 *
                  * For example:
-                 * 
+                 *
                  * `windup --packages foo --packages bar --packages baz`
-                 * 
+                 *
                  * While this is not necessarily the recommended approach, it would be nice for it to work smoothly if
                  * someone does it this way.
                  */
@@ -199,7 +210,7 @@ public class RunWindupCommand implements Command, FurnaceDependent
         generateCompletionDataCommand.execute();
 
         FileUtils.deleteQuietly(windupConfiguration.getOutputDirectory().toFile());
-        Path graphPath = windupConfiguration.getOutputDirectory().resolve("graph");
+        Path graphPath = windupConfiguration.getOutputDirectory().resolve(GRAPH_DATA_SUBDIR);
         try (GraphContext graphContext = getGraphContextFactory().create(graphPath))
         {
             WindupProgressMonitor progressMonitor = new ConsoleProgressMonitor();
@@ -211,13 +222,17 @@ public class RunWindupCommand implements Command, FurnaceDependent
             Path indexHtmlPath = windupConfiguration.getOutputDirectory().resolve("index.html").normalize().toAbsolutePath();
             System.out.println("Windup report created: " + indexHtmlPath + System.getProperty("line.separator")
                         + "              Access it at this URL: " + indexHtmlPath.toUri());
+
+            deleteGraphDataUnlessInhibited(windupConfiguration, graphPath);
         }
         catch (Exception e)
         {
             System.err.println("Windup Execution failed due to: " + e.getMessage());
             e.printStackTrace();
         }
+
     }
+
 
     private boolean validateInputAndOutputPath(Path inputPath, Path outputPath)
     {
@@ -335,4 +350,24 @@ public class RunWindupCommand implements Command, FurnaceDependent
         else
             return null;
     }
+
+
+    private void deleteGraphDataUnlessInhibited(WindupConfiguration windupConfiguration, Path graphPath)
+    {
+        Boolean keep = (Boolean) windupConfiguration.getOptionMap().get(KeepWorkDirsOption.NAME);
+        if (keep == null || !keep)
+        {
+            log.info("Deleting graph directory (see --" + KeepWorkDirsOption.NAME + "): " + graphPath.toFile().getPath());
+            try
+            {
+                FileUtils.deleteDirectory(graphPath.toFile());
+            }
+            catch (IOException ex)
+            {
+                log.log(Level.WARNING, "Failed deleting graph directory: " + graphPath.toFile().getPath()
+                    + "\n\tDue to: " + ex.getMessage(), ex);
+            }
+        }
+    }
+
 }

@@ -6,6 +6,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -56,7 +57,12 @@ public abstract class WindupArchitectureTest
 
     GraphContext createGraphContext()
     {
-        return factory.create(getDefaultPath());
+        return createGraphContext(getDefaultPath());
+    }
+
+    GraphContext createGraphContext(Path path)
+    {
+        return factory.create(path);
     }
 
     void runTest(String inputPath, boolean sourceMode) throws Exception
@@ -88,23 +94,40 @@ public abstract class WindupArchitectureTest
                 final List<String> includePackages,
                 final List<String> excludePackages) throws Exception
     {
+        Map<String, Object> otherOptions = Collections.emptyMap();
+        runTest(graphContext, inputPath, userRulesDir, sourceMode, includePackages, excludePackages, otherOptions);
+    }
 
-        WindupConfiguration wpc = new WindupConfiguration().setGraphContext(graphContext);
-        wpc.setAlwaysHaltOnException(true);
-        wpc.setInputPath(Paths.get(inputPath));
-        wpc.setOutputDirectory(graphContext.getGraphDirectory());
+    void runTest(final GraphContext graphContext,
+                final String inputPath,
+                final File userRulesDir,
+                final boolean sourceMode,
+                final List<String> includePackages,
+                final List<String> excludePackages,
+                final Map<String, Object> otherOptions) throws Exception
+    {
+
+        WindupConfiguration windupConfiguration = new WindupConfiguration().setGraphContext(graphContext);
+        windupConfiguration.setAlwaysHaltOnException(true);
+        windupConfiguration.setInputPath(Paths.get(inputPath));
+        windupConfiguration.setOutputDirectory(graphContext.getGraphDirectory());
         if (userRulesDir != null)
         {
-            wpc.setOptionValue(UserRulesDirectoryOption.NAME, userRulesDir);
+            windupConfiguration.setOptionValue(UserRulesDirectoryOption.NAME, userRulesDir);
         }
-        wpc.setOptionValue(SourceModeOption.NAME, sourceMode);
-        wpc.setOptionValue(ScanPackagesOption.NAME, includePackages);
-        wpc.setOptionValue(ExcludePackagesOption.NAME, excludePackages);
+        windupConfiguration.setOptionValue(SourceModeOption.NAME, sourceMode);
+        windupConfiguration.setOptionValue(ScanPackagesOption.NAME, includePackages);
+        windupConfiguration.setOptionValue(ExcludePackagesOption.NAME, excludePackages);
+
+        for (Map.Entry<String, Object> otherOption : otherOptions.entrySet())
+        {
+            windupConfiguration.setOptionValue(otherOption.getKey(), otherOption.getValue());
+        }
 
         RecordingWindupProgressMonitor progressMonitor = new RecordingWindupProgressMonitor();
-        wpc.setProgressMonitor(progressMonitor);
+        windupConfiguration.setProgressMonitor(progressMonitor);
 
-        processor.execute(wpc);
+        processor.execute(windupConfiguration);
 
         Assert.assertFalse(progressMonitor.isCancelled());
         Assert.assertTrue(progressMonitor.isDone());

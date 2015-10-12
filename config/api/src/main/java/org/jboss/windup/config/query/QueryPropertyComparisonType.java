@@ -6,4 +6,5 @@ public enum QueryPropertyComparisonType
     CONTAINS_TOKEN,
     CONTAINS_ANY_TOKEN,
     REGEX,
+    DEFINED,
 }

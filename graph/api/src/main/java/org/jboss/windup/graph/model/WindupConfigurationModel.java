@@ -23,6 +23,7 @@ public interface WindupConfigurationModel extends WindupVertexFrame
     String SOURCE_TECHNOLOGY = "sourceTechnology";
     String TARGET_TECHNOLOGY = "targetTechnology";
     String CSV_MODE = "csv";
+    String KEEP_WORKING_DIRECTORIES = "keepWorkingDirectories";
 
     /**
      * The input path to scan
@@ -119,4 +120,16 @@ public interface WindupConfigurationModel extends WindupVertexFrame
      */
     @Property(CSV_MODE)
     void setExportingCSV(boolean csv);
+
+    /**
+     * Indicates whether or not to keep working directories (graph and unzipped archive data)
+     */
+    @Property(KEEP_WORKING_DIRECTORIES)
+    Boolean isKeepWorkDirectories();
+
+    /**
+     * Indicates whether or not to keep working directories (graph and unzipped archive data)
+     */
+    @Property(KEEP_WORKING_DIRECTORIES)
+    void setKeepWorkDirectories(Boolean keep);
 }

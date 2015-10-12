@@ -48,7 +48,7 @@ import com.google.common.collect.Iterables;
 /**
  * Used to iterate over an implicit or explicit variable defined within the corresponding {@link ConfigurationRuleBuilder#when(Condition)} clause in
  * the current rule.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class Iteration extends DefaultOperationBuilder
@@ -85,8 +85,8 @@ public class Iteration extends DefaultOperationBuilder
     }
 
     /**
-     * Begin an {@link Iteration} over the named selection of the given type. Also sets the name and type of the
-     * variable for this iteration's "current element". The type serves for automatic type check.
+     * Begin an {@link Iteration} over the named selection of the given type. Also sets the name and type of the variable for this iteration's
+     * "current element". The type serves for automatic type check.
      */
     public static IterationBuilderOver over(Class<? extends WindupVertexFrame> sourceType, String source)
     {
@@ -293,17 +293,17 @@ public class Iteration extends DefaultOperationBuilder
     /**
      * Return the current {@link Iteration} payload variable name.
      *
-     * @throws IllegalStateException if there is more than one variable in the {@link Variables} stack, and the payload
-     *             name cannot be determined.
+     * @throws IllegalStateException if there is more than one variable in the {@link Variables} stack, and the payload name cannot be determined.
      */
     public static String getPayloadVariableName(GraphRewrite event, EvaluationContext ctx) throws IllegalStateException
     {
         Variables variables = Variables.instance(event);
         Map<String, Iterable<? extends WindupVertexFrame>> topLayer = variables.peek();
-        if (!topLayer.keySet().iterator().hasNext() || topLayer.keySet().size() > 1)
+        if (topLayer.keySet().size() != 1)
         {
-            throw new IllegalStateException("Cannot determined Iteration payload variable name because the top "
-                        + "layer of Variables stack contains multiple variables [" + topLayer.keySet() + ".");
+            throw new IllegalStateException("Cannot determine Iteration payload variable name because the top "
+                        + "layer of " + Variables.class.getSimpleName() + " stack contains " + topLayer.keySet().size() + " variables: "
+                        + topLayer.keySet());
         }
         String name = topLayer.keySet().iterator().next();
         return name;
@@ -377,7 +377,7 @@ public class Iteration extends DefaultOperationBuilder
      */
     public static <FRAMETYPE extends WindupVertexFrame> FRAMETYPE removeCurrentPayload(Variables stack,
                 Class<FRAMETYPE> type, String name)
-                throws IllegalStateException, IllegalTypeArgumentException
+                            throws IllegalStateException, IllegalTypeArgumentException
     {
         FRAMETYPE payload = getCurrentPayload(stack, type, name);
 

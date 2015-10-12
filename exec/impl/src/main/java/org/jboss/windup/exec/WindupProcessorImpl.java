@@ -13,6 +13,7 @@ import org.jboss.forge.furnace.util.Assert;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.windup.config.DefaultEvaluationContext;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.KeepWorkDirsOption;
 import org.jboss.windup.config.PreRulesetEvaluation;
 import org.jboss.windup.config.RuleLifecycleListener;
 import org.jboss.windup.config.RuleProvider;
@@ -83,6 +84,7 @@ public class WindupProcessorImpl implements WindupProcessor
         configurationModel.setOutputPath(getFileModel(context, configuration.getOutputDirectory()));
         configurationModel.setOfflineMode(configuration.isOffline());
         configurationModel.setExportingCSV(configuration.isExportingCSV());
+        configurationModel.setKeepWorkDirectories((Boolean) configuration.getOptionValue(KeepWorkDirsOption.NAME));
         for (Path path : configuration.getAllUserRulesDirectories())
         {
             System.out.println("Using user rules dir: " + path);

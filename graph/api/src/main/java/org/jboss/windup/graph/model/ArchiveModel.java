@@ -10,10 +10,12 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(ArchiveModel.TYPE)
 public interface ArchiveModel extends FileModel
 {
-    public static String TYPE = "ArchiveModel:";
-    public static String ARCHIVE_NAME = TYPE + "archiveName";
+    String TYPE = "ArchiveModel:";
+    String ARCHIVE_NAME = TYPE + "archiveName";
     String DECOMPILED_FILES = "decompiledFiles";
+    String UNZIPPED_DIRECTORY = "unzippedDirectory";
 
+    
     @Adjacency(label = "parentArchive", direction = Direction.IN)
     public ArchiveModel getParentArchive();
 
@@ -35,10 +37,10 @@ public interface ArchiveModel extends FileModel
     @Adjacency(label = "childArchive", direction = Direction.IN)
     public ArchiveModel getChildArchive();
 
-    @Adjacency(label = "unzippedDirectory", direction = Direction.OUT)
+    @Adjacency(label = UNZIPPED_DIRECTORY, direction = Direction.OUT)
     public void setUnzippedDirectory(FileModel fileResourceModel);
 
-    @Adjacency(label = "unzippedDirectory", direction = Direction.OUT)
+    @Adjacency(label = UNZIPPED_DIRECTORY, direction = Direction.OUT)
     public FileModel getUnzippedDirectory();
 
     @Adjacency(label = FileModel.ARCHIVE_FILES, direction = Direction.OUT)
@@ -52,7 +54,7 @@ public interface ArchiveModel extends FileModel
 
     @Adjacency(label = DECOMPILED_FILES, direction = Direction.OUT)
     public void addDecompiledFileModel(FileModel archiveFile);
-    
+
     @Adjacency(label = OrganizationModel.ARCHIVE_MODEL, direction = Direction.IN)
     public Iterable<OrganizationModel> getOrganizationModels();
 

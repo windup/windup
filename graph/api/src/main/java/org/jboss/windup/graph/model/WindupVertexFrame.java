@@ -14,7 +14,7 @@ public interface WindupVertexFrame extends VertexFrame
 {
     /**
      * Name of the property where vertex/frame types are stored.
-     * 
+     *
      * @see org.jboss.windup.graph.GraphTypeManager
      */
     public static final String TYPE_PROP = "w:vertextype";
@@ -23,6 +23,9 @@ public interface WindupVertexFrame extends VertexFrame
     @Override
     public String toString();
 
+    /**
+     * A string representation of this vertex, showing it's properties in a JSON-like format.
+     */
     @JavaHandler
     public String toPrettyString();
 
