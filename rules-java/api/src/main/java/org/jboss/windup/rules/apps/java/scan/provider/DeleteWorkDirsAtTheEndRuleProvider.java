@@ -1,26 +1,25 @@
 package org.jboss.windup.rules.apps.java.scan.provider;
 
-import com.thinkaurelius.titan.diskstorage.util.DirectoryUtil;
+import static org.jboss.windup.rules.apps.java.scan.provider.DeleteWorkDirsAtTheEndRuleProvider.KEEP_WORK_FILES;
+
 import java.io.File;
-import java.nio.file.Path;
-import org.apache.commons.io.FileUtils;
-import org.jboss.windup.config.query.WindupConfigurationQuery;
-import org.jboss.windup.config.query.OutAndBackCriterion;
+
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.KeepWorkDirsOption;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.IterationProgress;
 import org.jboss.windup.config.phase.PostFinalizePhase;
 import org.jboss.windup.config.phase.PostReportRenderingPhase;
+import org.jboss.windup.config.query.OutAndBackCriterion;
 import org.jboss.windup.config.query.Query;
+import org.jboss.windup.config.query.WindupConfigurationQuery;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
+import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.rules.apps.java.scan.operation.DeleteWorkDirsOperation;
 import org.jboss.windup.rules.apps.java.scan.operation.UnzipArchiveToOutputFolder;
-import static org.jboss.windup.rules.apps.java.scan.provider.DeleteWorkDirsAtTheEndRuleProvider.KEEP_WORK_FILES;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.config.Not;
@@ -51,34 +50,30 @@ public class DeleteWorkDirsAtTheEndRuleProvider extends AbstractRuleProvider
         return ConfigurationBuilder.begin()
         .addRule()
         .when(
-            Not.any(WindupConfigurationQuery.hasOption(KeepWorkDirsOption.class).as("nothing")),
-            Query.fromType(ArchiveModel.class).piped(new OutAndBackCriterion(ArchiveModel.UNZIPPED_DIRECTORY)).as("archives")
+                Not.any(WindupConfigurationQuery.hasOption(WindupConfigurationModel.KEEP_WORKING_DIRECTORIES, true).as("discard")),
+                Query.fromType(ArchiveModel.class).piped(new OutAndBackCriterion(ArchiveModel.UNZIPPED_DIRECTORY)).as("archives")
         )
         .perform(
-            Iteration.over("archives").perform(
-                DeleteWorkDirsOperation.delete(),
-                IterationProgress.monitoring("Deleted archive unzip directory", 1)
-            ).endIteration()
+                Iteration.over("archives").perform(
+                        DeleteWorkDirsOperation.delete(),
+                        IterationProgress.monitoring("Deleted archive unzip directory", 1)
+                ).endIteration()
         )
         .addRule().perform(
-            new GraphOperation()
-            {
-                public void perform(GraphRewrite event, EvaluationContext context)
-                {
-                    File archivesDir = UnzipArchiveToOutputFolder.getArchivesDirLocation(event.getGraphContext()).toFile();
-                    if (archivesDir.exists() && archivesDir.isDirectory())
-                        if(archivesDir.list().length == 0)
-                            archivesDir.delete();
-                }
+                        new GraphOperation() {
+                            public void perform(GraphRewrite event, EvaluationContext context) {
+                                File archivesDir = UnzipArchiveToOutputFolder.getArchivesDirLocation(event.getGraphContext()).toFile();
+                                if (archivesDir.exists() && archivesDir.isDirectory() && archivesDir.list().length == 0)
+                                    archivesDir.delete();
+                            }
 
-                public String toString()
-                {
-                    return "Delete archives/ if empty";
-                }
-            }
-        )
+                            public String toString() {
+                                return "Delete archives directory if empty";
+                            }
+                        }
+                )
         ;
-        // @formatter:off
+        // @formatter:on
     }
 
 }
