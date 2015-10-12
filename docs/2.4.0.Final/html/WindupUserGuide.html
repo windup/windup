@@ -1170,7 +1170,7 @@ If you omit the <code>--packages</code> argument, every package in the applicati
 <p>The first section of the application report page summarizes the entire application migration effort by technology type both graphically and in list format. This is followed by the <code>Application Messages</code> section, which contains useful information about general migration requirements for the application, such as the need to replace deprecated libraries or the need to resolve potential class loading issues.</p>
 </div>
 <div class="paragraph">
-<p>In the following example, the "JEE Example App" is assigned 102 story points related to 10 different technologies. It also displays one application message.</p>
+<p>In the following example, the "JEE Example App" is assigned 73 story points related to 10 different technologies. It also displays one application message "Deploying log4j.jar can result in non-deterministic ClassLoading issues. It is recommended to use the built-in JBoss EAP Log4j module configured via `jboss-deployment-structure.xml`" with a link to the rule that triggered it.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -1248,7 +1248,7 @@ The estimated Story Points change as new rules are added to Windup. The values h
 <div class="sect5">
 <h6 id="_file_analysis_pages">File Analysis Pages</h6>
 <div class="paragraph">
-<p>The analysis of the <code>jee-example-services.jar</code> lists the files in the JAR and the warnings and story points assigned to each one. Notice the <code>com.acme.anvil.listener.AnvilWebLifecycleListener</code> file, at the time of this test, has 23 warnings and is assigned 21 story points. Click on the file to see the detail.</p>
+<p>The analysis of the <code>jee-example-services.jar</code> lists the files in the JAR and the warnings and story points assigned to each one. Notice the <code>com.acme.anvil.listener.AnvilWebLifecycleListener</code> file, at the time of this test, has 20 warnings and is assigned 10 story points. Click on the file to see the detail.</p>
 </div>
 <div class="ulist">
 <ul>
@@ -1287,7 +1287,7 @@ The estimated Story Points change as new rules are added to Windup. The values h
 <div class="sect4">
 <h5 id="review-the-report-rule-provider-executions-report">Rule Provider Execution Report</h5>
 <div class="paragraph">
-<p>This report provides the list of rule providers that executed when running the Windup migration command against the application. The report contains the following columns.</p>
+<p>As stated above,access this report by clicking on the <code>All Rules</code> link at the bottom of the index page. This report provides the list of rule providers that executed when running the Windup migration command against the application. The report contains the following columns.</p>
 </div>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
@@ -1339,7 +1339,7 @@ The estimated Story Points change as new rules are added to Windup. The values h
 <div class="sect4">
 <h5 id="review-the-report-freemarker-report">Windup FreeMarker Functions and Directives Report</h5>
 <div class="paragraph">
-<p>Access this report from the <code>Windup FreeMarker Methods</code> link on the initial index page. This report lists all the registered functions and directives that were used to build the report. It is useful if you plan to build your own custom report or for debugging purposes.</p>
+<p>Access this report by clicking on the <code>Windup FreeMarker Methods</code> link on the initial index page. This report lists all the registered functions and directives that were used to build the report. It is useful if you plan to build your own custom report or for debugging purposes.</p>
 </div>
 <div class="exampleblock">
 <div class="content">
@@ -1903,7 +1903,7 @@ The estimated Story Points change as new rules are added to Windup. The values h
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-09-25 16:11:28 EDT
+Last updated 2015-10-12 13:09:42 EDT
 </div>
 </div>
 </body>

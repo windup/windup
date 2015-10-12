@@ -622,6 +622,9 @@ $ mkdir -p migration-rules/data</pre>
         &lt;description&gt;
             &lt;!-- Ruleset Description --&gt;
         &lt;/description&gt;
+        &lt;dependencies&gt;
+            &lt;!-- Ruleset Dependencies --&gt;
+        &lt;/dependencies&gt;
         &lt;sourceTechnology id="SOURCE_ID" versionRange="VERSION_RANGE"/&gt;
         &lt;targetTechnology id="TARGET_ID" versionRange="VERSION_RANGE"/&gt;
         &lt;tag&gt;Reviewed-2015-05-01&lt;/tag&gt;
@@ -663,6 +666,15 @@ Windup identifies files with the <code>.windup.xml</code> extension as XML-based
 <p>Replace the <code>UNIQUE_RULE_ID</code> with the ruleset ID appended with '_001': "JBoss5-web-class-loading_001"</p>
 </li>
 </ul>
+</div>
+</li>
+<li>
+<p>Add the following ruleset addon dependencies.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;addon id="org.jboss.windup.rules,windup-rules-javaee,2.4.0.Final"/&gt;
+&lt;addon id="org.jboss.windup.rules,windup-rules-java,2.4.0.Final"/&gt;</code></pre>
+</div>
 </div>
 </li>
 <li>
@@ -709,20 +721,23 @@ Windup identifies files with the <code>.windup.xml</code> extension as XML-based
 <div class="ulist">
 <ul>
 <li>
-<p>Provide an informative message.</p>
-</li>
-<li>
-<p>Provide a link to documentation that describes the migration details.</p>
+<p>Add a classification and descriptive title.</p>
 </li>
 <li>
 <p>Assign a level of effort of "1" to this task.</p>
+</li>
+<li>
+<p>Provide a hint with an informative message and a link to documentation that describes the migration details.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;perform&gt;
     &lt;iteration&gt;
-        &lt;classification title="JBoss Web Application Descriptor" effort="0"/&gt;
-        &lt;hint message="The class-loading element is no longer valid in the jboss-web.xml file." effort="1"&gt;
-            &lt;link href="https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html-single/Migration_Guide/index.html#Create_or_Modify_Files_That_Control_Class_Loading_in_JBoss_Enterprise_Application_Platform_6" title="Create or Modify Files That Control Class Loading in JBoss EAP 6"/&gt;
+        &lt;classification title="JBoss Web Application Descriptor" effort="1"/&gt;
+        &lt;hint title="JBoss Web XML class-loading element is no longer valid"&gt;
+          &lt;message&gt;
+            The class-loading element is no longer valid in the jboss-web.xml file.
+          &lt;/message&gt;
+          &lt;link href="https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html-single/Migration_Guide/index.html#Create_or_Modify_Files_That_Control_Class_Loading_in_JBoss_Enterprise_Application_Platform_6" title="Create or Modify Files That Control Class Loading in JBoss EAP 6"/&gt;
         &lt;/hint&gt;
     &lt;/iteration&gt;
 &lt;/perform&gt;</code></pre>
@@ -745,6 +760,10 @@ Windup identifies files with the <code>.windup.xml</code> extension as XML-based
         &lt;description&gt;
             This ruleset looks for the class-loading element in a jboss-web.xml file, which is no longer valid in JBoss EAP 6
         &lt;/description&gt;
+         &lt;dependencies&gt;
+            &lt;addon id="org.jboss.windup.rules,windup-rules-javaee,2.4.0.Final"/&gt;
+            &lt;addon id="org.jboss.windup.rules,windup-rules-java,2.4.0.Final"/&gt;
+        &lt;/dependencies&gt;
         &lt;sourceTechnology id="eap" versionRange="(4,5)"/&gt;
         &lt;targetTechnology id="eap" versionRange="[6,)"/&gt;
     &lt;/metadata&gt;
@@ -755,9 +774,12 @@ Windup identifies files with the <code>.windup.xml</code> extension as XML-based
             &lt;/when&gt;
             &lt;perform&gt;
                 &lt;iteration&gt;
-                    &lt;classification title="JBoss Web Application Descriptor" effort="0"/&gt;
-                    &lt;hint message="The class-loading element is no longer valid in the jboss-web.xml file." effort="1"&gt;
-                        &lt;link href="https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html-single/Migration_Guide/index.html#Create_or_Modify_Files_That_Control_Class_Loading_in_JBoss_Enterprise_Application_Platform_6" title="Create or Modify Files That Control Class Loading in JBoss EAP 6"/&gt;
+                    &lt;classification title="JBoss Web Application Descriptor" effort="1"/&gt;
+                    &lt;hint title="JBoss Web XML class-loading element is no longer valid"&gt;
+                      &lt;message&gt;
+                        The class-loading element is no longer valid in the jboss-web.xml file.
+                      &lt;/message&gt;
+                      &lt;link href="https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html-single/Migration_Guide/index.html#Create_or_Modify_Files_That_Control_Class_Loading_in_JBoss_Enterprise_Application_Platform_6" title="Create or Modify Files That Control Class Loading in JBoss EAP 6"/&gt;
                     &lt;/hint&gt;
                 &lt;/iteration&gt;
             &lt;/perform&gt;
@@ -802,8 +824,8 @@ For Windows: "\Documents and Settings\USER_NAME\.windup\rules\" or "\Users\USER_
 <p>Type the following command to test the rule in Windup, passing the test file as an input argument and a directory for the output report.</p>
 <div class="listingblock">
 <div class="content">
-<pre class="nowrap">For Linux:    WINDUP_HOME/bin/windup --sourceMode --input ~/migration-rules/data --output ~/migration-rules/reports --source eap --target eap
-For Windows:  WINDUP_HOME\bin\windup.bat --sourceMode --input migration-rules\data --output migration-rules\reports --source eap --target eap</pre>
+<pre class="nowrap">For Linux:    bin/windup --sourceMode --input ~/migration-rules/data --output ~/migration-rules/reports --source eap --target eap
+For Windows:  bin\windup.bat --sourceMode --input migration-rules\data --output migration-rules\reports --source eap --target eap</pre>
 </div>
 </div>
 </li>
@@ -821,15 +843,28 @@ For Windows:  WINDUP_HOME\bin\windup.bat --sourceMode --input migration-rules\da
 <div class="ulist">
 <ul>
 <li>
-<p>The <em>Overview</em> page displays the <strong>Name</strong> of the input folder, "data", along with the expected <strong>Effort</strong> of "1 Story Points".</p>
+<p>The <em>Overview</em> page displays the <strong>Name</strong> of the input folder, "data", along with the  <strong>Effort</strong> of "1 Story Points".</p>
 <div class="paragraph">
 <p><span class="image"><img src="images/CreateYourFirstRule-ReportOverview.png" alt="Overview" width="500"></span></p>
 </div>
 </li>
 <li>
-<p>Drill down into the <em>Application Report</em> detail by clicking on the "data" link under the <code>Name</code> column. This report displays a link for the name of the file, "jboss-web.xml", the warning "seam.jboss.org:loader=@projectName@ java2ParentDelegation=false" in the <strong>Issues</strong> column, and displays "1" *Estimated Story Points", as expected.</p>
+<p>Drill down into the <em>Application Report</em> detail by clicking on the "data" link under the <code>Name</code> column. This report displays a link for the name of the file, "jboss-web.xml", along with 3 warnings under <strong>Issues</strong> and 1 <strong>Story Points</strong>.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>JBoss Web Application Descriptor</p>
+</li>
+<li>
+<p>JBoss Web XML</p>
+</li>
+<li>
+<p>JBoss Web XML class-loading element is no longer valid</p>
 <div class="paragraph">
 <p><span class="image"><img src="images/CreateYourFirstRule-ReportApplication.png" alt="Overview" width="500"></span></p>
+</div>
+</li>
+</ul>
 </div>
 </li>
 <li>
@@ -837,6 +872,9 @@ For Windows:  WINDUP_HOME\bin\windup.bat --sourceMode --input migration-rules\da
 <div class="paragraph">
 <p><span class="image"><img src="images/CreateYourFirstRule-ReportSource.png" alt="Overview" width="500"></span></p>
 </div>
+</li>
+<li>
+<p>Return to the <em>Overview Page</em> and click on the "All Rule" link to view the <em>Rule Provider Executions</em> report. Find the 'JBoss5-web-class-loading' rule in the report and verify that the <strong>Status</strong> shows "Condition met" and the <strong>Result</strong> shows "success".</p>
 </li>
 </ul>
 </div>
@@ -894,7 +932,7 @@ For Windows:  WINDUP_HOME\bin\windup.bat --sourceMode --input migration-rules\da
 <p>XML rules only support a simple subset of conditions and operations.</p>
 </li>
 <li>
-<p>XML rules do not provide for direct custom graph data manipulation.</p>
+<p>XML rules do not provide for direct custom graph data manipulation that can be used later by other rules or the generation of reports.</p>
 </li>
 <li>
 <p>XML rules do not support the ability to create custom reports.</p>
@@ -1053,8 +1091,8 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Simple deployment?</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Supports custom reports?</p></td>
@@ -1115,7 +1153,7 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
 <div class="ulist">
 <ul>
 <li>
-<p><strong>&lt;rule id=UNIQUE_RULESET_ID_UNIQUE_RULE_ID&gt;</strong>: This element is defines the rule and gives it a unique ID. One or more rules can be defined for a ruleset.</p>
+<p><strong>&lt;rule id=UNIQUE_RULESET_ID_UNIQUE_RULE_ID&gt;</strong>: This element defines the rule and gives it a unique ID. One or more rules can be defined for a ruleset.</p>
 <div class="ulist">
 <ul>
 <li>
@@ -1134,7 +1172,7 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
 </div>
 </li>
 <li>
-<p><strong>&lt;file-mapping/&gt;</strong>: Mapa an extension to a graph type</p>
+<p><strong>&lt;file-mapping/&gt;</strong>: Map an extension to a graph type</p>
 </li>
 <li>
 <p><strong>&lt;package-mapping/&gt;</strong>: Maps from a package pattern (regular expression) to a organization name.</p>
@@ -1280,7 +1318,7 @@ otherwise(action)</pre>
 <div class="sect3">
 <h4 id="_create_the_ruleset_metadata">3.3.4. Create the Ruleset Metadata</h4>
 <div class="paragraph">
-<p>The XML ruleset <code>metadata</code> element provides additional information about the ruleset such as a description, the source and target technologies, and add-on dependencies. The metadata also allows for specification of tags, which allow you to provide additional information about a ruleset.</p>
+<p>The XML ruleset <code>metadata</code> element provides additional information about the ruleset such as a description, the source and target technologies, and add-on dependencies. The metadata also allows for specification of tags, which allow you to provide additional information about a ruleset. For more information about ruleset metadata, see <a href="#Rules-XML-Rule-Construction">XML Rule Construction</a>.</p>
 </div>
 <div class="paragraph">
 <p><em>Example:</em></p>
@@ -1377,7 +1415,7 @@ otherwise(action)</pre>
 <div class="sect4">
 <h5 id="_create_the_rule_perform_action">Create the Rule Perform Action</h5>
 <div class="paragraph">
-<p>The XML rule <code>&lt;perform&gt;</code> element performs the action when the condition is met. Operations allowed in this ection of the rule include the classification of application resources, in-line hints for migration steps, links to migration information, and project lineitem reporting. The following is a list of valid <code>&lt;peform&gt;</code> actions.</p>
+<p>The XML rule <code>&lt;perform&gt;</code> element performs the action when the condition is met. Operations allowed in this section of the rule include the classification of application resources, in-line hints for migration steps, links to migration information, and project lineitem reporting. The following is a list of valid <code>&lt;peform&gt;</code> actions.</p>
 </div>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
@@ -1393,15 +1431,15 @@ otherwise(action)</pre>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">&lt;classification&gt;</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Identify or classify a resource.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">This operation adds metadata that is intended to apply to the entire file. For example, if the Java Class is a JMS Message Listener, you might want to add a Classification with the title "JMS Message Listener". Information that would apply to the entire file would go here. Also, if an effort level is set, that information would apply to the entire file.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">&lt;link&gt;</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Provide links or references to additional information.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Provides an HTML link to additional information or documentation that provides more information about the migration task.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">&lt;hint&gt;</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Provide a hint or inline information.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">This operation adds metadata to a line within the file. For example, if the rule were set to apply to all instances of "javax.jms.TextMessage.setText(java.lang.String)" this would highlight every instance of that method call. This is frequently used when there is detailed information to attach that applies at the line level. Each time this operation is fired, the effort level will be added. In our example, if the effort level were 3 and there were 4 instances of "javax.jms.TextMessage.setText(java.lang.String)", then this would add 9 total story points. Whether or not to apply effort at this level or in a classification depends upon the amount of effort required during the migration.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">&lt;xslt&gt;</p></td>
@@ -1409,7 +1447,7 @@ otherwise(action)</pre>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">&lt;lineitem&gt;</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Provide line item information about a hint on the project or application overview page.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">This provides a high level message that will appear in the application overview page.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">&lt;iteration&gt;</p></td>
@@ -1461,19 +1499,21 @@ otherwise(action)</pre>
 <p>Use the <code>javaclass</code> element to find imports, methods, variable declarations, annotations, class implementations, and other items related to Java classes. For a better understanding of the <code>javaclass</code> condition, see the JavaDoc for the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/rules/apps/java/condition/JavaClass.html">JavaClass</a> class.</p>
 </div>
 <div class="paragraph">
-<p>The following is an example of a rule that tests for a <code>javaclass</code>.</p>
+<p>The following is an example of a rule that tests for WebLogic-specific Apache XML <code>javaclass</code> packages.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;rule id="UNIQUE_RULE_ID"&gt;
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;rule id="weblogic-03000"&gt;
     &lt;when&gt;
-        &lt;javaclass references="org.jboss.ws.api.annotation.WebContext" in="org/jboss/{*}" as="webcontextclasses"&gt;
-            &lt;location&gt;IMPORT&lt;/location&gt;
-            &lt;location&gt;TYPE&lt;/location&gt;
-        &lt;/javaclass&gt;
+        &lt;javaclass references="weblogic.apache.xml.{*}" /&gt;
     &lt;/when&gt;
     &lt;perform&gt;
-        &lt;hint message="WebContext is deprecated." effort="0"/&gt;
+        &lt;hint title="WebLogic Specific Apache XML Package" effort="1" severity="mandatory"&gt;
+            &lt;message&gt;
+                Code using this package should be replaced with code using the org.apache.xml package from [Apache
+                Xerces](http://xerces.apache.org/).
+            &lt;/message&gt;
+        &lt;/hint&gt;
     &lt;/perform&gt;
 &lt;/rule&gt;</code></pre>
 </div>
@@ -1503,17 +1543,29 @@ otherwise(action)</pre>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
 <p>The package or class name to match on. Wildcard characters can be used.</p>
 </div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+For performance reasons, you should not start the reference with wildcard characters. For example, use <code>weblogic.apache.xml.{*}</code> instead of <code>{web}.apache.xml.{*}</code>.
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <p><em>Example:</em></p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="nowrap">references="org.apache.commons.{*}"</pre>
+<pre class="nowrap">references="weblogic.apache.xml.{*}"</pre>
 </div>
 </div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">sourceMatch</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">matchesSource</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
 <p>An exact regex to match. This is useful to distinguish hard-coded strings.</p>
@@ -1531,7 +1583,7 @@ otherwise(action)</pre>
 <td class="tableblock halign-left valign-top"><p class="tableblock">as</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">VARIABLE_NAME</p></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p>A variable name assigned to the rule so that it can be used as a reference in later processing. See the <code>from</code> attribute below.</p>
+<p>A variable name assigned to the rule so that it can be used as a reference in later processing. See the <code>from</code> attribute below. (Optional)</p>
 </div>
 <div class="paragraph">
 <p><em>Example:</em></p>
@@ -1543,25 +1595,10 @@ otherwise(action)</pre>
 </div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">in</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">PATH_FILTER</p></td>
-<td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p>Used to filter input files matching this regex (regular expression) naming pattern. Wildcard characters can be used.</p>
-</div>
-<div class="paragraph">
-<p><em>Example:</em></p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="nowrap">in="{*}File1"</pre>
-</div>
-</div></div></td>
-</tr>
-<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">from</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">VARIABLE_NAME</p></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p>Begin the search query with the filtered result from a previous search identified by its <code>as</code> VARIABLE_NAME.</p>
+<p>Begin the search query with the filtered result from a previous search identified by its <code>as</code> VARIABLE_NAME. (Optional)</p>
 </div>
 <div class="paragraph">
 <p><em>Example:</em></p>
@@ -1569,6 +1606,21 @@ otherwise(action)</pre>
 <div class="listingblock">
 <div class="content">
 <pre class="nowrap">from="MyEjbRule"</pre>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">in</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PATH_FILTER</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Used to filter input files matching this regex (regular expression) naming pattern. Wildcard characters can be used. (Optional)</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">in="{*}File1"</pre>
 </div>
 </div></div></td>
 </tr>
@@ -1659,7 +1711,7 @@ otherwise(action)</pre>
 <td class="tableblock halign-left valign-top"><p class="tableblock">matches</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">XPATH</p></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p>Match on an XML file condition.</p>
+<p>Match on an XML file condition. (Optional)</p>
 </div>
 <div class="paragraph">
 <p><em>Example:</em></p>
@@ -1674,7 +1726,7 @@ otherwise(action)</pre>
 <td class="tableblock halign-left valign-top"><p class="tableblock">xpathResultMatch</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">XPATH_RESULT_STRING</p></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p>Return results that match the given regex.</p>
+<p>Return results that match the given regex. (Optional)</p>
 </div>
 <div class="paragraph">
 <p><em>Example:</em></p>
@@ -1690,7 +1742,7 @@ otherwise(action)</pre>
 <td class="tableblock halign-left valign-top"><p class="tableblock">as</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">VARIABLE_NAME</p></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p>A variable name assigned to the rule so that it can be used as a reference in later processing. See the <code>from</code> attribute below.</p>
+<p>A variable name assigned to the rule so that it can be used as a reference in later processing. See the <code>from</code> attribute below. (Optional)</p>
 </div>
 <div class="paragraph">
 <p><em>Example:</em></p>
@@ -1705,7 +1757,7 @@ otherwise(action)</pre>
 <td class="tableblock halign-left valign-top"><p class="tableblock">in</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">PATH_FILTER</p></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p>Used to filter input files matching this regex (regular expression) naming pattern. Wildcard characters can be used.</p>
+<p>Used to filter input files matching this regex (regular expression) naming pattern. Wildcard characters can be used. (Optional)</p>
 </div>
 <div class="paragraph">
 <p><em>Example:</em></p>
@@ -1720,7 +1772,7 @@ otherwise(action)</pre>
 <td class="tableblock halign-left valign-top"><p class="tableblock">from</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">VARIABLE_NAME</p></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p>Begin the search query with the filtered result from a previous search identified by its <code>as</code> VARIABLE_NAME.</p>
+<p>Begin the search query with the filtered result from a previous search identified by its <code>as</code> VARIABLE_NAME. (Optional)</p>
 </div>
 <div class="paragraph">
 <p><em>Example:</em></p>
@@ -1735,7 +1787,7 @@ otherwise(action)</pre>
 <td class="tableblock halign-left valign-top"><p class="tableblock">public-id</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">PUBLIC_ID</p></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p>The DTD public-id regex.</p>
+<p>The DTD public-id regex. (Optional)</p>
 </div>
 <div class="paragraph">
 <p><em>Example:</em></p>
@@ -1755,9 +1807,6 @@ otherwise(action)</pre>
 <p>The <code>matches</code> attribute may use several built-in custom XPath functions,
 which may have useful side effects, like setting the matched value on the rule variables stack.</p>
 </div>
-<div class="paragraph">
-<p>This is a brief list of these functions:</p>
-</div>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
 <col style="width: 50%;">
@@ -1773,7 +1822,7 @@ which may have useful side effects, like setting the matched value on the rule v
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>windup:matches()</code></p></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p>Match a XPath expression against a string, possibly containing Windup parametrization placeholders.</p>
+<p>Match a XPath expression against a string, possibly containing Windup parameterization placeholders.</p>
 </div>
 <div class="paragraph">
 <p><em>Example:</em></p>
@@ -1808,7 +1857,7 @@ which may have useful side effects, like setting the matched value on the rule v
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">&lt;namespace&gt;</p></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p>The namespace to referenced in XML files. This element contains 2 attributes: The <code>prefix</code> and the <code>uri</code>.</p>
+<p>The namespace referenced in XML files. This element contains 2 optional attributes: The <code>prefix</code> and the <code>uri</code>.</p>
 </div>
 <div class="paragraph">
 <p><em>Example:</em></p>
@@ -1828,10 +1877,10 @@ which may have useful side effects, like setting the matched value on the rule v
 <div class="sect4">
 <h5 id="_summary_4">Summary</h5>
 <div class="paragraph">
-<p>Use the <code>project</code> element to query for the project charateristics. For a better understanding of the <code>project</code> condition, see the JavaDoc for the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/project/condition/Project.html">Project</a> class.</p>
+<p>Use the <code>project</code> element to query the Maven POM file for the project charateristics. For a better understanding of the <code>project</code> condition, see the JavaDoc for the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/project/condition/Project.html">Project</a> class.</p>
 </div>
 <div class="paragraph">
-<p>The following is an example of a rule that checks a rule is dependent on the junit in the version between 2.0.0.Final and 2.2.0.Final.</p>
+<p>The following is an example of a rule that checks for a junit dependency version between 2.0.0.Final and 2.2.0.Final.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1853,7 +1902,7 @@ which may have useful side effects, like setting the matched value on the rule v
 <div class="sect5">
 <h6 id="_project_element_attributes">project Element Attributes</h6>
 <div class="paragraph">
-<p>The <code>project</code> element is used to match against the project as a whole. You can use this condition to query for dependencies of the project. It does not have any attributes itself.</p>
+<p>The <code>project</code> element is used to match against the project&#8217;s Maven POM file. You can use this condition to query for dependencies of the project. It does not have any attributes itself.</p>
 </div>
 </div>
 <div class="sect5">
@@ -1956,6 +2005,36 @@ which may have useful side effects, like setting the matched value on the rule v
 <td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Match the file names against the provided parameterized string.</p></td>
 </tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">as</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">VARIABLE_NAME</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>A variable name assigned to the rule so that it can be used as a reference in later processing. See the <code>from</code> attribute below.</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">as="MyEjbRule"</pre>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">from</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">VARIABLE_NAME</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Begin the search query with the filtered result from a previous search identified by its <code>as</code> VARIABLE_NAME. (Optional)</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">from="MyEjbRule"</pre>
+</div>
+</div></div></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -1995,12 +2074,32 @@ which may have useful side effects, like setting the matched value on the rule v
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">as</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">VARIABLE_NAME</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">A variable name assigned to the rule so that it can be used as a reference in later processing. See the <code>from</code> attribute below.</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>A variable name assigned to the rule so that it can be used as a reference in later processing. See the <code>from</code> attribute below.</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">as="MyEjbRule"</pre>
+</div>
+</div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">from</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">VARIABLE_NAME</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Begin the search query with the filtered result from a previous search identified by its <code>as</code> VARIABLE_NAME.</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Begin the search query with the filtered result from a previous search identified by its <code>as</code> VARIABLE_NAME. (Optional)</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">from="MyEjbRule"</pre>
+</div>
+</div></div></td>
 </tr>
 </tbody>
 </table>
@@ -2046,7 +2145,7 @@ which may have useful side effects, like setting the matched value on the rule v
 <div class="sect4">
 <h5 id="_summary_7">Summary</h5>
 <div class="paragraph">
-<p>The <code>classification</code> element is used to identify or classify application resources. It provides a level of effort and can also provide links to additional information about how to migrate this resource classification. For a better understanding of the <code>classification</code> action, see the JavaDoc for the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/reporting/config/classification/Classification.html">Classification</a> class.</p>
+<p>The <code>classification</code> element is used to identify or classify application resources that match the rule. It provides a title that is displayed in the report, a level of effort, and it can also provide links to additional information about how to migrate this resource classification. For a better understanding of the <code>classification</code> action, see the JavaDoc for the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/reporting/config/classification/Classification.html">Classification</a> class.</p>
 </div>
 <div class="paragraph">
 <p>The following is an example of a rule that classifies a resource as a WebLogic EAR application deployment descriptor file.</p>
@@ -2102,9 +2201,9 @@ which may have useful side effects, like setting the matched value on the rule v
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">effort</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">NUMBER</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BYTE</p></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p>The level of effort assigned to this resource.</p>
+<p>The level of effort assigned to this resource. (Optional)</p>
 </div>
 <div class="paragraph">
 <p><em>Example:</em></p>
@@ -2119,7 +2218,7 @@ which may have useful side effects, like setting the matched value on the rule v
 <td class="tableblock halign-left valign-top"><p class="tableblock">severity</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p>Whether this classification is "mandatory" or "optional"</p>
+<p>Whether this classification is "mandatory" or "optional". (Optional)</p>
 </div>
 <div class="paragraph">
 <p><em>Example:</em></p>
@@ -2134,7 +2233,7 @@ which may have useful side effects, like setting the matched value on the rule v
 <td class="tableblock halign-left valign-top"><p class="tableblock">of</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">VARIABLE_NAME</p></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p>Create a new classification for the given reference.</p>
+<p>Create a new classification for the given reference. (Optional)</p>
 </div>
 <div class="paragraph">
 <p><em>Example:</em></p>
@@ -2216,7 +2315,7 @@ which may have useful side effects, like setting the matched value on the rule v
 <div class="sect4">
 <h5 id="_summary_8">Summary</h5>
 <div class="paragraph">
-<p>The <code>link</code> element is used in classifications or hints to identify or classify links to informational content. For a better understanding of the <code>link</code> action, see the JavaDoc for the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/reporting/config/Link.html">Link</a> class.</p>
+<p>The <code>link</code> element is used in classifications or hints to provide links to informational content. For a better understanding of the <code>link</code> action, see the JavaDoc for the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/reporting/config/Link.html">Link</a> class.</p>
 </div>
 <div class="paragraph">
 <p>The following is an example of a rule that creates links to additional information.</p>
@@ -2362,7 +2461,7 @@ which may have useful side effects, like setting the matched value on the rule v
 <td class="tableblock halign-left valign-top"><p class="tableblock">severity</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p>Whether this hint is "mandatory" or "optional"</p>
+<p>Whether this hint is "mandatory" or "optional". (Optional)</p>
 </div>
 <div class="paragraph">
 <p><em>Example:</em></p>
@@ -2377,7 +2476,7 @@ which may have useful side effects, like setting the matched value on the rule v
 <td class="tableblock halign-left valign-top"><p class="tableblock">in</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">VARIABLE_NAME</p></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p>Create a new Hint in the FileLocationModel resolved by the given variable.</p>
+<p>Create a new Hint in the FileLocationModel resolved by the given variable. (Optional)</p>
 </div>
 <div class="paragraph">
 <p><em>Example:</em></p>
@@ -2390,9 +2489,9 @@ which may have useful side effects, like setting the matched value on the rule v
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">effort</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">NUMBER</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BYTE</p></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p>The level of effort assigned to this resource.</p>
+<p>The level of effort assigned to this resource.  (Optional)</p>
 </div>
 <div class="paragraph">
 <p><em>Example:</em></p>
@@ -2516,7 +2615,7 @@ API Specification" /&gt;</code></pre>
 <td class="tableblock halign-left valign-top"><p class="tableblock">of</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p>Create a new transformation for the given reference.</p>
+<p>Create a new transformation for the given reference. (Optional)</p>
 </div>
 <div class="paragraph">
 <p><em>Example:</em></p>
@@ -2531,7 +2630,7 @@ API Specification" /&gt;</code></pre>
 <td class="tableblock halign-left valign-top"><p class="tableblock">title</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
 <td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p>Sets the title for this XSLTTransformation.</p>
+<p>Sets the title for this XSLTTransformation in the report.</p>
 </div>
 <div class="paragraph">
 <p><em>Example:</em></p>
@@ -2571,6 +2670,11 @@ API Specification" /&gt;</code></pre>
 <pre class="nowrap">template="simpleXSLT.xsl"</pre>
 </div>
 </div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">effort</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BYTE</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The level of effort required for the tranformation. (Optional)</p></td>
 </tr>
 </tbody>
 </table>
@@ -2612,7 +2716,7 @@ API Specification" /&gt;</code></pre>
 <div class="sect4">
 <h5 id="_summary_11">Summary</h5>
 <div class="paragraph">
-<p>The <code>lineitem</code> element is used to provide line item information about a hint on the project or application overview page. For a better understanding of the <code>lineitem</code> action, see the JavaDoc for the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/project/operation/LineItem.html">Lineitem</a> class.</p>
+<p>The <code>lineitem</code> element is used to provide  general migration requirements for the application, such as the need to replace deprecated libraries or the need to resolve potential class loading issues. This information is displayed on the project or application overview page. For a better understanding of the <code>lineitem</code> action, see the JavaDoc for the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/project/operation/LineItem.html">Lineitem</a> class.</p>
 </div>
 <div class="paragraph">
 <p>The following is an example of a rule that creates a lineitem message.</p>
@@ -2682,31 +2786,27 @@ API Specification" /&gt;</code></pre>
 <p>The <code>iteration</code> element specifies to iterate over an implicit or explicit variable defined within the rule. For a better understanding of the <code>iteration</code> action, see the JavaDoc for the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/config/operation/Iteration.html">Iteration</a> class.</p>
 </div>
 <div class="paragraph">
-<p>The following is an example of a rule that preforms an iteration.</p>
+<p>The following is an example of a rule that performs an iteration.</p>
 </div>
 <div class="paragraph">
 <p><em>Example:</em></p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;rule id="XmlWebLogicRules_14wscy"&gt;
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;rule id="jboss-eap5-xml-19000"&gt;
     &lt;when&gt;
-        &lt;xmlfile as="1" matches="/wl:weblogic-webservices | /wl9:weblogic-webservices"&gt;
-            &lt;namespace prefix="wl9" uri="http://www.bea.com/ns/weblogic/90"/&gt;
-            &lt;namespace prefix="wl" uri="http://www.bea.com/ns/weblogic/weblogic-webservices"/&gt;
-        &lt;/xmlfile&gt;
-        &lt;xmlfile as="2" matches="//wl:webservice-type | //wl9:webservice-type" from="1"&gt;
-            &lt;namespace prefix="wl9" uri="http://www.bea.com/ns/weblogic/90"/&gt;
-            &lt;namespace prefix="wl" uri="http://www.bea.com/ns/weblogic/weblogic-webservices"/&gt;
-        &lt;/xmlfile&gt;
+        &lt;xmlfile as="jboss-app" matches="/jboss-app"/&gt;
+        &lt;xmlfile as="jboss-app-no-DTD" matches="/jboss-app" public-id=""/&gt;
     &lt;/when&gt;
     &lt;perform&gt;
-        &lt;iteration over="1"&gt;
-            &lt;classification title="Weblogic Webservice Descriptor" effort="0"/&gt;
+        &lt;iteration over="jboss-app"&gt;
+            &lt;classification title="JBoss application Descriptor" effort="5"/&gt;
         &lt;/iteration&gt;
-        &lt;iteration over="2"&gt;
-            &lt;hint effort="1"&gt;
-                &lt;message&gt;Webservice Type&lt;/message&gt;
+        &lt;iteration over="jboss-app-no-DTD"&gt;
+            &lt;classification title="JBoss application descriptor with missing DTD" effort="5"/&gt;
+        &lt;/iteration&gt;
+        &lt;iteration over="jboss-app-no-DTD"&gt;
+            &lt;xslt title="JBoss application descriptor - JBoss 5 (Windup-generated)" template="transformations/xslt/jboss-app-to-jboss5.xsl" extension="-jboss5.xml"/&gt;
         &lt;/iteration&gt;
     &lt;/perform&gt;
 &lt;/rule&gt;</code></pre>
@@ -2740,7 +2840,7 @@ API Specification" /&gt;</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="nowrap">over="2"</pre>
+<pre class="nowrap">over="jboss-app"</pre>
 </div>
 </div></div></td>
 </tr>
@@ -2869,7 +2969,7 @@ For Windows: "\Documents and Settings\USER_NAME\.windup\rules\"  -or-  "\Users\U
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="nowrap">WINDUP_HOME/bin/windup [--sourceMode] --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
+<pre class="nowrap">WINDUP_HOME/bin/windup [--sourceMode] --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY --target TARGET_TECHNOLOGY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -3088,7 +3188,7 @@ For Windows: "\Documents and Settings\USER_NAME\.windup\rules\"  -or-  "\Users\U
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-09-25 16:11:28 EDT
+Last updated 2015-10-12 13:09:42 EDT
 </div>
 </div>
 </body>

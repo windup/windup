@@ -1118,9 +1118,9 @@ public class MyProprietaryAnnotationClass extends HttpServlet {
 <p>Type the following command to test the rule, passing the test file as an input argument and a directory for the output report.</p>
 <div class="listingblock">
 <div class="content">
-<pre class="nowrap">For Linux:    bin/windup --sourceMode --input WORKSPACE_PATH/proprietary-annotation-example/src/test/ --output WORKSPACE_PATH/proprietary-annotation-example/windup-reports --packages com.proprietary
+<pre class="nowrap">For Linux:    bin/windup --sourceMode --input WORKSPACE_PATH/proprietary-annotation-example/src/test/ --output WORKSPACE_PATH/proprietary-annotation-example/windup-reports --target eap --packages com.proprietary
 
-For Windows:  bin\windup.bat --sourceMode --input WORKSPACE_PATH\proprietary-annotation-example\src\test\ --output WORKSPACE_PATH\proprietary-annotation-example\windup-reports --packages com.proprietary</pre>
+For Windows:  bin\windup.bat --sourceMode --input WORKSPACE_PATH\proprietary-annotation-example\src\test\ --output WORKSPACE_PATH\proprietary-annotation-example\windup-reports --target eap --packages com.proprietary</pre>
 </div>
 </div>
 </li>
@@ -2321,7 +2321,7 @@ FooModel = fooService.create();
 <p>XML rules only support a simple subset of conditions and operations.</p>
 </li>
 <li>
-<p>XML rules do not provide for direct custom graph data manipulation.</p>
+<p>XML rules do not provide for direct custom graph data manipulation that can be used later by other rules or the generation of reports.</p>
 </li>
 <li>
 <p>XML rules do not support the ability to create custom reports.</p>
@@ -2480,8 +2480,8 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Simple deployment?</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Supports custom reports?</p></td>
@@ -3386,7 +3386,7 @@ Windup building elements.</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>WINDUP_HOME/bin/windup [--sourceMode] --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
+<pre>WINDUP_HOME/bin/windup [--sourceMode] --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY --target TARGET_TECHNOLOGY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -3869,7 +3869,7 @@ Useful Commands: #action #agreed #help #info #idea #link #topic.</pre>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-09-25 16:11:28 EDT
+Last updated 2015-10-12 13:09:42 EDT
 </div>
 </div>
 </body>
