@@ -21,6 +21,7 @@ import org.jboss.windup.rules.apps.javaee.model.EjbSessionBeanModel;
 import org.jboss.windup.rules.apps.javaee.model.EnvironmentReferenceModel;
 import org.jboss.windup.rules.apps.javaee.model.JNDIResourceModel;
 import org.jboss.windup.rules.apps.javaee.model.JmsDestinationModel;
+import org.jboss.windup.rules.apps.javaee.model.ThreadPoolModel;
 import org.jboss.windup.rules.apps.javaee.rules.DiscoverEjbConfigurationXmlRuleProvider;
 import org.jboss.windup.rules.apps.javaee.service.EnvironmentReferenceService;
 import org.jboss.windup.rules.apps.javaee.service.JNDIResourceService;
@@ -71,6 +72,7 @@ public class ResolveWeblogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
         XmlFileService xmlFileService = new XmlFileService(event.getGraphContext());
         VendorSpecificationExtensionService vendorSpecificationService = new VendorSpecificationExtensionService(event.getGraphContext());
 
+        GraphService<ThreadPoolModel> threadPoolService = new GraphService<>(event.getGraphContext(), ThreadPoolModel.class);
         GraphService<EjbSessionBeanModel> ejbSessionBeanService = new GraphService<>(event.getGraphContext(), EjbSessionBeanModel.class);
         GraphService<EjbMessageDrivenModel> mdbService = new GraphService<>(event.getGraphContext(), EjbMessageDrivenModel.class);
 
@@ -144,6 +146,47 @@ public class ResolveWeblogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
                 sessionClustered = StringUtils.trim(sessionClustered);
             }
 
+            // parse thread pool information
+            ThreadPoolModel threadPoolModel = null;
+            for (Element poolDescriptor : $(enterpriseBeanTag).find("pool").get())
+            {
+                String maxSize = $(poolDescriptor).child("max-beans-in-free-pool").text();
+                String minSize = $(poolDescriptor).child("initial-beans-in-free-pool").text();
+                threadPoolModel = threadPoolService.create();
+                threadPoolModel.setPoolName(ejbName+"-ThreadPool");
+                
+                if(StringUtils.isNotBlank(maxSize)) {
+                    try {
+                        threadPoolModel.setMaxPoolSize(Integer.parseInt(maxSize));
+                    }
+                    catch(Exception e) {
+                        LOG.warning("Unable to parse max pool size: "+maxSize);
+                    }
+                }
+                
+                if(StringUtils.isNotBlank(minSize)) {
+                    try {
+                        threadPoolModel.setMinPoolSize(Integer.parseInt(minSize));
+                    }
+                    catch(Exception e) {
+                        LOG.warning("Unable to parse min pool size: "+minSize);
+                    }
+                }
+                break;
+            }
+            //set thread pool
+            if(threadPoolModel != null) {
+                for (EjbSessionBeanModel sessionBean : ejbSessionBeanService.findAllByProperty(EjbSessionBeanModel.EJB_BEAN_NAME, ejbName)) 
+                {
+                    sessionBean.setThreadPool(threadPoolModel);
+                }
+                for (EjbMessageDrivenModel mdb : mdbService.findAllByProperty(EjbMessageDrivenModel.EJB_BEAN_NAME, ejbName))
+                {
+                    mdb.setThreadPool(threadPoolModel);
+                }
+            }
+
+
             Map<String, Integer> txTimeouts = parseTxTimeout(enterpriseBeanTag, ejbName);
 
             if (StringUtils.isNotBlank(jndiLocation) && StringUtils.isNotBlank(ejbName))
@@ -168,9 +211,11 @@ public class ResolveWeblogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
                     sessionBean.setLocalJndiReference(localJndiRef);
                 }
             }
-            
-            if(txTimeouts.size() > 0 && StringUtils.isNotBlank(ejbName)) {
-                for (EjbSessionBeanModel sessionBean : ejbSessionBeanService.findAllByProperty(EjbSessionBeanModel.EJB_BEAN_NAME, ejbName)) {
+
+            if (txTimeouts.size() > 0 && StringUtils.isNotBlank(ejbName))
+            {
+                for (EjbSessionBeanModel sessionBean : ejbSessionBeanService.findAllByProperty(EjbSessionBeanModel.EJB_BEAN_NAME, ejbName))
+                {
                     sessionBean.setTxTimeouts(txTimeouts);
                 }
             }
@@ -186,8 +231,9 @@ public class ResolveWeblogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
                         JmsDestinationModel jndiRef = jmsDestinationService.createUnique(destination);
                         mdb.setDestination(jndiRef);
                     }
-                    
-                    if(txTimeouts.size() > 0) {
+
+                    if (txTimeouts.size() > 0)
+                    {
                         mdb.setTxTimeouts(txTimeouts);
                     }
                 }
@@ -202,12 +248,7 @@ public class ResolveWeblogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
                     sessionBean.setClustered(true);
                 }
             }
-            
-            
-            
         }
-        
-        
     }
 
     private Map<String, Integer> parseTxTimeout(Element enterpriseBeanTag, String ejbName)
@@ -215,18 +256,19 @@ public class ResolveWeblogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
         Map<String, Integer> transactionTimeouts = new HashMap<String, Integer>();
         String transactionTimeoutSeconds = $(enterpriseBeanTag).child("transaction-descriptor").child("trans-timeout-seconds").text();
         String methodName = "*";
-        if(StringUtils.isNotBlank(transactionTimeoutSeconds))
+        if (StringUtils.isNotBlank(transactionTimeoutSeconds))
         {
-            try {
+            try
+            {
                 Integer txTimeout = Integer.parseInt(transactionTimeoutSeconds);
                 transactionTimeouts.put(methodName, txTimeout);
             }
-            catch(Exception e) {
-                LOG.info("EJB: "+ejbName+" contains bad reference to TX Timeout on Method: "+methodName);
+            catch (Exception e)
+            {
+                LOG.info("EJB: " + ejbName + " contains bad reference to TX Timeout on Method: " + methodName);
             }
         }
-        
+
         return transactionTimeouts;
     }
-
 }

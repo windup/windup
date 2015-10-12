@@ -35,6 +35,15 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import javax.inject.Inject;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 /**
  * Test XML parsing of different vendors.
  * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
@@ -78,6 +87,7 @@ public class EjbXmlParsingTest
             Map<String, String> jndiHandler = new HashMap<>();
             
             testEjbSessionBeanTimeout(context, "WindupExampleService", "*", 3600);
+            testMdbThreadPool(context, "WindupMLBean", "WindupMLBean-ThreadPool", 5, 2);
             
             int returnedJNDI = testResourceRef(context);
 
@@ -281,4 +291,34 @@ public class EjbXmlParsingTest
         windupConfiguration.setOutputDirectory(outputPath);
         processor.execute(windupConfiguration);
     }
+    
+    
+    private void testEjbSessionBeanThreadPool(GraphContext context, String ejbName, String threadPoolName, Integer maxPoolSize, Integer minPoolSize) {
+        GraphService<EjbSessionBeanModel> service = new GraphService<>(context, EjbSessionBeanModel.class);
+        boolean found = false;
+        
+        EjbSessionBeanModel result = service.getUniqueByProperty(EjbSessionBeanModel.EJB_BEAN_NAME, ejbName);
+        if(result != null) {
+            if(result.getThreadPool()!=null) {
+                found = true;
+                Assert.assertTrue("For EJB: ["+ejbName+"] with pool name: ["+threadPoolName+"] max: ["+maxPoolSize+"] min: ["+minPoolSize+"], actual name: ["+result.getThreadPool().getPoolName()+"] max: ["+result.getThreadPool().getMaxPoolSize()+"] min: ["+result.getThreadPool().getMinPoolSize()+"]", maxPoolSize.equals(result.getThreadPool().getMaxPoolSize()) && minPoolSize.equals(result.getThreadPool().getMinPoolSize()) && threadPoolName.equals(result.getThreadPool().getPoolName()));
+            }
+        }
+        Assert.assertTrue("For EJB: ["+ejbName+"] with name: ["+threadPoolName+"] max: ["+maxPoolSize+"] min: ["+minPoolSize+"]", found);
+    }
+    
+    private void testMdbThreadPool(GraphContext context, String mdbName, String threadPoolName, Integer maxPoolSize, Integer minPoolSize) {
+        GraphService<EjbMessageDrivenModel> service = new GraphService<>(context, EjbMessageDrivenModel.class);
+        
+        boolean found = false;
+        
+        EjbMessageDrivenModel result = service.getUniqueByProperty(EjbMessageDrivenModel.EJB_BEAN_NAME, mdbName);
+        if(result != null) {
+            if(result.getThreadPool()!=null) {
+                found = true;
+                Assert.assertTrue("For MDB: ["+mdbName+"] with pool name: ["+threadPoolName+"] max: ["+maxPoolSize+"] min: ["+minPoolSize+"], actual name: ["+result.getThreadPool().getPoolName()+"] max: ["+result.getThreadPool().getMaxPoolSize()+"] min: ["+result.getThreadPool().getMinPoolSize()+"]", maxPoolSize.equals(result.getThreadPool().getMaxPoolSize()) && minPoolSize.equals(result.getThreadPool().getMinPoolSize()) && threadPoolName.equals(result.getThreadPool().getPoolName()));
+            }
+        }
+        Assert.assertTrue("For MDB: ["+mdbName+"] with name: ["+threadPoolName+"] max: ["+maxPoolSize+"] min: ["+minPoolSize+"]", found);
+     }
 }

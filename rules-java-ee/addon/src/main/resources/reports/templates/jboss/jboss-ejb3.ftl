@@ -35,12 +35,21 @@
 		<!-- Unhandled type: ${environmentRef.referenceTagType} -->
 	</#switch>
 </#macro>
+<#macro processPool bean>
+	<#if bean.threadPool??>
+		<p:pool>
+			<ejb-name>${bean.beanName}</ejb-name>
+			<p:bean-instance-pool-ref>${bean.threadPool.poolName}</p:bean-instance-pool-ref>
+        </p:pool>
+	</#if>
+</#macro>
 <jboss:ejb-jar xmlns:jboss="http://www.jboss.com/xml/ns/javaee"
                xmlns="http://java.sun.com/xml/ns/javaee"
                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                xmlns:s="urn:security:1.1"
                xmlns:tx="urn:trans-timeout"
                xmlns:c="urn:clustering:1.0"  
+               xmlns:p="urn:ejb-pool:1.0"
                xsi:schemaLocation="http://www.jboss.com/xml/ns/javaee http://www.jboss.org/j2ee/schema/jboss-ejb3-2_0.xsd http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/ejb-jar_3_1.xsd
                urn:trans-timeout http://www.jboss.org/j2ee/schema/trans-timeout-1_0.xsd"
                version="3.1"
@@ -100,6 +109,7 @@
     <#if reportModel.relatedResources.messageDriven.list.iterator()?has_content>
     	<#list reportModel.relatedResources.messageDriven.list.iterator() as mdb>
     	        <@processTxTimeout mdb />
+    	        <@processPool mdb />
          </#list>
     </#if>	
     	
