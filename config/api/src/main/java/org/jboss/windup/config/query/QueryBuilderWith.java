@@ -15,6 +15,11 @@ public interface QueryBuilderWith extends ConditionBuilder, QueryBuilderAs
     QueryBuilderPiped piped(QueryGremlinCriterion criterion);
 
     /**
+     * Narrow the query to {@link WindupVertexFrame} instances that have the given property defined.
+     */
+    QueryBuilderWith withProperty(String property);
+
+    /**
      * Narrow the query to {@link WindupVertexFrame} instances that contain the given property value.
      */
     QueryBuilderWith withProperty(String property, Object searchValue);

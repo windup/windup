@@ -180,8 +180,14 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
     @Override
     public QueryBuilderWith withProperty(String property, Iterable<?> values)
     {
-        pipelineCriteria.add(new QueryPropertyCriterion(property, QueryPropertyComparisonType.CONTAINS_ANY_TOKEN,
-                    values));
+        pipelineCriteria.add(new QueryPropertyCriterion(property, QueryPropertyComparisonType.CONTAINS_ANY_TOKEN, values));
+        return this;
+    }
+
+    @Override
+    public QueryBuilderWith withProperty(String property)
+    {
+        pipelineCriteria.add(new QueryPropertyCriterion(property, QueryPropertyComparisonType.DEFINED, null));
         return this;
     }
 

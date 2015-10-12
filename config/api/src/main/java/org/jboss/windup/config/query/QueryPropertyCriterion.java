@@ -10,9 +10,9 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
 class QueryPropertyCriterion implements QueryGremlinCriterion
 {
 
-    private String propertyName;
-    private QueryPropertyComparisonType searchType;
-    private Object searchValue;
+    private final String propertyName;
+    private final QueryPropertyComparisonType searchType;
+    private final Object searchValue;
 
     public QueryPropertyCriterion(String propertyName, QueryPropertyComparisonType searchType,
                 Object searchValue)
@@ -40,8 +40,11 @@ class QueryPropertyCriterion implements QueryGremlinCriterion
         case REGEX:
             pipeline.has(this.propertyName, Text.REGEX, searchValue);
             break;
+        case DEFINED:
+            pipeline.has(this.propertyName);
+            break;
         default:
-            throw new IllegalArgumentException("Unrecognized query type: " + searchType);
+            throw new IllegalArgumentException("Unrecognized property query type: " + searchType);
         }
     }
 

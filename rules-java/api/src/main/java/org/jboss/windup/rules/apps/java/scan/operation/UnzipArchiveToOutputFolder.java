@@ -45,19 +45,9 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
     private static final String ARCHIVES = "archives";
     private static final Logger LOG = Logging.get(UnzipArchiveToOutputFolder.class);
 
-    public UnzipArchiveToOutputFolder(String variableName)
-    {
-        super(variableName);
-    }
-
     public UnzipArchiveToOutputFolder()
     {
         super();
-    }
-
-    public static UnzipArchiveToOutputFolder unzip(String variableName)
-    {
-        return new UnzipArchiveToOutputFolder(variableName);
     }
 
     public static UnzipArchiveToOutputFolder unzip()
@@ -75,40 +65,23 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
         {
             throw new WindupException("Input path doesn't point to a file: " + (zipFile == null ? "null" : zipFile.getAbsolutePath()));
         }
+        final GraphContext graphContext = event.getGraphContext();
 
-        // create a folder for all archive contents
-        WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
-        String windupOutputFolder = cfg.getOutputPath().getFilePath();
-
-        Path windupTempUnzippedArchiveFolder = Paths.get(windupOutputFolder, ARCHIVES);
-        if (!Files.isDirectory(windupTempUnzippedArchiveFolder))
-        {
-            try
-            {
-                Files.createDirectories(windupTempUnzippedArchiveFolder);
-            }
-            catch (IOException e)
-            {
-                throw new WindupException("Failed to create temporary folder: " + windupTempUnzippedArchiveFolder
-                            + " due to: " + e.getMessage(), e);
-            }
-        }
-        unzipToTempDirectory(event, context, windupTempUnzippedArchiveFolder, zipFile, payload);
+        // Create a folder for all archive contents.
+        Path unzippedArchiveDir = getArchivesDirLocation(graphContext);
+        ensureDirIsCreated(unzippedArchiveDir);
+        unzipToTempDirectory(event, context, unzippedArchiveDir, zipFile, payload);
     }
 
-    private Path getAppArchiveFolder(Path tempFolder, String appArchiveName)
+
+    public static Path getArchivesDirLocation(final GraphContext graphContext)
     {
-        Path appArchiveFolder = Paths.get(tempFolder.toString(), appArchiveName);
-
-        int fileIdx = 1;
-        // if it is already created, try another folder name
-        while (Files.exists(appArchiveFolder))
-        {
-            appArchiveFolder = Paths.get(tempFolder.toString(), appArchiveName + "." + fileIdx);
-            fileIdx++;
-        }
-        return appArchiveFolder;
+        WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(graphContext);
+        String windupOutputFolder = cfg.getOutputPath().getFilePath();
+        Path windupTempUnzippedArchiveFolder = Paths.get(windupOutputFolder, ARCHIVES);
+        return windupTempUnzippedArchiveFolder;
     }
+
 
     private void unzipToTempDirectory(final GraphRewrite event, EvaluationContext context,
                 final Path tempFolder, final File inputZipFile,
@@ -121,22 +94,11 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
         if (null == appArchiveName)
             throw new IllegalStateException("Archive model doesn't have an archiveName: " + archiveModel.getFilePath());
 
-        final Path appArchiveFolder = getAppArchiveFolder(tempFolder, appArchiveName);
+        final Path appArchiveFolder = getNonexistentDirForAppArchive(tempFolder, appArchiveName);
+        createDir(appArchiveFolder, appArchiveName);
 
-        try
-        {
-            Files.createDirectories(appArchiveFolder);
-        }
-        catch (IOException e)
-        {
-            throw new WindupException("Could not create a temporary directory for application \""
-                        + appArchiveName + "\" at \"" + appArchiveFolder.toString() + "\" due to: " + e.getMessage(), e);
-        }
-
-        // unzip to the temp folder
-        LOG.info("Unzipping " + inputZipFile.getPath() + " to "
-                    + appArchiveFolder.toString());
-
+        // Unzip to the temp folder.
+        LOG.info("Unzipping " + inputZipFile.getPath() + " to " + appArchiveFolder.toString());
         try
         {
             unzipToFolder(inputZipFile, appArchiveFolder.toFile());
@@ -158,6 +120,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
         // add all unzipped files, and make sure their parent archive is set
         recurseAndAddFiles(event, context, tempFolder, fileService, archiveModel, newFileModel);
     }
+
 
     /**
      * Unzip the given {@link File} to the specified directory.
@@ -292,9 +255,58 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
         return ignored;
     }
 
+
+
+    private static Path getNonexistentDirForAppArchive(Path tempFolder, String appArchiveName)
+    {
+        Path appArchiveFolder = Paths.get(tempFolder.toString(), appArchiveName);
+
+        int fileIdx = 1;
+        // If it is already created, try another folder name.
+        while (Files.exists(appArchiveFolder))
+        {
+            appArchiveFolder = Paths.get(tempFolder.toString(), appArchiveName + "." + fileIdx);
+            fileIdx++;
+        }
+        return appArchiveFolder;
+    }
+
+
+
+    private static void ensureDirIsCreated(Path windupTempUnzippedArchiveFolder) throws WindupException
+    {
+        if (!Files.isDirectory(windupTempUnzippedArchiveFolder))
+        {
+            try
+            {
+                Files.createDirectories(windupTempUnzippedArchiveFolder);
+            }
+            catch (IOException e)
+            {
+                throw new WindupException("Failed to create temporary folder for archives: " + windupTempUnzippedArchiveFolder
+                        + "\n\tdue to: " + e.getMessage(), e);
+            }
+        }
+    }
+
+    private void createDir(final Path appArchiveFolder, String appArchiveName) throws WindupException
+    {
+        try
+        {
+            Files.createDirectories(appArchiveFolder);
+        }
+        catch (IOException e)
+        {
+            throw new WindupException("Could not create a temporary directory for application \""
+                    + appArchiveName + "\" at \"" + appArchiveFolder.toString() + "\" due to: " + e.getMessage(), e);
+        }
+    }
+
+
+
     @Override
     public String toString()
     {
-        return "UnzipArchivesToOutputFolder";
+        return UnzipArchiveToOutputFolder.class.getSimpleName();
     }
 }
