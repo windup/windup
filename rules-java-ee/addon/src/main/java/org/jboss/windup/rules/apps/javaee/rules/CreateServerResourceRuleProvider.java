@@ -25,6 +25,7 @@ import org.jboss.windup.rules.apps.javaee.model.DataSourceModel;
 import org.jboss.windup.rules.apps.javaee.model.JNDIResourceModel;
 import org.jboss.windup.rules.apps.javaee.model.JmsConnectionFactoryModel;
 import org.jboss.windup.rules.apps.javaee.model.JmsDestinationModel;
+import org.jboss.windup.rules.apps.javaee.model.ThreadPoolModel;
 import org.jboss.windup.rules.apps.javaee.service.DataSourceService;
 import org.jboss.windup.rules.apps.javaee.service.JNDIResourceService;
 import org.jboss.windup.util.Logging;
@@ -53,7 +54,7 @@ public class CreateServerResourceRuleProvider extends AbstractRuleProvider
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        ConditionBuilder resourceModelsFound = Query.fromType(JNDIResourceModel.class);
+        ConditionBuilder resourceModelsFound = Query.fromType(JNDIResourceModel.class).or(Query.fromType(ThreadPoolModel.class));
 
         GraphOperation addReport = new GraphOperation()
         {
@@ -97,12 +98,14 @@ public class CreateServerResourceRuleProvider extends AbstractRuleProvider
 
         DataSourceService datasourceService = new DataSourceService(context);
         JNDIResourceService jndiResourceService = new JNDIResourceService(context);
+        GraphService<ThreadPoolModel> threadPoolService = new GraphService<ThreadPoolModel>(context, ThreadPoolModel.class);
         GraphService<WindupVertexListModel> listService = new GraphService<WindupVertexListModel>(context, WindupVertexListModel.class);
 
         WindupVertexListModel datasourceList = listService.create();
         WindupVertexListModel jmsList = listService.create();
         WindupVertexListModel jmsConnectionFactoryList = listService.create();
         WindupVertexListModel otherJndiList = listService.create();
+        WindupVertexListModel threadPoolList = listService.create();
 
         for (JNDIResourceModel jndi : jndiResourceService.findAll())
         {
@@ -123,12 +126,17 @@ public class CreateServerResourceRuleProvider extends AbstractRuleProvider
                 otherJndiList.addItem(jndi);
             }
         }
+        
+        for(ThreadPoolModel tp : threadPoolService.findAll()) {
+            threadPoolList.addItem(tp);
+        }
 
         Map<String, WindupVertexFrame> additionalData = new HashMap<>(2);
         additionalData.put("datasources", datasourceList);
         additionalData.put("jmsDestinations", jmsList);
         additionalData.put("jmsConnectionFactories", jmsConnectionFactoryList);
         additionalData.put("otherResources", otherJndiList);
+        additionalData.put("threadPools", threadPoolList);
         applicationReportModel.setRelatedResource(additionalData);
 
         // Set the filename for the report

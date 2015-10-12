@@ -19,17 +19,17 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 public interface EjbSessionBeanModel extends EjbBeanBaseModel
 {
 
-    public static final String TYPE = "EjbSessionBean";
+    String TYPE = "EjbSessionBean";
 
-    public static final String EJB_HOME = "ejbHome";
-    public static final String EJB_LOCAL_HOME = "ejbLocalHome";
-    public static final String EJB_REMOTE = "ejbRemote";
-    public static final String EJB_LOCAL = "ejbLocal";
-    public static final String GLOBAL_JNDI = "globalJNDI";
-    public static final String MODULE_JNDI = "moduleJNDI";
-    public static final String LOCAL_JNDI = "localJNDI";
-
-    public static final String CLUSTERED = "clustered";
+    String EJB_HOME = "ejbHome";
+    String EJB_LOCAL_HOME = "ejbLocalHome";
+    String EJB_REMOTE = "ejbRemote";
+    String EJB_LOCAL = "ejbLocal";
+    String GLOBAL_JNDI = "globalJNDI";
+    String MODULE_JNDI = "moduleJNDI";
+    String LOCAL_JNDI = "localJNDI";
+    String CLUSTERED = "clustered";
+    String THREAD_POOL = "threadPool";
 
 
     /**
@@ -146,4 +146,15 @@ public interface EjbSessionBeanModel extends EjbBeanBaseModel
     @MapInProperties(propertyPrefix = "txTimeouts", propertyType = Integer.class)
     void setTxTimeouts(Map<String, Integer> map);
 
+    /**
+     * References the thread pool, if defined.
+     */
+    @Adjacency(label = THREAD_POOL, direction = Direction.OUT)
+    void setThreadPool(ThreadPoolModel threadPool);
+
+    /**
+     * References the thread pool, if defined.
+     */
+    @Adjacency(label = THREAD_POOL, direction = Direction.OUT)
+    public ThreadPoolModel getThreadPool();
 }

@@ -17,11 +17,12 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 public interface EjbMessageDrivenModel extends EjbBeanBaseModel
 {
 
-    public static final String TYPE = "EjbMessageDriven";
-    public static final String DESTINATION = "destination";
-    
+    String TYPE = "EjbMessageDriven";
+    String DESTINATION = "destination";
+    String THREAD_POOL = "threadPool";
+    String TX_TIMEOUTS = "txTimeouts";
 
-    
+
     /**
      * Contains the destination address, typically a JMS queue or topic
      */
@@ -44,12 +45,24 @@ public interface EjbMessageDrivenModel extends EjbBeanBaseModel
     /**
      * Timeouts for each method pattern in seconds, * is wildcard
      */
-    @MapInAdjacentProperties(label = "txTimeouts")
+    @MapInAdjacentProperties(label = TX_TIMEOUTS)
     Map<String, Integer> getTxTimeouts();
 
     /**
      * Timeouts for each method pattern, * is wildcard
      */
-    @MapInAdjacentProperties(label = "txTimeouts")
+    @MapInAdjacentProperties(label = TX_TIMEOUTS)
     void setTxTimeouts(Map<String, Integer> map);
+
+    /**
+     * References the thread pool, if defined.
+     */
+    @Adjacency(label = THREAD_POOL, direction = Direction.OUT)
+    void setThreadPool(ThreadPoolModel threadPool);
+
+    /**
+     * References the thread pool, if defined.
+     */
+    @Adjacency(label = THREAD_POOL, direction = Direction.OUT)
+    ThreadPoolModel getThreadPool();
 }

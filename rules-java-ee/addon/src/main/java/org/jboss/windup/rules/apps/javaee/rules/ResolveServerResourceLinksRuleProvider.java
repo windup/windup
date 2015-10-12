@@ -3,11 +3,12 @@ package org.jboss.windup.rules.apps.javaee.rules;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.PreReportGenerationPhase;
 import org.jboss.windup.config.query.Query;
-import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.LinkModel;
 import org.jboss.windup.graph.service.GraphService;
@@ -16,15 +17,19 @@ import org.jboss.windup.reporting.model.association.LinkableModel;
 import org.jboss.windup.rules.apps.javaee.model.DataSourceModel;
 import org.jboss.windup.rules.apps.javaee.model.JNDIResourceModel;
 import org.jboss.windup.rules.apps.javaee.model.JmsDestinationModel;
+import org.jboss.windup.rules.apps.javaee.model.ThreadPoolModel;
+import org.jboss.windup.rules.apps.javaee.service.JNDIResourceService;
 import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
+import org.ocpsoft.rewrite.config.Configuration;
+import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * Links server resources (datasources, jms, etc) to EAP 6 resource setup documentation
  *
  */
-public class ResolveServerResourceLinksRuleProvider extends IteratingRuleProvider<JNDIResourceModel>
+public class ResolveServerResourceLinksRuleProvider extends AbstractRuleProvider
 {
     private static final Logger LOG = Logging.get(ResolveServerResourceLinksRuleProvider.class);
 
@@ -34,22 +39,56 @@ public class ResolveServerResourceLinksRuleProvider extends IteratingRuleProvide
                     .setPhase(PreReportGenerationPhase.class));
     }
 
-    @Override
-    public ConditionBuilder when()
-    {
-        return Query.fromType(JNDIResourceModel.class);
-    }
 
     @Override
-    public void perform(GraphRewrite event, EvaluationContext context, JNDIResourceModel payload)
+    public Configuration getConfiguration(GraphContext context) {
+        return ConfigurationBuilder.begin()
+                    .addRule()
+                    .when(when())
+                    .perform(new GraphOperation()
+                    {
+                        @Override
+                        public void perform(GraphRewrite event, EvaluationContext context)
+                        {
+                            processServerResources(event.getGraphContext());
+                        }
+
+                        @Override
+                        public String toString()
+                        {
+                            return "ResolveServerResourceLinksRule";
+                        }
+                    });
+    }
+    
+    
+    protected ConditionBuilder when()
+    {
+        return Query.fromType(JNDIResourceModel.class).or(Query.fromType(ThreadPoolModel.class));
+    }
+    
+    protected void processServerResources(GraphContext context) {
+        JNDIResourceService jndiService = new JNDIResourceService(context);
+        GraphService<ThreadPoolModel> threadPoolService = new GraphService<>(context, ThreadPoolModel.class);
+        
+        for(JNDIResourceModel model : jndiService.findAll()) {
+            processJndiResource(context, model);
+        }
+        
+        for(ThreadPoolModel model : threadPoolService.findAll()) {
+            processThreadPool(context, model);
+        }
+    }
+
+    protected void processJndiResource(GraphContext context, JNDIResourceModel payload)
     {
         if (payload instanceof DataSourceModel)
         {
-            processDataSource(event.getGraphContext(), (DataSourceModel) payload);
+            processDataSource(context, (DataSourceModel) payload);
         }
         else if (payload instanceof JmsDestinationModel)
         {
-            processJMSDestination(event.getGraphContext(), (JmsDestinationModel) payload);
+            processJMSDestination(context, (JmsDestinationModel) payload);
         }
     }
 
@@ -62,6 +101,17 @@ public class ResolveServerResourceLinksRuleProvider extends IteratingRuleProvide
                     .getOrCreate(
                                 "Destination Setup",
                                 "https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html/Administration_and_Configuration_Guide/sect-Configuration.html");
+        linkable.addLink(jmsDestinationLink);
+    }
+    
+    private void processThreadPool(GraphContext context, ThreadPoolModel threadPool) {
+        LinkService linkService = new LinkService(context);
+        LinkableModel linkable = GraphService.addTypeToModel(context, threadPool, LinkableModel.class);
+
+        LinkModel jmsDestinationLink = linkService
+                    .getOrCreate(
+                                "Thread Pool Setup",
+                                "https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html/Administration_and_Configuration_Guide/sect-Configuring_EJB_Thread_Pools.html");
         linkable.addLink(jmsDestinationLink);
     }
 
@@ -125,9 +175,4 @@ public class ResolveServerResourceLinksRuleProvider extends IteratingRuleProvide
         linkable.addLink(eap6Link);
     }
 
-    @Override
-    public String toStringPerform()
-    {
-        return "Linking to Server Documentation";
-    }
 }
