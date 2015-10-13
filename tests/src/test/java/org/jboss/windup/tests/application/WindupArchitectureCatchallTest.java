@@ -85,10 +85,12 @@ public class WindupArchitectureCatchallTest extends WindupArchitectureTest
         util.loadPage(mainAppReport);
         util.checkFilePathEffort("catchalltest", "FileWithoutCatchallHits", 13);
         util.checkFilePathEffort("catchalltest", "FileWithBoth", 27);
+        util.checkFilePathEffort("catchalltest", "FileWithNoHintsRules", 63);
 
         util.loadPage(catchallAppReport);
         util.checkFilePathEffort("catchalltest", "FileWithBoth", 27);
         util.checkFilePathEffort("catchalltest", "FileWithCatchallHits", 14);
+        util.checkFilePathEffort("catchalltest", "FileWithNoHintsRules", 63);
     }
 
     @Singleton
@@ -115,7 +117,10 @@ public class WindupArchitectureCatchallTest extends WindupArchitectureTest
                         .perform(Hint.titled("java.util.* found").withText("Catchall hint is here").withEffort(7).withTags(catchallTags))
                         .addRule()
                         .when(JavaClass.references("java.net.URL"))
-                        .perform(Hint.titled("java.net.URL").withText("Java Net URL is here (no catchall").withEffort(13).withTags(otherTags));
+                        .perform(Hint.titled("java.net.URL").withText("Java Net URL is here (no catchall").withEffort(13).withTags(otherTags))
+                        .addRule()
+                        .when(JavaClass.references("java.util.HashMap"))
+                        .perform(Hint.titled("java.util.HashMap").withText("Java Net URL is here (no catchall").withEffort(42));
         }
     }
 

@@ -16,40 +16,7 @@ import org.jboss.windup.reporting.model.ReportFileModel;
 public class TagUtil
 {
     /**
-     * <p>
-     * This method determines whether or not the given tag should be used based upon the given set of include and exclude tags.
-     * </p>
-     *
-     * <p>
-     * If the tag is in the exclude tags, it will always return false.
-     * </p>
-     *
-     * <p>
-     * If it is not in the exclude tags and the includeTags are empty, it will always return true.
-     * </p>
-     *
-     * <p>
-     * If it is not in the exclude tags and it is in the include tags, then it will return true.
-     * </p>
-     *
-     * <p>
-     * Otherwise, it will return false.
-     * </p>
-     */
-    public static boolean isTagsMatch(String tag, Set<String> includeTags, Set<String> excludeTags)
-    {
-        if (excludeTags.contains(tag))
-            return false;
-
-        if (includeTags.isEmpty())
-            return true;
-
-        return includeTags.contains(tag);
-    }
-
-
-    /**
-     * @see includeTag(), only with strictExclude = true.
+     * @see TagUtil#isTagsMatch(Collection, Set, Set), only with strictExclude = true.
      */
     public static boolean isTagsMatch(Collection<String> tags, Set<String> includeTags, Set<String> excludeTags)
     {
@@ -58,7 +25,9 @@ public class TagUtil
 
     /**
      * <p>
-     * If any tag is in the exclude list, this will return false.
+     * If any tag is in the exclude list and strictExclude is true, this will return false.
+     *
+     * If any tag is in the exclude list and strictExclude is false, then it will depend upon whether or not there is a tag in the includeTags list.
      * </p>
      *
      * <p>
@@ -72,7 +41,7 @@ public class TagUtil
     {
         boolean foundIncludeMatch = false;
 
-        if (tags.isEmpty() && includeTags.isEmpty())
+        if (includeTags.isEmpty())
             return true;
 
         for (String tag : tags)
@@ -96,7 +65,6 @@ public class TagUtil
         Set<String> allTags = gatherReportFileTags(reportFileModel);
         return TagUtil.isTagsMatch(allTags, includeTags, excludeTags, false);
     }
-
 
     public static Set<String> gatherReportFileTags(ReportFileModel reportFileModel)
     {
