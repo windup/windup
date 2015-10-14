@@ -44,6 +44,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.event.Rewrite;
 
 import com.google.common.collect.Iterables;
+import org.jboss.windup.util.exception.WindupException;
 
 /**
  * Used to iterate over an implicit or explicit variable defined within the corresponding {@link ConfigurationRuleBuilder#when(Condition)} clause in
@@ -239,6 +240,7 @@ public class Iteration extends DefaultOperationBuilder
         try
         {
             for (WindupVertexFrame frame : frames)
+            try
             {
                 variables.push();
                 getPayloadManager().setCurrentPayload(variables, frame);
@@ -251,10 +253,10 @@ public class Iteration extends DefaultOperationBuilder
                         ((GraphCondition) condition).setInputVariablesName(getPayloadVariableName(event, context));
                     }
                     conditionResult = condition.evaluate(event, context);
-                /*
-                 * Add special clear layer for perform, because condition used one and could have added new variables. The condition result put into
-                 * variables is ignored.
-                 */
+                    /*
+                     * Add special clear layer for perform, because condition used one and could have added new variables. The condition result put into
+                     * variables is ignored.
+                     */
                     variables.push();
                     getPayloadManager().setCurrentPayload(variables, frame);
                 }
@@ -282,6 +284,10 @@ public class Iteration extends DefaultOperationBuilder
                     // remove the condition layer
                     variables.pop();
                 }
+            }
+            catch (Exception ex)
+            {
+                throw new WindupException("Failed when iterating " + frame.toPrettyString() + ":\n\t" + ex.getMessage(), ex);
             }
         }
         finally

@@ -58,6 +58,23 @@ public class ReportService extends GraphService<ReportModel>
     }
 
     /**
+     * Returns the ReportModel with given name.
+     */
+    public <T extends ReportModel> T getReportByName(String name, Class<T> clazz)
+    {
+        ReportModel reportM = this.getUniqueByProperty(ReportModel.REPORT_NAME, name);
+        //if (!(clazz.isAssignableFrom(reportM.getClass())))
+        try
+        {
+            return (T) reportM;
+        }
+        catch (ClassCastException ex)
+        {
+            throw new WindupException("The vertex is not of expected frame type "+clazz.getName()+": " + reportM.toPrettyString());
+        }
+    }
+
+    /**
      * Gets a unique filename (that has not been used before in the output folder) for this report and sets it on the report model.
      */
     public void setUniqueFilename(ReportModel model, String baseFilename, String extension)

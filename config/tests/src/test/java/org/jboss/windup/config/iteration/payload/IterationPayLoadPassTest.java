@@ -138,22 +138,21 @@ public class IterationPayLoadPassTest
         public Configuration getConfiguration(GraphContext context)
         {
             Configuration configuration = ConfigurationBuilder.begin()
-                        .addRule()
-                        .when(Query.fromType(TestPayloadModel.class).as("list_variable"))
-                        .perform(Iteration
-                                    .over("list_variable").as("single_var")
-                                    .perform(new AbstractIterationOperation<TestPayloadModel>()
-                                    {
-                                        @Override
-                                        public void perform(GraphRewrite event, EvaluationContext context,
-                                                    TestPayloadModel model)
-                                        {
-                                            modelCounter++;
-                                            Assert.assertNotNull(model);
-                                        }
-                                    })
-                                    .endIteration()
-                        );
+            .addRule()
+            .when(Query.fromType(TestPayloadModel.class).as("list_variable"))
+            .perform(Iteration
+                .over("list_variable").as("single_var")
+                .perform(new AbstractIterationOperation<TestPayloadModel>()
+                {
+                    @Override
+                    public void perform(GraphRewrite event, EvaluationContext context, TestPayloadModel model)
+                    {
+                        modelCounter++;
+                        Assert.assertNotNull(model);
+                    }
+                })
+                .endIteration()
+            );
             return configuration;
         }
         // @formatter:on
@@ -172,28 +171,27 @@ public class IterationPayLoadPassTest
         public Configuration getConfiguration(GraphContext context)
         {
             Configuration configuration = ConfigurationBuilder
-                        .begin()
-                        .addRule()
-                        .when(Query.fromType(TestSimple2Model.class).as("do_not_perform")
-                                    .and(Query.fromType(TestPayloadModel.class).as("list_variable")))
-                        .perform(Iteration //first iteration
-                                    .over("list_variable")
-                                    .as("single_var")
-                                    .perform(Iteration.over("do_not_perform") //second iteration
-                                                .perform(new AbstractIterationOperation<TestPayloadModel>("single_var")
-                                                {
-                                                    @Override
-                                                    public void perform(GraphRewrite event, EvaluationContext context,
-                                                                TestPayloadModel model)
-                                                    {
-                                                        //should access the outer iteration, not the inner one
-                                                        modelCounter++;
-                                                        Assert.assertNotNull(model);
-                                                    }
-                                                }).endIteration())
+            .begin()
+            .addRule()
+            .when(Query.fromType(TestSimple2Model.class).as("do_not_perform")
+                .and(Query.fromType(TestPayloadModel.class).as("list_variable")))
+            .perform(Iteration //first iteration
+                .over("list_variable")
+                .as("single_var")
+                .perform(Iteration.over("do_not_perform") //second iteration
+                    .perform(new AbstractIterationOperation<TestPayloadModel>("single_var")
+                    {
+                        @Override
+                        public void perform(GraphRewrite event, EvaluationContext context, TestPayloadModel model)
+                        {
+                            //should access the outer iteration, not the inner one
+                            modelCounter++;
+                            Assert.assertNotNull(model);
+                        }
+                    }).endIteration())
 
-                                    .endIteration()
-                        );
+                .endIteration()
+            );
             return configuration;
         }
         // @formatter:on

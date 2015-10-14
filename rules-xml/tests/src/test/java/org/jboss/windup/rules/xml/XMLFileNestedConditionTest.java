@@ -146,17 +146,17 @@ public class XMLFileNestedConditionTest
             };
 
             return ConfigurationBuilder
-                        .begin()
-                        .addRule()
-                        .when(XmlFile.matchesXpath("/abc:beans")
-                                    .namespace("abc", "http://www.springframework.org/schema/beans").as("first"))
-                        .perform(Classification.as("Spring File")
-                                               .and(
-                                                           Iteration.over("first")
-                                                           .when(XmlFile.from(Iteration.singleVariableIterationName("first")).matchesXpath("//windupv1:file-gate").namespace("windupv1", "http://www.jboss.org/schema/windup"))
-                                                           .perform(addTypeRefToList).endIteration()
-                                                           )
-                                );
+            .begin()
+            .addRule()
+            .when(XmlFile.matchesXpath("/abc:beans")
+                .namespace("abc", "http://www.springframework.org/schema/beans").as("first"))
+            .perform(Classification.as("Spring File")
+                    .and(
+                        Iteration.over("first")
+                        .when(XmlFile.from(Iteration.singleVariableIterationName("first")).matchesXpath("//windupv1:file-gate").namespace("windupv1", "http://www.jboss.org/schema/windup"))
+                        .perform(addTypeRefToList).endIteration()
+                        )
+                    );
         }
         // @formatter:on
 

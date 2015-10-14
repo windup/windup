@@ -31,6 +31,9 @@ class QueryPropertyCriterion implements QueryGremlinCriterion
         case EQUALS:
             pipeline.has(this.propertyName, this.searchValue);
             break;
+        case NOT_EQUALS:
+            pipeline.hasNot(this.propertyName, this.searchValue);
+            break;
         case CONTAINS_TOKEN:
             pipeline.has(this.propertyName, Text.CONTAINS, searchValue);
             break;
@@ -42,6 +45,9 @@ class QueryPropertyCriterion implements QueryGremlinCriterion
             break;
         case DEFINED:
             pipeline.has(this.propertyName);
+            break;
+        case NOT_DEFINED:
+            pipeline.hasNot(this.propertyName);
             break;
         default:
             throw new IllegalArgumentException("Unrecognized property query type: " + searchType);

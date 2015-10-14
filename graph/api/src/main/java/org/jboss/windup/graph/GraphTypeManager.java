@@ -105,13 +105,15 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
         Class<?> typeHoldingTypeField = getTypeRegistry().getTypeHoldingTypeField(kind);
         if (typeHoldingTypeField == null)
             return;
+        String typeFieldName = typeHoldingTypeField.getAnnotation(TypeField.class).value();
+
 
         TypeValue typeValueAnnotation = kind.getAnnotation(TypeValue.class);
         if (typeValueAnnotation == null)
             return;
-
-        String typeFieldName = typeHoldingTypeField.getAnnotation(TypeField.class).value();
         String typeValue = typeValueAnnotation.value();
+        ///String typeValue = getTypeIdentifier(kind);
+
         v.removeProperty(typeFieldName);
 
         for (TitanProperty existingType : v.getProperties(typeFieldName))
@@ -125,6 +127,19 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
         v.addProperty(typeFieldName, typeValue);
         addSuperclassType(kind, element);
     }
+
+    /**
+     * Returns the type identifier for given type - the value in the property discriminating this type.
+     */
+    public static String getTypeIdentifier(Class<? extends VertexFrame> modelInterface)
+    {
+        TypeValue typeValueAnnotation = modelInterface.getAnnotation(TypeValue.class);
+        if (typeValueAnnotation == null)
+            return null;
+
+        return typeValueAnnotation.value();
+    }
+
 
     /**
      * Adds the type value to the field denoting which type the element represents.
