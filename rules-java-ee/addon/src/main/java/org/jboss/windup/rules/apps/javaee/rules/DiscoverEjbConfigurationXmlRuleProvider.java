@@ -15,7 +15,6 @@ import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.Service;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
@@ -80,8 +79,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
     @Override
     public ConditionBuilder when()
     {
-        return Query.fromType(XmlFileModel.class).withProperty(XmlFileModel.ROOT_TAG_NAME, "ejb-jar")
-                    .withProperty(FileModel.FILE_NAME, "ejb-jar.xml");
+        return Query.fromType(XmlFileModel.class).withProperty(XmlFileModel.ROOT_TAG_NAME, "ejb-jar");
     }
 
     public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
@@ -452,7 +450,8 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
             type = StringUtils.trim(type);
             name = StringUtils.trim(name);
 
-            EnvironmentReferenceModel ref = environmentReferenceService.findEnvironmentReference(name, EnvironmentReferenceTagType.MSG_DESTINATION_REF);
+            EnvironmentReferenceModel ref = environmentReferenceService.findEnvironmentReference(name,
+                        EnvironmentReferenceTagType.MSG_DESTINATION_REF);
             if (ref == null)
             {
                 ref = environmentReferenceService.create();
