@@ -591,23 +591,6 @@ spots” when migrating applications. The goal is to provide a high level view i
 </ul>
 </div>
 </dd>
-<dt class="hdlist1">Automation</dt>
-<dd>
-<p>Windup has the ability to automate some of the migration processes.</p>
-<div class="ulist">
-<ul>
-<li>
-<p>Windup is integrated with Forge 2, meaning it can generate projects, libraries, and configuration files.</p>
-</li>
-<li>
-<p>Rules can create Forge inputs and put them into the data graph.</p>
-</li>
-<li>
-<p>During the automation phase, the data graph inputs can be processed to generate a new project.</p>
-</li>
-</ul>
-</div>
-</dd>
 <dt class="hdlist1">Work Estimation</dt>
 <dd>
 <p>Estimates for the <em>level of effort</em> are based on the skills required and the classification of migration work needed. <em>Level of effort</em> is represented as <em>story points</em> in the Windup reports.</p>
@@ -617,9 +600,6 @@ spots” when migrating applications. The goal is to provide a high level view i
 <p>Windup  reports are now targeted for specific audiences.</p>
 <div class="ulist">
 <ul>
-<li>
-<p>IT Management - Applications are ranked by cost of migration.</p>
-</li>
 <li>
 <p>Project Management - Reports detail the type of work and estimation of effort to complete the tasks.</p>
 </li>
@@ -855,14 +835,14 @@ The following subdirectories in the <code>OUTPUT_REPORT_DIRECTORY</code> contain
 <p>If omitted, the report will be generated in a  <strong>INPUT_ARCHIVE_OR_FOLDER.report</strong> folder.</p>
 </li>
 <li>
-<p>If the output directory exists, you will see the following error.</p>
+<p>If the output directory exists, you will be prompted with the following (with a default of N).</p>
 <div class="listingblock">
 <div class="content">
-<pre>***ERROR*** Files exist in /home/username/OUTPUT_REPORT_DIRECTORY, but --overwrite not specified. Aborting!</pre>
+<pre>Overwrite all contents of "/home/username/OUTPUT_REPORT_DIRECTORY" (anything already in the directory will be deleted)? [y,N]</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>You must specify the <code>--overwrite</code> argument to proceed. This forces Windup to delete and recreate the folder.</p>
+<p>However, if you specify the <code>--overwrite</code> argument, Windup will proceed to delete and recreate the folder.</p>
 </div>
 <div class="admonitionblock warning">
 <table>
@@ -1315,7 +1295,7 @@ The estimated Story Points change as new rules are added to Windup. The values h
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Status?</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Whether the rule execute or not</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Whether the rule executed or not</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Result?</p></td>
@@ -1903,7 +1883,7 @@ The estimated Story Points change as new rules are added to Windup. The values h
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2015-10-12 13:09:42 EDT
+Last updated 2015-10-13 21:49:50 EDT
 </div>
 </div>
 </body>
