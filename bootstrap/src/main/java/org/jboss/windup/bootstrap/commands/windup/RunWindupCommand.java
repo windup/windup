@@ -88,12 +88,6 @@ public class RunWindupCommand implements Command, FurnaceDependent
         {
             String argument = arguments.get(i);
             String optionName = getOptionName(argument);
-            if (optionName == null)
-            {
-                System.err.println("WARNING: Unrecognized command-line argument: " + argument);
-                continue;
-            }
-
             ConfigurationOption option = options.get(optionName.toUpperCase());
             if (option == null)
             {
@@ -107,7 +101,9 @@ public class RunWindupCommand implements Command, FurnaceDependent
                 i++;
                 while (i < arguments.size())
                 {
-                    if (getOptionName(arguments.get(i)) != null && options.containsKey(getOptionName(arguments.get(i).toUpperCase())))
+                    final String arg = arguments.get(i);
+                    final String name = getOptionName(arg);
+                    if (name != null)
                     {
                         // this is the next parameter... back up one and break the loop
                         i--;
@@ -123,12 +119,8 @@ public class RunWindupCommand implements Command, FurnaceDependent
                 }
 
                 /*
-                 * This allows us to support specifying a parameter multiple times.
-                 *
-                 * For example:
-                 *
+                 * This allows us to support specifying a parameter multiple times. For example:
                  * `windup --packages foo --packages bar --packages baz`
-                 *
                  * While this is not necessarily the recommended approach, it would be nice for it to work smoothly if
                  * someone does it this way.
                  */
@@ -144,7 +136,6 @@ public class RunWindupCommand implements Command, FurnaceDependent
             else
             {
                 String valueString = arguments.get(++i);
-
                 optionValues.put(option.getName(), convertType(option.getType(), valueString));
             }
         }

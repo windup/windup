@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
+import org.apache.commons.collections.ListUtils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.forge.furnace.Furnace;
@@ -262,12 +263,6 @@ public class Bootstrap
             }
         }
 
-        for (int i = 0; i < arguments.size(); i++)
-        {
-            final String arg = arguments.get(i);
-            if (unknownArgs.contains(arg))
-                arguments.remove(i);
-        }
 
         List<String> windupArguments = new ArrayList<>(unknownArgs);
         if (!windupArguments.isEmpty())
@@ -279,7 +274,7 @@ public class Bootstrap
         return commands;
     }
 
-    
+
     private boolean executePhase(CommandPhase phase, CopyOnWriteArrayList<Command> commands)
     {
         for (Command command : commands)
