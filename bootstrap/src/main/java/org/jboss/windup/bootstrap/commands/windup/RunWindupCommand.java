@@ -2,7 +2,6 @@ package org.jboss.windup.bootstrap.commands.windup;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,13 +24,13 @@ import org.jboss.windup.bootstrap.commands.CommandResult;
 import org.jboss.windup.bootstrap.commands.FurnaceDependent;
 import org.jboss.windup.config.ConfigurationOption;
 import org.jboss.windup.config.InputType;
+import org.jboss.windup.config.KeepWorkDirsOption;
 import org.jboss.windup.config.ValidationResult;
 import org.jboss.windup.config.metadata.RuleProviderRegistryCache;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.WindupProgressMonitor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.exec.configuration.options.InputPathOption;
-import org.jboss.windup.config.KeepWorkDirsOption;
 import org.jboss.windup.exec.configuration.options.OutputPathOption;
 import org.jboss.windup.exec.configuration.options.OverwriteOption;
 import org.jboss.windup.exec.configuration.options.TargetOption;
@@ -46,7 +45,6 @@ public class RunWindupCommand implements Command, FurnaceDependent
     private static final Logger log = Logging.get(RunWindupCommand.class);
 
     private static final String GRAPH_DATA_SUBDIR = "graph";
-
 
     private Furnace furnace;
     private final List<String> arguments;

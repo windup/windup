@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.logging.Logger;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -153,16 +154,48 @@ public class PathUtil
      * Converts a path to a class file (like "foo/bar/My.class" or "foo\\bar\\My.class") to a fully qualified class name
      * (like "foo.bar.My").
      */
-    public static String classFilePathToClassname(String classFilePath)
+    public static String classFilePathToClassname(String relativePath)
     {
-        if (classFilePath == null)
+        if (relativePath == null)
             return null;
 
-        final int pos = classFilePath.lastIndexOf(".class");
-        if (pos < 0)
-            throw new IllegalArgumentException("Not a .class file path: " + classFilePath);
+        final int pos = relativePath.lastIndexOf(".class");
+        if (pos < 0 && relativePath.lastIndexOf(".java") < 0)
+            throw new IllegalArgumentException("Not a .class/.java file path: " + relativePath);
 
-        return classFilePath.substring(0, pos).replace('/', '.').replace('\\', '.');
+        relativePath = FilenameUtils.separatorsToUnix(relativePath);
+
+        if (relativePath.startsWith("/"))
+        {
+            relativePath = relativePath.substring(1);
+        }
+
+        if (relativePath.startsWith("src/main/java/"))
+        {
+            relativePath = relativePath.substring("src/main/java/".length());
+        }
+
+        if (relativePath.startsWith("WEB-INF/classes/"))
+        {
+            relativePath = relativePath.substring("WEB-INF/classes/".length());
+        }
+
+        if (relativePath.startsWith("WEB-INF/classes.jdk15/"))
+        {
+            relativePath = relativePath.substring("WEB-INF/classes.jdk15/".length());
+        }
+
+        if (relativePath.endsWith(".class"))
+        {
+            relativePath = relativePath.substring(0, relativePath.length() - ".class".length());
+        }
+        else if (relativePath.endsWith(".java"))
+        {
+            relativePath = relativePath.substring(0, relativePath.length() - ".java".length());
+        }
+
+        String qualifiedName = relativePath.replace("/", ".");
+        return qualifiedName;
     }
 
     /**
@@ -210,6 +243,15 @@ public class PathUtil
             return true;
 
         return isInSubDirectory(dir, file.getParentFile());
+    }
+
+    /**
+     * Attempts to convert a path name (possibly a path within an archive) to a package name.
+     */
+    public static String pathToPackageName(String relativePath)
+    {
+        String qualifiedName = classFilePathToClassname(relativePath);
+        return ClassNameUtil.getPackageName(qualifiedName);
     }
 
     /*

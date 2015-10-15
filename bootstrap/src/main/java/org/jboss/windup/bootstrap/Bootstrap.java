@@ -41,6 +41,7 @@ import org.jboss.windup.bootstrap.commands.addons.AddImmutableAddonDirectoryComm
 import org.jboss.windup.bootstrap.commands.addons.InstallAddonCommand;
 import org.jboss.windup.bootstrap.commands.addons.ListAddonsCommand;
 import org.jboss.windup.bootstrap.commands.addons.RemoveAddonCommand;
+import org.jboss.windup.bootstrap.commands.windup.DiscoverPackagesCommand;
 import org.jboss.windup.bootstrap.commands.windup.DisplayHelpCommand;
 import org.jboss.windup.bootstrap.commands.windup.DisplayVersionCommand;
 import org.jboss.windup.bootstrap.commands.windup.GenerateCompletionDataCommand;
@@ -245,6 +246,11 @@ public class Bootstrap
             else if ("--generateCompletionData".equals(arg))
             {
                 commands.add(new GenerateCompletionDataCommand(true));
+            }
+            else if ("--discoverPackages".equals(arg))
+            {
+                unknownArgs.add(arg);
+                commands.add(new DiscoverPackagesCommand(unknownArgs));
             }
             else if (arg.startsWith("--updateRules"))
             {
