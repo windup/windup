@@ -43,6 +43,24 @@
         </p:pool>
 	</#if>
 </#macro>
+<#macro processTxTimeout bean>
+	<#if bean.txTimeouts??>
+    	<#list bean.txTimeouts?keys as txMethodPattern>
+    		<container-transaction>
+	            <method>
+	                <ejb-name>${bean.beanName}</ejb-name>
+	                <method-name>${txMethodPattern}</method-name>
+	                <method-intf>Local</method-intf>
+	            </method>
+	            <tx:trans-timeout>
+	                <tx:timeout>${bean.txTimeouts[txMethodPattern]}</tx:timeout>
+	                <tx:unit>Seconds</tx:unit>
+	            </tx:trans-timeout>
+	        </container-transaction>
+		</#list> 
+ 	</#if>
+</#macro>
+
 <jboss:ejb-jar xmlns:jboss="http://www.jboss.com/xml/ns/javaee"
                xmlns="http://java.sun.com/xml/ns/javaee"
                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
