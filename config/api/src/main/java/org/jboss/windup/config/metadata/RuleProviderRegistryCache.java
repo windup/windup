@@ -100,12 +100,7 @@ public class RuleProviderRegistryCache
             {
                 try (GraphContext graphContext = graphContextFactory.create())
                 {
-                    WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(graphContext);
-                    FileModel windupRulesPath = new FileService(graphContext).createByFilePath(PathUtil.getWindupRulesDir().toString());
-                    configurationModel.addUserRulesPath(windupRulesPath);
-
-                    this.cachedRegistry = ruleLoader.loadConfiguration(graphContext, null);
-                    this.cacheRefreshTime = System.currentTimeMillis();
+                    getRuleProviderRegistry(graphContext);
                     graphContext.clear();
                 }
             }
@@ -115,6 +110,29 @@ public class RuleProviderRegistryCache
             }
             return cachedRegistry;
         }
+    }
+
+    /**
+     * Load the registry using the given {@link GraphContext}.
+     */
+    public RuleProviderRegistry getRuleProviderRegistry(GraphContext graphContext)
+    {
+        WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(graphContext);
+        FileModel windupRulesPath = new FileService(graphContext).createByFilePath(PathUtil.getWindupRulesDir().toString());
+
+        boolean pathAlreadyAdded = false;
+        for (FileModel existingRulePath : configurationModel.getUserRulesPaths())
+        {
+            if (existingRulePath.equals(windupRulesPath))
+                pathAlreadyAdded = true;
+        }
+
+        if (!pathAlreadyAdded)
+            configurationModel.addUserRulesPath(windupRulesPath);
+
+        this.cachedRegistry = ruleLoader.loadConfiguration(graphContext, null);
+        this.cacheRefreshTime = System.currentTimeMillis();
+        return this.cachedRegistry;
     }
 
     private boolean cacheValid()
