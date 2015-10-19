@@ -41,6 +41,11 @@ public interface QueryBuilderWith extends ConditionBuilder, QueryBuilderAs
                 Object searchValue);
 
     /**
+     * Narrow the query to {@link WindupVertexFrame} instances that satisfy the given property comparison.
+     */
+    QueryBuilderWith withoutProperty(String property);
+
+    /**
      * Narrow the query with the given {@link Predicate}
      */
     <FRAMETYPE extends WindupVertexFrame> QueryBuilderAs filteredBy(Predicate<FRAMETYPE> predicate);

@@ -190,6 +190,13 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
         return this;
     }
 
+    @Override
+    public QueryBuilderWith withoutProperty(String property)
+    {
+        pipelineCriteria.add(new QueryPropertyCriterion(property, QueryPropertyComparisonType.NOT_DEFINED, null));
+        return this;
+    }
+
     private static FramesSelector createInitialFramesSelector(final Query query)
     {
         return new FramesSelector()
