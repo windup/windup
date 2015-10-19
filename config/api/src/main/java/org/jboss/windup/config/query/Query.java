@@ -117,17 +117,17 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
     /**
      * Begin this {@link Query} with results of a prior {@link Query}, read from the variable with the given name.
      */
-    public static QueryBuilderFrom from(final String name)
+    public static QueryBuilderFrom from(final String sourceVarName)
     {
         final Query query = new Query();
-        query.setInputVariablesName(name);
+        query.setInputVariablesName(sourceVarName);
         return query;
     }
 
     @Override
-    public ConditionBuilder as(String name)
+    public ConditionBuilder as(String outputVarName)
     {
-        outputVar = name;
+        outputVar = outputVarName;
         return this;
     }
 
@@ -304,7 +304,7 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
         builder.append("Query");
         if (searchType != null)
         {
-            builder.append(".find(").append(searchType.getName()).append(")");
+            builder.append(".fromType(").append(searchType.getName()).append(")");
         }
 
         if (!pipelineCriteria.isEmpty())
