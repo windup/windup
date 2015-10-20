@@ -28,6 +28,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
+ * @author Ondrej Zizka
  */
 public class ClassFilePreDecompilationScan extends AbstractIterationOperation<JavaClassFileModel>
 {
@@ -94,53 +95,62 @@ public class ClassFilePreDecompilationScan extends AbstractIterationOperation<Ja
         }
     }
 
+
+    private void filterClassesToDecompile(GraphRewrite event, EvaluationContext context, JavaClassFileModel fileModel)
+    {
+        try (InputStream is = fileModel.asInputStream())
+        {
+            WindupJavaConfigurationService configurationService = new WindupJavaConfigurationService(event.getGraphContext());
+            if (!configurationService.shouldScanFile(fileModel.getFilePath()))
+            {
+                fileModel.asVertex().setProperty(JavaClassFileModel.SKIP_DECOMPILATION, true);
+                return;
+            }
+
+            // keep inner classes (we may need them for decompilation purposes)
+            if (fileModel.getFileName().contains("$"))
+                return;
+
+            DependencyVisitor dependencyVisitor = new DependencyVisitor();
+            ClassReader classReader = new ClassReader(is);
+            classReader.accept(dependencyVisitor, 0);
+
+            // If we should ignore any of the contained classes, skip decompilation of the whole file.
+            for (String typeReference : dependencyVisitor.classes)
+            {
+                if (shouldIgnore(typeReference)) {
+                    fileModel.asVertex().setProperty(JavaClassFileModel.SKIP_DECOMPILATION, true);
+                    break;
+                }
+            }
+        }
+        catch (IOException|IllegalArgumentException e)
+        {
+            final String message = "ASM was unable to parse class file '" + fileModel.getFilePath() + "':\n\t" + e.getMessage();
+            LOG.log(Level.WARNING, message, e);
+            ClassificationService classificationService = new ClassificationService(event.getGraphContext());
+            classificationService.attachClassification(context, fileModel, JavaClassFileModel.UNPARSEABLE_CLASS_CLASSIFICATION,
+                        JavaClassFileModel.UNPARSEABLE_CLASS_DESCRIPTION);
+            fileModel.setParseError(message);
+        }
+    }
+
+
     @Override
     public void perform(GraphRewrite event, EvaluationContext context, JavaClassFileModel fileModel)
     {
-        ExecutionStatistics.get().begin("ClassFilePreDecompilationScan.perform()");
+        ExecutionStatistics.get().begin(PERF_ID);
         try
         {
-            try (InputStream is = fileModel.asInputStream())
-            {
-                addClassFileMetadata(event, context, fileModel);
-                WindupJavaConfigurationService configurationService = new WindupJavaConfigurationService(event.getGraphContext());
-                if (!configurationService.shouldScanFile(fileModel.getFilePath()))
-                {
-                    fileModel.asVertex().setProperty(JavaClassFileModel.SKIP_DECOMPILATION, true);
-                    return;
-                }
-
-                // keep inner classes (we may need them for decompilation purposes)
-                if (fileModel.getFileName().contains("$"))
-                    return;
-
-                DependencyVisitor dependencyVisitor = new DependencyVisitor();
-                ClassReader classReader = new ClassReader(is);
-
-                classReader.accept(dependencyVisitor, 0);
-                for (String typeReference : dependencyVisitor.classes)
-                {
-                    if (shouldIgnore(typeReference)) {
-                        fileModel.asVertex().setProperty(JavaClassFileModel.SKIP_DECOMPILATION, true);
-                    }
-                }
-
-
-            }
-            catch (IOException e)
-            {
-                final String message = "ASM was unable to parse class file '" + fileModel.getFilePath() + "':\n\t" + e.getMessage();
-                LOG.log(Level.WARNING, message, e);
-                ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-                classificationService.attachClassification(context, fileModel, JavaClassFileModel.UNPARSEABLE_CLASS_CLASSIFICATION,
-                            JavaClassFileModel.UNPARSEABLE_CLASS_DESCRIPTION);
-                fileModel.setParseError(message);
+            addClassFileMetadata(event, context, fileModel);
+            if (fileModel.getParseError() != null)
                 return;
-            }
+
+            filterClassesToDecompile(event, context, fileModel);
         }
         finally
         {
-            ExecutionStatistics.get().end("ClassFilePreDecompilationScan.perform()");
+            ExecutionStatistics.get().end(PERF_ID);
         }
     }
 
