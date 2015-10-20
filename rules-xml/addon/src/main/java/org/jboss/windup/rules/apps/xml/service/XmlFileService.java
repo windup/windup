@@ -18,7 +18,7 @@ import org.xml.sax.SAXException;
 
 /**
  * Manages creating, querying, and deleting XmlFileModels.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public class XmlFileService extends GraphService<XmlFileModel>
@@ -34,7 +34,7 @@ public class XmlFileService extends GraphService<XmlFileModel>
      * Loads and parses the provided XML file. This will quietly fail (not throwing an {@link Exception}) and return
      * null if it is unable to parse the provided {@link XmlFileModel}. A {@link ClassificationModel} will be created to
      * indicate that this file failed to parse.
-     * 
+     *
      * @return Returns either the parsed {@link Document} or null if the {@link Document} could not be parsed
      */
     public Document loadDocumentQuiet(EvaluationContext context, XmlFileModel model)
@@ -64,19 +64,21 @@ public class XmlFileService extends GraphService<XmlFileModel>
             {
                 XMLDocumentCache.cacheParseFailure(model);
                 document = null;
-                LOG.log(Level.WARNING,
-                            "Failed to parse xml entity: " + model.getFilePath() + ", due to: " + e.getMessage());
+                final String message = "Failed to parse xml entity: " + model.getFilePath() + ", due to: " + e.getMessage();
+                LOG.log(Level.WARNING, message);
                 classificationService.attachClassification(context, model, XmlFileModel.UNPARSEABLE_XML_CLASSIFICATION,
                             XmlFileModel.UNPARSEABLE_XML_DESCRIPTION);
+                model.setParseError(message);
             }
             catch (IOException e)
             {
                 XMLDocumentCache.cacheParseFailure(model);
                 document = null;
-                LOG.log(Level.WARNING,
-                            "Failed to parse xml entity: " + model.getFilePath() + ", due to: " + e.getMessage());
+                final String message = "Failed to parse xml entity: " + model.getFilePath() + ", due to: " + e.getMessage();
+                LOG.log(Level.WARNING, message);
                 classificationService.attachClassification(context, model, XmlFileModel.UNPARSEABLE_XML_CLASSIFICATION,
                             XmlFileModel.UNPARSEABLE_XML_DESCRIPTION);
+                model.setParseError(message);
             }
         }
         else

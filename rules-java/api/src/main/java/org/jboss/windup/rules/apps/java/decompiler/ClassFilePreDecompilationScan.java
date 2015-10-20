@@ -84,12 +84,12 @@ public class ClassFilePreDecompilationScan extends AbstractIterationOperation<Ja
         }
         catch (Exception e)
         {
-            LOG.log(Level.WARNING,
-                        "BCEL was unable to parse class file: " + javaClassFileModel.getFilePath() + " due to: " + e.getMessage(),
-                        e);
+            final String message = "BCEL was unable to parse class file '" + javaClassFileModel.getFilePath() + "':\n\t" + e.getMessage();
+            LOG.log(Level.WARNING, message, e);
             ClassificationService classificationService = new ClassificationService(event.getGraphContext());
             classificationService.attachClassification(context, javaClassFileModel, JavaClassFileModel.UNPARSEABLE_CLASS_CLASSIFICATION,
                         JavaClassFileModel.UNPARSEABLE_CLASS_DESCRIPTION);
+            javaClassFileModel.setParseError(message);
             javaClassFileModel.setSkipDecompilation(true);
         }
     }
@@ -129,12 +129,12 @@ public class ClassFilePreDecompilationScan extends AbstractIterationOperation<Ja
             }
             catch (IOException e)
             {
-                LOG.log(Level.WARNING,
-                            "ASM was unable to parse class file: " + fileModel.getFilePath() + " due to: " + e.getMessage(),
-                            e);
+                final String message = "ASM was unable to parse class file '" + fileModel.getFilePath() + "':\n\t" + e.getMessage();
+                LOG.log(Level.WARNING, message, e);
                 ClassificationService classificationService = new ClassificationService(event.getGraphContext());
                 classificationService.attachClassification(context, fileModel, JavaClassFileModel.UNPARSEABLE_CLASS_CLASSIFICATION,
                             JavaClassFileModel.UNPARSEABLE_CLASS_DESCRIPTION);
+                fileModel.setParseError(message);
                 return;
             }
         }
@@ -156,5 +156,9 @@ public class ClassFilePreDecompilationScan extends AbstractIterationOperation<Ja
     }
 
 
-
+    @Override
+    public String toString()
+    {
+        return ClassFilePreDecompilationScan.class.getSimpleName();
+    }
 }

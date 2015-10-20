@@ -287,7 +287,7 @@ public class Iteration extends DefaultOperationBuilder
             }
             catch (Exception ex)
             {
-                throw new WindupException("Failed when iterating " + frame.toPrettyString() + ": \n\t" + ex.getMessage(), ex);
+                throw new WindupException("Failed when iterating " + frame.toPrettyString() + ":\n\t" + ex.getMessage(), ex);
             }
         }
         finally

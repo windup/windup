@@ -12,6 +12,7 @@ import org.jboss.windup.util.ExecutionStatistics;
 
 import freemarker.ext.beans.StringModel;
 import freemarker.template.TemplateModelException;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * A template pattern: An abstract class implementing a template method exec for multiple path generators.
