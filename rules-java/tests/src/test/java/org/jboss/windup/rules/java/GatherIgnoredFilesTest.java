@@ -82,7 +82,7 @@ public class GatherIgnoredFilesTest
             WindupConfiguration windupConfiguration = new WindupConfiguration()
                         .setRuleProviderFilter(predicate)
                         .setGraphContext(context);
-            windupConfiguration.setInputPath(Paths.get(inputPath.getFilePath()));
+            windupConfiguration.addInputPath(Paths.get(inputPath.getFilePath()));
             windupConfiguration.setOutputDirectory(outputPath);
             processor.execute(windupConfiguration);
             WindupJavaConfigurationService javaCfg = new WindupJavaConfigurationService(context);

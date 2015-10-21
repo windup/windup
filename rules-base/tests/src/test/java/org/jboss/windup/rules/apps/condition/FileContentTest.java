@@ -101,7 +101,7 @@ public class FileContentTest
             WindupConfiguration windupConfiguration = new WindupConfiguration()
                         .setRuleProviderFilter(predicate)
                         .setGraphContext(context);
-            windupConfiguration.setInputPath(inputPath);
+            windupConfiguration.addInputPath(inputPath);
             windupConfiguration.setOutputDirectory(outputPath);
             windupConfiguration.setOptionValue(SourceModeOption.NAME, true);
             processor.execute(windupConfiguration);

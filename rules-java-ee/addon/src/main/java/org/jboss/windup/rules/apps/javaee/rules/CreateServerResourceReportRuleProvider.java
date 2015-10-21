@@ -41,8 +41,6 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  */
 public class CreateServerResourceRuleProvider extends AbstractRuleProvider
 {
-    private static final Logger LOG = Logging.get(CreateServerResourceRuleProvider.class);
-
     public static final String TEMPLATE_JPA_REPORT = "/reports/templates/server.ftl";
 
     public CreateServerResourceRuleProvider()
@@ -54,8 +52,6 @@ public class CreateServerResourceRuleProvider extends AbstractRuleProvider
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        ConditionBuilder resourceModelsFound = Query.fromType(JNDIResourceModel.class).or(Query.fromType(ThreadPoolModel.class));
-
         GraphOperation addReport = new GraphOperation()
         {
             @Override
@@ -63,52 +59,45 @@ public class CreateServerResourceRuleProvider extends AbstractRuleProvider
             {
                 WindupConfigurationModel windupConfiguration = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
 
-                ProjectModel projectModel = windupConfiguration.getInputPath().getProjectModel();
-                if (projectModel == null)
+                for (FileModel inputPath : windupConfiguration.getInputPaths())
                 {
-                    throw new WindupException("Error, no project found in: " + windupConfiguration.getInputPath().getFilePath());
+                    ProjectModel projectModel = inputPath.getProjectModel();
+                    if (projectModel == null)
+                    {
+                        throw new WindupException("Error, no project found in: " + inputPath.getFilePath());
+                    }
+                    createServerResourcesReport(event.getGraphContext(), projectModel);
                 }
-                createJNDIReport(event.getGraphContext(), projectModel);
             }
 
             @Override
             public String toString()
             {
-                return "CreateJPAReport";
+                return "CreateServerResourcesReport";
             }
         };
 
         return ConfigurationBuilder.begin()
                     .addRule()
-                    .when(resourceModelsFound)
                     .perform(addReport);
     }
 
-    private void createJNDIReport(GraphContext context, ProjectModel projectModel)
+    private void createServerResourcesReport(GraphContext context, ProjectModel projectModel)
     {
-        ApplicationReportService applicationReportService = new ApplicationReportService(context);
-        ApplicationReportModel applicationReportModel = applicationReportService.create();
-        applicationReportModel.setReportPriority(400);
-        applicationReportModel.setDisplayInApplicationReportIndex(true);
-        applicationReportModel.setReportName("Server Resources");
-        applicationReportModel.setReportIconClass("glyphicon server-resource-nav-logo");
-        applicationReportModel.setProjectModel(projectModel);
-        applicationReportModel.setTemplatePath(TEMPLATE_JPA_REPORT);
-        applicationReportModel.setTemplateType(TemplateType.FREEMARKER);
-
-        DataSourceService datasourceService = new DataSourceService(context);
         JNDIResourceService jndiResourceService = new JNDIResourceService(context);
         GraphService<ThreadPoolModel> threadPoolService = new GraphService<>(context, ThreadPoolModel.class);
-        GraphService<WindupVertexListModel> listService = new GraphService<>(context, WindupVertexListModel.class);
 
-        WindupVertexListModel datasourceList = listService.create();
-        WindupVertexListModel jmsList = listService.create();
-        WindupVertexListModel jmsConnectionFactoryList = listService.create();
-        WindupVertexListModel otherJndiList = listService.create();
-        WindupVertexListModel threadPoolList = listService.create();
+        List<DataSourceModel> datasourceList = new ArrayList<>();
+        List<JmsDestinationModel> jmsList = new ArrayList<>();
+        List<JmsConnectionFactoryModel> jmsConnectionFactoryList = new ArrayList<>();
+        List<JNDIResourceModel> otherJndiList = new ArrayList<>();
+        List<ThreadPoolModel> threadPoolList = new ArrayList<>();
 
         for (JNDIResourceModel jndi : jndiResourceService.findAll())
         {
+            if (!jndi.isAssociatedWithApplication(projectModel))
+                continue;
+
             if (jndi instanceof DataSourceModel)
             {
                 datasourceList.addItem(jndi);
@@ -127,16 +116,34 @@ public class CreateServerResourceRuleProvider extends AbstractRuleProvider
             }
         }
 
-        for(ThreadPoolModel tp : threadPoolService.findAll()) {
-            threadPoolList.addItem(tp);
+        for (ThreadPoolModel tp : threadPoolService.findAll())
+        {
+            if (tp.getApplication().equals(projectModel))
+                threadPoolList.add(tp);
         }
 
+        if (datasourceList.isEmpty() && jmsList.isEmpty() && jmsConnectionFactoryList.isEmpty() && otherJndiList.isEmpty()
+                    && threadPoolList.isEmpty())
+            return;
+
+        GraphService<WindupVertexListModel> listService = new GraphService<>(context, WindupVertexListModel.class);
+
+        ApplicationReportService applicationReportService = new ApplicationReportService(context);
+        ApplicationReportModel applicationReportModel = applicationReportService.create();
+        applicationReportModel.setReportPriority(400);
+        applicationReportModel.setDisplayInApplicationReportIndex(true);
+        applicationReportModel.setReportName("Server Resources");
+        applicationReportModel.setReportIconClass("glyphicon server-resource-nav-logo");
+        applicationReportModel.setProjectModel(projectModel);
+        applicationReportModel.setTemplatePath(TEMPLATE_JPA_REPORT);
+        applicationReportModel.setTemplateType(TemplateType.FREEMARKER);
+
         Map<String, WindupVertexFrame> additionalData = new HashMap<>(2);
-        additionalData.put("datasources", datasourceList);
-        additionalData.put("jmsDestinations", jmsList);
-        additionalData.put("jmsConnectionFactories", jmsConnectionFactoryList);
-        additionalData.put("otherResources", otherJndiList);
-        additionalData.put("threadPools", threadPoolList);
+        additionalData.put("datasources", listService.create().addAll(datasourceList));
+        additionalData.put("jmsDestinations", listService.create().addAll(jmsList));
+        additionalData.put("jmsConnectionFactories", listService.create().addAll(jmsConnectionFactoryList));
+        additionalData.put("otherResources", listService.create().addAll(otherJndiList));
+        additionalData.put("threadPools", listService.create().addAll(threadPoolList));
         applicationReportModel.setRelatedResource(additionalData);
 
         // Set the filename for the report

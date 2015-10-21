@@ -129,7 +129,7 @@ public class JavaIgnoreRegexesTest
                 WindupConfiguration configuration = new WindupConfiguration()
                             .setGraphContext(context)
                             .setRuleProviderFilter(predicate)
-                            .setInputPath(Paths.get(inputPath))
+                            .addInputPath(Paths.get(inputPath))
                             .setOutputDirectory(outputPath)
                             .setOptionValue(ScanPackagesOption.NAME, Collections.singletonList(""))
                             .setOptionValue(SourceModeOption.NAME, true);

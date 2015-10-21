@@ -83,8 +83,8 @@ public class ResolveWeblogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
         technologyTagService.addTagToFileModel(payload, "Weblogic EJB XML", TechnologyTagLevel.IMPORTANT);
 
         Document doc = xmlFileService.loadDocumentQuiet(context, payload);
-        
-        //mark as vendor extension; create reference to ejb-jar.xml
+
+        // mark as vendor extension; create reference to ejb-jar.xml
         vendorSpecificationService.associateAsVendorExtension(payload, "ejb-jar.xml");
 
         for (Element resourceRef : $(doc).find("resource-description").get())
@@ -94,7 +94,7 @@ public class ResolveWeblogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
 
             if (StringUtils.isNotBlank(jndiLocation) && StringUtils.isNotBlank(resourceName))
             {
-                JNDIResourceModel resource = jndiResourceService.createUnique(jndiLocation);
+                JNDIResourceModel resource = jndiResourceService.createUnique(payload.getApplication(), jndiLocation);
                 LOG.info("JNDI Name: " + jndiLocation + " to Resource: " + resourceName);
                 // now, look up the resource which is resolved by DiscoverEjbConfigurationXmlRuleProvider
                 for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceName))
@@ -112,7 +112,7 @@ public class ResolveWeblogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
 
             if (StringUtils.isNotBlank(jndiLocation) && StringUtils.isNotBlank(resourceName))
             {
-                JNDIResourceModel resource = jndiResourceService.createUnique(jndiLocation);
+                JNDIResourceModel resource = jndiResourceService.createUnique(payload.getApplication(), jndiLocation);
                 LOG.info("JNDI Name: " + jndiLocation + " to Resource: " + resourceName);
                 // now, look up the resource which is resolved by DiscoverEjbConfigurationXmlRuleProvider
                 for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceName))
@@ -136,11 +136,11 @@ public class ResolveWeblogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
             String jndiLocation = $(enterpriseBeanTag).child("jndi-name").text();
             String ejbName = $(enterpriseBeanTag).child("ejb-name").text();
 
-            
-            //resolve cluster values
+            // resolve cluster values
             String sessionClustered = $(enterpriseBeanTag).find("stateless-bean-is-clusterable").text();
             sessionClustered = StringUtils.trim(sessionClustered);
-            if(StringUtils.isBlank(sessionClustered)) {
+            if (StringUtils.isBlank(sessionClustered))
+            {
                 // not stateless or not set.
                 sessionClustered = $(enterpriseBeanTag).find("home-is-clusterable").text();
                 sessionClustered = StringUtils.trim(sessionClustered);
@@ -153,30 +153,38 @@ public class ResolveWeblogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
                 String maxSize = $(poolDescriptor).child("max-beans-in-free-pool").text();
                 String minSize = $(poolDescriptor).child("initial-beans-in-free-pool").text();
                 threadPoolModel = threadPoolService.create();
-                threadPoolModel.setPoolName(ejbName+"-ThreadPool");
-                
-                if(StringUtils.isNotBlank(maxSize)) {
-                    try {
+                threadPoolModel.setApplication(payload.getApplication());
+                threadPoolModel.setPoolName(ejbName + "-ThreadPool");
+
+                if (StringUtils.isNotBlank(maxSize))
+                {
+                    try
+                    {
                         threadPoolModel.setMaxPoolSize(Integer.parseInt(maxSize));
                     }
-                    catch(Exception e) {
-                        LOG.warning("Unable to parse max pool size: "+maxSize);
+                    catch (Exception e)
+                    {
+                        LOG.warning("Unable to parse max pool size: " + maxSize);
                     }
                 }
-                
-                if(StringUtils.isNotBlank(minSize)) {
-                    try {
+
+                if (StringUtils.isNotBlank(minSize))
+                {
+                    try
+                    {
                         threadPoolModel.setMinPoolSize(Integer.parseInt(minSize));
                     }
-                    catch(Exception e) {
-                        LOG.warning("Unable to parse min pool size: "+minSize);
+                    catch (Exception e)
+                    {
+                        LOG.warning("Unable to parse min pool size: " + minSize);
                     }
                 }
                 break;
             }
-            //set thread pool
-            if(threadPoolModel != null) {
-                for (EjbSessionBeanModel sessionBean : ejbSessionBeanService.findAllByProperty(EjbSessionBeanModel.EJB_BEAN_NAME, ejbName)) 
+            // set thread pool
+            if (threadPoolModel != null)
+            {
+                for (EjbSessionBeanModel sessionBean : ejbSessionBeanService.findAllByProperty(EjbSessionBeanModel.EJB_BEAN_NAME, ejbName))
                 {
                     sessionBean.setThreadPool(threadPoolModel);
                 }
@@ -186,12 +194,11 @@ public class ResolveWeblogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
                 }
             }
 
-
             Map<String, Integer> txTimeouts = parseTxTimeout(enterpriseBeanTag, ejbName);
 
             if (StringUtils.isNotBlank(jndiLocation) && StringUtils.isNotBlank(ejbName))
             {
-                JNDIResourceModel jndiRef = jndiResourceService.createUnique(jndiLocation);
+                JNDIResourceModel jndiRef = jndiResourceService.createUnique(payload.getApplication(), jndiLocation);
                 // look up the EJB by the name, and associate to JNDI.
                 for (EjbSessionBeanModel sessionBean : ejbSessionBeanService.findAllByProperty(EjbSessionBeanModel.EJB_BEAN_NAME, ejbName))
                 {
@@ -203,7 +210,7 @@ public class ResolveWeblogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
             if (StringUtils.isNotBlank(localJndiLocation) && StringUtils.isNotBlank(ejbName))
             {
                 // look up the EJB by the name, and associate to JNDI.
-                JNDIResourceModel localJndiRef = jndiResourceService.createUnique(localJndiLocation);
+                JNDIResourceModel localJndiRef = jndiResourceService.createUnique(payload.getApplication(), localJndiLocation);
 
                 for (EjbSessionBeanModel sessionBean : ejbSessionBeanService.findAllByProperty(EjbSessionBeanModel.EJB_BEAN_NAME, ejbName))
                 {
@@ -228,7 +235,7 @@ public class ResolveWeblogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
                     String destination = $(messageDrivenDescriptor).child("destination-jndi-name").text();
                     if (StringUtils.isNotBlank(destination))
                     {
-                        JmsDestinationModel jndiRef = jmsDestinationService.createUnique(destination);
+                        JmsDestinationModel jndiRef = jmsDestinationService.createUnique(payload.getApplication(), destination);
                         mdb.setDestination(jndiRef);
                     }
 
@@ -238,9 +245,9 @@ public class ResolveWeblogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
                     }
                 }
             }
-            
-            //sets the clustered value to the session bean.
-            if(StringUtils.equalsIgnoreCase("true", sessionClustered))
+
+            // sets the clustered value to the session bean.
+            if (StringUtils.equalsIgnoreCase("true", sessionClustered))
             {
                 for (EjbSessionBeanModel sessionBean : ejbSessionBeanService.findAllByProperty(EjbSessionBeanModel.EJB_BEAN_NAME, ejbName))
                 {

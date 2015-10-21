@@ -94,7 +94,7 @@ public class DiscoverJaxWSAnnotationsRuleProvider extends AbstractRuleProvider
         }
 
         JaxWSWebServiceModelService service = new JaxWSWebServiceModelService(event.getGraphContext());
-        service.getOrCreate(endpointInterface, implementationClass);
+        service.getOrCreate(typeReference.getFile().getApplication(), endpointInterface, implementationClass);
     }
 
     private JavaClassModel getJavaClass(JavaTypeReferenceModel javaTypeReference)

@@ -15,6 +15,7 @@ import org.jboss.windup.graph.model.LinkModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.LinkService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
@@ -61,9 +62,11 @@ public class GenerateJBossWebDescriptorRuleProvider extends AbstractRuleProvider
                             // configuration of current execution
                             WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
 
-                            // reference to input project model
-                            ProjectModel projectModel = configurationModel.getInputPath().getProjectModel();
-                            transformWebXml(context, event.getGraphContext(), projectModel);
+                            for (FileModel inputPath : configurationModel.getInputPaths())
+                            {
+                                ProjectModel projectModel = inputPath.getProjectModel();
+                                transformWebXml(context, event.getGraphContext(), projectModel);
+                            }
                         }
 
                         @Override

@@ -2,8 +2,10 @@ package org.jboss.windup.ui;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -200,7 +202,18 @@ public class WindupCommand implements UICommand
         {
             String key = entry.getKey().getName();
             Object value = getValueForInput(entry.getValue());
-            windupConfiguration.setOptionValue(key, value);
+            if (key.equals(InputPathOption.NAME))
+            {
+                if (value instanceof File)
+                {
+                    value = ((File) value).toPath();
+                }
+                windupConfiguration.setOptionValue(key, new LinkedHashSet<>(Collections.singletonList(value)));
+            }
+            else
+            {
+                windupConfiguration.setOptionValue(key, value);
+            }
         }
 
         windupConfiguration.useDefaultDirectories();

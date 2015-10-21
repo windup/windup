@@ -1,5 +1,17 @@
 package org.jboss.windup.rules.apps.condition;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.apache.commons.io.FileUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -34,13 +46,6 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.param.ParameterStore;
 import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
 
 @RunWith(Arquillian.class)
 public class FileTest
@@ -91,7 +96,7 @@ public class FileTest
             WindupConfiguration windupConfiguration = new WindupConfiguration()
                         .setRuleProviderFilter(predicate)
                         .setGraphContext(context);
-            windupConfiguration.setInputPath(inputPath);
+            windupConfiguration.addInputPath(inputPath);
             windupConfiguration.setOutputDirectory(outputPath);
             processor.execute(windupConfiguration);
 

@@ -29,13 +29,19 @@ public interface WindupConfigurationModel extends WindupVertexFrame
      * The input path to scan
      */
     @Adjacency(label = INPUT_PATH, direction = Direction.OUT)
-    FileModel getInputPath();
+    Iterable<FileModel> getInputPaths();
 
     /**
      * The input path to scan
      */
     @Adjacency(label = INPUT_PATH, direction = Direction.OUT)
-    void setInputPath(FileModel inputPath);
+    void setInputPaths(Iterable<FileModel> inputPaths);
+
+    /**
+     * The input path to scan
+     */
+    @Adjacency(label = INPUT_PATH, direction = Direction.OUT)
+    void addInputPath(FileModel inputPath);
 
     /**
      * The location for user provided rules directories (typically Groovy or XML Rules)

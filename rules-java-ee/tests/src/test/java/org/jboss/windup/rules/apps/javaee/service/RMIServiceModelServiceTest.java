@@ -14,6 +14,8 @@ import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
+import org.jboss.windup.graph.model.ProjectModel;
+import org.jboss.windup.graph.service.ProjectService;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.jboss.windup.rules.apps.javaee.model.RMIServiceModel;
@@ -79,7 +81,8 @@ public class RMIServiceModelServiceTest
 
         Assert.assertFalse(rmiService.findAll().iterator().hasNext());
 
-        RMIServiceModel model = rmiService.getOrCreate(rmiClass);
+        ProjectModel application = new ProjectService(context).create();
+        RMIServiceModel model = rmiService.getOrCreate(application, rmiClass);
         Assert.assertNotNull(model);
 
         Iterable<RMIServiceModel> allModels = rmiService.findAll();
@@ -97,7 +100,8 @@ public class RMIServiceModelServiceTest
 
         Assert.assertEquals(1, Iterables.size(rmiService.findAll()));
 
-        RMIServiceModel model = rmiService.getOrCreate(rmiClass);
+        ProjectModel application = new ProjectService(context).create();
+        RMIServiceModel model = rmiService.getOrCreate(application, rmiClass);
         Assert.assertNotNull(model);
 
         Assert.assertEquals(1, Iterables.size(rmiService.findAll()));

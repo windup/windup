@@ -106,7 +106,7 @@ public class ResolveJBossEjbXmlRuleProvider extends IteratingRuleProvider<XmlFil
 
             if (StringUtils.isNotBlank(jndiLocation) && StringUtils.isNotBlank(resourceRefName))
             {
-                JNDIResourceModel resource = jndiResourceService.createUnique(jndiLocation);
+                JNDIResourceModel resource = jndiResourceService.createUnique(payload.getApplication(), jndiLocation);
                 LOG.info("JNDI Name: " + jndiLocation + " to Resource: " + resourceRefName);
                 // now, look up the resource which is resolved by DiscoverEjbConfigurationXmlRuleProvider
                 for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceRefName))
@@ -130,7 +130,7 @@ public class ResolveJBossEjbXmlRuleProvider extends IteratingRuleProvider<XmlFil
 
             if (StringUtils.isNotBlank(jndiLocation) && StringUtils.isNotBlank(resourceRefName))
             {
-                JNDIResourceModel resource = jndiResourceService.createUnique(jndiLocation);
+                JNDIResourceModel resource = jndiResourceService.createUnique(payload.getApplication(), jndiLocation);
                 LOG.info("JNDI Name: " + jndiLocation + " to Resource: " + resourceRefName);
                 // now, look up the resource which is resolved by DiscoverEjbConfigurationXmlRuleProvider
                 for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceRefName))
@@ -165,7 +165,7 @@ public class ResolveJBossEjbXmlRuleProvider extends IteratingRuleProvider<XmlFil
                 {
                     if (StringUtils.isNotBlank(destination))
                     {
-                        JmsDestinationModel jndiRef = jmsDestinationService.createUnique(destination);
+                        JmsDestinationModel jndiRef = jmsDestinationService.createUnique(payload.getApplication(), destination);
                         mdb.setDestination(jndiRef);
                     }
                 }

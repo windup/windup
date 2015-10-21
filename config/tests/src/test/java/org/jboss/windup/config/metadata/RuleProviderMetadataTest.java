@@ -6,8 +6,8 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.engine.predicates.RuleProviderWithDependenciesPredicate;
@@ -60,7 +60,7 @@ public class RuleProviderMetadataTest
 
             windupConfig.setRuleProviderFilter(
                         new RuleProviderWithDependenciesPredicate(MetadataTestRuleProvider4.class));
-            windupConfig.setInputPath(Paths.get("src/test/resources/empty.war"));
+            windupConfig.addInputPath(Paths.get("src/test/resources/empty.war"));
             windupConfig.setOutputDirectory(Paths.get("target/WindupReport"));
 
             processor.execute(windupConfig);

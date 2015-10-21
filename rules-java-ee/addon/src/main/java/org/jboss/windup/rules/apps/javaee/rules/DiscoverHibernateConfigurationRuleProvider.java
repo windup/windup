@@ -146,7 +146,7 @@ public class DiscoverHibernateConfigurationRuleProvider extends IteratingRulePro
                     dataSourceName = StringUtils.substringAfterLast(dataSourceName, "/");
                 }
 
-                DataSourceModel dataSource = dataSourceService.createUnique(dataSourceName, dataSourceJndiName);
+                DataSourceModel dataSource = dataSourceService.createUnique(xmlFileModel.getApplication(), dataSourceName, dataSourceJndiName);
 
                 if (sessionFactoryProperties.containsKey("hibernate.dialect"))
                 {

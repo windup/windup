@@ -14,6 +14,8 @@ import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
+import org.jboss.windup.graph.model.ProjectModel;
+import org.jboss.windup.graph.service.ProjectService;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.jboss.windup.rules.apps.javaee.model.JaxRSWebServiceModel;
@@ -79,7 +81,8 @@ public class JaxRSWebServiceModelServiceTest
 
         Assert.assertFalse(serviceModelService.findAll().iterator().hasNext());
 
-        JaxRSWebServiceModel model = serviceModelService.getOrCreate(path, implementationClass);
+        ProjectModel application = new ProjectService(context).create();
+        JaxRSWebServiceModel model = serviceModelService.getOrCreate(application, path, implementationClass);
         Assert.assertNotNull(model);
 
         Assert.assertEquals(path, model.getPath());
@@ -100,7 +103,8 @@ public class JaxRSWebServiceModelServiceTest
 
         Assert.assertEquals(1, Iterables.size(serviceModelService.findAll()));
 
-        JaxRSWebServiceModel model = serviceModelService.getOrCreate(path, null);
+        ProjectModel application = new ProjectService(context).create();
+        JaxRSWebServiceModel model = serviceModelService.getOrCreate(application, path, null);
         Assert.assertNotNull(model);
 
         Assert.assertEquals(path, model.getPath());
@@ -121,7 +125,8 @@ public class JaxRSWebServiceModelServiceTest
 
         Assert.assertEquals(1, Iterables.size(serviceModelService.findAll()));
 
-        JaxRSWebServiceModel model = serviceModelService.getOrCreate(path, null);
+        ProjectModel application = new ProjectService(context).create();
+        JaxRSWebServiceModel model = serviceModelService.getOrCreate(application, path, null);
         Assert.assertNotNull(model);
 
         Assert.assertEquals(path, model.getPath());
@@ -142,7 +147,8 @@ public class JaxRSWebServiceModelServiceTest
 
         Assert.assertEquals(1, Iterables.size(serviceModelService.findAll()));
 
-        JaxRSWebServiceModel model = serviceModelService.getOrCreate(path, null);
+        ProjectModel application = new ProjectService(context).create();
+        JaxRSWebServiceModel model = serviceModelService.getOrCreate(application, path, null);
         Assert.assertNotNull(model);
 
         Assert.assertEquals(path, model.getPath());

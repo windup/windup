@@ -10,18 +10,18 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(JNDIReferenceModel.TYPE)
 public interface JNDIReferenceModel extends WindupVertexFrame
 {
-    public static final String TYPE = "JndiReferenceModel";
-    public static final String REF = "jndi";
+    String TYPE = "JndiReferenceModel";
+    String REF = "jndi";
     
     /**
      * Contains the jndi location for this resource.
      */
     @Adjacency(label = REF, direction = Direction.OUT)
-    public JNDIResourceModel getJndiReference();
+    JNDIResourceModel getJndiReference();
 
     /**
      * Contains the jndi location for this resource.
      */
     @Adjacency(label = REF, direction = Direction.OUT)
-    public void setJndiReference(JNDIResourceModel jndiReference);
+    void setJndiReference(JNDIResourceModel jndiReference);
 }

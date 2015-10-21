@@ -134,7 +134,7 @@ public class ExecutionBuilderImpl implements ExecutionBuilder, ExecutionBuilderS
         {
             throw new WindupException("Failed to configure windup due to: " + e.getMessage(), e);
         }
-        windupConfiguration.setInputPath(this.input);
+        windupConfiguration.addInputPath(this.input);
         windupConfiguration.setOutputDirectory(this.output);
         windupConfiguration.setProgressMonitor(this.progressMonitor);
 

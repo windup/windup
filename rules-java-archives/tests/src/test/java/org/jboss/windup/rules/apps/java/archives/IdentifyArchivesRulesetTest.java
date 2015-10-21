@@ -11,8 +11,8 @@ import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.dependencies.Coordinate;
 import org.jboss.forge.addon.dependencies.builder.CoordinateBuilder;
-import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.phase.ArchiveExtractionPhase;
@@ -87,7 +87,7 @@ public class IdentifyArchivesRulesetTest
 
             WindupConfiguration wc = new WindupConfiguration();
             wc.setGraphContext(graphContext);
-            wc.setInputPath(INPUT_PATH);
+            wc.addInputPath(INPUT_PATH);
             wc.setOutputDirectory(OUTPUT_PATH);
             wc.setOptionValue(OverwriteOption.NAME, true);
             wc.setRuleProviderFilter(new NotPredicate(

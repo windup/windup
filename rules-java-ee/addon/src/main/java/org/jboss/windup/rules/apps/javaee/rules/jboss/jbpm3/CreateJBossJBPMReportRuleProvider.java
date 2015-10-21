@@ -13,6 +13,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
@@ -52,10 +53,11 @@ public class CreateJBossJBPMReportRuleProvider extends AbstractRuleProvider
                         {
                             // configuration of current execution
                             WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
-
-                            // reference to input project model
-                            ProjectModel projectModel = configurationModel.getInputPath().getProjectModel();
-                            createJbpmReport(event.getGraphContext(), projectModel);
+                            for (FileModel inputPath : configurationModel.getInputPaths())
+                            {
+                                ProjectModel projectModel = inputPath.getProjectModel();
+                                createJbpmReport(event.getGraphContext(), projectModel);
+                            }
                         }
 
                         @Override

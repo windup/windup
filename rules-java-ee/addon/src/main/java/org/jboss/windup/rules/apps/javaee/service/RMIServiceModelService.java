@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.logging.Logger;
 
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
@@ -28,13 +29,14 @@ public class RMIServiceModelService extends GraphService<RMIServiceModel>
         super(context, RMIServiceModel.class);
     }
 
-    public RMIServiceModel getOrCreate(JavaClassModel rmiInterface)
+    public RMIServiceModel getOrCreate(ProjectModel application, JavaClassModel rmiInterface)
     {
         LOG.info("RMI Interface: " + rmiInterface.getQualifiedName());
         RMIServiceModel rmiServiceModel = findByInterface(rmiInterface);
         if (rmiServiceModel == null)
         {
             rmiServiceModel = create();
+            rmiServiceModel.addApplication(application);
             rmiServiceModel.setInterface(rmiInterface);
 
             Iterator<JavaClassModel> implementations = rmiInterface.getImplementedBy().iterator();
@@ -44,6 +46,11 @@ public class RMIServiceModelService extends GraphService<RMIServiceModel>
                 LOG.info(" -- Implementations: " + implModel.getQualifiedName());
                 rmiServiceModel.setImplementationClass(implModel);
             }
+        }
+        else
+        {
+            if (!rmiServiceModel.isAssociatedWithApplication(application))
+                rmiServiceModel.addApplication(application);
         }
 
         return rmiServiceModel;

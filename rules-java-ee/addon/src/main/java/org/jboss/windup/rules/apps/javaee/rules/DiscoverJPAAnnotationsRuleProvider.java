@@ -125,7 +125,7 @@ public class DiscoverJPAAnnotationsRuleProvider extends AbstractRuleProvider
 
         JPAEntityService jpaService = new JPAEntityService(event.getGraphContext());
         JPAEntityModel jpaEntity = jpaService.create();
-
+        jpaEntity.setApplication(entityTypeReference.getFile().getApplication());
         jpaEntity.setEntityName(ejbName);
         jpaEntity.setJavaClass(ejbClass);
         jpaEntity.setTableName(tableName);

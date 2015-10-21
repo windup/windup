@@ -91,7 +91,7 @@ public class ResolveOrionWebXmlRuleProvider extends IteratingRuleProvider<XmlFil
             String jndiLocation = $(resourceRef).attr("location");
             String resourceName = $(resourceRef).attr("name");
 
-            JNDIResourceModel resource = jndiResourceService.createUnique(jndiLocation);
+            JNDIResourceModel resource = jndiResourceService.createUnique(payload.getApplication(), jndiLocation);
 
             // now, look up the resource
             for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceName))

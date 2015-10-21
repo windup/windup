@@ -13,6 +13,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.report.IgnoredFileRegexModel;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.IgnoredFileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
@@ -50,10 +51,12 @@ public class CreateJavaIgnoredFilesReportRuleProvider extends AbstractRuleProvid
             @Override
             public void perform(GraphRewrite event, EvaluationContext context, WindupJavaConfigurationModel payload)
             {
-                WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(event
-                            .getGraphContext());
-                ProjectModel projectModel = configurationModel.getInputPath().getProjectModel();
-                createIgnoredFilesReport(event.getGraphContext(), payload, projectModel);
+                WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
+                for (FileModel inputPath : configurationModel.getInputPaths())
+                {
+                    ProjectModel projectModel = inputPath.getProjectModel();
+                    createIgnoredFilesReport(event.getGraphContext(), payload, projectModel);
+                }
             }
 
             @Override

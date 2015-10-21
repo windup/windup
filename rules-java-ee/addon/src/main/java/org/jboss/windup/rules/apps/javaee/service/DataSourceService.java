@@ -1,8 +1,10 @@
 package org.jboss.windup.rules.apps.javaee.service;
 
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.javaee.model.DataSourceModel;
+import org.jboss.windup.rules.apps.javaee.model.JNDIResourceModel;
 
 /**
  * Contains methods for querying, updating, and deleting {@link DataSourceModel}
@@ -20,14 +22,19 @@ public class DataSourceService extends GraphService<DataSourceModel>
     /**
      * Create unique; if existing convert an existing {@link DataSourceModel} if one exists.
      */
-    public synchronized DataSourceModel createUnique(String dataSourceName, String jndiName)
+    public synchronized DataSourceModel createUnique(ProjectModel application, String dataSourceName, String jndiName)
     {
-        DataSourceModel dataSource = getUniqueByProperty(DataSourceModel.JNDI_LOCATION, jndiName);
-        if (dataSource == null)
+        JNDIResourceModel jndiResourceModel = new JNDIResourceService(getGraphContext()).createUnique(application, jndiName);
+        final DataSourceModel dataSource;
+        if (jndiResourceModel instanceof DataSourceModel)
         {
-            dataSource = super.create();
+            dataSource = (DataSourceModel) jndiResourceModel;
             dataSource.setName(dataSourceName);
-            dataSource.setJndiLocation(jndiName);
+        }
+        else
+        {
+            dataSource = addTypeToModel(jndiResourceModel);
+            dataSource.setName(dataSourceName);
         }
         return dataSource;
     }

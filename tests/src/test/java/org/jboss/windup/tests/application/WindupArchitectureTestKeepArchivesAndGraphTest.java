@@ -72,7 +72,7 @@ public class WindupArchitectureTestKeepArchivesAndGraphTest extends WindupArchit
         {
             Map<String, Object> keepOption = new HashMap<>();
             keepOption.put(KeepWorkDirsOption.NAME, true);
-            super.runTest(context, path, null, false, Collections.singletonList("filter.out.everything"),
+            super.runTest(context, Collections.singletonList(path), null, false, Collections.singletonList("filter.out.everything"),
                         Collections.singletonList("filter.out.everything"), keepOption);
         }
         // check if archives are still there
