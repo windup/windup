@@ -1,6 +1,7 @@
 package org.jboss.windup.rules.apps.javaee.model;
 
 import org.jboss.windup.graph.Indexed;
+import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 
@@ -18,64 +19,77 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(EjbBeanBaseModel.TYPE)
 public interface EjbBeanBaseModel extends WindupVertexFrame
 {
-    public static final String TYPE = "EjbBeanBaseModel";
+    String TYPE = "EjbBeanBaseModel";
 
-    public static final String EJB_SESSION_TO_ENVIRONMENT_REFERENCE = "ejbToEnvironmentReference";
-    public static final String EJB_IMPLEMENTATION_CLASS = "ejbImplementationClass";
-    public static final String DISPLAY_NAME = "displayName";
-    public static final String EJB_ID = "ejbId";
-    public static final String TRANSACTION_TYPE = "transactionType";
-    public static final String SESSION_TYPE = "sessionType";
-    public static final String EJB_BEAN_NAME = "ejbBeanName";
+    String EJB_SESSION_TO_ENVIRONMENT_REFERENCE = "ejbToEnvironmentReference";
+    String EJB_IMPLEMENTATION_CLASS = "ejbImplementationClass";
+    String DISPLAY_NAME = "displayName";
+    String EJB_ID = "ejbId";
+    String TRANSACTION_TYPE = "transactionType";
+    String SESSION_TYPE = "sessionType";
+    String EJB_BEAN_NAME = "ejbBeanName";
+    String APPLICATION = "application";
+
+    /**
+     * Contains the application in which this EJB was discovered.
+     */
+    @Adjacency(label = APPLICATION, direction = Direction.OUT)
+    ProjectModel getApplication();
+
+    /**
+     * Contains the application in which this EJB was discovered.
+     */
+    @Adjacency(label = APPLICATION, direction = Direction.OUT)
+    void setApplication(ProjectModel projectModel);
 
     /**
      * Contains the bean's display name
      */
     @Property(DISPLAY_NAME)
-    public String getDisplayName();
+    String getDisplayName();
 
     /**
      * Contains the bean's display name
      */
     @Property(DISPLAY_NAME)
-    public void setDisplayName(String displayName);
+    void setDisplayName(String displayName);
 
     /**
      * Contains the bean's ejb id
      */
     @Property(EJB_ID)
-    public String getEjbId();
+    String getEjbId();
 
     /**
      * Contains the bean's ejb id
      */
     @Indexed
     @Property(EJB_ID)
-    public void setEjbId(String id);
+    void setEjbId(String id);
 
     /**
      * Contains the bean's type
      */
     @Property(SESSION_TYPE)
-    public String getSessionType();
+    String getSessionType();
 
     /**
      * Contains the bean's type
      */
     @Property(SESSION_TYPE)
-    public void setSessionType(String sessionType);
+    void setSessionType(String sessionType);
 
     /**
      * Contains the bean's transaction type
      */
     @Property(TRANSACTION_TYPE)
-    public String getTransactionType();
+    String getTransactionType();
 
     /**
      * Contains the bean's transaction type
      */
     @Property(TRANSACTION_TYPE)
-    public void setTransactionType(String transactionType);
+    void setTransactionType(String transactionType);
 
     /**
      * Contains the bean's name
@@ -88,29 +102,29 @@ public interface EjbBeanBaseModel extends WindupVertexFrame
      */
     @Indexed
     @Property(EJB_BEAN_NAME)
-    public void setBeanName(String ejbSessionBeanName);
+    void setBeanName(String ejbSessionBeanName);
 
     /**
      * Contains the bean's implementation class
      */
     @Adjacency(label = EJB_IMPLEMENTATION_CLASS, direction = Direction.OUT)
-    public void setEjbClass(JavaClassModel ejbHome);
+    void setEjbClass(JavaClassModel ejbHome);
 
     /**
      * Contains the bean's implementation class
      */
     @Adjacency(label = EJB_IMPLEMENTATION_CLASS, direction = Direction.OUT)
-    public JavaClassModel getEjbClass();
+    JavaClassModel getEjbClass();
 
     /**
      * Maintains a list of {@link EnvironmentReferenceModel}s associated with this web.xml file
      */
     @Adjacency(label = EJB_SESSION_TO_ENVIRONMENT_REFERENCE, direction = Direction.OUT)
-    public Iterable<EnvironmentReferenceModel> getEnvironmentReferences();
+    Iterable<EnvironmentReferenceModel> getEnvironmentReferences();
 
     /**
      * Maintains a list of {@link EnvironmentReferenceModel}s associated with this web.xml file
      */
     @Adjacency(label = EJB_SESSION_TO_ENVIRONMENT_REFERENCE, direction = Direction.OUT)
-    public void addEnvironmentReference(EnvironmentReferenceModel environmentReference);
+    void addEnvironmentReference(EnvironmentReferenceModel environmentReference);
 }

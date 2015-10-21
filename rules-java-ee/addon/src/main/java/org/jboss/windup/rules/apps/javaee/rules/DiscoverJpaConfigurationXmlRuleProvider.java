@@ -111,6 +111,7 @@ public class DiscoverJpaConfigurationXmlRuleProvider extends IteratingRuleProvid
         for (Element element : $(doc).find("persistence-unit").get())
         {
             JPAPersistenceUnitModel persistenceUnitModel = jpaPersistenceUnitService.create();
+            persistenceUnitModel.setApplication(xmlFileModel.getApplication());
             String persistenceUnitName = $(element).attr("name");
             persistenceUnitModel.setName(persistenceUnitName);
 
@@ -125,7 +126,7 @@ public class DiscoverJpaConfigurationXmlRuleProvider extends IteratingRuleProvid
                     dataSourceName = StringUtils.substringAfterLast(dataSourceName, "/");
                 }
 
-                DataSourceModel dataSource = dataSourceService.createUnique(dataSourceName, dataSourceJndiName);
+                DataSourceModel dataSource = dataSourceService.createUnique(xmlFileModel.getApplication(), dataSourceName, dataSourceJndiName);
                 persistenceUnitModel.addDataSource(dataSource);
             }
 
@@ -138,7 +139,7 @@ public class DiscoverJpaConfigurationXmlRuleProvider extends IteratingRuleProvid
                     dataSourceName = StringUtils.substringAfterLast(dataSourceName, "/");
                 }
 
-                DataSourceModel dataSource = dataSourceService.createUnique(dataSourceName, dataSourceJndiName);
+                DataSourceModel dataSource = dataSourceService.createUnique(xmlFileModel.getApplication(), dataSourceName, dataSourceJndiName);
                 persistenceUnitModel.addDataSource(dataSource);
             }
 
@@ -148,6 +149,7 @@ public class DiscoverJpaConfigurationXmlRuleProvider extends IteratingRuleProvid
                 JavaClassModel javaClz = javaClassService.getOrCreatePhantom(clzName);
 
                 JPAEntityModel entityModel = jpaEntityService.create();
+                entityModel.setApplication(xmlFileModel.getApplication());
                 entityModel.setJavaClass(javaClz);
             }
 

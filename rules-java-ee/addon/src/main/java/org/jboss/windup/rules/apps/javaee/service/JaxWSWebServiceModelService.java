@@ -3,6 +3,7 @@ package org.jboss.windup.rules.apps.javaee.service;
 import java.util.Collections;
 
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
@@ -21,7 +22,7 @@ public class JaxWSWebServiceModelService extends GraphService<JaxWSWebServiceMod
         super(context, JaxWSWebServiceModel.class);
     }
 
-    public JaxWSWebServiceModel getOrCreate(JavaClassModel endpointInterface, JavaClassModel implementationClass)
+    public JaxWSWebServiceModel getOrCreate(ProjectModel application, JavaClassModel endpointInterface, JavaClassModel implementationClass)
     {
         GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(getGraphContext().getGraph());
         pipeline.V().has(WindupVertexFrame.TYPE_PROP, JaxWSWebServiceModel.TYPE);
@@ -36,11 +37,15 @@ public class JaxWSWebServiceModelService extends GraphService<JaxWSWebServiceMod
 
         if (pipeline.hasNext())
         {
-            return frame(pipeline.next());
+            JaxWSWebServiceModel result = frame(pipeline.next());
+            if (!result.isAssociatedWithApplication(application))
+                result.addApplication(application);
+            return result;
         }
         else
         {
             JaxWSWebServiceModel model = create();
+            model.addApplication(application);
             model.setInterface(endpointInterface);
             if (implementationClass != null)
             {

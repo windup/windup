@@ -75,7 +75,7 @@ public class ResolveWeblogicWebXmlRuleProvider extends IteratingRuleProvider<Xml
 
             if (StringUtils.isNotBlank(jndiLocation))
             {
-                JNDIResourceModel resource = jndiResourceService.createUnique(jndiLocation);
+                JNDIResourceModel resource = jndiResourceService.createUnique(payload.getApplication(), jndiLocation);
 
                 LOG.info("JNDI: " + jndiLocation + " Resource: " + resourceName);
                 // now, look up the resource by name, and associate the type which is resolved by DiscoverWebXmlRuleProvider

@@ -89,7 +89,7 @@ public class ClassMetadataTest
 
             processorConfig.setRuleProviderFilter(ruleFilter);
             processorConfig.setGraphContext(context);
-            processorConfig.setInputPath(Paths.get(inputPath));
+            processorConfig.addInputPath(Paths.get(inputPath));
             processorConfig.setOutputDirectory(outputPath);
             processorConfig.setOptionValue(ScanPackagesOption.NAME, Collections.singletonList(""));
 

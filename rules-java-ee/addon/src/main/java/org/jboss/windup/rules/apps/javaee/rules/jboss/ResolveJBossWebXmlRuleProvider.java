@@ -10,6 +10,7 @@ import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
+import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.TechnologyTagService;
@@ -76,34 +77,35 @@ public class ResolveJBossWebXmlRuleProvider extends IteratingRuleProvider<XmlFil
         // register beans to JNDI: http://grepcode.com/file/repository.jboss.org/nexus/content/repositories/releases/org.jboss.ejb3/jboss-ejb3-core/0.1.0/test/naming/META-INF/jboss1.xml?av=f
         for (Element resourceRef : $(doc).find("resource-ref").get())
         {
-            processBinding(envRefService, jndiResourceService, resourceRef, "res-ref-name", "jndi-name");
+            processBinding(envRefService, jndiResourceService, payload.getApplication(), resourceRef, "res-ref-name", "jndi-name");
         }
         for (Element resourceRef : $(doc).find("resource-env-ref").get())
         {
-            processBinding(envRefService, jndiResourceService, resourceRef, "resource-env-ref-name", "jndi-name");
+            processBinding(envRefService, jndiResourceService, payload.getApplication(), resourceRef, "resource-env-ref-name", "jndi-name");
         }
         for (Element resourceRef : $(doc).find("message-destination-ref").get())
         {
-            processBinding(envRefService, jndiResourceService, resourceRef, "message-destination-ref-name", "jndi-name");
+            processBinding(envRefService, jndiResourceService, payload.getApplication(), resourceRef, "message-destination-ref-name", "jndi-name");
         }
         for (Element resourceRef : $(doc).find("ejb-ref").get())
         {
-            processBinding(envRefService, jndiResourceService, resourceRef, "ejb-ref-name", "jndi-name");
+            processBinding(envRefService, jndiResourceService, payload.getApplication(), resourceRef, "ejb-ref-name", "jndi-name");
         }
         for (Element resourceRef : $(doc).find("ejb-local-ref").get())
         {
-            processBinding(envRefService, jndiResourceService, resourceRef, "ejb-ref-name", "local-jndi-name");
+            processBinding(envRefService, jndiResourceService, payload.getApplication(), resourceRef, "ejb-ref-name", "local-jndi-name");
         }
     }
     
-    private void processBinding(EnvironmentReferenceService envRefService, JNDIResourceService jndiResourceService, Element resourceRef, String tagName, String tagJndi)
+    private void processBinding(EnvironmentReferenceService envRefService, JNDIResourceService jndiResourceService, ProjectModel application,
+                Element resourceRef, String tagName, String tagJndi)
     {
         String jndiLocation = $(resourceRef).child(tagJndi).text();
         String resourceRefName = $(resourceRef).child(tagName).text();
 
         if (StringUtils.isNotBlank(jndiLocation) && StringUtils.isNotBlank(resourceRefName))
         {
-            JNDIResourceModel resource = jndiResourceService.createUnique(jndiLocation);
+            JNDIResourceModel resource = jndiResourceService.createUnique(application, jndiLocation);
             LOG.info("JNDI Name: " + jndiLocation + " to Resource: " + resourceRefName);
             // now, look up the resource which is resolved by DiscoverEjbConfigurationXmlRuleProvider
             for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceRefName))

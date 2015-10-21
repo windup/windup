@@ -42,23 +42,24 @@ public class DiscoverNonMavenSourceProjectsRuleProvider extends AbstractRuleProv
         @Override
         public void perform(GraphRewrite event, EvaluationContext context)
         {
-            WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
-            FileModel mainFileModel = cfg.getInputPath();
-
-            ProjectService projectModelService = new ProjectService(event.getGraphContext());
-            ProjectModel mainProjectModel = mainFileModel.getProjectModel();
-            if (mainProjectModel == null)
+            WindupConfigurationModel configuration = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
+            for (FileModel mainFileModel : configuration.getInputPaths())
             {
-                mainProjectModel = projectModelService.create();
-                mainProjectModel.setName(mainFileModel.getFileName());
-                mainProjectModel.setDescription("Source Directory");
+                ProjectService projectModelService = new ProjectService(event.getGraphContext());
+                ProjectModel mainProjectModel = mainFileModel.getProjectModel();
+                if (mainProjectModel == null)
+                {
+                    mainProjectModel = projectModelService.create();
+                    mainProjectModel.setName(mainFileModel.getFileName());
+                    mainProjectModel.setDescription("Source Directory");
 
-                mainFileModel.setProjectModel(mainProjectModel);
-                mainProjectModel.setRootFileModel(mainFileModel);
-                mainProjectModel.addFileModel(mainFileModel);
+                    mainFileModel.setProjectModel(mainProjectModel);
+                    mainProjectModel.setRootFileModel(mainFileModel);
+                    mainProjectModel.addFileModel(mainFileModel);
+                }
+
+                addProjectToChildFiles(mainFileModel, mainProjectModel);
             }
-
-            addProjectToChildFiles(mainFileModel, mainProjectModel);
         }
 
         private void addProjectToChildFiles(FileModel fileModel, ProjectModel projectModel)

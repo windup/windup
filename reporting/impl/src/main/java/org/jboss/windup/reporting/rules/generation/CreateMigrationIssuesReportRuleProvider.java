@@ -7,6 +7,7 @@ import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.jboss.windup.reporting.model.TemplateType;
@@ -43,20 +44,23 @@ public class CreateMigrationIssuesReportRuleProvider extends AbstractRuleProvide
         @Override
         public void perform(GraphRewrite event, EvaluationContext context)
         {
-            ApplicationReportService applicationReportService = new ApplicationReportService(event.getGraphContext());
-            ApplicationReportModel report = applicationReportService.create();
-            report.setReportPriority(110);
-            report.setDisplayInApplicationReportIndex(true);
-            report.setReportIconClass("glyphicon glyphicon-warning-sign");
-            report.setReportName("Migration Issues");
-            report.setTemplatePath(TEMPLATE_PATH);
-            report.setTemplateType(TemplateType.FREEMARKER);
+            for (FileModel inputPath : WindupConfigurationService.getConfigurationModel(event.getGraphContext()).getInputPaths())
+            {
+                ApplicationReportService applicationReportService = new ApplicationReportService(event.getGraphContext());
+                ApplicationReportModel report = applicationReportService.create();
+                report.setReportPriority(110);
+                report.setDisplayInApplicationReportIndex(true);
+                report.setReportIconClass("glyphicon glyphicon-warning-sign");
+                report.setReportName("Migration Issues");
+                report.setTemplatePath(TEMPLATE_PATH);
+                report.setTemplateType(TemplateType.FREEMARKER);
 
-            ProjectModel projectModel = WindupConfigurationService.getConfigurationModel(event.getGraphContext()).getInputPath().getProjectModel();
-            report.setProjectModel(projectModel);
+                ProjectModel projectModel = inputPath.getProjectModel();
+                report.setProjectModel(projectModel);
 
-            ReportService reportService = new ReportService(event.getGraphContext());
-            reportService.setUniqueFilename(report, "problem_centric_report", "html");
+                ReportService reportService = new ReportService(event.getGraphContext());
+                reportService.setUniqueFilename(report, "problem_centric_report", "html");
+            }
         }
     }
 }

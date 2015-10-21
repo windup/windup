@@ -1,6 +1,7 @@
 package org.jboss.windup.rules.apps.javaee.service;
 
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
@@ -22,7 +23,7 @@ public class JaxRSWebServiceModelService extends GraphService<JaxRSWebServiceMod
         super(context, JaxRSWebServiceModel.class);
     }
 
-    public JaxRSWebServiceModel getOrCreate(String path, JavaClassModel implementationClass)
+    public JaxRSWebServiceModel getOrCreate(ProjectModel application, String path, JavaClassModel implementationClass)
     {
         GremlinPipeline<Vertex, Vertex> pipeline;
         if (implementationClass == null)
@@ -41,11 +42,15 @@ public class JaxRSWebServiceModelService extends GraphService<JaxRSWebServiceMod
 
         if (pipeline.hasNext())
         {
-            return frame(pipeline.next());
+            JaxRSWebServiceModel result = frame(pipeline.next());
+            if (!result.isAssociatedWithApplication(application))
+                result.addApplication(application);
+            return result;
         }
         else
         {
             JaxRSWebServiceModel jaxWebService = create();
+            jaxWebService.addApplication(application);
             jaxWebService.setPath(path);
 
             jaxWebService.setImplementationClass(implementationClass);

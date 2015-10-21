@@ -2,6 +2,7 @@ package org.jboss.windup.rules.apps.javaee.service;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.javaee.model.DataSourceModel;
 import org.jboss.windup.rules.apps.javaee.model.JNDIResourceModel;
@@ -25,15 +26,21 @@ public class JNDIResourceService extends GraphService<JNDIResourceModel>
     /**
      * Create unique; if existing convert an existing {@link DataSourceModel} if one exists.
      */
-    public synchronized JNDIResourceModel createUnique(String jndiName)
+    public synchronized JNDIResourceModel createUnique(ProjectModel application, String jndiName)
     {
-        JNDIResourceModel dataSource = getUniqueByProperty(DataSourceModel.JNDI_LOCATION, jndiName);
-        if (dataSource == null)
+        JNDIResourceModel jndiResourceModel = getUniqueByProperty(DataSourceModel.JNDI_LOCATION, jndiName);
+        if (jndiResourceModel == null)
         {
-            dataSource = super.create();
-            dataSource.setJndiLocation(jndiName);
+            jndiResourceModel = super.create();
+            jndiResourceModel.setJndiLocation(jndiName);
+            jndiResourceModel.addApplication(application);
         }
-        return dataSource;
+        else
+        {
+            if (!jndiResourceModel.isAssociatedWithApplication(application))
+                jndiResourceModel.addApplication(application);
+        }
+        return jndiResourceModel;
     }
 
     /**

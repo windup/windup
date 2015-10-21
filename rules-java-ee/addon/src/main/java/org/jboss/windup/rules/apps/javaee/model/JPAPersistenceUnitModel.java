@@ -3,6 +3,7 @@ package org.jboss.windup.rules.apps.javaee.model;
 import java.util.Map;
 
 import org.jboss.windup.graph.MapInAdjacentProperties;
+import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import com.tinkerpop.blueprints.Direction;
@@ -19,26 +20,39 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(JPAPersistenceUnitModel.TYPE)
 public interface JPAPersistenceUnitModel extends WindupVertexFrame
 {
-    public static final String TYPE = "JPAPersistenceUnit";
-    public static final String NAME = "persistenceUnitName";
+    String TYPE = "JPAPersistenceUnit";
+    String NAME = "persistenceUnitName";
+    String APPLICATION = "application";
+
+    /**
+     * Contains the application in which this JPA persistence unit was discovered.
+     */
+    @Adjacency(label = APPLICATION, direction = Direction.OUT)
+    ProjectModel getApplication();
+
+    /**
+     * Contains the application in which this JPA persistence unit was discovered.
+     */
+    @Adjacency(label = APPLICATION, direction = Direction.OUT)
+    void setApplication(ProjectModel projectModel);
 
     /**
      * Contains persistence unit name
      */
     @Property(NAME)
-    public String getName();
+    String getName();
 
     /**
      * Contains persistence unit name
      */
     @Property(NAME)
-    public void setName(String name);
+    void setName(String name);
 
     /**
      * Contains a link back to the {@link DataSourceModel}
      */
     @Adjacency(label = DataSourceModel.DATA_SOURCE, direction = Direction.OUT)
-    public Iterable<DataSourceModel> getDataSources();
+    Iterable<DataSourceModel> getDataSources();
 
     /**
      * Contains a link back to the {@link DataSourceModel}

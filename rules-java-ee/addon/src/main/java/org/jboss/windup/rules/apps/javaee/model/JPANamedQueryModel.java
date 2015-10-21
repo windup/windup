@@ -16,46 +16,45 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(JPANamedQueryModel.TYPE)
 public interface JPANamedQueryModel extends WindupVertexFrame
 {
-    public static final String JPA_ENTITY = "jpaEntity";
-    public static final String QUERY_NAME = "queryName";
-    public static final String QUERY = "query";
-    public static final String TYPE = "JPANamedQuery";
+    String QUERY_NAME = "queryName";
+    String QUERY = "query";
+    String TYPE = "JPANamedQuery";
 
 
     /**
      * Contains the query name
      */
     @Property(QUERY_NAME)
-    public String getQueryName();
+    String getQueryName();
 
     /**
      * Contains the query name
      */
     @Property(QUERY_NAME)
-    public void setQueryName(String queryName);
+    void setQueryName(String queryName);
 
     
     /**
      * Contains the query
      */
     @Property(QUERY)
-    public String getQuery();
+    String getQuery();
 
     /**
      * Contains the query
      */
     @Property(QUERY)
-    public void setQuery(String query);
+    void setQuery(String query);
 
     /**
      * Contains the jpa entity model
      */
     @Adjacency(label = JPAEntityModel.NAMED_QUERY, direction = Direction.IN)
-    public void setJpaEntity(JPAEntityModel jpaEntity);
+    void setJpaEntity(JPAEntityModel jpaEntity);
 
     /**
      * Contains the jpa entity model
      */
     @Adjacency(label = JPAEntityModel.NAMED_QUERY, direction = Direction.IN)
-    public JPAEntityModel getJpaEntity();
+    JPAEntityModel getJpaEntity();
 }

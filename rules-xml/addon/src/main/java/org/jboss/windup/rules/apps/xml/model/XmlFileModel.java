@@ -21,37 +21,37 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(XmlFileModel.TYPE)
 public interface XmlFileModel extends FileModel, SourceFileModel
 {
-    public static final Logger LOG = Logger.getLogger(XmlFileModel.class.getName());
+    Logger LOG = Logger.getLogger(XmlFileModel.class.getName());
 
-    public static final String UNPARSEABLE_XML_CLASSIFICATION = "Unparseable XML File";
-    public static final String UNPARSEABLE_XML_DESCRIPTION = "This file could not be parsed";
+    String UNPARSEABLE_XML_CLASSIFICATION = "Unparseable XML File";
+    String UNPARSEABLE_XML_DESCRIPTION = "This file could not be parsed";
 
-    public static final String ROOT_TAG_NAME = "rootTagName";
-    public static final String NAMESPACE = "namespace";
-    public static final String DOCTYPE = "doctype";
-    public static final String TYPE = "XmlFileModel";
-
-    @Adjacency(label = DOCTYPE, direction = Direction.OUT)
-    public void setDoctype(DoctypeMetaModel doctype);
+    String ROOT_TAG_NAME = "rootTagName";
+    String NAMESPACE = "namespace";
+    String DOCTYPE = "doctype";
+    String TYPE = "XmlFileModel";
 
     @Adjacency(label = DOCTYPE, direction = Direction.OUT)
-    public DoctypeMetaModel getDoctype();
+    void setDoctype(DoctypeMetaModel doctype);
+
+    @Adjacency(label = DOCTYPE, direction = Direction.OUT)
+    DoctypeMetaModel getDoctype();
 
     @Adjacency(label = NAMESPACE, direction = Direction.OUT)
-    public void addNamespace(NamespaceMetaModel namespace);
+    void addNamespace(NamespaceMetaModel namespace);
 
     @Adjacency(label = NAMESPACE, direction = Direction.OUT)
-    public Iterable<NamespaceMetaModel> getNamespaces();
+    Iterable<NamespaceMetaModel> getNamespaces();
 
     @Indexed
     @Property(ROOT_TAG_NAME)
-    public String getRootTagName();
+    String getRootTagName();
 
     @Property(ROOT_TAG_NAME)
-    public void setRootTagName(String rootTagName);
+    void setRootTagName(String rootTagName);
 
     @JavaHandler
-    public Document asDocument();
+    Document asDocument();
 
     abstract class Impl implements XmlFileModel, JavaHandlerContext<Vertex>
     {
