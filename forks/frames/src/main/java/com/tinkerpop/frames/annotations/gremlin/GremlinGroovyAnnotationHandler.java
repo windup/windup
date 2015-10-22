@@ -81,7 +81,13 @@ public class GremlinGroovyAnnotationHandler implements AnnotationHandler<Gremlin
                     throw new IllegalStateException("The returned object can not be framed: " + result.getClass());
                 }
             } else {
-                return result;
+                if (result instanceof Iterable) {
+                    // For the cases like Table - Gremlin returns an iterable with 1 item.
+                    Iterable resIt = (Iterable) result;
+                    return (ClassUtilities.returnsIterable(method)) ? resIt : resIt.iterator().hasNext() ? resIt.iterator().next() : null;
+                } else {
+                    return result;
+                }
             }
 
         } catch (ScriptException e) {
