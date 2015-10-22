@@ -9,13 +9,11 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.decompiler.api.ClassDecompileRequest;
 import org.jboss.windup.decompiler.api.DecompilationListener;
 import org.jboss.windup.decompiler.procyon.ProcyonConfiguration;
@@ -35,6 +33,7 @@ import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.PathUtil;
 import org.jboss.windup.util.ProgressEstimate;
 import org.jboss.windup.util.exception.WindupException;
+import org.jboss.windup.util.threading.WindupExecutors;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
@@ -88,7 +87,7 @@ public class ProcyonDecompilerOperation extends AbstractDecompilerOperation
 
         AddDecompiledItemsToGraph addDecompiledItemsToGraph = new AddDecompiledItemsToGraph(progressEstimate, event);
         ProcyonDecompiler decompiler = new ProcyonDecompiler(new ProcyonConfiguration().setIncludeNested(false));
-        decompiler.setExecutorService(Executors.newFixedThreadPool(threads), threads);
+        decompiler.setExecutorService(WindupExecutors.newFixedThreadPool(threads), threads);
         decompiler.decompileClassFiles(classesToDecompile, addDecompiledItemsToGraph);
         decompiler.close();
 
@@ -103,7 +102,7 @@ public class ProcyonDecompilerOperation extends AbstractDecompilerOperation
      */
     private class AddDecompiledItemsToGraph implements DecompilationListener
     {
-        private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+        private final ExecutorService executorService = WindupExecutors.newSingleThreadExecutor();
         private final AtomicInteger queueSize = new AtomicInteger(0);
 
         private final GraphRewrite event;

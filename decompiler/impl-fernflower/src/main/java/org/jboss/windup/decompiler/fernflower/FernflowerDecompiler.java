@@ -27,6 +27,8 @@ import org.jboss.windup.decompiler.api.DecompilationResult;
 import org.jboss.windup.decompiler.api.Decompiler;
 import org.jboss.windup.decompiler.util.Filter;
 import org.jboss.windup.util.Checks;
+import org.jboss.windup.util.threading.WindupChildThreadFactory;
+import org.jboss.windup.util.threading.WindupExecutors;
 import org.jetbrains.java.decompiler.main.Fernflower;
 import org.jetbrains.java.decompiler.main.extern.IBytecodeProvider;
 import org.jetbrains.java.decompiler.main.extern.IFernflowerPreferences;
@@ -43,7 +45,7 @@ public class FernflowerDecompiler implements Decompiler
 {
     private static final Logger LOG = Logger.getLogger(FernflowerDecompiler.class.getName());
 
-    private ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private ExecutorService executorService = WindupExecutors.newSingleThreadExecutor();
     private int numberOfThreads = 1;
 
     public FernflowerDecompiler()

@@ -1,9 +1,12 @@
 package org.jboss.windup.util;
 
+import org.jboss.windup.util.threading.WindupChildThread;
+
 import java.io.FileWriter;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 /**
@@ -29,8 +32,9 @@ public class ExecutionStatistics
 {
     private static Logger LOG = Logging.get(ExecutionStatistics.class);
 
-    private static ThreadLocal<ExecutionStatistics> stats = new ThreadLocal<>();
+    private static Map<Thread,ExecutionStatistics> stats = new ConcurrentHashMap<>();
     private Map<String, TimingData> executionInfo = new HashMap<>();
+
 
     private ExecutionStatistics()
     {
@@ -42,11 +46,53 @@ public class ExecutionStatistics
      */
     public static synchronized ExecutionStatistics get()
     {
-        if (stats.get() == null)
+        Thread currentThread = Thread.currentThread();
+        if (stats.get(currentThread) == null)
         {
-            stats.set(new ExecutionStatistics());
+            stats.put(currentThread,new ExecutionStatistics());
         }
-        return stats.get();
+        return stats.get(currentThread);
+    }
+
+    public Map<String, TimingData> getExecutionInfo() {
+        return executionInfo;
+    }
+
+    /**
+     * Merge this ExecutionStatistics with all the statistics created within the child threads. All the child threads had to be created using Windup-specific
+     * ThreadFactory in order to contain a reference to the parent thread.
+     */
+    public void merge() {
+        Thread currentThread = Thread.currentThread();
+        if(!stats.get(currentThread).equals(this) || currentThread instanceof WindupChildThread) {
+            throw new IllegalArgumentException("Trying to merge executionstatistics from a "
+                        + "different thread that is not registered as main thread of application run");
+        }
+
+        for (Thread thread : stats.keySet())
+        {
+            if(thread instanceof WindupChildThread && ((WindupChildThread) thread).getParentThread().equals(currentThread)) {
+                merge(stats.get(thread));
+            }
+        }
+    }
+
+    /**
+     * Merge two ExecutionStatistics into one. This method is private in order not to be synchronized (merging.
+     * @param otherStatistics
+     */
+    private void merge(ExecutionStatistics otherStatistics) {
+        for (String s : otherStatistics.executionInfo.keySet())
+        {
+            TimingData thisStats = this.executionInfo.get(s);
+            TimingData otherStats = otherStatistics.executionInfo.get(s);
+            if(thisStats == null) {
+                this.executionInfo.put(s,otherStats);
+            } else {
+                thisStats.merge(otherStats);
+            }
+
+        }
     }
 
     /**
@@ -54,7 +100,7 @@ public class ExecutionStatistics
      */
     public void reset()
     {
-        stats.set(null);
+        stats.remove(Thread.currentThread());
         executionInfo.clear();
     }
 
@@ -63,6 +109,9 @@ public class ExecutionStatistics
      */
     public void serializeTimingData(Path outputPath)
     {
+        //merge subThreads instances into the main instance
+        merge();
+
         try (FileWriter fw = new FileWriter(outputPath.toFile()))
         {
             fw.write("Type~Number Of Executions~Total Milliseconds~Milliseconds per execution\n");
@@ -132,7 +181,7 @@ public class ExecutionStatistics
         data.end();
     }
 
-    private class TimingData
+    public class TimingData
     {
         private String key;
         private long startTime;
@@ -159,6 +208,15 @@ public class ExecutionStatistics
             this.totalNanos += (System.nanoTime() - startTime);
             this.startTime = 0;
             this.numberOfExecutions++;
+        }
+
+        public void merge(TimingData other) {
+            this.numberOfExecutions += other.numberOfExecutions;
+            this.totalNanos = other.totalNanos;
+        }
+
+        public long getTotal() {
+            return totalNanos;
         }
     }
 }

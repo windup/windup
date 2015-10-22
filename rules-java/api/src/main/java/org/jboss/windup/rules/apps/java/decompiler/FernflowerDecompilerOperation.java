@@ -11,19 +11,16 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.decompiler.api.ClassDecompileRequest;
 import org.jboss.windup.decompiler.api.DecompilationListener;
 import org.jboss.windup.decompiler.api.DecompilationResult;
 import org.jboss.windup.decompiler.fernflower.FernflowerDecompiler;
 import org.jboss.windup.decompiler.procyon.ProcyonDecompiler;
-import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.FileService;
@@ -39,6 +36,7 @@ import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.PathUtil;
 import org.jboss.windup.util.ProgressEstimate;
 import org.jboss.windup.util.exception.WindupException;
+import org.jboss.windup.util.threading.WindupExecutors;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
@@ -98,7 +96,7 @@ public class FernflowerDecompilerOperation extends AbstractDecompilerOperation
 
         AddDecompiledItemsToGraph addDecompiledItemsToGraph = new AddDecompiledItemsToGraph(classesToDecompile, progressEstimate, event);
         FernflowerDecompiler decompiler = new FernflowerDecompiler();
-        decompiler.setExecutorService(Executors.newFixedThreadPool(threads), threads);
+        decompiler.setExecutorService(WindupExecutors.newFixedThreadPool(threads), threads);
         decompiler.decompileClassFiles(classesToDecompile, addDecompiledItemsToGraph);
         decompiler.close();
 
@@ -112,7 +110,7 @@ public class FernflowerDecompilerOperation extends AbstractDecompilerOperation
      */
     private class AddDecompiledItemsToGraph implements DecompilationListener
     {
-        private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+        private final ExecutorService executorService = WindupExecutors.newSingleThreadExecutor();
         private final AtomicInteger queueSize = new AtomicInteger(0);
 
         private final Map<String, ClassDecompileRequest> requestMap;
