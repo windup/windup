@@ -190,6 +190,12 @@ public interface ProjectModel extends WindupVertexFrame
     Iterable<FileModel> getFileModelsNoDirectories();
 
     /**
+     * Gets all contained files that are not directories
+     */
+    @GremlinGroovy("it.out('" + PROJECT_MODEL_TO_FILE + "').has('" + FileModel.PARSE_ERROR + "')")
+    Iterable<FileModel> getUnparsableFiles();
+
+    /**
      * Returns the project model that represents the whole application. If this projectModel is the root projectModel, it will return it.
      *
      * @return ProjectModel representing the whole application

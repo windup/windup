@@ -253,10 +253,10 @@ public class Iteration extends DefaultOperationBuilder
                         ((GraphCondition) condition).setInputVariablesName(getPayloadVariableName(event, context));
                     }
                     conditionResult = condition.evaluate(event, context);
-                /*
-                 * Add special clear layer for perform, because condition used one and could have added new variables. The condition result put into
-                 * variables is ignored.
-                 */
+                    /*
+                     * Add special clear layer for perform, because condition used one and could have added new variables. The condition result put into
+                     * variables is ignored.
+                     */
                     variables.push();
                     getPayloadManager().setCurrentPayload(variables, frame);
                 }

@@ -4,26 +4,40 @@
 <#assign applicationReportIndexModel = reportModel.applicationReportIndexModel>
 
 
-<#macro unparsableFileRenderer reportModel>
-    <div class="panel panel-primary">
-        <table class="table table-striped table-bordered">
+<#macro unparsableFilesRenderer subProject>
+    <#list (subProject.unparsableFiles.iterator())!>
+    <div class="panel panel-default panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title">${subProject.rootFileModel.prettyPath?html}</h3>
+        </div>
+        <table class="table" id="unparsableFiles">
+            <#items as file>
             <tr>
-                <th>File</th>
-                <th>Path</th>
-                <th>Expected format</th>
-                <th>Parsing error</th>
+                <td>
+                    <div><strong>${file.fileName!}</strong> <span>${file.filePath!}</span></div>
+                    <#if file.expectedFormat?has_content>
+                    <div><strong>Expected format:</strong> ${file.expectedFormat!}</div>
+                    </#if>
+                    <#if file.parseError?has_content>
+                    <div class="parseError well well-sm">${file.parseError!}</div>
+                    </#if>
+                </td>
             </tr>
-
-            <#list reportModel.unparsableFiles2.iterator() as file>
-            <tr>
-                <td>${file.fileName!}</td>
-                <td>${file.filePath!}</td>
-        		<td>${file.expectedFormat!}</td>
-        		<td>${file.parsingError!}</td>
-            </tr>
-            </#list>
+            </#items>
         </table>
     </div>
+    <#else>
+        <#if subProject.rootFileModel.parseError?has_content>
+        <div class="panel panel-default panel-primary">
+            <div class="panel-heading error">
+                <h3 class="panel-title">${subProject.rootFileModel.prettyPath?html}</h3>
+            </div>
+            <div style="font-size: 12px; padding: 1ex 1em;">${subProject.rootFileModel.parseError?html}.</div>
+        </div>
+        <#else>
+            <!-- No unparsable files in project ${subProject.rootFileModel.prettyPath?html} -->
+        </#if>
+    </#list>
 </#macro>
 
 <head>
@@ -33,8 +47,12 @@
     <link href="resources/css/bootstrap.min.css" rel="stylesheet">
     <link href="resources/css/windup.css" rel="stylesheet" media="screen">
     <link href="resources/css/windup.java.css" rel="stylesheet" media="screen">
+    <style>
+        body.report-Unparsable .panel,
+        body.report-Unparsable .panel-heading { border-radius: 4px 4px 0 0; }
+    </style>
 </head>
-<body role="document">
+<body role="document" class="report report-Unparsable">
 
 	<!-- Navbar -->
 	<div class="navbar navbar-default navbar-fixed-top">
@@ -58,25 +76,28 @@
                     <div class="main">Unparsable Files Report</div>
                     <div class="path">${reportModel.projectModel.name?html}</div>
                 </h1>
+                <div class="desc">
+                    <div class="forOverview">
+                        This report shows all files that Windup could not parse in the expected format.
+                        For instance, a file with a <code>.xml</code> or <code>.wsdl</code> suffix
+                        is supposed to be a XML file. If the XML parser fails on it, you'll see that here.
+                        Besides that, the information about parsing failure is also present wherever the individual file is listed.
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="row">
-        <!-- Breadcrumbs -->
-	        <div class="container-fluid">
-	            <ol class="breadcrumb top-menu">
-	                <li><a href="../index.html">All Applications</a></li>
-	                <#include "include/breadcrumbs.ftl">
-	            </ol>
-	        </div>
-        <!-- / Breadcrumbs -->
-		</div>
-
-		<div class="row">
-	        <div class="container-fluid theme-showcase" role="main">
-	            <@unparsableFileRenderer reportModel />
-	        </div>
-        </div>
+        <#list reportModel.allSubProjects3.iterator() as subProject>
+            <div class="row unparsableFile">
+                <div class="container-fluid theme-showcase" role="main">
+                    <@unparsableFilesRenderer subProject />
+                </div>
+            </div>
+        <#else>
+            <div class="row unparsableNone">
+                <h3>Everything OK - Windup didn't have problems parsing any file.</h3>
+            </div>
+        </#list>
     </div> <!-- /container -->
 
 

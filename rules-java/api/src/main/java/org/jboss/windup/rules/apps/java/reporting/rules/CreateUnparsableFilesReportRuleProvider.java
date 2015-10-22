@@ -9,6 +9,8 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
 import com.tinkerpop.pipes.PipeFunction;
 import com.tinkerpop.pipes.branch.LoopPipe;
 import com.tinkerpop.pipes.filter.PropertyFilterPipe;
+import com.tinkerpop.pipes.util.structures.Row;
+import com.tinkerpop.pipes.util.structures.Table;
 import java.util.Iterator;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
@@ -41,7 +43,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 @RuleMetadata(
         phase = ReportGenerationPhase.class
 )
-public class CreateUnparsableFilesReportRuleProvider2 extends AbstractRuleProvider
+public class CreateUnparsableFilesReportRuleProvider extends AbstractRuleProvider
 {
     public static final String REPORT_NAME = "Unparsable";
     public static final String TEMPLATE_UNPARSABLE = "/reports/templates/unparsable_files.ftl";
@@ -58,11 +60,13 @@ public class CreateUnparsableFilesReportRuleProvider2 extends AbstractRuleProvid
             @Override
             public void perform(GraphRewrite event, EvaluationContext context, WindupConfigurationModel payload)
             {
-                ProjectModel rootProjectModel = payload.getInputPath().getProjectModel();
-                if (rootProjectModel == null)
-                    throw new WindupException("Error, no project found in: " + payload.getInputPath().getFilePath());
+                for(FileModel fileM : payload.getInputPaths()){
+                    ProjectModel rootProjectModel = fileM.getProjectModel();
+                    if (rootProjectModel == null)
+                        throw new WindupException("Error, no project found in: " + fileM.getFilePath());
 
-                createReportModel(event.getGraphContext(), rootProjectModel);
+                    createReportModel(event.getGraphContext(), rootProjectModel);
+                }
             }
 
             public String toString() { return "addReport"; }
@@ -124,7 +128,6 @@ public class CreateUnparsableFilesReportRuleProvider2 extends AbstractRuleProvid
         reportM.setReportName(REPORT_NAME);
         reportM.setReportIconClass("glyphicon glyphicon-home");
         reportM.setMainApplicationReport(false);
-        reportM.setDisplayInApplicationList(false);
         reportM.setProjectModel(rootProjectModel);
         reportM.setTemplatePath(TEMPLATE_UNPARSABLE);
         reportM.setTemplateType(TemplateType.FREEMARKER);
@@ -142,28 +145,23 @@ public class CreateUnparsableFilesReportRuleProvider2 extends AbstractRuleProvid
         ///System.out.println("CHECK: " + check);
 
 
-        // Projects 1
+        /// Projects 1
         try {
-            for (ProjectModel project : reportM.getAllProjects())
+            for (ProjectModel project : reportM.getAllSubProjects3())
                 System.out.println("PROJECT: " + project.toPrettyString());
         } catch (Exception ex){ System.out.println("EX: " + ex.getMessage()); }
-        try {
-            for (ProjectModel project : reportM.getAllProjects2())
-                System.out.println("PROJECT 2: " + project.toPrettyString());
-        } catch (Exception ex){ System.out.println("EX: " + ex.getMessage()); }
-        try {
-            for (ProjectModel project : reportM.getAllProjects3())
-                System.out.println("PROJECT 3: " + project.toPrettyString());
-        } catch (Exception ex){ System.out.println("EX: " + ex.getMessage()); }
-        try {
-            for (ProjectModel project : reportM.getChildProjects())
-                System.out.println("CHILD PROJECTS: " + project.toPrettyString());
-        } catch (Exception ex){ System.out.println("EX: " + ex.getMessage()); }
-        try {
-            for (ProjectModel project : reportM.getReportToProject())
-                System.out.println("REP_TO_PROJECT: " + project.toPrettyString());
-        } catch (Exception ex){ System.out.println("EX: " + ex.getMessage()); }
 
+        ///
+        try {
+            final Iterable tableIt = (Iterable) reportM.getAllSubProjectsAndTheirUnparsablesTable();
+            Table table = (Table) tableIt.iterator().next();
+            for (Row row : (Table)table)
+                System.out.println("TABLE ROW: " + row.toString());
+        } catch (Exception ex){ System.out.println("EX: " + ex.getMessage()); ex.printStackTrace(); }
+
+
+        /// g.V().has('w:vertextype', 'ProjectModel').in('fileToProjectModel').has('parseError').parseError
+        /// g.V().has('w:vertextype', 'ProjectModel').as('prj').in('fileToProjectModel').has('parseError').as('file').table().cap
 
         // Projects 2
         final PipeFunction<LoopPipe.LoopBundle<Vertex>, Boolean> pipeFunction = new PipeFunction<LoopPipe.LoopBundle<Vertex>, Boolean>()

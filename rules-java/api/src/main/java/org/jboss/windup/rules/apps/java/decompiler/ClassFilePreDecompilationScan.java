@@ -139,7 +139,7 @@ public class ClassFilePreDecompilationScan extends AbstractIterationOperation<Ja
     @Override
     public void perform(GraphRewrite event, EvaluationContext context, JavaClassFileModel fileModel)
     {
-        ExecutionStatistics.get().begin(PERF_ID);
+        ExecutionStatistics.get().begin("ClassFilePreDecompilationScan.perform()");
         try
         {
             addClassFileMetadata(event, context, fileModel);
@@ -150,7 +150,7 @@ public class ClassFilePreDecompilationScan extends AbstractIterationOperation<Ja
         }
         finally
         {
-            ExecutionStatistics.get().end(PERF_ID);
+            ExecutionStatistics.get().end("ClassFilePreDecompilationScan.perform()");
         }
     }
 

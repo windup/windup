@@ -5,7 +5,10 @@ import org.jboss.windup.reporting.model.ApplicationReportModel;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.annotations.gremlin.GremlinGroovy;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import com.tinkerpop.pipes.util.structures.Table;
+import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.rules.apps.java.archives.model.IgnoredArchiveModel;
 
 /**
  * Model of the Unparsable Files report.
@@ -27,52 +30,56 @@ public interface UnparsablesAppReportModel extends ApplicationReportModel
     /**
      * Files that had problems while parsing.
      */
-    @GremlinGroovy("it"
-            + ".out('"+REPORT_TO_PROJECT_MODEL+"')"
-            + ".in('"+ProjectModel.PARENT_PROJECT+"')"
-            + ".loop(1)"
-            + ".out('" + ProjectModel.PROJECT_MODEL_TO_FILE + "').has('" + FileModel.PARSE_ERROR + "')")
-    Iterable<FileModel> getUnparsableFiles();
+    //        + ".out('" + ProjectModel.PROJECT_MODEL_TO_FILE + "').has('" + FileModel.PARSE_ERROR + "')")
 
+
+    /// REMOVE
     @GremlinGroovy("it"
             + ".out('"+REPORT_TO_PROJECT_MODEL+"')"
             + ".as('x').in('"+ProjectModel.PARENT_PROJECT+"')"
             + ".simplePath"
-            + ".loop('x'){true}"
+            + ".loop('x'){true}{true}"
             + ".out('" + ProjectModel.PROJECT_MODEL_TO_FILE + "').has('" + FileModel.PARSE_ERROR + "')")
     Iterable<ProjectModel> getUnparsableFiles2();
 
 
-    @GremlinGroovy("it"
-            + ".out('"+REPORT_TO_PROJECT_MODEL+"')")
-    Iterable<ProjectModel> getReportToProject();
-
-    @GremlinGroovy("it"
-            + ".out('"+REPORT_TO_PROJECT_MODEL+"')"
-            + ".in('"+ProjectModel.PARENT_PROJECT+"')")
-    Iterable<ProjectModel> getChildProjects();
-
     /**
      * Files that had problems while parsing.
      */
+    /// REMOVE
     @GremlinGroovy("it"
             + ".out('"+REPORT_TO_PROJECT_MODEL+"')"
             + ".in('"+ProjectModel.PARENT_PROJECT+"')"
             + ".loop(1){true}{true}")
-    Iterable<ProjectModel> getAllProjects();
+    Iterable<ProjectModel> getAllSubProjects();
 
+    /// REMOVE
     @GremlinGroovy("it"
             + ".out('"+REPORT_TO_PROJECT_MODEL+"')"
             + ".in('"+ProjectModel.PARENT_PROJECT+"')"
             + ".simplePath"
-            + ".loop(2){true}")
-    Iterable<ProjectModel> getAllProjects2();
+            + ".loop(2){true}{true}")
+    Iterable<ProjectModel> getAllSubProjects2();
 
     @GremlinGroovy("it"
             + ".out('"+REPORT_TO_PROJECT_MODEL+"')"
-            + ".as('x').in('"+ProjectModel.PARENT_PROJECT+"')"
+            + ".as('x')"
+            + ".in('"+ProjectModel.PARENT_PROJECT+"')"
             + ".simplePath"
-            + ".loop('x'){true}")
-    Iterable<ProjectModel> getAllProjects3();
+            + ".loop('x'){true}{true}"
+            + ".out('"+ProjectModel.ROOT_FILE_MODEL+"')"
+            + ".hasNot('"+WindupVertexFrame.TYPE_PROP+"', '"+IgnoredArchiveModel.TYPE+"')"
+            + ".back(2)")
+    Iterable<ProjectModel> getAllSubProjects3();
+
+    @GremlinGroovy(frame = false, value = "it.out('"+REPORT_TO_PROJECT_MODEL+"').as('x')"
+            + ".in('"+ProjectModel.PARENT_PROJECT+"')"
+            + ".simplePath"
+            + ".loop('x'){true}{true}"
+            + ".as('prj')"
+            + ".out('" + ProjectModel.PROJECT_MODEL_TO_FILE + "').has('" + FileModel.PARSE_ERROR + "').as('file')"
+            + ".table.cap"
+    )
+    Object getAllSubProjectsAndTheirUnparsablesTable();
 
 }

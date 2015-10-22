@@ -10,6 +10,7 @@ import org.jboss.windup.graph.model.ProjectModel;
  * A ProjectModel with links to the unparsable files, for the UnparsableAppReportModel.
  *
  * @author Ondrej Zizka
+ * /// TODO: REMOVE - not used
  */
 @TypeValue(ProjectWithUnparsablesModel.TYPE)
 public interface ProjectWithUnparsablesModel extends ProjectModel

@@ -20,6 +20,7 @@ import org.xml.sax.SAXException;
  * Manages creating, querying, and deleting XmlFileModels.
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
+ * @author Ondrej Zizka
  */
 public class XmlFileService extends GraphService<XmlFileModel>
 {

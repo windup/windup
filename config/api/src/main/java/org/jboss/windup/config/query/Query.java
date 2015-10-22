@@ -204,9 +204,8 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
             @Override
             public Iterable<WindupVertexFrame> getFrames(GraphRewrite event, EvaluationContext context)
             {
-                ;
                 Iterable<Vertex> startingVertices = getStartingVertices(event);
-                pipeline = new GremlinPipeline<>(startingVertices);
+                GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(startingVertices);
                 Set<WindupVertexFrame> frames = new HashSet<>();
                 for (QueryGremlinCriterion c : query.getPipelineCriteria())
                 {
