@@ -1,6 +1,8 @@
 package org.jboss.windup.reporting.freemarker.problemsummary;
 
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -14,7 +16,7 @@ public class ProblemSummary
     private final String issueName;
     private int numberFound;
     private final int effortPerIncident;
-    private final Set<FileModel> files = new LinkedHashSet<>();
+    private final Map<FileModel,ProblemFileSummary> files = new LinkedHashMap<>();
 
     public ProblemSummary(String ruleID, String issueName, int numberFound, int effortPerIncident)
     {
@@ -49,13 +51,17 @@ public class ProblemSummary
         return effortPerIncident;
     }
 
-    public Iterable<FileModel> getFiles()
+    public Iterable<ProblemFileSummary> getFiles()
     {
-        return files;
+        return files.values();
     }
 
     public void addFile(FileModel fileModel)
     {
-        this.files.add(fileModel);
+        if(files.containsKey(fileModel)) {
+            files.get(fileModel).addOccurence();
+        } else {
+            files.put(fileModel, new ProblemFileSummary(fileModel,1));
+        }
     }
 }

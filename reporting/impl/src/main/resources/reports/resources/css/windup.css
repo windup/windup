@@ -7,7 +7,7 @@ body {
   margin:10px;
 }
 
-.tablesorter thead tr th {
+.tablesorter > thead > tr > th {
   cursor:pointer;
   background-position: left center;
   padding-left: 20px;
