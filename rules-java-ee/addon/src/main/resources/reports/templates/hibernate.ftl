@@ -74,7 +74,7 @@
 		        </#list>
 		    </#list>
 
-		    <#if reportModel.relatedResources.hibernateEntities.list.iterator()?has_content>
+		    <#list reportModel.relatedResources.hibernateEntities.list.iterator()>
 		        <div class="panel panel-primary">
 		            <div class="panel-heading">
 		                <h3 class="panel-title">Entities</h3>
@@ -83,17 +83,17 @@
 		                <tr>
 		                    <th>Hibernate Entity</th><th>Table</th>
 		                </tr>
-		                <#list reportModel.relatedResources.hibernateEntities.list.iterator() as entity>
+		                <#items as entity>
 		          	        <tr>
 		          		        <td>
 		          		        	<@render_link model=entity.javaClass/>
 						        </td>
 		          		        <td>${entity.tableName!""}</td>
 		          	        </tr>
-		                </#list>
+		                </#items>
 		            </table>
 		        </div>
-		    </#if>
+		    </#list>
 	    </div> <!-- /container -->
 	</div><!--/row-->
 

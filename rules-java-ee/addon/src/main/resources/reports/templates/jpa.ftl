@@ -100,7 +100,7 @@
 		        </#list>
 		    </#list>
 
-		    <#if reportModel.relatedResources.jpaEntities.list.iterator()?has_content>
+		    <#list reportModel.relatedResources.jpaEntities.list.iterator()>
 		        <div class="panel panel-primary">
 		            <div class="panel-heading">
 		                <h3 class="panel-title">JPA Entities</h3>
@@ -109,7 +109,7 @@
 		                <tr>
 		                    <th>Entity Name</th><th>JPA Entity</th><th>Table</th>
 		                </tr>
-		                <#list reportModel.relatedResources.jpaEntities.list.iterator() as entity>
+		                <#items as entity>
 		          	        <tr>
 		          	        	<td>${entity.entityName!""}</td>
 		          		        <td>
@@ -117,12 +117,12 @@
 						        </td>
 		          		        <td>${entity.tableName!""}</td>
 		          	        </tr>
-		                </#list>
+		                </#items>
 		            </table>
 		        </div>
-		    </#if>
+		    </#list>
 
-		    <#if reportModel.relatedResources.jpaNamedQueries.list.iterator()?has_content>
+		    <#list reportModel.relatedResources.jpaNamedQueries.list.iterator()>
 		        <div class="panel panel-primary">
 		            <div class="panel-heading">
 		                <h3 class="panel-title">JPA Named Queries</h3>
@@ -132,15 +132,15 @@
 		                    <th>Query Name</th>
 		                    <th>Query</th>
 		                </tr>
-		                <#list reportModel.relatedResources.jpaNamedQueries.list.iterator() as named>
+		                <#items as named>
 		          	        <tr>
 		          	        	<td>${named.queryName}</td>
 		          		        <td>${named.query}</td>
 		          	        </tr>
-		                </#list>
+		                </#items>
 		            </table>
 		        </div>
-		    </#if>
+		    </#list>
 	    </div> <!-- /container -->
 	</div><!--/row-->
 

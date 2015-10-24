@@ -51,7 +51,7 @@
 
     <div class="container-fluid theme-showcase" role="main">
 
-	<#if classloader.classes?has_content>
+	<#list classloader.classes>
     <div class="panel panel-primary">
         <div class="panel-heading">
             <h3 class="panel-title">${classloader.type}</h3>
@@ -60,24 +60,24 @@
 			<tr>
 				<th>${classloader.referencedFrom}</th><th>${classloader.referenceType}</th>
 			</tr>
-			<#list classloader.classes as clz>
+			<#items as clz>
 			<tr>
 			  <td>${clz.clzName}</td>
 			  <td>
-			  	<#if clz.references?has_content>
+			  	<#list clz.references>
 			  	<table>
-					<#list clz.references as reference>
+					<#items as reference>
 						<tr>${reference.referenceType}<td></td><td>${reference.clzName}</td></tr>
-					</#list>
+					</#items>
 				</table>
 				</#if>
 			  </td>
 			</tr>
-			</#list>
+			</#items>
 
 			</table>
 	</div>
-	</#if>
+	</#list>
 
     </div> <!-- /container -->
 

@@ -15,24 +15,23 @@
 </#macro>
 
 <#macro reportLineRenderer reportLinesIterable>
-<#if reportLinesIterable.iterator()?has_content>
+<#list reportLinesIterable.iterator()>
     <div class="panel panel-primary">
         <div class="panel-heading">
             <h3 class="panel-title">Application Messages</h3>
         </div>
         <table class="table table-striped table-bordered">
-
-            <#list reportLinesIterable.iterator() as reportLine>
+            <#items as reportLine>
             <tr>
                 <td>
                     ${reportLine.message}
                     <@render_rule_link renderType="glyph" ruleID=reportLine.ruleID class="rule-link"/>
                 </td>
             </tr>
-            </#list>
+            </#items>
         </table>
     </div>
-</#if>
+</#list>
 </#macro>
 
 <#macro fileModelRenderer fileModel>
@@ -42,7 +41,6 @@
 
     <#assign sourceReportModel = fileModelToSourceReport(fileModel)!>
     <#if sourceReportModel.reportFilename?? >
-
 	<tr>
         <#-- Name -->
         <td>

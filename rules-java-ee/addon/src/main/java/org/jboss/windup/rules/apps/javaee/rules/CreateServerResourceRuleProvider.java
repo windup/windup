@@ -47,7 +47,7 @@ public class CreateServerResourceRuleProvider extends AbstractRuleProvider
 
     public CreateServerResourceRuleProvider()
     {
-        super(MetadataBuilder.forProvider(CreateServerResourceRuleProvider.class, "Create Server Resource Report")
+        super(MetadataBuilder.forProvider(CreateServerResourceRuleProvider.class, "Create Server Resources Report")
                     .setPhase(ReportGenerationPhase.class));
     }
 
@@ -98,8 +98,8 @@ public class CreateServerResourceRuleProvider extends AbstractRuleProvider
 
         DataSourceService datasourceService = new DataSourceService(context);
         JNDIResourceService jndiResourceService = new JNDIResourceService(context);
-        GraphService<ThreadPoolModel> threadPoolService = new GraphService<ThreadPoolModel>(context, ThreadPoolModel.class);
-        GraphService<WindupVertexListModel> listService = new GraphService<WindupVertexListModel>(context, WindupVertexListModel.class);
+        GraphService<ThreadPoolModel> threadPoolService = new GraphService<>(context, ThreadPoolModel.class);
+        GraphService<WindupVertexListModel> listService = new GraphService<>(context, WindupVertexListModel.class);
 
         WindupVertexListModel datasourceList = listService.create();
         WindupVertexListModel jmsList = listService.create();
@@ -126,7 +126,7 @@ public class CreateServerResourceRuleProvider extends AbstractRuleProvider
                 otherJndiList.addItem(jndi);
             }
         }
-        
+
         for(ThreadPoolModel tp : threadPoolService.findAll()) {
             threadPoolList.addItem(tp);
         }
@@ -141,6 +141,6 @@ public class CreateServerResourceRuleProvider extends AbstractRuleProvider
 
         // Set the filename for the report
         ReportService reportService = new ReportService(context);
-        reportService.setUniqueFilename(applicationReportModel, "server_resource_" + projectModel.getName(), "html");
+        reportService.setUniqueFilename(applicationReportModel, "server_resources_" + projectModel.getName(), "html");
     }
 }

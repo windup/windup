@@ -51,7 +51,7 @@
 		<div class="row">
     		<div class="container-fluid theme-showcase" role="main">
 
-		    <#if reportModel.relatedResources.jaxRsServices.list.iterator()?has_content>
+		    <#list reportModel.relatedResources.jaxRsServices.list.iterator()>
 		        <div class="panel panel-primary">
 		            <div class="panel-heading">
 		                <h3 class="panel-title">JAX-RS Services (REST)</h3>
@@ -60,19 +60,19 @@
 		                <tr>
 		                    <th class="col-md-6">Service Path</th><th class="col-md-6">Implementation</th>
 		                </tr>
-		                <#list reportModel.relatedResources.jaxRsServices.list.iterator() as service>
+		                <#items as service>
 		          	        <tr>
 		          	        	<td>${service.path}</td>
 		          		        <td>
 		          		        	<@render_link model=service.implementationClass/>
 						        </td>
 		          	        </tr>
-		                </#list>
+		                </#items>
 		            </table>
 		        </div>
-		    </#if>
+		    </#list>
 
-		    <#if reportModel.relatedResources.jaxWsServices.list.iterator()?has_content>
+		    <#list reportModel.relatedResources.jaxWsServices.list.iterator()>
 		        <div class="panel panel-primary">
 		            <div class="panel-heading">
 		                <h3 class="panel-title">JAX-WS Services (SOAP)</h3>
@@ -81,7 +81,7 @@
 		                <tr>
 		                    <th class="col-md-6">Interface</th><th class="col-md-6">Implementation</th>
 		                </tr>
-		                <#list reportModel.relatedResources.jaxWsServices.list.iterator() as service>
+		                <#items as service>
 		          	        <tr>
 		          	        	<td>
 		          	        		<@render_link model=service.interface/>
@@ -90,12 +90,12 @@
 		          		        	<@render_link model=service.implementationClass/>
 						        </td>
 		          	        </tr>
-		                </#list>
+		                </#items>
 		            </table>
 		        </div>
-		    </#if>
+		    </#list>
 
-		    <#if reportModel.relatedResources.ejbRemoteServices.list.iterator()?has_content>
+		    <#list reportModel.relatedResources.ejbRemoteServices.list.iterator()>
 		        <div class="panel panel-primary">
 		            <div class="panel-heading">
 		                <h3 class="panel-title">Remote EJB Services</h3>
@@ -104,7 +104,7 @@
 		                <tr>
 		                    <th class="col-md-6">Interface</th><th class="col-md-6">Implementation</th>
 		                </tr>
-		                <#list reportModel.relatedResources.ejbRemoteServices.list.iterator() as service>
+		                <#items as service>
 		          	        <tr>
 		          	        	<td>
 		          	        		<@render_link model=service.interface/>
@@ -113,12 +113,12 @@
 		          		        	<@render_link model=service.implementationClass/>
 						        </td>
 		          	        </tr>
-		                </#list>
+		                </#items>
 		            </table>
 		        </div>
-		    </#if>
+		    </#list>
 
-			<#if reportModel.relatedResources.rmiServices.list.iterator()?has_content>
+			<#list reportModel.relatedResources.rmiServices.list.iterator()>
 		        <div class="panel panel-primary">
 		            <div class="panel-heading">
 		                <h3 class="panel-title">RMI Services</h3>
@@ -127,7 +127,7 @@
 		                <tr>
 		                    <th class="col-md-6">Interface</th><th class="col-md-6">Implementation</th>
 		                </tr>
-		                <#list reportModel.relatedResources.rmiServices.list.iterator() as service>
+		                <#items as service>
 		          	        <tr>
 		          	        	<td>
 		          	        		<@render_link model=service.interface/>
@@ -136,10 +136,10 @@
 		          		        	<@render_link model=service.implementationClass/>
 						        </td>
 		          	        </tr>
-		                </#list>
+		                </#items>
 		            </table>
 		        </div>
-		    </#if>
+		    </#list>
 
 	    </div> <!-- /container -->
 	</div><!--/row-->

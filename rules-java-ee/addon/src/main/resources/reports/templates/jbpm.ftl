@@ -102,31 +102,31 @@
 								</div>
 								</#if>
 
-								<#if process.actionHandlers.iterator()?has_content>
+								<#list process.actionHandlers.iterator()>
 									<table class="table table-striped table-bordered">
 							            <tr>
 							              <th>Action Handler</th>
 							            </tr>
-										<#list process.actionHandlers.iterator() as actionHandler>
+										<#items as actionHandler>
 										    <tr>
 										    	<td><@render_link model=actionHandler/></td>
 								            </tr>
-								        </#list>
+								        </#items>
 							        </table>
-						        </#if>
+						        </#list>
 
-						        <#if process.decisionHandlers.iterator()?has_content>
+						        <#list process.decisionHandlers.iterator()>
 									<table class="table table-striped table-bordered">
 							            <tr>
 							              <th>Decision Handler</th>
 							            </tr>
-										<#list process.decisionHandlers.iterator() as decisionHandler>
+										<#items as decisionHandler>
 										    <tr>
 										    	<td><@render_link model=decisionHandler/></td>
 								            </tr>
-								        </#list>
+								        </#items>
 							        </table>
-						        </#if>
+						        </#list>
 
 
 							</div>
