@@ -1,5 +1,7 @@
 package org.jboss.windup.config;
 
+import org.jboss.windup.graph.model.WindupConfigurationModel;
+
 /**
  * Indicates the Java packages for Windup to scan.
  *
@@ -7,7 +9,7 @@ package org.jboss.windup.config;
  */
 public class KeepWorkDirsOption extends AbstractConfigurationOption
 {
-    public static final String NAME = "keepWorkDir";
+    public static final String NAME = WindupConfigurationModel.KEEP_WORKING_DIRECTORIES;
 
     @Override
     public String getDescription()

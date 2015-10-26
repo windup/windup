@@ -1,11 +1,9 @@
 package org.jboss.windup.rules.apps.java.scan.provider;
 
-import static org.jboss.windup.rules.apps.java.scan.provider.DeleteWorkDirsAtTheEndRuleProvider.KEEP_WORK_FILES;
-
 import java.io.File;
-
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.KeepWorkDirsOption;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.Iteration;
@@ -36,13 +34,11 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
     after = {PostReportRenderingPhase.class},
     // I don't want to create a dependency: before = {ExecutionTimeReportRuleProvider.class},
     description = "Deletes the temporary data Windup analyzes: the unzipped archives, and the graph data."
-            + " Use --" + KEEP_WORK_FILES + " to keep them.",
+            + " Use --" + KeepWorkDirsOption.NAME + " to keep them.",
     phase = PostFinalizePhase.class
 )
 public class DeleteWorkDirsAtTheEndRuleProvider extends AbstractRuleProvider
 {
-    public static final String KEEP_WORK_FILES = "keepTempFiles";
-
     @Override
     public Configuration getConfiguration(GraphContext graphContext)
     {

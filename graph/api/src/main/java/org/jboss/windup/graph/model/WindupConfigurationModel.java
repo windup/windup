@@ -23,7 +23,7 @@ public interface WindupConfigurationModel extends WindupVertexFrame
     String SOURCE_TECHNOLOGY = "sourceTechnology";
     String TARGET_TECHNOLOGY = "targetTechnology";
     String CSV_MODE = "csv";
-    String KEEP_WORKING_DIRECTORIES = "keepWorkingDirectories";
+    String KEEP_WORKING_DIRECTORIES = "keepWorkDirs";
 
     /**
      * The input path to scan
@@ -42,7 +42,7 @@ public interface WindupConfigurationModel extends WindupVertexFrame
      */
     @Adjacency(label = USER_RULES_PATH, direction = Direction.OUT)
     void addUserRulesPath(FileModel userRulesPath);
-    
+
     /**
      * The location for user provided ignore directory (list of ignored jar files)
      */
@@ -54,7 +54,7 @@ public interface WindupConfigurationModel extends WindupVertexFrame
      */
     @Adjacency(label = USER_RULES_PATH, direction = Direction.OUT)
     Iterable<FileModel> getUserRulesPaths();
-    
+
     /**
      * The location for user provided rules directories (typically Groovy or XML Rules)
      */
