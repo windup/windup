@@ -15,7 +15,7 @@ public class TestMigrationIssuesReportUtil extends TestReportUtil
         WebElement element = getDriver().findElement(By.id(TABLE_ID));
         if (element == null)
         {
-            throw new CheckFailedException("Unable to find ejb beans table element");
+            throw new CheckFailedException("Unable to find " + TABLE_ID + " table element");
         }
         return super.checkValueInTable(element, issueName, String.valueOf(numberFound), String.valueOf(effortPerIncident),
                     String.valueOf(totalEffort));

@@ -72,18 +72,35 @@
 	                                        ${problemSummary.issueName}
 	                                    </a>
 	                                    <div class="problem-file-list list-group" style="display: none;">
-	                                        <#list problemSummary.files as file>
-	                                            <@render_link model=file class="list-group-item"/><#t>
-	                                        </#list>
-                                            <div style="clear: both;"/>
+						<!-- Internal issues per file table -->
+						<table id="issues_per_file_table" class="table table-hover table-condensed tablesorter-child tablesorter">
+	                                          <thead>
+	                                             <tr>
+	                                               <th>File</th>
+	                                               <th>Issues Found</th>
+	                                             </tr>
+	                                          </thead>
+	                                          <tbody>
+				                    <#list problemSummary.files as fileSummary>
+	                                               <tr>
+	                                                  <td> 
+	                                                       <@render_link model=fileSummary.file class="list-group-item"/><#t>
+                                                          </td>
+			                                  <td>${fileSummary.occurences}</td>
+	                                               </tr>
+                                                    </#list>
+                                                   <div style="clear: both;"/>
+	                                          </tbody>
+	                                         </table>
+	                                       
 	                                    </div>
 	                                </td>
-			                        <td>${problemSummary.numberFound}</td>
-			                        <td>${problemSummary.effortPerIncident}</td>
-			                        <td>${problemSummary.numberFound * problemSummary.effortPerIncident}</td>
-			                        <td>
-			                            <@render_rule_link renderType="glyph" ruleID=problemSummary.ruleID/>
-			                        </td>
+			                <td>${problemSummary.numberFound}</td>
+			                <td>${problemSummary.effortPerIncident}</td>
+			                <td>${problemSummary.numberFound * problemSummary.effortPerIncident}</td>
+			                <td>
+			                    <@render_rule_link ruleID=problemSummary.ruleID renderType="glyph"/>
+			                 </td>
 	                            </tr>
 	                        </#list>
 	                    </tbody>
@@ -117,6 +134,7 @@
 	    });
             $(document).ready(function() {
                 $("#issues_table").tablesorter({
+                selectorHeaders: '> thead > tr > th',
                 sortList: [[3,1]],
         	headers: {
                   // 2nd,3rd,4th columns are parsed using thousands parser
