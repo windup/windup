@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.Iterables;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.Variables;
@@ -148,18 +149,16 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
                 Iterable<? extends WindupVertexFrame> result = resultIterable;
                 if (resultFilter != null)
                 {
-                    List<WindupVertexFrame> filtered = new LinkedList<>();
-                    for (WindupVertexFrame frame : result)
-                    {
-                        if (resultFilter.accept(frame))
+                    com.google.common.base.Predicate<WindupVertexFrame> guavaPred= new com.google.common.base.Predicate<WindupVertexFrame>() {
+
+                        @Override public boolean apply(WindupVertexFrame input)
                         {
-                            filtered.add(frame);
+                            return resultFilter.accept(input);
                         }
-                    }
-                    result = filtered;
+                    };
+                    result= Iterables.filter(result, guavaPred);
                 }
 
-                Variables variables = Variables.instance(event);
                 setResults(event, outputVar, result);
 
                 return result.iterator().hasNext();
