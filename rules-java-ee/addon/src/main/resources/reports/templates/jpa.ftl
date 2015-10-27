@@ -111,7 +111,7 @@
 		                </tr>
 		                <#list reportModel.relatedResources.jpaEntities.list.iterator() as entity>
 		          	        <tr>
-		          	        	<td>${entity.entityName}</td>
+		          	        	<td>${entity.entityName!""}</td>
 		          		        <td>
 		          		        	<@render_link model=entity.javaClass/>
 						        </td>
