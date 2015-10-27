@@ -25,7 +25,6 @@ public class IterationProgress extends AbstractIterationOperation<WindupVertexFr
     private int totalIterations = -1;
     private boolean estimateTimeRemaining = true;
     private ProgressEstimate progressEstimate;
-    private String variableListName = Iteration.DEFAULT_VARIABLE_LIST_STRING;
 
     private IterationProgress(String messagePrefix, int interval)
     {
@@ -38,11 +37,6 @@ public class IterationProgress extends AbstractIterationOperation<WindupVertexFr
         return new IterationProgress(messagePrefix, interval);
     }
 
-    public IterationProgress over(String iterableName) {
-        variableListName = iterableName;
-        return this;
-    }
-
     public IterationProgress disableTimeEstimation()
     {
         estimateTimeRemaining = false;
@@ -50,13 +44,12 @@ public class IterationProgress extends AbstractIterationOperation<WindupVertexFr
     }
 
     @Override
-    public void perform(GraphRewrite event, EvaluationContext context, WindupVertexFrame payload)
+    public void perform(GraphRewrite event, EvaluationContext context)
     {
         if (totalIterations == -1)
         {
             @SuppressWarnings("unchecked")
-            Iterable<WindupVertexFrame> frames = (Iterable<WindupVertexFrame>) event.getRewriteContext().get(
-                    variableListName);
+            Iterable<WindupVertexFrame> frames = (Iterable<WindupVertexFrame>) event.getRewriteContext().get(Iteration.DEFAULT_VARIABLE_LIST_STRING);
             totalIterations = Iterators.asList(frames).size();
             progressEstimate = new ProgressEstimate(totalIterations);
         }
@@ -73,10 +66,15 @@ public class IterationProgress extends AbstractIterationOperation<WindupVertexFr
         }
     }
 
+    @Override
+    public void perform(GraphRewrite event, EvaluationContext context, WindupVertexFrame payload)
+    {
+        // noop
+    }
 
     @Override
     public String toString()
     {
-        return "IterationProgress{msg=" + messagePrefix + ", int=" + interval + ", est=" + estimateTimeRemaining + ", variableListName=" + variableListName + '}';
+        return "IterationProgress{msg=" + messagePrefix + ", int=" + interval + ", est=" + estimateTimeRemaining + '}';
     }
 }

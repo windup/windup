@@ -26,7 +26,6 @@ import org.jboss.windup.util.threading.WindupExecutors;
 public class BatchASTProcessor
 {
     private static final int BATCH_SIZE = 1000 / Runtime.getRuntime().availableProcessors();
-    private static final int THREADPOOL_SIZE = (Runtime.getRuntime().availableProcessors() / 2) + 1;
 
     /**
      * Process the given batch of files and pass the results back to the listener as each file is processed.
@@ -38,7 +37,7 @@ public class BatchASTProcessor
 
         final String[] encodings = null;
         final String[] bindingKeys = new String[0];
-        final ExecutorService executor = WindupExecutors.newFixedThreadPool(THREADPOOL_SIZE);
+        final ExecutorService executor = WindupExecutors.newFixedThreadPool(WindupExecutors.getDefaultThreadCount());
         final FileASTRequestor requestor = new FileASTRequestor()
         {
             @Override

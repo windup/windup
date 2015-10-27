@@ -61,8 +61,7 @@ public class FernflowerDecompilerOperation extends AbstractDecompilerOperation
     public void perform(final GraphRewrite event, final EvaluationContext context)
     {
         ExecutionStatistics.get().begin("FernflowerDecompilationOperation.perform");
-        int totalCores = Runtime.getRuntime().availableProcessors();
-        int threads = totalCores == 0 ? 1 : totalCores;
+        int threads = WindupExecutors.getDefaultThreadCount();
         LOG.info("Decompiling with " + threads + " threads");
 
         WindupJavaConfigurationService configurationService = new WindupJavaConfigurationService(event.getGraphContext());
