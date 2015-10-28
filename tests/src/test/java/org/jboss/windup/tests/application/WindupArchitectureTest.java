@@ -67,24 +67,41 @@ public abstract class WindupArchitectureTest
 
     void runTest(String inputPath, boolean sourceMode) throws Exception
     {
+        runTest(Collections.singletonList(inputPath), sourceMode);
+    }
+
+    void runTest(Iterable<String> inputPaths, boolean sourceMode) throws Exception
+    {
         List<String> includeList = Collections.emptyList();
         List<String> excludeList = Collections.emptyList();
-        runTest(createGraphContext(), inputPath, null, sourceMode, includeList, excludeList);
+        runTest(createGraphContext(), inputPaths, null, sourceMode, includeList, excludeList);
     }
 
     void runTest(GraphContext graphContext, String inputPath, boolean sourceMode)
                 throws Exception
     {
+        runTest(graphContext, Collections.singletonList(inputPath), sourceMode);
+    }
+
+    void runTest(GraphContext graphContext, Iterable<String> inputPaths, boolean sourceMode)
+                throws Exception
+    {
         List<String> includeList = Collections.emptyList();
         List<String> excludeList = Collections.emptyList();
-        runTest(graphContext, inputPath, null, sourceMode, includeList, excludeList);
+        runTest(graphContext, inputPaths, null, sourceMode, includeList, excludeList);
     }
 
     void runTest(GraphContext graphContext, String inputPath, boolean sourceMode,
                 List<String> includePackages) throws Exception
     {
+        runTest(graphContext, Collections.singletonList(inputPath), sourceMode, includePackages);
+    }
+
+    void runTest(GraphContext graphContext, Iterable<String> inputPaths, boolean sourceMode,
+                List<String> includePackages) throws Exception
+    {
         List<String> excludeList = Collections.emptyList();
-        runTest(graphContext, inputPath, null, sourceMode, includePackages, excludeList);
+        runTest(graphContext, inputPaths, null, sourceMode, includePackages, excludeList);
     }
 
     void runTest(final GraphContext graphContext,
@@ -94,12 +111,22 @@ public abstract class WindupArchitectureTest
                 final List<String> includePackages,
                 final List<String> excludePackages) throws Exception
     {
-        Map<String, Object> otherOptions = Collections.emptyMap();
-        runTest(graphContext, inputPath, userRulesDir, sourceMode, includePackages, excludePackages, otherOptions);
+        runTest(graphContext, Collections.singletonList(inputPath), userRulesDir, sourceMode, includePackages, excludePackages);
     }
 
     void runTest(final GraphContext graphContext,
-                final String inputPath,
+                final Iterable<String> inputPaths,
+                final File userRulesDir,
+                final boolean sourceMode,
+                final List<String> includePackages,
+                final List<String> excludePackages) throws Exception
+    {
+        Map<String, Object> otherOptions = Collections.emptyMap();
+        runTest(graphContext, inputPaths, userRulesDir, sourceMode, includePackages, excludePackages, otherOptions);
+    }
+
+    void runTest(final GraphContext graphContext,
+                final Iterable<String> inputPaths,
                 final File userRulesDir,
                 final boolean sourceMode,
                 final List<String> includePackages,
@@ -109,7 +136,10 @@ public abstract class WindupArchitectureTest
 
         WindupConfiguration windupConfiguration = new WindupConfiguration().setGraphContext(graphContext);
         windupConfiguration.setAlwaysHaltOnException(true);
-        windupConfiguration.setInputPath(Paths.get(inputPath));
+        for (String inputPath : inputPaths)
+        {
+            windupConfiguration.addInputPath(Paths.get(inputPath));
+        }
         windupConfiguration.setOutputDirectory(graphContext.getGraphDirectory());
         if (userRulesDir != null)
         {

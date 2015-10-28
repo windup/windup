@@ -24,7 +24,6 @@ public interface InlineHintModel extends EffortReportModel,FileLocationModel
     String TYPE_PREFIX = TYPE + ":";
     String TITLE = TYPE_PREFIX + "title";
     String HINT = TYPE_PREFIX + "hint";
-    String SEVERITY = TYPE_PREFIX + "severity";
     String RULE_ID = TYPE_PREFIX + "ruleID";
     String LINKS = TYPE_PREFIX + "links";
     String FILE_LOCATION_REFERENCE = TYPE_PREFIX + "fileLocationReference";

@@ -88,7 +88,7 @@ public class JavaClassWithoutClassificationTest
 
             final WindupConfiguration processorConfig = new WindupConfiguration().setOutputDirectory(outputPath);
             processorConfig.setGraphContext(context);
-            processorConfig.setInputPath(Paths.get(inputDir));
+            processorConfig.addInputPath(Paths.get(inputDir));
             processorConfig.setOutputDirectory(outputPath);
             processorConfig.setOptionValue(ScanPackagesOption.NAME, Collections.singletonList(""));
             processorConfig.setOptionValue(SourceModeOption.NAME, true);

@@ -94,7 +94,7 @@ public class IgnoreArchivesRulesetTest
 
             WindupConfiguration config = new WindupConfiguration();
             config.setGraphContext(graphContext);
-            config.setInputPath(INPUT_PATH);
+            config.addInputPath(INPUT_PATH);
             config.setOutputDirectory(OUTPUT_PATH);
             config.setOptionValue(OverwriteOption.NAME, true);
             config.setRuleProviderFilter(new NotPredicate(

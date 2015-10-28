@@ -3,7 +3,9 @@ package org.jboss.windup.exec;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
@@ -80,7 +82,14 @@ public class WindupProcessorImpl implements WindupProcessor
         context.setOptions(configuration.getOptionMap());
 
         WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(context);
-        configurationModel.setInputPath(getFileModel(context, configuration.getInputPath()));
+
+        Set<FileModel> inputPathModels = new LinkedHashSet<>();
+        for (Path path : configuration.getInputPaths())
+        {
+            inputPathModels.add(getFileModel(context, path));
+        }
+        configurationModel.setInputPaths(inputPathModels);
+
         configurationModel.setOutputPath(getFileModel(context, configuration.getOutputDirectory()));
         configurationModel.setOfflineMode(configuration.isOffline());
         configurationModel.setExportingCSV(configuration.isExportingCSV());
@@ -143,8 +152,7 @@ public class WindupProcessorImpl implements WindupProcessor
 
         long endTime = System.currentTimeMillis();
         long seconds = (endTime - startTime) / 1000L;
-        LOG.info("Windup execution took " + seconds + " seconds to execute on input: "
-                    + configuration.getInputPath() + "!");
+        LOG.info("Windup execution took " + seconds + " seconds to execute on input: " + configuration.getInputPaths() + "!");
 
         ExecutionStatistics.get().reset();
     }
@@ -222,9 +230,13 @@ public class WindupProcessorImpl implements WindupProcessor
         GraphContext context = windupConfiguration.getGraphContext();
         Assert.notNull(context, "Windup GraphContext must not be null!");
 
-        Path inputPath = windupConfiguration.getInputPath();
-        Assert.notNull(inputPath, "Path to the application must not be null!");
-        Checks.checkFileOrDirectoryToBeRead(inputPath.toFile(), "Application");
+        Iterable<Path> inputPaths = windupConfiguration.getInputPaths();
+        Assert.notNull(inputPaths, "Path to the application must not be null!");
+        for (Path inputPath : inputPaths)
+        {
+            Assert.notNull(inputPath, "Path to the application must not be null!");
+            Checks.checkFileOrDirectoryToBeRead(inputPath.toFile(), "Application");
+        }
 
         Path outputDirectory = windupConfiguration.getOutputDirectory();
         Assert.notNull(outputDirectory, "Output directory must not be null!");

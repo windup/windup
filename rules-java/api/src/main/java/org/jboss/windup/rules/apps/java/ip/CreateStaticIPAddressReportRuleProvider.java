@@ -13,6 +13,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
@@ -59,9 +60,12 @@ public class CreateStaticIPAddressReportRuleProvider extends AbstractRuleProvide
                             // configuration of current execution
                             WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
 
-                            // reference to input project model
-                            ProjectModel projectModel = configurationModel.getInputPath().getProjectModel();
-                            createIPReport(event.getGraphContext(), projectModel);
+                            for (FileModel inputPath : configurationModel.getInputPaths())
+                            {
+                                // reference to input project model
+                                ProjectModel projectModel = inputPath.getProjectModel();
+                                createIPReport(event.getGraphContext(), projectModel);
+                            }
                         }
                     });
     }
@@ -82,14 +86,15 @@ public class CreateStaticIPAddressReportRuleProvider extends AbstractRuleProvide
         applicationReport.setProjectModel(rootProjectModel);
 
         // find all IPLocationModels
-        GraphService<StaticIPLocationModel> ipLocationModelService = new GraphService<StaticIPLocationModel>(context, StaticIPLocationModel.class);
+        GraphService<StaticIPLocationModel> ipLocationModelService = new GraphService<>(context, StaticIPLocationModel.class);
         Iterable<StaticIPLocationModel> results = ipLocationModelService.findAll();
 
         Map<String, WindupVertexFrame> relatedData = new HashMap<>(1);
-        WindupVertexListModel staticIPList = new GraphService<WindupVertexListModel>(context, WindupVertexListModel.class).create();
+        WindupVertexListModel staticIPList = new GraphService<>(context, WindupVertexListModel.class).create();
         for (StaticIPLocationModel location : results)
         {
-            staticIPList.addItem(location);
+            if (location.getFile().getProjectModel().getRootProjectModel().equals(rootProjectModel))
+                staticIPList.addItem(location);
         }
         relatedData.put("staticIPLocations", staticIPList);
         applicationReport.setRelatedResource(relatedData);

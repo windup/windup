@@ -73,7 +73,7 @@ public class DiscoverJaxRsAnnotationsRuleProvider extends AbstractRuleProvider
         JavaClassModel implementationClass = getJavaClass(typeReference);
 
         JaxRSWebServiceModelService service = new JaxRSWebServiceModelService(event.getGraphContext());
-        service.getOrCreate(path, implementationClass);
+        service.getOrCreate(typeReference.getFile().getApplication(), path, implementationClass);
     }
 
     private String getAnnotationLiteralValue(JavaAnnotationTypeReferenceModel model, String name)

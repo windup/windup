@@ -27,7 +27,7 @@ public class DecompilerUtil
     {
         final File result;
         WindupConfigurationModel configuration = WindupConfigurationService.getConfigurationModel(context);
-        File inputPath = configuration.getInputPath().asFile();
+        File inputPath = fileModel.getProjectModel().getRootProjectModel().getRootFileModel().asFile();
         if (PathUtil.isInSubDirectory(inputPath, fileModel.asFile()))
         {
             String outputPath = configuration.getOutputPath().getFilePath();

@@ -118,7 +118,7 @@ public class JavaClassBindingStatusTest
 
             processorConfig.setOptionValue(TargetOption.NAME, Collections.singletonList("fakeserver"));
             processorConfig.setGraphContext(context);
-            processorConfig.setInputPath(Paths.get(inputDir));
+            processorConfig.addInputPath(Paths.get(inputDir));
             processorConfig.setOutputDirectory(outputPath);
             processorConfig.setOptionValue(ScanPackagesOption.NAME, Collections.singletonList(""));
             processorConfig.setOptionValue(EnableClassNotFoundAnalysisOption.NAME, true);

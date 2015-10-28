@@ -258,6 +258,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
 
         Service<EjbSessionBeanModel> sessionBeanService = new GraphService<>(event.getGraphContext(), EjbSessionBeanModel.class);
         EjbSessionBeanModel sessionBean = sessionBeanService.create();
+        sessionBean.setApplication(ejbConfig.getApplication());
         sessionBean.setEjbId(ejbId);
         sessionBean.setDisplayName(displayName);
         sessionBean.setBeanName(ejbName);
@@ -312,6 +313,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
 
         Service<EjbMessageDrivenModel> sessionBeanService = new GraphService<>(event.getGraphContext(), EjbMessageDrivenModel.class);
         EjbMessageDrivenModel mdb = sessionBeanService.create();
+        mdb.setApplication(ejbConfig.getApplication());
         mdb.setEjbClass(ejb);
         mdb.setBeanName(ejbName);
         mdb.setDisplayName(displayName);
@@ -322,7 +324,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
         if (StringUtils.isNotBlank(destination))
         {
             JmsDestinationService jmsDestinationService = new JmsDestinationService(event.getGraphContext());
-            JmsDestinationModel jndiRef = jmsDestinationService.createUnique(destination);
+            JmsDestinationModel jndiRef = jmsDestinationService.createUnique(ejbConfig.getApplication(), destination);
             mdb.setDestination(jndiRef);
         }
 
@@ -373,6 +375,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
         // create new entity facet.
         Service<EjbEntityBeanModel> ejbEntityService = new GraphService<>(event.getGraphContext(), EjbEntityBeanModel.class);
         EjbEntityBeanModel entity = ejbEntityService.create();
+        entity.setApplication(ejbConfig.getApplication());
         entity.setPersistenceType(persistenceType);
         entity.setEjbId(ejbId);
         entity.setDisplayName(displayName);

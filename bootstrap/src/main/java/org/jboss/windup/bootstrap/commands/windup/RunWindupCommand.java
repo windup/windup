@@ -163,7 +163,7 @@ public class RunWindupCommand implements Command, FurnaceDependent
             windupConfiguration.setOptionValue(option.getName(), optionValues.get(option.getName()));
         }
 
-        if (!validateInputAndOutputPath(windupConfiguration.getInputPath(), windupConfiguration.getOutputDirectory()))
+        if (!validateInputAndOutputPath(windupConfiguration.getInputPaths().iterator().next(), windupConfiguration.getOutputDirectory()))
             return;
 
         try

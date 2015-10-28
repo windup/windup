@@ -71,7 +71,7 @@ public class SourceModeTest
             processorConfig.setRuleProviderFilter(new RuleProviderWithDependenciesPredicate(
                         SourceModeTestRuleProvider.class));
             processorConfig.setGraphContext(context);
-            processorConfig.setInputPath(inputDir);
+            processorConfig.addInputPath(inputDir);
             processorConfig.setOutputDirectory(outputPath);
             processorConfig.setOptionValue(SourceModeOption.NAME, true);
 
@@ -95,7 +95,7 @@ public class SourceModeTest
             processorConfig.setRuleProviderFilter(new RuleProviderWithDependenciesPredicate(
                         SourceModeTestRuleProvider.class));
             processorConfig.setGraphContext(context);
-            processorConfig.setInputPath(inputDir);
+            processorConfig.addInputPath(inputDir);
             processorConfig.setOutputDirectory(outputPath);
             processorConfig.setOptionValue(SourceModeOption.NAME, false);
 
@@ -119,7 +119,7 @@ public class SourceModeTest
             processorConfig.setRuleProviderFilter(new RuleProviderWithDependenciesPredicate(
                         SourceModeTestRuleProvider.class));
             processorConfig.setGraphContext(context);
-            processorConfig.setInputPath(inputDir);
+            processorConfig.addInputPath(inputDir);
             processorConfig.setOutputDirectory(outputPath);
 
             processor.execute(processorConfig);

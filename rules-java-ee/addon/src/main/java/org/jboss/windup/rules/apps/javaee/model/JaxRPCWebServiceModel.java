@@ -15,46 +15,45 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(JaxRPCWebServiceModel.TYPE)
 public interface JaxRPCWebServiceModel extends WebServiceModel
 {
-    public static final String TYPE = "JaxRPCService";
-    public static final String JAXRPC_IMPLEMENTATION_CLASS = "jaxrpcImplementationClass";
-    public static final String JAXRPC_INTERFACE = "jaxrpcInterface";
-    public static final String JAXRPC_XML_DESCRIPTOR = "jaxrpcXmlDescriptor";
+    String TYPE = "JaxRPCService";
+    String JAXRPC_IMPLEMENTATION_CLASS = "jaxrpcImplementationClass";
+    String JAXRPC_INTERFACE = "jaxrpcInterface";
+    String JAXRPC_XML_DESCRIPTOR = "jaxrpcXmlDescriptor";
     
     /**
      * Contains the JAX-WS implementation class
      */
     @Adjacency(label = JAXRPC_IMPLEMENTATION_CLASS, direction = Direction.OUT)
-    public void setImplementationClass(JavaClassModel implRef);
+    void setImplementationClass(JavaClassModel implRef);
 
     /**
      * Contains the JAX-WS implementation class
      */
     @Adjacency(label = JAXRPC_IMPLEMENTATION_CLASS, direction = Direction.OUT)
-    public JavaClassModel getImplementationClass();
+    JavaClassModel getImplementationClass();
 
     /**
      * Contains the JAX-WS implementation class
      */
     @Adjacency(label = JAXRPC_INTERFACE, direction = Direction.OUT)
-    public void setInterface(JavaClassModel interfaceRef);
+    void setInterface(JavaClassModel interfaceRef);
 
     /**
      * Contains the JAX-WS implementation class
      */
     @Adjacency(label = JAXRPC_INTERFACE, direction = Direction.OUT)
-    public JavaClassModel getInterface();
+    JavaClassModel getInterface();
     
     
     /**
      * Contains the JAX-WS implementation class
      */
     @Adjacency(label = JAXRPC_XML_DESCRIPTOR, direction = Direction.OUT)
-    public void setXmlDescriptor(XmlFileModel xmlFile);
+    void setXmlDescriptor(XmlFileModel xmlFile);
 
     /**
      * Contains the JAX-WS implementation class
      */
     @Adjacency(label = JAXRPC_XML_DESCRIPTOR, direction = Direction.OUT)
-    public XmlFileModel getXmlDescriptor();
-    
+    XmlFileModel getXmlDescriptor();
 }

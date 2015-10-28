@@ -1,52 +1,70 @@
 package org.jboss.windup.rules.apps.javaee.model;
 
+import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
+import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
+/**
+ * Contains thread pool information (max pool size, pool name, etc).
+ */
 @TypeValue(ThreadPoolModel.TYPE)
 public interface ThreadPoolModel extends WindupVertexFrame
 {
-    public static final String POOL_NAME = "poolName";
-    public static final String MIN_POOL_SIZE = "minPoolSize";
-    public static final String MAX_POOL_SIZE = "maxPoolSize";
-    public static final String TYPE = "ThreadPoolModel";
+    String TYPE = "ThreadPoolModel";
+    String POOL_NAME = "poolName";
+    String MIN_POOL_SIZE = "minPoolSize";
+    String MAX_POOL_SIZE = "maxPoolSize";
+    String APPLICATION = "application";
+
+    /**
+     * Contains the application in which this thread pool was discovered
+     */
+    @Adjacency(label = APPLICATION, direction = Direction.OUT)
+    ProjectModel getApplication();
+
+    /**
+     * Contains the application in which this thread pool was discovered
+     */
+    @Adjacency(label = APPLICATION, direction = Direction.OUT)
+    void setApplication(ProjectModel projectModel);
 
     /**
      * Max pool size
      */
     @Property(MAX_POOL_SIZE)
-    public Integer getMaxPoolSize();
+    Integer getMaxPoolSize();
 
     /**
      * Max pool size
      */
     @Property(MAX_POOL_SIZE)
-    public void setMaxPoolSize(Integer maxPoolSize);
+    void setMaxPoolSize(Integer maxPoolSize);
 
     /**
      * Min pool size
      */
     @Property(MIN_POOL_SIZE)
-    public Integer getMinPoolSize();
+    Integer getMinPoolSize();
 
     /**
      * Min pool size
      */
     @Property(MIN_POOL_SIZE)
-    public void setMinPoolSize(Integer minPoolSize);
+    void setMinPoolSize(Integer minPoolSize);
 
     /**
      * Pool name
      */
     @Property(POOL_NAME)
-    public String getPoolName();
+    String getPoolName();
 
     /**
      * Pool name
      */
     @Property(POOL_NAME)
-    public void setPoolName(String poolName);
-
+    void setPoolName(String poolName);
 }

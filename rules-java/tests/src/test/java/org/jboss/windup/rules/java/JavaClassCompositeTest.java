@@ -82,7 +82,7 @@ public class JavaClassCompositeTest
             processorConfig.setRuleProviderFilter(new RuleProviderWithDependenciesPredicate(
                         JavaCompositeClassTestRuleProvider.class));
             processorConfig.setGraphContext(context);
-            processorConfig.setInputPath(Paths.get(inputDir));
+            processorConfig.addInputPath(Paths.get(inputDir));
             processorConfig.setOutputDirectory(outputPath);
             processorConfig.setOptionValue(ScanPackagesOption.NAME, Collections.singletonList(""));
             processorConfig.setOptionValue(SourceModeOption.NAME, true);

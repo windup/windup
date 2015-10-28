@@ -10,6 +10,7 @@ import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
+import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.model.TechnologyTagModel;
@@ -78,19 +79,20 @@ public class ResolveWebsphereWebXmlRuleProvider extends IteratingRuleProvider<Xm
         TechnologyTagModel technologyTag = technologyTagService.addTagToFileModel(payload, "Websphere Web XML", TechnologyTagLevel.IMPORTANT);
         for (Element resourceRef : $(doc).find("resRefBindings").get())
         {
-            processBinding(envRefService, jndiResourceService, resourceRef, "bindingResourceRef");
+            processBinding(envRefService, jndiResourceService, payload.getApplication(), resourceRef, "bindingResourceRef");
         }
         for (Element resourceRef : $(doc).find("ejbRefBindings").get())
         {
-            processBinding(envRefService, jndiResourceService, resourceRef, "bindingEjbRef");
+            processBinding(envRefService, jndiResourceService, payload.getApplication(), resourceRef, "bindingEjbRef");
         }
         for (Element resourceRef : $(doc).find("messageDestinationRefBindings").get())
         {
-            processBinding(envRefService, jndiResourceService, resourceRef, "bindingMessageDestinationRef");
+            processBinding(envRefService, jndiResourceService, payload.getApplication(), resourceRef, "bindingMessageDestinationRef");
         }
     }
 
-    private void processBinding(EnvironmentReferenceService envRefService, JNDIResourceService jndiResourceService, Element resourceRef, String tagName)
+    private void processBinding(EnvironmentReferenceService envRefService, JNDIResourceService jndiResourceService, ProjectModel application,
+                Element resourceRef, String tagName)
     {
         String jndiLocation = $(resourceRef).attr("jndiName");
         String resourceId = $(resourceRef).child(tagName).attr("href");
@@ -103,7 +105,7 @@ public class ResolveWebsphereWebXmlRuleProvider extends IteratingRuleProvider<Xm
 
         if (StringUtils.isNotBlank(jndiLocation))
         {
-            JNDIResourceModel resource = jndiResourceService.createUnique(jndiLocation);
+            JNDIResourceModel resource = jndiResourceService.createUnique(application, jndiLocation);
             LOG.info("JNDI: " + jndiLocation + " Resource: " + resourceId);
             // now, look up the resource
             for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.REFERENCE_ID, resourceId))

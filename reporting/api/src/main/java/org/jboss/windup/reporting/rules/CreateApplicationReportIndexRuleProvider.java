@@ -10,6 +10,7 @@ import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.ApplicationReportIndexModel;
 import org.jboss.windup.reporting.service.ApplicationReportIndexService;
 import org.jboss.windup.util.exception.WindupException;
@@ -42,12 +43,15 @@ public class CreateApplicationReportIndexRuleProvider extends AbstractRuleProvid
             @Override
             public void perform(GraphRewrite event, EvaluationContext context, WindupConfigurationModel payload)
             {
-                ProjectModel projectModel = payload.getInputPath().getProjectModel();
-                if (projectModel == null)
+                for (FileModel inputPath : payload.getInputPaths())
                 {
-                    throw new WindupException("Error, no project found in: " + payload.getInputPath().getFilePath());
+                    ProjectModel projectModel = inputPath.getProjectModel();
+                    if (projectModel == null)
+                    {
+                        throw new WindupException("Error, no project found in: " + inputPath.getFilePath());
+                    }
+                    createApplicationReportIndex(event.getGraphContext(), projectModel);
                 }
-                createApplicationReportIndex(event.getGraphContext(), projectModel);
             }
 
             @Override

@@ -167,8 +167,22 @@ public interface FileModel extends ResourceModel
     @JavaHandler
     String getPrettyPathWithinProject();
 
+    /**
+     * Returns the application that this file is a part of. This is especially useful in the case of analyzing multiple application's, as we often
+     * need to know which application a particular file is associated with.
+     *
+     * This is a shortcut for calling getProjectModel().getRootProjectModel().
+     */
+    @JavaHandler
+    ProjectModel getApplication();
+
     abstract class Impl implements FileModel, JavaHandlerContext<Vertex>
     {
+        public ProjectModel getApplication()
+        {
+            return getProjectModel().getRootProjectModel();
+        }
+
         public String getPrettyPathWithinProject()
         {
             if (it().getProperty(PRETTY_PATH_WITHIN_PROJECT) != null)
