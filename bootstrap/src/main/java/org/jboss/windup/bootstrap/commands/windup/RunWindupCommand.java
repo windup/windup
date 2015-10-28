@@ -211,8 +211,6 @@ public class RunWindupCommand implements Command, FurnaceDependent
             Path indexHtmlPath = windupConfiguration.getOutputDirectory().resolve("index.html").normalize().toAbsolutePath();
             System.out.println("Windup report created: " + indexHtmlPath + System.getProperty("line.separator")
                         + "              Access it at this URL: " + indexHtmlPath.toUri());
-
-            deleteGraphDataUnlessInhibited(windupConfiguration, graphPath);
         }
         catch (Exception e)
         {
@@ -220,6 +218,7 @@ public class RunWindupCommand implements Command, FurnaceDependent
             e.printStackTrace();
         }
 
+        deleteGraphDataUnlessInhibited(windupConfiguration, graphPath);
     }
 
 
