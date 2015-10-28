@@ -45,6 +45,9 @@ public class DisplayHelpCommand implements Command, FurnaceDependent
         sb.append("--listTargetTechnologies\n");
         sb.append("\t List all available target technologies\n");
 
+        sb.append("--discoverPackages\n");
+        sb.append("\t Lists all available packages in the input application (--input must also be specified)\n");
+
         sb.append("--updateRulesets\n");
         sb.append("\t Update the core rulesets to the latest version available\n");
 
