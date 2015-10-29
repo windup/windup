@@ -33,9 +33,17 @@
         <div class="row">
             <div class="page-header page-header-no-border">
                 <h1>
-                    <div class="main">JBPM Process Report</div>
+                    <div class="main"
+                        onmouseover="$(this).parent().parent().addClass('showDesc')"
+                        onmouseout=" $(this).parent().parent().removeClass('showDesc')"
+                              >JBPM Process Report</div>
                     <div class="path">${reportModel.projectModel.name?html}</div>
                 </h1>
+                <div class="desc">
+                    The JBPM process report shows the basic characteristics of JBPM processes found in the application,
+                    such like count of nodes, states, tasks, decisions, subprocesses, etc.
+                    Also lists the action handlers and decision handlers.
+                </div>
             </div>
         </div>
 

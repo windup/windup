@@ -31,9 +31,16 @@
         <div class="row">
             <div class="page-header page-header-no-border">
                 <h1>
-                    <div class="main">Spring Bean Report</div>
+                    <div class="main"
+                        onmouseover="$(this).parent().parent().addClass('showDesc')"
+                        onmouseout=" $(this).parent().parent().removeClass('showDesc')"
+                              >Spring Bean Report</div>
                     <div class="path">${reportModel.projectModel.name?html}</div>
                 </h1>
+                <div class="desc">
+                    The Spring bean report lists the SpringBeans found in the application
+                     - their name and the implementing class.
+                </div>
             </div>
         </div>
 

@@ -83,9 +83,20 @@
         <div class="row">
             <div class="page-header page-header-no-border">
                 <h1>
-                    <div class="main">Ignored Files Report</div>
+                    <div class="main"
+                        onmouseover="$(this).parent().parent().addClass('showDesc')"
+                        onmouseout=" $(this).parent().parent().removeClass('showDesc')"
+                              >Ignored Files Report</div>
                     <div class="path">${reportModel.projectModel.name?html}</div>
                 </h1>
+                <div class="desc">
+                    This report lists the files which were found in the application,
+                    but based on certain rules and the Windup configuration, both built-in and local,
+                    they were not processed.
+                    See the <code>--userIgnorePath</code> Windup option in
+                    <a href="http://windup.github.io/windup/docs/latest/html/WindupUserGuide.html#command-line-arguments"
+                       >Windup User Guide</a>.
+                </div>
             </div>
         </div>
 

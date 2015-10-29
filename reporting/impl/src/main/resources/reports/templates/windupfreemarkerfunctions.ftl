@@ -33,8 +33,14 @@
         <div class="row">
             <div class="page-header page-header-no-border">
                 <h1>
-                    <div class="main">Windup FreeMarker Functions and Directives</div>
+                    <div class="main"
+                        onmouseover="$(this).parent().parent().addClass('showDesc')"
+                        onmouseout=" $(this).parent().parent().removeClass('showDesc')"
+                              >Windup FreeMarker Functions and Directives</div>
                 </h1>
+                <div class="desc">
+                    This report shows the custom Freemarker extensions created for and used by Windup.
+                </div>
             </div>
         </div>
 

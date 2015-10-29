@@ -159,6 +159,36 @@ a.windup-file-location {
     color: #005387;
 }
 
+
+/* Description of the report, showing when .page-header has .showDesc . */
+.page-header h1 div.main:after {
+    content: "What's this report?";
+    display: inline-block;
+    font-size: 12pt;
+    font-style: italic;
+    color: gray;
+    padding: 0.3ex 0.3em;
+    vertical-align: top;
+    cursor: help;
+}
+
+.page-header div.desc {
+    display: none;
+    border: 1px solid #888;
+    box-shadow: 4px 4px 6px #333;
+    background: #fffe9c;
+    font-size: 12pt;
+    font-weight: normal;
+    padding: 1ex 1em;
+}
+
+.page-header.showDesc div.desc {
+    display: block;
+    position: absolute;
+    left: 3em;
+    width: 60%;
+}
+
 .page-header h1 div.path {
     margin-left: 2em;
     font-weight: normal;

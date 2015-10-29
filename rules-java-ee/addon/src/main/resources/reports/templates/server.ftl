@@ -31,9 +31,16 @@
         <div class="row">
             <div class="page-header page-header-no-border">
                 <h1>
-                    <div class="main">Server Resource Report</div>
+                    <div class="main"
+                        onmouseover="$(this).parent().parent().addClass('showDesc')"
+                        onmouseout=" $(this).parent().parent().removeClass('showDesc')"
+                              >Server Resource Report</div>
                     <div class="path">${reportModel.projectModel.name?html}</div>
                 </h1>
+                <div class="desc">
+                    This reports lists the resources of the application that are supposed to be used by the server,
+                    such as datasources, JMS destinations, JMS connection factories, JMS connection factory list, and thread pools.
+                </div>
             </div>
         </div>
 

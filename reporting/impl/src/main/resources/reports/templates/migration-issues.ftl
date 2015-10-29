@@ -31,9 +31,16 @@
         <div class="row">
             <div class="page-header page-header-no-border">
                 <h1>
-                    <div class="main">Migration Issue Report</div>
+                    <div class="main"
+                            onmouseover="$(this).parent().parent().addClass('showDesc')"
+                            onmouseout=" $(this).parent().parent().removeClass('showDesc')"
+                                  >Migration Issue Report</div>
                     <div class="path">${reportModel.projectModel.name?html}</div>
                 </h1>
+                <div class="desc">
+                    The Migration Issues report is a numerical summary of all issues found in the whole application.
+                    Click on the individual issue types to see where it was found.
+                </div>
             </div>
         </div>
     </div>

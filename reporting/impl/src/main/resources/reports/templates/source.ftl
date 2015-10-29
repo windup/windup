@@ -35,9 +35,17 @@
         <div class="row">
             <div class="page-header page-header-no-border">
                 <h1>
-                    <div class="main">Source Report</div>
+                    <div class="main"
+                        onmouseover="$(this).parent().parent().addClass('showDesc')"
+                        onmouseout=" $(this).parent().parent().removeClass('showDesc')"
+                              >Source Report</div>
                     <div class="path">${reportModel.sourceFileModel.prettyPath?html}</div>
                 </h1>
+                <div class="desc">
+                    This report displays what Windup found in individual files.
+                    Each item is shown below the line it was found on,
+                    and next to it, you may find a link to the rule which it was found by.
+                </div>
             </div>
         </div>
 

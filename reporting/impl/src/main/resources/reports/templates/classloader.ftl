@@ -14,9 +14,19 @@
         <div class="row">
             <div class="page-header page-header-no-border">
                 <h1>
-                    <div class="main">Classloader Report</div>
+                    <div class="main"
+                            onmouseover="$(this).parent().parent().addClass('showDesc')"
+                            onmouseout=" $(this).parent().parent().removeClass('showDesc')"
+                                  >Classloader Report</div>
                     <div class="path">${application.applicationName?html}</div>
                 </h1>
+                <div class="desc">
+                    The classloader report shows the relations between classloaders and the loaded types,
+                    and highlights the conditions which often lead to problems, like
+                        duplicated classes,
+                        classes not found in the application,
+                        blacklisted classes.
+                </div>
 
                 <div class="navbar navbar-default">
                 <div class="navbar-header">

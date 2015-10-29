@@ -96,9 +96,17 @@
         <div class="row">
             <div class="page-header page-header-no-border">
                 <h1>
-                    <div class="main">Compatible Files Report</div>
+                    <div class="main"
+                        onmouseover="$(this).parent().parent().addClass('showDesc')"
+                        onmouseout=" $(this).parent().parent().removeClass('showDesc')"
+                              >Compatible Files Report</div>
                     <div class="path">${reportModel.projectModel.name?html}</div>
                 </h1>
+                <div class="desc">
+                    Files in this report are believed to be compatible with the selected target platform;
+                    however, it is possible that this report contains incompatible files that were not identified
+                    by any Windup rules. It is recommended that these files be reviewed manually for any issues.
+                </div>
             </div>
         </div>
 

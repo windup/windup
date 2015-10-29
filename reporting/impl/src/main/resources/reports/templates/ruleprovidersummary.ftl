@@ -33,8 +33,16 @@
         <div class="row">
             <div class="page-header page-header-no-border">
                 <h1>
-                    <div class="main">Rule Provider Executions</div>
+                    <div class="main"
+                        onmouseover="$(this).parent().parent().addClass('showDesc')"
+                        onmouseout=" $(this).parent().parent().removeClass('showDesc')"
+                              >Rule Provider Executions</div>
                 </h1>
+                <div class="desc">
+                    This report lists "rule providers", or sets of Windup rules.
+                    They may originate from a <code>.windup.xml</code> file
+                    or a Java class implementing <code>WindupRuleProvider</code>.
+                </div>
             </div>
         </div>
 
