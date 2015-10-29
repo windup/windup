@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -38,7 +39,6 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
-
 
 public class RunWindupCommand implements Command, FurnaceDependent
 {
@@ -119,10 +119,8 @@ public class RunWindupCommand implements Command, FurnaceDependent
                 }
 
                 /*
-                 * This allows us to support specifying a parameter multiple times. For example:
-                 * `windup --packages foo --packages bar --packages baz`
-                 * While this is not necessarily the recommended approach, it would be nice for it to work smoothly if
-                 * someone does it this way.
+                 * This allows us to support specifying a parameter multiple times. For example: `windup --packages foo --packages bar --packages baz`
+                 * While this is not necessarily the recommended approach, it would be nice for it to work smoothly if someone does it this way.
                  */
                 if (optionValues.containsKey(option.getName()))
                     ((List<Object>) optionValues.get(option.getName())).addAll(values);
@@ -136,7 +134,19 @@ public class RunWindupCommand implements Command, FurnaceDependent
             else
             {
                 String valueString = arguments.get(++i);
-                optionValues.put(option.getName(), convertType(option.getType(), valueString));
+                Object value = convertType(option.getType(), valueString);
+                if (option.getName().equals(InputPathOption.NAME) && value instanceof File)
+                {
+                    Collection<Path> inputPaths = (Collection<Path>) optionValues.get(option.getName());
+                    if (inputPaths == null)
+                        inputPaths = new LinkedHashSet<>();
+                    inputPaths.add(((File) value).toPath());
+                    optionValues.put(option.getName(), inputPaths);
+                }
+                else
+                {
+                    optionValues.put(option.getName(), value);
+                }
             }
         }
 
@@ -221,7 +231,6 @@ public class RunWindupCommand implements Command, FurnaceDependent
         deleteGraphDataUnlessInhibited(windupConfiguration, graphPath);
     }
 
-
     private boolean validateInputAndOutputPath(Path inputPath, Path outputPath)
     {
         ValidationResult validationResult = OutputPathOption.validateInputAndOutputPath(inputPath, outputPath);
@@ -267,18 +276,18 @@ public class RunWindupCommand implements Command, FurnaceDependent
     {
         if (!optionValues.containsKey(OutputPathOption.NAME))
         {
-            File inputFile = (File) optionValues.get(InputPathOption.NAME);
-            if (inputFile != null)
+            Iterable<Path> paths = (Iterable<Path>) optionValues.get(InputPathOption.NAME);
+            if (paths != null && paths.iterator().hasNext())
             {
                 try
                 {
-                    File canonicalInputFile = inputFile.getCanonicalFile();
+                    File canonicalInputFile = paths.iterator().next().toFile().getCanonicalFile();
                     File outputFile = new File(canonicalInputFile.getParentFile(), canonicalInputFile.getName() + ".report");
                     optionValues.put(OutputPathOption.NAME, outputFile);
                 }
                 catch (IOException e)
                 {
-                    throw new WindupException("Failed to get canonical path for input file: " + inputFile);
+                    throw new WindupException("Failed to get canonical path for input file: " + paths.iterator().next().toFile());
                 }
             }
         }
@@ -303,8 +312,6 @@ public class RunWindupCommand implements Command, FurnaceDependent
             throw new RuntimeException("Internal Error! Unrecognized type " + type.getCanonicalName());
         }
     }
-
-
 
     private boolean pathNotEmpty(File f)
     {
@@ -339,7 +346,6 @@ public class RunWindupCommand implements Command, FurnaceDependent
             return null;
     }
 
-
     private void deleteGraphDataUnlessInhibited(WindupConfiguration windupConfiguration, Path graphPath)
     {
         Boolean keep = (Boolean) windupConfiguration.getOptionMap().get(KeepWorkDirsOption.NAME);
@@ -353,7 +359,7 @@ public class RunWindupCommand implements Command, FurnaceDependent
             catch (IOException ex)
             {
                 log.log(Level.WARNING, "Failed deleting graph directory: " + graphPath.toFile().getPath()
-                    + "\n\tDue to: " + ex.getMessage(), ex);
+                            + "\n\tDue to: " + ex.getMessage(), ex);
             }
         }
     }

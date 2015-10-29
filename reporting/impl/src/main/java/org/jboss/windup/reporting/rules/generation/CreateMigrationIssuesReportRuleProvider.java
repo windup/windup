@@ -36,30 +36,43 @@ public class CreateMigrationIssuesReportRuleProvider extends AbstractRuleProvide
     {
         return ConfigurationBuilder.begin()
                     .addRule()
-                    .perform(new CreateProblemCentricReportOperation());
+                    .perform(new CreateMigrationIssueReportOperation());
     }
 
-    private class CreateProblemCentricReportOperation extends GraphOperation
+    private void createMigrationIssuesReport(GraphContext context, ProjectModel projectModel)
+    {
+        ApplicationReportService applicationReportService = new ApplicationReportService(context);
+        ApplicationReportModel report = applicationReportService.create();
+        report.setReportPriority(110);
+        report.setReportIconClass("glyphicon glyphicon-warning-sign");
+        report.setReportName("Migration Issues");
+        report.setTemplatePath(TEMPLATE_PATH);
+        report.setTemplateType(TemplateType.FREEMARKER);
+        report.setDisplayInApplicationReportIndex(true);
+
+        ReportService reportService = new ReportService(context);
+
+        if (projectModel == null)
+        {
+            reportService.setUniqueFilename(report, "main_migration_issues", "html");
+        }
+        else
+        {
+            report.setProjectModel(projectModel);
+            reportService.setUniqueFilename(report, "migration_issues", "html");
+        }
+    }
+
+    private class CreateMigrationIssueReportOperation extends GraphOperation
     {
         @Override
         public void perform(GraphRewrite event, EvaluationContext context)
         {
+            createMigrationIssuesReport(event.getGraphContext(), null);
+
             for (FileModel inputPath : WindupConfigurationService.getConfigurationModel(event.getGraphContext()).getInputPaths())
             {
-                ApplicationReportService applicationReportService = new ApplicationReportService(event.getGraphContext());
-                ApplicationReportModel report = applicationReportService.create();
-                report.setReportPriority(110);
-                report.setDisplayInApplicationReportIndex(true);
-                report.setReportIconClass("glyphicon glyphicon-warning-sign");
-                report.setReportName("Migration Issues");
-                report.setTemplatePath(TEMPLATE_PATH);
-                report.setTemplateType(TemplateType.FREEMARKER);
-
-                ProjectModel projectModel = inputPath.getProjectModel();
-                report.setProjectModel(projectModel);
-
-                ReportService reportService = new ReportService(event.getGraphContext());
-                reportService.setUniqueFilename(report, "problem_centric_report", "html");
+                createMigrationIssuesReport(event.getGraphContext(), inputPath.getProjectModel());
             }
         }
     }

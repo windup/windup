@@ -1,5 +1,9 @@
 package org.jboss.windup.reporting.service;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.tools.ant.taskdefs.Length.FileMode;
@@ -20,9 +24,8 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 /**
  * This provides helper functions for finding and creating {@link InlineHintModel} instances within the graph.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- * 
  */
 public class InlineHintService extends GraphService<InlineHintModel>
 {
@@ -54,8 +57,7 @@ public class InlineHintService extends GraphService<InlineHintModel>
     }
 
     /**
-     * Returns the total effort points in all of the {@link InlineHintModel} instances associated with the provided
-     * {@link FileModel}.
+     * Returns the total effort points in all of the {@link InlineHintModel} instances associated with the provided {@link FileModel}.
      */
     public int getMigrationEffortPoints(FileModel fileModel)
     {
@@ -71,12 +73,48 @@ public class InlineHintService extends GraphService<InlineHintModel>
         return hintEffort;
     }
 
+    private Collection<Vertex> getProjectAndChildren(ProjectModel projectModel)
+    {
+        ArrayList<Vertex> result = new ArrayList<>();
+        result.add(projectModel.asVertex());
+
+        for (ProjectModel child : projectModel.getChildProjects())
+        {
+            result.addAll(getProjectAndChildren(child));
+        }
+        return result;
+    }
+
+    public Iterable<InlineHintModel> getHintsForProject(ProjectModel projectModel, boolean recursive)
+    {
+
+        final Iterable<Vertex> initialVertices;
+        if (recursive)
+        {
+            initialVertices = getProjectAndChildren(projectModel);
+        }
+        else
+        {
+            initialVertices = Collections.singletonList(projectModel.asVertex());
+        }
+
+        GremlinPipeline<Vertex, Vertex> inlineHintPipeline = new GremlinPipeline<>(initialVertices);
+        inlineHintPipeline.out(ProjectModel.PROJECT_MODEL_TO_FILE);
+        inlineHintPipeline.in(InlineHintModel.FILE_MODEL).has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, InlineHintModel.TYPE);
+
+        List<InlineHintModel> results = new ArrayList<>();
+        for (Vertex v : inlineHintPipeline)
+        {
+            results.add(frame(v));
+        }
+        return results;
+    }
+
     /**
-     * Returns the total effort points in all of the {@link InlineHintModel} instances associated with the
-     * {@link FileMode} instances in the given {@link ProjectModel}.
-     * 
+     * Returns the total effort points in all of the {@link InlineHintModel} instances associated with the {@link FileMode} instances in the given
+     * {@link ProjectModel}.
+     * <p/>
      * If set to recursive, then also include the effort points from child projects.
-     * 
      */
     public int getMigrationEffortPoints(ProjectModel projectModel, Set<String> includeTags, Set<String> excludeTags, boolean recursive)
     {

@@ -23,7 +23,9 @@ import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.jboss.windup.reporting.model.ReportModel;
+import org.jboss.windup.reporting.service.ApplicationReportService;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.rules.apps.java.model.PropertiesModel;
 import org.jboss.windup.rules.apps.javaee.model.EnvironmentReferenceModel;
@@ -214,11 +216,24 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
     {
         TestMigrationIssuesReportUtil util = new TestMigrationIssuesReportUtil();
 
-        ReportService reportService = new ReportService(context);
-        ReportModel reportModel = reportService.getUniqueByProperty(
+        ApplicationReportService reportService = new ApplicationReportService(context);
+        Iterable<ApplicationReportModel> reportModels = reportService.findAllByProperty(
                     ReportModel.TEMPLATE_PATH,
                     "/reports/templates/migration-issues.ftl");
-        Path reportPath = Paths.get(reportService.getReportDirectory(), reportModel.getReportFilename());
+        ApplicationReportModel reportModel = null;
+        for (ApplicationReportModel possibleModel : reportModels)
+        {
+            if (possibleModel.getProjectModel() != null)
+            {
+                reportModel = possibleModel;
+                break;
+            }
+        }
+
+        if (reportModel == null)
+            throw new RuntimeException("Failed to find migration issues report!");
+
+        Path reportPath = Paths.get(new ReportService(context).getReportDirectory(), reportModel.getReportFilename());
         util.loadPage(reportPath);
 
         Assert.assertTrue(util.checkIssue("Classification ActivationConfigProperty", 2, 8, 16));

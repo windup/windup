@@ -7,6 +7,7 @@ import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.PostReportGenerationPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.reporting.model.ApplicationReportIndexModel;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.jboss.windup.reporting.service.ApplicationReportIndexService;
@@ -48,10 +49,14 @@ public class AttachApplicationReportsToIndexRuleProvider extends AbstractRulePro
         {
             if (payload.getDisplayInApplicationReportIndex() != null && payload.getDisplayInApplicationReportIndex())
             {
-                ApplicationReportIndexService applicationReportIndexService = new ApplicationReportIndexService(
-                            event.getGraphContext());
-                ApplicationReportIndexModel index = applicationReportIndexService
-                            .getApplicationReportIndexForProjectModel(payload.getProjectModel());
+                final ApplicationReportIndexService applicationReportIndexService = new ApplicationReportIndexService(event.getGraphContext());
+                final ProjectModel projectModel = payload.getProjectModel();
+                final ApplicationReportIndexModel index;
+                if (projectModel == null)
+                    index = applicationReportIndexService.getOrCreateGlobalApplicationIndex();
+                else
+                    index = applicationReportIndexService.getApplicationReportIndexForProjectModel(payload.getProjectModel());
+
                 index.addApplicationReportModel(payload);
             }
         }

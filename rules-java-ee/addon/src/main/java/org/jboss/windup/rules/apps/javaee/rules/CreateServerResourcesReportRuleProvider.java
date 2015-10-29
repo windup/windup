@@ -1,19 +1,20 @@
 package org.jboss.windup.rules.apps.javaee.rules;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
-import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
@@ -26,11 +27,8 @@ import org.jboss.windup.rules.apps.javaee.model.JNDIResourceModel;
 import org.jboss.windup.rules.apps.javaee.model.JmsConnectionFactoryModel;
 import org.jboss.windup.rules.apps.javaee.model.JmsDestinationModel;
 import org.jboss.windup.rules.apps.javaee.model.ThreadPoolModel;
-import org.jboss.windup.rules.apps.javaee.service.DataSourceService;
 import org.jboss.windup.rules.apps.javaee.service.JNDIResourceService;
-import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
-import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -39,13 +37,13 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * Creates a report of Server Resources within the application (eg, datasources, jms resources).
  *
  */
-public class CreateServerResourceRuleProvider extends AbstractRuleProvider
+public class CreateServerResourcesReportRuleProvider extends AbstractRuleProvider
 {
     public static final String TEMPLATE_JPA_REPORT = "/reports/templates/server.ftl";
 
-    public CreateServerResourceRuleProvider()
+    public CreateServerResourcesReportRuleProvider()
     {
-        super(MetadataBuilder.forProvider(CreateServerResourceRuleProvider.class, "Create Server Resources Report")
+        super(MetadataBuilder.forProvider(CreateServerResourcesReportRuleProvider.class, "Create Server Resources Report")
                     .setPhase(ReportGenerationPhase.class));
     }
 
@@ -100,19 +98,19 @@ public class CreateServerResourceRuleProvider extends AbstractRuleProvider
 
             if (jndi instanceof DataSourceModel)
             {
-                datasourceList.addItem(jndi);
+                datasourceList.add((DataSourceModel) jndi);
             }
             else if (jndi instanceof JmsDestinationModel)
             {
-                jmsList.addItem(jndi);
+                jmsList.add((JmsDestinationModel) jndi);
             }
             else if (jndi instanceof JmsConnectionFactoryModel)
             {
-                jmsConnectionFactoryList.addItem(jndi);
+                jmsConnectionFactoryList.add((JmsConnectionFactoryModel) jndi);
             }
             else
             {
-                otherJndiList.addItem(jndi);
+                otherJndiList.add(jndi);
             }
         }
 
