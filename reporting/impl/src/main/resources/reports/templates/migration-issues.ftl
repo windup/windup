@@ -2,148 +2,156 @@
 <html lang="en">
     <#assign applicationReportIndexModel = reportModel.applicationReportIndexModel>
 
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>${reportModel.projectModel.name} - Migration Issues</title>
-        <link href="resources/css/bootstrap.min.css" rel="stylesheet">
-        <link href="resources/css/windup.css" rel="stylesheet" media="screen">
-        <link href="resources/css/windup.java.css" rel="stylesheet" media="screen">
-    </head>
-    <body role="document">
-        <!-- Navbar -->
-        <div class="navbar navbar-default navbar-fixed-top">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-            </div>
-
-            <div class="navbar-collapse collapse navbar-responsive-collapse">
-                <#include "include/navbar.ftl">
-            </div><!-- /.nav-collapse -->
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>${reportModel.projectModel.name} - Migration Issues</title>
+    <link href="resources/css/bootstrap.min.css" rel="stylesheet">
+    <link href="resources/css/windup.css" rel="stylesheet" media="screen">
+    <link href="resources/css/windup.java.css" rel="stylesheet" media="screen">
+</head>
+<body role="document">
+    <!-- Navbar -->
+    <div class="navbar navbar-default navbar-fixed-top">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
         </div>
-        <!-- / Navbar -->
 
-        <div class="container-fluid" role="main">
-            <div class="row">
-                <div class="page-header page-header-no-border">
-                    <h1>
-                        <div class="main">Migration Issue Report</div>
-                        <div class="path">${reportModel.projectModel.name?html}</div>
-                    </h1>
+        <div class="navbar-collapse collapse navbar-responsive-collapse">
+            <#include "include/navbar.ftl">
+        </div><!-- /.nav-collapse -->
+    </div>
+    <!-- / Navbar -->
+
+    <div class="container-fluid" role="main">
+        <div class="row">
+            <div class="page-header page-header-no-border">
+                <h1>
+                    <div class="main"
+                            onmouseover="$(this).parent().parent().addClass('showDesc')"
+                            onmouseout=" $(this).parent().parent().removeClass('showDesc')"
+                                  >Migration Issue Report</div>
+                    <div class="path">${reportModel.projectModel.name?html}</div>
+                </h1>
+                <div class="desc">
+                    The Migration Issues report is a numerical summary of all issues found in the whole application.
+                    Click on the individual issue types to see where it was found.
                 </div>
             </div>
+        </div>
+    </div>
 
-        <div class="row">
-            <!-- Breadcrumbs -->
-            <div class="container-fluid">
-                <ol class="breadcrumb top-menu">
-                    <li><a href="../index.html">All Applications</a></li>
-                    <#include "include/breadcrumbs.ftl">
-                </ol>
+    <div class="row">
+        <!-- Breadcrumbs -->
+        <div class="container-fluid">
+            <ol class="breadcrumb top-menu">
+                <li><a href="../index.html">All Applications</a></li>
+                <#include "include/breadcrumbs.ftl">
+            </ol>
+        </div>
+        <!-- / Breadcrumbs -->
+    </div>
+
+    <div class="row">
+        <div class="container-fluid theme-showcase" role="main">
+            <div class="panel panel-default panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Potential Issues</h3>
+                </div>
+                <table id="issues_table" class="table table-hover table-condensed tablesorter">
+                    <thead>
+                        <tr>
+                            <th>Issue</th>
+                            <th>Incidents Found</th>
+                            <th>Story Points per Incident</th>
+                            <th>Total Story Points</th>
+                            <th class="col-md-1">Rule</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <#list getProblemSummaries() as problemSummary>
+                            <tr>
+                                <td>
+                                    <a href="#" class="problem-link">
+                                        ${problemSummary.issueName}
+                                    </a>
+                                    <div class="problem-file-list list-group" style="display: none;">
+                                        <!-- Internal issues per file table -->
+                                        <table id="issues_per_file_table" class="table table-hover table-condensed tablesorter-child tablesorter">
+                                            <thead>
+                                                <tr>
+                                                  <th>File</th>
+                                                  <th>Issues Found</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            <#list problemSummary.files as fileSummary>
+                                                <tr>
+                                                    <td>
+                                                        <@render_link model=fileSummary.file class="list-group-item"/><#t>
+                                                    </td>
+                                                    <td>${fileSummary.occurences}</td>
+                                                </tr>
+                                                </#list>
+                                                <div style="clear: both;"/>
+                                          </tbody>
+                                         </table>
+
+                                    </div>
+                                </td>
+                                <td>${problemSummary.numberFound}</td>
+                                <td>${problemSummary.effortPerIncident}</td>
+                                <td>${problemSummary.numberFound * problemSummary.effortPerIncident}</td>
+                                <td>
+                                    <@render_rule_link ruleID=problemSummary.ruleID renderType="glyph"/>
+                                </td>
+                            </tr>
+                        </#list>
+                    </tbody>
+                </table>
             </div>
-            <!-- / Breadcrumbs -->
         </div>
+    </div>
 
-        <div class="row">
-        	<div class="container-fluid theme-showcase" role="main">
-	            <div class="panel panel-default panel-primary">
-	            	<div class="panel-heading">
-                        <h3 class="panel-title">Potential Issues</h3>
-                    </div>
-	                <table id="issues_table" class="table table-hover table-condensed tablesorter">
-	                    <thead>
-	                        <tr>
-	                            <th>Issue</th>
-	                            <th>Incidents Found</th>
-	                            <th>Story Points per Incident</th>
-	                            <th>Total Story Points</th>
-	                            <th class="col-md-1">Rule</th>
-	                        </tr>
-	                    </thead>
-	                    <tbody>
-	                        <#list getProblemSummaries() as problemSummary>
-	                            <tr>
-	                                <td>
-	                                    <a href="#" class="problem-link">
-	                                        ${problemSummary.issueName}
-	                                    </a>
-	                                    <div class="problem-file-list list-group" style="display: none;">
-						<!-- Internal issues per file table -->
-						<table id="issues_per_file_table" class="table table-hover table-condensed tablesorter-child tablesorter">
-	                                          <thead>
-	                                             <tr>
-	                                               <th>File</th>
-	                                               <th>Issues Found</th>
-	                                             </tr>
-	                                          </thead>
-	                                          <tbody>
-				                    <#list problemSummary.files as fileSummary>
-	                                               <tr>
-	                                                  <td> 
-	                                                       <@render_link model=fileSummary.file class="list-group-item"/><#t>
-                                                          </td>
-			                                  <td>${fileSummary.occurences}</td>
-	                                               </tr>
-                                                    </#list>
-                                                   <div style="clear: both;"/>
-	                                          </tbody>
-	                                         </table>
-	                                       
-	                                    </div>
-	                                </td>
-			                <td>${problemSummary.numberFound}</td>
-			                <td>${problemSummary.effortPerIncident}</td>
-			                <td>${problemSummary.numberFound * problemSummary.effortPerIncident}</td>
-			                <td>
-			                    <@render_rule_link ruleID=problemSummary.ruleID renderType="glyph"/>
-			                 </td>
-	                            </tr>
-	                        </#list>
-	                    </tbody>
-	                </table>
-	            </div>
-	    	</div>
-        </div>
-
-        <script src="resources/js/jquery-1.10.1.min.js"></script>
-        <script src="resources/js/bootstrap.min.js"></script>
-        <script src="resources/js/jquery.tablesorter.min.js"></script>
-        <script type="text/javascript">
-            $(document).ready(function () {
-                $('.problem-link').each(function(index, value) {
-                    $(value).click(function(e) {
-                        e.preventDefault();
-                        $(value).siblings(".problem-file-list").toggle();
-                    });
+    <script src="resources/js/jquery-1.10.1.min.js"></script>
+    <script src="resources/js/bootstrap.min.js"></script>
+    <script src="resources/js/jquery.tablesorter.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('.problem-link').each(function(index, value) {
+                $(value).click(function(e) {
+                    e.preventDefault();
+                    $(value).siblings(".problem-file-list").toggle();
                 });
             });
-            // we need this parser because we are using comma to separate thousands
-            $.tablesorter.addParser({
-   		 id: 'thousands',
-   		 is: function(s) {
-  		      return true;
-   		 },
- 		 format: function(s) {
-   		     return s.replace('$','').replace(/,/g,'');
-   		 },
-  		 type: 'numeric'
-	    });
-            $(document).ready(function() {
-                $("#issues_table").tablesorter({
+        });
+        // we need this parser because we are using comma to separate thousands
+        $.tablesorter.addParser({
+            id: 'thousands',
+            is: function(s) {
+                 return true;
+            },
+            format: function(s) {
+                return s.replace('$','').replace(/,/g,'');
+            },
+            type: 'numeric'
+        });
+        $(document).ready(function() {
+            $("#issues_table").tablesorter({
                 selectorHeaders: '> thead > tr > th',
                 sortList: [[3,1]],
-        	headers: {
-                  // 2nd,3rd,4th columns are parsed using thousands parser
-          	      1: {sorter:'thousands'},
-                  2: {sorter:'thousands'},
-                  3: {sorter:'thousands'}
-                  }
-                });
-   	    });
-        </script>
-    </body>
+                headers: {
+                      // 2nd,3rd,4th columns are parsed using thousands parser
+                      1: {sorter:'thousands'},
+                      2: {sorter:'thousands'},
+                      3: {sorter:'thousands'}
+                }
+            });
+        });
+    </script>
+</body>
 </html>

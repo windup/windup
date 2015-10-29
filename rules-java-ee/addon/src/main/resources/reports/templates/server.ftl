@@ -12,166 +12,173 @@
 </head>
 <body role="document">
 
-	<!-- Navbar -->
-	<div class="navbar navbar-default navbar-fixed-top">
-		<div class="navbar-header">
-			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-				<span class="icon-bar"></span>
-			</button>
-		</div>
-		<div class="navbar-collapse collapse navbar-responsive-collapse">
-			<#include "include/navbar.ftl">
-		</div><!-- /.nav-collapse -->
-	</div>
-	<!-- / Navbar -->
+    <!-- Navbar -->
+    <div class="navbar navbar-default navbar-fixed-top">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+        </div>
+        <div class="navbar-collapse collapse navbar-responsive-collapse">
+            <#include "include/navbar.ftl">
+        </div><!-- /.nav-collapse -->
+    </div>
+    <!-- / Navbar -->
 
-	<div class="container-fluid" role="main">
-		<div class="row">
-			<div class="page-header page-header-no-border">
+    <div class="container-fluid" role="main">
+        <div class="row">
+            <div class="page-header page-header-no-border">
                 <h1>
-                    <div class="main">Server Resource Report</div>
+                    <div class="main"
+                        onmouseover="$(this).parent().parent().addClass('showDesc')"
+                        onmouseout=" $(this).parent().parent().removeClass('showDesc')"
+                              >Server Resource Report</div>
                     <div class="path">${reportModel.projectModel.name?html}</div>
                 </h1>
-			</div>
-		</div>
+                <div class="desc">
+                    This reports lists the resources of the application that are supposed to be used by the server,
+                    such as datasources, JMS destinations, JMS connection factories, JMS connection factory list, and thread pools.
+                </div>
+            </div>
+        </div>
 
-		<div class="row">
-			<!-- Breadcrumbs -->
-			<div class="container-fluid">
-				<ol class="breadcrumb top-menu">
-					<li><a href="../index.html">All Applications</a></li>
-					<#include "include/breadcrumbs.ftl">
-				</ol>
-			</div>
-			<!-- / Breadcrumbs -->
-		</div>
+        <div class="row">
+            <!-- Breadcrumbs -->
+            <div class="container-fluid">
+                <ol class="breadcrumb top-menu">
+                    <li><a href="../index.html">All Applications</a></li>
+                    <#include "include/breadcrumbs.ftl">
+                </ol>
+            </div>
+            <!-- / Breadcrumbs -->
+        </div>
 
-		<div class="row">
-    		<div class="container-fluid theme-showcase" role="main">
+        <div class="row">
+            <div class="container-fluid theme-showcase" role="main">
 
-			<#if reportModel.relatedResources.datasources.list.iterator()?has_content>
-					<div class="panel panel-primary">
-			            <div class="panel-heading">
-			                <h3 class="panel-title">DataSources</h3>
-			            </div>
-			            <table class="table table-striped table-bordered">
-			        	<tr>
-			        		<th class="col-md-4">JNDI Location</th>
-			        		<th class="col-md-2">Database</th>
-			        		<th class="col-md-6">Links</th>
-			        	</tr>
+            <#list reportModel.relatedResources.datasources.list.iterator()>
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">DataSources</h3>
+                    </div>
+                    <table class="table table-striped table-bordered">
+                    <tr>
+                        <th class="col-md-4">JNDI Location</th>
+                        <th class="col-md-2">Database</th>
+                        <th class="col-md-6">Links</th>
+                    </tr>
 
-			    		<#list reportModel.relatedResources.datasources.list.iterator() as datasource>
-			    			<tr>
-								<td>${datasource.jndiLocation}</td>
-								<td>
-									<#if datasource.databaseTypeName??>
-										${datasource.databaseTypeName}<#if datasource.databaseTypeVersion??> ${datasource.databaseTypeVersion}</#if>
-									</#if>
-								</td>
-								<td><@render_linkable linkable=datasource layout='horizontal'/></td>
-			    			</tr>
-					    </#list>
-			    		</table>
-			    	</div>
-			</#if>
+                    <#items as datasource>
+                        <tr>
+                            <td>${datasource.jndiLocation}</td>
+                            <td>
+                                <#if datasource.databaseTypeName??>
+                                    ${datasource.databaseTypeName}<#if datasource.databaseTypeVersion??> ${datasource.databaseTypeVersion}</#if>
+                                </#if>
+                            </td>
+                            <td><@render_linkable linkable=datasource layout='horizontal'/></td>
+                        </tr>
+                    </#items>
+                    </table>
+                </div>
+            </#list>
 
 
-			<#if reportModel.relatedResources.jmsDestinations.list.iterator()?has_content>
-					<div class="panel panel-primary">
-			            <div class="panel-heading">
-			                <h3 class="panel-title">JMS Destinations</h3>
-			            </div>
-			            <table class="table table-striped table-bordered">
-			        	<tr>
-			        		<th class="col-md-4">JNDI Location</th>
-			        		<th class="col-md-2">Destination Type</th>
-			        		<th>Links</th>
-			        	</tr>
-			    		<#list reportModel.relatedResources.jmsDestinations.list.iterator() as jmsDestination>
-			    			<tr>
-								<td>${jmsDestination.jndiLocation}</td>
-								<td><#if jmsDestination.destinationType??>${jmsDestination.destinationType}</#if></td>
-								<td><@render_linkable linkable=jmsDestination layout='horizontal'/></td>
-			    			</tr>
-					    </#list>
-			    		</table>
-			    	</div>
-			</#if>
+            <#list reportModel.relatedResources.jmsDestinations.list.iterator()>
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">JMS Destinations</h3>
+                    </div>
+                    <table class="table table-striped table-bordered">
+                    <tr>
+                        <th class="col-md-4">JNDI Location</th>
+                        <th class="col-md-2">Destination Type</th>
+                        <th>Links</th>
+                    </tr>
+                    <#items as jmsDestination>
+                        <tr>
+                            <td>${jmsDestination.jndiLocation}</td>
+                            <td><#if jmsDestination.destinationType??>${jmsDestination.destinationType}</#if></td>
+                            <td><@render_linkable linkable=jmsDestination layout='horizontal'/></td>
+                        </tr>
+                    </#items>
+                    </table>
+                </div>
+            </#list>
 
-			<#if reportModel.relatedResources.jmsConnectionFactories.list.iterator()?has_content>
-					<div class="panel panel-primary">
-			            <div class="panel-heading">
-			                <h3 class="panel-title">JMS Connection Factories</h3>
-			            </div>
-			            <table class="table table-striped table-bordered">
-			        	<tr>
-			        		<th>JNDI Location</th>
-			        		<th>Connection Factory Type</th>
-			        		<th>Links</th>
-			        	</tr>
-			    		<#list reportModel.relatedResources.jmsConnectionFactories.list.iterator() as jmsConnectionFactory>
-			    			<tr>
-								<td>${jmsConnectionFactory.jndiLocation}</td>
-								<td><#if jmsConnectionFactory.connectionFactoryType??>${jmsConnectionFactory.connectionFactoryType}</#if></td>
-								<td></td>
-			    			</tr>
-					    </#list>
-			    		</table>
-			    	</div>
-			</#if>
-			
-			<#if reportModel.relatedResources.threadPools.list.iterator()?has_content>
-					<div class="panel panel-primary">
-			            <div class="panel-heading">
-			                <h3 class="panel-title">Thread Pools</h3>
-			            </div>
-			            <table class="table table-striped table-bordered">
-			        	<tr>
-			        		<th class="col-md-4">Pool Name</th>
-			        		<th class="col-md-1">Max Size</th>
-			        		<th class="col-md-1">Min Size</th>
-			        		<th class="col-md-6">Links</th>
-			        	</tr>
-			        			
-			    		<#list reportModel.relatedResources.threadPools.list.iterator() as threadPool>
-			    			<tr>
-								<td>${threadPool.poolName}</td>
-								<td>${threadPool.maxPoolSize}</td>
-								<td>${threadPool.minPoolSize}</td>
-								<td><@render_linkable linkable=threadPool layout='horizontal'/></td>
-			    			</tr>
-					    </#list>
-			    		</table>
-			    	</div>
-			</#if>
-			
-			
+            <#list reportModel.relatedResources.jmsConnectionFactories.list.iterator()>
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">JMS Connection Factories</h3>
+                    </div>
+                    <table class="table table-striped table-bordered">
+                    <tr>
+                        <th>JNDI Location</th>
+                        <th>Connection Factory Type</th>
+                        <th>Links</th>
+                    </tr>
+                    <#items as jmsConnectionFactory>
+                        <tr>
+                            <td>${jmsConnectionFactory.jndiLocation}</td>
+                            <td><#if jmsConnectionFactory.connectionFactoryType??>${jmsConnectionFactory.connectionFactoryType}</#if></td>
+                            <td></td>
+                        </tr>
+                    </#items>
+                    </table>
+                </div>
+            </#list>
 
-			<#if reportModel.relatedResources.otherResources.list.iterator()?has_content>
-					<div class="panel panel-primary">
-			            <div class="panel-heading">
-			                <h3 class="panel-title">Other JNDI Entries</h3>
-			            </div>
-			            <table class="table table-striped table-bordered">
-			        	<tr>
-			        		<th>JNDI Location</th>
-			        	</tr>
-			    		<#list reportModel.relatedResources.otherResources.list.iterator() as other>
-			    			<tr>
-								<td>${other.jndiLocation}</td>
-			    			</tr>
-					    </#list>
-			    		</table>
-			    	</div>
-			</#if>
+            <#list reportModel.relatedResources.threadPools.list.iterator()>
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Thread Pools</h3>
+                    </div>
+                    <table class="table table-striped table-bordered">
+                    <tr>
+                        <th class="col-md-4">Pool Name</th>
+                        <th class="col-md-1">Max Size</th>
+                        <th class="col-md-1">Min Size</th>
+                        <th class="col-md-6">Links</th>
+                    </tr>
 
-	    </div> <!-- /container -->
-	</div><!--/row-->
+                    <#items as threadPool>
+                        <tr>
+                            <td>${threadPool.poolName}</td>
+                            <td>${threadPool.maxPoolSize}</td>
+                            <td>${threadPool.minPoolSize}</td>
+                            <td><@render_linkable linkable=threadPool layout='horizontal'/></td>
+                        </tr>
+                    </#items>
+                    </table>
+                </div>
+            </#list>
 
-	</div><!-- /container main-->
+
+
+            <#list reportModel.relatedResources.otherResources.list.iterator()>
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Other JNDI Entries</h3>
+                    </div>
+                    <table class="table table-striped table-bordered">
+                    <tr>
+                        <th>JNDI Location</th>
+                    </tr>
+                    <#items as other>
+                        <tr>
+                            <td>${other.jndiLocation}</td>
+                        </tr>
+                    </#items>
+                    </table>
+                </div>
+            </#list>
+
+        </div> <!-- /container -->
+    </div><!--/row-->
+
+    </div><!-- /container main-->
 
     <script src="resources/js/jquery-1.10.1.min.js"></script>
     <script src="resources/js/bootstrap.min.js"></script>
