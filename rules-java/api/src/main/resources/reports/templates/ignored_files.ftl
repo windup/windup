@@ -4,12 +4,12 @@
 <#assign applicationReportIndexModel = reportModel.applicationReportIndexModel>
 
 <#macro tagRenderer tag>
-	<#if tag.level?? && tag.level == "IMPORTANT">
-		<span class="label label-danger">
-	<#else>
-		<span class="label label-info">
-	</#if>
-		<#nested/></span>
+    <#if tag.level?? && tag.level == "IMPORTANT">
+        <span class="label label-danger">
+    <#else>
+        <span class="label label-info">
+    </#if>
+        <#nested/></span>
 </#macro>
 
 
@@ -26,7 +26,7 @@
             <tr>
                 <td> <#if file.fileName?has_content> ${file.fileName} </#if> </td>
                 <td> <#if file.filePath?has_content> ${file.filePath} </#if> </td>
-        		<td> <#if file.ignoredRegex?has_content> ${file.ignoredRegex} </#if> </td>
+                <td> <#if file.ignoredRegex?has_content> ${file.ignoredRegex} </#if> </td>
             </tr>
             </#list>
         </table>
@@ -39,14 +39,14 @@
         <table class="table table-striped table-bordered">
             <tr>
                 <th>Regex</th>
-				<th>Compilable</th>
+                <th>Compilable</th>
             </tr>
 
             <#list reportModel.fileRegexes.iterator() as regex>
             <tr>
                 <td> <#if regex.regex?has_content> ${regex.regex} </#if> </td>
-		<td> <#if regex.compilationError?has_content> ${regex.compilationError}
-		     <#else> OK
+                <td> <#if regex.compilationError?has_content> ${regex.compilationError}
+                     <#else> OK
                      </#if> </td>
             </tr>
             </#list>
@@ -64,8 +64,8 @@
 </head>
 <body role="document">
 
-	<!-- Navbar -->
-	<div class="navbar navbar-default navbar-fixed-top">
+    <!-- Navbar -->
+    <div class="navbar navbar-default navbar-fixed-top">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
                 <span class="icon-bar"></span>
@@ -91,20 +91,20 @@
 
         <div class="row">
         <!-- Breadcrumbs -->
-	        <div class="container-fluid">
-	            <ol class="breadcrumb top-menu">
-	                <li><a href="../index.html">All Applications</a></li>
-	                <#include "include/breadcrumbs.ftl">
-	            </ol>
-	        </div>
+            <div class="container-fluid">
+                <ol class="breadcrumb top-menu">
+                    <li><a href="../index.html">All Applications</a></li>
+                    <#include "include/breadcrumbs.ftl">
+                </ol>
+            </div>
         <!-- / Breadcrumbs -->
-		</div>
+        </div>
 
-		<div class="row">
-	        <div class="container-fluid theme-showcase" role="main">
-	            <@fileRegexesRenderer reportModel />
-	            <@ignoredFileRenderer reportModel />
-	        </div>
+        <div class="row">
+            <div class="container-fluid theme-showcase" role="main">
+                <@fileRegexesRenderer reportModel />
+                <@ignoredFileRenderer reportModel />
+            </div>
         </div>
     </div> <!-- /container -->
 

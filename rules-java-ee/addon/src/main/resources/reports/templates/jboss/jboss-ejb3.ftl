@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <#macro processEnvRef environmentRef>
-	<#switch environmentRef.referenceTagType>
+    <#switch environmentRef.referenceTagType>
         <#case "RESOURCE_ENV_REF">
             <resource-env-ref>
                 <resource-env-ref-name>${environmentRef.name}</resource-env-ref-name>
@@ -32,38 +32,38 @@
             </message-destination-ref>
             <#break>
         <#default>
-		<!-- Unhandled type: ${environmentRef.referenceTagType} -->
-	</#switch>
-</#macro>
+        <!-- Unhandled type: ${environmentRef.referenceTagType} -->
+    </#switch>
+    </#macro>
 
-<#macro processPool bean>
-	<#if bean.threadPool??>
-		<p:pool>
-			<ejb-name>${bean.beanName}</ejb-name>
-			<p:bean-instance-pool-ref>${bean.threadPool.poolName}</p:bean-instance-pool-ref>
+    <#macro processPool bean>
+    <#if bean.threadPool??>
+        <p:pool>
+            <ejb-name>${bean.beanName}</ejb-name>
+            <p:bean-instance-pool-ref>${bean.threadPool.poolName}</p:bean-instance-pool-ref>
         </p:pool>
-	</#if>
-</#macro>
+    </#if>
+    </#macro>
 
-<#macro processTxTimeout bean>
-	<#if bean.txTimeouts??>
-    	<#list bean.txTimeouts?keys as txMethodPattern>
-    		<container-transaction>
-	            <method>
-	                <ejb-name>${bean.beanName}</ejb-name>
-	                <method-name>${txMethodPattern}</method-name>
-	                <method-intf>Local</method-intf>
-	            </method>
-	            <tx:trans-timeout>
-	                <tx:timeout>${bean.txTimeouts[txMethodPattern]}</tx:timeout>
-	                <tx:unit>Seconds</tx:unit>
-	            </tx:trans-timeout>
-	        </container-transaction>
-		</#list>
- 	</#if>
-</#macro>
+    <#macro processTxTimeout bean>
+    <#if bean.txTimeouts??>
+        <#list bean.txTimeouts?keys as txMethodPattern>
+            <container-transaction>
+                <method>
+                    <ejb-name>${bean.beanName}</ejb-name>
+                    <method-name>${txMethodPattern}</method-name>
+                    <method-intf>Local</method-intf>
+                </method>
+                <tx:trans-timeout>
+                    <tx:timeout>${bean.txTimeouts[txMethodPattern]}</tx:timeout>
+                    <tx:unit>Seconds</tx:unit>
+                </tx:trans-timeout>
+            </container-transaction>
+        </#list>
+    </#if>
+    </#macro>
 
-<jboss:ejb-jar xmlns:jboss="http://www.jboss.com/xml/ns/javaee"
+    <jboss:ejb-jar xmlns:jboss="http://www.jboss.com/xml/ns/javaee"
                xmlns="http://java.sun.com/xml/ns/javaee"
                xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                xmlns:s="urn:security:1.1"
@@ -77,26 +77,26 @@
 
     <enterprise-beans>
 
-		<#if iterableHasContent(reportModel.relatedResources.sessionBeans)>
-		<#list reportModel.relatedResources.sessionBeans.list.iterator() as sessionBean>
-		<session>
+        <#if iterableHasContent(reportModel.relatedResources.sessionBeans)>
+        <#list reportModel.relatedResources.sessionBeans.list.iterator() as sessionBean>
+        <session>
             <ejb-name>${sessionBean.beanName}</ejb-name>
             <session-type>${sessionBean.sessionType}</session-type>
 
             <#if iterableHasContent(sessionBean.environmentReferences)>
-	            <#list sessionBean.environmentReferences.iterator() as environmentRef>
-		            <@processEnvRef environmentRef />
-	            </#list>
+                <#list sessionBean.environmentReferences.iterator() as environmentRef>
+                    <@processEnvRef environmentRef />
+                </#list>
             </#if>
         </session>
         </#list>
         </#if>
 
-    	<#list reportModel.relatedResources.messageDriven.list.iterator() as mdb>
-    	<message-driven>
-			<ejb-name>${mdb.beanName}</ejb-name>
-			<activation-config>
-			   <#if mdb.destination??>
+        <#list reportModel.relatedResources.messageDriven.list.iterator() as mdb>
+        <message-driven>
+            <ejb-name>${mdb.beanName}</ejb-name>
+            <activation-config>
+               <#if mdb.destination??>
                <activation-config-property>
                   <activation-config-property-name>destination</activation-config-property-name>
                   <activation-config-property-value>${mdb.destination.jndiLocation}</activation-config-property-value>
@@ -105,12 +105,12 @@
             </activation-config>
 
             <#if iterableHasContent(mdb.environmentReferences)>
-	            <#list mdb.environmentReferences.iterator() as environmentRef>
-		            <@processEnvRef environmentRef />
-	            </#list>
+                <#list mdb.environmentReferences.iterator() as environmentRef>
+                    <@processEnvRef environmentRef />
+                </#list>
             </#if>
-    	</message-driven>
-    	</#list>
+        </message-driven>
+        </#list>
     </enterprise-beans>
 
     <assembly-descriptor>
@@ -126,13 +126,13 @@
         </#list>
     </#if>
     <#list reportModel.relatedResources.messageDriven.list.iterator()>
-    	<#items as mdb>
-    	        <@processTxTimeout mdb />
-    	        <@processPool mdb />
+        <#items as mdb>
+                <@processTxTimeout mdb />
+                <@processPool mdb />
         </#items>
     </#list>
 
-   </assembly-descriptor>
+    </assembly-descriptor>
 
 
 </jboss:ejb-jar>

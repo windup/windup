@@ -5,11 +5,11 @@
 
 
 <#macro tagRenderer tag>
-	<#if tag.level?? && tag.level == "IMPORTANT">
-		<span class="label label-danger tag-${tag.name}">
-	<#else>
-		<span class="label label-info tag-${tag.name}">
-	</#if>
+    <#if tag.level?? && tag.level == "IMPORTANT">
+        <span class="label label-danger tag-${tag.name}">
+    <#else>
+        <span class="label label-info tag-${tag.name}">
+    </#if>
             <#nested/>
         </span>
 </#macro>
@@ -41,7 +41,7 @@
 
     <#assign sourceReportModel = fileModelToSourceReport(fileModel)!>
     <#if sourceReportModel.reportFilename?? >
-	<tr>
+    <tr>
         <#-- Name -->
         <td>
             <a href="${sourceReportModel.reportFilename}">
@@ -49,20 +49,20 @@
             </a>
         </td>
         <#-- Technology -->
-		<td>
-			<#list getTechnologyTagsForFile(fileModel).iterator() as tag>
+        <td>
+            <#list getTechnologyTagsForFile(fileModel).iterator() as tag>
                 <@tagRenderer tag>
                     ${tag.name} ${tag.version!}
                 </@tagRenderer>
             </#list>
-			<#list getTagsFromFileClassificationsAndHints(fileModel) as tag>
-        		<span class="label label-info tag">${tag}</span>
+            <#list getTagsFromFileClassificationsAndHints(fileModel) as tag>
+                <span class="label label-info tag">${tag}</span>
             </#list>
             <div style="clear: both;"/>
-		</td>
+        </td>
 
         <#-- Issues -->
-		<td>
+        <td>
         <#assign warnings = sourceReportModel.sourceFileModel.inlineHintCount + sourceReportModel.sourceFileModel.classificationCount>
         <#-- The ~Count are, in fact, Gremlin queries. Don't call more than once. -->
 
@@ -92,15 +92,15 @@
             </#list>
             <#if warnings gt 1></ul></#if>
         </#if>
-		</td>
+        </td>
 
         <#-- Story points -->
-		<td>
+        <td>
             <#assign fileEffort = getMigrationEffortPointsForFile(sourceReportModel.sourceFileModel)>
             ${fileEffort}
-		</td>
-	</tr>
-	</#if>
+        </td>
+    </tr>
+    </#if>
 </#macro>
 
 <#macro projectModelRenderer projectModel>
@@ -122,47 +122,47 @@
             </div>
 
             <!-- Basic info -->
-			<div class="basicInfo col-md-6 pull-right">
-				<table class="table">
-					<tr>
-						<th>Organization</th>
-						<th>Version</th>
-						<th>Link</th>
-					</tr>
-					<tr>
-						<td>
-						<#assign organizations = projectModelToOrganizations(projectModel)>
+            <div class="basicInfo col-md-6 pull-right">
+                <table class="table">
+                    <tr>
+                        <th>Organization</th>
+                        <th>Version</th>
+                        <th>Link</th>
+                    </tr>
+                    <tr>
+                        <td>
+                        <#assign organizations = projectModelToOrganizations(projectModel)>
 
-						<#if iterableHasContent(organizations)>
-							<#list organizations.iterator() as organization>
-								${organization.name?html}
-							</#list>
-						</#if>
-						</td>
+                        <#if iterableHasContent(organizations)>
+                            <#list organizations.iterator() as organization>
+                                ${organization.name?html}
+                            </#list>
+                        </#if>
+                        </td>
 
-						<td>${projectModel.name!""?html}</td>
-						<td>
-							<#if projectModel.url?has_content>
-								<a href="${projectModel.url?html}">Project Site</a>
-							</#if>
+                        <td>${projectModel.name!""?html}</td>
+                        <td>
+                            <#if projectModel.url?has_content>
+                                <a href="${projectModel.url?html}">Project Site</a>
+                            </#if>
 
-							<#if projectModelSha1Archive(projectModel)?has_content>
-								<#assign sha1URL = '|ga|1|1:"' + projectModelSha1Archive(projectModel) + '"'>
-								<#assign sha1URL = 'http://search.maven.org/#search' + sha1URL?url('ISO-8859-1')>
-								<a href="${sha1URL?html}">Maven Central</a>
-							</#if>
-						</td>
-					</tr>
-					<tr>
-						<th>Description</th>
-					</tr>
-					<tr>
-						<td colspan="3">
-							${projectModel.description!""}
-						</td>
-					</tr>
-				</table>
-			</div>
+                            <#if projectModelSha1Archive(projectModel)?has_content>
+                                <#assign sha1URL = '|ga|1|1:"' + projectModelSha1Archive(projectModel) + '"'>
+                                <#assign sha1URL = 'http://search.maven.org/#search' + sha1URL?url('ISO-8859-1')>
+                                <a href="${sha1URL?html}">Maven Central</a>
+                            </#if>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Description</th>
+                    </tr>
+                    <tr>
+                        <td colspan="3">
+                            ${projectModel.description!""}
+                        </td>
+                    </tr>
+                </table>
+            </div>
 
         </div>
         <#if iterableHasContent(projectModel.fileModelsNoDirectories)>

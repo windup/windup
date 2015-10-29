@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 
-  <head>
+<head>
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <title>${application.applicationName} - Classloader Report</title>
     <link href="../../resources/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="../../resources/css/windup.css" rel="stylesheet" media="screen"/>
-  </head>
-  <body role="document">
+</head>
+<body role="document">
 
     <div class="container-fluid" role="main">
         <div class="row">
@@ -46,38 +46,35 @@
 
 
 
-
-
-
     <div class="container-fluid theme-showcase" role="main">
 
-	<#list classloader.classes>
+    <#list classloader.classes>
     <div class="panel panel-primary">
         <div class="panel-heading">
             <h3 class="panel-title">${classloader.type}</h3>
         </div>
-			<table class="table table-striped table-bordered">
-			<tr>
-				<th>${classloader.referencedFrom}</th><th>${classloader.referenceType}</th>
-			</tr>
-			<#items as clz>
-			<tr>
-			  <td>${clz.clzName}</td>
-			  <td>
-			  	<#list clz.references>
-			  	<table>
-					<#items as reference>
-						<tr>${reference.referenceType}<td></td><td>${reference.clzName}</td></tr>
-					</#items>
-				</table>
-				</#if>
-			  </td>
-			</tr>
-			</#items>
+            <table class="table table-striped table-bordered">
+            <tr>
+                <th>${classloader.referencedFrom}</th><th>${classloader.referenceType}</th>
+            </tr>
+            <#items as clz>
+            <tr>
+              <td>${clz.clzName}</td>
+              <td>
+                <#list clz.references>
+                <table>
+                    <#items as reference>
+                        <tr>${reference.referenceType}<td></td><td>${reference.clzName}</td></tr>
+                    </#items>
+                </table>
+                </#if>
+              </td>
+            </tr>
+            </#items>
 
-			</table>
-	</div>
-	</#list>
+            </table>
+    </div>
+    </#list>
 
     </div> <!-- /container -->
 
