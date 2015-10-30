@@ -25,6 +25,7 @@
     <#else>
         ${name!""}
     </#if>
+
 </#macro>
 
 
@@ -32,7 +33,7 @@
     <#if fileModel.prettyPathWithinProject?has_content>
     <tr>
         <td>
-            <#assign fileName = getPrettyPathForFile(fileModel)!>
+            <#assign fileName = getPrettyPathForFileWithExtensions(fileModel)!>
             <@fileSourceLink fileModel fileName/>
         </td>
         <td>

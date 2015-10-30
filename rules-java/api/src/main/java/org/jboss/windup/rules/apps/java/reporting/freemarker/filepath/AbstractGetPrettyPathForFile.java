@@ -1,4 +1,4 @@
-package org.jboss.windup.rules.apps.java.reporting.freemarker;
+package org.jboss.windup.rules.apps.java.reporting.freemarker.filepath;
 
 import java.util.List;
 
@@ -14,24 +14,16 @@ import freemarker.ext.beans.StringModel;
 import freemarker.template.TemplateModelException;
 
 /**
- * Returns a pretty path for the provided file. If the File appears to represent a Java File, this will attempt to determine the associated Java Class
- * and return the name formatted as a package and class (eg, com.package.Foo).
- * 
- * Called as follows:
- * 
- * getPrettyPathForFile(fileModel)
- * 
- * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- * 
+ * A template pattern: An abstract class implementing a template method exec for multiple path generators.
+ * In order to provide a new path generator from Model, extend this class and implement all the abstract methods.
  */
-public class GetPrettyPathForFile implements WindupFreeMarkerMethod
+public abstract class AbstractGetPrettyPathForFile implements WindupFreeMarkerMethod
 {
-    private static final String NAME = "getPrettyPathForFile";
 
     @Override
     public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
     {
-        ExecutionStatistics.get().begin(NAME);
+        ExecutionStatistics.get().begin(getMethodName());
         try
         {
             if (arguments.size() != 1)
@@ -42,41 +34,32 @@ public class GetPrettyPathForFile implements WindupFreeMarkerMethod
             FileModel fileModel = (FileModel) stringModelArg.getWrappedObject();
             if (fileModel instanceof JavaClassFileModel)
             {
-                JavaClassFileModel jcfm = (JavaClassFileModel) fileModel;
-                return jcfm.getJavaClass().getQualifiedName();
+                return getPath((JavaClassFileModel) fileModel);
             }
-            else if (fileModel instanceof ReportResourceFileModel) {
-                return "resources/"+fileModel.getPrettyPath();
+            else if (fileModel instanceof ReportResourceFileModel)
+            {
+                return getPath((ReportResourceFileModel) fileModel);
             }
             else if (fileModel instanceof JavaSourceFileModel)
             {
-                JavaSourceFileModel javaSourceModel = (JavaSourceFileModel) fileModel;
-                String filename = fileModel.getFileName();
-                String packageName = javaSourceModel.getPackageName();
-
-                if (filename.endsWith(".java"))
-                {
-                    filename = filename.substring(0, filename.length() - 5);
-                }
-
-                return packageName == null || packageName.equals("") ? filename : packageName + "." + filename;
+                return getPath((JavaSourceFileModel) fileModel);
             }
             else
             {
-                return fileModel.getPrettyPathWithinProject();
+                return getPath(fileModel);
             }
         }
         finally
         {
-            ExecutionStatistics.get().end(NAME);
+            ExecutionStatistics.get().end(getMethodName());
         }
     }
 
-    @Override
-    public String getMethodName()
-    {
-        return NAME;
-    }
+    public abstract String getPath(JavaClassFileModel jcfm);
+    public abstract String getPath(ReportResourceFileModel model);
+    public abstract String getPath(FileModel model);
+    public abstract String getPath(JavaSourceFileModel javaSourceModel);
+    public abstract String getMethodName();
 
     @Override
     public String getDescription()
