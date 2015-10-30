@@ -1,5 +1,6 @@
 package org.jboss.windup.graph.typedgraph;
 
+import org.jboss.windup.graph.frames.FrameBooleanDefaultValue;
 import org.jboss.windup.graph.model.resource.ResourceModel;
 
 import com.tinkerpop.blueprints.Vertex;
@@ -32,6 +33,13 @@ public interface TestFooModel extends ResourceModel
 
     @Property("prop3")
     public String getProp3();
+
+    @Property("prop4")
+    @FrameBooleanDefaultValue(false)
+    public void setProp4(Boolean prop);
+
+    @Property("prop4")
+    public Boolean getProp4();
 
     @JavaHandler
     public String testJavaMethod();

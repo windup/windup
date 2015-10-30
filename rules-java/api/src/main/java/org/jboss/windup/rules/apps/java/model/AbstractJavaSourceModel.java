@@ -26,7 +26,6 @@ public interface AbstractJavaSourceModel extends FileModel, SourceFileModel
     String PACKAGE_NAME = "packageName";
     String JAVA_CLASS_MODEL = "javaClass";
     String ROOT_SOURCE_FOLDER = "rootSourceFolder";
-    String IS_DECOMPILED = "decompiled";
 
     /**
      * This is the "root" directory for this source file.
@@ -71,15 +70,4 @@ public interface AbstractJavaSourceModel extends FileModel, SourceFileModel
     @Adjacency(label = JAVA_CLASS_MODEL, direction = Direction.OUT)
     void addJavaClass(JavaClassModel javaClassModel);
 
-    /**
-     * Specifies if the given .java file was decompiled from a .class file
-     */
-    @Property(IS_DECOMPILED)
-    Boolean isDecompiled();
-
-    /**
-     * Specifies if the given .java file was decompiled from a .class file
-     */
-    @Property(IS_DECOMPILED)
-    void setDecompiled(boolean decompiled);
 }

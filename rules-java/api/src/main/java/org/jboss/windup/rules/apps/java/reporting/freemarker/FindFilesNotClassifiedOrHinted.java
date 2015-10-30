@@ -1,8 +1,10 @@
 package org.jboss.windup.rules.apps.java.reporting.freemarker;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import com.tinkerpop.blueprints.Direction;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -14,6 +16,7 @@ import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.files.model.FileLocationModel;
+import org.jboss.windup.rules.files.model.FileReferenceModel;
 import org.jboss.windup.util.ExecutionStatistics;
 
 import com.tinkerpop.blueprints.Vertex;
@@ -23,13 +26,13 @@ import freemarker.template.TemplateModelException;
 
 /**
  * Finds the files that have not had {@link ClassificationModel}s linked, and also does not have {@link FileLocationModel}s linked.
- * 
+ * <p>
  * Called by:
- * 
+ * <p>
  * findFilesNotClassifiedOrHinted(Iterable<FileModel>)
- * 
+ * <p>
  * NOTE: This will only return JavaSourceFileModels and XmlFileModels in order to reduce clutter.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public class FindFilesNotClassifiedOrHinted implements WindupFreeMarkerMethod
@@ -67,8 +70,25 @@ public class FindFilesNotClassifiedOrHinted implements WindupFreeMarkerMethod
         for (Vertex v : result)
         {
             FileModel f = context.getFramed().frame(v, FileModel.class);
-            if (f instanceof JavaSourceFileModel || f instanceof XmlFileModel || f instanceof JavaClassFileModel)
+
+            //we don't want to show our decompiled classes in the report
+            boolean wasNotGenerated = !f.isWindupGenerated();
+            boolean isOfInterestingType = f instanceof JavaSourceFileModel || f instanceof XmlFileModel || f instanceof JavaClassFileModel;
+            //we don't want to list .class files that have their decompiled .java file with hints/classifications
+            boolean withoutHiddenHints = true;
+
+            if (f instanceof JavaClassFileModel)
             {
+                Iterator<Vertex> decompiled = v.getVertices(Direction.OUT, JavaClassFileModel.DECOMPILED_FILE).iterator();
+                if (decompiled.hasNext())
+                {
+                    withoutHiddenHints = !decompiled.next().getVertices(Direction.IN, FileReferenceModel.FILE_MODEL).iterator().hasNext();
+                }
+            }
+
+            if (wasNotGenerated && withoutHiddenHints && isOfInterestingType)
+            {
+                //if it passed all the checks, add it
                 resultModels.add(f);
             }
         }

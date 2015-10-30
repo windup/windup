@@ -24,6 +24,8 @@ public interface JavaClassFileModel extends FileModel
     String PROPERTY_PACKAGE_NAME = "packageName";
     String SKIP_DECOMPILATION = "skipDecompilation";
 
+    String DECOMPILED_FILE = "decompiledFile";
+
     /**
      * Indicates that we should not decompile this. This can allow us to skip the decompilation of class files that are not determined to be relevant
      * for source scanning.
@@ -86,4 +88,5 @@ public interface JavaClassFileModel extends FileModel
      */
     @Property(MINOR_VERSION)
     void setMinorVersion(int minorVersion);
+
 }

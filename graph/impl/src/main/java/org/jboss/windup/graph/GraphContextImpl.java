@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import com.tinkerpop.blueprints.Element;
+import com.tinkerpop.frames.FrameInitializer;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
@@ -143,7 +145,7 @@ public class GraphContextImpl implements GraphContext
             public Graph configure(Graph baseGraph, FramedGraphConfiguration config)
             {
                 config.setFrameClassLoaderResolver(classLoaderResolver);
-
+                config.addFrameInitializer(new DefaultValueInitializer());
                 config.addMethodHandler(new MapInPropertiesHandler());
                 config.addMethodHandler(new MapInAdjacentPropertiesHandler());
                 config.addMethodHandler(new MapInAdjacentVerticesHandler());
@@ -152,6 +154,8 @@ public class GraphContextImpl implements GraphContext
                 return baseGraph;
             }
         };
+
+
 
         FramedGraphFactory factory = new FramedGraphFactory(
                     addModules,

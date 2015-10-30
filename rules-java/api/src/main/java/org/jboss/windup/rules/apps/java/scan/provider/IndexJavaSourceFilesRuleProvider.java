@@ -141,7 +141,6 @@ public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
 
                 // make sure we mark this as a Java file
                 technologyTagService.addTagToFileModel(payload, TECH_TAG, TECH_TAG_LEVEL);
-                payload.setDecompiled(false);
                 payload.setPackageName(packageName);
                 try (FileInputStream fis = new FileInputStream(payload.getFilePath()))
                 {

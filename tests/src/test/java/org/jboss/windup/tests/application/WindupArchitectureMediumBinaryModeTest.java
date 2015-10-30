@@ -15,6 +15,7 @@ import org.jboss.windup.reporting.model.ReportModel;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.rules.apps.java.ip.CreateStaticIPAddressReportRuleProvider;
 import org.jboss.windup.rules.apps.java.model.JarManifestModel;
+import org.jboss.windup.rules.apps.java.reporting.rules.CreateCompatibleFileReportRuleProvider;
 import org.jboss.windup.rules.apps.java.service.JarManifestService;
 import org.jboss.windup.testutil.html.TestJavaApplicationOverviewUtil;
 import org.jboss.windup.testutil.html.TestStaticIPReportUtil;
@@ -105,6 +106,7 @@ public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTe
                                 "Line: 727, Position: 14", "127.0.0.1"));
 
     }
+
 
     private void validateOverviewReport(GraphContext context)
     {
