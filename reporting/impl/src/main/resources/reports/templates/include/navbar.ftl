@@ -1,10 +1,16 @@
 <ul class="nav navbar-nav">
 <#if applicationReportIndexModel ??>
-    <#list applicationReportIndexModel.applicationReportModelsSortedByPriority as reportModel>
-        <#if reportModel.reportIconClass?has_content>
-            <li><a href="${reportModel.reportFilename}"><i class="${reportModel.reportIconClass}"></i> ${reportModel.reportName}</a></li>
+    <#list applicationReportIndexModel.applicationReportModelsSortedByPriority as navbarReportModel>
+        <#assign liClass = "">
+
+        <#if reportModel?? && reportModel.equals(navbarReportModel)>
+            <#assign liClass = "active">
+        </#if>
+
+        <#if navbarReportModel.reportIconClass?has_content>
+            <li class="${liClass}"><a href="${navbarReportModel.reportFilename}"><i class="${navbarReportModel.reportIconClass}"></i> ${navbarReportModel.reportName}</a></li>
         <#else>
-            <li><a href="${reportModel.reportFilename}">${reportModel.reportName}</a></li>
+            <li class="${liClass}"><a href="${navbarReportModel.reportFilename}">${navbarReportModel.reportName}</a></li>
         </#if>
     </#list>
 </#if>
