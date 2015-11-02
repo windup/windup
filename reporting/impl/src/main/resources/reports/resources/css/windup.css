@@ -243,6 +243,14 @@ p.windup-contributors  {
 	height: 13px;
 	width: 13px;
 }
+
+.navbar-nav .active a {
+    background-color: rgb(137, 137, 137) !important;
+    color: #FFDA39 !important;
+    border-bottom: 3pt solid !important;
+    margin-bottom: -3pt;
+}
+
 .hibernate-nav-logo {
 	background: url(../img/styles/hibernate-small-white-icon.png);
 }
