@@ -195,7 +195,7 @@ public class RuleIterationOverAllSpecifiedTest
                                                             ConfigurationBuilder.begin().addRule(FileMapping.from("adsfsd").to(FileModel.class))
                                                 )
                                                 )
-                                                
+
                         );
             return configuration;
         }
@@ -209,7 +209,7 @@ public class RuleIterationOverAllSpecifiedTest
         {
             super(MetadataBuilder.forProvider(TestRuleIterationOverAllSpecifiedWithExceptionProvider.class));
         }
-        
+
         // @formatter:off
         @Override
         public Configuration getConfiguration(GraphContext context)

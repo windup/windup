@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -218,9 +219,9 @@ public class WindupConfiguration
     /**
      * Contains the path to the input file (or directory) to be processed
      */
-    public Iterable<Path> getInputPaths()
+    public Collection<Path> getInputPaths()
     {
-        Iterable<Path> inputPaths = getOptionValue(InputPathOption.NAME);
+        Collection<Path> inputPaths = getOptionValue(InputPathOption.NAME);
         return inputPaths;
     }
 

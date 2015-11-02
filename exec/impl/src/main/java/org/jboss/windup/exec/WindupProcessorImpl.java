@@ -1,5 +1,6 @@
 package org.jboss.windup.exec;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -86,11 +87,11 @@ public class WindupProcessorImpl implements WindupProcessor
         Set<FileModel> inputPathModels = new LinkedHashSet<>();
         for (Path path : configuration.getInputPaths())
         {
-            inputPathModels.add(getFileModel(context, path));
+            inputPathModels.add(getFileModel(context, path.toFile()));
         }
         configurationModel.setInputPaths(inputPathModels);
 
-        configurationModel.setOutputPath(getFileModel(context, configuration.getOutputDirectory()));
+        configurationModel.setOutputPath(getFileModel(context, configuration.getOutputDirectory().toFile()));
         configurationModel.setOfflineMode(configuration.isOffline());
         configurationModel.setExportingCSV(configuration.isExportingCSV());
         configurationModel.setKeepWorkDirectories((Boolean) configuration.getOptionValue(KeepWorkDirsOption.NAME));
@@ -102,12 +103,12 @@ public class WindupProcessorImpl implements WindupProcessor
                 throw new WindupException("Null path found (all paths are: "
                             + configuration.getAllUserRulesDirectories() + ")");
             }
-            configurationModel.addUserRulesPath(getFileModel(context, path));
+            configurationModel.addUserRulesPath(getFileModel(context, path.toFile()));
         }
 
         for (Path path : configuration.getAllIgnoreDirectories())
         {
-            configurationModel.addUserIgnorePath(getFileModel(context, path));
+            configurationModel.addUserIgnorePath(getFileModel(context, path.toFile()));
         }
 
         addSourceAndTargetInformation(context, configuration, configurationModel);
@@ -209,9 +210,9 @@ public class WindupProcessorImpl implements WindupProcessor
         }
     }
 
-    private FileModel getFileModel(GraphContext context, Path path)
+    private FileModel getFileModel(GraphContext context, File file)
     {
-        return new FileService(context).createByFilePath(path.toString());
+        return new FileService(context).createByFilePath(file.getPath());
     }
 
     private EvaluationContext createEvaluationContext()
@@ -230,7 +231,7 @@ public class WindupProcessorImpl implements WindupProcessor
         GraphContext context = windupConfiguration.getGraphContext();
         Assert.notNull(context, "Windup GraphContext must not be null!");
 
-        Iterable<Path> inputPaths = windupConfiguration.getInputPaths();
+        Collection<Path> inputPaths = windupConfiguration.getInputPaths();
         Assert.notNull(inputPaths, "Path to the application must not be null!");
         for (Path inputPath : inputPaths)
         {

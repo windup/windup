@@ -56,6 +56,7 @@ public abstract class AbstractPathConfigurationOption extends AbstractConfigurat
         {
             for (Object listItem : (Iterable) fileObject)
             {
+                // FIXME: "Recursion" into overriden method is an antipattern and can lead to SOEx.
                 ValidationResult result = validate(listItem);
                 if (result.getLevel() != ValidationResult.Level.SUCCESS)
                     return result;
