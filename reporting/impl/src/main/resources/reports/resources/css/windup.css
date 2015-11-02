@@ -245,7 +245,7 @@ p.windup-contributors  {
 }
 
 .navbar-nav .active a {
-    background-color: #2C709C !important;
+    background-color: rgb(137, 137, 137) !important;
     color: #FFDA39 !important;
     border-bottom: 3pt solid !important;
     margin-bottom: -3pt;
