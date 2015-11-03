@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -13,6 +14,7 @@ import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.iterators.ArrayListIterator;
 import org.apache.commons.io.FileUtils;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
@@ -90,18 +92,23 @@ public class WindupCommand implements UICommand
     {
         initializeConfigurationOptionComponents(builder);
 
-        final UIInput inputPath = (UIInput) getInputForOption(InputPathOption.class);
+        final UIInputMany inputPaths = (UIInputMany) getInputForOption(InputPathOption.class);
         final UIInput outputPath = (UIInput) getInputForOption(OutputPathOption.class);
         outputPath.setDefaultValue(new Callable<DirectoryResource>()
         {
             @Override
             public DirectoryResource call() throws Exception
             {
-                if (inputPath.getValue() != null)
+                Iterable<File> inputPathsIterable = inputPaths.getValue();
+
+                if (inputPathsIterable.iterator().hasNext())
                 {
-                    FileResource<?> value = (FileResource<?>) inputPath.getValue();
-                    DirectoryResource childDirectory = value.getParent().getChildDirectory(value.getName() + ".report");
-                    return childDirectory;
+                    // set the default based on the first one
+
+                    File value = inputPathsIterable.iterator().next();
+                    File childDirectory = new File(value.getCanonicalFile().getParentFile(), value.getName() + ".report");
+
+                    return resourceFactory.create(DirectoryResource.class, childDirectory);
                 }
 
                 return null;
@@ -114,14 +121,16 @@ public class WindupCommand implements UICommand
             @Override
             public void validate(UIValidationContext context)
             {
-                if (inputPath.hasValue())
-                {
+                final UIInputMany inputPaths = (UIInputMany) getInputForOption(InputPathOption.class);
+                Iterable<File> inputPathsIterable = inputPaths.getValue();
+
+                for (File inputFile : inputPathsIterable) {
                     /**
                      * It would be really nice to be able to use native Resource types here... but we can't "realllly"
                      * do that because the Windup configuration API doesn't understand Forge data types, so instead we
                      * use string comparison and write a test case.
                      */
-                    File inputFile = (File) getValueForInput(inputPath);
+                    //File inputFile = (File) inputPath.getUnderlyingResourceObject();
                     File outputFile = (File) getValueForInput(outputPath);
 
                     if (inputFile.equals(outputFile))
@@ -144,7 +153,7 @@ public class WindupCommand implements UICommand
                     {
                         if (outputParent.equals(inputFile))
                         {
-                            context.addValidationError(inputPath, "Input path must not be a parent of output path.");
+                            context.addValidationError(inputPaths, "Input path must not be a parent of output path.");
                         }
                         outputParent = outputParent.getParentFile();
                     }
@@ -204,11 +213,18 @@ public class WindupCommand implements UICommand
             Object value = getValueForInput(entry.getValue());
             if (key.equals(InputPathOption.NAME))
             {
-                if (value instanceof File)
+                Set<Path> paths = new LinkedHashSet<>();
+                if (value instanceof List)
                 {
-                    value = ((File) value).toPath();
+                    for (Object path : (List)value)
+                    {
+                        if (path instanceof File)
+                            path = ((File) path).toPath();
+                        paths.add((Path)path);
+                    }
                 }
-                windupConfiguration.setOptionValue(key, new LinkedHashSet<>(Collections.singletonList(value)));
+
+                windupConfiguration.setOptionValue(key, paths);
             }
             else
             {

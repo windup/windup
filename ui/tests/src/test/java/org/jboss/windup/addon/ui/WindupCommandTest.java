@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -236,9 +237,13 @@ public class WindupCommandTest
                             DirectoryResource.class.isAssignableFrom(outputDir.getClass()));
                 Assert.assertTrue("The output should be created inside the .report folder by default",
                             ((DirectoryResource) outputDir).getName().endsWith(".report"));
-                FileResource<?> inputDir = (FileResource<?>) controller.getValueFor("input");
-                Resource<?> child = inputDir.getParent().getChild(((DirectoryResource) outputDir).getName());
-                Assert.assertNotNull("The output should be created near the ${input} folder by default", child);
+                ArrayList<File> inputDirs = (ArrayList<File>) controller.getValueFor("input");
+                Assert.assertEquals(1, inputDirs.size());
+
+                File inputDirParent = inputDirs.get(0).getParentFile();
+                File child = new File(inputDirParent, ((DirectoryResource) outputDir).getName());
+                Assert.assertTrue("The output should be created near the ${input} folder by default", child.exists());
+                Assert.assertTrue("The output should be created near the ${input} folder by default", child.isDirectory());
                 final String msg = "controller.execute() 'Failed': " + result.getMessage();
                 Assert.assertFalse(msg, result instanceof Failed);
             }
