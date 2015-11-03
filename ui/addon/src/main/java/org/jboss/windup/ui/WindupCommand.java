@@ -110,7 +110,6 @@ public class WindupCommand implements UICommand
 
                     return resourceFactory.create(DirectoryResource.class, childDirectory);
                 }
-
                 return null;
             }
 
@@ -121,30 +120,25 @@ public class WindupCommand implements UICommand
             @Override
             public void validate(UIValidationContext context)
             {
-                final UIInputMany inputPaths = (UIInputMany) getInputForOption(InputPathOption.class);
-                Iterable<File> inputPathsIterable = inputPaths.getValue();
+                File outputFile = (File) getValueForInput(outputPath);
+                final UIInputMany inputPathsUI = (UIInputMany) getInputForOption(InputPathOption.class);
+                Iterable<File> inputPathsIterable = inputPathsUI.getValue();
 
-                for (File inputFile : inputPathsIterable) {
-                    /**
-                     * It would be really nice to be able to use native Resource types here... but we can't "realllly"
-                     * do that because the Windup configuration API doesn't understand Forge data types, so instead we
-                     * use string comparison and write a test case.
-                     */
-                    //File inputFile = (File) inputPath.getUnderlyingResourceObject();
-                    File outputFile = (File) getValueForInput(outputPath);
-
+                /**
+                 * It would be really nice to be able to use native Resource types here... but we can't "realllly"
+                 * do that because the Windup configuration API doesn't understand Forge data types, so instead we
+                 * use string comparison and write a test case.
+                 */
+                //File inputFile = (File) inputPath.getUnderlyingResourceObject();
+                for (File inputFile : inputPathsIterable){
                     if (inputFile.equals(outputFile))
-                    {
                         context.addValidationError(outputPath, "Output file cannot be the same as the input file.");
-                    }
 
                     File inputParent = inputFile.getParentFile();
                     while (inputParent != null)
                     {
                         if (inputParent.equals(outputFile))
-                        {
                             context.addValidationError(outputPath, "Output path must not be a parent of input path.");
-                        }
                         inputParent = inputParent.getParentFile();
                     }
 
@@ -152,9 +146,7 @@ public class WindupCommand implements UICommand
                     while (outputParent != null)
                     {
                         if (outputParent.equals(inputFile))
-                        {
-                            context.addValidationError(inputPaths, "Input path must not be a parent of output path.");
-                        }
+                            context.addValidationError(inputPathsUI, "Input path must not be a parent of output path.");
                         outputParent = outputParent.getParentFile();
                     }
                 }

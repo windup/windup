@@ -78,14 +78,14 @@ public class OutputPathOption extends AbstractPathConfigurationOption
         return validateInputsAndOutputPaths(Collections.singletonList(inputPath), outputPath);
     }
 
-    public static ValidationResult validateInputsAndOutputPaths(Collection<Path> inputPaths, Path outputPath)
+    public static ValidationResult validateInputsAndOutputPaths(Collection inputPaths, Path outputPath)
     {
 
         File outputFile = outputPath.toFile();
 
-        for (Path inputPath : inputPaths)
+        for (Object inputPath : inputPaths)
         {
-            File inputFile = inputPath.toFile();
+            File inputFile = (inputPath instanceof Path) ? ((Path)inputPath).toFile() : (File) inputPath;
 
             if (inputFile.equals(outputFile))
             {

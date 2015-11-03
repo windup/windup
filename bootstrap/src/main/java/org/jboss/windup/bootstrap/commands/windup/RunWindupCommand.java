@@ -39,6 +39,7 @@ import org.jboss.windup.exec.configuration.options.OverwriteOption;
 import org.jboss.windup.exec.configuration.options.TargetOption;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
+import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
 
@@ -97,6 +98,7 @@ public class RunWindupCommand implements Command, FurnaceDependent
                 continue;
             }
 
+            // For MANY InputType, take the following arguments as values.
             if (option.getUIType() == InputType.MANY || option.getUIType() == InputType.SELECT_MANY)
             {
                 List<Object> values = new ArrayList<>();
@@ -131,24 +133,13 @@ public class RunWindupCommand implements Command, FurnaceDependent
             }
             else if (Boolean.class.isAssignableFrom(option.getType()))
             {
-                optionValues.put(option.getName(), !"false".equalsIgnoreCase(argument));
+                optionValues.put(option.getName(), true);
             }
             else
             {
                 String valueString = arguments.get(++i);
                 Object value = convertType(option.getType(), valueString);
-                if (option.getName().equals(InputPathOption.NAME) && value instanceof File)
-                {
-                    Collection<Path> inputPaths = (Collection<Path>) optionValues.get(option.getName());
-                    if (inputPaths == null)
-                        inputPaths = new LinkedHashSet<>();
-                    inputPaths.add(((File) value).toPath());
-                    optionValues.put(option.getName(), inputPaths);
-                }
-                else
-                {
-                    optionValues.put(option.getName(), value);
-                }
+                optionValues.put(option.getName(), value);
             }
         }
 
@@ -170,9 +161,11 @@ public class RunWindupCommand implements Command, FurnaceDependent
         if (!validationSuccess)
             return;
 
-        // In case of --unzippedAppInput, treat the directories in --input as unzipped applications.
+        // In case of --unzippedAppInput or --sourceMode, treat the directories in --input as unzipped applications.
         // Otherwise, as a directory containing separate applications (default).
-        Boolean isExplodedApp = (Boolean) optionValues.get(ExplodedAppInputOption.NAME);
+        Boolean isExplodedApp =
+                (Boolean) optionValues.get(ExplodedAppInputOption.NAME)
+                || (Boolean) optionValues.get(SourceModeOption.NAME);
         if (!isExplodedApp){
             List<File> input = (List<File>) optionValues.get(InputPathOption.NAME);
             input = expandMultiAppInputDirs(input);

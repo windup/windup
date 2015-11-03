@@ -85,9 +85,10 @@ public class WindupProcessorImpl implements WindupProcessor
         WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(context);
 
         Set<FileModel> inputPathModels = new LinkedHashSet<>();
-        for (Path path : configuration.getInputPaths())
+        for (Object inputPathObj : configuration.getInputPaths())
         {
-            inputPathModels.add(getFileModel(context, path.toFile()));
+            File inputFile = (inputPathObj instanceof Path) ? ((Path)inputPathObj).toFile() : (File)inputPathObj;
+            inputPathModels.add(getFileModel(context, inputFile));
         }
         configurationModel.setInputPaths(inputPathModels);
 
@@ -231,12 +232,13 @@ public class WindupProcessorImpl implements WindupProcessor
         GraphContext context = windupConfiguration.getGraphContext();
         Assert.notNull(context, "Windup GraphContext must not be null!");
 
-        Collection<Path> inputPaths = windupConfiguration.getInputPaths();
+        Collection inputPaths = windupConfiguration.getInputPaths();
         Assert.notNull(inputPaths, "Path to the application must not be null!");
-        for (Path inputPath : inputPaths)
+        for (Object inputPathObj : inputPaths)
         {
-            Assert.notNull(inputPath, "Path to the application must not be null!");
-            Checks.checkFileOrDirectoryToBeRead(inputPath.toFile(), "Application");
+            File inputFile = (inputPathObj instanceof Path) ? ((Path)inputPathObj).toFile() : (File)inputPathObj;
+            Assert.notNull(inputPathObj, "Path to the application must not be null!");
+            Checks.checkFileOrDirectoryToBeRead(inputFile, "Application");
         }
 
         Path outputDirectory = windupConfiguration.getOutputDirectory();

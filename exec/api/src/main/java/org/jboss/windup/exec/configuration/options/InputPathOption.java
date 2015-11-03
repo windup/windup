@@ -48,18 +48,12 @@ public class InputPathOption extends AbstractPathConfigurationOption
     public ValidationResult validate(Object filesObject)
     {
         ValidationResult result = super.validate(filesObject);
-
-        ///if (!(filesObject instanceof File) && !(filesObject instanceof Path))
-        ///    return result;
-
         if (!result.isSuccess())
             return result;
 
         // This method is called again from super.validate() for each item, so let's skip that.
         if (!(filesObject instanceof Iterable))
             return ValidationResult.SUCCESS;
-
-        //File file = super.castToFile(filesObject);
 
         List<String> largeApps = new LinkedList<>();
         Iterable it = (Iterable) filesObject;

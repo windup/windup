@@ -2,6 +2,7 @@ package org.jboss.windup.addon.ui;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -38,6 +39,8 @@ import org.jboss.forge.furnace.util.Addons;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.forge.furnace.versions.SingleVersion;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.windup.exec.configuration.options.InputPathOption;
+import org.jboss.windup.exec.configuration.options.OutputPathOption;
 import org.jboss.windup.exec.updater.RulesetsUpdater;
 import org.jboss.windup.ui.DistributionUpdater;
 import org.jboss.windup.ui.WindupCommand;
@@ -144,10 +147,10 @@ public class WindupUpdateDistributionCommandTest
         try (CommandController controller = harness.createCommandController(WindupCommand.class))
         {
             controller.initialize();
-            controller.setValueFor("input", new File("src/test/resources/test.jar").getAbsolutePath());
+            controller.setValueFor(InputPathOption.NAME, Collections.singletonList(new File("src/test/resources/test.jar").getAbsolutePath()));
             final File resultDir = new File("target/testRunFromUpgraded");
             resultDir.mkdirs();
-            controller.setValueFor("output", resultDir.getAbsolutePath());
+            controller.setValueFor(OutputPathOption.NAME, resultDir.getAbsolutePath());
 
             Result result = controller.execute();
             Assert.assertTrue(result.getMessage(), !(result instanceof Failed));

@@ -7,6 +7,7 @@ import java.io.OutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -31,6 +32,9 @@ import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
+import org.jboss.windup.exec.configuration.options.InputPathOption;
+import org.jboss.windup.exec.configuration.options.OutputPathOption;
+import org.jboss.windup.exec.configuration.options.OverwriteOption;
 import org.jboss.windup.exec.configuration.options.TargetOption;
 import org.jboss.windup.exec.configuration.options.UserIgnorePathOption;
 import org.jboss.windup.exec.configuration.options.UserRulesDirectoryOption;
@@ -41,6 +45,7 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.ui.WindupCommand;
 import org.jboss.windup.util.PathUtil;
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -105,9 +110,9 @@ public class WindupCommandTest
                 controller.initialize();
                 Assert.assertTrue(controller.isEnabled());
                 controller.setValueFor(TargetOption.NAME, Collections.singletonList("jboss"));
-                controller.setValueFor("input", inputFile);
+                controller.setValueFor(InputPathOption.NAME, Collections.singletonList(inputFile));
                 Assert.assertTrue(controller.canExecute());
-                controller.setValueFor("output", tempDir);
+                controller.setValueFor(OutputPathOption.NAME, tempDir);
                 Assert.assertFalse(controller.canExecute());
                 List<UIMessage> messages = controller.validate();
                 boolean validationFound = false;
@@ -120,9 +125,9 @@ public class WindupCommandTest
                     }
                 }
                 Assert.assertTrue(validationFound);
-                controller.setValueFor("output", null);
+                controller.setValueFor(OutputPathOption.NAME, null);
                 Assert.assertTrue(controller.canExecute());
-                controller.setValueFor("overwrite", true);
+                controller.setValueFor(OverwriteOption.NAME, true);
             }
             finally
             {
@@ -497,10 +502,16 @@ public class WindupCommandTest
     {
         controller.initialize();
         Assert.assertTrue(controller.isEnabled());
-        controller.setValueFor("input", inputFile);
+        controller.setValueFor(InputPathOption.NAME, Collections.singletonList(inputFile)); // FORGE-2524
+        final Object value = controller.getValueFor(InputPathOption.NAME);
+        Assume.assumeTrue(value instanceof Collection);
+        Assume.assumeTrue(((Collection)value).iterator().hasNext());
+        Assume.assumeTrue(((Collection)value).iterator().next() instanceof File);
+        Assume.assumeTrue(((Collection)value).iterator().next().equals(inputFile));
+
         if (outputFile != null)
         {
-            controller.setValueFor("output", outputFile);
+            controller.setValueFor(OutputPathOption.NAME, outputFile);
         }
         controller.setValueFor(TargetOption.NAME, Collections.singletonList("jboss"));
         Assert.assertTrue(controller.canExecute());

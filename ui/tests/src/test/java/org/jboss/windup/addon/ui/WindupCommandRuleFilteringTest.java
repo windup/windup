@@ -32,6 +32,8 @@ import org.jboss.windup.config.metadata.TechnologyReference;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.exec.configuration.options.ExcludeTagsOption;
 import org.jboss.windup.exec.configuration.options.IncludeTagsOption;
+import org.jboss.windup.exec.configuration.options.InputPathOption;
+import org.jboss.windup.exec.configuration.options.OutputPathOption;
 import org.jboss.windup.exec.configuration.options.SourceOption;
 import org.jboss.windup.exec.configuration.options.TargetOption;
 import org.jboss.windup.graph.GraphContext;
@@ -163,11 +165,11 @@ public class WindupCommandRuleFilteringTest
 
                 controller.initialize();
                 Assert.assertTrue(controller.isEnabled());
-                controller.setValueFor("input", inputFile);
-                if (outputFile != null)
-                {
-                    controller.setValueFor("output", outputFile);
-                }
+                //controller.setValueFor(InputPathOption.NAME, inputFile);
+                controller.setValueFor(InputPathOption.NAME, Collections.singletonList(inputFile)); // FORGE-2524
+                Object valueFor = controller.getValueFor(InputPathOption.NAME);///
+
+                controller.setValueFor(OutputPathOption.NAME, outputFile);
 
                 if (includeTags != null)
                 {
