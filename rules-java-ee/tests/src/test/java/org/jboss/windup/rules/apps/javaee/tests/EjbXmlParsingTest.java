@@ -35,15 +35,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.inject.Inject;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
 /**
  * Test XML parsing of different vendors.
  * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
@@ -287,7 +278,7 @@ public class EjbXmlParsingTest
         pm.setRootFileModel(inputPath);
         WindupConfiguration windupConfiguration = new WindupConfiguration()
                     .setGraphContext(context);
-        windupConfiguration.setInputPath(Paths.get(inputPath.getFilePath()));
+        windupConfiguration.addInputPath(Paths.get(inputPath.getFilePath()));
         windupConfiguration.setOutputDirectory(outputPath);
         processor.execute(windupConfiguration);
     }

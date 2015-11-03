@@ -6,8 +6,8 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -86,7 +86,7 @@ public class IterationPayLoadPassTest
 
             WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
             FileService fileModelService = new FileService(context);
-            windupCfg.setInputPath(fileModelService.createByFilePath("/tmp/testpath"));
+            windupCfg.addInputPath(fileModelService.createByFilePath("/tmp/testpath"));
 
             TestIterationPayLoadPassProvider provider = new TestIterationPayLoadPassProvider();
             Configuration configuration = provider.getConfiguration(context);
@@ -114,7 +114,7 @@ public class IterationPayLoadPassTest
 
             WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
             FileService fileModelService = new FileService(context);
-            windupCfg.setInputPath(fileModelService.createByFilePath("/tmp/testpath"));
+            windupCfg.addInputPath(fileModelService.createByFilePath("/tmp/testpath"));
 
             TestIterationPayLoadNotPassProvider provider = new TestIterationPayLoadNotPassProvider();
             Configuration configuration = provider.getConfiguration(context);

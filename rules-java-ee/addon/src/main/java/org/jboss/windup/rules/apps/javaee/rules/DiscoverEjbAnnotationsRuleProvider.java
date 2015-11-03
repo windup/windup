@@ -107,6 +107,7 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
 
         Service<EjbSessionBeanModel> sessionBeanService = new GraphService<>(event.getGraphContext(), EjbSessionBeanModel.class);
         EjbSessionBeanModel sessionBean = sessionBeanService.create();
+        sessionBean.setApplication(javaTypeReference.getFile().getApplication());
         sessionBean.setBeanName(ejbName);
         sessionBean.setEjbClass(ejbClass);
         sessionBean.setSessionType(sessionType);
@@ -134,13 +135,14 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
 
         Service<EjbMessageDrivenModel> messageDrivenService = new GraphService<>(event.getGraphContext(), EjbMessageDrivenModel.class);
         EjbMessageDrivenModel messageDrivenBean = messageDrivenService.create();
+        messageDrivenBean.setApplication(javaTypeReference.getFile().getApplication());
         messageDrivenBean.setBeanName(ejbName);
         messageDrivenBean.setEjbClass(ejbClass);
 
         if (StringUtils.isNotBlank(destination))
         {
             JmsDestinationService jmsDestinationService = new JmsDestinationService(event.getGraphContext());
-            messageDrivenBean.setDestination(jmsDestinationService.createUnique(destination));
+            messageDrivenBean.setDestination(jmsDestinationService.createUnique(javaTypeReference.getFile().getApplication(), destination));
         }
 
     }

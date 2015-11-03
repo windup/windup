@@ -100,7 +100,7 @@ public class XmlAndJavaParameterizedTest
                                     new RuleProviderPhasePredicate(MigrationRulesPhase.class, ReportGenerationPhase.class)
                                     ))
                         .setGraphContext(context);
-            windupConfiguration.setInputPath(Paths.get(inputPath.getFilePath()));
+            windupConfiguration.addInputPath(Paths.get(inputPath.getFilePath()));
             windupConfiguration.setOutputDirectory(outputPath);
             windupConfiguration.setOptionValue(SourceModeOption.NAME, true);
             processor.execute(windupConfiguration);

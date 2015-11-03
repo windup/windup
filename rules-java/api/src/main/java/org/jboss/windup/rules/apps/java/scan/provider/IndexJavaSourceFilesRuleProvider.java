@@ -82,6 +82,19 @@ public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
             super();
         }
 
+        /**
+         * If this is in the input directory, return the input directory. Otherwise, return null.
+         */
+        private String getInputPathForSource(WindupConfigurationModel configuration, String javaPath)
+        {
+            for (FileModel input : configuration.getInputPaths())
+            {
+                if (javaPath.startsWith(input.getFilePath()))
+                    return input.getFilePath();
+            }
+            return null;
+        }
+
         @Override
         public void perform(GraphRewrite event, EvaluationContext context, JavaSourceFileModel payload)
         {
@@ -101,14 +114,12 @@ public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
                             WindupConfigurationModel.class)
                             .getUnique();
 
-                String inputDir = configuration.getInputPath().getFilePath();
-                inputDir = Paths.get(inputDir).toAbsolutePath().toString();
-
                 String filepath = payload.getFilePath();
                 filepath = Paths.get(filepath).toAbsolutePath().toString();
 
                 String classFilePath;
-                if (filepath.startsWith(inputDir))
+                String inputDir = getInputPathForSource(configuration, filepath);
+                if (inputDir != null)
                 {
                     classFilePath = filepath.substring(inputDir.length() + 1);
                 }

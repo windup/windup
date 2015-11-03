@@ -15,31 +15,31 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(JPAConfigurationFileModel.TYPE)
 public interface JPAConfigurationFileModel extends XmlFileModel
 {
-    public static final String JPA_PERSISTENCE_UNIT = "jpaPersistenceUnit";
-    public static final String SPECIFICATION_VERSION = "specificationVersion";
-    public static final String TYPE = "JPAConfigurationFileModel";
+    String JPA_PERSISTENCE_UNIT = "jpaPersistenceUnit";
+    String SPECIFICATION_VERSION = "specificationVersion";
+    String TYPE = "JPAConfigurationFileModel";
 
     /**
      * This contains the version of JPA being used by the application.
      */
     @Property(SPECIFICATION_VERSION)
-    public String getSpecificationVersion();
+    String getSpecificationVersion();
 
     /**
      * This contains the version of JPA being used by the application.
      */
     @Property(SPECIFICATION_VERSION)
-    public void setSpecificationVersion(String version);
+    void setSpecificationVersion(String version);
 
     /**
      * Contains references to all {@link JPAPersistenceUnitModel}s defined within this file.
      */
     @Adjacency(label = JPA_PERSISTENCE_UNIT, direction = Direction.OUT)
-    public Iterable<JPAPersistenceUnitModel> getPersistenceUnits();
+    Iterable<JPAPersistenceUnitModel> getPersistenceUnits();
 
     /**
      * Contains references to all {@link JPAPersistenceUnitModel}s defined within this file.
      */
     @Adjacency(label = JPA_PERSISTENCE_UNIT, direction = Direction.OUT)
-    public void addPersistenceUnit(JPAPersistenceUnitModel jpaPersistenceUnit);
+    void addPersistenceUnit(JPAPersistenceUnitModel jpaPersistenceUnit);
 }

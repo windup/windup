@@ -13,6 +13,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
@@ -57,12 +58,15 @@ public class CreateHibernateReportRuleProvider extends AbstractRuleProvider
             {
                 WindupConfigurationModel windupConfiguration = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
 
-                ProjectModel projectModel = windupConfiguration.getInputPath().getProjectModel();
-                if (projectModel == null)
+                for (FileModel inputPath : windupConfiguration.getInputPaths())
                 {
-                    throw new WindupException("Error, no project found in: " + windupConfiguration.getInputPath().getFilePath());
+                    ProjectModel projectModel = inputPath.getProjectModel();
+                    if (projectModel == null)
+                    {
+                        throw new WindupException("Error, no project found in: " + inputPath.getFilePath());
+                    }
+                    createHibernateReport(event.getGraphContext(), projectModel);
                 }
-                createHibernateReport(event.getGraphContext(), projectModel);
             }
 
             @Override

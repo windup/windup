@@ -89,7 +89,7 @@ public class SpringDataSourceExtractionTest
         pm.setRootFileModel(inputPath);
         WindupConfiguration windupConfiguration = new WindupConfiguration()
                     .setGraphContext(context);
-        windupConfiguration.setInputPath(Paths.get(inputPath.getFilePath()));
+        windupConfiguration.addInputPath(Paths.get(inputPath.getFilePath()));
         windupConfiguration.setOutputDirectory(outputPath);
         processor.execute(windupConfiguration);
     }

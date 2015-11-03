@@ -140,7 +140,7 @@ public class DiscoverSpringConfigurationFilesRuleProvider extends IteratingRuleP
                 LOG.info("Found JNDI in Bean Spring: " + jndiName);
                 if (StringUtils.isNotBlank(jndiName))
                 {
-                    JNDIResourceModel jndiResource = jndiResourceService.createUnique(jndiName);
+                    JNDIResourceModel jndiResource = jndiResourceService.createUnique(payload.getApplication(), jndiName);
                     if (StringUtils.isNotBlank(expectedType))
                     {
                         LOG.info(" -- Type: " + expectedType);
@@ -208,7 +208,7 @@ public class DiscoverSpringConfigurationFilesRuleProvider extends IteratingRuleP
                 JNDIResourceModel jndiResource = null;
                 if (StringUtils.isNotBlank(jndiName))
                 {
-                    jndiResource = jndiResourceService.createUnique(jndiName);
+                    jndiResource = jndiResourceService.createUnique(payload.getApplication(), jndiName);
                     if (StringUtils.isNotBlank(expectedType))
                     {
                         LOG.info(" -- Type: " + expectedType);

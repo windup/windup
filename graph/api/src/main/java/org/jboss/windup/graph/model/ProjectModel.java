@@ -188,21 +188,25 @@ public interface ProjectModel extends WindupVertexFrame
 
     /**
      * Returns the project model that represents the whole application. If this projectModel is the root projectModel, it will return it.
+     * 
      * @return ProjectModel representing the whole application
      */
     @JavaHandler
-    public ProjectModel getRootProjectModel();
-
+    ProjectModel getRootProjectModel();
 
     abstract class Impl implements ProjectModel, JavaHandlerContext<Vertex>
     {
         public ProjectModel getRootProjectModel()
         {
             ProjectModel projectModel = this;
-            while(projectModel.getParentProject() !=null) {
+            while (projectModel.getParentProject() != null)
+            {
                 projectModel = projectModel.getParentProject();
             }
-            return projectModel;
+
+            // reframe it to make sure that we return a proxy
+            // (otherwise, it may return this method handler implementation, which will have some unexpected side effects)
+            return frame(projectModel.asVertex());
         }
 
     }

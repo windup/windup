@@ -72,7 +72,7 @@ public class XMLFileWithoutClassification1Test
                         .setRuleProviderFilter(
                                     new NotPredicate(new RuleProviderPhasePredicate(ReportGenerationPhase.class, ReportRenderingPhase.class)))
                         .setGraphContext(context);
-            windupConfiguration.setInputPath(inputPath);
+            windupConfiguration.addInputPath(inputPath);
             windupConfiguration.setOutputDirectory(outputPath);
             processor.execute(windupConfiguration);
 

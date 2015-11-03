@@ -1,5 +1,20 @@
 package org.jboss.windup.exec.configuration;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.IdentityHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.services.Imported;
@@ -18,20 +33,6 @@ import org.jboss.windup.exec.configuration.options.UserRulesDirectoryOption;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.util.PathUtil;
 import org.ocpsoft.rewrite.config.Rule;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.IdentityHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Configuration of WindupProcessor.
@@ -202,19 +203,25 @@ public class WindupConfiguration
     /**
      * Contains the path to the input file (or directory) to be processed
      */
-    public WindupConfiguration setInputPath(Path inputPath)
+    public WindupConfiguration addInputPath(Path inputPath)
     {
-        setOptionValue(InputPathOption.NAME, inputPath.toFile());
+        Set<Path> inputPaths = getOptionValue(InputPathOption.NAME);
+        if (inputPaths == null)
+        {
+            inputPaths = new LinkedHashSet<>();
+            setOptionValue(InputPathOption.NAME, inputPaths);
+        }
+        inputPaths.add(inputPath);
         return this;
     }
 
     /**
      * Contains the path to the input file (or directory) to be processed
      */
-    public Path getInputPath()
+    public Iterable<Path> getInputPaths()
     {
-        File file = getOptionValue(InputPathOption.NAME);
-        return file == null ? null : file.toPath();
+        Iterable<Path> inputPaths = getOptionValue(InputPathOption.NAME);
+        return inputPaths;
     }
 
     /**

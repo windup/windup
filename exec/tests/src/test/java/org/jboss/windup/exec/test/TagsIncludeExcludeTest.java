@@ -13,8 +13,8 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.proxy.Proxies;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
@@ -185,7 +185,7 @@ public class TagsIncludeExcludeTest
     {
         WindupConfiguration wc = new WindupConfiguration();
         wc.setGraphContext(grCtx);
-        wc.setInputPath(Paths.get("."));
+        wc.addInputPath(Paths.get("."));
         wc.setOutputDirectory(Paths.get("target/WindupReport"));
 
         wc.setOptionValue(IncludeTagsOption.NAME, inTags);

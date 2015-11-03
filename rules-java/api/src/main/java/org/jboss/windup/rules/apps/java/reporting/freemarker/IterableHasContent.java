@@ -17,7 +17,7 @@ import freemarker.template.TemplateModelException;
  * 
  * Called as follows:
  * 
- * getPrettyPathForFile(fileModel)
+ * getPrettyPathForFile(Iterable)
  * 
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  * 
@@ -34,7 +34,7 @@ public class IterableHasContent implements WindupFreeMarkerMethod
         {
             if (arguments.size() != 1)
             {
-                throw new TemplateModelException("Error, method expects one argument (FileModel)");
+                throw new TemplateModelException("Error, method expects one argument (Iterable)");
             }
             return hasContent(arguments.get(0));
         }

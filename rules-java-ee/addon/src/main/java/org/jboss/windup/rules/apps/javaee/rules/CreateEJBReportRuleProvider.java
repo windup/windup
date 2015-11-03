@@ -8,11 +8,11 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
-import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
@@ -23,6 +23,7 @@ import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.rules.apps.javaee.model.EjbBeanBaseModel;
 import org.jboss.windup.rules.apps.javaee.model.EjbEntityBeanModel;
 import org.jboss.windup.rules.apps.javaee.model.EjbMessageDrivenModel;
+import org.jboss.windup.rules.apps.javaee.service.EjbBeanService;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -46,7 +47,6 @@ public class CreateEJBReportRuleProvider extends AbstractRuleProvider
     {
         return ConfigurationBuilder.begin()
                     .addRule()
-                    .when(Query.fromType(EjbBeanBaseModel.class))
                     .perform(new GraphOperation()
                     {
                         @Override
@@ -55,9 +55,11 @@ public class CreateEJBReportRuleProvider extends AbstractRuleProvider
                             // configuration of current execution
                             WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
 
-                            // reference to input project model
-                            ProjectModel projectModel = configurationModel.getInputPath().getProjectModel();
-                            createEJBReport(event.getGraphContext(), projectModel);
+                            for (FileModel inputPath : configurationModel.getInputPaths())
+                            {
+                                ProjectModel projectModel = inputPath.getProjectModel();
+                                createEJBReport(event.getGraphContext(), projectModel);
+                            }
                         }
 
                         @Override
@@ -72,17 +74,7 @@ public class CreateEJBReportRuleProvider extends AbstractRuleProvider
     @SuppressWarnings("unchecked")
     private void createEJBReport(GraphContext context, ProjectModel projectModel)
     {
-        ApplicationReportService applicationReportService = new ApplicationReportService(context);
-        ApplicationReportModel applicationReportModel = applicationReportService.create();
-        applicationReportModel.setReportPriority(300);
-        applicationReportModel.setDisplayInApplicationReportIndex(true);
-        applicationReportModel.setReportName("EJBs");
-        applicationReportModel.setReportIconClass("glyphicon ejb-nav-logo");
-        applicationReportModel.setProjectModel(projectModel);
-        applicationReportModel.setTemplatePath(TEMPLATE_EJB_REPORT);
-        applicationReportModel.setTemplateType(TemplateType.FREEMARKER);
-
-        GraphService<EjbBeanBaseModel> ejbService = new GraphService<EjbBeanBaseModel>(context, EjbBeanBaseModel.class);
+        EjbBeanService ejbService = new EjbBeanService(context);
         GraphService<WindupVertexListModel> listService = new GraphService<>(context, WindupVertexListModel.class);
 
         WindupVertexListModel<EjbBeanBaseModel> entityList = listService.create();
@@ -90,8 +82,14 @@ public class CreateEJBReportRuleProvider extends AbstractRuleProvider
         WindupVertexListModel<EjbBeanBaseModel> statelessList = listService.create();
         WindupVertexListModel<EjbBeanBaseModel> statefulList = listService.create();
 
+        boolean itemAdded = false;
         for (EjbBeanBaseModel ejbModel : ejbService.findAll())
         {
+            if (!ejbModel.getApplication().equals(projectModel))
+                continue;
+
+            itemAdded = true;
+
             if (ejbModel instanceof EjbMessageDrivenModel)
             {
                 mdbList.addItem(ejbModel);
@@ -112,6 +110,19 @@ public class CreateEJBReportRuleProvider extends AbstractRuleProvider
                 }
             }
         }
+
+        if (!itemAdded)
+            return;
+
+        ApplicationReportService applicationReportService = new ApplicationReportService(context);
+        ApplicationReportModel applicationReportModel = applicationReportService.create();
+        applicationReportModel.setReportPriority(300);
+        applicationReportModel.setDisplayInApplicationReportIndex(true);
+        applicationReportModel.setReportName("EJBs");
+        applicationReportModel.setReportIconClass("glyphicon ejb-nav-logo");
+        applicationReportModel.setProjectModel(projectModel);
+        applicationReportModel.setTemplatePath(TEMPLATE_EJB_REPORT);
+        applicationReportModel.setTemplateType(TemplateType.FREEMARKER);
 
         Map<String, WindupVertexFrame> data = new HashMap<>(4);
         data.put("entity", entityList);

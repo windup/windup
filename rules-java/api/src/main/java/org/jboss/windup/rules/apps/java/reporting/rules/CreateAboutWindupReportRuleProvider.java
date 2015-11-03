@@ -16,6 +16,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.AboutWindupModel;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.jboss.windup.reporting.model.TemplateType;
@@ -57,12 +58,15 @@ public class CreateAboutWindupReportRuleProvider extends AbstractRuleProvider
             @Override
             public void perform(GraphRewrite event, EvaluationContext context, WindupConfigurationModel payload)
             {
-                ProjectModel projectModel = payload.getInputPath().getProjectModel();
-                if (projectModel == null)
+                for (FileModel inputPath : payload.getInputPaths())
                 {
-                    throw new WindupException("Error, no project found in: " + payload.getInputPath().getFilePath());
+                    ProjectModel projectModel = inputPath.getProjectModel();
+                    if (projectModel == null)
+                    {
+                        throw new WindupException("Error, no project found in: " + inputPath.getFilePath());
+                    }
+                    createApplicationReport(event.getGraphContext(), projectModel);
                 }
-                createApplicationReport(event.getGraphContext(), projectModel);
             }
 
             @Override

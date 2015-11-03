@@ -99,7 +99,7 @@ public class XMLFileNestedConditionTest
                                     new RuleProviderPhasePredicate(MigrationRulesPhase.class, ReportGenerationPhase.class)
                                     ))
                         .setGraphContext(context);
-            windupConfiguration.setInputPath(Paths.get(inputPath.getFilePath()));
+            windupConfiguration.addInputPath(Paths.get(inputPath.getFilePath()));
             windupConfiguration.setOutputDirectory(outputPath);
             processor.execute(windupConfiguration);
 

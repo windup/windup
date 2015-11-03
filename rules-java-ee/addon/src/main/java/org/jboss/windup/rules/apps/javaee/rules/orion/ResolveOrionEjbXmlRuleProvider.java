@@ -84,7 +84,7 @@ public class ResolveOrionEjbXmlRuleProvider extends IteratingRuleProvider<XmlFil
 
             if (StringUtils.isNotBlank(jndiLocation) && StringUtils.isNotBlank(resourceName))
             {
-                JNDIResourceModel resource = jndiResourceService.createUnique(jndiLocation);
+                JNDIResourceModel resource = jndiResourceService.createUnique(payload.getApplication(), jndiLocation);
                 LOG.info("JNDI Name: " + jndiLocation + " to Resource: " + resourceName);
                 // now, look up the resource which is resolved by DiscoverEjbConfigurationXmlRuleProvider
                 for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceName))
@@ -107,7 +107,7 @@ public class ResolveOrionEjbXmlRuleProvider extends IteratingRuleProvider<XmlFil
 
                     if (StringUtils.isNotBlank(destination))
                     {
-                        JNDIResourceModel jndiRef = jndiResourceService.createUnique(destination);
+                        JNDIResourceModel jndiRef = jndiResourceService.createUnique(payload.getApplication(), destination);
                         ejb.setGlobalJndiReference(jndiRef);
                     }
                 }
@@ -140,7 +140,7 @@ public class ResolveOrionEjbXmlRuleProvider extends IteratingRuleProvider<XmlFil
 
                     if (StringUtils.isNotBlank(destination))
                     {
-                        JmsDestinationModel jndiRef = jmsDestinationService.createUnique(destination);
+                        JmsDestinationModel jndiRef = jmsDestinationService.createUnique(payload.getApplication(), destination);
                         mdb.setDestination(jndiRef);
                     }
                 }

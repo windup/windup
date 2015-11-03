@@ -38,9 +38,10 @@ import freemarker.template.TemplateModel;
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  * 
  */
-public class RenderFileReferenceDirective implements WindupFreeMarkerTemplateDirective
+public class RenderLinkDirective implements WindupFreeMarkerTemplateDirective
 {
-    private static final Logger LOG = Logging.get(RenderFileReferenceDirective.class);
+    private static final Logger LOG = Logging.get(RenderLinkDirective.class);
+    public static final String NAME = "render_link";
     private GraphContext context;
     private SourceReportService sourceReportService;
     private JavaClassService javaClassService;
@@ -77,8 +78,6 @@ public class RenderFileReferenceDirective implements WindupFreeMarkerTemplateDir
 
         LayoutType layoutType = resolveLayoutType(params);
         String cssClass = resolveCssClass(params);
-        
-        
 
         if (model instanceof FileLocationModel)
         {
@@ -102,18 +101,19 @@ public class RenderFileReferenceDirective implements WindupFreeMarkerTemplateDir
         }
     }
 
-
-	private String resolveCssClass(Map params) {
+    private String resolveCssClass(Map params)
+    {
         SimpleScalar renderStyleModel = (SimpleScalar) params.get("class");
         if (renderStyleModel != null)
         {
             return renderStyleModel.getAsString();
         }
-		return "";
-	}
+        return "";
+    }
 
-	private LayoutType resolveLayoutType(Map params) throws TemplateException {
-		LayoutType layoutType = LayoutType.HORIZONTAL;
+    private LayoutType resolveLayoutType(Map params) throws TemplateException
+    {
+        LayoutType layoutType = LayoutType.HORIZONTAL;
         SimpleScalar layoutModel = (SimpleScalar) params.get("layout");
         if (layoutModel != null)
         {
@@ -127,8 +127,8 @@ public class RenderFileReferenceDirective implements WindupFreeMarkerTemplateDir
                 throw new TemplateException("Layout: " + lt + " is not supported.", e, null);
             }
         }
-		return layoutType;
-	}
+        return layoutType;
+    }
 
     private void processFileLocationModel(Writer writer, String cssClass, FileLocationModel obj, String defaultText) throws IOException
     {
@@ -170,7 +170,8 @@ public class RenderFileReferenceDirective implements WindupFreeMarkerTemplateDir
         }
     }
 
-    private void processJavaClassModel(Writer writer, LayoutType layoutType, String cssClass, JavaClassModel clz, String defaultText) throws IOException
+    private void processJavaClassModel(Writer writer, LayoutType layoutType, String cssClass, JavaClassModel clz, String defaultText)
+                throws IOException
     {
         Iterator<JavaSourceFileModel> results = javaClassService.getJavaSource(clz.getQualifiedName()).iterator();
 
@@ -246,11 +247,12 @@ public class RenderFileReferenceDirective implements WindupFreeMarkerTemplateDir
 
     private void renderLink(Writer writer, String cssClass, String href, String linkText) throws IOException
     {
-    	if(cssClass == null) {
-    		cssClass = "";
-    	}
-    	
-        writer.append("<a class='"+cssClass+"' href='" + href + "'>");
+        if (cssClass == null)
+        {
+            cssClass = "";
+        }
+
+        writer.append("<a class='" + cssClass + "' href='" + href + "'>");
         writer.append(linkText);
         writer.append("</a>");
     }
@@ -375,7 +377,7 @@ public class RenderFileReferenceDirective implements WindupFreeMarkerTemplateDir
     @Override
     public String getDirectiveName()
     {
-        return "render_link";
+        return NAME;
     }
 
     @Override
@@ -391,10 +393,10 @@ public class RenderFileReferenceDirective implements WindupFreeMarkerTemplateDir
         HORIZONTAL, UL, DL, LI, DT
     }
 
-	public enum RenderStyleType {
-		DEFAULT, LABEL
-	}
-
+    public enum RenderStyleType
+    {
+        DEFAULT, LABEL
+    }
 
     private static class Link
     {

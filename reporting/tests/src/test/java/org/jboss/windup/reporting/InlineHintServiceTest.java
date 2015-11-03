@@ -2,6 +2,7 @@ package org.jboss.windup.reporting;
 
 import java.io.File;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -16,11 +17,15 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.service.FileService;
+import org.jboss.windup.graph.service.ProjectService;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.service.InlineHintService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import com.google.common.collect.Iterables;
 
 @RunWith(Arquillian.class)
 public class InlineHintServiceTest
@@ -75,6 +80,95 @@ public class InlineHintServiceTest
             }
             Assert.assertTrue(foundF1Effort);
             Assert.assertTrue(foundF2Effort);
+        }
+    }
+
+    @Test
+    public void testFindHintsForProject() throws Exception
+    {
+        try (GraphContext context = factory.create())
+        {
+            FileService fileService = new FileService(context);
+            InlineHintService hintService = new InlineHintService(context);
+            ProjectService projectService = new ProjectService(context);
+
+            ProjectModel parent = projectService.create();
+            parent.setName("parent");
+
+            FileModel fileP1 = fileService.create();
+            InlineHintModel hintP1 = hintService.create();
+            hintP1.setFile(fileP1);
+
+            FileModel fileP2 = fileService.create();
+            InlineHintModel hintP2 = hintService.create();
+            hintP2.setFile(fileP2);
+
+            ProjectModel child1 = projectService.create();
+            child1.setName("child1");
+            child1.setParentProject(parent);
+
+            ProjectModel child2 = projectService.create();
+            child2.setName("child2");
+            child2.setParentProject(parent);
+
+            FileModel child2File1 = fileService.create();
+            child2.addFileModel(child2File1);
+            InlineHintModel child2HintFile1 = hintService.create();
+            child2HintFile1.setFile(child2File1);
+
+            FileModel child2File2 = fileService.create();
+            child2.addFileModel(child2File2);
+            InlineHintModel child2HintFile2 = hintService.create();
+            child2HintFile2.setFile(child2File2);
+
+            ProjectModel child3 = projectService.create();
+            child3.setName("child3");
+            child3.setParentProject(parent);
+
+            FileModel child3File1 = fileService.create();
+            child3.addFileModel(child3File1);
+            InlineHintModel child3HintFile1 = hintService.create();
+            child3HintFile1.setFile(child3File1);
+
+            ProjectModel child2_1 = projectService.create();
+            child2_1.setName("child2_1");
+            child2_1.setParentProject(child2);
+            ProjectModel child2_2 = projectService.create();
+            child2_2.setName("child2_2");
+            child2_2.setParentProject(child2);
+
+            ProjectModel child2_1_2 = projectService.create();
+            child2_1_2.setName("child2_1_2");
+            child2_1_2.setParentProject(child2_1);
+
+            FileModel child2_1File1 = fileService.create();
+            child2_1_2.addFileModel(child2_1File1);
+            InlineHintModel child2_1HintFile1 = hintService.create();
+            child2_1HintFile1.setFile(child2_1File1);
+
+            ProjectModel child2_3 = projectService.create();
+            child2_3.setName("child2_3");
+            child2_3.setParentProject(child2);
+
+            Iterable<InlineHintModel> hints = hintService.getHintsForProject(child2, true);
+            Set<InlineHintModel> hintSet = new HashSet<>();
+
+            System.out.println("1: " + child2HintFile1);
+            System.out.println("2: " + child2HintFile2);
+            System.out.println("3: " + child2_1HintFile1);
+
+            for (InlineHintModel hint : hints)
+            {
+                hintSet.add(hint);
+            }
+
+            // make sure there were no duplicates
+            Assert.assertEquals(Iterables.size(hints), hintSet.size());
+
+            Assert.assertTrue(hintSet.contains(child2HintFile1));
+            Assert.assertTrue(hintSet.contains(child2HintFile2));
+            Assert.assertTrue(hintSet.contains(child2_1HintFile1));
+            Assert.assertTrue(!hintSet.contains(child3HintFile1));
         }
     }
 

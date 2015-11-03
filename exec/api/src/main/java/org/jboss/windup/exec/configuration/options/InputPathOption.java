@@ -1,6 +1,7 @@
 package org.jboss.windup.exec.configuration.options;
 
 import java.io.File;
+import java.nio.file.Path;
 
 import org.jboss.windup.config.AbstractPathConfigurationOption;
 import org.jboss.windup.config.InputType;
@@ -44,12 +45,14 @@ public class InputPathOption extends AbstractPathConfigurationOption
     public ValidationResult validate(Object fileObject)
     {
         ValidationResult result = super.validate(fileObject);
+
+        if (!(fileObject instanceof File) && !(fileObject instanceof Path))
+            return result;
+
         if (!result.isSuccess())
             return result;
 
-        File file = ((File) fileObject);
-        if (!file.exists())
-            return new ValidationResult(ValidationResult.Level.ERROR, "Input path not found: " + file.getAbsolutePath());
+        File file = super.castToFile(fileObject);
 
         if (file.isFile())
         {

@@ -1,6 +1,8 @@
 package org.jboss.windup.rules.apps.javaee.rules;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.jboss.windup.config.AbstractRuleProvider;
@@ -13,6 +15,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
@@ -57,9 +60,11 @@ public class CreateRemoteReportRuleProvider extends AbstractRuleProvider
                             // configuration of current execution
                             WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
 
-                            // reference to input project model
-                            ProjectModel projectModel = configurationModel.getInputPath().getProjectModel();
-                            createReport(event.getGraphContext(), projectModel);
+                            for (FileModel inputPath : configurationModel.getInputPaths())
+                            {
+                                ProjectModel projectModel = inputPath.getProjectModel();
+                                createReport(event.getGraphContext(), projectModel);
+                            }
                         }
 
                         @Override
@@ -74,6 +79,41 @@ public class CreateRemoteReportRuleProvider extends AbstractRuleProvider
     @SuppressWarnings("unchecked")
     private void createReport(GraphContext context, ProjectModel projectModel)
     {
+
+
+        GraphService<RemoteServiceModel> remoteServices = new GraphService<>(context, RemoteServiceModel.class);
+
+        List<JaxRSWebServiceModel> jaxRsList = new ArrayList<>();
+        List<JaxWSWebServiceModel> jaxWsList = new ArrayList<>();
+        List<EjbRemoteServiceModel> ejbRemoteList = new ArrayList<>();
+        List<RMIServiceModel> rmiList = new ArrayList<>();
+
+        for (RemoteServiceModel remoteServiceModel : remoteServices.findAll())
+        {
+            if (!remoteServiceModel.isAssociatedWithApplication(projectModel))
+                continue;
+
+            if (remoteServiceModel instanceof JaxRSWebServiceModel)
+            {
+                jaxRsList.add((JaxRSWebServiceModel) remoteServiceModel);
+            }
+            else if (remoteServiceModel instanceof JaxWSWebServiceModel)
+            {
+                jaxWsList.add((JaxWSWebServiceModel) remoteServiceModel);
+            }
+            else if (remoteServiceModel instanceof EjbRemoteServiceModel)
+            {
+                ejbRemoteList.add((EjbRemoteServiceModel) remoteServiceModel);
+            }
+            else if (remoteServiceModel instanceof RMIServiceModel)
+            {
+                rmiList.add((RMIServiceModel) remoteServiceModel);
+            }
+        }
+
+        if (jaxRsList.isEmpty() && jaxWsList.isEmpty() && ejbRemoteList.isEmpty() && rmiList.isEmpty())
+            return;
+
         ApplicationReportService applicationReportService = new ApplicationReportService(context);
         ApplicationReportModel applicationReportModel = applicationReportService.create();
         applicationReportModel.setReportPriority(300);
@@ -84,39 +124,12 @@ public class CreateRemoteReportRuleProvider extends AbstractRuleProvider
         applicationReportModel.setTemplatePath(TEMPLATE_EJB_REPORT);
         applicationReportModel.setTemplateType(TemplateType.FREEMARKER);
 
-        GraphService<RemoteServiceModel> remoteServices = new GraphService<>(context, RemoteServiceModel.class);
         GraphService<WindupVertexListModel> listService = new GraphService<>(context, WindupVertexListModel.class);
-
-        WindupVertexListModel<JaxRSWebServiceModel> jaxRsList = listService.create();
-        WindupVertexListModel<JaxWSWebServiceModel> jaxWsList = listService.create();
-        WindupVertexListModel<EjbRemoteServiceModel> ejbRemoteList = listService.create();
-        WindupVertexListModel<RMIServiceModel> rmiList = listService.create();
-
-        for (RemoteServiceModel remoteServiceModel : remoteServices.findAll())
-        {
-            if (remoteServiceModel instanceof JaxRSWebServiceModel)
-            {
-                jaxRsList.addItem((JaxRSWebServiceModel)remoteServiceModel);
-            }
-            else if (remoteServiceModel instanceof JaxWSWebServiceModel)
-            {
-                jaxWsList.addItem((JaxWSWebServiceModel)remoteServiceModel);
-            }
-            else if (remoteServiceModel instanceof EjbRemoteServiceModel)
-            {
-            	ejbRemoteList.addItem((EjbRemoteServiceModel)remoteServiceModel);
-            }
-            else if (remoteServiceModel instanceof RMIServiceModel)
-            {
-            	rmiList.addItem((RMIServiceModel)remoteServiceModel);
-            }
-        }
-
         Map<String, WindupVertexFrame> data = new HashMap<>(4);
-        data.put("jaxRsServices", jaxRsList);
-        data.put("jaxWsServices", jaxWsList);
-        data.put("ejbRemoteServices", ejbRemoteList);
-        data.put("rmiServices", rmiList);
+        data.put("jaxRsServices", listService.create().addAll(jaxRsList));
+        data.put("jaxWsServices", listService.create().addAll(jaxWsList));
+        data.put("ejbRemoteServices", listService.create().addAll(ejbRemoteList));
+        data.put("rmiServices", listService.create().addAll(rmiList));
         applicationReportModel.setRelatedResource(data);
 
         ReportService reportService = new ReportService(context);

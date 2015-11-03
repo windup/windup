@@ -29,10 +29,12 @@ public abstract class AbstractPathConfigurationOption extends AbstractConfigurat
         return File.class;
     }
 
-    @SuppressWarnings("unchecked")
-    private <T> T castToType(Object file)
+    protected File castToFile(Object file)
     {
-        return (T) file;
+        if (file instanceof Path)
+            return ((Path) file).toFile();
+        else
+            return (File) file;
     }
 
     @Override
@@ -47,7 +49,10 @@ public abstract class AbstractPathConfigurationOption extends AbstractConfigurat
             return ValidationResult.SUCCESS;
         }
 
-        if (fileObject instanceof Iterable)
+        if (fileObject instanceof Iterable && !(fileObject instanceof Path))                                  // path isn't the type of iterable we
+                                                                                                              // are
+        // looking
+        // for
         {
             for (Object listItem : (Iterable) fileObject)
             {
@@ -58,7 +63,7 @@ public abstract class AbstractPathConfigurationOption extends AbstractConfigurat
             return ValidationResult.SUCCESS;
         }
 
-        File file = castToType(fileObject);
+        File file = castToFile(fileObject);
         Path path = file.toPath();
         if (mustExist)
         {

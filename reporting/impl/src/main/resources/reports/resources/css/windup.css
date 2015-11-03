@@ -4,7 +4,7 @@ body {
 }
 
 .logo {
-  margin:10px;
+  margin:23px;
 }
 
 .tablesorter > thead > tr > th {
@@ -159,7 +159,6 @@ a.windup-file-location {
     color: #005387;
 }
 
-
 /* Description of the report, showing when .page-header has .showDesc . */
 .page-header h1 div.main:after {
     content: "What's this report?";
@@ -222,6 +221,10 @@ p.windup-contributors  {
 	margin: 10px 0 0 0;
 }
 
+.migration-issues-detailed-item {
+    border: 0px;
+}
+
 
 /** Bootstrap overrides **/
 
@@ -246,9 +249,6 @@ p.windup-contributors  {
 
 .navbar-nav .active a {
     background-color: rgb(137, 137, 137) !important;
-    color: #FFDA39 !important;
-    border-bottom: 3pt solid !important;
-    margin-bottom: -3pt;
 }
 
 .hibernate-nav-logo {
