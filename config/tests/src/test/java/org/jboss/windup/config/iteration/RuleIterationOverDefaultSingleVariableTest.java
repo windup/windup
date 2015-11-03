@@ -131,7 +131,7 @@ public class RuleIterationOverDefaultSingleVariableTest
             WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
             FileService fileModelService = new FileService(context);
             windupCfg.addInputPath(fileModelService
-                        .createByFilePath(OperatingSystemUtils.createTempDir().getAbsolutePath()));
+                .createByFilePath(OperatingSystemUtils.createTempDir().getAbsolutePath()));
 
             TestRuleIterationOverDefaultSingleVariableWithExceptionProvider provider = new TestRuleIterationOverDefaultSingleVariableWithExceptionProvider();
             Configuration configuration = provider.getConfiguration(context);

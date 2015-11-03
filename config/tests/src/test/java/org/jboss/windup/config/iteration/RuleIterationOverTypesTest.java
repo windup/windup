@@ -34,9 +34,9 @@ import org.ocpsoft.rewrite.param.ParameterValueStore;
 
 /**
  * Testing the Iteration.over(SomeType.class) approach.
- * 
+ *
  * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
- * 
+ *
  */
 @RunWith(Arquillian.class)
 public class RuleIterationOverTypesTest
