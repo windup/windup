@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.apache.commons.io.FileUtils;
@@ -121,13 +122,13 @@ public abstract class DecompilerTestBase
             }
 
             @Override
-            public void decompilationFailed(String inputPath, String message)
+            public void decompilationFailed(List<String> inputPath, String message)
             {
 
             }
 
             @Override
-            public void fileDecompiled(String inputPath, String outputPath)
+            public void fileDecompiled(List<String> inputPath, String outputPath)
             {
                 // noop
             }

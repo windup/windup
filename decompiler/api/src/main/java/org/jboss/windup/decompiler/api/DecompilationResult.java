@@ -17,9 +17,18 @@ public class DecompilationResult
     private final List<DecompilationFailure> failed = Collections.synchronizedList(new LinkedList<DecompilationFailure>());
     private final Map<String, String> decompiledFiles = Collections.synchronizedMap(new HashMap<String, String>());
 
-    public void addDecompiled(String inputPath, String path)
+    public void addDecompiled(List<String> inputPaths, String path)
     {
-        this.decompiledFiles.put(inputPath, path);
+        String mainInput = null;
+        for(String inputPath : inputPaths) {
+            if(!inputPath.contains("$")) {
+                mainInput=inputPath;
+            }
+        }
+        if(mainInput==null) {
+            mainInput = inputPaths.get(0);
+        }
+        this.decompiledFiles.put(mainInput, path);
     }
 
     public Map<String, String> getDecompiledFiles()

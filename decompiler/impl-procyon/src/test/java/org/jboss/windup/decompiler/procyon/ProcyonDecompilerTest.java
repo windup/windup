@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jboss.windup.decompiler.DecompilerTestBase;
@@ -58,14 +59,14 @@ public class ProcyonDecompilerTest extends DecompilerTestBase
         DecompilationListener listener = new DecompilationListener()
         {
             @Override
-            public void fileDecompiled(String inputPath, String outputPath)
+            public void fileDecompiled(List<String> inputPath, String outputPath)
             {
                 Assert.assertNotNull("Results object was returned.", outputPath);
                 numberDecompiled.incrementAndGet();
             }
 
             @Override
-            public void decompilationFailed(String inputPath, String message)
+            public void decompilationFailed(List<String> inputPath, String message)
             {
 
             }

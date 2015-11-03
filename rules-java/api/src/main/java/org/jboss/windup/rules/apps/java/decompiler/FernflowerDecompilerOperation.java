@@ -150,7 +150,7 @@ public class FernflowerDecompilerOperation extends AbstractDecompilerOperation
         }
 
         @Override
-        public void decompilationFailed(String inputPath, String message)
+        public void decompilationFailed(List<String> inputPath, String message)
         {
             ClassDecompileRequest request = requestMap.get(inputPath);
             ProcyonDecompiler procyon = new ProcyonDecompiler();
@@ -166,14 +166,14 @@ public class FernflowerDecompilerOperation extends AbstractDecompilerOperation
                 for (Map.Entry<String, String> decompiledFile : result.getDecompiledFiles().entrySet())
                 {
                     LOG.info("Failsafe Procyon decompilation of " + inputPath + " successful!");
-                    fileDecompiled(decompiledFile.getKey(), decompiledFile.getValue());
+                    fileDecompiled(Collections.singletonList(decompiledFile.getKey()), decompiledFile.getValue());
                 }
             }
 
         }
 
         @Override
-        public synchronized void fileDecompiled(final String inputPath, final String decompiledOutputFile)
+        public synchronized void fileDecompiled(final List<String> inputPath, final String decompiledOutputFile)
         {
             Runnable saveDecompiledRunnable = new Runnable()
             {
@@ -190,8 +190,10 @@ public class FernflowerDecompilerOperation extends AbstractDecompilerOperation
                                         (int) remainingTimeMillis / 1000);
                     }
 
+                    String mainClassFile = inputPath.get(0);
+
                     FileService fileService = new FileService(event.getGraphContext());
-                    Path classFilePath = Paths.get(inputPath);
+                    Path classFilePath = Paths.get(mainClassFile);
 
                     FileModel decompiledFileModel = fileService.getUniqueByProperty(FileModel.FILE_PATH,
                                 decompiledOutputFile);
@@ -265,6 +267,7 @@ public class FernflowerDecompilerOperation extends AbstractDecompilerOperation
                             classModel.getJavaClass().setDecompiledSource(decompiledSourceFileModel);
                             decompiledSourceFileModel.setPackageName(classModel.getPackageName());
                             decompiledSourceFileModel.setWindupGenerated(true);
+                            setupClassToJavaConnections(event.getGraphContext(),inputPath,decompiledSourceFileModel);
 
                             // Set the root path of this source file (if possible). Procyon should always be placing the file
                             // into a location that is appropriate for the package name, so this should always yield
@@ -316,5 +319,6 @@ public class FernflowerDecompilerOperation extends AbstractDecompilerOperation
             return "DecompileWithProcyon";
         }
     }
+
 
 }

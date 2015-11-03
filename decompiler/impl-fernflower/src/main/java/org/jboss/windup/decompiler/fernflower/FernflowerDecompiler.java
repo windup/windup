@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -100,9 +101,9 @@ public class FernflowerDecompiler implements Decompiler
         };
     }
 
-    private FernFlowerResultSaver getResultSaver(final String classFile, final File outputDirectory, final DecompilationListener listener)
+    private FernFlowerResultSaver getResultSaver(final List<String> requests, File directory, final DecompilationListener listener)
     {
-        return new FernFlowerResultSaver(classFile, outputDirectory, listener);
+        return new FernFlowerResultSaver(requests,directory, listener);
     }
 
     @Override
@@ -117,6 +118,7 @@ public class FernflowerDecompiler implements Decompiler
              */
             String filename = request.getClassFile().getFileName().toString();
             String key;
+            boolean mainClassFile = false;
             if (filename.matches(".*\\$.*.class"))
             {
                 key = request.getClassFile().getParent().resolve(filename.substring(0, filename.indexOf("$")) + ".class").toString();
@@ -124,6 +126,7 @@ public class FernflowerDecompiler implements Decompiler
             else
             {
                 key = request.getClassFile().toString();
+                mainClassFile=true;
             }
 
             List<ClassDecompileRequest> list = requestMap.get(key);
@@ -132,7 +135,11 @@ public class FernflowerDecompiler implements Decompiler
                 list = new ArrayList<>();
                 requestMap.put(key, list);
             }
-            list.add(request);
+            if(mainClassFile) {
+                list.add(0,request);
+            } else {
+                list.add(request);
+            }
         }
 
         List<Callable<Void>> tasks = new ArrayList<>(requestMap.size());
@@ -147,9 +154,9 @@ public class FernflowerDecompiler implements Decompiler
                 public Void call() throws Exception
                 {
                     ClassDecompileRequest firstRequest = requests.get(0);
+                    List<String> classFiles = pathsFromDecompilationRequests(requests);
                     FernFlowerResultSaver resultSaver = getResultSaver(
-                                firstRequest.getClassFile().toString(),
-                                firstRequest.getOutputDirectory().toFile(),
+                                pathsFromDecompilationRequests(requests),firstRequest.getOutputDirectory().toFile(),
                                 listener);
                     Fernflower fernflower = new Fernflower(getByteCodeProvider(), resultSaver, getOptions(), new FernflowerJDKLogger());
                     for (ClassDecompileRequest request : requests)
@@ -160,11 +167,11 @@ public class FernflowerDecompiler implements Decompiler
                     {
                         fernflower.decompileContext();
                         if (!resultSaver.isFileSaved())
-                            listener.decompilationFailed(key, "File was not decompiled!");
+                            listener.decompilationFailed(classFiles, "File was not decompiled!");
                     }
                     catch (Throwable t)
                     {
-                        listener.decompilationFailed(key, "Decompilation failed due to: " + t.getMessage());
+                        listener.decompilationFailed(classFiles, "Decompilation failed due to: " + t.getMessage());
                         LOG.warning("Decompilation of " + key + " failed due to: " + t.getMessage());
                     }
 
@@ -195,13 +202,13 @@ public class FernflowerDecompiler implements Decompiler
         DecompilationListener listener = new DecompilationListener()
         {
             @Override
-            public void fileDecompiled(String inputPath, String outputPath)
+            public void fileDecompiled(List<String> inputPath, String outputPath)
             {
                 result.addDecompiled(inputPath, outputPath);
             }
 
             @Override
-            public void decompilationFailed(String inputPath, String message)
+            public void decompilationFailed(List<String> inputPath, String message)
             {
                 result.addFailure(new DecompilationFailure(message, inputPath, null));
             }
@@ -213,14 +220,22 @@ public class FernflowerDecompiler implements Decompiler
             }
         };
 
-        FernFlowerResultSaver resultSaver = getResultSaver(classFilePath.toString(), outputDir.toFile(), listener);
+        FernFlowerResultSaver resultSaver = getResultSaver(Collections.singletonList(classFilePath.toString()), outputDir.toFile(), listener);
         Fernflower fernflower = new Fernflower(getByteCodeProvider(), resultSaver, getOptions(), new FernflowerJDKLogger());
         fernflower.getStructContext().addSpace(classFilePath.toFile(), true);
         fernflower.decompileContext();
 
         if (!resultSaver.isFileSaved())
-            listener.decompilationFailed(classFilePath.toString(), "File was not decompiled!");
+            listener.decompilationFailed(Collections.singletonList(classFilePath.toString()), "File was not decompiled!");
 
+        return result;
+    }
+
+    private List<String> pathsFromDecompilationRequests(List<ClassDecompileRequest> requests) {
+        List<String> result = new ArrayList<>();
+        for(ClassDecompileRequest request : requests) {
+            result.add(request.getClassFile().toString());
+        }
         return result;
     }
 
@@ -242,14 +257,14 @@ public class FernflowerDecompiler implements Decompiler
         DecompilationListener listener = new DecompilationListener()
         {
             @Override
-            public void fileDecompiled(String inputPath, String outputPath)
+            public void fileDecompiled(List<String> inputPaths, String outputPath)
             {
-                result.addDecompiled(inputPath, outputPath);
-                delegate.fileDecompiled(inputPath, outputPath);
+                result.addDecompiled(inputPaths, outputPath);
+                delegate.fileDecompiled(inputPaths, outputPath);
             }
 
             @Override
-            public void decompilationFailed(String inputPath, String message)
+            public void decompilationFailed(List<String> inputPath, String message)
             {
                 result.addFailure(new DecompilationFailure(message, inputPath, null));
                 delegate.decompilationFailed(inputPath, message);
@@ -325,13 +340,13 @@ public class FernflowerDecompiler implements Decompiler
                     }
                 };
 
-                FernFlowerResultSaver resultSaver = getResultSaver(entry.getName(), outputDir.toFile(), listener);
+                FernFlowerResultSaver resultSaver = getResultSaver(Collections.singletonList(entry.getName()), outputDir.toFile(), listener);
                 Fernflower fernflower = new Fernflower(bytecodeProvider, resultSaver, getOptions(), new FernflowerJDKLogger());
                 fernflower.getStructContext().addSpace(new File(entry.getName()), true);
                 fernflower.decompileContext();
 
                 if (!resultSaver.isFileSaved())
-                    listener.decompilationFailed(entry.getName(), "File was not decompiled!");
+                    listener.decompilationFailed(Collections.singletonList(entry.getName()), "File was not decompiled!");
             }
             listener.decompilationProcessComplete();
             return result;

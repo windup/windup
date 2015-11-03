@@ -15,6 +15,9 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
+import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -67,8 +70,11 @@ public class WindupArchitectureSmallBinaryModeTest extends WindupArchitectureTes
 
             Assert.assertTrue(appReportContent
                         .contains("Used only to support migration activities."));
+            allDecompiledFilesAreLinked(context);
         }
     }
+
+
 
     private Path resolveChildPath(Path parent, final String childPattern)
     {
