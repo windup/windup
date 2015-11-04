@@ -26,6 +26,7 @@ import org.jboss.windup.decompiler.api.DecompilationFailure;
 import org.jboss.windup.decompiler.api.DecompilationListener;
 import org.jboss.windup.decompiler.api.DecompilationResult;
 import org.jboss.windup.decompiler.api.Decompiler;
+import org.jboss.windup.decompiler.decompiler.AbstractDecompiler;
 import org.jboss.windup.decompiler.util.Filter;
 import org.jboss.windup.util.Checks;
 import org.jboss.windup.util.threading.WindupChildThreadFactory;
@@ -42,45 +43,14 @@ import org.jetbrains.java.decompiler.util.InterpreterUtil;
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public class FernflowerDecompiler implements Decompiler
+public class FernflowerDecompiler extends AbstractDecompiler
 {
     private static final Logger LOG = Logger.getLogger(FernflowerDecompiler.class.getName());
-
-    private ExecutorService executorService = WindupExecutors.newSingleThreadExecutor();
-    private int numberOfThreads = 1;
 
     public FernflowerDecompiler()
     {
     }
 
-    @Override
-    public void close()
-    {
-        this.executorService.shutdown();
-        try
-        {
-            executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-        }
-        catch (InterruptedException e)
-        {
-            throw new IllegalStateException("Was not able to decompile in the given time limit.");
-        }
-    }
-
-    public void setExecutorService(ExecutorService service, int numberOfThreads)
-    {
-        this.executorService.shutdown();
-        try
-        {
-            executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
-        }
-        catch (InterruptedException e)
-        {
-            throw new IllegalStateException("Was not able to decompile in the given time limit.");
-        }
-        this.numberOfThreads = numberOfThreads;
-        this.executorService = service;
-    }
 
     private Map<String, Object> getOptions()
     {
@@ -107,51 +77,23 @@ public class FernflowerDecompiler implements Decompiler
     }
 
     @Override
-    public void decompileClassFiles(Collection<ClassDecompileRequest> allRequests, final DecompilationListener listener)
+    public Logger getLogger()
     {
-        Map<String, List<ClassDecompileRequest>> requestMap = new HashMap<>();
-        for (ClassDecompileRequest request : allRequests)
-        {
+        return LOG;
+    }
 
-            /*
-             * Combine requests that are related (for example Foo.class and Foo$1.class), as this helps fernflower to resolve inner classes.
-             */
-            String filename = request.getClassFile().getFileName().toString();
-            String key;
-            boolean mainClassFile = false;
-            if (filename.matches(".*\\$.*.class"))
-            {
-                key = request.getClassFile().getParent().resolve(filename.substring(0, filename.indexOf("$")) + ".class").toString();
-            }
-            else
-            {
-                key = request.getClassFile().toString();
-                mainClassFile=true;
-            }
-
-            List<ClassDecompileRequest> list = requestMap.get(key);
-            if (list == null)
-            {
-                list = new ArrayList<>();
-                requestMap.put(key, list);
-            }
-            if(mainClassFile) {
-                list.add(0,request);
-            } else {
-                list.add(request);
-            }
-        }
-
-        List<Callable<Void>> tasks = new ArrayList<>(requestMap.size());
+    public Collection<Callable<File>> getDecompileTasks(final Map<String, List<ClassDecompileRequest>> requestMap, final DecompilationListener listener)
+    {
+        Collection<Callable<File>> tasks = new ArrayList<>(requestMap.size());
         for (Map.Entry<String, List<ClassDecompileRequest>> entry : requestMap.entrySet())
         {
             final String key = entry.getKey();
             final List<ClassDecompileRequest> requests = entry.getValue();
 
-            Callable<Void> task = new Callable<Void>()
+            Callable<File> task = new Callable<File>()
             {
                 @Override
-                public Void call() throws Exception
+                public File call() throws Exception
                 {
                     ClassDecompileRequest firstRequest = requests.get(0);
                     List<String> classFiles = pathsFromDecompilationRequests(requests);
@@ -173,6 +115,7 @@ public class FernflowerDecompiler implements Decompiler
                     {
                         listener.decompilationFailed(classFiles, "Decompilation failed due to: " + t.getMessage());
                         LOG.warning("Decompilation of " + key + " failed due to: " + t.getMessage());
+
                     }
 
                     return null;
@@ -181,18 +124,7 @@ public class FernflowerDecompiler implements Decompiler
             tasks.add(task);
         }
 
-        try
-        {
-            executorService.invokeAll(tasks);
-        }
-        catch (InterruptedException e)
-        {
-            throw new IllegalStateException("Decompilation was interrupted.");
-        }
-        finally
-        {
-            listener.decompilationProcessComplete();
-        }
+       return tasks;
     }
 
     @Override
@@ -231,6 +163,8 @@ public class FernflowerDecompiler implements Decompiler
         return result;
     }
 
+
+
     private List<String> pathsFromDecompilationRequests(List<ClassDecompileRequest> requests) {
         List<String> result = new ArrayList<>();
         for(ClassDecompileRequest request : requests) {
@@ -240,20 +174,11 @@ public class FernflowerDecompiler implements Decompiler
     }
 
     @Override
-    public DecompilationResult decompileArchive(Path archive, Path outputDir, DecompilationListener listener) throws DecompilationException
-    {
-        return decompileArchive(archive, outputDir, null, listener);
-    }
-
-    @Override
-    public DecompilationResult decompileArchive(Path archive, Path outputDir, Filter<ZipEntry> filter, final DecompilationListener delegate)
+    public DecompilationResult decompileArchiveImpl(Path archive, Path outputDir, Filter<ZipEntry> filter, final DecompilationListener delegate)
                 throws DecompilationException
     {
-        Checks.checkFileToBeRead(archive.toFile(), "Archive to decompile");
-        Checks.checkDirectoryToBeFilled(outputDir.toFile(), "Output directory");
 
         final DecompilationResult result = new DecompilationResult();
-
         DecompilationListener listener = new DecompilationListener()
         {
             @Override
