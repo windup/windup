@@ -15,7 +15,9 @@ import org.jboss.windup.reporting.model.ReportModel;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.rules.apps.java.ip.CreateStaticIPAddressReportRuleProvider;
 import org.jboss.windup.rules.apps.java.model.JarManifestModel;
+import org.jboss.windup.rules.apps.java.reporting.rules.CreateCompatibleFileReportRuleProvider;
 import org.jboss.windup.rules.apps.java.service.JarManifestService;
+import org.jboss.windup.testutil.html.TestCompatibleReportUtil;
 import org.jboss.windup.testutil.html.TestJavaApplicationOverviewUtil;
 import org.jboss.windup.testutil.html.TestStaticIPReportUtil;
 import org.junit.Assert;
@@ -106,6 +108,28 @@ public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTe
 
     }
 
+    private void validateCompatibleReport(GraphContext context)
+    {
+        ReportService reportService = new ReportService(context);
+        ReportModel reportModel = reportService.getUniqueByProperty(
+                    ReportModel.TEMPLATE_PATH,
+                    CreateCompatibleFileReportRuleProvider.TEMPLATE_APPLICATION_REPORT);
+        TestCompatibleReportUtil util = new TestCompatibleReportUtil();
+
+
+        Path reportPath = Paths.get(reportService.getReportDirectory(), reportModel.getReportFilename());
+        util.loadPage(reportPath);
+        Assert.assertTrue(util
+                    .checkFileInReport("org/jboss/devconf/openshift/HomePage.class", ""));
+        Assert.assertTrue(util
+                    .checkFileInReport("org/joda/time/DateMidnight.class", ""));
+        Assert.assertTrue(util
+                    .checkFileInReport(
+                                "org/joda/time/Chronology.class", ""));
+        Assert.assertTrue("An application has duplicate entries for a single file.",util.checkTableWithoutDuplicates());
+
+    }
+
     private void validateOverviewReport(GraphContext context)
     {
         ReportService reportService = new ReportService(context);
@@ -133,5 +157,6 @@ public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTe
     {
         validateOverviewReport(context);
         validateStaticIPReport(context);
+        validateCompatibleReport(context);
     }
 }

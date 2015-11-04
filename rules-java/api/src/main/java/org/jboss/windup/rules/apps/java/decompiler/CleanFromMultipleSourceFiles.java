@@ -86,7 +86,7 @@ public class CleanFromMultipleSourceFiles extends GraphOperation
                 while (iterator.hasNext())
                 {
                     JavaSourceFileModel javaModel = iterator.next();
-                    if (javaModel.isDecompiled() != null && javaModel.isDecompiled() && !uniqueClassFound)
+                    if (javaModel.isWindupGenerated() != null && javaModel.isWindupGenerated() && !uniqueClassFound)
                     {
                         uniqueClassFound = true;
                     }

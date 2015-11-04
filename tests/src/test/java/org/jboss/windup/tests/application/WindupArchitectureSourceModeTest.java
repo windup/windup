@@ -28,6 +28,7 @@ import org.jboss.windup.reporting.model.ReportModel;
 import org.jboss.windup.reporting.service.ApplicationReportService;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.rules.apps.java.model.PropertiesModel;
+import org.jboss.windup.rules.apps.java.reporting.rules.CreateCompatibleFileReportRuleProvider;
 import org.jboss.windup.rules.apps.javaee.model.EnvironmentReferenceModel;
 import org.jboss.windup.rules.apps.javaee.model.WebXmlModel;
 import org.jboss.windup.rules.apps.javaee.rules.CreateEJBReportRuleProvider;
@@ -36,6 +37,7 @@ import org.jboss.windup.rules.apps.javaee.rules.CreateSpringBeanReportRuleProvid
 import org.jboss.windup.rules.apps.javaee.service.WebXmlService;
 import org.jboss.windup.rules.apps.xml.service.XsltTransformationService;
 import org.jboss.windup.tests.application.rules.TestServletAnnotationRuleProvider;
+import org.jboss.windup.testutil.html.TestCompatibleReportUtil;
 import org.jboss.windup.testutil.html.TestEJBReportUtil;
 import org.jboss.windup.testutil.html.TestEJBReportUtil.EJBType;
 import org.jboss.windup.testutil.html.TestJPAReportUtil;
@@ -107,6 +109,7 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
                 validateWebXmlReferences(context);
                 validatePropertiesModels(context);
                 validateReports(context);
+                validateCompatibleReport(context);
             }
         }
         finally
@@ -193,6 +196,26 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
                     "org.windup.examples.ejb.simplestateless.SimpleStatelessEJB"));
         Assert.assertTrue(util.checkBeanInReport(EJBType.STATEFUL, "MyNameForSimpleStatefulEJB", "",
                     "org.windup.examples.ejb.simplestateful.SimpleStatefulEJB"));
+    }
+
+    private void validateCompatibleReport(GraphContext context)
+    {
+        ReportService reportService = new ReportService(context);
+        ReportModel reportModel = reportService.getUniqueByProperty(
+                    ReportModel.TEMPLATE_PATH,
+                    CreateCompatibleFileReportRuleProvider.TEMPLATE_APPLICATION_REPORT);
+        TestCompatibleReportUtil util = new TestCompatibleReportUtil();
+
+
+        Path reportPath = Paths.get(reportService.getReportDirectory(), reportModel.getReportFilename());
+        util.loadPage(reportPath);
+        Assert.assertTrue(util
+                    .checkFileInReport("src/main/resources/springexample/spring-sample-file.xml", ""));
+        Assert.assertTrue(util
+                    .checkFileInReport(
+                                "org/windup/examples/ejb/entitybean/SecondEntity.java", ""));
+        Assert.assertTrue("An application has duplicate entries for a single file.",util.checkTableWithoutDuplicates());
+
     }
 
     private void validateJPAReport(GraphContext context)

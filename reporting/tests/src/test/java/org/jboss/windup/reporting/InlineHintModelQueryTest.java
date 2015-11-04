@@ -20,9 +20,9 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
-import org.jboss.windup.reporting.query.FindFilesNotClassifiedOrHintedGremlinCriterion;
 import org.jboss.windup.reporting.query.FindSourceReportFilesGremlinCriterion;
 import org.jboss.windup.reporting.service.TechnologyTagService;
+import org.jboss.windup.rules.apps.java.query.FindFilesNotClassifiedOrHintedGremlinCriterion;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -41,6 +41,7 @@ public class InlineHintModelQueryTest
                 @AddonDependency(name = "org.jboss.windup.config:windup-config"),
                 @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
                 @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
     public static AddonArchive getDeployment()

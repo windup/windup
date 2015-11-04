@@ -26,7 +26,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  */
 public class CreateCompatibleFileReportRuleProvider extends AbstractRuleProvider
 {
-    private static final String TEMPLATE_APPLICATION_REPORT = "/reports/templates/compatible_files.ftl";
+    public static final String TEMPLATE_APPLICATION_REPORT = "/reports/templates/compatible_files.ftl";
 
     public CreateCompatibleFileReportRuleProvider()
     {

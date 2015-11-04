@@ -67,7 +67,6 @@ public class AnalyzeJSPFileRuleProvider extends AbstractRuleProvider
                 // Setup some basic details about the "Java Class"
                 // source root, is decompiled, javaclass. package name
                 sourceFile.setPackageName("");
-                sourceFile.setDecompiled(false);
                 JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
                 JavaClassModel classModel = javaClassService.create();
                 classModel.setPackageName("");
