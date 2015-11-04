@@ -1,11 +1,13 @@
 package org.jboss.windup.exec.configuration.options;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
+import java.util.logging.Logger;
 
+import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.AbstractPathConfigurationOption;
 import org.jboss.windup.config.InputType;
 import org.jboss.windup.config.ValidationResult;
@@ -18,12 +20,20 @@ import org.jboss.windup.config.ValidationResult;
  */
 public class InputPathOption extends AbstractPathConfigurationOption
 {
+    private static Logger LOG = Logger.getLogger(InputPathOption.class.getCanonicalName());
+
     public static final String NAME = "input";
     private static final long SIZE_WARNING_TRESHOLD_MB = 10;
 
     public InputPathOption()
     {
         super(true);
+    }
+
+    @Override
+    public Class<?> getType()
+    {
+        return Path.class;
     }
 
     @Override
@@ -51,34 +61,41 @@ public class InputPathOption extends AbstractPathConfigurationOption
         if (!result.isSuccess())
             return result;
 
-        // This method is called again from super.validate() for each item, so let's skip that.
-        if (!(filesObject instanceof Iterable))
-            return ValidationResult.SUCCESS;
-
-        List<String> largeApps = new LinkedList<>();
-        Iterable it = (Iterable) filesObject;
-        for (Object fileObj : it)
+        List<Path> largeApps = new LinkedList<>();
+        for (Path path : (Iterable<Path>) filesObject)
         {
-            File file = super.castToFile(fileObj);
-            ValidationResult resultFile = super.validate(file);
+            ValidationResult resultFile = super.validate(path);
             if (!resultFile.isSuccess())
                 return resultFile;
 
-            if (!file.exists())
-                return new ValidationResult(ValidationResult.Level.ERROR, "Input path not found: " + file.getAbsolutePath());
+            if (!Files.exists(path))
+                return new ValidationResult(ValidationResult.Level.ERROR, "Input path not found: " + path);
 
-            if (FileUtils.sizeOf(file) > SIZE_WARNING_TRESHOLD_MB * 1024 * 1024){
-                largeApps.add(file.getPath());
+            if (!Files.isDirectory(path))
+            {
+                try
+                {
+                    long fileSize = Files.size(path);
+                    if (fileSize > SIZE_WARNING_TRESHOLD_MB * 1024 * 1024)
+                    {
+                        largeApps.add(path);
+                    }
+                }
+                catch (IOException e)
+                {
+                    LOG.warning("Could not determine file size for: " + path);
+                }
             }
         }
 
         if (!largeApps.isEmpty())
             return new ValidationResult(ValidationResult.Level.PROMPT_TO_CONTINUE,
-                "These input applications or directories are large:"
-                + "\n\t" + StringUtils.join(largeApps, "\n\t") + "\n"
-                + " Processing may take a very long time."
-                + " Please consult the Windup User Guide for performance tips."
-                + " Would you like to continue?", true);
+                        "These input applications or directories are large:"
+                                    + "\n\t" + StringUtils.join(largeApps, "\n\t") + "\n"
+                                    + " Processing may take a very long time."
+                                    + " Please consult the Windup User Guide for performance tips."
+                                    + " Would you like to continue?",
+                        true);
 
         return ValidationResult.SUCCESS;
     }

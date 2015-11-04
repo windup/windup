@@ -2,7 +2,6 @@ package org.jboss.windup.ui;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -14,8 +13,8 @@ import java.util.concurrent.Callable;
 
 import javax.inject.Inject;
 
-import org.apache.commons.collections.iterators.ArrayListIterator;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.jboss.forge.addon.resource.DirectoryResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.Resource;
@@ -120,7 +119,7 @@ public class WindupCommand implements UICommand
             @Override
             public void validate(UIValidationContext context)
             {
-                File outputFile = (File) getValueForInput(outputPath);
+                File outputFile = (File) getValueForInput(getOption(OutputPathOption.NAME), outputPath);
                 final UIInputMany inputPathsUI = (UIInputMany) getInputForOption(InputPathOption.class);
                 Iterable<File> inputPathsIterable = inputPathsUI.getValue();
 
@@ -161,8 +160,9 @@ public class WindupCommand implements UICommand
         {
             final InputComponent<?, ?> inputComponent = entry.getValue();
 
-            Object inputValue = getValueForInput(inputComponent);
-            ValidationResult result = entry.getKey().validate(inputValue);
+            ConfigurationOption option = entry.getKey();
+            Object inputValue = getValueForInput(option, inputComponent);
+            ValidationResult result = option.validate(inputValue);
 
             if (result.getLevel().equals(ValidationResult.Level.ERROR))
             {
@@ -201,27 +201,10 @@ public class WindupCommand implements UICommand
         WindupConfiguration windupConfiguration = new WindupConfiguration();
         for (Entry<ConfigurationOption, InputComponent<?, ?>> entry : this.inputOptions.entrySet())
         {
-            String key = entry.getKey().getName();
-            Object value = getValueForInput(entry.getValue());
-            if (key.equals(InputPathOption.NAME))
-            {
-                Set<Path> paths = new LinkedHashSet<>();
-                if (value instanceof List)
-                {
-                    for (Object path : (List)value)
-                    {
-                        if (path instanceof File)
-                            path = ((File) path).toPath();
-                        paths.add((Path)path);
-                    }
-                }
-
-                windupConfiguration.setOptionValue(key, paths);
-            }
-            else
-            {
-                windupConfiguration.setOptionValue(key, value);
-            }
+            ConfigurationOption option = entry.getKey();
+            String name = option.getName();
+            Object value = getValueForInput(option, entry.getValue());
+            windupConfiguration.setOptionValue(name, value);
         }
 
         windupConfiguration.useDefaultDirectories();
@@ -294,7 +277,10 @@ public class WindupCommand implements UICommand
             }
             case MANY:
             {
-                UIInputMany<?> inputMany = componentFactory.createInputMany(option.getName(), option.getType());
+                // forge can't handle "Path", so use File
+                Class<?> optionType = option.getType() == Path.class ? File.class : option.getType();
+
+                UIInputMany<?> inputMany = componentFactory.createInputMany(option.getName(), optionType);
                 inputMany.setDefaultValue(new DefaultValueAdapter(option, Iterable.class));
                 inputComponent = inputMany;
                 break;
@@ -350,6 +336,18 @@ public class WindupCommand implements UICommand
         }
     }
 
+    private ConfigurationOption getOption(String name)
+    {
+        for (Entry<ConfigurationOption, InputComponent<?, ?>> entry : this.inputOptions.entrySet())
+        {
+            if (StringUtils.equals(name, entry.getKey().getName()))
+            {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+
     private InputComponent<?, ?> getInputForOption(Class<? extends ConfigurationOption> option)
     {
         for (Entry<ConfigurationOption, InputComponent<?, ?>> entry : this.inputOptions.entrySet())
@@ -362,7 +360,7 @@ public class WindupCommand implements UICommand
         return null;
     }
 
-    private Object getValueForInput(InputComponent<?, ?> input)
+    private Object getValueForInput(ConfigurationOption option, InputComponent<?, ?> input)
     {
         Object value = input.getValue();
         if (value == null)
@@ -375,6 +373,23 @@ public class WindupCommand implements UICommand
             Resource<?> resourceResolved = getResourceResolved((Resource<?>) value);
             return resourceResolved.getUnderlyingResourceObject();
         }
+
+        if (option.getType() == Path.class)
+        {
+            // these have to be converted
+            Set<Path> paths = new LinkedHashSet<>();
+            if (value instanceof List)
+            {
+                for (Object path : (List) value)
+                {
+                    if (path instanceof File)
+                        path = ((File) path).toPath();
+                    paths.add((Path) path);
+                }
+            }
+            value = paths;
+        }
+
         return value;
     }
 

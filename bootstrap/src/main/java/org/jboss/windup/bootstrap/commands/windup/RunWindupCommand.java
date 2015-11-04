@@ -2,12 +2,14 @@ package org.jboss.windup.bootstrap.commands.windup;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -32,8 +34,8 @@ import org.jboss.windup.config.metadata.RuleProviderRegistryCache;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.WindupProgressMonitor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
-import org.jboss.windup.exec.configuration.options.InputPathOption;
 import org.jboss.windup.exec.configuration.options.ExplodedAppInputOption;
+import org.jboss.windup.exec.configuration.options.InputPathOption;
 import org.jboss.windup.exec.configuration.options.OutputPathOption;
 import org.jboss.windup.exec.configuration.options.OverwriteOption;
 import org.jboss.windup.exec.configuration.options.TargetOption;
@@ -165,9 +167,10 @@ public class RunWindupCommand implements Command, FurnaceDependent
         // Otherwise, as a directory containing separate applications (default).
         Boolean isExplodedApp =
                 (Boolean) optionValues.get(ExplodedAppInputOption.NAME)
-                || (Boolean) optionValues.get(SourceModeOption.NAME);
-        if (!isExplodedApp){
-            List<File> input = (List<File>) optionValues.get(InputPathOption.NAME);
+                    || (Boolean) optionValues.get(SourceModeOption.NAME);
+        if (!isExplodedApp)
+        {
+            List<Path> input = (List<Path>) optionValues.get(InputPathOption.NAME);
             input = expandMultiAppInputDirs(input);
             optionValues.put(InputPathOption.NAME, input);
         }
@@ -217,6 +220,24 @@ public class RunWindupCommand implements Command, FurnaceDependent
 
         FileUtils.deleteQuietly(windupConfiguration.getOutputDirectory().toFile());
         Path graphPath = windupConfiguration.getOutputDirectory().resolve(GRAPH_DATA_SUBDIR);
+
+        System.out.println();
+        if (windupConfiguration.getInputPaths().size() == 1)
+        {
+            System.out.println("Input Application:" + windupConfiguration.getInputPaths().iterator().next());
+        }
+        else
+        {
+            System.out.println("Input Applications:");
+            for (Path inputPath : windupConfiguration.getInputPaths())
+            {
+                System.out.println("\t" + inputPath);
+            }
+            System.out.println();
+        }
+        System.out.println("Output Path:" + windupConfiguration.getOutputDirectory());
+        System.out.println();
+
         try (GraphContext graphContext = getGraphContextFactory().create(graphPath))
         {
             WindupProgressMonitor progressMonitor = new ConsoleProgressMonitor();
@@ -302,7 +323,11 @@ public class RunWindupCommand implements Command, FurnaceDependent
 
     private Object convertType(Class<?> type, String input)
     {
-        if (File.class.isAssignableFrom(type))
+        if (Path.class.isAssignableFrom(type))
+        {
+            return Paths.get(input);
+        }
+        else if (File.class.isAssignableFrom(type))
         {
             return new File(input);
         }
@@ -376,23 +401,35 @@ public class RunWindupCommand implements Command, FurnaceDependent
      * Expands the directories from the given list and and returns a list of subfiles.
      * Files from the original list are kept as is.
      */
-    private static List<File> expandMultiAppInputDirs(List<File> input)
+    private static List<Path> expandMultiAppInputDirs(List<Path> input)
     {
-        List<File> expanded = new LinkedList<>();
-        for (File file : input)
+        List<Path> expanded = new LinkedList<>();
+        for (Path path : input)
         {
-            if(file.isFile()){
-                expanded.add(file);
+            if (Files.isRegularFile(path))
+            {
+                expanded.add(path);
                 continue;
             }
-            if(!file.isDirectory()){
-                log.warning("Neither a file or directory found in input: " + file.toString());
+            if (!Files.isDirectory(path))
+            {
+                log.warning("Neither a file or directory found in input: " + path.toString());
                 continue;
             }
 
-            for (File subFile : file.listFiles())
+            try
             {
-                expanded.add(subFile);
+                try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(path))
+                {
+                    for (Path subpath : directoryStream)
+                    {
+                        expanded.add(subpath);
+                    }
+                }
+            }
+            catch (IOException e)
+            {
+                throw new WindupException("Failed to read directory contents of: " + path);
             }
         }
         return expanded;

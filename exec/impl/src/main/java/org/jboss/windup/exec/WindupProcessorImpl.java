@@ -1,6 +1,5 @@
 package org.jboss.windup.exec;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -85,14 +84,13 @@ public class WindupProcessorImpl implements WindupProcessor
         WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(context);
 
         Set<FileModel> inputPathModels = new LinkedHashSet<>();
-        for (Object inputPathObj : configuration.getInputPaths())
+        for (Path inputPath : configuration.getInputPaths())
         {
-            File inputFile = (inputPathObj instanceof Path) ? ((Path)inputPathObj).toFile() : (File)inputPathObj;
-            inputPathModels.add(getFileModel(context, inputFile));
+            inputPathModels.add(getFileModel(context, inputPath));
         }
         configurationModel.setInputPaths(inputPathModels);
 
-        configurationModel.setOutputPath(getFileModel(context, configuration.getOutputDirectory().toFile()));
+        configurationModel.setOutputPath(getFileModel(context, configuration.getOutputDirectory()));
         configurationModel.setOfflineMode(configuration.isOffline());
         configurationModel.setExportingCSV(configuration.isExportingCSV());
         configurationModel.setKeepWorkDirectories((Boolean) configuration.getOptionValue(KeepWorkDirsOption.NAME));
@@ -104,19 +102,18 @@ public class WindupProcessorImpl implements WindupProcessor
                 throw new WindupException("Null path found (all paths are: "
                             + configuration.getAllUserRulesDirectories() + ")");
             }
-            configurationModel.addUserRulesPath(getFileModel(context, path.toFile()));
+            configurationModel.addUserRulesPath(getFileModel(context, path));
         }
 
         for (Path path : configuration.getAllIgnoreDirectories())
         {
-            configurationModel.addUserIgnorePath(getFileModel(context, path.toFile()));
+            configurationModel.addUserIgnorePath(getFileModel(context, path));
         }
 
         addSourceAndTargetInformation(context, configuration, configurationModel);
         configureRuleProviderAndTagFilters(configuration);
 
-        RuleProviderRegistry providerRegistry =
-                    ruleLoader.loadConfiguration(context, configuration.getRuleProviderFilter());
+        RuleProviderRegistry providerRegistry = ruleLoader.loadConfiguration(context, configuration.getRuleProviderFilter());
         Configuration rules = providerRegistry.getConfiguration();
 
         List<RuleLifecycleListener> listeners = new ArrayList<>();
@@ -211,9 +208,9 @@ public class WindupProcessorImpl implements WindupProcessor
         }
     }
 
-    private FileModel getFileModel(GraphContext context, File file)
+    private FileModel getFileModel(GraphContext context, Path file)
     {
-        return new FileService(context).createByFilePath(file.getPath());
+        return new FileService(context).createByFilePath(file.toString());
     }
 
     private EvaluationContext createEvaluationContext()
@@ -232,13 +229,12 @@ public class WindupProcessorImpl implements WindupProcessor
         GraphContext context = windupConfiguration.getGraphContext();
         Assert.notNull(context, "Windup GraphContext must not be null!");
 
-        Collection inputPaths = windupConfiguration.getInputPaths();
+        Collection<Path> inputPaths = windupConfiguration.getInputPaths();
         Assert.notNull(inputPaths, "Path to the application must not be null!");
-        for (Object inputPathObj : inputPaths)
+        for (Path inputPath : inputPaths)
         {
-            File inputFile = (inputPathObj instanceof Path) ? ((Path)inputPathObj).toFile() : (File)inputPathObj;
-            Assert.notNull(inputPathObj, "Path to the application must not be null!");
-            Checks.checkFileOrDirectoryToBeRead(inputFile, "Application");
+            Assert.notNull(inputPath, "Path to the application must not be null!");
+            Checks.checkFileOrDirectoryToBeRead(inputPath.toFile(), "Application");
         }
 
         Path outputDirectory = windupConfiguration.getOutputDirectory();
