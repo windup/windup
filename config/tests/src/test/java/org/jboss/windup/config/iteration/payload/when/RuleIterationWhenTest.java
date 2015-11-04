@@ -149,11 +149,11 @@ public class RuleIterationWhenTest
                                         {
                                           model=payload;
                                         }
-                                    
+
                                     })).endIteration()
-                                    
+
                         )
-                        
+
                         .addRule()
                         .when(Query.fromType(TestWhenModel.class).withProperty(TestWhenModel.NAME, NAME))
                         .perform(Iteration.over()
@@ -169,9 +169,9 @@ public class RuleIterationWhenTest
                                                     }
                                                 }).endIteration()
                                                 ).endIteration()
-                                    
+
                         )
-                        
+
                         .addRule()
                         .when(Query.fromType(TestWhenModel.class).withProperty(TestWhenModel.NAME, NAME).as("outer_variable"))
                         .perform(Iteration.over()
@@ -187,7 +187,7 @@ public class RuleIterationWhenTest
                                                     }
                                                 }).endIteration()
                                                 ).endIteration()
-                                    
+
                         )
                         .addRule()
                         .when(Query.fromType(TestWhenModel.class).withProperty(TestWhenModel.NAME, NAME).as("outer_variable"))
@@ -204,12 +204,12 @@ public class RuleIterationWhenTest
                                                     }
                                                 }).endIteration()
                                                 ).endIteration()
-                                    
+
                         )
                         ;
             return configuration;
         }
-        
+
         public int getMatchCount() {
             return matchCount;
         }
@@ -219,16 +219,16 @@ public class RuleIterationWhenTest
         public int getOuterConditionCounter() {
             return outerConditionCounter;
         }
-        
+
         public TestWhenModel getModel() {
             return this.model;
         }
-        
+
         public int getSameConditionCounter() {
             return sameConditionCounter;
         }
 
     }
 
-  
+
 }

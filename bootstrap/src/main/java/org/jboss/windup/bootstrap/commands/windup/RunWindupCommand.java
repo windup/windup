@@ -2,12 +2,15 @@ package org.jboss.windup.bootstrap.commands.windup;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -31,12 +34,14 @@ import org.jboss.windup.config.metadata.RuleProviderRegistryCache;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.WindupProgressMonitor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
+import org.jboss.windup.exec.configuration.options.ExplodedAppInputOption;
 import org.jboss.windup.exec.configuration.options.InputPathOption;
 import org.jboss.windup.exec.configuration.options.OutputPathOption;
 import org.jboss.windup.exec.configuration.options.OverwriteOption;
 import org.jboss.windup.exec.configuration.options.TargetOption;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
+import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
 
@@ -95,6 +100,7 @@ public class RunWindupCommand implements Command, FurnaceDependent
                 continue;
             }
 
+            // For MANY InputType, take the following arguments as values.
             if (option.getUIType() == InputType.MANY || option.getUIType() == InputType.SELECT_MANY)
             {
                 List<Object> values = new ArrayList<>();
@@ -105,13 +111,13 @@ public class RunWindupCommand implements Command, FurnaceDependent
                     final String name = getOptionName(arg);
                     if (name != null)
                     {
-                        // this is the next parameter... back up one and break the loop
+                        // This is the next parameter... back up one and break the loop.
                         i--;
                         break;
                     }
 
                     String valueString = arguments.get(i);
-                    // lists are space delimited... split them here
+                    // Lists are space delimited. split them here.
                     for (String value : StringUtils.split(valueString, ' '))
                         values.add(convertType(option.getType(), value));
 
@@ -135,25 +141,16 @@ public class RunWindupCommand implements Command, FurnaceDependent
             {
                 String valueString = arguments.get(++i);
                 Object value = convertType(option.getType(), valueString);
-                if (option.getName().equals(InputPathOption.NAME) && value instanceof File)
-                {
-                    Collection<Path> inputPaths = (Collection<Path>) optionValues.get(option.getName());
-                    if (inputPaths == null)
-                        inputPaths = new LinkedHashSet<>();
-                    inputPaths.add(((File) value).toPath());
-                    optionValues.put(option.getName(), inputPaths);
-                }
-                else
-                {
-                    optionValues.put(option.getName(), value);
-                }
+                optionValues.put(option.getName(), value);
             }
         }
 
         setDefaultOutputPath(optionValues);
+        setDefaultOptionsValues(options, optionValues);
 
         RuleProviderRegistryCache ruleProviderRegistryCache = furnace.getAddonRegistry().getServices(RuleProviderRegistryCache.class).get();
 
+        // Target - interactive
         Collection<String> targets = (Collection<String>) optionValues.get(TargetOption.NAME);
         if ((targets == null || targets.isEmpty()) && !batchMode.get())
         {
@@ -166,6 +163,19 @@ public class RunWindupCommand implements Command, FurnaceDependent
         if (!validationSuccess)
             return;
 
+        // In case of --unzippedAppInput or --sourceMode, treat the directories in --input as unzipped applications.
+        // Otherwise, as a directory containing separate applications (default).
+        Boolean isExplodedApp =
+                (Boolean) optionValues.get(ExplodedAppInputOption.NAME)
+                    || (Boolean) optionValues.get(SourceModeOption.NAME);
+        if (!isExplodedApp)
+        {
+            List<Path> input = (List<Path>) optionValues.get(InputPathOption.NAME);
+            input = expandMultiAppInputDirs(input);
+            optionValues.put(InputPathOption.NAME, input);
+        }
+
+
         WindupConfiguration windupConfiguration = new WindupConfiguration();
         for (Map.Entry<String, ConfigurationOption> optionEntry : options.entrySet())
         {
@@ -173,7 +183,7 @@ public class RunWindupCommand implements Command, FurnaceDependent
             windupConfiguration.setOptionValue(option.getName(), optionValues.get(option.getName()));
         }
 
-        if (!validateInputAndOutputPath(windupConfiguration.getInputPaths().iterator().next(), windupConfiguration.getOutputDirectory()))
+        if (!validateInputAndOutputPath(windupConfiguration.getInputPaths(), windupConfiguration.getOutputDirectory()))
             return;
 
         try
@@ -210,6 +220,24 @@ public class RunWindupCommand implements Command, FurnaceDependent
 
         FileUtils.deleteQuietly(windupConfiguration.getOutputDirectory().toFile());
         Path graphPath = windupConfiguration.getOutputDirectory().resolve(GRAPH_DATA_SUBDIR);
+
+        System.out.println();
+        if (windupConfiguration.getInputPaths().size() == 1)
+        {
+            System.out.println("Input Application:" + windupConfiguration.getInputPaths().iterator().next());
+        }
+        else
+        {
+            System.out.println("Input Applications:");
+            for (Path inputPath : windupConfiguration.getInputPaths())
+            {
+                System.out.println("\t" + inputPath);
+            }
+            System.out.println();
+        }
+        System.out.println("Output Path:" + windupConfiguration.getOutputDirectory());
+        System.out.println();
+
         try (GraphContext graphContext = getGraphContextFactory().create(graphPath))
         {
             WindupProgressMonitor progressMonitor = new ConsoleProgressMonitor();
@@ -231,9 +259,9 @@ public class RunWindupCommand implements Command, FurnaceDependent
         deleteGraphDataUnlessInhibited(windupConfiguration, graphPath);
     }
 
-    private boolean validateInputAndOutputPath(Path inputPath, Path outputPath)
+    private boolean validateInputAndOutputPath(Collection<Path> inputPaths, Path outputPath)
     {
-        ValidationResult validationResult = OutputPathOption.validateInputAndOutputPath(inputPath, outputPath);
+        ValidationResult validationResult = OutputPathOption.validateInputsAndOutputPaths(inputPaths, outputPath);
         switch (validationResult.getLevel())
         {
         case ERROR:
@@ -295,7 +323,11 @@ public class RunWindupCommand implements Command, FurnaceDependent
 
     private Object convertType(Class<?> type, String input)
     {
-        if (File.class.isAssignableFrom(type))
+        if (Path.class.isAssignableFrom(type))
+        {
+            return Paths.get(input);
+        }
+        else if (File.class.isAssignableFrom(type))
         {
             return new File(input);
         }
@@ -361,6 +393,57 @@ public class RunWindupCommand implements Command, FurnaceDependent
                 log.log(Level.WARNING, "Failed deleting graph directory: " + graphPath.toFile().getPath()
                             + "\n\tDue to: " + ex.getMessage(), ex);
             }
+        }
+    }
+
+
+    /**
+     * Expands the directories from the given list and and returns a list of subfiles.
+     * Files from the original list are kept as is.
+     */
+    private static List<Path> expandMultiAppInputDirs(List<Path> input)
+    {
+        List<Path> expanded = new LinkedList<>();
+        for (Path path : input)
+        {
+            if (Files.isRegularFile(path))
+            {
+                expanded.add(path);
+                continue;
+            }
+            if (!Files.isDirectory(path))
+            {
+                log.warning("Neither a file or directory found in input: " + path.toString());
+                continue;
+            }
+
+            try
+            {
+                try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(path))
+                {
+                    for (Path subpath : directoryStream)
+                    {
+                        expanded.add(subpath);
+                    }
+                }
+            }
+            catch (IOException e)
+            {
+                throw new WindupException("Failed to read directory contents of: " + path);
+            }
+        }
+        return expanded;
+    }
+
+
+    private void setDefaultOptionsValues(Map<String, ConfigurationOption> options, Map<String, Object> optionValues)
+    {
+        for (Map.Entry<String, ConfigurationOption> option : options.entrySet())
+        {
+            if (null != optionValues.get(option.getValue().getName()))
+                continue;
+
+            optionValues.put(option.getValue().getName(), option.getValue().getDefaultValue());
         }
     }
 

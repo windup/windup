@@ -84,9 +84,9 @@ public class WindupProcessorImpl implements WindupProcessor
         WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(context);
 
         Set<FileModel> inputPathModels = new LinkedHashSet<>();
-        for (Path path : configuration.getInputPaths())
+        for (Path inputPath : configuration.getInputPaths())
         {
-            inputPathModels.add(getFileModel(context, path));
+            inputPathModels.add(getFileModel(context, inputPath));
         }
         configurationModel.setInputPaths(inputPathModels);
 
@@ -113,8 +113,7 @@ public class WindupProcessorImpl implements WindupProcessor
         addSourceAndTargetInformation(context, configuration, configurationModel);
         configureRuleProviderAndTagFilters(configuration);
 
-        RuleProviderRegistry providerRegistry =
-                    ruleLoader.loadConfiguration(context, configuration.getRuleProviderFilter());
+        RuleProviderRegistry providerRegistry = ruleLoader.loadConfiguration(context, configuration.getRuleProviderFilter());
         Configuration rules = providerRegistry.getConfiguration();
 
         List<RuleLifecycleListener> listeners = new ArrayList<>();
@@ -209,9 +208,9 @@ public class WindupProcessorImpl implements WindupProcessor
         }
     }
 
-    private FileModel getFileModel(GraphContext context, Path path)
+    private FileModel getFileModel(GraphContext context, Path file)
     {
-        return new FileService(context).createByFilePath(path.toString());
+        return new FileService(context).createByFilePath(file.toString());
     }
 
     private EvaluationContext createEvaluationContext()
@@ -230,7 +229,7 @@ public class WindupProcessorImpl implements WindupProcessor
         GraphContext context = windupConfiguration.getGraphContext();
         Assert.notNull(context, "Windup GraphContext must not be null!");
 
-        Iterable<Path> inputPaths = windupConfiguration.getInputPaths();
+        Collection<Path> inputPaths = windupConfiguration.getInputPaths();
         Assert.notNull(inputPaths, "Path to the application must not be null!");
         for (Path inputPath : inputPaths)
         {

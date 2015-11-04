@@ -4,6 +4,8 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import org.jboss.windup.util.exception.WindupException;
+
 /**
  * Provides a base for validating {@link ConfigurationOption}s of type {@link File}. This uses the results of {@link ConfigurationOption#getUIType()}
  * to determine whether to validate as a file or as a directory.
@@ -29,42 +31,18 @@ public abstract class AbstractPathConfigurationOption extends AbstractConfigurat
         return File.class;
     }
 
-    protected File castToFile(Object file)
+    protected Path castToPath(Object file)
     {
-        if (file instanceof Path)
-            return ((Path) file).toFile();
+        if (file instanceof File)
+            return ((File) file).toPath();
+        else if (file instanceof Path)
+            return (Path) file;
         else
-            return (File) file;
+            throw new WindupException("Unrecognized type: " + file.getClass().getCanonicalName());
     }
 
-    @Override
-    public ValidationResult validate(Object fileObject)
+    private ValidationResult validatePath(Path path)
     {
-        if (fileObject == null && isRequired())
-        {
-            return new ValidationResult(ValidationResult.Level.ERROR, getName() + " is required!");
-        }
-        else if (fileObject == null)
-        {
-            return ValidationResult.SUCCESS;
-        }
-
-        if (fileObject instanceof Iterable && !(fileObject instanceof Path))                                  // path isn't the type of iterable we
-                                                                                                              // are
-        // looking
-        // for
-        {
-            for (Object listItem : (Iterable) fileObject)
-            {
-                ValidationResult result = validate(listItem);
-                if (result.getLevel() != ValidationResult.Level.SUCCESS)
-                    return result;
-            }
-            return ValidationResult.SUCCESS;
-        }
-
-        File file = castToFile(fileObject);
-        Path path = file.toPath();
         if (mustExist)
         {
             if (getUIType() == InputType.DIRECTORY && !Files.isDirectory(path))
@@ -83,6 +61,32 @@ public abstract class AbstractPathConfigurationOption extends AbstractConfigurat
             {
                 return new ValidationResult(ValidationResult.Level.ERROR, getName() + " must exist!");
             }
+        }
+        return ValidationResult.SUCCESS;
+    }
+
+    @Override
+    public ValidationResult validate(Object fileObject)
+    {
+        if (fileObject == null && isRequired())
+        {
+            return new ValidationResult(ValidationResult.Level.ERROR, getName() + " is required!");
+        }
+        else if (fileObject == null)
+        {
+            return ValidationResult.SUCCESS;
+        }
+
+        // Path isn't the type of iterable we are looking for
+        if (fileObject instanceof Iterable && !(fileObject instanceof Path))
+        {
+            for (Object listItem : (Iterable) fileObject)
+            {
+                ValidationResult result = validatePath(castToPath(listItem));
+                if (result.getLevel() != ValidationResult.Level.SUCCESS)
+                    return result;
+            }
+            return ValidationResult.SUCCESS;
         }
         return ValidationResult.SUCCESS;
     }

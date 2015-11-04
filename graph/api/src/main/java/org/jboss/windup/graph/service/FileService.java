@@ -25,7 +25,7 @@ public class FileService extends GraphService<FileModel>
     {
         ExecutionStatistics.get().begin("FileService.createByFilePath(parentFile, filePath)");
         // always search by absolute path
-        String absolutePath = Paths.get(filePath).toAbsolutePath().toString();
+        String absolutePath = Paths.get(filePath).normalize().toAbsolutePath().toString();
         FileModel entry = findByPath(absolutePath);
 
         if (entry == null)

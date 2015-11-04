@@ -2,6 +2,9 @@ package org.jboss.windup.exec.configuration.options;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import org.jboss.windup.config.AbstractPathConfigurationOption;
 import org.jboss.windup.config.InputType;
@@ -9,7 +12,7 @@ import org.jboss.windup.config.ValidationResult;
 
 /**
  * Indicates that output path for the windup report and other data produced by a Windup execution.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
@@ -71,34 +74,43 @@ public class OutputPathOption extends AbstractPathConfigurationOption
      * <li>Output is a subdirectory of the input</li>
      * </ul>
      */
-    public static ValidationResult validateInputAndOutputPath(Path inputPath, Path outputPath)
+    public static ValidationResult validateInputAndOutputPath(Path inputPath, Path outputPath){
+        return validateInputsAndOutputPaths(Collections.singletonList(inputPath), outputPath);
+    }
+
+    public static ValidationResult validateInputsAndOutputPaths(Collection inputPaths, Path outputPath)
     {
-        File inputFile = inputPath.toFile();
+
         File outputFile = outputPath.toFile();
 
-        if (inputFile.equals(outputFile))
+        for (Object inputPath : inputPaths)
         {
-            return new ValidationResult(ValidationResult.Level.ERROR, "Output file cannot be the same as the input file.");
-        }
+            File inputFile = (inputPath instanceof Path) ? ((Path)inputPath).toFile() : (File) inputPath;
 
-        File inputParent = inputFile.getParentFile();
-        while (inputParent != null)
-        {
-            if (inputParent.equals(outputFile))
+            if (inputFile.equals(outputFile))
             {
-                return new ValidationResult(ValidationResult.Level.ERROR, "Output path must not be a parent of input path.");
+                return new ValidationResult(ValidationResult.Level.ERROR, "Output file cannot be the same as the input file.");
             }
-            inputParent = inputParent.getParentFile();
-        }
 
-        File outputParent = outputFile.getParentFile();
-        while (outputParent != null)
-        {
-            if (outputParent.equals(inputFile))
+            File inputParent = inputFile.getParentFile();
+            while (inputParent != null)
             {
-                return new ValidationResult(ValidationResult.Level.ERROR, "Input path must not be a parent of output path.");
+                if (inputParent.equals(outputFile))
+                {
+                    return new ValidationResult(ValidationResult.Level.ERROR, "Output path must not be a parent of input path.");
+                }
+                inputParent = inputParent.getParentFile();
             }
-            outputParent = outputParent.getParentFile();
+
+            File outputParent = outputFile.getParentFile();
+            while (outputParent != null)
+            {
+                if (outputParent.equals(inputFile))
+                {
+                    return new ValidationResult(ValidationResult.Level.ERROR, "Input path must not be a parent of output path.");
+                }
+                outputParent = outputParent.getParentFile();
+            }
         }
 
         return ValidationResult.SUCCESS;
