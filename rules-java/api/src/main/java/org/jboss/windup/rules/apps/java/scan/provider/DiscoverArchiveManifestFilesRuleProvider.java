@@ -74,7 +74,7 @@ public class DiscoverArchiveManifestFilesRuleProvider extends IteratingRuleProvi
         try (InputStream is = manifestFile.asInputStream())
         {
             Manifest manifest = new Manifest(is);
-            if (manifest == null || manifest.getMainAttributes().size() == 0)
+            if (manifest == null || manifest.getMainAttributes().isEmpty())
             {
                 // no manifest found, skip this one
                 return;

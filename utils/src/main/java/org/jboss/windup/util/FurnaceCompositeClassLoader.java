@@ -15,7 +15,7 @@ import java.util.Set;
  */
 public class FurnaceCompositeClassLoader extends ClassLoader
 {
-    private final Set<ClassLoader> loaders = new LinkedHashSet<ClassLoader>();
+    private final Set<ClassLoader> loaders = new LinkedHashSet<>();
 
     public FurnaceCompositeClassLoader(List<ClassLoader> loaders)
     {

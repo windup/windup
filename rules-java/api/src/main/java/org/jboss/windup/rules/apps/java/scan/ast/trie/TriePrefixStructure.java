@@ -94,7 +94,7 @@ public class TriePrefixStructure<SAVE_TYPE, SEARCH_TYPE>
         TriePrefixStructure resolver = typeInterestMap.get(currentCharacter);
         if (resolver == null)
         {
-            resolver = new TriePrefixStructure<SAVE_TYPE, SEARCH_TYPE>(relation);
+            resolver = new TriePrefixStructure<>(relation);
             typeInterestMap.put(currentCharacter, resolver);
         }
 

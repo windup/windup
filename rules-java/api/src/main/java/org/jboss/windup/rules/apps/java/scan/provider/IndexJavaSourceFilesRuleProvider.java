@@ -205,7 +205,7 @@ public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
             String qualifiedName = javaSource.getQualifiedName();
 
             String simpleName = qualifiedName;
-            if (packageName != null && !packageName.equals("") && simpleName != null)
+            if (packageName != null && !packageName.isEmpty() && simpleName != null)
             {
                 simpleName = simpleName.substring(packageName.length() + 1);
             }

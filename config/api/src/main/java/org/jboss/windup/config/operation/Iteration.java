@@ -331,7 +331,7 @@ public class Iteration extends DefaultOperationBuilder
                         + " variable.");
         }
 
-        vars.put(name, new IterationPayload<WindupVertexFrame>(frame));
+        vars.put(name, new IterationPayload<>(frame));
     }
 
     /**

@@ -21,7 +21,7 @@ public class MetadataAddonDependenciesHandler implements ElementHandler<List<Add
     public List<AddonId> processElement(ParserContext context, Element element) throws ConfigurationException
     {
         List<Element> children = $(element).children().get();
-        List<AddonId> addonIds = new ArrayList<AddonId>();
+        List<AddonId> addonIds = new ArrayList<>();
         for (Element child : children)
         {
             Object result = context.processElement(child);

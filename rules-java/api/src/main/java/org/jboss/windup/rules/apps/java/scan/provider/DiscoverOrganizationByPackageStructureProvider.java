@@ -82,7 +82,7 @@ public class DiscoverOrganizationByPackageStructureProvider extends AbstractRule
                                     LOG.warning("Error loading archive: "+payload.getFileName());
                                 }
                                 
-                                if(possibleOrganization.size() == 0) {
+                                if(possibleOrganization.isEmpty()) {
                                     LOG.info(" -- Archive: "+payload.getArchiveName()+" organization unknown.");
                                     organizationService.attachOrganization(payload, "Unknown");
                                 }

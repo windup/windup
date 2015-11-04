@@ -21,7 +21,7 @@ public class FileFrom
      */
     public File inFileNamed(String filenamePattern)
     {
-        if (filenamePattern != null && !filenamePattern.equals(""))
+        if (filenamePattern != null && !filenamePattern.isEmpty())
         {
             f.setFilenamePattern(new RegexParameterizedPatternParser(filenamePattern));
         }

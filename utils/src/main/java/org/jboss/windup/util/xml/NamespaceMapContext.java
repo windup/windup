@@ -47,7 +47,7 @@ public class NamespaceMapContext implements NamespaceContext
 	}
 
 	public Set<String> getNamespaceURIs() {
-		return new HashSet<String>(context.values());
+		return new HashSet<>(context.values());
 	}
 
 	public String getNamespaceURI(String prefix) {
@@ -64,7 +64,7 @@ public class NamespaceMapContext implements NamespaceContext
 	}
 
 	public Iterator<String> getPrefixes(String namespaceURI) {
-		List<String> prefixes = new LinkedList<String>();
+		List<String> prefixes = new LinkedList<>();
 
 		for (String key : context.keySet()) {
 			// slow but works.

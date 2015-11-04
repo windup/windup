@@ -96,7 +96,7 @@ public class GenerateJBossWebDescriptorRuleProvider extends AbstractRuleProvider
             applicationReportModel.setTemplatePath(JBOSS_WEB_TEMPLATE);
             applicationReportModel.setTemplateType(TemplateType.FREEMARKER);
 
-            GraphService<WindupVertexListModel> listService = new GraphService<WindupVertexListModel>(context, WindupVertexListModel.class);
+            GraphService<WindupVertexListModel> listService = new GraphService<>(context, WindupVertexListModel.class);
 
             WindupVertexListModel environmentReferences = listService.create();
             for (EnvironmentReferenceModel ev : webDescriptor.getEnvironmentReferences())

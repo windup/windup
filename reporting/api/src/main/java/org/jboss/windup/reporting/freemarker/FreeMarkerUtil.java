@@ -62,7 +62,7 @@ public class FreeMarkerUtil
     {
         Imported<WindupFreeMarkerMethod> freeMarkerMethods = furnace.getAddonRegistry().getServices(
                     WindupFreeMarkerMethod.class);
-        Map<String, Object> results = new HashMap<String, Object>();
+        Map<String, Object> results = new HashMap<>();
 
         for (WindupFreeMarkerMethod freeMarkerMethod : freeMarkerMethods)
         {
@@ -98,7 +98,7 @@ public class FreeMarkerUtil
      */
     public static Map<String, Object> findFreeMarkerContextVariables(Variables variables, String... varNames)
     {
-        Map<String, Object> results = new HashMap<String, Object>();
+        Map<String, Object> results = new HashMap<>();
 
         for (String varName : varNames)
         {

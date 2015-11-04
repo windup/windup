@@ -113,7 +113,7 @@ public class File extends ParameterizedGraphCondition
             @SuppressWarnings("rawtypes")
             public void modelMatched()
             {
-                this.variables = new LinkedHashMap<String, List<WindupVertexFrame>>();
+                this.variables = new LinkedHashMap<>();
                 frameCreationContext.beginNew((Map) variables);
             }
 

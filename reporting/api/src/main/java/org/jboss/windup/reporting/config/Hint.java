@@ -196,7 +196,7 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
     @Override
     public Set<String> getRequiredParameterNames()
     {
-        final Set<String> result = new LinkedHashSet<String>();
+        final Set<String> result = new LinkedHashSet<>();
         result.addAll(hintTextPattern.getRequiredParameterNames());
         if (hintTitlePattern != null)
             result.addAll(hintTitlePattern.getRequiredParameterNames());

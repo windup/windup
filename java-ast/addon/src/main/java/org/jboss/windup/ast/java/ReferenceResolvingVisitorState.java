@@ -29,12 +29,12 @@ public class ReferenceResolvingVisitorState
     /**
      * Maintains a set of all variable names that have been resolved
      */
-    private final Set<String> names = new HashSet<String>();
+    private final Set<String> names = new HashSet<>();
 
     /**
      * Maintains a map of nameInstances to fully qualified class names.
      */
-    private final Map<String, String> nameInstance = new HashMap<String, String>();
+    private final Map<String, String> nameInstance = new HashMap<>();
 
     public List<String> getWildcardImports()
     {

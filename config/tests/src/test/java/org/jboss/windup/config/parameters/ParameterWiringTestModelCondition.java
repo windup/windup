@@ -84,7 +84,7 @@ public class ParameterWiringTestModelCondition extends ParameterizedGraphConditi
                 ParameterizedPatternResult parseResult = pattern.parse(model.getValue());
                 if (parseResult.matches())
                 {
-                    Map<String, List<WindupVertexFrame>> variables = new LinkedHashMap<String, List<WindupVertexFrame>>();
+                    Map<String, List<WindupVertexFrame>> variables = new LinkedHashMap<>();
                     frameCreationContext.beginNew((Map) variables);
                     if (parseResult.submit(event, context))
                     {

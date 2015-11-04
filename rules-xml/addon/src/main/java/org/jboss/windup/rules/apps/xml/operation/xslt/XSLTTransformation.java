@@ -57,7 +57,7 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
     private int effort = 0;
 
     private Transformer xsltTransformer;
-    private Map<String, String> xsltParameters = new HashMap<String, String>();
+    private Map<String, String> xsltParameters = new HashMap<>();
 
     private XSLTTransformation(String variable)
     {

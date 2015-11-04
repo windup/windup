@@ -210,7 +210,7 @@ public class ResolveSpringHibernateJPADataSourceRuleProvider extends IteratingRu
         List<Element> elements = new LinkedList<>();
         elements.addAll($(doc).children().filter(attr("id", id)).get());
 
-        if (elements.size() == 0)
+        if (elements.isEmpty())
         {
             elements.addAll($(doc).children().filter(attr("name", id)).get());
         }
@@ -242,7 +242,7 @@ public class ResolveSpringHibernateJPADataSourceRuleProvider extends IteratingRu
      */
     private Map<String, String> readProperties(Element properties)
     {
-        Map<String, String> values = new HashMap<String, String>();
+        Map<String, String> values = new HashMap<>();
         for (Element p : $(properties).find("prop"))
         {
             String key = $(p).attr("key");

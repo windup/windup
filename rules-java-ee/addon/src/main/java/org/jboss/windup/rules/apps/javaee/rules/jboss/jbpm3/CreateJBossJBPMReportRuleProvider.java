@@ -82,7 +82,7 @@ public class CreateJBossJBPMReportRuleProvider extends AbstractRuleProvider
         applicationReportModel.setTemplateType(TemplateType.FREEMARKER);
 
         GraphService<Jbpm3ProcessModel> jbpmProcessService = new GraphService<>(context, Jbpm3ProcessModel.class);
-        GraphService<WindupVertexListModel> listService = new GraphService<WindupVertexListModel>(context, WindupVertexListModel.class);
+        GraphService<WindupVertexListModel> listService = new GraphService<>(context, WindupVertexListModel.class);
 
         WindupVertexListModel processes = listService.create();
 

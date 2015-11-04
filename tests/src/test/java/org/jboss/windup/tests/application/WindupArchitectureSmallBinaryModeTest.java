@@ -85,7 +85,7 @@ public class WindupArchitectureSmallBinaryModeTest extends WindupArchitectureTes
             throw new IllegalStateException("No files matched, for pattern [" + childPattern + "]");
 
         List<String> results = Arrays.asList(list);
-        if (results.size() == 0)
+        if (results.isEmpty())
             throw new IllegalStateException("No files matched, for pattern [" + childPattern + "]");
 
         if (results.size() > 1)

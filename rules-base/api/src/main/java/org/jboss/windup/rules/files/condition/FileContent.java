@@ -98,7 +98,7 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
      */
     public FileContentFileName inFileNamed(String filenamePattern)
     {
-        if (filenamePattern != null && !filenamePattern.equals(""))
+        if (filenamePattern != null && !filenamePattern.isEmpty())
         {
             this.filenamePattern = new RegexParameterizedPatternParser(filenamePattern);
         }
@@ -145,7 +145,7 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
             @SuppressWarnings("rawtypes")
             public void modelMatched()
             {
-                this.variables = new LinkedHashMap<String, List<WindupVertexFrame>>();
+                this.variables = new LinkedHashMap<>();
                 frameCreationContext.beginNew((Map) variables);
             }
 

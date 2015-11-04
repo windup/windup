@@ -67,7 +67,7 @@ public abstract class ParameterizedGraphCondition extends GraphCondition impleme
                         context.put(ParameterValueStore.class, clone);
 
                         if (variables == null)
-                            variables = new LinkedHashMap<String, Iterable<? extends WindupVertexFrame>>();
+                            variables = new LinkedHashMap<>();
                         valueStores.put(clone, variables);
                     }
 
@@ -201,7 +201,7 @@ public abstract class ParameterizedGraphCondition extends GraphCondition impleme
                     .get(PARAM_VALUE_STORE_MAP_KEY);
         Map<ParameterValueStore, Map<String, Iterable<? extends WindupVertexFrame>>> valueStores = cachedStores;
         if (valueStores == null)
-            valueStores = new ConcurrentHashMap<ParameterValueStore, Map<String, Iterable<? extends WindupVertexFrame>>>();
+            valueStores = new ConcurrentHashMap<>();
 
         return valueStores;
     }

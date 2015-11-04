@@ -199,14 +199,14 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
             {
                 GremlinPipeline<Vertex, Vertex> pipeline;
                 Iterable<Vertex> startingVertices = getStartingVertices(event);
-                pipeline = new GremlinPipeline<Vertex, Vertex>(startingVertices);
+                pipeline = new GremlinPipeline<>(startingVertices);
                 Set<WindupVertexFrame> frames = new HashSet<>();
                 for (QueryGremlinCriterion c : query.getPipelineCriteria())
                 {
                     c.query(event, pipeline);
                 }
 
-                FramedVertexIterable<WindupVertexFrame> framedVertexIterable = new FramedVertexIterable<WindupVertexFrame>(
+                FramedVertexIterable<WindupVertexFrame> framedVertexIterable = new FramedVertexIterable<>(
                             event.getGraphContext().getFramed(), pipeline,
                             WindupVertexFrame.class);
                 for (WindupVertexFrame frame : framedVertexIterable)
@@ -219,7 +219,7 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
             private Iterable<Vertex> getStartingVertices(GraphRewrite event)
             {
                 boolean hasStartingVerticesVariable = query.getInputVariablesName() != null
-                            && !query.getInputVariablesName().equals("");
+                            && !query.getInputVariablesName().isEmpty();
                 Iterable<Vertex> startingVertices;
                 if (hasStartingVerticesVariable)
                 {

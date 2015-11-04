@@ -85,7 +85,7 @@ public class DiscoverSpringConfigurationFilesRuleProvider extends IteratingRuleP
         List<Element> beansElements = $(doc).namespace("s", "http://www.springframework.org/schema/beans")
                     .xpath("/s:beans").get();
 
-        if (beansElements.size() == 0)
+        if (beansElements.isEmpty())
         {
             LOG.log(Level.WARNING, "Found [beans] XML without namespace at: " + payload.getFilePath() + ".");
             return;

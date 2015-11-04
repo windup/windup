@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
-import org.apache.commons.collections.ListUtils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.forge.furnace.Furnace;

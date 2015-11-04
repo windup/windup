@@ -126,8 +126,8 @@ public class GraphContextImpl implements GraphContext
 
     private void createFramed(TitanGraph titanGraph)
     {
-        this.eventGraph = new EventGraph<TitanGraph>(titanGraph);
-        this.batchGraph = new BatchGraph<TitanGraph>(titanGraph, 1000L);
+        this.eventGraph = new EventGraph<>(titanGraph);
+        this.batchGraph = new BatchGraph<>(titanGraph, 1000L);
 
         final ClassLoader compositeClassLoader = classLoaderProvider.getCompositeClassLoader();
 

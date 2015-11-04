@@ -4,19 +4,15 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.forge.furnace.util.Streams;
 import org.jboss.windup.util.exception.WindupException;
 
@@ -123,7 +119,7 @@ public class ZipUtil
     {
         if (supportedExtensions == null)
         {
-            Set<String> extensions = new HashSet<String>();
+            Set<String> extensions = new HashSet<>();
             extensions.add("war");
             extensions.add("ear");
             extensions.add("jar");

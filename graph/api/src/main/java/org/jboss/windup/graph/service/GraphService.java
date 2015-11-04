@@ -62,7 +62,7 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
             @Override
             public Long execute() throws BuildException
             {
-                GremlinPipeline<Iterable<?>, Object> pipe = new GremlinPipeline<Iterable<?>, Object>();
+                GremlinPipeline<Iterable<?>, Object> pipe = new GremlinPipeline<>();
                 long result = pipe.start(obj).count();
                 return result;
             }

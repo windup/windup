@@ -136,7 +136,7 @@ public class RexsterInitializer implements AfterGraphInitializationListener, Bef
         // the EngineController needs to be configured statically before requests start serving so that it can
         // properly construct ScriptEngine objects with the correct reset policy. allow scriptengines to be
         // configured so that folks can drop in different gremlin flavors.
-        final List<EngineConfiguration> configuredScriptEngines = new ArrayList<EngineConfiguration>();
+        final List<EngineConfiguration> configuredScriptEngines = new ArrayList<>();
         final List<HierarchicalConfiguration> configs = properties.getScriptEngines();
         for (HierarchicalConfiguration config : configs)
         {

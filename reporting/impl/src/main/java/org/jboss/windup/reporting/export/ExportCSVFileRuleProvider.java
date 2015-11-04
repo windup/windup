@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -19,7 +18,6 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.LinkModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
-import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.ProjectService;
 import org.jboss.windup.reporting.model.ClassificationModel;

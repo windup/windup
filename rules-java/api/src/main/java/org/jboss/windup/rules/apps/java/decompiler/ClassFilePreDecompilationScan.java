@@ -11,8 +11,6 @@ import org.apache.bcel.classfile.JavaClass;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
-import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.rules.apps.java.DependencyVisitor;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
@@ -52,7 +50,7 @@ public class ClassFilePreDecompilationScan extends AbstractIterationOperation<Ja
             int minorVersion = bcelJavaClass.getMinor();
 
             String simpleName = qualifiedName;
-            if (packageName != null && !packageName.equals("") && simpleName != null)
+            if (packageName != null && !packageName.isEmpty() && simpleName != null)
             {
                 simpleName = StringUtils.substringAfterLast(simpleName, ".");
             }

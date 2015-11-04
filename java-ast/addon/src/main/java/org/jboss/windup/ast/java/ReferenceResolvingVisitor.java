@@ -99,7 +99,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
             AbstractTypeDeclaration typeDeclaration = (AbstractTypeDeclaration) types.get(0);
             this.className = typeDeclaration.getName().getFullyQualifiedName();
 
-            if (packageName.equals(""))
+            if (packageName.isEmpty())
             {
                 fqcn = className;
             }
@@ -296,7 +296,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
                         compilationUnit.getColumnNumber(node.getStartPosition()), node.getLength(), extractDefinitionLine(node.toString()));
         }
         // register parameters and register them for next processing
-        List<String> qualifiedArguments = new ArrayList<String>();
+        List<String> qualifiedArguments = new ArrayList<>();
         @SuppressWarnings("unchecked")
         List<SingleVariableDeclaration> parameters = (List<SingleVariableDeclaration>) node.parameters();
         if (parameters != null)
@@ -821,8 +821,8 @@ public class ReferenceResolvingVisitor extends ASTVisitor
             // it must be a local method. ignore.
             return true;
         }
-        List<String> qualifiedInstances = new ArrayList<String>();
-        List<String> argumentsQualified = new ArrayList<String>();
+        List<String> qualifiedInstances = new ArrayList<>();
+        List<String> argumentsQualified = new ArrayList<>();
         // get qualified arguments of the method
         IMethodBinding resolveTypeBinding = node.resolveMethodBinding();
         final ResolutionStatus resolutionStatus;
@@ -854,7 +854,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
                             if (interfaceMethod.getName().equals(node.getName().toString()))
                             {
 
-                                List<String> interfaceMethodArguments = new ArrayList<String>();
+                                List<String> interfaceMethodArguments = new ArrayList<>();
                                 for (ITypeBinding type : interfaceMethod.getParameterTypes())
                                 {
                                     interfaceMethodArguments.add(type.getQualifiedName());
@@ -984,7 +984,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
         /*
          * Qualified class may not be resolved in case of anonymous classes
          */
-        if (qualifiedClass == null || qualifiedClass.equals(""))
+        if (qualifiedClass == null || qualifiedClass.isEmpty())
         {
             qualifiedClass = node.getType().toString();
             ResolveClassnameResult result = resolveClassname(qualifiedClass);
@@ -1024,7 +1024,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
             }
             else
             {
-                this.qualifiedParameters = new LinkedList<String>();
+                this.qualifiedParameters = new LinkedList<>();
             }
         }
 
@@ -1064,7 +1064,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
             }
             else
             {
-                this.qualifiedParameters = new LinkedList<String>();
+                this.qualifiedParameters = new LinkedList<>();
             }
 
         }
@@ -1093,7 +1093,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
 
     private List<String> methodParameterGuesser(List<?> arguements)
     {
-        List<String> resolvedParams = new ArrayList<String>(arguements.size());
+        List<String> resolvedParams = new ArrayList<>(arguements.size());
         for (Object o : arguements)
         {
             if (o instanceof SimpleName)

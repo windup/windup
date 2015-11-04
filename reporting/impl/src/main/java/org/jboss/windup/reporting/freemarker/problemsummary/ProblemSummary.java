@@ -1,9 +1,7 @@
 package org.jboss.windup.reporting.freemarker.problemsummary;
 
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Set;
 
 import org.jboss.windup.graph.model.resource.FileModel;
 

@@ -56,9 +56,9 @@ public class Project extends GraphCondition
     public boolean evaluate(GraphRewrite event, EvaluationContext context)
     {
         // TODO:handle from attribute
-        GraphService<ProjectModel> projectService = new GraphService<ProjectModel>(event.getGraphContext(), ProjectModel.class);
+        GraphService<ProjectModel> projectService = new GraphService<>(event.getGraphContext(), ProjectModel.class);
         Iterable<ProjectModel> findAll = projectService.findAll();
-        List<WindupVertexFrame> result = new ArrayList<WindupVertexFrame>();
+        List<WindupVertexFrame> result = new ArrayList<>();
         for (ProjectModel payload : findAll)
         {
             Iterable<ProjectDependencyModel> dependencies = payload.getDependencies();

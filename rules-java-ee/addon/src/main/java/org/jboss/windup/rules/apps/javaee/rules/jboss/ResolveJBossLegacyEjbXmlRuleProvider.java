@@ -197,7 +197,7 @@ public class ResolveJBossLegacyEjbXmlRuleProvider extends IteratingRuleProvider<
 
     private Map<String, Integer> parseTxTimeout(Element elementRef, String ejbName)
     {
-        Map<String, Integer> transactionTimeouts = new HashMap<String, Integer>();
+        Map<String, Integer> transactionTimeouts = new HashMap<>();
         for (Element methodRef : $(elementRef).child("method-attributes").find("method").get())
         {
             String methodName = $(methodRef).child("method-name").content();

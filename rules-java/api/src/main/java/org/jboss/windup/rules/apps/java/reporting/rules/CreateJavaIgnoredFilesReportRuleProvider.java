@@ -78,7 +78,7 @@ public class CreateJavaIgnoredFilesReportRuleProvider extends AbstractRuleProvid
     private IgnoredFilesReportModel createIgnoredFilesReport(GraphContext context,
                 WindupJavaConfigurationModel javaCfg, ProjectModel rootProjectModel)
     {
-        GraphService<IgnoredFilesReportModel> ignoredFilesService = new GraphService<IgnoredFilesReportModel>(context, IgnoredFilesReportModel.class);
+        GraphService<IgnoredFilesReportModel> ignoredFilesService = new GraphService<>(context, IgnoredFilesReportModel.class);
         IgnoredFilesReportModel ignoredFilesReportModel = ignoredFilesService.create();
         ignoredFilesReportModel.setReportPriority(100);
         ignoredFilesReportModel.setReportName(TITLE);
@@ -90,7 +90,7 @@ public class CreateJavaIgnoredFilesReportRuleProvider extends AbstractRuleProvid
         ignoredFilesReportModel.setTemplateType(TemplateType.FREEMARKER);
         ignoredFilesReportModel.setDisplayInApplicationList(false);
 
-        GraphService<IgnoredFileModel> ignoredFilesModelService = new GraphService<IgnoredFileModel>(context,
+        GraphService<IgnoredFileModel> ignoredFilesModelService = new GraphService<>(context,
                     IgnoredFileModel.class);
         Iterable<IgnoredFileModel> allIgnoredFiles = ignoredFilesModelService.findAll();
         for (IgnoredFileModel file : allIgnoredFiles)
@@ -114,7 +114,7 @@ public class CreateJavaIgnoredFilesReportRuleProvider extends AbstractRuleProvid
 
     private List<String> getAllFatherProjectPaths(ProjectModel projectModel)
     {
-        List<String> paths = new ArrayList<String>();
+        List<String> paths = new ArrayList<>();
         paths.add(projectModel.getRootFileModel().getFilePath());
         while (projectModel.getParentProject() != null)
         {

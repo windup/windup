@@ -42,7 +42,7 @@ public class WindupJavaConfigurationService extends GraphService<WindupJavaConfi
     {
         if (ignoredRegexes == null)
         {
-            ignoredRegexes = new ArrayList<String>();
+            ignoredRegexes = new ArrayList<>();
 
             WindupJavaConfigurationModel cfg = getJavaConfigurationModel(getGraphContext());
             for (IgnoredFileRegexModel ignored : cfg.getIgnoredFileRegexes())

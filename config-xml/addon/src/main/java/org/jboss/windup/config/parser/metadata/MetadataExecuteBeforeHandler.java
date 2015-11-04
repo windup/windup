@@ -18,7 +18,7 @@ public class MetadataExecuteBeforeHandler implements ElementHandler<String>
     public String processElement(ParserContext handlerManager, Element element) throws ConfigurationException
     {
         String executeBefore = element.getTextContent();
-        if(executeBefore == null || executeBefore.equals("")) {
+        if(executeBefore == null || executeBefore.isEmpty()) {
             throw new WindupXMLRulesetParsingException("The '" + EXECUTE_BEFORE_ELEMENT + "' must contain non-empty text value");
         }
         return executeBefore;
