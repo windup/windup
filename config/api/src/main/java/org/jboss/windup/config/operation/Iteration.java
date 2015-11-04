@@ -478,19 +478,19 @@ public class Iteration extends DefaultOperationBuilder
         builder.append("Iteration.over(?)");
         if (!getPayloadManager().getPayLoadName().equals(DEFAULT_SINGLE_VARIABLE_STRING))
         {
-            builder.append(".as(" + getPayloadManager().getPayLoadName() + ")");
+            builder.append(".as(").append(getPayloadManager().getPayLoadName()).append(")");
         }
         if (condition != null)
         {
-            builder.append(".when(" + condition + ")");
+            builder.append(".when(").append(condition).append(")");
         }
         if (operationPerform != null)
         {
-            builder.append(".perform(" + operationPerform + ")");
+            builder.append(".perform(").append(operationPerform).append(")");
         }
         if (operationOtherwise != null)
         {
-            builder.append(".otherwise(" + operationOtherwise + ")");
+            builder.append(".otherwise(").append(operationOtherwise).append(")");
         }
         return builder.toString();
     }

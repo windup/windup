@@ -194,7 +194,7 @@ public class XmlFileParameterizedTest
 
     public static class TestParameterizedXmlRuleProvider extends AbstractRuleProvider
     {
-        private Set<FileLocationModel> xmlFiles = new HashSet<>();
+        private final Set<FileLocationModel> xmlFiles = new HashSet<>();
 
         public TestParameterizedXmlRuleProvider()
         {

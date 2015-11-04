@@ -62,7 +62,7 @@ import org.jboss.windup.bootstrap.listener.GreetingListener;
 public class Bootstrap
 {
     public static final String WINDUP_HOME = "windup.home";
-    private AtomicBoolean batchMode = new AtomicBoolean(false);
+    private final AtomicBoolean batchMode = new AtomicBoolean(false);
     private Furnace furnace;
 
     public static void main(final String[] args)
@@ -104,7 +104,7 @@ public class Bootstrap
 
         final String name;
         final String value;
-        final int index = argument.indexOf("=");
+        final int index = argument.indexOf('=');
         if (index == -1)
         {
             name = argument.substring(2);

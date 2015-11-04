@@ -30,10 +30,10 @@ import java.util.logging.Logger;
  */
 public class ExecutionStatistics
 {
-    private static Logger LOG = Logging.get(ExecutionStatistics.class);
+    private static final Logger LOG = Logging.get(ExecutionStatistics.class);
 
-    private static Map<Thread,ExecutionStatistics> stats = new ConcurrentHashMap<>();
-    private Map<String, TimingData> executionInfo = new HashMap<>();
+    private static final Map<Thread,ExecutionStatistics> stats = new ConcurrentHashMap<>();
+    private final Map<String, TimingData> executionInfo = new HashMap<>();
 
 
     private ExecutionStatistics()
@@ -183,7 +183,7 @@ public class ExecutionStatistics
 
     public class TimingData
     {
-        private String key;
+        private final String key;
         private long startTime;
         private long numberOfExecutions;
         private long totalNanos;

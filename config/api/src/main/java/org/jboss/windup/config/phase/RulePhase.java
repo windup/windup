@@ -21,7 +21,7 @@ import org.ocpsoft.rewrite.config.Rule;
  */
 public abstract class RulePhase extends AbstractRuleProvider
 {
-    private Class<? extends RulePhase> thisPhase;
+    private final Class<? extends RulePhase> thisPhase;
     private Class<? extends RulePhase> previousPhase;
     private Class<? extends RulePhase> nextPhase;
 

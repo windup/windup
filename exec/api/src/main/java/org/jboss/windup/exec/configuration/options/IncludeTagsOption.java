@@ -57,6 +57,7 @@ public class IncludeTagsOption extends AbstractConfigurationOption
         return String.class;
     }
 
+    @Override
     public boolean isRequired()
     {
         return false;

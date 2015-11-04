@@ -403,7 +403,7 @@ public class RenderLinkDirective implements WindupFreeMarkerTemplateDirective
         private final String link;
         private final String description;
 
-        public Link(String link, String description)
+        Link(String link, String description)
         {
             this.link = link;
             this.description = description;

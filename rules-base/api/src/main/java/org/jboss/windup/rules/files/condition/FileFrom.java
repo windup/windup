@@ -9,7 +9,7 @@ import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
  */
 public class FileFrom
 {
-    private File f = new File();
+    private final File f = new File();
 
     public void setFrom(String from)
     {

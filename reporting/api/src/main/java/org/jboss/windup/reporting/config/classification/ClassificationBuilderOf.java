@@ -7,7 +7,7 @@ package org.jboss.windup.reporting.config.classification;
  */
 public class ClassificationBuilderOf
 {
-    private Classification classification;
+    private final Classification classification;
 
     ClassificationBuilderOf(String variable)
     {

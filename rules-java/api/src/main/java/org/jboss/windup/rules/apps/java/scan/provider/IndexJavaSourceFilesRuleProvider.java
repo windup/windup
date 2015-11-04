@@ -51,7 +51,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  */
 public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
 {
-    private static Logger LOG = Logging.get(IndexJavaSourceFilesRuleProvider.class);
+    private static final Logger LOG = Logging.get(IndexJavaSourceFilesRuleProvider.class);
 
     public static final String TECH_TAG = "Java Source";
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.INFORMATIONAL;
@@ -132,7 +132,7 @@ public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
 
                 String packageName = "";
                 if (qualifiedName.contains("."))
-                    packageName = qualifiedName.substring(0, qualifiedName.lastIndexOf("."));
+                    packageName = qualifiedName.substring(0, qualifiedName.lastIndexOf('.'));
 
                 if (packageName.startsWith("src.main.java."))
                 {

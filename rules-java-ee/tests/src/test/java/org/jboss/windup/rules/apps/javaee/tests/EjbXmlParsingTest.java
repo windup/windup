@@ -50,10 +50,10 @@ public class EjbXmlParsingTest
         return ShrinkWrap.create(AddonArchive.class).addBeansXML();
     }
 
-    private static String WEBLOGIC_TEST_EJB_XMLS = "../../test-files/ejb/weblogic-ejb-test";
-    private static String WEBSPHERE_TEST_EJB_XMLS = "../../test-files/ejb/websphere-ejb-test";
-    private static String JBOSS_TEST_EJB_XMLS = "../../test-files/ejb/jboss-ejb-test";
-    private static String ORION_TEST_EJB_XMLS = "../../test-files/ejb/orion-ejb-test";
+    private static final String WEBLOGIC_TEST_EJB_XMLS = "../../test-files/ejb/weblogic-ejb-test";
+    private static final String WEBSPHERE_TEST_EJB_XMLS = "../../test-files/ejb/websphere-ejb-test";
+    private static final String JBOSS_TEST_EJB_XMLS = "../../test-files/ejb/jboss-ejb-test";
+    private static final String ORION_TEST_EJB_XMLS = "../../test-files/ejb/orion-ejb-test";
 
     @Inject
     private WindupProcessor processor;

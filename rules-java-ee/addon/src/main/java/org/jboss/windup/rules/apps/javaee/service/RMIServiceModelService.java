@@ -22,7 +22,7 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
  */
 public class RMIServiceModelService extends GraphService<RMIServiceModel>
 {
-    private static Logger LOG = Logging.get(RMIServiceModelService.class);
+    private static final Logger LOG = Logging.get(RMIServiceModelService.class);
 
     public RMIServiceModelService(GraphContext context)
     {

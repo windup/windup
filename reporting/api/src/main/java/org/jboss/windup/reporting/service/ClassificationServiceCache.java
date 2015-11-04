@@ -21,7 +21,7 @@ class ClassificationServiceCache extends AbstractRuleLifecycleListener implement
     /**
      * Keep a cache of items files associated with classification in order to improve performance.
      */
-    private static Map<String, Boolean> classificationFileModelCache = Collections.synchronizedMap(new LRUMap(30000));
+    private static final Map<String, Boolean> classificationFileModelCache = Collections.synchronizedMap(new LRUMap(30000));
 
     /**
      * Indicates whether or not the given {@link FileModel} is already attached to the {@link ClassificationModel}.

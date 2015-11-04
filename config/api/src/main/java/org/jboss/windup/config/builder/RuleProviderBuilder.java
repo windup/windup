@@ -23,7 +23,7 @@ public final class RuleProviderBuilder extends AbstractRuleProvider implements
             RuleProviderBuilderMetadataSetPhase,
             RuleProviderBuilderAddDependencies
 {
-    private ConfigurationBuilder configurationBuilder;
+    private final ConfigurationBuilder configurationBuilder;
     private MetadataBuilder metadata;
 
     

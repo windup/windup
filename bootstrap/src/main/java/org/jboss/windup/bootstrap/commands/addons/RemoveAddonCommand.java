@@ -23,8 +23,8 @@ import org.jboss.windup.bootstrap.commands.FurnaceDependent;
 public class RemoveAddonCommand extends AbstractAddonCommand implements Command, FurnaceDependent
 {
     private Furnace furnace;
-    private String addonId;
-    private AtomicBoolean batchMode;
+    private final String addonId;
+    private final AtomicBoolean batchMode;
 
     public RemoveAddonCommand(String addonId, AtomicBoolean batchMode)
     {
@@ -100,7 +100,6 @@ public class RemoveAddonCommand extends AbstractAddonCommand implements Command,
             e.printStackTrace();
             System.out.println(getVersionString());
         }
-        return;
     }
 
     @Override

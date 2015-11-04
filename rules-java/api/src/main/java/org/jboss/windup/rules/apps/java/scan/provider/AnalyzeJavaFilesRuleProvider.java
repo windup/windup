@@ -75,11 +75,11 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  */
 public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
 {
-    private static Object lockObject = new Object();
+    private static final Object lockObject = new Object();
 
     public static final int COMMIT_INTERVAL = 500;
     public static final int LOG_INTERVAL = 250;
-    private static Logger LOG = Logging.get(AnalyzeJavaFilesRuleProvider.class);
+    private static final Logger LOG = Logging.get(AnalyzeJavaFilesRuleProvider.class);
 
     @Inject
     private WindupWildcardImportResolver importResolver;

@@ -1,5 +1,6 @@
 package org.jboss.windup.config.parser.xml;
 
+import java.util.Collections;
 import static org.joox.JOOX.$;
 
 import java.util.HashMap;
@@ -79,7 +80,7 @@ public class RuleProviderHandler implements ElementHandler<Void>
                 cachedPhases.put(classNameToKey(simpleName), unwrappedClass);
             }
         }
-        return cachedPhases;
+        return Collections.unmodifiableMap(cachedPhases);
     }
 
     private String classNameToKey(String className)

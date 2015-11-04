@@ -86,7 +86,7 @@ public class FormatRule implements WindupFreeMarkerMethod
             {
                 result.append("\n");
                 insertPadding(result, indentLevel + 1);
-                result.append(".when(" + wrap(conditionToString, MAX_WIDTH, indentLevel + 2) + ")");
+                result.append(".when(").append(wrap(conditionToString, MAX_WIDTH, indentLevel + 2)).append(")");
             }
 
         }
@@ -97,21 +97,21 @@ public class FormatRule implements WindupFreeMarkerMethod
             {
                 result.append("\n");
                 insertPadding(result, indentLevel + 1);
-                result.append(".perform(" + wrap(operationToString, MAX_WIDTH, indentLevel + 2) + ")");
+                result.append(".perform(").append(wrap(operationToString, MAX_WIDTH, indentLevel + 2)).append(")");
             }
         }
         if (rule.getId() != null && !rule.getId().isEmpty())
         {
             result.append("\n");
             insertPadding(result, indentLevel);
-            result.append("withId(\"" + rule.getId() + "\")");
+            result.append("withId(\"").append(rule.getId()).append("\")");
         }
 
         if (rule.priority() != 0)
         {
             result.append("\n");
             insertPadding(result, indentLevel);
-            result.append(".withPriority(" + rule.priority() + ")");
+            result.append(".withPriority(").append(rule.priority()).append(")");
         }
 
         return result.toString();

@@ -28,8 +28,8 @@ import org.jboss.windup.util.PathUtil;
 @Singleton
 public class RuleProviderRegistryCache
 {
-    private static Logger LOG = Logger.getLogger(RuleProviderRegistryCache.class.getSimpleName());
-    private static long MAX_CACHE_AGE = 1000L * 60L * 1L;
+    private static final Logger LOG = Logger.getLogger(RuleProviderRegistryCache.class.getSimpleName());
+    private static final long MAX_CACHE_AGE = 1000L * 60L * 1L;
 
     @Inject
     private GraphContextFactory graphContextFactory;

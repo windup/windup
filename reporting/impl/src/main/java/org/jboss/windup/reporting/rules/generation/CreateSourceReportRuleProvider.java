@@ -43,7 +43,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  */
 public class CreateSourceReportRuleProvider extends AbstractRuleProvider
 {
-    private static Logger LOG = Logging.get(CreateSourceReportRuleProvider.class);
+    private static final Logger LOG = Logging.get(CreateSourceReportRuleProvider.class);
     private static final String TEMPLATE = "/reports/templates/source.ftl";
 
     @Inject

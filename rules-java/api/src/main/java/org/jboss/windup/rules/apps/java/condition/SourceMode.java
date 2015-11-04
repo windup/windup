@@ -30,7 +30,7 @@ public class SourceMode extends GraphCondition
         return new SourceMode(Boolean.FALSE);
     }
 
-    private Boolean value;
+    private final Boolean value;
 
     private SourceMode(Boolean value)
     {

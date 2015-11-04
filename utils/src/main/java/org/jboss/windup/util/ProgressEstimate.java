@@ -10,8 +10,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ProgressEstimate
 {
     private long startTime = -1;
-    private AtomicInteger worked = new AtomicInteger();
-    private int total;
+    private final AtomicInteger worked = new AtomicInteger();
+    private final int total;
 
     /**
      * Creates a new {@link ProgressEstimate} for the given number of units of work.

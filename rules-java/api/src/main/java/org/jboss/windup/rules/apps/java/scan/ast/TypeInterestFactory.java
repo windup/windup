@@ -26,15 +26,15 @@ import org.jboss.windup.util.Logging;
  */
 public final class TypeInterestFactory
 {
-    private static Logger LOG = Logging.get(TypeInterestFactory.class);
+    private static final Logger LOG = Logging.get(TypeInterestFactory.class);
 
     // Keep track of each pattern, as well as an identifier of who gave the pattern to us (so that we can update it)
-    private static Map<String, PatternAndLocation> patternsBySource = new HashMap<>();
+    private static final Map<String, PatternAndLocation> patternsBySource = new HashMap<>();
 
     // The full list of patterns, organized by location (including null for the case of no location specified)
-    private static Map<TypeReferenceLocation, TypeInterestFactoryTrie> trieByLocation = new HashMap<>();
+    private static final Map<TypeReferenceLocation, TypeInterestFactoryTrie> trieByLocation = new HashMap<>();
 
-    private static Set<String> ignorePatternSet = Collections.synchronizedSet(new HashSet<String>());
+    private static final Set<String> ignorePatternSet = Collections.synchronizedSet(new HashSet<String>());
 
     static
     {
@@ -60,14 +60,14 @@ public final class TypeInterestFactory
 
     // cache these lookups in an LRU cache, as there are frequent duplicates (and the regex comparisons are much slower
     // than a cache lookup)
-    private static Map<String, Boolean> resultsCache = Collections.synchronizedMap(new LRUMap(8000));
-    private static AtomicLong cacheLookupCount = new AtomicLong(0);
-    private static AtomicLong cacheHitCount = new AtomicLong(0);
+    private static final Map<String, Boolean> resultsCache = Collections.synchronizedMap(new LRUMap(8000));
+    private static final AtomicLong cacheLookupCount = new AtomicLong(0);
+    private static final AtomicLong cacheHitCount = new AtomicLong(0);
 
     // cache the words from the patterns and use this to filter out obvious non-matches very quickly
-    private static Set<String> prescanMap = new TreeSet<>();
-    private static AtomicInteger totalPrescans = new AtomicInteger();
-    private static AtomicInteger totalPrescanHits = new AtomicInteger();
+    private static final Set<String> prescanMap = new TreeSet<>();
+    private static final AtomicInteger totalPrescans = new AtomicInteger();
+    private static final AtomicInteger totalPrescanHits = new AtomicInteger();
 
     static void clear()
     {

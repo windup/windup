@@ -17,7 +17,7 @@ import com.tinkerpop.blueprints.Vertex;
  */
 public class RuleExecutionInformation
 {
-    private Rule rule;
+    private final Rule rule;
     private boolean evaluationResult;
     private boolean executed;
     private boolean failed;

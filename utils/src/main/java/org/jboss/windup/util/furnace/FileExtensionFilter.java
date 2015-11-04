@@ -8,7 +8,7 @@ import org.jboss.forge.furnace.util.Predicate;
  */
 public class FileExtensionFilter implements Predicate<String>
 {
-    private String extension;
+    private final String extension;
 
     /**
      * Only accept names that end with "." + extension.

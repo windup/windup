@@ -61,6 +61,7 @@ public class TargetOption extends AbstractConfigurationOption
         return String.class;
     }
 
+    @Override
     public boolean isRequired()
     {
         return true;

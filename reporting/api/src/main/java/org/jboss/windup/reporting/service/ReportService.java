@@ -23,12 +23,12 @@ public class ReportService extends GraphService<ReportModel>
 {
     private static final String REPORTS_DIR = "reports";
 
-    private static Set<String> usedFilenames = new HashSet<>();
+    private static final Set<String> usedFilenames = new HashSet<>();
 
     /**
      * Used to insure uniqueness in report names
      */
-    private AtomicInteger index = new AtomicInteger(1);
+    private final AtomicInteger index = new AtomicInteger(1);
 
     public ReportService(GraphContext context)
     {
@@ -65,7 +65,7 @@ public class ReportService extends GraphService<ReportModel>
         String filename = PathUtil.cleanFileName(baseFilename) + "." + extension;
 
         // FIXME this looks nasty
-        while (usedFilenames.contains(filename.toString()))
+        while (usedFilenames.contains(filename))
         {
             filename = PathUtil.cleanFileName(baseFilename) + "." + index.getAndIncrement() + "." + extension;
         }

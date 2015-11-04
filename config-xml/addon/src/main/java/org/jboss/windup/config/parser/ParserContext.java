@@ -33,7 +33,7 @@ import org.w3c.dom.Element;
  */
 public class ParserContext
 {
-    private List<AbstractRuleProvider> ruleProviders = new ArrayList<>();
+    private final List<AbstractRuleProvider> ruleProviders = new ArrayList<>();
     private RuleProviderBuilder builder;
     private ConfigurationRuleBuilder rule;
     private ConfigurationRuleParameterWhere where;

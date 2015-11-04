@@ -15,7 +15,7 @@ import org.jboss.forge.furnace.util.Strings;
  */
 public class AbstractRulesetMetadata implements RulesetMetadata
 {
-    private String id;
+    private final String id;
 
     /**
      * Construct a new {@link AbstractRulesetMetadata} instance using the given {@link String} ID.

@@ -270,10 +270,10 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
     {
         StringBuilder builder = new StringBuilder();
         builder.append(this.getClass().getSimpleName());
-        builder.append(".from(" + getInputVariablesName() + ")");
-        builder.append(".matches(" + contentPattern + ")");
-        builder.append(".inFilesNamed(" + filenamePattern + ")");
-        builder.append(".as(" + getVarname() + ")");
+        builder.append(".from(").append(getInputVariablesName()).append(")");
+        builder.append(".matches(").append(contentPattern).append(")");
+        builder.append(".inFilesNamed(").append(filenamePattern).append(")");
+        builder.append(".as(").append(getVarname()).append(")");
         return builder.toString();
     }
 

@@ -35,7 +35,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  */
 public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
 {
-    private static Logger LOG = Logging.get(DiscoverEjbAnnotationsRuleProvider.class);
+    private static final Logger LOG = Logging.get(DiscoverEjbAnnotationsRuleProvider.class);
 
     public DiscoverEjbAnnotationsRuleProvider()
     {

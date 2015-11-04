@@ -14,7 +14,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  */
 public class TypedFramesSelector implements FramesSelector
 {
-    private Class<? extends WindupVertexFrame> framesModel;
+    private final Class<? extends WindupVertexFrame> framesModel;
 
     public TypedFramesSelector(Class<? extends WindupVertexFrame> framesModel)
     {

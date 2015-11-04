@@ -117,7 +117,6 @@ public class InstallAddonCommand extends AbstractAddonCommand implements Command
             e.printStackTrace();
             System.out.println("> Forge version [" + runtimeAPIVersion + "]");
         }
-        return;
     }
 
     @Override

@@ -63,12 +63,12 @@ class QueryPropertyCriterion implements QueryGremlinCriterion
                     if (element instanceof Enum && ((Enum<?>) element).name().equals(first))
                     {
                         found = true;
-                        break ITERABLE;
+                        break;
                     }
                     if (first.equals(element))
                     {
                         found = true;
-                        break ITERABLE;
+                        break;
                     }
                 }
                 return found;

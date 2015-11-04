@@ -6,7 +6,7 @@ package org.jboss.windup.rules.apps.xml.condition;
  */
 public class XmlFileFrom
 {
-    private XmlFile xmlFile;
+    private final XmlFile xmlFile;
 
     XmlFileFrom(String variable)
     {

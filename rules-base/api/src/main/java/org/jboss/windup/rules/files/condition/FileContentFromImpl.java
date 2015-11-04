@@ -5,7 +5,7 @@ package org.jboss.windup.rules.files.condition;
  */
 public class FileContentFromImpl implements FileContentFrom
 {
-    private String from;
+    private final String from;
 
     public FileContentFromImpl(String from)
     {

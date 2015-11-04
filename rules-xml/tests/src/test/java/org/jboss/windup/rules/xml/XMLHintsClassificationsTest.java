@@ -125,7 +125,7 @@ public class XMLHintsClassificationsTest
     @Singleton
     public static class TestXMLHintsClassificationsRuleProvider extends AbstractRuleProvider
     {
-        private Set<FileLocationModel> xmlFiles = new HashSet<>();
+        private final Set<FileLocationModel> xmlFiles = new HashSet<>();
 
         public TestXMLHintsClassificationsRuleProvider()
         {

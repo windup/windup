@@ -151,7 +151,7 @@ public class RenderApplicationPieChartDirective implements WindupFreeMarkerTempl
         public String key;
         public Integer value;
 
-        public PieSort(String k, Integer v)
+        PieSort(String k, Integer v)
         {
             this.key = k;
             this.value = v;

@@ -104,7 +104,7 @@ public enum TypeReferenceLocation
      */
     TAGLIB_IMPORT("Taglib Import");
 
-    private String readablePrefix;
+    private final String readablePrefix;
 
     private TypeReferenceLocation(String readablePrefix)
     {

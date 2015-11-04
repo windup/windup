@@ -27,7 +27,7 @@ import freemarker.template.TemplateModelException;
  */
 public class ProjectModelToOrganizationsMethod implements WindupFreeMarkerMethod
 {
-    private static Logger LOG = Logging.get(ProjectModelToOrganizationsMethod.class);
+    private static final Logger LOG = Logging.get(ProjectModelToOrganizationsMethod.class);
 
     private static final String NAME = "projectModelToOrganizations";
 

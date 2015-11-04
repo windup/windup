@@ -41,7 +41,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  */
 public class ProcyonDecompilerOperation extends AbstractDecompilerOperation
 {
-    private static Logger LOG = Logging.get(ProcyonDecompilerOperation.class);
+    private static final Logger LOG = Logging.get(ProcyonDecompilerOperation.class);
 
     private static final String TECH_TAG = "Decompiled Java File";
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.INFORMATIONAL;

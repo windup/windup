@@ -34,7 +34,7 @@ import org.w3c.dom.NodeList;
  */
 public class XmlUtil
 {
-    private static Logger LOG = Logging.get(XmlUtil.class);
+    private static final Logger LOG = Logging.get(XmlUtil.class);
     protected static final Map<String, String> objs;
 
     static

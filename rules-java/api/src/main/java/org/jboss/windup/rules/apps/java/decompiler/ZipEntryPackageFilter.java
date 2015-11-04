@@ -19,7 +19,7 @@ public class ZipEntryPackageFilter implements Filter<ZipEntry>
 {
     private static final Logger log = Logging.get(ZipEntryPackageFilter.class);
 
-    private WindupJavaConfigurationService configurationService;
+    private final WindupJavaConfigurationService configurationService;
 
     /**
      * Create the filter using the given {@link GraphContext}.

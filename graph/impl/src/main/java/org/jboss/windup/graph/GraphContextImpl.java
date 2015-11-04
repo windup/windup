@@ -62,14 +62,14 @@ public class GraphContextImpl implements GraphContext
 
     private final Path graphDir;
 
-    private GraphApiCompositeClassLoaderProvider classLoaderProvider;
+    private final GraphApiCompositeClassLoaderProvider classLoaderProvider;
 
     /**
      * Used to save all the {@link BeforeGraphCloseListener}s that are also {@link AfterGraphInitializationListener}. This is due a need to call
      * {@link BeforeGraphCloseListener.beforeGraphClose()} on the same instance on which {@link AfterGraphInitializationListener.afterGraphStarted()}
      * was called
      */
-    private Map<String, BeforeGraphCloseListener> beforeGraphCloseListenerBuffer = new HashMap<>();
+    private final Map<String, BeforeGraphCloseListener> beforeGraphCloseListenerBuffer = new HashMap<>();
 
     public GraphContextImpl(Furnace furnace, GraphTypeRegistry typeRegistry, GraphTypeManager typeManager,
                 GraphApiCompositeClassLoaderProvider classLoaderProvider, Path graphDir)

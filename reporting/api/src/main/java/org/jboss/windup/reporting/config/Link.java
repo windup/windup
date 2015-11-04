@@ -7,8 +7,8 @@ package org.jboss.windup.reporting.config;
  */
 public class Link
 {
-    private String link;
-    private String title;
+    private final String link;
+    private final String title;
 
     private Link(String link, String title)
     {

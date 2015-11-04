@@ -120,14 +120,16 @@ public class RexsterInitializer implements AfterGraphInitializationListener, Bef
                 f.mkdir();
                 continue;
             }
-            java.io.InputStream is = jar.getInputStream(file); // get the input stream
-            java.io.FileOutputStream fos = new java.io.FileOutputStream(f);
-            while (is.available() > 0)
-            {  // write contents of 'is' to 'fos'
-                fos.write(is.read());
+            try (java.io.InputStream is = jar.getInputStream(file) // get the input stream
+            )
+            {
+                java.io.FileOutputStream fos = new java.io.FileOutputStream(f);
+                while (is.available() > 0)
+                {  // write contents of 'is' to 'fos'
+                    fos.write(is.read());
+                }
+                fos.close();
             }
-            fos.close();
-            is.close();
         }
     }
 

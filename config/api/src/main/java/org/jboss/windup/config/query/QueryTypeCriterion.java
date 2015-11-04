@@ -13,8 +13,8 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 class QueryTypeCriterion implements QueryFramesCriterion, QueryGremlinCriterion
 {
-    private String typeValue;
-    private Class<? extends WindupVertexFrame> searchedClass;
+    private final String typeValue;
+    private final Class<? extends WindupVertexFrame> searchedClass;
 
     public QueryTypeCriterion(Class<? extends WindupVertexFrame> clazz)
     {

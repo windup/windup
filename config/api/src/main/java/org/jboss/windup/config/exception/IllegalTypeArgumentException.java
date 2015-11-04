@@ -4,9 +4,9 @@ public class IllegalTypeArgumentException extends IllegalArgumentException
 {
     private static final long serialVersionUID = 1L;
 
-    private String variableName;
-    private Class<?> expectedInterface;
-    private Class<?> actualType;
+    private final String variableName;
+    private final Class<?> expectedInterface;
+    private final Class<?> actualType;
 
     public IllegalTypeArgumentException(String variableName, Class<?> expectedInterface, Class<?> actualType)
     {

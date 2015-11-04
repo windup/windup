@@ -47,7 +47,7 @@ import org.ocpsoft.rewrite.util.Maps;
  */
 public class File extends ParameterizedGraphCondition
 {
-    private static Logger LOG = Logging.get(File.class);
+    private static final Logger LOG = Logging.get(File.class);
 
     private RegexParameterizedPatternParser filenamePattern;
 
@@ -188,9 +188,9 @@ public class File extends ParameterizedGraphCondition
     {
         StringBuilder builder = new StringBuilder();
         builder.append(this.getClass().getSimpleName());
-        builder.append(".from(" + getInputVariablesName() + ")");
-        builder.append(".inFilesNamed(" + filenamePattern + ")");
-        builder.append(".as(" + getVarname() + ")");
+        builder.append(".from(").append(getInputVariablesName()).append(")");
+        builder.append(".inFilesNamed(").append(filenamePattern).append(")");
+        builder.append(".as(").append(getVarname()).append(")");
         return builder.toString();
     }
 

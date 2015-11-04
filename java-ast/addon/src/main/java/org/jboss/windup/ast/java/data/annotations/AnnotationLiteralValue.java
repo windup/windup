@@ -9,8 +9,8 @@ package org.jboss.windup.ast.java.data.annotations;
 public class AnnotationLiteralValue implements AnnotationValue
 {
 
-    private Class<?> type;
-    private Object value;
+    private final Class<?> type;
+    private final Object value;
 
     /**
      * Instantiates a {@link AnnotationLiteralValue} with the give type and value.

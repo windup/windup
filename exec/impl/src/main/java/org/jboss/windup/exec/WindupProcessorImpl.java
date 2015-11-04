@@ -57,7 +57,7 @@ import org.ocpsoft.rewrite.util.Visitor;
  */
 public class WindupProcessorImpl implements WindupProcessor
 {
-    private static Logger LOG = Logging.get(WindupProcessorImpl.class);
+    private static final Logger LOG = Logging.get(WindupProcessorImpl.class);
 
     @Inject
     private RuleLoader ruleLoader;

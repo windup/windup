@@ -25,7 +25,7 @@ public class VertexFromFramedIterable implements Iterable<Vertex>
     {
         return new Iterator<Vertex>()
         {
-            private Iterator<? extends VertexFrame> iterator = iterable.iterator();
+            private final Iterator<? extends VertexFrame> iterator = iterable.iterator();
 
             public void remove()
             {

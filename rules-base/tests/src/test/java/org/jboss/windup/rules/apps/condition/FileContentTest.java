@@ -211,7 +211,7 @@ public class FileContentTest
             .addRule()
             .when(FileContent.matches("file {text}.").inFileNamed("{*}.txt"))
             .perform(new ParameterizedIterationOperation<FileLocationModel>() {
-                private RegexParameterizedPatternParser textPattern = new RegexParameterizedPatternParser("{text}");
+                private final RegexParameterizedPatternParser textPattern = new RegexParameterizedPatternParser("{text}");
 
                 @Override
                 public void performParameterized(GraphRewrite event, EvaluationContext context, FileLocationModel payload) {
@@ -232,7 +232,7 @@ public class FileContentTest
             .addRule()
             .when(FileContent.matches(" THE {needle} IN THE HAYSTACK {*}").inFileNamed("{*}.txt"))
             .perform(new ParameterizedIterationOperation<FileLocationModel>() {
-                private RegexParameterizedPatternParser textPattern = new RegexParameterizedPatternParser("{needle}");
+                private final RegexParameterizedPatternParser textPattern = new RegexParameterizedPatternParser("{needle}");
 
                 @Override
                 public void performParameterized(GraphRewrite event, EvaluationContext context, FileLocationModel payload) {

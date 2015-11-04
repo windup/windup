@@ -114,7 +114,7 @@ public class DiscoverJBossJbpmProcessFilesRuleProvider extends IteratingRuleProv
         //try and find the process image to associate to the definition
         String processImage = payload.getFilePath();
         processImage = StringUtils.removeEnd(processImage, payload.getFileName());
-        processImage = processImage+"processimage.jpg";
+        processImage += "processimage.jpg";
         
         //look up the process definition.
         FileService fileService = new FileService(event.getGraphContext());

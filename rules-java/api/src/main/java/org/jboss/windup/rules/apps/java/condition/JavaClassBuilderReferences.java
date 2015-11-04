@@ -2,7 +2,7 @@ package org.jboss.windup.rules.apps.java.condition;
 
 public class JavaClassBuilderReferences
 {
-    private String inputVarName;
+    private final String inputVarName;
 
     public JavaClassBuilderReferences(String inputVarName)
     {

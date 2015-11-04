@@ -25,8 +25,8 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 public class GraphService<T extends WindupVertexFrame> implements Service<T>
 {
-    private Class<T> type;
-    private GraphContext context;
+    private final Class<T> type;
+    private final GraphContext context;
 
     public GraphService(GraphContext context, Class<T> type)
     {

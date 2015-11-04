@@ -8,7 +8,7 @@ import java.util.concurrent.ThreadFactory;
 public class WindupChildThreadFactory implements ThreadFactory
 {
 
-    private Thread mainWindupThread;
+    private final Thread mainWindupThread;
 
     public WindupChildThreadFactory()
     {

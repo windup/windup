@@ -31,7 +31,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  */
 public class ClassFilePreDecompilationScan extends AbstractIterationOperation<JavaClassFileModel>
 {
-    private static Logger LOG = Logging.get(ClassFilePreDecompilationScan.class);
+    private static final Logger LOG = Logging.get(ClassFilePreDecompilationScan.class);
 
 
     private void addClassFileMetadata(GraphRewrite event, EvaluationContext context, JavaClassFileModel javaClassFileModel)

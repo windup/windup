@@ -25,8 +25,8 @@ public class XMLDocumentCache
      */
     public static class Result
     {
-        private boolean parseFailure;
-        private Document document;
+        private final boolean parseFailure;
+        private final Document document;
 
         public Result(boolean parseFailure, Document document)
         {
@@ -93,7 +93,7 @@ public class XMLDocumentCache
     private static class CacheDocument
     {
         private boolean parseFailure;
-        private SoftReference<Document> document;
+        private final SoftReference<Document> document;
 
         public CacheDocument(boolean parseFailure, Document document)
         {

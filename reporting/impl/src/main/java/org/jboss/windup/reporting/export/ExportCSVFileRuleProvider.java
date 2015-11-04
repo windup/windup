@@ -42,7 +42,7 @@ public class ExportCSVFileRuleProvider extends AbstractRuleProvider
 {
     public static final int COMMIT_INTERVAL = 750;
     public static final int LOG_INTERVAL = 250;
-    private static Logger LOG = Logging.get(ExportCSVFileRuleProvider.class);
+    private static final Logger LOG = Logging.get(ExportCSVFileRuleProvider.class);
     Map<String, CSVWriter> projectToFile;
 
     public ExportCSVFileRuleProvider()
@@ -162,7 +162,7 @@ public class ExportCSVFileRuleProvider extends AbstractRuleProvider
             for (LinkModel linkModel : links)
             {
                 linksString.append("[");
-                linksString.append(linkModel.getLink() + ",");
+                linksString.append(linkModel.getLink()).append(",");
                 linksString.append(linkModel.getDescription());
                 linksString.append("]");
             }

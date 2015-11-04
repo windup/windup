@@ -36,7 +36,7 @@ public enum InputType
      */
     FILE_OR_DIRECTORY("File or Directory");
 
-    private String value;
+    private final String value;
 
     private InputType(String val)
     {

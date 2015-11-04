@@ -195,13 +195,13 @@ public class Classification extends ParameterizedIterationOperation<FileModel> i
     public String toString()
     {
         StringBuilder result = new StringBuilder();
-        result.append("Classification.as(" + classificationPattern.getPattern() + ")");
+        result.append("Classification.as(").append(classificationPattern.getPattern()).append(")");
         if (descriptionPattern != null && !descriptionPattern.getPattern().trim().isEmpty())
-            result.append(".withDescription(" + descriptionPattern + ")");
+            result.append(".withDescription(").append(descriptionPattern).append(")");
         if (effort != 0)
-            result.append(".withEffort(" + effort + ")");
+            result.append(".withEffort(").append(effort).append(")");
         if (links != null && !links.isEmpty())
-            result.append(".with(" + links + ")");
+            result.append(".with(").append(links).append(")");
         return result.toString();
     }
 

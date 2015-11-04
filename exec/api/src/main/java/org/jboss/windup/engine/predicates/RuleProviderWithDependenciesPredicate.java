@@ -16,9 +16,9 @@ import org.jboss.windup.config.RuleProvider;
  */
 public class RuleProviderWithDependenciesPredicate implements Predicate<RuleProvider>
 {
-    private static Logger LOG = Logger.getLogger(RuleProviderWithDependenciesPredicate.class.getName());
+    private static final Logger LOG = Logger.getLogger(RuleProviderWithDependenciesPredicate.class.getName());
 
-    private List<RuleProvider> ruleProviders;
+    private final List<RuleProvider> ruleProviders;
 
     @SafeVarargs
     public RuleProviderWithDependenciesPredicate(Class<? extends RuleProvider> provider, Class<? extends RuleProvider>... providers)

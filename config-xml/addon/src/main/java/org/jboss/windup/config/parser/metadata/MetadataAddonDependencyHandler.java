@@ -13,7 +13,7 @@ import org.w3c.dom.Element;
 @NamespaceElementHandler(elementName = MetadataAddonDependencyHandler.ADDON_DEPENDENCY_ELEMENT, namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
 public class MetadataAddonDependencyHandler implements ElementHandler<AddonId>
 {
-    private static String ID = "id";
+    private static final String ID = "id";
     public static final String  ADDON_DEPENDENCY_ELEMENT = "addon";
 
     @Override
