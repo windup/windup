@@ -1,8 +1,11 @@
 package org.jboss.windup.reporting.freemarker;
 
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -29,7 +32,8 @@ public class MarkdownToHtmlMethod implements WindupFreeMarkerMethod
 {
     private static final Logger LOG = Logging.get(MarkdownToHtmlMethod.class);
 
-    public static final long MAX_PARSING_TIME_MILLIS = 10000;
+    public static final long MAX_PARSING_TIME_MILLIS = 100000;
+    private static final Map<String, SoftReference<String>> cache = new ConcurrentHashMap<>();
 
     @Override
     public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
@@ -41,9 +45,15 @@ public class MarkdownToHtmlMethod implements WindupFreeMarkerMethod
         SimpleScalar freemarkerArg = (SimpleScalar) arguments.get(0);
         String markdownSource = freemarkerArg.getAsString();
 
+        SoftReference<String> cachedResult = cache.get(markdownSource);
+        String cachedResultString;
+        if (cachedResult != null && (cachedResultString = cachedResult.get()) != null)
+        {
+            return cachedResultString;
+        }
+
         try
         {
-
             // build the plugins object with our extensions
             PegDownPlugins plugins = PegDownPlugins.builder().build();
             PegDownProcessor processor = new PegDownProcessor(Extensions.FENCED_CODE_BLOCKS, MAX_PARSING_TIME_MILLIS, plugins);
@@ -56,7 +66,9 @@ public class MarkdownToHtmlMethod implements WindupFreeMarkerMethod
 
             ToHtmlSerializer serializer = new ToHtmlSerializer(new LinkRenderer(), Collections.<String, VerbatimSerializer> emptyMap(),
                         serializerPlugins);
-            return serializer.toHtml(outputNode);
+            String result = serializer.toHtml(outputNode);
+            cache.put(markdownSource, new SoftReference<>(result));
+            return result;
         }
         catch (Throwable t)
         {
@@ -82,5 +94,4 @@ public class MarkdownToHtmlMethod implements WindupFreeMarkerMethod
     public void setContext(GraphRewrite event)
     {
     }
-
 }

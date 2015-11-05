@@ -236,52 +236,58 @@ public class Iteration extends DefaultOperationBuilder
         Operation commitAndProgress = commit.and(iterationProgressOperation);
 
         event.getRewriteContext().put(DEFAULT_VARIABLE_LIST_STRING, frames); // set the current frames
-        for (WindupVertexFrame frame : frames)
+        try
         {
-            variables.push();
-            getPayloadManager().setCurrentPayload(variables, frame);
-            boolean conditionResult = true;
-            if (condition != null)
+            for (WindupVertexFrame frame : frames)
             {
-                // automatically set the input variable to point to the current payload
-                if (condition instanceof GraphCondition)
+                variables.push();
+                getPayloadManager().setCurrentPayload(variables, frame);
+                boolean conditionResult = true;
+                if (condition != null)
                 {
-                    ((GraphCondition) condition).setInputVariablesName(getPayloadVariableName(event, context));
-                }
-                conditionResult = condition.evaluate(event, context);
+                    // automatically set the input variable to point to the current payload
+                    if (condition instanceof GraphCondition)
+                    {
+                        ((GraphCondition) condition).setInputVariablesName(getPayloadVariableName(event, context));
+                    }
+                    conditionResult = condition.evaluate(event, context);
                 /*
                  * Add special clear layer for perform, because condition used one and could have added new variables. The condition result put into
                  * variables is ignored.
                  */
-                variables.push();
-                getPayloadManager().setCurrentPayload(variables, frame);
-            }
-            if (conditionResult)
-            {
-                if (operationPerform != null)
-                {
-                    operationPerform.perform(event, context);
+                    variables.push();
+                    getPayloadManager().setCurrentPayload(variables, frame);
                 }
-            }
-            else if (condition != null)
-            {
-                if (operationOtherwise != null)
+                if (conditionResult)
                 {
-                    operationOtherwise.perform(event, context);
+                    if (operationPerform != null)
+                    {
+                        operationPerform.perform(event, context);
+                    }
                 }
-            }
-            commitAndProgress.perform(event, context);
+                else if (condition != null)
+                {
+                    if (operationOtherwise != null)
+                    {
+                        operationOtherwise.perform(event, context);
+                    }
+                }
+                commitAndProgress.perform(event, context);
 
-            getPayloadManager().removeCurrentPayload(variables);
-            // remove the perform layer
-            variables.pop();
-            if (condition != null)
-            {
-                // remove the condition layer
+                getPayloadManager().removeCurrentPayload(variables);
+                // remove the perform layer
                 variables.pop();
+                if (condition != null)
+                {
+                    // remove the condition layer
+                    variables.pop();
+                }
             }
         }
-
+        finally
+        {
+            event.getRewriteContext().put(DEFAULT_VARIABLE_LIST_STRING, null);
+        }
     }
 
     @Override

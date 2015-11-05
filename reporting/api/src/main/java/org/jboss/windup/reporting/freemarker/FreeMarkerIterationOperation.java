@@ -108,10 +108,10 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
 
             Template template = freemarkerConfig.getTemplate(templatePath);
 
-            Variables varStack = Variables.instance(event);
+            Variables variables = Variables.instance(event);
 
             // just the variables
-            Map<String, Object> vars = FreeMarkerUtil.findFreeMarkerContextVariables(varStack,
+            Map<String, Object> vars = FreeMarkerUtil.findFreeMarkerContextVariables(variables,
                         variableNames.toArray(new String[variableNames
                                     .size()]));
 
@@ -122,7 +122,11 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
 
             // also, extension functions (these are kept separate from vars in order to prevent them
             // from being stored in the associated data with the reportmodel)
-            Map<String, Object> freeMarkerExtensions = FreeMarkerUtil.findFreeMarkerExtensions(furnace, event);
+            final Map<String, Object> freeMarkerExtensions;
+            synchronized (furnace)
+            {
+                freeMarkerExtensions = FreeMarkerUtil.findFreeMarkerExtensions(furnace, event);
+            }
 
             Map<String, Object> objects = new HashMap<>(vars);
             objects.putAll(freeMarkerExtensions);
