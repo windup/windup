@@ -33,7 +33,7 @@ import org.ocpsoft.rewrite.param.RegexConstraint;
 @RunWith(Arquillian.class)
 public class XMLRuleProviderLoaderTest
 {
-    private static Logger LOG = Logger.getLogger(XMLRuleProviderLoaderTest.class.getName());
+    private static final Logger LOG = Logger.getLogger(XMLRuleProviderLoaderTest.class.getName());
 
     @Deployment
     @AddonDependencies({

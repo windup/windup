@@ -34,8 +34,8 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @Singleton
 public class GraphTypeManager implements TypeResolver, FrameInitializer
 {
-    private Map<String, Class<? extends WindupVertexFrame>> registeredTypes = new HashMap<>();
-    private TypeRegistry typeRegistry = new TypeRegistry();
+    private final Map<String, Class<? extends WindupVertexFrame>> registeredTypes = new HashMap<>();
+    private final TypeRegistry typeRegistry = new TypeRegistry();
 
     public Set<Class<? extends WindupVertexFrame>> getRegisteredTypes()
     {

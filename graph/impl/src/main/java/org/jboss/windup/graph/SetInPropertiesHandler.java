@@ -146,9 +146,8 @@ public class SetInPropertiesHandler implements MethodHandler<SetInProperties>
 
         String prefix = preparePrefix(ann);
 
-        for (int i = 0; i < args.length; i++ )
+        for (Object arg : args)
         {
-            Object arg = args[i];
             if (!(arg instanceof String))
                 throw new WindupException("The arguments of the add*() method " + method.getName() + " must be String, but was: " + arg.getClass());
 

@@ -15,7 +15,7 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
  */
 public class TestReportUtil
 {
-    private WebDriver driver;
+    private final WebDriver driver;
 
     public TestReportUtil()
     {

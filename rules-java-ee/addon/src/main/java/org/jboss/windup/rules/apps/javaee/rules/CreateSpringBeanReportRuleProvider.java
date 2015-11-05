@@ -95,7 +95,7 @@ public class CreateSpringBeanReportRuleProvider extends AbstractRuleProvider
         applicationReportModel.setTemplateType(TemplateType.FREEMARKER);
 
         SpringBeanService springBeanService = new SpringBeanService(context);
-        GraphService<WindupVertexListModel> listService = new GraphService<WindupVertexListModel>(context, WindupVertexListModel.class);
+        GraphService<WindupVertexListModel> listService = new GraphService<>(context, WindupVertexListModel.class);
 
         WindupVertexListModel springBeanList = listService.create();
         for (SpringBeanModel springBeanModel : springBeanService.findAll())

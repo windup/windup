@@ -72,7 +72,7 @@ public class TechnologyTagService extends GraphService<TechnologyTagModel>
     {
         GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(fileModel.asVertex());
         pipeline.in(TechnologyTagModel.TECH_TAG_TO_FILE_MODEL).has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, TechnologyTagModel.TYPE);
-        return new FramedVertexIterable<TechnologyTagModel>(getGraphContext().getFramed(), pipeline, TechnologyTagModel.class);
+        return new FramedVertexIterable<>(getGraphContext().getFramed(), pipeline, TechnologyTagModel.class);
     }
 
     /**
@@ -86,7 +86,7 @@ public class TechnologyTagService extends GraphService<TechnologyTagModel>
         pipeline.out(ProjectModel.PROJECT_MODEL_TO_FILE);
         pipeline.in(TechnologyTagModel.TECH_TAG_TO_FILE_MODEL).has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, TechnologyTagModel.TYPE);
 
-        Iterable<TechnologyTagModel> modelIterable = new FramedVertexIterable<TechnologyTagModel>(getGraphContext().getFramed(), pipeline,
+        Iterable<TechnologyTagModel> modelIterable = new FramedVertexIterable<>(getGraphContext().getFramed(), pipeline,
                     TechnologyTagModel.class);
         results.addAll(Iterators.asSet(modelIterable));
 

@@ -26,7 +26,7 @@ public class FileMappingGraphChangedListener implements GraphChangedListener
 {
     private static final Logger LOG = Logger.getLogger(FileMappingGraphChangedListener.class.getSimpleName());
 
-    private GraphRewrite event;
+    private final GraphRewrite event;
 
     public FileMappingGraphChangedListener(GraphRewrite event)
     {

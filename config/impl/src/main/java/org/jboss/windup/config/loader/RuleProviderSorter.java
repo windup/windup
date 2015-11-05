@@ -96,7 +96,7 @@ public class RuleProviderSorter
 
         checkForCycles(graph);
 
-        List<RuleProvider> result = new ArrayList<RuleProvider>(this.providers.size());
+        List<RuleProvider> result = new ArrayList<>(this.providers.size());
         TopologicalOrderIterator<RuleProvider, DefaultEdge> iterator = new TopologicalOrderIterator<>(graph);
         while (iterator.hasNext())
         {

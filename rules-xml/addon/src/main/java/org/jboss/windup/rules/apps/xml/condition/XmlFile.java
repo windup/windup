@@ -227,7 +227,7 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD, 
             @Override
             public void modelMatched()
             {
-                this.variables = new LinkedHashMap<String, List<WindupVertexFrame>>();
+                this.variables = new LinkedHashMap<>();
                 frameCreationContext.beginNew((Map) this.variables);
             }
 
@@ -314,7 +314,7 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD, 
             final GraphContext graphContext = event.getGraphContext();
             GraphService<XmlFileModel> xmlResourceService = new GraphService<>(graphContext, XmlFileModel.class);
             Iterable<? extends WindupVertexFrame> allXmls;
-            if (getInputVariablesName() == null || getInputVariablesName().equals(""))
+            if (getInputVariablesName() == null || getInputVariablesName().isEmpty())
             {
                 allXmls = xmlResourceService.findAll();
             }
@@ -361,7 +361,7 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD, 
                         continue;
                     }
                 }
-                if (publicId != null && !publicId.equals(""))
+                if (publicId != null && !publicId.isEmpty())
                 {
                     DoctypeMetaModel doctype = xml.getDoctype();
                     if (doctype == null || doctype.getPublicId() == null

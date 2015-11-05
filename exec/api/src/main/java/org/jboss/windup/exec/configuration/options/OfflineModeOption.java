@@ -47,6 +47,7 @@ public class OfflineModeOption extends AbstractConfigurationOption
         return false;
     }
 
+    @Override
     public ValidationResult validate(Object valueObj)
     {
         return ValidationResult.SUCCESS;

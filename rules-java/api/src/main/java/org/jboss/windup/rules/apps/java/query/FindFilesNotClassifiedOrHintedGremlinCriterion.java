@@ -40,7 +40,7 @@ public class FindFilesNotClassifiedOrHintedGremlinCriterion
 
         ExecutionStatistics.get().begin("FindFilesNotClassifiedOrHintedGremlinCriterion.hintPipeline");
         // create a pipeline to get all hinted items
-        GremlinPipeline<Vertex, Vertex> hintPipeline = new GremlinPipeline<Vertex, Vertex>(
+        GremlinPipeline<Vertex, Vertex> hintPipeline = new GremlinPipeline<>(
                     context.getQuery().type(InlineHintModel.class).vertices());
         hintPipeline.as("fileLocation1").out(FileLocationModel.FILE_MODEL).retain(initialVerticesList);
         hintPipeline.fill(allClassifiedOrHintedVertices);
@@ -48,7 +48,7 @@ public class FindFilesNotClassifiedOrHintedGremlinCriterion
 
         ExecutionStatistics.get().begin("FindFilesNotClassifiedOrHintedGremlinCriterion.classificationPipeline");
         // create a pipeline to get all items with attached classifications
-        GremlinPipeline<Vertex, Vertex> classificationPipeline = new GremlinPipeline<Vertex, Vertex>(
+        GremlinPipeline<Vertex, Vertex> classificationPipeline = new GremlinPipeline<>(
                     context.getQuery().type(ClassificationModel.class).vertices());
         classificationPipeline.as("fileModel2").out(ClassificationModel.FILE_MODEL).retain(initialVerticesList);
         classificationPipeline.fill(allClassifiedOrHintedVertices);

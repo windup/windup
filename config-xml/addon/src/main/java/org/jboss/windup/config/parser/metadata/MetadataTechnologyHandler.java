@@ -22,8 +22,8 @@ import org.w3c.dom.Element;
 public abstract class MetadataTechnologyHandler implements ElementHandler<TechnologyReference>
 {
     public static final String TECHNOLOGY_ELEMENT = "technology";
-    private static String ID = "id";
-    private static String VERSION_RANGE = "versionRange";
+    private static final String ID = "id";
+    private static final String VERSION_RANGE = "versionRange";
 
     @Override
     public TechnologyReference processElement(ParserContext handlerManager, Element element) throws ConfigurationException

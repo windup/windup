@@ -477,7 +477,7 @@ public class WindupCommandTest
                 Assert.assertTrue(foundWindupHomeDirIgnorePath);
                 Assert.assertEquals(3, totalFound);
                 GraphContext context = (GraphContext) controller.getContext().getAttributeMap().get(GraphContext.class);
-                GraphService<FileModel> service = new GraphService<FileModel>(context.load(), FileModel.class);
+                GraphService<FileModel> service = new GraphService<>(context.load(), FileModel.class);
                 Iterable<FileModel> findAll = service.findAll();
                 boolean notEmpty = false;
                 for (FileModel fileModel : findAll)

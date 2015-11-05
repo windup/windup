@@ -141,8 +141,8 @@ public class GetProblemSummariesMethod implements WindupFreeMarkerMethod
 
     private class RuleSummaryKey
     {
-        private String ruleID;
-        private String title;
+        private final String ruleID;
+        private final String title;
 
         public RuleSummaryKey(String ruleID, String title)
         {

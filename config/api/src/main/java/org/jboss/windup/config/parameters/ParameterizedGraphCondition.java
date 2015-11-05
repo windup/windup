@@ -23,7 +23,7 @@ import org.ocpsoft.rewrite.param.Parameterized;
 
 public abstract class ParameterizedGraphCondition extends GraphCondition implements Parameterized
 {
-    private static Logger LOG = Logging.get(ParameterizedGraphCondition.class);
+    private static final Logger LOG = Logging.get(ParameterizedGraphCondition.class);
 
     static final String PARAM_VALUE_STORE_MAP_KEY = ParameterizedGraphCondition.class.getName()
                 + "_parameterValueStoreMap";
@@ -51,7 +51,7 @@ public abstract class ParameterizedGraphCondition extends GraphCondition impleme
                 FrameCreationContext frameCreationContext = new FrameCreationContext()
                 {
                     private ParameterValueStore current;
-                    private DefaultParameterValueStore original = (DefaultParameterValueStore) DefaultParameterValueStore
+                    private final DefaultParameterValueStore original = (DefaultParameterValueStore) DefaultParameterValueStore
                                 .getInstance(context);
 
                     @Override
@@ -67,7 +67,7 @@ public abstract class ParameterizedGraphCondition extends GraphCondition impleme
                         context.put(ParameterValueStore.class, clone);
 
                         if (variables == null)
-                            variables = new LinkedHashMap<String, Iterable<? extends WindupVertexFrame>>();
+                            variables = new LinkedHashMap<>();
                         valueStores.put(clone, variables);
                     }
 
@@ -201,7 +201,7 @@ public abstract class ParameterizedGraphCondition extends GraphCondition impleme
                     .get(PARAM_VALUE_STORE_MAP_KEY);
         Map<ParameterValueStore, Map<String, Iterable<? extends WindupVertexFrame>>> valueStores = cachedStores;
         if (valueStores == null)
-            valueStores = new ConcurrentHashMap<ParameterValueStore, Map<String, Iterable<? extends WindupVertexFrame>>>();
+            valueStores = new ConcurrentHashMap<>();
 
         return valueStores;
     }

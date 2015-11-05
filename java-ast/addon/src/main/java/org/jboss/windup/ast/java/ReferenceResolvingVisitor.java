@@ -59,19 +59,19 @@ import org.jboss.windup.ast.java.data.annotations.AnnotationValue;
 /**
  * Provides the ability to parse a Java source file and return a {@link List} of {@link ClassReference} objects containing the fully qualified names
  * of all of the contained references. <b>Note: A new instance of this visitor should be constructed for each {@link CompilationUnit}</b>
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class ReferenceResolvingVisitor extends ASTVisitor
 {
-    private static Logger LOG = Logger.getLogger(ReferenceResolvingVisitor.class.getName());
+    private static final Logger LOG = Logger.getLogger(ReferenceResolvingVisitor.class.getName());
 
     private final WildcardImportResolver wildcardImportResolver;
 
     private String packageName;
     private String className;
-    private String path;
+    private final String path;
     private final CompilationUnit compilationUnit;
     private final List<ClassReference> classReferences = new ArrayList<>();
 
@@ -99,7 +99,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
             AbstractTypeDeclaration typeDeclaration = (AbstractTypeDeclaration) types.get(0);
             this.className = typeDeclaration.getName().getFullyQualifiedName();
 
-            if (packageName.equals(""))
+            if (packageName.isEmpty())
             {
                 fqcn = className;
             }
@@ -191,7 +191,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
     private void processImport(String interest, ResolutionStatus resolutionStatus, int lineNumber, int columnNumber, int length, String line)
     {
         final PackageAndClassName packageAndClass;
-        if (interest.indexOf(".") == -1)
+        if (!interest.contains("."))
         {
             packageAndClass = new PackageAndClassName(interest, null);
         }
@@ -296,9 +296,9 @@ public class ReferenceResolvingVisitor extends ASTVisitor
                         compilationUnit.getColumnNumber(node.getStartPosition()), node.getLength(), extractDefinitionLine(node.toString()));
         }
         // register parameters and register them for next processing
-        List<String> qualifiedArguments = new ArrayList<String>();
+        List<String> qualifiedArguments = new ArrayList<>();
         @SuppressWarnings("unchecked")
-        List<SingleVariableDeclaration> parameters = (List<SingleVariableDeclaration>) node.parameters();
+        List<SingleVariableDeclaration> parameters = node.parameters();
         if (parameters != null)
         {
             for (SingleVariableDeclaration type : parameters)
@@ -547,7 +547,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
 
     /**
      * Adds parameters contained in the annotation into the annotation type reference
-     * 
+     *
      * @param typeRef
      * @param node
      */
@@ -821,8 +821,8 @@ public class ReferenceResolvingVisitor extends ASTVisitor
             // it must be a local method. ignore.
             return true;
         }
-        List<String> qualifiedInstances = new ArrayList<String>();
-        List<String> argumentsQualified = new ArrayList<String>();
+        List<String> qualifiedInstances = new ArrayList<>();
+        List<String> argumentsQualified = new ArrayList<>();
         // get qualified arguments of the method
         IMethodBinding resolveTypeBinding = node.resolveMethodBinding();
         final ResolutionStatus resolutionStatus;
@@ -854,7 +854,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
                             if (interfaceMethod.getName().equals(node.getName().toString()))
                             {
 
-                                List<String> interfaceMethodArguments = new ArrayList<String>();
+                                List<String> interfaceMethodArguments = new ArrayList<>();
                                 for (ITypeBinding type : interfaceMethod.getParameterTypes())
                                 {
                                     interfaceMethodArguments.add(type.getQualifiedName());
@@ -984,7 +984,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
         /*
          * Qualified class may not be resolved in case of anonymous classes
          */
-        if (qualifiedClass == null || qualifiedClass.equals(""))
+        if (qualifiedClass == null || qualifiedClass.isEmpty())
         {
             qualifiedClass = node.getType().toString();
             ResolveClassnameResult result = resolveClassname(qualifiedClass);
@@ -1011,7 +1011,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
         private final String methodName;
         private final List<String> qualifiedParameters;
 
-        public MethodType(String qualifiedName, String packageName, String className, String methodName, List<String> qualifiedParameters)
+        MethodType(String qualifiedName, String packageName, String className, String methodName, List<String> qualifiedParameters)
         {
             this.qualifiedName = qualifiedName;
             this.packageName = packageName;
@@ -1024,7 +1024,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
             }
             else
             {
-                this.qualifiedParameters = new LinkedList<String>();
+                this.qualifiedParameters = new LinkedList<>();
             }
         }
 
@@ -1032,7 +1032,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
         public String toString()
         {
             StringBuilder builder = new StringBuilder();
-            builder.append(qualifiedName + "." + methodName);
+            builder.append(qualifiedName).append(".").append(methodName);
             builder.append("(");
 
             for (int i = 0, j = qualifiedParameters.size(); i < j; i++)
@@ -1064,7 +1064,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
             }
             else
             {
-                this.qualifiedParameters = new LinkedList<String>();
+                this.qualifiedParameters = new LinkedList<>();
             }
 
         }
@@ -1093,7 +1093,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
 
     private List<String> methodParameterGuesser(List<?> arguements)
     {
-        List<String> resolvedParams = new ArrayList<String>(arguements.size());
+        List<String> resolvedParams = new ArrayList<>(arguements.size());
         for (Object o : arguements)
         {
             if (o instanceof SimpleName)
@@ -1214,7 +1214,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
     {
         /*
          * If the type contains a "." assume that it is fully qualified.
-         * 
+         *
          * FIXME - This is a carryover from the original Windup code, and I don't think that this assumption is valid.
          */
         if (!StringUtils.contains(sourceClassname, "."))
@@ -1280,14 +1280,14 @@ public class ReferenceResolvingVisitor extends ASTVisitor
             final String className;
 
             // remove the .* if this was a package import
-            if (qualifiedName.indexOf(".*") != -1)
+            if (qualifiedName.contains(".*"))
             {
                 packageName = qualifiedName.replace("*", "");
                 className = null;
             }
             else
             {
-                int lastDot = qualifiedName.lastIndexOf(".");
+                int lastDot = qualifiedName.lastIndexOf('.');
                 if (lastDot == -1)
                 {
                     packageName = null;

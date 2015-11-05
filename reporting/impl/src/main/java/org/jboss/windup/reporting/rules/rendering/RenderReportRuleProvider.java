@@ -48,7 +48,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  */
 public class RenderReportRuleProvider extends AbstractRuleProvider
 {
-    private static Logger LOG = Logging.get(RenderReportRuleProvider.class);
+    private static final Logger LOG = Logging.get(RenderReportRuleProvider.class);
 
     @Inject
     private Furnace furnace;

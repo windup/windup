@@ -11,7 +11,7 @@ import java.util.List;
 public class AnnotationArrayValue implements AnnotationValue
 {
 
-    private List<AnnotationValue> values;
+    private final List<AnnotationValue> values;
 
     /**
      * Creates an {@link AnnotationArrayValue} with the given list of values.

@@ -42,7 +42,7 @@ public class InlineHintService extends GraphService<InlineHintModel>
         GremlinPipeline<Vertex, Vertex> inlineHintPipeline = new GremlinPipeline<>(reference.asVertex());
         inlineHintPipeline.in(InlineHintModel.FILE_LOCATION_REFERENCE);
         inlineHintPipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, InlineHintModel.TYPE);
-        return new FramedVertexIterable<InlineHintModel>(getGraphContext().getFramed(), inlineHintPipeline, InlineHintModel.class);
+        return new FramedVertexIterable<>(getGraphContext().getFramed(), inlineHintPipeline, InlineHintModel.class);
     }
 
     /**
@@ -53,7 +53,7 @@ public class InlineHintService extends GraphService<InlineHintModel>
         GremlinPipeline<Vertex, Vertex> inlineHintPipeline = new GremlinPipeline<>(file.asVertex());
         inlineHintPipeline.in(FileReferenceModel.FILE_MODEL);
         inlineHintPipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, InlineHintModel.TYPE);
-        return new FramedVertexIterable<InlineHintModel>(getGraphContext().getFramed(), inlineHintPipeline, InlineHintModel.class);
+        return new FramedVertexIterable<>(getGraphContext().getFramed(), inlineHintPipeline, InlineHintModel.class);
     }
 
     /**

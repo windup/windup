@@ -32,7 +32,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  */
 public class DiscoverOrganizationByPackageStructureProvider extends AbstractRuleProvider
 {
-    private static Logger LOG = Logging.get(DiscoverOrganizationByPackageStructureProvider.class);
+    private static final Logger LOG = Logging.get(DiscoverOrganizationByPackageStructureProvider.class);
 
     public DiscoverOrganizationByPackageStructureProvider()
     {
@@ -82,7 +82,7 @@ public class DiscoverOrganizationByPackageStructureProvider extends AbstractRule
                                     LOG.warning("Error loading archive: "+payload.getFileName());
                                 }
                                 
-                                if(possibleOrganization.size() == 0) {
+                                if(possibleOrganization.isEmpty()) {
                                     LOG.info(" -- Archive: "+payload.getArchiveName()+" organization unknown.");
                                     organizationService.attachOrganization(payload, "Unknown");
                                 }

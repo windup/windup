@@ -117,7 +117,7 @@ public class DotWriter implements GraphWriter
 
     private void writeOptions(OutputStream os, String[]... options) throws IOException
     {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>();
         for (String[] option : options)
         {
             String key = option[0];
@@ -130,7 +130,7 @@ public class DotWriter implements GraphWriter
 
     private void writeOptions(Map<String, String> options, OutputStream os) throws IOException
     {
-        if (options == null || options.size() == 0)
+        if (options == null || options.isEmpty())
         {
             return;
         }

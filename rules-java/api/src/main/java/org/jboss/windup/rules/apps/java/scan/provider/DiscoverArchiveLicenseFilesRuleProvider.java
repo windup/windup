@@ -67,7 +67,7 @@ public class DiscoverArchiveLicenseFilesRuleProvider extends
     {
         Rule rule = (Rule) context.get(Rule.class);
         Set<FileModel> licenseFiles = findLicense(payload);
-        if (licenseFiles.size() == 0)
+        if (licenseFiles.isEmpty())
         {
             // no licenses found, skip this one
             return;
@@ -78,7 +78,7 @@ public class DiscoverArchiveLicenseFilesRuleProvider extends
                     event.getGraphContext());
         ClassificationService classificationService = new ClassificationService(
                     event.getGraphContext());
-        GraphService<LicenseModel> licenseService = new GraphService<LicenseModel>(
+        GraphService<LicenseModel> licenseService = new GraphService<>(
                     event.getGraphContext(), LicenseModel.class);
 
         for (FileModel license : licenseFiles)

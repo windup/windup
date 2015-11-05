@@ -13,7 +13,6 @@ import org.jboss.windup.util.ExecutionStatistics;
 import freemarker.ext.beans.StringModel;
 import freemarker.template.SimpleSequence;
 import freemarker.template.TemplateModelException;
-import org.apache.commons.lang.StringUtils;
 
 /**
  *

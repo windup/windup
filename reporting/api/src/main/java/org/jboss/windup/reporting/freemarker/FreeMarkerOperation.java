@@ -32,9 +32,9 @@ public class FreeMarkerOperation extends GraphOperation
 {
     private static final Logger LOG = Logger.getLogger(FreeMarkerOperation.class.getName());
 
-    private Furnace furnace;
-    private String templatePath;
-    private String outputFilename;
+    private final Furnace furnace;
+    private final String templatePath;
+    private final String outputFilename;
     private List<String> variableNames = new ArrayList<>();
 
     protected FreeMarkerOperation(Furnace furnace, String templatePath, String outputFilename, String... varNames)

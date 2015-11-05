@@ -111,7 +111,7 @@ public class RenderApplicationPieChartDirective implements WindupFreeMarkerTempl
 
     private List<PieSort> topX(Map<String, Integer> map, int top)
     {
-        List<PieSort> list = new ArrayList<PieSort>(map.keySet().size() + 1);
+        List<PieSort> list = new ArrayList<>(map.keySet().size() + 1);
         List<PieSort> bottomList;
 
         // Add the key/value pairs to the list containing the PieSort(key,value) object.
@@ -151,7 +151,7 @@ public class RenderApplicationPieChartDirective implements WindupFreeMarkerTempl
         public String key;
         public Integer value;
 
-        public PieSort(String k, Integer v)
+        PieSort(String k, Integer v)
         {
             this.key = k;
             this.value = v;

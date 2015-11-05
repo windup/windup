@@ -34,12 +34,12 @@ import org.w3c.dom.NodeList;
  */
 public class XmlUtil
 {
-    private static Logger LOG = Logging.get(XmlUtil.class);
+    private static final Logger LOG = Logging.get(XmlUtil.class);
     protected static final Map<String, String> objs;
 
     static
     {
-        objs = new HashMap<String, String>();
+        objs = new HashMap<>();
         objs.put("xsi", "http://www.w3.org/2001/XMLSchema-instance");
     }
 
@@ -87,7 +87,7 @@ public class XmlUtil
      */
     public static Map<String, String> getSchemaLocations(Document doc)
     {
-        Set<String> namespaces = new HashSet<String>();
+        Set<String> namespaces = new HashSet<>();
         namespaces.addAll(LocationAwareXmlReader.getNamespaces(doc));
 
         String schemaLocation;
@@ -100,7 +100,7 @@ public class XmlUtil
             throw new RuntimeException("Exception extracting xpath.", e);
         }
 
-        Map<String, String> result = new HashMap<String, String>();
+        Map<String, String> result = new HashMap<>();
         if (StringUtils.isNotBlank(schemaLocation))
         {
             schemaLocation = StringUtils.trim(schemaLocation);

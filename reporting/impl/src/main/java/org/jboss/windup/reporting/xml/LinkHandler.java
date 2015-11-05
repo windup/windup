@@ -46,6 +46,6 @@ public class LinkHandler implements ElementHandler<Link>
                         "Error, '" + ELEMENT_NAME + "' element must have a non-empty '" + TITLE_ATTR
                                     + "' attribute (eg, 'Documentation for XYZ')");
         }
-        return (Link) Link.to(title, link);
+        return Link.to(title, link);
     }
 }

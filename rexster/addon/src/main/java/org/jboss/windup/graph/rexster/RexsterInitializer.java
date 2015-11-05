@@ -120,14 +120,16 @@ public class RexsterInitializer implements AfterGraphInitializationListener, Bef
                 f.mkdir();
                 continue;
             }
-            java.io.InputStream is = jar.getInputStream(file); // get the input stream
-            java.io.FileOutputStream fos = new java.io.FileOutputStream(f);
-            while (is.available() > 0)
-            {  // write contents of 'is' to 'fos'
-                fos.write(is.read());
+            try (java.io.InputStream is = jar.getInputStream(file) // get the input stream
+            )
+            {
+                java.io.FileOutputStream fos = new java.io.FileOutputStream(f);
+                while (is.available() > 0)
+                {  // write contents of 'is' to 'fos'
+                    fos.write(is.read());
+                }
+                fos.close();
             }
-            fos.close();
-            is.close();
         }
     }
 
@@ -136,7 +138,7 @@ public class RexsterInitializer implements AfterGraphInitializationListener, Bef
         // the EngineController needs to be configured statically before requests start serving so that it can
         // properly construct ScriptEngine objects with the correct reset policy. allow scriptengines to be
         // configured so that folks can drop in different gremlin flavors.
-        final List<EngineConfiguration> configuredScriptEngines = new ArrayList<EngineConfiguration>();
+        final List<EngineConfiguration> configuredScriptEngines = new ArrayList<>();
         final List<HierarchicalConfiguration> configs = properties.getScriptEngines();
         for (HierarchicalConfiguration config : configs)
         {

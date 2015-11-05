@@ -238,7 +238,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
     private boolean checkIfIgnored(final GraphContext context, FileModel file, List<String> patterns)
     {
         boolean ignored = false;
-        if (patterns != null && patterns.size() != 0)
+        if (patterns != null && !patterns.isEmpty())
         {
             for (String pattern : patterns)
             {

@@ -208,7 +208,7 @@ public class PathUtil
      */
     public static Path getRootFolderForSource(Path sourceFilePath, String packageName)
     {
-        if (packageName == null || packageName.trim().equals(""))
+        if (packageName == null || packageName.trim().isEmpty())
         {
             return sourceFilePath.getParent();
         }

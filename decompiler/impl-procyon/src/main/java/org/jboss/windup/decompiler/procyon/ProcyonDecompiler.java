@@ -291,7 +291,7 @@ public class ProcyonDecompiler implements Decompiler
         // TODO: Rewrite with Commons IO's DirectoryWalker.
         File curDirFull = rootDir.resolve(subPath).toFile();
         final List<File> files = Arrays.asList(curDirFull.listFiles());
-        Collection<Callable<File>> tasks = new ArrayList<Callable<File>>();
+        Collection<Callable<File>> tasks = new ArrayList<>();
         for (File file : files)
         {
             final MetadataSystem metadataSystem = new NoRetryMetadataSystem(new InputTypeLoader());

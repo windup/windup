@@ -98,7 +98,7 @@ public class CreateAboutWindupReportRuleProvider extends AbstractRuleProvider
         applicationReportModel.setTemplatePath(TEMPLATE_APPLICATION_REPORT);
         applicationReportModel.setTemplateType(TemplateType.FREEMARKER);
 
-        Map<String, WindupVertexFrame> related = new HashMap<String, WindupVertexFrame>();
+        Map<String, WindupVertexFrame> related = new HashMap<>();
         AboutWindupModel aboutWindupModel = context.getFramed().addVertex(null, AboutWindupModel.class);
 
         aboutWindupModel.setWindupRuntimeVersion(addon.getId().getVersion().toString());

@@ -90,7 +90,7 @@ public class DependencyVisitor extends ClassVisitor
         current = groups.get(p);
         if (current == null)
         {
-            current = new HashMap<String, Integer>();
+            current = new HashMap<>();
             groups.put(p, current);
         }
 

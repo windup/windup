@@ -62,14 +62,14 @@ public class GraphContextImpl implements GraphContext
 
     private final Path graphDir;
 
-    private GraphApiCompositeClassLoaderProvider classLoaderProvider;
+    private final GraphApiCompositeClassLoaderProvider classLoaderProvider;
 
     /**
      * Used to save all the {@link BeforeGraphCloseListener}s that are also {@link AfterGraphInitializationListener}. This is due a need to call
      * {@link BeforeGraphCloseListener.beforeGraphClose()} on the same instance on which {@link AfterGraphInitializationListener.afterGraphStarted()}
      * was called
      */
-    private Map<String, BeforeGraphCloseListener> beforeGraphCloseListenerBuffer = new HashMap<>();
+    private final Map<String, BeforeGraphCloseListener> beforeGraphCloseListenerBuffer = new HashMap<>();
 
     public GraphContextImpl(Furnace furnace, GraphTypeRegistry typeRegistry, GraphTypeManager typeManager,
                 GraphApiCompositeClassLoaderProvider classLoaderProvider, Path graphDir)
@@ -126,8 +126,8 @@ public class GraphContextImpl implements GraphContext
 
     private void createFramed(TitanGraph titanGraph)
     {
-        this.eventGraph = new EventGraph<TitanGraph>(titanGraph);
-        this.batchGraph = new BatchGraph<TitanGraph>(titanGraph, 1000L);
+        this.eventGraph = new EventGraph<>(titanGraph);
+        this.batchGraph = new BatchGraph<>(titanGraph, 1000L);
 
         final ClassLoader compositeClassLoader = classLoaderProvider.getCompositeClassLoader();
 

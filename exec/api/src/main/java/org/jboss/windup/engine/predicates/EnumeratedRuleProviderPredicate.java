@@ -1,5 +1,6 @@
 package org.jboss.windup.engine.predicates;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -22,10 +23,7 @@ public class EnumeratedRuleProviderPredicate implements Predicate<RuleProvider>
         if (provider != null)
             this.enabledProviders.add(provider);
 
-        for (Class<? extends RuleProvider> p : providers)
-        {
-            this.enabledProviders.add(p);
-        }
+        this.enabledProviders.addAll(Arrays.asList(providers));
     }
 
     @Override

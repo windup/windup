@@ -105,7 +105,7 @@ public class GatherIgnoredFileNamesRuleProvider extends IteratingRuleProvider<Wi
                 String line = null;
                 while ((line = reader.readLine()) != null)
                 {
-                    GraphService<IgnoredFileRegexModel> graphService = new GraphService<IgnoredFileRegexModel>(
+                    GraphService<IgnoredFileRegexModel> graphService = new GraphService<>(
                                 context, IgnoredFileRegexModel.class);
                     IgnoredFileRegexModel ignored = graphService.create();
                     ignored.setRegex(line);

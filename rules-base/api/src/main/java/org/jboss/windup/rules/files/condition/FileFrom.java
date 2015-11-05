@@ -9,7 +9,7 @@ import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
  */
 public class FileFrom
 {
-    private File f = new File();
+    private final File f = new File();
 
     public void setFrom(String from)
     {
@@ -21,7 +21,7 @@ public class FileFrom
      */
     public File inFileNamed(String filenamePattern)
     {
-        if (filenamePattern != null && !filenamePattern.equals(""))
+        if (filenamePattern != null && !filenamePattern.isEmpty())
         {
             f.setFilenamePattern(new RegexParameterizedPatternParser(filenamePattern));
         }

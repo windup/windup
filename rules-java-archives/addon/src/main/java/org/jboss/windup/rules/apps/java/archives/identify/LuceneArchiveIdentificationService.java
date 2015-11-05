@@ -29,7 +29,7 @@ import org.jboss.windup.util.exception.WindupException;
  */
 public class LuceneArchiveIdentificationService implements ArchiveIdentificationService, Closeable
 {
-    private static Logger LOG = Logging.get(LuceneArchiveIdentificationService.class);
+    private static final Logger LOG = Logging.get(LuceneArchiveIdentificationService.class);
 
     private static final String SHA1 = "sha1";
     private static final String GROUP_ID = "groupId";

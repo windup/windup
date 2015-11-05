@@ -260,7 +260,7 @@ public class ResolveWeblogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
 
     private Map<String, Integer> parseTxTimeout(Element enterpriseBeanTag, String ejbName)
     {
-        Map<String, Integer> transactionTimeouts = new HashMap<String, Integer>();
+        Map<String, Integer> transactionTimeouts = new HashMap<>();
         String transactionTimeoutSeconds = $(enterpriseBeanTag).child("transaction-descriptor").child("trans-timeout-seconds").text();
         String methodName = "*";
         if (StringUtils.isNotBlank(transactionTimeoutSeconds))

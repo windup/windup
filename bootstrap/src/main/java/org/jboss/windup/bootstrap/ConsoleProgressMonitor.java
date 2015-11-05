@@ -11,7 +11,7 @@ import org.jboss.windup.exec.WindupProgressMonitor;
  */
 public class ConsoleProgressMonitor implements WindupProgressMonitor
 {
-    private static Logger LOG = Logger.getLogger(ConsoleProgressMonitor.class.getName());
+    private static final Logger LOG = Logger.getLogger(ConsoleProgressMonitor.class.getName());
 
     private int totalWork;
     private int currentWork;

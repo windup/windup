@@ -26,7 +26,7 @@ import freemarker.template.TemplateModelException;
  */
 public class ProjectModelToApplicationIndexMethod implements WindupFreeMarkerMethod
 {
-    private static Logger LOG = Logging.get(ProjectModelToApplicationIndexMethod.class);
+    private static final Logger LOG = Logging.get(ProjectModelToApplicationIndexMethod.class);
 
     private static final String NAME = "projectModelToApplicationIndex";
 

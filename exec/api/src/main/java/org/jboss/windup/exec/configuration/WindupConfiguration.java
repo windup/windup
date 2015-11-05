@@ -48,7 +48,7 @@ public class WindupConfiguration
 
     private Predicate<RuleProvider> ruleProviderFilter;
     private WindupProgressMonitor progressMonitor = new NullWindupProgressMonitor();
-    private Map<String, Object> configurationOptions = new HashMap<>();
+    private final Map<String, Object> configurationOptions = new HashMap<>();
     private boolean alwaysHaltOnException;
 
     private GraphContext context;

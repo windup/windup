@@ -397,7 +397,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
     private List<EnvironmentReferenceModel> processEnvironmentReference(GraphContext context, Element element)
     {
         EnvironmentReferenceService environmentReferenceService = new EnvironmentReferenceService(context);
-        List<EnvironmentReferenceModel> resources = new LinkedList<EnvironmentReferenceModel>();
+        List<EnvironmentReferenceModel> resources = new LinkedList<>();
 
         // find Environment Resource references...
         for (Element e : $(element).find("resource-ref").get())

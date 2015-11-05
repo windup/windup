@@ -64,7 +64,7 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
     private final String uniqueID;
     private List<TypeReferenceLocation> locations = Collections.emptyList();
 
-    private RegexParameterizedPatternParser referencePattern;
+    private final RegexParameterizedPatternParser referencePattern;
     private RegexParameterizedPatternParser lineMatchPattern;
     private RegexParameterizedPatternParser typeFilterPattern;
 

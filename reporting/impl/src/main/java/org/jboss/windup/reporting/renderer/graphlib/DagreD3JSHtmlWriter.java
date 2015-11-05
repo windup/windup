@@ -26,7 +26,7 @@ import java.util.logging.Level;
 
 public class DagreD3JSHtmlWriter implements GraphWriter
 {
-    private static Logger LOG = Logging.get(DagreD3JSHtmlWriter.class);
+    private static final Logger LOG = Logging.get(DagreD3JSHtmlWriter.class);
 
     private final GraphWriter writer;
 
@@ -36,6 +36,7 @@ public class DagreD3JSHtmlWriter implements GraphWriter
                     vertexLabelProperty, edgeLabelProperty);
     }
 
+    @Override
     public void writeGraph(final OutputStream os) throws IOException
     {
         // read in the html template resource.

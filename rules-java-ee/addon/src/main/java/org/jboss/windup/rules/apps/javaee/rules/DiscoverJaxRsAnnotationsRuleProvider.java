@@ -31,7 +31,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  */
 public class DiscoverJaxRsAnnotationsRuleProvider extends AbstractRuleProvider
 {
-    private static Logger LOG = Logging.get(DiscoverJaxRsAnnotationsRuleProvider.class);
+    private static final Logger LOG = Logging.get(DiscoverJaxRsAnnotationsRuleProvider.class);
 
     private static final String JAXRS_ANNOTATIONS = "jaxrsAnnotations";
 

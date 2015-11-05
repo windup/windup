@@ -66,7 +66,7 @@ public class FindFilesNotClassifiedOrHinted implements WindupFreeMarkerMethod
         }
         Iterable<Vertex> result = criterion.query(context, initialFileModelsAsVertices);
 
-        List<FileModel> resultModels = new ArrayList<FileModel>();
+        List<FileModel> resultModels = new ArrayList<>();
         for (Vertex v : result)
         {
             FileModel f = context.getFramed().frame(v, FileModel.class);

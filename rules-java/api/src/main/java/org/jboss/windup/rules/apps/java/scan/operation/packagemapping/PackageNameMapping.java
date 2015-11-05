@@ -20,7 +20,7 @@ public class PackageNameMapping extends GraphRule implements PackageNameMappingW
 {
     private static final Logger LOG = Logger.getLogger(PackageNameMapping.class.getSimpleName());
 
-    private String id = this.getClass().getName() + "_" + UUID.randomUUID().toString();
+    private final String id = this.getClass().getName() + "_" + UUID.randomUUID().toString();
 
     private String organization;
     private String packagePattern;

@@ -146,7 +146,7 @@ public class JavaClassTest
     @Singleton
     public static class JavaClassTestRuleProvider extends AbstractRuleProvider
     {
-        private static Logger log = Logger.getLogger(RuleSubset.class.getName());
+        private static final Logger log = Logger.getLogger(RuleSubset.class.getName());
 
         private int firstRuleMatchCount = 0;
         private int secondRuleMatchCount = 0;

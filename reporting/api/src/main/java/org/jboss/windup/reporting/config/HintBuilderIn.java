@@ -7,7 +7,7 @@ package org.jboss.windup.reporting.config;
  */
 public class HintBuilderIn
 {
-    private Hint hint;
+    private final Hint hint;
 
     public HintBuilderIn(String fileVariable)
     {

@@ -139,7 +139,7 @@ public class XMLTransformationTest
     @RuleMetadata(phase = PostMigrationRulesPhase.class)
     public static class TestXMLTransformationRuleProvider extends AbstractRuleProvider
     {
-        private Set<FileLocationModel> xmlFiles = new HashSet<>();
+        private final Set<FileLocationModel> xmlFiles = new HashSet<>();
 
         @Override
         public Configuration getConfiguration(GraphContext context)

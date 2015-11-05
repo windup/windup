@@ -11,7 +11,7 @@ import org.jboss.forge.furnace.util.Predicate;
  */
 public class FileSuffixPredicate implements Predicate<File>
 {
-    private String suffixPattern;
+    private final String suffixPattern;
 
     /**
      * Create a new {@link FileSuffixPredicate} using the given regular expression to match the end of the filename.

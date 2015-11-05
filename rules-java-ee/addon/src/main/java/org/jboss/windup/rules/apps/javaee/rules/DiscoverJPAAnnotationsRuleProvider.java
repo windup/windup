@@ -38,7 +38,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  */
 public class DiscoverJPAAnnotationsRuleProvider extends AbstractRuleProvider
 {
-    private static Logger LOG = Logging.get(DiscoverJPAAnnotationsRuleProvider.class);
+    private static final Logger LOG = Logging.get(DiscoverJPAAnnotationsRuleProvider.class);
 
     private static final String ENTITY_ANNOTATIONS = "entityAnnotations";
     private static final String TABLE_ANNOTATIONS_LIST = "tableAnnotations";
@@ -177,7 +177,7 @@ public class DiscoverJPAAnnotationsRuleProvider extends AbstractRuleProvider
 
                 if (annotationTypeReference.getFile().equals(entityTypeReference.getFile()))
                 {
-                    JavaAnnotationTypeReferenceModel reference = (JavaAnnotationTypeReferenceModel) annotationTypeReference;
+                    JavaAnnotationTypeReferenceModel reference = annotationTypeReference;
                     addNamedQuery(namedQueryService, jpaEntity, reference);
                 }
             }

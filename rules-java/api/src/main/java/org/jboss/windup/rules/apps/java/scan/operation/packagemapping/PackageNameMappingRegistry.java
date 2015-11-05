@@ -28,7 +28,7 @@ import org.ocpsoft.rewrite.util.Visitor;
  */
 public class PackageNameMappingRegistry
 {
-    private static Logger LOG = Logger.getLogger(PackageNameMappingRegistry.class.getSimpleName());
+    private static final Logger LOG = Logger.getLogger(PackageNameMappingRegistry.class.getSimpleName());
 
     @Inject
     private GraphContextFactory graphContextFactory;

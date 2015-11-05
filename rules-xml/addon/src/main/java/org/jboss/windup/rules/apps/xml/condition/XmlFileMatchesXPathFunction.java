@@ -19,7 +19,7 @@ import org.w3c.dom.NodeList;
 
 class XmlFileMatchesXPathFunction implements XPathFunction
 {
-    private static Logger LOG = Logging.get(XmlFileMatchesXPathFunction.class);
+    private static final Logger LOG = Logging.get(XmlFileMatchesXPathFunction.class);
 
     private final EvaluationContext context;
     private final ParameterStore store;

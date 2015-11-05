@@ -53,7 +53,7 @@ public class JavaClassHandler implements ElementHandler<JavaClassBuilderAt>
             throw new WindupException("The '" + ELEM_NAME + "' element must have a non-empty '" + ATTR_REFERENCES + "' attribute");
         }
 
-        List<TypeReferenceLocation> locations = new ArrayList<TypeReferenceLocation>();
+        List<TypeReferenceLocation> locations = new ArrayList<>();
         List<Element> children = $(element).children("location").get();
         for (Element child : children)
         {

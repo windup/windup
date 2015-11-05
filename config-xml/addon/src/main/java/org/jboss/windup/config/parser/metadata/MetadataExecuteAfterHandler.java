@@ -18,7 +18,7 @@ public class MetadataExecuteAfterHandler implements ElementHandler<String>
     public String processElement(ParserContext handlerManager, Element element) throws ConfigurationException
     {
         String executeAfterId = element.getTextContent();
-        if(executeAfterId == null || executeAfterId.equals("")) {
+        if(executeAfterId == null || executeAfterId.isEmpty()) {
             throw new WindupXMLRulesetParsingException("The '" + EXECUTE_AFTER_ELEMENT + "' must contain non-empty text value");
         }
         return executeAfterId;

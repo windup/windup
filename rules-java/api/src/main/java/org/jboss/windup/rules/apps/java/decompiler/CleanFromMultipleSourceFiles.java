@@ -78,7 +78,7 @@ public class CleanFromMultipleSourceFiles extends GraphOperation
             {
                 boolean uniqueClassFound = false;
                 List<JavaSourceFileModel> verticesToBeDeleted = new ArrayList<>();
-                if (javaClassFileModels.size() == 0)
+                if (javaClassFileModels.isEmpty())
                 {
                     return null;
                 }

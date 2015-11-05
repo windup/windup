@@ -10,7 +10,7 @@ import org.jboss.windup.util.Logging;
 
 class XmlFileStartFrameXPathFunction implements XPathFunction
 {
-    private static Logger LOG = Logging.get(XmlFileStartFrameXPathFunction.class);
+    private static final Logger LOG = Logging.get(XmlFileStartFrameXPathFunction.class);
 
     private final XmlFileParameterMatchCache paramMatchCache;
 

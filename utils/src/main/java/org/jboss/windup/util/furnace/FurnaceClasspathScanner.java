@@ -146,17 +146,18 @@ public class FurnaceClasspathScanner
     {
         try
         {
-            ZipFile zip = new ZipFile(archive);
-            Enumeration<? extends ZipEntry> entries = zip.entries();
-
-            while (entries.hasMoreElements())
+            try (ZipFile zip = new ZipFile(archive))
             {
-                ZipEntry entry = entries.nextElement();
-                String name = entry.getName();
-                if (filter.accept(name))
-                    discoveredFiles.add(name);
+                Enumeration<? extends ZipEntry> entries = zip.entries();
+                
+                while (entries.hasMoreElements())
+                {
+                    ZipEntry entry = entries.nextElement();
+                    String name = entry.getName();
+                    if (filter.accept(name))
+                        discoveredFiles.add(name);
+                }
             }
-            zip.close();
         }
         catch (IOException e)
         {

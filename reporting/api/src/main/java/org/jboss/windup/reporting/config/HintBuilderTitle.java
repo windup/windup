@@ -6,7 +6,7 @@ package org.jboss.windup.reporting.config;
  */
 public class HintBuilderTitle
 {
-    private String title;
+    private final String title;
 
     /**
      * Constructs an instance with the specified title.

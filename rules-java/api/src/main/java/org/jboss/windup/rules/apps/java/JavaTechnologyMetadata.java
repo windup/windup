@@ -13,7 +13,7 @@ import org.jboss.windup.config.metadata.TechnologyReference;
  */
 public class JavaTechnologyMetadata extends TechnologyMetadata
 {
-    private Set<Path> additionalClasspaths = new HashSet<>();
+    private final Set<Path> additionalClasspaths = new HashSet<>();
 
     public JavaTechnologyMetadata(TechnologyReference technology)
     {

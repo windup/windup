@@ -27,6 +27,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import java.util.Arrays;
 
 /**
  * This class is used to produce a freemarker report from inside of a Windup {@link Iteration}.
@@ -51,10 +52,7 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
         useDefaultPayloadVariableName = true;
         if (varNames != null)
         {
-            for (String varName : varNames)
-            {
-                variableNames.add(varName);
-            }
+            variableNames.addAll(Arrays.asList(varNames));
         }
     }
 
@@ -66,10 +64,7 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
         variableNames.add(iterationVarName);
         if (varNames != null)
         {
-            for (String varName : varNames)
-            {
-                variableNames.add(varName);
-            }
+            variableNames.addAll(Arrays.asList(varNames));
         }
     }
 
@@ -144,12 +139,7 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
 
             FreeMarkerUtil.addAssociatedReportData(event.getGraphContext(), payload, vars);
         }
-        catch (IOException e)
-        {
-            LOG.log(Level.WARNING,
-                        "Template \"" + templatePath + "\" Failed to write report at \"" + outputFilename + "\" due to: " + e.getMessage(), e);
-        }
-        catch (TemplateException e)
+        catch (IOException | TemplateException e)
         {
             LOG.log(Level.WARNING,
                         "Template \"" + templatePath + "\" Failed to write report at \"" + outputFilename + "\" due to: " + e.getMessage(), e);

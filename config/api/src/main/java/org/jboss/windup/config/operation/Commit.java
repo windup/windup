@@ -5,7 +5,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 public class Commit extends GraphOperation
 {
-    private int period;
+    private final int period;
     private int uncommittedIterations = 0;
 
     private Commit(int period)

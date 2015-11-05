@@ -1,5 +1,6 @@
 package org.jboss.windup.config.parser.xml;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,6 +58,6 @@ public class PhaseHandler implements ElementHandler<Void>
                 cachedPhases.put(classNameToKey(simpleName), unwrappedClass);
             }
         }
-        return cachedPhases;
+        return Collections.unmodifiableMap(cachedPhases);
     }
 }

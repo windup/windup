@@ -9,9 +9,9 @@ import java.nio.file.Path;
  */
 public class ClassDecompileRequest
 {
-    private Path rootDirectory;
-    private Path classFile;
-    private Path outputDirectory;
+    private final Path rootDirectory;
+    private final Path classFile;
+    private final Path outputDirectory;
 
     /**
      * Create an instance with the given rootDirectory (eg, for a class named "com.foo.Example" in

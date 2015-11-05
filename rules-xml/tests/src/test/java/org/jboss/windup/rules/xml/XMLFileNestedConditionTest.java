@@ -125,7 +125,7 @@ public class XMLFileNestedConditionTest
     @Singleton
     public static class TestXMLNestedXmlFileRuleProvider extends AbstractRuleProvider
     {
-        private Set<FileLocationModel> xmlFiles = new HashSet<>();
+        private final Set<FileLocationModel> xmlFiles = new HashSet<>();
 
         public TestXMLNestedXmlFileRuleProvider()
         {

@@ -7,8 +7,8 @@ import java.util.regex.Pattern;
  */
 public class RewritePatternToRegex
 {
-    private String rewritePattern;
-    private Pattern compiledRegex;
+    private final String rewritePattern;
+    private final Pattern compiledRegex;
 
     public String getRewritePattern()
     {

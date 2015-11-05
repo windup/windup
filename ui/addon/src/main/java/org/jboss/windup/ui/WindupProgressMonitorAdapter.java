@@ -10,7 +10,7 @@ import org.jboss.windup.exec.WindupProgressMonitor;
  */
 public class WindupProgressMonitorAdapter implements WindupProgressMonitor
 {
-    private UIProgressMonitor delegate;
+    private final UIProgressMonitor delegate;
 
     public WindupProgressMonitorAdapter(UIProgressMonitor delegate)
     {

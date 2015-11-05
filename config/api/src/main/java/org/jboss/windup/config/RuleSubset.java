@@ -79,7 +79,7 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
 {
     // public static final String SYSTEM_PROPERTY
 
-    private static Logger log = Logger.getLogger(RuleSubset.class.getName());
+    private static final Logger log = Logger.getLogger(RuleSubset.class.getName());
 
     /**
      * Used for tracking the time taken by the rules within each RuleProvider. This links from a {@link AbstractRuleProvider} to the ID of a
@@ -95,7 +95,7 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
 
     private final Configuration config;
 
-    private List<RuleLifecycleListener> listeners = new ArrayList<>();
+    private final List<RuleLifecycleListener> listeners = new ArrayList<>();
 
     private boolean alwaysHaltOnFailure = false;
 

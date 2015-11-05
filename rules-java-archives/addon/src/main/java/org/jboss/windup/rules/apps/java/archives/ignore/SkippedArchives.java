@@ -149,8 +149,8 @@ public class SkippedArchives
     private static class CoordinatePattern
     {
 
-        private CoordinateBuilder coordinate;
-        private VersionRange version;
+        private final CoordinateBuilder coordinate;
+        private final VersionRange version;
 
         public CoordinatePattern(CoordinateBuilder coordinate, VersionRange version)
         {

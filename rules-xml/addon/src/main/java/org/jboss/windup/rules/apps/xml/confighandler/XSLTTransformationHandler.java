@@ -57,7 +57,7 @@ public class XSLTTransformationHandler implements ElementHandler<XSLTTransformat
         {
             throw new WindupException("Error, 'xslt' element must have a non-empty 'extension' attribute");
         }
-        Map<String, String> parameters = new HashMap<String, String>();
+        Map<String, String> parameters = new HashMap<>();
         List<Element> children = $(element).children("xslt-parameter").get();
         for (Element child : children)
         {

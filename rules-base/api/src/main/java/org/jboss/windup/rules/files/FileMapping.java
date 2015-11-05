@@ -40,8 +40,8 @@ public class FileMapping extends GraphRule implements PreRulesetEvaluation, File
 {
     private static final Logger LOG = Logging.get(FileMapping.class);
 
-    private Pattern pattern;
-    private List<Class<? extends WindupVertexFrame>> types = new ArrayList<>();
+    private final Pattern pattern;
+    private final List<Class<? extends WindupVertexFrame>> types = new ArrayList<>();
 
     private final String id;
 
@@ -182,8 +182,8 @@ public class FileMapping extends GraphRule implements PreRulesetEvaluation, File
     {
         StringBuilder builder = new StringBuilder();
         builder.append(getClass().getName());
-        builder.append(".from(" + pattern + ")");
-        builder.append(".to(" + types + ")");
+        builder.append(".from(").append(pattern).append(")");
+        builder.append(".to(").append(types).append(")");
         return builder.toString();
     }
 }

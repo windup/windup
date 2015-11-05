@@ -366,7 +366,7 @@ public class RenderLinkDirective implements WindupFreeMarkerTemplateDirective
                 filename = filename.substring(0, filename.length() - 5);
             }
 
-            return packageName == null || packageName.equals("") ? filename : packageName + "." + filename;
+            return packageName == null || packageName.isEmpty() ? filename : packageName + "." + filename;
         }
         else
         {
@@ -403,7 +403,7 @@ public class RenderLinkDirective implements WindupFreeMarkerTemplateDirective
         private final String link;
         private final String description;
 
-        public Link(String link, String description)
+        Link(String link, String description)
         {
             this.link = link;
             this.description = description;

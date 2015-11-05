@@ -29,20 +29,20 @@ public class FindSourceReportFilesGremlinCriterion implements QueryGremlinCriter
         GraphContext context = event.getGraphContext();
 
         // create a pipeline to get all blacklisted items
-        GremlinPipeline<Vertex, Vertex> hintPipeline = new GremlinPipeline<Vertex, Vertex>(
+        GremlinPipeline<Vertex, Vertex> hintPipeline = new GremlinPipeline<>(
                     context.getQuery().type(FileModel.class).vertices());
         hintPipeline.as("fileModel1").in(FileLocationModel.FILE_MODEL)
                     .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, InlineHintModel.TYPE).back("fileModel1");
 
         // create a pipeline to get all items with attached classifications
-        GremlinPipeline<Vertex, Vertex> classificationPipeline = new GremlinPipeline<Vertex, Vertex>(
+        GremlinPipeline<Vertex, Vertex> classificationPipeline = new GremlinPipeline<>(
                     context.getQuery().type(FileModel.class).vertices());
         classificationPipeline.as("fileModel2").in(ClassificationModel.FILE_MODEL)
                     .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, ClassificationModel.TYPE)
                     .back("fileModel2");
 
         // create a pipeline to get all items with attached technology tags
-        GremlinPipeline<Vertex, Vertex> technologyTagPipeline = new GremlinPipeline<Vertex, Vertex>(
+        GremlinPipeline<Vertex, Vertex> technologyTagPipeline = new GremlinPipeline<>(
                     context.getQuery().type(FileModel.class).vertices());
         technologyTagPipeline.as("fileModel3").in(TechnologyTagModel.TECH_TAG_TO_FILE_MODEL)
                     .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, TechnologyTagModel.TYPE)
@@ -50,7 +50,7 @@ public class FindSourceReportFilesGremlinCriterion implements QueryGremlinCriter
                     .back("fileModel3");
 
         // Also return SourceFileModel results with the generate source flag set to true
-        GremlinPipeline<Vertex, Vertex> generateSourceReportPropertyPipeline = new GremlinPipeline<Vertex, Vertex>(
+        GremlinPipeline<Vertex, Vertex> generateSourceReportPropertyPipeline = new GremlinPipeline<>(
                     context.getQuery().type(SourceFileModel.class).vertices());
         generateSourceReportPropertyPipeline
                     .has(SourceFileModel.GENERATE_SOURCE_REPORT, true);

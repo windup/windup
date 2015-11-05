@@ -6,7 +6,7 @@ package org.jboss.windup.project.condition;
  */
 public class ProjectFrom
 {
-    private String inputVarName;
+    private final String inputVarName;
 
     public ProjectFrom(String from)
     {

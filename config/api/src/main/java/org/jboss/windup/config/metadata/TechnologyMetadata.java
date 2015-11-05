@@ -5,7 +5,7 @@ package org.jboss.windup.config.metadata;
  */
 public abstract class TechnologyMetadata
 {
-    private TechnologyReference technology;
+    private final TechnologyReference technology;
 
     public TechnologyMetadata(TechnologyReference technology)
     {

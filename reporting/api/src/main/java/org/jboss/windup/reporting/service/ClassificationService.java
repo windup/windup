@@ -62,7 +62,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
         GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(model.asVertex());
         pipeline.in(ClassificationModel.FILE_MODEL);
         pipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, ClassificationModel.TYPE);
-        return new FramedVertexIterable<ClassificationModel>(getGraphContext().getFramed(), pipeline, ClassificationModel.class);
+        return new FramedVertexIterable<>(getGraphContext().getFramed(), pipeline, ClassificationModel.class);
     }
     
     /**
@@ -74,7 +74,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
         pipeline.in(ClassificationModel.FILE_MODEL);
         pipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, ClassificationModel.TYPE);
         pipeline.has(ClassificationModel.CLASSIFICATION, classificationName);
-        return new FramedVertexIterable<ClassificationModel>(getGraphContext().getFramed(), pipeline, ClassificationModel.class);
+        return new FramedVertexIterable<>(getGraphContext().getFramed(), pipeline, ClassificationModel.class);
     }
 
     /**

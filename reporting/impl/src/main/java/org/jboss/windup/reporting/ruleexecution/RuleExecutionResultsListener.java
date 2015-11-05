@@ -24,7 +24,7 @@ import com.tinkerpop.blueprints.util.wrappers.event.listener.GraphChangedListene
  */
 public class RuleExecutionResultsListener implements RuleLifecycleListener
 {
-    private IdentityHashMap<Rule, RuleExecutionInformation> ruleExecutionInformation = new IdentityHashMap<>();
+    private final IdentityHashMap<Rule, RuleExecutionInformation> ruleExecutionInformation = new IdentityHashMap<>();
     private GraphRewrite event;
     private Rule currentRule = null;
 

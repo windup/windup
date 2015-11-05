@@ -22,7 +22,7 @@ import com.github.rwitzel.streamflyer.util.statistics.LineColumnAwareModificatio
  */
 public class StreamRegexMatcher extends RegexModifier
 {
-    private StreamRegexMatcherProcessor streamRegexMatcherProcessor;
+    private final StreamRegexMatcherProcessor streamRegexMatcherProcessor;
 
     public static StreamRegexMatcher create(String regex, StreamRegexMatchListener listener)
     {

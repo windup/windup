@@ -20,10 +20,10 @@ public class TriePrefixStructure<SAVE_TYPE, SEARCH_TYPE>
 {
     private static TriePrefixStructure defaultInstance;
 
-    private Set<SAVE_TYPE> currentLevelSet = new LinkedHashSet<>();
-    private Map<Character, TriePrefixStructure<SAVE_TYPE, SEARCH_TYPE>> typeInterestMap = new HashMap<>(26);
+    private final Set<SAVE_TYPE> currentLevelSet = new LinkedHashSet<>();
+    private final Map<Character, TriePrefixStructure<SAVE_TYPE, SEARCH_TYPE>> typeInterestMap = new HashMap<>(26);
 
-    private TrieStructureTypeRelation relation;
+    private final TrieStructureTypeRelation relation;
 
     public  TriePrefixStructure(TrieStructureTypeRelation<SAVE_TYPE, SEARCH_TYPE> relation) {
         this.relation=relation;
@@ -94,7 +94,7 @@ public class TriePrefixStructure<SAVE_TYPE, SEARCH_TYPE>
         TriePrefixStructure resolver = typeInterestMap.get(currentCharacter);
         if (resolver == null)
         {
-            resolver = new TriePrefixStructure<SAVE_TYPE, SEARCH_TYPE>(relation);
+            resolver = new TriePrefixStructure<>(relation);
             typeInterestMap.put(currentCharacter, resolver);
         }
 

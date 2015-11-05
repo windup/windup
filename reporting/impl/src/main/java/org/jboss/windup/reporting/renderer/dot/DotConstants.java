@@ -39,7 +39,7 @@ public class DotConstants
     {
         public static Map<String, String> create()
         {
-            return new HashMap<String, String>();
+            return new HashMap<>();
         }
     }
 
