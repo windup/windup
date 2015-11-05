@@ -2,6 +2,22 @@
 <xs:schema targetNamespace="http://windup.jboss.org/schema/jboss-ruleset" xmlns="http://windup.jboss.org/schema/jboss-ruleset" xmlns:xs="http://www.w3.org/2001/XMLSchema"
     elementFormDefault="qualified">
 
+   <!-- Root element for Windup tests rules. -->
+   <xs:element name="ruletest">
+      <xs:annotation>
+         <xs:documentation>Root element of Windup rules test.
+         </xs:documentation>
+      </xs:annotation>
+      <xs:complexType>
+         <xs:sequence>
+            <xs:element name="testDataPath" minOccurs="1" type="xs:string" />
+            <xs:element name="sourceMode" minOccurs="0" maxOccurs="1" type="xs:boolean" />
+            <xs:element name="rulePath" minOccurs="1" type="xs:string" />
+            <xs:element ref="ruleset" minOccurs="0" maxOccurs="unbounded" />
+         </xs:sequence>
+         <xs:attribute type="xs:string" name="id"/>
+      </xs:complexType>
+   </xs:element>
 
     <!-- Root element. -->
     <xs:element name="ruleset">
@@ -162,6 +178,43 @@
             <xs:attribute type="xs:string" name="message" use="optional" />
         </xs:complexType>
     </xs:element>
+    
+    <!-- TEST CONDITION DEFINITIONS -->
+
+   <xs:element name="classification-exists">
+      <xs:complexType>
+         <xs:attribute type="xs:string" name="classification"/>
+         <xs:attribute type="xs:string" name="in"/>
+      </xs:complexType>
+   </xs:element>
+
+   <xs:element name="file-exists">
+      <xs:complexType>
+         <xs:attribute type="xs:string" name="filename" use="required" />
+      </xs:complexType>
+   </xs:element>   
+
+   <xs:element name="hint-exists">
+      <xs:complexType>
+         <xs:attribute type="xs:string" name="message"/>
+         <xs:attribute type="xs:string" name="in"/>
+      </xs:complexType>
+   </xs:element>
+
+   <xs:element name="lineitem-exists">
+      <xs:complexType>
+         <xs:attribute type="xs:string" name="message"/>
+         <xs:attribute type="xs:string" name="in"/>
+      </xs:complexType>
+   </xs:element>
+   
+   <!-- OPERATION DEFINITIONS -->
+   
+   <xs:element name="fail">
+      <xs:complexType>
+         <xs:attribute type="xs:string" name="message" />
+      </xs:complexType>
+   </xs:element>
 
     <!-- OPERATION DEFINITIONS -->
 
@@ -272,6 +325,10 @@
             <xs:element ref="project" minOccurs="0" maxOccurs="unbounded" />
             <xs:element ref="filecontent" minOccurs="0" maxOccurs="unbounded" />
             <xs:element ref="file" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element ref="classification-exists" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element ref="file-exists" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element ref="hint-exists" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element ref="lineitem-exists" minOccurs="0" maxOccurs="unbounded" />
         </xs:choice>
     </xs:complexType>
 
@@ -312,6 +369,11 @@
             <xs:element ref="log" minOccurs="0" maxOccurs="unbounded" />
             <xs:element ref="xslt" minOccurs="0" maxOccurs="unbounded" />
             <xs:element ref="lineitem" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element ref="fail" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element ref="classification-exists" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element ref="file-exists" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element ref="hint-exists" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element ref="lineitem-exists" minOccurs="0" maxOccurs="unbounded" />
         </xs:choice>
         <xs:attribute type="xs:string" name="over" />
         <!-- <xs:attribute type="xs:string" name="as" /> not supported in handler yet -->
