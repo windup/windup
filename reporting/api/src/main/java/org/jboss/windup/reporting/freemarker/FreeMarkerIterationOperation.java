@@ -9,10 +9,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.forge.furnace.Furnace;
+import org.jboss.forge.furnace.lock.LockMode;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.Variables;
 import org.jboss.windup.config.operation.Iteration;
@@ -81,7 +83,7 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
     }
 
     @Override
-    public void perform(GraphRewrite event, EvaluationContext context, ReportModel payload)
+    public void perform(final GraphRewrite event, final EvaluationContext context, final ReportModel payload)
     {
         String templatePath = payload.getTemplatePath();
         String outputFilename = payload.getReportFilename();
@@ -123,10 +125,14 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
             // also, extension functions (these are kept separate from vars in order to prevent them
             // from being stored in the associated data with the reportmodel)
             final Map<String, Object> freeMarkerExtensions;
-            synchronized (furnace)
+            freeMarkerExtensions = furnace.getLockManager().performLocked(LockMode.WRITE, new Callable<Map<String, Object>>()
             {
-                freeMarkerExtensions = FreeMarkerUtil.findFreeMarkerExtensions(furnace, event);
-            }
+                @Override
+                public Map<String, Object> call() throws Exception
+                {
+                    return FreeMarkerUtil.findFreeMarkerExtensions(furnace, event);
+                }
+            });
 
             Map<String, Object> objects = new HashMap<>(vars);
             objects.putAll(freeMarkerExtensions);
