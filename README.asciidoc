@@ -1,4 +1,4 @@
-== Windup 2.0
+== Windup 2
 
 Windup is an automated application migration and assessment tool.
 If you want to contribute or participate in developer discussions,
@@ -18,7 +18,7 @@ or subscribe to the link:https://lists.jboss.org/mailman/listinfo/windup-dev[win
 
 === Installation and Usage
 
-You may download the link:https://repository.jboss.org/nexus/content/repositories/releases/org/jboss/windup/windup-distribution/[latest Windup release from JBoss.org Maven Repository].
+You may download the link:http://windup.jboss.org/download.html[latest Windup release].
 After that, follow the link:https://github.com/windup/windup/wiki/Execute[User Guide, Execute Windup].
 
 === Project Source Code Format
