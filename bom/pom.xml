@@ -3,8 +3,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <properties>
-        <version.forge>2.16.2.Final</version.forge>
-        <version.furnace>2.19.0.Final</version.furnace>
+        <version.forge>2.20.1.Final</version.forge>
+        <version.furnace>2.22.7.Final</version.furnace>
         <version.nexus.index>4</version.nexus.index>
     </properties>
 

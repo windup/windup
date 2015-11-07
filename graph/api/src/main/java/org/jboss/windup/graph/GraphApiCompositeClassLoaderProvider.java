@@ -3,12 +3,11 @@ package org.jboss.windup.graph;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.addons.AddonDependency;
 import org.jboss.forge.furnace.addons.AddonFilter;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.windup.util.FurnaceCompositeClassLoader;
 
 /**
@@ -17,11 +16,22 @@ import org.jboss.windup.util.FurnaceCompositeClassLoader;
  */
 public class GraphApiCompositeClassLoaderProvider
 {
-    @Inject
     private Addon addon;
 
-    @Inject
     private Furnace furnace;
+
+    public GraphApiCompositeClassLoaderProvider()
+    {
+        this.furnace = SimpleContainer.getFurnace(GraphApiCompositeClassLoaderProvider.class.getClassLoader());
+        for (Addon addon : this.furnace.getAddonRegistry().getAddons())
+        {
+            if (addon.getClassLoader() != null && addon.getClassLoader().equals(GraphApiCompositeClassLoaderProvider.class.getClassLoader()))
+            {
+                this.addon = addon;
+                break;
+            }
+        }
+    }
 
     /**
      * Creates a classloader which combines classloaders of all addons depending on Graph API. This insures that

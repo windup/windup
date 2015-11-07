@@ -9,9 +9,10 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
-import javax.inject.Singleton;
-
+import org.jboss.forge.furnace.Furnace;
+import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.util.furnace.FurnaceClasspathScanner;
 
 import com.thinkaurelius.titan.core.TitanProperty;
 import com.thinkaurelius.titan.graphdb.vertices.StandardVertex;
@@ -21,7 +22,10 @@ import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.util.wrappers.event.EventVertex;
 import com.tinkerpop.frames.FrameInitializer;
 import com.tinkerpop.frames.FramedGraph;
+import com.tinkerpop.frames.FramedGraphConfiguration;
 import com.tinkerpop.frames.VertexFrame;
+import com.tinkerpop.frames.modules.AbstractModule;
+import com.tinkerpop.frames.modules.Module;
 import com.tinkerpop.frames.modules.TypeResolver;
 import com.tinkerpop.frames.modules.typedgraph.TypeField;
 import com.tinkerpop.frames.modules.typedgraph.TypeRegistry;
@@ -29,36 +33,66 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
  * Windup's implementation of extended type handling for TinkerPop Frames. This allows storing multiple types based on the @TypeValue.value(), also in
- * the type property (see {@link WindupVertexFrame.TYPE_PROP}.
+ * the type property (see {@link WindupVertexFrame#TYPE_PROP}.
  */
-@Singleton
 public class GraphTypeManager implements TypeResolver, FrameInitializer
 {
-    private final Map<String, Class<? extends WindupVertexFrame>> registeredTypes = new HashMap<>();
-    private final TypeRegistry typeRegistry = new TypeRegistry();
+    private Map<String, Class<? extends WindupVertexFrame>> registeredTypes;
+    private TypeRegistry typeRegistry;
+
+    public GraphTypeManager()
+    {
+    }
+
+    private void initRegistry()
+    {
+        Furnace furnace = SimpleContainer.getFurnace(GraphTypeManager.class.getClassLoader());
+        FurnaceClasspathScanner furnaceClasspathScanner = furnace.getAddonRegistry().getServices(FurnaceClasspathScanner.class).get();
+
+        this.registeredTypes = new HashMap<>();
+        this.typeRegistry = new TypeRegistry();
+        for (Class<? extends WindupVertexFrame> frameType : GraphModelScanner.loadFrames(furnaceClasspathScanner))
+        {
+            addTypeToRegistry(frameType);
+        }
+    }
 
     public Set<Class<? extends WindupVertexFrame>> getRegisteredTypes()
     {
-        return Collections.unmodifiableSet(new HashSet<>(registeredTypes.values()));
+        return Collections.unmodifiableSet(new HashSet<>(getRegisteredTypeMap().values()));
     }
 
-    public void addTypeToRegistry(Class<? extends WindupVertexFrame> wvf)
+    private Map<String, Class<? extends WindupVertexFrame>> getRegisteredTypeMap()
     {
-        TypeValue typeValueAnnotation = wvf.getAnnotation(TypeValue.class);
+        if (registeredTypes == null)
+            initRegistry();
+        return registeredTypes;
+    }
+
+    private TypeRegistry getTypeRegistry()
+    {
+        if (typeRegistry == null)
+            initRegistry();
+        return typeRegistry;
+    }
+
+    private void addTypeToRegistry(Class<? extends WindupVertexFrame> frameType)
+    {
+        TypeValue typeValueAnnotation = frameType.getAnnotation(TypeValue.class);
 
         // Do not attempt to add items where this is null... we use
         // *Model types with no TypeValue to function as essentially
         // "abstract" models that would never exist on their own (only as subclasses).
         if (typeValueAnnotation != null)
         {
-            if (registeredTypes.containsKey(typeValueAnnotation.value()))
+            if (getRegisteredTypeMap().containsKey(typeValueAnnotation.value()))
             {
-                throw new IllegalArgumentException("Type value for model '" + wvf.getCanonicalName()
+                throw new IllegalArgumentException("Type value for model '" + frameType.getCanonicalName()
                             + "' is already registered with model "
-                            + registeredTypes.get(typeValueAnnotation.value()).getName());
+                            + getRegisteredTypeMap().get(typeValueAnnotation.value()).getName());
             }
-            registeredTypes.put(typeValueAnnotation.value(), wvf);
-            typeRegistry.add(wvf);
+            getRegisteredTypeMap().put(typeValueAnnotation.value(), frameType);
+            getTypeRegistry().add(frameType);
         }
     }
 
@@ -68,7 +102,7 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
     public void removeTypeFromElement(Class<? extends VertexFrame> kind, Element element)
     {
         StandardVertex v = GraphTypeManager.asTitanVertex(element);
-        Class<?> typeHoldingTypeField = typeRegistry.getTypeHoldingTypeField(kind);
+        Class<?> typeHoldingTypeField = getTypeRegistry().getTypeHoldingTypeField(kind);
         if (typeHoldingTypeField == null)
             return;
 
@@ -98,7 +132,7 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
     public void addTypeToElement(Class<? extends VertexFrame> kind, Element element)
     {
         StandardVertex v = GraphTypeManager.asTitanVertex(element);
-        Class<?> typeHoldingTypeField = typeRegistry.getTypeHoldingTypeField(kind);
+        Class<?> typeHoldingTypeField = getTypeRegistry().getTypeHoldingTypeField(kind);
         if (typeHoldingTypeField == null)
             return;
 
@@ -202,7 +236,7 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
     private Class<?>[] resolve(Element e, Class<?> defaultType)
     {
         // The class field holding the name of the type holding property.
-        Class<?> typeHoldingTypeField = typeRegistry.getTypeHoldingTypeField(defaultType);
+        Class<?> typeHoldingTypeField = getTypeRegistry().getTypeHoldingTypeField(defaultType);
         if (typeHoldingTypeField != null)
         {
             // Name of the graph element property holding the type list.
@@ -216,7 +250,7 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
                 List<Class<?>> resultClasses = new ArrayList<>();
                 for (TitanProperty value : valuesAll)
                 {
-                    Class<?> type = typeRegistry.getType(typeHoldingTypeField, value.getValue().toString());
+                    Class<?> type = getTypeRegistry().getType(typeHoldingTypeField, value.getValue().toString());
                     if (type != null)
                     {
                         // first check that no subclasses have already been added
@@ -261,5 +295,21 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
         {
             addTypeToElement((Class<? extends VertexFrame>) kind, element);
         }
+    }
+
+    /**
+     * Build TinkerPop Frames module - a collection of models.
+     */
+    public Module build()
+    {
+        return new AbstractModule()
+        {
+            @Override
+            public void doConfigure(FramedGraphConfiguration config)
+            {
+                config.addTypeResolver(GraphTypeManager.this);
+                config.addFrameInitializer(GraphTypeManager.this);
+            }
+        };
     }
 }

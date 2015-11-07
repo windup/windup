@@ -31,13 +31,6 @@
             <version>${version.titangraph}</version>
         </dependency>
         <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>14.0.1</version>
-            <!-- Guava dep is hardcoded to 14.0.1, because including the v15 that titan depends on breaks arquillian as of 
-                2014/08/21 -->
-        </dependency>
-        <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy</artifactId>
             <version>1.8.9</version> <!-- Version 1.8.9 is required by Tinkerpop Gremlin -->
@@ -55,7 +48,7 @@
         <!-- Furnace Container -->
         <dependency>
             <groupId>org.jboss.forge.furnace.container</groupId>
-            <artifactId>cdi-api</artifactId>
+            <artifactId>simple-api</artifactId>
             <scope>provided</scope>
         </dependency>
 

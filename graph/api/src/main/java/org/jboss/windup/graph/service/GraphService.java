@@ -333,7 +333,7 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
                 Class<T> type)
     {
         Vertex vertex = frame.asVertex();
-        graphContext.getGraphTypeRegistry().addTypeToElement(type, vertex);
+        graphContext.getGraphTypeManager().addTypeToElement(type, vertex);
         return graphContext.getFramed().frame(vertex, type);
     }
 
@@ -344,7 +344,7 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
                 Class<T> type)
     {
         Vertex vertex = frame.asVertex();
-        graphContext.getGraphTypeRegistry().removeTypeFromElement(type, vertex);
+        graphContext.getGraphTypeManager().removeTypeFromElement(type, vertex);
         return graphContext.getFramed().frame(vertex, type);
     }
 

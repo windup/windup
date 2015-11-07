@@ -8,61 +8,30 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.util.PathUtil;
 import org.jboss.windup.util.furnace.FurnaceClasspathScanner;
 
-import com.tinkerpop.blueprints.Element;
-import com.tinkerpop.frames.FramedGraphConfiguration;
-import com.tinkerpop.frames.VertexFrame;
-import com.tinkerpop.frames.modules.AbstractModule;
-import com.tinkerpop.frames.modules.Module;
-
 /**
  * This is used to provide a registry of {@link WindupVertexFrame} subclasses for integration with Tinkerpop Frames.
  *
  */
-@Singleton
-public class GraphTypeRegistry
+class GraphModelScanner
 {
-    private static final Logger LOG = Logger.getLogger(GraphTypeRegistry.class.getName());
+    private static final Logger LOG = Logger.getLogger(GraphModelScanner.class.getName());
 
-    @Inject
-    private FurnaceClasspathScanner scanner;
-
-    @Inject
-    private GraphTypeManager graphTypeManager;
-
-    /**
-     * Add the provided type to the given {@link Element}.
-     */
-    public void addTypeToElement(Class<? extends VertexFrame> kind, Element element)
+    public static List<Class<? extends WindupVertexFrame>> loadFrames(FurnaceClasspathScanner scanner)
     {
-        graphTypeManager.addTypeToElement(kind, element);
-    }
+        List<Class<? extends WindupVertexFrame>> results = new ArrayList<>();
 
-    /**
-     * Remove the provided type from the given {@link Element}.
-     */
-    public void removeTypeFromElement(Class<? extends WindupVertexFrame> kind, Element element)
-    {
-        graphTypeManager.removeTypeFromElement(kind, element);
-    }
-
-    @PostConstruct
-    public void init()
-    {
         // Scan for all classes form *Model.class.
         Predicate<String> modelClassFilter = new Predicate<String>()
         {
             // Package prefixes to skip.
             Set<String> skipPackages = new HashSet<>();
+
             {
                 this.skipPackages.add("org.dom4j.");
                 this.skipPackages.add("groovy.model.");
@@ -100,8 +69,8 @@ public class GraphTypeRegistry
             {
                 LOG.fine("    Found: " + clazz);
                 @SuppressWarnings("unchecked")
-                Class<? extends WindupVertexFrame> wvf = (Class<? extends WindupVertexFrame>) clazz;
-                graphTypeManager.addTypeToRegistry(wvf);
+                Class<? extends WindupVertexFrame> windupVertexFrame = (Class<? extends WindupVertexFrame>) clazz;
+                results.add(windupVertexFrame);
             }
             else
             {
@@ -109,10 +78,11 @@ public class GraphTypeRegistry
             }
         }
 
-        logLoadedModelTypes(graphTypeManager.getRegisteredTypes());
+        logLoadedModelTypes(results);
+        return results;
     }
 
-    private void logLoadedModelTypes(Set<Class<? extends WindupVertexFrame>> types)
+    private static void logLoadedModelTypes(List<Class<? extends WindupVertexFrame>> types)
     {
         List<Class<? extends WindupVertexFrame>> list = new ArrayList<>(types);
         Collections.sort(list, new Comparator<Class<? extends WindupVertexFrame>>()
@@ -143,19 +113,4 @@ public class GraphTypeRegistry
                     + result.toString() + OperatingSystemUtils.getLineSeparator() + "]");
     }
 
-    /**
-     * Build TinkerPop Frames module - a collection of models.
-     */
-    public Module build()
-    {
-        return new AbstractModule()
-        {
-            @Override
-            public void doConfigure(FramedGraphConfiguration config)
-            {
-                config.addTypeResolver(graphTypeManager);
-                config.addFrameInitializer(graphTypeManager);
-            }
-        };
-    }
 }

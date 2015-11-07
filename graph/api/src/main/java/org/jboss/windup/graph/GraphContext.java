@@ -45,12 +45,12 @@ public interface GraphContext extends Closeable
     FramedGraph<EventGraph<TitanGraph>> getFramed();
 
     /**
-     * Get the {@link GraphTypeRegistry}.
+     * Get the {@link GraphTypeManager}.
      */
-    GraphTypeRegistry getGraphTypeRegistry();
+    GraphTypeManager getGraphTypeManager();
 
     /**
-     * Get the {@link GraphTypeRegistry}.
+     * Get the {@link GraphModelScanner}.
      */
     TypeAwareFramedGraphQuery getQuery();
 
