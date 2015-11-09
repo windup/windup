@@ -161,10 +161,13 @@ a.windup-file-location {
 
 /* Description of the report, showing when .page-header has .showDesc . */
 .page-header h1 div.main:after {
-    content: "What's this report?";
+    content: "\e085"; /* Glyphicons question-sign */
+    font-family:'Glyphicons Halflings';
+    position:relative; top:1px; line-height:1; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
     display: inline-block;
     font-size: 12pt;
-    font-style: italic;
+    font-style: normal;
+    font-weight:normal;
     color: gray;
     padding: 0.3ex 0.3em;
     vertical-align: top;
