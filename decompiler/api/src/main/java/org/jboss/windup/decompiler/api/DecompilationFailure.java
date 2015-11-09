@@ -10,27 +10,27 @@ import java.util.List;
  */
 public class DecompilationFailure
 {
-    private final List<String> paths;
+    private final List<String> sourceClassPaths;
     private final String message;
     private final Throwable cause;
 
     public DecompilationFailure()
     {
-        this.paths = null;
+        this.sourceClassPaths = null;
         this.message = null;
         this.cause = null;
     }
 
-    public DecompilationFailure(String message, List<String> path, Throwable cause)
+    public DecompilationFailure(String message, List<String> sourceClassPaths, Throwable cause)
     {
         this.message = message;
         this.cause = cause;
-        this.paths = path;
+        this.sourceClassPaths = sourceClassPaths;
     }
 
     public List<String> getPath()
     {
-        return paths;
+        return sourceClassPaths;
     }
 
     public Throwable getCause()

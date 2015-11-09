@@ -18,7 +18,7 @@ import org.jetbrains.java.decompiler.main.extern.IResultSaver;
  */
 public class FernFlowerResultSaver implements IResultSaver
 {
-    private final List<String> classFiles;
+    private final List<String> sourceClassFiles;
     private final File outputDirectory;
     private final DecompilationListener listener;
 
@@ -27,9 +27,9 @@ public class FernFlowerResultSaver implements IResultSaver
     /**
      * Creates a {@link IResultSaver} for this single classfile. Each instance should not be reused.
      */
-    public FernFlowerResultSaver(List<String> classFiles, File outputDir, DecompilationListener listener)
+    public FernFlowerResultSaver(List<String> sourceClassFiles, File outputDir, DecompilationListener listener)
     {
-        this.classFiles = classFiles;
+        this.sourceClassFiles = sourceClassFiles;
         this.outputDirectory = outputDir;
         this.listener = listener;
     }
@@ -57,14 +57,14 @@ public class FernFlowerResultSaver implements IResultSaver
                 fw.write(content);
             }
             if (listener != null)
-                listener.fileDecompiled(classFiles, outputFile.toString());
+                listener.fileDecompiled(sourceClassFiles, outputFile.toString());
 
             fileSaved = true;
         }
         catch (IOException t)
         {
             if (listener != null)
-                listener.decompilationFailed(classFiles, t.getMessage());
+                listener.decompilationFailed(sourceClassFiles, t.getMessage());
         }
     }
 

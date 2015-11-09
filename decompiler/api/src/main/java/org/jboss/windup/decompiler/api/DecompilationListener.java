@@ -10,12 +10,12 @@ public interface DecompilationListener
     /**
      * Indicates that the files at inputPath has been decompiled to outputPath
      */
-    void fileDecompiled(List<String> inputPath, String outputPath);
+    void fileDecompiled(List<String> sourceClassPaths, String outputPath);
 
     /**
      * Called to indicate that decompilation of this particular files has failed for the specified reason.
      */
-    void decompilationFailed(List<String> inputPath, String message);
+    void decompilationFailed(List<String> sourceClassPaths, String message);
 
     /**
      * Indicates that the decompilation process is complete for all files within the archive (or directory).
