@@ -1,5 +1,7 @@
 package org.jboss.windup.decompiler.api;
 
+import java.util.List;
+
 /**
  * Contains information about a decompilation failure.
  *
@@ -8,27 +10,27 @@ package org.jboss.windup.decompiler.api;
  */
 public class DecompilationFailure
 {
-    private final String path;
+    private final List<String> sourceClassPaths;
     private final String message;
     private final Throwable cause;
 
     public DecompilationFailure()
     {
-        this.path = null;
+        this.sourceClassPaths = null;
         this.message = null;
         this.cause = null;
     }
 
-    public DecompilationFailure(String message, String path, Throwable cause)
+    public DecompilationFailure(String message, List<String> sourceClassPaths, Throwable cause)
     {
         this.message = message;
         this.cause = cause;
-        this.path = path;
+        this.sourceClassPaths = sourceClassPaths;
     }
 
-    public String getPath()
+    public List<String> getPath()
     {
-        return path;
+        return sourceClassPaths;
     }
 
     public Throwable getCause()

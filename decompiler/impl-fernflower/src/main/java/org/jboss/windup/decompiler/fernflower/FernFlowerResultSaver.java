@@ -3,8 +3,11 @@ package org.jboss.windup.decompiler.fernflower;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.jar.Manifest;
 
+import org.jboss.windup.decompiler.api.ClassDecompileRequest;
 import org.jboss.windup.decompiler.api.DecompilationListener;
 import org.jetbrains.java.decompiler.main.extern.IResultSaver;
 
@@ -15,7 +18,7 @@ import org.jetbrains.java.decompiler.main.extern.IResultSaver;
  */
 public class FernFlowerResultSaver implements IResultSaver
 {
-    private final String classFile;
+    private final List<String> sourceClassFiles;
     private final File outputDirectory;
     private final DecompilationListener listener;
 
@@ -24,12 +27,13 @@ public class FernFlowerResultSaver implements IResultSaver
     /**
      * Creates a {@link IResultSaver} for this single classfile. Each instance should not be reused.
      */
-    public FernFlowerResultSaver(String classFile, File outputDirectory, DecompilationListener listener)
+    public FernFlowerResultSaver(List<String> sourceClassFiles, File outputDir, DecompilationListener listener)
     {
-        this.classFile = classFile;
-        this.outputDirectory = outputDirectory;
+        this.sourceClassFiles = sourceClassFiles;
+        this.outputDirectory = outputDir;
         this.listener = listener;
     }
+
 
     /**
      * Indicates that this file
@@ -53,14 +57,14 @@ public class FernFlowerResultSaver implements IResultSaver
                 fw.write(content);
             }
             if (listener != null)
-                listener.fileDecompiled(classFile, outputFile.toString());
+                listener.fileDecompiled(sourceClassFiles, outputFile.toString());
 
             fileSaved = true;
         }
         catch (IOException t)
         {
             if (listener != null)
-                listener.decompilationFailed(classFile, t.getMessage());
+                listener.decompilationFailed(sourceClassFiles, t.getMessage());
         }
     }
 

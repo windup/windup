@@ -69,14 +69,14 @@ public class FernflowerDecompilerTest extends DecompilerTestBase
         DecompilationListener listener = new DecompilationListener()
         {
             @Override
-            public void fileDecompiled(String inputPath, String outputPath)
+            public void fileDecompiled(List<String> inputPath, String outputPath)
             {
                 Assert.assertNotNull("Results object was returned.", outputPath);
                 numberDecompiled.incrementAndGet();
             }
 
             @Override
-            public void decompilationFailed(String inputPath, String message)
+            public void decompilationFailed(List<String> inputPath, String message)
             {
                 System.out.println("Failed for input: " + inputPath + " due to: " + message);
             }

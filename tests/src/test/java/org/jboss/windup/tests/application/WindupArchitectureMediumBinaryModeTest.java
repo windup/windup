@@ -3,6 +3,7 @@ package org.jboss.windup.tests.application;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Properties;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -49,15 +50,31 @@ public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTe
     }
 
     @Test
-    public void testRunWindupMedium() throws Exception
+    public void testRunWindupMediumWithFernflower() throws Exception
     {
         final String path = "../test-files/Windup1x-javaee-example.war";
 
         try (GraphContext context = createGraphContext())
         {
             super.runTest(context, path, false);
+            allDecompiledFilesAreLinked(context);
             validateManifestEntries(context);
             validateReports(context);
+        }
+
+    }
+
+    @Test
+    public void testRunWindupMediumWithProcyon() throws Exception
+    {
+        final String path = "../test-files/Windup1x-javaee-example.war";
+        try (GraphContext context = createGraphContext())
+        {
+            Properties props = System.getProperties();
+            props.setProperty("windup.decompiler", "Procyon");
+            super.runTest(context, path, false);
+            props.remove("windup.decompiler");
+            allDecompiledFilesAreLinked(context);
         }
     }
 

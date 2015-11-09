@@ -1,19 +1,21 @@
 package org.jboss.windup.decompiler.api;
 
+import java.util.List;
+
 /**
  * Called to indicate the progress during decompilation
  */
 public interface DecompilationListener
 {
     /**
-     * Indicates that the file at inputPath has been decompiled to outputPath
+     * Indicates that the files at inputPath has been decompiled to outputPath
      */
-    void fileDecompiled(String inputPath, String outputPath);
+    void fileDecompiled(List<String> sourceClassPaths, String outputPath);
 
     /**
-     * Called to indicate that decompilation of this particular file has failed for the specified reason.
+     * Called to indicate that decompilation of this particular files has failed for the specified reason.
      */
-    void decompilationFailed(String inputPath, String message);
+    void decompilationFailed(List<String> sourceClassPaths, String message);
 
     /**
      * Indicates that the decompilation process is complete for all files within the archive (or directory).

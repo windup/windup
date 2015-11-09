@@ -19,12 +19,14 @@ import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.exec.configuration.options.UserRulesDirectoryOption;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
+import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.ReportModel;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.rules.apps.java.config.ExcludePackagesOption;
 import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.rules.apps.java.model.JavaApplicationOverviewReportModel;
+import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.reporting.rules.CreateJavaApplicationOverviewReportRuleProvider;
 import org.junit.Assert;
 
@@ -195,6 +197,15 @@ public abstract class WindupArchitectureTest
         Assert.assertNotNull(reportModel);
 
         return (JavaApplicationOverviewReportModel) reportModel;
+    }
+
+    protected void allDecompiledFilesAreLinked(GraphContext context) {
+        GraphService<JavaClassFileModel> classModels = new GraphService<>(context,JavaClassFileModel.class);
+        for (JavaClassFileModel javaClassFileModel : classModels.findAllWithoutProperty(JavaClassFileModel.SKIP_DECOMPILATION, true))
+        {
+             Assert.assertNotNull(javaClassFileModel.getJavaClass().getDecompiledSource());
+        }
+
     }
 
     /*

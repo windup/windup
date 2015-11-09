@@ -66,8 +66,7 @@ public class ProcyonDecompilerOperation extends AbstractDecompilerOperation
         List<ClassDecompileRequest> classesToDecompile = new ArrayList<>(10000); // Just a guess as to the average size
         for (JavaClassFileModel classFileModel : allClasses)
         {
-            if (!classFileModel.getFilePath().contains("$")
-                        && configurationService.shouldScanPackage(classFileModel.getPackageName()))
+            if (configurationService.shouldScanPackage(classFileModel.getPackageName()))
             {
                 File outputDir = DecompilerUtil.getOutputDirectoryForClass(event.getGraphContext(), classFileModel);
                 classesToDecompile.add(new ClassDecompileRequest(outputDir.toPath(), classFileModel.asFile().toPath(), outputDir.toPath()));
@@ -138,13 +137,13 @@ public class ProcyonDecompilerOperation extends AbstractDecompilerOperation
         }
 
         @Override
-        public void decompilationFailed(String inputPath, String message)
+        public void decompilationFailed(List<String> inputPath, String message)
         {
             progressEstimate.addWork(1);
         }
 
         @Override
-        public synchronized void fileDecompiled(final String inputPath, final String decompiledOutputFile)
+        public synchronized void fileDecompiled(final List<String> inputPath, final String decompiledOutputFile)
         {
             Runnable saveDecompiledRunnable = new Runnable()
             {
@@ -162,7 +161,7 @@ public class ProcyonDecompilerOperation extends AbstractDecompilerOperation
                     }
 
                     FileService fileService = new FileService(event.getGraphContext());
-                    Path classFilePath = Paths.get(inputPath);
+                    Path classFilePath = Paths.get(inputPath.get(0));
 
                     FileModel decompiledFileModel = fileService.getUniqueByProperty(FileModel.FILE_PATH,
                                 decompiledOutputFile);
@@ -236,6 +235,7 @@ public class ProcyonDecompilerOperation extends AbstractDecompilerOperation
                             classModel.getJavaClass().setDecompiledSource(decompiledSourceFileModel);
                             decompiledSourceFileModel.setPackageName(classModel.getPackageName());
                             decompiledSourceFileModel.setWindupGenerated(true);
+                            setupClassToJavaConnections(event.getGraphContext(),inputPath,decompiledSourceFileModel);
 
                             // Set the root path of this source file (if possible). Procyon should always be placing the file
                             // into a location that is appropriate for the package name, so this should always yield
