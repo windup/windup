@@ -5,13 +5,9 @@
 
 
 <#macro tagRenderer tag>
-    <#if tag.level?? && tag.level == "IMPORTANT">
-        <span class="label label-danger tag-${tag.name}">
-    <#else>
-        <span class="label label-info tag-${tag.name}">
-    </#if>
-            <#nested/>
-        </span>
+    <span class="label label-${(tag.level! == 'IMPORTANT')?then('danger','info')} tag-${tag.name?replace(' ','')}">
+        <#nested/>
+    </span>
 </#macro>
 
 <#macro reportLineRenderer reportLinesIterable>
@@ -62,36 +58,20 @@
         </td>
 
         <#-- Issues -->
-        <td>
         <#assign warnings = sourceReportModel.sourceFileModel.inlineHintCount + sourceReportModel.sourceFileModel.classificationCount>
         <#-- The ~Count are, in fact, Gremlin queries. Don't call more than once. -->
-
-        <#if warnings != 0 >
-            <!-- TODO: Move the different rendering to CSS. -->
-            <#if warnings gt 1>
-                <b>Warnings: ${warnings} items</b>
+        <td class="warnCount${warnings}">
+            <h4 class="warns">Warnings: ${warnings} items</h4>
+            <#if warnings != 0 >
                 <ul class='notifications'>
-            </#if>
-            <#list sourceReportModel.sourceFileModel.classificationModels.iterator()>
-                <#items as classification>
-                    <#if warnings == 1 >
-                        ${classification.classification}
-                    <#else>
+                    <#list sourceReportModel.sourceFileModel.classificationModels.iterator() as classification>
                         <li class='warning clsf'>${classification.classification?html}</li>
-                    </#if>
-                </#items>
-            </#list>
-            <#list sourceReportModel.sourceFileModel.inlineHints.iterator()>
-                <#items as hintLine>
-                    <#if warnings == 1 >
-                        ${hintLine.title?html}
-                    <#else>
+                    </#list>
+                    <#list sourceReportModel.sourceFileModel.inlineHints.iterator() as hintLine>
                         <li class='warning hint'>${hintLine.title?html}</li>
-                    </#if>
-                </#items>
-            </#list>
-            <#if warnings gt 1></ul></#if>
-        </#if>
+                    </#list>
+                </ul>
+            </#if>
         </td>
 
         <#-- Story points -->
@@ -292,8 +272,8 @@
         <@render_pie project=reportModel.projectModel recursive=true elementID="application_pie" includeTags=reportModel.includeTags excludeTags=reportModel.excludeTags />
 
 
-        <#macro projectPieRenderer projectModel>
-            <@render_pie project=projectModel recursive=false elementID="project_${projectModel.asVertex().getId()?string(\"0\")}_pie" includeTags=reportModel.includeTags excludeTags=reportModel.excludeTags />
+            <#macro projectPieRenderer projectModel>
+                <@render_pie project=projectModel recursive=false elementID="project_${projectModel.asVertex().id?c}_pie" includeTags=reportModel.includeTags excludeTags=reportModel.excludeTags />
 
             <#list projectModel.childProjects.iterator() as childProject>
                 <@projectPieRenderer childProject />
