@@ -64,11 +64,18 @@
             <h4 class="warns">Warnings: ${warnings} items</h4>
             <#if warnings != 0 >
                 <ul class='notifications'>
+                    <#assign map = {}>
                     <#list sourceReportModel.sourceFileModel.classificationModels.iterator() as classification>
-                        <li class='warning clsf'>${classification.classification?html}</li>
+                        <#assign count = (map[classification.classification]!0) + 1>
+                        <#assign map += {classification.classification : count}>
                     </#list>
                     <#list sourceReportModel.sourceFileModel.inlineHints.iterator() as hintLine>
-                        <li class='warning hint'>${hintLine.title?html}</li>
+                        <#assign count = (map[hintLine.title]!0) + 1>
+                        <#assign map += {hintLine.title : count}>
+                    </#list>
+                    <#list map?keys as key>
+                        <#assign count = map[key]>
+                        <li class="warning"> ${key?html} <small>${count}&#215;</small></li>
                     </#list>
                 </ul>
             </#if>
@@ -269,7 +276,7 @@
         <script src="resources/js/jquery-1.10.1.min.js"></script>
         <script src="resources/libraries/flot/jquery.flot.min.js"></script>
         <script src="resources/libraries/flot/jquery.flot.pie.min.js"></script>
-         <script src="resources/js/windup-overview.js"/>
+        <script src="resources/js/windup-overview.js"/>
         <script src="resources/js/bootstrap.min.js"></script>
 
         <@render_pie project=reportModel.projectModel recursive=true elementID="application_pie" includeTags=reportModel.includeTags excludeTags=reportModel.excludeTags />
