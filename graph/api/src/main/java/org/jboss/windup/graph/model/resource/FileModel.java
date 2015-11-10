@@ -34,8 +34,6 @@ public interface FileModel extends ResourceModel
     String FILE_NAME = "fileName";
     String FILE_PATH = "filePath";
     String IS_DIRECTORY = "isDirectory";
-    String PRETTY_PATH = "fileModelPrettyPath";
-    String PRETTY_PATH_WITHIN_PROJECT = "fileModelPrettyPathWithinProject";
     String WINDUP_GENERATED = "windupGenerated";
 
     /**
@@ -63,7 +61,7 @@ public interface FileModel extends ResourceModel
      */
     // implemented via a handler that makes sure the isDirectory property is set as well
     @JavaHandler
-    public void setFilePath(String filePath);
+    void setFilePath(String filePath);
 
     /**
      * Indicates whether the file is a directory or not
@@ -169,6 +167,7 @@ public interface FileModel extends ResourceModel
     @JavaHandler
     String getPrettyPathWithinProject();
 
+
     /**
      * Returns the application that this file is a part of. This is especially useful in the case of analyzing multiple application's, as we often
      * need to know which application a particular file is associated with.
@@ -200,9 +199,6 @@ public interface FileModel extends ResourceModel
 
         public String getPrettyPathWithinProject()
         {
-            if (it().getProperty(PRETTY_PATH_WITHIN_PROJECT) != null)
-                return it().getProperty(PRETTY_PATH_WITHIN_PROJECT);
-
             String result;
             ProjectModel projectModel = getProjectModel();
             if (projectModel == null)
@@ -234,15 +230,11 @@ public interface FileModel extends ResourceModel
                     result = StringUtils.isEmpty(parentPrettyPath) ? filename : parentPrettyPath + "/" + filename;
                 }
             }
-            it().setProperty(PRETTY_PATH_WITHIN_PROJECT, result);
             return result;
         }
 
         public String getPrettyPath()
         {
-            if (it().getProperty(PRETTY_PATH) != null)
-                return it().getProperty(PRETTY_PATH);
-
             String filename = getFileName();
             String result;
             if (getParentFile() == null)
@@ -260,7 +252,6 @@ public interface FileModel extends ResourceModel
             {
                 result = getParentFile().getPrettyPath() + "/" + filename;
             }
-            it().setProperty(PRETTY_PATH, result);
             return result;
         }
 
