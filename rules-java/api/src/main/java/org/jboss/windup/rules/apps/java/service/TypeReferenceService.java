@@ -58,7 +58,7 @@ public class TypeReferenceService extends GraphService<JavaTypeReferenceModel>
 
         // 1. Get all JavaHints for the given project
         GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(projectModel.asVertex());
-        pipeline.in(FileModel.FILE_TO_PROJECT_MODEL).in(InlineHintModel.FILE_MODEL);
+        pipeline.out(ProjectModel.PROJECT_MODEL_TO_FILE).in(InlineHintModel.FILE_MODEL);
         pipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, InlineHintModel.TYPE);
 
         pipeline.as("inlineHintVertex");
