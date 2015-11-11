@@ -7,7 +7,7 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 
 public interface ResourceModel extends WindupVertexFrame
 {
-    public InputStream asInputStream();
+    InputStream asInputStream();
 
-    public File asFile() throws RuntimeException;
+    File asFile() throws RuntimeException;
 }

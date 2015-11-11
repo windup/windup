@@ -85,6 +85,12 @@ public interface Service<FRAMETYPE extends VertexFrame>
     Iterable<FRAMETYPE> findAllByPropertyMatchingRegex(String key, String... regex);
 
     /**
+     * Find all instances of the {@link WindupVertexFrame} type on which this {@link Service} operates with the specified property matching the given
+     * regexes.
+     */
+    Iterable<FRAMETYPE> findAllByPropertyNotMatchingRegex(String key, String... regex);
+
+    /**
      * Get the instance of the type on which this {@link Service} operates that has the given id value.
      */
     FRAMETYPE getById(Object id);

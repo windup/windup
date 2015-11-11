@@ -107,8 +107,6 @@ public interface FileModel extends ResourceModel
 
     /**
      * Files contained within this directory
-     *
-     * @return
      */
     @Adjacency(label = PARENT_FILE, direction = Direction.IN)
     Iterable<FileModel> getFilesInDirectory();
@@ -166,7 +164,6 @@ public interface FileModel extends ResourceModel
      */
     @JavaHandler
     String getPrettyPathWithinProject();
-
 
     /**
      * Returns the application that this file is a part of. This is especially useful in the case of analyzing multiple application's, as we often

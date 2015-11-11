@@ -2,7 +2,9 @@ package org.jboss.windup.graph.service;
 
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import org.apache.tools.ant.BuildException;
 import org.jboss.windup.graph.FramedElementInMemory;
@@ -21,7 +23,9 @@ import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.FramedGraphQuery;
 import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import com.tinkerpop.frames.structures.FramedVertexIterable;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
+import com.tinkerpop.pipes.PipeFunction;
 
 public class GraphService<T extends WindupVertexFrame> implements Service<T>
 {
@@ -181,9 +185,39 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     }
 
     @Override
+    public Iterable<T> findAllByPropertyNotMatchingRegex(final String key, final String... regex)
+    {
+        return ExecutionStatistics.performBenchmarked("GraphService.findAllByPropertyNotMatchingRegex(" + key + ")",
+                    new Task<Iterable<T>>()
+                    {
+                        @Override
+                        public Iterable<T> execute()
+                        {
+
+                            Iterable<T> matchingFrames = findAllByPropertyMatchingRegex(key, regex);
+                            final Set<Object> matchIDs = new HashSet<>();
+                            for (T frame : matchingFrames)
+                                matchIDs.add(frame.asVertex().getId());
+
+                            GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>();
+                            pipeline.filter(new PipeFunction<Vertex, Boolean>()
+                            {
+                                @Override
+                                public Boolean compute(Vertex argument)
+                                {
+                                    return !matchIDs.contains(argument.getId());
+                                }
+                            });
+                            return (Iterable<T>) new FramedVertexIterable<>(getGraphContext().getFramed(), pipeline, WindupVertexFrame.class);
+                        }
+                    });
+    }
+
+    @Override
     public Iterable<T> findAllByPropertyMatchingRegex(final String key, final String... regex)
     {
-        return ExecutionStatistics.performBenchmarked("GraphService.findAllByPropertyMatchingRegex(" + key + ")", new Task<Iterable<T>>()
+        return ExecutionStatistics.performBenchmarked("GraphService.findAllByPropertyMatchingRegex(" + key + ")",
+                    new Task<Iterable<T>>()
         {
             @Override
             public Iterable<T> execute() throws BuildException
