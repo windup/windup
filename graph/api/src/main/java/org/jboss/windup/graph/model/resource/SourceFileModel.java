@@ -16,7 +16,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(SourceFileModel.TYPE)
 public interface SourceFileModel extends WindupVertexFrame
 {
-    String TYPE = "SourceFileModel";
+    String TYPE = "SourceFile";
     String TRANSFORMED_TO = "transformedTo";
     String GENERATE_SOURCE_REPORT = "generateSourceReport";
 

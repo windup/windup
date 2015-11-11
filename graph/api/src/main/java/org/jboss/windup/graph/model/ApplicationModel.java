@@ -3,7 +3,7 @@ package org.jboss.windup.graph.model;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
-@TypeValue("ApplicationModel")
+@TypeValue("Application")
 public interface ApplicationModel extends WindupVertexFrame
 {
     public static final String PROPERTY_APPLICATION_NAME = "applicationName";

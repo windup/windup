@@ -5,7 +5,7 @@ import org.jboss.windup.graph.model.ArchiveType;
 
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
-@TypeValue("EarArchiveModel")
+@TypeValue("EarArchive")
 @ArchiveType(".ear")
 public interface EarArchiveModel extends ArchiveModel
 {

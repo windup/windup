@@ -5,7 +5,7 @@ import org.jboss.windup.graph.model.ArchiveType;
 
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
-@TypeValue("WarArchiveModel")
+@TypeValue("WarArchive")
 @ArchiveType(".war")
 public interface WarArchiveModel extends ArchiveModel
 {

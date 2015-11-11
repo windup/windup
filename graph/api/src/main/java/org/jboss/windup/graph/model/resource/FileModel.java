@@ -24,13 +24,13 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(FileModel.TYPE)
 public interface FileModel extends ResourceModel
 {
-    String TYPE = "FileResource";
+    String TYPE = "File";
 
     String ARCHIVE_FILES = "archiveFiles";
     String PARENT_FILE = "parentFile";
     String SHA1_HASH = "sha1Hash";
     String MD5_HASH = "md5Hash";
-    String FILE_TO_PROJECT_MODEL = "fileToProjectModel";
+    String FILE_TO_PROJECT_MODEL = "fileToProject";
     String FILE_NAME = "fileName";
     String FILE_PATH = "filePath";
     String IS_DIRECTORY = "isDirectory";

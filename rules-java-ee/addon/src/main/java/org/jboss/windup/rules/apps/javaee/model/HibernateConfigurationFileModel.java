@@ -18,7 +18,7 @@ public interface HibernateConfigurationFileModel extends XmlFileModel
 
     public static final String HIBERNATE_SESSION_FACTORY = "hibernateSessionFactory";
     public static final String SPECIFICATION_VERSION = "specificationVersion";
-    public static final String TYPE = "HibernateConfigurationFileModel";
+    public static final String TYPE = "HibernateConfigurationFile";
 
     @Property(SPECIFICATION_VERSION)
     public String getSpecificationVersion();

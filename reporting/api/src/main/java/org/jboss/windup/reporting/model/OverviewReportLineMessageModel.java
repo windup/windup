@@ -18,7 +18,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(OverviewReportLineMessageModel.TYPE)
 public interface OverviewReportLineMessageModel extends WindupVertexFrame
 {
-    String TYPE = "OverviewReportLineMessageModel";
+    String TYPE = "OverviewReportLineMessage";
     String PROPERTY_RULE_ID = "ruleID";
     String PROJECT_MODEL = "project";
     String PROPERTY_MESSAGE = "message";

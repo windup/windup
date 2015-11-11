@@ -22,10 +22,10 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(ProjectModel.TYPE)
 public interface ProjectModel extends WindupVertexFrame
 {
-    public static final String TYPE = "ProjectModel";
+    public static final String TYPE = "Project";
     public static final String DEPENDENCY = "dependency";
     public static final String PARENT_PROJECT = "parentProject";
-    public static final String ROOT_FILE_MODEL = "rootFileModel";
+    public static final String ROOT_FILE_MODEL = "rootFile";
     public static final String PROJECT_MODEL_TO_FILE = "projectModelToFile";
     public static final String SOURCE_BASED = "sourceBased";
     public static final String DESCRIPTION = "description";

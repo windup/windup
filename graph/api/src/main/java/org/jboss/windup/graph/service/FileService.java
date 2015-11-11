@@ -23,6 +23,7 @@ public class FileService extends GraphService<FileModel>
 
     public FileModel createByFilePath(FileModel parentFile, String filePath)
     {
+        System.out.println("  CREATING FileModel: " + filePath);
         ExecutionStatistics.get().begin("FileService.createByFilePath(parentFile, filePath)");
         // always search by absolute path
         String absolutePath = Paths.get(filePath).normalize().toAbsolutePath().toString();

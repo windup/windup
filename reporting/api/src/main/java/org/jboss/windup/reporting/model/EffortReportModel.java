@@ -10,7 +10,7 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
  */
 public interface EffortReportModel extends WindupVertexFrame
 {
-    static final String TYPE = "ClassificationModel";
+    static final String TYPE = "Classification";
     static final String TYPE_PREFIX = TYPE + ":";
     static final String EFFORT = TYPE_PREFIX + "effort";
     static final String SEVERITY = TYPE_PREFIX + TYPE_PREFIX + "severity";

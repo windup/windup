@@ -10,7 +10,7 @@ import org.jboss.windup.graph.model.resource.ResourceModel;
  *  A vertex used to test default value settings
  * @author <a href="mailto:mbriskar@redhat.com">Matej Briskar</a>
  */
-@TypeValue("DefaultValueTestModel")
+@TypeValue("DefaultValueTest")
 public interface DefaultValueTestModel extends WindupVertexFrame
 {
 

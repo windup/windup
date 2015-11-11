@@ -19,7 +19,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(EjbBeanBaseModel.TYPE)
 public interface EjbBeanBaseModel extends WindupVertexFrame
 {
-    String TYPE = "EjbBeanBaseModel";
+    String TYPE = "EjbBeanBase";
 
     String EJB_SESSION_TO_ENVIRONMENT_REFERENCE = "ejbToEnvironmentReference";
     String EJB_IMPLEMENTATION_CLASS = "ejbImplementationClass";

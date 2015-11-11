@@ -4,7 +4,7 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
-@TypeValue("SimpleModel")
+@TypeValue("Simple")
 public interface TestSimple2Model extends WindupVertexFrame
 {
 

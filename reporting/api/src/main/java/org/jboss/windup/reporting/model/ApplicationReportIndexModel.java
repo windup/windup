@@ -22,11 +22,11 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
  */
-@TypeValue("ApplicationReportIndexModel")
+@TypeValue("ApplicationReportIndex")
 public interface ApplicationReportIndexModel extends WindupVertexFrame
 {
-    public static final String APPLICATION_REPORT_INDEX_TO_PROJECT_MODEL = "appReportIndexToProjectModel";
-    public static final String APPLICATION_REPORT_INDEX_TO_REPORT_MODEL = "appReportIndexToAppReportModel";
+    public static final String APPLICATION_REPORT_INDEX_TO_PROJECT_MODEL = "appReportIndexToProject";
+    public static final String APPLICATION_REPORT_INDEX_TO_REPORT_MODEL = "appReportIndexToAppReport";
 
     /**
      * Get all ReportModels that should be displayed in the index in ascending order, according to priority
