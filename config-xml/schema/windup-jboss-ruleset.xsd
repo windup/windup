@@ -84,7 +84,7 @@
             <xs:element name="otherwise" type="iteration" minOccurs="0" maxOccurs="1" />
             <xs:element name="where" type="where" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
-        <xs:attribute type="xs:string" name="id" use="optional" />
+        <xs:attribute type="xs:string" name="id" use="required" />
     </xs:complexType>
 
 
@@ -154,7 +154,7 @@
     <xs:element name="filecontent">
         <xs:complexType>
             <xs:attribute type="xs:string" name="from" />
-            <xs:attribute type="xs:string" name="pattern" />
+            <xs:attribute type="xs:string" name="pattern" use="required"/>
             <xs:attribute type="xs:string" name="filename" />
             <xs:attribute type="xs:string" name="as" />
         </xs:complexType>
@@ -163,7 +163,7 @@
     <xs:element name="file">
         <xs:complexType>
             <xs:attribute type="xs:string" name="from" />
-            <xs:attribute type="xs:string" name="filename" />
+            <xs:attribute type="xs:string" name="filename" use="required"/>
             <xs:attribute type="xs:string" name="as" />
         </xs:complexType>
     </xs:element>
@@ -183,7 +183,7 @@
 
    <xs:element name="classification-exists">
       <xs:complexType>
-         <xs:attribute type="xs:string" name="classification"/>
+         <xs:attribute type="xs:string" name="classification" use="required"/>
          <xs:attribute type="xs:string" name="in"/>
       </xs:complexType>
    </xs:element>
@@ -196,14 +196,14 @@
 
    <xs:element name="hint-exists">
       <xs:complexType>
-         <xs:attribute type="xs:string" name="message"/>
+         <xs:attribute type="xs:string" name="message" use="required"/>
          <xs:attribute type="xs:string" name="in"/>
       </xs:complexType>
    </xs:element>
 
    <xs:element name="lineitem-exists">
       <xs:complexType>
-         <xs:attribute type="xs:string" name="message"/>
+         <xs:attribute type="xs:string" name="message" use="required"/>
          <xs:attribute type="xs:string" name="in"/>
       </xs:complexType>
    </xs:element>
@@ -230,6 +230,7 @@
             <xs:attribute type="xs:string" name="severity" use="optional" />
             <xs:attribute type="xs:string" name="in" use="optional" />
             <xs:attribute type="xs:byte" name="effort" use="optional" />
+<!--             <xs:attribute type="xs:string" name="message" use="optional"/> -->
         </xs:complexType>
     </xs:element>
 
@@ -252,8 +253,8 @@
         <xs:complexType>
             <xs:simpleContent>
                 <xs:extension base="xs:string">
-                    <xs:attribute type="xs:anyURI" name="href" />
-                    <xs:attribute type="xs:string" name="title" />
+                    <xs:attribute type="xs:anyURI" name="href" use="required"/>
+                    <xs:attribute type="xs:string" name="title" use="required"/>
                 </xs:extension>
             </xs:simpleContent>
         </xs:complexType>
@@ -270,7 +271,7 @@
         <xs:complexType>
             <xs:simpleContent>
                 <xs:extension base="xs:string">
-                    <xs:attribute type="xs:string" name="message" />
+                    <xs:attribute type="xs:string" name="message" use="required"/>
                 </xs:extension>
             </xs:simpleContent>
         </xs:complexType>
@@ -292,9 +293,9 @@
                 </xs:element>
             </xs:sequence>
             <xs:attribute type="xs:string" name="of" use="optional" />
-            <xs:attribute type="xs:string" name="title" />
-            <xs:attribute type="xs:string" name="extension" />
-            <xs:attribute type="xs:string" name="template" />
+            <xs:attribute type="xs:string" name="title" use="required"/>
+            <xs:attribute type="xs:string" name="extension" use="required"/>
+            <xs:attribute type="xs:string" name="template" use="required"/>
             <xs:attribute type="xs:byte" name="effort" use="optional" />
         </xs:complexType>
     </xs:element>
@@ -382,12 +383,12 @@
 
     <xs:complexType name="technology">
         <xs:attribute type="xs:string" name="versionRange" />
-        <xs:attribute type="xs:string" name="id" />
+        <xs:attribute type="xs:string" name="id" use="required"/>
     </xs:complexType>
 
     <xs:complexType name="mapping">
-        <xs:attribute type="xs:string" name="from" use="optional" />
-        <xs:attribute type="xs:string" name="to" use="optional" />
+        <xs:attribute type="xs:string" name="from" use="required" />
+        <xs:attribute type="xs:string" name="to" use="required" />
     </xs:complexType>
 
     <xs:complexType name="javaclass-ignore">
