@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<#if reportModel.sourceFileModel.projectModel??>
-<#assign applicationReportIndexModel = projectModelToApplicationIndex(reportModel.sourceFileModel.projectModel)>
+<#if reportModel.sourceFileModel.boundProject??>
+<#assign applicationReportIndexModel = projectModelToApplicationIndex(reportModel.sourceFileModel.boundProject)>
 </#if>
 
 <head>

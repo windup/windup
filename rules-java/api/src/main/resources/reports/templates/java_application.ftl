@@ -102,7 +102,7 @@
         <#assign panelStoryPoints = getMigrationEffortPoints(projectModel, false, reportModel.includeTags, reportModel.excludeTags)>
         <div class="panel-heading panel-collapsed clickable">
             <span class="pull-left"><i class="glyphicon glyphicon-chevron-up arrowIcon"></i></span>
-            <h3 class="panel-title">${projectModel.rootFileModel.prettyPath?html} (${panelStoryPoints} story points)</h3>
+            <h3 class="panel-title">${projectModel.rootOriginLocation.prettyPath?html} (${panelStoryPoints} story points)</h3>
         </div>
         <div class="panel-body" style="display:none">
         <div class="container-fluid summaryMargin">
@@ -162,12 +162,12 @@
             </div>
 
         </div>
-        <#if iterableHasContent(projectModel.fileModelsNoDirectories)>
+        <#if iterableHasContent(projectModel.containedFilesNoDirectories)>
         <table class="table table-striped table-bordered">
             <tr>
                 <th class="col-md-6">Name</th><th class="col-md-1">Technology</th><th>Issues</th><th class="col-md-1">Story Points</th>
             </tr>
-            <#list sortFilesByPathAscending(projectModel.fileModelsNoDirectories) as fileModel>
+            <#list sortFilesByPathAscending(projectModel.containedFilesNoDirectories) as fileModel>
                 <@fileModelRenderer fileModel/>
             </#list>
         </table>

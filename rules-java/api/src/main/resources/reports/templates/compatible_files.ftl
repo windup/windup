@@ -46,11 +46,11 @@
 </#macro>
 
 <#macro projectModelRenderer projectModel>
-    <#assign fileModelCollection = sortFilesByPathAscending(findFilesNotClassifiedOrHinted(projectModel.fileModelsNoDirectories))>
+    <#assign fileModelCollection = sortFilesByPathAscending(findFilesNotClassifiedOrHinted(projectModel.containedFilesNoDirectories))>
     <#if iterableHasContent(fileModelCollection)>
         <div class="panel panel-primary">
             <div class="panel-heading">
-                <h3 class="panel-title">${projectModel.rootFileModel.prettyPath}</h3>
+                <h3 class="panel-title">${projectModel.rootOriginLocation.prettyPath}</h3>
             </div>
             <table class="table table-striped table-bordered">
                 <tr>
