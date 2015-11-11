@@ -72,20 +72,20 @@ public class JavaClassXmlRulesTest
 
             FileModel inputPathFrame = context.getFramed().addVertex(null, FileModel.class);
             inputPathFrame.setFilePath(inputDir);
-            inputPathFrame.setProjectModel(pm);
-            pm.addFileModel(inputPathFrame);
+            inputPathFrame.setBoundProject(pm);
+            pm.addContainedFile(inputPathFrame);
 
-            pm.setRootFileModel(inputPathFrame);
+            pm.setRootOriginLocation(inputPathFrame);
 
             FileModel fileModel = context.getFramed().addVertex(null, FileModel.class);
             fileModel.setFilePath(inputDir + "/JavaClassTestFile1.java");
-            fileModel.setProjectModel(pm);
-            pm.addFileModel(fileModel);
+            fileModel.setBoundProject(pm);
+            pm.addContainedFile(fileModel);
 
             fileModel = context.getFramed().addVertex(null, FileModel.class);
             fileModel.setFilePath(inputDir + "/JavaClassTestFile2.java");
-            fileModel.setProjectModel(pm);
-            pm.addFileModel(fileModel);
+            fileModel.setBoundProject(pm);
+            pm.addContainedFile(fileModel);
 
             context.getGraph().getBaseGraph().commit();
 

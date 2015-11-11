@@ -65,13 +65,13 @@ public class DiscoverMavenHierarchyRuleProvider extends AbstractRuleProvider
         {
             return;
         }
-        else if (archiveModel.getProjectModel() != null)
+        else if (archiveModel.getBoundProject() != null)
         {
             String mavenGAV = projectModel.getGroupId() + ":" + projectModel.getArtifactId() + ":"
                         + projectModel.getVersion();
             String archivePath = archiveModel.getFilePath();
             LOG.info("Setting parent project for: " + mavenGAV + " to: " + archivePath);
-            projectModel.setParentProject(archiveModel.getProjectModel());
+            projectModel.setParentProject(archiveModel.getBoundProject());
         }
         else
         {
@@ -85,9 +85,9 @@ public class DiscoverMavenHierarchyRuleProvider extends AbstractRuleProvider
         {
             return;
         }
-        else if (fileModel.getProjectModel() != null)
+        else if (fileModel.getBoundProject() != null)
         {
-            projectModel.setParentProject(fileModel.getProjectModel());
+            projectModel.setParentProject(fileModel.getBoundProject());
         }
         else
         {
@@ -97,7 +97,7 @@ public class DiscoverMavenHierarchyRuleProvider extends AbstractRuleProvider
 
     private void setMavenParentProject(MavenProjectModel projectModel)
     {
-        FileModel fileModel = projectModel.getRootFileModel();
+        FileModel fileModel = projectModel.getRootOriginLocation();
         if (fileModel == null)
         {
             // skip if no file was discovered for it

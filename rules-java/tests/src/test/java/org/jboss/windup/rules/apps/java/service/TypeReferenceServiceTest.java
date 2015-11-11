@@ -89,10 +89,10 @@ public class TypeReferenceServiceTest
         b1b.setFileLocationReference(t2);
 
         ProjectModel projectModel = context.getFramed().addVertex(null, ProjectModel.class);
-        projectModel.addFileModel(f1);
-        f1.setProjectModel(projectModel);
-        projectModel.addFileModel(f2);
-        f2.setProjectModel(projectModel);
+        projectModel.addContainedFile(f1);
+        f1.setBoundProject(projectModel);
+        projectModel.addContainedFile(f2);
+        f2.setBoundProject(projectModel);
 
         return projectModel;
     }

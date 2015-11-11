@@ -76,7 +76,7 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
                 /*
                  * Make sure we don't add try to create multiple projects out of it
                  */
-                if (payload.getProjectModel() != null)
+                if (payload.getBoundProject() != null)
                     return;
 
                 // get a default name from the parent file (if the maven project doesn't contain one)
@@ -92,20 +92,20 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
                     ArchiveModel archiveModel = payload.getParentArchive();
                     if (archiveModel != null && !isAlreadyMavenProject(archiveModel))
                     {
-                        archiveModel.setProjectModel(mavenProjectModel);
+                        archiveModel.setBoundProject(mavenProjectModel);
 
-                        mavenProjectModel.setRootFileModel(archiveModel);
+                        mavenProjectModel.setRootOriginLocation(archiveModel);
 
                         // Attach the project to all files within the archive
                         for (FileModel f : archiveModel.getContainedFileModels())
                         {
                             // don't add archive models, as those really are separate projects...
                             // also, don't set the project model if one is already set
-                            if (!(f instanceof ArchiveModel) && f.getProjectModel() == null)
+                            if (!(f instanceof ArchiveModel) && f.getBoundProject() == null)
                             {
                                 // only set it if it has not already been set
-                                f.setProjectModel(mavenProjectModel);
-                                mavenProjectModel.addFileModel(f);
+                                f.setBoundProject(mavenProjectModel);
+                                mavenProjectModel.addContainedFile(f);
                             }
                         }
                     }
@@ -116,9 +116,9 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
                         FileModel parentFileModel = new FileService(event.getGraphContext()).findByPath(parentFile.getAbsolutePath());
                         if (parentFileModel != null && !isAlreadyMavenProject(parentFileModel))
                         {
-                            parentFileModel.setProjectModel(mavenProjectModel);
-                            mavenProjectModel.addFileModel(parentFileModel);
-                            mavenProjectModel.setRootFileModel(parentFileModel);
+                            parentFileModel.setBoundProject(mavenProjectModel);
+                            mavenProjectModel.addContainedFile(parentFileModel);
+                            mavenProjectModel.setRootOriginLocation(parentFileModel);
 
                             // now add all child folders that do not contain pom files
                             for (FileModel childFile : parentFileModel.getFilesInDirectory())
@@ -153,7 +153,7 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
      */
     private boolean isAlreadyMavenProject(FileModel fileModel)
     {
-        return fileModel.getProjectModel() != null && fileModel.getProjectModel() instanceof MavenProjectModel;
+        return fileModel.getBoundProject() != null && fileModel.getBoundProject() instanceof MavenProjectModel;
     }
 
     private void addFilesToModel(MavenProjectModel mavenProjectModel, FileModel fileModel)
@@ -170,8 +170,8 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
             }
         }
 
-        fileModel.setProjectModel(mavenProjectModel);
-        mavenProjectModel.addFileModel(fileModel);
+        fileModel.setBoundProject(mavenProjectModel);
+        mavenProjectModel.addContainedFile(fileModel);
 
         // now recursively all files to the project
         for (FileModel childFile : fileModel.getFilesInDirectory())
@@ -346,7 +346,7 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
         MavenProjectModel project = null;
         for (MavenProjectModel possibleProject : possibleProjects)
         {
-            if (possibleProject.getRootFileModel() != null)
+            if (possibleProject.getRootOriginLocation() != null)
             {
                 return possibleProject;
             }
@@ -372,7 +372,7 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
         }
         for (MavenProjectModel mavenProjectModel : mavenProjectModels)
         {
-            if (mavenProjectModel.getRootFileModel() == null)
+            if (mavenProjectModel.getRootOriginLocation() == null)
             {
                 // this is a stub... we can fill it in with details
                 return mavenProjectModel;

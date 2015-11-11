@@ -17,7 +17,7 @@ public interface WindupVertexFrame extends VertexFrame
      *
      * @see org.jboss.windup.graph.GraphTypeManager
      */
-    public static final String TYPE_PROP = "w:vertextype";
+    public static final String TYPE_PROP = "w:type";
 
     @JavaHandler
     @Override

@@ -55,7 +55,7 @@ public class CreateJBossJBPMReportRuleProvider extends AbstractRuleProvider
                             WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
                             for (FileModel inputPath : configurationModel.getInputPaths())
                             {
-                                ProjectModel projectModel = inputPath.getProjectModel();
+                                ProjectModel projectModel = inputPath.getBoundProject();
                                 createJbpmReport(event.getGraphContext(), projectModel);
                             }
                         }

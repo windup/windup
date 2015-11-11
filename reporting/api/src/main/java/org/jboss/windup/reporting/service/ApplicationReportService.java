@@ -57,7 +57,7 @@ public class ApplicationReportService extends GraphService<ApplicationReportMode
         pipe.out(ApplicationReportModel.REPORT_TO_PROJECT_MODEL);
 
         // check that the project for this application report is the same as the root project for the provided fileModel
-        ProjectModel rootProjectModel = fileModel.getProjectModel();
+        ProjectModel rootProjectModel = fileModel.getBoundProject();
         if (rootProjectModel == null)
         {
             return null;
@@ -66,8 +66,8 @@ public class ApplicationReportService extends GraphService<ApplicationReportMode
         {
             rootProjectModel = rootProjectModel.getRootProjectModel();
         }
-        String rootFilePath = rootProjectModel.getRootFileModel().getFilePath();
-        pipe.out(ProjectModel.ROOT_FILE_MODEL);
+        String rootFilePath = rootProjectModel.getRootOriginLocation().getFilePath();
+        pipe.out(ProjectModel.ROOT_ORIGIN_LOCATION);
         pipe.has(FileModel.FILE_PATH, rootFilePath);
 
         pipe.back("applicationReport");

@@ -66,9 +66,9 @@ public class ProjectModelToOrganizationsMethod implements WindupFreeMarkerMethod
         }
         ProjectModel projectModel = (ProjectModel) stringModelArg.getWrappedObject();
 
-        if (projectModel.getRootFileModel() instanceof ArchiveModel)
+        if (projectModel.getRootOriginLocation() instanceof ArchiveModel)
         {
-            result = ((ArchiveModel) projectModel.getRootFileModel()).getOrganizationModels();
+            result = ((ArchiveModel) projectModel.getRootOriginLocation()).getOrganizationModels();
         }
 
         ExecutionStatistics.get().end(NAME);

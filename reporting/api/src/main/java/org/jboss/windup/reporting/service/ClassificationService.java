@@ -85,7 +85,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
     public int getMigrationEffortPoints(ProjectModel projectModel, Set<String> includeTags, Set<String> excludeTags, boolean recursive)
     {
         GremlinPipeline<Vertex, Vertex> classificationPipeline = new GremlinPipeline<>(projectModel.asVertex());
-        classificationPipeline.out(ProjectModel.PROJECT_MODEL_TO_FILE).in(ClassificationModel.FILE_MODEL);
+        classificationPipeline.out(ProjectModel.CONTAINED_FILES).in(ClassificationModel.FILE_MODEL);
         classificationPipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, ClassificationModel.TYPE);
 
         int classificationEffort = 0;

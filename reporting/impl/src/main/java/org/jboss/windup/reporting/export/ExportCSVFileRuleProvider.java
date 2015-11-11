@@ -84,7 +84,7 @@ public class ExportCSVFileRuleProvider extends AbstractRuleProvider
             {
                 for (InlineHintModel hint : hints)
                 {
-                    final ProjectModel parentRootProjectModel = hint.getFile().getProjectModel().getRootProjectModel();
+                    final ProjectModel parentRootProjectModel = hint.getFile().getBoundProject().getRootProjectModel();
                     String links = buildLinkString(hint.getLinks());
                     String ruleId = hint.getRuleID() != null ? hint.getRuleID() : "";
                     String title = hint.getTitle() != null ? hint.getTitle() : "";
@@ -94,9 +94,9 @@ public class ExportCSVFileRuleProvider extends AbstractRuleProvider
                     String filePath = "";
                     if (hint.getFile() != null)
                     {
-                        if (hint.getFile().getProjectModel() != null)
+                        if (hint.getFile().getBoundProject() != null)
                         {
-                            projectNameString = hint.getFile().getProjectModel().getName();
+                            projectNameString = hint.getFile().getBoundProject().getName();
                         }
                         fileName = hint.getFile().getFileName();
                         filePath = hint.getFile().getFilePath();
@@ -113,7 +113,7 @@ public class ExportCSVFileRuleProvider extends AbstractRuleProvider
                 {
                     for (FileModel fileModel : classification.getFileModels())
                     {
-                        final ProjectModel parentRootProjectModel = fileModel.getProjectModel().getRootProjectModel();
+                        final ProjectModel parentRootProjectModel = fileModel.getBoundProject().getRootProjectModel();
                         String links = buildLinkString(classification.getLinks());
                         String ruleId = classification.getRuleID() != null ? classification.getRuleID() : "";
                         String classifText = classification.getClassification() != null ? classification.getClassification() : "";
@@ -121,9 +121,9 @@ public class ExportCSVFileRuleProvider extends AbstractRuleProvider
                         String projectNameString = "";
                         String fileName = "";
                         String filePath = "";
-                        if (fileModel.getProjectModel() != null)
+                        if (fileModel.getBoundProject() != null)
                         {
-                            projectNameString = fileModel.getProjectModel().getName();
+                            projectNameString = fileModel.getBoundProject().getName();
                         }
                         fileName = fileModel.getFileName();
                         filePath = fileModel.getFilePath();

@@ -14,37 +14,37 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 /**
  * Base interface representing an abstract project model with a project name, version, type, and location on disk. Projects may be source-based or
  * binary based.
- * 
+ *
  * Additional models may extend this to support additional project types (eg, Maven-based projects).
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(ProjectModel.TYPE)
 public interface ProjectModel extends WindupVertexFrame
 {
     public static final String TYPE = "Project";
-    public static final String DEPENDENCY = "dependency";
-    public static final String PARENT_PROJECT = "parentProject";
-    public static final String ROOT_FILE_MODEL = "rootFile";
-    public static final String PROJECT_MODEL_TO_FILE = "projectModelToFile";
+    public static final String PREFIX = "Project:";
+    public static final String DEPENDENCY = PREFIX + "dependency";
+    public static final String PARENT_PROJECT = PREFIX + "parentProject";
+    public static final String ROOT_ORIGIN_LOCATION = PREFIX + "rootOriginLocation";
+    public static final String CONTAINED_FILES = PREFIX + "containedFiles";
     public static final String SOURCE_BASED = "sourceBased";
-    public static final String DESCRIPTION = "description";
-    public static final String ORGANIZATION = "organization";
-    public static final String URL = "url";
-    public static final String NAME = "name";
-    public static final String VERSION = "version";
-    public static final String PROJECT_TYPE = "projectType";
+    public static final String DESCRIPTION = PREFIX + "description";
+    public static final String ORGANIZATION = PREFIX + "organization";
+    public static final String URL = PREFIX + "url";
+    public static final String NAME = PREFIX + "name";
+    public static final String VERSION = PREFIX + "version";
+    public static final String PROJECT_TYPE = PREFIX + "type";
 
     /**
-     * This represents the root directory (in the case of a source-based analysis) or root archive (for binary analysis) containing this particular
-     * project.
-     * 
+     * This represents the root directory (in the case of a source-based analysis)
+     * or root archive (for binary analysis) containing this particular project.
      */
-    @Adjacency(label = ROOT_FILE_MODEL, direction = Direction.OUT)
-    void setRootFileModel(FileModel fileModel);
+    @Adjacency(label = ROOT_ORIGIN_LOCATION, direction = Direction.OUT)
+    void setRootOriginLocation(FileModel fileModel);
 
-    @Adjacency(label = ROOT_FILE_MODEL, direction = Direction.OUT)
-    FileModel getRootFileModel();
+    @Adjacency(label = ROOT_ORIGIN_LOCATION, direction = Direction.OUT)
+    FileModel getRootOriginLocation();
 
     /**
      * Indicates whether or not this is a source-based project (eg, the project provided by the user for analysis), or a binary project (eg, as part
@@ -171,24 +171,24 @@ public interface ProjectModel extends WindupVertexFrame
     /**
      * Retrieve all files contained within the project.
      */
-    @Adjacency(label = PROJECT_MODEL_TO_FILE, direction = Direction.OUT)
-    Iterable<FileModel> getFileModels();
+    @Adjacency(label = CONTAINED_FILES, direction = Direction.OUT)
+    Iterable<FileModel> getContainedFiles();
 
     /**
      * Add a file model to the project.
      */
-    @Adjacency(label = PROJECT_MODEL_TO_FILE, direction = Direction.OUT)
-    void addFileModel(FileModel fileModel);
+    @Adjacency(label = CONTAINED_FILES, direction = Direction.OUT)
+    void addContainedFile(FileModel fileModel);
 
     /**
      * Gets all contained files that are not directories
      */
-    @GremlinGroovy("it.out('" + PROJECT_MODEL_TO_FILE + "').has('" + FileModel.IS_DIRECTORY + "', false)")
-    Iterable<FileModel> getFileModelsNoDirectories();
+    @GremlinGroovy("it.out('" + CONTAINED_FILES + "').has('" + FileModel.IS_DIRECTORY + "', false)")
+    Iterable<FileModel> getContainedFilesNoDirectories();
 
     /**
      * Returns the project model that represents the whole application. If this projectModel is the root projectModel, it will return it.
-     * 
+     *
      * @return ProjectModel representing the whole application
      */
     @JavaHandler
@@ -196,6 +196,7 @@ public interface ProjectModel extends WindupVertexFrame
 
     abstract class Impl implements ProjectModel, JavaHandlerContext<Vertex>
     {
+        @Override
         public ProjectModel getRootProjectModel()
         {
             ProjectModel projectModel = this;

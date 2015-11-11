@@ -51,7 +51,7 @@ public class DiscoverNonMavenArchiveProjectsRuleProvider extends AbstractRulePro
                     @Override
                     public boolean evaluate(GraphRewrite event, EvaluationContext context, ArchiveModel payload)
                     {
-                        return payload.getProjectModel() == null;
+                        return payload.getBoundProject() == null;
                     }
                     @Override
                     public String toString()
@@ -73,7 +73,7 @@ public class DiscoverNonMavenArchiveProjectsRuleProvider extends AbstractRulePro
                                 hierarchy.add(parentArchive);
                                 
                                 // break once we have added a parent with a project model
-                                if (parentArchive.getProjectModel() != null)
+                                if (parentArchive.getBoundProject() != null)
                                 {
                                     break;
                                 }
@@ -86,13 +86,13 @@ public class DiscoverNonMavenArchiveProjectsRuleProvider extends AbstractRulePro
                             ProjectService projectModelService = new ProjectService(event.getGraphContext());
                             for (ArchiveModel archiveModel : hierarchy)
                             {
-                                ProjectModel projectModel = archiveModel.getProjectModel();
+                                ProjectModel projectModel = archiveModel.getBoundProject();
                                 
                                 // create the project if we don't already have one
                                 if (projectModel == null) {
                                     projectModel = projectModelService.create();
                                     projectModel.setName(archiveModel.getArchiveName());
-                                    projectModel.setRootFileModel(archiveModel);
+                                    projectModel.setRootOriginLocation(archiveModel);
                                     projectModel.setDescription("Unidentified Archive");
                                     
                                     if(ZipUtil.endsWithZipExtension(archiveModel.getArchiveName()))
@@ -104,17 +104,17 @@ public class DiscoverNonMavenArchiveProjectsRuleProvider extends AbstractRulePro
                                         }
                                     }
                                     
-                                    archiveModel.setProjectModel(projectModel);
+                                    archiveModel.setBoundProject(projectModel);
                                     // Attach the project to all files within the archive
                                     for (FileModel f : archiveModel.getContainedFileModels())
                                     {
                                         // don't add archive models, as those really are separate projects...
                                         // also, don't set the project model if one is already set
-                                        if (!(f instanceof ArchiveModel) && f.getProjectModel() == null)
+                                        if (!(f instanceof ArchiveModel) && f.getBoundProject() == null)
                                         {
                                             // only set it if it has not already been set
-                                            f.setProjectModel(projectModel);
-                                            projectModel.addFileModel(f);
+                                            f.setBoundProject(projectModel);
+                                            projectModel.addContainedFile(f);
                                         }
                                     }
                                 }

@@ -11,20 +11,21 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
  * Extends ProjectModel to support maven specific properties.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- * 
+ *
  */
 @TypeValue(MavenProjectModel.TYPE)
 public interface MavenProjectModel extends ProjectModel
 {
-    public static final String MAVEN_POM = "mavenPom";
-    public static final String PARENT_MAVEN_POM = "parentMavenPOM";
     public static final String TYPE = "MavenFacet";
-    public static final String ARTIFACT_ID = "artifactId";
-    public static final String GROUP_ID = "groupId";
+    public static final String PREFIX = "Maven:";
+    public static final String POM = PREFIX + "pom";
+    public static final String PARENT_MAVEN_POM = PREFIX + "parentPom";
+    public static final String ARTIFACT_ID = PREFIX + "artifactId";
+    public static final String GROUP_ID = PREFIX + "groupId";
     public static final String SPECIFICATION_VERSION = "specificationVersion";
-    public static final String MAVEN_IDENTIFIER = "mavenIdentifier";
+    public static final String MAVEN_IDENTIFIER = PREFIX + "identifier";
 
     /**
      * Contains the parent POM (if available).
@@ -47,13 +48,13 @@ public interface MavenProjectModel extends ProjectModel
     /**
      * Contains the maven pom {@link XmlFileModel}.
      */
-    @Adjacency(label = MAVEN_POM, direction = Direction.OUT)
+    @Adjacency(label = POM, direction = Direction.OUT)
     Iterable<XmlFileModel> getMavenPom();
 
     /**
      * Contains the maven pom {@link XmlFileModel}.
      */
-    @Adjacency(label = MAVEN_POM, direction = Direction.OUT)
+    @Adjacency(label = POM, direction = Direction.OUT)
     void addMavenPom(XmlFileModel pom);
 
     /**

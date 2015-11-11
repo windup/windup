@@ -91,8 +91,8 @@ public class XMLFileNestedConditionTest
             FileUtils.deleteDirectory(outputPath.toFile());
             Files.createDirectories(outputPath);
 
-            inputPath.setProjectModel(pm);
-            pm.setRootFileModel(inputPath);
+            inputPath.setBoundProject(pm);
+            pm.setRootOriginLocation(inputPath);
 
             WindupConfiguration windupConfiguration = new WindupConfiguration()
                         .setRuleProviderFilter(new NotPredicate(

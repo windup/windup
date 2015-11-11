@@ -58,7 +58,7 @@ public class ClassificationServiceTest
 
             boolean foundF1Effort = false;
             boolean foundF2Effort = false;
-            for (FileModel fm : projectModel.getFileModels())
+            for (FileModel fm : projectModel.getContainedFiles())
             {
                 if (fm.getFilePath().equals("/f1"))
                 {
@@ -99,10 +99,10 @@ public class ClassificationServiceTest
         b2.setEffort(3);
 
         ProjectModel projectModel = context.getFramed().addVertex(null, ProjectModel.class);
-        projectModel.addFileModel(f1);
-        f1.setProjectModel(projectModel);
-        projectModel.addFileModel(f2);
-        f2.setProjectModel(projectModel);
+        projectModel.addContainedFile(f1);
+        f1.setBoundProject(projectModel);
+        projectModel.addContainedFile(f2);
+        f2.setBoundProject(projectModel);
 
         return projectModel;
     }

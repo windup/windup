@@ -219,13 +219,13 @@ public class ProcyonDecompilerOperation extends AbstractDecompilerOperation
                         if (classFileModel != null && classFileModel instanceof JavaClassFileModel)
                         {
                             decompiledFileModel.setParentArchive(classFileModel.getParentArchive());
-                            ProjectModel projectModel = classFileModel.getProjectModel();
+                            ProjectModel projectModel = classFileModel.getBoundProject();
 
                             // only add it to the project model if it is not already there
-                            if (decompiledFileModel.getProjectModel() == null || !decompiledFileModel.getProjectModel().equals(projectModel))
+                            if (decompiledFileModel.getBoundProject() == null || !decompiledFileModel.getBoundProject().equals(projectModel))
                             {
-                                decompiledFileModel.setProjectModel(projectModel);
-                                projectModel.addFileModel(decompiledFileModel);
+                                decompiledFileModel.setBoundProject(projectModel);
+                                projectModel.addContainedFile(decompiledFileModel);
                             }
 
                             if (decompiledFileModel.getParentArchive() != null)

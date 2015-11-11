@@ -64,7 +64,7 @@ public class GenerateJBossWebDescriptorRuleProvider extends AbstractRuleProvider
 
                             for (FileModel inputPath : configurationModel.getInputPaths())
                             {
-                                ProjectModel projectModel = inputPath.getProjectModel();
+                                ProjectModel projectModel = inputPath.getBoundProject();
                                 transformWebXml(context, event.getGraphContext(), projectModel);
                             }
                         }

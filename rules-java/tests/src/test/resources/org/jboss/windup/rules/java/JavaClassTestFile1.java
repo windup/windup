@@ -65,7 +65,7 @@ public class JavaClassTestFile1
             // Create FileModel for $inputDir
             FileModel inputPathFrame = context.getFramed().addVertex(null, FileModel.class);
             inputPathFrame.setFilePath(inputDir);
-            inputPathFrame.setProjectModel(pm);
+            inputPathFrame.setBoundProject(pm);
             pm.addFileModel(inputPathFrame);
 
             // Set project.rootFileModel to inputPath
@@ -74,13 +74,13 @@ public class JavaClassTestFile1
             // Create FileModel for $inputDir/HintsClassificationsTest.java
             FileModel fileModel = context.getFramed().addVertex(null, FileModel.class);
             fileModel.setFilePath(inputDir + "/JavaHintsClassificationsTest.java");
-            fileModel.setProjectModel(pm);
+            fileModel.setBoundProject(pm);
             pm.addFileModel(fileModel);
 
             // Create FileModel for $inputDir/JavaClassTest.java
             fileModel = context.getFramed().addVertex(null, FileModel.class);
             fileModel.setFilePath(inputDir + "/JavaClassTest.java");
-            fileModel.setProjectModel(pm);
+            fileModel.setBoundProject(pm);
             pm.addFileModel(fileModel);
 
             context.getGraph().getBaseGraph().commit();

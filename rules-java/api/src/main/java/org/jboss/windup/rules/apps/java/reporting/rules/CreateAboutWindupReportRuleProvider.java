@@ -60,7 +60,7 @@ public class CreateAboutWindupReportRuleProvider extends AbstractRuleProvider
             {
                 for (FileModel inputPath : payload.getInputPaths())
                 {
-                    ProjectModel projectModel = inputPath.getProjectModel();
+                    ProjectModel projectModel = inputPath.getBoundProject();
                     if (projectModel == null)
                     {
                         throw new WindupException("Error, no project found in: " + inputPath.getFilePath());
