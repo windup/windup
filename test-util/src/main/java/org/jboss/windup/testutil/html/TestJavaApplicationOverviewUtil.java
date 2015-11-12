@@ -1,18 +1,21 @@
 package org.jboss.windup.testutil.html;
 
-import java.util.List;
-
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+
+import java.util.List;
 
 /**
  * Contains methods for testing the Java Application Overview report.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- * 
  */
 public class TestJavaApplicationOverviewUtil extends TestReportUtil
 {
+
     public void checkMainEffort(int expectedEffort)
     {
         WebElement effortElement = getDriver()
@@ -41,9 +44,9 @@ public class TestJavaApplicationOverviewUtil extends TestReportUtil
             throw new CheckFailedException("Unable to find app section with name: " + appSection);
         }
 
-        WebElement effortElement = appSectionEl.findElement(By.xpath(
-                    "../..//div[@class = 'points']/div[text() = 'Story Points']/../div[@class = 'number']"));
-        String effortString = effortElement.getText().trim();
+        String xpath = getElementXPath(getDriver(),appSectionEl) + "/" + "../..//div[@class = \\'points\\']/div[text() = \\'Story Points\\']/../div[@class = \\'number\\']";
+
+        String effortString = getStringValueForXpathElement(getDriver(),xpath).trim();
         effortString = effortString.replace(",", "");
 
         try
@@ -60,7 +63,7 @@ public class TestJavaApplicationOverviewUtil extends TestReportUtil
 
     /**
      * Checks if the given App section, filepath, and effort level can be seen in the report.
-     * 
+     * <p>
      * For example checkFilePathEffort("src_example", "src/main/resources/test.properties", 13) will ensure that an
      * application called "src_example" is in the report, with a line referencing "src/main/resources/test.properties"
      * and that this line contains the effort level 13).
@@ -86,7 +89,7 @@ public class TestJavaApplicationOverviewUtil extends TestReportUtil
             {
                 try
                 {
-                    int number = Integer.parseInt(element.getText());
+                    int number = Integer.parseInt(getTextForElement(element));
                     if (number == effort)
                     {
                         return;
@@ -111,7 +114,7 @@ public class TestJavaApplicationOverviewUtil extends TestReportUtil
 
     /**
      * Checks if the given App section, filepath, and tag can be found in the report.
-     * 
+     * <p>
      * For example calling checkFilePathAndIssues("src_example", "src/main/resources/test.properties",
      * "Web Servlet again") will ensure that an application called "src_example" is in the report, with a line
      * referencing "src/main/resources/test.properties" and that this line contains text in the issues section saying
@@ -134,7 +137,8 @@ public class TestJavaApplicationOverviewUtil extends TestReportUtil
         List<WebElement> elements = fileRowElement.findElements(By.xpath("./td[position() = 3]"));
         for (WebElement element : elements)
         {
-            if (element.getText() != null && element.getText().contains(text))
+            String elementText = getTextForElement(element);
+            if (elementText != null && elementText.contains(text))
             {
                 return;
             }
@@ -146,7 +150,7 @@ public class TestJavaApplicationOverviewUtil extends TestReportUtil
 
     /**
      * Checks if the given App section, filepath, and tag can be found in the report.
-     * 
+     * <p>
      * For example calling checkFilePathAndTag("src_example", "src/main/resources/test.properties", "Properties") will
      * ensure that an application called "src_example" is in the report, with a line referencing
      * "src/main/resources/test.properties" and that this file is tagged "Properties"
@@ -168,10 +172,11 @@ public class TestJavaApplicationOverviewUtil extends TestReportUtil
         List<WebElement> elements = fileRowElement.findElements(By.xpath("./td[position() = 2]/span"));
         for (WebElement element : elements)
         {
-            if (element.getText() != null && element.getText().equals(tag))
-            {
-                return;
-            }
+            String spanValue = getTextForElement(element);
+            if (spanValue.equals(tag))
+                {
+                    return;
+                }
         }
 
         throw new CheckFailedException("Unable to find app: " + appSection + " file: " + filePath + " with tag: "
@@ -179,8 +184,35 @@ public class TestJavaApplicationOverviewUtil extends TestReportUtil
     }
 
     /**
+     * In case the element's css is display:none, selenium does not see it using getText().
+     * Therefore this methods uses javascript to query the value
+     * @param element
+     * @return
+     */
+    private String getTextForElement(WebElement element) {
+        HtmlUnitDriver driver=(HtmlUnitDriver) getDriver();
+        String xpath = getElementXPath(driver,element);
+        String result = getStringValueForXpathElement(driver,xpath);
+        return result.trim();
+    }
+
+    /**
+     * Returns the xpath full path of the given element. E.g something like /html/body/div[2]/p
+     * @param driver
+     * @param element
+     * @return
+     */
+    private String getElementXPath(WebDriver driver, WebElement element) {
+        return "/html/" + (String)((JavascriptExecutor)driver).executeScript("gPt=function(c){if(c.id!==''){return'id(\"'+c.id+'\")'}if(c===document.body){return c.tagName}var a=0;var e=c.parentNode.childNodes;for(var b=0;b<e.length;b++){var d=e[b];if(d===c){return gPt(c.parentNode)+'/'+c.tagName+'['+(a+1)+']'}if(d.nodeType===1&&d.tagName===c.tagName){a++}}};return gPt(arguments[0]).toLowerCase();", element);
+    }
+
+    private String getStringValueForXpathElement(WebDriver driver, String xpathToElement) {
+        return (String)((JavascriptExecutor)driver).executeScript("var foundDocument=document.evaluate( '" +xpathToElement + "', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null ).singleNodeValue; if(foundDocument !=null) {return foundDocument.textContent;} else {return null} ");
+    }
+
+    /**
      * Checks if the given App section, filepath, and tag can be found in the report.
-     * 
+     * <p>
      * For example calling checkFilePathAndTag("src_example", "src/main/resources/test.properties") will ensure that an
      * application called "src_example" is in the report, with a line referencing "src/main/resources/test.properties"
      */
@@ -203,7 +235,7 @@ public class TestJavaApplicationOverviewUtil extends TestReportUtil
 
     private WebElement getFileRowElement(String appSection, String filePath)
     {
-        WebElement fileTable = getAppSectionElement(appSection).findElement(By.xpath("../../table"));
+        WebElement fileTable = getAppSectionElement(appSection).findElement(By.xpath("../../div[contains(@class,'panel-body')]/table"));
 
         WebElement fileRow = fileTable.findElement(By
                     .xpath("./tbody/tr/td/a[normalize-space(text()) = '" + filePath + "']/../.."));
@@ -215,11 +247,23 @@ public class TestJavaApplicationOverviewUtil extends TestReportUtil
         List<WebElement> titleElements = getDriver().findElements(By.className("panel-title"));
         for (WebElement el : titleElements)
         {
-            if (el.getText() != null && appSection.equals(el.getText().trim()))
+            String panelTitleText = el.getText();
+            if (panelTitleText != null)
             {
-                return el;
+                panelTitleText = parseOutAppTitle(panelTitleText);
+                if (appSection.equals(panelTitleText.trim()))
+                {
+                    return el;
+                }
             }
+
         }
         return null;
+    }
+
+    private String parseOutAppTitle(String input)
+    {
+        //remove story points information
+        return input.replaceAll("\\(.*\\)", "");
     }
 }
