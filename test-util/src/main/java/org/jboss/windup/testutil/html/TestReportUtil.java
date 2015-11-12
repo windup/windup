@@ -7,6 +7,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**
  * Contains utility methods for assisting tests in interacting with the generated reports.
@@ -19,7 +20,10 @@ public class TestReportUtil
 
     public TestReportUtil()
     {
-        this.driver = new HtmlUnitDriver(false);
+        DesiredCapabilities capabilities = new DesiredCapabilities();
+        capabilities.setBrowserName("firefox");
+        capabilities.setJavascriptEnabled(true);
+        this.driver = new HtmlUnitDriver(capabilities);
     }
 
     /**

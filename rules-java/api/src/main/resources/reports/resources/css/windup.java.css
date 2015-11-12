@@ -14,6 +14,19 @@
   width: 14px;
 }
 
+.panel .panel-body  .points .number  { 
+     width:100%;
+     font-size: 50pt;
+}
+
+.arrowIcon {
+    padding-right:30px;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
 .totalLoe {
   font-size: 100px;
   display: block;

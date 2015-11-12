@@ -64,10 +64,10 @@ body {
 	border-bottom-right-radius: 8pt;
 }
 
-.panel.panel-primary {
+.panel.panel-primary.panel-boarding {
     border-radius: 8pt;
 }
-.panel.panel-primary > .panel-heading {
+.panel.panel-primary.panel-boarding > .panel-heading {
     border-radius: 8px 8px 0 0 !important;
     border-color: #00255D;
 }
@@ -93,6 +93,7 @@ h3.panel-title span.s {
 .projectBox         .points          { width: 49%; }
 .projectBox         .points .number  { font-size: 70pt; }
 .panel .panel-body  .points .number  { font-size: 50pt; width: 1.5em; }
+.panel .panel-body  .points .mainNumber  { font-size: 50pt;}
 
 .panel .panel-body .info h4 { font-weight: bold; font-size: 11pt; margin: 6pt 0 4pt 0; }
 .panel .panel-body .info h4:first-child { margin-top: 0; }

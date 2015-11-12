@@ -85,14 +85,17 @@
 
 <#macro projectModelRenderer projectModel>
     <div class="panel panel-primary projectBox">
-        <div class="panel-heading">
-            <h3 class="panel-title">${projectModel.rootFileModel.prettyPath?html}</h3>
+        <#assign panelStoryPoints = getMigrationEffortPoints(projectModel, false, reportModel.includeTags, reportModel.excludeTags)>
+        <div class="panel-heading panel-collapsed clickable">
+            <span class="pull-left"><i class="glyphicon glyphicon-chevron-up arrowIcon"></i></span>
+            <h3 class="panel-title">${projectModel.rootFileModel.prettyPath?html} (${panelStoryPoints} story points)</h3>
         </div>
+        <div class="panel-body" style="display:none">
         <div class="container-fluid summaryMargin">
 
             <!-- Points -->
             <div class="points" style="text-align: center; color: #00254b; padding-bottom: 1ex;">
-                <div class="number">${getMigrationEffortPoints(projectModel, false, reportModel.includeTags, reportModel.excludeTags)}</div>
+                <div class="number">${panelStoryPoints}</div>
                 <div>Story Points</div>
             </div>
 
@@ -155,6 +158,7 @@
             </#list>
         </table>
         </#if>
+        </div>
     </div>
     <#list sortProjectsByPathAscending(projectModel.childProjects) as childProject>
         <@projectModelRenderer childProject/>
@@ -263,10 +267,9 @@
 
 
         <script src="resources/js/jquery-1.10.1.min.js"></script>
-
         <script src="resources/libraries/flot/jquery.flot.min.js"></script>
         <script src="resources/libraries/flot/jquery.flot.pie.min.js"></script>
-
+         <script src="resources/js/windup-overview.js"/>
         <script src="resources/js/bootstrap.min.js"></script>
 
         <@render_pie project=reportModel.projectModel recursive=true elementID="application_pie" includeTags=reportModel.includeTags excludeTags=reportModel.excludeTags />
