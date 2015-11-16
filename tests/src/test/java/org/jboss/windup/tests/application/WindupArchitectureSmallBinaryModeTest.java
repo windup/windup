@@ -15,9 +15,6 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.service.GraphService;
-import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
-import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -58,7 +55,7 @@ public class WindupArchitectureSmallBinaryModeTest extends WindupArchitectureTes
             Path appReportPath = resolveChildPath(reportsDirectory,
                         "Overview_JEE_Example_App__org_windup_example_jee_example_app_1_0_0_\\.html");
             Path appNonClassifiedReportPath = resolveChildPath(reportsDirectory,
-                        "nonclassifiedfiles_JEE_Example_App__org_windup_example_jee_example_app_1_0_0_\\.html");
+                        "compatiblefiles_JEE_Example_App__org_windup_example_jee_example_app_1_0_0_\\.html");
             Path productCatalogBeanPath = resolveChildPath(reportsDirectory, "ProductCatalogBean_java\\.html");
 
             Assert.assertTrue(indexPath.toFile().exists());

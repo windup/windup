@@ -55,6 +55,10 @@ public class TattletaleRuleProvider extends AbstractRuleProvider
         @Override
         public void perform(GraphRewrite event, EvaluationContext context)
         {
+            Boolean generateReport = (Boolean) event.getGraphContext().getOptionMap().get(EnableTattletaleReportOption.NAME);
+            if (generateReport == null || !generateReport)
+                return;
+
             WindupConfigurationModel configuration = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
             for (FileModel input : configuration.getInputPaths())
             {
