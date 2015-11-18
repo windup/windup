@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -19,8 +20,6 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.addon.resource.DirectoryResource;
-import org.jboss.forge.addon.resource.FileResource;
-import org.jboss.forge.addon.resource.Resource;
 import org.jboss.forge.addon.ui.controller.CommandController;
 import org.jboss.forge.addon.ui.output.UIMessage;
 import org.jboss.forge.addon.ui.result.Failed;
@@ -31,6 +30,9 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.TechnologyReference;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.exec.configuration.options.InputPathOption;
 import org.jboss.windup.exec.configuration.options.OutputPathOption;
@@ -49,6 +51,8 @@ import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.ocpsoft.rewrite.config.Configuration;
+import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 
 @RunWith(Arquillian.class)
 public class WindupCommandTest
@@ -76,6 +80,10 @@ public class WindupCommandTest
 
     @Inject
     private UITestHarness uiTestHarness;
+
+    // This is just there to make sure that we have at least one "target" technology available
+    @Inject
+    private SampleProviderForTarget provider;
 
     @Before
     public void beforeTest()
@@ -109,7 +117,7 @@ public class WindupCommandTest
             {
                 controller.initialize();
                 Assert.assertTrue(controller.isEnabled());
-                controller.setValueFor(TargetOption.NAME, Collections.singletonList("jboss"));
+                controller.setValueFor(TargetOption.NAME, Collections.singletonList("eap"));
                 controller.setValueFor(InputPathOption.NAME, Collections.singletonList(inputFile));
                 Assert.assertTrue(controller.canExecute());
                 controller.setValueFor(OutputPathOption.NAME, tempDir);
@@ -505,18 +513,39 @@ public class WindupCommandTest
         controller.setValueFor(InputPathOption.NAME, Collections.singletonList(inputFile)); // FORGE-2524
         final Object value = controller.getValueFor(InputPathOption.NAME);
         Assume.assumeTrue(value instanceof Collection);
-        Assume.assumeTrue(((Collection)value).iterator().hasNext());
-        Assume.assumeTrue(((Collection)value).iterator().next() instanceof File);
-        Assume.assumeTrue(((Collection)value).iterator().next().equals(inputFile));
+        Assume.assumeTrue(((Collection) value).iterator().hasNext());
+        Assume.assumeTrue(((Collection) value).iterator().next() instanceof File);
+        Assume.assumeTrue(((Collection) value).iterator().next().equals(inputFile));
 
         if (outputFile != null)
         {
             controller.setValueFor(OutputPathOption.NAME, outputFile);
         }
-        controller.setValueFor(TargetOption.NAME, Collections.singletonList("jboss"));
+        controller.setValueFor(TargetOption.NAME, Collections.singletonList("eap"));
+
         Assert.assertTrue(controller.canExecute());
         controller.setValueFor("packages", "org.jboss");
         Assert.assertTrue(controller.canExecute());
     }
 
+    /**
+     * This class exists purely to guarantee that we have at least one selection available for "target".
+     */
+    @Singleton
+    public static class SampleProviderForTarget extends AbstractRuleProvider
+    {
+        public SampleProviderForTarget()
+        {
+            super(MetadataBuilder.forProvider(SampleProviderForTarget.class)
+                        .addTag("tag2")
+                        .addSourceTechnology(new TechnologyReference("foo", "[1.0,)"))
+                        .addTargetTechnology(new TechnologyReference("eap", "[1.0,)")));
+        }
+
+        @Override
+        public Configuration getConfiguration(GraphContext context)
+        {
+            return ConfigurationBuilder.begin();
+        }
+    }
 }

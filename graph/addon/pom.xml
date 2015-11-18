@@ -13,17 +13,26 @@
 
     <dependencies>
 
+        <!-- Local Dependencies -->
         <dependency>
             <groupId>org.jboss.windup.graph</groupId>
             <artifactId>windup-graph-api</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.jboss.windup.graph</groupId>
             <artifactId>windup-graph-impl</artifactId>
             <optional>true</optional>
         </dependency>
 
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+            <version>1.7.5</version>
+            <scope>compile</scope>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- Addon Dependencies -->
         <dependency>
             <groupId>org.jboss.windup.utils</groupId>
             <artifactId>windup-utils</artifactId>
@@ -34,11 +43,10 @@
         <!-- Furnace Container -->
         <dependency>
             <groupId>org.jboss.forge.furnace.container</groupId>
-            <artifactId>cdi</artifactId>
+            <artifactId>simple</artifactId>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
-
 
     </dependencies>
 

@@ -25,7 +25,7 @@ import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
-import org.jboss.windup.graph.GraphTypeRegistry;
+import org.jboss.windup.graph.GraphTypeManager;
 import org.jboss.windup.graph.frames.TypeAwareFramedGraphQuery;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -508,9 +508,9 @@ public class IterationAutomicCommitTest
         }
 
         @Override
-        public GraphTypeRegistry getGraphTypeRegistry()
+        public GraphTypeManager getGraphTypeManager()
         {
-            return delegate.getGraphTypeRegistry();
+            return delegate.getGraphTypeManager();
         }
 
         @Override

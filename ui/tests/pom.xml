@@ -11,7 +11,7 @@
     <name>Windup Engine - UI Tests</name>
 
     <properties>
-        <version.forge>2.16.2.Final</version.forge>
+        <version.forge>2.20.1.Final</version.forge>
     </properties>
 
     <dependencies>
