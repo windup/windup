@@ -46,7 +46,7 @@ public class TargetOption extends AbstractConfigurationOption
     @Override
     public String getDescription()
     {
-        return "The target server or framework to migrate to. This could include multiple items (eg, \"JBoss EAP 6\" and \"EJB 3\")";
+        return "The target server or framework to migrate to. This could include multiple items (eg, \"eap\" and \"hibernate\")";
     }
 
     @Override

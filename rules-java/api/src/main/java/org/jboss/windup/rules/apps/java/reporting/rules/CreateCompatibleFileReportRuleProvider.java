@@ -38,8 +38,11 @@ public class CreateCompatibleFileReportRuleProvider extends AbstractRuleProvider
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        ConditionBuilder applicationProjectModelsFound = Query
-                    .fromType(WindupConfigurationModel.class);
+        Boolean generateReport = (Boolean)context.getOptionMap().get(EnableCompatibleFilesReportOption.NAME);
+        if (generateReport == null || !generateReport)
+            return ConfigurationBuilder.begin();
+
+        ConditionBuilder applicationProjectModelsFound = Query.fromType(WindupConfigurationModel.class);
 
         AbstractIterationOperation<WindupConfigurationModel> addApplicationReport = new AbstractIterationOperation<WindupConfigurationModel>()
         {
@@ -88,7 +91,7 @@ public class CreateCompatibleFileReportRuleProvider extends AbstractRuleProvider
 
         // Set the filename for the report
         ReportService reportService = new ReportService(context);
-        reportService.setUniqueFilename(applicationReportModel, "nonclassifiedfiles_" + projectModel.getName(), "html");
+        reportService.setUniqueFilename(applicationReportModel, "compatiblefiles_" + projectModel.getName(), "html");
 
         return applicationReportModel;
     }

@@ -28,6 +28,8 @@ import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.rules.apps.java.model.JavaApplicationOverviewReportModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.reporting.rules.CreateJavaApplicationOverviewReportRuleProvider;
+import org.jboss.windup.rules.apps.java.reporting.rules.EnableCompatibleFilesReportOption;
+import org.jboss.windup.rules.apps.tattletale.EnableTattletaleReportOption;
 import org.junit.Assert;
 
 /**
@@ -150,6 +152,8 @@ public abstract class WindupArchitectureTest
         windupConfiguration.setOptionValue(SourceModeOption.NAME, sourceMode);
         windupConfiguration.setOptionValue(ScanPackagesOption.NAME, includePackages);
         windupConfiguration.setOptionValue(ExcludePackagesOption.NAME, excludePackages);
+        windupConfiguration.setOptionValue(EnableTattletaleReportOption.NAME, true);
+        windupConfiguration.setOptionValue(EnableCompatibleFilesReportOption.NAME, true);
 
         for (Map.Entry<String, Object> otherOption : otherOptions.entrySet())
         {
@@ -199,11 +203,12 @@ public abstract class WindupArchitectureTest
         return (JavaApplicationOverviewReportModel) reportModel;
     }
 
-    protected void allDecompiledFilesAreLinked(GraphContext context) {
-        GraphService<JavaClassFileModel> classModels = new GraphService<>(context,JavaClassFileModel.class);
+    protected void allDecompiledFilesAreLinked(GraphContext context)
+    {
+        GraphService<JavaClassFileModel> classModels = new GraphService<>(context, JavaClassFileModel.class);
         for (JavaClassFileModel javaClassFileModel : classModels.findAllWithoutProperty(JavaClassFileModel.SKIP_DECOMPILATION, true))
         {
-             Assert.assertNotNull(javaClassFileModel.getJavaClass().getDecompiledSource());
+            Assert.assertNotNull(javaClassFileModel.getJavaClass().getDecompiledSource());
         }
 
     }
