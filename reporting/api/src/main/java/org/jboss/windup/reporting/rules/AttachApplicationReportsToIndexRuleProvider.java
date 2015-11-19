@@ -51,13 +51,19 @@ public class AttachApplicationReportsToIndexRuleProvider extends AbstractRulePro
             {
                 final ApplicationReportIndexService applicationReportIndexService = new ApplicationReportIndexService(event.getGraphContext());
                 final ProjectModel projectModel = payload.getProjectModel();
-                final ApplicationReportIndexModel index;
-                if (projectModel == null)
-                    index = applicationReportIndexService.getOrCreateGlobalApplicationIndex();
-                else
-                    index = applicationReportIndexService.getApplicationReportIndexForProjectModel(payload.getProjectModel());
 
-                index.addApplicationReportModel(payload);
+                if (projectModel == null || Boolean.TRUE == payload.getDisplayInGlobalApplicationIndex())
+                {
+                    ApplicationReportIndexModel index = applicationReportIndexService.getOrCreateGlobalApplicationIndex();
+                    index.addApplicationReportModel(payload);
+                }
+
+                if (projectModel != null)
+                {
+                    ApplicationReportIndexModel index = applicationReportIndexService
+                                .getApplicationReportIndexForProjectModel(payload.getProjectModel());
+                    index.addApplicationReportModel(payload);
+                }
             }
         }
 

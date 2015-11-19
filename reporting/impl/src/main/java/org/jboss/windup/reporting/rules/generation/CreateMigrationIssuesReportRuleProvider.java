@@ -17,12 +17,13 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+import com.google.common.collect.Iterables;
+
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public class CreateMigrationIssuesReportRuleProvider extends AbstractRuleProvider
 {
-
     public static final String TEMPLATE_PATH = "/reports/templates/migration-issues.ftl";
 
     public CreateMigrationIssuesReportRuleProvider()
@@ -39,7 +40,7 @@ public class CreateMigrationIssuesReportRuleProvider extends AbstractRuleProvide
                     .perform(new CreateMigrationIssueReportOperation());
     }
 
-    private void createMigrationIssuesReport(GraphContext context, ProjectModel projectModel)
+    private ApplicationReportModel createMigrationIssuesReport(GraphContext context, ProjectModel projectModel)
     {
         ApplicationReportService applicationReportService = new ApplicationReportService(context);
         ApplicationReportModel report = applicationReportService.create();
@@ -61,6 +62,7 @@ public class CreateMigrationIssuesReportRuleProvider extends AbstractRuleProvide
             report.setProjectModel(projectModel);
             reportService.setUniqueFilename(report, "migration_issues", "html");
         }
+        return report;
     }
 
     private class CreateMigrationIssueReportOperation extends GraphOperation
@@ -68,11 +70,19 @@ public class CreateMigrationIssuesReportRuleProvider extends AbstractRuleProvide
         @Override
         public void perform(GraphRewrite event, EvaluationContext context)
         {
-            createMigrationIssuesReport(event.getGraphContext(), null);
+            int inputApplicationCount = Iterables.size(WindupConfigurationService.getConfigurationModel(event.getGraphContext()).getInputPaths());
+
+            // Don't create a separate global report if there is only a single application
+            if (inputApplicationCount > 1)
+                createMigrationIssuesReport(event.getGraphContext(), null);
 
             for (FileModel inputPath : WindupConfigurationService.getConfigurationModel(event.getGraphContext()).getInputPaths())
             {
-                createMigrationIssuesReport(event.getGraphContext(), inputPath.getProjectModel());
+                ApplicationReportModel report = createMigrationIssuesReport(event.getGraphContext(), inputPath.getProjectModel());
+
+                // if we have only a single application, attach this report to the global index
+                if (inputApplicationCount == 1)
+                    report.setDisplayInGlobalApplicationIndex(true);
             }
         }
     }
