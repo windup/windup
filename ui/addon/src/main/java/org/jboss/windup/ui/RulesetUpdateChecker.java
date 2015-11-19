@@ -38,7 +38,7 @@ public class RulesetUpdateChecker
         if (updater.rulesetsNeedUpdate())
         {
             System.out.println("\nThe rulesets are outdated: " + updater.getRulesetsDir()
-                + "\nConsider running Windup with --updateRuleset or --updateDistribution.\n");
+                + "\nConsider running Windup with --updateRulesets.\n");
         }
     }
 
