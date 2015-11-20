@@ -287,3 +287,7 @@ p.windup-contributors  {
 .floatRight {
     float: right;
 }
+
+.warns {
+    font-weight: bold;
+}

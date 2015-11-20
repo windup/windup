@@ -61,8 +61,15 @@
         <#assign warnings = sourceReportModel.sourceFileModel.inlineHintCount + sourceReportModel.sourceFileModel.classificationCount>
         <#-- The ~Count are, in fact, Gremlin queries. Don't call more than once. -->
         <td class="warnCount${warnings}">
-            <h4 class="warns">Warnings: ${warnings} items</h4>
-            <#if warnings != 0 >
+            <#if warnings == 1>
+                <#list sourceReportModel.sourceFileModel.classificationModels.iterator() as classification>
+                    ${classification.classification}
+                </#list>
+                <#list sourceReportModel.sourceFileModel.inlineHints.iterator() as hintLine>
+                    ${hintLine.title}
+                </#list>
+            <#elseif warnings &gt; 1 >
+                <div class="warns">Warnings: ${warnings} items</div>
                 <ul class='notifications'>
                     <#assign map = {}>
                     <#list sourceReportModel.sourceFileModel.classificationModels.iterator() as classification>
