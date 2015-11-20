@@ -99,6 +99,7 @@ h3.panel-title span.s {
 .panel .panel-body .info h4:first-child { margin-top: 0; }
 .panel .panel-body .info .rule-link.tag { font-variant-position: super; font-weight: normal; position: relative; top: -0.3ex; }
 
+.java-application .notifications li.warning small { color: #888; font-style: italic; }
 
 
 dl:last-child {
@@ -285,4 +286,8 @@ p.windup-contributors  {
 /** General rules */
 .floatRight {
     float: right;
+}
+
+.warns {
+    font-weight: bold;
 }
