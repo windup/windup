@@ -3,6 +3,7 @@ package org.jboss.windup.config.tags;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Writer;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -13,6 +14,7 @@ import javax.inject.Singleton;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.xml.sax.SAXException;
 
 
@@ -120,6 +122,51 @@ public class TagService
         }
         while (!currentSet.isEmpty());
         return false;
+    }
+
+    /**
+     * Writes the JavaScript code describing the tags as Tag classes to given writer.
+     */
+    public void dumpTagsToJavaScript(Writer writer) throws IOException
+    {
+        writer.append("function fillTagService(tagService) {\n");
+        writer.append("\t// (name, isRoot, isPseudo, color), [parent tags]\n");
+        for (Tag tag : definedTags.values())
+        {
+            writer.append("\ttagService.registerTag(new Tag(");
+                escapeOrNull(tag.getName(), writer);
+                writer.append(", ");
+                escapeOrNull(tag.getTitle(), writer);
+                writer.append(", ").append(""+tag.isRoot())
+                .append(", ").append(""+tag.isPseudo())
+                .append(", ");
+                escapeOrNull(tag.getColor(), writer);
+                writer.append(")").append(", [");
+
+                // We only have strings, not references, so we're letting registerTag() getOrCreate() the tag.
+                for (Tag parentTag : tag.getParentTags())
+                {
+                    writer.append("'").append(StringEscapeUtils.escapeEcmaScript(parentTag.getName())).append("',");
+                }
+            writer.append("]);\n");
+        }
+        writer.append("}\n");
+    }
+
+
+    private void escapeOrNull(final String string, Writer writer) throws IOException
+    {
+        if(string == null)
+            writer.append("null");
+        else
+            writer.append('"').append(StringEscapeUtils.escapeEcmaScript(string)).append('"');
+    }
+
+
+    @Override
+    public String toString()
+    {
+        return "TagService{ definedTags: " + definedTags.size() + '}';
     }
 
 }

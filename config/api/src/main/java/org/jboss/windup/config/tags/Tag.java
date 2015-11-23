@@ -8,6 +8,9 @@ import org.apache.commons.collections4.set.UnmodifiableSet;
 
 /**
  * Represents a tag. Determined by it's lowercased name.
+ * The structure is not a tree - a tag may have multiple parents.
+ *
+ * @author Ondrej Zizka
  */
 public final class Tag
 {
@@ -16,8 +19,11 @@ public final class Tag
      * Keeps the "contains" relation.
      */
     private final Set<Tag> containedTags = new HashSet<>();
-    private final Set<Tag> containingTags = new HashSet<>();
+    private final Set<Tag> parentTags = new HashSet<>();
     private boolean isRoot = false;
+    private boolean isPseudo = false;
+    private String color = null;
+    private String title = null;
 
 
     Tag(String name)
@@ -42,7 +48,7 @@ public final class Tag
 
     public Set<Tag> getParentTags()
     {
-        return UnmodifiableSet.unmodifiableSet(containingTags);
+        return UnmodifiableSet.unmodifiableSet(parentTags);
     }
 
 
@@ -52,7 +58,7 @@ public final class Tag
     public void addContainedTag(Tag tag)
     {
         this.containedTags.add(tag);
-        tag.containingTags.add(this);
+        tag.parentTags.add(this);
     }
 
     /**
@@ -60,7 +66,7 @@ public final class Tag
      */
     public void addContainingTag(Tag tag)
     {
-        this.containingTags.add(tag);
+        this.parentTags.add(tag);
         tag.containedTags.add(this);
     }
 
@@ -86,13 +92,56 @@ public final class Tag
     }
 
 
-    public void setRoot(boolean isRoot)
-    {
-        this.isRoot = isRoot;
-    }
-
     public boolean isRoot()
     {
         return this.isRoot;
     }
+
+    public void setIsRoot(boolean isRoot)
+    {
+        this.isRoot = isRoot;
+    }
+
+
+    public boolean isPseudo()
+    {
+        return isPseudo;
+    }
+
+
+    public void setPseudo(boolean isPseudo)
+    {
+        this.isPseudo = isPseudo;
+    }
+
+
+    public String getColor()
+    {
+        return color;
+    }
+
+
+    public void setColor(String color)
+    {
+        this.color = color;
+    }
+
+
+    public String getTitleOrName()
+    {
+        return title != null ? title : name;
+    }
+
+    public String getTitle()
+    {
+        return title;
+    }
+
+
+    public void setTitle(String title)
+    {
+        this.title = title;
+    }
+
+
 }

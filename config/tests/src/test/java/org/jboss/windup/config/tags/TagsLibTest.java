@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringWriter;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -44,6 +45,31 @@ public class TagsLibTest
         Assert.assertTrue(tagService.isUnderTag("b1a1", "c1"));
         Assert.assertTrue(tagService.isUnderTag("b1a1", "c1a"));
         Assert.assertFalse(tagService.isUnderTag("c1", "b1a1"));
+    }
+
+
+    @Test
+    public void testTagsExportingToJavaScript() throws Exception
+    {
+        final TagService tagService = new TagService();
+
+        File file = new File("src/test/java/org/jboss/windup/config/tags/java-ee.test.tags.xml");
+        try(InputStream is = new FileInputStream(file))
+        {
+            tagService.readTags(is);
+        }
+        catch( IOException ex )
+        {
+            throw ex;
+        }
+
+        StringWriter writer = new StringWriter((int) file.length());
+        tagService.dumpTagsToJavaScript(writer);
+        final String javascript = writer.toString();
+        System.out.println(javascript);
+        Assert.assertTrue(javascript.contains("function"));
+        Assert.assertTrue(javascript.contains("java-ee"));
+        Assert.assertTrue(javascript.contains("weblogic"));
     }
 
 }

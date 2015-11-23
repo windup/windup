@@ -7,6 +7,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.jboss.forge.furnace.Furnace;
@@ -40,6 +41,7 @@ public class TagServiceHolder
     /**
      * Loads the tag definitions from the files with a ".tags.xml" suffix from the addons.
      */
+    @PostConstruct
     public void loadTagDefinitions()
     {
         Map<Addon, List<URL>> addonToResourcesMap = scanner.scanForAddonMap(new FileExtensionFilter("tags.xml"));
@@ -47,6 +49,7 @@ public class TagServiceHolder
         {
             for (URL resource : entry.getValue())
             {
+                log.info("Reading tags definitions from: " + resource.toString() + " from addon " + entry.getKey().getId());
                 try(InputStream is = resource.openStream())
                 {
                     tagService.readTags(is);

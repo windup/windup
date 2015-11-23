@@ -1,53 +1,88 @@
+
+/* Summary layout table */
+body.java-application table.summaryLayout { width: 100%; }
+body.java-application table.summaryLayout > tr > td,
+body.java-application table.summaryLayout > tbody > tr > td { vertical-align: top; margin-bottom: 2ex; }
+
+body.java-application table.summaryLayout > tbody > tr > td div#treeView-Projects {
+    float: left;
+    margin: 0px 0px 2ex 120px;
+    font-family: "Trebuchet MS",Helvetica,sans-serif;
+}
+
+.projectBox table.subprojects > tbody > tr > th,
+.projectBox table.subprojects > tbody > tr > td {
+    border-left: none;
+    border-right: none;
+}
+.projectBox table.subprojects > tbody > tr > td {
+    padding: 1px 0.5em;
+}
+
+
+/* Charts */
+body.java-application .chartBoundary {
+    width: 500px;
+    margin: 20px auto;
+}
+
+body.java-application .chartBoundary h4 {
+    border-bottom: 1px solid #008CBA;
+    margin-right: 10%;
+}
+
+.mainGraphContainer {
+    margin-bottom: 20px;
+}
+
+/* Packages pie chart */
 .windupPieGraph {
-  height:250px;
-  width:800px;
-  margin: 0 auto;
-  border: 0px dashed gainsboro;
+    height: 250px;
+    width:  500px;
+    margin: 0 auto;
+    border: 0px dashed gainsboro;
 }
-
 .windupPieGraph div.legend table {
-  width: 300px;
+    min-width: 200px;
+    margin-right: 20px;
 }
-
-.windupPieGraph div.legend td.legendColorBox, 
+.windupPieGraph div.legend td.legendColorBox,
 .windupPieGraph div.legend td.legendColorBox div {
-  width: 14px;
+    width: 14px;
+}
+.windupPieGraph div.legend td.legendLabel { padding-left: 0.6ex; }
+
+
+/* Project panels */
+
+.projectBox .panel-heading span.storyPoints { font-size: 80%; margin-left: 1em; }
+
+/* .points also in main CSS - windup.css */
+.panel .panel-body  div.points {
+    float: left;
+    padding-bottom: 1ex;
+    text-align: center;
+    color: #00254b;
+}
+.panel .panel-body  div.points .number  {
+    width:100%;
+    font-size: 65pt;
 }
 
-.panel .panel-body  .points .number  { 
-     width:100%;
-     font-size: 50pt;
+.panel .panel-body  div.basicInfo {
+    float: left;
+    position: absolute;
+    margin-left: 18%;
+}
+
+.panel .panel-body  div.basicInfo > table {
+    border-bottom: 1px solid #DDD;
 }
 
 .arrowIcon {
     padding-right:30px;
 }
 
-.clickable {
+.panel-collapsed.clickable {
     cursor: pointer;
-}
-
-.totalLoe {
-  font-size: 100px;
-  display: block;
-  color: #00254b;
-  text-align: right;
-  text-shadow: 0px -1px 1px #000;
-}
-
-.totalDesc {
-  color: #999;
-  font-size: 15px;
-  text-align: right;
-  margin-right: 10px;
-  margin-top: -10px;
-}
-
-.mainGraphContainer {
-  margin-bottom: 20px;
-} 
-
-.archiveGraphContainer {
-  margin-top: 20px;
-  margin-bottom: 20px;
 }

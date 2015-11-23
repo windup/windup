@@ -37,14 +37,27 @@ public class TagsSaxHandler extends DefaultHandler
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException
     {
-        log.info("Element: qname: " + qName + " localName: " + localName);
         if("tag".equals(qName))
         {
             String tagName = attributes.getValue("name");
             Tag tag = tagService.getOrCreateTag(tagName);
 
-            if (!"false".equals(attributes.getValue(qName)))
-                tag.setRoot(true);
+            if ("true".equals(attributes.getValue("root")))
+                tag.setIsRoot(true);
+
+            if ("true".equals(attributes.getValue("pseudo")))
+                tag.setPseudo(true);
+
+            tag.setTitle(attributes.getValue("title"));
+
+            final String color = attributes.getValue("color");
+            if (color != null)
+            {
+                if (color.matches("#\\p{XDigit}{6}"))
+                    tag.setColor(color);
+                else
+                    log.fine("Invalid color, not matching #\\p{XDigit}{6}: " + color);
+            }
 
             // Add this <tag> to its parent.
             if(!stack.empty())
@@ -59,9 +72,6 @@ public class TagsSaxHandler extends DefaultHandler
                 Tag containingTag = tagService.getOrCreateTag(containingTagName);
                 tag.addContainingTag(containingTag);
             }
-        }
-        else if ("contains".equals(qName))
-        {
         }
     }
 
