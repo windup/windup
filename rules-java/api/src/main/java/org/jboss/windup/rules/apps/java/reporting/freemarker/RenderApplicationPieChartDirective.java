@@ -27,11 +27,11 @@ import freemarker.template.TemplateModel;
 /**
  * Renders a JavaScript block that calls <a href="http://www.flotcharts.org/">Flot</a>. This depends upon the template already loading the JQuery and
  * Flot Charting Javascript files.
- * 
+ *
  * The chart will present a distribution of packages that have been hinted by Windup.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- * 
+ *
  */
 public class RenderApplicationPieChartDirective implements WindupFreeMarkerTemplateDirective
 {
@@ -80,26 +80,25 @@ public class RenderApplicationPieChartDirective implements WindupFreeMarkerTempl
     {
         List<PieSort> pieList = topX(data, 9);
 
-        String dataID = "data_" + elementID;
+        String dataVarName = "data_" + elementID;
         writer.append("<script type='text/javascript'>");
-        writer.append("\n").append("$(function () {");
-        writer.append("\n").append("  var " + dataID + " = [];");
-
-        int i = 0;
+        writer.append("\n$(function () {");
+        writer.append("\n  var " + dataVarName + " = [];");
         for (PieSort p : pieList)
-        {
-            writer.append("\n").append(
-                        dataID + "[" + i + "] = { label: '" + p.key + "', data: " + p.value + " };");
-            i++;
-        }
-        writer.append("\n").append("  $.plot($('#" + elementID + "'), " + dataID + ", {");
-        writer.append("\n").append("      series: {");
-        writer.append("\n").append("          pie: {");
-        writer.append("\n").append("              show: true");
-        writer.append("\n").append("          }");
-        writer.append("\n").append("      }");
-        writer.append("\n").append("  });");
-        writer.append("\n").append("});");
+            writer.append("\n").append(dataVarName).append(".push({ label: '").append(p.key).append("', data: ").append(p.value.toString()).append(" });");
+
+        writer.append("\n  $.plot($('#" + elementID + "'), " + dataVarName + ", {");
+        writer.append("\n      series: { pie: { show: true,  innerRadius: 0.55, offset: { top: 0, left: -120 } } },");
+        writer.append("\n      colors: $.map( " + dataVarName + ", function(item, index) {" +
+                      "\n          var len = " + dataVarName + ".length;" +
+                      "\n          return jQuery.Color({" +
+                      "\n              hue: ((index*0.95*360/len) + 90/len) % 360," +
+                      "\n              saturation: 0.95," +
+                      "\n              lightness: ((index%4 == 3 ? 1:0)/-4)+0.55, alpha: 1" +
+                      "\n          }).toHexString();" +
+                      "\n      })");
+        writer.append("\n  });");
+        writer.append("\n});");
         writer.append("</script>");
     }
 
@@ -112,41 +111,33 @@ public class RenderApplicationPieChartDirective implements WindupFreeMarkerTempl
     private List<PieSort> topX(Map<String, Integer> map, int top)
     {
         List<PieSort> list = new ArrayList<>(map.keySet().size() + 1);
-        List<PieSort> bottomList;
 
         // Add the key/value pairs to the list containing the PieSort(key,value) object.
         for (String key : map.keySet())
         {
-            PieSort p = new PieSort(key + " - " + map.get(key), map.get(key));
+            PieSort p = new PieSort(key + " - " + map.get(key) + "&times;", map.get(key));
             list.add(p);
         }
 
         Collections.sort(list);
 
         // Collect the bottom of the list for the "Other" category.
-        int other = 0;
         if (top < list.size())
         {
-            bottomList = list.subList(top, list.size());
-
             // Add the "Other" category up.
-            for (PieSort p : bottomList)
-            {
+            int other = 0;
+            for (PieSort p : list.subList(top, list.size()))
                 other += p.value;
-            }
 
             list = list.subList(0, top);
-        }
-
-        if (other > 0)
-        {
-            list.add(new PieSort("Other" + " - " + other, other));
+            if (other > 0)
+                list.add(new PieSort("Other - " + other + "&times;", other));
         }
 
         return list;
     }
 
-    private class PieSort implements Comparable<PieSort>
+    private static class PieSort implements Comparable<PieSort>
     {
         public String key;
         public Integer value;
@@ -160,12 +151,7 @@ public class RenderApplicationPieChartDirective implements WindupFreeMarkerTempl
         @Override
         public int compareTo(PieSort p)
         {
-            if (value < p.value)
-                return 1;
-            if (value == p.value)
-                return 0;
-            else
-                return -1;
+            return p.value - value;
         }
     }
 
