@@ -97,6 +97,7 @@
     </#if>
 </#macro>
 
+    
 <#macro projectModelRenderer projectModel>
     <div class="panel panel-primary projectBox">
         <#assign panelStoryPoints = getMigrationEffortPoints(projectModel, false, reportModel.includeTags, reportModel.excludeTags)>
@@ -275,6 +276,10 @@
         <div class="row container-fluid">
             <div class="theme-showcase" role="main">
                 <@reportLineRenderer reportModel.applicationReportLines />
+                <div>
+                    <a id="collapseAll" href="javascript:collapseAll()">Collapse All</a>
+                    <a id="expandAll" href="javascript:expandAll()">Expand All</a>
+                </div>
                 <@projectModelRenderer reportModel.projectModel />
             </div> <!-- /container -->
         </div>
