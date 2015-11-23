@@ -79,8 +79,7 @@
     <xs:complexType name="rule">
         <xs:sequence>
             <xs:element name="when" type="when" />
-            <xs:element name="perform" type="iteration">
-            </xs:element>
+            <xs:element name="perform" type="iteration"/>
             <xs:element name="otherwise" type="iteration" minOccurs="0" maxOccurs="1" />
             <xs:element name="where" type="where" minOccurs="0" maxOccurs="unbounded" />
         </xs:sequence>
@@ -178,6 +177,14 @@
             <xs:attribute type="xs:string" name="message" use="optional" />
         </xs:complexType>
     </xs:element>
+
+    <xs:complexType name="iterable-filter">
+         <xs:complexContent>
+            <xs:extension base="when-base">
+                <xs:attribute name="size" type="xs:integer"/>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
     
     <!-- TEST CONDITION DEFINITIONS -->
 
@@ -330,6 +337,8 @@
             <xs:element ref="file-exists" minOccurs="0" maxOccurs="unbounded" />
             <xs:element ref="hint-exists" minOccurs="0" maxOccurs="unbounded" />
             <xs:element ref="lineitem-exists" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="iterable-filter" type="iterable-filter" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="toFileModel" type="when-base" minOccurs="0" maxOccurs="unbounded" />
         </xs:choice>
     </xs:complexType>
 

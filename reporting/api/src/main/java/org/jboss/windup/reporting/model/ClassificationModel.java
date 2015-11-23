@@ -1,8 +1,14 @@
 package org.jboss.windup.reporting.model;
 
+import java.util.Set;
+
+import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.frames.modules.javahandler.JavaHandler;
+import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.association.LinkableModel;
+import org.jboss.windup.rules.files.condition.ToFileModelTransformable;
 import org.ocpsoft.rewrite.config.Rule;
 
 import com.tinkerpop.blueprints.Direction;
@@ -16,7 +22,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
  * additional information, or auto-translated/generated/updated versions of the source file.
  */
 @TypeValue(ClassificationModel.TYPE)
-public interface ClassificationModel extends EffortReportModel, LinkableModel, TaggableModel
+public interface ClassificationModel extends EffortReportModel, LinkableModel, ToFileModelTransformable, TaggableModel
 {
     String TYPE = "ClassificationModel";
     String TYPE_PREFIX = TYPE + ":";
@@ -76,5 +82,17 @@ public interface ClassificationModel extends EffortReportModel, LinkableModel, T
     String getRuleID();
 
 
+
+    @JavaHandler
+    @Override
+    Iterable<FileModel> transformToFileModel();
+
+    abstract class Impl implements ClassificationModel, JavaHandlerContext<Vertex>
+    {
+        @Override
+        public Iterable<FileModel> transformToFileModel() {
+            return this.getFileModels();
+        }
+    }
 
 }
