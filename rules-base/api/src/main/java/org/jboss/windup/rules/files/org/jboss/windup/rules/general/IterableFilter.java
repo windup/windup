@@ -8,7 +8,10 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
- * Created by mbriskar on 11/19/15.
+ * A {@link GraphCondition} that returns true/false based on the iterable returned from the wrapped condition. It is useful to check if the result
+ * contains the specified number of elements etc.
+ *
+ * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  */
 public class IterableFilter extends GraphCondition
 {
@@ -23,9 +26,10 @@ public class IterableFilter extends GraphCondition
         this.size=size;
     }
 
-    public void withWrappedCondition(GraphCondition condition)
+    public IterableFilter withWrappedCondition(GraphCondition condition)
     {
         this.wrappedCondition=condition;
+        return this;
     }
 
     @Override

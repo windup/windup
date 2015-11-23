@@ -9,12 +9,15 @@ import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jboss.windup.rules.files.condition.ToFileModelTransformable;
+
+import java.util.Collections;
 
 /**
  * Refers to a specific portion of a File and contains a reference to the code involved.
  */
 @TypeValue(FileLocationModel.TYPE)
-public interface FileLocationModel extends FileReferenceModel
+public interface FileLocationModel extends FileReferenceModel, ToFileModelTransformable
 {
 
     String TYPE = "fileLocationModel";
@@ -77,6 +80,10 @@ public interface FileLocationModel extends FileReferenceModel
     @JavaHandler
     String getDescription();
 
+    @Override
+    @JavaHandler
+    Iterable<FileModel> transformToFileModel();
+
     abstract class Impl implements FileLocationModel, JavaHandlerContext<Vertex>
     {
         private static final int MAX_DESC_WIDTH = 90;
@@ -88,6 +95,12 @@ public interface FileLocationModel extends FileReferenceModel
                 return "";
             return StringEscapeUtils.escapeHtml4(
                     StringUtils.substringBefore(StringUtils.abbreviate(getSourceSnippit().trim(), MAX_DESC_WIDTH), "\n"));
+        }
+
+        @Override
+        public Iterable<FileModel> transformToFileModel()
+        {
+            return Collections.singleton(getFile());
         }
     }
 }

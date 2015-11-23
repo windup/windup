@@ -6,6 +6,7 @@ import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.util.exception.WindupException;
+import org.joox.JOOX;
 import org.w3c.dom.Element;
 
 import java.util.List;
@@ -13,6 +14,16 @@ import java.util.List;
 import static org.joox.JOOX.$;
 
 /**
+ *
+ * Example:
+ *
+ * <pre>
+ * &lt;toFileModel &gt;
+ *   &lt;classification ...../&gt;
+ * &lt;/toFileModel &gt;
+ * </pre>
+ *
+ *
  * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  *
  */

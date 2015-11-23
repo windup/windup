@@ -14,7 +14,16 @@ import java.util.regex.Pattern;
 import static org.joox.JOOX.$;
 
 /**
- * @author mbriskar
+ * An {@link ElementHandler} for {@link IterableFilter}
+ *
+ * Example:
+ *
+ * <pre>
+ * &lt;iterable-filter size="3" &gt;
+ *   &lt;hint ...../&gt;
+ * &lt;/iterable-filter &gt;
+ * </pre>
+ *
  */
 @NamespaceElementHandler(elementName = IterableFilterHandler.ELEMENT_NAME, namespace = "http://windup.jboss.org/schema/jboss-ruleset")
 public class IterableFilterHandler implements ElementHandler<IterableFilter>

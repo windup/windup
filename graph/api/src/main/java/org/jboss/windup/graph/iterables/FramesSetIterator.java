@@ -22,12 +22,14 @@ public class FramesSetIterator<T extends WindupVertexFrame> implements Iterator<
         fillInNextFrame();
     }
 
-    @Override public boolean hasNext()
+    @Override
+    public boolean hasNext()
     {
         return nextFrame!=null;
     }
 
-    @Override public T next()
+    @Override
+    public T next()
     {
         T nextFrame = getAndSetNewFrame();
         if(nextFrame == null) {
@@ -53,6 +55,11 @@ public class FramesSetIterator<T extends WindupVertexFrame> implements Iterator<
                 nextFrame=frame;
             }
         }
+    }
+
+    @Override
+    public void remove() {
+        wrappedIterator.remove();
     }
 
 }
