@@ -37,6 +37,7 @@ import org.jboss.windup.exec.rulefilters.NotPredicate;
 import org.jboss.windup.exec.rulefilters.RuleProviderPhasePredicate;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.service.InlineHintService;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
@@ -125,10 +126,18 @@ public class FileContentTest
             boolean foundFile2Line3 = false;
             boolean foundFile2Line4 = false;
             boolean foundFile3Needle = false;
+
+            String fileNoMatchesName = "file_no_matches.txt";
+            boolean foundFileNoMatchesInOperation = false;
+            boolean foundFileNoMatchesInOtherwise = false;
+
             for (int i = 0; i < provider.rule1ResultStrings.size(); i++)
             {
                 FileLocationModel location = provider.rule1ResultModels.get(i);
                 System.out.println("Location: " + location);
+                if (location.getFile().getFileName().equals(fileNoMatchesName))
+                    foundFileNoMatchesInOperation = true;
+
                 if (location.getFile().getFileName().equals("file1.txt"))
                 {
                     if (location.getLineNumber() == 1 && location.getColumnNumber() == 8 && location.getSourceSnippit().equals("file 1."))
@@ -172,6 +181,14 @@ public class FileContentTest
             Assert.assertTrue(foundFile2Line3);
             Assert.assertTrue(foundFile2Line4);
 
+            Assert.assertFalse(foundFileNoMatchesInOperation);
+            for (FileModel fileModel : provider.rule1Otherwise)
+            {
+                if (fileModel.getFileName().equals(fileNoMatchesName))
+                    foundFileNoMatchesInOtherwise = true;
+            }
+            Assert.assertTrue(foundFileNoMatchesInOtherwise);
+
             for (int i = 0; i < provider.rule2ResultStrings.size(); i++)
             {
                 FileLocationModel location = provider.rule2ResultModels.get(i);
@@ -194,6 +211,9 @@ public class FileContentTest
         private List<FileLocationModel> rule1ResultModels = new ArrayList<>();
         private List<String> rule2ResultStrings = new ArrayList<>();
         private List<FileLocationModel> rule2ResultModels = new ArrayList<>();
+
+        private List<FileModel> rule1Otherwise = new ArrayList<>();
+
         public int count = 0;
 
         public FileContentTestRuleProvider()
@@ -228,7 +248,14 @@ public class FileContentTest
                 public void setParameterStore(ParameterStore store) {
                     textPattern.setParameterStore(store);
                 }
-            })
+            }).otherwise(
+                new AbstractIterationOperation<FileModel>() {
+                    @Override
+                    public void perform(GraphRewrite event, EvaluationContext context, FileModel fileModel) {
+                        rule1Otherwise.add(fileModel);
+                    }
+                }
+            )
             .addRule()
             .when(FileContent.matches(" THE {needle} IN THE HAYSTACK {*}").inFileNamed("{*}.txt"))
             .perform(new ParameterizedIterationOperation<FileLocationModel>() {

@@ -1,0 +1,3 @@
+my thing with no matches
+this should help filecontenttest with otherwise matching
+yay

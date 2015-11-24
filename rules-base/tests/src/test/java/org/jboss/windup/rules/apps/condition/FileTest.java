@@ -108,11 +108,12 @@ public class FileTest
                 count++;
             }
             //test the classifications xml windup.xml rules
-            Assert.assertEquals(3,count);
+            Assert.assertEquals(4, count);
             //test the matches from the java rules
             Assert.assertTrue(provider.rule1ResultStrings.contains("file1"));
             Assert.assertTrue(provider.rule1ResultStrings.contains("file2"));
             Assert.assertTrue(provider.rule1ResultStrings.contains("file3"));
+            Assert.assertFalse(provider.rule1ResultStrings.contains("file_no_matches"));
         }
     }
 
@@ -153,7 +154,7 @@ public class FileTest
                 public void setParameterStore(ParameterStore store) {
                     textPattern.setParameterStore(store);
                 }
-            });
+            }).where("text").matches("file\\d");
          }
         // @formatter:on
     }

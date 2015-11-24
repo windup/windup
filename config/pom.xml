@@ -22,7 +22,7 @@
     </modules>
 
     <properties>
-        <version.rewrite>3.0.0.Alpha9-jboss</version.rewrite>
+        <version.rewrite>3.0.0.Alpha10</version.rewrite>
     </properties>
 
     <repositories>

@@ -127,7 +127,7 @@
                         <exclude>${testExcludeString}</exclude>
                     </excludes>
                     <!-- http://maven.apache.org/surefire/maven-surefire-plugin/faq.html#late-property-evaluation -->
-                    <argLine>-Xms512m -Xmx2048m -XX:MaxPermSize=768m -XX:ReservedCodeCacheSize=128m @{jacoco.argLine}</argLine>
+                    <argLine>-Xms512m -Xmx2048m -XX:MaxPermSize=768m -XX:ReservedCodeCacheSize=128m</argLine>
                     <reuseForks>false</reuseForks>
                 </configuration>
             </plugin>

@@ -5,9 +5,11 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
@@ -32,6 +34,7 @@ import org.jboss.windup.rules.files.model.FileLocationModel;
 import org.jboss.windup.rules.files.model.FileReferenceModel;
 import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
+import org.ocpsoft.rewrite.config.Conditions;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.param.DefaultParameterStore;
 import org.ocpsoft.rewrite.param.ParameterStore;
@@ -179,6 +182,7 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
     {
         final ParameterStore store = DefaultParameterStore.getInstance(context);
         final GraphService<FileLocationModel> fileLocationService = new GraphService<>(event.getGraphContext(), FileLocationModel.class);
+        final boolean negated = Conditions.isNegated(context);
 
         // initialize the input
         List<FileModel> fileModels = new ArrayList<>();
@@ -186,7 +190,7 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
         fileNameInput(fileModels, event, store);
         allInput(fileModels, event, store);
 
-        final List<FileLocationModel> results = new ArrayList<>();
+        final Set<WindupVertexFrame> results = new LinkedHashSet<>();
         for (final FileModel fileModel : fileModels)
         {
             if (fileModel.isDirectory())
@@ -206,6 +210,7 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
             {
                 Reader reader = new FileReader(fileModel.asFile());
 
+                final AtomicBoolean matchesFound = new AtomicBoolean(false);
                 Pattern fileContentsRegex = contentPattern.getCompiledPattern(store);
                 StreamRegexMatchListener matchListener = new StreamRegexMatchListener()
                 {
@@ -227,6 +232,13 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
                             if (parsedFileNamePattern2 == null || (parsedFileNamePattern2.submit(event, context)
                                         && (contentPattern == null || contentPatternResult.submit(event, context))))
                             {
+                                matchesFound.set(true);
+                                if (negated)
+                                {
+                                    evaluationStrategy.modelSubmissionRejected();
+                                    return;
+                                }
+
                                 FileLocationModel fileLocationModel = fileLocationService.create();
                                 fileLocationModel.setFile(fileModel);
                                 fileLocationModel.setColumnNumber((int) matchEvent.getColumnNumber());
@@ -246,13 +258,18 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
                     }
                 };
 
+                // this allows us to track whether the matching process found anything
                 Modifier regexModifier = StreamRegexMatcher.create(fileContentsRegex.pattern(), matchListener);
                 try (ModifyingReader modifyingReader = new ModifyingReader(reader, regexModifier))
                 {
-
                     char[] buffer = new char[32768];
                     while (modifyingReader.read(buffer) != -1)
                         ; // consume the stream
+                }
+                if (negated && !matchesFound.get())
+                {
+                    // In negation mode, we add the ones that don't match
+                    results.add(fileModel);
                 }
             }
             catch (Exception e)
@@ -263,7 +280,7 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
         }
 
         setResults(event, getVarname(), results);
-        return !results.isEmpty();
+        return negated ? results.isEmpty() : !results.isEmpty();
     }
 
     public String toString()
@@ -308,7 +325,9 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
             if (vertices.isEmpty() && StringUtils.isBlank(getInputVariablesName()))
             {
                 FileService fileModelService = new FileService(event.getGraphContext());
-                for (FileModel fileModel : fileModelService.findAllByPropertyMatchingRegex(FileModel.FILE_NAME, filenameRegex.pattern()))
+                Iterable<FileModel> fileModels = fileModelService.findAllByPropertyMatchingRegex(FileModel.FILE_NAME, filenameRegex.pattern());
+
+                for (FileModel fileModel : fileModels)
                 {
                     vertices.add(fileModel);
                 }
