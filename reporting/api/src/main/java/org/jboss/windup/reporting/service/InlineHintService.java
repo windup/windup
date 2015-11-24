@@ -3,6 +3,7 @@ package org.jboss.windup.reporting.service;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -18,9 +19,11 @@ import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.rules.files.model.FileReferenceModel;
 
 import com.thinkaurelius.titan.core.attribute.Text;
+import com.tinkerpop.blueprints.Compare;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.structures.FramedVertexIterable;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
+import com.tinkerpop.pipes.PipeFunction;
 
 /**
  * This provides helper functions for finding and creating {@link InlineHintModel} instances within the graph.
@@ -63,6 +66,7 @@ public class InlineHintService extends GraphService<InlineHintModel>
     {
         GremlinPipeline<Vertex, Vertex> inlineHintPipeline = new GremlinPipeline<>(fileModel.asVertex());
         inlineHintPipeline.in(InlineHintModel.FILE_MODEL);
+        inlineHintPipeline.has(EffortReportModel.EFFORT, Compare.GREATER_THAN, 0);
         inlineHintPipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, InlineHintModel.TYPE);
 
         int hintEffort = 0;
@@ -116,11 +120,36 @@ public class InlineHintService extends GraphService<InlineHintModel>
      * <p/>
      * If set to recursive, then also include the effort points from child projects.
      */
-    public int getMigrationEffortPoints(ProjectModel projectModel, Set<String> includeTags, Set<String> excludeTags, boolean recursive)
+    public int getMigrationEffortPoints(ProjectModel initialProject, Set<String> includeTags, Set<String> excludeTags, boolean recursive)
     {
-        GremlinPipeline<Vertex, Vertex> inlineHintPipeline = new GremlinPipeline<>(projectModel.asVertex());
-        inlineHintPipeline.out(ProjectModel.PROJECT_MODEL_TO_FILE).in(InlineHintModel.FILE_MODEL);
+        final Set<Vertex> initialVertices = new HashSet<>();
+        if (recursive)
+        {
+            for (ProjectModel projectModel1 : initialProject.getAllProjectModels())
+                initialVertices.add(projectModel1.asVertex());
+        }
+        else
+        {
+            initialVertices.add(initialProject.asVertex());
+        }
+
+        GremlinPipeline<Vertex, Vertex> inlineHintPipeline = new GremlinPipeline<>(getGraphContext().getGraph());
+        inlineHintPipeline.V();
+        inlineHintPipeline.has(EffortReportModel.EFFORT, Compare.GREATER_THAN, 0);
         inlineHintPipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, InlineHintModel.TYPE);
+
+        inlineHintPipeline.as("hint");
+        inlineHintPipeline.out(InlineHintModel.FILE_MODEL);
+        inlineHintPipeline.out(FileModel.FILE_TO_PROJECT_MODEL);
+        inlineHintPipeline.filter(new PipeFunction<Vertex, Boolean>()
+        {
+            @Override
+            public Boolean compute(Vertex argument)
+            {
+                return initialVertices.contains(argument);
+            }
+        });
+        inlineHintPipeline.back("hint");
 
         int hintEffort = 0;
         for (Vertex v : inlineHintPipeline)
@@ -134,14 +163,6 @@ public class InlineHintService extends GraphService<InlineHintModel>
             }
 
             hintEffort += (Integer) v.getProperty(EffortReportModel.EFFORT);
-        }
-
-        if (recursive)
-        {
-            for (ProjectModel childProject : projectModel.getChildProjects())
-            {
-                hintEffort += getMigrationEffortPoints(childProject, includeTags, excludeTags, recursive);
-            }
         }
         return hintEffort;
     }

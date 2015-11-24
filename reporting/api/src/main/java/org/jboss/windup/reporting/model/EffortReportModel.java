@@ -1,19 +1,24 @@
 package org.jboss.windup.reporting.model;
 
-import com.tinkerpop.frames.Property;
+import org.jboss.windup.graph.IndexType;
+import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+
+import com.tinkerpop.frames.Property;
+import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
  *  Aggregates the common properties of all the items generating effort for the Application.
  *
  *  @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  */
+@TypeValue(EffortReportModel.TYPE)
 public interface EffortReportModel extends WindupVertexFrame
 {
-    static final String TYPE = "ClassificationModel";
-    static final String TYPE_PREFIX = TYPE + ":";
-    static final String EFFORT = TYPE_PREFIX + "effort";
-    static final String SEVERITY = TYPE_PREFIX + TYPE_PREFIX + "severity";
+    String TYPE = "EffortReportModel";
+    String TYPE_PREFIX = TYPE + ":";
+    String EFFORT = "EffortReportModelEffort"; // don't use the prefix as we can't name the index with an "_"
+    String SEVERITY = TYPE_PREFIX + "severity";
 
     /**
      * Set the effort weight (E.g. How difficult is it to fix the issue?)
@@ -25,6 +30,7 @@ public interface EffortReportModel extends WindupVertexFrame
      * Get the effort weight (E.g. How difficult is it to fix the issue?)
      */
     @Property(EFFORT)
+    @Indexed(value = IndexType.SEARCH, dataType = Integer.class)
     int getEffort();
 
     /**

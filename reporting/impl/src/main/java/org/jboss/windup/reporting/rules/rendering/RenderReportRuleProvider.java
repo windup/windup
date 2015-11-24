@@ -9,6 +9,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
@@ -132,12 +133,19 @@ public class RenderReportRuleProvider extends AbstractRuleProvider
                             WindupVertexFrame reportModelObject = reportModels.remove();
                             if (reportModelObject == null)
                                 return null;
-
                             reportModel = (ReportModel) reportModelObject;
-                            Thread.currentThread().setName(reportModel.getTemplatePath() + "_" + reportModel.getReportFilename());
 
-                            iterationProgress.perform(event, context);
-                            freeMarkerIterationOperation.perform(event, context, reportModel);
+                            try
+                            {
+                                Thread.currentThread().setName(reportModel.getTemplatePath() + "_" + reportModel.getReportFilename());
+
+                                iterationProgress.perform(event, context);
+                                freeMarkerIterationOperation.perform(event, context, reportModel);
+                            }
+                            catch (Throwable t)
+                            {
+                                LOG.log(Level.WARNING, "Failed to render freemarker report: " + reportModel + " due to: " + t.getMessage(), t);
+                            }
                         }
                     }
                 });

@@ -1,5 +1,6 @@
 package org.jboss.windup.reporting.service;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -12,13 +13,16 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.TagUtil;
 import org.jboss.windup.reporting.model.ClassificationModel;
+import org.jboss.windup.reporting.model.EffortReportModel;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 import com.thinkaurelius.titan.core.attribute.Text;
+import com.tinkerpop.blueprints.Compare;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.structures.FramedVertexIterable;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
+import com.tinkerpop.pipes.PipeFunction;
 
 /**
  * Adds methods for loading and querying ClassificationModel related data.
@@ -40,6 +44,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
     {
         GremlinPipeline<Vertex, Vertex> classificationPipeline = new GremlinPipeline<>(fileModel.asVertex());
         classificationPipeline.in(ClassificationModel.FILE_MODEL);
+        classificationPipeline.has(EffortReportModel.EFFORT, Compare.GREATER_THAN, 0);
         classificationPipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, ClassificationModel.TYPE);
 
         int classificationEffort = 0;
@@ -82,16 +87,43 @@ public class ClassificationService extends GraphService<ClassificationModel>
      * 
      * If set to recursive, then also include the effort points from child projects.
      */
-    public int getMigrationEffortPoints(ProjectModel projectModel, Set<String> includeTags, Set<String> excludeTags, boolean recursive)
+    public int getMigrationEffortPoints(ProjectModel initialProject, Set<String> includeTags, Set<String> excludeTags, boolean recursive)
     {
-        GremlinPipeline<Vertex, Vertex> classificationPipeline = new GremlinPipeline<>(projectModel.asVertex());
-        classificationPipeline.out(ProjectModel.PROJECT_MODEL_TO_FILE).in(ClassificationModel.FILE_MODEL);
+        final Set<Vertex> initialVertices = new HashSet<>();
+        if (recursive)
+        {
+            for (ProjectModel projectModel1 : initialProject.getAllProjectModels())
+                initialVertices.add(projectModel1.asVertex());
+        }
+        else
+        {
+            initialVertices.add(initialProject.asVertex());
+        }
+
+        GremlinPipeline<Vertex, Vertex> classificationPipeline = new GremlinPipeline<>(getGraphContext().getGraph());
+        classificationPipeline.V();
+        classificationPipeline.has(EffortReportModel.EFFORT, Compare.GREATER_THAN, 0);
         classificationPipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, ClassificationModel.TYPE);
+
+        classificationPipeline.as("classification");
+        classificationPipeline.out(ClassificationModel.FILE_MODEL);
+        classificationPipeline.out(FileModel.FILE_TO_PROJECT_MODEL);
+        classificationPipeline.filter(new PipeFunction<Vertex, Boolean>()
+        {
+            @Override
+            public Boolean compute(Vertex argument)
+            {
+                return initialVertices.contains(argument);
+            }
+        });
+        classificationPipeline.back("classification");
 
         int classificationEffort = 0;
         for (Vertex v : classificationPipeline)
         {
             Integer migrationEffort = v.getProperty(ClassificationModel.EFFORT);
+            if (migrationEffort == null)
+                continue;
 
             // only check tags if we have some passed in
             if (!includeTags.isEmpty() || !excludeTags.isEmpty())
@@ -100,18 +132,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
                 if (!TagUtil.isTagsMatch(classificationModel.getTags(), includeTags, excludeTags))
                     continue;
             }
-
-            if (migrationEffort != null)
-            {
-                classificationEffort += migrationEffort;
-            }
-        }
-        if (recursive)
-        {
-            for (ProjectModel childProject : projectModel.getChildProjects())
-            {
-                classificationEffort += getMigrationEffortPoints(childProject, includeTags, excludeTags, recursive);
-            }
+            classificationEffort += migrationEffort;
         }
         return classificationEffort;
     }

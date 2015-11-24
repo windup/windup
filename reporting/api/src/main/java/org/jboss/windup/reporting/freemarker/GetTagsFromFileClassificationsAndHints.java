@@ -1,24 +1,25 @@
 package org.jboss.windup.reporting.freemarker;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.reporting.model.ClassificationModel;
+import org.jboss.windup.reporting.model.InlineHintModel;
+import org.jboss.windup.rules.files.model.FileLocationModel;
+import org.jboss.windup.util.ExecutionStatistics;
+
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.structures.FramedVertexIterable;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
-import java.util.List;
-
-import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.util.ExecutionStatistics;
 
 import freemarker.ext.beans.StringModel;
 import freemarker.template.TemplateModelException;
-import java.util.HashSet;
-import java.util.Set;
-import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.reporting.model.ClassificationModel;
-import org.jboss.windup.reporting.model.InlineHintModel;
-import org.jboss.windup.rules.files.model.FileLocationModel;
 
 /**
  * Gets all tags from the classifications associated with the provided {@link FileModel}.
@@ -80,8 +81,8 @@ public class GetTagsFromFileClassificationsAndHints implements WindupFreeMarkerM
             GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(fileModel.asVertex());
             pipeline.in(ClassificationModel.FILE_MODEL).has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, ClassificationModel.TYPE);
             FramedVertexIterable<ClassificationModel> iterable = new FramedVertexIterable<>(this.context.getFramed(), pipeline, ClassificationModel.class);
-            for(ClassificationModel clsf : iterable)
-                tags.addAll(clsf.getTags());
+            for (ClassificationModel classification : iterable)
+                tags.addAll(classification.getTags());
         }
 
         // Hints

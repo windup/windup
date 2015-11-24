@@ -58,7 +58,8 @@ public class TypeReferenceServiceTest
             ProjectModel projectModel = fillData(context);
 
             Set<String> emptySet = Collections.emptySet();
-            Map<String, Integer> data = typeReferenceService.getPackageUseFrequencies(projectModel, emptySet, emptySet, 2, false);
+            Map<String, Integer> data = typeReferenceService.getPackageUseFrequencies(projectModel, emptySet, emptySet, 2,
+                        false);
             Assert.assertEquals(1, data.size());
             Assert.assertEquals("com.example.*", data.keySet().iterator().next());
             Assert.assertEquals(Integer.valueOf(2), data.values().iterator().next());
@@ -83,6 +84,7 @@ public class TypeReferenceServiceTest
 
         InlineHintModel b1 = inlineHintService.create();
         InlineHintModel b1b = inlineHintService.create();
+
         b1.setFile(f1);
         b1.setFileLocationReference(t1);
         b1b.setFile(f1);

@@ -1,9 +1,6 @@
 package org.jboss.windup.reporting.model;
 
-import java.util.Set;
-
 import org.jboss.windup.graph.Indexed;
-import org.jboss.windup.graph.SetInProperties;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.association.LinkableModel;
 import org.ocpsoft.rewrite.config.Rule;
@@ -19,7 +16,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
  * additional information, or auto-translated/generated/updated versions of the source file.
  */
 @TypeValue(ClassificationModel.TYPE)
-public interface ClassificationModel extends EffortReportModel, LinkableModel
+public interface ClassificationModel extends EffortReportModel, LinkableModel, TaggableModel
 {
     String TYPE = "ClassificationModel";
     String TYPE_PREFIX = TYPE + ":";
@@ -79,22 +76,5 @@ public interface ClassificationModel extends EffortReportModel, LinkableModel
     String getRuleID();
 
 
-    /**
-     * Add a tag associated with this {@link ClassificationModel}
-     */
-    @SetInProperties(propertyPrefix = "tag")
-    ClassificationModel addTag(String tag);
-
-    /**
-     * Set the set of tags associated with this {@link ClassificationModel}
-     */
-    @SetInProperties(propertyPrefix = "tag")
-    ClassificationModel setTags(Set<String> tags);
-
-    /**
-     * Get the set of tags associated with this {@link ClassificationModel}
-     */
-    @SetInProperties(propertyPrefix = "tag")
-    Set<String> getTags();
 
 }

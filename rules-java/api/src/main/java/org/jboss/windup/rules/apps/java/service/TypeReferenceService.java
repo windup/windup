@@ -1,7 +1,6 @@
 package org.jboss.windup.rules.apps.java.service;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -69,25 +68,8 @@ public class TypeReferenceService extends GraphService<JavaTypeReferenceModel>
 
         // 2. Organize them by package name
         // summarize results.
-        Iterator<Vertex> pipelineIterator = pipeline.iterator();
-        while (true)
+        for (Vertex inlineHintVertex : pipeline)
         {
-            ExecutionStatistics.get().begin("TypeReferenceService.getPackageUseFrequencies(data,projectModel,nameDepth,recursive):hasNext");
-            try
-            {
-                if (!pipelineIterator.hasNext())
-                    break;
-            }
-            finally
-            {
-                ExecutionStatistics.get().end("TypeReferenceService.getPackageUseFrequencies(data,projectModel,nameDepth,recursive):hasNext");
-            }
-
-            ExecutionStatistics.get().begin("TypeReferenceService.getPackageUseFrequencies(data,projectModel,nameDepth,recursive):next");
-            Vertex inlineHintVertex = pipelineIterator.next();
-            ExecutionStatistics.get().end("TypeReferenceService.getPackageUseFrequencies(data,projectModel,nameDepth,recursive):next");
-
-            ExecutionStatistics.get().begin("TypeReferenceService.getPackageUseFrequencies(data,projectModel,nameDepth,recursive):tagCheck");
             InlineHintModel javaInlineHint = hintService.frame(inlineHintVertex);
             // only check tags if we have some passed in
             if (!includeTags.isEmpty() || !excludeTags.isEmpty())
@@ -95,9 +77,7 @@ public class TypeReferenceService extends GraphService<JavaTypeReferenceModel>
                 if (!TagUtil.isTagsMatch(javaInlineHint.getTags(), includeTags, excludeTags))
                     continue;
             }
-            ExecutionStatistics.get().end("TypeReferenceService.getPackageUseFrequencies(data,projectModel,nameDepth,recursive):tagCheck");
 
-            ExecutionStatistics.get().begin("TypeReferenceService.getPackageUseFrequencies(data,projectModel,nameDepth,recursive):referenceCalc");
             int val = 1;
             FileLocationModel fileLocationModel = javaInlineHint.getFileLocationReference();
             if (fileLocationModel == null || !(fileLocationModel instanceof JavaTypeReferenceModel))
@@ -115,7 +95,7 @@ public class TypeReferenceService extends GraphService<JavaTypeReferenceModel>
                 for (int i = 0; i < nameDepth; i++)
                 {
                     String subElement = keyArray[i];
-                    // FIXME/TODO - This shouldn't be necessary, but is at the moment due to some stuff emitted by our
+                    // FIXME/TODO - This shouldn't be necessary, but is at the moment due to some stuff emmitted by our
                     // AST
                     if (subElement.contains("(") || subElement.contains(")"))
                     {
@@ -146,7 +126,6 @@ public class TypeReferenceService extends GraphService<JavaTypeReferenceModel>
             }
             data.put(pattern, val);
         }
-        ExecutionStatistics.get().end("TypeReferenceService.getPackageUseFrequencies(data,projectModel,nameDepth,recursive):referenceCalc");
 
         if (recursive)
         {
