@@ -106,15 +106,21 @@ dl:last-child {
 	margin-bottom:0;
 }
 
+//overwriting bootstrap style 
 .label {
     display: block;
     float: left;
     border-radius: 4px;
-    box-shadow: 1px 1px 1px #444;
-    padding: 4px 8px 1px;
-    margin: 2px 4px 6px 0px;
+    //box-shadow: 1px 1px 1px #444;
+    padding: 4px;
+    margin: 2px;
     font-weight: bold;
 }
+//overwriting bootstrap style
+.label-info {
+    background-color: #696969; //this is dark grey instead of blueish from bootstrap's label-info 
+}
+
 a.windup-file-location {
 	display: block; position: relative; top: -40px; visibility: hidden;
 }
