@@ -291,6 +291,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
             }
             finally
             {
+                sourcePathToFileModel.clear();
                 ExecutionStatistics.get().end("AnalyzeJavaFilesRuleProvider.analyzeFile");
             }
         }
