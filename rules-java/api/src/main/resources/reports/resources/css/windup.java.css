@@ -4,6 +4,11 @@ body.java-application table.summaryLayout { width: 100%; }
 body.java-application table.summaryLayout > tr > td,
 body.java-application table.summaryLayout > tbody > tr > td { vertical-align: top; margin-bottom: 2ex; }
 
+body.java-application table.summaryLayout > tbody > tr > td div#treeView-Projects {
+    float: left;
+    margin: 0px 0px 2ex 120px;
+    font-family: "Trebuchet MS",Helvetica,sans-serif;
+}
 
 .projectBox table.subprojects > tbody > tr > th,
 .projectBox table.subprojects > tbody > tr > td {
@@ -13,6 +18,7 @@ body.java-application table.summaryLayout > tbody > tr > td { vertical-align: to
 .projectBox table.subprojects > tbody > tr > td {
     padding: 1px 0.5em;
 }
+
 
 /* Charts */
 body.java-application .chartBoundary {
@@ -46,6 +52,10 @@ body.java-application .chartBoundary h4 {
 }
 .windupPieGraph div.legend td.legendLabel { padding-left: 0.6ex; }
 
+
+/* Project panels */
+
+.projectBox .panel-heading span.storyPoints { font-size: 80%; margin-left: 1em; }
 
 /* .points also in main CSS - windup.css */
 .panel .panel-body  div.points {

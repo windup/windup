@@ -100,11 +100,14 @@
 
 
 <#macro projectModelRenderer projectModel>
-    <div class="panel panel-primary projectBox" id="project_${projectModel.asVertex().id?c}">
+    <#assign projectID = "project_${projectModel.asVertex().id?c}">
+    <div class="panel panel-primary projectBox" id="${projectID}">
         <#assign panelStoryPoints = getMigrationEffortPoints(projectModel, false, reportModel.includeTags, reportModel.excludeTags)>
         <div class="panel-heading panel-collapsed clickable">
             <span class="pull-left"><i class="glyphicon glyphicon-expand arrowIcon"></i></span>
-            <h3 class="panel-title">${projectModel.rootFileModel.prettyPath?html} (${panelStoryPoints} story points)</h3>
+            <h3 class="panel-title">${projectModel.rootFileModel.prettyPath?html}
+                <span class="storyPoints">(${panelStoryPoints} story points)</span>
+            </h3>
         </div>
         <div class="panel-body" style="display:none">
         <div class="container-fluid summaryMargin">
@@ -192,13 +195,20 @@
     </div>
 
     <script>
-        console.log("A: " + (parentProject == null ? "null" : parentProject.toString()));
-        thisProject = new ProjectNode("${projectModel.name?js_string}", "${projectModel.asVertex().id?c}");
-        if (parentProject != null)
+        //console.log("A: " + (parentProject == null ? "null" : parentProject.toString()));///
+        thisProject = new ProjectNode("${projectModel.name?js_string}", "${projectID}");
+        thisProject.sourceBased = ${projectModel.sourceBased!false?c};
+        var $tagLabels = $("#${projectID} .projectFile .tech .label");
+        var $tagWarns = $tagLabels.find(".warning");
+        $tagWarns.add( $tagLabels.find(".danger") );
+        thisProject.warnings = $tagWarns.size();
+        thisProject.tags = []; /// TODO: Need to execute all this after the tag JS analysis.
+
+        if (parentProject == null)
+            rootProject = thisProject;
+        else
             parentProject.addSubproject(thisProject);
         parentProject = thisProject;
-        //console.log("B: " + JSON.stringify(parentProject, null, 4));
-        console.log("B: " + (parentProject == null ? "null" : parentProject.toString()));
     </script>
     <#list sortProjectsByPathAscending(projectModel.childProjects) as childProject>
         <@projectModelRenderer childProject/>
@@ -208,6 +218,11 @@
     </script>
 </#macro>
 
+
+
+
+<#-- ############################################################################################################### -->
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -215,12 +230,10 @@
     <link href="resources/css/bootstrap.min.css" rel="stylesheet">
     <link href="resources/css/windup.css" rel="stylesheet" media="screen">
     <link href="resources/css/windup.java.css" rel="stylesheet" media="screen">
-    <script src="resources/js/windup-overview-head.js"/>
+    <script src="resources/js/windup-overview-head.js"></script>
     <style>
         body.report-Overview .forCatchall { display: none; }
         body.report-Catchall .forOverview { display: none; }
-        #treeView_Projects{ font-family: "Trebuchet MS",Helvetica,sans-serif; }
-
     </style>
 </head>
 <body role="document" class="java-application report-${reportModel.reportName}">
@@ -288,23 +301,21 @@
         <!-- Summary -->
         <div class="row container-fluid">
             <div class="container mainGraphContainer">
-                <table style="width: 100%;">
+                <table class="summaryLayout" style="width: 100%;">
                     <tr>
-                        <td>
+                        <td colspan="2">
                             <div class="points" style="text-align: center; color: #00254b; padding-bottom: 1ex;">
                                 <div class="number">${getMigrationEffortPoints(reportModel.projectModel, true, reportModel.includeTags, reportModel.excludeTags)}</div>
                                 <div>Story Points</div>
                             </div>
-                        </td>
-                        <td>
-                            <div id="treeView_Projects"></div>
+                            <div id="treeView-Projects"></div>
                         </td>
                     </tr>
                     <tr>
                         <td>
                             <div class="chartBoundary">
-                                <h4>Incompatible API usage frequencies (by API packages)</h4>
-                                <div id="application_pie" class="windupPieGraph"/>
+                                <h4>Incompatible API usage count (by API packages)</h4>
+                                <div id="application_pie" class="windupPieGraph"></div>
                             </div>
                         </td>
                         <td>
@@ -320,6 +331,7 @@
 
         <script>
             // For projects TreeView - used when gathering the projects data to JavaScript.
+            var rootProject = null;
             var parentProject = null;
             var thisProject = null;
         </script>
@@ -340,7 +352,9 @@
         <script src="resources/js/jquery.color-2.1.2.min.js"></script>
         <script src="resources/libraries/flot/jquery.flot.min.js"></script>
         <script src="resources/libraries/flot/jquery.flot.pie.min.js"></script>
-        <script src="resources/js/windup-overview.js"/>
+        <link   rel="stylesheet"      href="resources/libraries/jstree/themes/default/style.min.css"/>
+        <script type="text/javascript" src="resources/libraries/jstree/jstree.min.js"></script>
+        <script src="resources/js/windup-overview.js"></script>
         <script src="resources/js/bootstrap.min.js"></script>
 
         <@render_pie project=reportModel.projectModel recursive=true elementID="application_pie" includeTags=reportModel.includeTags excludeTags=reportModel.excludeTags />
@@ -357,160 +371,25 @@
 
 
         <script>
-        // Panels toggling - slide up or down.
-
-        $(document).on("click", ".panel-heading", function(event) {
-            togglePanelSlide.call(this, event);
-            //initializeBarchartIfNotDoneYet.call(this, event);
-        });
-        $('#collapseAll').toggle();
-
-        $( document ).ready( function () {
-            createTagCharts();
-        })
-
-
-
-        // Projects TreeView.
-
-        var jsTreeData = prepareJsTreeData(rootProject);
-        $(function () {
-            $('#treeView_Projects').jstree({
-                plugins : ["wholerow", "checkbox"],
-                core: {
-                    data: jsTreeData
-                },
+            // Panels toggling - slide up or down.
+            $(document).on("click", ".panel-heading", function(event) {
+                togglePanelSlide.call(this, event);
             });
-        });
-        $('#treeView_Projects').on("changed.jstree", function(event, data) {
-            console.log(data.selected);///
-        });
+            $('#collapseAll').toggle();
+
+            $(document).ready( function() {
+                createTagCharts();
+            })
 
 
-
-        // Tags bar chart.
-
-        var chartObjects = {};
-
-        function initializeBarchartIfNotDoneYet(event) {
-            $(this).parents(".projectBox").each(function(){
-                var chartObj = chartObjects[ $(this).attr("id") + "-tags" ];
-                chartObj.setupGrid();
-                chartObj.draw();
-            });
-        }
-
-        function createTagCharts() {
-            // For each project's file, count it's tags.
-            var rootProjCountMap = {};
-            // Append a div to each project's summary. Doesn't work because it's hidden while Flot is rendering.
-            //$(".projectBox .summaryMargin"/* td.tagsBarChart*/).append('<div class="tagChart" style="height: 300px; width: 600px;"></div>')
-            $(".projectBox").each(function(iProj){
-                var projectId = $(this).attr("id");
-                curProjCountsMap = {};
-
-                // Create the tag -> count map.
-                $(this).find(".projectFile").each(function(iFile){
-                    $(this).find(".tech .label").each(function(iTag){
-                        var tagName = $(this).text().trim();
-                        rootProjCountMap[ tagName ] = ++rootProjCountMap[ tagName ] || 1; // Sum map.
-                        curProjCountsMap[ tagName ] = ++curProjCountsMap[ tagName ] || 1;
-                    })
-                })
-
-                // Don't draw the chart if there's just one tag.
-                if (curProjCountsMap.length < 2)
-                    return;
-
-                chartHeight = Math.max(50, Math.min(400, Object.keys(curProjCountsMap).length * 22 + 20));
-
-                // Render the bar chart for this project.
-                // We need to render it somewhere where it is visible and then move to the collapsed subproject divs.
-                $(document.body).append('<div class="tagChart" style="height: ' + chartHeight + 'px; width: 500px;"></div>'); // Returns body.
-                var chartDiv = $("body > .tagChart")[0];
-                curProjCountsMap = sortMapByValues(curProjCountsMap);
-                // Store the chart object for later use.
-                chartObjects[projectId + "-tags"] =
-                        createChart(chartDiv, curProjCountsMap);
-                $("body > .tagChart").appendTo( $(this).find(".summaryMargin .tagsBarChart") );
-                $(this).find(".summaryMargin .tagsBarChart").append( $("body > .tagChart") );
+            // Projects TreeView.
+            $(function() {
+                renderAppTreeView(rootProject);
             });
 
-            // Sum tags chart
-            rootProjCountMap = sortMapByValues(rootProjCountMap);
-            createChart("#tagsChartContainer-sum", rootProjCountMap);
 
-            // Substitutes yaxis: { font: } - Flot uses "smaller" which breaks alignment.
-            $(".tagChart .flot-text").css("font-size", "");
-        }
-
-
-        // Prepare the data in the format [[value,index], ...].
-        function prepareFlotData(tagToCountMap) {
-            var ticks = [];
-            var values = [];
-            var maxValue = 1;
-
-            var keys = getKeys(tagToCountMap);
-            for (var i = 0; i < keys.length; i++) {
-                ticks[i] = [i, keys[i]];
-                values[i] = [tagToCountMap[keys[i]], i];
-                maxValue = Math.max(maxValue, values[i][0]);
-            }
-            return { ticks: ticks, values: values, maxValue: maxValue };
-        }
-
-        function createChart(divSelectorOrElement, tagToCountMap) {
-            var flotData = prepareFlotData(tagToCountMap);
-            return createFlotChart(divSelectorOrElement, flotData);
-        }
-
-        function createFlotChart(divSelectorOrElement, flotData) {
-            var dataset = [{ data: flotData.values, color: "#5482FF" }];
-
-            var options = {
-                series: { bars: { horizontal: true, show: true } },
-                bars: {
-                    align: "center",
-                    barWidth: 0.6,
-                    lineWidth: 1,
-                },
-                grid: {
-                    hoverable: true,
-                    borderWidth: 1,
-                    borderColor: "#B0B0B0",
-                    backgroundColor: { colors: ["#FFFFFF", "#EDF5FF"] },
-                    margin: 3, // Doesn't work
-                    minBorderMargin: 3,
-                },
-                xaxis: {
-                    axisLabel: "Count",
-                    axisLabelUseCanvas: true,
-                    axisLabelFontSizePixels: 12,
-                    axisLabelFontFamily: "Verdana, Arial",
-                    axisLabelPadding: 10,
-                    // Logarithmic
-                    //ticks: [1,2,3,4,5,6,7,8,9,10,15,30,50,75,100,200,350,500,750,1000,5000,10000],
-                    //transform: function(v) { return Math.log(v+0.0001); /*move away from zero*/},
-                    //inverseTransform: function (v) { return Math.exp(v); }
-                    //min: 0.7,
-                    max: flotData.maxValue * 1.1, // Substitutes grid: { margin: ... }
-                    tickDecimals: 0,
-                    tickFormatter: function(value, axis){ return value + "x"; },
-                },
-                yaxis: {
-                    axisLabel: "Technology",
-                    axisLabelUseCanvas: true,
-                    axisLabelFontSizePixels: 12,
-                    axisLabelFontFamily: "Verdana, Arial",
-                    ticks: flotData.ticks,
-                    // Otherwise Flot uses "smaller" which breaks alignment.
-                    //font: { size: "14px", color: "black" }, // doesn't work
-                },
-            };
-
-            return $.plot( $(divSelectorOrElement), dataset, options );
-        }
+            // Tags bar chart.
+            var chartObjects = {};
         </script>
     </div>
 </body>

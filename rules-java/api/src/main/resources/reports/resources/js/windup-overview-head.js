@@ -1,4 +1,10 @@
 
+/*
+ * This file needs to be loaded at the beginning of the page, because its code is used throughout the document.
+ * With some effort it could be moved back to the end, if it's worth it.
+ */
+
+
 /* ========   TreeView stuff        ========== */
 
 var ProjectNode = function(name, id) {
@@ -53,8 +59,10 @@ function prepareJsTreeData(windupTree, parentObj /* undefined for root */)
     var subNode = null;
     // Expected format of the node (there are no required fields)
     var curObj = {
-        id          : curNode.id,
+        id          : "treeNode-" + curNode.id,
         text        : curNode.name,
+        //icon:       : curNode.,/// TODO
+        li_attr     : (curNode.tags.constructor !== Array) ? "" : ("tag-" + curNode.tags.join(" tag-")),
         state       : {
             opened    : true,
             //selected  : false,

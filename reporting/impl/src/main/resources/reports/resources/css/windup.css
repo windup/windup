@@ -239,6 +239,9 @@ p.windup-contributors  {
 
 /** Bootstrap overrides **/
 
+.panel-primary {
+    border-color: #00445C;
+}
 
 /** Wider <dd> **/
 .dl-horizontal dt {
