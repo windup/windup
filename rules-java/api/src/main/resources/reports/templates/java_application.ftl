@@ -55,7 +55,7 @@
             <#list getTagsFromFileClassificationsAndHints(fileModel) as tag>
                 <span class="label label-info tag">${tag}</span>
             </#list>
-            <div style="clear: both;"/>
+            <div style="clear: both;"></div>
         </td>
 
         <#-- Issues -->
@@ -190,9 +190,22 @@
         </#if>
         </div>
     </div>
+
+    <script>
+        console.log("A: " + (parentProject == null ? "null" : parentProject.toString()));
+        thisProject = new ProjectNode("${projectModel.name?js_string}", "${projectModel.asVertex().id?c}");
+        if (parentProject != null)
+            parentProject.addSubproject(thisProject);
+        parentProject = thisProject;
+        //console.log("B: " + JSON.stringify(parentProject, null, 4));
+        console.log("B: " + (parentProject == null ? "null" : parentProject.toString()));
+    </script>
     <#list sortProjectsByPathAscending(projectModel.childProjects) as childProject>
         <@projectModelRenderer childProject/>
     </#list>
+    <script>
+        parentProject = parentProject.getParent();
+    </script>
 </#macro>
 
 <head>
@@ -202,9 +215,12 @@
     <link href="resources/css/bootstrap.min.css" rel="stylesheet">
     <link href="resources/css/windup.css" rel="stylesheet" media="screen">
     <link href="resources/css/windup.java.css" rel="stylesheet" media="screen">
+    <script src="resources/js/windup-overview-head.js"/>
     <style>
         body.report-Overview .forCatchall { display: none; }
         body.report-Catchall .forOverview { display: none; }
+        #treeView_Projects{ font-family: "Trebuchet MS",Helvetica,sans-serif; }
+
     </style>
 </head>
 <body role="document" class="java-application report-${reportModel.reportName}">
@@ -268,6 +284,8 @@
             <!-- / Breadcrumbs -->
         </div>
 
+
+        <!-- Summary -->
         <div class="row container-fluid">
             <div class="container mainGraphContainer">
                 <table style="width: 100%;">
@@ -279,18 +297,19 @@
                             </div>
                         </td>
                         <td>
-                            <div class="chartBoundary">
-                                <h4>Incidents distribution amongst packages</h4>
-                                <div id="application_pie" class="windupPieGraph"/>
-                            </div>
+                            <div id="treeView_Projects"></div>
                         </td>
                     </tr>
                     <tr>
                         <td>
+                            <div class="chartBoundary">
+                                <h4>Incompatible API usage frequencies (by API packages)</h4>
+                                <div id="application_pie" class="windupPieGraph"/>
+                            </div>
                         </td>
                         <td>
                             <div class="chartBoundary">
-                                <h4>Technologies found</h4>
+                                <h4>Technologies found - occurence count</h4>
                                 <div id="tagsChartContainer-sum" style="height: 300px; width: 500px;"></div>
                             </div>
                         </td>
@@ -298,6 +317,12 @@
                 </table>
             </div>
         </div>
+
+        <script>
+            // For projects TreeView - used when gathering the projects data to JavaScript.
+            var parentProject = null;
+            var thisProject = null;
+        </script>
 
         <div class="row container-fluid">
             <div class="theme-showcase" role="main">
@@ -333,6 +358,7 @@
 
         <script>
         // Panels toggling - slide up or down.
+
         $(document).on("click", ".panel-heading", function(event) {
             togglePanelSlide.call(this, event);
             //initializeBarchartIfNotDoneYet.call(this, event);
@@ -342,6 +368,27 @@
         $( document ).ready( function () {
             createTagCharts();
         })
+
+
+
+        // Projects TreeView.
+
+        var jsTreeData = prepareJsTreeData(rootProject);
+        $(function () {
+            $('#treeView_Projects').jstree({
+                plugins : ["wholerow", "checkbox"],
+                core: {
+                    data: jsTreeData
+                },
+            });
+        });
+        $('#treeView_Projects').on("changed.jstree", function(event, data) {
+            console.log(data.selected);///
+        });
+
+
+
+        // Tags bar chart.
 
         var chartObjects = {};
 
