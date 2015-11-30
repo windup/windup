@@ -50,7 +50,7 @@ public class CleanFromMultipleSourceFiles extends GraphOperation
             {
                 JavaSourceFileModel javaModel = context.getFramed().frame(vertex, JavaSourceFileModel.class);
                 // String that identifies 3 properties - projectModel + packageName + className that must be the same for vertices
-                ProjectModel projectModel = javaModel.getProjectModel();
+                ProjectModel projectModel = javaModel.getBoundProject();
                 String projectModelID = projectModel == null ? "" : projectModel.asVertex().getId().toString();
                 String packageName = javaModel.getPackageName() == null ? "" : javaModel.getPackageName();
 

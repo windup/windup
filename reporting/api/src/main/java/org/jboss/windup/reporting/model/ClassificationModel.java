@@ -21,13 +21,13 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(ClassificationModel.TYPE)
 public interface ClassificationModel extends EffortReportModel, LinkableModel
 {
-    String TYPE = "ClassificationModel";
+    String TYPE = "Classification";
     String TYPE_PREFIX = TYPE + ":";
     String RULE_ID = TYPE_PREFIX + "ruleID";
     String CLASSIFICATION = TYPE_PREFIX + "classification";
     String DESCRIPTION = TYPE_PREFIX + "description";
 
-    String FILE_MODEL = TYPE_PREFIX + "classificationModelToFileModel";
+    String FILE_MODEL = TYPE_PREFIX + "classificationModelToFile";
 
     /**
      * Add a {@link FileModel} associated with this {@link ClassificationModel}.

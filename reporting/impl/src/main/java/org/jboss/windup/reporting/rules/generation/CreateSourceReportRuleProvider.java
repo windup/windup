@@ -74,7 +74,7 @@ public class CreateSourceReportRuleProvider extends AbstractRuleProvider
                 ReportFileModel reportFileModel = GraphService.addTypeToModel(event.getGraphContext(), payload,
                             ReportFileModel.class);
                 sm.setSourceFileModel(reportFileModel);
-                if (reportFileModel.getProjectModel() == null)
+                if (reportFileModel.getBoundProject() == null)
                 {
                     LOG.warning("Error, source report created for file: " + payload.getFilePath() + ", but this file does not have a " + 
                                 ProjectModel.class.getSimpleName() + " associated. Execution will continue, however the source report " + 

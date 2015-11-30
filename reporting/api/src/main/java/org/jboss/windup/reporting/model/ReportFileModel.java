@@ -15,7 +15,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(ReportFileModel.TYPE)
 public interface ReportFileModel extends FileModel
 {
-    public static final String TYPE = "ReportFileModel";
+    public static final String TYPE = "ReportFile";
     public static final String RELATED_HINTS_QUERY = "it.in(\"" + FileReferenceModel.FILE_MODEL
                 + "\").has(\"" + WindupVertexFrame.TYPE_PROP
                 + "\", com.thinkaurelius.titan.core.attribute.Text.CONTAINS, \"" + InlineHintModel.TYPE + "\")";

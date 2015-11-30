@@ -24,9 +24,9 @@ public interface ApplicationReportModel extends ReportModel
     String TYPE = "ApplicationReport";
     String REPORT_TO_APPLICATION_NOTE = "reportToApplicationNote";
     String REPORT_LINES = "reportLines";
-    String REPORT_TO_PROJECT_MODEL = "reportToProjectModel";
+    String REPORT_TO_PROJECT_MODEL = "reportToProject";
     String REPORT_PRIORITY = "reportPriority";
-    String MAIN_APPLICATION_REPORT = "mainApplicationModel";
+    String MAIN_APPLICATION_REPORT = "mainApplication";
 
     /**
      * Provides a link to the Navigation Index that is used for this particular report

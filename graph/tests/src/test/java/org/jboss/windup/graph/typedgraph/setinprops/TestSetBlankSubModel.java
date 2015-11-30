@@ -6,7 +6,7 @@ import org.jboss.windup.graph.SetInProperties;
 
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
-@TypeValue("SetInPropsBlankSubModel")
+@TypeValue("SetInPropsBlankSub")
 public interface TestSetBlankSubModel extends TestSetPrefixModel
 {
     @SetInProperties(propertyPrefix = "")

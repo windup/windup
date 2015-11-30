@@ -21,7 +21,7 @@ public interface TechnologyTagModel extends WindupVertexFrame
 {
     String TYPE = "TechnologyTag";
 
-    String TECH_TAG_TO_FILE_MODEL = "techTagToFileModel";
+    String TECH_TAG_TO_FILE_MODEL = "techTagToFile";
     String NAME = "name";
     String VERSION = "version";
     String LEVEL = "level";

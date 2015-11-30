@@ -91,8 +91,8 @@ public class XMLTransformationTest
             FileUtils.deleteDirectory(outputPath.toFile());
             Files.createDirectories(outputPath);
 
-            inputPath.setProjectModel(pm);
-            pm.setRootFileModel(inputPath);
+            inputPath.setBoundProject(pm);
+            pm.setRootOriginLocation(inputPath);
 
             GraphService<XsltTransformationModel> transformationService = new GraphService<>(context,
                         XsltTransformationModel.class);

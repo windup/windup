@@ -17,7 +17,7 @@ public interface JPAConfigurationFileModel extends XmlFileModel
 {
     String JPA_PERSISTENCE_UNIT = "jpaPersistenceUnit";
     String SPECIFICATION_VERSION = "specificationVersion";
-    String TYPE = "JPAConfigurationFileModel";
+    String TYPE = "JPAConfigurationFile";
 
     /**
      * This contains the version of JPA being used by the application.

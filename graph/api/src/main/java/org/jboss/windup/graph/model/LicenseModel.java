@@ -9,7 +9,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(LicenseModel.TYPE)
 public interface LicenseModel extends FileModel, SourceFileModel {
 
-	public static final String TYPE = "LicenseModel";
+	public static final String TYPE = "License";
 	public static final String NAME = "licenseName";
 	public static final String URL = "licenseURL";
 	

@@ -7,7 +7,7 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
-@TypeValue("SetInPropsPrefixModel")
+@TypeValue("SetInPropsPrefix")
 public interface TestSetPrefixModel extends WindupVertexFrame
 {
     @SetInProperties(propertyPrefix = "myset")

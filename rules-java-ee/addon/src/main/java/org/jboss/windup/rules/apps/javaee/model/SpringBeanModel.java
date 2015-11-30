@@ -18,7 +18,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(SpringBeanModel.TYPE)
 public interface SpringBeanModel extends WindupVertexFrame
 {
-    public static final String TYPE = "SpringBeanModel";
+    public static final String TYPE = "SpringBean";
     public static final String SPRING_BEAN_TO_JAVA_CLASS = "springBeanToJavaClass";
     public static final String SPRING_CONFIGURATION = "springConfiguration";
     public static final String SPRING_BEAN_NAME = "springBeanName";

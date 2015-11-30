@@ -6,7 +6,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(JavaAnnotationLiteralTypeValueModel.TYPE)
 public interface JavaAnnotationLiteralTypeValueModel extends JavaAnnotationTypeValueModel
 {
-    public static final String TYPE = "JavaAnnotationLiteralTypeValueModel";
+    public static final String TYPE = "JavaAnnotationLiteralTypeValue";
     public static final String LITERAL_TYPE = "literalType";
     public static final String LITERAL_VALUE = "literalValue";
 

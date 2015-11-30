@@ -20,8 +20,8 @@ public class ProjectModelByRootFileComparator implements Comparator<ProjectModel
     @Override
     public int compare(ProjectModel o1, ProjectModel o2)
     {
-        String filePath1 = o1.getRootFileModel().getFilePath();
-        String filePath2 = o2.getRootFileModel().getFilePath();
+        String filePath1 = o1.getRootOriginLocation().getFilePath();
+        String filePath2 = o2.getRootOriginLocation().getFilePath();
         return filePathComparator.compare(filePath1, filePath2);
     }
 }

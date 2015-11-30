@@ -56,7 +56,7 @@ public class CreateJavaApplicationOverviewReportRuleProvider extends AbstractRul
             {
                 for (FileModel inputPath : payload.getInputPaths())
                 {
-                    ProjectModel projectModel = inputPath.getProjectModel();
+                    ProjectModel projectModel = inputPath.getBoundProject();
                     if (projectModel == null)
                     {
                         throw new WindupException("Error, no project found in: " + inputPath.getFilePath());
@@ -112,7 +112,7 @@ public class CreateJavaApplicationOverviewReportRuleProvider extends AbstractRul
             if (dupeCheck.contains(line.getMessage()))
                 continue;
 
-            String projectPrettyPath = projectModel.getRootFileModel().getPrettyPath();
+            String projectPrettyPath = projectModel.getRootOriginLocation().getPrettyPath();
             if (projectPrettyPath == null)
             {
                 throw new WindupException("Path for project: " + projectModel + " evaluated to null!");
@@ -122,11 +122,11 @@ public class CreateJavaApplicationOverviewReportRuleProvider extends AbstractRul
             boolean found = false;
             while (project != null && !found)
             {
-                if (project.getRootFileModel() == null)
+                if (project.getRootOriginLocation() == null)
                 {
                     throw new WindupException("Root file for project: " + project + " evaluated to null!");
                 }
-                if (projectPrettyPath.equals(project.getRootFileModel().getPrettyPath()))
+                if (projectPrettyPath.equals(project.getRootOriginLocation().getPrettyPath()))
                 {
                     dupeCheck.add(line.getMessage());
                     applicationReportModel.addApplicationReportLine(line);

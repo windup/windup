@@ -14,7 +14,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(ThreadPoolModel.TYPE)
 public interface ThreadPoolModel extends WindupVertexFrame
 {
-    String TYPE = "ThreadPoolModel";
+    String TYPE = "ThreadPool";
     String POOL_NAME = "poolName";
     String MIN_POOL_SIZE = "minPoolSize";
     String MAX_POOL_SIZE = "maxPoolSize";

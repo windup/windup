@@ -72,7 +72,7 @@ public class CreateMigrationIssuesReportRuleProvider extends AbstractRuleProvide
 
             for (FileModel inputPath : WindupConfigurationService.getConfigurationModel(event.getGraphContext()).getInputPaths())
             {
-                createMigrationIssuesReport(event.getGraphContext(), inputPath.getProjectModel());
+                createMigrationIssuesReport(event.getGraphContext(), inputPath.getBoundProject());
             }
         }
     }

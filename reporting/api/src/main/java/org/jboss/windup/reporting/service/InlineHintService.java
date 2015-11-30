@@ -99,7 +99,7 @@ public class InlineHintService extends GraphService<InlineHintModel>
         }
 
         GremlinPipeline<Vertex, Vertex> inlineHintPipeline = new GremlinPipeline<>(initialVertices);
-        inlineHintPipeline.out(ProjectModel.PROJECT_MODEL_TO_FILE);
+        inlineHintPipeline.out(ProjectModel.CONTAINED_FILES);
         inlineHintPipeline.in(InlineHintModel.FILE_MODEL).has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, InlineHintModel.TYPE);
 
         List<InlineHintModel> results = new ArrayList<>();
@@ -119,7 +119,7 @@ public class InlineHintService extends GraphService<InlineHintModel>
     public int getMigrationEffortPoints(ProjectModel projectModel, Set<String> includeTags, Set<String> excludeTags, boolean recursive)
     {
         GremlinPipeline<Vertex, Vertex> inlineHintPipeline = new GremlinPipeline<>(projectModel.asVertex());
-        inlineHintPipeline.out(ProjectModel.PROJECT_MODEL_TO_FILE).in(InlineHintModel.FILE_MODEL);
+        inlineHintPipeline.out(ProjectModel.CONTAINED_FILES).in(InlineHintModel.FILE_MODEL);
         inlineHintPipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, InlineHintModel.TYPE);
 
         int hintEffort = 0;

@@ -103,7 +103,7 @@ public class WindupCompiledWithSourceTest extends WindupArchitectureTest
 
             ProjectModel project = models.iterator().next();
             Set<FileModel> duplicateCheck = new HashSet<>();
-            for (FileModel fileModel : project.getFileModels())
+            for (FileModel fileModel : project.getContainedFiles())
             {
                 if (duplicateCheck.contains(fileModel))
                     Assert.fail("Duplicate model detected, aborting");

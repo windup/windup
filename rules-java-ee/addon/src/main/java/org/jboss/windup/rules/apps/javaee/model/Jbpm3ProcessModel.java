@@ -13,7 +13,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(Jbpm3ProcessModel.TYPE)
 public interface Jbpm3ProcessModel extends XmlFileModel
 {
-    public static final String TYPE = "Jbpm3ProcessModel";
+    public static final String TYPE = "Jbpm3Process";
     public static final String PROCESS_NAME = "processName";
     public static final String STATE_COUNT = "stateCount";
     public static final String NODE_COUNT = "nodeCount";

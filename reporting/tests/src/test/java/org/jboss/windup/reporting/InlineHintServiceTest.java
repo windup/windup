@@ -63,7 +63,7 @@ public class InlineHintServiceTest
 
             boolean foundF1Effort = false;
             boolean foundF2Effort = false;
-            for (FileModel fm : projectModel.getFileModels())
+            for (FileModel fm : projectModel.getContainedFiles())
             {
                 if (fm.getFilePath().equals("/f1"))
                 {
@@ -112,12 +112,12 @@ public class InlineHintServiceTest
             child2.setParentProject(parent);
 
             FileModel child2File1 = fileService.create();
-            child2.addFileModel(child2File1);
+            child2.addContainedFile(child2File1);
             InlineHintModel child2HintFile1 = hintService.create();
             child2HintFile1.setFile(child2File1);
 
             FileModel child2File2 = fileService.create();
-            child2.addFileModel(child2File2);
+            child2.addContainedFile(child2File2);
             InlineHintModel child2HintFile2 = hintService.create();
             child2HintFile2.setFile(child2File2);
 
@@ -126,7 +126,7 @@ public class InlineHintServiceTest
             child3.setParentProject(parent);
 
             FileModel child3File1 = fileService.create();
-            child3.addFileModel(child3File1);
+            child3.addContainedFile(child3File1);
             InlineHintModel child3HintFile1 = hintService.create();
             child3HintFile1.setFile(child3File1);
 
@@ -142,7 +142,7 @@ public class InlineHintServiceTest
             child2_1_2.setParentProject(child2_1);
 
             FileModel child2_1File1 = fileService.create();
-            child2_1_2.addFileModel(child2_1File1);
+            child2_1_2.addContainedFile(child2_1File1);
             InlineHintModel child2_1HintFile1 = hintService.create();
             child2_1HintFile1.setFile(child2_1File1);
 
@@ -193,10 +193,10 @@ public class InlineHintServiceTest
         b2.setFile(f2);
 
         ProjectModel projectModel = context.getFramed().addVertex(null, ProjectModel.class);
-        projectModel.addFileModel(f1);
-        f1.setProjectModel(projectModel);
-        projectModel.addFileModel(f2);
-        f2.setProjectModel(projectModel);
+        projectModel.addContainedFile(f1);
+        f1.setBoundProject(projectModel);
+        projectModel.addContainedFile(f2);
+        f2.setBoundProject(projectModel);
 
         return projectModel;
     }

@@ -9,7 +9,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(JmsConnectionFactoryModel.TYPE)
 public interface JmsConnectionFactoryModel extends JNDIResourceModel
 {
-    public static final String TYPE = "JmsConnectionFactoryModel";
+    public static final String TYPE = "JmsConnectionFactory";
     public static final String CONNECTION_FACTORY_TYPE = "connectionFactoryType";
 
     /**

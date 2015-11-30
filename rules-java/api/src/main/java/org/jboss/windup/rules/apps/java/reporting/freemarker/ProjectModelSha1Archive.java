@@ -69,8 +69,8 @@ public class ProjectModelSha1Archive implements WindupFreeMarkerMethod
             throw new IllegalArgumentException("FreeMarker Method " + NAME + " called with null project model");
         }
         ProjectModel projectModel = (ProjectModel) stringModelArg.getWrappedObject();
-        if(projectModel.getRootFileModel() instanceof IdentifiedArchiveModel) {
-        	result = projectModel.getRootFileModel().getSHA1Hash();
+        if(projectModel.getRootOriginLocation() instanceof IdentifiedArchiveModel) {
+        	result = projectModel.getRootOriginLocation().getSHA1Hash();
         }
         ExecutionStatistics.get().end(NAME);
         

@@ -103,7 +103,7 @@ public class TattletaleRuleProvider extends AbstractRuleProvider
 
         private void createReportModel(GraphContext context, FileModel input, String reportRelativePath)
         {
-            ProjectModel inputProjectModel = input.getProjectModel();
+            ProjectModel inputProjectModel = input.getBoundProject();
 
             ApplicationReportModel applicationReportModel = new ApplicationReportService(context).create();
             applicationReportModel.setReportName("Tattletale");

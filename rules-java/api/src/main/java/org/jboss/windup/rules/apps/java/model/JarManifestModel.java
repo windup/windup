@@ -14,7 +14,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(JarManifestModel.TYPE)
 public interface JarManifestModel extends FileModel, SourceFileModel
 {
-    public static final String TYPE = "JarManifestModel";
+    public static final String TYPE = "JarManifest";
     public static final String ARCHIVE = "archive";
 
     @Adjacency(label = ARCHIVE, direction = Direction.IN)

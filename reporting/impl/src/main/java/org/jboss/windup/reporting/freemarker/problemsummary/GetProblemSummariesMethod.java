@@ -57,7 +57,7 @@ public class GetProblemSummariesMethod implements WindupFreeMarkerMethod
         {
             projectModel = null;
         }
-        // projectModel.getFileModels()
+        // projectModel.getContainedFiles()
 
         // get all classifications
         // get all hints
@@ -96,7 +96,7 @@ public class GetProblemSummariesMethod implements WindupFreeMarkerMethod
                 {
                     // make sure this one is in the project
                     boolean projectMatches = false;
-                    ProjectModel fileProject = file.getProjectModel();
+                    ProjectModel fileProject = file.getBoundProject();
                     while (fileProject != null)
                     {
                         if (fileProject.equals(projectModel))

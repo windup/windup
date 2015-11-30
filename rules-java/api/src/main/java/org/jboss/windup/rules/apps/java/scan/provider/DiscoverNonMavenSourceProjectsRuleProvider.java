@@ -46,16 +46,16 @@ public class DiscoverNonMavenSourceProjectsRuleProvider extends AbstractRuleProv
             for (FileModel mainFileModel : configuration.getInputPaths())
             {
                 ProjectService projectModelService = new ProjectService(event.getGraphContext());
-                ProjectModel mainProjectModel = mainFileModel.getProjectModel();
+                ProjectModel mainProjectModel = mainFileModel.getBoundProject();
                 if (mainProjectModel == null)
                 {
                     mainProjectModel = projectModelService.create();
                     mainProjectModel.setName(mainFileModel.getFileName());
                     mainProjectModel.setDescription("Source Directory");
 
-                    mainFileModel.setProjectModel(mainProjectModel);
-                    mainProjectModel.setRootFileModel(mainFileModel);
-                    mainProjectModel.addFileModel(mainFileModel);
+                    mainFileModel.setBoundProject(mainProjectModel);
+                    mainProjectModel.setRootOriginLocation(mainFileModel);
+                    mainProjectModel.addContainedFile(mainFileModel);
                 }
 
                 addProjectToChildFiles(mainFileModel, mainProjectModel);
@@ -66,16 +66,16 @@ public class DiscoverNonMavenSourceProjectsRuleProvider extends AbstractRuleProv
         {
             for (FileModel childFile : fileModel.getFilesInDirectory())
             {
-                if (childFile.getProjectModel() == null)
+                if (childFile.getBoundProject() == null)
                 {
-                    projectModel.addFileModel(childFile);
-                    childFile.setProjectModel(projectModel);
+                    projectModel.addContainedFile(childFile);
+                    childFile.setBoundProject(projectModel);
                 }
-                else if (childFile.getProjectModel().getParentProject() == null && !childFile.getProjectModel().equals(projectModel))
+                else if (childFile.getBoundProject().getParentProject() == null && !childFile.getBoundProject().equals(projectModel))
                 {
                     // if the child has a project, but the project doesn't have a parent, associate it with the root
                     // project
-                    childFile.getProjectModel().setParentProject(projectModel);
+                    childFile.getBoundProject().setParentProject(projectModel);
                 }
                 addProjectToChildFiles(childFile, projectModel);
             }

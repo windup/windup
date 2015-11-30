@@ -22,7 +22,7 @@ public interface HibernateEntityModel extends WindupVertexFrame
     public static final String TABLE_NAME = "tableName";
     public static final String SPECIFICATION_VERSION = "specificationVersion";
     public static final String HIBERNATE_ENTITY_CLASS = "hibernateEntityClass";
-    public static final String TYPE = "HibernateEntityModel";
+    public static final String TYPE = "HibernateEntity";
 
     /**
      * Contains the specification version

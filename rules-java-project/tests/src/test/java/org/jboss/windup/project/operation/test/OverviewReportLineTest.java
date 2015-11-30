@@ -96,15 +96,15 @@ public class OverviewReportLineTest
             FileUtils.deleteDirectory(outputPath.toFile());
             Files.createDirectories(outputPath);
 
-            inputPath.setProjectModel(pm);
-            subinputPath.setProjectModel(subProject);
-            subsubinputPath.setProjectModel(subsubProject);
-            pm.addFileModel(inputPath);
-            pm.setRootFileModel(inputPath);
-            subProject.addFileModel(subinputPath);
-            subProject.setRootFileModel(subinputPath);
-            subsubProject.addFileModel(subsubinputPath);
-            subsubProject.setRootFileModel(subsubinputPath);
+            inputPath.setBoundProject(pm);
+            subinputPath.setBoundProject(subProject);
+            subsubinputPath.setBoundProject(subsubProject);
+            pm.addContainedFile(inputPath);
+            pm.setRootOriginLocation(inputPath);
+            subProject.addContainedFile(subinputPath);
+            subProject.setRootOriginLocation(subinputPath);
+            subsubProject.addContainedFile(subsubinputPath);
+            subsubProject.setRootOriginLocation(subsubinputPath);
 
             WindupConfiguration windupConfiguration = new WindupConfiguration()
                         .setGraphContext(context);

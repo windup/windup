@@ -15,7 +15,7 @@ public interface RulePhaseExecutionStatisticsModel extends WindupVertexFrame
 {
     public static final String ORDER_EXECUTED = "orderExecuted";
     public static final String RULE_PHASE = "rulePhase";
-    public static final String TYPE = "RulePhaseExecutionStatisticsModel";
+    public static final String TYPE = "RulePhaseExecutionStatistics";
     public static final String TIME_TAKEN = "timeTaken";
 
     /**

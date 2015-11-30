@@ -64,7 +64,7 @@ public class GenerateJBossEjbDescriptorRuleProvider extends AbstractRuleProvider
 
                             for (FileModel inputPath : configurationModel.getInputPaths())
                             {
-                                ProjectModel projectModel = inputPath.getProjectModel();
+                                ProjectModel projectModel = inputPath.getBoundProject();
                                 createReport(context, event.getGraphContext(), projectModel);
                             }
                         }

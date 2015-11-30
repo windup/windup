@@ -54,7 +54,7 @@ public class CreateJavaIgnoredFilesReportRuleProvider extends AbstractRuleProvid
                 WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
                 for (FileModel inputPath : configurationModel.getInputPaths())
                 {
-                    ProjectModel projectModel = inputPath.getProjectModel();
+                    ProjectModel projectModel = inputPath.getBoundProject();
                     createIgnoredFilesReport(event.getGraphContext(), payload, projectModel);
                 }
             }
@@ -95,8 +95,8 @@ public class CreateJavaIgnoredFilesReportRuleProvider extends AbstractRuleProvid
         Iterable<IgnoredFileModel> allIgnoredFiles = ignoredFilesModelService.findAll();
         for (IgnoredFileModel file : allIgnoredFiles)
         {
-            List<String> allProjectPaths = getAllFatherProjectPaths(file.getProjectModel());
-            if (allProjectPaths.contains(rootProjectModel.getRootFileModel().getFilePath()))
+            List<String> allProjectPaths = getAllFatherProjectPaths(file.getBoundProject());
+            if (allProjectPaths.contains(rootProjectModel.getRootOriginLocation().getFilePath()))
             {
                 ignoredFilesReportModel.addIgnoredFile(file);
             }
@@ -115,11 +115,11 @@ public class CreateJavaIgnoredFilesReportRuleProvider extends AbstractRuleProvid
     private List<String> getAllFatherProjectPaths(ProjectModel projectModel)
     {
         List<String> paths = new ArrayList<>();
-        paths.add(projectModel.getRootFileModel().getFilePath());
+        paths.add(projectModel.getRootOriginLocation().getFilePath());
         while (projectModel.getParentProject() != null)
         {
             projectModel = projectModel.getParentProject();
-            paths.add(projectModel.getRootFileModel().getFilePath());
+            paths.add(projectModel.getRootOriginLocation().getFilePath());
         }
         return paths;
     }

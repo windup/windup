@@ -17,7 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 public interface FileLocationModel extends FileReferenceModel
 {
 
-    String TYPE = "fileLocationModel";
+    String TYPE = "fileLocation";
     String LINE_NUMBER = "lineNumber";
     String LENGTH = "length";
     String COLUMN_NUMBER = "startPosition";

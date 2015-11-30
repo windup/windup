@@ -22,8 +22,8 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(SourceReportModel.TYPE)
 public interface SourceReportModel extends ReportModel
 {
-    public static final String TYPE = "SourceReportModel";
-    public static final String SOURCE_REPORT_TO_SOURCE_FILE_MODEL = "sourceReportSourceFileModel";
+    public static final String TYPE = "SourceReport";
+    public static final String SOURCE_REPORT_TO_SOURCE_FILE_MODEL = "sourceReportSourceFile";
 
     @Property("sourceType")
     public void setSourceType(String sourceType);

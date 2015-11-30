@@ -5,7 +5,7 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
-@TypeValue("TestWhenModel")
+@TypeValue("TestWhen")
 public interface TestWhenModel extends WindupVertexFrame
 {
 

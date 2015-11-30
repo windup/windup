@@ -24,13 +24,13 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(FileModel.TYPE)
 public interface FileModel extends ResourceModel
 {
-    String TYPE = "FileResource";
+    String TYPE = "File";
 
     String ARCHIVE_FILES = "archiveFiles";
     String PARENT_FILE = "parentFile";
     String SHA1_HASH = "sha1Hash";
     String MD5_HASH = "md5Hash";
-    String FILE_TO_PROJECT_MODEL = "fileToProjectModel";
+    String BOUND_PROJECT = "boundProject";
     String FILE_NAME = "fileName";
     String FILE_PATH = "filePath";
     String IS_DIRECTORY = "isDirectory";
@@ -134,14 +134,14 @@ public interface FileModel extends ResourceModel
     /**
      * Gets the ProjectModel that this file is a part of
      */
-    @Adjacency(label = FILE_TO_PROJECT_MODEL, direction = Direction.OUT)
-    ProjectModel getProjectModel();
+    @Adjacency(label = BOUND_PROJECT, direction = Direction.OUT)
+    ProjectModel getBoundProject();
 
     /**
      * Sets the ProjectModel that this file is a part of
      */
-    @Adjacency(label = FILE_TO_PROJECT_MODEL, direction = Direction.OUT)
-    void setProjectModel(ProjectModel projectModel);
+    @Adjacency(label = BOUND_PROJECT, direction = Direction.OUT)
+    void setBoundProject(ProjectModel projectModel);
 
     /**
      * Gets a {@link File} object representing this file
@@ -169,10 +169,10 @@ public interface FileModel extends ResourceModel
 
 
     /**
-     * Returns the application that this file is a part of. This is especially useful in the case of analyzing multiple application's, as we often
-     * need to know which application a particular file is associated with.
-     *
-     * This is a shortcut for calling getProjectModel().getRootProjectModel().
+     * Returns the application that this file is a part of. This is especially useful in the case of
+     * analyzing multiple application's, as we often need to know which application
+     * a particular file is associated with.
+     * This is a shortcut for calling getBoundProject().getRootProjectModel().
      */
     @JavaHandler
     ProjectModel getApplication();
@@ -194,19 +194,19 @@ public interface FileModel extends ResourceModel
     {
         public ProjectModel getApplication()
         {
-            return getProjectModel().getRootProjectModel();
+            return getBoundProject().getRootProjectModel();
         }
 
         public String getPrettyPathWithinProject()
         {
             String result;
-            ProjectModel projectModel = getProjectModel();
+            ProjectModel projectModel = getBoundProject();
             if (projectModel == null)
             {
                 // no project, just return the whole path
                 result = getPrettyPath();
             }
-            else if (projectModel.getRootFileModel().getFilePath().equals(getFilePath()))
+            else if (projectModel.getRootOriginLocation().getFilePath().equals(getFilePath()))
             {
                 result = "";
             }
