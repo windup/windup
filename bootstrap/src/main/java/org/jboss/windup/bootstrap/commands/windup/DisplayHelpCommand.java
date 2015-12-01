@@ -1,28 +1,16 @@
 package org.jboss.windup.bootstrap.commands.windup;
 
-import org.jboss.forge.furnace.Furnace;
 import org.jboss.windup.bootstrap.commands.Command;
 import org.jboss.windup.bootstrap.commands.CommandPhase;
 import org.jboss.windup.bootstrap.commands.CommandResult;
-import org.jboss.windup.bootstrap.commands.FurnaceDependent;
-import org.jboss.windup.config.ConfigurationOption;
-import org.jboss.windup.exec.configuration.WindupConfiguration;
+import org.jboss.windup.bootstrap.help.Help;
+import org.jboss.windup.bootstrap.help.OptionDescription;
 
-public class DisplayHelpCommand implements Command, FurnaceDependent
+public class DisplayHelpCommand implements Command
 {
-    private Furnace furnace;
-
-    @Override
-    public void setFurnace(Furnace furnace)
-    {
-        this.furnace = furnace;
-    }
-
     @Override
     public CommandResult execute()
     {
-        Iterable<ConfigurationOption> windupOptions = WindupConfiguration.getWindupConfigurationOptions(furnace);
-
         StringBuilder sb = new StringBuilder();
         sb.append("Usage: windup [OPTION]... PARAMETER ... \n");
         sb.append("Extendable migration analysis, at your fingertips. \n");
@@ -30,7 +18,7 @@ public class DisplayHelpCommand implements Command, FurnaceDependent
 
         sb.append("\nWindup Options:\n");
 
-        for (ConfigurationOption option : windupOptions)
+        for (OptionDescription option : Help.load().getOptions())
         {
             sb.append("--").append(option.getName()).append("\n");
             sb.append("\t").append(option.getDescription()).append("\n");
@@ -87,6 +75,6 @@ public class DisplayHelpCommand implements Command, FurnaceDependent
     @Override
     public CommandPhase getPhase()
     {
-        return CommandPhase.PRE_EXECUTION;
+        return CommandPhase.PRE_CONFIGURATION;
     }
 }
