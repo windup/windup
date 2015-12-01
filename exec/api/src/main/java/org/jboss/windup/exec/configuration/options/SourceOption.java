@@ -68,8 +68,18 @@ public class SourceOption extends AbstractConfigurationOption
     }
 
     @Override
-    public ValidationResult validate(Object value)
+    public ValidationResult validate(Object values)
     {
+        if (values != null)
+        {
+            for (Object value : (Iterable<?>) values)
+            {
+                if (!getAvailableValues().contains(value))
+                    return new ValidationResult(ValidationResult.Level.ERROR,
+                                NAME + " value (" + value + ") not found, must be one of: " + getAvailableValues());
+            }
+        }
+
         return ValidationResult.SUCCESS;
     }
 }

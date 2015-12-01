@@ -39,6 +39,7 @@ import org.jboss.windup.exec.configuration.options.InputPathOption;
 import org.jboss.windup.exec.configuration.options.OutputPathOption;
 import org.jboss.windup.exec.configuration.options.OverwriteOption;
 import org.jboss.windup.exec.configuration.options.TargetOption;
+import org.jboss.windup.exec.configuration.options.UserRulesDirectoryOption;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
@@ -93,6 +94,12 @@ public class RunWindupCommand implements Command, FurnaceDependent
         {
             String argument = arguments.get(i);
             String optionName = getOptionName(argument);
+            if (optionName == null)
+            {
+                System.err.println("WARNING: Unrecognized command-line argument: " + argument);
+                continue;
+            }
+
             ConfigurationOption option = options.get(optionName.toUpperCase());
             if (option == null)
             {
@@ -149,6 +156,11 @@ public class RunWindupCommand implements Command, FurnaceDependent
         setDefaultOptionsValues(options, optionValues);
 
         RuleProviderRegistryCache ruleProviderRegistryCache = furnace.getAddonRegistry().getServices(RuleProviderRegistryCache.class).get();
+        File userProvidedPath = (File) optionValues.get(UserRulesDirectoryOption.NAME);
+        if (userProvidedPath != null)
+        {
+            ruleProviderRegistryCache.addUserRulesPath(userProvidedPath.toPath());
+        }
 
         // Target - interactive
         Collection<String> targets = (Collection<String>) optionValues.get(TargetOption.NAME);
@@ -174,7 +186,6 @@ public class RunWindupCommand implements Command, FurnaceDependent
             input = expandMultiAppInputDirs(input);
             optionValues.put(InputPathOption.NAME, input);
         }
-
 
         WindupConfiguration windupConfiguration = new WindupConfiguration();
         for (Map.Entry<String, ConfigurationOption> optionEntry : options.entrySet())
