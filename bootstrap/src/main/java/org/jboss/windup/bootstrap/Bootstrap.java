@@ -45,6 +45,7 @@ import org.jboss.windup.bootstrap.commands.windup.DiscoverPackagesCommand;
 import org.jboss.windup.bootstrap.commands.windup.DisplayHelpCommand;
 import org.jboss.windup.bootstrap.commands.windup.DisplayVersionCommand;
 import org.jboss.windup.bootstrap.commands.windup.GenerateCompletionDataCommand;
+import org.jboss.windup.bootstrap.commands.windup.GenerateHelpCacheCommand;
 import org.jboss.windup.bootstrap.commands.windup.ListSourceTechnologiesCommand;
 import org.jboss.windup.bootstrap.commands.windup.ListTagsCommand;
 import org.jboss.windup.bootstrap.commands.windup.ListTargetTechnologiesCommand;
@@ -134,13 +135,17 @@ public class Bootstrap
             if (!executePhase(CommandPhase.CONFIGURATION, commands))
                 return;
 
+            if (commands.isEmpty())
+            {
+                // no commands are available, just print the help and exit
+                new DisplayHelpCommand().execute();
+                return;
+            }
+
             if (!containsMutableRepository(furnace.getRepositories()))
             {
                 furnace.addRepository(AddonRepositoryMode.MUTABLE, getUserAddonsDir());
             }
-
-            if (commands.isEmpty())
-                commands.add(new DisplayHelpCommand());
 
             if (!executePhase(CommandPhase.POST_CONFIGURATION, commands) || commands.isEmpty())
                 return;
@@ -247,6 +252,15 @@ public class Bootstrap
             {
                 commands.add(new GenerateCompletionDataCommand(true));
             }
+            else if (arg.equals("--generateHelp"))
+            {
+                commands.add(new GenerateHelpCacheCommand());
+            }
+            else if ("--generateCaches".equals(arg))
+            {
+                commands.add(new GenerateCompletionDataCommand(true));
+                commands.add(new GenerateHelpCacheCommand());
+            }
             else if ("--discoverPackages".equals(arg))
             {
                 unknownArgs.add(arg);
@@ -262,11 +276,15 @@ public class Bootstrap
             }
         }
 
-
         List<String> windupArguments = new ArrayList<>(unknownArgs);
         if (!windupArguments.isEmpty())
         {
             commands.add(new DisplayVersionCommand(CommandResult.CONTINUE));
+
+            // go ahead and regenerate this every time just in case there are user-added addons that affect the result
+            commands.add(new GenerateHelpCacheCommand());
+            commands.add(new GenerateCompletionDataCommand(true));
+
             commands.add(new RunWindupCommand(windupArguments, batchMode));
         }
 

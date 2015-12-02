@@ -77,7 +77,7 @@ public class GenerateCompletionDataCommand implements Command, FurnaceDependent
                 writer.write("listSourceTechnologies:none" + NEW_LINE);
                 writer.write("listTargetTechnologies:none" + NEW_LINE);
                 writer.write("install:none" + NEW_LINE);
-                writer.write("remote:none" + NEW_LINE);
+                writer.write("remove:none" + NEW_LINE);
                 writer.write("addonDir:file" + NEW_LINE);
                 writer.write("immutableAddonDir:file" + NEW_LINE);
                 writer.write("batchMode:none" + NEW_LINE);
@@ -90,7 +90,7 @@ public class GenerateCompletionDataCommand implements Command, FurnaceDependent
                 {
                     StringBuilder line = new StringBuilder();
                     line.append(option.getName()).append(":");
-                    if (File.class.isAssignableFrom(option.getType()))
+                    if (File.class.isAssignableFrom(option.getType()) || Path.class.isAssignableFrom(option.getType()))
                         line.append("file");
                     else if (option.getUIType() == InputType.SELECT_MANY || option.getUIType() == InputType.SELECT_ONE)
                     {

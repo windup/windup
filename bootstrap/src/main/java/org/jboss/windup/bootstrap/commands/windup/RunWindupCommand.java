@@ -214,10 +214,6 @@ public class RunWindupCommand implements Command, FurnaceDependent
             }
         }
 
-        GenerateCompletionDataCommand generateCompletionDataCommand = new GenerateCompletionDataCommand(false);
-        generateCompletionDataCommand.setFurnace(furnace);
-        generateCompletionDataCommand.execute();
-
         FileUtils.deleteQuietly(windupConfiguration.getOutputDirectory().toFile());
         Path graphPath = windupConfiguration.getOutputDirectory().resolve(GRAPH_DATA_SUBDIR);
 
