@@ -1,6 +1,8 @@
 package org.jboss.windup.config.metadata;
 
+import java.nio.file.Path;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,8 +38,18 @@ public class RuleProviderRegistryCache
     @Inject
     private RuleLoader ruleLoader;
 
+    private Set<Path> userRulesPaths = new LinkedHashSet<>();
+
     private RuleProviderRegistry cachedRegistry;
     private long cacheRefreshTime;
+
+    /**
+     * Specify that the user has added an additional path for user defined rules.
+     */
+    public void addUserRulesPath(Path path)
+    {
+        userRulesPaths.add(path);
+    }
 
     /**
      * Returns all tags known by Windup.
@@ -119,6 +131,7 @@ public class RuleProviderRegistryCache
     {
         WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(graphContext);
         FileModel windupRulesPath = new FileService(graphContext).createByFilePath(PathUtil.getWindupRulesDir().toString());
+        FileModel userRulesPath = new FileService(graphContext).createByFilePath(PathUtil.getUserRulesDir().toString());
 
         boolean pathAlreadyAdded = false;
         for (FileModel existingRulePath : configurationModel.getUserRulesPaths())
@@ -128,7 +141,15 @@ public class RuleProviderRegistryCache
         }
 
         if (!pathAlreadyAdded)
+        {
             configurationModel.addUserRulesPath(windupRulesPath);
+            configurationModel.addUserRulesPath(userRulesPath);
+        }
+        for (Path additionalUserRulesPath : this.userRulesPaths)
+        {
+            FileModel additionalRulesFileModel = new FileService(graphContext).createByFilePath(additionalUserRulesPath.toString());
+            configurationModel.addUserRulesPath(additionalRulesFileModel);
+        }
 
         this.cachedRegistry = ruleLoader.loadConfiguration(graphContext, null);
         this.cacheRefreshTime = System.currentTimeMillis();

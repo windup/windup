@@ -68,12 +68,20 @@ public class TargetOption extends AbstractConfigurationOption
     }
 
     @Override
-    public ValidationResult validate(Object value)
+    public ValidationResult validate(Object values)
     {
-        if (value == null)
+        if (values == null)
         {
             return new ValidationResult(ValidationResult.Level.ERROR, NAME + " parameter is required!");
         }
+
+        for (Object value : (Iterable<?>) values)
+        {
+            if (!getAvailableValues().contains(value))
+                return new ValidationResult(ValidationResult.Level.ERROR,
+                            NAME + " value (" + value + ") not found, must be one of: " + getAvailableValues());
+        }
+
         return ValidationResult.SUCCESS;
     }
 
