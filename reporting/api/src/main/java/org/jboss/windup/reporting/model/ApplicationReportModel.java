@@ -21,6 +21,7 @@ public interface ApplicationReportModel extends ReportModel
 {
     String DISPLAY_IN_APPLICATION_REPORT_INDEX = "displayInApplicationReportIndex";
     String DISPLAY_IN_APPLICATION_LIST = "displayInApplicationList";
+    String DISPLAY_IN_GLOBAL_APPLICATION_INDEX = "displayInGlobalApplicationIndex";
     String TYPE = "ApplicationReport";
     String REPORT_TO_APPLICATION_NOTE = "reportToApplicationNote";
     String REPORT_LINES = "reportLines";
@@ -51,6 +52,18 @@ public interface ApplicationReportModel extends ReportModel
      */
     @Property(REPORT_PRIORITY)
     void setReportPriority(int priority);
+
+    /**
+     * Indicates that this report should also be attached to the global application index.
+     */
+    @Property(DISPLAY_IN_GLOBAL_APPLICATION_INDEX)
+    void setDisplayInGlobalApplicationIndex(Boolean displayInGlobalApplicationIndex);
+
+    /**
+     * Indicates that this report should also be attached to the global application index.
+     */
+    @Property(DISPLAY_IN_GLOBAL_APPLICATION_INDEX)
+    Boolean getDisplayInGlobalApplicationIndex();
 
     /**
      * Indicates whether or not to display this in the list of all applications. Usually this would be true for a main "overview" type report for a

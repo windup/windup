@@ -5,7 +5,6 @@ import java.lang.reflect.Method;
 import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -165,9 +164,9 @@ public class GraphContextImpl implements GraphContext
 
     private void initializeTitanIndexes(TitanGraph titanGraph)
     {
-        Set<String> defaultIndexKeys = new HashSet<>();
-        Set<String> searchIndexKeys = new HashSet<>();
-        Set<String> listIndexKeys = new HashSet<>();
+        Map<String, Class<?>> defaultIndexKeys = new HashMap<>();
+        Map<String, Class<?>> searchIndexKeys = new HashMap<>();
+        Map<String, Class<?>> listIndexKeys = new HashMap<>();
 
         Set<Class<? extends WindupVertexFrame>> modelTypes = graphTypeManager.getRegisteredTypes();
         for (Class<? extends WindupVertexFrame> type : modelTypes)
@@ -180,18 +179,19 @@ public class GraphContextImpl implements GraphContext
                     Property property = Annotations.getAnnotation(method, Property.class);
                     if (property != null)
                     {
+                        Class<?> dataType = index.dataType();
                         switch (index.value())
                         {
                         case DEFAULT:
-                            defaultIndexKeys.add(property.value());
+                            defaultIndexKeys.put(property.value(), dataType);
                             break;
 
                         case SEARCH:
-                            searchIndexKeys.add(property.value());
+                            searchIndexKeys.put(property.value(), dataType);
                             break;
 
                         case LIST:
-                            listIndexKeys.add(property.value());
+                            listIndexKeys.put(property.value(), dataType);
                             break;
 
                         default:
@@ -206,28 +206,45 @@ public class GraphContextImpl implements GraphContext
          * This is the root Model index that enables us to query on frame-type (by subclass type, etc.) Without this, every typed query would be slow.
          * Do not remove this unless something really paradigm-shifting has happened.
          */
-        listIndexKeys.add(WindupVertexFrame.TYPE_PROP);
+        listIndexKeys.put(WindupVertexFrame.TYPE_PROP, String.class);
 
         log.info("Detected and initialized [" + defaultIndexKeys.size() + "] default indexes: " + defaultIndexKeys);
         log.info("Detected and initialized [" + searchIndexKeys.size() + "] search indexes: " + searchIndexKeys);
         log.info("Detected and initialized [" + listIndexKeys.size() + "] list indexes: " + listIndexKeys);
 
         TitanManagement titan = titanGraph.getManagementSystem();
-        for (String key : defaultIndexKeys)
+        for (Map.Entry<String, Class<?>> entry : defaultIndexKeys.entrySet())
         {
-            PropertyKey propKey = titan.makePropertyKey(key).dataType(String.class).cardinality(Cardinality.SINGLE).make();
+            String key = entry.getKey();
+            Class<?> dataType = entry.getValue();
+
+            PropertyKey propKey = titan.makePropertyKey(key).dataType(dataType).cardinality(Cardinality.SINGLE).make();
             titan.buildIndex(key, Vertex.class).addKey(propKey).buildCompositeIndex();
         }
 
-        for (String key : searchIndexKeys)
+        for (Map.Entry<String, Class<?>> entry : searchIndexKeys.entrySet())
         {
-            PropertyKey propKey = titan.makePropertyKey(key).dataType(String.class).cardinality(Cardinality.SINGLE).make();
-            titan.buildIndex(key, Vertex.class).addKey(propKey, Mapping.STRING.getParameter()).buildMixedIndex("search");
+            String key = entry.getKey();
+            Class<?> dataType = entry.getValue();
+
+            if (dataType == String.class)
+            {
+                PropertyKey propKey = titan.makePropertyKey(key).dataType(String.class).cardinality(Cardinality.SINGLE).make();
+                titan.buildIndex(key, Vertex.class).addKey(propKey, Mapping.STRING.getParameter()).buildMixedIndex("search");
+            }
+            else
+            {
+                PropertyKey propKey = titan.makePropertyKey(key).dataType(dataType).cardinality(Cardinality.SINGLE).make();
+                titan.buildIndex(key, Vertex.class).addKey(propKey).buildMixedIndex("search");
+            }
         }
 
-        for (String key : listIndexKeys)
+        for (Map.Entry<String, Class<?>> entry : listIndexKeys.entrySet())
         {
-            PropertyKey propKey = titan.makePropertyKey(key).dataType(String.class).cardinality(Cardinality.LIST).make();
+            String key = entry.getKey();
+            Class<?> dataType = entry.getValue();
+
+            PropertyKey propKey = titan.makePropertyKey(key).dataType(dataType).cardinality(Cardinality.LIST).make();
             titan.buildIndex(key, Vertex.class).addKey(propKey).buildCompositeIndex();
         }
 

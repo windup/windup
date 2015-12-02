@@ -11,6 +11,7 @@ import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.service.InlineHintService;
 import org.jboss.windup.rules.files.model.FileReferenceModel;
+import org.jboss.windup.util.ExecutionStatistics;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.param.ParameterStore;
 import org.ocpsoft.rewrite.param.Parameterized;
@@ -30,51 +31,59 @@ public class HasHint extends AbstractIterationFilter<WindupVertexFrame> implemen
     @Override
     public boolean evaluate(GraphRewrite event, EvaluationContext context, WindupVertexFrame payload)
     {
-        boolean result = false;
-        InlineHintService service = new InlineHintService(event.getGraphContext());
-
-        if (payload instanceof FileReferenceModel)
+        ExecutionStatistics.get().begin(HasHint.class.getCanonicalName());
+        try
         {
-            Iterable<InlineHintModel> hints = service.getHintsForFileReference((FileReferenceModel) payload);
-            if (messagePattern == null)
+            boolean result = false;
+            InlineHintService service = new InlineHintService(event.getGraphContext());
+
+            if (payload instanceof FileReferenceModel)
             {
-                result = hints.iterator().hasNext();
-            }
-            else
-            {
-                for (InlineHintModel c : hints)
+                Iterable<InlineHintModel> hints = service.getHintsForFileReference((FileReferenceModel) payload);
+                if (messagePattern == null)
                 {
-                    ParameterizedPatternResult parseResult = messagePattern.parse(c.getHint());
-                    if (parseResult.matches() && parseResult.isValid(event, context))
+                    result = hints.iterator().hasNext();
+                }
+                else
+                {
+                    for (InlineHintModel c : hints)
                     {
-                        result = true;
-                        break;
+                        ParameterizedPatternResult parseResult = messagePattern.parse(c.getHint());
+                        if (parseResult.matches() && parseResult.isValid(event, context))
+                        {
+                            result = true;
+                            break;
+                        }
                     }
                 }
             }
-        }
 
-        if (payload instanceof FileModel)
-        {
-            Iterable<InlineHintModel> hints = service.getHintsForFile((FileModel) payload);
-            if (messagePattern == null)
+            if (payload instanceof FileModel)
             {
-                result = hints.iterator().hasNext();
-            }
-            else
-            {
-                for (InlineHintModel c : hints)
+                Iterable<InlineHintModel> hints = service.getHintsForFile((FileModel) payload);
+                if (messagePattern == null)
                 {
-                    ParameterizedPatternResult parseResult = messagePattern.parse(c.getHint());
-                    if (parseResult.matches() && parseResult.isValid(event, context))
+                    result = hints.iterator().hasNext();
+                }
+                else
+                {
+                    for (InlineHintModel c : hints)
                     {
-                        result = true;
-                        break;
+                        ParameterizedPatternResult parseResult = messagePattern.parse(c.getHint());
+                        if (parseResult.matches() && parseResult.isValid(event, context))
+                        {
+                            result = true;
+                            break;
+                        }
                     }
                 }
             }
+            return result;
         }
-        return result;
+        finally
+        {
+            ExecutionStatistics.get().end(HasHint.class.getCanonicalName());
+        }
     }
 
     /**

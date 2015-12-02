@@ -1,8 +1,5 @@
 package org.jboss.windup.reporting.model;
 
-import java.util.Set;
-
-import org.jboss.windup.graph.SetInProperties;
 import org.jboss.windup.graph.model.LinkModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.config.Link;
@@ -18,7 +15,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
  * positions within those files.
  */
 @TypeValue(InlineHintModel.TYPE)
-public interface InlineHintModel extends EffortReportModel,FileLocationModel
+public interface InlineHintModel extends EffortReportModel, FileLocationModel, TaggableModel
 {
     String TYPE = "Hint";
     String TYPE_PREFIX = TYPE + ":";
@@ -27,7 +24,6 @@ public interface InlineHintModel extends EffortReportModel,FileLocationModel
     String RULE_ID = TYPE_PREFIX + "ruleID";
     String LINKS = TYPE_PREFIX + "links";
     String FILE_LOCATION_REFERENCE = TYPE_PREFIX + "fileLocationReference";
-    String TAG = "tag";
 
     /**
      * A short descriptive text describing the problem covered by this hint
@@ -76,24 +72,6 @@ public interface InlineHintModel extends EffortReportModel,FileLocationModel
      */
     @Adjacency(label = LINKS, direction = Direction.OUT)
     Iterable<LinkModel> getLinks();
-
-    /**
-     * Add a tag associated with this {@link InlineHintModel}
-     */
-    @SetInProperties(propertyPrefix = TAG)
-    InlineHintModel addTag(String tag);
-
-    /**
-     * Set the set of tags associated with this {@link InlineHintModel}
-     */
-    @SetInProperties(propertyPrefix = TAG)
-    InlineHintModel setTags(Set<String> tags);
-
-    /**
-     * Get the set of tags associated with this {@link InlineHintModel}
-     */
-    @SetInProperties(propertyPrefix = TAG)
-    Set<String> getTags();
 
     /**
      * Set the ID of the rule that triggered this particular blacklist entry

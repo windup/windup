@@ -25,4 +25,9 @@ public @interface Indexed
      * The type of index to be created.
      */
     IndexType value() default IndexType.DEFAULT;
+
+    /**
+     * Indicates the type for the property. The default is {@link String}.
+     */
+    Class<?> dataType() default String.class;
 }

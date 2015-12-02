@@ -1,6 +1,7 @@
 package org.jboss.windup.reporting.config.classification;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -20,7 +21,10 @@ import org.jboss.windup.reporting.config.Link;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.Severity;
 import org.jboss.windup.reporting.service.ClassificationService;
+import org.jboss.windup.reporting.service.TagSetService;
 import org.jboss.windup.rules.files.model.FileReferenceModel;
+import org.jboss.windup.util.ExecutionStatistics;
+import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.param.ParameterStore;
@@ -32,11 +36,11 @@ import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:dynawest@gmail.com">Ondrej Zizka</a>
  */
-public class Classification extends ParameterizedIterationOperation<FileModel> implements ClassificationAs, ClassificationEffort,
+public class Classification extends ParameterizedIterationOperation<FileModel>implements ClassificationAs, ClassificationEffort,
             ClassificationDescription, ClassificationLink, ClassificationTags, ClassificationSeverity
 {
     public static final Severity DEFAULT_SEVERITY = Severity.OPTIONAL;
-    private static final Logger log = Logger.getLogger(Classification.class.getName());
+    private static final Logger LOG = Logging.get(Classification.class);
 
     private List<Link> links = new ArrayList<>();
     private Set<String> tags = new HashSet<>();
@@ -146,44 +150,61 @@ public class Classification extends ParameterizedIterationOperation<FileModel> i
         return result;
     }
 
+    private Set<String> getTags()
+    {
+        return Collections.unmodifiableSet(tags);
+    }
+
     @Override
     public void performParameterized(GraphRewrite event, EvaluationContext context, FileModel payload)
     {
-        /*
-         * Check for duplicate classifications before we do anything. If a classification already exists, then we don't want to add another.
-         */
-        String description = null;
-        if (descriptionPattern != null)
-            description = descriptionPattern.getBuilder().build(event, context);
-        String text = classificationPattern.getBuilder().build(event, context);
-
-        GraphContext graphContext = event.getGraphContext();
-        ClassificationService classificationService = new ClassificationService(graphContext);
-
-        ClassificationModel classification = classificationService.getUniqueByProperty(ClassificationModel.CLASSIFICATION, text);
-
-        if (classification == null)
+        ExecutionStatistics.get().begin("Classification.performParameterized");
+        try
         {
-            classification = classificationService.create();
-            classification.setEffort(effort);
-            classification.setSeverity(severity);
-            classification.setDescription(description);
-            classification.setClassification(text);
+            /*
+             * Check for duplicate classifications before we do anything. If a classification already exists, then we don't want to add another.
+             */
+            String description = null;
+            if (descriptionPattern != null)
+                description = descriptionPattern.getBuilder().build(event, context);
+            String text = classificationPattern.getBuilder().build(event, context);
 
-            classification.setRuleID(((Rule) context.get(Rule.class)).getId());
+            GraphContext graphContext = event.getGraphContext();
+            ClassificationService classificationService = new ClassificationService(graphContext);
 
-            LinkService linkService = new LinkService(graphContext);
-            for (Link link : links)
+            ClassificationModel classification = classificationService.getUniqueByProperty(ClassificationModel.CLASSIFICATION, text);
+
+            if (classification == null)
             {
-                LinkModel linkModel = linkService.getOrCreate(link.getTitle(), link.getLink());
-                classification.addLink(linkModel);
-            }
-        }
+                classification = classificationService.create();
+                classification.setEffort(effort);
+                classification.setSeverity(severity);
+                classification.setDescription(description);
+                classification.setClassification(text);
 
-        classificationService.attachClassification(classification, payload);
-        if (payload instanceof SourceFileModel)
-            ((SourceFileModel) payload).setGenerateSourceReport(true);
-        log.info("Classification added to " + payload.getPrettyPathWithinProject() + " [" + this + "] ");
+                Set<String> tags = new HashSet<>(this.getTags());
+                TagSetService tagSetService = new TagSetService(event.getGraphContext());
+                classification.setTagModel(tagSetService.getOrCreate(event, tags));
+
+                classification.setRuleID(((Rule) context.get(Rule.class)).getId());
+
+                LinkService linkService = new LinkService(graphContext);
+                for (Link link : links)
+                {
+                    LinkModel linkModel = linkService.getOrCreate(link.getTitle(), link.getLink());
+                    classification.addLink(linkModel);
+                }
+            }
+
+            classificationService.attachClassification(classification, payload);
+            if (payload instanceof SourceFileModel)
+                ((SourceFileModel) payload).setGenerateSourceReport(true);
+            LOG.info("Classification added to " + payload.getPrettyPathWithinProject() + " [" + this + "] ");
+        }
+        finally
+        {
+            ExecutionStatistics.get().end("Classification.performParameterized");
+        }
     }
 
     protected void setClassificationText(String classification)

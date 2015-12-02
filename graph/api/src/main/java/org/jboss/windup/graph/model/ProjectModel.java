@@ -1,5 +1,8 @@
 package org.jboss.windup.graph.model;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.jboss.windup.graph.model.resource.FileModel;
 
 import com.tinkerpop.blueprints.Direction;
@@ -194,8 +197,15 @@ public interface ProjectModel extends WindupVertexFrame
     @JavaHandler
     ProjectModel getRootProjectModel();
 
+    /**
+     * Returns this project model as well as all of its children, recursively.
+     */
+    @JavaHandler
+    Set<ProjectModel> getAllProjectModels();
+
     abstract class Impl implements ProjectModel, JavaHandlerContext<Vertex>
     {
+        @Override
         public ProjectModel getRootProjectModel()
         {
             ProjectModel projectModel = this;
@@ -209,5 +219,14 @@ public interface ProjectModel extends WindupVertexFrame
             return frame(projectModel.asVertex());
         }
 
+        @Override
+        public Set<ProjectModel> getAllProjectModels()
+        {
+            Set<ProjectModel> result = new HashSet<>();
+            result.add(frame(it(), ProjectModel.class));
+            for (ProjectModel child : getChildProjects())
+                result.addAll(child.getAllProjectModels());
+            return result;
+        }
     }
 }
