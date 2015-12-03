@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -179,17 +180,19 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
          */
         GraphRewrite event = (GraphRewrite) rewrite;
 
-        List<Rule> rules = config.getRules();
+        LinkedList<Rule> rules = new LinkedList(config.getRules());
 
         for (RuleLifecycleListener listener : listeners)
         {
             listener.beforeExecution(event);
         }
+        int currentRuleIndex = -1;
 
         EvaluationContextImpl subContext = new EvaluationContextImpl();
-        for (int i = 0; i < rules.size(); i++)
+        while(!rules.isEmpty())
         {
-            Rule rule = rules.get(i);
+            currentRuleIndex++;
+            Rule rule = rules.getFirst();
 
             Context ruleContext = rule instanceof Context ? (Context) rule : null;
             long ruleTimeStarted = System.currentTimeMillis();
@@ -289,7 +292,7 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                     if (ruleContext != null)
                     {
                         int timeTaken = (int) (ruleTimeCompleted - ruleTimeStarted);
-                        logTimeTakenByRuleProvider(event.getGraphContext(), ruleContext, i, timeTaken);
+                        logTimeTakenByRuleProvider(event.getGraphContext(), ruleContext, currentRuleIndex, timeTaken);
                     }
                 }
             }
@@ -320,6 +323,10 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                 halt |= (halt_ instanceof Boolean && ((Boolean) halt_).booleanValue());
                 if (halt)
                     throw new WindupException(exMsg, ex);
+            }
+            finally
+            {
+                rules.removeFirst();
             }
 
         }
