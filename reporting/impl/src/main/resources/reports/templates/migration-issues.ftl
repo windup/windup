@@ -72,10 +72,10 @@
 	                <table id="issues_table" class="table table-hover table-condensed tablesorter">
 	                    <thead>
 	                        <tr>
-	                            <th>Issue</th>
-	                            <th>Incidents Found</th>
-	                            <th>Story Points per Incident</th>
-	                            <th>Total Story Points</th>
+	                            <th class="sortable">Issue</th>
+	                            <th class="sortable">Incidents Found</th>
+	                            <th class="sortable">Story Points per Incident</th>
+	                            <th class="sortable">Total Story Points</th>
 	                            <th class="col-md-1">Rule</th>
 	                        </tr>
 	                    </thead>
@@ -135,7 +135,7 @@
                     });
                 });
             });
-            // we need this parser because we are using comma to separate thousands
+            // we need these parsers because we are using comma to separate thousands and are also sorting links
             $.tablesorter.addParser({
    		 id: 'thousands',
    		 is: function(s) {
@@ -146,15 +146,31 @@
    		 },
   		 type: 'numeric'
 	    });
+        $.tablesorter.addParser({
+        id: 'a-elements',
+        is: function(s)
+        {
+            // return false so this parser is not auto detected 
+            return false;
+        },
+        format: function(s)
+        {
+            // format your data for normalization 
+            return s.replace(new RegExp(/<.*?>/),"");
+        },
+        type: 'text'
+    }); 
             $(document).ready(function() {
                 $("#issues_table").tablesorter({
                 selectorHeaders: '> thead > tr > th',
                 sortList: [[3,1]],
         	headers: {
                   // 2nd,3rd,4th columns are parsed using thousands parser
+                  0: {sorter:'a-elements'},
           	      1: {sorter:'thousands'},
                   2: {sorter:'thousands'},
-                  3: {sorter:'thousands'}
+                  3: {sorter:'thousands'},
+                  4: {sorter: false}
                   }
                 });
    	    });
