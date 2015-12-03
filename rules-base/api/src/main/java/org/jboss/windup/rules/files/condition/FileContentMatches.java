@@ -3,7 +3,7 @@ package org.jboss.windup.rules.files.condition;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 
 /**
- * Created by mbriskar on 6/24/15.
+ * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  */
 public interface FileContentMatches extends ConditionBuilder
 {
