@@ -65,11 +65,10 @@ body {
 }
 
 .panel.panel-primary.panel-boarding {
-    border-radius: 8pt;
-}
+
+	}
 .panel.panel-primary.panel-boarding > .panel-heading {
-    border-radius: 8px 8px 0 0 !important;
-    border-color: #00255D;
+    border-color: #008cba;
 }
 
 .panel.panel-primary h3 {
