@@ -77,7 +77,7 @@ public class GenerateIndexPageRuleProvider extends AbstractRuleProvider
         WindupVertexListModel<ApplicationReportModel> applications = listService.create();
         for (ApplicationReportModel applicationReportModel : applicationReportService.findAll())
         {
-            if (applicationReportModel.getDisplayInApplicationList())
+            if (applicationReportModel.isMainApplicationReport())
                 applications.addItem(applicationReportModel);
         }
         Map<String, WindupVertexFrame> relatedData = new HashMap<>();
