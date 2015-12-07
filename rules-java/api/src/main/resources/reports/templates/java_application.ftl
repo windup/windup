@@ -99,8 +99,9 @@
 
     
 <#macro projectModelRenderer projectModel>
-    <div class="panel panel-primary projectBox">
-        <#assign panelStoryPoints = getMigrationEffortPoints(projectModel, false, reportModel.includeTags, reportModel.excludeTags)>
+	<#assign panelStoryPoints = getMigrationEffortPoints(projectModel, false, reportModel.includeTags, reportModel.excludeTags)>
+
+    <div class="panel panel-primary projectBox" data-windup-projectid="${projectModel.asVertex().getId()?c}" data-windup-project-storypoints="${panelStoryPoints}">
         <div class="panel-heading panel-collapsed clickable">
             <span class="pull-left"><i class="glyphicon glyphicon-chevron-up arrowIcon"></i></span>
             <h3 class="panel-title">${projectModel.rootFileModel.prettyPath?html} (${panelStoryPoints} story points)</h3>
@@ -286,6 +287,7 @@
 
 
         <script src="resources/js/jquery-1.10.1.min.js"></script>
+        <script src="resources/js/jquery.storageapi.min.js"></script>
         <script src="resources/libraries/flot/jquery.flot.min.js"></script>
         <script src="resources/libraries/flot/jquery.flot.pie.min.js"></script>
         <script src="resources/js/windup-overview.js"/>
