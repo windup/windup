@@ -70,13 +70,11 @@ public class DiscoverStaticIPAddressRuleProvider extends AbstractRuleProvider
                             {
                             	//if the file is a property file, make sure the line isn't commented out.
                             	
-                        		if(isCommentedPropertyLine(event.getGraphContext(), payload)) {
+                                if (ignoreLine(event.getGraphContext(), payload))
+                                {
                         			return;
                         		}
-                            	if(isMavenVersionTag(event.getGraphContext(), payload)) {
-                            		return;
-                            	}
-                            	
+
                             	StaticIPLocationModel location = GraphService.addTypeToModel(event.getGraphContext(), payload,
                                         StaticIPLocationModel.class);
                                 location.setRuleID(((Rule) context.get(Rule.class)).getId());
@@ -98,53 +96,57 @@ public class DiscoverStaticIPAddressRuleProvider extends AbstractRuleProvider
                     .where("type").matches("java|properties|xml")
                     .withId(getClass().getSimpleName());
     }
-    
-    /**
-     * if the line is commented out, returns true
-     * @param context
-     * @param model
-     * @return
-     */
-    private boolean isCommentedPropertyLine(GraphContext context, FileLocationModel model) {
-    	if(model.getFile() instanceof PropertiesModel) {
-			//check to see if the line is commented...
-			int lineNumber = model.getLineNumber();
-			LineIterator li = null;
-			try {
-				li = FileUtils.lineIterator(model.getFile().asFile());
-				
-				int i = 0;
-				while(li.hasNext()) {
-					i++;
 
-					//read the line to memory only if it is the line of interest
-					if(i == lineNumber) {
-						String line = StringUtils.trim(li.next());
-						//check that it isn't commented.
-						if(StringUtils.startsWith(line, "#")) {
-							return true;
-						}
+    private boolean ignoreLine(GraphContext context, FileLocationModel model)
+    {
+        boolean isPropertiesFile = model.getFile() instanceof PropertiesModel;
+
+        int lineNumber = model.getLineNumber();
+        LineIterator li = null;
+        try
+        {
+            li = FileUtils.lineIterator(model.getFile().asFile());
+
+            int i = 0;
+            while (li.hasNext())
+            {
+                i++;
+
+                // read the line to memory only if it is the line of interest
+                if (i == lineNumber)
+                {
+                    String line = StringUtils.trim(li.next());
+                    // check that it isn't commented.
+                    if (isPropertiesFile && StringUtils.startsWith(line, "#"))
+                        return true;
+                    // WINDUP-808 - Remove matches with "version" or "revision" on the same line
+                    else if (StringUtils.containsIgnoreCase(line, "version") || StringUtils.containsIgnoreCase(line, "revision"))
+                        return true;
+                    else
 						return false;
-					}
-					else if(i < lineNumber) {
-						//seek
-						li.next();
-					}
-					else if(i > lineNumber) {
-						LOG.warning("Did not find line: "+lineNumber+" in file: "+model.getFile().getFileName());
-						break;
-					}
 				}
-			} catch (IOException | RuntimeException e) {
-				LOG.log(Level.WARNING, "Exception reading properties from file: " + model.getFile().getFilePath(), e);
+                else if (i < lineNumber)
+                {
+                    // seek
+                    li.next();
+                }
+                else if (i > lineNumber)
+                {
+                    LOG.warning("Did not find line: " + lineNumber + " in file: " + model.getFile().getFileName());
+                    break;
+                }
 			}
-			finally {
-				LineIterator.closeQuietly(li);
-			}
-			
-    	}
-	
-    	return false;
+        }
+        catch (IOException | RuntimeException e)
+        {
+            LOG.log(Level.WARNING, "Exception reading properties from file: " + model.getFile().getFilePath(), e);
+        }
+        finally
+        {
+            LineIterator.closeQuietly(li);
+        }
+
+        return false;
     }
     
     private boolean isMavenFile(GraphContext context, FileLocationModel model) {
