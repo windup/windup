@@ -110,7 +110,12 @@ public class ResolveSpringHibernateJPADataSourceRuleProvider extends IteratingRu
             return false;
         }
         return (qualifiedName.equals("org.springframework.orm.hibernate3.LocalSessionFactoryBean")
+        			|| qualifiedName.equals("org.springframework.orm.hibernate3.AbstractSessionFactoryBean")
+        			|| qualifiedName.equals("org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean")
                     || qualifiedName.equals("org.springframework.orm.hibernate4.LocalSessionFactoryBean")
+                    || qualifiedName.equals("org.springframework.orm.hibernate5.LocalSessionFactoryBean")
+                    || qualifiedName.equals("org.springframework.orm.jpa.LocalEntityManagerFactoryBean")
+                    || qualifiedName.equals("org.springframework.orm.jpa.vendor.HibernateJpaSessionFactoryBean")
                     || qualifiedName.equals("org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean"));
     }
 
