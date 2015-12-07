@@ -88,7 +88,6 @@ public class CreateJavaIgnoredFilesReportRuleProvider extends AbstractRuleProvid
         ignoredFilesReportModel.setProjectModel(rootProjectModel);
         ignoredFilesReportModel.setTemplatePath(TEMPLATE_REPORT);
         ignoredFilesReportModel.setTemplateType(TemplateType.FREEMARKER);
-        ignoredFilesReportModel.setDisplayInApplicationList(false);
 
         GraphService<IgnoredFileModel> ignoredFilesModelService = new GraphService<>(context,
                     IgnoredFileModel.class);

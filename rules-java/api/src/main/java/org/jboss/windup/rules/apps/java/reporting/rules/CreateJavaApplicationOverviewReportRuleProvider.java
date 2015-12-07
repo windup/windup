@@ -82,7 +82,7 @@ public class CreateJavaApplicationOverviewReportRuleProvider extends AbstractRul
 
     private void createApplicationReport(GraphContext context, ProjectModel projectModel)
     {
-        createMainApplicationOverviewReport(context, projectModel, 100, true, OVERVIEW, Collections.EMPTY_SET, Collections.singleton(TAG_CATCHALL));
+        createMainApplicationOverviewReport(context, projectModel, 100, false, OVERVIEW, Collections.EMPTY_SET, Collections.singleton(TAG_CATCHALL));
         createMainApplicationOverviewReport(context, projectModel, 101, false, CATCHALL_REPORT, Collections.singleton(TAG_CATCHALL),
                     Collections.EMPTY_SET);
     }
@@ -100,7 +100,6 @@ public class CreateJavaApplicationOverviewReportRuleProvider extends AbstractRul
         applicationReportModel.setProjectModel(projectModel);
         applicationReportModel.setTemplatePath(TEMPLATE_APPLICATION_REPORT);
         applicationReportModel.setTemplateType(TemplateType.FREEMARKER);
-        applicationReportModel.setDisplayInApplicationList(main);
         applicationReportModel.setIncludeTags(includeTags);
         applicationReportModel.setExcludeTags(excludeTags);
         GraphService<OverviewReportLineMessageModel> lineNotesService = new GraphService<>(context, OverviewReportLineMessageModel.class);

@@ -35,7 +35,6 @@ public class ApplicationReportService extends GraphService<ApplicationReportMode
     public ApplicationReportModel create()
     {
         ApplicationReportModel applicationReportModel = super.create();
-        applicationReportModel.setDisplayInApplicationList(false);
         applicationReportModel.setDisplayInApplicationReportIndex(false);
         applicationReportModel.setMainApplicationReport(false);
         applicationReportModel.setReportPriority(Integer.MAX_VALUE);

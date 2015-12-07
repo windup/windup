@@ -12,17 +12,16 @@
             <#assign reportUrl = "#">
         </#if>
 
-        <#if navReportModel.reportIconClass?has_content>
+        
             <li class="${liClass}">
                 <a href="${reportUrl}">
-                    <i class="${navReportModel.reportIconClass}"></i> ${navReportModel.reportName}
+                  <#if navReportModel.reportIconClass?has_content>
+                    <i class="${navReportModel.reportIconClass}"></i>
+                  </#if>
+                  ${navReportModel.reportName}
                 </a>
             </li>
-        <#else>
-            <li class="${liClass}">
-                <a href="${reportUrl}">${navReportModel.reportName}</a>
-            </li>
-        </#if>
+        
     </#list>
 </#if>
 </ul>
