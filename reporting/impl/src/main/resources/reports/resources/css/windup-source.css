@@ -389,11 +389,9 @@ div.inline-source-comment {
 }
 
 div.inline-comment {
-	border-radius: 5px;
 	margin: 2px 6px;
 	border: 1px solid #666;
 	background: #CCC;
-	box-shadow: 2px 0 5px #999;
 	overflow: hidden;
 }
 
@@ -477,9 +475,12 @@ div.inline-comment-body p:last-child, ul:last-child, ol.last-child {
 .snippet-wrap .snippet-num li.box {
     border: none;
     padding-bottom: 5px;
+    border: 1px solid #80775d !important;
+    margin-right: 10px;
 }
 
 div.green div.inline-comment {
+	border: 1px solid #4f673a;
 }
 
 div.green div.inline-comment div.inline-comment-heading {
