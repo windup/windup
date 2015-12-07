@@ -23,12 +23,13 @@ import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.structures.FramedVertexIterable;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 import com.tinkerpop.pipes.PipeFunction;
+import org.jboss.windup.util.ExecutionStatistics;
 
 /**
  * Adds methods for loading and querying ClassificationModel related data.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- * 
+ *
  */
 public class ClassificationService extends GraphService<ClassificationModel>
 {
@@ -69,7 +70,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
         pipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, ClassificationModel.TYPE);
         return new FramedVertexIterable<>(getGraphContext().getFramed(), pipeline, ClassificationModel.class);
     }
-    
+
     /**
      * Return all {@link ClassificationModel} instances that are attached to the given {@link FileModel} instance with a specific classification name.
      */
@@ -84,7 +85,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
 
     /**
      * Returns the total effort points in all of the {@link ClassificationModel}s associated with the files in this project.
-     * 
+     *
      * If set to recursive, then also include the effort points from child projects.
      */
     public int getMigrationEffortPoints(ProjectModel initialProject, Set<String> includeTags, Set<String> excludeTags, boolean recursive)
@@ -143,6 +144,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
      */
     public ClassificationModel attachClassification(Rule rule, FileModel fileModel, String classificationText, String description)
     {
+        ExecutionStatistics.get().begin("ClassificationService#attachClassification");
         ClassificationModel model = getUnique(getTypedQuery().has(ClassificationModel.CLASSIFICATION, classificationText));
         if (model == null)
         {
@@ -158,6 +160,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
             return attachClassification(model, fileModel);
         }
 
+        ExecutionStatistics.get().end("ClassificationService#attachClassification");
         return model;
     }
 
@@ -182,17 +185,20 @@ public class ClassificationService extends GraphService<ClassificationModel>
      */
     public ClassificationModel attachClassification(ClassificationModel classificationModel, FileModel fileModel)
     {
+        ExecutionStatistics.get().begin("ClassificationService#attachClassification-CM,FM");
         if (!isClassificationLinkedToFileModel(classificationModel, fileModel))
         {
             classificationModel.addFileModel(fileModel);
         }
         ClassificationServiceCache.cacheClassificationFileModel(classificationModel, fileModel, true);
 
+        ExecutionStatistics.get().end("ClassificationService#attachClassification-CM,FM");
         return classificationModel;
     }
 
     public ClassificationModel attachLink(ClassificationModel classificationModel, LinkModel linkModel)
     {
+        ExecutionStatistics.get().begin("ClassificationService#attachLink");
         for (LinkModel existing : classificationModel.getLinks())
         {
             if (StringUtils.equals(existing.getLink(), linkModel.getLink()))
@@ -201,6 +207,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
             }
         }
         classificationModel.addLink(linkModel);
+        ExecutionStatistics.get().end("ClassificationService#attachLink");
         return classificationModel;
     }
 }
