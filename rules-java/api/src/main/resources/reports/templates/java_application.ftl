@@ -183,7 +183,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>${reportModel.projectModel.name?html} - Application Report</title>
+    <title>${reportModel.projectModel.rootFileModel.fileName?html} - Application Report</title>
     <link href="resources/css/bootstrap.min.css" rel="stylesheet">
     <link href="resources/css/windup.css" rel="stylesheet" media="screen">
     <link href="resources/css/windup.java.css" rel="stylesheet" media="screen">
@@ -219,7 +219,7 @@
                     onmouseover="$(this).parent().parent().addClass('showDesc')"
                     onmouseout=" $(this).parent().parent().removeClass('showDesc')"
                           >Application Report</div>
-                    <div class="path">${reportModel.projectModel.name?html}</div>
+                    <div class="path">${reportModel.projectModel.rootFileModel.fileName}</div>
                 </h1>
                 <div class="desc">
                     <div class="forOverview">

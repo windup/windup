@@ -19,7 +19,7 @@
 	<#if applicationReport.displayInApplicationList>
 		<tr>
 			<td>
-				<a href="reports/${applicationReport.reportFilename}">${applicationReport.projectModel.name}</a>
+				<a href="reports/${applicationReport.reportFilename}">${applicationReport.projectModel.rootFileModel.fileName}</a>
 			</td>
 			<td>
 
