@@ -36,7 +36,8 @@ public class ExcludeTagsOption extends AbstractConfigurationOption
     @Override
     public String getLabel()
     {
-        return "Indicates the tags to explicitly exclude from processing (by default all tags are processed)";
+        return "Indicates the tags to explicitly exclude from processing (by default all tags are processed). Multiple tags can be specified separated by a space (eg, --"
+                    + NAME + " TAG_1 TAG_@";
     }
 
     @Override

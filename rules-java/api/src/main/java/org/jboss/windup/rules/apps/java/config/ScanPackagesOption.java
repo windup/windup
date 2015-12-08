@@ -19,7 +19,8 @@ public class ScanPackagesOption extends AbstractConfigurationOption
     @Override
     public String getDescription()
     {
-        return "A list of java package name prefixes to scan (eg, com.myapp)";
+        return "A list of java package name prefixes to scan (eg, com.myapp). Multiple items can be separated by a space (eg, --" + NAME
+                    + " PACKAGE_1 PACKAGE_2).";
     }
 
     @Override

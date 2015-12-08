@@ -16,7 +16,7 @@ public class SourceModeOption extends AbstractConfigurationOption
     @Override
     public String getDescription()
     {
-        return "Indicates whether the input file or directory is a source code or compiled binaries (Default: Compiled)";
+        return "Indicates whether the input file or directory is a source code or compiled binaries (Default: Compiled).";
     }
 
     @Override

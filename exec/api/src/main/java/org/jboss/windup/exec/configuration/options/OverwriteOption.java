@@ -17,7 +17,7 @@ public class OverwriteOption extends AbstractConfigurationOption
     @Override
     public String getDescription()
     {
-        return "Force overwrite of the output directory, without prompting";
+        return "Force overwrite of the output directory, without prompting.";
     }
 
     @Override
