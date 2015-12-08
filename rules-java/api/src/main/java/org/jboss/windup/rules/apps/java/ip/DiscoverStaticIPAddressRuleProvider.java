@@ -1,6 +1,5 @@
 package org.jboss.windup.rules.apps.java.ip;
 
-
 import static org.joox.JOOX.$;
 
 import java.io.IOException;
@@ -38,9 +37,9 @@ import org.w3c.dom.Element;
  */
 public class DiscoverStaticIPAddressRuleProvider extends AbstractRuleProvider
 {
-	private static final String IP_PATTERN = "(?<![\\w.])\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}(?![\\w.])";
-	private static final Logger LOG = Logger.getLogger(DiscoverStaticIPAddressRuleProvider.class.getSimpleName());
-	
+    private static final String IP_PATTERN = "(?<![\\w.])\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}(?![\\w.])";
+    private static final Logger LOG = Logger.getLogger(DiscoverStaticIPAddressRuleProvider.class.getSimpleName());
+
     public DiscoverStaticIPAddressRuleProvider()
     {
         super(MetadataBuilder.forProvider(DiscoverStaticIPAddressRuleProvider.class)
@@ -68,15 +67,15 @@ public class DiscoverStaticIPAddressRuleProvider extends AbstractRuleProvider
                             // graph
                             if (InetAddressValidator.getInstance().isValid(payload.getSourceSnippit()))
                             {
-                            	//if the file is a property file, make sure the line isn't commented out.
-                            	
+                                // if the file is a property file, make sure the line isn't commented out.
+
                                 if (ignoreLine(event.getGraphContext(), payload))
                                 {
-                        			return;
-                        		}
+                                    return;
+                                }
 
-                            	StaticIPLocationModel location = GraphService.addTypeToModel(event.getGraphContext(), payload,
-                                        StaticIPLocationModel.class);
+                                StaticIPLocationModel location = GraphService.addTypeToModel(event.getGraphContext(), payload,
+                                            StaticIPLocationModel.class);
                                 location.setRuleID(((Rule) context.get(Rule.class)).getId());
                                 location.setTitle("Static IP Address Detected");
 
@@ -122,9 +121,11 @@ public class DiscoverStaticIPAddressRuleProvider extends AbstractRuleProvider
                     // WINDUP-808 - Remove matches with "version" or "revision" on the same line
                     else if (StringUtils.containsIgnoreCase(line, "version") || StringUtils.containsIgnoreCase(line, "revision"))
                         return true;
+                    else if (isMavenVersionTag(context, model))
+                        return true;
                     else
-						return false;
-				}
+                        return false;
+                }
                 else if (i < lineNumber)
                 {
                     // seek
@@ -135,7 +136,7 @@ public class DiscoverStaticIPAddressRuleProvider extends AbstractRuleProvider
                     LOG.warning("Did not find line: " + lineNumber + " in file: " + model.getFile().getFileName());
                     break;
                 }
-			}
+            }
         }
         catch (IOException | RuntimeException e)
         {
@@ -148,41 +149,45 @@ public class DiscoverStaticIPAddressRuleProvider extends AbstractRuleProvider
 
         return false;
     }
-    
-    private boolean isMavenFile(GraphContext context, FileLocationModel model) {
-    	if(!(model.getFile() instanceof XmlFileModel)) {
-    		return false;
-    	}
-    	
-    	ClassificationService cs = new ClassificationService(context);
-    	for(ClassificationModel cm : cs.getClassificationByName(model.getFile(), "Maven POM")) {
-    		return true;
-    	}
-    	return false;
+
+    private boolean isMavenFile(GraphContext context, FileLocationModel model)
+    {
+        if (!(model.getFile() instanceof XmlFileModel))
+        {
+            return false;
+        }
+
+        ClassificationService cs = new ClassificationService(context);
+        for (ClassificationModel cm : cs.getClassificationByName(model.getFile(), "Maven POM"))
+        {
+            return true;
+        }
+        return false;
     }
-    
 
     /**
-     *  if this is a maven file, checks to see if "version" tags match the discovered text; if the 
-     *  discovered text does match something in a version tag, it is likely a version, not an IP address
-     *  
+     * if this is a maven file, checks to see if "version" tags match the discovered text; if the discovered text does match something in a version
+     * tag, it is likely a version, not an IP address
+     * 
      * @param context
      * @param model
      * @return
      */
-    private boolean isMavenVersionTag(GraphContext context, FileLocationModel model) {
-    	if(isMavenFile(context, model)) {
-    		Document doc = ((XmlFileModel)model.getFile()).asDocument();
-    		for(Element elm : $(doc).find("version")) {
-    			String text = StringUtils.trim($(elm).text());
-    			if(StringUtils.equals(text, model.getSourceSnippit())) {
-    				return true;
-    			}
-    		}
-    	}
-    	return false;
+    private boolean isMavenVersionTag(GraphContext context, FileLocationModel model)
+    {
+        if (isMavenFile(context, model))
+        {
+            Document doc = ((XmlFileModel) model.getFile()).asDocument();
+            for (Element elm : $(doc).find("version"))
+            {
+                String text = StringUtils.trim($(elm).text());
+                if (StringUtils.equals(text, model.getSourceSnippit()))
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
-    
-    
-    
+
 }
