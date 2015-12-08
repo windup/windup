@@ -35,22 +35,14 @@ public class ToFileModelHandler implements ElementHandler<ToFileModel>
     @Override
     public ToFileModel processElement(ParserContext context, Element element) throws ConfigurationException
     {
-        // Read & Validate
         List<Element> children = JOOX.$(element).children().get();
         validateChildren(children);
         Element firstChild = children.get(0);
-        Object wrappedCondition = context.processElement(firstChild);
+        GraphCondition wrappedCondition = (GraphCondition) context.processElement(firstChild);
+
         validateWrappedCondition(wrappedCondition);
 
-        // Create the condition
-        ToFileModel toFileModelCondition = new ToFileModel();
-        for (Element child : children)
-        {
-            Object condition = context.processElement(child);
-            toFileModelCondition.withWrappedCondition((GraphCondition) condition);
-        }
-
-        return toFileModelCondition;
+        return ToFileModel.withWrappedCondition(wrappedCondition);
     }
 
     private void validateWrappedCondition(Object wrappedCondition)
