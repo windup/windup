@@ -338,7 +338,7 @@
             <xs:element ref="hint-exists" minOccurs="0" maxOccurs="unbounded" />
             <xs:element ref="lineitem-exists" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="iterable-filter" type="iterable-filter" minOccurs="0" maxOccurs="unbounded" />
-            <xs:element name="toFileModel" type="when-base" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="to-file-model" type="when-base" minOccurs="0" maxOccurs="unbounded" />
         </xs:choice>
     </xs:complexType>
 
