@@ -30,18 +30,18 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * Discovers Websphere Web XML files and parses the related metadata
+ * Discovers WebSphere Web XML files and parses the related metadata
  * 
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  * 
  */
-public class ResolveWebsphereWebXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
+public class ResolveWebSphereWebXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
 {
-    private static final Logger LOG = Logger.getLogger(ResolveWebsphereWebXmlRuleProvider.class.getSimpleName());
+    private static final Logger LOG = Logger.getLogger(ResolveWebSphereWebXmlRuleProvider.class.getSimpleName());
 
-    public ResolveWebsphereWebXmlRuleProvider()
+    public ResolveWebSphereWebXmlRuleProvider()
     {
-        super(MetadataBuilder.forProvider(ResolveWebsphereWebXmlRuleProvider.class)
+        super(MetadataBuilder.forProvider(ResolveWebSphereWebXmlRuleProvider.class)
                     .setPhase(InitialAnalysisPhase.class)
                     .addExecuteAfter(DiscoverWebXmlRuleProvider.class));
     }
@@ -49,7 +49,7 @@ public class ResolveWebsphereWebXmlRuleProvider extends IteratingRuleProvider<Xm
     @Override
     public String toStringPerform()
     {
-        return "Discover IBM Websphere Web Binding Files";
+        return "Discover IBM WebSphere Web Binding Files";
     }
 
     @Override
@@ -67,16 +67,17 @@ public class ResolveWebsphereWebXmlRuleProvider extends IteratingRuleProvider<Xm
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
 
         ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-        ClassificationModel classification = classificationService.attachClassification(context, payload, "Websphere Web Binding", "Websphere Web Binding XML Descriptor");
+        ClassificationModel classification = classificationService.attachClassification(context, payload, "WebSphere Web Binding",
+                    "WebSphere Web Binding XML Descriptor");
         classification.setEffort(1);
-        
+
         Document doc = xmlFileService.loadDocumentQuiet(context, payload);
 
         VendorSpecificationExtensionService vendorSpecificationService = new VendorSpecificationExtensionService(event.getGraphContext());
-        //mark as vendor extension; create reference to web.xml
+        // mark as vendor extension; create reference to web.xml
         vendorSpecificationService.associateAsVendorExtension(payload, "web.xml");
-        
-        TechnologyTagModel technologyTag = technologyTagService.addTagToFileModel(payload, "Websphere Web XML", TechnologyTagLevel.IMPORTANT);
+
+        TechnologyTagModel technologyTag = technologyTagService.addTagToFileModel(payload, "WebSphere Web XML", TechnologyTagLevel.IMPORTANT);
         for (Element resourceRef : $(doc).find("resRefBindings").get())
         {
             processBinding(envRefService, jndiResourceService, payload.getApplication(), resourceRef, "bindingResourceRef");
@@ -97,9 +98,10 @@ public class ResolveWebsphereWebXmlRuleProvider extends IteratingRuleProvider<Xm
         String jndiLocation = $(resourceRef).attr("jndiName");
         String resourceId = $(resourceRef).child(tagName).attr("href");
         resourceId = StringUtils.substringAfter(resourceId, "WEB-INF/web.xml#");
-        
-        if(StringUtils.isBlank(resourceId)) {
-            LOG.info("Issue Element: "+$(resourceRef).toString());
+
+        if (StringUtils.isBlank(resourceId))
+        {
+            LOG.info("Issue Element: " + $(resourceRef).toString());
             return;
         }
 

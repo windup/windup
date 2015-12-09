@@ -17,18 +17,18 @@ import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
- * Discovers Websphere Web Service Binding XML files and parses the related metadata
+ * Discovers WebSphere Web Service Binding XML files and parses the related metadata
  * 
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  * 
  */
-public class ResolveWebsphereWsExtBindingXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
+public class ResolveWebSphereWsExtBindingXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
 {
-    private static final Logger LOG = Logger.getLogger(ResolveWebsphereWsExtBindingXmlRuleProvider.class.getSimpleName());
+    private static final Logger LOG = Logger.getLogger(ResolveWebSphereWsExtBindingXmlRuleProvider.class.getSimpleName());
 
-    public ResolveWebsphereWsExtBindingXmlRuleProvider()
+    public ResolveWebSphereWsExtBindingXmlRuleProvider()
     {
-        super(MetadataBuilder.forProvider(ResolveWebsphereWsExtBindingXmlRuleProvider.class)
+        super(MetadataBuilder.forProvider(ResolveWebSphereWsExtBindingXmlRuleProvider.class)
                     .setPhase(InitialAnalysisPhase.class)
                     .addExecuteAfter(DiscoverXmlFilesRuleProvider.class));
     }
@@ -36,7 +36,7 @@ public class ResolveWebsphereWsExtBindingXmlRuleProvider extends IteratingRulePr
     @Override
     public String toStringPerform()
     {
-        return "Discover Websphere Web Service Extension XML Files";
+        return "Discover WebSphere Web Service Extension XML Files";
     }
 
     @Override
@@ -50,10 +50,10 @@ public class ResolveWebsphereWsExtBindingXmlRuleProvider extends IteratingRulePr
     public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
     {
         ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-        classificationService.attachClassification(context, payload, "Websphere WS Extension", "Websphere Webservice Extension XML Descriptor.");
+        classificationService.attachClassification(context, payload, "WebSphere WS Extension", "WebSphere Webservice Extension XML Descriptor.");
 
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
-        technologyTagService.addTagToFileModel(payload, "Websphere WS Extension", TechnologyTagLevel.IMPORTANT);
+        technologyTagService.addTagToFileModel(payload, "WebSphere WS Extension", TechnologyTagLevel.IMPORTANT);
 
     }
 

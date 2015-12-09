@@ -17,18 +17,18 @@ import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
- * Discovers Websphere Web Service Binding XML files and parses the related metadata
+ * Discovers WebSphere Web Service Extension XML files and parses the related metadata
  * 
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  * 
  */
-public class ResolveWebsphereWsBindingXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
+public class ResolveWebSphereWsClientBindingXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
 {
-    private static final Logger LOG = Logger.getLogger(ResolveWebsphereWsBindingXmlRuleProvider.class.getSimpleName());
+    private static final Logger LOG = Logger.getLogger(ResolveWebSphereWsClientBindingXmlRuleProvider.class.getSimpleName());
 
-    public ResolveWebsphereWsBindingXmlRuleProvider()
+    public ResolveWebSphereWsClientBindingXmlRuleProvider()
     {
-        super(MetadataBuilder.forProvider(ResolveWebsphereWsBindingXmlRuleProvider.class)
+        super(MetadataBuilder.forProvider(ResolveWebSphereWsClientBindingXmlRuleProvider.class)
                     .setPhase(InitialAnalysisPhase.class)
                     .addExecuteAfter(DiscoverXmlFilesRuleProvider.class));
     }
@@ -36,24 +36,24 @@ public class ResolveWebsphereWsBindingXmlRuleProvider extends IteratingRuleProvi
     @Override
     public String toStringPerform()
     {
-        return "Discover Websphere Web Service Binding XML Files";
+        return "Discover WebSphere Web Service Binding XML Files";
     }
 
     @Override
     public ConditionBuilder when()
     {
-        return Query.fromType(XmlFileModel.class).withProperty(FileModel.FILE_NAME, "ibm-webservicesclient-bnd.xmi")
-                    .withProperty(XmlFileModel.ROOT_TAG_NAME, "ClientBinding");
+        return Query.fromType(XmlFileModel.class).withProperty(FileModel.FILE_NAME, "ibm-webservices-ext.xmi")
+                    .withProperty(XmlFileModel.ROOT_TAG_NAME, "WsExtension");
     }
 
     @Override
     public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
     {
         ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-        classificationService.attachClassification(context, payload, "Websphere WS Binding", "Websphere Webservice Binding XML Descriptor.");
+        classificationService.attachClassification(context, payload, "WebSphere WS Client", "WebSphere Webservice Binding XML Descriptor.");
 
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
-        technologyTagService.addTagToFileModel(payload, "Websphere WS Binding", TechnologyTagLevel.IMPORTANT);
+        technologyTagService.addTagToFileModel(payload, "WebSphere WS Client", TechnologyTagLevel.IMPORTANT);
 
     }
 

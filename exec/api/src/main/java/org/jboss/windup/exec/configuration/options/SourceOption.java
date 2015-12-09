@@ -12,8 +12,8 @@ import org.jboss.windup.config.metadata.RuleProviderRegistryCache;
 /**
  * Specifies the source framework or server to migrate from. This could include multiple items.
  * 
- * For example, this might be a migration from Weblogic, EJB2, and JSF 1.x to JBoss EAP 6, EJB 3, and JSF 2. Source in that case would include
- * Weblogic, EJB2, and JSF 1.x.
+ * For example, this might be a migration from WebLogic, EJB2, and JSF 1.x to JBoss EAP 6, EJB 3, and JSF 2. Source in that case would include
+ * WebLogic, EJB2, and JSF 1.x.
  * 
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
