@@ -26,18 +26,18 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * Discovers Weblogic Web XML files and parses the related metadata
+ * Discovers WebLogic Web XML files and parses the related metadata
  * 
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  * 
  */
-public class ResolveWeblogicWebXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
+public class ResolveWebLogicWebXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
 {
-    private static final Logger LOG = Logger.getLogger(ResolveWeblogicWebXmlRuleProvider.class.getSimpleName());
+    private static final Logger LOG = Logger.getLogger(ResolveWebLogicWebXmlRuleProvider.class.getSimpleName());
 
-    public ResolveWeblogicWebXmlRuleProvider()
+    public ResolveWebLogicWebXmlRuleProvider()
     {
-        super(MetadataBuilder.forProvider(ResolveWeblogicWebXmlRuleProvider.class)
+        super(MetadataBuilder.forProvider(ResolveWebLogicWebXmlRuleProvider.class)
                     .setPhase(InitialAnalysisPhase.class)
                     .addExecuteAfter(DiscoverWebXmlRuleProvider.class));
     }
@@ -45,7 +45,7 @@ public class ResolveWeblogicWebXmlRuleProvider extends IteratingRuleProvider<Xml
     @Override
     public String toStringPerform()
     {
-        return "Discover Weblogic Web Files";
+        return "Discover WebLogic Web Files";
     }
 
     @Override
@@ -64,10 +64,10 @@ public class ResolveWeblogicWebXmlRuleProvider extends IteratingRuleProvider<Xml
 
         Document doc = xmlFileService.loadDocumentQuiet(context, payload);
         VendorSpecificationExtensionService vendorSpecificationService = new VendorSpecificationExtensionService(event.getGraphContext());
-        //mark as vendor extension; create reference to web.xml
+        // mark as vendor extension; create reference to web.xml
         vendorSpecificationService.associateAsVendorExtension(payload, "web.xml");
 
-        technologyTagService.addTagToFileModel(payload, "Weblogic Web XML", TechnologyTagLevel.IMPORTANT);
+        technologyTagService.addTagToFileModel(payload, "WebLogic Web XML", TechnologyTagLevel.IMPORTANT);
         for (Element resourceRef : $(doc).find("resource-description").get())
         {
             String jndiLocation = $(resourceRef).child("jndi-name").text();

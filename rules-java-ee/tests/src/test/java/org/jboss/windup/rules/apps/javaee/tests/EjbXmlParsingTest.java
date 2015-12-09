@@ -62,7 +62,7 @@ public class EjbXmlParsingTest
     private GraphContextFactory factory;
 
     @Test
-    public void testEJBWeblogic() throws Exception
+    public void testEJBWebLogic() throws Exception
     {
         try (GraphContext context = factory.create())
         {
@@ -113,7 +113,7 @@ public class EjbXmlParsingTest
     }
 
     @Test
-    public void testEJBWebsphere() throws Exception
+    public void testEJBWebSphere() throws Exception
     {
         try (GraphContext context = factory.create())
         {

@@ -18,18 +18,18 @@ import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
- * Discovers Websphere EJB Extension XML files and parses the related metadata
+ * Discovers WebSphere EJB Extension XML files and parses the related metadata
  * 
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  * 
  */
-public class ResolveWebsphereEjbExtensionXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
+public class ResolveWebSphereEjbExtensionXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
 {
-    private static final Logger LOG = Logger.getLogger(ResolveWebsphereEjbExtensionXmlRuleProvider.class.getSimpleName());
+    private static final Logger LOG = Logger.getLogger(ResolveWebSphereEjbExtensionXmlRuleProvider.class.getSimpleName());
 
-    public ResolveWebsphereEjbExtensionXmlRuleProvider()
+    public ResolveWebSphereEjbExtensionXmlRuleProvider()
     {
-        super(MetadataBuilder.forProvider(ResolveWebsphereEjbExtensionXmlRuleProvider.class)
+        super(MetadataBuilder.forProvider(ResolveWebSphereEjbExtensionXmlRuleProvider.class)
                     .setPhase(InitialAnalysisPhase.class)
                     .addExecuteAfter(DiscoverEjbConfigurationXmlRuleProvider.class));
     }
@@ -37,7 +37,7 @@ public class ResolveWebsphereEjbExtensionXmlRuleProvider extends IteratingRulePr
     @Override
     public String toStringPerform()
     {
-        return "Discover Websphere EJB XML Files";
+        return "Discover WebSphere EJB XML Files";
     }
 
     @Override
@@ -51,11 +51,11 @@ public class ResolveWebsphereEjbExtensionXmlRuleProvider extends IteratingRulePr
     public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
     {
         ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-        classificationService.attachClassification(context, payload, "Websphere EJB Ext", "Websphere Enterprise Java Bean Extension XML Descriptor.");
+        classificationService.attachClassification(context, payload, "WebSphere EJB Ext", "WebSphere Enterprise Java Bean Extension XML Descriptor.");
 
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
-        technologyTagService.addTagToFileModel(payload, "Websphere EJB Ext", TechnologyTagLevel.IMPORTANT);
-        
+        technologyTagService.addTagToFileModel(payload, "WebSphere EJB Ext", TechnologyTagLevel.IMPORTANT);
+
         VendorSpecificationExtensionService vendorSpecificationService = new VendorSpecificationExtensionService(event.getGraphContext());
         vendorSpecificationService.associateAsVendorExtension(payload, "ejb-jar.xml");
     }

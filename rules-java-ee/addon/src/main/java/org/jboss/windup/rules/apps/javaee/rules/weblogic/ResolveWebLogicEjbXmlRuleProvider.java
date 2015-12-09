@@ -35,18 +35,18 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * Discovers Weblogic EJB XML files and parses the related metadata
+ * Discovers WebLogic EJB XML files and parses the related metadata
  * 
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  * 
  */
-public class ResolveWeblogicEjbXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
+public class ResolveWebLogicEjbXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
 {
-    private static final Logger LOG = Logger.getLogger(ResolveWeblogicEjbXmlRuleProvider.class.getSimpleName());
+    private static final Logger LOG = Logger.getLogger(ResolveWebLogicEjbXmlRuleProvider.class.getSimpleName());
 
-    public ResolveWeblogicEjbXmlRuleProvider()
+    public ResolveWebLogicEjbXmlRuleProvider()
     {
-        super(MetadataBuilder.forProvider(ResolveWeblogicEjbXmlRuleProvider.class)
+        super(MetadataBuilder.forProvider(ResolveWebLogicEjbXmlRuleProvider.class)
                     .setPhase(InitialAnalysisPhase.class)
                     .addExecuteAfter(DiscoverEjbConfigurationXmlRuleProvider.class));
     }
@@ -54,7 +54,7 @@ public class ResolveWeblogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
     @Override
     public String toStringPerform()
     {
-        return "Discover Weblogic EJB XML Files";
+        return "Discover WebLogic EJB XML Files";
     }
 
     @Override
@@ -77,10 +77,10 @@ public class ResolveWeblogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
         GraphService<EjbMessageDrivenModel> mdbService = new GraphService<>(event.getGraphContext(), EjbMessageDrivenModel.class);
 
         ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-        classificationService.attachClassification(context, payload, "Weblogic EJB XML", "Weblogic Enterprise Java Bean XML Descriptor.");
+        classificationService.attachClassification(context, payload, "WebLogic EJB XML", "WebLogic Enterprise Java Bean XML Descriptor.");
 
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
-        technologyTagService.addTagToFileModel(payload, "Weblogic EJB XML", TechnologyTagLevel.IMPORTANT);
+        technologyTagService.addTagToFileModel(payload, "WebLogic EJB XML", TechnologyTagLevel.IMPORTANT);
 
         Document doc = xmlFileService.loadDocumentQuiet(context, payload);
 

@@ -35,18 +35,18 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * Discovers Websphere EJB XML files and parses the related metadata
+ * Discovers WebSphere EJB XML files and parses the related metadata
  * 
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  * 
  */
-public class ResolveWebsphereEjbBindingXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
+public class ResolveWebSphereEjbBindingXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
 {
-    private static final Logger LOG = Logger.getLogger(ResolveWebsphereEjbBindingXmlRuleProvider.class.getSimpleName());
+    private static final Logger LOG = Logger.getLogger(ResolveWebSphereEjbBindingXmlRuleProvider.class.getSimpleName());
 
-    public ResolveWebsphereEjbBindingXmlRuleProvider()
+    public ResolveWebSphereEjbBindingXmlRuleProvider()
     {
-        super(MetadataBuilder.forProvider(ResolveWebsphereEjbBindingXmlRuleProvider.class)
+        super(MetadataBuilder.forProvider(ResolveWebSphereEjbBindingXmlRuleProvider.class)
                     .setPhase(InitialAnalysisPhase.class)
                     .addExecuteAfter(DiscoverEjbConfigurationXmlRuleProvider.class));
     }
@@ -54,7 +54,7 @@ public class ResolveWebsphereEjbBindingXmlRuleProvider extends IteratingRuleProv
     @Override
     public String toStringPerform()
     {
-        return "Discover Weblogic EJB XML Files";
+        return "Discover WebSphere EJB XML Files";
     }
 
     @Override
@@ -76,35 +76,36 @@ public class ResolveWebsphereEjbBindingXmlRuleProvider extends IteratingRuleProv
         GraphService<EjbSessionBeanModel> ejbSessionBeanService = new GraphService<>(event.getGraphContext(), EjbSessionBeanModel.class);
         GraphService<EjbMessageDrivenModel> mdbService = new GraphService<>(event.getGraphContext(), EjbMessageDrivenModel.class);
 
-         
         ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-        ClassificationModel classification = classificationService.attachClassification(context, payload, "Websphere EJB Binding", "Websphere Enterprise Java Bean Binding XML Descriptor");
+        ClassificationModel classification = classificationService.attachClassification(context, payload, "WebSphere EJB Binding",
+                    "WebSphere Enterprise Java Bean Binding XML Descriptor");
         classification.setEffort(1);
-        
+
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
-        technologyTagService.addTagToFileModel(payload, "Websphere EJB", TechnologyTagLevel.IMPORTANT);
+        technologyTagService.addTagToFileModel(payload, "WebSphere EJB", TechnologyTagLevel.IMPORTANT);
 
         Document doc = xmlFileService.loadDocumentQuiet(context, payload);
 
-        if(doc == null) {
+        if (doc == null)
+        {
             return;
         }
 
         VendorSpecificationExtensionService vendorSpecificationService = new VendorSpecificationExtensionService(event.getGraphContext());
-        //mark as vendor extension; create reference to ejb-jar.xml
+        // mark as vendor extension; create reference to ejb-jar.xml
         vendorSpecificationService.associateAsVendorExtension(payload, "ejb-jar.xml");
-        
+
         // register beans to JNDI
         for (Element resourceRef : $(doc).find("ejbBindings").get())
         {
             String href = $(resourceRef).child("enterpriseBean").attr("href");
             String resourceId = StringUtils.substringAfterLast(href, "ejb-jar.xml#");
             String jndiLocation = $(resourceRef).attr("jndiName");
-            
-            //determine type:
+
+            // determine type:
             String type = $(resourceRef).child("enterpriseBean").attr("type");
-            
-            LOG.info("Type: "+type);
+
+            LOG.info("Type: " + type);
 
             if (StringUtils.isNotBlank(jndiLocation) && StringUtils.isNotBlank(resourceId))
             {
@@ -136,9 +137,7 @@ public class ResolveWebsphereEjbBindingXmlRuleProvider extends IteratingRuleProv
         {
             processBinding(envRefService, jndiResourceService, payload.getApplication(), resourceRef, "bindingMessageDestinationRef");
         }
-        
-        
-        
+
         // Bind MDBs to Destinations
         for (Element resourceRef : $(doc).find("messageDestinationRefBindings").get())
         {
@@ -163,8 +162,7 @@ public class ResolveWebsphereEjbBindingXmlRuleProvider extends IteratingRuleProv
         }
 
     }
-  
-    
+
     private void processBinding(EnvironmentReferenceService envRefService, JNDIResourceService jndiResourceService, ProjectModel application,
                 Element resourceRef, String tagName)
     {
