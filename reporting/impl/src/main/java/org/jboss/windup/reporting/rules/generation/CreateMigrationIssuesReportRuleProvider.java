@@ -45,7 +45,11 @@ public class CreateMigrationIssuesReportRuleProvider extends AbstractRuleProvide
         @Override
         public void perform(GraphRewrite event, EvaluationContext context)
         {
-            createGlobalMigrationIssuesReport(event.getGraphContext());
+            int inputApplicationCount = Iterables.size(WindupConfigurationService.getConfigurationModel(event.getGraphContext()).getInputPaths());
+            if (inputApplicationCount > 1)
+            {
+                createGlobalMigrationIssuesReport(event.getGraphContext());
+            }
 
             for (FileModel inputPath : WindupConfigurationService.getConfigurationModel(event.getGraphContext()).getInputPaths())
             {
@@ -60,24 +64,27 @@ public class CreateMigrationIssuesReportRuleProvider extends AbstractRuleProvide
             ApplicationReportModel report = applicationReportService.create();
             report.setReportPriority(110);
             report.setReportIconClass("glyphicon glyphicon-warning-sign");
-            report.setReportName("Migration Issues");
             report.setTemplatePath(TEMPLATE_PATH);
             report.setTemplateType(TemplateType.FREEMARKER);
             report.setDisplayInApplicationReportIndex(true);
             return report;
         }
 
-        private ApplicationReportModel createSingleApplicationMigrationIssuesReport(GraphContext context, ProjectModel projectModel) {
+        private ApplicationReportModel createSingleApplicationMigrationIssuesReport(GraphContext context, ProjectModel projectModel)
+        {
             ReportService reportService = new ReportService(context);
             ApplicationReportModel report = createMigrationIssuesReportBase(context);
+            report.setReportName("Migration Issues");
             report.setProjectModel(projectModel);
             reportService.setUniqueFilename(report, "migration_issues", "html");
             return report;
         }
 
-        private ApplicationReportModel createGlobalMigrationIssuesReport(GraphContext context) {
+        private ApplicationReportModel createGlobalMigrationIssuesReport(GraphContext context)
+        {
             ReportService reportService = new ReportService(context);
             ApplicationReportModel report = createMigrationIssuesReportBase(context);
+            report.setReportName("All Migration Issues");
             report.setDisplayInGlobalApplicationIndex(true);
             reportService.setUniqueFilename(report, "migration_issues", "html");
             return report;
