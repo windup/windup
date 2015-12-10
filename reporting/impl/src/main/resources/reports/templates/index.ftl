@@ -16,7 +16,6 @@
 </#macro>
 
 <#macro applicationReportRenderer applicationReport>
-	<#if applicationReport.displayInApplicationList>
 		<tr>
 			<td>
 				<a href="reports/${applicationReport.reportFilename}">${applicationReport.projectModel.rootFileModel.fileName}</a>
@@ -36,7 +35,6 @@
       			${getMigrationEffortPoints(applicationReport.projectModel, true)} Story Points
     		</td>
 		</tr>
-	</#if>
 </#macro>
 
 	<head>

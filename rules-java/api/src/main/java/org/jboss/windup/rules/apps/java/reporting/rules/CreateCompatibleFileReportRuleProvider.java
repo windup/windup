@@ -87,7 +87,6 @@ public class CreateCompatibleFileReportRuleProvider extends AbstractRuleProvider
         applicationReportModel.setProjectModel(projectModel);
         applicationReportModel.setTemplatePath(TEMPLATE_APPLICATION_REPORT);
         applicationReportModel.setTemplateType(TemplateType.FREEMARKER);
-        applicationReportModel.setDisplayInApplicationList(false);
 
         // Set the filename for the report
         ReportService reportService = new ReportService(context);
