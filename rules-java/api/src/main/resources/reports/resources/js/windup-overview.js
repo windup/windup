@@ -2,8 +2,8 @@ $(document).on('click', '.panel-heading', function(e){
     var $this = $(this);
 
 	if(!$this.hasClass('panel-collapsed')) {
-		var projectId = $this.parent().data("windup-projectid");
-		$.sessionStorage.set(projectId, "false");
+		var projectGuid = $this.parent().data("windup-projectguid");
+		$.sessionStorage.set(projectGuid, "false");
 
 		$this.parents('.panel').find('.panel-body').slideUp();
       	$this.parents('.panel').removeClass('panel-boarding').addClass('panel-collapsed');
@@ -17,8 +17,8 @@ $('#collapseAll').toggle();
 
 function expandSelected(e) {
 	var $this = $(e);
-	var projectId = $this.parent().data("windup-projectid");
-	$.sessionStorage.set(projectId, "true");
+	var projectGuid = $this.parent().data("windup-projectguid");
+	$.sessionStorage.set(projectGuid, "true");
 
 	$this.parents('.panel').find('.panel-body').slideDown();
 	$this.parents('.panel').addClass('panel-boarding');
@@ -28,11 +28,11 @@ function expandSelected(e) {
 
 function expandMemory(){
 	$('.panel-heading').each(function() {
-		var projectId = $(this).parent().data("windup-projectid");
+		var projectGuid = $(this).parent().data("windup-projectguid");
 		var storyPoints = $(this).parent().data("windup-project-storypoints");
 		
-		if($.sessionStorage.isSet(projectId)) {
-			var value = $.sessionStorage.get(projectId);
+		if($.sessionStorage.isSet(projectGuid)) {
+			var value = $.sessionStorage.get(projectGuid);
 			if(value == true) {
 				expandSelected($(this));
 				return;

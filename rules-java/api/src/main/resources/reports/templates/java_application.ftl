@@ -101,7 +101,7 @@
 <#macro projectModelRenderer projectModel>
 	<#assign panelStoryPoints = getMigrationEffortPoints(projectModel, false, reportModel.includeTags, reportModel.excludeTags)>
 
-    <div class="panel panel-primary projectBox" data-windup-projectid="${projectModel.asVertex().getId()?c}" data-windup-project-storypoints="${panelStoryPoints}">
+    <div class="panel panel-primary projectBox" data-windup-projectguid="${generateGUID()}" data-windup-project-storypoints="${panelStoryPoints}">
         <div class="panel-heading panel-collapsed clickable">
             <span class="pull-left"><i class="glyphicon glyphicon-chevron-up arrowIcon"></i></span>
             <h3 class="panel-title">${projectModel.rootFileModel.prettyPath?html} (${panelStoryPoints} story points)</h3>
