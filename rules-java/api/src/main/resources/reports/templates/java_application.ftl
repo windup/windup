@@ -288,7 +288,7 @@
         <script src="resources/js/jquery-1.10.1.min.js"></script>
         <script src="resources/libraries/flot/jquery.flot.min.js"></script>
         <script src="resources/libraries/flot/jquery.flot.pie.min.js"></script>
-        <script src="resources/js/windup-overview.js"/>
+        <script src="resources/js/windup-overview.js"></script>
         <script src="resources/js/bootstrap.min.js"></script>
 
         <@render_pie project=reportModel.projectModel recursive=true elementID="application_pie" includeTags=reportModel.includeTags excludeTags=reportModel.excludeTags />
