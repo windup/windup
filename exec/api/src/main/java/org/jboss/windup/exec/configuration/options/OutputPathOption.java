@@ -4,7 +4,6 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 import org.jboss.windup.config.AbstractPathConfigurationOption;
 import org.jboss.windup.config.InputType;
@@ -40,7 +39,7 @@ public class OutputPathOption extends AbstractPathConfigurationOption
     @Override
     public String getDescription()
     {
-        return "Output Directory (WARNING: any existing files will be removed)";
+        return "Output Directory (WARNING: any existing files will be removed).";
     }
 
     @Override

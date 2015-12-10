@@ -15,7 +15,7 @@ public class ExcludePackagesOption extends AbstractConfigurationOption
     @Override
     public String getDescription()
     {
-        return "A list of java package name prefixes to exclude (eg, com.myapp.subpackage)";
+        return "A list of java package name prefixes to exclude (eg, com.myapp.subpackage). Multiple options may be specified, separated by a space.";
     }
 
     @Override

@@ -14,7 +14,7 @@ public class OfflineModeOption extends AbstractConfigurationOption
     @Override
     public String getDescription()
     {
-        return "Indicates whether to fetch information from the internet";
+        return "Indicates whether to fetch information from the internet.";
     }
 
     @Override

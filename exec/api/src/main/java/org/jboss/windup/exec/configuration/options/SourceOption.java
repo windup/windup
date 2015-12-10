@@ -46,7 +46,7 @@ public class SourceOption extends AbstractConfigurationOption
     @Override
     public String getDescription()
     {
-        return "The source server or framework to migrate from. This could include multiple items (eg, \"WebLogic\" and \"EJB 2\")";
+        return "The source server or framework to migrate from. This could include multiple items (eg, \"WebLogic\" and \"EJB 2\").";
     }
 
     @Override
