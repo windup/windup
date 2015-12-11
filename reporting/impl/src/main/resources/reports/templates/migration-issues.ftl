@@ -40,7 +40,7 @@
             <div class="row">
                 <div class="page-header page-header-no-border">
                     <h1>
-                        <div class="main">Migration Issue Report</div>
+                        <div class="main">Migration Issues Report</div>
                         <#if reportModel.projectModel??>
                             <div class="path">${reportModel.projectModel.name?html}</div>
                         </#if>
@@ -51,17 +51,6 @@
                     </div>
                 </div>
             </div>
-
-        <div class="row">
-            <!-- Breadcrumbs -->
-            <div class="container-fluid">
-                <ol class="breadcrumb top-menu">
-                    <li><a href="../index.html">All Applications</a></li>
-                    <#include "include/breadcrumbs.ftl">
-                </ol>
-            </div>
-            <!-- / Breadcrumbs -->
-        </div>
 
         <div class="row">
         	<div class="container-fluid theme-showcase" role="main">

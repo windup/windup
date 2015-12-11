@@ -113,15 +113,6 @@
 
         <div class="row">
             <div class="container-fluid">
-                <ol class="breadcrumb top-menu">
-                    <li><a href="../index.html">All Applications</a></li>
-                    <#include "include/breadcrumbs.ftl">
-                </ol>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="container-fluid">
                 <div class="alert alert-info">
                   <p><strong>DISCLAIMER:</strong> Files in this report are believed to be compatible with the selected target platform;
                   however, it is possible that this report contains incompatible files that were not identified by any rules in the system. It is

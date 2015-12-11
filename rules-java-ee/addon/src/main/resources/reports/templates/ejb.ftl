@@ -92,17 +92,6 @@
         </div>
 
         <div class="row">
-            <!-- Breadcrumbs -->
-            <div class="container-fluid">
-                <ol class="breadcrumb top-menu">
-                    <li><a href="../index.html">All Applications</a></li>
-                    <#include "include/breadcrumbs.ftl">
-                </ol>
-            </div>
-            <!-- / Breadcrumbs -->
-        </div>
-
-        <div class="row">
             <div class="container-fluid theme-showcase" role="main">
 
             <#if !reportModel.relatedResources.mdb.list.iterator()?has_content && !reportModel.relatedResources.stateless.list.iterator()?has_content && !reportModel.relatedResources.stateful.list.iterator()?has_content && !reportModel.relatedResources.entity.list.iterator()?has_content>

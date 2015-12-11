@@ -39,17 +39,6 @@
         </div>
 
         <div class="row">
-            <!-- Breadcrumbs -->
-            <div class="container-fluid">
-                <ol class="breadcrumb top-menu">
-                  <li><a href="../index.html">All Applications</a></li>
-                  <#include "include/breadcrumbs.ftl">
-                </ol>
-            </div>
-            <!-- / Breadcrumbs -->
-        </div>
-
-        <div class="row">
             <div class="container-fluid theme-showcase" role="main">
                 <div class="panel panel-primary">
                     <div class="panel-heading">
