@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-
+<#assign index_page = true>
 <#if reportModel.applicationReportIndexModel??>
     <#assign navUrlPrefix = "reports/">
     <#assign applicationReportIndexModel = reportModel.applicationReportIndexModel>
@@ -79,7 +79,7 @@
             <div class="row">
                 <div class="page-header">
                     <h1>
-                        <div class="main">Overview</div>
+                        <div class="main">Application list</div>
                         <div class="path">Profiled by Windup</div>
                     </h1>
                 </div>

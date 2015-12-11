@@ -31,7 +31,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  */
 public class CreateJavaApplicationOverviewReportRuleProvider extends AbstractRuleProvider
 {
-    public static final String OVERVIEW = "Overview";
+    public static final String DETAILS_REPORT= "Application Report";
     public static final String CATCHALL_REPORT = "Catchall";
     public static final String TEMPLATE_APPLICATION_REPORT = "/reports/templates/java_application.ftl";
     public static final String TAG_CATCHALL = "catchall";
@@ -82,7 +82,7 @@ public class CreateJavaApplicationOverviewReportRuleProvider extends AbstractRul
 
     private void createApplicationReport(GraphContext context, ProjectModel projectModel)
     {
-        createMainApplicationOverviewReport(context, projectModel, 100, false, OVERVIEW, Collections.EMPTY_SET, Collections.singleton(TAG_CATCHALL));
+        createMainApplicationOverviewReport(context, projectModel, 100, false, DETAILS_REPORT, Collections.EMPTY_SET, Collections.singleton(TAG_CATCHALL));
         createMainApplicationOverviewReport(context, projectModel, 101, false, CATCHALL_REPORT, Collections.singleton(TAG_CATCHALL),
                     Collections.EMPTY_SET);
     }
@@ -95,7 +95,7 @@ public class CreateJavaApplicationOverviewReportRuleProvider extends AbstractRul
         applicationReportModel.setReportPriority(priority);
         applicationReportModel.setDisplayInApplicationReportIndex(true);
         applicationReportModel.setReportName(name);
-        applicationReportModel.setReportIconClass("glyphicon glyphicon-home");
+        applicationReportModel.setReportIconClass("glyphicon glyphicon-th-list");
         applicationReportModel.setMainApplicationReport(main);
         applicationReportModel.setProjectModel(projectModel);
         applicationReportModel.setTemplatePath(TEMPLATE_APPLICATION_REPORT);

@@ -32,6 +32,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  */
 public class GenerateIndexPageRuleProvider extends AbstractRuleProvider
 {
+    public static final String APPLICATION_LIST_REPORT = "Application List";
     private static final String VAR_APPLICATION_REPORTS = "applicationReports";
     private static final String OUTPUT_FILENAME = "../index.html";
     private static final String TEMPLATE_PATH = "/reports/templates/index.ftl";
@@ -63,10 +64,11 @@ public class GenerateIndexPageRuleProvider extends AbstractRuleProvider
     private void createIndexReport(GraphContext context)
     {
         ApplicationReportService applicationReportService = new ApplicationReportService(context);
+        
         ApplicationReportModel report = applicationReportService.create();
         report.setReportPriority(1);
         report.setReportIconClass("glyphicon glyphicon-home");
-        report.setReportName("Application List");
+        report.setReportName(APPLICATION_LIST_REPORT);
         report.setTemplatePath(TEMPLATE_PATH);
         report.setTemplateType(TemplateType.FREEMARKER);
 

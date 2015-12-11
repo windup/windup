@@ -53,7 +53,7 @@ public class WindupArchitectureSmallBinaryModeTest extends WindupArchitectureTes
             Path indexPath = graphDirectory.resolve(Paths.get("index.html"));
 
             Path appReportPath = resolveChildPath(reportsDirectory,
-                        "Overview_JEE_Example_App__org_windup_example_jee_example_app_1_0_0_\\.html");
+                        "Application_Report_JEE_Example_App__org_windup_example_jee_example_app_1_0_0_\\.html");
             Path appNonClassifiedReportPath = resolveChildPath(reportsDirectory,
                         "compatiblefiles_JEE_Example_App__org_windup_example_jee_example_app_1_0_0_\\.html");
             Path productCatalogBeanPath = resolveChildPath(reportsDirectory, "ProductCatalogBean_java\\.html");

@@ -175,7 +175,7 @@ public abstract class WindupArchitectureTest
 
     JavaApplicationOverviewReportModel getMainApplicationReport(GraphContext context)
     {
-        return getApplicationOverviewReportByName(context, CreateJavaApplicationOverviewReportRuleProvider.OVERVIEW);
+        return getApplicationOverviewReportByName(context, CreateJavaApplicationOverviewReportRuleProvider.DETAILS_REPORT);
     }
 
     JavaApplicationOverviewReportModel getCatchallApplicationReport(GraphContext context)

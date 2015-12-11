@@ -243,17 +243,6 @@
             </div>
         </div>
 
-        <div class="row">
-            <!-- Breadcrumbs -->
-            <div class="container-fluid">
-                <ol class="breadcrumb top-menu">
-                    <li><a href="../index.html">All Applications</a></li>
-                    <#include "include/breadcrumbs.ftl">
-                </ol>
-            </div>
-            <!-- / Breadcrumbs -->
-        </div>
-
         <div class="row container-fluid">
             <div class='container mainGraphContainer'>
                 <!--
