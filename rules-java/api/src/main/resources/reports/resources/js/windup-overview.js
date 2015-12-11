@@ -13,7 +13,6 @@ $(document).on('click', '.panel-heading', function(e){
 		expandSelected(this);
 	}
 })
-$('#collapseAll').toggle();
 
 function expandSelected(e) {
 	var $this = $(e);
@@ -49,6 +48,7 @@ function expandMemory(){
 	});
 }
 
+
 //
 function expandAll(){
 	$('.panel-body').slideDown();
@@ -69,3 +69,12 @@ function collapseAll(){
 }
 
 expandMemory();
+
+// show properly the Collapse/Expand All link
+if ( $('.panel-heading').find('.glyphicon-chevron-up').length > 0) {
+   $('#collapseAll').toggle();
+}
+else {
+   $('#expandAll').toggle();
+}
+
