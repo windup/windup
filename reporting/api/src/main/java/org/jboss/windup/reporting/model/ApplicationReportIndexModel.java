@@ -71,8 +71,7 @@ public interface ApplicationReportIndexModel extends WindupVertexFrame
             List<ApplicationReportModel> reports = new ArrayList<>();
             for (ApplicationReportModel m : getApplicationReportModels())
             {
-                if (!m.getReportName().equals("Application List"))
-                    reports.add(m);
+                reports.add(m);
             }
 
             Collections.sort(reports, new Comparator<ApplicationReportModel>()

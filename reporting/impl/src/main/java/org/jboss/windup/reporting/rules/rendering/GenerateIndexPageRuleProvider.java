@@ -72,7 +72,7 @@ public class GenerateIndexPageRuleProvider extends AbstractRuleProvider
         report.setTemplatePath(TEMPLATE_PATH);
         report.setTemplateType(TemplateType.FREEMARKER);
 
-        report.setDisplayInApplicationReportIndex(true);
+        report.setDisplayInApplicationReportIndex(false);
         report.setReportFilename(OUTPUT_FILENAME);
 
         GraphService<WindupVertexListModel> listService = new GraphService<>(context, WindupVertexListModel.class);

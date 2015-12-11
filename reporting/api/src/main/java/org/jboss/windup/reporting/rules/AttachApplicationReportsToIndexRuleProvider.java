@@ -47,23 +47,20 @@ public class AttachApplicationReportsToIndexRuleProvider extends AbstractRulePro
         @Override
         public void perform(GraphRewrite event, EvaluationContext context, ApplicationReportModel payload)
         {
-            if (payload.getDisplayInApplicationReportIndex() != null && payload.getDisplayInApplicationReportIndex())
+            final ApplicationReportIndexService applicationReportIndexService = new ApplicationReportIndexService(event.getGraphContext());
+            final ProjectModel projectModel = payload.getProjectModel();
+
+            if (projectModel == null || Boolean.TRUE == payload.getDisplayInGlobalApplicationIndex())
             {
-                final ApplicationReportIndexService applicationReportIndexService = new ApplicationReportIndexService(event.getGraphContext());
-                final ProjectModel projectModel = payload.getProjectModel();
+                ApplicationReportIndexModel index = applicationReportIndexService.getOrCreateGlobalApplicationIndex();
+                index.addApplicationReportModel(payload);
+            }
 
-                if (projectModel == null || Boolean.TRUE == payload.getDisplayInGlobalApplicationIndex())
-                {
-                    ApplicationReportIndexModel index = applicationReportIndexService.getOrCreateGlobalApplicationIndex();
-                    index.addApplicationReportModel(payload);
-                }
-
-                if (projectModel != null)
-                {
-                    ApplicationReportIndexModel index = applicationReportIndexService
-                                .getApplicationReportIndexForProjectModel(payload.getProjectModel());
-                    index.addApplicationReportModel(payload);
-                }
+            if (projectModel != null)
+            {
+                ApplicationReportIndexModel index = applicationReportIndexService
+                            .getApplicationReportIndexForProjectModel(payload.getProjectModel());
+                index.addApplicationReportModel(payload);
             }
         }
 
