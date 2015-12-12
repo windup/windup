@@ -4,7 +4,10 @@ import org.jboss.windup.graph.IndexType;
 import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
+import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.Property;
+import com.tinkerpop.frames.modules.javahandler.JavaHandler;
+import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
@@ -15,6 +18,8 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(EffortReportModel.TYPE)
 public interface EffortReportModel extends WindupVertexFrame
 {
+    public static final Severity DEFAULT_SEVERITY = Severity.OPTIONAL;
+
     String TYPE = "EffortReportModel";
     String TYPE_PREFIX = TYPE + ":";
     String EFFORT = "EffortReportModelEffort"; // don't use the prefix as we can't name the index with an "_"
@@ -42,6 +47,18 @@ public interface EffortReportModel extends WindupVertexFrame
     /**
      * Contains a severity level that may be used to indicate to the user the severity level of a problem.
      */
-    @Property(SEVERITY)
+    @JavaHandler
     Severity getSeverity();
+
+    abstract class Impl implements EffortReportModel, JavaHandlerContext<Vertex>
+    {
+        @Override
+        public Severity getSeverity()
+        {
+            String severityString = it().getProperty(SEVERITY);
+            if (severityString == null)
+                return DEFAULT_SEVERITY;
+            return Severity.valueOf(severityString);
+        }
+    }
 }

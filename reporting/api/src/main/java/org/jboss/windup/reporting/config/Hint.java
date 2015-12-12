@@ -15,6 +15,7 @@ import org.jboss.windup.config.parameters.ParameterizedIterationOperation;
 import org.jboss.windup.graph.model.LinkModel;
 import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.reporting.model.EffortReportModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.model.Severity;
 import org.jboss.windup.reporting.service.TagSetService;
@@ -34,14 +35,12 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel>impl
 {
     private static final Logger LOG = Logging.get(Hint.class);
 
-    public static final Severity DEFAULT_SEVERITY = Severity.OPTIONAL;
-
     private RegexParameterizedPatternParser hintTitlePattern;
     private RegexParameterizedPatternParser hintTextPattern;
     private int effort;
-    private Severity severity = DEFAULT_SEVERITY;
+    private Severity severity = EffortReportModel.DEFAULT_SEVERITY;
     private List<Link> links = new ArrayList<>();
-    private Set<String> tags = Collections.EMPTY_SET;
+    private Set<String> tags = Collections.emptySet();
 
     protected Hint(String variable)
     {
@@ -85,8 +84,7 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel>impl
     }
 
     /**
-     * Create a new {@link Hint} in the current {@link FileLocationModel}, and specify the text or content to be
-     * displayed in the report.
+     * Create a new {@link Hint} in the current {@link FileLocationModel}, and specify the text or content to be displayed in the report.
      */
     public static HintText withText(String text)
     {

@@ -1,4 +1,77 @@
 <!DOCTYPE html>
+
+<#macro migrationIssuesRenderer problemSummary>
+    <tr>
+        <td>
+            <a href="#" class="problem-link">
+                ${problemSummary.issueName}
+            </a>
+            <div class="problem-file-list list-group" style="display: none;">
+                <div style="position:relative; width: 100%;">
+                    <!-- Internal issues per file table -->
+                    <table class="table table-hover table-condensed tablesorter-child tablesorter">
+                        <thead>
+                            <tr>
+                                <th>File</th>
+                                <th>Issues Found</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <#list problemSummary.descriptions as description>
+                                <#list problemSummary.getFilesForDescription(description) as fileSummary>
+                                    <tr>
+                                        <td>
+                                            <@render_link model=fileSummary.file class="list-group-item migration-issues-detailed-item"/><#t>
+                                        </td>
+                                        <td>
+                                            <@render_link model=fileSummary.file text="#{fileSummary.occurences}" class="list-group-item migration-issues-detailed-item"/><#t>
+                                        </td>
+                                        <td>
+                                            <#if fileSummary?is_first>
+                                                <a href="#" class="show-detailed-hint">Show Hint</a>
+                                            </#if>
+                                        </td>
+                                    </tr>
+                                    <#if fileSummary?is_first>
+                                        <tr class="hint-detail-display" style="display: none;">
+                                            <td colspan="3">
+                                                <div>
+                                                    ${markdownToHtml(description!"-- No detailed text --")}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </#if>
+                                </#list>
+                            </#list>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </td>
+        <td>${problemSummary.numberFound}</td>
+        <td>${problemSummary.effortPerIncident}</td>
+        <td>${getEffortDescriptionForPoints(problemSummary.effortPerIncident)}</td>
+        <td>${problemSummary.numberFound * problemSummary.effortPerIncident}</td>
+    </tr>
+</#macro>
+
+<#function getIncidentsFound problemSummaries>
+    <#assign result = 0>
+    <#list problemSummaries as problemSummary>
+        <#assign result = result + problemSummary.numberFound>
+    </#list>
+    <#return result>
+</#function>
+
+<#function getTotalPoints problemSummaries>
+    <#assign result = 0>
+    <#list problemSummaries as problemSummary>
+        <#assign result = result + (problemSummary.numberFound * problemSummary.effortPerIncident)>
+    </#list>
+    <#return result>
+</#function>
+
 <html lang="en">
     <#if reportModel.applicationReportIndexModel??>
         <#assign applicationReportIndexModel = reportModel.applicationReportIndexModel>
@@ -58,59 +131,38 @@
         <div class="row">
         	<div class="container-fluid theme-showcase" role="main">
 	            <div class="panel panel-default panel-primary">
-	            	<div class="panel-heading">
-                        <h3 class="panel-title">Potential Issues</h3>
+	                <div class="panel-heading">
+                        <h3 class="panel-title">Analysis Detail</h3>
                     </div>
-	                <table id="issues_table" class="table table-hover table-condensed tablesorter">
-	                    <thead>
-	                        <tr>
-	                            <th class="sortable">Issue</th>
-	                            <th class="sortable">Incidents Found</th>
-	                            <th class="sortable">Story Points per Incident</th>
-	                            <th class="sortable">Total Story Points</th>
-	                            <th class="col-md-1">Rule</th>
-	                        </tr>
-	                    </thead>
-	                    <tbody>
-	                        <#list getProblemSummaries(reportModel.projectModel) as problemSummary>
-	                            <tr>
-	                                <td>
-	                                    <a href="#" class="problem-link">
-	                                        ${problemSummary.issueName}
-	                                    </a>
-	                                    <div class="problem-file-list list-group" style="display: none;">
-                                        <!-- Internal issues per file table -->
-                                        <table id="issues_per_file_table" class="table table-hover table-condensed tablesorter-child tablesorter">
-                                            <thead>
-                                                <tr>
-                                                    <th>File</th>
-                                                    <th>Issues Found</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <#list problemSummary.files as fileSummary>
-                                                    <tr>
-                                                        <td>
-                                                            <@render_link model=fileSummary.file class="list-group-item migration-issues-detailed-item"/><#t>
-                                                        </td>
-                                                        <td>
-                                                            <@render_link model=fileSummary.file text="#{fileSummary.occurences}" class="list-group-item migration-issues-detailed-item"/><#t>
-                                                        </td>
-                                                    </tr>
-                                                </#list>
-                                            </tbody>
-                                        </table>
-	                                </td>
-			                        <td>${problemSummary.numberFound}</td>
-			                        <td>${problemSummary.effortPerIncident}</td>
-			                        <td>${problemSummary.numberFound * problemSummary.effortPerIncident}</td>
-			                        <td>
-			                            <@render_rule_link ruleID=problemSummary.ruleID renderType="glyph" />
-			                        </td>
-	                            </tr>
-	                        </#list>
-	                    </tbody>
-	                </table>
+
+                    <#assign problemsBySeverity = getProblemSummaries(reportModel.projectModel)>
+                    <#list problemsBySeverity?keys as severity>
+                        <table class="table table-hover table-condensed tablesorter migration-issues-table">
+                            <thead>
+                                <tr>
+                                    <th class="sortable">Issue</th>
+                                    <th class="sortable">Incidents Found</th>
+                                    <th class="sortable">Story Points per Incident</th>
+                                    <th>Level of Effort</th>
+                                    <th class="sortable">Total Story Points</th>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <b>${severity}</b>
+                                    </td>
+                                    <td>${getIncidentsFound(problemsBySeverity[severity])}</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td>${getTotalPoints(problemsBySeverity[severity])}</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <#list problemsBySeverity[severity] as problemSummary>
+                                    <@migrationIssuesRenderer problemSummary />
+                                </#list>
+                            </tbody>
+                        </table>
+                    </#list>
 	            </div>
 	    	</div>
         </div>
@@ -152,20 +204,57 @@
         },
         type: 'text'
     }); 
-            $(document).ready(function() {
-                $("#issues_table").tablesorter({
-                selectorHeaders: '> thead > tr > th',
-                sortList: [[3,1]],
-        	headers: {
-                  // 2nd,3rd,4th columns are parsed using thousands parser
-                  0: {sorter:'a-elements'},
-          	      1: {sorter:'thousands'},
-                  2: {sorter:'thousands'},
-                  3: {sorter:'thousands'},
-                  4: {sorter: false}
-                  }
-                });
-   	    });
+    $(document).ready(function() {
+        $(".show-detailed-hint").click(function (e) {
+            $(this).parent().parent().next(".hint-detail-display").toggle();
+            $(this).text() == "Show Hint" ? $(this).text("Hide Hint") : $(this).text("Show Hint");
+            e.preventDefault();
+        });
+
+        $(".migration-issues-table").tablesorter({
+            selectorHeaders: '> thead > tr > th',
+            sortList: [[4,1]],
+            headers: {
+                // 2nd, 3rd, and 5th columns are parsed using thousands parser
+                0: {sorter:'a-elements'},
+                1: {sorter:'thousands'},
+                2: {sorter:'thousands'},
+                3: {sorter:false},
+                4: {sorter:'thousands'}
+            }
+        });
+    });
+
+   	    function resizeTables()
+        {
+            var tableArr = document.getElementsByClassName('migration-issues-table');
+            var cellWidths = new Array();
+
+            // get widest
+            for(i = 0; i < tableArr.length; i++)
+            {
+                for(j = 0; j < tableArr[i].rows[0].cells.length; j++)
+                {
+                   var cell = tableArr[i].rows[0].cells[j];
+
+                   if(!cellWidths[j] || cellWidths[j] < cell.clientWidth)
+                        cellWidths[j] = cell.clientWidth;
+                }
+            }
+
+            // set all columns to the widest width found
+            for(i = 0; i < tableArr.length; i++)
+            {
+                for(j = 0; j < tableArr[i].rows[0].cells.length; j++)
+                {
+                    tableArr[i].rows[0].cells[j].style.width = cellWidths[j]+'px';
+                }
+            }
+        }
+
+        window.onload = resizeTables;
+
+
         </script>
     </body>
 </html>

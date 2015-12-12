@@ -1,5 +1,7 @@
 package org.jboss.windup.testutil.html;
 
+import java.util.List;
+
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -8,16 +10,22 @@ import org.openqa.selenium.WebElement;
  */
 public class TestMigrationIssuesReportUtil extends TestReportUtil
 {
-    private static final String TABLE_ID = "issues_table";
+    private static final String ISSUES_TABLE_CLASS_NAME = "migration-issues-table";
 
-    public boolean checkIssue(String issueName, int numberFound, int effortPerIncident, int totalEffort)
+    public boolean checkIssue(String issueName, int numberFound, int effortPerIncident, String levelOfEffort, int totalEffort)
     {
-        WebElement element = getDriver().findElement(By.id(TABLE_ID));
-        if (element == null)
+        List<WebElement> elements = getDriver().findElements(By.className(ISSUES_TABLE_CLASS_NAME));
+        if (elements == null || elements.isEmpty())
         {
-            throw new CheckFailedException("Unable to find " + TABLE_ID + " table element");
+            throw new CheckFailedException("Unable to find " + ISSUES_TABLE_CLASS_NAME + " table element");
         }
-        return super.checkValueInTable(element, issueName, String.valueOf(numberFound), String.valueOf(effortPerIncident),
-                    String.valueOf(totalEffort));
+        for (WebElement element : elements)
+        {
+            if (super.checkValueInTable(element, issueName, String.valueOf(numberFound), String.valueOf(effortPerIncident),
+                        levelOfEffort, String.valueOf(totalEffort)))
+                return true;
+        }
+
+        return false;
     }
 }
