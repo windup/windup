@@ -40,7 +40,7 @@
 	<head>
 		<meta charset="utf-8"/>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-		<title>Overview - Profiled by Windup</title>
+		<title>${reportModel.reportName} - Profiled by Windup</title>
 
 		<!-- Bootstrap -->
 		<link href="reports/resources/css/bootstrap.min.css" rel="stylesheet"/>
@@ -79,9 +79,17 @@
             <div class="row">
                 <div class="page-header">
                     <h1>
-                        <div class="main">Application list</div>
+                        <div class="main"
+                        onmouseover="$(this).parent().parent().addClass('showDesc')"
+                        onmouseout=" $(this).parent().parent().removeClass('showDesc')"
+                        >Application list</div>
                         <div class="path">Profiled by Windup</div>
                     </h1>
+                    <div class="desc">
+                        The Application List report shows All applications which were analyzed.
+                        Click on the individual application to see individual reports or you can follow 
+                        Global Migration Issues Report.
+                    </div>
                 </div>
             </div>
         </div>

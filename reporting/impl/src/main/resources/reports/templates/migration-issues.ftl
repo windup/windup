@@ -11,7 +11,7 @@
             <#if reportModel.projectModel??>
                 ${reportModel.projectModel.name} -
             </#if>
-            Migration Issues
+            ${reportModel.reportName} Report
         </title>
         <link href="resources/css/bootstrap.min.css" rel="stylesheet">
         <link href="resources/css/windup.css" rel="stylesheet" media="screen">
@@ -40,13 +40,16 @@
             <div class="row">
                 <div class="page-header page-header-no-border">
                     <h1>
-                        <div class="main">Migration Issues Report</div>
+                        <div class="main"
+                        onmouseover="$(this).parent().parent().addClass('showDesc')"
+                        onmouseout=" $(this).parent().parent().removeClass('showDesc')"
+                        >${reportModel.reportName} Report</div>
                         <#if reportModel.projectModel??>
                             <div class="path">${reportModel.projectModel.name?html}</div>
                         </#if>
                     </h1>
                     <div class="desc">
-                        The Migration Issues report is a numerical summary of all issues found in the whole application.
+                        The ${reportModel.reportName} report is a numerical summary of all issues found.
                         Click on the individual issue types to see where it was found.
                     </div>
                 </div>

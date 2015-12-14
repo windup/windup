@@ -42,6 +42,9 @@ public class CreateMigrationIssuesReportRuleProvider extends AbstractRuleProvide
 
     private class CreateMigrationIssueReportOperation extends GraphOperation
     {
+        private static final String ALL_MIGRATION_ISSUES_REPORT_NAME = "All Migration Issues";
+        private static final String MIGRATION_ISSUES_REPORT_NAME = "Migration Issues";
+
         @Override
         public void perform(GraphRewrite event, EvaluationContext context)
         {
@@ -74,7 +77,7 @@ public class CreateMigrationIssuesReportRuleProvider extends AbstractRuleProvide
         {
             ReportService reportService = new ReportService(context);
             ApplicationReportModel report = createMigrationIssuesReportBase(context);
-            report.setReportName("Migration Issues");
+            report.setReportName(MIGRATION_ISSUES_REPORT_NAME);
             report.setProjectModel(projectModel);
             reportService.setUniqueFilename(report, "migration_issues", "html");
             return report;
@@ -84,7 +87,7 @@ public class CreateMigrationIssuesReportRuleProvider extends AbstractRuleProvide
         {
             ReportService reportService = new ReportService(context);
             ApplicationReportModel report = createMigrationIssuesReportBase(context);
-            report.setReportName("All Migration Issues");
+            report.setReportName(ALL_MIGRATION_ISSUES_REPORT_NAME);
             report.setDisplayInGlobalApplicationIndex(true);
             reportService.setUniqueFilename(report, "migration_issues", "html");
             return report;
