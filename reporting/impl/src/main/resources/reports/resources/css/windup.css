@@ -40,9 +40,9 @@ body {
 	background: #43ac6a;
 }
 
-.feedback-nav-btn {
+.nav > li > a.feedback-nav-btn {
 	background: #43ac6a;
-	margin-left: -54px;
+	padding-right: 30px;
 }
 
 .feedback-nav-btn:hover {

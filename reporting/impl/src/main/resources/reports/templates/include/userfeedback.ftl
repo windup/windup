@@ -1,8 +1,5 @@
-<li class="dropdown">
-    <a href="#" class="dropdown-toggle feedback-nav-btn" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="glyphicon glyphicon-comment"></i>&nbsp;</a>
-    <ul class="dropdown-menu">
-        <li><a href="#" id="jiraFeedbackTrigger">Send Feedback</a></li>
-    </ul>
+<li>
+    <a href="#" id="jiraFeedbackTrigger" class="feedback-nav-btn"><i class="glyphicon glyphicon-comment"></i> Send Feedback </a>
 </li>
 
 
