@@ -25,7 +25,6 @@ public interface ApplicationReportModel extends ReportModel
     String DISPLAY_IN_APPLICATION_REPORT_INDEX = "displayInApplicationReportIndex";
     String DISPLAY_IN_GLOBAL_APPLICATION_INDEX = "displayInGlobalApplicationIndex";
     String TYPE = "ApplicationReport";
-    String REPORT_TO_APPLICATION_NOTE = "reportToApplicationNote";
     String REPORT_LINES = "reportLines";
     String REPORT_TO_PROJECT_MODEL = "reportToProjectModel";
     String REPORT_PRIORITY = "reportPriority";
@@ -107,19 +106,6 @@ public interface ApplicationReportModel extends ReportModel
     @Adjacency(label = REPORT_LINES, direction = Direction.OUT)
     void addApplicationReportLine(OverviewReportLineMessageModel line);
     
-    
-    /**
-     * Application notes allow custom text to be added
-     */
-    @Adjacency(label = REPORT_TO_APPLICATION_NOTE, direction = Direction.OUT)
-    Iterable<String> getApplicationNotes();
-
-    /**
-     * Application notes allow custom text to be added
-     */
-    @Adjacency(label = REPORT_TO_APPLICATION_NOTE, direction = Direction.OUT)
-    void addApplicationNote(String applicationNote);
-
     /**
      * The ProjectModel associated with this Application Report.
      */
