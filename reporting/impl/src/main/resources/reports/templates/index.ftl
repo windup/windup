@@ -8,9 +8,9 @@
 
 <#macro tagRenderer tag>
 	<#if tag.level?? && tag.level == "IMPORTANT">
-		<span class="label label-danger">
+		<span class="label label-danger" title="${tag.level}">
 	<#else>
-		<span class="label label-info">
+		<span class="label label-info" title="${tag.level}">
 	</#if>
 		<#nested/></span>
 </#macro>
@@ -98,10 +98,16 @@
 
         <div class="container-fluid theme-showcase" role="main">
 
+<#include "include/labellegend.ftl">
+
             <!-- Table -->
             <table class="table table-striped table-bordered">
             <tr>
-                <th>Name</th><th>Technology</th><th>Effort</th>
+                <th>Name</th><th
+            onmouseover="$('.tag-legend').addClass('showLegend')"
+            onmouseout=" $('.tag-legend').removeClass('showLegend')"                
+                ">Technology <i class="glyphicon glyphicon-question-sign"></i></th>
+              <th>Effort</th>
             </tr>
 
             <#list reportModel.relatedResources.applications.list.iterator() as applicationReport>
@@ -109,7 +115,7 @@
             </#list>
 
         </table>
-
+        
         <div style="width: 100%; text-align: center">
             <a href="reports/windup_ruleproviders.html">All Rules</a>
                 |

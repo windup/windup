@@ -71,7 +71,7 @@
                             <h4>Technologies</h4>
                             <div class="technologies" style="overflow: auto"><!-- "auto" to contain all the tags. -->
                                 <#items as techTag>
-                                    <span class="label label-info">${techTag.name}</span>
+                                    <span class="label label-info" title="${techTag.level}">${techTag.name}</span>
                                 </#items>
                             </div>
                             </#list>
@@ -183,6 +183,7 @@
 
         </#list>
 
+        <#include "include/labellegend.ftl">
 
             $('code[class]').each(function(){
                  var codeSyntax = ($(this).attr('class'));

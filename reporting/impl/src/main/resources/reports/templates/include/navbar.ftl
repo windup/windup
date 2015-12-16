@@ -39,3 +39,4 @@
 <ul class="nav navbar-nav navbar-right">
     <#include "userfeedback.ftl">
 </ul>
+

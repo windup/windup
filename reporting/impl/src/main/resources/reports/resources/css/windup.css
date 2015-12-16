@@ -302,3 +302,17 @@ p.windup-contributors  {
 .warns {
     font-weight: bold;
 }
+
+div.tag-legend{
+    display: none;
+}
+
+div.tag-legend.showLegend {
+    position: absolute;
+    padding: 5px;
+    display: block;
+    white-space: nowrap;
+    z-index: 1;
+    left: 25%;
+}
+
