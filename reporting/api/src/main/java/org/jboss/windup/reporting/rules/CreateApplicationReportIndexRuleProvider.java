@@ -20,10 +20,9 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
- * Creates an index that can be used to register reports related to an application.
+ * For each input path, creates an index that can be used to register reports related to each application on that input.
  * 
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- * 
  */
 public class CreateApplicationReportIndexRuleProvider extends AbstractRuleProvider
 {
