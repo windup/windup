@@ -8,9 +8,9 @@
 
 <#macro tagRenderer tag>
 	<#if tag.level?? && tag.level == "IMPORTANT">
-		<span class="label label-danger">
+		<span class="label label-danger" title="${tag.level}">
 	<#else>
-		<span class="label label-info">
+		<span class="label label-info" title="${tag.level}">
 	</#if>
 		<#nested/></span>
 </#macro>
@@ -100,15 +100,15 @@
 
             <!-- Table -->
             <table class="table table-striped table-bordered">
-            <tr>
-                <th>Name</th><th>Technology</th><th>Effort</th>
-            </tr>
+               <tr>
+                  <th>Name</th><th>Technology</th><th>Effort</th>
+               </tr>
 
-            <#list reportModel.relatedResources.applications.list.iterator() as applicationReport>
-                <@applicationReportRenderer applicationReport/>
-            </#list>
+               <#list reportModel.relatedResources.applications.list.iterator() as applicationReport>
+                  <@applicationReportRenderer applicationReport/>
+               </#list>
+            </table>
 
-        </table>
 
         <div style="width: 100%; text-align: center">
             <a href="reports/windup_ruleproviders.html">All Rules</a>

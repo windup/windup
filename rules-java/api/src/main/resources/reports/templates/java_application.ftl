@@ -5,7 +5,7 @@
 
 
 <#macro tagRenderer tag>
-    <span class="label label-${(tag.level! == 'IMPORTANT')?then('danger','info')} tag-${tag.name?replace(' ','')}">
+    <span title="${tag.level}" class="label label-${(tag.level! == 'IMPORTANT')?then('danger','info')} tag-${tag.name?replace(' ','')}">
         <#nested/>
     </span>
 </#macro>
