@@ -19,6 +19,7 @@ import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.graph.service.LinkService;
 import org.jboss.windup.reporting.config.Link;
 import org.jboss.windup.reporting.model.ClassificationModel;
+import org.jboss.windup.reporting.model.EffortReportModel;
 import org.jboss.windup.reporting.model.Severity;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.TagSetService;
@@ -39,7 +40,6 @@ import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
 public class Classification extends ParameterizedIterationOperation<FileModel>implements ClassificationAs, ClassificationEffort,
             ClassificationDescription, ClassificationLink, ClassificationTags, ClassificationSeverity
 {
-    public static final Severity DEFAULT_SEVERITY = Severity.OPTIONAL;
     private static final Logger LOG = Logging.get(Classification.class);
 
     private List<Link> links = new ArrayList<>();
@@ -48,7 +48,7 @@ public class Classification extends ParameterizedIterationOperation<FileModel>im
     private RegexParameterizedPatternParser classificationPattern;
     private RegexParameterizedPatternParser descriptionPattern;
     private int effort;
-    private Severity severity = DEFAULT_SEVERITY;
+    private Severity severity = EffortReportModel.DEFAULT_SEVERITY;
 
     Classification(String variable)
     {

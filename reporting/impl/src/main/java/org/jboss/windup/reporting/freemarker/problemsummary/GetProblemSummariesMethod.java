@@ -1,9 +1,11 @@
 package org.jboss.windup.reporting.freemarker.problemsummary;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
@@ -12,6 +14,7 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
+import org.jboss.windup.reporting.model.Severity;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.InlineHintService;
 
@@ -57,13 +60,20 @@ public class GetProblemSummariesMethod implements WindupFreeMarkerMethod
         {
             projectModel = null;
         }
-        // projectModel.getFileModels()
 
         // get all classifications
         // get all hints
         // group them by title (classification and hint title)
 
-        List<ProblemSummary> results = new ArrayList<>();
+        // The key is the severity as a String
+        Map<String, List<ProblemSummary>> results = new TreeMap<>(new Comparator<String>()
+        {
+            @Override
+            public int compare(String severity1, String severity2)
+            {
+                return Severity.valueOf(severity1).ordinal() - Severity.valueOf(severity2).ordinal();
+            }
+        });
         Map<RuleSummaryKey, ProblemSummary> ruleIDToSummary = new HashMap<>();
 
         InlineHintService hintService = new InlineHintService(context);
@@ -75,15 +85,15 @@ public class GetProblemSummariesMethod implements WindupFreeMarkerMethod
             ProblemSummary summary = ruleIDToSummary.get(key);
             if (summary == null)
             {
-                summary = new ProblemSummary(hint.getRuleID(), hint.getTitle(), 1, hint.getEffort());
+                summary = new ProblemSummary(hint.getSeverity().toString(), hint.getRuleID(), hint.getTitle(), 1, hint.getEffort());
                 ruleIDToSummary.put(key, summary);
-                results.add(summary);
+                addToResults(results, summary);
             }
             else
             {
                 summary.setNumberFound(summary.getNumberFound() + 1);
             }
-            summary.addFile(hint.getFile());
+            summary.addFile(hint.getHint(), hint.getFile());
         }
 
         ClassificationService classificationService = new ClassificationService(context);
@@ -119,18 +129,31 @@ public class GetProblemSummariesMethod implements WindupFreeMarkerMethod
             ProblemSummary summary = ruleIDToSummary.get(key);
             if (summary == null)
             {
-                summary = new ProblemSummary(classification.getRuleID(), classification.getClassification(), 0, classification.getEffort());
+                summary = new ProblemSummary(classification.getSeverity().toString(), classification.getRuleID(), classification.getClassification(),
+                            0,
+                            classification.getEffort());
                 ruleIDToSummary.put(key, summary);
-                results.add(summary);
+                addToResults(results, summary);
             }
 
             for (FileModel file : newFileModels)
-                summary.addFile(file);
+                summary.addFile(classification.getDescription(), file);
 
             summary.setNumberFound(summary.getNumberFound() + newFileModels.size());
         }
 
         return results;
+    }
+
+    private void addToResults(Map<String, List<ProblemSummary>> results, ProblemSummary summary)
+    {
+        List<ProblemSummary> list = results.get(summary.getSeverity());
+        if (list == null)
+        {
+            list = new ArrayList<>();
+            results.put(summary.getSeverity(), list);
+        }
+        list.add(summary);
     }
 
     @Override
