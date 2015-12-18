@@ -22,7 +22,6 @@ import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
-
 /**
  * Adds the getPackageUseFrequencies() and createTypeReference().
  */
@@ -74,7 +73,7 @@ public class TypeReferenceService extends GraphService<JavaTypeReferenceModel>
             // only check tags if we have some passed in
             if (!includeTags.isEmpty() || !excludeTags.isEmpty())
             {
-                if (!TagUtil.isTagsMatch(javaInlineHint.getTags(), includeTags, excludeTags))
+                if (!TagUtil.checkMatchingTags(javaInlineHint.getTags(), includeTags, excludeTags))
                     continue;
             }
 

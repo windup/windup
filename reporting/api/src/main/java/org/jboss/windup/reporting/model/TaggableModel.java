@@ -18,6 +18,11 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(TaggableModel.TYPE)
 public interface TaggableModel extends WindupVertexFrame
 {
+    /**
+     * This location for this tag is not ideal. TODO - Find a better place for this...
+     */
+    String CATCHALL_TAG = "catchall";
+
     String TYPE = "TaggableModel";
     String TAG = "tag";
 

@@ -16,11 +16,11 @@ import org.jboss.windup.reporting.model.ReportFileModel;
 public class TagUtil
 {
     /**
-     * @see TagUtil#isTagsMatch(Collection, Set, Set), only with strictExclude = true.
+     * @see TagUtil#checkMatchingTags(Collection, Set, Set), only with strictExclude = true.
      */
-    public static boolean isTagsMatch(Collection<String> tags, Set<String> includeTags, Set<String> excludeTags)
+    public static boolean checkMatchingTags(Collection<String> tags, Set<String> includeTags, Set<String> excludeTags)
     {
-        return TagUtil.isTagsMatch(tags, includeTags, excludeTags, true);
+        return TagUtil.checkMatchingTags(tags, includeTags, excludeTags, true);
     }
 
     /**
@@ -37,7 +37,7 @@ public class TagUtil
      * Otherwise, return false.
      * </p>
      */
-    public static boolean isTagsMatch(Collection<String> tags, Set<String> includeTags, Set<String> excludeTags, boolean strictExclude)
+    public static boolean checkMatchingTags(Collection<String> tags, Set<String> includeTags, Set<String> excludeTags, boolean strictExclude)
     {
         boolean foundIncludeMatch = false;
 
@@ -63,7 +63,7 @@ public class TagUtil
     public static boolean hasHintsOrClassificationsWithRelevantTags(ReportFileModel reportFileModel, Set<String> includeTags, Set<String> excludeTags)
     {
         Set<String> allTags = gatherReportFileTags(reportFileModel);
-        return TagUtil.isTagsMatch(allTags, includeTags, excludeTags, false);
+        return TagUtil.checkMatchingTags(allTags, includeTags, excludeTags, false);
     }
 
     public static Set<String> gatherReportFileTags(ReportFileModel reportFileModel)

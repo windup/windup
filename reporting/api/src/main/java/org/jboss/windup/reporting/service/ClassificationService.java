@@ -69,7 +69,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
         pipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, ClassificationModel.TYPE);
         return new FramedVertexIterable<>(getGraphContext().getFramed(), pipeline, ClassificationModel.class);
     }
-    
+
     /**
      * Return all {@link ClassificationModel} instances that are attached to the given {@link FileModel} instance with a specific classification name.
      */
@@ -129,7 +129,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
             if (!includeTags.isEmpty() || !excludeTags.isEmpty())
             {
                 ClassificationModel classificationModel = frame(v);
-                if (!TagUtil.isTagsMatch(classificationModel.getTags(), includeTags, excludeTags))
+                if (!TagUtil.checkMatchingTags(classificationModel.getTags(), includeTags, excludeTags))
                     continue;
             }
             classificationEffort += migrationEffort;

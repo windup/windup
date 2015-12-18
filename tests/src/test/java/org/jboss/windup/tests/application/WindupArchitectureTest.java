@@ -20,6 +20,7 @@ import org.jboss.windup.exec.configuration.options.UserRulesDirectoryOption;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.reporting.model.MigrationIssuesReportModel;
 import org.jboss.windup.reporting.model.ReportModel;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.rules.apps.java.config.ExcludePackagesOption;
@@ -175,20 +176,21 @@ public abstract class WindupArchitectureTest
 
     JavaApplicationOverviewReportModel getMainApplicationReport(GraphContext context)
     {
-        return getApplicationOverviewReportByName(context, CreateJavaApplicationOverviewReportRuleProvider.DETAILS_REPORT);
+        return (JavaApplicationOverviewReportModel) getReport(context, CreateJavaApplicationOverviewReportRuleProvider.TEMPLATE_APPLICATION_REPORT,
+                    CreateJavaApplicationOverviewReportRuleProvider.DETAILS_REPORT);
     }
 
-    JavaApplicationOverviewReportModel getCatchallApplicationReport(GraphContext context)
+    MigrationIssuesReportModel getCatchallApplicationReport(GraphContext context)
     {
-        return getApplicationOverviewReportByName(context, CreateJavaApplicationOverviewReportRuleProvider.CATCHALL_REPORT);
+        return (MigrationIssuesReportModel) getReport(context, "/reports/templates/migration-issues.ftl", "Potential Issues");
     }
 
-    JavaApplicationOverviewReportModel getApplicationOverviewReportByName(GraphContext context, String name)
+    ReportModel getReport(GraphContext context, String template, String name)
     {
         ReportService reportService = new ReportService(context);
         Iterable<ReportModel> reportModels = reportService.findAllByProperty(
                     ReportModel.TEMPLATE_PATH,
-                    CreateJavaApplicationOverviewReportRuleProvider.TEMPLATE_APPLICATION_REPORT);
+                    template);
         ReportModel reportModel = null;
         for (ReportModel candidateModel : reportModels)
         {
@@ -200,7 +202,7 @@ public abstract class WindupArchitectureTest
         }
         Assert.assertNotNull(reportModel);
 
-        return (JavaApplicationOverviewReportModel) reportModel;
+        return reportModel;
     }
 
     protected void allDecompiledFilesAreLinked(GraphContext context)

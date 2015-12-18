@@ -5,12 +5,15 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.reporting.TagUtil;
+import org.jboss.windup.reporting.freemarker.FreeMarkerUtil;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
@@ -19,9 +22,12 @@ import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.InlineHintService;
 
 import freemarker.ext.beans.StringModel;
+import freemarker.template.SimpleSequence;
 import freemarker.template.TemplateModelException;
 
 /**
+ * Gets {@link ProblemSummary}s for display to the user.
+ * 
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public class GetProblemSummariesMethod implements WindupFreeMarkerMethod
@@ -61,6 +67,9 @@ public class GetProblemSummariesMethod implements WindupFreeMarkerMethod
             projectModel = null;
         }
 
+        Set<String> includeTags = FreeMarkerUtil.simpleSequenceToSet((SimpleSequence) arguments.get(1));
+        Set<String> excludeTags = FreeMarkerUtil.simpleSequenceToSet((SimpleSequence) arguments.get(2));
+
         // get all classifications
         // get all hints
         // group them by title (classification and hint title)
@@ -80,6 +89,10 @@ public class GetProblemSummariesMethod implements WindupFreeMarkerMethod
         final Iterable<InlineHintModel> hints = projectModel == null ? hintService.findAll() : hintService.getHintsForProject(projectModel, true);
         for (InlineHintModel hint : hints)
         {
+            Set<String> tags = hint.getTags();
+            if (!TagUtil.checkMatchingTags(tags, includeTags, excludeTags, false))
+                continue;
+
             RuleSummaryKey key = new RuleSummaryKey(hint.getRuleID(), hint.getTitle());
 
             ProblemSummary summary = ruleIDToSummary.get(key);
@@ -99,6 +112,10 @@ public class GetProblemSummariesMethod implements WindupFreeMarkerMethod
         ClassificationService classificationService = new ClassificationService(context);
         for (ClassificationModel classification : classificationService.findAll())
         {
+            Set<String> tags = classification.getTags();
+            if (!TagUtil.checkMatchingTags(tags, includeTags, excludeTags, false))
+                continue;
+
             List<FileModel> newFileModels = new ArrayList<>();
             for (FileModel file : classification.getFileModels())
             {
