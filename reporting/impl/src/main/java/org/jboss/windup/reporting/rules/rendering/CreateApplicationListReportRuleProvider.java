@@ -30,19 +30,18 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
  */
-public class GenerateIndexPageRuleProvider extends AbstractRuleProvider
+public class CreateApplicationListReportRuleProvider extends AbstractRuleProvider
 {
     public static final String APPLICATION_LIST_REPORT = "Application List";
-    private static final String VAR_APPLICATION_REPORTS = "applicationReports";
     private static final String OUTPUT_FILENAME = "../index.html";
-    private static final String TEMPLATE_PATH = "/reports/templates/index.ftl";
+    private static final String TEMPLATE_PATH = "/reports/templates/application_list.ftl";
 
     @Inject
     private Furnace furnace;
 
-    public GenerateIndexPageRuleProvider()
+    public CreateApplicationListReportRuleProvider()
     {
-        super(MetadataBuilder.forProvider(GenerateIndexPageRuleProvider.class)
+        super(MetadataBuilder.forProvider(CreateApplicationListReportRuleProvider.class)
                     .setPhase(PostReportGenerationPhase.class).addExecuteBefore(AttachApplicationReportsToIndexRuleProvider.class));
     }
 
@@ -64,7 +63,7 @@ public class GenerateIndexPageRuleProvider extends AbstractRuleProvider
     private void createIndexReport(GraphContext context)
     {
         ApplicationReportService applicationReportService = new ApplicationReportService(context);
-        
+
         ApplicationReportModel report = applicationReportService.create();
         report.setReportPriority(1);
         report.setReportIconClass("glyphicon glyphicon-home");

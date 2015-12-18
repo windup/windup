@@ -34,6 +34,7 @@ public class TattletaleRuleProvider extends AbstractRuleProvider
 {
     public static final String REPORT_TEMPLATE = "/reports/templates/embedded.ftl";
     private static final String TATTLETALE_REPORT_SUBDIR = "tattletale";
+    public static final String REPORT_DESCRIPTION = "This report contains the results of running Tattletale on the input application.";
 
     public TattletaleRuleProvider()
     {
@@ -107,6 +108,7 @@ public class TattletaleRuleProvider extends AbstractRuleProvider
 
             ApplicationReportModel applicationReportModel = new ApplicationReportService(context).create();
             applicationReportModel.setReportName("Tattletale");
+            applicationReportModel.setDescription(REPORT_DESCRIPTION);
             applicationReportModel.setReportIconClass("glyphicon tattletale-nav-logo");
             applicationReportModel.setReportPriority(500);
 

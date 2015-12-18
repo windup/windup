@@ -40,6 +40,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 public class CreateServerResourcesReportRuleProvider extends AbstractRuleProvider
 {
     public static final String TEMPLATE_JPA_REPORT = "/reports/templates/server.ftl";
+    public static final String REPORT_DESCRIPTION = "This report displays all server resources (for example, JNDI resources) in the input application.";
 
     public CreateServerResourcesReportRuleProvider()
     {
@@ -131,6 +132,7 @@ public class CreateServerResourcesReportRuleProvider extends AbstractRuleProvide
         applicationReportModel.setReportPriority(400);
         applicationReportModel.setDisplayInApplicationReportIndex(true);
         applicationReportModel.setReportName("Server Resources");
+        applicationReportModel.setDescription(REPORT_DESCRIPTION);
         applicationReportModel.setReportIconClass("glyphicon server-resource-nav-logo");
         applicationReportModel.setProjectModel(projectModel);
         applicationReportModel.setTemplatePath(TEMPLATE_JPA_REPORT);

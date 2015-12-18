@@ -33,6 +33,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 public class CreateJBossJBPMReportRuleProvider extends AbstractRuleProvider
 {
     public static final String TEMPLATE_EJB_REPORT = "/reports/templates/jbpm.ftl";
+    public static final String REPORT_DESCRIPTION = "This report contains all of the JBPM related resources that were discovered during analysis.";
 
     public CreateJBossJBPMReportRuleProvider()
     {
@@ -76,6 +77,7 @@ public class CreateJBossJBPMReportRuleProvider extends AbstractRuleProvider
         applicationReportModel.setReportPriority(300);
         applicationReportModel.setDisplayInApplicationReportIndex(true);
         applicationReportModel.setReportName("JBPM");
+        applicationReportModel.setDescription(REPORT_DESCRIPTION);
         applicationReportModel.setReportIconClass("glyphicon bpm-nav-logo");
         applicationReportModel.setProjectModel(projectModel);
         applicationReportModel.setTemplatePath(TEMPLATE_EJB_REPORT);

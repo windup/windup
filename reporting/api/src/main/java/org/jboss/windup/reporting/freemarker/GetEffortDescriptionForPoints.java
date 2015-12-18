@@ -1,8 +1,10 @@
 package org.jboss.windup.reporting.freemarker;
 
 import java.util.List;
+import java.util.Map;
 
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.reporting.service.EffortReportService;
 import org.jboss.windup.util.ExecutionStatistics;
 
 import freemarker.template.SimpleNumber;
@@ -38,28 +40,9 @@ public class GetEffortDescriptionForPoints implements WindupFreeMarkerMethod
             throw new TemplateModelException("Error, method expects one argument (Integer)");
         }
         SimpleNumber simpleNumber = (SimpleNumber) arguments.get(0);
-        String result = "";
-        switch (simpleNumber.getAsNumber().intValue())
-        {
-        case 0:
-            result = "Info";
-            break;
-        case 1:
-            result = "Trivial";
-            break;
-        case 3:
-            result = "Complex";
-            break;
-        case 5:
-            result = "Redesign";
-            break;
-        case 7:
-            result = "Requires Architectural Change";
-            break;
-        case 13:
-        default:
-            result = "Unknown";
-        }
+        int effort = simpleNumber.getAsNumber().intValue();
+        Map<Integer, String> effortToDescription = EffortReportService.getEffortLevelDescriptionMappings();
+        String result = effortToDescription.containsKey(effort) ? effortToDescription.get(effort) : EffortReportService.UNKNOWN;
 
         ExecutionStatistics.get().end(NAME);
         return result;

@@ -34,6 +34,7 @@ public class CreateStaticIPAddressReportRuleProvider extends AbstractRuleProvide
 {
     private static final String TITLE = "Static IP Addresses";
     public static final String TEMPLATE_REPORT = "/reports/templates/static_ip_addresses.ftl";
+    public static final String REPORT_DESCRIPTION = "The Static IP report provides a list of all static IP addresses that were found in the application. These often require review during migration.";
 
     public CreateStaticIPAddressReportRuleProvider()
     {
@@ -79,6 +80,7 @@ public class CreateStaticIPAddressReportRuleProvider extends AbstractRuleProvide
 
         applicationReport.setReportPriority(600);
         applicationReport.setReportName(TITLE);
+        applicationReport.setDescription(REPORT_DESCRIPTION);
         applicationReport.setTemplatePath(TEMPLATE_REPORT);
         applicationReport.setDisplayInApplicationReportIndex(true);
         applicationReport.setReportIconClass("glyphicon glyphicon-map-marker");

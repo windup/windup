@@ -35,7 +35,9 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 public class CreateAboutWindupReportRuleProvider extends AbstractRuleProvider
 {
 
-	@Inject Addon addon;
+    public static final String REPORT_DESCRIPTION = "This describes the current version of Windup and provides helpful links for further assistance.";
+    @Inject
+    Addon addon;
 
     public static final String REPORT_NAME = "About";
     public static final String TEMPLATE_APPLICATION_REPORT = "/reports/templates/about_windup.ftl";
@@ -92,6 +94,7 @@ public class CreateAboutWindupReportRuleProvider extends AbstractRuleProvider
     	applicationReportModel.setReportPriority(10000);
         applicationReportModel.setDisplayInApplicationReportIndex(true);
         applicationReportModel.setReportName(REPORT_NAME);
+        applicationReportModel.setDescription(REPORT_DESCRIPTION);
         applicationReportModel.setReportIconClass("glyphicon glyphicon-info-sign");
         applicationReportModel.setMainApplicationReport(false);
         applicationReportModel.setProjectModel(projectModel);

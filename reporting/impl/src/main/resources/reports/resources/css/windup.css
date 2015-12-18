@@ -6,7 +6,7 @@
 
 
 body {
-  padding-top: 30px;
+  padding-top: 45px;
   padding-bottom: 30px;
 }
 
@@ -301,4 +301,15 @@ p.windup-contributors  {
 
 .warns {
     font-weight: bold;
+}
+
+/*
+ * Row with equal height columns
+ * --------------------------------------------------
+ */
+.row-eq-height {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display:         flex;
 }

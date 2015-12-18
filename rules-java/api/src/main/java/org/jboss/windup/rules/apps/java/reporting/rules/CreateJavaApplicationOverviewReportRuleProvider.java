@@ -31,8 +31,9 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  */
 public class CreateJavaApplicationOverviewReportRuleProvider extends AbstractRuleProvider
 {
-    public static final String DETAILS_REPORT = "Application Report";
+    public static final String DETAILS_REPORT = "Application Details";
     public static final String TEMPLATE_APPLICATION_REPORT = "/reports/templates/java_application.ftl";
+    public static final String DESCRIPTION = "This provides a detailed overview of all resources found within the application that may need attention during the migration.";
 
     public CreateJavaApplicationOverviewReportRuleProvider()
     {
@@ -45,7 +46,7 @@ public class CreateJavaApplicationOverviewReportRuleProvider extends AbstractRul
     public Configuration getConfiguration(GraphContext context)
     {
         ConditionBuilder applicationProjectModelsFound = Query
-                    .fromType(WindupConfigurationModel.class);
+                .fromType(WindupConfigurationModel.class);
 
         AbstractIterationOperation<WindupConfigurationModel> addApplicationReport = new AbstractIterationOperation<WindupConfigurationModel>()
         {
@@ -59,8 +60,7 @@ public class CreateJavaApplicationOverviewReportRuleProvider extends AbstractRul
                     {
                         throw new WindupException("Error, no project found in: " + inputPath.getFilePath());
                     }
-                    createReport(event.getGraphContext(), projectModel, 100, false, TEMPLATE_APPLICATION_REPORT, DETAILS_REPORT, Collections.<String> emptySet(),
-                            Collections.singleton(TaggableModel.CATCHALL_TAG));
+                    createReport(event.getGraphContext(), projectModel);
                 }
             }
 
@@ -72,28 +72,28 @@ public class CreateJavaApplicationOverviewReportRuleProvider extends AbstractRul
         };
 
         return ConfigurationBuilder.begin()
-                    .addRule()
-                    .when(applicationProjectModelsFound)
-                    .perform(addApplicationReport);
+                .addRule()
+                .when(applicationProjectModelsFound)
+                .perform(addApplicationReport);
 
     }
     // @formatter:on
 
-    private void createReport(GraphContext context, ProjectModel projectModel, int priority, boolean main, String template,
-                String name, Set<String> includeTags, Set<String> excludeTags)
+    private void createReport(GraphContext context, ProjectModel projectModel)
     {
         GraphService<JavaApplicationOverviewReportModel> service = new GraphService<>(context, JavaApplicationOverviewReportModel.class);
         JavaApplicationOverviewReportModel applicationReportModel = service.create();
-        applicationReportModel.setReportPriority(priority);
+        applicationReportModel.setReportPriority(102);
         applicationReportModel.setDisplayInApplicationReportIndex(true);
-        applicationReportModel.setReportName(name);
+        applicationReportModel.setReportName(DETAILS_REPORT);
+        applicationReportModel.setDescription(DESCRIPTION);
         applicationReportModel.setReportIconClass("glyphicon glyphicon-th-list");
-        applicationReportModel.setMainApplicationReport(main);
+        applicationReportModel.setMainApplicationReport(false);
         applicationReportModel.setProjectModel(projectModel);
-        applicationReportModel.setTemplatePath(template);
+        applicationReportModel.setTemplatePath(TEMPLATE_APPLICATION_REPORT);
         applicationReportModel.setTemplateType(TemplateType.FREEMARKER);
-        applicationReportModel.setIncludeTags(includeTags);
-        applicationReportModel.setExcludeTags(excludeTags);
+        applicationReportModel.setIncludeTags(Collections.<String> emptySet());
+        applicationReportModel.setExcludeTags(Collections.singleton(TaggableModel.CATCHALL_TAG));
         GraphService<OverviewReportLineMessageModel> lineNotesService = new GraphService<>(context, OverviewReportLineMessageModel.class);
         Iterable<OverviewReportLineMessageModel> allLines = lineNotesService.findAll();
         Set<String> dupeCheck = new HashSet<>();
@@ -131,6 +131,6 @@ public class CreateJavaApplicationOverviewReportRuleProvider extends AbstractRul
         }
         // Set the filename for the report
         ReportService reportService = new ReportService(context);
-        reportService.setUniqueFilename(applicationReportModel, name + "_" + projectModel.getName(), "html");
+        reportService.setUniqueFilename(applicationReportModel, "ApplicationDetails_" + projectModel.getName(), "html");
     }
 }

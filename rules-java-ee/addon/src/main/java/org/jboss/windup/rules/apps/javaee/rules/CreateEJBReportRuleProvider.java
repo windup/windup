@@ -35,6 +35,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 public class CreateEJBReportRuleProvider extends AbstractRuleProvider
 {
     public static final String TEMPLATE_EJB_REPORT = "/reports/templates/ejb.ftl";
+    public static final String REPORT_DESCRIPTION = "The EJB report contains a list of EJBs found within the application.";
 
     public CreateEJBReportRuleProvider()
     {
@@ -119,6 +120,7 @@ public class CreateEJBReportRuleProvider extends AbstractRuleProvider
         applicationReportModel.setReportPriority(300);
         applicationReportModel.setDisplayInApplicationReportIndex(true);
         applicationReportModel.setReportName("EJBs");
+        applicationReportModel.setDescription(REPORT_DESCRIPTION);
         applicationReportModel.setReportIconClass("glyphicon ejb-nav-logo");
         applicationReportModel.setProjectModel(projectModel);
         applicationReportModel.setTemplatePath(TEMPLATE_EJB_REPORT);

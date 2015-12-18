@@ -80,20 +80,19 @@ public interface ApplicationReportModel extends ReportModel
     void setDisplayInApplicationReportIndex(Boolean displayInIndex);
 
     /**
-     * Indicates whether or not this is the main report for the application. This boolean flag means this report will be referenced from all the filemodels within application.
-     * Only one report per application must have this set to true.
+     * Indicates whether or not this is the main report for the application. This boolean flag means this report will be referenced from all the
+     * filemodels within application. Only one report per application must have this set to true.
      */
     @Property(MAIN_APPLICATION_REPORT)
     Boolean isMainApplicationReport();
 
     /**
-     * Indicates whether or not this is the main report for the application. This boolean flag means this report will be referenced from all the filemodels within application.
-     * Only one report per application must have this set to true.
+     * Indicates whether or not this is the main report for the application. This boolean flag means this report will be referenced from all the
+     * filemodels within application. Only one report per application must have this set to true.
      */
     @Property(MAIN_APPLICATION_REPORT)
     void setMainApplicationReport(Boolean mainApplicationReport);
 
-    
     /**
      * Application notes allow custom text to be added
      */
@@ -105,7 +104,7 @@ public interface ApplicationReportModel extends ReportModel
      */
     @Adjacency(label = REPORT_LINES, direction = Direction.OUT)
     void addApplicationReportLine(OverviewReportLineMessageModel line);
-    
+
     /**
      * The ProjectModel associated with this Application Report.
      */
@@ -118,7 +117,6 @@ public interface ApplicationReportModel extends ReportModel
     @Adjacency(label = REPORT_TO_PROJECT_MODEL, direction = Direction.OUT)
     void setProjectModel(ProjectModel projectModel);
 
-    
     /**
      * Contains report properties
      */

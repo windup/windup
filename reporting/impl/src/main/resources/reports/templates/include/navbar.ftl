@@ -39,3 +39,10 @@
 <ul class="nav navbar-nav navbar-right">
     <#include "userfeedback.ftl">
 </ul>
+
+<script type="text/javascript">
+    var script   = document.createElement("script");
+    script.type  = "text/javascript";
+    script.src   = "resources/js/navbar.js";
+    document.body.appendChild(script);
+</script>

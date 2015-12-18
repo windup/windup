@@ -9,10 +9,26 @@ public enum Severity
     /**
      * It must be migrated
      */
-    MANDATORY,
+    MANDATORY("Mandatory"),
     /**
      * It is a problem that does not need to be strictly migrated
      */
-    OPTIONAL
+    OPTIONAL("Optional"),
+    /**
+     * Possible issues
+     */
+    POSSIBLE_ISSUES("Potential Issues");
 
+    private String description;
+
+    Severity(String description)
+    {
+        this.description = description;
+    }
+
+    @Override
+    public String toString()
+    {
+        return description;
+    }
 }

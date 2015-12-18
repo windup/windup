@@ -11,14 +11,14 @@ import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
- *  Aggregates the common properties of all the items generating effort for the Application.
+ * Aggregates the common properties of all the items generating effort for the Application.
  *
- *  @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
+ * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  */
 @TypeValue(EffortReportModel.TYPE)
 public interface EffortReportModel extends WindupVertexFrame
 {
-    public static final Severity DEFAULT_SEVERITY = Severity.OPTIONAL;
+    Severity DEFAULT_SEVERITY = Severity.OPTIONAL;
 
     String TYPE = "EffortReportModel";
     String TYPE_PREFIX = TYPE + ":";

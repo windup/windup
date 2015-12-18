@@ -75,6 +75,7 @@ public class CreateApplicationReportIndexRuleProvider extends AbstractRuleProvid
     {
         ApplicationReportIndexService applicationReportIndexService = new ApplicationReportIndexService(context);
         ApplicationReportIndexModel index = applicationReportIndexService.create();
+
         addAllProjectModels(index, applicationProjectModel);
 
         return index;
