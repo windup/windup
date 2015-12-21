@@ -29,7 +29,24 @@
 
 
         <!-- Addon Dependencies -->
-
+        <dependency>
+            <groupId>org.jboss.windup.config</groupId>
+            <artifactId>windup-config</artifactId>
+            <classifier>forge-addon</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.graph</groupId>
+            <artifactId>windup-graph</artifactId>
+            <classifier>forge-addon</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.utils</groupId>
+            <artifactId>windup-utils</artifactId>
+            <classifier>forge-addon</classifier>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- Test Dependencies -->
         <dependency>
@@ -39,11 +56,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-                <groupId>org.jboss.windup</groupId>
-                <artifactId>windup-test-harness</artifactId>
-                <version>${project.version}</version>
-		<scope>test</scope>
-        </dependency>  
+            <groupId>org.jboss.windup</groupId>
+            <artifactId>windup-test-harness</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 
