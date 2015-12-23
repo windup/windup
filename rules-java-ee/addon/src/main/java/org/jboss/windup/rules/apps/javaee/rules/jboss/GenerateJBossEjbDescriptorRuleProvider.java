@@ -1,6 +1,8 @@
 package org.jboss.windup.rules.apps.javaee.rules.jboss;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -28,6 +30,7 @@ import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.rules.apps.javaee.model.EjbDeploymentDescriptorModel;
 import org.jboss.windup.rules.apps.javaee.model.EjbMessageDrivenModel;
 import org.jboss.windup.rules.apps.javaee.model.EjbSessionBeanModel;
+import org.jboss.windup.rules.apps.javaee.model.WebXmlModel;
 import org.jboss.windup.rules.apps.javaee.model.association.VendorSpecificationExtensionModel;
 import org.jboss.windup.rules.apps.javaee.service.VendorSpecificationExtensionService;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -85,7 +88,7 @@ public class GenerateJBossEjbDescriptorRuleProvider extends AbstractRuleProvider
         VendorSpecificationExtensionService vendorSpecificService = new VendorSpecificationExtensionService(context);
         LinkService linkService = new LinkService(context);
 
-        for (EjbDeploymentDescriptorModel ejbDescriptor : ejbDescriptors.findAll())
+        for (EjbDeploymentDescriptorModel ejbDescriptor : findAllEjbDescsInProject(context,projectModel))
         {
             ApplicationReportService applicationReportService = new ApplicationReportService(context);
             ApplicationReportModel applicationReportModel = applicationReportService.create();
@@ -136,5 +139,17 @@ public class GenerateJBossEjbDescriptorRuleProvider extends AbstractRuleProvider
             ejbDescriptor.addLinkToTransformedFile(newDescriptorLink);
         }
 
+    }
+
+    private Iterable<EjbDeploymentDescriptorModel> findAllEjbDescsInProject(GraphContext context, ProjectModel projectModel) {
+        GraphService<EjbDeploymentDescriptorModel> webDescriptors = new GraphService<>(context, EjbDeploymentDescriptorModel.class);
+        List<EjbDeploymentDescriptorModel> resultModels = new ArrayList<EjbDeploymentDescriptorModel>();
+        for (EjbDeploymentDescriptorModel ejbDesc : webDescriptors.findAll())
+        {
+            if(ejbDesc.getProjectModel().equals(projectModel)) {
+                resultModels.add(ejbDesc);
+            }
+        }
+        return resultModels;
     }
 }

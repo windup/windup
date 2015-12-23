@@ -11,6 +11,11 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.LinkModel;
+import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.rules.apps.javaee.model.EjbDeploymentDescriptorModel;
+import org.jboss.windup.rules.apps.javaee.model.WebXmlModel;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -45,14 +50,47 @@ public class WindupMultiAppBasicTest extends WindupArchitectureTest
     {
         final String path1 = "../test-files/Windup1x-javaee-example.war";
         final String path2 = "../test-files/maven-info-missing.war";
+        final String path3 = "../test-files/badly_named_app";
         List<String> paths = new ArrayList<>();
         paths.add(path1);
         paths.add(path2);
+        paths.add(path3);
 
         try (GraphContext context = createGraphContext())
         {
             super.runTest(context, paths, false);
+            checkEJBDescriptors(context);
+            checkWebXmls(context);
         }
+
+    }
+
+    private void checkEJBDescriptors(GraphContext context)
+    {
+        GraphService<EjbDeploymentDescriptorModel> ejbDescriptors = new GraphService<>(context,EjbDeploymentDescriptorModel.class);
+        for (EjbDeploymentDescriptorModel ejbDeploymentDescriptorModel : ejbDescriptors.findAll())
+        {
+            Assert.assertTrue(1 >= getIterableSize(ejbDeploymentDescriptorModel.getLinksToTransformedFiles()));
+        }
+
+    }
+
+    private void checkWebXmls(GraphContext context)
+    {
+        GraphService<WebXmlModel> webXmls = new GraphService<>(context,WebXmlModel.class);
+        for (WebXmlModel webXml : webXmls.findAll())
+        {
+            Assert.assertTrue(1 >= getIterableSize(webXml.getLinksToTransformedFiles()));
+        }
+    }
+
+    private int getIterableSize(Iterable<?> iterable) {
+        int itemCount = 0;
+        for (Object o : iterable)
+        {
+            itemCount++;
+        }
+        return itemCount;
     }
 
 }

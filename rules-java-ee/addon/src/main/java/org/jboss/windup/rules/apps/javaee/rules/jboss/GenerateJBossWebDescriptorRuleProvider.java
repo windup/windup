@@ -1,6 +1,8 @@
 package org.jboss.windup.rules.apps.javaee.rules.jboss;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 
@@ -86,7 +88,7 @@ public class GenerateJBossWebDescriptorRuleProvider extends AbstractRuleProvider
         ApplicationReportService applicationReportService = new ApplicationReportService(context);
         VendorSpecificationExtensionService vendorSpecificService = new VendorSpecificationExtensionService(context);
 
-        for (WebXmlModel webDescriptor : webDescriptors.findAll())
+        for (WebXmlModel webDescriptor : findAllWebXmlsInProject(context,projectModel))
         {
             ApplicationReportModel applicationReportModel = applicationReportService.create();
             applicationReportModel.setReportPriority(300);
@@ -130,4 +132,18 @@ public class GenerateJBossWebDescriptorRuleProvider extends AbstractRuleProvider
             }
         }
     }
+
+    private Iterable<WebXmlModel> findAllWebXmlsInProject(GraphContext context, ProjectModel projectModel) {
+        GraphService<WebXmlModel> webDescriptors = new GraphService<>(context, WebXmlModel.class);
+        List<WebXmlModel> resultModels = new ArrayList<WebXmlModel>();
+        for (WebXmlModel webXmlModel : webDescriptors.findAll())
+        {
+            if(webXmlModel.getProjectModel().equals(projectModel)) {
+                resultModels.add(webXmlModel);
+            }
+
+        }
+        return resultModels;
+    }
+
 }
