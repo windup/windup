@@ -119,14 +119,14 @@ public class IterationAutomicCommitTest
             Assert.assertEquals(1, titanGraph.commitCount);
 
             // Now create a few hundred FileModels to see if autocommit happens periodically
-            for (int i = 0; i < 800; i++)
+            for (int i = 0; i < 1200; i++)
             {
                 fileModelService.create().setFilePath("foo." + i);
             }
             titanGraph.commitCount = 0;
 
             RuleSubset.create(configuration).perform(event, evaluationContext);
-            Assert.assertEquals(9, titanGraph.commitCount);
+            Assert.assertEquals(2, titanGraph.commitCount);
         }
     }
 

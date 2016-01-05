@@ -24,6 +24,7 @@ import org.jboss.windup.graph.listeners.AfterGraphInitializationListener;
 import org.jboss.windup.graph.listeners.BeforeGraphCloseListener;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
+import com.sleepycat.je.LockMode;
 import com.thinkaurelius.titan.core.Cardinality;
 import com.thinkaurelius.titan.core.PropertyKey;
 import com.thinkaurelius.titan.core.TitanFactory;
@@ -31,6 +32,7 @@ import com.thinkaurelius.titan.core.TitanGraph;
 import com.thinkaurelius.titan.core.schema.Mapping;
 import com.thinkaurelius.titan.core.schema.TitanManagement;
 import com.thinkaurelius.titan.core.util.TitanCleanup;
+import com.thinkaurelius.titan.diskstorage.berkeleyje.BerkeleyJEStoreManager;
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.util.wrappers.batch.BatchGraph;
@@ -272,9 +274,20 @@ public class GraphContextImpl implements GraphContext
         // the performance decrease seems to be minimal.
         conf.setProperty("storage.berkeleydb.cache-percentage", 1);
 
+        // Set READ UNCOMMITTED to improve performance
+        conf.setProperty("storage.berkeleydb.lock-mode", LockMode.READ_UNCOMMITTED);
+        conf.setProperty("storage.berkeleydb.isolation-level", BerkeleyJEStoreManager.IsolationLevel.READ_UNCOMMITTED);
+
         // Increase storage write buffer since we basically do a large bulk load during the first phases.
         // See http://s3.thinkaurelius.com/docs/titan/current/bulk-loading.html
         conf.setProperty("storage.buffer-size", "4096");
+
+        // Turn off transactions to improve performance
+        conf.setProperty("storage.transactions", false);
+
+        conf.setProperty("ids.block-size", 25000);
+        // conf.setProperty("ids.flush", true);
+        // conf.setProperty("", false);
 
         //
         // turn on a db-cache that persists across txn boundaries, but make it relatively small

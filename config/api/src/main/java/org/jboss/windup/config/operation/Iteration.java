@@ -224,7 +224,7 @@ public class Iteration extends DefaultOperationBuilder
             if (frameCount > 100)
             {
                 if (!hasCommitOperation)
-                    commit = Commit.every(100);
+                    commit = Commit.every(1000);
 
                 if (!hasIterationOperation)
                 {
