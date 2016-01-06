@@ -5,7 +5,7 @@
 
 
 <#macro tagRenderer tag>
-    <span class="label label-${(tag.level! == 'IMPORTANT')?then('danger','info')} tag-${tag.name?replace(' ','')}">
+    <span title="${tag.level}" class="label label-${(tag.level! == 'IMPORTANT')?then('danger','info')} tag-${tag.name?replace(' ','')}">
         <#nested/>
     </span>
 </#macro>
@@ -165,14 +165,19 @@
 
         </div>
         <#if iterableHasContent(projectModel.fileModelsNoDirectories)>
-        <table class="table table-striped table-bordered">
-            <tr>
-                <th class="col-md-6">Name</th><th class="col-md-1">Technology</th><th>Issues</th><th class="col-md-1">Story Points</th>
-            </tr>
-            <#list sortFilesByPathAscending(projectModel.fileModelsNoDirectories) as fileModel>
-                <@fileModelRenderer fileModel/>
-            </#list>
-        </table>
+            <#include "include/labellegend.ftl">
+            <table class="table table-striped table-bordered">
+                <tr>
+                    <th class="col-md-6">Name</th>
+                    <th class="col-md-1" onmouseover="$('.tag-legend').addClass('showLegend')"
+            onmouseout=" $('.tag-legend').removeClass('showLegend')" 
+                    >Technology  <i class="glyphicon glyphicon-question-sign"></th>
+                    <th>Issues</th><th class="col-md-1">Story Points</th>
+                </tr>
+                <#list sortFilesByPathAscending(projectModel.fileModelsNoDirectories) as fileModel>
+                    <@fileModelRenderer fileModel/>
+                </#list>
+            </table>
         </#if>
         </div>
     </div>
