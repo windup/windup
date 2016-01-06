@@ -122,8 +122,7 @@
                         </#if>
                     </h1>
                     <div class="desc">
-                        The ${reportModel.reportName} report is a numerical summary of all issues found.
-                        Click on the individual issue types to see where it was found.
+                        ${reportModel.description}
                     </div>
                 </div>
             </div>
@@ -135,7 +134,7 @@
                         <h3 class="panel-title">Analysis Detail</h3>
                     </div>
 
-                    <#assign problemsBySeverity = getProblemSummaries(reportModel.projectModel)>
+                    <#assign problemsBySeverity = getProblemSummaries(reportModel.projectModel, reportModel.includeTags, reportModel.excludeTags)>
                     <#list problemsBySeverity?keys as severity>
                         <table class="table table-hover table-condensed tablesorter migration-issues-table">
                             <thead>

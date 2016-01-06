@@ -33,6 +33,7 @@ public interface ReportModel extends WindupVertexFrame
     String REPORT_FILENAME = "reportFilename";
     String REPORT_ICON_CLASS = "reportIconClass";
     String REPORT_NAME = "reportName";
+    String DESCRIPTION = "reportDescription";
 
     /**
      * The name of the report (for example, 'ClassLoader Report' or 'EJB Report')
@@ -45,6 +46,18 @@ public interface ReportModel extends WindupVertexFrame
      */
     @Property(REPORT_NAME)
     String getReportName();
+
+    /**
+     * Contains a full-text description of the report.
+     */
+    @Property(DESCRIPTION)
+    void setDescription(String description);
+
+    /**
+     * Contains a full-text description of the report.
+     */
+    @Property(DESCRIPTION)
+    String getDescription();
 
     /**
      * The filename of the report on disk (useful for other reports that need to link to this one)

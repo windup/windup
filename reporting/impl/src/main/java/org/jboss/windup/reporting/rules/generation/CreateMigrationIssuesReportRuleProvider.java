@@ -8,8 +8,10 @@ import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
+import org.jboss.windup.reporting.model.MigrationIssuesReportModel;
 import org.jboss.windup.reporting.model.TemplateType;
 import org.jboss.windup.reporting.service.ApplicationReportService;
 import org.jboss.windup.reporting.service.ReportService;
@@ -70,6 +72,9 @@ public class CreateMigrationIssuesReportRuleProvider extends AbstractRuleProvide
             report.setTemplatePath(TEMPLATE_PATH);
             report.setTemplateType(TemplateType.FREEMARKER);
             report.setDisplayInApplicationReportIndex(true);
+
+            new GraphService<>(context, MigrationIssuesReportModel.class).addTypeToModel(report);
+
             return report;
         }
 
@@ -78,6 +83,9 @@ public class CreateMigrationIssuesReportRuleProvider extends AbstractRuleProvide
             ReportService reportService = new ReportService(context);
             ApplicationReportModel report = createMigrationIssuesReportBase(context);
             report.setReportName(MIGRATION_ISSUES_REPORT_NAME);
+            String description = "The " + report.getReportName()
+                        + " report is a numerical summary of all issues found. Click on the individual issue types to see where it was found.";
+            report.setDescription(description);
             report.setProjectModel(projectModel);
             reportService.setUniqueFilename(report, "migration_issues", "html");
             return report;
@@ -89,6 +97,9 @@ public class CreateMigrationIssuesReportRuleProvider extends AbstractRuleProvide
             ApplicationReportModel report = createMigrationIssuesReportBase(context);
             report.setReportName(ALL_MIGRATION_ISSUES_REPORT_NAME);
             report.setDisplayInGlobalApplicationIndex(true);
+            String description = "The " + report.getReportName()
+                        + " report is a numerical summary of all issues found. Click on the individual issue types to see where it was found.";
+            report.setDescription(description);
             reportService.setUniqueFilename(report, "migration_issues", "html");
             return report;
         }

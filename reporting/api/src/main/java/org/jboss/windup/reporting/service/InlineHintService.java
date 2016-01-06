@@ -158,7 +158,7 @@ public class InlineHintService extends GraphService<InlineHintModel>
             if (!includeTags.isEmpty() || !excludeTags.isEmpty())
             {
                 InlineHintModel hintModel = frame(v);
-                if (!TagUtil.isTagsMatch(hintModel.getTags(), includeTags, excludeTags))
+                if (!TagUtil.checkMatchingTags(hintModel.getTags(), includeTags, excludeTags))
                     continue;
             }
 

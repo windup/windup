@@ -23,6 +23,8 @@ import org.jboss.windup.reporting.model.ReportModel;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
 import org.jboss.windup.testutil.html.TestJavaApplicationOverviewUtil;
+import org.jboss.windup.testutil.html.TestMigrationIssuesReportUtil;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -81,16 +83,16 @@ public class WindupArchitectureCatchallTest extends WindupArchitectureTest
         ReportModel catchallApplicationReportModel = getCatchallApplicationReport(context);
         Path catchallAppReport = Paths.get(reportService.getReportDirectory(), catchallApplicationReportModel.getReportFilename());
 
-        TestJavaApplicationOverviewUtil util = new TestJavaApplicationOverviewUtil();
-        util.loadPage(mainAppReport);
-        util.checkFilePathEffort("catchalltest", "FileWithoutCatchallHits", 13);
-        util.checkFilePathEffort("catchalltest", "FileWithBoth", 27);
-        util.checkFilePathEffort("catchalltest", "FileWithNoHintsRules", 63);
+        TestJavaApplicationOverviewUtil javaApplicationOverviewUtil = new TestJavaApplicationOverviewUtil();
+        javaApplicationOverviewUtil.loadPage(mainAppReport);
+        javaApplicationOverviewUtil.checkFilePathEffort("catchalltest", "FileWithoutCatchallHits", 13);
+        javaApplicationOverviewUtil.checkFilePathEffort("catchalltest", "FileWithBoth", 27);
+        javaApplicationOverviewUtil.checkFilePathEffort("catchalltest", "FileWithNoHintsRules", 63);
 
-        util.loadPage(catchallAppReport);
-        util.checkFilePathEffort("catchalltest", "FileWithBoth", 27);
-        util.checkFilePathEffort("catchalltest", "FileWithCatchallHits", 14);
-        util.checkFilePathEffort("catchalltest", "FileWithNoHintsRules", 63);
+        TestMigrationIssuesReportUtil migrationIssuesReportUtil = new TestMigrationIssuesReportUtil();
+        migrationIssuesReportUtil.loadPage(catchallAppReport);
+
+        Assert.assertTrue(migrationIssuesReportUtil.checkIssue("java.util.* found ", 7, 7, "Requires Architectural Change", 49));
     }
 
     @Singleton

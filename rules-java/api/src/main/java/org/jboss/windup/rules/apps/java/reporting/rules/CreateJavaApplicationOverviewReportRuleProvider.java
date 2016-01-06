@@ -16,6 +16,7 @@ import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.OverviewReportLineMessageModel;
+import org.jboss.windup.reporting.model.TaggableModel;
 import org.jboss.windup.reporting.model.TemplateType;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.rules.apps.java.model.JavaApplicationOverviewReportModel;
@@ -25,16 +26,13 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-
 /**
  * Creates the main report HTML page for a Java application.
  */
 public class CreateJavaApplicationOverviewReportRuleProvider extends AbstractRuleProvider
 {
-    public static final String DETAILS_REPORT= "Application Report";
-    public static final String CATCHALL_REPORT = "Catchall";
+    public static final String DETAILS_REPORT = "Application Report";
     public static final String TEMPLATE_APPLICATION_REPORT = "/reports/templates/java_application.ftl";
-    public static final String TAG_CATCHALL = "catchall";
 
     public CreateJavaApplicationOverviewReportRuleProvider()
     {
@@ -61,7 +59,8 @@ public class CreateJavaApplicationOverviewReportRuleProvider extends AbstractRul
                     {
                         throw new WindupException("Error, no project found in: " + inputPath.getFilePath());
                     }
-                    createApplicationReport(event.getGraphContext(), projectModel);
+                    createReport(event.getGraphContext(), projectModel, 100, false, TEMPLATE_APPLICATION_REPORT, DETAILS_REPORT, Collections.<String> emptySet(),
+                            Collections.singleton(TaggableModel.CATCHALL_TAG));
                 }
             }
 
@@ -80,15 +79,8 @@ public class CreateJavaApplicationOverviewReportRuleProvider extends AbstractRul
     }
     // @formatter:on
 
-    private void createApplicationReport(GraphContext context, ProjectModel projectModel)
-    {
-        createMainApplicationOverviewReport(context, projectModel, 100, false, DETAILS_REPORT, Collections.EMPTY_SET, Collections.singleton(TAG_CATCHALL));
-        createMainApplicationOverviewReport(context, projectModel, 101, false, CATCHALL_REPORT, Collections.singleton(TAG_CATCHALL),
-                    Collections.EMPTY_SET);
-    }
-
-    private void createMainApplicationOverviewReport(GraphContext context, ProjectModel projectModel, int priority, boolean main, String name,
-                Set<String> includeTags, Set<String> excludeTags)
+    private void createReport(GraphContext context, ProjectModel projectModel, int priority, boolean main, String template,
+                String name, Set<String> includeTags, Set<String> excludeTags)
     {
         GraphService<JavaApplicationOverviewReportModel> service = new GraphService<>(context, JavaApplicationOverviewReportModel.class);
         JavaApplicationOverviewReportModel applicationReportModel = service.create();
@@ -98,7 +90,7 @@ public class CreateJavaApplicationOverviewReportRuleProvider extends AbstractRul
         applicationReportModel.setReportIconClass("glyphicon glyphicon-th-list");
         applicationReportModel.setMainApplicationReport(main);
         applicationReportModel.setProjectModel(projectModel);
-        applicationReportModel.setTemplatePath(TEMPLATE_APPLICATION_REPORT);
+        applicationReportModel.setTemplatePath(template);
         applicationReportModel.setTemplateType(TemplateType.FREEMARKER);
         applicationReportModel.setIncludeTags(includeTags);
         applicationReportModel.setExcludeTags(excludeTags);

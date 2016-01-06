@@ -189,8 +189,7 @@
     <link href="resources/css/windup.css" rel="stylesheet" media="screen">
     <link href="resources/css/windup.java.css" rel="stylesheet" media="screen">
     <style>
-        body.report-Overview .forCatchall { display: none; }
-        body.report-Catchall .forOverview { display: none; }
+        .desc { z-index: 5000; }
     </style>
 </head>
 <body role="document" class="java-application report-${reportModel.reportName}">
@@ -223,22 +222,9 @@
                     <div class="path">${reportModel.projectModel.rootFileModel.fileName}</div>
                 </h1>
                 <div class="desc">
-                    <div class="forOverview">
-                        This report shows all items found within an application that may need an attention during the migration process.
-                        Examples of such issues are use of incompatible APIs, source platform configuration files,
-                        proprietary technologies or obsolete versions of libraries.
-                    </div>
-                    <div class="forCatchall">
-                        The Catchall report lists the items found within given application which Windup discovered using
-                        so-called "catch-all rules",
-                        which usually react to a common incompatible technology trait, such like a typical Java package name.
-                        Items listed in this report will most likely need some migration effort.
-                        Also, the technologies found by catch-all rules are good candidates for specific Windup rules.
-                        <p>
-                        See <a href="http://windup.github.io/windup/docs/latest/html/WindupUserGuide.html#Get-Involved"
-                           >Get Involved</a> in Windup User Guide to see how to contribute a Windup rule.
-                        </p>
-                    </div>
+                    This report shows all items found within an application that may need an attention during the migration process.
+                    Examples of such issues are use of incompatible APIs, source platform configuration files,
+                    proprietary technologies or obsolete versions of libraries.
                 </div>
             </div>
         </div>
