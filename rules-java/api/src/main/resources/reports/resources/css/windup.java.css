@@ -4,11 +4,47 @@ body.java-application table.summaryLayout { width: 100%; }
 body.java-application table.summaryLayout > tr > td,
 body.java-application table.summaryLayout > tbody > tr > td { vertical-align: top; margin-bottom: 2ex; }
 
-body.java-application table.summaryLayout > tbody > tr > td div#treeView-Projects {
+/* ===  Projects tree view  === */
+body.java-application #treeView-Projects-wrap {
     float: left;
-    margin: 0px 0px 2ex 120px;
-    font-family: "Trebuchet MS",Helvetica,sans-serif;
+    margin: 0px 0px 2ex 150px;
+    overflow: hidden;
 }
+body.java-application #treeView-Projects-wrap #overlayFog { display: none; }
+body.java-application #treeView-Projects-wrap.short #overlayFog {
+    display: block;
+    z-index: 10;
+    position: absolute;
+    width: 600px;
+    height: 30px;
+    margin-top:  80px;
+    padding-top: 50px;
+    background: -moz-linear-gradient(top, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top, rgba(255,255,255,0) 0%,rgba(255,255,255,1) 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom, rgba(255,255,255,0) 0%,rgba(255,255,255,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00ffffff', endColorstr='#ffffff',GradientType=0 ); /* IE6-9 */                                    xbackground-color: blue;
+    text-align: right;
+}
+body.java-application #treeView-Projects-wrap #treeView-Projects {
+    font-family: "Trebuchet MS",Helvetica,sans-serif;
+    overflow: hidden;
+}
+body.java-application #treeView-Projects-wrap.short #treeView-Projects {
+    height: 130px;
+}
+
+body.java-application #treeView-Projects-wrap .showButtons { z-index: 20; }
+body.java-application #treeView-Projects-wrap.short .showLess { display: none; }
+body.java-application #treeView-Projects-wrap.short .showMore { display: inherit; }
+body.java-application #treeView-Projects-wrap       .showLess { display: inherit; }
+body.java-application #treeView-Projects-wrap       .showMore { display: none; }
+
+/* Things to show/hide when all the long computation is done ("Computing... " etc.). */
+body.java-application.computingDone .hideWhenComputed { display: none; }
+body.java-application               .hideUntilComputed { display: none; }
+body.java-application.computingDone .hideUntilComputed { display: inherit; }
+
+
 
 .projectBox table.subprojects > tbody > tr > th,
 .projectBox table.subprojects > tbody > tr > td {

@@ -57,7 +57,10 @@ function collapseAll(){
 	$('#collapseAll').toggle();
 }
 
+t0 = Date.now();
 expandMemory();
+console.log("PERF: expandMemory() took " + (Date.now() - t0) + " ms.");
+
 
 // show properly the Collapse/Expand All link
 if ( $('.panel-heading').find('.glyphicon-chevron-up').length > 0) {
@@ -113,15 +116,45 @@ function renderAppTreeView(rootProject)
 /* ========   Projects TreeView   ========== */
 
 function createTagCharts() {
+    window.projectBoxes$ = [];
+
     // For each project's file, count it's tags.
-    var rootProjCountMap = {};
-    $(".projectBox").each(function(iProj){
-        var projectId = $(this).attr("id");
+    window.rootProjCountMap = {};
+
+    var t0 = Date.now();
+    $("div.projectBox").each(function(iProj){
+    ///$("body > div.container-fluid > div.row > div.theme-showcase > div.projectBox").each(function(iProj){
+        window.projectBoxes$.push($(this));
+    });
+    console.log('PERF: $("div.projectBox") found ' + window.projectBoxes$.length + " elements in " + (Date.now() - t0) + " ms.");
+    window.setTimeout(processNextChart, 50);
+}
+
+function processNextChart()
+{
+    console.log("PERF: processNextChart(), next " + BATCH_SIZE + " projects.");
+    var BATCH_SIZE = 25;
+    for (var i = BATCH_SIZE; i > 0; i--)
+    {
+        var $projectBox = window.projectBoxes$.shift();
+        if (!$projectBox) {
+            summaryChart();
+            $(".hideWhenComputed").remove();
+            $(document.body).addClass("computingDone");
+            return;
+        }
+
+        var projectId = $projectBox.attr("id");
+        //console.log("PERF: " + Date.now() + " Processing projectBox: " + projectId);
         var curProjCountsMap = {};
+        var rootProjCountMap = window.rootProjCountMap;
 
         // Create the tag -> count map.
-        $(this).find(".projectFile").each(function(iFile){
-            $(this).find(".tech .label").each(function(iTag){
+        // This query is an optimized form of .find(".projectFile") / .find(".tech .tag")
+        ///$projectBox.find(".projectFile").each(function(iFile){
+        $projectBox.children("div.panel-body").children("table.subprojects").children("tbody").children("tr.projectFile").each(function(iFile){
+            ///$(this).find(".tech .tag").each(function(iTag){
+            $(this).children("td.tech").children("span.tag").each(function(iTag){
                 var tagName = $(this).data("windup-tag");
                 // Get the nearest root tag, as per definitions in *.tags.xml.
                 if(!tagName)
@@ -141,22 +174,31 @@ function createTagCharts() {
         if (curProjCountsMap.length < 2)
             return;
 
-        chartHeight = Math.max(50, Math.min(400, Object.keys(curProjCountsMap).length * 22 + 20));
+        var chartHeight = Math.max(50, Math.min(400, Object.keys(curProjCountsMap).length * 22 + 20));
 
         // Render the bar chart for this project.
         // We need to render it somewhere where it is visible and then move to the collapsed subproject divs.
         $(document.body).append('<div class="tagChart" style="height: ' + chartHeight + 'px; width: 500px;"></div>'); // Returns body.
         var chartDiv = $("body > .tagChart")[0];
         curProjCountsMap = sortMapByValues(curProjCountsMap);
-        // Store the chart object for later use.
+        // Store the chart object for later use. Not used yet.
         chartObjects[projectId + "-tags"] =
                 createChart(chartDiv, curProjCountsMap);
-        $("body > .tagChart").appendTo( $(this).find(".summaryMargin .tagsBarChart") );
-        $(this).find(".summaryMargin .tagsBarChart").append( $("body > .tagChart") );
-    });
+        $("body > .tagChart").appendTo( $projectBox.find(".summaryMargin .tagsBarChart") );
+        $projectBox.find(".summaryMargin .tagsBarChart").append( $("body > .tagChart") );
+    }
 
+    // Queue processing of the next chart.
+    window.setTimeout(processNextChart, 10);
+}
+
+/**
+ * Creates the summary chart at the top.
+ */
+function summaryChart()
+{
     // Sum tags chart
-    rootProjCountMap = sortMapByValues(rootProjCountMap);
+    var rootProjCountMap = sortMapByValues(window.rootProjCountMap);
     createChart("#tagsChartContainer-sum", rootProjCountMap);
 
     // Substitutes yaxis: { font: } - Flot uses "smaller" which breaks alignment.

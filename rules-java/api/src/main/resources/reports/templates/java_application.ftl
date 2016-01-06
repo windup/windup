@@ -4,8 +4,8 @@
 <#assign applicationReportIndexModel = reportModel.applicationReportIndexModel>
 
 
-<#macro tagRenderer tag>
-    <span class="label label-${(tag.level! == 'IMPORTANT')?then('danger','info')} tag-${tag.name?replace(' ','')}"
+<#macro tagRenderer tag class="">
+    <span class="label label-${(tag.level! == 'IMPORTANT')?then('danger','info')} tag-${tag.name?replace(' ','')} ${class!}"
           data-windup-tag="${tag.name?html}">
         <#nested/>
     </span>
@@ -282,7 +282,16 @@
                                 <div class="number">${getMigrationEffortPoints(reportModel.projectModel, true, reportModel.includeTags, reportModel.excludeTags)}</div>
                                 <div>Story Points</div>
                             </div>
-                            <div id="treeView-Projects"></div>
+                            <div id="treeView-Projects-wrap" class="short">
+                                <div id="overlayFog" class="showMore">
+                                    <span style="position: relative; top: 4ex; left: 4em;" class="hideWhenComputed">Computing...</span>
+                                </div>
+                                <div id="treeView-Projects"></div>
+                                <div class="showButtons hideUntilComputed">
+                                    <a class="showMore" href="#" onclick='$("#treeView-Projects-wrap").removeClass("short")'>Show all...</a>
+                                    <a class="showLess" href="#" onclick='$("#treeView-Projects-wrap").addClass("short")'>Show less</a>
+                                </div>
+                            </div>
                         </td>
                     </tr>
                     <tr>
@@ -295,7 +304,9 @@
                         <td>
                             <div class="chartBoundary">
                                 <h4>Technologies found - occurence count</h4>
-                                <div id="tagsChartContainer-sum" style="height: 300px; width: 500px;"></div>
+                                <div id="tagsChartContainer-sum" style="height: 300px; width: 500px;">
+                                    <div class="hideWhenComputed" style="position: relative; top: 4ex; left: 4em;">Computing...</div>
+                                </div>
                             </div>
                         </td>
                     </tr>
@@ -368,7 +379,11 @@
 
             // Projects TreeView.
             $(function() {
-                renderAppTreeView(rootProject);
+                window.setTimeout( function(){
+                    t0 = Date.now();
+                    renderAppTreeView(rootProject);
+                    console.log("PERF: renderAppTreeView() took " + (Date.now() - t0) + " ms.");
+                }, 500 );
             });
         </script>
     </div>
