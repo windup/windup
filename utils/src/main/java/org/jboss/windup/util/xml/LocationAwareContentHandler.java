@@ -48,7 +48,7 @@ public class LocationAwareContentHandler extends DefaultHandler2
 	@Override
 	public InputSource resolveEntity(String name, String publicId, String baseURI, String systemId) throws SAXException, IOException {
 		doctype = new Doctype(name, publicId, systemId, baseURI);
-
+		doc.setUserData(DOCTYPE_KEY_NAME, doctype, null);
 		return new InputSource(new ByteArrayInputStream(new byte[0]));
 	}
 
@@ -85,7 +85,6 @@ public class LocationAwareContentHandler extends DefaultHandler2
 		}
 		else {
 			current.appendChild(e);
-			doc.setUserData(DOCTYPE_KEY_NAME, doctype, null);
 		}
 		current = e;
 
