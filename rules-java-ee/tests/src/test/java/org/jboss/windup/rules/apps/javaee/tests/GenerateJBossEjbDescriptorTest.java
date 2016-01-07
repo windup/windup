@@ -20,6 +20,7 @@ import org.jboss.windup.rules.apps.javaee.model.WebXmlModel;
 import org.jboss.windup.rules.apps.javaee.rules.jboss.GenerateJBossEjbDescriptorRuleProvider;
 import org.jboss.windup.rules.apps.javaee.rules.jboss.GenerateJBossWebDescriptorRuleProvider;
 import org.jboss.windup.testutil.basics.WindupTestUtilMethods;
+import org.jboss.windup.util.Iterables;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -85,18 +86,8 @@ public class GenerateJBossEjbDescriptorTest
         GraphService<EjbDeploymentDescriptorModel> ejbDescriptors = new GraphService<>(context,EjbDeploymentDescriptorModel.class);
         for (EjbDeploymentDescriptorModel ejbDesc : ejbDescriptors.findAll())
         {
-            Assert.assertTrue(1 >= getIterableSize(ejbDesc.getLinksToTransformedFiles()));
+            Assert.assertTrue(1 >= Iterables.size(ejbDesc.getLinksToTransformedFiles()));
         }
-    }
-
-    private int getIterableSize(Iterable<LinkModel> linksToTransformedFiles)
-    {
-        int resultCount = 0;
-        for (LinkModel linksToTransformedFile : linksToTransformedFiles)
-        {
-            resultCount++;
-        }
-        return resultCount;
     }
 
 }
