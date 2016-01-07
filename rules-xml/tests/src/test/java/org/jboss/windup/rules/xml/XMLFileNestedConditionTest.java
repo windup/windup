@@ -118,6 +118,7 @@ public class XMLFileNestedConditionTest
             Iterator<FileModel> iterator = classifications.get(0).getFileModels().iterator();
             Assert.assertNotNull(iterator.next());
             Assert.assertNotNull(iterator.next());
+            Assert.assertNotNull(iterator.next());
             Assert.assertFalse(iterator.hasNext());
         }
     }
