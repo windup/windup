@@ -36,6 +36,12 @@
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
+        <!-- MOCKITO is added here because of some bug in Furnace that will not find the classes in case it is added in test module only -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.9.5</version>
+        </dependency>
         <dependency>
             <groupId>org.jboss.windup.utils</groupId>
             <artifactId>windup-utils</artifactId>

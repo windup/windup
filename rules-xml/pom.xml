@@ -27,7 +27,6 @@
                 <groupId>org.jboss.windup.rules.apps</groupId>
                 <artifactId>windup-rules-xml</artifactId>
                 <version>${project.version}</version>
-                <classifier>forge-addon</classifier>
             </dependency>
             <dependency>
                 <groupId>org.jboss.windup.rules.apps</groupId>

@@ -25,6 +25,8 @@ public interface XmlFileModel extends FileModel, SourceFileModel
 
     String UNPARSEABLE_XML_CLASSIFICATION = "Unparseable XML File";
     String NOT_VALID_XML = "XML File is not valid";
+    String XSD_URL_NOT_VALID = "XML File references not valid xsd url.";
+
     String UNPARSEABLE_XML_DESCRIPTION = "This file could not be parsed";
 
     String ROOT_TAG_NAME = "rootTagName";

@@ -28,6 +28,11 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.jboss.windup.rules.apps</groupId>
+            <artifactId>windup-rules-xml-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.jboss.windup.config</groupId>
             <artifactId>windup-config-xml</artifactId>
             <classifier>forge-addon</classifier>
