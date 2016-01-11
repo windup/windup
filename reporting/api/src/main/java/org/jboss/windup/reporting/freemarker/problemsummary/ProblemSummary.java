@@ -4,13 +4,14 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.reporting.model.Severity;
 
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public class ProblemSummary
 {
-    private final String severity;
+    private final Severity severity;
     private final String ruleID;
     private final String issueName;
     private int numberFound;
@@ -20,7 +21,7 @@ public class ProblemSummary
     /**
      * Creates a new instance with the given information.
      */
-    public ProblemSummary(String severity, String ruleID, String issueName, int numberFound, int effortPerIncident)
+    public ProblemSummary(Severity severity, String ruleID, String issueName, int numberFound, int effortPerIncident)
     {
         this.severity = severity;
         this.ruleID = ruleID;
@@ -33,7 +34,7 @@ public class ProblemSummary
      * Returns the severity as a String (the String type makes integration with freemarker easier, as freemarker doesn't always retain type
      * information on enums).
      */
-    public String getSeverity()
+    public Severity getSeverity()
     {
         return severity;
     }

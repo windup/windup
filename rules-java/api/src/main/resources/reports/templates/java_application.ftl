@@ -195,7 +195,7 @@
 <body role="document" class="java-application report-${reportModel.reportName}">
 
     <!-- Navbar -->
-    <div class="navbar navbar-default navbar-fixed-top">
+    <div id="main-navbar" class="navbar navbar-default navbar-fixed-top">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
                 <span class="icon-bar"></span>
@@ -222,9 +222,7 @@
                     <div class="path">${reportModel.projectModel.rootFileModel.fileName}</div>
                 </h1>
                 <div class="desc">
-                    This report shows all items found within an application that may need an attention during the migration process.
-                    Examples of such issues are use of incompatible APIs, source platform configuration files,
-                    proprietary technologies or obsolete versions of libraries.
+                    ${reportModel.description}
                 </div>
             </div>
         </div>

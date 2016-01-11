@@ -27,6 +27,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 public class CreateCompatibleFileReportRuleProvider extends AbstractRuleProvider
 {
     public static final String TEMPLATE_APPLICATION_REPORT = "/reports/templates/compatible_files.ftl";
+    public static final String REPORT_DESCRIPTION = "This provides a list of files that are believed to be compatible, potentially requiring no migration effort.";
 
     public CreateCompatibleFileReportRuleProvider()
     {
@@ -82,6 +83,7 @@ public class CreateCompatibleFileReportRuleProvider extends AbstractRuleProvider
         applicationReportModel.setReportPriority(200);
         applicationReportModel.setDisplayInApplicationReportIndex(true);
         applicationReportModel.setReportName("Compatible Files");
+        applicationReportModel.setDescription(REPORT_DESCRIPTION);
         applicationReportModel.setReportIconClass("glyphicon glyphicon-check");
         applicationReportModel.setMainApplicationReport(false);
         applicationReportModel.setProjectModel(projectModel);

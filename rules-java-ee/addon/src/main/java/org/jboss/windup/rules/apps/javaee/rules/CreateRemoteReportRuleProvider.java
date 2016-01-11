@@ -39,6 +39,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 public class CreateRemoteReportRuleProvider extends AbstractRuleProvider
 {
     public static final String TEMPLATE_EJB_REPORT = "/reports/templates/remote.ftl";
+    public static final String REPORT_DESCRIPTION = "This report displays all remote services references that were found within the application.";
 
     public CreateRemoteReportRuleProvider()
     {
@@ -119,6 +120,7 @@ public class CreateRemoteReportRuleProvider extends AbstractRuleProvider
         applicationReportModel.setReportPriority(300);
         applicationReportModel.setDisplayInApplicationReportIndex(true);
         applicationReportModel.setReportName("Remote Services");
+        applicationReportModel.setDescription(REPORT_DESCRIPTION);
         applicationReportModel.setReportIconClass("glyphicon service-nav-logo");
         applicationReportModel.setProjectModel(projectModel);
         applicationReportModel.setTemplatePath(TEMPLATE_EJB_REPORT);

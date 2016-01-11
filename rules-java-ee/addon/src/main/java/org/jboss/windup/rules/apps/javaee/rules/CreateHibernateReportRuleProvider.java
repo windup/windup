@@ -38,6 +38,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 public class CreateHibernateReportRuleProvider extends AbstractRuleProvider
 {
     public static final String TEMPLATE_HIBERNATE_REPORT = "/reports/templates/hibernate.ftl";
+    public static final String REPORT_DESCRIPTION = "The Hibernate report contains details on all Hibernate related resources that were found in the application.";
 
     public CreateHibernateReportRuleProvider()
     {
@@ -89,6 +90,7 @@ public class CreateHibernateReportRuleProvider extends AbstractRuleProvider
         applicationReportModel.setReportPriority(400);
         applicationReportModel.setDisplayInApplicationReportIndex(true);
         applicationReportModel.setReportName("Hibernate");
+        applicationReportModel.setDescription(REPORT_DESCRIPTION);
         applicationReportModel.setReportIconClass("glyphicon hibernate-nav-logo");
         applicationReportModel.setProjectModel(projectModel);
         applicationReportModel.setTemplatePath(TEMPLATE_HIBERNATE_REPORT);

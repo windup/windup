@@ -1,5 +1,6 @@
 package org.jboss.windup.reporting.freemarker;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -32,6 +33,9 @@ public class FreeMarkerUtil
      */
     public static Set<String> simpleSequenceToSet(SimpleSequence simpleSequence)
     {
+        if (simpleSequence == null)
+            return Collections.emptySet();
+
         Set<String> result = new HashSet<>();
         for (int i = 0; i < simpleSequence.size(); i++)
         {

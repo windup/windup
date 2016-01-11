@@ -38,6 +38,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 public class CreateSpringBeanReportRuleProvider extends AbstractRuleProvider
 {
     public static final String TEMPLATE_SPRING_REPORT = "/reports/templates/spring.ftl";
+    public static final String REPORT_DESCRIPTION = "This report contains a list of Spring beans found during the analysis.";
 
     public CreateSpringBeanReportRuleProvider()
     {
@@ -88,6 +89,7 @@ public class CreateSpringBeanReportRuleProvider extends AbstractRuleProvider
         applicationReportModel.setReportPriority(500);
         applicationReportModel.setDisplayInApplicationReportIndex(true);
         applicationReportModel.setReportName("Spring Beans");
+        applicationReportModel.setDescription(REPORT_DESCRIPTION);
         applicationReportModel.setReportIconClass("glyphicon glyphicon-leaf");
         applicationReportModel.setProjectModel(projectModel);
         applicationReportModel.setReportIconClass("glyphicon glyphicon-leaf");

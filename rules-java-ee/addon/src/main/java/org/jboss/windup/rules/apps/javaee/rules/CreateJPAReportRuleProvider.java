@@ -39,6 +39,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 public class CreateJPAReportRuleProvider extends AbstractRuleProvider
 {
     public static final String TEMPLATE_JPA_REPORT = "/reports/templates/jpa.ftl";
+    public static final String REPORT_DESCRIPTION = "This report contains details JPA related resources that were found in the application.";
 
     public CreateJPAReportRuleProvider()
     {
@@ -123,6 +124,7 @@ public class CreateJPAReportRuleProvider extends AbstractRuleProvider
         applicationReportModel.setReportPriority(400);
         applicationReportModel.setDisplayInApplicationReportIndex(true);
         applicationReportModel.setReportName("JPA");
+        applicationReportModel.setDescription(REPORT_DESCRIPTION);
         applicationReportModel.setReportIconClass("glyphicon jpa-nav-logo");
         applicationReportModel.setProjectModel(projectModel);
         applicationReportModel.setTemplatePath(TEMPLATE_JPA_REPORT);

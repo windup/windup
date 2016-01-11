@@ -17,9 +17,11 @@ import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.rules.apps.java.ip.CreateStaticIPAddressReportRuleProvider;
 import org.jboss.windup.rules.apps.java.model.JarManifestModel;
 import org.jboss.windup.rules.apps.java.reporting.rules.CreateCompatibleFileReportRuleProvider;
+import org.jboss.windup.rules.apps.java.reporting.rules.CreateReportIndexRuleProvider;
 import org.jboss.windup.rules.apps.java.service.JarManifestService;
 import org.jboss.windup.testutil.html.TestCompatibleReportUtil;
 import org.jboss.windup.testutil.html.TestJavaApplicationOverviewUtil;
+import org.jboss.windup.testutil.html.TestReportIndexReportUtil;
 import org.jboss.windup.testutil.html.TestStaticIPReportUtil;
 import org.junit.Assert;
 import org.junit.Test;
@@ -167,6 +169,19 @@ public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTe
         util.checkAppSectionEffort("Windup1x-javaee-example.war/WEB-INF/lib/wicket-request-1.5.10.jar", 24);
     }
 
+    private void validateReportIndex(GraphContext context)
+    {
+        ReportService reportService = new ReportService(context);
+        ReportModel reportModel = reportService.getUniqueByProperty(
+                    ReportModel.TEMPLATE_PATH,
+                    CreateReportIndexRuleProvider.TEMPLATE);
+        Path appReportPath = Paths.get(reportService.getReportDirectory(), reportModel.getReportFilename());
+        TestReportIndexReportUtil util = new TestReportIndexReportUtil();
+        util.loadPage(appReportPath);
+
+        Assert.assertTrue(util.checkIncidentByCategoryRow("Optional", 292, 2210));
+    }
+
     /**
      * Validate that the report pages were generated correctly
      */
@@ -175,5 +190,6 @@ public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTe
         validateOverviewReport(context);
         validateStaticIPReport(context);
         validateCompatibleReport(context);
+        validateReportIndex(context);
     }
 }

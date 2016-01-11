@@ -27,6 +27,7 @@ import com.google.common.collect.Iterables;
 public class CreateMigrationIssuesReportRuleProvider extends AbstractRuleProvider
 {
     public static final String TEMPLATE_PATH = "/reports/templates/migration-issues.ftl";
+    public static final String REPORT_DESCRIPTION = "The Migration Issues report provides a concise summary of all issues that require attention.";
 
     public CreateMigrationIssuesReportRuleProvider()
     {
@@ -59,7 +60,7 @@ public class CreateMigrationIssuesReportRuleProvider extends AbstractRuleProvide
             for (FileModel inputPath : WindupConfigurationService.getConfigurationModel(event.getGraphContext()).getInputPaths())
             {
                 ApplicationReportModel report = createSingleApplicationMigrationIssuesReport(event.getGraphContext(), inputPath.getProjectModel());
-                report.setMainApplicationReport(true);
+                report.setMainApplicationReport(false);
             }
         }
 
@@ -67,11 +68,12 @@ public class CreateMigrationIssuesReportRuleProvider extends AbstractRuleProvide
         {
             ApplicationReportService applicationReportService = new ApplicationReportService(context);
             ApplicationReportModel report = applicationReportService.create();
-            report.setReportPriority(110);
+            report.setReportPriority(101);
             report.setReportIconClass("glyphicon glyphicon-warning-sign");
             report.setTemplatePath(TEMPLATE_PATH);
             report.setTemplateType(TemplateType.FREEMARKER);
             report.setDisplayInApplicationReportIndex(true);
+            report.setDescription(REPORT_DESCRIPTION);
 
             new GraphService<>(context, MigrationIssuesReportModel.class).addTypeToModel(report);
 
@@ -83,9 +85,6 @@ public class CreateMigrationIssuesReportRuleProvider extends AbstractRuleProvide
             ReportService reportService = new ReportService(context);
             ApplicationReportModel report = createMigrationIssuesReportBase(context);
             report.setReportName(MIGRATION_ISSUES_REPORT_NAME);
-            String description = "The " + report.getReportName()
-                        + " report is a numerical summary of all issues found. Click on the individual issue types to see where it was found.";
-            report.setDescription(description);
             report.setProjectModel(projectModel);
             reportService.setUniqueFilename(report, "migration_issues", "html");
             return report;
@@ -97,9 +96,6 @@ public class CreateMigrationIssuesReportRuleProvider extends AbstractRuleProvide
             ApplicationReportModel report = createMigrationIssuesReportBase(context);
             report.setReportName(ALL_MIGRATION_ISSUES_REPORT_NAME);
             report.setDisplayInGlobalApplicationIndex(true);
-            String description = "The " + report.getReportName()
-                        + " report is a numerical summary of all issues found. Click on the individual issue types to see where it was found.";
-            report.setDescription(description);
             reportService.setUniqueFilename(report, "migration_issues", "html");
             return report;
         }

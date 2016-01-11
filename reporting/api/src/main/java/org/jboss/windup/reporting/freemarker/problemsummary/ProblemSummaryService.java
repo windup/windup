@@ -8,82 +8,34 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.TagUtil;
-import org.jboss.windup.reporting.freemarker.FreeMarkerUtil;
-import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.model.Severity;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.InlineHintService;
 
-import freemarker.ext.beans.StringModel;
-import freemarker.template.SimpleSequence;
-import freemarker.template.TemplateModelException;
-
 /**
- * Gets {@link ProblemSummary}s for display to the user.
- * 
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class GetProblemSummariesMethod implements WindupFreeMarkerMethod
+public class ProblemSummaryService
 {
-    public static final String NAME = "getProblemSummaries";
-
-    private GraphContext context;
-
-    @Override
-    public String getMethodName()
+    public static Map<Severity, List<ProblemSummary>> getProblemSummaries(GraphContext context, ProjectModel projectModel, Set<String> includeTags,
+                Set<String> excludeTags)
     {
-        return NAME;
-    }
-
-    @Override
-    public String getDescription()
-    {
-        return "Returns a summary of all classification and hints found during analysis in the form of a List<"
-                    + ProblemSummary.class.getSimpleName() + ">.";
-    }
-
-    @Override
-    public Object exec(List arguments) throws TemplateModelException
-    {
-        // Get the project if one was passed in
-        final ProjectModel projectModel;
-        if (arguments.size() > 0)
-        {
-            StringModel projectModelArg = (StringModel) arguments.get(0);
-            if (projectModelArg == null)
-                projectModel = null;
-            else
-                projectModel = (ProjectModel) projectModelArg.getWrappedObject();
-        }
-        else
-        {
-            projectModel = null;
-        }
-
-        Set<String> includeTags = FreeMarkerUtil.simpleSequenceToSet((SimpleSequence) arguments.get(1));
-        Set<String> excludeTags = FreeMarkerUtil.simpleSequenceToSet((SimpleSequence) arguments.get(2));
-
-        // get all classifications
-        // get all hints
-        // group them by title (classification and hint title)
-
         // The key is the severity as a String
-        Map<String, List<ProblemSummary>> results = new TreeMap<>(new Comparator<String>()
+        Map<Severity, List<ProblemSummary>> results = new TreeMap<>(new Comparator<Severity>()
         {
             @Override
-            public int compare(String severity1, String severity2)
+            public int compare(Severity severity1, Severity severity2)
             {
-                return Severity.valueOf(severity1).ordinal() - Severity.valueOf(severity2).ordinal();
+                return severity1.ordinal() - severity2.ordinal();
             }
         });
-        Map<RuleSummaryKey, ProblemSummary> ruleIDToSummary = new HashMap<>();
+        Map<RuleSummaryKey, ProblemSummary> ruleToSummary = new HashMap<>();
 
         InlineHintService hintService = new InlineHintService(context);
         final Iterable<InlineHintModel> hints = projectModel == null ? hintService.findAll() : hintService.getHintsForProject(projectModel, true);
@@ -95,11 +47,11 @@ public class GetProblemSummariesMethod implements WindupFreeMarkerMethod
 
             RuleSummaryKey key = new RuleSummaryKey(hint.getRuleID(), hint.getTitle());
 
-            ProblemSummary summary = ruleIDToSummary.get(key);
+            ProblemSummary summary = ruleToSummary.get(key);
             if (summary == null)
             {
-                summary = new ProblemSummary(hint.getSeverity().toString(), hint.getRuleID(), hint.getTitle(), 1, hint.getEffort());
-                ruleIDToSummary.put(key, summary);
+                summary = new ProblemSummary(hint.getSeverity(), hint.getRuleID(), hint.getTitle(), 1, hint.getEffort());
+                ruleToSummary.put(key, summary);
                 addToResults(results, summary);
             }
             else
@@ -143,13 +95,13 @@ public class GetProblemSummariesMethod implements WindupFreeMarkerMethod
                 continue;
 
             RuleSummaryKey key = new RuleSummaryKey(classification.getRuleID(), classification.getClassification());
-            ProblemSummary summary = ruleIDToSummary.get(key);
+            ProblemSummary summary = ruleToSummary.get(key);
             if (summary == null)
             {
-                summary = new ProblemSummary(classification.getSeverity().toString(), classification.getRuleID(), classification.getClassification(),
+                summary = new ProblemSummary(classification.getSeverity(), classification.getRuleID(), classification.getClassification(),
                             0,
                             classification.getEffort());
-                ruleIDToSummary.put(key, summary);
+                ruleToSummary.put(key, summary);
                 addToResults(results, summary);
             }
 
@@ -162,7 +114,7 @@ public class GetProblemSummariesMethod implements WindupFreeMarkerMethod
         return results;
     }
 
-    private void addToResults(Map<String, List<ProblemSummary>> results, ProblemSummary summary)
+    private static void addToResults(Map<Severity, List<ProblemSummary>> results, ProblemSummary summary)
     {
         List<ProblemSummary> list = results.get(summary.getSeverity());
         if (list == null)
@@ -171,47 +123,5 @@ public class GetProblemSummariesMethod implements WindupFreeMarkerMethod
             results.put(summary.getSeverity(), list);
         }
         list.add(summary);
-    }
-
-    @Override
-    public void setContext(GraphRewrite event)
-    {
-        this.context = event.getGraphContext();
-    }
-
-    private class RuleSummaryKey
-    {
-        private final String ruleID;
-        private final String title;
-
-        public RuleSummaryKey(String ruleID, String title)
-        {
-            this.ruleID = ruleID;
-            this.title = title;
-        }
-
-        @Override
-        public boolean equals(Object o)
-        {
-            if (this == o)
-                return true;
-            if (o == null || getClass() != o.getClass())
-                return false;
-
-            RuleSummaryKey that = (RuleSummaryKey) o;
-
-            if (ruleID != null ? !ruleID.equals(that.ruleID) : that.ruleID != null)
-                return false;
-            return !(title != null ? !title.equals(that.title) : that.title != null);
-
-        }
-
-        @Override
-        public int hashCode()
-        {
-            int result = ruleID != null ? ruleID.hashCode() : 0;
-            result = 31 * result + (title != null ? title.hashCode() : 0);
-            return result;
-        }
     }
 }
