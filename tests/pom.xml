@@ -88,6 +88,13 @@
 
         <!-- Test Dependencies -->
         <dependency>
+            <groupId>org.jboss.windup</groupId>
+            <artifactId>windup-bootstrap</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.jboss.forge.furnace.container</groupId>
             <artifactId>cdi</artifactId>
             <classifier>forge-addon</classifier>
@@ -101,5 +108,41 @@
         </dependency>  
 
     </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.jboss.forge.furnace</groupId>
+                <artifactId>furnace-maven-plugin</artifactId>
+                <version>${version.furnace}</version>
+                <executions>
+                    <execution>
+                        <id>deploy-addons-for-bootstrap-tests</id>
+                        <phase>process-test-resources</phase>
+                        <goals>
+                            <goal>addon-install</goal>
+                        </goals>
+                        <inherited>false</inherited>
+                        <configuration>
+                            <!-- obtained from windup-distribution/pom.xml -->
+                            <addonRepository>${project.build.directory}/forge-addons-for-bootstrap-tests</addonRepository>
+                            <addonIds>
+                                <addonId>org.jboss.forge.addon:addon-manager,${version.forge}</addonId>
+                                <addonId>org.jboss.forge.addon:maven,${version.forge}</addonId>
+                                <addonId>org.jboss.forge.addon:projects,${version.forge}</addonId>
+                                <addonId>org.jboss.windup.ui:windup-ui,${project.version}</addonId>
+                                <addonId>org.jboss.windup.rules.apps:windup-rules-java,${project.version}</addonId>
+                                <addonId>org.jboss.windup.rules.apps:windup-rules-java-project,${project.version}</addonId>
+                                <addonId>org.jboss.windup.rules.apps:windup-rules-java-ee,${project.version}</addonId>
+                                <addonId>org.jboss.windup:windup-tooling,${project.version}</addonId>
+                                <!-- this will be used in the tests, see InstallRemoveAddonCommandTest -->
+                                <!--<addonId>org.jboss.windup.rules.apps:windup-rules-tattletale,${project.version}</addonId>-->
+                            </addonIds>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
