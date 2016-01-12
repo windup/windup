@@ -1,7 +1,9 @@
 package org.jboss.windup.rules.apps.xml.rules;
 
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 
 /**
@@ -14,7 +16,7 @@ public class AbstractXsdValidationTest
     public static final String NOT_VALID_XSD_SCHEMA_URL="src/test/resources/xsd-validation/xsd-url-not-exist.xml";
     public static final String NO_XSD_SCHEMA_URL="src/test/resources/xsd-validation/no-xsd-url.xml";
 
-    public void addFileModel(GraphContext context, String filePath) {
+    protected void addFileModel(GraphContext context, String filePath) {
         FileModel fileModel = context.getFramed().addVertex(null, XmlFileModel.class);
         String fileName = parseFileName(filePath);
 
@@ -22,9 +24,25 @@ public class AbstractXsdValidationTest
         fileModel.setFileName(fileName);
     }
 
-    public String parseFileName(String filePath) {
+    protected String parseFileName(String filePath) {
         String[] filePathSplitted = filePath.split("/");
         String fileName = filePathSplitted[filePathSplitted.length-1];
         return fileName;
+    }
+
+    protected void initOnlineWindupConfiguration(GraphContext context)
+    {
+        initWindupConfiguration(context).setOfflineMode(false);
+    }
+
+    protected void initOfflineWindupConfiguration(GraphContext context)
+    {
+        initWindupConfiguration(context).setOfflineMode(true);
+    }
+
+    private WindupConfigurationModel initWindupConfiguration(GraphContext context) {
+        GraphService<WindupConfigurationModel> configurationService = new GraphService<>(context,
+                    WindupConfigurationModel.class);
+        return configurationService.create();
     }
 }

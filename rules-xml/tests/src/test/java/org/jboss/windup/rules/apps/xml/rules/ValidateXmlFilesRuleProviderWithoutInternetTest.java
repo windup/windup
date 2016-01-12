@@ -83,6 +83,8 @@ public class ValidateXmlFilesRuleProviderWithoutInternetTest  extends AbstractXs
         try (GraphContext context = factory.create())
         {
             addFileModel(context, VALID_XML);
+            initOnlineWindupConfiguration(context);
+
             List<? extends RuleProvider> ruleProviders = Collections.singletonList(ruleProvider);
             WindupTestUtilMethods.runOnlyRuleProviders(ruleProviders, context);
 
@@ -99,6 +101,8 @@ public class ValidateXmlFilesRuleProviderWithoutInternetTest  extends AbstractXs
         try (GraphContext context = factory.create())
         {
             addFileModel(context, NOT_VALID_XML);
+            initOnlineWindupConfiguration(context);
+
             List<? extends RuleProvider> ruleProviders = Collections.singletonList(ruleProvider);
             WindupTestUtilMethods.runOnlyRuleProviders(ruleProviders, context);
 
@@ -115,6 +119,8 @@ public class ValidateXmlFilesRuleProviderWithoutInternetTest  extends AbstractXs
         try (GraphContext context = factory.create())
         {
             addFileModel(context, NOT_VALID_XSD_SCHEMA_URL);
+            initOnlineWindupConfiguration(context);
+
             List<? extends RuleProvider> ruleProviders = Collections.singletonList(ruleProvider);
             WindupTestUtilMethods.runOnlyRuleProviders(ruleProviders, context);
 
@@ -136,6 +142,8 @@ public class ValidateXmlFilesRuleProviderWithoutInternetTest  extends AbstractXs
         try (GraphContext context = factory.create())
         {
             addFileModel(context, NO_XSD_SCHEMA_URL);
+            initOnlineWindupConfiguration(context);
+
             List<? extends RuleProvider> ruleProviders = Collections.singletonList(ruleProvider);
             WindupTestUtilMethods.runOnlyRuleProviders(ruleProviders, context);
 

@@ -73,7 +73,7 @@ public class ValidateXmlFilesRuleProvider extends AbstractRuleProvider
     {
         return ConfigurationBuilder.begin()
                     .addRule()
-                    .when(Query.fromType(XmlFileModel.class))
+                    .when(new ProcessingIsOnlineGraphCondition().and(Query.fromType(XmlFileModel.class)))
                     .perform(new ValidateAndRegisterClassification());
     }
 

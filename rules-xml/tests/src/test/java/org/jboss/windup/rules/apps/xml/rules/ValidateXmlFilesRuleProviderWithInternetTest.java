@@ -10,6 +10,7 @@ import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
+import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.ClassificationModel;
@@ -100,6 +101,7 @@ public class ValidateXmlFilesRuleProviderWithInternetTest extends AbstractXsdVal
     {
         try (GraphContext context = factory.create())
         {
+            initOnlineWindupConfiguration(context);
             addFileModel(context, VALID_XML);
             List<? extends RuleProvider> ruleProviders = Collections.singletonList(ruleProvider);
             WindupTestUtilMethods.runOnlyRuleProviders(ruleProviders, context);
@@ -116,7 +118,9 @@ public class ValidateXmlFilesRuleProviderWithInternetTest extends AbstractXsdVal
     {
         try (GraphContext context = factory.create())
         {
+            initOnlineWindupConfiguration(context);
             addFileModel(context, NOT_VALID_XML);
+
             doThrow(new SAXException()).when(mockValidator).validate(any(Source.class));
 
             List<? extends RuleProvider> ruleProviders = Collections.singletonList(ruleProvider);
@@ -128,7 +132,7 @@ public class ValidateXmlFilesRuleProviderWithInternetTest extends AbstractXsdVal
             Assert.assertEquals(1, Iterables.size(classifications));
 
             final ClassificationModel notValidClassification = classifications.iterator().next();
-            Assert.assertEquals(XmlFileModel.NOT_VALID_XML,notValidClassification.getClassification());
+            Assert.assertEquals(XmlFileModel.NOT_VALID_XML, notValidClassification.getClassification());
             Assert.assertEquals(0, notValidClassification.getEffort());
             Assert.assertEquals(1, Iterables.size(notValidClassification.getFileModels()));
             FileModel fileWithClassification = notValidClassification.getFileModels().iterator().next();
@@ -142,7 +146,9 @@ public class ValidateXmlFilesRuleProviderWithInternetTest extends AbstractXsdVal
     {
         try (GraphContext context = factory.create())
         {
+            initOnlineWindupConfiguration(context);
             addFileModel(context, NOT_VALID_XSD_SCHEMA_URL);
+
             when(mockSchema.newSchema(any(URL.class))).thenThrow(new SAXException(new FileNotFoundException()));
 
             List<? extends RuleProvider> ruleProviders = Collections.singletonList(ruleProvider);
@@ -171,6 +177,29 @@ public class ValidateXmlFilesRuleProviderWithInternetTest extends AbstractXsdVal
         try (GraphContext context = factory.create())
         {
             addFileModel(context, NO_XSD_SCHEMA_URL);
+            initOnlineWindupConfiguration(context);
+
+            List<? extends RuleProvider> ruleProviders = Collections.singletonList(ruleProvider);
+            WindupTestUtilMethods.runOnlyRuleProviders(ruleProviders, context);
+
+            GraphService<ClassificationModel> classificationService = new GraphService<>(context,
+                        ClassificationModel.class);
+            Iterable<ClassificationModel> classifications = classificationService.findAll();
+            Assert.assertEquals(0, Iterables.size(classifications));
+
+        }
+    }
+
+    @Test
+    public void testNotValidXmlInOfflineMode() throws Exception
+    {
+        try (GraphContext context = factory.create())
+        {
+            initOfflineWindupConfiguration(context);
+            addFileModel(context, NOT_VALID_XML);
+
+            doThrow(new SAXException()).when(mockValidator).validate(any(Source.class));
+
             List<? extends RuleProvider> ruleProviders = Collections.singletonList(ruleProvider);
             WindupTestUtilMethods.runOnlyRuleProviders(ruleProviders, context);
 
