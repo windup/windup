@@ -31,6 +31,7 @@ body.java-application #treeView-Projects-wrap #treeView-Projects {
 }
 body.java-application #treeView-Projects-wrap.short #treeView-Projects {
     height: 130px;
+    overflow: scroll;
 }
 
 body.java-application #treeView-Projects-wrap .showButtons { z-index: 20; }

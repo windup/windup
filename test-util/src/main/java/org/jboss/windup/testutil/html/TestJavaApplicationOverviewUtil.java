@@ -37,6 +37,9 @@ public class TestJavaApplicationOverviewUtil extends TestReportUtil
             contents = contents.replace("<script src=\"resources/libraries/flot/jquery.flot.min.js\"></script>",
                     "<script>$.plot = function(){}</script>");
             contents = contents.replace("<script src=\"resources/libraries/flot/jquery.flot.pie.min.js\"></script>", "");
+            // RenderApplicationPieChartDirective
+            contents = contents.replace("<script src=\"resources/js/jquery.color-2.1.2.min.js\"></script>",
+                    "<script>jQuery.Color = function(){ return { toHexString: function(){ return \"#aa0000\"; } } }</script>");
 
             try (FileWriter writer = new FileWriter(modifiedPath.toFile()))
             {

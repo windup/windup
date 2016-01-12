@@ -196,7 +196,7 @@
     </div>
 
     <script>
-        thisProject = new ProjectNode("${projectModel.name?js_string}", "${projectID}");
+        thisProject = new ProjectNode("${projectModel.rootFileModel.prettyPath?js_string}", "${projectID}");
         thisProject.sourceBased = ${projectModel.sourceBased!false?c};
         var $tagLabels = $("#${projectID} .projectFile .tech .label");
         var $tagWarns = $tagLabels.find(".warning");
@@ -288,8 +288,8 @@
                                 </div>
                                 <div id="treeView-Projects"></div>
                                 <div class="showButtons hideUntilComputed">
-                                    <a class="showMore" href="#" onclick='$("#treeView-Projects-wrap").removeClass("short")'>Show all...</a>
-                                    <a class="showLess" href="#" onclick='$("#treeView-Projects-wrap").addClass("short")'>Show less</a>
+                                    <a class="showMore" href="#" onclick='$("#treeView-Projects-wrap").removeClass("short")'>Show all &#x21F2;</a>
+                                    <a class="showLess" href="#" onclick='$("#treeView-Projects-wrap").addClass("short")'>Show less &#x21F1;</a>
                                 </div>
                             </div>
                         </td>
@@ -357,22 +357,24 @@
 
 
         <script>
+            t0 = Date.now();
+            expandMemory();
+            console.log("PERF: expandMemory() took " + (Date.now() - t0) + " ms.");
+
+
             // Panels toggling - slide up or down.
             $(document).on("click", ".panel-heading", function(event) {
                 togglePanelSlide.call(this, event);
             });
-            $('#collapseAll').toggle();
-
-
-            // Tags bar charts.
-            var chartObjects = {};
         </script>
         <script src="resources/tagsData.js"></script>
         <script>
+            // Tags bar charts.
             $(document).ready( function() {
                 window.tagService = new TagService();
                 // The hierarchy of tags
                 fillTagService(window.tagService);
+                var chartObjects = {};
                 createTagCharts();
             })
 
@@ -380,9 +382,9 @@
             // Projects TreeView.
             $(function() {
                 window.setTimeout( function(){
-                    t0 = performance.now();
+                    t0 = Date.now();
                     renderAppTreeView(rootProject);
-                    console.log("PERF: renderAppTreeView() took " + (performance.now() - t0) + " ms.");
+                    console.log("PERF: renderAppTreeView() took " + (Date.now() - t0) + " ms.");
                 }, 500 );
             });
         </script>

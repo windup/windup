@@ -16,26 +16,42 @@ function setPanelSlide($panelHeading, expand){
 }
 
 function expandMemory(){
+    expandMemory.elements$ = [];
+    var t0 = Date.now();
 	$('.panel-heading').each(function() {
-		var projectGuid = $(this).parent().data("windup-projectguid");
-		var storyPoints = $(this).parent().data("windup-project-storypoints");
+        expandMemory.elements$.push($(this));
+    });
+    console.log('PERF: $(".panel-heading") found ' + expandMemory.elements$.length + " elements in " + (Date.now() - t0) + " ms.");
+    window.setTimeout(expandMemory_delayed, 500);
+}
 
+function expandMemory_delayed() {
+    var BATCH_SIZE = 25;
+    console.log("PERF: expandMemory_delayed(), next " + BATCH_SIZE + " projects.");///
+    for (var i = BATCH_SIZE; i > 0; i--)
+    {
+        var $element = expandMemory.elements$.shift();
+        //console.log($element);///
+        if($element == undefined){
+            // All project boxes were processed.
+            showCollapseExpandLinksAsNeeded();
+            return;
+        }
+		var projectGuid = $element.parent().data("windup-projectguid");
 		if($.sessionStorage.isSet(projectGuid)) {
-			var value = $.sessionStorage.get(projectGuid);
-			if(value == true) {
-				setPanelSlide($(this), true);
-				return;
+			if($.sessionStorage.get(projectGuid)) {
+				setPanelSlide($element, true);
 			}
-			else {
-				return;
-			}
+            continue;
 		}
 
+        var storyPoints = $element.parent().data("windup-project-storypoints");
 		if(parseInt(storyPoints) > 0) {
-			setPanelSlide($(this), true);
-			return;
+			setPanelSlide($element, true);
+			continue;
 		}
-	});
+	}
+    window.setTimeout(expandMemory_delayed, 300);
 }
 
 
@@ -45,31 +61,23 @@ function expandAll(){
     $('.panel-heading').find('i').removeClass('glyphicon-expand').addClass('glyphicon-collapse-up');
     $('.panel-heading').addClass('panel-boarding').removeClass('panel-collapsed');
     $('.panel-heading').parents('.panel').addClass('panel-boarding');
-    $('#expandAll').toggle();
-    $('#collapseAll').toggle();
+    $('#expandAll').hide();
+    $('#collapseAll').show();
 }
 
 function collapseAll(){
+    $('.panel-body').slideUp();
     $('.panel-heading').find('i').removeClass('glyphicon-collapse-up').addClass('glyphicon-expand');
 	$('.panel-heading').addClass('panel-collapsed').removeClass('panel-boarding');
 	$('.panel-heading').parents('.panel').addClass('panel-collapsed').removeClass('panel-boarding');
-	$('#expandAll').toggle();
-	$('#collapseAll').toggle();
+	$('#expandAll').show();
+	$('#collapseAll').hide();
 }
 
-t0 = performance.now();
-expandMemory();
-console.log("PERF: expandMemory() took " + (performance.now() - t0) + " ms.");
-
-
-// show properly the Collapse/Expand All link
-if ( $('.panel-heading').find('.glyphicon-chevron-up').length > 0) {
-   $('#collapseAll').toggle();
+function showCollapseExpandLinksAsNeeded(){
+    $('#collapseAll').toggle( $('.panel-heading').find('.glyphicon-collapse-up').length > 0 );
+    $('#expandAll').toggle( $('.panel-heading').find('.glyphicon-expand').length > 0 );
 }
-else {
-   $('#expandAll').toggle();
-}
-
 
 
 /* ========   Projects TreeView   ========== */
@@ -116,24 +124,25 @@ function renderAppTreeView(rootProject)
 /* ========   Projects TreeView   ========== */
 
 function createTagCharts() {
+    window.chartObjects = {};
     window.projectBoxes$ = [];
 
     // For each project's file, count it's tags.
     window.rootProjCountMap = {};
 
-    var t0 = performance.now();
+    var t0 = Date.now();
     $("div.projectBox").each(function(iProj){
     ///$("body > div.container-fluid > div.row > div.theme-showcase > div.projectBox").each(function(iProj){
         window.projectBoxes$.push($(this));
     });
-    console.log('PERF: $("div.projectBox") found ' + window.projectBoxes$.length + " elements in " + (performance.now() - t0) + " ms.");
+    console.log('PERF: $("div.projectBox") found ' + window.projectBoxes$.length + " elements in " + (Date.now() - t0) + " ms.");
     window.setTimeout(processNextChart, 50);
 }
 
 function processNextChart()
 {
-    console.trace("PERF: processNextChart(), next " + BATCH_SIZE + " projects.");
     var BATCH_SIZE = 25;
+    console.log("PERF: processNextChart(), next " + BATCH_SIZE + " projects.");
     for (var i = BATCH_SIZE; i > 0; i--)
     {
         var $projectBox = window.projectBoxes$.shift();
@@ -145,7 +154,7 @@ function processNextChart()
         }
 
         var projectId = $projectBox.attr("id");
-        //console.trace("PERF: " + performance.now() + " Processing projectBox: " + projectId);
+        //console.log("PERF: " + Date.now() + " Processing projectBox: " + projectId);
         var curProjCountsMap = {};
         var rootProjCountMap = window.rootProjCountMap;
 
