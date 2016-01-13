@@ -43,9 +43,9 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * This renders the ApplicationReport, along with all of its subapplications via freemarker.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- * 
+ *
  */
 public class RenderReportRuleProvider extends AbstractRuleProvider
 {
@@ -69,7 +69,7 @@ public class RenderReportRuleProvider extends AbstractRuleProvider
             .addRule()
             .when(Query.fromType(ReportModel.class).withProperty(ReportModel.TEMPLATE_TYPE, TemplateType.FREEMARKER.toString()))
             .perform(new FreeMarkerThreadedRenderer(furnace))
-            
+
             .addRule()
             .when(Query.fromType(ReportResourceFileModel.class))
             .perform(new AbstractIterationOperation<ReportResourceFileModel>() {
@@ -86,7 +86,7 @@ public class RenderReportRuleProvider extends AbstractRuleProvider
                         FileUtils.copyFile(payload.asFile(), fullPath);
                         LOG.info("Copied raw file: " + payload.getFilePath() + " to: " + fullPath.getAbsolutePath());
                     } catch (IOException e) {
-                        LOG.warning("Exception creating file: " + fullPath.getAbsolutePath());
+                        LOG.warning("IOException creating file: " + fullPath.getAbsolutePath() + "\n\t" + e.getMessage());
                     }
                 }
             });

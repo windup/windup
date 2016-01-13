@@ -5,180 +5,23 @@ pre#source {
 	padding: 0;
 }
 
-div.rightColumn {
-    float: right;
-    border-left: 1px solid #CCC;
-}
-div.leftColumn {
-    float: right;
-}
-
 div.inline-comment-body p:first-child, div.inline-comment-body ul:first-child, div.inline-comment-body ol:first-child {
        padding-top:0;
-}
-
-div.windupHighLevel {
-	overflow: hidden;
-	margin: 0 auto;
-	background: white;
-	border-radius: 10px;
-	box-shadow: 0 0 5px #999;
-	padding: 10px;
-}
-div.totalSummary {
-    display: block;
-    margin-right:10px;
-}
-
-div.windupSummary {
-	margin:10px;
-}
-
-div.totalLoe {
-	font-size: 100px;
-	display: block;
-	color: #00254b;
-	text-align: right;
-	text-shadow: 0px -1px 1px #000;
-}
-
-div.totalDesc {
-	color: #999;
-	font-size: 15px;
-	text-align: right;
-	margin-right: 10px;
-	margin-top: -10px;
 }
 
 .source-report .info .classifications .desc { padding-left: 3ex; }
 
 
-span.jreVersion {
-	border: 2px solid #146B90;
-	background: #49B3DF;
-	font-weight: normal;
-	font-size: 11px;
-	margin-top: -3px;
-	color: white;
-	border-radius: 5px;
-	padding: 2px 4px;
-	text-shadow: 1px 1px 1px black;
-}
-
-div.archiveResult {
-	border: 3px solid #00254b;
-	border-radius: 4px;
-	margin: 10px 0;
-}
-
-div.archiveVendorVersion {
-	margin-bottom: 10px;
-	font-weight:bold;
-}
-
-
-div.archivePie {
-	margin-bottom: 10px;
-	padding: 10px 0;
-}
-
-div.archiveResult div.content {
-	overflow-x: auto;
-}
-
-h3.archiveResultTitle {
-	background: #00254b;
-	margin: 0;
-	padding: 4px;
-	color: #FFF;
-}
-
-h3.archiveResultTitle a {
-	color: #FFF !important;
-}
-
-table.archive-report {
-	width: 100%;
-	border-collapse: collapse;
-}
-
-th.archiveResultTitle {
-	background:#000; color:#FFF;
-}
-
-tr th:last-child {
-	width: 600px;
-}
-
-tr td:last-child {
-	width: 600px;
-}
-
-tr th:nth-child(2) {
-	width: 80px;
-}
-
-tr td:nth-child(2) {
-	width: 70px;
-}
+tr th:last-child { width: 600px; }
+tr td:last-child { width: 600px; }
+tr th:nth-child(2) { width: 80px; }
+tr td:nth-child(2) { width: 70px; }
 
 pre {
 	font-family : "Lucida Grand", Verdana, Arial, Helvetica, sans-serif;
 }
 
-div.reportHeader {
-	padding:5px 15px;
-	border-bottom:1px solid #CCC;
-
-	background: #FFF;
-}
-
-div.commentBlock {
-	border-top:1px solid #000 !important;
-	border-left: 0;
-	border-right: 0;
-	border-botom: 0;
-	color: #FFF;
-	display: block;
-	background:#27AB27;
-	margin-left:-6px;
-	padding-bottom: 1px;
-    white-space: normal;
-}
-
-ul li.commentLine {
-	list-style: disc !important;
-}
-
-div.commentHint {
-    border: 1px solid #317131;
-    margin: 2px 10px 10px 2px;
-    background: #52BC52;
-    padding: 2px 2px 2px 8px;
-    border-left: 5px solid #317131;
-    word-wrap: break-word;
-}
-
-div.commentHint p:last-child {
-	margin-bottom: 0;
-	padding-bottom: 0;
-}
-div.commentHint p:first-child {
-	margin-top: 0;
-	padding-top: 0;
-}
-
-pre.commentBlockCode {
-	white-space: pre;
-}
-
-td.archiveSummary {
-	background: #FFF;
-	height: 250px;
-	border-bottom:1px solid #96a3a9;
-	padding: 10px;
-}
-
+/* Pie chart */
 div.windupPieGraph {
 	height:250px;
 	width:800px;
@@ -194,80 +37,6 @@ div.windupPieGraph div.legend td.legendColorBox,
 div.windupPieGraph div.legend td.legendColorBox div {
 	width: 14px;
 }
-
-div.windupHeader {
-	padding: 10px 0;
-	text-align: center;
-	overflow:hidden;
-	background: #FFF;
-	border-bottom: 4px solid #00254b;
-}
-
-div.windupHeader img {
-	height: 70px;
-}
-
-div.windupFooter {
-	padding: 10px 0;
-	text-align: center;
-	overflow:hidden;
-	border-top: 1px solid #CCC;
-	background: #EFEFEF;
-}
-
-div.windupBody {
-	padding: 10px;
-	background: #CCC;
-	border-top: 1px solid #999;
-	border-bottom: 1px solid #999;
-	box-shadow: 0 0 5px #999 inset;
-}
-
-div.windupReportBody {
-	background: #FFF;
-	padding:10px 0;
-}
-
-div.windupFooter img {
-	height: 20px;
-	border: 0px;
-}
-
-div.windupFooter a img {
-	height: 20px;
-	border: 0px;
-}
-
-
-table.archive-report tr {
-    border-top: 1px solid #CCC;
-    border-bottom: 1px solid #CCC;
-}
-
-table.archive-report tr:nth-child(odd) {
-    background-color: #EEE;
-}
-
-table.archive-report tr th {
-    font-size: 14pt;
-    font-weight: 200;
-    text-align: left;
-    vertical-align: bottom;
-    padding: 5px;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    text-rendering: optimizeLegibility;
-    text-transform: uppercase;
-
-}
-
-table.archive-report tr td {
-    font-size: 10pt;
-    font-weight: bold;
-    vertical-align: top;
-    text-align: left;
-    padding: 5px;
-}
-
 
 
 div.sausage {
@@ -285,26 +54,6 @@ div.sausage-current {
 }
 span.dash {
 	padding: 0 10px;
-}
-
-div.sourceView {
-	padding:2px;
-	margin: 3px 5px 0 0;
-	float:left;
-}
-div.sourceBlock {
-	display: inline-block;
-	height: 7px;
-	width: 7px;
-	margin: 1px;
-}
-
-div.redSourceBlock {
-	background: #C52323;
-}
-
-div.greenSourceBlock {
-	background: #61C423;
 }
 
 ul.links {
@@ -498,39 +247,6 @@ div.green pre {
 
 li.box + li.box {
 	margin-top:6px;
-}
-
-div.archiveSummaryPart {
-	min-width: 100px;
-	float: left;
-	margin: 0 10px;
-	padding: 10px;
-}
-
-div.archiveSummaryPart p {
-	padding: 0;
-	margin: 10px 0;
-}
-
-.archiveSummary h3 {
-	margin: 0;
-	padding: 5px 0;
-	border-bottom: 1px solid #CCC;
-	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-	font-weight: 200;
-	font-size: 14pt;
-	text-transform: uppercase;
-	text-rendering: optimizeLegibility;
-}
-
-div.archiveSummary {
-	overflow: hidden;
-	margin:15px;
-	padding:10px;
-	background: whitesmoke;
-	border:1px solid #CCC;
-	box-shadow: 0 0 5px #CCC inset;
-	border-radius: 5px;
 }
 
 .sh_ide-eclipse .sh_sourceCode .sh_type,

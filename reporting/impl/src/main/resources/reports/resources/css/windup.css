@@ -96,7 +96,7 @@ h3.panel-title span.s {
 .panel .panel-body  .points { float: left; text-align: center; color: #00254b; }
 
 .mainGraphContainer .points .number  { font-size: 85pt; width: 1.5em; }
-.projectBox         .points          { width: 43%; }
+.projectBox         .points          { width: 24%; }
 .projectBox         .points .number  { font-size: 70pt; }
 .panel .panel-body  .points .number  { font-size: 50pt; width: 1.5em; }
 .panel .panel-body  .points .mainNumber  { font-size: 50pt;}
@@ -112,7 +112,7 @@ dl:last-child {
 	margin-bottom:0;
 }
 
-/*overwriting bootstrap style*/ 
+/*overwriting bootstrap style*/
 .label {
     display: block;
     float: left;
@@ -202,6 +202,7 @@ a.windup-file-location {
     position: absolute;
     left: 3em;
     width: 60%;
+    z-index: 10000;
 }
 
 .page-header h1 div.path {
@@ -244,6 +245,9 @@ p.windup-contributors  {
 
 /** Bootstrap overrides **/
 
+.panel-primary {
+    border-color: #00445C;
+}
 
 /** Wider <dd> **/
 .dl-horizontal dt {
