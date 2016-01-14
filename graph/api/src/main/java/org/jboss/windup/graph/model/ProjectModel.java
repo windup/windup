@@ -17,9 +17,9 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 /**
  * Base interface representing an abstract project model with a project name, version, type, and location on disk. Projects may be source-based or
  * binary based.
- * 
+ *
  * Additional models may extend this to support additional project types (eg, Maven-based projects).
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(ProjectModel.TYPE)
@@ -41,7 +41,7 @@ public interface ProjectModel extends WindupVertexFrame
     /**
      * This represents the root directory (in the case of a source-based analysis) or root archive (for binary analysis) containing this particular
      * project.
-     * 
+     *
      */
     @Adjacency(label = ROOT_FILE_MODEL, direction = Direction.OUT)
     void setRootFileModel(FileModel fileModel);
@@ -61,7 +61,7 @@ public interface ProjectModel extends WindupVertexFrame
      * of the dependencies for a Maven project, or as a binary provided by the user for analysis).
      */
     @Property(SOURCE_BASED)
-    boolean isSourceBased();
+    Boolean isSourceBased();
 
     /**
      * The organization associated with this project.
@@ -191,7 +191,7 @@ public interface ProjectModel extends WindupVertexFrame
 
     /**
      * Returns the project model that represents the whole application. If this projectModel is the root projectModel, it will return it.
-     * 
+     *
      * @return ProjectModel representing the whole application
      */
     @JavaHandler
