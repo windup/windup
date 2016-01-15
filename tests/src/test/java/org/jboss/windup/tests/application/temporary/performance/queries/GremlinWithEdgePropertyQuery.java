@@ -15,6 +15,9 @@ import java.util.List;
  */
 public class GremlinWithEdgePropertyQuery extends TestQuery
 {
+    public GremlinWithEdgePropertyQuery() {
+        super();
+    }
 
     public GremlinWithEdgePropertyQuery(GraphContext context)
     {

@@ -15,6 +15,11 @@ import java.util.List;
  */
 public class GremlinWithoutEdgePropertyQuery extends TestQuery
 {
+
+    public GremlinWithoutEdgePropertyQuery() {
+        super();
+    }
+
     public GremlinWithoutEdgePropertyQuery(GraphContext context)
     {
         super(context);

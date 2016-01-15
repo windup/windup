@@ -1,24 +1,25 @@
 package org.jboss.windup.tests.application.temporary.performance;
 
-import junit.framework.Assert;
+import com.google.common.collect.Iterables;
+import org.junit.Assert;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
+import org.jboss.forge.furnace.services.Imported;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.tests.application.WindupArchitectureTest;
 import org.jboss.windup.tests.application.temporary.performance.data.initialization.AbstractDataInitializer;
 import org.jboss.windup.tests.application.temporary.performance.data.initialization.NoiseDataInitializer;
 import org.jboss.windup.tests.application.temporary.performance.data.initialization.TestDataInitializer;
-import org.jboss.windup.tests.application.temporary.performance.queries.GremlinWithEdgePropertyQuery;
 import org.jboss.windup.tests.application.temporary.performance.queries.TestQuery;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.enterprise.inject.Any;
-import javax.enterprise.inject.Instance;
 import javax.inject.Inject;
 import java.io.PrintWriter;
 
@@ -29,8 +30,8 @@ import java.io.PrintWriter;
 public class EdgeWithPropertyPerformanceTest extends WindupArchitectureTest
 {
 
-    public static final int NUMBER_OF_FILE_MODELS_WITH_PREFIX = 10000;
-    public static final int NUMBER_OF_FILE_MODELS_WITHOUT_PREFIX = 90000;
+    public static final int NUMBER_OF_FILE_MODELS_WITH_PREFIX = 50000;
+    public static final int NUMBER_OF_FILE_MODELS_WITHOUT_PREFIX = 50000;
 
     //noise vertices
     public static final int NUMBER_OF_FILE_MODELS_NOISE = 100000;
@@ -62,7 +63,7 @@ public class EdgeWithPropertyPerformanceTest extends WindupArchitectureTest
 
 
     @Inject @Any
-    private Instance<TestQuery> queries;
+    private Imported<TestQuery> queries;
 
 
     @Test
@@ -79,8 +80,9 @@ public class EdgeWithPropertyPerformanceTest extends WindupArchitectureTest
             {
                 initData(context);
                 query.setContext(context);
-                query.query();
-                writer.println(query.getTotalTimeReport());
+                Iterable<FileModel> result = query.queryAndMeasureTime();
+                Assert.assertEquals(NUMBER_OF_FILE_MODELS_WITH_PREFIX,Iterables.size(result));
+                            writer.println(query.getTotalTimeReport());
                 writer.println();
             }
         }
@@ -88,6 +90,7 @@ public class EdgeWithPropertyPerformanceTest extends WindupArchitectureTest
         writer.println();
         writer.println("INITIALIZATION TIME:");
         writer.println(testDataInitializer.getTotalReport());
+        writer.close();;
     }
 
     private void initData(GraphContext context) {

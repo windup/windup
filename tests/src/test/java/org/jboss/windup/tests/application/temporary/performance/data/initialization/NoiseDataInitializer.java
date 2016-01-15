@@ -2,6 +2,7 @@ package org.jboss.windup.tests.application.temporary.performance.data.initializa
 
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.model.ClassificationModel;
+import org.jboss.windup.reporting.model.InlineHintModel;
 
 /**
  * Created by mbriskar on 1/15/16.
@@ -28,12 +29,18 @@ public class NoiseDataInitializer extends AbstractDataInitializer
         for(int i =0; i< numberOfClassificationNoise; i++) {
             ClassificationModel classificationModel = context.getFramed().addVertex(null, ClassificationModel.class);
             classificationModel.setClassification(i + ". classification");
+            if(i%100 == 0) {
+                context.getGraph().getBaseGraph().commit();
+            }
         }
         context.getGraph().getBaseGraph().commit();
         //noise hints
         for(int i =0; i< numberOfHintsNoise; i++) {
-            ClassificationModel classificationModel = context.getFramed().addVertex(null, ClassificationModel.class);
-            classificationModel.setClassification(i + ". hint");
+            InlineHintModel hintModel = context.getFramed().addVertex(null, InlineHintModel.class);
+            hintModel.setHint(i + ". hint");
+            if(i%100 == 0) {
+                context.getGraph().getBaseGraph().commit();
+            }
         }
         context.getGraph().getBaseGraph().commit();
     }

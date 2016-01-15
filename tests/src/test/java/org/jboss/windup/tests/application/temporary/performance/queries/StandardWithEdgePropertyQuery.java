@@ -12,6 +12,11 @@ import java.util.List;
  */
 public class StandardWithEdgePropertyQuery extends TestQuery
 {
+
+    public StandardWithEdgePropertyQuery() {
+        super();
+    }
+
     public StandardWithEdgePropertyQuery(GraphContext context)
     {
         super(context);

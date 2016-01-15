@@ -28,7 +28,7 @@ public abstract class TestQuery
     }
     public abstract Iterable<FileModel> specificQuery();
 
-    public Iterable<FileModel> query() {
+    public Iterable<FileModel> queryAndMeasureTime() {
         long startTime = System.nanoTime();
         Iterable<FileModel> resultFileModels = specificQuery();
         long queryTime = System.nanoTime() - startTime;
@@ -46,6 +46,6 @@ public abstract class TestQuery
     }
 
     public String getTotalTimeReport() {
-        return "Getting output through edges with Gremlin took " + (totalQueryTime) / 1000 + " ms.";
+        return "Getting output from "  + getClass().getSimpleName()+" took " + (totalQueryTime) / 1000 + " ms.";
     }
 }
