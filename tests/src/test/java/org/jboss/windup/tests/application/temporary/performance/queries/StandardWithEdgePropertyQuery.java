@@ -30,7 +30,7 @@ public class StandardWithEdgePropertyQuery extends TestQuery
         List<FileModel> resultFileModels = new ArrayList<>();
         for (Edge fileModelEdge : getTheOnlyProjectModel().asVertex().getEdges(Direction.OUT, ProjectModel.TO_FILE_MODEL_EDGE))
         {
-            if (fileModelEdge.getProperty(FileModel.FILE_NAME).toString().contains("prefix"))
+            if (fileModelEdge.getProperty(FileModel.FILE_NAME).toString().equals("hardcoded_name"))
             {
                 FileModel fileModel = context.getFramed().frame(fileModelEdge.getVertex(Direction.OUT), FileModel.class);
                 resultFileModels.add(fileModel);

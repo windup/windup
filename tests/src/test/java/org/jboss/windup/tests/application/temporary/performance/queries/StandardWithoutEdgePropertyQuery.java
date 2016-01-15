@@ -29,7 +29,7 @@ public class StandardWithoutEdgePropertyQuery extends TestQuery
         List<FileModel> resultFileModels = new ArrayList<>();
         for (Vertex file : getTheOnlyProjectModel().asVertex().getVertices(Direction.OUT, ProjectModel.PROJECT_MODEL_TO_FILE))
         {
-            if (file.getProperty(FileModel.FILE_NAME).toString().contains("prefix"))
+            if (file.getProperty(FileModel.FILE_NAME).toString().equals("hardcoded_name"))
             {
                 resultFileModels.add(context.getFramed().frame(file, FileModel.class));
             }

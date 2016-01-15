@@ -30,7 +30,7 @@ public class GremlinWithoutEdgePropertyQuery extends TestQuery
         List<FileModel> resultFileModels = new ArrayList<>();
         GremlinPipeline<Iterable<?>, Object> pipeline = new GremlinPipeline<>(getTheOnlyProjectModel().asVertex());
         pipeline.out(ProjectModel.PROJECT_MODEL_TO_FILE);
-        pipeline.has(FileModel.FILE_NAME, Text.CONTAINS, "prefix");
+        pipeline.has(FileModel.FILE_NAME,  "hardcoded_name");
         for (Object vertex : pipeline)
         {
             Vertex v = (Vertex) vertex;

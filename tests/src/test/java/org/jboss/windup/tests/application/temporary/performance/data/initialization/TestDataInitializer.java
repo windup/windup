@@ -49,7 +49,7 @@ public class TestDataInitializer extends AbstractDataInitializer
 
     public List<FileModel> createTestingFileModels(GraphContext context)
     {
-        List<FileModel> fileModelsWithPreffix = createFileModelsWithPreffix("prefix-", numberOfFileModelsWithPrefix, context);
+        List<FileModel> fileModelsWithPreffix = createFileModelsWithHardcodedName("hardcoded_name", numberOfFileModelsWithPrefix, context);
         List<FileModel> fileModelsWithoutPreffix = createFileModelsWithPreffix("", numberOfFileModelsWithoutPrefix, context);
         List<FileModel> result = new ArrayList<>();
         result.addAll(fileModelsWithPreffix);

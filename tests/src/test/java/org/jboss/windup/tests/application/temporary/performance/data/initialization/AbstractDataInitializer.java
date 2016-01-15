@@ -28,4 +28,16 @@ public abstract class AbstractDataInitializer
         return createdFileModels;
     }
 
+    public List<FileModel> createFileModelsWithHardcodedName(String fileName, int numberOfFiles, GraphContext context)
+    {
+        List<FileModel> createdFileModels = new ArrayList<>();
+        for (int i = 0; i < numberOfFiles; i++)
+        {
+            FileModel fileModel = context.getFramed().addVertex(null, FileModel.class);
+            fileModel.setFileName(fileName);
+            createdFileModels.add(fileModel);
+        }
+        return createdFileModels;
+    }
+
 }
