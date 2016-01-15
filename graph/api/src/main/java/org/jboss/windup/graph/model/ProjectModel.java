@@ -3,6 +3,7 @@ package org.jboss.windup.graph.model;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.tinkerpop.frames.Incidence;
 import org.jboss.windup.graph.model.resource.FileModel;
 
 import com.tinkerpop.blueprints.Direction;
@@ -13,6 +14,7 @@ import com.tinkerpop.frames.annotations.gremlin.GremlinGroovy;
 import com.tinkerpop.frames.modules.javahandler.JavaHandler;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.model.resource.ToFileModelEdge;
 
 /**
  * Base interface representing an abstract project model with a project name, version, type, and location on disk. Projects may be source-based or
@@ -202,6 +204,15 @@ public interface ProjectModel extends WindupVertexFrame
      */
     @JavaHandler
     Set<ProjectModel> getAllProjectModels();
+
+    static String TO_FILE_MODEL_EDGE = "toFileModelEdge";
+
+    @Incidence(label = TO_FILE_MODEL_EDGE, direction = Direction.OUT)
+    public Iterable<ToFileModelEdge> getToFileModelEdges();
+
+    @Incidence(label = TO_FILE_MODEL_EDGE, direction = Direction.OUT)
+    public ToFileModelEdge addToFileModelEdges(ToFileModelEdge edge);
+
 
     abstract class Impl implements ProjectModel, JavaHandlerContext<Vertex>
     {
