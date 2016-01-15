@@ -1,14 +1,14 @@
 package org.jboss.windup.tests.application.temporary.performance.queries;
 
-import com.thinkaurelius.titan.core.attribute.Text;
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.blueprints.Vertex;
 
 /**
  * Created by mbriskar on 1/15/16.
@@ -27,11 +27,11 @@ public class StandardWithoutEdgePropertyQuery extends TestQuery
     @Override public Iterable<FileModel> specificQuery()
     {
         List<FileModel> resultFileModels = new ArrayList<>();
-        for (FileModel fileModel : getTheOnlyProjectModel().getFileModels())
+        for (Vertex file : getTheOnlyProjectModel().asVertex().getVertices(Direction.OUT, ProjectModel.PROJECT_MODEL_TO_FILE))
         {
-            if (fileModel.getFileName().contains("prefix"))
+            if (file.getProperty(FileModel.FILE_NAME).toString().contains("prefix"))
             {
-                resultFileModels.add(fileModel);
+                resultFileModels.add(context.getFramed().frame(file, FileModel.class));
             }
         }
         return resultFileModels;
