@@ -1,0 +1,129 @@
+<?xml version="1.0"?>
+<tags setName="java">
+    <tag name="java-ee" root="true" color="#00CC00">
+        <tag name="servlet"/>
+        <tag name="datasource"/>
+        <tag name="datasources"/>
+        <tag name="application-server:" pseudo="true">
+            <tag name="glassfish"/>
+            <tag name="resin"/>
+            <tag name="jonas"/>
+            <tag name="jrun"/>
+            <tag name="websphere"/>
+            <tag name="weblogic"/>
+            <tag name="orion"/>
+            <tag name="jboss-eap5"/>
+        </tag>
+        <tag name="web-server:" pseudo="true">
+            <tag name="jboss-web"/>
+            <tag name="tomcat"/>
+        </tag>
+        <tag name="ejb">
+           <tag name="ejb2"/>
+        </tag>
+        <tag name="jndi"/>
+        <tag name="jaas"/>
+        <tag name="remoting">
+           <tag name="jax-rpc"/>
+        </tag>
+        <tag name="messaging" root="true" color="#AACC00">
+            <tag name="jms"/>
+            <tag name="apache-cxf">
+               <tag name="xfire"/>
+            </tag>
+            <tag name="mq"/>
+            <tag name="mqe"/>
+            <tag name="smooks"/>
+        </tag>
+        <tag name="framework:" pseudo="true">
+           <tag name="seam"/>
+           <tag name="seam-ui-control"/>
+           <tag name="spring"/>
+           <tag name="jsf"/>
+           <tag name="jsp"/>
+        </tag>
+        <tag name="web-service" root="true" color="#00BBBB">
+           <tag name="wsdl" parents="descriptor"/>
+           <tag name="axis"/>
+           <tag name="jboss-ws"/>
+        </tag>
+        <tag name="esb" root="true" color="#0000BB">
+           <tag name="jboss-esb"/>
+           <tag name="sonic-esb"/>
+           <tag name="camel"/>
+           <tag name="mule-esb (mule)"/>
+        </tag>
+        <tag name="soa">
+           <tag name="soa-p"/>
+           <tag name="apache-tuscany"/>
+        </tag>
+        <tag name="soap"/>
+    </tag>
+    <tag name="java-se" root="true" color="#BB0000">
+        <tag name="classloader"/>
+        <tag name="classloading"/>
+    </tag>
+    <tag name="concepts">
+        <tag name="asynchronous">
+           <tag name="timer"/>
+           <tag name="scheduler"/>
+           <tag name="commonj"/>
+        </tag>
+        <tag name="lifecycle">
+           <tag name="startup"/>
+        </tag>
+        <tag name="pool"/>
+        <tag name="cache"/>
+        <tag name="client"/>
+        <tag name="cluster"/>
+        <tag name="performance"/>
+        <tag name="configuration">
+            <tag name="descriptor"/>
+            <tag name="port"/>
+        </tag>
+        <tag name="protocol">
+            <tag name="http"/>
+        </tag>
+        <tag name="persistence">
+            <tag name="database"/>
+            <tag name="hibernate"/>
+            <tag name="postgresql"/>
+            <tag name="jdbc"/>
+        </tag>
+        <tag name="logging">
+            <tag name="slf4j"/>
+            <tag name="log4j"/>
+        </tag>
+        <tag name="context"/>
+        <tag name="web"/>
+        <tag name="web-app"/>
+        <tag name="transactions"/>
+        <tag name="application-bindings"/>
+        <tag name="management">
+            <tag name="mx4j"/>
+        </tag>
+        <tag name="security"/>
+        <tag name="rules">
+            <tag name="ibm-wbi"/>
+        </tag>
+        <tag name="file-system"/>
+        <tag name="distributed"/>
+        <tag name="deployment"/>
+    </tag>
+    <tag name="platforms">
+        <tag name="sap"/>
+    </tag>
+    <tag name="windup-internal:" pseudo="true">
+        <tag name="catchall"/>
+        <tag name="reviewed-*" pseudo="true"/>
+    </tag>
+    <tag name="vendors:" pseudo="true">
+        <tag name="ibm"/>
+        <tag name="oracle"/>
+        <tag name="apache"/>
+        <tag name="iona"/>
+        <tag name="jboss"/>
+        <tag name="sonic"/>
+        <tag name="tibco"/>
+    </tag>
+</tags>
