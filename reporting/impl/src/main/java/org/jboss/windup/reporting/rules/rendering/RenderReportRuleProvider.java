@@ -86,7 +86,7 @@ public class RenderReportRuleProvider extends AbstractRuleProvider
                         FileUtils.copyFile(payload.asFile(), fullPath);
                         LOG.info("Copied raw file: " + payload.getFilePath() + " to: " + fullPath.getAbsolutePath());
                     } catch (IOException e) {
-                        LOG.warning("IOException creating file: " + fullPath.getAbsolutePath() + "\n\t" + e.getMessage());
+                        LOG.warning("IOException creating file: " + fullPath.getAbsolutePath() + ", due to: " + e.getMessage());
                     }
                 }
             });

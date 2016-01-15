@@ -44,6 +44,8 @@ public class TestReportIndexReportUtil extends TestReportUtil
             contents = contents.replace("<script src=\"resources/libraries/flot/jquery.flot.axislabels.js\"></script>", "");
             contents = contents.replace("<script src=\"resources/libraries/flot/jquery.flot.resize.js\"></script>", "");
 
+            contents = contents.replaceAll("jQuery.Color\\((.|[\n])*?\\);", "");
+
             contents = contents.replace("createTagCharts();", "");
 
             try (FileWriter writer = new FileWriter(modifiedPath.toFile()))

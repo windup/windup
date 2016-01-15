@@ -5,12 +5,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
-import org.apache.commons.io.FileUtils;
 
+import org.apache.commons.io.FileUtils;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
@@ -20,7 +19,6 @@ import org.jboss.windup.config.phase.PreReportGenerationPhase;
 import org.jboss.windup.config.tags.TagService;
 import org.jboss.windup.config.tags.TagServiceHolder;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.resource.ReportResourceFileModel;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -32,7 +30,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  *
  * @author Ondrej Zizka
  */
-@RuleMetadata( phase = PreReportGenerationPhase.class, before = {RenderReportRuleProvider.class})
+@RuleMetadata(phase = PreReportGenerationPhase.class, before = { RenderReportRuleProvider.class })
 public class RenderTagsJavaScriptRuleProvider extends AbstractRuleProvider
 {
     private static final Logger LOG = Logging.get(RenderTagsJavaScriptRuleProvider.class);
@@ -42,7 +40,6 @@ public class RenderTagsJavaScriptRuleProvider extends AbstractRuleProvider
 
     @Inject
     private TagServiceHolder tagServiceHolder;
-
 
     // @formatter:off
     @Override
@@ -71,11 +68,13 @@ public class RenderTagsJavaScriptRuleProvider extends AbstractRuleProvider
                         return;
                     }
 
-                    try(FileWriter writer = new FileWriter(tagsDataFile)) {
+                    try(FileWriter writer = new FileWriter(tagsDataFile))
+                    {
                         tagService.dumpTagsToJavaScript(writer);
                         LOG.info("Exporting tags data to file: " + tagsDataFile.getPath());
                     }
-                    catch (IOException e) {
+                    catch (IOException e)
+                    {
                         LOG.severe("Error exporting tags data to: " + tagsDataFile.getPath());
                         return;
                     }

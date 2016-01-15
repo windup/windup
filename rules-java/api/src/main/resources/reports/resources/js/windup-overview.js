@@ -84,7 +84,10 @@ function showCollapseExpandLinksAsNeeded(){
 
 function renderAppTreeView(rootProject)
 {
+    var start = t0 = Date.now();
     var jsTreeData = prepareJsTreeData(rootProject);
+    console.log("PERF: prepareJsTreeData() took " + (Date.now() - start) + " ms.");
+
     $('#treeView-Projects').jstree({
         plugins : ["types"], // ["wholerow"], //"checkbox"
         core: {

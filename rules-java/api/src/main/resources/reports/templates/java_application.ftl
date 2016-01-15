@@ -5,7 +5,7 @@
 
 
 <#macro tagRenderer tag class="">
-    <span class="label label-${(tag.level! == 'IMPORTANT')?then('danger','info')} tag-${tag.name?replace(' ','')} ${class!}"
+    <span title="${tag.level}" class="label label-${(tag.level! == 'IMPORTANT')?then('danger','info')} tag-${tag.name?replace(' ','')} ${class!}"
           data-windup-tag="${tag.name?html}">
         <#nested/>
     </span>
@@ -168,7 +168,7 @@
                     <td>
                         <!-- Packages pie chart -->
                         <div class="chartBoundary">
-                            <h4>Incompatible API usage count (by API packages)</h4>
+                            <h4>Java Issues by Package</h4>
                             <div id="project_${projectModel.asVertex().id?c}_pie" class="windupPieGraph"></div>
                         </div>
                     </td>
@@ -226,7 +226,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>${reportModel.projectModel.rootFileModel.fileName?html} - Application Report</title>
+    <title>${reportModel.projectModel.rootFileModel.fileName?html} - Application Details Report</title>
     <link href="resources/css/bootstrap.min.css" rel="stylesheet">
     <link href="resources/css/windup.css" rel="stylesheet" media="screen">
     <link href="resources/css/windup.java.css" rel="stylesheet" media="screen">
@@ -261,7 +261,7 @@
                     <div class="main"
                     onmouseover="$(this).parent().parent().addClass('showDesc')"
                     onmouseout=" $(this).parent().parent().removeClass('showDesc')"
-                          >Application Report</div>
+                          >Application Details Report</div>
                     <div class="path">${reportModel.projectModel.rootFileModel.fileName}</div>
                 </h1>
                 <div class="desc">
@@ -295,7 +295,7 @@
                     <tr>
                         <td>
                             <div class="chartBoundary">
-                                <h4>Incompatible API usage count (by API packages)</h4>
+                                <h4>Java Issues by Package</h4>
                                 <div id="application_pie" class="windupPieGraph"></div>
                             </div>
                         </td>

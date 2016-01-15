@@ -156,6 +156,7 @@
     </div>
 
     <script type="text/javascript" src="resources/js/jquery-1.10.1.min.js"></script>
+    <script src="resources/js/jquery.color-2.1.2.min.js"></script>
     <script src="resources/js/bootstrap.min.js"></script>
     <script src="resources/libraries/flot/jquery.flot.js"></script>
     <script src="resources/libraries/flot/jquery.flot.pie.min.js"></script>
