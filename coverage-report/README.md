@@ -8,9 +8,9 @@ data files that this module consumes.
 
 To enable collecting coverage data and producing the report,
 just enable the `jacoco` Maven profile and execute the Maven build
-at least up to the `package` phase from the top-level directory:
+to the `install` phase from the top-level directory:
 
-    mvn clean package -Pjacoco
+    mvn clean install -Pjacoco
 
 The coverage report will then be present in
 

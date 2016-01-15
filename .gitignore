@@ -25,3 +25,4 @@ atlassian-ide-plugin.xml
 /nbactions.xml
 *-test-result.html
 rexster.xml
+/tests/cache/
