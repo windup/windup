@@ -1,5 +1,6 @@
 package org.jboss.windup.rules.apps.javaee.tests;
 
+import com.google.common.collect.Iterables;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
@@ -85,18 +86,8 @@ public class GenerateJBossEjbDescriptorTest
         GraphService<EjbDeploymentDescriptorModel> ejbDescriptors = new GraphService<>(context,EjbDeploymentDescriptorModel.class);
         for (EjbDeploymentDescriptorModel ejbDesc : ejbDescriptors.findAll())
         {
-            Assert.assertTrue(1 >= getIterableSize(ejbDesc.getLinksToTransformedFiles()));
+            Assert.assertTrue(1 >= Iterables.size(ejbDesc.getLinksToTransformedFiles()));
         }
-    }
-
-    private int getIterableSize(Iterable<LinkModel> linksToTransformedFiles)
-    {
-        int resultCount = 0;
-        for (LinkModel linksToTransformedFile : linksToTransformedFiles)
-        {
-            resultCount++;
-        }
-        return resultCount;
     }
 
 }

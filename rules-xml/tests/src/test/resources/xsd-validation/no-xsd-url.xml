@@ -1,0 +1,4 @@
+<document-without-xsd xmlns="http://www.example.com/elements">
+       <element>
+       </element>
+</document-without-xsd>

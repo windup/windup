@@ -60,6 +60,12 @@
             <classifier>forge-addon</classifier>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.utils</groupId>
+            <artifactId>windup-utils</artifactId>
+            <classifier>forge-addon</classifier>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 

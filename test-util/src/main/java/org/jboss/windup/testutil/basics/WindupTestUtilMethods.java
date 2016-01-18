@@ -17,7 +17,7 @@ import java.util.List;
 public class WindupTestUtilMethods
 {
 
-    public static void runOnlyRuleProviders(List<? extends RuleProvider> providers, GraphContext context)
+    public static void runOnlyRuleProviders(Iterable<? extends RuleProvider> providers, GraphContext context)
     {
         GraphRewrite event = new GraphRewrite(context);
         DefaultEvaluationContext evaluationContext = createEvalContext(event);

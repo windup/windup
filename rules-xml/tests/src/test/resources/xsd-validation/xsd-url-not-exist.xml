@@ -1,0 +1,6 @@
+<rootElement xmlns="http://www.example.com/elements"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.example.com/schema/elements http://www.example.com/schema/elements/elements-1.0.xsd">
+       <not-valid-element-name>
+       </not-valid-element-name>
+    </rootElement>
