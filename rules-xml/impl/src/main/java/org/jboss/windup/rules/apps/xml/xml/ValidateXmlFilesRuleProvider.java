@@ -14,10 +14,9 @@ import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.InlineHintService;
 import org.jboss.windup.reporting.service.TagSetService;
-import org.jboss.windup.rules.apps.xml.model.NamespaceMetaModel;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
-import org.jboss.windup.rules.apps.xml.model.XmlTypeReferenceModel;
 import org.jboss.windup.rules.apps.xml.service.XmlFileService;
+import org.jboss.windup.rules.files.condition.ProcessingIsOnlineGraphCondition;
 import org.jboss.windup.rules.files.model.FileLocationModel;
 import org.jboss.windup.util.xml.LocationAwareContentHandler;
 import org.jboss.windup.util.xml.XmlUtil;
@@ -97,9 +96,10 @@ public class ValidateXmlFilesRuleProvider extends AbstractRuleProvider
             }
             catch (MalformedURLException e)
             {
-                e.printStackTrace();
+                FileLocationModel rootElementLocation = createLocationModelFromNodeElement(document.getDocumentElement(),event.getGraphContext(),sourceFile);
+                createUrlNotValidHint(event.getGraphContext(), rootElementLocation, xsdUrl);
             }
-            catch (SAXException e)
+            catch (Exception e)
             {
                 final Throwable cause = e.getCause();
                 if(cause instanceof UnknownHostException) {
@@ -107,14 +107,19 @@ public class ValidateXmlFilesRuleProvider extends AbstractRuleProvider
                 } else if(cause instanceof FileNotFoundException) {
                     //probably wrong XSD URL
                     FileLocationModel rootElementLocation = createLocationModelFromNodeElement(document.getDocumentElement(),event.getGraphContext(),sourceFile);
+                    createUrlNotValidHint(event.getGraphContext(),rootElementLocation,xsdUrl);
 
-                    final InlineHintModel inlineHintModel = InlineHintService.addTypeToModel(event.getGraphContext(), rootElementLocation, InlineHintModel.class);
-                    inlineHintModel.setTitle(XmlFileModel.XSD_URL_NOT_VALID);
-                    inlineHintModel.setHint(xsdUrl + " is not a valid url.");
-                    inlineHintModel.setEffort(1);
+
                 }
             }
 
+        }
+
+        private void createUrlNotValidHint(GraphContext context,FileLocationModel model, String xsdUrl) {
+            final InlineHintModel inlineHintModel = InlineHintService.addTypeToModel(context, model, InlineHintModel.class);
+            inlineHintModel.setTitle(XmlFileModel.XSD_URL_NOT_VALID);
+            inlineHintModel.setHint(xsdUrl + " is not a valid url.");
+            inlineHintModel.setEffort(1);
         }
 
         private FileLocationModel createLocationModelFromNodeElement(Node node, GraphContext context, FileModel sourceFile) {

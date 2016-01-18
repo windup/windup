@@ -13,6 +13,7 @@ public class AbstractXsdValidationTest
 {
     public static final String VALID_XML = "src/test/resources/xsd-validation/example-pom.xml";
     public static String NOT_VALID_XML = "src/test/resources/xsd-validation/not-xsd-valid.xml";
+    public static String URL_NOT_PARSABLE = "src/test/resources/xsd-validation/xsd-url-not-parsable.xml";
     public static final String NOT_VALID_XSD_SCHEMA_URL="src/test/resources/xsd-validation/xsd-url-not-exist.xml";
     public static final String NO_XSD_SCHEMA_URL="src/test/resources/xsd-validation/no-xsd-url.xml";
 

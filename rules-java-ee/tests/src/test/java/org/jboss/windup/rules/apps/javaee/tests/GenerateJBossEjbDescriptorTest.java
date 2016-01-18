@@ -1,5 +1,6 @@
 package org.jboss.windup.rules.apps.javaee.tests;
 
+import com.google.common.collect.Iterables;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
@@ -20,7 +21,6 @@ import org.jboss.windup.rules.apps.javaee.model.WebXmlModel;
 import org.jboss.windup.rules.apps.javaee.rules.jboss.GenerateJBossEjbDescriptorRuleProvider;
 import org.jboss.windup.rules.apps.javaee.rules.jboss.GenerateJBossWebDescriptorRuleProvider;
 import org.jboss.windup.testutil.basics.WindupTestUtilMethods;
-import org.jboss.windup.util.Iterables;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

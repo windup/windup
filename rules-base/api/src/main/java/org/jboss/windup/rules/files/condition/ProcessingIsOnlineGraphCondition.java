@@ -1,4 +1,4 @@
-package org.jboss.windup.rules.apps.xml.xml;
+package org.jboss.windup.rules.files.condition;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.condition.GraphCondition;

@@ -1,5 +1,6 @@
 package org.jboss.windup.rules.apps.xml.rules;
 
+import com.google.common.collect.Iterables;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
@@ -10,7 +11,6 @@ import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
-import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.ClassificationModel;
@@ -19,7 +19,6 @@ import org.jboss.windup.reporting.service.InlineHintService;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.apps.xml.xml.ValidateXmlFilesRuleProvider;
 import org.jboss.windup.testutil.basics.WindupTestUtilMethods;
-import org.jboss.windup.util.Iterables;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -207,6 +206,28 @@ public class ValidateXmlFilesRuleProviderWithInternetTest extends AbstractXsdVal
                         ClassificationModel.class);
             Iterable<ClassificationModel> classifications = classificationService.findAll();
             Assert.assertEquals(0, Iterables.size(classifications));
+
+        }
+    }
+
+    @Test
+    public void testUnparsableUrl() throws Exception
+    {
+        try (GraphContext context = factory.create())
+        {
+            initOnlineWindupConfiguration(context);
+            addFileModel(context, URL_NOT_PARSABLE);
+
+            List<? extends RuleProvider> ruleProviders = Collections.singletonList(ruleProvider);
+            WindupTestUtilMethods.runOnlyRuleProviders(ruleProviders, context);
+
+            GraphService<InlineHintModel> hintService = new GraphService<>(context,
+                        InlineHintModel.class);
+            Iterable<InlineHintModel> hints = hintService.findAll();
+            Assert.assertEquals(1, Iterables.size(hints));
+
+            final InlineHintModel hint = hints.iterator().next();
+            Assert.assertEquals(XmlFileModel.XSD_URL_NOT_VALID,hint.getTitle());
 
         }
     }
