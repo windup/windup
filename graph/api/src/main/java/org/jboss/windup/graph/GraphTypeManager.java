@@ -112,7 +112,6 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
         if (typeValueAnnotation == null)
             return;
         String typeValue = typeValueAnnotation.value();
-        ///String typeValue = getTypeIdentifier(kind);
 
         v.removeProperty(typeFieldName);
 

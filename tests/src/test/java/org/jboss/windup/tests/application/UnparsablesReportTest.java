@@ -19,11 +19,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 /**
- * The archive has the following unparsable items:
- *   jee-example-app-1.0.0.ear/unparsableClass.jar!/unparsable.class
- *   jee-example-app-1.0.0.ear/META-INF/maven/org.windup.example/unparsable/pom.xml
- *   jee-example-app-1.0.0.ear/META-INF/maven/org.windup.example/unparsable/pom.properties
- *   jee-example-app-1.0.0.ear/unparsable.jar
+ * The archive has the following unparsable items: jee-example-app-1.0.0.ear/unparsableClass.jar!/unparsable.class
+ * jee-example-app-1.0.0.ear/META-INF/maven/org.windup.example/unparsable/pom.xml
+ * jee-example-app-1.0.0.ear/META-INF/maven/org.windup.example/unparsable/pom.properties jee-example-app-1.0.0.ear/unparsable.jar
  *
  * @author Ondrej Zizka, ozizka at redhat.com
  */
@@ -70,14 +68,10 @@ public class UnparsablesReportTest extends WindupArchitectureTest
         TestUnparsablesUtil util = new TestUnparsablesUtil();
         Path reportPath = Paths.get(reportService.getReportDirectory(), reportModel.getReportFilename());
         util.loadPage(reportPath);
-        //Assert.assertTrue(util.checkUnparsableFileInReport("unparsableClass.jar",
-        //        "jee-example-app-1.0.0.ear/unparsableClass.jar", "Can't load class"));
-        //Assert.assertTrue(util.checkUnparsableFileInReport("unparsable.jar",
-        //        "jee-example-app-1.0.0.ear/unparsable.jar", "Cannot unzip the file"));
         Assert.assertTrue(util.checkUnparsableFileInReport("NonParsable.class",
-                "archives/jee-example-services.jar/com/NonParsable.class", "BCEL"));
+                    "archives/jee-example-services.jar/com/NonParsable.class", "BCEL"));
         Assert.assertTrue(util.checkUnparsableFileInReport("NonParsable.xml",
-                "archives/jee-example-services.jar/META-INF/NonParsable.xml", "Failed to parse XML entity"));
+                    "archives/jee-example-services.jar/META-INF/NonParsable.xml", "Failed to parse XML entity"));
     }
 
 }

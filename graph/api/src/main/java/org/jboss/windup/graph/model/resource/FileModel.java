@@ -97,13 +97,13 @@ public interface FileModel extends ResourceModel
     void setSHA1Hash(String sha1Hash);
 
     /**
-     * Did Windup encounter problems when parsing this file?
+     * Did Windup encounter problems when parsing this file? If so, this will contain a description of the error.
      */
     @Property(PARSE_ERROR)
     String getParseError();
 
     /**
-     * Contains a SHA1 Hash of the file
+     * Did Windup encounter problems when parsing this file? If so, this will contain a description of the error.
      */
     @Property(PARSE_ERROR)
     void setParseError(String message);

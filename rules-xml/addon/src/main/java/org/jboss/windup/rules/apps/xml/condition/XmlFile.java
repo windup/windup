@@ -60,9 +60,6 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD, 
 {
     private static final Logger LOG = Logging.get(XmlFile.class);
 
-    ///protected static final String UNPARSEABLE_XML_CLASSIFICATION = "Unparseable XML File";
-    ///protected static final String UNPARSEABLE_XML_DESCRIPTION = "This file could not be parsed via XPath";
-
     protected static final String WINDUP_NS_PREFIX = "windup";
     protected static final String WINDUP_NS_URI = "http://windup.jboss.org/windupv2functions";
 

@@ -31,6 +31,7 @@ import org.jboss.windup.config.operation.iteration.TypedNamedFramesSelector;
 import org.jboss.windup.config.operation.iteration.TypedNamedIterationPayloadManager;
 import org.jboss.windup.config.selectors.FramesSelector;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.common.util.Assert;
 import org.ocpsoft.rewrite.config.And;
 import org.ocpsoft.rewrite.config.CompositeOperation;
@@ -44,7 +45,6 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.event.Rewrite;
 
 import com.google.common.collect.Iterables;
-import org.jboss.windup.util.exception.WindupException;
 
 /**
  * Used to iterate over an implicit or explicit variable defined within the corresponding {@link ConfigurationRuleBuilder#when(Condition)} clause in
@@ -285,9 +285,9 @@ public class Iteration extends DefaultOperationBuilder
                     variables.pop();
                 }
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                throw new WindupException("Failed when iterating " + frame.toPrettyString() + ":\n\t" + ex.getMessage(), ex);
+                    throw new WindupException("Failed when iterating " + frame.toPrettyString() + ", due to: " + e.getMessage(), e);
             }
         }
         finally

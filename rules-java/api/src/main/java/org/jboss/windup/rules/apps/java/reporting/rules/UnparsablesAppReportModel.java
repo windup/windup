@@ -1,14 +1,13 @@
 package org.jboss.windup.rules.apps.java.reporting.rules;
 
 import org.jboss.windup.graph.model.ProjectModel;
-import org.jboss.windup.reporting.model.ApplicationReportModel;
-import com.tinkerpop.frames.Adjacency;
-import com.tinkerpop.frames.annotations.gremlin.GremlinGroovy;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
-import com.tinkerpop.pipes.util.structures.Table;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.jboss.windup.rules.apps.java.archives.model.IgnoredArchiveModel;
+
+import com.tinkerpop.frames.annotations.gremlin.GremlinGroovy;
+import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
  * Model of the Unparsable Files report.
@@ -19,13 +18,6 @@ import org.jboss.windup.rules.apps.java.archives.model.IgnoredArchiveModel;
 public interface UnparsablesAppReportModel extends ApplicationReportModel
 {
     String TYPE = "UnparsablesAppReport";
-    String LABEL_PROJECT = TYPE + ":project";
-
-    @Adjacency(label = LABEL_PROJECT)
-    void addProject(ProjectModel project);
-
-    @Adjacency(label = LABEL_PROJECT)
-    Iterable<ProjectModel> getProjects();
 
     /**
      * Files that had problems while parsing.
@@ -41,6 +33,9 @@ public interface UnparsablesAppReportModel extends ApplicationReportModel
             + ".back(2)")
     Iterable<ProjectModel> getAllSubProjects();
 
+    /**
+     * Gets a tables of all unparseable files.
+     */
     @GremlinGroovy(frame = false, value = "it.out('"+REPORT_TO_PROJECT_MODEL+"').as('x')"
             + ".in('"+ProjectModel.PARENT_PROJECT+"')"
             + ".simplePath"
