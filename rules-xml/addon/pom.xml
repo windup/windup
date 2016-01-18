@@ -14,9 +14,13 @@
     <dependencies>
         <!-- Local Dependencies -->
         <dependency>
-            <groupId>org.jooq</groupId>
-            <artifactId>joox</artifactId>
-            <version>1.2.0</version>
+            <groupId>org.jboss.windup.rules.apps</groupId>
+            <artifactId>windup-rules-xml-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.rules.apps</groupId>
+            <artifactId>windup-rules-xml-impl</artifactId>
+            <optional>true</optional>
         </dependency>
 
         <!-- Addon Dependencies -->
@@ -31,6 +35,12 @@
             <artifactId>windup-config-xml</artifactId>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
+        </dependency>
+        <!-- MOCKITO is added here because of some bug in Furnace that will not find the classes in case it is added in test module only -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.9.5</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.utils</groupId>

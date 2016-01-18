@@ -1,0 +1,6 @@
+    <not-parsable-url xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans not-parsable-url">
+       <not-valid-element-name>
+       </not-valid-element-name>
+    </not-parsable-url>
