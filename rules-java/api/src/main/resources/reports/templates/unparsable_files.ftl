@@ -87,7 +87,7 @@
             </div>
         </div>
 
-        <#list reportModel.allSubProjects3.iterator() as subProject>
+        <#list reportModel.allSubProjects.iterator() as subProject>
             <div class="row unparsableFile">
                 <div class="container-fluid theme-showcase" role="main">
                     <@unparsableFilesRenderer subProject />

@@ -30,37 +30,6 @@ public interface UnparsablesAppReportModel extends ApplicationReportModel
     /**
      * Files that had problems while parsing.
      */
-    //        + ".out('" + ProjectModel.PROJECT_MODEL_TO_FILE + "').has('" + FileModel.PARSE_ERROR + "')")
-
-
-    /// REMOVE
-    @GremlinGroovy("it"
-            + ".out('"+REPORT_TO_PROJECT_MODEL+"')"
-            + ".as('x').in('"+ProjectModel.PARENT_PROJECT+"')"
-            + ".simplePath"
-            + ".loop('x'){true}{true}"
-            + ".out('" + ProjectModel.PROJECT_MODEL_TO_FILE + "').has('" + FileModel.PARSE_ERROR + "')")
-    Iterable<ProjectModel> getUnparsableFiles2();
-
-
-    /**
-     * Files that had problems while parsing.
-     */
-    /// REMOVE
-    @GremlinGroovy("it"
-            + ".out('"+REPORT_TO_PROJECT_MODEL+"')"
-            + ".in('"+ProjectModel.PARENT_PROJECT+"')"
-            + ".loop(1){true}{true}")
-    Iterable<ProjectModel> getAllSubProjects();
-
-    /// REMOVE
-    @GremlinGroovy("it"
-            + ".out('"+REPORT_TO_PROJECT_MODEL+"')"
-            + ".in('"+ProjectModel.PARENT_PROJECT+"')"
-            + ".simplePath"
-            + ".loop(2){true}{true}")
-    Iterable<ProjectModel> getAllSubProjects2();
-
     @GremlinGroovy("it"
             + ".out('"+REPORT_TO_PROJECT_MODEL+"')"
             + ".as('x')"
@@ -70,7 +39,7 @@ public interface UnparsablesAppReportModel extends ApplicationReportModel
             + ".out('"+ProjectModel.ROOT_FILE_MODEL+"')"
             + ".hasNot('"+WindupVertexFrame.TYPE_PROP+"', '"+IgnoredArchiveModel.TYPE+"')"
             + ".back(2)")
-    Iterable<ProjectModel> getAllSubProjects3();
+    Iterable<ProjectModel> getAllSubProjects();
 
     @GremlinGroovy(frame = false, value = "it.out('"+REPORT_TO_PROJECT_MODEL+"').as('x')"
             + ".in('"+ProjectModel.PARENT_PROJECT+"')"

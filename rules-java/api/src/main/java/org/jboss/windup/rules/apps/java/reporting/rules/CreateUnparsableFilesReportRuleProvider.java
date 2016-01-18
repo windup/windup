@@ -73,46 +73,14 @@ public class CreateUnparsableFilesReportRuleProvider extends AbstractRuleProvide
         };
 
         // For each FileModel...
-        AbstractIterationOperation<FileModel> addFilesToReport =
-                new AbstractIterationOperation<FileModel>("file")
-        {
-            @Override
-            public void perform(GraphRewrite event, EvaluationContext context, FileModel fileModel)
-            {
-                final Variables vars = Variables.instance(event);
-                addFile(event.getGraphContext(), fileModel);
-            }
-
-            public String toString() { return "renderProjects"; }
-        };
-
-        Operation processProject = Iteration.over("project")
-                .when(Query.from("project")
-                        .piped(new InCriterion(FileModel.FILE_TO_PROJECT_MODEL))
-                        .withProperty(PROPERTY_UNPARSABLE).as("files")
-                )
-                .perform(
-                        Iteration.over("files").perform(addFilesToReport).endIteration()
-                ).endIteration();
-
         return ConfigurationBuilder.begin()
         .addRule()
         .when(
             Query.fromType(WindupConfigurationModel.class).as("wc"),
             Query.fromType(ProjectModel.class).as("projects")
-            //Query.from("projects").piped(new InCriterion(FileModel.FILE_TO_PROJECT_MODEL)).withProperty(PROPERTY_UNPARSABLE).as("files")
         )
         .perform(
-            Iteration.over("wc").perform(createReportModel).endIteration(),
-            Iteration.over("projects").as("project").perform(
-                    new AbstractIterationOperation<ProjectModel>()
-                    {
-                        public void perform(GraphRewrite event, EvaluationContext context, ProjectModel payload)
-                        {
-                            addProjectAndFiles(event, payload);
-                        }
-                    }
-            ).endIteration()
+            Iteration.over("wc").perform(createReportModel).endIteration()
         );
 
     }
@@ -131,81 +99,10 @@ public class CreateUnparsableFilesReportRuleProvider extends AbstractRuleProvide
         reportM.setProjectModel(rootProjectModel);
         reportM.setTemplatePath(TEMPLATE_UNPARSABLE);
         reportM.setTemplateType(TemplateType.FREEMARKER);
-        //applicationReportModel.setIncludeTags(includeTags);
-        //applicationReportModel.setExcludeTags(excludeTags);
-
-        //GraphService<OverviewReportLineMessageModel> lineNotesService = new GraphService<>(context, OverviewReportLineMessageModel.class);
-        //Iterable<OverviewReportLineMessageModel> allLines = lineNotesService.findAll();
 
         // Set the filename for the report
         ReportService reportService = new ReportService(context);
         reportService.setUniqueFilename(reportM, REPORT_NAME + "_" + rootProjectModel.getName(), "html");
-
-        ///UnparsablesAppReportModel check = reportService.getReportByName(REPORT_NAME, UnparsablesAppReportModel.class);
-        ///System.out.println("CHECK: " + check);
-
-
-        /// Projects 1
-        try {
-            for (ProjectModel project : reportM.getAllSubProjects3())
-                System.out.println("PROJECT: " + project.toPrettyString());
-        } catch (Exception ex){ System.out.println("EX: " + ex.getMessage()); }
-
-        ///
-        try {
-            final Iterable tableIt = (Iterable) reportM.getAllSubProjectsAndTheirUnparsablesTable();
-            Table table = (Table) tableIt.iterator().next();
-            for (Row row : (Table)table)
-                System.out.println("TABLE ROW: " + row.toString());
-        } catch (Exception ex){ System.out.println("EX: " + ex.getMessage()); ex.printStackTrace(); }
-
-
-        /// g.V().has('w:vertextype', 'ProjectModel').in('fileToProjectModel').has('parseError').parseError
-        /// g.V().has('w:vertextype', 'ProjectModel').as('prj').in('fileToProjectModel').has('parseError').as('file').table().cap
-
-        // Projects 2
-        final PipeFunction<LoopPipe.LoopBundle<Vertex>, Boolean> pipeFunction = new PipeFunction<LoopPipe.LoopBundle<Vertex>, Boolean>()
-        {
-            public Boolean compute(LoopPipe.LoopBundle<Vertex> argument)
-            {
-                return Boolean.TRUE;
-            }
-        };
-
-        GremlinPipeline<Vertex, Vertex> projectsPipe =
-                new GremlinGroovyPipeline<Vertex, Vertex>(rootProjectModel.asVertex())
-                .in(ProjectModel.PARENT_PROJECT).loop(1, pipeFunction);
-        for (Vertex projectV : projectsPipe)
-        {
-            ProjectModel project = context.getFramed().frame(projectV, ProjectModel.class);
-            System.out.println("PROJECT: " + project.toPrettyString());
-        }
-
-        SoutPipe soutPipe = new SoutPipe(context, FileModel.class);
-        SoutPipe soutPipe2 = new SoutPipe(context, ProjectModel.class);
-
-        // Trying multi-iteration
-        Iterator<? extends Element> unparsables = new GremlinGroovyPipeline<Vertex, Vertex>(reportM.getProjectModel())
-                //.add(new WindupTypePipe(FileModel.class))
-                .sideEffect(soutPipe)
-                .in(FileModel.FILE_TO_PROJECT_MODEL)
-                .has(PROPERTY_UNPARSABLE)
-                .sideEffect(soutPipe2)
-                .iterator();
-    }
-
-
-
-
-    private void addFile(GraphContext context, FileModel fileModel)
-    {
-        //Variables.instance(context).
-    }
-
-    private void addProjectAndFiles(GraphRewrite event, ProjectModel payload)
-    {
-        //UnparsablesAppReportModel reportM = new ReportService(event.getGraphContext()).getReportByName(REPORT_NAME, UnparsablesAppReportModel.class);
-        //ProjectModel rootProjectM = new ProjectService(event.getGraphContext()).getRootProject();
     }
 
 
@@ -214,29 +111,7 @@ public class CreateUnparsableFilesReportRuleProvider extends AbstractRuleProvide
         public WindupTypePipe(Class<FileModel> clazz)
         {
             super(WindupVertexFrame.TYPE_PROP, Tokens.mapPredicate(Tokens.T.in), GraphTypeManager.getTypeIdentifier(clazz));
-            //String typeId = GraphTypeManager.getTypeIdentifier(clazz);
-            //final Pipe pipe = new PropertyFilterPipe(WindupVertexFrame.TYPE_PROP, Tokens.mapPredicate(Tokens.T.in), typeId);
         }
     }
-
-
-    private static class SoutPipe implements PipeFunction
-    {
-        private final GraphContext grCtx;
-        private final Class<? extends WindupVertexFrame> frameType;
-
-        private SoutPipe(GraphContext context, Class<? extends WindupVertexFrame> frameType)
-        {
-            this.grCtx = context;
-            this.frameType = frameType;
-        }
-
-        @Override
-        public Vertex compute(Object argument)
-        {
-            System.out.println(grCtx.getFramed().frame((Vertex)argument, frameType).toPrettyString());
-            return (Vertex)argument;
-        }
-    };
 
 }
