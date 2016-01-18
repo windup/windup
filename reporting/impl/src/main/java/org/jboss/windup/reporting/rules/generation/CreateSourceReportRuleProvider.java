@@ -35,11 +35,11 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * This creates SourceReportModel entries for every relevant item within the graph.
- * 
+ *
  * Relevancy is based on whether the item has classifications or blacklists attached to it.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- * 
+ *
  */
 public class CreateSourceReportRuleProvider extends AbstractRuleProvider
 {
@@ -76,11 +76,11 @@ public class CreateSourceReportRuleProvider extends AbstractRuleProvider
                 sm.setSourceFileModel(reportFileModel);
                 if (reportFileModel.getProjectModel() == null)
                 {
-                    LOG.warning("Error, source report created for file: " + payload.getFilePath() + ", but this file does not have a " + 
-                                ProjectModel.class.getSimpleName() + " associated. Execution will continue, however the source report " + 
+                    LOG.warning("Error, source report created for file: " + payload.getFilePath() + ", but this file does not have a " +
+                                ProjectModel.class.getSimpleName() + " associated. Execution will continue, however the source report " +
                                 "for this file may be malformed");
                 }
-                
+
                 sm.setReportName(payload.getPrettyPath());
                 sm.setSourceType(resolveSourceType(payload));
 
@@ -92,7 +92,7 @@ public class CreateSourceReportRuleProvider extends AbstractRuleProvider
                 if (mainAppReport != null) {
                     sm.setParentReport(mainAppReport);
                 }
-                
+
                 GraphService.addTypeToModel(event.getGraphContext(), sm, FreeMarkerSourceReportModel.class);
                 ReportService reportService = new ReportService(event.getGraphContext());
                 reportService.setUniqueFilename(sm, payload.getFileName(), "html");

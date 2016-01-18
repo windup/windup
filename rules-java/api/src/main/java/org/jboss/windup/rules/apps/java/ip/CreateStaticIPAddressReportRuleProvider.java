@@ -27,7 +27,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * Finds files that contain potential static IP addresses, determined by regular expression.
- * 
+ *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
 public class CreateStaticIPAddressReportRuleProvider extends AbstractRuleProvider
