@@ -35,6 +35,9 @@ public interface FileModel extends ResourceModel
     String FILE_PATH = "filePath";
     String IS_DIRECTORY = "isDirectory";
     String WINDUP_GENERATED = "windupGenerated";
+    String PRETTY_PATH = "fileModelPrettyPath";
+    String PRETTY_PATH_WITHIN_PROJECT = "fileModelPrettyPathWithinProject";
+    String PARSE_ERROR = "parseError";
 
     /**
      * Contains the File Name (the last component of the path). Eg, a file /tmp/foo/bar/file.txt would have fileName set to "file.txt"
@@ -93,6 +96,19 @@ public interface FileModel extends ResourceModel
     @Property(SHA1_HASH)
     void setSHA1Hash(String sha1Hash);
 
+    /**
+     * Did Windup encounter problems when parsing this file? If so, this will contain a description of the error.
+     */
+    @Property(PARSE_ERROR)
+    String getParseError();
+
+    /**
+     * Did Windup encounter problems when parsing this file? If so, this will contain a description of the error.
+     */
+    @Property(PARSE_ERROR)
+    void setParseError(String message);
+
+    
     /**
      * Parent directory
      */

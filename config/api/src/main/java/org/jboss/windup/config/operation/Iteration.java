@@ -31,6 +31,7 @@ import org.jboss.windup.config.operation.iteration.TypedNamedFramesSelector;
 import org.jboss.windup.config.operation.iteration.TypedNamedIterationPayloadManager;
 import org.jboss.windup.config.selectors.FramesSelector;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.common.util.Assert;
 import org.ocpsoft.rewrite.config.And;
 import org.ocpsoft.rewrite.config.CompositeOperation;
@@ -239,6 +240,7 @@ public class Iteration extends DefaultOperationBuilder
         try
         {
             for (WindupVertexFrame frame : frames)
+            try
             {
                 variables.push();
                 getPayloadManager().setCurrentPayload(variables, frame);
@@ -251,10 +253,10 @@ public class Iteration extends DefaultOperationBuilder
                         ((GraphCondition) condition).setInputVariablesName(getPayloadVariableName(event, context));
                     }
                     conditionResult = condition.evaluate(event, context);
-                /*
-                 * Add special clear layer for perform, because condition used one and could have added new variables. The condition result put into
-                 * variables is ignored.
-                 */
+                    /*
+                     * Add special clear layer for perform, because condition used one and could have added new variables. The condition result put into
+                     * variables is ignored.
+                     */
                     variables.push();
                     getPayloadManager().setCurrentPayload(variables, frame);
                 }
@@ -282,6 +284,10 @@ public class Iteration extends DefaultOperationBuilder
                     // remove the condition layer
                     variables.pop();
                 }
+            }
+            catch (Exception e)
+            {
+                    throw new WindupException("Failed when iterating " + frame.toPrettyString() + ", due to: " + e.getMessage(), e);
             }
         }
         finally

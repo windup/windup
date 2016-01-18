@@ -1,5 +1,6 @@
 package org.jboss.windup.rules.apps.java.scan.provider;
 
+import com.thinkaurelius.titan.util.datastructures.Maps;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -12,6 +13,8 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
@@ -71,7 +74,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * Scan the Java Source code files and store the used type information from them.
- * 
+ *
  */
 public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
 {
@@ -177,7 +180,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                     WindupWildcardImportResolver.setContext(event.getGraphContext());
 
                     final BlockingQueue<Pair<Path, List<ClassReference>>> processedPaths = new ArrayBlockingQueue<>(ANALYSIS_QUEUE_SIZE);
-                    final Set<Path> failedPaths = Sets.getConcurrentSet();
+                    final ConcurrentMap<Path, String> failures = new ConcurrentHashMap<>();
                     BatchASTListener listener = new BatchASTListener()
                     {
                         @Override
@@ -196,8 +199,9 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                         @Override
                         public void failed(Path filePath, Throwable cause)
                         {
-                            LOG.log(Level.WARNING, "Failed to process: " + filePath + " due to: " + cause.getMessage(), cause);
-                            failedPaths.add(filePath);
+                            final String message = "Failed to process: " + filePath + " due to: " + cause.getMessage();
+                            LOG.log(Level.WARNING, message, cause);
+                            failures.put(filePath, message);
                         }
                     };
 
@@ -225,12 +229,13 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                         filesToProcess.remove(pair.getKey());
                     }
 
-                    for (Path path : failedPaths)
+                    for (Map.Entry<Path, String> failure : failures.entrySet())
                     {
                         ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-                        JavaSourceFileModel sourceFileModel = getJavaSourceFileModel(event.getGraphContext(), path);
+                        JavaSourceFileModel sourceFileModel = getJavaSourceFileModel(event.getGraphContext(), failure.getKey());
                         classificationService.attachClassification(context, sourceFileModel, JavaSourceFileModel.UNPARSEABLE_JAVA_CLASSIFICATION,
                                     JavaSourceFileModel.UNPARSEABLE_JAVA_DESCRIPTION);
+                        sourceFileModel.setParseError(failure.getValue());
                     }
 
                     if (!filesToProcess.isEmpty())
@@ -250,12 +255,14 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                             }
                             catch (Exception e)
                             {
-                                LOG.log(Level.WARNING, "Failed to process: " + unprocessed + " due to: " + e.getMessage(), e);
+                                final String message = "Failed to process: " + unprocessed + " due to: " + e.getMessage();
+                                LOG.log(Level.WARNING, message, e);
                                 ClassificationService classificationService = new ClassificationService(event.getGraphContext());
                                 JavaSourceFileModel sourceFileModel = getJavaSourceFileModel(event.getGraphContext(), unprocessed);
                                 classificationService.attachClassification(context, sourceFileModel,
                                             JavaSourceFileModel.UNPARSEABLE_JAVA_CLASSIFICATION,
                                             JavaSourceFileModel.UNPARSEABLE_JAVA_DESCRIPTION);
+                                sourceFileModel.setParseError(message);
                             }
                             estimate.addWork(1);
                             printProgressEstimate(event, estimate);
@@ -274,6 +281,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                             message.append("\tFailed to process: " + unprocessed + "\n");
                             classificationService.attachClassification(context, sourceFileModel, JavaSourceFileModel.UNPARSEABLE_JAVA_CLASSIFICATION,
                                         JavaSourceFileModel.UNPARSEABLE_JAVA_DESCRIPTION);
+                            // Is the classification attached 2nd time here?
                         }
                         LOG.warning(message.toString());
                     }

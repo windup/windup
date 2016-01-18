@@ -53,7 +53,7 @@ class QueryTypeCriterion implements QueryFramesCriterion, QueryGremlinCriterion
 
     public String toString()
     {
-        return ".find(" + searchedClass.getSimpleName() + ")";
+        return ".formType(" + searchedClass.getSimpleName() + ")";
     }
 
     @Override

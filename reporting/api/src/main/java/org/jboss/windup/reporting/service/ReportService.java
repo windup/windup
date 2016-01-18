@@ -9,6 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
+import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.model.ReportModel;
@@ -55,6 +56,23 @@ public class ReportService extends GraphService<ReportModel>
             }
         }
         return path.toAbsolutePath().toString();
+    }
+
+    /**
+     * Returns the ReportModel with given name.
+     */
+    @SuppressWarnings("unchecked")
+    public <T extends ReportModel> T getReportByName(String name, Class<T> clazz)
+    {
+        WindupVertexFrame model = this.getUniqueByProperty(ReportModel.REPORT_NAME, name);
+        try
+        {
+            return (T) model;
+        }
+        catch (ClassCastException ex)
+        {
+            throw new WindupException("The vertex is not of expected frame type " + clazz.getName() + ": " + model.toPrettyString());
+        }
     }
 
     /**

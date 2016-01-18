@@ -8,7 +8,7 @@ import com.tinkerpop.gremlin.groovy.Gremlin;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface QueryBuilderPiped extends ConditionBuilder, QueryBuilderAs
+public interface QueryBuilderPiped extends ConditionBuilder, QueryBuilderAs, QueryBuilderWith
 {
     /**
      * Query the selected {@link WindupVertexFrame} instances via {@link Gremlin}. This method can be used to change the
