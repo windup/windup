@@ -23,6 +23,13 @@ public interface XmlFileXpath extends ConditionBuilder
      * @return
      */
     XmlFileDTD andDTDPublicId(String publicIdRegex);
+
+    /**
+     * Specify the DTD system-id regex.
+     * @param systemIdRegex system-id regex
+     * @return
+     */
+    XmlFileDTD andDTDSystemId(String systemIdRegex);
     
     /**
      * Specify the regex of xml file name. Use this now only if you don't want to specify regex for the xpath result nor DTD regex.

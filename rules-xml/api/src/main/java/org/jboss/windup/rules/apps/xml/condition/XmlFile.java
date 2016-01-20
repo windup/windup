@@ -72,6 +72,7 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD, 
     private Map<String, String> namespaces = new HashMap<>();
     private String publicId;
     private String xpathResultMatch;
+    private String dtdNamespace;
 
     // just to extract required parameter names
     private RegexParameterizedPatternParser xpathPattern;
@@ -119,13 +120,19 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD, 
     }
 
     /**
-     * Create a new {@link XmlFile} that matches on the provided DTD id regular expression.
+     * Create a new {@link XmlFile} that matches on the provided DTD namespace.
      */
-    public static XmlFileDTD withDTDPublicId(String publicIdRegex)
+    public static XmlFileDTD withDTDSystemId(String dtdNamespace)
     {
         XmlFile xmlFile = new XmlFile();
-        xmlFile.publicId = publicIdRegex;
+        xmlFile.dtdNamespace = dtdNamespace;
         return xmlFile;
+    }
+
+    public XmlFileDTD andDTDSystemId(String dtdNamespace)
+    {
+        this.dtdNamespace = dtdNamespace;
+        return this;
     }
 
     /**
@@ -358,15 +365,22 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD, 
                         continue;
                     }
                 }
-                if (publicId != null && !publicId.isEmpty())
+                if (( publicId != null && !publicId.isEmpty() ) || dtdNamespace!=null)
                 {
                     DoctypeMetaModel doctype = xml.getDoctype();
-                    if (doctype == null || doctype.getPublicId() == null
-                                || !doctype.getPublicId().matches(publicId))
+                    if (doctype == null )
                     {
                         continue;
                     }
-                    else if (xpathString == null)
+                    if(publicId != null && ( (doctype.getPublicId() == null) || !doctype.getPublicId().matches(publicId))) {
+                        continue;
+                    }
+                    if(dtdNamespace != null && ( (doctype.getSystemId() == null) || !doctype.getSystemId().matches(dtdNamespace))) {
+                        continue;
+                    }
+
+
+                    if (xpathString == null)
                     {
                         evaluationStrategy.modelMatched();
                         // if the xpath is not set and therefore we have the result already
@@ -461,11 +475,6 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD, 
         {
             this.xpathPattern = new RegexParameterizedPatternParser(this.xpathString);
         }
-    }
-
-    public void setPublicId(String publicId)
-    {
-        this.publicId = publicId;
     }
 
     public String toString()
