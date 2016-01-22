@@ -10,18 +10,6 @@
 
     <name>Windup - Bootstrap module</name>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.jboss.windup</groupId>
-                <artifactId>windup-bom</artifactId>
-                <type>pom</type>
-                <scope>import</scope>
-                <version>${project.version}</version>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
     <dependencies>
         <dependency>
             <groupId>org.jboss.windup.config</groupId>
