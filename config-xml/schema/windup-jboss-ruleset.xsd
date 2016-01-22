@@ -114,6 +114,7 @@
             <xs:attribute type="xs:string" name="xpathResultMatch" use="optional" />
             <xs:attribute type="xs:string" name="matches" use="optional" />
             <xs:attribute type="xs:string" name="public-id" use="optional" />
+            <xs:attribute type="xs:string" name="system-id" use="optional" />
             <xs:attribute type="xs:string" name="in" use="optional" />
             <xs:attribute type="xs:string" name="from" use="optional" />
         </xs:complexType>

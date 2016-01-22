@@ -47,14 +47,15 @@ public class XmlFileHandler implements ElementHandler<XmlFile>
         String as = $(element).attr("as");
         String from = $(element).attr("from");
         String publicId = $(element).attr("public-id");
+        String systemId = $(element).attr("system-id");
         String resultMatch = $(element).attr("xpathResultMatch");
         if (as == null)
         {
             as = Iteration.DEFAULT_VARIABLE_LIST_STRING;
         }
-        if (StringUtils.isBlank(xpath) && StringUtils.isBlank(publicId))
+        if (StringUtils.isBlank(xpath) && StringUtils.isBlank(publicId) && StringUtils.isBlank(systemId))
         {
-            throw new WindupException("Error, 'xmlfile' element must have a non-empty 'matches' or public-id attribute");
+            throw new WindupException("Error, 'xmlfile' element must have a non-empty 'matches', 'public-id' or 'system-id' attribute");
         }
         String inFile = $(element).attr("in");
 
@@ -83,6 +84,7 @@ public class XmlFileHandler implements ElementHandler<XmlFile>
             xmlFile.resultMatches(resultMatch);
         }
         xmlFile.andDTDPublicId(publicId);
+        xmlFile.andDTDSystemId(systemId);
         for (Map.Entry<String, String> nsMapping : namespaceMappings.entrySet())
         {
             xmlFile.namespace(nsMapping.getKey(), nsMapping.getValue());

@@ -25,7 +25,7 @@ public class XmlFileFrom
 
     public XmlFileDTD withDTDPublicId(String regex)
     {
-        this.xmlFile.setPublicId(regex);
+        this.xmlFile.andDTDPublicId(regex);
         return this.xmlFile;
     }
 
