@@ -23,7 +23,11 @@ public class XmlFileParameterMatchCache
     {
         for (int i = frameID; i >= 0; i--)
         {
-            String existingValue = vars.get(i).get(key);
+            Map<String, String> frameVariables = vars.get(i);
+            if(frameVariables == null) {
+                continue;
+            }
+            String existingValue = frameVariables.get(key);
             if (existingValue != null && !existingValue.equals(value))
             {
                 return false;
@@ -37,10 +41,10 @@ public class XmlFileParameterMatchCache
         vars.get(frameID).put(key, value);
     }
 
-    public Map<String, String> getVariables(int frameID)
+    public Map<String, String> getVariables()
     {
         Map<String, String> result = new HashMap<>();
-        for (int i = 0; i < vars.size(); i++)
+        for (int i  : vars.keySet())
         {
             Map<String, String> existingVars = vars.get(i);
             for (Map.Entry<String, String> existingVar : existingVars.entrySet())

@@ -574,7 +574,7 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD, 
                     }
                 }
 
-                for (Map.Entry<String, String> entry : paramMatchCache.getVariables(frameIdx).entrySet())
+                for (Map.Entry<String, String> entry : paramMatchCache.getVariables().entrySet())
                 {
                     Parameter<?> param = store.get(entry.getKey());
                     String value = entry.getValue();
