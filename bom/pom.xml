@@ -4,7 +4,7 @@
 
     <properties>
         <version.forge>2.20.1.Final</version.forge>
-        <version.furnace>2.22.7.Final</version.furnace>
+        <version.furnace>2.22.10.Final</version.furnace>
         <version.nexus.index>4</version.nexus.index>
     </properties>
 
@@ -293,17 +293,15 @@
                 <groupId>org.jboss.windup</groupId>
                 <artifactId>windup-bootstrap</artifactId>
                 <version>${project.version}</version>
-            </dependency>            
-            
-
-        <dependency>
-            <groupId>org.jboss.windup</groupId>
-            <artifactId>windup-test-harness</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
-        </dependency>
+            </dependency>
 
 
+            <dependency>
+                <groupId>org.jboss.windup</groupId>
+                <artifactId>windup-test-harness</artifactId>
+                <version>${project.version}</version>
+                <scope>test</scope>
+            </dependency>
 
         </dependencies>
     </dependencyManagement>

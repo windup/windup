@@ -18,6 +18,12 @@ public class GraphContextFactoryImpl implements GraphContextFactory
 
     public GraphContextFactoryImpl() throws Exception
     {
+    }
+
+    //@PostConstruct doesn't work with SimpleContainer.
+    public void init(){
+        if (this.furnace != null)
+            return;
         this.furnace = SimpleContainer.getFurnace(GraphContextFactory.class.getClassLoader());
         this.graphApiCompositeClassLoaderProvider = furnace.getAddonRegistry().getServices(GraphApiCompositeClassLoaderProvider.class).get();
         this.graphTypeManager = furnace.getAddonRegistry().getServices(GraphTypeManager.class).get();
@@ -26,6 +32,7 @@ public class GraphContextFactoryImpl implements GraphContextFactory
     @Override
     public GraphContext create()
     {
+        init();
         return new GraphContextImpl(
                     furnace,
                     graphTypeManager,
@@ -36,6 +43,7 @@ public class GraphContextFactoryImpl implements GraphContextFactory
     @Override
     public GraphContext create(Path graphDir)
     {
+        init();
         return new GraphContextImpl(
                     furnace,
                     graphTypeManager,
@@ -46,6 +54,7 @@ public class GraphContextFactoryImpl implements GraphContextFactory
     @Override
     public GraphContext load(Path graphDir)
     {
+        init();
         return new GraphContextImpl(
                     furnace,
                     graphTypeManager,
