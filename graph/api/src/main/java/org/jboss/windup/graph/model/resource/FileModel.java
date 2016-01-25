@@ -35,9 +35,47 @@ public interface FileModel extends ResourceModel
     String FILE_PATH = "filePath";
     String IS_DIRECTORY = "isDirectory";
     String WINDUP_GENERATED = "windupGenerated";
-    String PRETTY_PATH = "fileModelPrettyPath";
-    String PRETTY_PATH_WITHIN_PROJECT = "fileModelPrettyPathWithinProject";
     String PARSE_ERROR = "parseError";
+
+    String DUPLICATE = TYPE + "duplicate";
+    String ORIGINAL_FILE = TYPE + "OriginalFile";
+
+    /**
+     * Indicates that this {@link FileModel} is a duplicate of another file.
+     */
+    @Property(DUPLICATE)
+    @FrameBooleanDefaultValue(false)
+    Boolean isDuplicate();
+
+    /**
+     * Indicates that this {@link FileModel} is a duplicate of another file.
+     */
+    @Property(DUPLICATE)
+    void setDuplicate(boolean duplicate);
+
+    /**
+     * Gets the list of files that are an exact duplicate of this original file.
+     *
+     * NOTE: This should only contains items if this file is the file with {@link FileModel#isDuplicate()} set to false.
+     */
+    @Adjacency(label = ORIGINAL_FILE, direction = Direction.IN)
+    Iterable<FileModel> getDuplicates();
+
+    /**
+     * Gets the original file.
+     *
+     * NOTE: This should only contains an item if this file is a file with {@link FileModel#isDuplicate()} set to true.
+     */
+    @Adjacency(label = ORIGINAL_FILE, direction = Direction.OUT)
+    FileModel getOriginalFile();
+
+    /**
+     * Gets the original file.
+     *
+     * NOTE: This should only contains an item if this file is a file with {@link FileModel#isDuplicate()} set to true.
+     */
+    @Adjacency(label = ORIGINAL_FILE, direction = Direction.OUT)
+    void setOriginalFile(FileModel fileModel);
 
     /**
      * Contains the File Name (the last component of the path). Eg, a file /tmp/foo/bar/file.txt would have fileName set to "file.txt"
@@ -88,6 +126,7 @@ public interface FileModel extends ResourceModel
      * Contains a SHA1 Hash of the file
      */
     @Property(SHA1_HASH)
+    @Indexed
     String getSHA1Hash();
 
     /**

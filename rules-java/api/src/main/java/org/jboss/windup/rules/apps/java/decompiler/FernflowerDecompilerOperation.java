@@ -21,7 +21,10 @@ import org.jboss.windup.decompiler.api.DecompilationListener;
 import org.jboss.windup.decompiler.api.DecompilationResult;
 import org.jboss.windup.decompiler.fernflower.FernflowerDecompiler;
 import org.jboss.windup.decompiler.procyon.ProcyonDecompiler;
+import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.ProjectModel;
+import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.GraphService;
@@ -38,6 +41,9 @@ import org.jboss.windup.util.ProgressEstimate;
 import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.util.threading.WindupExecutors;
 import org.ocpsoft.rewrite.context.EvaluationContext;
+
+import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.blueprints.util.wrappers.event.EventVertex;
 
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
@@ -150,26 +156,29 @@ public class FernflowerDecompilerOperation extends AbstractDecompilerOperation
         }
 
         @Override
-        public void decompilationFailed(List<String> inputPath, String message)
+        public void decompilationFailed(List<String> inputPaths, String message)
         {
-            ClassDecompileRequest request = requestMap.get(inputPath);
-            ProcyonDecompiler procyon = new ProcyonDecompiler();
+            for (String inputPath : inputPaths)
+            {
+                ClassDecompileRequest request = requestMap.get(inputPath);
+                ProcyonDecompiler procyon = new ProcyonDecompiler();
 
-            DecompilationResult result = procyon.decompileClassFile(request.getRootDirectory(), request.getClassFile(), request.getOutputDirectory());
-            if (!result.getFailures().isEmpty())
-            {
-                LOG.warning("Failsafe Procyon decompilation of " + inputPath + " failed!");
-                progressEstimate.addWork(1);
-            }
-            else
-            {
-                for (Map.Entry<String, String> decompiledFile : result.getDecompiledFiles().entrySet())
+                DecompilationResult result = procyon.decompileClassFile(request.getRootDirectory(), request.getClassFile(),
+                            request.getOutputDirectory());
+                if (!result.getFailures().isEmpty())
                 {
-                    LOG.info("Failsafe Procyon decompilation of " + inputPath + " successful!");
-                    fileDecompiled(Collections.singletonList(decompiledFile.getKey()), decompiledFile.getValue());
+                    LOG.warning("Failsafe Procyon decompilation of " + inputPath + " failed!");
+                    progressEstimate.addWork(1);
+                }
+                else
+                {
+                    for (Map.Entry<String, String> decompiledFile : result.getDecompiledFiles().entrySet())
+                    {
+                        LOG.info("Failsafe Procyon decompilation of " + inputPath + " successful!");
+                        fileDecompiled(Collections.singletonList(decompiledFile.getKey()), decompiledFile.getValue());
+                    }
                 }
             }
-
         }
 
         @Override
@@ -195,14 +204,12 @@ public class FernflowerDecompilerOperation extends AbstractDecompilerOperation
                     FileService fileService = new FileService(event.getGraphContext());
                     Path classFilePath = Paths.get(mainClassFile);
 
-                    FileModel decompiledFileModel = fileService.getUniqueByProperty(FileModel.FILE_PATH,
-                                decompiledOutputFile);
+                    FileModel decompiledFileModel = fileService.findByPath(decompiledOutputFile);
 
                     if (decompiledFileModel == null)
                     {
                         FileModel parentFileModel = fileService.findByPath(Paths.get(decompiledOutputFile)
-                                    .getParent()
-                                    .toString());
+                                    .getParent().toString());
 
                         // make sure parent files already exist
                         // (it can happen that it does not if PROCYON puts the decompiled .java file in an unexpected
@@ -212,7 +219,7 @@ public class FernflowerDecompilerOperation extends AbstractDecompilerOperation
                         {
                             List<Path> lineage = new LinkedList<>();
                             Path parentPath = Paths.get(decompiledOutputFile).getParent();
-                            FileModel existingParentFM = parentFileModel;
+                            FileModel existingParentFM = null;
                             while (existingParentFM == null)
                             {
                                 lineage.add(0, parentPath);
@@ -246,41 +253,23 @@ public class FernflowerDecompilerOperation extends AbstractDecompilerOperation
                         // This can happen if the source file was already there, but tagged as something else before.
                         techTagService.removeTagFromFileModel(decompiledSourceFileModel, IndexJavaSourceFilesRuleProvider.TECH_TAG);
 
-                        FileModel classFileModel = fileService.getUniqueByProperty(
-                                    FileModel.FILE_PATH, classFilePath.toAbsolutePath().toString());
+                        FileModel classFileModel = fileService.findByPath(classFilePath.toString());
                         if (classFileModel != null && classFileModel instanceof JavaClassFileModel)
                         {
-                            decompiledFileModel.setParentArchive(classFileModel.getParentArchive());
-                            ProjectModel projectModel = classFileModel.getProjectModel();
+                            attachDecompiledFile(fileService, decompiledSourceFileModel, classFileModel, inputPath);
 
-                            // only add it to the project model if it is not already there
-                            if (decompiledFileModel.getProjectModel() == null || !decompiledFileModel.getProjectModel().equals(projectModel))
+                            for (FileModel duplicateClassFile : classFileModel.getDuplicates())
                             {
-                                decompiledFileModel.setProjectModel(projectModel);
-                                projectModel.addFileModel(decompiledFileModel);
+                                // 1. Duplicate the decompiled java model
+                                JavaSourceFileModel duplicateDecompiledJavaModel = (JavaSourceFileModel) duplicateFileModel(
+                                            event.getGraphContext(),
+                                            fileService,
+                                            duplicateClassFile.getParentArchive(),
+                                            decompiledSourceFileModel);
+
+                                // 2. Add this to the duplicateClass file as a relationship
+                                attachDecompiledFile(fileService, duplicateDecompiledJavaModel, duplicateClassFile, inputPath);
                             }
-
-                            if (decompiledFileModel.getParentArchive() != null)
-                                decompiledFileModel.getParentArchive().addDecompiledFileModel(decompiledFileModel);
-
-                            JavaClassFileModel classModel = (JavaClassFileModel) classFileModel;
-                            classModel.getJavaClass().setDecompiledSource(decompiledSourceFileModel);
-                            decompiledSourceFileModel.setPackageName(classModel.getPackageName());
-                            decompiledSourceFileModel.setWindupGenerated(true);
-                            setupClassToJavaConnections(event.getGraphContext(),inputPath,decompiledSourceFileModel);
-
-                            // Set the root path of this source file (if possible). Procyon should always be placing the file
-                            // into a location that is appropriate for the package name, so this should always yield
-                            // a non-null root path.
-                            Path rootSourcePath = PathUtil.getRootFolderForSource(decompiledSourceFileModel.asFile().toPath(),
-                                        classModel.getPackageName());
-                            if (rootSourcePath != null)
-                            {
-                                FileModel rootSourceFileModel = fileService.createByFilePath(rootSourcePath.toString());
-                                decompiledSourceFileModel.setRootSourceFolder(rootSourceFileModel);
-                            }
-                            if (classModel.getJavaClass() != null)
-                                decompiledSourceFileModel.addJavaClass(classModel.getJavaClass());
                         }
                         else
                         {
@@ -311,6 +300,66 @@ public class FernflowerDecompilerOperation extends AbstractDecompilerOperation
                     // noop
                 }
             }
+        }
+
+        private FileModel duplicateFileModel(GraphContext context, FileService fileService, ArchiveModel newArchiveModel, FileModel originalFile)
+        {
+            FileModel newFileModel = fileService.create();
+            newFileModel.setFilePath(originalFile.getFilePath());
+
+            Vertex originalSubFileVertex = originalFile.asVertex();
+            Vertex newFileModelVertex = newFileModel.asVertex();
+            if (newFileModelVertex instanceof EventVertex)
+            {
+                // we don't want events firing during the copy process, as we just want a literal
+                // copy of the original properties
+                newFileModelVertex = ((EventVertex) newFileModelVertex).getBaseVertex();
+            }
+            for (String originalPropertyKey : originalSubFileVertex.getPropertyKeys())
+            {
+                if (!WindupVertexFrame.TYPE_PROP.equals(originalPropertyKey))
+                    newFileModelVertex.setProperty(originalPropertyKey, originalSubFileVertex.getProperty(originalPropertyKey));
+            }
+            newFileModel.setDuplicate(true);
+            newFileModel.setOriginalFile(originalFile);
+            newFileModel.setParentArchive(newArchiveModel);
+            newArchiveModel.addContainedFileModel(newFileModel);
+            newFileModel.setProjectModel(newArchiveModel.getProjectModel());
+            newArchiveModel.getProjectModel().addFileModel(newFileModel);
+            return GraphService.refresh(context, newFileModel);
+        }
+
+        private void attachDecompiledFile(FileService fileService, JavaSourceFileModel decompiledSourceFileModel,
+                    FileModel classFileModel, List<String> inputPath)
+        {
+            decompiledSourceFileModel.setParentArchive(classFileModel.getParentArchive());
+            ProjectModel projectModel = classFileModel.getProjectModel();
+
+            // only add it to the project model if it is not already there
+            if (decompiledSourceFileModel.getProjectModel() == null || !decompiledSourceFileModel.getProjectModel().equals(projectModel))
+            {
+                decompiledSourceFileModel.setProjectModel(projectModel);
+                projectModel.addFileModel(decompiledSourceFileModel);
+            }
+
+            JavaClassFileModel classModel = (JavaClassFileModel) classFileModel;
+            classModel.getJavaClass().setDecompiledSource(decompiledSourceFileModel);
+            decompiledSourceFileModel.setPackageName(classModel.getPackageName());
+            decompiledSourceFileModel.setWindupGenerated(true);
+            setupClassToJavaConnections(event.getGraphContext(), inputPath, decompiledSourceFileModel);
+
+            // Set the root path of this source file (if possible). Procyon should always be placing the file
+            // into a location that is appropriate for the package name, so this should always yield
+            // a non-null root path.
+            Path rootSourcePath = PathUtil.getRootFolderForSource(decompiledSourceFileModel.asFile().toPath(),
+                        classModel.getPackageName());
+            if (rootSourcePath != null)
+            {
+                FileModel rootSourceFileModel = fileService.createByFilePath(rootSourcePath.toString());
+                decompiledSourceFileModel.setRootSourceFolder(rootSourceFileModel);
+            }
+            if (classModel.getJavaClass() != null)
+                decompiledSourceFileModel.addJavaClass(classModel.getJavaClass());
         }
 
         @Override

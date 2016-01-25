@@ -97,11 +97,11 @@ public class InlineHintServiceTest
 
             FileModel fileP1 = fileService.create();
             InlineHintModel hintP1 = hintService.create();
-            hintP1.setFile(fileP1);
+            hintP1.addFile(fileP1);
 
             FileModel fileP2 = fileService.create();
             InlineHintModel hintP2 = hintService.create();
-            hintP2.setFile(fileP2);
+            hintP2.addFile(fileP2);
 
             ProjectModel child1 = projectService.create();
             child1.setName("child1");
@@ -114,12 +114,12 @@ public class InlineHintServiceTest
             FileModel child2File1 = fileService.create();
             child2.addFileModel(child2File1);
             InlineHintModel child2HintFile1 = hintService.create();
-            child2HintFile1.setFile(child2File1);
+            child2HintFile1.addFile(child2File1);
 
             FileModel child2File2 = fileService.create();
             child2.addFileModel(child2File2);
             InlineHintModel child2HintFile2 = hintService.create();
-            child2HintFile2.setFile(child2File2);
+            child2HintFile2.addFile(child2File2);
 
             ProjectModel child3 = projectService.create();
             child3.setName("child3");
@@ -128,7 +128,7 @@ public class InlineHintServiceTest
             FileModel child3File1 = fileService.create();
             child3.addFileModel(child3File1);
             InlineHintModel child3HintFile1 = hintService.create();
-            child3HintFile1.setFile(child3File1);
+            child3HintFile1.addFile(child3File1);
 
             ProjectModel child2_1 = projectService.create();
             child2_1.setName("child2_1");
@@ -144,7 +144,7 @@ public class InlineHintServiceTest
             FileModel child2_1File1 = fileService.create();
             child2_1_2.addFileModel(child2_1File1);
             InlineHintModel child2_1HintFile1 = hintService.create();
-            child2_1HintFile1.setFile(child2_1File1);
+            child2_1HintFile1.addFile(child2_1File1);
 
             ProjectModel child2_3 = projectService.create();
             child2_3.setName("child2_3");
@@ -183,14 +183,14 @@ public class InlineHintServiceTest
 
         InlineHintModel b1 = inlineHintService.create();
         InlineHintModel b1b = inlineHintService.create();
-        b1.setFile(f1);
+        b1.addFile(f1);
         b1.setEffort(50);
-        b1b.setFile(f1);
+        b1b.addFile(f1);
         b1b.setEffort(100);
 
         InlineHintModel b2 = inlineHintService.create();
         b2.setEffort(3);
-        b2.setFile(f2);
+        b2.addFile(f2);
 
         ProjectModel projectModel = context.getFramed().addVertex(null, ProjectModel.class);
         projectModel.addFileModel(f1);

@@ -7,6 +7,7 @@ import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.phase.DecompilationPhase;
 import org.jboss.windup.config.query.Query;
+import org.jboss.windup.config.query.QueryPropertyComparisonType;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
@@ -28,7 +29,7 @@ public class BeforeDecompileClassesRuleProvider extends AbstractRuleProvider
         return ConfigurationBuilder.begin()
         .addRule()
         .when(Query.fromType(JavaClassFileModel.class)
-                .withoutProperty(FileModel.PARSE_ERROR)
+                .withoutProperty(FileModel.PARSE_ERROR).withProperty(FileModel.DUPLICATE, QueryPropertyComparisonType.NOT_EQUALS, true)
         )
         .perform(new ClassFilePreDecompilationScan());
     }

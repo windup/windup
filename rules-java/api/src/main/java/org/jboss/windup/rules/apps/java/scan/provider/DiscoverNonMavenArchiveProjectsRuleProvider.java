@@ -22,6 +22,8 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+import com.tinkerpop.blueprints.Direction;
+
 /**
  * Finds Archives that were not classified as Maven archives/projects, and adds some generic project information for
  * them.
@@ -110,11 +112,13 @@ public class DiscoverNonMavenArchiveProjectsRuleProvider extends AbstractRulePro
                                     {
                                         // don't add archive models, as those really are separate projects...
                                         // also, don't set the project model if one is already set
-                                        if (!(f instanceof ArchiveModel) && f.getProjectModel() == null)
+                                        if (!(f instanceof ArchiveModel))
                                         {
-                                            // only set it if it has not already been set
-                                            f.setProjectModel(projectModel);
-                                            projectModel.addFileModel(f);
+                                            if (!f.asVertex().getVertices(Direction.OUT, FileModel.FILE_TO_PROJECT_MODEL).iterator().hasNext()) {
+                                                // only set it if it has not already been set
+                                                f.setProjectModel(projectModel);
+                                                projectModel.addFileModel(f);
+                                            }
                                         }
                                     }
                                 }

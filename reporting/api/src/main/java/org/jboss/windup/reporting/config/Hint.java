@@ -13,6 +13,7 @@ import org.jboss.forge.furnace.util.Assert;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.parameters.ParameterizedIterationOperation;
 import org.jboss.windup.graph.model.LinkModel;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.EffortReportModel;
@@ -101,47 +102,51 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel>impl
         try
         {
             GraphService<InlineHintModel> service = new GraphService<>(event.getGraphContext(), InlineHintModel.class);
-
-            InlineHintModel hintModel = service.create();
-            hintModel.setRuleID(((Rule) context.get(Rule.class)).getId());
-            hintModel.setLineNumber(locationModel.getLineNumber());
-            hintModel.setColumnNumber(locationModel.getColumnNumber());
-            hintModel.setLength(locationModel.getLength());
-            hintModel.setFileLocationReference(locationModel);
-            hintModel.setFile(locationModel.getFile());
-            hintModel.setEffort(effort);
-            hintModel.setSeverity(this.severity);
-            if (hintTitlePattern != null)
+            for (FileModel locationFileModel : locationModel.getFiles())
             {
-                hintModel.setTitle(hintTitlePattern.getBuilder().build(event, context));
-            }
-            else
-            {
-                // If there is no title, just use the description of the location
-                // (eg, 'Constructing com.otherproduct.Foo()')
-                hintModel.setTitle(locationModel.getDescription());
-            }
-            String hintText = hintTextPattern.getBuilder().build(event, context);
-            hintModel.setHint(hintText);
 
-            GraphService<LinkModel> linkService = new GraphService<>(event.getGraphContext(), LinkModel.class);
-            for (Link link : links)
-            {
-                LinkModel linkModel = linkService.create();
-                linkModel.setDescription(link.getTitle());
-                linkModel.setLink(link.getLink());
-                hintModel.addLink(linkModel);
-            }
+                InlineHintModel hintModel = service.create();
+                hintModel.setRuleID(((Rule) context.get(Rule.class)).getId());
+                hintModel.setLineNumber(locationModel.getLineNumber());
+                hintModel.setColumnNumber(locationModel.getColumnNumber());
+                hintModel.setLength(locationModel.getLength());
+                hintModel.setFileLocationReference(locationModel);
+                hintModel.addFile(locationFileModel);
+                hintModel.setEffort(effort);
+                hintModel.setSeverity(this.severity);
+                if (hintTitlePattern != null)
+                {
+                    hintModel.setTitle(hintTitlePattern.getBuilder().build(event, context));
+                }
+                else
+                {
+                    // If there is no title, just use the description of the location
+                    // (eg, 'Constructing com.otherproduct.Foo()')
+                    hintModel.setTitle(locationModel.getDescription());
+                }
+                String hintText = hintTextPattern.getBuilder().build(event, context);
+                hintModel.setHint(hintText);
 
-            Set<String> tags = new HashSet<>(this.getTags());
-            TagSetService tagSetService = new TagSetService(event.getGraphContext());
-            hintModel.setTagModel(tagSetService.getOrCreate(event, tags));
+                GraphService<LinkModel> linkService = new GraphService<>(event.getGraphContext(), LinkModel.class);
+                for (Link link : links)
+                {
+                    LinkModel linkModel = linkService.create();
+                    linkModel.setDescription(link.getTitle());
+                    linkModel.setLink(link.getLink());
+                    hintModel.addLink(linkModel);
+                }
 
-            if (locationModel.getFile() instanceof SourceFileModel)
-                ((SourceFileModel) locationModel.getFile()).setGenerateSourceReport(true);
+                Set<String> tags = new HashSet<>(this.getTags());
+                TagSetService tagSetService = new TagSetService(event.getGraphContext());
+                hintModel.setTagModel(tagSetService.getOrCreate(event, tags));
 
-            LOG.info("Hint added to " + locationModel.getFile().getPrettyPathWithinProject() + " [" + this.toString(hintModel.getTitle(), hintText)
+                if (locationFileModel instanceof SourceFileModel)
+                    ((SourceFileModel) locationFileModel).setGenerateSourceReport(true);
+
+                LOG.info("Hint added to " + locationFileModel.getPrettyPathWithinProject() + " ["
+                            + this.toString(hintModel.getTitle(), hintText)
                         + "] with tags: " + StringUtils.join(this.getTags(), " "));
+            }
         }
         finally
         {

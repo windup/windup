@@ -21,7 +21,7 @@ import freemarker.template.TemplateModelException;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
  */
-public class GetEffortForFile implements WindupFreeMarkerMethod
+public class GetMigrationEffortPointsForFile implements WindupFreeMarkerMethod
 {
     private static final String NAME = "getMigrationEffortPointsForFile";
     private ClassificationService classificationService;

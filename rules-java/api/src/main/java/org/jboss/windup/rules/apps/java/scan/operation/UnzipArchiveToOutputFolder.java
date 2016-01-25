@@ -21,6 +21,7 @@ import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
+import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.IgnoredFileModel;
 import org.jboss.windup.graph.service.FileService;
@@ -33,6 +34,9 @@ import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.ZipUtil;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.context.EvaluationContext;
+
+import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.blueprints.util.wrappers.event.EventVertex;
 
 
 
@@ -70,7 +74,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
         // Create a folder for all archive contents.
         Path unzippedArchiveDir = getArchivesDirLocation(graphContext);
         ensureDirIsCreated(unzippedArchiveDir);
-        unzipToTempDirectory(event, context, unzippedArchiveDir, zipFile, payload);
+        unzipToTempDirectory(event, context, unzippedArchiveDir, payload);
     }
 
 
@@ -78,15 +82,14 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
     {
         WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(graphContext);
         String windupOutputFolder = cfg.getOutputPath().getFilePath();
-        Path windupTempUnzippedArchiveFolder = Paths.get(windupOutputFolder, ARCHIVES);
-        return windupTempUnzippedArchiveFolder;
+        return Paths.get(windupOutputFolder, ARCHIVES);
     }
 
 
     private void unzipToTempDirectory(final GraphRewrite event, EvaluationContext context,
-                final Path tempFolder, final File inputZipFile,
-                final ArchiveModel archiveModel)
+                final Path tempFolder, final ArchiveModel archiveModel)
     {
+        final File inputZipFile = archiveModel.asFile();
         final FileService fileService = new FileService(event.getGraphContext());
 
         // Setup a temp folder for the archive
@@ -209,19 +212,9 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
                         event.getGraphContext().getGraph().getBaseGraph().commit();
                     }
 
-                    if (subFile.isFile() && ZipUtil.endsWithZipExtension(subFileModel.getFilePath()))
+                    if (isZipFileModel(subFileModel))
                     {
-                        File newZipFile = subFileModel.asFile();
-                        ArchiveModel newArchiveModel = GraphService.addTypeToModel(event.getGraphContext(), subFileModel, ArchiveModel.class);
-                        newArchiveModel.setParentArchive(archiveModel);
-                        newArchiveModel.setArchiveName(newZipFile.getName());
-                        archiveModel.addChildArchive(newArchiveModel);
-
-                        /*
-                         * New archive must be reloaded in case the archive should be ignored
-                         */
-                        newArchiveModel = GraphService.refresh(event.getGraphContext(), newArchiveModel);
-                        unzipToTempDirectory(event, context, tempFolder, newZipFile, newArchiveModel);
+                        unzipSubArchive(event, context, tempFolder, fileService, archiveModel, subFileModel);
                     }
 
                     if (subFile.isDirectory())
@@ -231,6 +224,97 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
                 }
             }
         }
+    }
+
+    private boolean isZipFileModel(FileModel fileModel)
+    {
+        File file = fileModel.asFile();
+        return file.isFile() && ZipUtil.endsWithZipExtension(file.toString());
+    }
+
+    private void unzipSubArchive(GraphRewrite event, EvaluationContext context, Path tempFolder, FileService fileService, ArchiveModel parentArchive,
+                FileModel childFile)
+    {
+        ArchiveModel childArchive = GraphService.addTypeToModel(event.getGraphContext(), childFile, ArchiveModel.class);
+        childArchive.setArchiveName(childArchive.getFileName());
+
+        childArchive.setParentArchive(parentArchive);
+        parentArchive.addChildArchive(childArchive);
+
+        /*
+         * New archive must be reloaded in case the archive should be ignored
+         */
+        childArchive = GraphService.refresh(event.getGraphContext(), childArchive);
+
+        Iterable<FileModel> identicalArchiveModels = fileService.findBySHA1Hash(childArchive.getSHA1Hash());
+        ArchiveModel originalArchive = null;
+        for (FileModel identicalArchiveModel : identicalArchiveModels)
+        {
+            if (!identicalArchiveModel.equals(childArchive) && !identicalArchiveModel.isDuplicate())
+            {
+                originalArchive = (ArchiveModel) identicalArchiveModel;
+                break;
+            }
+        }
+
+        if (originalArchive != null)
+        {
+            childArchive.setDuplicate(true);
+            childArchive.setOriginalFile(originalArchive);
+
+            FileModel unzippedDirectory = duplicateFileModel(fileService, childArchive, null, originalArchive.getUnzippedDirectory());
+            childArchive.setUnzippedDirectory(unzippedDirectory);
+            recurseAndAddDuplicateFileReferences(event, context, tempFolder, fileService, childArchive, originalArchive.getUnzippedDirectory(),
+                        unzippedDirectory);
+        }
+        else
+        {
+            unzipToTempDirectory(event, context, tempFolder, childArchive);
+        }
+    }
+
+    private void recurseAndAddDuplicateFileReferences(GraphRewrite event, EvaluationContext context, Path tempFolder, FileService fileService,
+                ArchiveModel archiveModel, FileModel originalParentModel, FileModel parentModel)
+    {
+        for (FileModel originalSubFile : originalParentModel.getFilesInDirectory())
+        {
+            FileModel newFileModel = duplicateFileModel(fileService, archiveModel, parentModel, originalSubFile);
+
+            if (isZipFileModel(newFileModel))
+            {
+                unzipSubArchive(event, context, tempFolder, fileService, archiveModel, newFileModel);
+            }
+            if (originalSubFile.isDirectory())
+            {
+                recurseAndAddDuplicateFileReferences(event, context, tempFolder, fileService, archiveModel, originalSubFile, newFileModel);
+            }
+        }
+    }
+
+    private FileModel duplicateFileModel(FileService fileService, ArchiveModel archive, FileModel newParent, FileModel originalFile)
+    {
+        FileModel newFileModel = fileService.create();
+        newFileModel.setFilePath(originalFile.getFilePath());
+
+        Vertex originalSubFileVertex = originalFile.asVertex();
+        Vertex newFileModelVertex = newFileModel.asVertex();
+        if (newFileModelVertex instanceof EventVertex)
+        {
+            // we don't want events firing during the copy process, as we just want a literal
+            // copy of the original properties
+            newFileModelVertex = ((EventVertex) newFileModelVertex).getBaseVertex();
+        }
+        for (String originalPropertyKey : originalSubFileVertex.getPropertyKeys())
+        {
+            if (!WindupVertexFrame.TYPE_PROP.equals(originalPropertyKey))
+                newFileModelVertex.setProperty(originalPropertyKey, originalSubFileVertex.getProperty(originalPropertyKey));
+        }
+        newFileModel.setDuplicate(true);
+        newFileModel.setOriginalFile(originalFile);
+        newFileModel.setParentFile(newParent);
+        newFileModel.setParentArchive(archive);
+        archive.addContainedFileModel(newFileModel);
+        return newFileModel;
     }
 
     /**

@@ -3,6 +3,7 @@ package org.jboss.windup.rules.apps.java.decompiler;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -11,6 +12,7 @@ import org.apache.bcel.classfile.JavaClass;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.rules.apps.java.DependencyVisitor;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
@@ -22,6 +24,8 @@ import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.Logging;
 import org.objectweb.asm.ClassReader;
 import org.ocpsoft.rewrite.context.EvaluationContext;
+
+import com.google.common.collect.Iterables;
 
 /**
  * An operation doing a pre-scan of the .class file in order to check if it is possible to tell in advance if it is worth decompiling the class.
@@ -35,82 +39,96 @@ public class ClassFilePreDecompilationScan extends AbstractIterationOperation<Ja
     private static final Logger LOG = Logging.get(ClassFilePreDecompilationScan.class);
 
 
-    private void addClassFileMetadata(GraphRewrite event, EvaluationContext context, JavaClassFileModel javaClassFileModel)
+    private void addClassFileMetadata(GraphRewrite event, EvaluationContext context, JavaClassFileModel originalJavaClassFileModel)
     {
-        try (FileInputStream fis = new FileInputStream(javaClassFileModel.getFilePath()))
+        Iterable<FileModel> allIncludingDupes = Iterables.concat(originalJavaClassFileModel.getDuplicates(),
+                    Collections.singleton(originalJavaClassFileModel));
+        try (FileInputStream fis = new FileInputStream(originalJavaClassFileModel.getFilePath()))
         {
-            final ClassParser parser = new ClassParser(fis, javaClassFileModel.getFilePath());
+
+            final ClassParser parser = new ClassParser(fis, originalJavaClassFileModel.getFilePath());
             final JavaClass bcelJavaClass = parser.parse();
-            final String packageName = bcelJavaClass.getPackageName();
 
-            final String qualifiedName = bcelJavaClass.getClassName();
-
-            final JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
-            final JavaClassModel javaClassModel = javaClassService.create(qualifiedName);
-            int majorVersion = bcelJavaClass.getMajor();
-            int minorVersion = bcelJavaClass.getMinor();
-
-            String simpleName = qualifiedName;
-            if (packageName != null && !packageName.isEmpty() && simpleName != null)
+            for (FileModel fileModel : allIncludingDupes)
             {
-                simpleName = StringUtils.substringAfterLast(simpleName, ".");
-            }
+                JavaClassFileModel javaClassFileModel = (JavaClassFileModel) fileModel;
 
-            javaClassFileModel.setMajorVersion(majorVersion);
-            javaClassFileModel.setMinorVersion(minorVersion);
-            javaClassFileModel.setPackageName(packageName);
+                final String packageName = bcelJavaClass.getPackageName();
 
-            javaClassModel.setSimpleName(simpleName);
-            javaClassModel.setPackageName(packageName);
-            javaClassModel.setQualifiedName(qualifiedName);
-            javaClassModel.setClassFile(javaClassFileModel);
-            javaClassModel.setPublic(bcelJavaClass.isPublic());
-            javaClassModel.setInterface(bcelJavaClass.isInterface());
+                final String qualifiedName = bcelJavaClass.getClassName();
 
-            final String[] interfaceNames = bcelJavaClass.getInterfaceNames();
-            if (interfaceNames != null)
-            {
-                for (final String interfaceName : interfaceNames)
+                final JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
+                final JavaClassModel javaClassModel = javaClassService.create(qualifiedName);
+                int majorVersion = bcelJavaClass.getMajor();
+                int minorVersion = bcelJavaClass.getMinor();
+
+                String simpleName = qualifiedName;
+                if (packageName != null && !packageName.isEmpty() && simpleName != null)
                 {
-                    JavaClassModel interfaceModel = javaClassService.getOrCreatePhantom(interfaceName);
-                    javaClassService.addInterface(javaClassModel, interfaceModel);
+                    simpleName = StringUtils.substringAfterLast(simpleName, ".");
                 }
+
+                javaClassModel.setSimpleName(simpleName);
+                javaClassModel.setPackageName(packageName);
+                javaClassModel.setQualifiedName(qualifiedName);
+                javaClassModel.setClassFile(javaClassFileModel);
+                javaClassModel.setPublic(bcelJavaClass.isPublic());
+                javaClassModel.setInterface(bcelJavaClass.isInterface());
+
+                final String[] interfaceNames = bcelJavaClass.getInterfaceNames();
+                if (interfaceNames != null)
+                {
+                    for (final String interfaceName : interfaceNames)
+                    {
+                        JavaClassModel interfaceModel = javaClassService.getOrCreatePhantom(interfaceName);
+                        javaClassService.addInterface(javaClassModel, interfaceModel);
+                    }
+                }
+
+                String superclassName = bcelJavaClass.getSuperclassName();
+                if (!bcelJavaClass.isInterface() && !StringUtils.isBlank(superclassName))
+                    javaClassModel.setExtends(javaClassService.getOrCreatePhantom(superclassName));
+
+                javaClassFileModel.setMajorVersion(majorVersion);
+                javaClassFileModel.setMinorVersion(minorVersion);
+                javaClassFileModel.setPackageName(packageName);
+                javaClassFileModel.setJavaClass(javaClassModel);
             }
-
-            String superclassName = bcelJavaClass.getSuperclassName();
-            if (!bcelJavaClass.isInterface() && !StringUtils.isBlank(superclassName))
-                javaClassModel.setExtends(javaClassService.getOrCreatePhantom(superclassName));
-
-            javaClassFileModel.setJavaClass(javaClassModel);
         }
         catch (Exception e)
         {
-            final String message = "BCEL was unable to parse class file '" + javaClassFileModel.getFilePath() + "':\n\t" + e.getMessage();
-            LOG.log(Level.WARNING, message, e);
-            ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-            classificationService.attachClassification(context, javaClassFileModel, JavaClassFileModel.UNPARSEABLE_CLASS_CLASSIFICATION,
+            for (FileModel fileModel : allIncludingDupes)
+            {
+                JavaClassFileModel javaClassFileModel = (JavaClassFileModel) fileModel;
+                final String message = "BCEL was unable to parse class file '" + javaClassFileModel.getFilePath() + "':\n\t" + e.getMessage();
+                LOG.log(Level.WARNING, message, e);
+                ClassificationService classificationService = new ClassificationService(event.getGraphContext());
+                classificationService.attachClassification(context, javaClassFileModel, JavaClassFileModel.UNPARSEABLE_CLASS_CLASSIFICATION,
                         JavaClassFileModel.UNPARSEABLE_CLASS_DESCRIPTION);
-            javaClassFileModel.setParseError(message);
-            javaClassFileModel.setSkipDecompilation(true);
+                javaClassFileModel.setParseError(message);
+                javaClassFileModel.setSkipDecompilation(true);
+            }
         }
     }
 
 
-    private void filterClassesToDecompile(GraphRewrite event, EvaluationContext context, JavaClassFileModel fileModel)
+    private void filterClassesToDecompile(GraphRewrite event, EvaluationContext context, JavaClassFileModel originalFileModel)
     {
-        try (InputStream is = fileModel.asInputStream())
+        Iterable<FileModel> allIncludingDupes = Iterables.concat(originalFileModel.getDuplicates(), Collections.singleton(originalFileModel));
+        WindupJavaConfigurationService configurationService = new WindupJavaConfigurationService(event.getGraphContext());
+        if (!configurationService.shouldScanFile(originalFileModel.getFilePath()))
         {
-            WindupJavaConfigurationService configurationService = new WindupJavaConfigurationService(event.getGraphContext());
-            if (!configurationService.shouldScanFile(fileModel.getFilePath()))
-            {
+            for (FileModel fileModel : allIncludingDupes)
                 fileModel.asVertex().setProperty(JavaClassFileModel.SKIP_DECOMPILATION, true);
-                return;
-            }
+            return;
+        }
 
-            // keep inner classes (we may need them for decompilation purposes)
-            if (fileModel.getFileName().contains("$"))
-                return;
+        // keep inner classes (we may need them for decompilation purposes)
+        if (originalFileModel.getFileName().contains("$"))
+            return;
 
+        try (InputStream is = originalFileModel.asInputStream())
+        {
             DependencyVisitor dependencyVisitor = new DependencyVisitor();
             ClassReader classReader = new ClassReader(is);
             classReader.accept(dependencyVisitor, 0);
@@ -119,19 +137,23 @@ public class ClassFilePreDecompilationScan extends AbstractIterationOperation<Ja
             for (String typeReference : dependencyVisitor.classes)
             {
                 if (shouldIgnore(typeReference)) {
-                    fileModel.asVertex().setProperty(JavaClassFileModel.SKIP_DECOMPILATION, true);
+                    for (FileModel fileModel : allIncludingDupes)
+                        fileModel.asVertex().setProperty(JavaClassFileModel.SKIP_DECOMPILATION, true);
                     break;
                 }
             }
         }
         catch (IOException|IllegalArgumentException e)
         {
+            for (FileModel fileModel : allIncludingDupes)
+            {
             final String message = "ASM was unable to parse class file '" + fileModel.getFilePath() + "':\n\t" + e.getMessage();
             LOG.log(Level.WARNING, message, e);
             ClassificationService classificationService = new ClassificationService(event.getGraphContext());
             classificationService.attachClassification(context, fileModel, JavaClassFileModel.UNPARSEABLE_CLASS_CLASSIFICATION,
                         JavaClassFileModel.UNPARSEABLE_CLASS_DESCRIPTION);
             fileModel.setParseError(message);
+            }
         }
     }
 

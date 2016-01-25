@@ -8,8 +8,8 @@ import javax.inject.Inject;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.AddonDependencies;
+import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.GraphRewrite;
@@ -90,11 +90,11 @@ public class InlineHintModelQueryTest
 
         InlineHintModel b1 = context.getFramed().addVertex(null, InlineHintModel.class);
         InlineHintModel b1b = context.getFramed().addVertex(null, InlineHintModel.class);
-        b1.setFile(f1);
-        b1b.setFile(f1);
+        b1.addFile(f1);
+        b1b.addFile(f1);
 
         InlineHintModel b2 = context.getFramed().addVertex(null, InlineHintModel.class);
-        b2.setFile(f2);
+        b2.addFile(f2);
 
         ClassificationModel c1 = context.getFramed().addVertex(null, ClassificationModel.class);
         ClassificationModel c1b = context.getFramed().addVertex(null, ClassificationModel.class);
@@ -184,11 +184,11 @@ public class InlineHintModelQueryTest
 
         InlineHintModel b1 = context.getFramed().addVertex(null, InlineHintModel.class);
         InlineHintModel b1b = context.getFramed().addVertex(null, InlineHintModel.class);
-        b1.setFile(f1);
-        b1b.setFile(f1);
+        b1.addFile(f1);
+        b1b.addFile(f1);
 
         InlineHintModel b2 = context.getFramed().addVertex(null, InlineHintModel.class);
-        b2.setFile(f2);
+        b2.addFile(f2);
 
         ClassificationModel c1 = context.getFramed().addVertex(null, ClassificationModel.class);
         ClassificationModel c1b = context.getFramed().addVertex(null, ClassificationModel.class);

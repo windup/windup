@@ -1,6 +1,5 @@
 package org.jboss.windup.rules.files.condition;
 
-import com.tinkerpop.frames.modules.javahandler.JavaHandler;
 import org.jboss.windup.graph.model.resource.FileModel;
 
 /**
@@ -13,5 +12,5 @@ public interface ToFileModelTransformable
      * This is useful especially for operation on graph conditions such as filtering.
      * @return {@FileModel} filemodels
      */
-    Iterable<FileModel> transformToFileModel();
+    Iterable<? extends FileModel> transformToFileModel();
 }

@@ -1,17 +1,15 @@
 package org.jboss.windup.rules.files.model;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.rules.files.condition.ToFileModelTransformable;
 
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.javahandler.JavaHandler;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
-import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.jboss.windup.rules.files.condition.ToFileModelTransformable;
-
-import java.util.Collections;
 
 /**
  * Refers to a specific portion of a File and contains a reference to the code involved.
@@ -82,7 +80,7 @@ public interface FileLocationModel extends FileReferenceModel, ToFileModelTransf
 
     @Override
     @JavaHandler
-    Iterable<FileModel> transformToFileModel();
+    Iterable<? extends FileModel> transformToFileModel();
 
     abstract class Impl implements FileLocationModel, JavaHandlerContext<Vertex>
     {
@@ -98,9 +96,9 @@ public interface FileLocationModel extends FileReferenceModel, ToFileModelTransf
         }
 
         @Override
-        public Iterable<FileModel> transformToFileModel()
+        public Iterable<? extends FileModel> transformToFileModel()
         {
-            return Collections.singleton(getFile());
+            return getFiles();
         }
     }
 }

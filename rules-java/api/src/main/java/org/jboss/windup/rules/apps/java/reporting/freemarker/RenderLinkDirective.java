@@ -133,10 +133,10 @@ public class RenderLinkDirective implements WindupFreeMarkerTemplateDirective
     private void processFileLocationModel(Writer writer, String cssClass, FileLocationModel obj, String defaultText) throws IOException
     {
         String position = " (" + obj.getLineNumber() + ", " + obj.getColumnNumber() + ")";
-        String linkText = StringUtils.isBlank(defaultText) ? getPrettyPathForFile(obj.getFile()) + position : defaultText;
+        String linkText = StringUtils.isBlank(defaultText) ? getPrettyPathForFile(obj.getFiles().iterator().next()) + position : defaultText;
         String anchor = obj.asVertex().getId().toString();
 
-        SourceReportModel result = sourceReportService.getSourceReportForFileModel(obj.getFile());
+        SourceReportModel result = sourceReportService.getSourceReportForFileModel(obj.getFiles().iterator().next());
         if (result == null)
         {
             writer.write(linkText);

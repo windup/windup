@@ -58,7 +58,10 @@ public class ProblemSummaryService
             {
                 summary.setNumberFound(summary.getNumberFound() + 1);
             }
-            summary.addFile(hint.getHint(), hint.getFile());
+            for (FileModel fileModel : hint.getFiles())
+            {
+                summary.addFile(hint.getHint(), fileModel);
+            }
         }
 
         ClassificationService classificationService = new ClassificationService(context);

@@ -1,10 +1,17 @@
 package org.jboss.windup.rules.apps.java.condition;
 
-import com.thinkaurelius.titan.core.attribute.Text;
-import com.tinkerpop.blueprints.Predicate;
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.frames.structures.FramedVertexIterable;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Pattern;
+
 import org.apache.commons.lang.StringUtils;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
@@ -40,17 +47,12 @@ import org.ocpsoft.rewrite.param.ParameterizedPatternResult;
 import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
 import org.ocpsoft.rewrite.util.Maps;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.regex.Pattern;
+import com.google.common.collect.Iterables;
+import com.thinkaurelius.titan.core.attribute.Text;
+import com.tinkerpop.blueprints.Predicate;
+import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.frames.structures.FramedVertexIterable;
+import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 /**
  * {@link GraphCondition} that matches Vertices in the graph based upon the provided parameters.
@@ -169,6 +171,7 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
 
         return result;
     }
+
     /** Used to alter the regex so it will be compatible with lucene **/
     private String titanify(Pattern pattern)
     {
@@ -187,24 +190,24 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
             /*
              * Only set in the case of a query with no "from" variable.
              */
-            String initialQueryID = null;
+            final String initialQueryID = "iqi." + UUID.randomUUID().toString();
 
             QueryBuilderFrom query;
-            initialQueryID = "iqi." + UUID.randomUUID().toString();
 
-            //prepare initialQueryID
+            // prepare initialQueryID
             if (!StringUtils.isBlank(getInputVariablesName()))
             {
                 QueryBuilderFrom fromQuery = Query.from(getInputVariablesName());
                 QueryBuilderPiped piped = fromQuery.piped(new QueryGremlinCriterion()
                 {
-                    @Override public void query(GraphRewrite event, GremlinPipeline<Vertex, Vertex> pipeline)
+                    @Override
+                    public void query(GraphRewrite event, GremlinPipeline<Vertex, Vertex> pipeline)
                     {
                         pipeline.out(FileReferenceModel.FILE_MODEL).in(FileReferenceModel.FILE_MODEL)
                                     .has(JavaTypeReferenceModel.RESOLVED_SOURCE_SNIPPIT, Text.REGEX, compiledPattern.toString());
                     }
                 });
-                piped.as(initialQueryID).evaluate(event,context);
+                piped.as(initialQueryID).evaluate(event, context);
             }
             else
             {
@@ -245,42 +248,48 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
                 Iterable<? extends WindupVertexFrame> frames = Variables.instance(event).findVariable(uuid);
                 for (WindupVertexFrame frame : frames)
                 {
-                    FileModel fileModel = ((FileReferenceModel) frame).getFile();
-                    Iterable<JavaClassModel> javaClasses = null;
-                    if (fileModel instanceof AbstractJavaSourceModel)
-                        javaClasses = ((AbstractJavaSourceModel) fileModel).getJavaClasses();
-                    else if (fileModel instanceof JavaClassFileModel)
-                        javaClasses = Arrays.asList(((JavaClassFileModel) fileModel).getJavaClass());
-
-                    for (JavaClassModel javaClassModel : javaClasses)
+                    for (FileModel fileModel : ((FileReferenceModel) frame).getFiles())
                     {
-                        if (typeFilterPattern == null || typeFilterPattern.parse(javaClassModel
-                                    .getQualifiedName()).matches())
+                        Iterable<JavaClassModel> javaClasses = null;
+                        if (fileModel instanceof AbstractJavaSourceModel)
+                            javaClasses = ((AbstractJavaSourceModel) fileModel).getJavaClasses();
+                        else if (fileModel instanceof JavaClassFileModel)
+                            javaClasses = Arrays.asList(((JavaClassFileModel) fileModel).getJavaClass());
+
+                        if (Iterables.size(javaClasses) == 0)
                         {
-                            JavaTypeReferenceModel model = (JavaTypeReferenceModel) frame;
-                            ParameterizedPatternResult referenceResult = referencePattern.parse(model
-                                        .getResolvedSourceSnippit());
-                            if (referenceResult.matches())
+                            System.out.println("We be doomed");
+                        }
+
+                        for (JavaClassModel javaClassModel : javaClasses)
+                        {
+                            if (typeFilterPattern == null || typeFilterPattern.parse(javaClassModel
+                                        .getQualifiedName()).matches())
                             {
-                                evaluationStrategy.modelMatched();
-                                if (referenceResult.submit(event, context)
-                                            && (typeFilterPattern == null || typeFilterPattern.parse(javaClassModel
-                                                        .getQualifiedName()).submit(event, context)))
+                                JavaTypeReferenceModel model = (JavaTypeReferenceModel) frame;
+                                ParameterizedPatternResult referenceResult = referencePattern.parse(model
+                                            .getResolvedSourceSnippit());
+                                if (referenceResult.matches())
                                 {
-                                    results.add(model);
-                                    evaluationStrategy.modelSubmitted(model);
-                                }
-                                else
-                                {
-                                    evaluationStrategy.modelSubmissionRejected();
+                                    evaluationStrategy.modelMatched();
+                                    if (referenceResult.submit(event, context)
+                                                && (typeFilterPattern == null || typeFilterPattern.parse(javaClassModel
+                                                            .getQualifiedName()).submit(event, context)))
+                                    {
+                                        results.add(model);
+                                        evaluationStrategy.modelSubmitted(model);
+                                    }
+                                    else
+                                    {
+                                        evaluationStrategy.modelSubmissionRejected();
+                                    }
                                 }
                             }
                         }
                     }
                 }
                 Variables.instance(event).removeVariable(uuid);
-                if (initialQueryID != null)
-                    Variables.instance(event).removeVariable(initialQueryID);
+                Variables.instance(event).removeVariable(initialQueryID);
 
                 setResults(event, getVarname(), results);
                 return !results.isEmpty();

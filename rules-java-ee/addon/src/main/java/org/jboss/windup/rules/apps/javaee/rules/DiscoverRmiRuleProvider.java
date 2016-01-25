@@ -74,22 +74,26 @@ public class DiscoverRmiRuleProvider extends AbstractRuleProvider
         }
 
         LOG.info("Processing: " + typeReference);
-        // Make sure we create a source report for the interface source
-        typeReference.getFile().setGenerateSourceReport(true);
-
-        RMIServiceModelService rmiService = new RMIServiceModelService(event.getGraphContext());
-
-        if (javaClassModel != null)
+        for (AbstractJavaSourceModel javaSourceModel : typeReference.getFiles())
         {
-            RMIServiceModel rmiServiceModel = rmiService.getOrCreate(typeReference.getFile().getApplication(), javaClassModel);
+            // Make sure we create a source report for the interface source
+            javaSourceModel.setGenerateSourceReport(true);
 
-            // Create the source report for the RMI Implementation.
-            JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
-            
-            if (rmiServiceModel != null && rmiServiceModel.getImplementationClass() != null) {
-                for (JavaSourceFileModel source : javaClassService.getJavaSource(rmiServiceModel.getImplementationClass().getQualifiedName()))
+            RMIServiceModelService rmiService = new RMIServiceModelService(event.getGraphContext());
+
+            if (javaClassModel != null)
+            {
+                RMIServiceModel rmiServiceModel = rmiService.getOrCreate(javaSourceModel.getApplication(), javaClassModel);
+
+                // Create the source report for the RMI Implementation.
+                JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
+
+                if (rmiServiceModel != null && rmiServiceModel.getImplementationClass() != null)
                 {
-                    source.setGenerateSourceReport(true);
+                    for (JavaSourceFileModel source : javaClassService.getJavaSource(rmiServiceModel.getImplementationClass().getQualifiedName()))
+                    {
+                        source.setGenerateSourceReport(true);
+                    }
                 }
             }
         }
@@ -120,22 +124,27 @@ public class DiscoverRmiRuleProvider extends AbstractRuleProvider
     private JavaClassModel getJavaClass(JavaTypeReferenceModel javaTypeReference)
     {
         JavaClassModel result = null;
-        AbstractJavaSourceModel javaSource = javaTypeReference.getFile();
-
-        for (JavaClassModel javaClassModel : javaSource.getJavaClasses())
+        Iterable<AbstractJavaSourceModel> javaSources = javaTypeReference.getFiles();
+        for (AbstractJavaSourceModel javaSource : javaSources)
         {
-            // there can be only one public one, and the annotated class should be public
-            if (javaClassModel.isPublic() != null && javaClassModel.isPublic())
+            for (JavaClassModel javaClassModel : javaSource.getJavaClasses())
             {
-                result = javaClassModel;
-                break;
+                // there can be only one public one, and the annotated class should be public
+                if (javaClassModel.isPublic() != null && javaClassModel.isPublic())
+                {
+                    result = javaClassModel;
+                    break;
+                }
             }
-        }
 
-        if (result == null)
-        {
-            // no public classes found, so try to find any class (even non-public ones)
-            result = javaSource.getJavaClasses().iterator().next();
+            if (result == null)
+            {
+                // no public classes found, so try to find any class (even non-public ones)
+                result = javaSource.getJavaClasses().iterator().next();
+            }
+
+            if (result != null)
+                break;
         }
         return result;
     }

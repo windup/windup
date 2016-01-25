@@ -75,19 +75,21 @@ public class TypeReferenceServiceTest
         FileModel f2 = context.getFramed().addVertex(null, FileModel.class);
         f2.setFilePath("/f2");
 
-        JavaTypeReferenceModel t1 = typeReferenceService.createTypeReference(f1, TypeReferenceLocation.ANNOTATION, ResolutionStatus.RESOLVED, 0, 2,
+        JavaTypeReferenceModel t1 = typeReferenceService.createTypeReference(Collections.singleton(f1), TypeReferenceLocation.ANNOTATION,
+                    ResolutionStatus.RESOLVED, 0, 2,
                     2,
                     "com.example.Class1", "@Class1");
-        JavaTypeReferenceModel t2 = typeReferenceService.createTypeReference(f1, TypeReferenceLocation.ANNOTATION, ResolutionStatus.RESOLVED, 0, 2,
+        JavaTypeReferenceModel t2 = typeReferenceService.createTypeReference(Collections.singleton(f1), TypeReferenceLocation.ANNOTATION,
+                    ResolutionStatus.RESOLVED, 0, 2,
                     2,
                     "com.example.Class1", "@Class1");
 
         InlineHintModel b1 = inlineHintService.create();
         InlineHintModel b1b = inlineHintService.create();
 
-        b1.setFile(f1);
+        b1.addFile(f1);
         b1.setFileLocationReference(t1);
-        b1b.setFile(f1);
+        b1b.addFile(f1);
         b1b.setFileLocationReference(t2);
 
         ProjectModel projectModel = context.getFramed().addVertex(null, ProjectModel.class);

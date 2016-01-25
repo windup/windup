@@ -175,7 +175,8 @@ public class JavaClassTest
                     public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
                     {
                         firstRuleMatchCount++;
-                        log.info("First rule matched: " + payload.getFile().getFilePath());
+                        for (FileModel fileModel : payload.getFiles())
+                            log.info("First rule matched: " + fileModel.getFilePath());
                     }
                 }).endIteration()
             )
@@ -205,7 +206,8 @@ public class JavaClassTest
                     public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
                     {
                         thirdRuleMatchCount++;
-                        log.info("First rule matched: " + payload.getFile().getFilePath());
+                        for (FileModel fileModel : payload.getFiles())
+                            log.info("First rule matched: " + fileModel.getFilePath());
                     }
                 }).endIteration()
             );

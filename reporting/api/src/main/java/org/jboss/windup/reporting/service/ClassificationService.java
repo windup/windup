@@ -125,14 +125,18 @@ public class ClassificationService extends GraphService<ClassificationModel>
             if (migrationEffort == null)
                 continue;
 
+            ClassificationModel classificationModel = frame(v);
             // only check tags if we have some passed in
             if (!includeTags.isEmpty() || !excludeTags.isEmpty())
             {
-                ClassificationModel classificationModel = frame(v);
                 if (!TagUtil.checkMatchingTags(classificationModel.getTags(), includeTags, excludeTags))
                     continue;
             }
-            classificationEffort += migrationEffort;
+            for (FileModel fileModel : classificationModel.getFileModels())
+            {
+                if (initialVertices.contains(fileModel.getProjectModel().asVertex()))
+                    classificationEffort += migrationEffort;
+            }
         }
         return classificationEffort;
     }

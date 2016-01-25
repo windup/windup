@@ -95,8 +95,14 @@ public class CreateStaticIPAddressReportRuleProvider extends AbstractRuleProvide
         WindupVertexListModel staticIPList = new GraphService<>(context, WindupVertexListModel.class).create();
         for (StaticIPLocationModel location : results)
         {
-            if (location.getFile().getProjectModel().getRootProjectModel().equals(rootProjectModel))
-                staticIPList.addItem(location);
+            for (FileModel fileModel : location.getFiles())
+            {
+                if (fileModel.getProjectModel().getRootProjectModel().equals(rootProjectModel))
+                {
+                    staticIPList.addItem(location);
+                    break;
+                }
+            }
         }
         relatedData.put("staticIPLocations", staticIPList);
         applicationReport.setRelatedResource(relatedData);

@@ -84,30 +84,30 @@ public class ExportCSVFileRuleProvider extends AbstractRuleProvider
             {
                 for (InlineHintModel hint : hints)
                 {
-                    final ProjectModel parentRootProjectModel = hint.getFile().getProjectModel().getRootProjectModel();
-                    String links = buildLinkString(hint.getLinks());
-                    String ruleId = hint.getRuleID() != null ? hint.getRuleID() : "";
-                    String title = hint.getTitle() != null ? hint.getTitle() : "";
-                    String description = hint.getDescription() != null ? hint.getDescription() : "";
-                    String projectNameString = "";
-                    String fileName = "";
-                    String filePath = "";
-                    if (hint.getFile() != null)
+                    for (FileModel fileModel : hint.getFiles())
                     {
-                        if (hint.getFile().getProjectModel() != null)
+                        final ProjectModel parentRootProjectModel = fileModel.getProjectModel().getRootProjectModel();
+                        String links = buildLinkString(hint.getLinks());
+                        String ruleId = hint.getRuleID() != null ? hint.getRuleID() : "";
+                        String title = hint.getTitle() != null ? hint.getTitle() : "";
+                        String description = hint.getDescription() != null ? hint.getDescription() : "";
+                        String projectNameString = "";
+                        String fileName = "";
+                        String filePath = "";
+                        if (fileModel.getProjectModel() != null)
                         {
-                            projectNameString = hint.getFile().getProjectModel().getName();
+                            projectNameString = fileModel.getProjectModel().getName();
                         }
-                        fileName = hint.getFile().getFileName();
-                        filePath = hint.getFile().getFilePath();
-                    }
-                    String[] strings = new String[] {
+                        fileName = fileModel.getFileName();
+                        filePath = fileModel.getFilePath();
+                        String[] strings = new String[] {
                                 ruleId, "hint", title, description, links,
                                 projectNameString,
                                 fileName, filePath, String.valueOf(
-                                hint.getLineNumber()), String.valueOf(hint.getEffort()) };
-                    writeCsvRecordForProject(outputFolderPath, parentRootProjectModel, strings);
-
+                                                hint.getLineNumber()),
+                                    String.valueOf(hint.getEffort()) };
+                        writeCsvRecordForProject(outputFolderPath, parentRootProjectModel, strings);
+                    }
                 }
                 for (ClassificationModel classification : classifications)
                 {

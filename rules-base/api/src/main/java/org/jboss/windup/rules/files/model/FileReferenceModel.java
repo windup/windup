@@ -23,11 +23,11 @@ public interface FileReferenceModel extends WindupVertexFrame
      * Contains the {@link FileModel} referenced by this object.
      */
     @Adjacency(label = FILE_MODEL, direction = Direction.OUT)
-    FileModel getFile();
+    Iterable<? extends FileModel> getFiles();
 
     /**
      * Contains the {@link FileModel} referenced by this object.
      */
     @Adjacency(label = FILE_MODEL, direction = Direction.OUT)
-    FileModel setFile(FileModel file);
+    FileModel addFile(FileModel file);
 }

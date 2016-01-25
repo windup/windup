@@ -1,15 +1,13 @@
 package org.jboss.windup.rules.apps.java.decompiler;
 
+import java.util.List;
+
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.FileService;
-import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
-
-import java.nio.file.Paths;
-import java.util.List;
 
 /**
  * An abstract operation providing some default methods useful for the DecompilerOperations.
@@ -40,16 +38,15 @@ abstract public class AbstractDecompilerOperation extends GraphOperation
     }
 
     private Iterable<JavaClassFileModel> getDefaultFilesToDecompile(GraphContext context) {
-        GraphService<JavaClassFileModel> classFileService = new GraphService<>(context, JavaClassFileModel.class);
-        return classFileService.findAllWithoutProperty(JavaClassFileModel.SKIP_DECOMPILATION, true);
+        return context.getQuery().type(JavaClassFileModel.class).hasNot(JavaClassFileModel.SKIP_DECOMPILATION, true).hasNot(FileModel.DUPLICATE, true)
+                    .vertices(JavaClassFileModel.class);
     }
 
     protected void setupClassToJavaConnections(GraphContext context,List<String> classFilesPaths, JavaSourceFileModel decompiledJavaFile)
     {
         FileService fileService = new FileService(context);
         for(String classFilePath : classFilesPaths) {
-            FileModel classFileModel = fileService.getUniqueByProperty(
-                        FileModel.FILE_PATH, Paths.get(classFilePath).toAbsolutePath().toString());
+            FileModel classFileModel = fileService.findByPath(classFilePath);
             if(classFileModel instanceof JavaClassFileModel) {
                 JavaClassFileModel javaClassFileModel = (JavaClassFileModel) classFileModel;
                 javaClassFileModel.getJavaClass().setDecompiledSource(decompiledJavaFile);

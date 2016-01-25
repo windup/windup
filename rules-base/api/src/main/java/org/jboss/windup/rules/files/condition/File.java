@@ -165,7 +165,7 @@ public class File extends ParameterizedGraphCondition
             {
                 // Use a file location model to make attaching hints possible
                 FileLocationModel fileLocationModel = fileLocationService.create();
-                fileLocationModel.setFile(fileModel);
+                fileLocationModel.addFile(fileModel);
                 fileLocationModel.setColumnNumber(1);
                 fileLocationModel.setLineNumber(1);
                 fileLocationModel.setLength(1);
@@ -207,7 +207,10 @@ public class File extends ParameterizedGraphCondition
                 if (windupVertexFrame instanceof FileModel)
                     vertices.add((FileModel) windupVertexFrame);
                 if (windupVertexFrame instanceof FileReferenceModel)
-                    vertices.add(((FileReferenceModel) windupVertexFrame).getFile());
+                {
+                    for (FileModel fileModel : ((FileReferenceModel) windupVertexFrame).getFiles())
+                        vertices.add(fileModel);
+                }
             }
         }
     }

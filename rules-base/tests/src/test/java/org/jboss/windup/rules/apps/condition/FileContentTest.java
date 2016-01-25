@@ -37,6 +37,7 @@ import org.jboss.windup.exec.rulefilters.NotPredicate;
 import org.jboss.windup.exec.rulefilters.RuleProviderPhasePredicate;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.service.InlineHintService;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
@@ -129,40 +130,44 @@ public class FileContentTest
             {
                 FileLocationModel location = provider.rule1ResultModels.get(i);
                 System.out.println("Location: " + location);
-                if (location.getFile().getFileName().equals("file1.txt"))
+                for (FileModel fileModel : location.getFiles())
                 {
-                    if (location.getLineNumber() == 1 && location.getColumnNumber() == 8 && location.getSourceSnippit().equals("file 1."))
+                    if (fileModel.getFileName().equals("file1.txt"))
                     {
-                        foundFile1Line1 = true;
+                        if (location.getLineNumber() == 1 && location.getColumnNumber() == 8 && location.getSourceSnippit().equals("file 1."))
+                        {
+                            foundFile1Line1 = true;
+                        }
+                        else if (location.getLineNumber() == 2 && location.getColumnNumber() == 27 && location.getSourceSnippit().equals("file 1."))
+                        {
+                            foundFile1Line2 = true;
+                        }
                     }
-                    else if (location.getLineNumber() == 2 && location.getColumnNumber() == 27 && location.getSourceSnippit().equals("file 1."))
+                    else if (fileModel.getFileName().equals("file2.txt"))
                     {
-                        foundFile1Line2 = true;
+                        if (location.getLineNumber() == 1 && location.getColumnNumber() == 5
+                                    && location.getSourceSnippit().equals("file firstline2."))
+                        {
+                            foundFile2Line1 = true;
+                        }
+                        else if (location.getLineNumber() == 2 && location.getColumnNumber() == 8 && location.getSourceSnippit().equals("file #2."))
+                        {
+                            foundFile2Line2 = true;
+                        }
+                        else if (location.getLineNumber() == 3 && location.getColumnNumber() == 5 && location.getSourceSnippit().equals("file 2."))
+                        {
+                            foundFile2Line3 = true;
+                        }
+                        else if (location.getLineNumber() == 4 && location.getColumnNumber() == 0
+                                    && location.getSourceSnippit().equals("file lastline2."))
+                        {
+                            foundFile2Line4 = true;
+                        }
                     }
-                }
-                else if (location.getFile().getFileName().equals("file2.txt"))
-                {
-                    if (location.getLineNumber() == 1 && location.getColumnNumber() == 5 && location.getSourceSnippit().equals("file firstline2."))
+                    else
                     {
-                        foundFile2Line1 = true;
+                        Assert.fail("Unrecognized file: " + fileModel.getFileName());
                     }
-                    else if (location.getLineNumber() == 2 && location.getColumnNumber() == 8 && location.getSourceSnippit().equals("file #2."))
-                    {
-                        foundFile2Line2 = true;
-                    }
-                    else if (location.getLineNumber() == 3 && location.getColumnNumber() == 5 && location.getSourceSnippit().equals("file 2."))
-                    {
-                        foundFile2Line3 = true;
-                    }
-                    else if (location.getLineNumber() == 4 && location.getColumnNumber() == 0
-                                && location.getSourceSnippit().equals("file lastline2."))
-                    {
-                        foundFile2Line4 = true;
-                    }
-                }
-                else
-                {
-                    Assert.fail("Unrecognized file: " + location.getFile().getFileName());
                 }
             }
             Assert.assertTrue(foundFile1Line1);
@@ -176,9 +181,13 @@ public class FileContentTest
             {
                 FileLocationModel location = provider.rule2ResultModels.get(i);
                 System.out.println("Rule 2 Location: " + location);
-                if (location.getFile().getFileName().equals("file3.txt") && location.getLineNumber() == 30721 && location.getColumnNumber() == 15)
+                for (FileModel fileModel : location.getFiles())
                 {
-                    foundFile3Needle = true;
+                    if (fileModel.getFileName().equals("file3.txt") && location.getLineNumber() == 30721 && location.getColumnNumber() == 15)
+                    {
+                        foundFile3Needle = true;
+                        break;
+                    }
                 }
             }
             Assert.assertTrue(foundFile3Needle);
