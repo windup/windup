@@ -16,6 +16,7 @@
     <link href="resources/css/windup.java.css" rel="stylesheet" media="screen">
     <link rel='stylesheet' type='text/css' href='resources/css/windup-source.css' />
     <link rel='stylesheet' type='text/css' href='resources/libraries/sausage/sausage.css' />
+    <link rel='stylesheet' type='text/css' href='resources/libraries/flot/plot.css' />
 </head>
 <body role="document" class="java-report-index">
 

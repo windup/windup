@@ -194,6 +194,9 @@ function createLineAndBarChart(divSelectorOrElement, lineChartData, barChartData
                 align: "center",
                 barWidth: .6,
                 lineWidth:1
+            },
+            valueLabels: {
+                show: true
             }
         },
         {
@@ -225,7 +228,7 @@ function createLineAndBarChart(divSelectorOrElement, lineChartData, barChartData
             position: "nw"
         },
         grid: {
-            hoverable: true,
+            hoverable: false,
             borderWidth: 1,
             borderColor: "#B0B0B0",
             backgroundColor: { colors: ["#FFFFFF", "#EDF5FF"] },
@@ -240,7 +243,16 @@ function createBarChart(divSelectorOrElement, flotData) {
     if (flotData == null)
         return null;
 
-    var dataset = [{ data: flotData.values, color: "#5482FF" }];
+    var dataset = [{
+        data: flotData.values,
+        color: "#5482FF",
+        valueLabels: {
+            show: true,
+            showAsHtml: true,
+            xoffset: 3,
+            plotAxis: 'x'
+        },
+    }];
 
     var options = {
         series: { bars: { horizontal: true, show: true } },
@@ -250,7 +262,7 @@ function createBarChart(divSelectorOrElement, flotData) {
             lineWidth: 1,
         },
         grid: {
-            hoverable: true,
+            hoverable: false,
             borderWidth: 1,
             borderColor: "#B0B0B0",
             backgroundColor: { colors: ["#FFFFFF", "#EDF5FF"] },
