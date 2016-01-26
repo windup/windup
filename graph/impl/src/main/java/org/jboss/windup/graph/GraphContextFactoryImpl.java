@@ -11,54 +11,59 @@ import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 public class GraphContextFactoryImpl implements GraphContextFactory
 {
     private GraphApiCompositeClassLoaderProvider graphApiCompositeClassLoaderProvider;
-
     private Furnace furnace;
-
     private GraphTypeManager graphTypeManager;
 
-    public GraphContextFactoryImpl() throws Exception
+    private Furnace getFurnace()
     {
+        if (furnace == null)
+            this.furnace = SimpleContainer.getFurnace(GraphContextFactory.class.getClassLoader());
+        return this.furnace;
     }
 
-    //@PostConstruct doesn't work with SimpleContainer.
-    public void init(){
-        if (this.furnace != null)
-            return;
-        this.furnace = SimpleContainer.getFurnace(GraphContextFactory.class.getClassLoader());
-        this.graphApiCompositeClassLoaderProvider = furnace.getAddonRegistry().getServices(GraphApiCompositeClassLoaderProvider.class).get();
-        this.graphTypeManager = furnace.getAddonRegistry().getServices(GraphTypeManager.class).get();
+    private GraphApiCompositeClassLoaderProvider getGraphApiCompositeClassLoaderProvider()
+    {
+        if (this.graphApiCompositeClassLoaderProvider == null)
+            this.graphApiCompositeClassLoaderProvider = getFurnace().getAddonRegistry().getServices(GraphApiCompositeClassLoaderProvider.class)
+                        .get();
+        return this.graphApiCompositeClassLoaderProvider;
+    }
+
+    private GraphTypeManager getGraphTypeManager()
+    {
+        if (this.graphTypeManager == null)
+            this.graphTypeManager = getFurnace().getAddonRegistry().getServices(GraphTypeManager.class).get();
+
+        return this.graphTypeManager;
     }
 
     @Override
     public GraphContext create()
     {
-        init();
         return new GraphContextImpl(
-                    furnace,
-                    graphTypeManager,
-                    graphApiCompositeClassLoaderProvider,
+                    getFurnace(),
+                    getGraphTypeManager(),
+                    getGraphApiCompositeClassLoaderProvider(),
                     getTempGraphDirectory()).create();
     }
 
     @Override
     public GraphContext create(Path graphDir)
     {
-        init();
         return new GraphContextImpl(
-                    furnace,
-                    graphTypeManager,
-                    graphApiCompositeClassLoaderProvider,
+                    getFurnace(),
+                    getGraphTypeManager(),
+                    getGraphApiCompositeClassLoaderProvider(),
                     graphDir).create();
     }
 
     @Override
     public GraphContext load(Path graphDir)
     {
-        init();
         return new GraphContextImpl(
-                    furnace,
-                    graphTypeManager,
-                    graphApiCompositeClassLoaderProvider,
+                    getFurnace(),
+                    getGraphTypeManager(),
+                    getGraphApiCompositeClassLoaderProvider(),
                     graphDir).load();
     }
 
