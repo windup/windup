@@ -17,7 +17,7 @@
     <description>Migration Tools</description>
 
     <properties>
-        <version.forge>2.20.1.Final</version.forge>
+        <version.forge>2.20.2.Final</version.forge>
         <version.furnace>2.22.10.Final</version.furnace>
         <version.titangraph>0.5.4</version.titangraph>
         <version.tinkerpop.blueprints>2.5.0</version.tinkerpop.blueprints>
