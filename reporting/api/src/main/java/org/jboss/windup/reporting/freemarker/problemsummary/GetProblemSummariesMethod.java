@@ -1,9 +1,11 @@
 package org.jboss.windup.reporting.freemarker.problemsummary;
 
-import java.util.HashMap;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
@@ -59,16 +61,31 @@ public class GetProblemSummariesMethod implements WindupFreeMarkerMethod
         Set<String> includeTags = FreeMarkerUtil.simpleSequenceToSet((SimpleSequence) arguments.get(1));
         Set<String> excludeTags = FreeMarkerUtil.simpleSequenceToSet((SimpleSequence) arguments.get(2));
 
-        Map<Severity, List<ProblemSummary>> problemSummaries = ProblemSummaryService.getProblemSummaries(context, projectModel, includeTags,
+        Map<Severity, List<ProblemSummary>> problemSummariesOriginal = ProblemSummaryService.getProblemSummaries(context, projectModel, includeTags,
                     excludeTags);
 
         // Convert the keys to String to make Freemarker happy
-        Map<String, List<ProblemSummary>> primarySummariesByString = new HashMap<>(problemSummaries.size());
+        Comparator<Severity> severityComparator = new Comparator<Severity>()
+        {
+            @Override
+            public int compare(Severity severity1, Severity severity2)
+            {
+                int ordinal1 = severity1 == null ? 0 : severity1.ordinal();
+                int ordinal2 = severity2 == null ? 0 : severity2.ordinal();
+
+                return ordinal1 - ordinal2;
+            }
+        };
+        Map<Severity, List<ProblemSummary>> problemSummaries = new TreeMap<>(severityComparator);
+        problemSummaries.putAll(problemSummariesOriginal);
+
+        Map<String, List<ProblemSummary>> primarySummariesByString = new LinkedHashMap<>(problemSummariesOriginal.size());
         for (Map.Entry<Severity, List<ProblemSummary>> entry : problemSummaries.entrySet())
         {
             String severityString = entry.getKey() == null ? null : entry.getKey().toString();
             primarySummariesByString.put(severityString, entry.getValue());
         }
+
         return primarySummariesByString;
     }
 
