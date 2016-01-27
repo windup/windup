@@ -1,7 +1,9 @@
 package org.jboss.windup.tests.bootstrap;
 
 import org.jboss.windup.bootstrap.Bootstrap;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -50,6 +52,9 @@ public class InstallRemoveAddonCommandsTest extends AbstractBootstrapTest {
         });
     }
 
+    @Rule
+    public final TemporaryFolder tmp = new TemporaryFolder();
+
     private final String installOption;
     private final String installAddonId;
     private final String removeOption;
@@ -67,7 +72,7 @@ public class InstallRemoveAddonCommandsTest extends AbstractBootstrapTest {
 
     @Test
     public void commaSeparatedVersion() throws IOException {
-        bootstrap(installOption, installAddonId, removeOption, removeAddonId);
+        bootstrap("--addonDir", tmp.getRoot().getAbsolutePath(), installOption, installAddonId, removeOption, removeAddonId);
         checkExpectations();
     }
 
@@ -76,7 +81,7 @@ public class InstallRemoveAddonCommandsTest extends AbstractBootstrapTest {
         String installAddonId = this.installAddonId.replace(',', ':');
         String removeAddonId = this.removeAddonId.replace(',', ':');
 
-        bootstrap(installOption, installAddonId, removeOption, removeAddonId);
+        bootstrap("--addonDir", tmp.getRoot().getAbsolutePath(), installOption, installAddonId, removeOption, removeAddonId);
         checkExpectations();
     }
 
