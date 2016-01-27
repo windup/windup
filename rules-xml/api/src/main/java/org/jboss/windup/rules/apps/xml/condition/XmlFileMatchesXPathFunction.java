@@ -17,7 +17,7 @@ import org.ocpsoft.rewrite.param.ParameterizedPatternResult;
 import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
 import org.w3c.dom.NodeList;
 
-class XmlFileMatchesXPathFunction implements XPathFunction
+public class XmlFileMatchesXPathFunction implements XPathFunction
 {
     private static final Logger LOG = Logging.get(XmlFileMatchesXPathFunction.class);
 
@@ -26,7 +26,8 @@ class XmlFileMatchesXPathFunction implements XPathFunction
     private final XmlFileParameterMatchCache paramMatchCache;
     private final GraphRewrite event;
 
-    XmlFileMatchesXPathFunction(EvaluationContext context, ParameterStore store, XmlFileParameterMatchCache paramMatchCache, GraphRewrite event)
+    public XmlFileMatchesXPathFunction(EvaluationContext context, ParameterStore store, XmlFileParameterMatchCache paramMatchCache,
+                GraphRewrite event)
     {
         this.context = context;
         this.store = store;

@@ -9,7 +9,7 @@ import javax.xml.xpath.XPathFunction;
 import javax.xml.xpath.XPathFunctionException;
 import javax.xml.xpath.XPathFunctionResolver;
 
-class XmlFileFunctionResolver implements XPathFunctionResolver
+public class XmlFileFunctionResolver implements XPathFunctionResolver
 {
     private final XPathFunctionResolver originalResolver;
     private final Map<QName, XPathFunction> functionMap = new HashMap<>();
