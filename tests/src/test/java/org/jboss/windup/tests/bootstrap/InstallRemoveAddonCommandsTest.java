@@ -67,18 +67,12 @@ public class InstallRemoveAddonCommandsTest extends AbstractBootstrapTest {
 
     @Test
     public void commaSeparatedVersion() throws IOException {
-        // installAddonId without version fails because of WINDUP-834
-        assumeTrue(ADDON_WITH_VERSION.equals(installAddonId));
-
         bootstrap(installOption, installAddonId, removeOption, removeAddonId);
         checkExpectations();
     }
 
     @Test
     public void colonSeparatedVersion() throws IOException {
-        // installAddonId without version fails because of WINDUP-834
-        assumeTrue(ADDON_WITH_VERSION.equals(installAddonId));
-
         String installAddonId = this.installAddonId.replace(',', ':');
         String removeAddonId = this.removeAddonId.replace(',', ':');
 
