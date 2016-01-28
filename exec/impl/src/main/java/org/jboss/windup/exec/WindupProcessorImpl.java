@@ -191,6 +191,13 @@ public class WindupProcessorImpl implements WindupProcessor
         Collection<String> sources = (Collection<String>) config.getOptionMap().get(SourceOption.NAME);
         Collection<String> targets = (Collection<String>) config.getOptionMap().get(TargetOption.NAME);
 
+        if(includeTags != null && includeTags.isEmpty()) includeTags = null;
+        if(excludeTags != null && excludeTags.isEmpty()) excludeTags = null;
+        if(sources != null && sources.isEmpty()) sources = null;
+        if(targets != null && targets.isEmpty()) targets = null;
+
+
+
         if (includeTags != null || excludeTags != null || sources != null || targets != null)
         {
             Predicate<RuleProvider> configuredPredicate = config.getRuleProviderFilter();
