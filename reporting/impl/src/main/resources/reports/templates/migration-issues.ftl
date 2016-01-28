@@ -7,18 +7,20 @@
                 ${problemSummary.issueName}
             </a>
             <div class="problem-file-list list-group" style="display: none;">
-                <div style="position:relative; width: 100%;">
+                <div style="width: 100%;">
                     <!-- Internal issues per file table -->
                     <table class="table table-hover table-condensed tablesorter-child tablesorter">
                         <thead>
                             <tr>
                                 <th>File</th>
                                 <th>Incidents Found</th>
-                                <th></th>
+                                <th></th><!-- This column is for links to hide/show the last column -->
+                                <th></th><!-- This column is for shown hint title -->
                             </tr>
                         </thead>
                         <tbody>
                             <#list problemSummary.descriptions as description>
+                                <#assign filesCount=problemSummary.getFilesForDescription(description)?size>
                                 <#list problemSummary.getFilesForDescription(description) as fileSummary>
                                     <tr>
                                         <td>
@@ -32,16 +34,14 @@
                                                 <a href="#" class="show-detailed-hint">Show Hint</a>
                                             </#if>
                                         </td>
+                                        <td rowspan="${filesCount}">
+                                          <#if fileSummary?is_first>
+                                             <div class="hint-detail-display" style="display: none;">
+                                                      ${markdownToHtml(description!"-- No detailed text --")}
+                                             </div>
+                                          </#if>
+                                        </td>
                                     </tr>
-                                    <#if fileSummary?is_first>
-                                        <tr class="hint-detail-display" style="display: none;">
-                                            <td colspan="3">
-                                                <div>
-                                                    ${markdownToHtml(description!"-- No detailed text --")}
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </#if>
                                 </#list>
                             </#list>
                         </tbody>
@@ -215,7 +215,7 @@
     }); 
     $(document).ready(function() {
         $(".show-detailed-hint").click(function (e) {
-            $(this).parent().parent().next(".hint-detail-display").toggle();
+            $(this).parent().parent().find(".hint-detail-display").toggle();
             $(this).text() == "Show Hint" ? $(this).text("Hide Hint") : $(this).text("Show Hint");
             e.preventDefault();
         });
@@ -233,6 +233,7 @@
             }
         });
     });
+  
 
    	    function resizeTables()
         {
