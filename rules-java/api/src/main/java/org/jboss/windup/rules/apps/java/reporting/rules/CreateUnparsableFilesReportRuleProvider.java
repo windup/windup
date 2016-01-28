@@ -27,6 +27,10 @@ public class CreateUnparsableFilesReportRuleProvider extends AbstractRuleProvide
 {
     public static final String REPORT_NAME = "Unparsable";
     public static final String TEMPLATE_UNPARSABLE = "/reports/templates/unparsable_files.ftl";
+    public static final String DESCRIPTION = "This report shows all files that Windup could not parse in the expected format.\n" +
+                "                        For instance, a file with a <code>.xml</code> or <code>.wsdl</code> suffix\n" +
+                "                        is assumed to be an XML file. If the XML parser fails on it, you'll see that here.\n" +
+                "                        Besides that, the information about parsing failure is also present wherever the individual file is listed.";
 
     // @formatter:off
     @Override
@@ -72,6 +76,7 @@ public class CreateUnparsableFilesReportRuleProvider extends AbstractRuleProvide
         reportModel.setReportPriority(120);
         reportModel.setDisplayInApplicationReportIndex(true);
         reportModel.setReportName(REPORT_NAME);
+        reportModel.setDescription(DESCRIPTION);
         reportModel.setReportIconClass("glyphicon glyphicon-warning-sign");
         reportModel.setMainApplicationReport(false);
         reportModel.setProjectModel(rootProjectModel);

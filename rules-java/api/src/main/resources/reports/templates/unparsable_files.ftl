@@ -73,16 +73,12 @@
         <div class="row">
             <div class="page-header page-header-no-border">
                 <h1>
-                    <div class="main">Unparsable Files Report</div>
+                    <div class="main" onmouseover="$(this).parent().parent().addClass('showDesc')"
+                                      onmouseout=" $(this).parent().parent().removeClass('showDesc')">Unparsable Files Report</div>
                     <div class="path">${reportModel.projectModel.name?html}</div>
                 </h1>
                 <div class="desc">
-                    <div class="forOverview">
-                        This report shows all files that Windup could not parse in the expected format.
-                        For instance, a file with a <code>.xml</code> or <code>.wsdl</code> suffix
-                        is supposed to be a XML file. If the XML parser fails on it, you'll see that here.
-                        Besides that, the information about parsing failure is also present wherever the individual file is listed.
-                    </div>
+                    ${reportModel.description}
                 </div>
             </div>
         </div>

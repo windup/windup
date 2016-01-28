@@ -59,7 +59,7 @@
             <div style="clear: both;"></div>
         </td>
 
-        <#-- Issues -->
+        <#-- Incidents -->
         <#assign warnings = sourceReportModel.sourceFileModel.inlineHintCount + sourceReportModel.sourceFileModel.classificationCount>
         <#-- The ~Count are, in fact, Gremlin queries. Don't call more than once. -->
         <td class="warnCount${warnings}">
@@ -168,7 +168,7 @@
                     <td>
                         <!-- Packages pie chart -->
                         <div class="chartBoundary">
-                            <h4>Java Issues by Package</h4>
+                            <h4>Java Incidents by Package</h4>
                             <div id="project_${projectModel.asVertex().id?c}_pie" class="windupPieGraph"></div>
                         </div>
                     </td>
@@ -295,7 +295,7 @@
                     <tr>
                         <td>
                             <div class="chartBoundary">
-                                <h4>Java Issues by Package</h4>
+                                <h4>Java Incidents by Package</h4>
                                 <div id="application_pie" class="windupPieGraph"></div>
                             </div>
                         </td>

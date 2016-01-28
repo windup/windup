@@ -256,7 +256,7 @@ function createBarChart(divSelectorOrElement, flotData) {
             backgroundColor: { colors: ["#FFFFFF", "#EDF5FF"] },
         },
         xaxis: {
-            axisLabel: "Number of findings / incidents",
+            axisLabel: "Number of incidents",
             axisLabelPadding: 1,
             axisLabelUseCanvas: false,
             axisLabelFontFamily: 'Verdana, Arial',

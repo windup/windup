@@ -13,7 +13,7 @@
                         <thead>
                             <tr>
                                 <th>File</th>
-                                <th>Issues Found</th>
+                                <th>Incidents Found</th>
                                 <th></th>
                             </tr>
                         </thead>

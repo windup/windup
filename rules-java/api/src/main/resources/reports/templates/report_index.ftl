@@ -115,7 +115,7 @@
             <div class="panel panel-primary col-md-12">
                 <div class="panel col-md-6">
                     <div style="margin-left: 190px;">
-                        <b>Java Issues by Package</b>
+                        <b>Java Incidents by Package</b>
                     </div>
                     <div id='application_pie' class='windupPieGraph'/>
                 </div>
