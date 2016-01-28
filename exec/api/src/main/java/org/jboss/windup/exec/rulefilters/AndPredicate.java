@@ -39,4 +39,17 @@ public class AndPredicate implements Predicate<RuleProvider>
         }
         return result;
     }
+
+
+    @Override
+    public String toString()
+    {
+        StringBuilder sb = new StringBuilder("AndPredicate{");
+        for (Predicate<RuleProvider> predicate : predicates)
+        {
+            sb.append("\t").append(predicate).append("\n");
+        }
+        return sb.append("}").toString();
+    }
+
 }

@@ -200,10 +200,9 @@ public class WindupProcessorImpl implements WindupProcessor
 
             Predicate<RuleProvider> providerFilter = new AndPredicate(tagPredicate, sourceAndTargetPredicate);
             if (configuredPredicate != null)
-            {
                 providerFilter = new AndPredicate(configuredPredicate, tagPredicate, sourceAndTargetPredicate);
-            }
 
+            LOG.info("RuleProvider filter: " + providerFilter);
             config.setRuleProviderFilter(providerFilter);
         }
     }
