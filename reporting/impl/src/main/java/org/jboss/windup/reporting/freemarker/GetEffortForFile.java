@@ -58,7 +58,7 @@ public class GetEffortForFile implements WindupFreeMarkerMethod
         StringModel fileModelArg = (StringModel) arguments.get(0);
         FileModel fileModel = (FileModel) fileModelArg.getWrappedObject();
 
-        Object result = classificationService.getMigrationEffortPoints(fileModel) + inlineHintService.getMigrationEffortPoints(fileModel);
+        Object result = classificationService.getMigrationEffortDetails(fileModel) + inlineHintService.getMigrationEffortDetails(fileModel);
         ExecutionStatistics.get().end(NAME);
         return result;
     }

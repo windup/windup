@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<#include "include/effort_util.ftl">
+
 <#assign applicationReportIndexModel = reportModel.applicationReportIndexModel>
 
 
@@ -101,7 +103,7 @@
 
 
 <#macro projectModelRenderer projectModel>
-	<#assign panelStoryPoints = getMigrationEffortPoints(projectModel, false, reportModel.includeTags, reportModel.excludeTags)>
+	<#assign panelStoryPoints = getMigrationEffortPointsForProject(projectModel, false, reportModel.includeTags, reportModel.excludeTags)>
     <#assign projectID = "project_${projectModel.asVertex().id?c}">
     <div class="panel panel-primary projectBox" id="${projectID}" data-windup-projectguid="${generateGUID()}" data-windup-project-storypoints="${panelStoryPoints}">
         <div class="panel-heading panel-collapsed clickable">
@@ -277,7 +279,7 @@
                     <tr>
                         <td colspan="2">
                             <div class="points" style="text-align: center; color: #00254b; padding-bottom: 1ex;">
-                                <div class="number">${getMigrationEffortPoints(reportModel.projectModel, true, reportModel.includeTags, reportModel.excludeTags)}</div>
+                                <div class="number">${getMigrationEffortPointsForProject(reportModel.projectModel, true, reportModel.includeTags, reportModel.excludeTags)}</div>
                                 <div>Story Points</div>
                             </div>
                             <div id="treeView-Projects-wrap" class="short">

@@ -1,6 +1,8 @@
 package org.jboss.windup.reporting.service;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -40,7 +42,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
     /**
      * Returns the total effort points in all of the {@link ClassificationModel}s associated with the provided {@link FileModel}.
      */
-    public int getMigrationEffortPoints(FileModel fileModel)
+    public int getMigrationEffortDetails(FileModel fileModel)
     {
         GremlinPipeline<Vertex, Vertex> classificationPipeline = new GremlinPipeline<>(fileModel.asVertex());
         classificationPipeline.in(ClassificationModel.FILE_MODEL);
@@ -87,8 +89,11 @@ public class ClassificationService extends GraphService<ClassificationModel>
      * 
      * If set to recursive, then also include the effort points from child projects.
      */
-    public int getMigrationEffortPoints(ProjectModel initialProject, Set<String> includeTags, Set<String> excludeTags, boolean recursive)
+    public Map<Integer, Integer> getMigrationEffortDetails(ProjectModel initialProject, Set<String> includeTags, Set<String> excludeTags,
+                boolean recursive)
     {
+        Map<Integer, Integer> results = new HashMap<>();
+
         final Set<Vertex> initialVertices = new HashSet<>();
         if (recursive)
         {
@@ -118,7 +123,6 @@ public class ClassificationService extends GraphService<ClassificationModel>
         });
         classificationPipeline.back("classification");
 
-        int classificationEffort = 0;
         for (Vertex v : classificationPipeline)
         {
             Integer migrationEffort = v.getProperty(ClassificationModel.EFFORT);
@@ -132,9 +136,13 @@ public class ClassificationService extends GraphService<ClassificationModel>
                 if (!TagUtil.checkMatchingTags(classificationModel.getTags(), includeTags, excludeTags))
                     continue;
             }
-            classificationEffort += migrationEffort;
+
+            if (!results.containsKey(migrationEffort))
+                results.put(migrationEffort, 1);
+            else
+                results.put(migrationEffort, results.get(migrationEffort) + 1);
         }
-        return classificationEffort;
+        return results;
     }
 
     /**

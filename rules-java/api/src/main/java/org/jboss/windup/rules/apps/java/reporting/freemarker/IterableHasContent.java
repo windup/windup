@@ -9,6 +9,7 @@ import org.jboss.windup.util.exception.WindupException;
 
 import freemarker.core.CollectionAndSequence;
 import freemarker.ext.beans.BeanModel;
+import freemarker.template.DefaultListAdapter;
 import freemarker.template.SimpleSequence;
 import freemarker.template.TemplateModelException;
 
@@ -55,11 +56,16 @@ public class IterableHasContent implements WindupFreeMarkerMethod
         else if (arg instanceof SimpleSequence)
         {
             SimpleSequence simpleSequence = (SimpleSequence) arg;
-            return (simpleSequence.toList().size() > 0);
+            return simpleSequence.toList().size() > 0;
+        }
+        else if (arg instanceof DefaultListAdapter)
+        {
+            DefaultListAdapter defaultListAdapter = (DefaultListAdapter) arg;
+            return defaultListAdapter.size() > 0;
         }
         else if (arg instanceof CollectionAndSequence) {
             CollectionAndSequence sequence = (CollectionAndSequence)arg;
-            return (sequence.size() > 0);
+            return sequence.size() > 0;
         }
         else
         {

@@ -19,6 +19,8 @@ import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+import freemarker.template.Configuration;
+import freemarker.template.DefaultObjectWrapperBuilder;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 
@@ -70,10 +72,14 @@ public class FreeMarkerOperation extends GraphOperation
             LOG.info("Reporting: Writing template \"" + templatePath + "\" to output file \""
                         + outputPath.toAbsolutePath().toString() + "\"");
 
-            freemarker.template.Configuration cfg = new freemarker.template.Configuration();
-            cfg.setTemplateLoader(new FurnaceFreeMarkerTemplateLoader());
-            cfg.setTemplateUpdateDelay(500);
-            Template template = cfg.getTemplate(templatePath);
+            freemarker.template.Configuration freemarkerConfig = new freemarker.template.Configuration();
+            DefaultObjectWrapperBuilder objectWrapperBuilder = new DefaultObjectWrapperBuilder(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
+            objectWrapperBuilder.setUseAdaptersForContainers(true);
+            freemarkerConfig.setObjectWrapper(objectWrapperBuilder.build());
+
+            freemarkerConfig.setTemplateLoader(new FurnaceFreeMarkerTemplateLoader());
+            freemarkerConfig.setTemplateUpdateDelayMilliseconds(3600);
+            Template template = freemarkerConfig.getTemplate(templatePath);
 
             Variables varStack = Variables.instance(event);
 
