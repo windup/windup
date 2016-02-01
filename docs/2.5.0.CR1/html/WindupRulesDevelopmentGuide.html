@@ -1,0 +1,3207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.2">
+<title>Windup Rules Development Guide</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400">
+<style>
+/* Asciidoctor default stylesheet | MIT License | http://asciidoctor.org */
+/* Remove the comments around the @import statement below when using this as a custom stylesheet */
+/*@import "https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400";*/
+article,aside,details,figcaption,figure,footer,header,hgroup,main,nav,section,summary{display:block}
+audio,canvas,video{display:inline-block}
+audio:not([controls]){display:none;height:0}
+[hidden],template{display:none}
+script{display:none!important}
+html{font-family:sans-serif;-ms-text-size-adjust:100%;-webkit-text-size-adjust:100%}
+body{margin:0}
+a{background:transparent}
+a:focus{outline:thin dotted}
+a:active,a:hover{outline:0}
+h1{font-size:2em;margin:.67em 0}
+abbr[title]{border-bottom:1px dotted}
+b,strong{font-weight:bold}
+dfn{font-style:italic}
+hr{-moz-box-sizing:content-box;box-sizing:content-box;height:0}
+mark{background:#ff0;color:#000}
+code,kbd,pre,samp{font-family:monospace;font-size:1em}
+pre{white-space:pre-wrap}
+q{quotes:"\201C" "\201D" "\2018" "\2019"}
+small{font-size:80%}
+sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}
+sup{top:-.5em}
+sub{bottom:-.25em}
+img{border:0}
+svg:not(:root){overflow:hidden}
+figure{margin:0}
+fieldset{border:1px solid silver;margin:0 2px;padding:.35em .625em .75em}
+legend{border:0;padding:0}
+button,input,select,textarea{font-family:inherit;font-size:100%;margin:0}
+button,input{line-height:normal}
+button,select{text-transform:none}
+button,html input[type="button"],input[type="reset"],input[type="submit"]{-webkit-appearance:button;cursor:pointer}
+button[disabled],html input[disabled]{cursor:default}
+input[type="checkbox"],input[type="radio"]{box-sizing:border-box;padding:0}
+input[type="search"]{-webkit-appearance:textfield;-moz-box-sizing:content-box;-webkit-box-sizing:content-box;box-sizing:content-box}
+input[type="search"]::-webkit-search-cancel-button,input[type="search"]::-webkit-search-decoration{-webkit-appearance:none}
+button::-moz-focus-inner,input::-moz-focus-inner{border:0;padding:0}
+textarea{overflow:auto;vertical-align:top}
+table{border-collapse:collapse;border-spacing:0}
+*,*:before,*:after{-moz-box-sizing:border-box;-webkit-box-sizing:border-box;box-sizing:border-box}
+html,body{font-size:100%}
+body{background:#fff;color:rgba(0,0,0,.8);padding:0;margin:0;font-family:"Noto Serif","DejaVu Serif",serif;font-weight:400;font-style:normal;line-height:1;position:relative;cursor:auto}
+a:hover{cursor:pointer}
+img,object,embed{max-width:100%;height:auto}
+object,embed{height:100%}
+img{-ms-interpolation-mode:bicubic}
+#map_canvas img,#map_canvas embed,#map_canvas object,.map_canvas img,.map_canvas embed,.map_canvas object{max-width:none!important}
+.left{float:left!important}
+.right{float:right!important}
+.text-left{text-align:left!important}
+.text-right{text-align:right!important}
+.text-center{text-align:center!important}
+.text-justify{text-align:justify!important}
+.hide{display:none}
+.antialiased,body{-webkit-font-smoothing:antialiased}
+img{display:inline-block;vertical-align:middle}
+textarea{height:auto;min-height:50px}
+select{width:100%}
+p.lead,.paragraph.lead>p,#preamble>.sectionbody>.paragraph:first-of-type p{font-size:1.21875em;line-height:1.6}
+.subheader,.admonitionblock td.content>.title,.audioblock>.title,.exampleblock>.title,.imageblock>.title,.listingblock>.title,.literalblock>.title,.stemblock>.title,.openblock>.title,.paragraph>.title,.quoteblock>.title,table.tableblock>.title,.verseblock>.title,.videoblock>.title,.dlist>.title,.olist>.title,.ulist>.title,.qlist>.title,.hdlist>.title{line-height:1.45;color:#7a2518;font-weight:400;margin-top:0;margin-bottom:.25em}
+div,dl,dt,dd,ul,ol,li,h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6,pre,form,p,blockquote,th,td{margin:0;padding:0;direction:ltr}
+a{color:#2156a5;text-decoration:underline;line-height:inherit}
+a:hover,a:focus{color:#1d4b8f}
+a img{border:none}
+p{font-family:inherit;font-weight:400;font-size:1em;line-height:1.6;margin-bottom:1.25em;text-rendering:optimizeLegibility}
+p aside{font-size:.875em;line-height:1.35;font-style:italic}
+h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{font-family:"Open Sans","DejaVu Sans",sans-serif;font-weight:300;font-style:normal;color:#ba3925;text-rendering:optimizeLegibility;margin-top:1em;margin-bottom:.5em;line-height:1.0125em}
+h1 small,h2 small,h3 small,#toctitle small,.sidebarblock>.content>.title small,h4 small,h5 small,h6 small{font-size:60%;color:#e99b8f;line-height:0}
+h1{font-size:2.125em}
+h2{font-size:1.6875em}
+h3,#toctitle,.sidebarblock>.content>.title{font-size:1.375em}
+h4,h5{font-size:1.125em}
+h6{font-size:1em}
+hr{border:solid #ddddd8;border-width:1px 0 0;clear:both;margin:1.25em 0 1.1875em;height:0}
+em,i{font-style:italic;line-height:inherit}
+strong,b{font-weight:bold;line-height:inherit}
+small{font-size:60%;line-height:inherit}
+code{font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;font-weight:400;color:rgba(0,0,0,.9)}
+ul,ol,dl{font-size:1em;line-height:1.6;margin-bottom:1.25em;list-style-position:outside;font-family:inherit}
+ul,ol,ul.no-bullet,ol.no-bullet{margin-left:1.5em}
+ul li ul,ul li ol{margin-left:1.25em;margin-bottom:0;font-size:1em}
+ul.square li ul,ul.circle li ul,ul.disc li ul{list-style:inherit}
+ul.square{list-style-type:square}
+ul.circle{list-style-type:circle}
+ul.disc{list-style-type:disc}
+ul.no-bullet{list-style:none}
+ol li ul,ol li ol{margin-left:1.25em;margin-bottom:0}
+dl dt{margin-bottom:.3125em;font-weight:bold}
+dl dd{margin-bottom:1.25em}
+abbr,acronym{text-transform:uppercase;font-size:90%;color:rgba(0,0,0,.8);border-bottom:1px dotted #ddd;cursor:help}
+abbr{text-transform:none}
+blockquote{margin:0 0 1.25em;padding:.5625em 1.25em 0 1.1875em;border-left:1px solid #ddd}
+blockquote cite{display:block;font-size:.9375em;color:rgba(0,0,0,.6)}
+blockquote cite:before{content:"\2014 \0020"}
+blockquote cite a,blockquote cite a:visited{color:rgba(0,0,0,.6)}
+blockquote,blockquote p{line-height:1.6;color:rgba(0,0,0,.85)}
+@media only screen and (min-width:768px){h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{line-height:1.2}
+h1{font-size:2.75em}
+h2{font-size:2.3125em}
+h3,#toctitle,.sidebarblock>.content>.title{font-size:1.6875em}
+h4{font-size:1.4375em}}table{background:#fff;margin-bottom:1.25em;border:solid 1px #dedede}
+table thead,table tfoot{background:#f7f8f7;font-weight:bold}
+table thead tr th,table thead tr td,table tfoot tr th,table tfoot tr td{padding:.5em .625em .625em;font-size:inherit;color:rgba(0,0,0,.8);text-align:left}
+table tr th,table tr td{padding:.5625em .625em;font-size:inherit;color:rgba(0,0,0,.8)}
+table tr.even,table tr.alt,table tr:nth-of-type(even){background:#f8f8f7}
+table thead tr th,table tfoot tr th,table tbody tr td,table tr td,table tfoot tr td{display:table-cell;line-height:1.6}
+h1,h2,h3,#toctitle,.sidebarblock>.content>.title,h4,h5,h6{line-height:1.2;word-spacing:-.05em}
+h1 strong,h2 strong,h3 strong,#toctitle strong,.sidebarblock>.content>.title strong,h4 strong,h5 strong,h6 strong{font-weight:400}
+.clearfix:before,.clearfix:after,.float-group:before,.float-group:after{content:" ";display:table}
+.clearfix:after,.float-group:after{clear:both}
+*:not(pre)>code{font-size:.9375em;font-style:normal!important;letter-spacing:0;padding:.1em .5ex;word-spacing:-.15em;background-color:#f7f7f8;-webkit-border-radius:4px;border-radius:4px;line-height:1.45;text-rendering:optimizeSpeed}
+pre,pre>code{line-height:1.45;color:rgba(0,0,0,.9);font-family:"Droid Sans Mono","DejaVu Sans Mono",monospace;font-weight:400;text-rendering:optimizeSpeed}
+.keyseq{color:rgba(51,51,51,.8)}
+kbd{display:inline-block;color:rgba(0,0,0,.8);font-size:.75em;line-height:1.4;background-color:#f7f7f7;border:1px solid #ccc;-webkit-border-radius:3px;border-radius:3px;-webkit-box-shadow:0 1px 0 rgba(0,0,0,.2),0 0 0 .1em white inset;box-shadow:0 1px 0 rgba(0,0,0,.2),0 0 0 .1em #fff inset;margin:-.15em .15em 0 .15em;padding:.2em .6em .2em .5em;vertical-align:middle;white-space:nowrap}
+.keyseq kbd:first-child{margin-left:0}
+.keyseq kbd:last-child{margin-right:0}
+.menuseq,.menu{color:rgba(0,0,0,.8)}
+b.button:before,b.button:after{position:relative;top:-1px;font-weight:400}
+b.button:before{content:"[";padding:0 3px 0 2px}
+b.button:after{content:"]";padding:0 2px 0 3px}
+p a>code:hover{color:rgba(0,0,0,.9)}
+#header,#content,#footnotes,#footer{width:100%;margin-left:auto;margin-right:auto;margin-top:0;margin-bottom:0;max-width:62.5em;*zoom:1;position:relative;padding-left:.9375em;padding-right:.9375em}
+#header:before,#header:after,#content:before,#content:after,#footnotes:before,#footnotes:after,#footer:before,#footer:after{content:" ";display:table}
+#header:after,#content:after,#footnotes:after,#footer:after{clear:both}
+#content{margin-top:1.25em}
+#content:before{content:none}
+#header>h1:first-child{color:rgba(0,0,0,.85);margin-top:2.25rem;margin-bottom:0}
+#header>h1:first-child+#toc{margin-top:8px;border-top:1px solid #ddddd8}
+#header>h1:only-child,body.toc2 #header>h1:nth-last-child(2){border-bottom:1px solid #ddddd8;padding-bottom:8px}
+#header .details{border-bottom:1px solid #ddddd8;line-height:1.45;padding-top:.25em;padding-bottom:.25em;padding-left:.25em;color:rgba(0,0,0,.6);display:-ms-flexbox;display:-webkit-flex;display:flex;-ms-flex-flow:row wrap;-webkit-flex-flow:row wrap;flex-flow:row wrap}
+#header .details span:first-child{margin-left:-.125em}
+#header .details span.email a{color:rgba(0,0,0,.85)}
+#header .details br{display:none}
+#header .details br+span:before{content:"\00a0\2013\00a0"}
+#header .details br+span.author:before{content:"\00a0\22c5\00a0";color:rgba(0,0,0,.85)}
+#header .details br+span#revremark:before{content:"\00a0|\00a0"}
+#header #revnumber{text-transform:capitalize}
+#header #revnumber:after{content:"\00a0"}
+#content>h1:first-child:not([class]){color:rgba(0,0,0,.85);border-bottom:1px solid #ddddd8;padding-bottom:8px;margin-top:0;padding-top:1rem;margin-bottom:1.25rem}
+#toc{border-bottom:1px solid #efefed;padding-bottom:.5em}
+#toc>ul{margin-left:.125em}
+#toc ul.sectlevel0>li>a{font-style:italic}
+#toc ul.sectlevel0 ul.sectlevel1{margin:.5em 0}
+#toc ul{font-family:"Open Sans","DejaVu Sans",sans-serif;list-style-type:none}
+#toc a{text-decoration:none}
+#toc a:active{text-decoration:underline}
+#toctitle{color:#7a2518;font-size:1.2em}
+@media only screen and (min-width:768px){#toctitle{font-size:1.375em}
+body.toc2{padding-left:15em;padding-right:0}
+#toc.toc2{margin-top:0!important;background-color:#f8f8f7;position:fixed;width:15em;left:0;top:0;border-right:1px solid #efefed;border-top-width:0!important;border-bottom-width:0!important;z-index:1000;padding:1.25em 1em;height:100%;overflow:auto}
+#toc.toc2 #toctitle{margin-top:0;font-size:1.2em}
+#toc.toc2>ul{font-size:.9em;margin-bottom:0}
+#toc.toc2 ul ul{margin-left:0;padding-left:1em}
+#toc.toc2 ul.sectlevel0 ul.sectlevel1{padding-left:0;margin-top:.5em;margin-bottom:.5em}
+body.toc2.toc-right{padding-left:0;padding-right:15em}
+body.toc2.toc-right #toc.toc2{border-right-width:0;border-left:1px solid #efefed;left:auto;right:0}}@media only screen and (min-width:1280px){body.toc2{padding-left:20em;padding-right:0}
+#toc.toc2{width:20em}
+#toc.toc2 #toctitle{font-size:1.375em}
+#toc.toc2>ul{font-size:.95em}
+#toc.toc2 ul ul{padding-left:1.25em}
+body.toc2.toc-right{padding-left:0;padding-right:20em}}#content #toc{border-style:solid;border-width:1px;border-color:#e0e0dc;margin-bottom:1.25em;padding:1.25em;background:#f8f8f7;-webkit-border-radius:4px;border-radius:4px}
+#content #toc>:first-child{margin-top:0}
+#content #toc>:last-child{margin-bottom:0}
+#footer{max-width:100%;background-color:rgba(0,0,0,.8);padding:1.25em}
+#footer-text{color:rgba(255,255,255,.8);line-height:1.44}
+.sect1{padding-bottom:.625em}
+@media only screen and (min-width:768px){.sect1{padding-bottom:1.25em}}.sect1+.sect1{border-top:1px solid #efefed}
+#content h1>a.anchor,h2>a.anchor,h3>a.anchor,#toctitle>a.anchor,.sidebarblock>.content>.title>a.anchor,h4>a.anchor,h5>a.anchor,h6>a.anchor{position:absolute;z-index:1001;width:1.5ex;margin-left:-1.5ex;display:block;text-decoration:none!important;visibility:hidden;text-align:center;font-weight:400}
+#content h1>a.anchor:before,h2>a.anchor:before,h3>a.anchor:before,#toctitle>a.anchor:before,.sidebarblock>.content>.title>a.anchor:before,h4>a.anchor:before,h5>a.anchor:before,h6>a.anchor:before{content:"\00A7";font-size:.85em;display:block;padding-top:.1em}
+#content h1:hover>a.anchor,#content h1>a.anchor:hover,h2:hover>a.anchor,h2>a.anchor:hover,h3:hover>a.anchor,#toctitle:hover>a.anchor,.sidebarblock>.content>.title:hover>a.anchor,h3>a.anchor:hover,#toctitle>a.anchor:hover,.sidebarblock>.content>.title>a.anchor:hover,h4:hover>a.anchor,h4>a.anchor:hover,h5:hover>a.anchor,h5>a.anchor:hover,h6:hover>a.anchor,h6>a.anchor:hover{visibility:visible}
+#content h1>a.link,h2>a.link,h3>a.link,#toctitle>a.link,.sidebarblock>.content>.title>a.link,h4>a.link,h5>a.link,h6>a.link{color:#ba3925;text-decoration:none}
+#content h1>a.link:hover,h2>a.link:hover,h3>a.link:hover,#toctitle>a.link:hover,.sidebarblock>.content>.title>a.link:hover,h4>a.link:hover,h5>a.link:hover,h6>a.link:hover{color:#a53221}
+.audioblock,.imageblock,.literalblock,.listingblock,.stemblock,.videoblock{margin-bottom:1.25em}
+.admonitionblock td.content>.title,.audioblock>.title,.exampleblock>.title,.imageblock>.title,.listingblock>.title,.literalblock>.title,.stemblock>.title,.openblock>.title,.paragraph>.title,.quoteblock>.title,table.tableblock>.title,.verseblock>.title,.videoblock>.title,.dlist>.title,.olist>.title,.ulist>.title,.qlist>.title,.hdlist>.title{text-rendering:optimizeLegibility;text-align:left;font-family:"Noto Serif","DejaVu Serif",serif;font-size:1rem;font-style:italic}
+table.tableblock>caption.title{white-space:nowrap;overflow:visible;max-width:0}
+.paragraph.lead>p,#preamble>.sectionbody>.paragraph:first-of-type p{color:rgba(0,0,0,.85)}
+table.tableblock #preamble>.sectionbody>.paragraph:first-of-type p{font-size:inherit}
+.admonitionblock>table{border-collapse:separate;border:0;background:none;width:100%}
+.admonitionblock>table td.icon{text-align:center;width:80px}
+.admonitionblock>table td.icon img{max-width:none}
+.admonitionblock>table td.icon .title{font-weight:bold;font-family:"Open Sans","DejaVu Sans",sans-serif;text-transform:uppercase}
+.admonitionblock>table td.content{padding-left:1.125em;padding-right:1.25em;border-left:1px solid #ddddd8;color:rgba(0,0,0,.6)}
+.admonitionblock>table td.content>:last-child>:last-child{margin-bottom:0}
+.exampleblock>.content{border-style:solid;border-width:1px;border-color:#e6e6e6;margin-bottom:1.25em;padding:1.25em;background:#fff;-webkit-border-radius:4px;border-radius:4px}
+.exampleblock>.content>:first-child{margin-top:0}
+.exampleblock>.content>:last-child{margin-bottom:0}
+.sidebarblock{border-style:solid;border-width:1px;border-color:#e0e0dc;margin-bottom:1.25em;padding:1.25em;background:#f8f8f7;-webkit-border-radius:4px;border-radius:4px}
+.sidebarblock>:first-child{margin-top:0}
+.sidebarblock>:last-child{margin-bottom:0}
+.sidebarblock>.content>.title{color:#7a2518;margin-top:0;text-align:center}
+.exampleblock>.content>:last-child>:last-child,.exampleblock>.content .olist>ol>li:last-child>:last-child,.exampleblock>.content .ulist>ul>li:last-child>:last-child,.exampleblock>.content .qlist>ol>li:last-child>:last-child,.sidebarblock>.content>:last-child>:last-child,.sidebarblock>.content .olist>ol>li:last-child>:last-child,.sidebarblock>.content .ulist>ul>li:last-child>:last-child,.sidebarblock>.content .qlist>ol>li:last-child>:last-child{margin-bottom:0}
+.literalblock pre,.listingblock pre:not(.highlight),.listingblock pre[class="highlight"],.listingblock pre[class^="highlight "],.listingblock pre.CodeRay,.listingblock pre.prettyprint{background:#f7f7f8}
+.sidebarblock .literalblock pre,.sidebarblock .listingblock pre:not(.highlight),.sidebarblock .listingblock pre[class="highlight"],.sidebarblock .listingblock pre[class^="highlight "],.sidebarblock .listingblock pre.CodeRay,.sidebarblock .listingblock pre.prettyprint{background:#f2f1f1}
+.literalblock pre,.literalblock pre[class],.listingblock pre,.listingblock pre[class]{-webkit-border-radius:4px;border-radius:4px;word-wrap:break-word;padding:1em;font-size:.8125em}
+.literalblock pre.nowrap,.literalblock pre[class].nowrap,.listingblock pre.nowrap,.listingblock pre[class].nowrap{overflow-x:auto;white-space:pre;word-wrap:normal}
+@media only screen and (min-width:768px){.literalblock pre,.literalblock pre[class],.listingblock pre,.listingblock pre[class]{font-size:.90625em}}@media only screen and (min-width:1280px){.literalblock pre,.literalblock pre[class],.listingblock pre,.listingblock pre[class]{font-size:1em}}.literalblock.output pre{color:#f7f7f8;background-color:rgba(0,0,0,.9)}
+.listingblock pre.highlightjs{padding:0}
+.listingblock pre.highlightjs>code{padding:1em;-webkit-border-radius:4px;border-radius:4px}
+.listingblock pre.prettyprint{border-width:0}
+.listingblock>.content{position:relative}
+.listingblock code[data-lang]:before{display:none;content:attr(data-lang);position:absolute;font-size:.75em;top:.425rem;right:.5rem;line-height:1;text-transform:uppercase;color:#999}
+.listingblock:hover code[data-lang]:before{display:block}
+.listingblock.terminal pre .command:before{content:attr(data-prompt);padding-right:.5em;color:#999}
+.listingblock.terminal pre .command:not([data-prompt]):before{content:"$"}
+table.pyhltable{border-collapse:separate;border:0;margin-bottom:0;background:none}
+table.pyhltable td{vertical-align:top;padding-top:0;padding-bottom:0}
+table.pyhltable td.code{padding-left:.75em;padding-right:0}
+pre.pygments .lineno,table.pyhltable td:not(.code){color:#999;padding-left:0;padding-right:.5em;border-right:1px solid #ddddd8}
+pre.pygments .lineno{display:inline-block;margin-right:.25em}
+table.pyhltable .linenodiv{background:none!important;padding-right:0!important}
+.quoteblock{margin:0 1em 1.25em 1.5em;display:table}
+.quoteblock>.title{margin-left:-1.5em;margin-bottom:.75em}
+.quoteblock blockquote,.quoteblock blockquote p{color:rgba(0,0,0,.85);font-size:1.15rem;line-height:1.75;word-spacing:.1em;letter-spacing:0;font-style:italic;text-align:justify}
+.quoteblock blockquote{margin:0;padding:0;border:0}
+.quoteblock blockquote:before{content:"\201c";float:left;font-size:2.75em;font-weight:bold;line-height:.6em;margin-left:-.6em;color:#7a2518;text-shadow:0 1px 2px rgba(0,0,0,.1)}
+.quoteblock blockquote>.paragraph:last-child p{margin-bottom:0}
+.quoteblock .attribution{margin-top:.5em;margin-right:.5ex;text-align:right}
+.quoteblock .quoteblock{margin-left:0;margin-right:0;padding:.5em 0;border-left:3px solid rgba(0,0,0,.6)}
+.quoteblock .quoteblock blockquote{padding:0 0 0 .75em}
+.quoteblock .quoteblock blockquote:before{display:none}
+.verseblock{margin:0 1em 1.25em 1em}
+.verseblock pre{font-family:"Open Sans","DejaVu Sans",sans;font-size:1.15rem;color:rgba(0,0,0,.85);font-weight:300;text-rendering:optimizeLegibility}
+.verseblock pre strong{font-weight:400}
+.verseblock .attribution{margin-top:1.25rem;margin-left:.5ex}
+.quoteblock .attribution,.verseblock .attribution{font-size:.9375em;line-height:1.45;font-style:italic}
+.quoteblock .attribution br,.verseblock .attribution br{display:none}
+.quoteblock .attribution cite,.verseblock .attribution cite{display:block;letter-spacing:-.05em;color:rgba(0,0,0,.6)}
+.quoteblock.abstract{margin:0 0 1.25em 0;display:block}
+.quoteblock.abstract blockquote,.quoteblock.abstract blockquote p{text-align:left;word-spacing:0}
+.quoteblock.abstract blockquote:before,.quoteblock.abstract blockquote p:first-of-type:before{display:none}
+table.tableblock{max-width:100%;border-collapse:separate}
+table.tableblock td>.paragraph:last-child p>p:last-child,table.tableblock th>p:last-child,table.tableblock td>p:last-child{margin-bottom:0}
+table.spread{width:100%}
+table.tableblock,th.tableblock,td.tableblock{border:0 solid #dedede}
+table.grid-all th.tableblock,table.grid-all td.tableblock{border-width:0 1px 1px 0}
+table.grid-all tfoot>tr>th.tableblock,table.grid-all tfoot>tr>td.tableblock{border-width:1px 1px 0 0}
+table.grid-cols th.tableblock,table.grid-cols td.tableblock{border-width:0 1px 0 0}
+table.grid-all *>tr>.tableblock:last-child,table.grid-cols *>tr>.tableblock:last-child{border-right-width:0}
+table.grid-rows th.tableblock,table.grid-rows td.tableblock{border-width:0 0 1px 0}
+table.grid-all tbody>tr:last-child>th.tableblock,table.grid-all tbody>tr:last-child>td.tableblock,table.grid-all thead:last-child>tr>th.tableblock,table.grid-rows tbody>tr:last-child>th.tableblock,table.grid-rows tbody>tr:last-child>td.tableblock,table.grid-rows thead:last-child>tr>th.tableblock{border-bottom-width:0}
+table.grid-rows tfoot>tr>th.tableblock,table.grid-rows tfoot>tr>td.tableblock{border-width:1px 0 0 0}
+table.frame-all{border-width:1px}
+table.frame-sides{border-width:0 1px}
+table.frame-topbot{border-width:1px 0}
+th.halign-left,td.halign-left{text-align:left}
+th.halign-right,td.halign-right{text-align:right}
+th.halign-center,td.halign-center{text-align:center}
+th.valign-top,td.valign-top{vertical-align:top}
+th.valign-bottom,td.valign-bottom{vertical-align:bottom}
+th.valign-middle,td.valign-middle{vertical-align:middle}
+table thead th,table tfoot th{font-weight:bold}
+tbody tr th{display:table-cell;line-height:1.6;background:#f7f8f7}
+tbody tr th,tbody tr th p,tfoot tr th,tfoot tr th p{color:rgba(0,0,0,.8);font-weight:bold}
+p.tableblock>code:only-child{background:none;padding:0}
+p.tableblock{font-size:1em}
+td>div.verse{white-space:pre}
+ol{margin-left:1.75em}
+ul li ol{margin-left:1.5em}
+dl dd{margin-left:1.125em}
+dl dd:last-child,dl dd:last-child>:last-child{margin-bottom:0}
+ol>li p,ul>li p,ul dd,ol dd,.olist .olist,.ulist .ulist,.ulist .olist,.olist .ulist{margin-bottom:.625em}
+ul.unstyled,ol.unnumbered,ul.checklist,ul.none{list-style-type:none}
+ul.unstyled,ol.unnumbered,ul.checklist{margin-left:.625em}
+ul.checklist li>p:first-child>.fa-square-o:first-child,ul.checklist li>p:first-child>.fa-check-square-o:first-child{width:1em;font-size:.85em}
+ul.checklist li>p:first-child>input[type="checkbox"]:first-child{width:1em;position:relative;top:1px}
+ul.inline{margin:0 auto .625em auto;margin-left:-1.375em;margin-right:0;padding:0;list-style:none;overflow:hidden}
+ul.inline>li{list-style:none;float:left;margin-left:1.375em;display:block}
+ul.inline>li>*{display:block}
+.unstyled dl dt{font-weight:400;font-style:normal}
+ol.arabic{list-style-type:decimal}
+ol.decimal{list-style-type:decimal-leading-zero}
+ol.loweralpha{list-style-type:lower-alpha}
+ol.upperalpha{list-style-type:upper-alpha}
+ol.lowerroman{list-style-type:lower-roman}
+ol.upperroman{list-style-type:upper-roman}
+ol.lowergreek{list-style-type:lower-greek}
+.hdlist>table,.colist>table{border:0;background:none}
+.hdlist>table>tbody>tr,.colist>table>tbody>tr{background:none}
+td.hdlist1{padding-right:.75em;font-weight:bold}
+td.hdlist1,td.hdlist2{vertical-align:top}
+.literalblock+.colist,.listingblock+.colist{margin-top:-.5em}
+.colist>table tr>td:first-of-type{padding:0 .75em;line-height:1}
+.colist>table tr>td:last-of-type{padding:.25em 0}
+.thumb,.th{line-height:0;display:inline-block;border:solid 4px #fff;-webkit-box-shadow:0 0 0 1px #ddd;box-shadow:0 0 0 1px #ddd}
+.imageblock.left,.imageblock[style*="float: left"]{margin:.25em .625em 1.25em 0}
+.imageblock.right,.imageblock[style*="float: right"]{margin:.25em 0 1.25em .625em}
+.imageblock>.title{margin-bottom:0}
+.imageblock.thumb,.imageblock.th{border-width:6px}
+.imageblock.thumb>.title,.imageblock.th>.title{padding:0 .125em}
+.image.left,.image.right{margin-top:.25em;margin-bottom:.25em;display:inline-block;line-height:0}
+.image.left{margin-right:.625em}
+.image.right{margin-left:.625em}
+a.image{text-decoration:none}
+span.footnote,span.footnoteref{vertical-align:super;font-size:.875em}
+span.footnote a,span.footnoteref a{text-decoration:none}
+span.footnote a:active,span.footnoteref a:active{text-decoration:underline}
+#footnotes{padding-top:.75em;padding-bottom:.75em;margin-bottom:.625em}
+#footnotes hr{width:20%;min-width:6.25em;margin:-.25em 0 .75em 0;border-width:1px 0 0 0}
+#footnotes .footnote{padding:0 .375em;line-height:1.3;font-size:.875em;margin-left:1.2em;text-indent:-1.2em;margin-bottom:.2em}
+#footnotes .footnote a:first-of-type{font-weight:bold;text-decoration:none}
+#footnotes .footnote:last-of-type{margin-bottom:0}
+#content #footnotes{margin-top:-.625em;margin-bottom:0;padding:.75em 0}
+.gist .file-data>table{border:0;background:#fff;width:100%;margin-bottom:0}
+.gist .file-data>table td.line-data{width:99%}
+div.unbreakable{page-break-inside:avoid}
+.big{font-size:larger}
+.small{font-size:smaller}
+.underline{text-decoration:underline}
+.overline{text-decoration:overline}
+.line-through{text-decoration:line-through}
+.aqua{color:#00bfbf}
+.aqua-background{background-color:#00fafa}
+.black{color:#000}
+.black-background{background-color:#000}
+.blue{color:#0000bf}
+.blue-background{background-color:#0000fa}
+.fuchsia{color:#bf00bf}
+.fuchsia-background{background-color:#fa00fa}
+.gray{color:#606060}
+.gray-background{background-color:#7d7d7d}
+.green{color:#006000}
+.green-background{background-color:#007d00}
+.lime{color:#00bf00}
+.lime-background{background-color:#00fa00}
+.maroon{color:#600000}
+.maroon-background{background-color:#7d0000}
+.navy{color:#000060}
+.navy-background{background-color:#00007d}
+.olive{color:#606000}
+.olive-background{background-color:#7d7d00}
+.purple{color:#600060}
+.purple-background{background-color:#7d007d}
+.red{color:#bf0000}
+.red-background{background-color:#fa0000}
+.silver{color:#909090}
+.silver-background{background-color:#bcbcbc}
+.teal{color:#006060}
+.teal-background{background-color:#007d7d}
+.white{color:#bfbfbf}
+.white-background{background-color:#fafafa}
+.yellow{color:#bfbf00}
+.yellow-background{background-color:#fafa00}
+span.icon>.fa{cursor:default}
+.admonitionblock td.icon [class^="fa icon-"]{font-size:2.5em;text-shadow:1px 1px 2px rgba(0,0,0,.5);cursor:default}
+.admonitionblock td.icon .icon-note:before{content:"\f05a";color:#19407c}
+.admonitionblock td.icon .icon-tip:before{content:"\f0eb";text-shadow:1px 1px 2px rgba(155,155,0,.8);color:#111}
+.admonitionblock td.icon .icon-warning:before{content:"\f071";color:#bf6900}
+.admonitionblock td.icon .icon-caution:before{content:"\f06d";color:#bf3400}
+.admonitionblock td.icon .icon-important:before{content:"\f06a";color:#bf0000}
+.conum[data-value]{display:inline-block;color:#fff!important;background-color:rgba(0,0,0,.8);-webkit-border-radius:100px;border-radius:100px;text-align:center;font-size:.75em;width:1.67em;height:1.67em;line-height:1.67em;font-family:"Open Sans","DejaVu Sans",sans-serif;font-style:normal;font-weight:bold}
+.conum[data-value] *{color:#fff!important}
+.conum[data-value]+b{display:none}
+.conum[data-value]:after{content:attr(data-value)}
+pre .conum[data-value]{position:relative;top:-.125em}
+b.conum *{color:inherit!important}
+.conum:not([data-value]):empty{display:none}
+h1,h2{letter-spacing:-.01em}
+dt,th.tableblock,td.content{text-rendering:optimizeLegibility}
+p,td.content{letter-spacing:-.01em}
+p strong,td.content strong{letter-spacing:-.005em}
+p,blockquote,dt,td.content{font-size:1.0625rem}
+p{margin-bottom:1.25rem}
+.sidebarblock p,.sidebarblock dt,.sidebarblock td.content,p.tableblock{font-size:1em}
+.exampleblock>.content{background-color:#fffef7;border-color:#e0e0dc;-webkit-box-shadow:0 1px 4px #e0e0dc;box-shadow:0 1px 4px #e0e0dc}
+.print-only{display:none!important}
+@media print{@page{margin:1.25cm .75cm}
+*{-webkit-box-shadow:none!important;box-shadow:none!important;text-shadow:none!important}
+a{color:inherit!important;text-decoration:underline!important}
+a.bare,a[href^="#"],a[href^="mailto:"]{text-decoration:none!important}
+a[href^="http:"]:not(.bare):after,a[href^="https:"]:not(.bare):after{content:"(" attr(href) ")";display:inline-block;font-size:.875em;padding-left:.25em}
+abbr[title]:after{content:" (" attr(title) ")"}
+pre,blockquote,tr,img{page-break-inside:avoid}
+thead{display:table-header-group}
+img{max-width:100%!important}
+p,blockquote,dt,td.content{font-size:1em;orphans:3;widows:3}
+h2,h3,#toctitle,.sidebarblock>.content>.title{page-break-after:avoid}
+#toc,.sidebarblock,.exampleblock>.content{background:none!important}
+#toc{border-bottom:1px solid #ddddd8!important;padding-bottom:0!important}
+.sect1{padding-bottom:0!important}
+.sect1+.sect1{border:0!important}
+#header>h1:first-child{margin-top:1.25rem}
+body.book #header{text-align:center}
+body.book #header>h1:first-child{border:0!important;margin:2.5em 0 1em 0}
+body.book #header .details{border:0!important;display:block;padding:0!important}
+body.book #header .details span:first-child{margin-left:0!important}
+body.book #header .details br{display:block}
+body.book #header .details br+span:before{content:none!important}
+body.book #toc{border:0!important;text-align:left!important;padding:0!important;margin:0!important}
+body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-break-before:always}
+.listingblock code[data-lang]:before{display:block}
+#footer{background:none!important;padding:0 .9375em}
+#footer-text{color:rgba(0,0,0,.6)!important;font-size:.9em}
+.hide-on-print{display:none!important}
+.print-only{display:block!important}
+.hide-for-print{display:none!important}
+.show-for-print{display:inherit!important}}
+</style>
+</head>
+<body class="book">
+<div id="header">
+<h1>Windup Rules Development Guide</h1>
+<div id="toc" class="toc">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_introduction">1. Introduction</a></li>
+<li><a href="#_get_started">2. Get Started</a>
+<ul class="sectlevel2">
+<li><a href="#Rules-Create-Your-First-Rule">2.1. Create Your First XML Rule</a>
+<ul class="sectlevel3">
+<li><a href="#_overview">2.1.1. Overview</a></li>
+<li><a href="#_rule_example_description">2.1.2. Rule Example Description</a></li>
+<li><a href="#_create_the_directory_structure_for_the_rule">2.1.3. Create the Directory Structure for the Rule</a></li>
+<li><a href="#_create_data_to_test_the_rule">2.1.4. Create Data to Test the Rule</a></li>
+<li><a href="#_create_the_rule">2.1.5. Create the Rule</a></li>
+<li><a href="#_install_the_rule">2.1.6. Install the Rule</a></li>
+<li><a href="#_validate_the_rule_against_the_schema">2.1.7. Validate the Rule Against the Schema</a></li>
+<li><a href="#_test_the_rule">2.1.8. Test the Rule</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_create_and_test_xml_rules">3. Create and Test XML Rules</a>
+<ul class="sectlevel2">
+<li><a href="#Rules-Difference-Between-XML-based-and-Java-based-Rules">3.1. Difference Between XML-based and Java-based Rules</a>
+<ul class="sectlevel3">
+<li><a href="#_summary">3.1.1. Summary</a></li>
+<li><a href="#_which_one_to_choose">3.1.2. Which one to choose?</a></li>
+<li><a href="#_pros_and_cons_of_xml_based_rules">3.1.3. Pros and Cons of XML-based Rules</a></li>
+<li><a href="#_pros_and_cons_of_java_based_rules">3.1.4. Pros and Cons of Java-based Rules</a></li>
+<li><a href="#_examples_of_xml_based_and_java_based_rules">3.1.5. Examples of XML-based and Java Based Rules</a></li>
+<li><a href="#_quick_comparison_summary">3.1.6. Quick Comparison Summary</a></li>
+</ul>
+</li>
+<li><a href="#Rules-XML-Rule-Construction">3.2. XML-Rule-Construction</a>
+<ul class="sectlevel3">
+<li><a href="#_rulesets">3.2.1. Rulesets</a></li>
+<li><a href="#_predefined_rules">3.2.2. Predefined Rules</a></li>
+</ul>
+</li>
+<li><a href="#Rules-Create-a-Basic-XML-Rule">3.3. Create a Basic XML Rule</a>
+<ul class="sectlevel3">
+<li><a href="#_prerequisites">3.3.1. Prerequisites</a></li>
+<li><a href="#_file_naming_convention_for_xml_rules">3.3.2. File Naming Convention for XML Rules</a></li>
+<li><a href="#_basic_xml_rule_template">3.3.3. Basic XML Rule Template</a></li>
+<li><a href="#_create_the_ruleset_metadata">3.3.4. Create the Ruleset Metadata</a></li>
+<li><a href="#_create_the_rule_2">3.3.5. Create the Rule</a></li>
+</ul>
+</li>
+<li><a href="#Rules-XML-Rule-When-Condition-Syntax">3.4. XML Rule - When Condition Syntax</a>
+<ul class="sectlevel3">
+<li><a href="#javaclass-syntax">3.4.1. javaclass Syntax</a></li>
+<li><a href="#xmlfile-syntax">3.4.2. xmlfile Syntax</a></li>
+<li><a href="#project-syntax">3.4.3. project Syntax</a></li>
+<li><a href="#filecontent-syntax">3.4.4. filecontent Syntax</a></li>
+<li><a href="#file-syntax">3.4.5. file Syntax</a></li>
+</ul>
+</li>
+<li><a href="#Rules-XML-Rule-Perform-Action-Syntax">3.5. XML Rule - Perform Action Syntax</a>
+<ul class="sectlevel3">
+<li><a href="#classification-syntax">3.5.1. Classification Syntax</a></li>
+<li><a href="#link-syntax">3.5.2. Link Syntax</a></li>
+<li><a href="#hint-syntax">3.5.3. Hint Syntax</a></li>
+<li><a href="#xslt-syntax">3.5.4. XSLT Syntax</a></li>
+<li><a href="#lineitem-syntax">3.5.5. Lineitem Syntax</a></li>
+<li><a href="#iteration-syntax">3.5.6. Iteration Syntax</a></li>
+</ul>
+</li>
+<li><a href="#Rules-Validate-Rulesets-Against-the-Schema">3.6. Validate Rulesets Against the Schema</a></li>
+<li><a href="#Rules-Test-an-XML-Rule">3.7. Test an XML Rule in Windup</a>
+<ul class="sectlevel3">
+<li><a href="#_add_the_rule_to_windup">3.7.1. Add the Rule to Windup</a></li>
+<li><a href="#_test_the_xml_rule">3.7.2. Test the XML Rule</a></li>
+<li><a href="#_additional_resources">3.7.3. Additional Resources</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#_additional_resources_2">4. Additional Resources</a>
+<ul class="sectlevel2">
+<li><a href="#_review_the_existing_windup_xml_rules">4.1. Review the Existing Windup XML Rules</a></li>
+<li><a href="#Rules-Important-Links">4.2. Important Links</a></li>
+</ul>
+</li>
+<li><a href="#_appendix">5. Appendix</a>
+<ul class="sectlevel2">
+<li><a href="#Rules-Rule-Story-Points">5.1. Rule Story Points</a>
+<ul class="sectlevel3">
+<li><a href="#_what_are_story_points">5.1.1. What are Story Points?</a></li>
+<li><a href="#_how_story_points_are_estimated_in_rules">5.1.2. How Story Points are Estimated in Rules</a></li>
+<li><a href="#_task_severity">5.1.3. Task Severity</a></li>
+</ul>
+</li>
+<li><a href="#About-the-HOME-Variable">5.2. About the WINDUP_HOME Variable</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div class="sect1">
+<h2 id="_introduction">1. Introduction</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This guide is for engineers, consultants, and others who plan to create custom XML-based rules for Windup.</p>
+</div>
+<div class="paragraph">
+<p>If you are new to Windup, it is recommended that you start with the <a href="https://access.redhat.com/documentation/en/red-hat-jboss-migration-toolkit/version-2.4/windup-user-guide">Windup User Guide</a>. It provides detailed information about system requirements and detailed instructions on how to install and execute Windup. It also contains tips to <a href="https://access.redhat.com/documentation/en/red-hat-jboss-migration-toolkit/version-2.4/windup-user-guide#Optimize-Performance">optimize performance</a> and provides links to other sources of information about Windup.</p>
+</div>
+<div class="paragraph">
+<p>If you would like to contribute to the Windup source code base or provide Java-based rule add-ons, see the <a href="https://github.com/windup/windup/wiki">Windup Wiki</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_get_started">2. Get Started</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="Rules-Create-Your-First-Rule">2.1. Create Your First XML Rule</h3>
+<div class="sect3">
+<h4 id="_overview">2.1.1. Overview</h4>
+<div class="paragraph">
+<p>This topic guides you through the process of creating and testing your first Windup XML-based rule.</p>
+</div>
+<div class="paragraph">
+<p>Windup XML-base rules use the following familiar rule pattern:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>when(condition)
+    perform(action)
+otherwise(action)</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Ruleset and Rule XML elements are covered in more detail here: <a href="#Rules-XML-Rule-Construction">XML Rule Construction</a>.</p>
+</div>
+<div class="paragraph">
+<p>Additional details about creating XML rules, with example syntax, can be found here: <a href="#Rules-Create-a-Basic-XML-Rule">Create a Basic XML Rule</a>.</p>
+</div>
+<div class="paragraph">
+<p>As you create your first rule, refer to the <a href="http://windup.jboss.org/schema/windup-jboss-ruleset.xsd">Rules Schema</a> for valid XML syntax.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_rule_example_description">2.1.2. Rule Example Description</h4>
+<div class="paragraph">
+<p>In this example, you write a rule to discover instances where an application defines a <code>jboss-web.xml</code> file containing a <code>&lt;class-loading&gt;</code> element and provide a link to the documentation that describes how to migrate the code.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_create_the_directory_structure_for_the_rule">2.1.3. Create the Directory Structure for the Rule</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Create a directory structure to contain your first rule and the data file to use for testing.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">$ mkdir -p migration-rules/rules
+$ mkdir -p migration-rules/data</pre>
+</div>
+</div>
+</li>
+<li>
+<p>This directory structure will also be used to hold the generated Windup reports.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_create_data_to_test_the_rule">2.1.4. Create Data to Test the Rule</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Use your favorite editor or IDE to create a <code>jboss-web.xml</code> file in the <code>~/migration-rules/data/</code> subdirectory.</p>
+</li>
+<li>
+<p>Copy in the following content.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;!DOCTYPE jboss-web PUBLIC "-//JBoss//DTD Web Application 4.2//EN" "http://www.jboss.org/j2ee/dtd/jboss-web_4_2.dtd"&gt;
+&lt;jboss-web&gt;
+    &lt;class-loading java2ClassLoadingCompliance="false"&gt;
+        &lt;loader-repository&gt;
+            seam.jboss.org:loader=@projectName@
+            &lt;loader-repository-config&gt;java2ParentDelegation=false&lt;/loader-repository-config&gt;
+        &lt;/loader-repository&gt;
+    &lt;/class-loading&gt;
+&lt;/jboss-web&gt;</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_create_the_rule">2.1.5. Create the Rule</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Use your favorite editor or IDE to create an XML file in the <code>~/migration-rules/rules/</code> subdirectory named <code>JBoss5-web-class-loading.windup.xml</code>. Copy in the following content.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;?xml version="1.0"?&gt;
+&lt;ruleset id="UNIQUE_RULESET_ID"
+    xmlns="http://windup.jboss.org/schema/jboss-ruleset"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://windup.jboss.org/schema/jboss-ruleset http://windup.jboss.org/schema/jboss-ruleset/windup-jboss-ruleset.xsd"&gt;
+    &lt;metadata&gt;
+        &lt;description&gt;
+            &lt;!-- Ruleset Description --&gt;
+        &lt;/description&gt;
+        &lt;dependencies&gt;
+            &lt;!-- Ruleset Dependencies --&gt;
+        &lt;/dependencies&gt;
+        &lt;sourceTechnology id="SOURCE_ID" versionRange="VERSION_RANGE"/&gt;
+        &lt;targetTechnology id="TARGET_ID" versionRange="VERSION_RANGE"/&gt;
+        &lt;tag&gt;Reviewed-2015-05-01&lt;/tag&gt;
+    &lt;/metadata&gt;
+    &lt;rules&gt;
+        &lt;rule id="UNIQUE_RULE_ID"&gt;
+            &lt;when&gt;
+                &lt;!-- Test for a condition here --&gt;
+            &lt;/when&gt;
+            &lt;perform&gt;
+                &lt;!-- Perform an action --&gt;
+            &lt;/perform&gt;
+        &lt;/rule&gt;
+     &lt;/rules&gt;
+&lt;/ruleset&gt;</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+Windup identifies files with the <code>.windup.xml</code> extension as XML-based rules, so be sure to use this naming convention, otherwise the rule will not be evaluated!
+</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>Add the unique identifier for the ruleset and rule.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Replace the <code>UNIQUE_RULESET_ID</code> with the file name: "JBoss5-web-class-loading"</p>
+</li>
+<li>
+<p>Replace the <code>UNIQUE_RULE_ID</code> with the ruleset ID appended with '_001': "JBoss5-web-class-loading_001"</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Add the following ruleset addon dependencies.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;addon id="org.jboss.windup.rules,windup-rules-javaee,2.5.0.Final"/&gt;
+&lt;addon id="org.jboss.windup.rules,windup-rules-java,2.5.0.Final"/&gt;</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Add the source and target technologies.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Replace the sourceTechnology <code>SOURCE_ID</code> with: "eap"</p>
+</li>
+<li>
+<p>Replace the targetTechnology <code>TARGET_ID</code> with: "eap"</p>
+</li>
+<li>
+<p>Replace the sourceTechnology <code>VERSION_RANGE</code> with: "(4,5)"</p>
+</li>
+<li>
+<p>Replace the targetTechnology <code>VERSION_RANGE</code> with: "[6,)"</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Complete the <code>when</code> condition.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Because this rule finds <code>jboss-web.xml</code> files containing the <code>class-loading</code> element, we use <code>xmlfile</code> to evaluate the files.</p>
+</li>
+<li>
+<p>To match on the <code>class-loading</code> element that is a child of <code>jboss-web</code>, use the xpath expression "jboss-web/class-loading".</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;when&gt;
+    &lt;xmlfile matches="jboss-web/class-loading" /&gt;
+&lt;/when&gt;</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Complete the <code>perform</code> action for this rule.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Add a classification and descriptive title.</p>
+</li>
+<li>
+<p>Assign a level of effort of "1" to this task.</p>
+</li>
+<li>
+<p>Provide a hint with an informative message and a link to documentation that describes the migration details.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;perform&gt;
+    &lt;iteration&gt;
+        &lt;classification title="JBoss Web Application Descriptor" effort="1"/&gt;
+        &lt;hint title="JBoss Web XML class-loading element is no longer valid"&gt;
+          &lt;message&gt;
+            The class-loading element is no longer valid in the jboss-web.xml file.
+          &lt;/message&gt;
+          &lt;link href="https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html-single/Migration_Guide/index.html#Create_or_Modify_Files_That_Control_Class_Loading_in_JBoss_Enterprise_Application_Platform_6" title="Create or Modify Files That Control Class Loading in JBoss EAP 6"/&gt;
+        &lt;/hint&gt;
+    &lt;/iteration&gt;
+&lt;/perform&gt;</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>The rule is now complete and should look like the following example.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;?xml version="1.0"?&gt;
+&lt;ruleset id="JBoss5-web-class-loading"
+    xmlns="http://windup.jboss.org/schema/jboss-ruleset"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://windup.jboss.org/schema/jboss-ruleset http://windup.jboss.org/schema/jboss-ruleset/windup-jboss-ruleset.xsd"&gt;
+    &lt;metadata&gt;
+        &lt;description&gt;
+            This ruleset looks for the class-loading element in a jboss-web.xml file, which is no longer valid in JBoss EAP 6
+        &lt;/description&gt;
+         &lt;dependencies&gt;
+            &lt;addon id="org.jboss.windup.rules,windup-rules-javaee,2.5.0.Final"/&gt;
+            &lt;addon id="org.jboss.windup.rules,windup-rules-java,2.5.0.Final"/&gt;
+        &lt;/dependencies&gt;
+        &lt;sourceTechnology id="eap" versionRange="(4,5)"/&gt;
+        &lt;targetTechnology id="eap" versionRange="[6,)"/&gt;
+    &lt;/metadata&gt;
+    &lt;rules&gt;
+        &lt;rule id="JBoss5-web-class-loading_1000"&gt;
+            &lt;when&gt;
+                &lt;xmlfile matches="jboss-web/class-loading" /&gt;
+            &lt;/when&gt;
+            &lt;perform&gt;
+                &lt;iteration&gt;
+                    &lt;classification title="JBoss Web Application Descriptor" effort="1"/&gt;
+                    &lt;hint title="JBoss Web XML class-loading element is no longer valid"&gt;
+                      &lt;message&gt;
+                        The class-loading element is no longer valid in the jboss-web.xml file.
+                      &lt;/message&gt;
+                      &lt;link href="https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html-single/Migration_Guide/index.html#Create_or_Modify_Files_That_Control_Class_Loading_in_JBoss_Enterprise_Application_Platform_6" title="Create or Modify Files That Control Class Loading in JBoss EAP 6"/&gt;
+                    &lt;/hint&gt;
+                &lt;/iteration&gt;
+            &lt;/perform&gt;
+        &lt;/rule&gt;
+     &lt;/rules&gt;
+&lt;/ruleset&gt;</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_install_the_rule">2.1.6. Install the Rule</h4>
+<div class="paragraph">
+<p>A Windup rule is installed simply by copying the rule to the appropriate folder.</p>
+</div>
+<div class="paragraph">
+<p>Copy the <code>JBoss5-web-class-loading.windup.xml</code> file to your <code>${user.home}/.windup/rules/</code> directory.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">For Linux or Mac: ~/.windup/rules/
+For Windows: "\Documents and Settings\USER_NAME\.windup\rules\" or "\Users\USER_NAME\.windup\rules\"</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_validate_the_rule_against_the_schema">2.1.7. Validate the Rule Against the Schema</h4>
+<div class="paragraph">
+<p>To validate your XML rule using the Windup rule schema, see <a href="#Rules-Validate-Rulesets-Against-the-Schema">Validate Rulesets Against the Schema</a>.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_test_the_rule">2.1.8. Test the Rule</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Open a terminal and navigate to the WINDUP_HOME directory.</p>
+</li>
+<li>
+<p>Type the following command to test the rule in Windup, passing the test file as an input argument and a directory for the output report.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">For Linux:    bin/windup --sourceMode --input ~/migration-rules/data --output ~/migration-rules/reports --source eap --target eap
+For Windows:  bin\windup.bat --sourceMode --input migration-rules\data --output migration-rules\reports --source eap --target eap</pre>
+</div>
+</div>
+</li>
+<li>
+<p>You should see this result.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">***SUCCESS*** Windup report created: /home/your-username/migration-rules/reports/index.html
+              Access it at this URL: file:///home/your-username/migration-rules/reports/index.html</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Access the report at ~/migration-rules/reports/index.html to be sure it provides the expected results.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>The <em>Overview</em> page displays the <strong>Name</strong> of the input folder, "data", along with the  <strong>Effort</strong> of "1 Story Points".</p>
+<div class="paragraph">
+<p><span class="image"><img src="images/CreateYourFirstRule-ReportOverview.png" alt="Overview" width="500"></span></p>
+</div>
+</li>
+<li>
+<p>Drill down into the <em>Application Report</em> detail by clicking on the "data" link under the <code>Name</code> column. This report displays a link for the name of the file, "jboss-web.xml", along with 3 warnings under <strong>Issues</strong> and 1 <strong>Story Points</strong>.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>JBoss Web Application Descriptor</p>
+</li>
+<li>
+<p>JBoss Web XML</p>
+</li>
+<li>
+<p>JBoss Web XML class-loading element is no longer valid</p>
+<div class="paragraph">
+<p><span class="image"><img src="images/CreateYourFirstRule-ReportApplication.png" alt="Overview" width="500"></span></p>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Drill down into <em>Source Report</em> file detail by clicking on the "jboss-web.xml" file link. This report provides information about the file and summarizes the story points. It also highlights the <code>&lt;class-loading&gt;</code> line in the <code>jboss-web.xml</code> file, provides the message "The class-loading element is no longer valid in the jboss-web.xml file.", and provides a link to the <a href="https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html-single/Migration_Guide/index.html#Create_or_Modify_Files_That_Control_Class_Loading_in_JBoss_Enterprise_Application_Platform_6">Create or Modify Files That Control Class Loading in JBoss EAP 6</a> topic in the JBoss EAP 6 Migration Guide. Click on the link to be sure the link is valid.</p>
+<div class="paragraph">
+<p><span class="image"><img src="images/CreateYourFirstRule-ReportSource.png" alt="Overview" width="500"></span></p>
+</div>
+</li>
+<li>
+<p>Return to the <em>Overview Page</em> and click on the "All Rule" link to view the <em>Rule Provider Executions</em> report. Find the 'JBoss5-web-class-loading' rule in the report and verify that the <strong>Status</strong> shows "Condition met" and the <strong>Result</strong> shows "success".</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_create_and_test_xml_rules">3. Create and Test XML Rules</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="Rules-Difference-Between-XML-based-and-Java-based-Rules">3.1. Difference Between XML-based and Java-based Rules</h3>
+<div class="sect3">
+<h4 id="_summary">3.1.1. Summary</h4>
+<div class="paragraph">
+<p>As mentioned before, Windup provides a core and a default set of rules to analyze and report on migration of application code. Windup also allows you to write your own custom rules. These rules can be written using either XML or Java. Rules written using XML are referred to as <em>XML-based</em> rules. Rules written using the Java API are referred to as <em>Java-based</em> rule add-ons. Both <em>XML-based</em> and <em>Java-based</em> rule add-ons can be used to inspect (classify) and report on Java source, XML, properties, archives, and other types of files,</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_which_one_to_choose">3.1.2. Which one to choose?</h4>
+<div class="paragraph">
+<p><em>XML-based</em> rules provide a quick, simple way to create rules to analyze Java, XML, and properties files. If you simply need to highlight a specific section of Java code or XML file content and provide migration hints for it, creation of <em>XML-based</em> rules is the recommended approach. Creation of custom <em>XML-based</em> rules is covered in this guide.</p>
+</div>
+<div class="paragraph">
+<p><em>Java-based</em> rule add-ons provide the ability to create very complex rules, manipulate the shared data model graph, and customize the resulting reports. If you need to test or perform complex conditions and operations or want to manipulate the shared data model graph, create custom reports, or extend the functionality in any other way beyond what the <em>XML-based</em> rules provide, you must create <em>Java-based</em> rules. Creation of custom <em>Java-based</em> rules is covered in the <a href="http://windup.github.io/windup/docs/latest/html/WindupCoreDevelopmentGuide.html">Windup Core Development Guide</a>.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_pros_and_cons_of_xml_based_rules">3.1.3. Pros and Cons of XML-based Rules</h4>
+<div class="paragraph">
+<p>Pros:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>XML rules are fairly easy to write and require less code.</p>
+</li>
+<li>
+<p>XML rules are not compiled so you do not need to configure Maven to build from source.</p>
+</li>
+<li>
+<p>XML rules are simple to deploy. You simply drop the rule into the appropriate path and Windup automatically scans the new rule.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Cons:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>XML rules only support a simple subset of conditions and operations.</p>
+</li>
+<li>
+<p>XML rules do not provide for direct custom graph data manipulation that can be used later by other rules or the generation of reports.</p>
+</li>
+<li>
+<p>XML rules do not support the ability to create custom reports.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_pros_and_cons_of_java_based_rules">3.1.4. Pros and Cons of Java-based Rules</h4>
+<div class="paragraph">
+<p>Pros:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Java rule add-ons allow you to write custom conditions and operations and provide a lot of flexibility.</p>
+</li>
+<li>
+<p>Java rule add-ons allow you to access and manipulate the shared data model graph and to customize reports.</p>
+</li>
+<li>
+<p>You can set breakpoints and test Java rule add-ons using a debugger.</p>
+</li>
+<li>
+<p>IDEs provide code completion for the Windup API.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Cons:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>You must configure Maven to compile Java rule add-ons.</p>
+</li>
+<li>
+<p>Java rule add-ons that are not included in the Windup core code base must be a full Forge add-on.</p>
+</li>
+<li>
+<p>Java rule add-ons require that you write Java code.</p>
+</li>
+<li>
+<p>Writing Java rule add-ons can be complex and require knowledge of Windup internals.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_examples_of_xml_based_and_java_based_rules">3.1.5. Examples of XML-based and Java Based Rules</h4>
+<div class="paragraph">
+<p>The following is an example of a rule written in XML that classifies Java code:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;?xml version="1.0"?&gt;
+&lt;ruleset id="EjbRules"
+    xmlns="http://windup.jboss.org/schema/jboss-ruleset"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://windup.jboss.org/schema/jboss-ruleset http://windup.jboss.org/schema/jboss-ruleset/windup-jboss-ruleset.xsd"&gt;
+    &lt;rules&gt;
+        &lt;rule id="EjbRules_1000"&gt;
+            &lt;when&gt;
+                &lt;javaclass references="javax.persistence.Entity" as="default"&gt;
+                    &lt;location&gt;TYPE&lt;/location&gt;
+                &lt;/javaclass&gt;
+            &lt;/when&gt;
+            &lt;perform&gt;
+                &lt;iteration&gt;
+                    &lt;classification title="JPA Entity" effort="0"/&gt;
+                &lt;/iteration&gt;
+            &lt;/perform&gt;
+        &lt;/rule&gt;
+    &lt;/rules&gt;
+&lt;/ruleset&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The following is an example of a rule written in Java that classifies Java code:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-java" data-lang="java">/**
+ * Scans for classes with EJB related annotations, and adds EJB related metadata for these.
+ */
+public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
+{
+    @Override
+    public Configuration getConfiguration(GraphContext context) {
+        return ConfigurationBuilder.begin()
+        .addRule()
+        .when(JavaClass.references("javax.ejb.{annotationType}").at(TypeReferenceLocation.ANNOTATION))
+        .perform(new AbstractIterationOperation&lt;JavaTypeReferenceModel&gt;()
+        {
+            public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
+            {
+                extractEJBMetadata(event, payload);
+            };
+        })
+        .where("annotationType").matches("Stateless|Stateful")
+        .withId(ruleIDPrefix + "_StatelessAndStatefulRule")
+        .addRule()
+        .when(JavaClass.references("javax.ejb.MessageDriven").at(TypeReferenceLocation.ANNOTATION))
+        .perform(new AbstractIterationOperation&lt;JavaTypeReferenceModel&gt;() {
+            @Override
+            public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload) {
+                extractMessageDrivenMetadata(event, payload);
+            }
+        })
+        .withId(ruleIDPrefix + "_MessageDrivenRule")
+        .addRule()
+        .when(JavaClass.references("javax.persistence.Entity").at(TypeReferenceLocation.ANNOTATION).as(ENTITY_ANNOTATIONS)
+                    .or(JavaClass.references("javax.persistence.Table").at(TypeReferenceLocation.ANNOTATION).as(TABLE_ANNOTATIONS_LIST)))
+        .perform(Iteration.over(ENTITY_ANNOTATIONS).perform(new AbstractIterationOperation&lt;JavaTypeReferenceModel&gt;() {
+            @Override public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload) {
+                extractEntityBeanMetadata(event, payload);
+            }
+        }).endIteration())
+        .withId(ruleIDPrefix + "_EntityBeanRule");
+    }
+    ...
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_quick_comparison_summary">3.1.6. Quick Comparison Summary</h4>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 60%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Requirement</th>
+<th class="tableblock halign-left valign-top">XML Rule</th>
+<th class="tableblock halign-left valign-top">Java Rule Add-on</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Easy to write?</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Depends on the complexity of the rule</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Requires that you configure Maven?</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Requires that you compile the rule?</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Simple deployment?</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Supports custom reports?</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Ability to create complex conditions and operations?</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Ability to directly manipulate the graph data?</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Rules-XML-Rule-Construction">3.2. XML-Rule-Construction</h3>
+<div class="paragraph">
+<p>This section describes the basic construction of XML rules. All XML rules are defined as elements within rulesets.</p>
+</div>
+<div class="sect3">
+<h4 id="_rulesets">3.2.1. Rulesets</h4>
+<div class="paragraph">
+<p>A  ruleset is a group of one or more rules that targets a specific area of migration. This is the basic construct for the <code>&lt;ruleset&gt;</code> element.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>&lt;ruleset id="UNIQUE_RULESET_ID&gt;</strong>: This element defines this as a Windup ruleset and gives it a unique ruleset ID.</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>&lt;metadata&gt;</strong>: Provide metadata about the ruleset.</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>&lt;description&gt;</strong>: Description of the ruleset.</p>
+</li>
+<li>
+<p><strong>&lt;dependencies/&gt;</strong>: Rule add-ons required by this ruleset.</p>
+</li>
+<li>
+<p><strong> &lt;sourceTechnology/&gt;</strong>: Source technology</p>
+</li>
+<li>
+<p><strong> &lt;targetTechnology/&gt;</strong>: Target technology</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>&lt;rules&gt;</strong>: This element contains the individual rules.</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>&lt;rule id=UNIQUE_RULESET_ID_UNIQUE_RULE_ID&gt;</strong>: This element defines the rule and gives it a unique ID. One or more rules can be defined for a ruleset.</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>&lt;when&gt;</strong>: This element defines the condition or conditions to match on. For a detailed description of the elements allowed in a <code>&lt;when&gt;</code>, see <a href="#Rules-XML-Rule-When-Condition-Syntax">XML Rule - When Condition Syntax</a>.</p>
+</li>
+<li>
+<p><strong>&lt;perform&gt;</strong>: This element defines the action to be performed when the rule condition is matched. For a detailed description of the elements allowed in a <code>&lt;perform&gt;</code>, see <a href="#Rules-XML-Rule-Perform-Action-Syntax">XML Rule - Perform Action Syntax</a>.</p>
+</li>
+<li>
+<p><strong>&lt;otherwise&gt;</strong>: This element defines the action to be performed when the rule condition is not matched. This element takes the same child elements as the <code>&lt;perform&gt;</code> element.</p>
+</li>
+<li>
+<p><strong>&lt;where&gt;</strong>: This element matches on a string pattern.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>&lt;file-mapping/&gt;</strong>: Map an extension to a graph type</p>
+</li>
+<li>
+<p><strong>&lt;package-mapping/&gt;</strong>: Maps from a package pattern (regular expression) to a organization name.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_predefined_rules">3.2.2. Predefined Rules</h4>
+<div class="paragraph">
+<p>Windup provides some predefined rules for more common migration requirements, for example, mapping files from the source platform to target platform. The following is an example of the predefined "XmlFileMappings" rule.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;?xml version="1.0"?&gt;
+    &lt;ruleset id="XmlFileMappings"
+        xmlns="http://windup.jboss.org/schema/jboss-ruleset"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://windup.jboss.org/schema/jboss-ruleset http://windup.jboss.org/schema/jboss-ruleset/windup-jboss-ruleset.xsd"&gt;
+        &lt;metadata&gt;
+            &lt;description&gt;
+                This ruleset maps files to the Model.
+            &lt;/description&gt;
+            &lt;dependencies&gt;
+                &lt;addon id="org.jboss.windup.rules.files.FileMappingHandler"/&gt;
+            &lt;/dependencies&gt;
+            &lt;sourceTechnology id="eap" versionRange="(4,5)"/&gt;
+            &lt;targetTechnology id="eap" versionRange="[6,)"/&gt;
+            &lt;tag&gt;reviewed-2015-05-27&lt;/tag&gt;
+        &lt;/metadata&gt;
+        &lt;rules&gt;
+            &lt;file-mapping from=".*\.tld$" to="XmlFileModel"/&gt;
+            &lt;file-mapping from=".*\.bpel$" to="XmlFileModel"/&gt;
+            &lt;file-mapping from=".*\.wsdl$" to="XmlFileModel"/&gt;
+            &lt;file-mapping from=".*\.wsdd$" to="XmlFileModel"/&gt;
+            &lt;file-mapping from=".*\.bpelex$" to="XmlFileModel"/&gt;
+            &lt;file-mapping from=".*\.mon$" to="XmlFileModel"/&gt;
+            &lt;file-mapping from=".*\.xmi$" to="XmlFileModel"/&gt;
+            &lt;file-mapping from=".*\.export$" to="XmlFileModel"/&gt;
+            &lt;file-mapping from=".*\.import$" to="XmlFileModel"/&gt;
+            &lt;file-mapping from=".*\.bcfg$" to="XmlFileModel"/&gt;
+            &lt;file-mapping from=".*\.map$" to="XmlFileModel"/&gt;
+            &lt;file-mapping from=".*\.brg$" to="XmlFileModel"/&gt;
+            &lt;file-mapping from=".*\.brgt$" to="XmlFileModel"/&gt;
+            &lt;file-mapping from=".*\.ruleset$" to="XmlFileModel"/&gt;
+            &lt;file-mapping from=".*\.module$" to="XmlFileModel"/&gt;
+            &lt;file-mapping from=".*\.modulex$" to="XmlFileModel"/&gt;
+            &lt;file-mapping from=".*\.composite$" to="XmlFileModel"/&gt;
+            &lt;file-mapping from=".*\.requirements$" to="XmlFileModel"/&gt;
+          &lt;/rules&gt;
+        &lt;/ruleset&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Rules-Create-a-Basic-XML-Rule">3.3. Create a Basic XML Rule</h3>
+<div class="paragraph">
+<p>You can create a Windup rule using Java, XML, or Groovy. This topic describes how to create a rule using XML.</p>
+</div>
+<div class="sect3">
+<h4 id="_prerequisites">3.3.1. Prerequisites</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>You should have already installed Windup. Installation instruction are provided in the <a href="https://access.redhat.com/documentation/en/red-hat-jboss-migration-toolkit/version-2.4/windup-user-guide">Windup User Guide</a>.</p>
+</li>
+<li>
+<p>Before you begin, you may also want to be familiar with the following documentation:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Windup rules are based on the ocpsoft <strong>rewrite</strong> project. You can find more information about ocpsoft <strong>rewrite</strong> here: <a href="http://ocpsoft.org/rewrite/" class="bare">http://ocpsoft.org/rewrite/</a></p>
+</li>
+<li>
+<p>The JavaDoc for the Windup API is located here: <a href="http://windup.github.io/windup/docs/latest/javadoc/" class="bare">http://windup.github.io/windup/docs/latest/javadoc/</a></p>
+</li>
+<li>
+<p>The XML rule schema is located here: <a href="http://windup.jboss.org/schema/windup-jboss-ruleset.xsd" class="bare">http://windup.jboss.org/schema/windup-jboss-ruleset.xsd</a></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_file_naming_convention_for_xml_rules">3.3.2. File Naming Convention for XML Rules</h4>
+<div class="paragraph">
+<p>You must name the file containing an XML rule with the <code>.windup.xml</code> extension. Windup identifies files with this extension as XML-base rules, so be sure to use this naming convention, otherwise the rule will not be evaluated!</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_basic_xml_rule_template">3.3.3. Basic XML Rule Template</h4>
+<div class="paragraph">
+<p>XML rules consist of <em>conditions</em> and <em>actions</em> and follow the familiar "if/then/else" construct:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>when(condition)
+    perform(action)
+otherwise(action)</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The following is the basic syntax for XML rules.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;?xml version="1.0"?&gt;
+&lt;ruleset id="unique-ruleset-id"
+    xmlns="http://windup.jboss.org/schema/jboss-ruleset"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://windup.jboss.org/schema/jboss-ruleset http://windup.jboss.org/schema/jboss-ruleset/windup-jboss-ruleset.xsd"&gt;
+    &lt;metadata&gt;
+        &lt;!-- Metadata about the rule including a description,
+             source technology, target technology, and any
+             add-on dependencies --&gt;
+    &lt;/metadata&gt;
+    &lt;rules&gt;
+        &lt;rule id="unique-ruleset-id-01000"&gt;
+            &lt;when&gt;
+                &lt;!-- Test a condition... --&gt;
+            &lt;/when&gt;
+            &lt;perform&gt;
+                &lt;!-- Perform this action when condition is satisfied --&gt;
+            &lt;/perform&gt;
+            &lt;otherwise&gt;
+                &lt;!-- Perform this action when condition is not satisfied --&gt;
+            &lt;/otherwise&gt;
+        &lt;/rule&gt;
+    &lt;rules&gt;
+&lt;/ruleset&gt;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_create_the_ruleset_metadata">3.3.4. Create the Ruleset Metadata</h4>
+<div class="paragraph">
+<p>The XML ruleset <code>metadata</code> element provides additional information about the ruleset such as a description, the source and target technologies, and add-on dependencies. The metadata also allows for specification of tags, which allow you to provide additional information about a ruleset. For more information about ruleset metadata, see <a href="#Rules-XML-Rule-Construction">XML Rule Construction</a>.</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;ruleset id=”unique-ruleset-id”
+    xmlns="http://windup.jboss.org/schema/jboss-ruleset"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://windup.jboss.org/schema/jboss-ruleset http://windup.jboss.org/schema/jboss-ruleset/windup-jboss-ruleset.xsd"&gt;
+    &lt;metadata&gt;
+        &lt;description&gt;
+                This is the description.
+        &lt;/description&gt;
+        &lt;dependencies&gt;
+                &lt;addon id="org.jboss.windup.rules,windup-rules-javaee,2.0.1.Final"/&gt;
+                &lt;addon id="org.jboss.windup.rules,windup-rules-java,2.0.0.Final"/&gt;
+        &lt;/dependencies&gt;
+        &lt;sourceTechnology id="weblogic" versionRange="(10,12]"/&gt;
+        &lt;sourceTechnology id="ejb" versionRange="(2,3]"/&gt;
+        &lt;targetTechnology id="eap" versionRange="(5,6]"/&gt;
+        &lt;targetTechnology id="ejb" versionRange="(2,3]"/&gt;
+        &lt;tag&gt;require-stateless&lt;/tag&gt;
+        &lt;tag&gt;require-nofilesystem-io&lt;/tag&gt;
+        &lt;executeAfter&gt;AfterRulesetId&lt;/executeAfter&gt;
+        &lt;executeBefore&gt;BeforeRulesetId&lt;/executeBefore&gt;
+    &lt;/metadata&gt;
+    &lt;rules&gt;
+    &lt;/rules&gt;
+&lt;/ruleset&gt;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_create_the_rule_2">3.3.5. Create the Rule</h4>
+<div class="paragraph">
+<p>Individual rules are contained within a <code>&lt;rules&gt;</code> element and consist of one or more conditions and actions.</p>
+</div>
+<div class="sect4">
+<h5 id="_create_the_rule_when_condition">Create the Rule When Condition</h5>
+<div class="paragraph">
+<p>The XML rule <code>&lt;when&gt;</code> element tests for a condition. The following is a list of valid <code>&lt;when&gt;</code> conditions.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 80%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Element</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;true&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Always match.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>&lt;or&gt;</p>
+</div>
+<div class="paragraph">
+<p>&lt;and&gt;</p>
+</div>
+<div class="paragraph">
+<p>&lt;not&gt;</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">These are the standard logical operators.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;javaclass&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Test for a match in a Java class.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;javaclass-ignore&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Exclude javaclass which you would like to ignore in processing discovery.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;xmlfile&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Test for a match in an XML file.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;project&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Test for project characteristics, such as dependencies.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;filecontent&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Find strings or text within files, for example, properties files.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;file-mapping&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Define file names to internal stored File model.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;package-mapping&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Define package names to organization or libraries.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The specific syntax is dependent on whether you are creating a rule to evaluate Java class, an XML file, a project, or file content and is described in more detail here: <a href="#Rules-XML-Rule-When-Condition-Syntax">XML Rule - When Condition Syntax</a></p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_create_the_rule_perform_action">Create the Rule Perform Action</h5>
+<div class="paragraph">
+<p>The XML rule <code>&lt;perform&gt;</code> element performs the action when the condition is met. Operations allowed in this section of the rule include the classification of application resources, in-line hints for migration steps, links to migration information, and project lineitem reporting. The following is a list of valid <code>&lt;peform&gt;</code> actions.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 80%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Element</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;classification&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">This operation adds metadata that is intended to apply to the entire file. For example, if the Java Class is a JMS Message Listener, you might want to add a Classification with the title "JMS Message Listener". Information that would apply to the entire file would go here. Also, if an effort level is set, that information would apply to the entire file.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;link&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Provides an HTML link to additional information or documentation that provides more information about the migration task.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;hint&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">This operation adds metadata to a line within the file. For example, if the rule were set to apply to all instances of "javax.jms.TextMessage.setText(java.lang.String)" this would highlight every instance of that method call. This is frequently used when there is detailed information to attach that applies at the line level. Each time this operation is fired, the effort level will be added. In our example, if the effort level were 3 and there were 4 instances of "javax.jms.TextMessage.setText(java.lang.String)", then this would add 9 total story points. Whether or not to apply effort at this level or in a classification depends upon the amount of effort required during the migration.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;xslt&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Specify how to transform an XML file.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;lineitem&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">This provides a high level message that will appear in the application overview page.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;iteration&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Specify to iterate over an implicit or explicit variable defined within the rule.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The syntax is described in more detail here: <a href="#Rules-XML-Rule-Perform-Action-Syntax">XML Rule - Perform Action Syntax</a>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Rules-XML-Rule-When-Condition-Syntax">3.4. XML Rule - When Condition Syntax</h3>
+<div class="paragraph">
+<p>Conditions allowed in the <code>when</code> portion of a rule must extend <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/config/operation/GraphOperation.html">GraphOperation</a> and currently include evaluation of Java classes, XML files, projects, and file content. Because XML rules are modeled after the Java-based rule add-ons, links to JavaDocs for the related Java classes are provided for a better understanding of how they behave.</p>
+</div>
+<div class="paragraph">
+<p>The complete XML rule schema is located here: <a href="http://windup.jboss.org/schema/windup-jboss-ruleset.xsd" class="bare">http://windup.jboss.org/schema/windup-jboss-ruleset.xsd</a></p>
+</div>
+<div class="paragraph">
+<p>The following sections describe the more common XML <code>when</code> rule conditions.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#javaclass-syntax">javaclass Syntax</a></p>
+</li>
+<li>
+<p><a href="#xmlfile-syntax">xmlfile Syntax</a></p>
+</li>
+<li>
+<p><a href="#project-syntax">project Syntax</a></p>
+</li>
+<li>
+<p><a href="#filecontent-syntax">filecontent Syntax</a></p>
+</li>
+<li>
+<p><a href="#file-syntax">file Syntax</a></p>
+</li>
+</ul>
+</div>
+<div class="sect3">
+<h4 id="javaclass-syntax">3.4.1. javaclass Syntax</h4>
+<div class="sect4">
+<h5 id="_summary_2">Summary</h5>
+<div class="paragraph">
+<p>Use the <code>javaclass</code> element to find imports, methods, variable declarations, annotations, class implementations, and other items related to Java classes. For a better understanding of the <code>javaclass</code> condition, see the JavaDoc for the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/rules/apps/java/condition/JavaClass.html">JavaClass</a> class.</p>
+</div>
+<div class="paragraph">
+<p>The following is an example of a rule that tests for WebLogic-specific Apache XML <code>javaclass</code> packages.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;rule id="weblogic-03000"&gt;
+    &lt;when&gt;
+        &lt;javaclass references="weblogic.apache.xml.{*}" /&gt;
+    &lt;/when&gt;
+    &lt;perform&gt;
+        &lt;hint title="WebLogic Specific Apache XML Package" effort="1" severity="mandatory"&gt;
+            &lt;message&gt;
+                Code using this package should be replaced with code using the org.apache.xml package from [Apache
+                Xerces](http://xerces.apache.org/).
+            &lt;/message&gt;
+        &lt;/hint&gt;
+    &lt;/perform&gt;
+&lt;/rule&gt;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_construct_a_javaclass_element">Construct a javaclass Element</h5>
+<div class="sect5">
+<h6 id="_javaclass_element_attributes">javaclass Element Attributes</h6>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Attribute Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">references</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CLASS_NAME</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>The package or class name to match on. Wildcard characters can be used.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+For performance reasons, you should not start the reference with wildcard characters. For example, use <code>weblogic.apache.xml.{*}</code> instead of <code>{web}.apache.xml.{*}</code>.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">references="weblogic.apache.xml.{*}"</pre>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">matchesSource</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>An exact regex to match. This is useful to distinguish hard-coded strings.</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">sourceMatch="log4j.logger"</pre>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">as</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">VARIABLE_NAME</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>A variable name assigned to the rule so that it can be used as a reference in later processing. See the <code>from</code> attribute below. (Optional)</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">as="MyEjbRule"</pre>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">from</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">VARIABLE_NAME</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Begin the search query with the filtered result from a previous search identified by its <code>as</code> VARIABLE_NAME. (Optional)</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">from="MyEjbRule"</pre>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">in</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PATH_FILTER</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Used to filter input files matching this regex (regular expression) naming pattern. Wildcard characters can be used. (Optional)</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">in="{*}File1"</pre>
+</div>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect5">
+<h6 id="_javaclass_element_child_elements">JavaClass Element Child Elements</h6>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 80%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Child Element</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;location&gt;</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>The location where the reference was found in a Java class. Location can refer to annotations, field and variable declarations, imports, and methods. For the complete list of valid values, see the JavaDoc for <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/ast/java/data/TypeReferenceLocation.html">TypeReferenceLocation</a>.</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;location&gt;IMPORT&lt;/location&gt;</code></pre>
+</div>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="xmlfile-syntax">3.4.2. xmlfile Syntax</h4>
+<div class="sect4">
+<h5 id="_summary_3">Summary</h5>
+<div class="paragraph">
+<p>Use the <code>xmlfile</code> element to find information in XML files. For a better understanding of the <code>xmlfile</code> condition, see the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/rules/apps/xml/condition/XmlFile.html">XmlFile</a> JavaDoc.</p>
+</div>
+<div class="paragraph">
+<p>The following is an example of a rule that tests for an <code>xmlfile</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;rule id="UNIQUE_RULE_ID"&gt;
+    &lt;when&gt;
+        &lt;xmlfile matches="/w:web-app/w:resource-ref/w:res-auth[text() = 'Container']"&gt;
+            &lt;namespace prefix="w" uri="http://java.sun.com/xml/ns/javaee"/&gt;
+        &lt;/xmlfile&gt;
+    &lt;/when&gt;
+    &lt;perform&gt;
+        &lt;hint title="Title for Hint from XML"&gt;
+            &lt;message&gt;Container Auth&lt;/message&gt;
+        &lt;/hint&gt;
+        &lt;xslt description="Example XSLT Conversion" extension="-converted-example.xml"
+              template="/exampleconversion.xsl"/&gt;
+    &lt;/perform&gt;
+&lt;/rule&gt;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_construct_an_xmlfile_element">Construct an xmlfile Element</h5>
+<div class="sect5">
+<h6 id="_xmlfile_element_attributes">xmlfile Element: Attributes</h6>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Attribute Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">matches</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">XPATH</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Match on an XML file condition. (Optional)</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">matches="/w:web-app/w:resource-ref/w:res-auth[text() = 'Container']"</pre>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">xpathResultMatch</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">XPATH_RESULT_STRING</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Return results that match the given regex. (Optional)</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">&lt;xmlfile matches="//foo/text()"
+  xpathResultMatch="Text from foo."/&gt;</pre>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">as</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">VARIABLE_NAME</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>A variable name assigned to the rule so that it can be used as a reference in later processing. See the <code>from</code> attribute below. (Optional)</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">as="MyEjbRule"</pre>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">in</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PATH_FILTER</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Used to filter input files matching this regex (regular expression) naming pattern. Wildcard characters can be used. (Optional)</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">in="{*}File1"</pre>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">from</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">VARIABLE_NAME</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Begin the search query with the filtered result from a previous search identified by its <code>as</code> VARIABLE_NAME. (Optional)</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">from="MyEjbRule"</pre>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">public-id</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PUBLIC_ID</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>The DTD public-id regex. (Optional)</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">public-id="public"</pre>
+</div>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect5">
+<h6 id="_xmlfile_element_code_matches_code_advanced_usage_custom_windup_xpath_functions">xmlfile Element: <code>matches</code> - Advanced usage: Custom Windup XPath functions</h6>
+<div class="paragraph">
+<p>The <code>matches</code> attribute may use several built-in custom XPath functions,
+which may have useful side effects, like setting the matched value on the rule variables stack.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Function</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>windup:matches()</code></p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Match a XPath expression against a string, possibly containing Windup parameterization placeholders.</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">matches="windup:matches(//foo/@class, '{javaclassname}'"</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This will match all <code>&lt;foo/&gt;</code> elements with a <code>class</code> attribute and store their value into <code>javaclassname</code> parameter for each iteration.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_xmlfile_element_child_elements">xmlfile Element: Child Elements</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 80%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Child Element</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;namespace&gt;</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>The namespace referenced in XML files. This element contains 2 optional attributes: The <code>prefix</code> and the <code>uri</code>.</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;namespace prefix="abc" uri="http://maven.apache.org/POM/4.0.0"/&gt;</code></pre>
+</div>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="project-syntax">3.4.3. project Syntax</h4>
+<div class="sect4">
+<h5 id="_summary_4">Summary</h5>
+<div class="paragraph">
+<p>Use the <code>project</code> element to query the Maven POM file for the project charateristics. For a better understanding of the <code>project</code> condition, see the JavaDoc for the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/project/condition/Project.html">Project</a> class.</p>
+</div>
+<div class="paragraph">
+<p>The following is an example of a rule that checks for a junit dependency version between 2.0.0.Final and 2.2.0.Final.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;rule id="UNIQUE_RULE_ID"&gt;
+    &lt;when&gt;
+        &lt;project&gt;
+            &lt;artifact groupId="junit" artifactId="junit" from="2.0.0.Final" to="2.2.0.Final"/&gt;
+        &lt;/project&gt;
+    &lt;/when&gt;
+    &lt;perform&gt;
+        &lt;lineitem message="The project uses junit with the version between 2.0.0.Final and 2.2.0.Final"/&gt;
+    &lt;/perform&gt;
+&lt;/rule&gt;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_construct_a_project_element">Construct a project Element</h5>
+<div class="sect5">
+<h6 id="_project_element_attributes">project Element Attributes</h6>
+<div class="paragraph">
+<p>The <code>project</code> element is used to match against the project&#8217;s Maven POM file. You can use this condition to query for dependencies of the project. It does not have any attributes itself.</p>
+</div>
+</div>
+<div class="sect5">
+<h6 id="_project_element_child_elements">project Element Child Elements</h6>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 80%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Child Element</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;artifact&gt;</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Subcondition used within <code>project</code> to query against project dependencies. The <code>artifact</code> element attributes are described below.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect5">
+<h6 id="_artifact_element_attributes">artifact Element Attributes</h6>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Attribute Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">groupId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PROJECT_GROUP_ID</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Match on the project <code>&lt;groupId&gt;</code> of the dependency</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">artifactId</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PROJECT_ARTIFACT_ID</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Match on the project <code>&lt;artifactId&gt;</code> of the dependency</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">fromVersion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">FROM_VERSION</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Specify the lower version bound of the artifact. For example <code>2.0.0.Final</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">toVersion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">TO_VERSION</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Specify the upper version bound of the artifact. For example <code>2.2.0.Final</code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="filecontent-syntax">3.4.4. filecontent Syntax</h4>
+<div class="sect4">
+<h5 id="_summary_5">Summary</h5>
+<div class="paragraph">
+<p>Use the <code>filecontent</code> element to find strings or text within files, for example, a line in a Properties file. For a better understanding of the <code>filecontent</code> condition, see the JavaDoc for the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/rules/files/condition/FileContent.html">FileContent</a> class.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_construct_a_filecontent_element">Construct a filecontent Element</h5>
+<div class="sect5">
+<h6 id="_filecontent_element_attributes">filecontent Element Attributes</h6>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Attribute Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">pattern</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Match the file contents against the provided parameterized string</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">filename</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Match the file names against the provided parameterized string.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">as</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">VARIABLE_NAME</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>A variable name assigned to the rule so that it can be used as a reference in later processing. See the <code>from</code> attribute below.</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">as="MyEjbRule"</pre>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">from</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">VARIABLE_NAME</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Begin the search query with the filtered result from a previous search identified by its <code>as</code> VARIABLE_NAME. (Optional)</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">from="MyEjbRule"</pre>
+</div>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="file-syntax">3.4.5. file Syntax</h4>
+<div class="sect4">
+<h5 id="_summary_6">Summary</h5>
+<div class="paragraph">
+<p>Use the <code>file</code> element to find the existence of files with a specific name, for example, a ' ibm-webservices-ext.xmi' file. For a better understanding of the <code>file</code> condition, see the JavaDoc for the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/rules/files/condition/File.html">File</a> class.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_construct_a_file_element">Construct a file Element</h5>
+<div class="sect5">
+<h6 id="_file_element_attributes">file Element Attributes</h6>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Attribute Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">filename</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">String</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Match the file names against the provided parameterized string.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">as</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">VARIABLE_NAME</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>A variable name assigned to the rule so that it can be used as a reference in later processing. See the <code>from</code> attribute below.</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">as="MyEjbRule"</pre>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">from</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">VARIABLE_NAME</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Begin the search query with the filtered result from a previous search identified by its <code>as</code> VARIABLE_NAME. (Optional)</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">from="MyEjbRule"</pre>
+</div>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Rules-XML-Rule-Perform-Action-Syntax">3.5. XML Rule - Perform Action Syntax</h3>
+<div class="paragraph">
+<p>Operations available in the <code>perform</code> section of the rule include the classification of application resources, in-line hints for migration steps, links to migration information, and project lineitem reporting. Because XML rules are modeled after the Java-based rule add-ons, links to JavaDocs for the related Java classes are provided for a better understanding of how they behave.</p>
+</div>
+<div class="paragraph">
+<p>The complete XML rule schema is located here: <a href="http://windup.jboss.org/schema/windup-jboss-ruleset.xsd" class="bare">http://windup.jboss.org/schema/windup-jboss-ruleset.xsd</a></p>
+</div>
+<div class="paragraph">
+<p>The following sections describe the more common XML rule perform actions.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#classification-syntax">Classification Syntax</a></p>
+</li>
+<li>
+<p><a href="#link-syntax">Link Syntax</a></p>
+</li>
+<li>
+<p><a href="#hint-syntax">Hint Syntax</a></p>
+</li>
+<li>
+<p><a href="#xslt-syntax">XSLT Syntax</a></p>
+</li>
+<li>
+<p><a href="#lineitem-syntax">Lineitem Syntax</a></p>
+</li>
+<li>
+<p><a href="#iteration-syntax">Iteration Syntax</a></p>
+</li>
+</ul>
+</div>
+<div class="sect3">
+<h4 id="classification-syntax">3.5.1. Classification Syntax</h4>
+<div class="sect4">
+<h5 id="_summary_7">Summary</h5>
+<div class="paragraph">
+<p>The <code>classification</code> element is used to identify or classify application resources that match the rule. It provides a title that is displayed in the report, a level of effort, and it can also provide links to additional information about how to migrate this resource classification. For a better understanding of the <code>classification</code> action, see the JavaDoc for the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/reporting/config/classification/Classification.html">Classification</a> class.</p>
+</div>
+<div class="paragraph">
+<p>The following is an example of a rule that classifies a resource as a WebLogic EAR application deployment descriptor file.</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;rule id="XmlWebLogicRules_10vvyf"&gt;
+    &lt;when&gt;
+        &lt;xmlfile as="default" matches="/*[local-name()='weblogic-application']"&gt;&lt;/xmlfile&gt;
+    &lt;/when&gt;
+    &lt;perform&gt;
+        &lt;iteration&gt;
+            &lt;classification title="Weblogic EAR Application Descriptor" effort="3"/&gt;
+        &lt;/iteration&gt;
+    &lt;/perform&gt;
+&lt;/rule&gt;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="__code_classification_code_element_attributes"><code>classification</code> Element: Attributes</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Attribute Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">title</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Title this resource using the specified string.</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">title="JBoss Seam Components"</pre>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">effort</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BYTE</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>The level of effort assigned to this resource. (Optional)</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">effort="2"</pre>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">severity</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Whether this classification is "mandatory" or "optional". (Optional)</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">severity="mandatory"</pre>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">of</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">VARIABLE_NAME</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Create a new classification for the given reference. (Optional)</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">of="MySeamRule"</pre>
+</div>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="__code_classification_code_element_child_elements"><code>classification</code> Element: Child Elements</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 80%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Child Element</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;link&gt;</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Provides a link URI and text title for additional information.</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;classification title="Websphere Startup Service" effort="4"&gt;
+   &lt;link href="http://docs.oracle.com/javaee/6/api/javax/ejb/Singleton.html" title="EJB3.1 Singleton Bean"/&gt;
+   &lt;link href="http://docs.oracle.com/javaee/6/api/javax/ejb/Startup.html" title="EJB3.1 Startup Bean"/&gt;
+&lt;/classification&gt;</code></pre>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;tag&gt;</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Provides additional custom information for the classification.</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;tag&gt;Seam3&lt;/tag&gt;</code></pre>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;description&gt;</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Description of this resource</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;description&gt;JBoss Seam components must be replaced&lt;/description&gt;</code></pre>
+</div>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="link-syntax">3.5.2. Link Syntax</h4>
+<div class="sect4">
+<h5 id="_summary_8">Summary</h5>
+<div class="paragraph">
+<p>The <code>link</code> element is used in classifications or hints to provide links to informational content. For a better understanding of the <code>link</code> action, see the JavaDoc for the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/reporting/config/Link.html">Link</a> class.</p>
+</div>
+<div class="paragraph">
+<p>The following is an example of a rule that creates links to additional information.</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;rule id="SeamToCDIRules_2fmb"&gt;
+    &lt;when&gt;
+        &lt;javaclass references="org.jboss.seam.{*}" as="default"/&gt;
+    &lt;/when&gt;
+    &lt;perform&gt;
+        &lt;iteration&gt;
+            &lt;classification title="SEAM Component" effort="1"&gt;
+                &lt;link href="http://www.seamframework.org/Seam3/Seam2ToSeam3MigrationNotes" title="Seam 2 to Seam 3 Migration Notes"/&gt;
+                &lt;link href="http://docs.jboss.org/weld/reference/latest/en-US/html/example.html" title="JSF Web Application Example"/&gt;
+                &lt;link href="http://docs.jboss.org/weld/reference/latest/en-US/html/contexts.html" title="JBoss Context Documentation"/&gt;
+                &lt;link href="http://www.andygibson.net/blog/tutorial/cdi-conversations-part-2/" title="CDI Conversations Blog Post"/&gt;
+            &lt;/classification&gt;
+        &lt;/iteration&gt;
+    &lt;/perform&gt;
+&lt;/rule&gt;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="__code_link_code_element_attributes"><code>link</code> Element: Attributes</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Attribute Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">href</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">URI</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>The URI for the referenced link.</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">href="https://access.redhat.com/articles/1249423"</pre>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">title</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>A title for the link.</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">title="Migrate WebLogic Proprietary Servlet Annotations"</pre>
+</div>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="hint-syntax">3.5.3. Hint Syntax</h4>
+<div class="sect4">
+<h5 id="_summary_9">Summary</h5>
+<div class="paragraph">
+<p>The <code>hint</code> element is used to provide a hint or inline information about how to migrate a section of code. For a better understanding of the <code>hint</code> action, see the JavaDoc for the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/reporting/config/Hint.html">Hint</a> class.</p>
+</div>
+<div class="paragraph">
+<p>The following is an example of a rule that creates a hint.</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;rule id="WebLogicWebServiceRules_8jyqn"&gt;
+    &lt;when&gt;
+        &lt;javaclass references="weblogic.wsee.connection.transport.http.HttpTransportInfo.setUsername({*})" as="default"&gt;
+            &lt;location&gt;METHOD&lt;/location&gt;
+        &lt;/javaclass&gt;
+    &lt;/when&gt;
+    &lt;perform&gt;
+        &lt;iteration&gt;
+            &lt;hint title="Proprietary web-service" severity="mandatory" effort="3"&gt;
+                &lt;message&gt;Replace proprietary web-service authentication with JAX-WS standards.&lt;/message&gt;
+                &lt;link href="http://java-x.blogspot.com/2009/03/invoking-web-services-through-proxy.html" title="JAX-WS Proxy Password Example"/&gt;
+            &lt;/hint&gt;
+        &lt;/iteration&gt;
+    &lt;/perform&gt;
+&lt;/rule&gt;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="__code_hint_code_element_attributes"><code>hint</code> Element:  Attributes</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Attribute Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">title</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Title this hint using the specified string. Title is required attribute.</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">title="JBoss Seam Component Hint"</pre>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">severity</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Whether this hint is "mandatory" or "optional". (Optional)</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">severity="mandatory"</pre>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">in</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">VARIABLE_NAME</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Create a new Hint in the FileLocationModel resolved by the given variable. (Optional)</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">in="Foo"</pre>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">effort</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BYTE</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>The level of effort assigned to this resource.  (Optional)</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">effort="2"</pre>
+</div>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="__code_hint_code_element_child_elements"><code>hint</code> Element: Child Elements</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 80%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Child Element</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;message&gt;</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>A message describing the migration hint</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;message&gt;EJB 2.0 is deprecated&lt;/message&gt;</code></pre>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;link&gt;</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Identify or classify links to informational content. See the section on <a href="#link-syntax">Link Syntax</a> for details.</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;link href="http://docs.oracle.com/javaee/6/api/" title="Java Platform, Enterprise Edition 6
+API Specification" /&gt;</code></pre>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;tag&gt;</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Define a custom tag for this <code>hint</code>.</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;tag&gt;Needs review&lt;/tag&gt;</code></pre>
+</div>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="xslt-syntax">3.5.4. XSLT Syntax</h4>
+<div class="sect4">
+<h5 id="_summary_10">Summary</h5>
+<div class="paragraph">
+<p>The <code>xslt</code> element specifies how to transform an XML file. For a better understanding of the <code>xslt</code> action, see the JavaDoc for the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/rules/apps/xml/operation/xslt/XSLTTransformation.html">XSLTTransformation</a>  class.</p>
+</div>
+<div class="paragraph">
+<p>The following is an example of rule that defines an XSLT action.</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;rule id="XmlWebLogicRules_6bcvk"&gt;
+    &lt;when&gt;
+        &lt;xmlfile as="default" matches="/weblogic-ejb-jar"/&gt;
+    &lt;/when&gt;
+    &lt;perform&gt;
+        &lt;iteration&gt;
+            &lt;classification title="Weblogic EJB XML" effort="3"/&gt;
+            &lt;xslt title="JBoss EJB Descriptor (Windup-Generated)" template="transformations/xslt/weblogic-ejb-to-jboss.xsl" extension="-jboss.xml"/&gt;
+        &lt;/iteration&gt;
+    &lt;/perform&gt;
+&lt;/rule&gt;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="__code_xslt_code_element_attributes"><code>xslt</code> Element:  Attributes</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Attribute Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">of</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Create a new transformation for the given reference. (Optional)</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">of="testVariable_instance"</pre>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">title</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Sets the title for this XSLTTransformation in the report.</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">title="XSLT Transformed Output"</pre>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">extension</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Sets the extension for this XSLTTransformation.</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">extension="-result.html"</pre>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">template</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Sets the XSL template.</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">template="simpleXSLT.xsl"</pre>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">effort</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">BYTE</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The level of effort required for the tranformation. (Optional)</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="__code_xslt_code_element_child_elements"><code>xslt</code> Element: Child Elements</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 80%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Child Element</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;xslt-parameter&gt;</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Specify XSLTTransformation parameters as property value pairs</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;xslt-parameter property="title" value="EJB Transformation"/&gt;</code></pre>
+</div>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="lineitem-syntax">3.5.5. Lineitem Syntax</h4>
+<div class="sect4">
+<h5 id="_summary_11">Summary</h5>
+<div class="paragraph">
+<p>The <code>lineitem</code> element is used to provide  general migration requirements for the application, such as the need to replace deprecated libraries or the need to resolve potential class loading issues. This information is displayed on the project or application overview page. For a better understanding of the <code>lineitem</code> action, see the JavaDoc for the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/project/operation/LineItem.html">Lineitem</a> class.</p>
+</div>
+<div class="paragraph">
+<p>The following is an example of a rule that creates a lineitem message.</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;rule id="weblogic_servlet_annotation_1000"&gt;
+    &lt;when&gt;
+        &lt;javaclass references="weblogic.servlet.annotation.WLServlet" as="default"&gt;
+            &lt;location&gt;ANNOTATION&lt;/location&gt;
+        &lt;/javaclass&gt;
+    &lt;/when&gt;
+    &lt;perform&gt;
+        &lt;hint effort="1"&gt;
+            &lt;message&gt;Replace the proprietary WebLogic @WLServlet annotation with the Java EE 6 standard @WebServlet annotation.&lt;/message&gt;
+            &lt;link href="https://access.redhat.com/articles/1249423" title="Migrate WebLogic Proprietary Servlet Annotations" /&gt;
+            &lt;lineitem message="Proprietary WebLogic @WLServlet annotation found in file."/&gt;
+        &lt;/hint&gt;
+    &lt;/perform&gt;
+&lt;/rule&gt;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="__code_lineitem_code_element_attributes"><code>lineitem</code> Element:  Attributes</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Attribute Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">message</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">STRING</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>A lineitem message</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">message="Proprietary code found."</pre>
+</div>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="iteration-syntax">3.5.6. Iteration Syntax</h4>
+<div class="sect4">
+<h5 id="_summary_12">Summary</h5>
+<div class="paragraph">
+<p>The <code>iteration</code> element specifies to iterate over an implicit or explicit variable defined within the rule. For a better understanding of the <code>iteration</code> action, see the JavaDoc for the <a href="http://windup.github.io/windup/docs/latest/javadoc/org/jboss/windup/config/operation/Iteration.html">Iteration</a> class.</p>
+</div>
+<div class="paragraph">
+<p>The following is an example of a rule that performs an iteration.</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight nowrap"><code class="language-xml" data-lang="xml">&lt;rule id="jboss-eap5-xml-19000"&gt;
+    &lt;when&gt;
+        &lt;xmlfile as="jboss-app" matches="/jboss-app"/&gt;
+        &lt;xmlfile as="jboss-app-no-DTD" matches="/jboss-app" public-id=""/&gt;
+    &lt;/when&gt;
+    &lt;perform&gt;
+        &lt;iteration over="jboss-app"&gt;
+            &lt;classification title="JBoss application Descriptor" effort="5"/&gt;
+        &lt;/iteration&gt;
+        &lt;iteration over="jboss-app-no-DTD"&gt;
+            &lt;classification title="JBoss application descriptor with missing DTD" effort="5"/&gt;
+        &lt;/iteration&gt;
+        &lt;iteration over="jboss-app-no-DTD"&gt;
+            &lt;xslt title="JBoss application descriptor - JBoss 5 (Windup-generated)" template="transformations/xslt/jboss-app-to-jboss5.xsl" extension="-jboss5.xml"/&gt;
+        &lt;/iteration&gt;
+    &lt;/perform&gt;
+&lt;/rule&gt;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="__code_iteration_code_element_attributes"><code>iteration</code> Element:  Attributes</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Attribute Name</th>
+<th class="tableblock halign-left valign-top">Type</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">over</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">VARIABLE_NAME</p></td>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Iterate over the condition identified by this VARIABLE_NAME.</p>
+</div>
+<div class="paragraph">
+<p><em>Example:</em></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">over="jboss-app"</pre>
+</div>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect4">
+<h5 id="__code_iteration_code_element_child_elements"><code>iteration</code> Element: Child Elements</h5>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 80%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Child Element</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">&lt;iteration&gt;</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Child elements include a <code>when</code> condition, along with the actions <code>iteration</code>, <code>classification</code>, <code>hint</code>, <code>xslt</code>, <code>lineitem</code>, and <code>otherwise</code>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Rules-Validate-Rulesets-Against-the-Schema">3.6. Validate Rulesets Against the Schema</h3>
+<div class="paragraph">
+<p>To validate XML rules using the Windup rule schema, follow these steps.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Download this XML validator: <a href="https://github.com/amouat/xsd-validator" class="bare">https://github.com/amouat/xsd-validator</a> <a href="https://github.com/amouat/xsd-validator/releases/download/v1.0/xsdv-1.0.zip" class="bare">https://github.com/amouat/xsd-validator/releases/download/v1.0/xsdv-1.0.zip</a></p>
+</li>
+<li>
+<p>Extract the ZIP file in to a directory of your choice.</p>
+</li>
+<li>
+<p>The xsd-validator requires the schema file to be located on the local file system. Download the Windup rule schema from one of the following locations to a directory of your choice.</p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="http://windup.jboss.org/schema/windup-jboss-ruleset.xsd" class="bare">http://windup.jboss.org/schema/windup-jboss-ruleset.xsd</a></p>
+</li>
+<li>
+<p><a href="https://github.com/windup/windup/blob/master/config-xml/windup-jboss-ruleset.xsd" class="bare">https://github.com/windup/windup/blob/master/config-xml/windup-jboss-ruleset.xsd</a></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Run the following command, replacing the variables as follows.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>RULESET_DIRECTORY: The path to the top level folder that contains the rules.</p>
+</li>
+<li>
+<p>XSD_VALIDATOR: The path to the extracted xsd-validator.</p>
+</li>
+<li>
+<p>XSD_SCHEMA: The path to the local Windup windup-jboss-ruleset.xsd file.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">find RULESET_DIRECTORY -type f -iname "*.windup.xml" -exec XSD_VALIDATOR./xsdv.sh XSD_SCHEMA {} \;</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap"> find ~/MigrationRules/ -type f -iname "*.windup.xml" -exec ~/tools/xsdv/xsdv.sh ~/windup/config-xml/schema/windup-jboss-ruleset.xsd {} \;</pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>The console displays the results of each ruleset validation. If a ruleset fails to validate, the content causing the error is printed to the console.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Rules-Test-an-XML-Rule">3.7. Test an XML Rule in Windup</h3>
+<div class="sect3">
+<h4 id="_add_the_rule_to_windup">3.7.1. Add the Rule to Windup</h4>
+<div class="paragraph">
+<p>A Windup rule is installed simply by copying the rule to the appropriate Windup folder. Windup scans for rules, which are files that end with either <code>*.windup.groovy</code> or <code>.windup.xml</code>, in the following locations:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Copy the rule to a directory specified by the <code>--userRulesDirectory</code> argument on the Windup command line.</p>
+</li>
+<li>
+<p>Copy the rule to the WINDUP_HOME/rules/ directory. <a href="#About-the-HOME-Variable">WINDUP_HOME</a> is the directory where you install and run the Windup executable.</p>
+</li>
+<li>
+<p>Copy the rule to the <code>${user.home}/.windup/rules/</code> directory. This directory is created by Windup the first time it is executed and contains rules, add-ons, and the Windup log.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">For Linux or Mac:   ~/.windup/rules/
+For Windows: "\Documents and Settings\USER_NAME\.windup\rules\"  -or-  "\Users\USER_NAME\.windup\rules\"</pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_test_the_xml_rule">3.7.2. Test the XML Rule</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Test the XML rule against your application file by running Windup in a terminal.</p>
+<div class="paragraph">
+<p>The command uses this syntax:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">WINDUP_HOME/bin/windup [--sourceMode] --input INPUT_ARCHIVE_OR_FOLDER --output OUTPUT_REPORT_DIRECTORY --target TARGET_TECHNOLOGY --packages PACKAGE_1 PACKAGE_2 PACKAGE_N</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You should see the following result:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="nowrap">***SUCCESS*** Windup report created: OUTPUT_REPORT_DIRECTORY/index.html</pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_additional_resources">3.7.3. Additional Resources</h4>
+<div class="ulist">
+<ul>
+<li>
+<p>More examples of how to run Windup are located in the <a href="https://access.redhat.com/documentation/en/red-hat-jboss-migration-toolkit/version-2.4/windup-user-guide">Windup User Guide</a>.</p>
+</li>
+<li>
+<p>Working examples of XML-based rules can be found on GitHub in the <a href="https://github.com/windup/windup/">Windup source code</a> GitHub repository and the Windup quickstarts <a href="https://github.com/windup/windup-quickstarts/">GitHub repository</a> or <a href="https://github.com/windup/windup-quickstarts/releases">latest release ZIP download</a>.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_additional_resources_2">4. Additional Resources</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_review_the_existing_windup_xml_rules">4.1. Review the Existing Windup XML Rules</h3>
+<div class="paragraph">
+<p>Windup XML-based rules are located on GitHub at the following location: <a href="https://github.com/windup/windup-rulesets/tree/master/rules" class="bare">https://github.com/windup/windup-rulesets/tree/master/rules</a>.</p>
+</div>
+<div class="paragraph">
+<p>Instructions to <a href="https://github.com/windup/windup/wiki/Dev-Get-the-Source-Code#fork-and-clone-the-windup-rulesets-repository">fork and clone the Windup rulesets repository</a> to your local machine are provided on the Wiki.</p>
+</div>
+<div class="paragraph">
+<p>Rules are grouped by target platform and function. When you create a new rule, it is helpful to find a rule that is similar to the one you need and use it as a starting template.</p>
+</div>
+<div class="paragraph">
+<p>New rules are continually added, so it is a good idea to check back frequently to review the updates.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="Rules-Important-Links">4.2. Important Links</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Windup wiki: <a href="https://github.com/windup/windup/wiki" class="bare">https://github.com/windup/windup/wiki</a></p>
+</li>
+<li>
+<p>Windup documentation (generated from the Wiki documentation at the link above):</p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://access.redhat.com/documentation/en/red-hat-jboss-migration-toolkit/version-2.4/windup-user-guide">Windup User Guide</a></p>
+</li>
+<li>
+<p><a href="https://access.redhat.com/documentation/en/red-hat-jboss-migration-toolkit/version-2.4/windup-rules-development-guide">Windup Rules Development Guide</a></p>
+</li>
+<li>
+<p><a href="http://windup.github.io/windup/docs/latest/html/WindupCoreDevelopmentGuide.html">Windup Core Development Guide</a></p>
+</li>
+<li>
+<p><a href="http://windup.github.io/windup/docs/latest/javadoc">Windup Javadoc</a></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Windup forums: <a href="https://community.jboss.org/en/windup" class="bare">https://community.jboss.org/en/windup</a></p>
+<div class="ulist">
+<ul>
+<li>
+<p>Windup 0.x legacy forums: <a href="https://developer.jboss.org/en/windup" class="bare">https://developer.jboss.org/en/windup</a></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Windup issue tracker: <a href="https://issues.jboss.org/browse/WINDUP" class="bare">https://issues.jboss.org/browse/WINDUP</a></p>
+</li>
+<li>
+<p>Windup users mailing List: <a href="mailto:windup-users@lists.jboss.org">windup-users@lists.jboss.org</a></p>
+</li>
+<li>
+<p>Windup developers mailing list: <a href="mailto:windup-dev@lists.jboss.org">windup-dev@lists.jboss.org</a></p>
+</li>
+<li>
+<p>Windup commits mailing list: <a href="mailto:windup-commits@lists.jboss.org">windup-commits@lists.jboss.org</a></p>
+</li>
+<li>
+<p>Windup on Twitter: <a href="https://twitter.com/jbosswindup">@JBossWindup</a></p>
+</li>
+<li>
+<p>Windup IRC channel: Server FreeNode (<code>irc.freenode.net</code>), channel <code>#windup</code>.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Windup IRC Chat transcripts: <a href="http://bit.ly/windup-transcripts" class="bare">http://bit.ly/windup-transcripts</a></p>
+</li>
+<li>
+<p>Windup meeting IRC Chat transcripts: transcripts: <a href="http://bit.ly/windup-meetings" class="bare">http://bit.ly/windup-meetings</a></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_appendix">5. Appendix</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="Rules-Rule-Story-Points">5.1. Rule Story Points</h3>
+<div class="sect3">
+<h4 id="_what_are_story_points">5.1.1. What are Story Points?</h4>
+<div class="paragraph">
+<p><em>Story Points</em> are an abstract metric commonly used in Scrum Agile software development methodology to estimate the <em>level of effort</em> needed to implement a feature or change. They are based on a <a href="http://scrummethodology.com/scrum-effort-estimation-and-story-points/">modified Fibonacci sequence</a>.</p>
+</div>
+<div class="paragraph">
+<p>In a similar manner, Windup uses <em>story points</em> to express the <em>level of effort</em> needed to migrate particular application constructs, and in a sum, the application as a whole. It does not necessarily translate to man-hours, but the value should be consistent across tasks.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_how_story_points_are_estimated_in_rules">5.1.2. How Story Points are Estimated in Rules</h4>
+<div class="paragraph">
+<p>Estimating the <em>level of effort</em> for the <em>story points</em> for a rule can be tricky. The following are the general guidelines Windup uses when estimating the <em>level of effort</em> required for a rule.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Level of Effort</th>
+<th class="tableblock halign-left valign-top">Story Points</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Trivial</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The migration is a trivial change or a simple library swap with no or minimal API changes.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Complex</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">3</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The changes required for the migration task are complex, but have a documented solution.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Redesign</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">5</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The migration task requires a redesign or a complete library change, with significant API changes.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rearchitecture</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">7</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The migration requires a complete rearchitecture of the component or subsystem.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Unknown</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">13</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The migration solution is not known and may need a complete rewrite.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_task_severity">5.1.3. Task Severity</h4>
+<div class="paragraph">
+<p>In addition to the <em>level of effort</em>, migration tasks can be assigned a <em>severity</em> that indicates whether the task must be completed or can be postponed.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Mandatory</dt>
+<dd>
+<p>The task must be completed for a successful migration. If the changes are not made, the resulting application will not build or run successfully. Examples include replacement of proprietary APIs that are not supported in the target platform.</p>
+</dd>
+<dt class="hdlist1">Optional</dt>
+<dd>
+<p>If the migration task is not completed, the application will work, but the results may not be the optimal. If the change is not made at the time of migration, it is recommended to put it on the schedule soon after migration is completed. An example of this would be the upgrade of EJB 2.x code to EJB 3.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="About-the-HOME-Variable">5.2. About the WINDUP_HOME Variable</h3>
+<div class="paragraph">
+<p>This documentation uses the <strong>WINDUP_HOME</strong> <em>replaceable</em> value to denote the path to the Windup distribution. When you encounter this value in the documentation, be sure to replace it with the actual path to your Windup installation.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>If you download and install the latest distribution of Windup from the JBoss Nexus repository, WINDUP_HOME refers to the windup-distribution-2.5.0-Final folder extracted from the downloaded ZIP file.</p>
+</li>
+<li>
+<p>If you build Windup from GitHub source, WINDUP_HOME refers to the windup-distribution-2.5.0-Final folder extracted from the windup-distribution/target/windup-distribution-2.5.0-Final.zip file.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Last updated 2016-02-01 11:02:48 EST
+</div>
+</div>
+</body>
+</html>
