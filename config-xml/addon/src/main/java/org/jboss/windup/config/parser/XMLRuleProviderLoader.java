@@ -44,9 +44,9 @@ import org.w3c.dom.Document;
 /**
  * This {@link RuleProviderLoader} searches for and loads {@link AbstractRuleProvider}s from XML files that within all
  * addons, with filenames that end in ".windup.xml".
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ *
  */
 public class XMLRuleProviderLoader implements RuleProviderLoader
 {
@@ -126,6 +126,7 @@ public class XMLRuleProviderLoader implements RuleProviderLoader
                 }
                 catch (Exception e)
                 {
+                    userRulesFileModel.setParseError("Failed to parse XML configuration: " + e.getClass().getSimpleName() + ": " + e.getMessage());
                     throw new WindupException("Failed to parse XML configuration at: " + resource.toString() + " due to: "
                                 + e.getMessage(), e);
                 }
