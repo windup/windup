@@ -228,7 +228,7 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
                                         && (contentPattern == null || contentPatternResult.submit(event, context))))
                             {
                                 FileLocationModel fileLocationModel = fileLocationService.create();
-                                fileLocationModel.setFile(fileModel);
+                                fileLocationModel.addFile(fileModel);
                                 fileLocationModel.setColumnNumber((int) matchEvent.getColumnNumber());
                                 // increment by one, as the source is 0-based, but the model is 1-based
                                 int lineNumber = (int) (matchEvent.getLineNumber() + 1);
@@ -290,7 +290,10 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
                 if (windupVertexFrame instanceof FileModel)
                     vertices.add((FileModel) windupVertexFrame);
                 if (windupVertexFrame instanceof FileReferenceModel)
-                    vertices.add(((FileReferenceModel) windupVertexFrame).getFile());
+                {
+                    for (FileModel fileModel : ((FileReferenceModel) windupVertexFrame).getFiles())
+                        vertices.add(fileModel);
+                }
             }
         }
     }

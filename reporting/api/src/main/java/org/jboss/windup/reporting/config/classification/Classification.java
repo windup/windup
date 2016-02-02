@@ -37,7 +37,7 @@ import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:dynawest@gmail.com">Ondrej Zizka</a>
  */
-public class Classification extends ParameterizedIterationOperation<FileModel>implements ClassificationAs, ClassificationEffort,
+public class Classification extends ParameterizedIterationOperation<WindupVertexFrame>implements ClassificationAs, ClassificationEffort,
             ClassificationDescription, ClassificationLink, ClassificationTags, ClassificationSeverity
 {
     private static final Logger LOG = Logging.get(Classification.class);
@@ -58,26 +58,6 @@ public class Classification extends ParameterizedIterationOperation<FileModel>im
     Classification()
     {
         super();
-    }
-
-    /**
-     * Set the payload to the fileModel of the given instance even though the variable is not directly referencing it. This is mainly to simplify the
-     * creation of the rule, when the FileModel itself is not being iterated but just a model referencing it.
-     *
-     */
-    @Override
-    public FileModel resolvePayload(GraphRewrite event, EvaluationContext context, WindupVertexFrame payload)
-    {
-        checkVariableName(event, context);
-        if (payload instanceof FileReferenceModel)
-        {
-            return ((FileReferenceModel) payload).getFile();
-        }
-        if (payload instanceof FileModel)
-        {
-            return (FileModel) payload;
-        }
-        return null;
     }
 
     /**
@@ -156,55 +136,72 @@ public class Classification extends ParameterizedIterationOperation<FileModel>im
     }
 
     @Override
-    public void performParameterized(GraphRewrite event, EvaluationContext context, FileModel payload)
+    public void performParameterized(GraphRewrite event, EvaluationContext context, WindupVertexFrame frame)
     {
         ExecutionStatistics.get().begin("Classification.performParameterized");
+
         try
         {
-            /*
-             * Check for duplicate classifications before we do anything. If a classification already exists, then we don't want to add another.
-             */
-            String description = null;
-            if (descriptionPattern != null)
-                description = descriptionPattern.getBuilder().build(event, context);
-            String text = classificationPattern.getBuilder().build(event, context);
-
-            GraphContext graphContext = event.getGraphContext();
-            ClassificationService classificationService = new ClassificationService(graphContext);
-
-            ClassificationModel classification = classificationService.getUniqueByProperty(ClassificationModel.CLASSIFICATION, text);
-
-            if (classification == null)
+            if (frame instanceof FileReferenceModel)
             {
-                classification = classificationService.create();
-                classification.setEffort(effort);
-                classification.setSeverity(severity);
-                classification.setDescription(description);
-                classification.setClassification(text);
-
-                Set<String> tags = new HashSet<>(this.getTags());
-                TagSetService tagSetService = new TagSetService(event.getGraphContext());
-                classification.setTagModel(tagSetService.getOrCreate(event, tags));
-
-                classification.setRuleID(((Rule) context.get(Rule.class)).getId());
-
-                LinkService linkService = new LinkService(graphContext);
-                for (Link link : links)
+                for (FileModel fileModel : ((FileReferenceModel) frame).getFiles())
                 {
-                    LinkModel linkModel = linkService.getOrCreate(link.getTitle(), link.getLink());
-                    classification.addLink(linkModel);
+                    performParameterizedForFile(event, context, fileModel);
                 }
             }
-
-            classificationService.attachClassification(classification, payload);
-            if (payload instanceof SourceFileModel)
-                ((SourceFileModel) payload).setGenerateSourceReport(true);
-            LOG.info("Classification added to " + payload.getPrettyPathWithinProject() + " [" + this + "] ");
+            if (frame instanceof FileModel)
+            {
+                performParameterizedForFile(event, context, (FileModel) frame);
+            }
         }
         finally
         {
             ExecutionStatistics.get().end("Classification.performParameterized");
         }
+    }
+
+    private void performParameterizedForFile(GraphRewrite event, EvaluationContext context, FileModel payload)
+    {
+        /*
+         * Check for duplicate classifications before we do anything. If a classification already exists, then we don't want to add another.
+         */
+        String description = null;
+        if (descriptionPattern != null)
+            description = descriptionPattern.getBuilder().build(event, context);
+        String text = classificationPattern.getBuilder().build(event, context);
+
+        GraphContext graphContext = event.getGraphContext();
+        ClassificationService classificationService = new ClassificationService(graphContext);
+
+        ClassificationModel classification = classificationService.getUniqueByProperty(ClassificationModel.CLASSIFICATION, text);
+
+        if (classification == null)
+        {
+            classification = classificationService.create();
+            classification.setEffort(effort);
+            classification.setSeverity(severity);
+            classification.setDescription(description);
+            classification.setClassification(text);
+
+            Set<String> tags = new HashSet<>(this.getTags());
+            TagSetService tagSetService = new TagSetService(event.getGraphContext());
+            classification.setTagModel(tagSetService.getOrCreate(event, tags));
+
+            classification.setRuleID(((Rule) context.get(Rule.class)).getId());
+
+            LinkService linkService = new LinkService(graphContext);
+            for (Link link : links)
+            {
+                LinkModel linkModel = linkService.getOrCreate(link.getTitle(), link.getLink());
+                classification.addLink(linkModel);
+            }
+        }
+
+        classificationService.attachClassification(classification, payload);
+        if (payload instanceof SourceFileModel)
+            ((SourceFileModel) payload).setGenerateSourceReport(true);
+        LOG.info("Classification added to " + payload.getPrettyPathWithinProject() + " [" + this + "] ");
+
     }
 
     protected void setClassificationText(String classification)

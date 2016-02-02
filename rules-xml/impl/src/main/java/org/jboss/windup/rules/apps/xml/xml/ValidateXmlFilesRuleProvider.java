@@ -1,5 +1,18 @@
 package org.jboss.windup.rules.apps.xml.xml;
 
+import java.io.FileNotFoundException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.UnknownHostException;
+import java.util.Collections;
+
+import javax.xml.XMLConstants;
+import javax.xml.transform.Source;
+import javax.xml.transform.stream.StreamSource;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
+
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.MetadataBuilder;
@@ -26,18 +39,6 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
-
-import javax.xml.XMLConstants;
-import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-import javax.xml.validation.Validator;
-import java.io.FileNotFoundException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.UnknownHostException;
-import java.util.Collections;
 
 /**
  * A rule provider validating all of the xml files and registering the classification in case the xml file is not valid.
@@ -137,7 +138,7 @@ public class ValidateXmlFilesRuleProvider extends AbstractRuleProvider
             fileLocation.setLineNumber(lineNumber);
             fileLocation.setColumnNumber(columnNumber);
             fileLocation.setLength(node.toString().length());
-            fileLocation.setFile(sourceFile);
+            fileLocation.addFile(sourceFile);
             return fileLocation;
         }
 

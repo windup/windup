@@ -91,60 +91,65 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
 
     private void extractEJBMetadata(GraphRewrite event, JavaTypeReferenceModel javaTypeReference)
     {
-        javaTypeReference.getFile().setGenerateSourceReport(true);
-        JavaAnnotationTypeReferenceModel annotationTypeReference = (JavaAnnotationTypeReferenceModel) javaTypeReference;
-
-        JavaClassModel ejbClass = getJavaClass(javaTypeReference);
-
-        String ejbName = getAnnotationLiteralValue(annotationTypeReference, "name");
-        if (Strings.isNullOrEmpty(ejbName))
+        for (AbstractJavaSourceModel javaSourceModel : javaTypeReference.getFiles())
         {
-            ejbName = ejbClass.getClassName();
-        }
+            javaSourceModel.setGenerateSourceReport(true);
+            JavaAnnotationTypeReferenceModel annotationTypeReference = (JavaAnnotationTypeReferenceModel) javaTypeReference;
 
-        String sessionType = javaTypeReference.getResolvedSourceSnippit()
+            JavaClassModel ejbClass = getJavaClass(javaTypeReference);
+
+            String ejbName = getAnnotationLiteralValue(annotationTypeReference, "name");
+            if (Strings.isNullOrEmpty(ejbName))
+            {
+                ejbName = ejbClass.getClassName();
+            }
+
+            String sessionType = javaTypeReference.getResolvedSourceSnippit()
                     .substring(javaTypeReference.getResolvedSourceSnippit().lastIndexOf(".") + 1);
 
-        Service<EjbSessionBeanModel> sessionBeanService = new GraphService<>(event.getGraphContext(), EjbSessionBeanModel.class);
-        EjbSessionBeanModel sessionBean = sessionBeanService.create();
-        sessionBean.setApplication(javaTypeReference.getFile().getApplication());
-        sessionBean.setBeanName(ejbName);
-        sessionBean.setEjbClass(ejbClass);
-        sessionBean.setSessionType(sessionType);
+            Service<EjbSessionBeanModel> sessionBeanService = new GraphService<>(event.getGraphContext(), EjbSessionBeanModel.class);
+            EjbSessionBeanModel sessionBean = sessionBeanService.create();
+            sessionBean.setApplication(javaSourceModel.getApplication());
+            sessionBean.setBeanName(ejbName);
+            sessionBean.setEjbClass(ejbClass);
+            sessionBean.setSessionType(sessionType);
+        }
     }
 
     private void extractMessageDrivenMetadata(GraphRewrite event, JavaTypeReferenceModel javaTypeReference)
     {
-        javaTypeReference.getFile().setGenerateSourceReport(true);
-        JavaAnnotationTypeReferenceModel annotationTypeReference = (JavaAnnotationTypeReferenceModel) javaTypeReference;
-
-        JavaClassModel ejbClass = getJavaClass(javaTypeReference);
-
-        String ejbName = getAnnotationLiteralValue(annotationTypeReference, "name");
-        if (Strings.isNullOrEmpty(ejbName))
+        for (AbstractJavaSourceModel javaSourceModel : javaTypeReference.getFiles())
         {
-            ejbName = ejbClass.getClassName();
+            javaSourceModel.setGenerateSourceReport(true);
+            JavaAnnotationTypeReferenceModel annotationTypeReference = (JavaAnnotationTypeReferenceModel) javaTypeReference;
+
+            JavaClassModel ejbClass = getJavaClass(javaTypeReference);
+
+            String ejbName = getAnnotationLiteralValue(annotationTypeReference, "name");
+            if (Strings.isNullOrEmpty(ejbName))
+            {
+                ejbName = ejbClass.getClassName();
+            }
+
+            String destination = getAnnotationLiteralValue(annotationTypeReference, "mappedName");
+            if (StringUtils.isBlank(destination))
+            {
+                JavaAnnotationTypeValueModel activationConfigAnnotation = annotationTypeReference.getAnnotationValues().get("activationConfig");
+                destination = getDestinationFromActivationConfig(activationConfigAnnotation);
+            }
+
+            Service<EjbMessageDrivenModel> messageDrivenService = new GraphService<>(event.getGraphContext(), EjbMessageDrivenModel.class);
+            EjbMessageDrivenModel messageDrivenBean = messageDrivenService.create();
+            messageDrivenBean.setApplication(javaSourceModel.getApplication());
+            messageDrivenBean.setBeanName(ejbName);
+            messageDrivenBean.setEjbClass(ejbClass);
+
+            if (StringUtils.isNotBlank(destination))
+            {
+                JmsDestinationService jmsDestinationService = new JmsDestinationService(event.getGraphContext());
+                messageDrivenBean.setDestination(jmsDestinationService.createUnique(javaSourceModel.getApplication(), destination));
+            }
         }
-
-        String destination = getAnnotationLiteralValue(annotationTypeReference, "mappedName");
-        if (StringUtils.isBlank(destination))
-        {
-            JavaAnnotationTypeValueModel activationConfigAnnotation = annotationTypeReference.getAnnotationValues().get("activationConfig");
-            destination = getDestinationFromActivationConfig(activationConfigAnnotation);
-        }
-
-        Service<EjbMessageDrivenModel> messageDrivenService = new GraphService<>(event.getGraphContext(), EjbMessageDrivenModel.class);
-        EjbMessageDrivenModel messageDrivenBean = messageDrivenService.create();
-        messageDrivenBean.setApplication(javaTypeReference.getFile().getApplication());
-        messageDrivenBean.setBeanName(ejbName);
-        messageDrivenBean.setEjbClass(ejbClass);
-
-        if (StringUtils.isNotBlank(destination))
-        {
-            JmsDestinationService jmsDestinationService = new JmsDestinationService(event.getGraphContext());
-            messageDrivenBean.setDestination(jmsDestinationService.createUnique(javaTypeReference.getFile().getApplication(), destination));
-        }
-
     }
 
     private String getDestinationFromActivationConfig(JavaAnnotationTypeValueModel annotationTypeReferenceModel)
@@ -200,21 +205,27 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
     private JavaClassModel getJavaClass(JavaTypeReferenceModel javaTypeReference)
     {
         JavaClassModel result = null;
-        AbstractJavaSourceModel javaSource = javaTypeReference.getFile();
-        for (JavaClassModel javaClassModel : javaSource.getJavaClasses())
+        Iterable<AbstractJavaSourceModel> javaSources = javaTypeReference.getFiles();
+        for (AbstractJavaSourceModel javaSource : javaSources)
         {
-            // there can be only one public one, and the annotated class should be public
-            if (javaClassModel.isPublic() != null && javaClassModel.isPublic())
+            for (JavaClassModel javaClassModel : javaSource.getJavaClasses())
             {
-                result = javaClassModel;
-                break;
+                // there can be only one public one, and the annotated class should be public
+                if (javaClassModel.isPublic() != null && javaClassModel.isPublic())
+                {
+                    result = javaClassModel;
+                    break;
+                }
             }
-        }
 
-        if (result == null)
-        {
-            // no public classes found, so try to find any class (even non-public ones)
-            result = javaSource.getJavaClasses().iterator().next();
+            if (result == null)
+            {
+                // no public classes found, so try to find any class (even non-public ones)
+                result = javaSource.getJavaClasses().iterator().next();
+            }
+
+            if (result != null)
+                break;
         }
         return result;
     }

@@ -33,7 +33,7 @@ public interface JavaTypeReferenceModel extends FileLocationModel
      */
     @Override
     @Adjacency(label = FILE_MODEL, direction = Direction.OUT)
-    AbstractJavaSourceModel getFile();
+    Iterable<AbstractJavaSourceModel> getFiles();
 
     /**
      * Gets the snippit referenced by this {@link FileLocationModel}.

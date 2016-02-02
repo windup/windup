@@ -1,5 +1,6 @@
 package org.jboss.windup.rules.apps.java.scan.provider;
 
+import org.jboss.forge.roaster._shade.org.eclipse.jdt.internal.core.builder.SourceFile;
 import org.jboss.windup.ast.java.data.ResolutionStatus;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
@@ -11,6 +12,8 @@ import org.jboss.windup.config.phase.PreReportGenerationPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.config.HasHint;
 import org.jboss.windup.reporting.model.InlineHintModel;
@@ -83,24 +86,28 @@ public class FindUnboundJavaReferencesRuleProvider extends AbstractRuleProvider
                     continue;
                 }
 
-                InlineHintModel hint = new InlineHintService(event.getGraphContext()).create();
-                hint.setRuleID(RULE_ID);
-                hint.setLineNumber(typeReference.getLineNumber());
-                hint.setColumnNumber(typeReference.getColumnNumber());
-                hint.setLength(typeReference.getLength());
-                hint.setFileLocationReference(typeReference);
-                hint.setFile(typeReference.getFile());
-                hint.setEffort(5);
-                hint.setSeverity(Severity.MANDATORY);
-                hint.setTitle(TITLE);
-                hint.setHint("This class reference (" + typeReference.getDescription() + ") could not be found on the classpath");
-
-                typeReference.getFile().setGenerateSourceReport(true);
-
-                count++;
-                if (count % 1000 == 0)
+                for (FileModel fileModel : typeReference.getFiles())
                 {
-                    event.getGraphContext().getGraph().getBaseGraph().commit();
+                    InlineHintModel hint = new InlineHintService(event.getGraphContext()).create();
+                    hint.setRuleID(RULE_ID);
+                    hint.setLineNumber(typeReference.getLineNumber());
+                    hint.setColumnNumber(typeReference.getColumnNumber());
+                    hint.setLength(typeReference.getLength());
+                    hint.setFileLocationReference(typeReference);
+                    hint.addFile(fileModel);
+                    hint.setEffort(5);
+                    hint.setSeverity(Severity.MANDATORY);
+                    hint.setTitle(TITLE);
+                    hint.setHint("This class reference (" + typeReference.getDescription() + ") could not be found on the classpath");
+
+                    if (fileModel instanceof SourceFile)
+                        ((SourceFileModel) fileModel).setGenerateSourceReport(true);
+
+                    count++;
+                    if (count % 1000 == 0)
+                    {
+                        event.getGraphContext().getGraph().getBaseGraph().commit();
+                    }
                 }
             }
         }

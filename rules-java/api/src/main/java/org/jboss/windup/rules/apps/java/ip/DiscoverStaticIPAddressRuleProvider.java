@@ -16,6 +16,7 @@ import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.service.ClassificationService;
@@ -68,7 +69,6 @@ public class DiscoverStaticIPAddressRuleProvider extends AbstractRuleProvider
                             if (InetAddressValidator.getInstance().isValid(payload.getSourceSnippit()))
                             {
                                 // if the file is a property file, make sure the line isn't commented out.
-
                                 if (ignoreLine(event.getGraphContext(), payload))
                                 {
                                     return;
@@ -98,69 +98,74 @@ public class DiscoverStaticIPAddressRuleProvider extends AbstractRuleProvider
 
     private boolean ignoreLine(GraphContext context, FileLocationModel model)
     {
-        boolean isPropertiesFile = model.getFile() instanceof PropertiesModel;
-
-        int lineNumber = model.getLineNumber();
-        LineIterator li = null;
-        try
+        for (FileModel fileModel : model.getFiles())
         {
-            li = FileUtils.lineIterator(model.getFile().asFile());
+            boolean isPropertiesFile = fileModel instanceof PropertiesModel;
 
-            int i = 0;
-            while (li.hasNext())
+            int lineNumber = model.getLineNumber();
+            LineIterator li = null;
+            try
             {
-                i++;
+                li = FileUtils.lineIterator(fileModel.asFile());
 
-                // read the line to memory only if it is the line of interest
-                if (i == lineNumber)
+                int i = 0;
+                while (li.hasNext())
                 {
-                    String line = StringUtils.trim(li.next());
-                    // check that it isn't commented.
-                    if (isPropertiesFile && StringUtils.startsWith(line, "#"))
-                        return true;
-                    // WINDUP-808 - Remove matches with "version" or "revision" on the same line
-                    else if (StringUtils.containsIgnoreCase(line, "version") || StringUtils.containsIgnoreCase(line, "revision"))
-                        return true;
-                    else if (isMavenVersionTag(context, model))
-                        return true;
-                    else
-                        return false;
-                }
-                else if (i < lineNumber)
-                {
-                    // seek
-                    li.next();
-                }
-                else if (i > lineNumber)
-                {
-                    LOG.warning("Did not find line: " + lineNumber + " in file: " + model.getFile().getFileName());
-                    break;
+                    i++;
+
+                    // read the line to memory only if it is the line of interest
+                    if (i == lineNumber)
+                    {
+                        String line = StringUtils.trim(li.next());
+                        // check that it isn't commented.
+                        if (isPropertiesFile && StringUtils.startsWith(line, "#"))
+                            return true;
+                        // WINDUP-808 - Remove matches with "version" or "revision" on the same line
+                        else if (StringUtils.containsIgnoreCase(line, "version") || StringUtils.containsIgnoreCase(line, "revision"))
+                            return true;
+                        else if (isMavenVersionTag(context, model))
+                            return true;
+                        else
+                            return false;
+                    }
+                    else if (i < lineNumber)
+                    {
+                        // seek
+                        li.next();
+                    }
+                    else if (i > lineNumber)
+                    {
+                        LOG.warning("Did not find line: " + lineNumber + " in file: " + fileModel.getFileName());
+                        break;
+                    }
                 }
             }
+            catch (IOException | RuntimeException e)
+            {
+                LOG.log(Level.WARNING, "Exception reading properties from file: " + fileModel.getFilePath(), e);
+            }
+            finally
+            {
+                LineIterator.closeQuietly(li);
+            }
         }
-        catch (IOException | RuntimeException e)
-        {
-            LOG.log(Level.WARNING, "Exception reading properties from file: " + model.getFile().getFilePath(), e);
-        }
-        finally
-        {
-            LineIterator.closeQuietly(li);
-        }
-
         return false;
     }
 
     private boolean isMavenFile(GraphContext context, FileLocationModel model)
     {
-        if (!(model.getFile() instanceof XmlFileModel))
+        for (FileModel fileModel : model.getFiles())
         {
-            return false;
-        }
+            if (!(fileModel instanceof XmlFileModel))
+            {
+                return false;
+            }
 
-        ClassificationService cs = new ClassificationService(context);
-        for (ClassificationModel cm : cs.getClassificationByName(model.getFile(), "Maven POM"))
-        {
-            return true;
+            ClassificationService cs = new ClassificationService(context);
+            for (ClassificationModel cm : cs.getClassificationByName(fileModel, "Maven POM"))
+            {
+                return true;
+            }
         }
         return false;
     }
@@ -177,13 +182,16 @@ public class DiscoverStaticIPAddressRuleProvider extends AbstractRuleProvider
     {
         if (isMavenFile(context, model))
         {
-            Document doc = ((XmlFileModel) model.getFile()).asDocument();
-            for (Element elm : $(doc).find("version"))
+            for (FileModel fileModel : model.getFiles())
             {
-                String text = StringUtils.trim($(elm).text());
-                if (StringUtils.equals(text, model.getSourceSnippit()))
+                Document doc = ((XmlFileModel) fileModel).asDocument();
+                for (Element elm : $(doc).find("version"))
                 {
-                    return true;
+                    String text = StringUtils.trim($(elm).text());
+                    if (StringUtils.equals(text, model.getSourceSnippit()))
+                    {
+                        return true;
+                    }
                 }
             }
         }

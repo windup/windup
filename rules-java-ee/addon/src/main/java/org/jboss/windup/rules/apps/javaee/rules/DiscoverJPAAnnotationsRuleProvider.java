@@ -12,10 +12,12 @@ import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
 import org.jboss.windup.rules.apps.java.model.AbstractJavaSourceModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
+import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationListTypeValueModel;
 import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationLiteralTypeValueModel;
@@ -29,6 +31,8 @@ import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
+
+import com.google.common.collect.Iterables;
 
 /**
  * Scans for classes with JPA related annotations, and adds JPA related metadata for these.
@@ -95,90 +99,92 @@ public class DiscoverJPAAnnotationsRuleProvider extends AbstractRuleProvider
 
     private void extractEntityBeanMetadata(GraphRewrite event, JavaTypeReferenceModel entityTypeReference)
     {
-        entityTypeReference.getFile().setGenerateSourceReport(true);
-        JavaAnnotationTypeReferenceModel entityAnnotationTypeReference = (JavaAnnotationTypeReferenceModel) entityTypeReference;
-        JavaAnnotationTypeReferenceModel tableAnnotationTypeReference = null;
-        for (WindupVertexFrame annotationTypeReferenceBase : Variables.instance(event).findVariable(TABLE_ANNOTATIONS_LIST))
+        for (FileModel fileModel : entityTypeReference.getFiles())
         {
-            JavaAnnotationTypeReferenceModel annotationTypeReference = (JavaAnnotationTypeReferenceModel) annotationTypeReferenceBase;
-            if (annotationTypeReference.getFile().equals(entityTypeReference.getFile()))
-            {
-                tableAnnotationTypeReference = annotationTypeReference;
-                break;
-            }
-        }
-
-        JavaClassModel ejbClass = getJavaClass(entityTypeReference);
-
-        String ejbName = getAnnotationLiteralValue(entityAnnotationTypeReference, "name");
-        if (ejbName == null)
-        {
-            ejbName = ejbClass.getClassName();
-        }
-        String tableName = tableAnnotationTypeReference == null ? ejbName : getAnnotationLiteralValue(tableAnnotationTypeReference, "name");
-        if (tableName == null)
-        {
-            tableName = ejbName;
-        }
-        String catalogName = tableAnnotationTypeReference == null ? null : getAnnotationLiteralValue(tableAnnotationTypeReference, "catalog");
-        String schemaName = tableAnnotationTypeReference == null ? null : getAnnotationLiteralValue(tableAnnotationTypeReference, "schema");
-
-        JPAEntityService jpaService = new JPAEntityService(event.getGraphContext());
-        JPAEntityModel jpaEntity = jpaService.create();
-        jpaEntity.setApplication(entityTypeReference.getFile().getApplication());
-        jpaEntity.setEntityName(ejbName);
-        jpaEntity.setJavaClass(ejbClass);
-        jpaEntity.setTableName(tableName);
-        jpaEntity.setCatalogName(catalogName);
-        jpaEntity.setSchemaName(schemaName);
-
-        GraphService<JPANamedQueryModel> namedQueryService = new GraphService<>(event.getGraphContext(), JPANamedQueryModel.class);
-
-        Iterable<? extends WindupVertexFrame> namedQueriesList = Variables.instance(event).findVariable(NAMED_QUERIES_LIST);
-        if (namedQueriesList != null)
-        {
-            for (WindupVertexFrame annotationTypeReferenceBase : namedQueriesList)
+            ((JavaSourceFileModel) fileModel).setGenerateSourceReport(true);
+            JavaAnnotationTypeReferenceModel entityAnnotationTypeReference = (JavaAnnotationTypeReferenceModel) entityTypeReference;
+            JavaAnnotationTypeReferenceModel tableAnnotationTypeReference = null;
+            for (WindupVertexFrame annotationTypeReferenceBase : Variables.instance(event).findVariable(TABLE_ANNOTATIONS_LIST))
             {
                 JavaAnnotationTypeReferenceModel annotationTypeReference = (JavaAnnotationTypeReferenceModel) annotationTypeReferenceBase;
-
-                if (annotationTypeReference.getFile().equals(entityTypeReference.getFile()))
+                if (Iterables.contains(annotationTypeReference.getFiles(), fileModel))
                 {
-                    JavaAnnotationTypeValueModel value = annotationTypeReference.getAnnotationValues().get("value");
-                    if (value != null && value instanceof JavaAnnotationListTypeValueModel)
-                    {
-                        JavaAnnotationListTypeValueModel referenceList = (JavaAnnotationListTypeValueModel) value;
+                    tableAnnotationTypeReference = annotationTypeReference;
+                    break;
+                }
+            }
 
-                        if (referenceList.getList() != null)
+            JavaClassModel ejbClass = getJavaClass(entityTypeReference);
+
+            String ejbName = getAnnotationLiteralValue(entityAnnotationTypeReference, "name");
+            if (ejbName == null)
+            {
+                ejbName = ejbClass.getClassName();
+            }
+            String tableName = tableAnnotationTypeReference == null ? ejbName : getAnnotationLiteralValue(tableAnnotationTypeReference, "name");
+            if (tableName == null)
+            {
+                tableName = ejbName;
+            }
+            String catalogName = tableAnnotationTypeReference == null ? null : getAnnotationLiteralValue(tableAnnotationTypeReference, "catalog");
+            String schemaName = tableAnnotationTypeReference == null ? null : getAnnotationLiteralValue(tableAnnotationTypeReference, "schema");
+
+            JPAEntityService jpaService = new JPAEntityService(event.getGraphContext());
+            JPAEntityModel jpaEntity = jpaService.create();
+            jpaEntity.setApplication(fileModel.getApplication());
+            jpaEntity.setEntityName(ejbName);
+            jpaEntity.setJavaClass(ejbClass);
+            jpaEntity.setTableName(tableName);
+            jpaEntity.setCatalogName(catalogName);
+            jpaEntity.setSchemaName(schemaName);
+
+            GraphService<JPANamedQueryModel> namedQueryService = new GraphService<>(event.getGraphContext(), JPANamedQueryModel.class);
+
+            Iterable<? extends WindupVertexFrame> namedQueriesList = Variables.instance(event).findVariable(NAMED_QUERIES_LIST);
+            if (namedQueriesList != null)
+            {
+                for (WindupVertexFrame annotationTypeReferenceBase : namedQueriesList)
+                {
+                    JavaAnnotationTypeReferenceModel annotationTypeReference = (JavaAnnotationTypeReferenceModel) annotationTypeReferenceBase;
+
+                    if (Iterables.contains(annotationTypeReference.getFiles(), fileModel))
+                    {
+                        JavaAnnotationTypeValueModel value = annotationTypeReference.getAnnotationValues().get("value");
+                        if (value != null && value instanceof JavaAnnotationListTypeValueModel)
                         {
-                            for (JavaAnnotationTypeValueModel ref : referenceList.getList())
+                            JavaAnnotationListTypeValueModel referenceList = (JavaAnnotationListTypeValueModel) value;
+
+                            if (referenceList.getList() != null)
                             {
-                                if (ref instanceof JavaAnnotationTypeReferenceModel)
+                                for (JavaAnnotationTypeValueModel ref : referenceList.getList())
                                 {
-                                    JavaAnnotationTypeReferenceModel reference = (JavaAnnotationTypeReferenceModel) ref;
-                                    addNamedQuery(namedQueryService, jpaEntity, reference);
-                                }
-                                else
-                                {
-                                    LOG.warning("Unexpected Annotation");
+                                    if (ref instanceof JavaAnnotationTypeReferenceModel)
+                                    {
+                                        JavaAnnotationTypeReferenceModel reference = (JavaAnnotationTypeReferenceModel) ref;
+                                        addNamedQuery(namedQueryService, jpaEntity, reference);
+                                    }
+                                    else
+                                    {
+                                        LOG.warning("Unexpected Annotation");
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
-        }
 
-        Iterable<? extends WindupVertexFrame> namedQueryList = Variables.instance(event).findVariable(NAMED_QUERY_LIST);
-        if (namedQueryList != null)
-        {
-            for (WindupVertexFrame annotationTypeReferenceBase : namedQueryList)
+            Iterable<? extends WindupVertexFrame> namedQueryList = Variables.instance(event).findVariable(NAMED_QUERY_LIST);
+            if (namedQueryList != null)
             {
-                JavaAnnotationTypeReferenceModel annotationTypeReference = (JavaAnnotationTypeReferenceModel) annotationTypeReferenceBase;
-
-                if (annotationTypeReference.getFile().equals(entityTypeReference.getFile()))
+                for (WindupVertexFrame annotationTypeReferenceBase : namedQueryList)
                 {
-                    JavaAnnotationTypeReferenceModel reference = annotationTypeReference;
-                    addNamedQuery(namedQueryService, jpaEntity, reference);
+                    JavaAnnotationTypeReferenceModel annotationTypeReference = (JavaAnnotationTypeReferenceModel) annotationTypeReferenceBase;
+
+                    if (Iterables.contains(annotationTypeReference.getFiles(), fileModel))
+                    {
+                        addNamedQuery(namedQueryService, jpaEntity, annotationTypeReference);
+                    }
                 }
             }
         }
@@ -202,21 +208,26 @@ public class DiscoverJPAAnnotationsRuleProvider extends AbstractRuleProvider
     private JavaClassModel getJavaClass(JavaTypeReferenceModel javaTypeReference)
     {
         JavaClassModel result = null;
-        AbstractJavaSourceModel javaSource = javaTypeReference.getFile();
-        for (JavaClassModel javaClassModel : javaSource.getJavaClasses())
+        for (AbstractJavaSourceModel javaSource : javaTypeReference.getFiles())
         {
-            // there can be only one public one, and the annotated class should be public
-            if (javaClassModel.isPublic() != null && javaClassModel.isPublic())
+            for (JavaClassModel javaClassModel : javaSource.getJavaClasses())
             {
-                result = javaClassModel;
-                break;
+                // there can be only one public one, and the annotated class should be public
+                if (javaClassModel.isPublic() != null && javaClassModel.isPublic())
+                {
+                    result = javaClassModel;
+                    break;
+                }
             }
-        }
 
-        if (result == null)
-        {
-            // no public classes found, so try to find any class (even non-public ones)
-            result = javaSource.getJavaClasses().iterator().next();
+            if (result == null)
+            {
+                // no public classes found, so try to find any class (even non-public ones)
+                result = javaSource.getJavaClasses().iterator().next();
+            }
+
+            if (result != null)
+                break;
         }
         return result;
     }

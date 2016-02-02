@@ -219,20 +219,23 @@ public class ExecutionBuilderImpl implements ExecutionBuilder, ExecutionBuilderS
         InlineHintService hintService = new InlineHintService(graphContext);
         for (InlineHintModel hintModel : hintService.findAll())
         {
-            HintImpl hint = new HintImpl();
-            hint.setFile(hintModel.getFile().asFile());
-            hint.setTitle(hintModel.getTitle());
-            hint.setHint(hintModel.getHint());
-            hint.setSeverity(hintModel.getSeverity());
-            hint.setEffort(hintModel.getEffort());
-            hint.setColumn(hintModel.getColumnNumber());
-            hint.setLineNumber(hintModel.getLineNumber());
-            hint.setLength(hintModel.getLength());
-            hint.setSourceSnippit(hintModel.getSourceSnippit());
-            hint.setRuleID(hintModel.getRuleID());
+            for (FileModel file : hintModel.getFiles())
+            {
+                HintImpl hint = new HintImpl();
+                hint.setFile(file.asFile());
+                hint.setTitle(hintModel.getTitle());
+                hint.setHint(hintModel.getHint());
+                hint.setSeverity(hintModel.getSeverity());
+                hint.setEffort(hintModel.getEffort());
+                hint.setColumn(hintModel.getColumnNumber());
+                hint.setLineNumber(hintModel.getLineNumber());
+                hint.setLength(hintModel.getLength());
+                hint.setSourceSnippit(hintModel.getSourceSnippit());
+                hint.setRuleID(hintModel.getRuleID());
 
-            hint.setLinks(asLinks(hintModel.getLinks()));
-            hints.add(hint);
+                hint.setLinks(asLinks(hintModel.getLinks()));
+                hints.add(hint);
+            }
         }
         return hints;
     }

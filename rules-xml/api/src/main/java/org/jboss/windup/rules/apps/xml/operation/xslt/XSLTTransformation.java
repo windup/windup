@@ -81,8 +81,10 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
         WindupVertexFrame payload = resolveVariable(event, getVariableName());
         if (payload instanceof FileReferenceModel)
         {
-            FileModel file = ((FileReferenceModel) payload).getFile();
-            perform(event, context, (XmlFileModel) file);
+            for (FileModel file : ((FileReferenceModel) payload).getFiles())
+            {
+                perform(event, context, (XmlFileModel) file);
+            }
         }
         else
         {

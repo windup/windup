@@ -2,6 +2,7 @@ package org.jboss.windup.rules.apps.javaee.rules;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -78,7 +79,7 @@ public class AnalyzeJSPFileRuleProvider extends AbstractRuleProvider
                 Iterable<ClassReference> references = getClassReferences(typeReferenceService, sourceFile);
                 for (ClassReference reference : references)
                 {
-                    JavaTypeReferenceModel typeReference = typeReferenceService.createTypeReference(sourceFile,
+                    JavaTypeReferenceModel typeReference = typeReferenceService.createTypeReference(Collections.singleton(sourceFile),
                                 reference.getLocation(),
                                 reference.getResolutionStatus(),
                                 reference.getLineNumber(), reference.getColumn(), reference.getLength(),

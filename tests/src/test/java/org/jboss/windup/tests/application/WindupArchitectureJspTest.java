@@ -113,10 +113,12 @@ public class WindupArchitectureJspTest extends WindupArchitectureTest
                                         @Override
                                         public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
                                         {
-                                            FileModel source = payload.getFile();
-                                            if (!(source instanceof JspSourceFileModel))
-                                                Assert.fail("File was not a jsp file!");
-                                            taglibsFound++;
+                                            for (FileModel source : payload.getFiles())
+                                            {
+                                                if (!(source instanceof JspSourceFileModel))
+                                                    Assert.fail("File was not a jsp file!");
+                                                taglibsFound++;
+                                            }
                                         }
                                     })
                         .addRule()
@@ -126,10 +128,12 @@ public class WindupArchitectureJspTest extends WindupArchitectureTest
                             @Override
                             public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
                             {
-                                FileModel source = payload.getFile();
-                                if (!(source instanceof JspSourceFileModel))
-                                    Assert.fail("File was not a jsp file!");
-                                enumerationRuleHitCount++;
+                                for (FileModel source : payload.getFiles())
+                                {
+                                    if (!(source instanceof JspSourceFileModel))
+                                        Assert.fail("File was not a jsp file!");
+                                    enumerationRuleHitCount++;
+                                }
                             }
                         });
         }

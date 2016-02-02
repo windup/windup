@@ -1,11 +1,11 @@
 package org.jboss.windup.rules.apps.java.scan.provider;
 
-import com.thinkaurelius.titan.util.datastructures.Maps;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -24,7 +24,6 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.jboss.forge.furnace.util.Sets;
 import org.jboss.windup.ast.java.ASTProcessor;
 import org.jboss.windup.ast.java.BatchASTFuture;
 import org.jboss.windup.ast.java.BatchASTListener;
@@ -124,8 +123,8 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                             .getJavaConfigurationModel(event.getGraphContext());
                 final boolean classNotFoundAnalysisEnabled = javaConfiguration.isClassNotFoundAnalysisEnabled();
 
-                GraphService<JavaSourceFileModel> service = new GraphService<>(event.getGraphContext(), JavaSourceFileModel.class);
-                Iterable<JavaSourceFileModel> allJavaSourceModels = service.findAll();
+                Iterable<JavaSourceFileModel> allJavaSourceModels = event.getGraphContext().getQuery().type(JavaSourceFileModel.class)
+                            .hasNot(FileModel.DUPLICATE, true).vertices(JavaSourceFileModel.class);
 
                 final Set<Path> allSourceFiles = new TreeSet<>();
 
@@ -349,20 +348,34 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
             for (ClassReference reference : references)
             {
                 JavaSourceFileModel javaSourceModel = getJavaSourceFileModel(context, filePath);
-                JavaTypeReferenceModel typeReference = typeReferenceService.createTypeReference(javaSourceModel,
-                            reference.getLocation(),
-                            reference.getResolutionStatus(),
-                            reference.getLineNumber(), reference.getColumn(), reference.getLength(),
-                            reference.getQualifiedName(),
-                            reference.getLine());
-                if (reference instanceof AnnotationClassReference)
-                {
-                    Map<String, AnnotationValue> annotationValues = ((AnnotationClassReference) reference).getAnnotationValues();
-                    addAnnotationValues(context, javaSourceModel, typeReference, annotationValues);
-                }
-                referenceCount.incrementAndGet();
-                commitIfNeeded(context, referenceCount.get());
+                attachReferencesToFile(context, referenceCount, typeReferenceService, reference, javaSourceModel);
             }
+        }
+
+        private void attachReferencesToFile(GraphContext context, AtomicInteger referenceCount, TypeReferenceService typeReferenceService,
+                    ClassReference reference, JavaSourceFileModel originalSourceFile)
+        {
+            Set<JavaSourceFileModel> allSourceFiles = new LinkedHashSet<>();
+            allSourceFiles.add(originalSourceFile);
+            for (FileModel fileModel : originalSourceFile.getDuplicates())
+            {
+                if (fileModel instanceof JavaSourceFileModel)
+                    allSourceFiles.add((JavaSourceFileModel) fileModel);
+            }
+
+            JavaTypeReferenceModel typeReference = typeReferenceService.createTypeReference(allSourceFiles,
+                        reference.getLocation(),
+                        reference.getResolutionStatus(),
+                        reference.getLineNumber(), reference.getColumn(), reference.getLength(),
+                        reference.getQualifiedName(),
+                        reference.getLine());
+            if (reference instanceof AnnotationClassReference)
+            {
+                Map<String, AnnotationValue> annotationValues = ((AnnotationClassReference) reference).getAnnotationValues();
+                addAnnotationValues(context, allSourceFiles, typeReference, annotationValues);
+            }
+            referenceCount.incrementAndGet();
+            commitIfNeeded(context, referenceCount.get());
         }
 
         private JavaSourceFileModel getJavaSourceFileModel(GraphContext context, Path filePath)
@@ -373,7 +386,8 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
         /**
          * Adds parameters contained in the annotation into the annotation type reference
          */
-        private void addAnnotationValues(GraphContext context, JavaSourceFileModel javaSourceFileModel, JavaTypeReferenceModel typeReference,
+        private void addAnnotationValues(GraphContext context, Iterable<JavaSourceFileModel> javaSourceFileModel,
+                    JavaTypeReferenceModel typeReference,
                     Map<String, AnnotationValue> annotationValues)
         {
             GraphService<JavaAnnotationTypeReferenceModel> annotationTypeReferenceService = new GraphService<>(context,
@@ -390,7 +404,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
             javaAnnotationTypeReferenceModel.setAnnotationValues(valueModels);
         }
 
-        private JavaAnnotationTypeValueModel getValueModelForAnnotationValue(GraphContext context, JavaSourceFileModel javaSourceFileModel,
+        private JavaAnnotationTypeValueModel getValueModelForAnnotationValue(GraphContext context, Iterable<JavaSourceFileModel> javaSourceFileModel,
                     AnnotationValue value)
         {
             JavaAnnotationTypeValueModel result;
@@ -446,7 +460,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
         }
 
         private void attachLocationMetadata(JavaTypeReferenceModel javaTypeReferenceModel, AnnotationClassReference annotationClassReference,
-                    JavaSourceFileModel javaSourceFileModel)
+                    Iterable<JavaSourceFileModel> javaSourceFileModels)
         {
             javaTypeReferenceModel.setResolutionStatus(annotationClassReference.getResolutionStatus());
             javaTypeReferenceModel.setResolvedSourceSnippit(annotationClassReference.getQualifiedName());
@@ -455,7 +469,8 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
             javaTypeReferenceModel.setColumnNumber(annotationClassReference.getColumn());
             javaTypeReferenceModel.setLineNumber(annotationClassReference.getLineNumber());
             javaTypeReferenceModel.setLength(annotationClassReference.getLength());
-            javaTypeReferenceModel.setFile(javaSourceFileModel);
+            for (JavaSourceFileModel javaSourceFileModel : javaSourceFileModels)
+                javaTypeReferenceModel.addFile(javaSourceFileModel);
         }
 
         @Override

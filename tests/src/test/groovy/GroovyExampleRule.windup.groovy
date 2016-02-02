@@ -51,3 +51,7 @@ ruleSet("Example Servlet Rule")
     .addRule()
     .when(JavaClass.references("javax.ejb.ActivationConfigProperty"))
     .perform(Classification.as("Classification ActivationConfigProperty").withEffort(8))
+
+		.addRule()
+		.when(JavaClass.references("weblogic.{*}"))
+		.perform(Classification.as("Some weblogic junk").withEffort(8))

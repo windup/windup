@@ -1,6 +1,20 @@
 package org.jboss.windup.rules.apps.xml.rules;
 
-import com.google.common.collect.Iterables;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
+
+import java.io.FileNotFoundException;
+import java.net.URL;
+import java.util.Collections;
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.xml.transform.Source;
+import javax.xml.validation.Schema;
+import javax.xml.validation.SchemaFactory;
+import javax.xml.validation.Validator;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
@@ -26,19 +40,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.xml.sax.SAXException;
 
-import javax.inject.Inject;
-import javax.xml.transform.Source;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-import javax.xml.validation.Validator;
-import java.io.FileNotFoundException;
-import java.net.URL;
-import java.util.Collections;
-import java.util.List;
-
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
+import com.google.common.collect.Iterables;
 
 /**
  * Tests the {@link ValidateXmlFilesRuleProvider} and simulates good internet access with mocks
@@ -165,7 +167,7 @@ public class ValidateXmlFilesRuleProviderWithInternetTest extends AbstractXsdVal
             final InlineHintModel notValidHint = hints.iterator().next();
             Assert.assertEquals(XmlFileModel.XSD_URL_NOT_VALID,notValidHint.getTitle());
             Assert.assertEquals(1, notValidHint.getEffort());
-            Assert.assertEquals(parseFileName(NOT_VALID_XSD_SCHEMA_URL), notValidHint.getFile().getFileName());
+            Assert.assertEquals(parseFileName(NOT_VALID_XSD_SCHEMA_URL), notValidHint.getFiles().iterator().next().getFileName());
 
         }
     }

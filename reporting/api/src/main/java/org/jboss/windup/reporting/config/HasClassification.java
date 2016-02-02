@@ -34,26 +34,36 @@ public class HasClassification extends AbstractIterationFilter<WindupVertexFrame
 
         if (payload instanceof FileReferenceModel)
         {
-            payload = ((FileReferenceModel) payload).getFile();
-        }
-
-        if (payload instanceof FileModel)
-        {
-            Iterable<ClassificationModel> classifications = service.getClassifications((FileModel) payload);
-            if (titlePattern == null)
+            Iterable<? extends FileModel> fileModels = ((FileReferenceModel) payload).getFiles();
+            for (FileModel fileModel : fileModels)
             {
-                result = classifications.iterator().hasNext();
+                result |= handleFileModel(event, context, fileModel, service);
             }
-            else
+        }
+        else if (payload instanceof FileModel)
+        {
+            result = handleFileModel(event, context, (FileModel) payload, service);
+        }
+        return result;
+    }
+
+    private boolean handleFileModel(GraphRewrite event, EvaluationContext context, FileModel payload, ClassificationService service)
+    {
+        boolean result = false;
+        Iterable<ClassificationModel> classifications = service.getClassifications(payload);
+        if (titlePattern == null)
+        {
+            result = classifications.iterator().hasNext();
+        }
+        else
+        {
+            for (ClassificationModel c : classifications)
             {
-                for (ClassificationModel c : classifications)
+                ParameterizedPatternResult parseResult = titlePattern.parse(c.getClassification());
+                if (parseResult.matches() && parseResult.isValid(event, context))
                 {
-                    ParameterizedPatternResult parseResult = titlePattern.parse(c.getClassification());
-                    if (parseResult.matches() && parseResult.isValid(event, context))
-                    {
-                        result = true;
-                        break;
-                    }
+                    result = true;
+                    break;
                 }
             }
         }

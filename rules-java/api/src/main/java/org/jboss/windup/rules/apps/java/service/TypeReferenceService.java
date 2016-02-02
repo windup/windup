@@ -138,13 +138,14 @@ public class TypeReferenceService extends GraphService<JavaTypeReferenceModel>
         ExecutionStatistics.get().end("TypeReferenceService.getPackageUseFrequencies(data,projectModel,nameDepth,recursive)");
     }
 
-    public JavaTypeReferenceModel createTypeReference(FileModel fileModel, TypeReferenceLocation location,
+    public JavaTypeReferenceModel createTypeReference(Iterable<? extends FileModel> fileModels, TypeReferenceLocation location,
                 ResolutionStatus resolutionStatus, int lineNumber, int columnNumber, int length, String resolvedSource, String line)
     {
         ExecutionStatistics.get().begin("TypeReferenceService.createTypeReference(fileModel,location,lineNumber,columnNumber,length,source)");
         JavaTypeReferenceModel model = create();
 
-        model.setFile(fileModel);
+        for (FileModel fileModel : fileModels)
+            model.addFile(fileModel);
         model.setLineNumber(lineNumber);
         model.setColumnNumber(columnNumber);
         model.setLength(length);

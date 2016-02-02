@@ -170,11 +170,11 @@ public class CSVExportingTest
         c2.setClassification("classification2-text");
         c2.setEffort(300);
 
-        b1.setFile(f1);
-        b1b.setFile(f1);
+        b1.addFile(f1);
+        b1b.addFile(f1);
         c1.addFileModel(f1);
 
-        b2.setFile(f2);
+        b2.addFile(f2);
         c1.addFileModel(f2);
         c2.addFileModel(f2);
 

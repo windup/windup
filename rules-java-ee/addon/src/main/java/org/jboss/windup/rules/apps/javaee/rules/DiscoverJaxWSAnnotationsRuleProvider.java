@@ -82,41 +82,49 @@ public class DiscoverJaxWSAnnotationsRuleProvider extends AbstractRuleProvider
 
         LOG.info("Processing: " + typeReference);
 
-        typeReference.getFile().setGenerateSourceReport(true);
-        JavaAnnotationTypeReferenceModel jaxWsAnnotationTypeReference = (JavaAnnotationTypeReferenceModel) typeReference;
-
-        String endpointInterfaceQualifiedName = getAnnotationLiteralValue(jaxWsAnnotationTypeReference, "endpointInterface");
-        JavaClassModel endpointInterface = javaClassService.getOrCreatePhantom(endpointInterfaceQualifiedName);
-        if (StringUtils.isNotBlank(endpointInterfaceQualifiedName))
+        for (AbstractJavaSourceModel javaSourceModel : typeReference.getFiles())
         {
-            for (JavaSourceFileModel source : javaClassService.getJavaSource(endpointInterface.getQualifiedName()))
-                source.setGenerateSourceReport(true);
-        }
+            javaSourceModel.setGenerateSourceReport(true);
+            JavaAnnotationTypeReferenceModel jaxWsAnnotationTypeReference = (JavaAnnotationTypeReferenceModel) typeReference;
 
-        JaxWSWebServiceModelService service = new JaxWSWebServiceModelService(event.getGraphContext());
-        service.getOrCreate(typeReference.getFile().getApplication(), endpointInterface, implementationClass);
+            String endpointInterfaceQualifiedName = getAnnotationLiteralValue(jaxWsAnnotationTypeReference, "endpointInterface");
+            JavaClassModel endpointInterface = javaClassService.getOrCreatePhantom(endpointInterfaceQualifiedName);
+            if (StringUtils.isNotBlank(endpointInterfaceQualifiedName))
+            {
+                for (JavaSourceFileModel source : javaClassService.getJavaSource(endpointInterface.getQualifiedName()))
+                    source.setGenerateSourceReport(true);
+            }
+
+            JaxWSWebServiceModelService service = new JaxWSWebServiceModelService(event.getGraphContext());
+            service.getOrCreate(javaSourceModel.getApplication(), endpointInterface, implementationClass);
+        }
     }
 
     private JavaClassModel getJavaClass(JavaTypeReferenceModel javaTypeReference)
     {
         JavaClassModel result = null;
-        AbstractJavaSourceModel javaSource = javaTypeReference.getFile();
-        for (JavaClassModel javaClassModel : javaSource.getJavaClasses())
+        Iterable<AbstractJavaSourceModel> javaSources = javaTypeReference.getFiles();
+        for (AbstractJavaSourceModel javaSource : javaSources)
         {
-            // there can be only one public one, and the annotated class should be public
-            if (javaClassModel.isPublic() != null && javaClassModel.isPublic())
+            for (JavaClassModel javaClassModel : javaSource.getJavaClasses())
             {
-                result = javaClassModel;
-                break;
+                // there can be only one public one, and the annotated class should be public
+                if (javaClassModel.isPublic() != null && javaClassModel.isPublic())
+                {
+                    result = javaClassModel;
+                    break;
+                }
             }
-        }
 
-        if (result == null)
-        {
-            // no public classes found, so try to find any class (even non-public ones)
-            result = javaSource.getJavaClasses().iterator().next();
-        }
+            if (result == null)
+            {
+                // no public classes found, so try to find any class (even non-public ones)
+                result = javaSource.getJavaClasses().iterator().next();
+            }
 
+            if (result != null)
+                break;
+        }
         return result;
     }
 
