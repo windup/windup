@@ -34,6 +34,8 @@ public class ClassFilePreDecompilationScan extends AbstractIterationOperation<Ja
 {
     private static final Logger LOG = Logging.get(ClassFilePreDecompilationScan.class);
 
+    String UNPARSEABLE_CLASS_CLASSIFICATION = "Unparseable Class File";
+    String UNPARSEABLE_CLASS_DESCRIPTION = "This Class file could not be parsed";
 
     private void addClassFileMetadata(GraphRewrite event, EvaluationContext context, JavaClassFileModel javaClassFileModel)
     {
@@ -88,9 +90,9 @@ public class ClassFilePreDecompilationScan extends AbstractIterationOperation<Ja
             final String message = "BCEL was unable to parse class file '" + javaClassFileModel.getFilePath() + "':\n\t" + e.getMessage();
             LOG.log(Level.WARNING, message, e);
             ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-            classificationService.attachClassification(context, javaClassFileModel, JavaClassFileModel.UNPARSEABLE_CLASS_CLASSIFICATION,
-                        JavaClassFileModel.UNPARSEABLE_CLASS_DESCRIPTION);
-            javaClassFileModel.setParseError(message);
+            classificationService.attachClassification(context, javaClassFileModel, UNPARSEABLE_CLASS_CLASSIFICATION, UNPARSEABLE_CLASS_DESCRIPTION);
+            if (Boolean.TRUE.equals(javaClassFileModel.isIgnoreParseError()))
+                javaClassFileModel.setParseError(message);
             javaClassFileModel.setSkipDecompilation(true);
         }
     }
@@ -129,8 +131,7 @@ public class ClassFilePreDecompilationScan extends AbstractIterationOperation<Ja
             final String message = "ASM was unable to parse class file '" + fileModel.getFilePath() + "':\n\t" + e.getMessage();
             LOG.log(Level.WARNING, message, e);
             ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-            classificationService.attachClassification(context, fileModel, JavaClassFileModel.UNPARSEABLE_CLASS_CLASSIFICATION,
-                        JavaClassFileModel.UNPARSEABLE_CLASS_DESCRIPTION);
+            classificationService.attachClassification(context, fileModel, UNPARSEABLE_CLASS_CLASSIFICATION, UNPARSEABLE_CLASS_DESCRIPTION);
             fileModel.setParseError(message);
         }
     }

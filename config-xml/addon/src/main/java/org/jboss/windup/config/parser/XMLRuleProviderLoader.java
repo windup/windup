@@ -127,8 +127,7 @@ public class XMLRuleProviderLoader implements RuleProviderLoader
                 catch (Exception e)
                 {
                     userRulesFileModel.setParseError("Failed to parse XML configuration: " + e.getClass().getSimpleName() + ": " + e.getMessage());
-                    throw new WindupException("Failed to parse XML configuration at: " + resource.toString() + " due to: "
-                                + e.getMessage(), e);
+                    throw new WindupException("Failed to parse XML configuration at: " + resource.toString() + " due to: " + e.getMessage(), e);
                 }
             }
         }

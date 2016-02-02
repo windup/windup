@@ -15,9 +15,6 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(JavaClassFileModel.TYPE)
 public interface JavaClassFileModel extends FileModel
 {
-    String UNPARSEABLE_CLASS_CLASSIFICATION = "Unparseable Class File";
-    String UNPARSEABLE_CLASS_DESCRIPTION = "This Class file could not be parsed";
-
     String MINOR_VERSION = "minorVersion";
     String MAJOR_VERSION = "majorVersion";
     String TYPE = "JavaClassFileModel";

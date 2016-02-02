@@ -23,7 +23,6 @@ import static org.joox.JOOX.$;
  *   &lt;hint ...../&gt;
  * &lt;/iterable-filter &gt;
  * </pre>
- *
  */
 @NamespaceElementHandler(elementName = IterableFilterHandler.ELEMENT_NAME, namespace = "http://windup.jboss.org/schema/jboss-ruleset")
 public class IterableFilterHandler implements ElementHandler<IterableFilter>
@@ -57,19 +56,19 @@ public class IterableFilterHandler implements ElementHandler<IterableFilter>
     private void validateWrappedCondition(Object wrappedCondition)
     {
         if(! (wrappedCondition instanceof GraphCondition)) {
-            throw new WindupException("Failed to parse, as the '" + ELEMENT_NAME + "' element is required to wrap GraphConditions only." );
+            throw new WindupException("The <" + ELEMENT_NAME + "> element must wrap GraphConditions only." );
         }
     }
 
     private void validateAttributes(String size) throws WindupException{
         if(!Pattern.matches("[0-9]+",size)) {
-            throw new WindupException("Failed to parse, as the '" + ELEMENT_NAME + "' element's '" +IterableFilterHandler.SIZE_ATTRIBUTE + " attribute is not a valid number" );
+            throw new WindupException("The <" + ELEMENT_NAME + "> element's '" +IterableFilterHandler.SIZE_ATTRIBUTE + " attribute is not a valid number." );
         }
     }
 
     private void validateChildren(List<Element> children) throws WindupException{
         if(children.size() != 1) {
-            throw new WindupException("Failed to parse, as the '" + ELEMENT_NAME + "' element is required to have exactly 1 child." );
+            throw new WindupException("The <" + ELEMENT_NAME + "> element must have exactly 1 child." );
         }
     }
 }

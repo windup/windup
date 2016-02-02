@@ -80,6 +80,10 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
 {
     private static final Object lockObject = new Object();
 
+    static final String UNPARSEABLE_JAVA_CLASSIFICATION = "Unparseable Java File";
+    static final String UNPARSEABLE_JAVA_DESCRIPTION = "This Java file could not be parsed";
+
+
     public static final int COMMIT_INTERVAL = 500;
     public static final int LOG_INTERVAL = 250;
     private static final Logger LOG = Logging.get(AnalyzeJavaFilesRuleProvider.class);
@@ -233,9 +237,9 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                     {
                         ClassificationService classificationService = new ClassificationService(event.getGraphContext());
                         JavaSourceFileModel sourceFileModel = getJavaSourceFileModel(event.getGraphContext(), failure.getKey());
-                        classificationService.attachClassification(context, sourceFileModel, JavaSourceFileModel.UNPARSEABLE_JAVA_CLASSIFICATION,
-                                    JavaSourceFileModel.UNPARSEABLE_JAVA_DESCRIPTION);
-                        sourceFileModel.setParseError(failure.getValue());
+                        classificationService.attachClassification(context, sourceFileModel, UNPARSEABLE_JAVA_CLASSIFICATION, UNPARSEABLE_JAVA_DESCRIPTION);
+                        if (sourceFileModel.isIgnoreParseError() != Boolean.TRUE)
+                            sourceFileModel.setParseError(failure.getValue());
                     }
 
                     if (!filesToProcess.isEmpty())
@@ -259,10 +263,9 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                                 LOG.log(Level.WARNING, message, e);
                                 ClassificationService classificationService = new ClassificationService(event.getGraphContext());
                                 JavaSourceFileModel sourceFileModel = getJavaSourceFileModel(event.getGraphContext(), unprocessed);
-                                classificationService.attachClassification(context, sourceFileModel,
-                                            JavaSourceFileModel.UNPARSEABLE_JAVA_CLASSIFICATION,
-                                            JavaSourceFileModel.UNPARSEABLE_JAVA_DESCRIPTION);
-                                sourceFileModel.setParseError(message);
+                                classificationService.attachClassification(context, sourceFileModel, UNPARSEABLE_JAVA_CLASSIFICATION, UNPARSEABLE_JAVA_DESCRIPTION);
+                                if (sourceFileModel.isIgnoreParseError() != Boolean.TRUE)
+                                    sourceFileModel.setParseError(message);
                             }
                             estimate.addWork(1);
                             printProgressEstimate(event, estimate);
@@ -279,8 +282,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                         {
                             JavaSourceFileModel sourceFileModel = getJavaSourceFileModel(event.getGraphContext(), unprocessed);
                             message.append("\tFailed to process: " + unprocessed + "\n");
-                            classificationService.attachClassification(context, sourceFileModel, JavaSourceFileModel.UNPARSEABLE_JAVA_CLASSIFICATION,
-                                        JavaSourceFileModel.UNPARSEABLE_JAVA_DESCRIPTION);
+                            classificationService.attachClassification(context, sourceFileModel, UNPARSEABLE_JAVA_CLASSIFICATION, UNPARSEABLE_JAVA_DESCRIPTION);
                             // Is the classification attached 2nd time here?
                         }
                         LOG.warning(message.toString());

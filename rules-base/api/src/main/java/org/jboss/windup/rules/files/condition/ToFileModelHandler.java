@@ -48,14 +48,14 @@ public class ToFileModelHandler implements ElementHandler<ToFileModel>
     private void validateWrappedCondition(Object wrappedCondition)
     {
         if(! (wrappedCondition instanceof GraphCondition)) {
-            throw new WindupException("Failed to parse, as the '" + ELEMENT_NAME + "' element is required to wrap GraphConditions only." );
+            throw new WindupException("The <" + ELEMENT_NAME + "> element must wrap GraphConditions only." );
         }
     }
 
     private void validateChildren(List<Element> children)
     {
         if(children.size() != 1) {
-            throw new WindupException("Failed to parse, as the '" + ELEMENT_NAME + "' element is required to have exactly 1 child." );
+            throw new WindupException("The <" + ELEMENT_NAME + "> element must have exactly 1 child." );
         }
     }
 }

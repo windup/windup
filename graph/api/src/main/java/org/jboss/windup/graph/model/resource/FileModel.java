@@ -38,6 +38,7 @@ public interface FileModel extends ResourceModel
     String PRETTY_PATH = "fileModelPrettyPath";
     String PRETTY_PATH_WITHIN_PROJECT = "fileModelPrettyPathWithinProject";
     String PARSE_ERROR = "parseError";
+    String IGNORE_PARSE_ERROR = "ignoreParseError";
 
     /**
      * Contains the File Name (the last component of the path). Eg, a file /tmp/foo/bar/file.txt would have fileName set to "file.txt"
@@ -108,7 +109,19 @@ public interface FileModel extends ResourceModel
     @Property(PARSE_ERROR)
     void setParseError(String message);
 
-    
+    /**
+     * Should Windup ignore the parsing error?
+     */
+    @Property(IGNORE_PARSE_ERROR)
+    Boolean isIgnoreParseError();
+
+    /**
+     * Should Windup ignore the parsing error?
+     */
+    @Property(IGNORE_PARSE_ERROR)
+    void setIgnoreParseError(Boolean ignore);
+
+
     /**
      * Parent directory
      */

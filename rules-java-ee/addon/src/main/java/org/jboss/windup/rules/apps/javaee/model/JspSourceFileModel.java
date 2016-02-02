@@ -12,8 +12,5 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(JspSourceFileModel.TYPE)
 public interface JspSourceFileModel extends AbstractJavaSourceModel
 {
-    String UNPARSEABLE_JSP_CLASSIFICATION = "Unparseable JSP File";
-    String UNPARSEABLE_JSP_DESCRIPTION = "This JSP file could not be parsed";
-
     String TYPE = "JspSourceFile";
 }

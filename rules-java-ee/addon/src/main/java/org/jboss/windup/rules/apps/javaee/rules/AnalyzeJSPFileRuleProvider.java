@@ -36,6 +36,10 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  */
 public class AnalyzeJSPFileRuleProvider extends AbstractRuleProvider
 {
+    final static String UNPARSEABLE_JSP_CLASSIFICATION = "Unparseable JSP File";
+    final static String UNPARSEABLE_JSP_DESCRIPTION = "This JSP file could not be parsed";
+
+
     public AnalyzeJSPFileRuleProvider()
     {
         super(MetadataBuilder.forProvider(AnalyzeJSPFileRuleProvider.class)
@@ -89,9 +93,9 @@ public class AnalyzeJSPFileRuleProvider extends AbstractRuleProvider
             catch (Exception e)
             {
                 ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-                classificationService.attachClassification(context, sourceFile, JspSourceFileModel.UNPARSEABLE_JSP_CLASSIFICATION,
-                            JspSourceFileModel.UNPARSEABLE_JSP_DESCRIPTION);
-                sourceFile.setParseError("JSP file could not be parsed: " + e.getMessage());
+                classificationService.attachClassification(context, sourceFile, UNPARSEABLE_JSP_CLASSIFICATION, UNPARSEABLE_JSP_DESCRIPTION);
+                if (! Boolean.TRUE.equals(sourceFile.isIgnoreParseError()))
+                    sourceFile.setParseError("JSP file could not be parsed: " + e.getMessage());
             }
         }
     }
