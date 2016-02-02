@@ -54,7 +54,7 @@
 
         <div class="row container-fluid col-md-12">
             <div class="row-eq-height">
-                <div class="panel panel-primary col-md-6">
+                <div class="panel panel-primary col-md-6" style="margin-right: 10px;">
                     <table class="table table-condensed table-striped" id="incidentsByTypeTable">
                         <thead>
                             <tr>
@@ -83,7 +83,7 @@
                         </tbody>
                     </table>
                 </div>
-                <div class="panel panel-primary col-md-6">
+                <div class="panel panel-primary col-md-6" style="margin-left: 10px;">
                     <table class="table table-condensed table-striped">
                         <thead>
                             <tr>
