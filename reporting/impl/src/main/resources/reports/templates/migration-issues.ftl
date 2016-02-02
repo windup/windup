@@ -135,6 +135,16 @@
                     </div>
 
                     <#assign problemsBySeverity = getProblemSummaries(reportModel.projectModel, reportModel.includeTags, reportModel.excludeTags)>
+                    <#if !problemsBySeverity?has_content>
+                        <div class="panel-body">
+                            <div>
+                                No issues were found by the existing rules. If you would like to add custom rules,
+                                see the <a href="https://github.com/windup/windup/wiki/Rules-Development-Guide">
+                                Rule Development Guide</a>.
+                            </div>
+                        </div>
+                    </#if>
+
                     <#list problemsBySeverity?keys as severity>
                         <table class="table table-hover table-condensed tablesorter migration-issues-table">
                             <thead>
