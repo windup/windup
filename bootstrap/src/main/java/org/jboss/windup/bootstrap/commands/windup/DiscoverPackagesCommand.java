@@ -12,9 +12,9 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -26,6 +26,7 @@ import org.jboss.windup.bootstrap.commands.FurnaceDependent;
 import org.jboss.windup.exec.configuration.options.InputPathOption;
 import org.jboss.windup.rules.apps.java.scan.operation.packagemapping.PackageNameMappingRegistry;
 import org.jboss.windup.util.ClassNameUtil;
+import org.jboss.windup.util.PackageComparator;
 import org.jboss.windup.util.PackageFrequencyTrie;
 import org.jboss.windup.util.PackageFrequencyTrieVisitor;
 import org.jboss.windup.util.PathUtil;
@@ -71,7 +72,7 @@ public class DiscoverPackagesCommand extends AbstractListCommand implements Comm
         PackageNameMappingRegistry packageNameMappingRegistry = getFurnace().getAddonRegistry().getServices(PackageNameMappingRegistry.class).get();
         packageNameMappingRegistry.loadPackageMappings();
 
-        Map<String, String> packageToOrganization = new LinkedHashMap<>();
+        Map<String, String> packageToOrganization = new TreeMap<>(new PackageComparator());
         PackageFrequencyTrie frequencyTrie = new PackageFrequencyTrie();
 
         for (String qualifiedName : classes.keySet())
