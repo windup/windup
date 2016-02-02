@@ -23,18 +23,33 @@ import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.structures.FramedVertexIterable;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 import com.tinkerpop.pipes.PipeFunction;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import org.jboss.windup.util.ExecutionStatistics;
 
 /**
  * Adds methods for loading and querying ClassificationModel related data.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- * 
+ *
  */
 public class ClassificationService extends GraphService<ClassificationModel>
 {
+    private static final int CACHE_CAPACITY = 1000;
+
+    Map<String, ClassificationModel> classificationFramesCache;
+
     public ClassificationService(GraphContext context)
     {
         super(context, ClassificationModel.class);
+
+        this.classificationFramesCache = new LinkedHashMap<String, ClassificationModel>(CACHE_CAPACITY * 10/7, 0.7f, true)
+        {
+            @Override
+            protected boolean removeEldestEntry(Map.Entry<String, ClassificationModel> eldest) {
+                return size() > CACHE_CAPACITY;
+            }
+        };
     }
 
     /**
@@ -71,7 +86,8 @@ public class ClassificationService extends GraphService<ClassificationModel>
     }
 
     /**
-     * Return all {@link ClassificationModel} instances that are attached to the given {@link FileModel} instance with a specific classification name.
+     * Return all {@link ClassificationModel} instances that are attached to the given {@link FileModel}
+     * instance with a specific classification name.
      */
     public Iterable<ClassificationModel> getClassificationByName(FileModel model, String classificationName)
     {
@@ -84,7 +100,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
 
     /**
      * Returns the total effort points in all of the {@link ClassificationModel}s associated with the files in this project.
-     * 
+     *
      * If set to recursive, then also include the effort points from child projects.
      */
     public int getMigrationEffortPoints(ProjectModel initialProject, Set<String> includeTags, Set<String> excludeTags, boolean recursive)
@@ -138,32 +154,38 @@ public class ClassificationService extends GraphService<ClassificationModel>
     }
 
     /**
-     * Attach a {@link ClassificationModel} with the given classificationText and description to the provided {@link FileModel}. If an existing Model
-     * exists with the provided classificationText, that one will be used instead.
+     * Attach a {@link ClassificationModel} with the given classificationText and description to the provided {@link FileModel}.
+     * If an existing Model exists with the provided classificationText, that one will be used instead.
      */
-    public ClassificationModel attachClassification(Rule rule, FileModel fileModel, String classificationText, String description)
+    public ClassificationModel attachClassification(Rule rule, FileModel fileModel, String classificationTitle, String description)
     {
-        ClassificationModel model = getUnique(getTypedQuery().has(ClassificationModel.CLASSIFICATION, classificationText));
+        ExecutionStatistics.get().begin("ClassificationService#attachClassification");
+        ClassificationModel cached = classificationFramesCache.get(classificationTitle);
+        ClassificationModel model = cached;
         if (model == null)
+            model = getUnique(getTypedQuery().has(ClassificationModel.CLASSIFICATION, classificationTitle));
+
+        if (model != null)
+            attachClassification(model, fileModel);
+        else
         {
             model = create();
-            model.setClassification(classificationText);
+            model.setClassification(classificationTitle);
             model.setDescription(description);
             model.setEffort(0);
             model.addFileModel(fileModel);
             model.setRuleID(rule.getId());
         }
-        else
-        {
-            return attachClassification(model, fileModel);
-        }
 
+        if (cached == null)
+            classificationFramesCache.put(classificationTitle, model);
+        ExecutionStatistics.get().end("ClassificationService#attachClassification");
         return model;
     }
 
     /**
-     * Attach a {@link ClassificationModel} with the given classificationText and description to the provided {@link FileModel}. If an existing Model
-     * exists with the provided classificationText, that one will be used instead.
+     * Attach a {@link ClassificationModel} with the given classificationText and description to the provided {@link FileModel}.
+     * If an existing Model exists with the provided classificationText, that one will be used instead.
      */
     public ClassificationModel attachClassification(EvaluationContext context, FileModel fileModel, String classificationText, String description)
     {
@@ -180,19 +202,22 @@ public class ClassificationService extends GraphService<ClassificationModel>
      * This method just attaches the {@link ClassificationModel} to the {@link Length.FileMode}. It will only do so if this link is not already
      * present.
      */
-    public ClassificationModel attachClassification(ClassificationModel classificationModel, FileModel fileModel)
+    public ClassificationModel attachClassification(final ClassificationModel classificationModel, FileModel fileModel)
     {
+        ExecutionStatistics.get().begin("ClassificationService#attachClassification-CM,FM");
         if (!isClassificationLinkedToFileModel(classificationModel, fileModel))
         {
             classificationModel.addFileModel(fileModel);
         }
         ClassificationServiceCache.cacheClassificationFileModel(classificationModel, fileModel, true);
 
+        ExecutionStatistics.get().end("ClassificationService#attachClassification-CM,FM");
         return classificationModel;
     }
 
     public ClassificationModel attachLink(ClassificationModel classificationModel, LinkModel linkModel)
     {
+        ExecutionStatistics.get().begin("ClassificationService#attachLink");
         for (LinkModel existing : classificationModel.getLinks())
         {
             if (StringUtils.equals(existing.getLink(), linkModel.getLink()))
@@ -201,6 +226,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
             }
         }
         classificationModel.addLink(linkModel);
+        ExecutionStatistics.get().end("ClassificationService#attachLink");
         return classificationModel;
     }
 }
