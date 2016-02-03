@@ -242,7 +242,6 @@ public class XmlFileParameterizedTest
                         .perform(Hint.withText("Found dangling value: {index}").withEffort(2)
                                      .and(addTypeRefToList2))
 
-
                         .addRule()
                         .when(
                                     XmlFile.matchesXpath("//row[windup:matches(index/text(), '{index}')]").as("1")

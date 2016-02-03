@@ -9,13 +9,13 @@ import javax.xml.xpath.XPathFunctionException;
 import org.jboss.windup.config.condition.EvaluationStrategy;
 import org.jboss.windup.util.Logging;
 
-class XmlFileEvaluateXPathFunction implements XPathFunction
+public class XmlFileEvaluateXPathFunction implements XPathFunction
 {
     private static final Logger LOG = Logging.get(XmlFileEvaluateXPathFunction.class);
 
     private final EvaluationStrategy evaluationStrategy;
 
-    XmlFileEvaluateXPathFunction(EvaluationStrategy evaluationStrategy)
+    public XmlFileEvaluateXPathFunction(EvaluationStrategy evaluationStrategy)
     {
         this.evaluationStrategy = evaluationStrategy;
     }

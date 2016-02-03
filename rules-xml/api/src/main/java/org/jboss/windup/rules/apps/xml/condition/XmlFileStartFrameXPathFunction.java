@@ -8,13 +8,13 @@ import javax.xml.xpath.XPathFunctionException;
 
 import org.jboss.windup.util.Logging;
 
-class XmlFileStartFrameXPathFunction implements XPathFunction
+public class XmlFileStartFrameXPathFunction implements XPathFunction
 {
     private static final Logger LOG = Logging.get(XmlFileStartFrameXPathFunction.class);
 
     private final XmlFileParameterMatchCache paramMatchCache;
 
-    XmlFileStartFrameXPathFunction(XmlFileParameterMatchCache paramMatchCache)
+    public XmlFileStartFrameXPathFunction(XmlFileParameterMatchCache paramMatchCache)
     {
         this.paramMatchCache = paramMatchCache;
     }
