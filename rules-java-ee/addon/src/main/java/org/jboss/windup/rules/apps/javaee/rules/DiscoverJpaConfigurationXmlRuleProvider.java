@@ -79,8 +79,7 @@ public class DiscoverJpaConfigurationXmlRuleProvider extends IteratingRuleProvid
                 extractMetadata(event.getGraphContext(), xml, doc);
             }
             catch (Exception ex) {
-                if (!Boolean.TRUE.equals(xml.isIgnoreParseError()))
-                    xml.setParseError("Failed to parse JPA configuration: " + ex.getMessage());
+                xml.setParseError("Failed to parse JPA configuration: " + ex.getMessage());
             }
         }
     }

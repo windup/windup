@@ -90,8 +90,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
         }
         catch (Exception ex)
         {
-            if (!Boolean.TRUE.equals(payload.isIgnoreParseError()))
-                payload.setParseError("Failed to parse EJB-JAR definitions: " + ex.getMessage());
+            payload.setParseError("Failed to parse EJB-JAR definitions: " + ex.getMessage());
         }
     }
 

@@ -91,8 +91,7 @@ public class ClassFilePreDecompilationScan extends AbstractIterationOperation<Ja
             LOG.log(Level.WARNING, message, e);
             ClassificationService classificationService = new ClassificationService(event.getGraphContext());
             classificationService.attachClassification(context, javaClassFileModel, UNPARSEABLE_CLASS_CLASSIFICATION, UNPARSEABLE_CLASS_DESCRIPTION);
-            if (Boolean.TRUE.equals(javaClassFileModel.isIgnoreParseError()))
-                javaClassFileModel.setParseError(message);
+            javaClassFileModel.setParseError(message);
             javaClassFileModel.setSkipDecompilation(true);
         }
     }

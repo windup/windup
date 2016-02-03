@@ -130,15 +130,13 @@ public class DiscoverXmlFilesRuleProvider extends AbstractRuleProvider
             {
                 final String message = "Failed to parse XML entity: " + file.getFilePath() + ": the file is empty.";
                 LOG.log(Level.FINE, message);
-                if (! Boolean.TRUE.equals(file.isIgnoreParseError()))
-                    file.setParseError(message);
+                file.setParseError(message);
             }
             else
             {
                 final String message = "Failed to parse XML entity: " + file.getFilePath() + ", due to: " + e.getMessage();
                 LOG.log(Level.INFO, message, e);
-                if (! Boolean.TRUE.equals(file.isIgnoreParseError()))
-                    file.setParseError(message);
+                file.setParseError(message);
             }
             new ClassificationService(event.getGraphContext())
                 .attachClassification(context, file, XmlFileService.UNPARSEABLE_XML_CLASSIFICATION, XmlFileService.UNPARSEABLE_XML_DESCRIPTION);

@@ -100,8 +100,7 @@ public class XmlFileService extends GraphService<XmlFileModel>
             final String message = "Failed to parse XML file: " + model.getFilePath() + ", due to: " + e.getMessage();
             LOG.log(Level.WARNING, message);
             classificationService.attachClassification(context, model, UNPARSEABLE_XML_CLASSIFICATION, UNPARSEABLE_XML_DESCRIPTION);
-            if (! Boolean.TRUE.equals(model.isIgnoreParseError()))
-               model.setParseError(message);
+            model.setParseError(message);
             throw new WindupException(message, e);
         }
         catch (IOException e)
@@ -111,8 +110,7 @@ public class XmlFileService extends GraphService<XmlFileModel>
             final String message = "Failed to parse XML file: " + model.getFilePath() + ", due to: " + e.getMessage();
             LOG.log(Level.WARNING, message);
             classificationService.attachClassification(context, model, UNPARSEABLE_XML_CLASSIFICATION, UNPARSEABLE_XML_DESCRIPTION);
-            if (! Boolean.TRUE.equals(model.isIgnoreParseError()))
-                model.setParseError(message);
+            model.setParseError(message);
             throw new WindupException(message, e);
         }
 
