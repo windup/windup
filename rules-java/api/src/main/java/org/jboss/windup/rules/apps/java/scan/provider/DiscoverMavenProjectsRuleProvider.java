@@ -183,13 +183,20 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
     public MavenProjectModel extractMavenProjectModel(GraphRewrite event, EvaluationContext context, String defaultProjectName,
                 XmlFileModel xmlFileModel)
     {
-        File xmlFile = xmlFileModel.asFile();
-        Document document = new XmlFileService(event.getGraphContext()).loadDocumentQuiet(context, xmlFileModel);
-        if (document == null)
+        Document document;
+        try
         {
-            LOG.warning("Could not parse pom at: " + xmlFileModel.getFilePath() + " skipping maven project discovery for this.");
+            document = new XmlFileService(event.getGraphContext()).loadDocument(context, xmlFileModel);
+        }
+        catch (Exception ex)
+        {
+            xmlFileModel.setParseError("Could not parse POM XML: " + ex.getMessage());
+            LOG.warning("Could not parse POM XML for '" + xmlFileModel.getFilePath()
+                    + "':\n\t" + ex.getMessage() + "\n\tSkipping Maven project discovery.");
             return null;
         }
+
+        File xmlFile = xmlFileModel.asFile();
 
         // modelVersion
         String modelVersion = XmlUtil.xpathExtract(document, "/pom:project/pom:modelVersion", namespaces);
@@ -203,8 +210,7 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
         String version = XmlUtil.xpathExtract(document, "/pom:project/pom:version", namespaces);
 
         String parentGroupId = XmlUtil.xpathExtract(document, "/pom:project/pom:parent/pom:groupId", namespaces);
-        String parentArtifactId = XmlUtil.xpathExtract(document, "/pom:project/pom:parent/pom:artifactId",
-                    namespaces);
+        String parentArtifactId = XmlUtil.xpathExtract(document, "/pom:project/pom:parent/pom:artifactId", namespaces);
         String parentVersion = XmlUtil.xpathExtract(document, "/pom:project/pom:parent/pom:version", namespaces);
 
         if (StringUtils.isBlank(groupId) && StringUtils.isNotBlank(parentGroupId))

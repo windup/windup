@@ -18,7 +18,7 @@
                     <#if file.expectedFormat?has_content>
                     <div><strong>Expected format:</strong> ${file.expectedFormat!}</div>
                     </#if>
-                    <#if file.parseError?has_content>
+                    <#if file.parseError?has_content && file.onParseError! != "IGNORE">
                     <div class="parseError well well-sm">${file.parseError!}</div>
                     </#if>
                 </td>
@@ -27,7 +27,7 @@
         </table>
     </div>
     <#else>
-        <#if subProject.rootFileModel.parseError?has_content>
+        <#if subProject.rootFileModel.parseError?has_content && subProject.rootFileModel.onParseError! != "IGNORE">
         <div class="panel panel-default panel-primary">
             <div class="panel-heading error">
                 <h3 class="panel-title">${subProject.rootFileModel.prettyPath?html}</h3>

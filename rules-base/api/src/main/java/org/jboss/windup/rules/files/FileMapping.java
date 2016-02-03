@@ -18,10 +18,10 @@ import org.jboss.windup.config.PreRulesetEvaluation;
 import org.jboss.windup.config.phase.ArchiveMetadataExtractionPhase;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.FileModel.OnParseError;
 import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.util.Logging;
-import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
@@ -36,12 +36,14 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  *
  */
-public class FileMapping extends GraphRule implements PreRulesetEvaluation, FileMappingFrom
+public class FileMapping extends GraphRule implements PreRulesetEvaluation, FileMappingFrom, FileMappingTo
 {
     private static final Logger LOG = Logging.get(FileMapping.class);
 
+
     private final Pattern pattern;
     private final List<Class<? extends WindupVertexFrame>> types = new ArrayList<>();
+    private OnParseError onParseError = OnParseError.WARN;
 
     private final String id;
 
@@ -64,7 +66,7 @@ public class FileMapping extends GraphRule implements PreRulesetEvaluation, File
     }
 
     @Override
-    public Rule to(Class<? extends WindupVertexFrame> type)
+    public FileMappingTo to(Class<? extends WindupVertexFrame> type)
     {
         Assert.notNull(type, "Model type must not be null.");
         this.types.add(type);
@@ -73,12 +75,21 @@ public class FileMapping extends GraphRule implements PreRulesetEvaluation, File
 
     @Override
     @SuppressWarnings("unchecked")
-    public Rule to(Class<? extends WindupVertexFrame>... types)
+    public FileMappingTo to(Class<? extends WindupVertexFrame>... types)
     {
         Assert.notNull(types, "Model type list must not be null.");
         this.types.addAll(Arrays.asList(types));
         return this;
     }
+
+
+    @Override
+    public FileMappingTo onParseError(OnParseError onParseError)
+    {
+        this.onParseError = onParseError;
+        return this;
+    }
+
 
     @Override
     public void preRulesetEvaluation(GraphRewrite event)
@@ -101,20 +112,21 @@ public class FileMapping extends GraphRule implements PreRulesetEvaluation, File
             String pattern = entry.getKey();
             List<Class<? extends WindupVertexFrame>> types = entry.getValue();
 
-            Iterable<FileModel> models = fileService.findAllByPropertyMatchingRegex(
-                        FileModel.FILE_PATH, pattern);
+            Iterable<FileModel> models = fileService.findAllByPropertyMatchingRegex(FileModel.FILE_PATH, pattern);
 
             for (FileModel model : models)
             {
-                if (!model.isDirectory())
-                {
-                    for (Class<? extends WindupVertexFrame> type : types)
-                    {
-                        GraphService.addTypeToModel(event.getGraphContext(), model, type);
-                    }
-                    LOG.info("Mapped file [" + model.getFilePath() + "] matching pattern [" + pattern + "] to the following [" + types.size()
-                                + "] types: " + types);
-                }
+                if (model.isDirectory())
+                    continue;
+
+                for (Class<? extends WindupVertexFrame> type : types)
+                    GraphService.addTypeToModel(event.getGraphContext(), model, type);
+
+                if (this.onParseError == OnParseError.IGNORE)
+                    model.setOnParseError(OnParseError.IGNORE);
+
+                LOG.info("Mapped file [" + model.getFilePath() + "] matching pattern [" + pattern + "] to the following [" + types.size()
+                            + "] types: " + types);
             }
         }
     }

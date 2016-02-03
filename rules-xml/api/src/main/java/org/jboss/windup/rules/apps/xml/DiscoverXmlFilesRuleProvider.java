@@ -21,6 +21,7 @@ import org.jboss.windup.rules.apps.xml.model.NamespaceMetaModel;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.apps.xml.service.DoctypeMetaService;
 import org.jboss.windup.rules.apps.xml.service.NamespaceService;
+import org.jboss.windup.rules.apps.xml.service.XmlFileService;
 import org.jboss.windup.rules.files.FileMapping;
 import org.jboss.windup.util.xml.LocationAwareContentHandler;
 import org.jboss.windup.util.xml.LocationAwareContentHandler.Doctype;
@@ -48,26 +49,26 @@ public class DiscoverXmlFilesRuleProvider extends AbstractRuleProvider
     {
         return ConfigurationBuilder.begin()
 
-                    .addRule(FileMapping.from(".*\\.xml$").to(XmlFileModel.class))
-                    .addRule(FileMapping.from(".*\\.xmi$").to(XmlFileModel.class))
-                    .addRule(FileMapping.from(".*\\.jsf$").to(XmlFileModel.class))
-                    .addRule(FileMapping.from(".*\\.xhtml$").to(XmlFileModel.class))
-                    .addRule()
-                    .when(Query.fromType(XmlFileModel.class))
-                    .perform(new AbstractIterationOperation<XmlFileModel>()
-                    {
-                        @Override
-                        public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
-                        {
-                            addXmlMetaInformation(event, context, payload);
-                        }
+            .addRule(FileMapping.from(".*\\.xml$").to(XmlFileModel.class))
+            .addRule(FileMapping.from(".*\\.xmi$").to(XmlFileModel.class))
+            .addRule(FileMapping.from(".*\\.jsf$").to(XmlFileModel.class))
+            .addRule(FileMapping.from(".*\\.xhtml$").to(XmlFileModel.class))
+            .addRule()
+            .when(Query.fromType(XmlFileModel.class))
+            .perform(new AbstractIterationOperation<XmlFileModel>()
+            {
+                @Override
+                public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
+                {
+                    addXmlMetaInformation(event, context, payload);
+                }
 
-                        @Override
-                        public String toString()
-                        {
-                            return "IndexXmlFilesMetadata";
-                        }
-                    });
+                @Override
+                public String toString()
+                {
+                    return "IndexXmlFilesMetadata";
+                }
+            });
     }
 
     private void addXmlMetaInformation(GraphRewrite event, EvaluationContext context, XmlFileModel file)
@@ -134,11 +135,11 @@ public class DiscoverXmlFilesRuleProvider extends AbstractRuleProvider
             else
             {
                 final String message = "Failed to parse XML entity: " + file.getFilePath() + ", due to: " + e.getMessage();
-                LOG.log(Level.FINE, message, e);
+                LOG.log(Level.INFO, message, e);
                 file.setParseError(message);
             }
             new ClassificationService(event.getGraphContext())
-                .attachClassification(context, file, XmlFileModel.UNPARSEABLE_XML_CLASSIFICATION, XmlFileModel.UNPARSEABLE_XML_DESCRIPTION);
+                .attachClassification(context, file, XmlFileService.UNPARSEABLE_XML_CLASSIFICATION, XmlFileService.UNPARSEABLE_XML_DESCRIPTION);
         }
     }
 }

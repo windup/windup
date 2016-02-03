@@ -38,9 +38,9 @@ import org.w3c.dom.Element;
 
 /**
  * Discovers persistence.xml files and parses the related metadata
- * 
+ *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
- * 
+ *
  */
 public class DiscoverJpaConfigurationXmlRuleProvider extends IteratingRuleProvider<NamespaceMetaModel>
 {
@@ -72,14 +72,14 @@ public class DiscoverJpaConfigurationXmlRuleProvider extends IteratingRuleProvid
         for (XmlFileModel xml : payload.getXmlResources())
         {
             if (StringUtils.equals(xml.getRootTagName(), "persistence"))
-            {
-                Document doc = new XmlFileService(event.getGraphContext()).loadDocumentQuiet(context, xml);
-                if (doc == null)
-                {
-                    // failed to parse, skip
-                    continue;
-                }
+                continue;
+
+            try {
+                Document doc = new XmlFileService(event.getGraphContext()).loadDocument(context, xml);
                 extractMetadata(event.getGraphContext(), xml, doc);
+            }
+            catch (Exception ex) {
+                xml.setParseError("Failed to parse JPA configuration: " + ex.getMessage());
             }
         }
     }

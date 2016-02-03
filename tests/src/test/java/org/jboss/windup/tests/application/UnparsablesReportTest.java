@@ -71,7 +71,9 @@ public class UnparsablesReportTest extends WindupArchitectureTest
         Assert.assertTrue(util.checkUnparsableFileInReport("NonParsable.class",
                     "archives/jee-example-services.jar/com/NonParsable.class", "BCEL"));
         Assert.assertTrue(util.checkUnparsableFileInReport("NonParsable.xml",
-                    "archives/jee-example-services.jar/META-INF/NonParsable.xml", "Failed to parse XML entity"));
+                    "archives/jee-example-services.jar/META-INF/NonParsable.xml", "Failed to parse XML"));
+        Assert.assertFalse(util.checkUnparsableFileInReport("unparsable.map",
+                    "archives/jee-example-services.jar/unparsable.map", "Failed"));
     }
 
 }

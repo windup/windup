@@ -16,6 +16,7 @@ import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.config.parser.xml.RuleProviderHandler;
 import org.jboss.windup.graph.GraphTypeManager;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.util.xml.XmlUtil;
 import org.ocpsoft.rewrite.config.Rule;
@@ -31,6 +32,7 @@ public class FileMappingHandler implements ElementHandler<Void>
     protected static final String ELEM_NAME = "file-mapping";
     private static final String FROM = "from";
     private static final String TO = "to";
+    private static final String ON_PARSE_ERROR = "onParseError";
 
     @Inject
     private GraphTypeManager typeManager;
@@ -41,6 +43,8 @@ public class FileMappingHandler implements ElementHandler<Void>
     {
         String from = $(element).attr(FROM);
         String to = $(element).attr(TO);
+        String onParseError = $(element).attr(ON_PARSE_ERROR);
+
         if (StringUtils.isBlank(from))
         {
             throw new WindupException("The '" + ELEM_NAME + "' element must have a non-empty '" + FROM + "' attribute");
@@ -49,6 +53,13 @@ public class FileMappingHandler implements ElementHandler<Void>
         {
             throw new WindupException("The '" + ELEM_NAME + "' element must have a non-empty '" + TO + "' attribute");
         }
+        if (!StringUtils.isBlank(onParseError))
+        {
+            final List<String> acceptableValues = Arrays.asList(new String[]{ATTR_PARSE_IGNORE, "warn", "warning"});
+            if(!acceptableValues.contains(onParseError))
+                throw new WindupException("The '<" + ELEM_NAME + ">' attribute '"+ON_PARSE_ERROR+"' must contain one of: " + StringUtils.join(acceptableValues, ", "));
+        }
+
 
         List<Class<? extends WindupVertexFrame>> types = new ArrayList<>();
         List<String> typeNames = Arrays.asList(to.trim().split("\\s*,\\s*"));
@@ -57,7 +68,10 @@ public class FileMappingHandler implements ElementHandler<Void>
             List<Class<? extends WindupVertexFrame>> matchingTypes = new ArrayList<>();
             for (Class<? extends WindupVertexFrame> modelType : typeManager.getRegisteredTypes())
             {
-                if (modelType.getName().equals(name) || modelType.getSimpleName().equals(name + ".class") || modelType.getSimpleName().equals(name + "Model") || modelType.getSimpleName().equals(name))
+                if (modelType.getName().equals(name) ||
+                    modelType.getSimpleName().equals(name + ".class") ||
+                    modelType.getSimpleName().equals(name + "Model") ||
+                    modelType.getSimpleName().equals(name))
                 {
                     matchingTypes.add(modelType);
                 }
@@ -77,11 +91,12 @@ public class FileMappingHandler implements ElementHandler<Void>
             types.addAll(matchingTypes);
         }
 
-        Rule rule = FileMapping.from(from).to(types.toArray(new Class[types.size()]));
+        Rule rule = FileMapping.from(from).to(types.toArray(new Class[types.size()])).onParseError(FileModel.OnParseError.IGNORE);
         if (rule instanceof Context)
             ((Context) rule).put(RuleMetadataType.RULE_XML, XmlUtil.nodeToString(element));
         context.getBuilder().addRule(rule);
         return null;
     }
+    private static final String ATTR_PARSE_IGNORE = "ignore";
 
 }

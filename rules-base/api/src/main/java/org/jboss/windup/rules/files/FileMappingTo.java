@@ -1,6 +1,7 @@
 package org.jboss.windup.rules.files;
 
 import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.graph.model.resource.FileModel.OnParseError;
 import org.ocpsoft.rewrite.config.Rule;
 
 /**
@@ -8,15 +9,10 @@ import org.ocpsoft.rewrite.config.Rule;
  *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface FileMappingFrom extends Rule
+public interface FileMappingTo extends Rule
 {
     /**
      * Specifies the {@link WindupVertexFrame} type to which files matching the specified pattern should be mapped.
      */
-    FileMappingTo to(Class<? extends WindupVertexFrame> type);
-
-    /**
-     * Specifies the {@link WindupVertexFrame} types to which files matching the specified pattern should be mapped.
-     */
-    FileMappingTo to(@SuppressWarnings("unchecked") Class<? extends WindupVertexFrame>... types);
+    FileMappingTo onParseError(OnParseError onParseError);
 }

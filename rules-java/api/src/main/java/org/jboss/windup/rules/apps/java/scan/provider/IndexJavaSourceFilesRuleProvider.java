@@ -36,6 +36,8 @@ import org.jboss.windup.rules.apps.java.condition.SourceMode;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.scan.ast.WindupWildcardImportResolver;
+import static org.jboss.windup.rules.apps.java.scan.provider.AnalyzeJavaFilesRuleProvider.UNPARSEABLE_JAVA_CLASSIFICATION;
+import static org.jboss.windup.rules.apps.java.scan.provider.AnalyzeJavaFilesRuleProvider.UNPARSEABLE_JAVA_DESCRIPTION;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.PathUtil;
@@ -46,7 +48,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * Discovers .java files from the applications being analyzed.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
@@ -157,12 +159,10 @@ public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
                 }
                 catch (Exception e)
                 {
-                    LOG.log(Level.WARNING,
-                                "Could not parse java file: " + payload.getFilePath() + " due to: " + e.getMessage(), e);
+                    LOG.log(Level.WARNING, "Could not parse java file: " + payload.getFilePath() + " due to: " + e.getMessage(), e);
                     ClassificationService classificationService = new ClassificationService(graphContext);
-                    classificationService.attachClassification(context, payload,
-                                JavaSourceFileModel.UNPARSEABLE_JAVA_CLASSIFICATION,
-                                JavaSourceFileModel.UNPARSEABLE_JAVA_DESCRIPTION);
+                    classificationService.attachClassification(context, payload, UNPARSEABLE_JAVA_CLASSIFICATION, UNPARSEABLE_JAVA_DESCRIPTION);
+                    payload.setParseError(UNPARSEABLE_JAVA_CLASSIFICATION + ": " + e.getMessage());
                     return;
                 }
             }
@@ -182,9 +182,8 @@ public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
             catch (ParserException e)
             {
                 ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-                classificationService.attachClassification(context, sourceFileModel,
-                            JavaSourceFileModel.UNPARSEABLE_JAVA_CLASSIFICATION,
-                            JavaSourceFileModel.UNPARSEABLE_JAVA_DESCRIPTION);
+                classificationService.attachClassification(context, sourceFileModel, UNPARSEABLE_JAVA_CLASSIFICATION, UNPARSEABLE_JAVA_DESCRIPTION);
+                sourceFileModel.setParseError(UNPARSEABLE_JAVA_CLASSIFICATION + ": " + e.getMessage());
                 return;
             }
 

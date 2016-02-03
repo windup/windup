@@ -50,10 +50,10 @@ import org.w3c.dom.Element;
 
 /**
  * Discovers ejb-jar.xml files and parses the related metadata
- * 
+ *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- * 
+ *
  */
 public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
 {
@@ -84,14 +84,14 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
 
     public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
     {
-        Document doc = new XmlFileService(event.getGraphContext()).loadDocumentQuiet(context, payload);
-        if (doc == null)
-        {
-            // failed to parse, skip
-            return;
+        try {
+            Document doc = new XmlFileService(event.getGraphContext()).loadDocument(context, payload);
+            extractMetadata(event, context, payload, doc);
         }
-
-        extractMetadata(event, context, payload, doc);
+        catch (Exception ex)
+        {
+            payload.setParseError("Failed to parse EJB-JAR definitions: " + ex.getMessage());
+        }
     }
 
     private void extractMetadata(GraphRewrite event, EvaluationContext context, XmlFileModel xmlModel, Document doc)
@@ -99,8 +99,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
         ClassificationService classificationService = new ClassificationService(event.getGraphContext());
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
         TechnologyTagModel technologyTag = technologyTagService.addTagToFileModel(xmlModel, TECH_TAG, TECH_TAG_LEVEL);
-        classificationService.attachClassification(context, xmlModel, "EJB XML",
-                    "Enterprise Java Bean XML Descriptor.");
+        classificationService.attachClassification(context, xmlModel, "EJB XML", "Enterprise Java Bean XML Descriptor.");
 
         // otherwise, it is a EJB-JAR XML.
         if (xmlModel.getDoctype() != null)
