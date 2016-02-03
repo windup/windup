@@ -16,6 +16,7 @@ import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.config.parser.xml.RuleProviderHandler;
 import org.jboss.windup.graph.GraphTypeManager;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.util.xml.XmlUtil;
 import org.ocpsoft.rewrite.config.Rule;
@@ -90,7 +91,7 @@ public class FileMappingHandler implements ElementHandler<Void>
             types.addAll(matchingTypes);
         }
 
-        Rule rule = FileMapping.from(from).to(types.toArray(new Class[types.size()])).onParseError(FileMapping.OnParseError.IGNORE);
+        Rule rule = FileMapping.from(from).to(types.toArray(new Class[types.size()])).onParseError(FileModel.OnParseError.IGNORE);
         if (rule instanceof Context)
             ((Context) rule).put(RuleMetadataType.RULE_XML, XmlUtil.nodeToString(element));
         context.getBuilder().addRule(rule);

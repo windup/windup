@@ -4,7 +4,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.EnumUtils;
 import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.frames.FrameBooleanDefaultValue;
 import org.jboss.windup.graph.model.ArchiveModel;
@@ -38,7 +39,17 @@ public interface FileModel extends ResourceModel
     String PRETTY_PATH = "fileModelPrettyPath";
     String PRETTY_PATH_WITHIN_PROJECT = "fileModelPrettyPathWithinProject";
     String PARSE_ERROR = "parseError";
-    String IGNORE_PARSE_ERROR = "ignoreParseError";
+    String ON_PARSE_ERROR = "onParseError";
+
+    public static enum OnParseError {
+        IGNORE, WARN;
+        OnParseError fromName(String name){
+            return EnumUtils.getEnum(OnParseError.class, StringUtils.upperCase(name));
+            //return OnParseError.valueOf(StringUtils.upperCase(name));
+        }
+    }
+
+
 
     /**
      * Contains the File Name (the last component of the path). Eg, a file /tmp/foo/bar/file.txt would have fileName set to "file.txt"
@@ -110,16 +121,16 @@ public interface FileModel extends ResourceModel
     void setParseError(String message);
 
     /**
-     * Should Windup ignore the parsing error?
+     * What to do with a parsing error?
      */
-    @Property(IGNORE_PARSE_ERROR)
-    Boolean isIgnoreParseError();
+    @Property(ON_PARSE_ERROR)
+    OnParseError getOnParseError();
 
     /**
-     * Should Windup ignore the parsing error?
+     * What to do with a parsing error?
      */
-    @Property(IGNORE_PARSE_ERROR)
-    void setIgnoreParseError(Boolean ignore);
+    @Property(ON_PARSE_ERROR)
+    void setOnParseError(OnParseError ignore);
 
 
     /**

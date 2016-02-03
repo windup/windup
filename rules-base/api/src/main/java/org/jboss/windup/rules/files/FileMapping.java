@@ -9,7 +9,6 @@ import java.util.Map.Entry;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import org.apache.commons.lang.RandomStringUtils;
-import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import org.jboss.forge.furnace.util.Assert;
@@ -19,6 +18,7 @@ import org.jboss.windup.config.PreRulesetEvaluation;
 import org.jboss.windup.config.phase.ArchiveMetadataExtractionPhase;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.FileModel.OnParseError;
 import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.util.Logging;
@@ -39,14 +39,6 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 public class FileMapping extends GraphRule implements PreRulesetEvaluation, FileMappingFrom, FileMappingTo
 {
     private static final Logger LOG = Logging.get(FileMapping.class);
-
-    public static enum OnParseError {
-        IGNORE, WARN;
-        OnParseError fromName(String name){
-            return EnumUtils.getEnum(OnParseError.class, StringUtils.upperCase(name));
-            //return OnParseError.valueOf(StringUtils.upperCase(name));
-        }
-    }
 
 
     private final Pattern pattern;
@@ -131,7 +123,7 @@ public class FileMapping extends GraphRule implements PreRulesetEvaluation, File
                     GraphService.addTypeToModel(event.getGraphContext(), model, type);
 
                 if (this.onParseError == OnParseError.IGNORE)
-                    model.setIgnoreParseError(Boolean.TRUE);
+                    model.setOnParseError(OnParseError.IGNORE);
 
                 LOG.info("Mapped file [" + model.getFilePath() + "] matching pattern [" + pattern + "] to the following [" + types.size()
                             + "] types: " + types);

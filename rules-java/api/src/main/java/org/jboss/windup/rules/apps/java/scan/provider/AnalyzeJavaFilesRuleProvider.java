@@ -238,8 +238,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                         ClassificationService classificationService = new ClassificationService(event.getGraphContext());
                         JavaSourceFileModel sourceFileModel = getJavaSourceFileModel(event.getGraphContext(), failure.getKey());
                         classificationService.attachClassification(context, sourceFileModel, UNPARSEABLE_JAVA_CLASSIFICATION, UNPARSEABLE_JAVA_DESCRIPTION);
-                        if (sourceFileModel.isIgnoreParseError() != Boolean.TRUE)
-                            sourceFileModel.setParseError(failure.getValue());
+                        sourceFileModel.setParseError(failure.getValue());
                     }
 
                     if (!filesToProcess.isEmpty())
