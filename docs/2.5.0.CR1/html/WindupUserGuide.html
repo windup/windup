@@ -417,12 +417,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel1">
 <li><a href="#_introduction">1. Introduction</a>
 <ul class="sectlevel2">
-<li><a href="#What-is-it">1.1. What is Windup?</a>
-<ul class="sectlevel3">
-<li><a href="#_overview">1.1.1. Overview</a></li>
-<li><a href="#_how_does_windup_simplify_migration">1.1.2. How Does Windup Simplify Migration?</a></li>
-</ul>
-</li>
+<li><a href="#What-is-it">1.1. What is Windup?</a></li>
 <li><a href="#Features">1.2. Features of Windup</a></li>
 <li><a href="#_about_windup_rules">1.3. About Windup Rules</a></li>
 <li><a href="#System-Requirements">1.4. System Requirements</a>
@@ -513,26 +508,20 @@ Windup to migrate Java applications or other components.</p>
 </div>
 <div class="sect2">
 <h3 id="What-is-it">1.1. What is Windup?</h3>
-<hr>
 <div class="paragraph">
-<p><span class="image"><img src="images/windup-logo-large.png" alt="Windup Logo"></span></p>
+<p><span class="image"><img src="topics/images/windup-logo-large.png" alt="Windup Logo"></span></p>
 </div>
-<hr>
-<div class="sect3">
-<h4 id="_overview">1.1.1. Overview</h4>
+<h4 id="_overview" class="discrete">Overview</h4>
 <div class="paragraph">
 <p>Windup is an extensible and customizable rule-based tool that helps simplify migration of Java applications.</p>
 </div>
 <div class="paragraph">
 <p>Running from a <a href="http://forge.jboss.org">Forge</a> environment, Windup examines application artifacts, including project source directories and applications archives, then produces an HTML report highlighting areas that need changes. Windup can be used to migrate Java applications from previous versions of <em>Red Hat JBoss Enterprise Application Platform</em> or from other containers, such as <em>Oracle® WebLogic Server</em> or <em>IBM® WebSphere® Application Server</em>.</p>
 </div>
-</div>
-<div class="sect3">
-<h4 id="_how_does_windup_simplify_migration">1.1.2. How Does Windup Simplify Migration?</h4>
+<h4 id="_how_does_windup_simplify_migration" class="discrete">How Does Windup Simplify Migration?</h4>
 <div class="paragraph">
 <p>Windup looks for common resources and highlights technologies and known “trouble
 spots” when migrating applications. The goal is to provide a high level view into the technologies used by the application and provide a detailed report organizations can use to estimate, document, and migrate enterprise applications to Java EE and JBoss EAP.</p>
-</div>
 </div>
 </div>
 <div class="sect2">
@@ -631,7 +620,7 @@ otherwise(action)</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Windup provides comprehensive set of standard migration rules out-of-the-box. Because applications may contain custom libraries or components, Windup allows you to write your own rules to identify use of components or software that may not be covered by the existing ruleset. If you plan to write your own custom rules, see the <a href="https://access.redhat.com/documentation/en/red-hat-jboss-migration-toolkit/version-2.4/windup-rules-development-guide">
+<p>Windup provides comprehensive set of standard migration rules out-of-the-box. Because applications may contain custom libraries or components, Windup allows you to write your own rules to identify use of components or software that may not be covered by the existing ruleset. If you plan to write your own custom rules, see the <a href="http://windup.github.io/windup/docs/latest/html/WindupRulesDevelopmentGuide.html">
 Windup Rules Development Guide</a> for detailed instructions.</p>
 </div>
 </div>
@@ -1124,7 +1113,6 @@ If you omit the <code>--packages</code> argument, every package in the applicati
 ├── index.html          (landing page for the report)
 ├── EXPORT_FILE.csv     (optional export of data in CSV format)
 ├── archives/           (archives extracted from the application, for information only)
-├── graph/              (binary graph database files generated during the run, for information only)
 ├── reports/            (generated HTML reports)
 ├── stats/              (performance statistics)</pre>
 </div>
@@ -1137,22 +1125,30 @@ If you omit the <code>--packages</code> argument, every package in the applicati
 <pre class="nowrap">WINDUP_HOME/bin/windup --input /home/username/windup-source/test-files/jee-example-app-1.0.0.ear/ --output /home/username/windup-reports/jee-example-app-1.0.0.ear-report --target eap --packages com.acme org.apache</pre>
 </div>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Note</div>
+</td>
+<td class="content">
+The incidents and estimated <em>Story Points</em> change as new rules are added to Windup. The values here may not match what you see when you test this application.
+</td>
+</tr>
+</table>
+</div>
 </div>
 <div class="sect3">
 <h4 id="_access_the_reports">2.3.2. Access the Reports</h4>
 <div class="paragraph">
 <p>Use your favorite browser to open the <code>index.html</code> file located in the output report directory. You should see something like the following:</p>
 </div>
-<div class="exampleblock">
-<div class="content">
 <div class="paragraph">
-<p><strong>Windup Report: Index Page</strong>
-<span class="image"><img src="images/report-jee-example-index-page.png" alt="Report Index Page" width="600"></span></p>
-</div>
-</div>
+<div class="title">Windup Report: Application List</div>
+<p><span class="image"><img src="topics/images/report-jee-example-index-page.png" alt="Report Index Page" width="600"></span></p>
 </div>
 <div class="paragraph">
-<p>This page lists the application that was processed along with the technologies that were encountered. It also provides links to the following additional reports.</p>
+<p>This page lists the applications that were processed along with the technologies that were encountered. It also provides links to the following additional reports.</p>
 </div>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
@@ -1184,41 +1180,81 @@ If you omit the <code>--packages</code> argument, every package in the applicati
 </tr>
 </tbody>
 </table>
+<div class="paragraph">
+<p>Click on the <strong>jee-example-app-1.0.0.ear</strong> link under the <strong>Name</strong> column to view the application report.</p>
+</div>
 <div class="sect4">
 <h5 id="review-the-report-application-report">Application Report</h5>
-<div class="sect5">
-<h6 id="_overview_and_application_messages">Overview and Application Messages</h6>
+<h6 id="_report_index" class="discrete">Report Index</h6>
 <div class="paragraph">
-<p>The first section of the application report page summarizes the entire application migration effort by technology type both graphically and in list format. This is followed by the <code>Application Messages</code> section, which contains useful information about general migration requirements for the application, such as the need to replace deprecated libraries or the need to resolve potential class loading issues.</p>
+<p>The first section of the application report page summarizes the entire application migration effort. It summarizes the mandadory, optional, and potential issues that were found. It also breaks the findings down by type and by whether the suggested updates are informational, trivial, complex, need redesign, or require architectural changes. It also summarizes the issues by package.</p>
 </div>
 <div class="paragraph">
-<p>In the following example, the "JEE Example App" is assigned 73 story points related to 10 different technologies. It also displays one application message "Deploying log4j.jar can result in non-deterministic ClassLoading issues. It is recommended to use the built-in JBoss EAP Log4j module configured via `jboss-deployment-structure.xml`" with a link to the rule that triggered it.</p>
+<p>This is followed by a list of reports that contain additional details about the migration of this application.</p>
 </div>
-<div class="admonitionblock note">
-<table>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 80%;">
+</colgroup>
+<thead>
 <tr>
-<td class="icon">
-<div class="title">Note</div>
-</td>
-<td class="content">
-The estimated Story Points change as new rules are added to Windup. The values here may not match what you see when you test this application.
-</td>
+<th class="tableblock halign-left valign-top">Report Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
 </tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Migration Issues</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The Migration Issues report provides a concise summary of all issues that require attention.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Application Details</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">This provides a detailed overview of all resources found within the application that may need attention during the migration.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Potential Issues</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The Potential Issues report is a numerical summary of potential issues. While they may potentially require attention, there is currently no detailed migration guidance available for these items. If you see issues here that require effort, please send them to us for further assistance.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Unparsable</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">This report shows all files that Windup could not parse in the expected format. For instance, a file with a <code>.xml</code> or <code>.wsdl</code> suffix is assumed to be an XML file. If the XML parser fails, the issue is reported here and also where the individual file is listed.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Remote Services</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">This report displays all remote services references that were found within the application.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">EJBs</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The EJB report contains a list of EJBs found within the application.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Server Resources</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">This report displays all server resources (for example, JNDI resources) in the input application.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">About</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">This describes the current version of Windup and provides helpful links for further assistance.</p></td>
+</tr>
+</tbody>
 </table>
-</div>
-<div class="exampleblock">
-<div class="content">
 <div class="paragraph">
-<p><strong>Windup Report: Overview and Application Messages</strong>
-<span class="image"><img src="images/report-jee-example-application-overview.png" alt="Report Overview and Application Messages" width="600"></span></p>
+<div class="title">Windup Report - Report Index</div>
+<p><span class="image"><img src="topics/images/report-jee-example-application-overview.png" alt="Report Overview and Application Messages" width="600"></span></p>
 </div>
-</div>
-</div>
-</div>
-<div class="sect5">
-<h6 id="_archive_analysis_sections">Archive Analysis Sections</h6>
 <div class="paragraph">
-<p>Depending on whether you run Windup against source or compiled code, the report next provides details by file, or by file within each archive. Each archive summary begins with a total of the story points assigned to its migration, followed by a table detailing the changes required for each file in the archive. The report contains the following columns.</p>
+<p>Click on the <strong>Application Details</strong> link under <strong>Additional Reports</strong> to see the the <em>Application Details Report</em>.</p>
+</div>
+<h6 id="_application_details_report" class="discrete">Application Details Report</h6>
+<div class="paragraph">
+<p>The report lists the estimated story points, the Java incidents by package, and a count of the occurrences of the technologies found in the application. Next is a display of application messages generated during the migration process. Finally, there is a breakdown of this information for each archive analyzed during the process.</p>
+</div>
+<div class="paragraph">
+<div class="title">Windup Report - Application Details Report</div>
+<p><span class="image"><img src="topics/images/report-jee-example-application-details.png" alt="Application Details Report" width="600"></span></p>
+</div>
+<div class="paragraph">
+<p>Expand the <code>jee-example-app-1.0.0.ear/jee-example-services.jar</code> to review the estimated story points, Java incidents by package, and a count of the occurrences of the technologies found in this archive. This summary begins with a total of the story points assigned to its migration, followed by a table detailing the changes required for each file in the archive. The report contains the following columns.</p>
 </div>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
@@ -1250,7 +1286,7 @@ The estimated Story Points change as new rules are added to Windup. The values h
 <p>Level of effort required to migrate the file.</p>
 </div>
 <div class="paragraph">
-<p><em>Story Points</em> are covered in more detail in the <a href="https://access.redhat.com/documentation/en/red-hat-jboss-migration-toolkit/version-2.4/windup-rules-development-guide#Rules-Rule-Story-Points">Windup Rules Development Guide</a>.</p>
+<p><em>Story Points</em> are covered in more detail in the <a href="http://windup.github.io/windup/docs/latest/html/WindupRulesDevelopmentGuide.html#Rules-Rule-Story-Points">Windup Rules Development Guide</a>.</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -1258,19 +1294,13 @@ The estimated Story Points change as new rules are added to Windup. The values h
 <div class="paragraph">
 <p>The following is an example of the archive analysis summary section of a Windup Report. The following is an the analysis of the <code>WINDUP_SOURCE/test-files/jee-example-app-1.0.0.ear/jee-example-services.jar</code>.</p>
 </div>
-<div class="exampleblock">
-<div class="content">
 <div class="paragraph">
-<p><strong>Windup Report: Archive Detail</strong>
-<span class="image"><img src="images/report-jee-example-services-jar.png" alt="Report Archive Detail" width="600"></span></p>
+<div class="title">Windup Report: Archive Detail</div>
+<p><span class="image"><img src="topics/images/report-jee-example-services-jar.png" alt="Report Archive Detail" width="600"></span></p>
 </div>
-</div>
-</div>
-</div>
-<div class="sect5">
-<h6 id="_file_analysis_pages">File Analysis Pages</h6>
+<h6 id="_file_analysis_pages" class="discrete">File Analysis Pages</h6>
 <div class="paragraph">
-<p>The analysis of the <code>jee-example-services.jar</code> lists the files in the JAR and the warnings and story points assigned to each one. Notice the <code>com.acme.anvil.listener.AnvilWebLifecycleListener</code> file, at the time of this test, has 20 warnings and is assigned 10 story points. Click on the file to see the detail.</p>
+<p>The analysis of the <code>jee-example-services.jar</code> lists the files in the JAR and the warnings and story points assigned to each one. Notice the <code>com.acme.anvil.listener.AnvilWebLifecycleListener</code> file, at the time of this test, has 22 warnings and is assigned 16 story points. Click on the file link to see the detail.</p>
 </div>
 <div class="ulist">
 <ul>
@@ -1285,25 +1315,16 @@ The estimated Story Points change as new rules are added to Windup. The values h
 <div class="paragraph">
 <p>In this example, warnings appear at various import statements, declarations, and method calls. Each warning describes the issue and the action that should be taken.</p>
 </div>
-<div class="exampleblock">
-<div class="content">
 <div class="paragraph">
-<p><strong>Windup Report: Source Report - Part 1</strong>
-<span class="image"><img src="images/report-jee-example-source-1.png" alt="File Detail - Part 1" width="600"></span></p>
-</div>
-</div>
+<div class="title">Windup Report: Source Report - Part 1</div>
+<p><span class="image"><img src="topics/images/report-jee-example-source-1.png" alt="File Detail - Part 1" width="600"></span></p>
 </div>
 <div class="paragraph">
 <p>Later in the source code, warnings appear for the creation of the InitialContext and for JNDI lookup names.</p>
 </div>
-<div class="exampleblock">
-<div class="content">
 <div class="paragraph">
-<p><strong>Windup Report: Source Report - Part 2</strong>
-<span class="image"><img src="images/report-jee-example-source-2.png" alt="File Detail - Part 2" width="600"></span></p>
-</div>
-</div>
-</div>
+<div class="title">Windup Report: Source Report - Part 2</div>
+<p><span class="image"><img src="topics/images/report-jee-example-source-2.png" alt="File Detail - Part 2" width="600"></span></p>
 </div>
 </div>
 <div class="sect4">
@@ -1349,13 +1370,9 @@ The estimated Story Points change as new rules are added to Windup. The values h
 </tr>
 </tbody>
 </table>
-<div class="exampleblock">
-<div class="content">
 <div class="paragraph">
-<p><strong>Windup Report: Rule Provider Report</strong>
-<span class="image"><img src="images/report-jee-example-ruleprovider.png" alt="RuleProvider Report" width="600"></span></p>
-</div>
-</div>
+<div class="title">Windup Report: Rule Provider Report</div>
+<p><span class="image"><img src="topics/images/report-jee-example-ruleprovider.png" alt="RuleProvider Report" width="600"></span></p>
 </div>
 </div>
 <div class="sect4">
@@ -1363,13 +1380,9 @@ The estimated Story Points change as new rules are added to Windup. The values h
 <div class="paragraph">
 <p>Access this report by clicking on the <code>Windup FreeMarker Methods</code> link on the initial index page. This report lists all the registered functions and directives that were used to build the report. It is useful if you plan to build your own custom report or for debugging purposes.</p>
 </div>
-<div class="exampleblock">
-<div class="content">
 <div class="paragraph">
-<p><strong>Windup Report: FreeMarker Functions and Directives</strong>
-<span class="image"><img src="images/report-jee-example-freemarker.png" alt="FreeMarker Functions and Directives" width="600"></span></p>
-</div>
-</div>
+<div class="title">Windup Report: FreeMarker Functions and Directives</div>
+<p><span class="image"><img src="topics/images/report-jee-example-freemarker.png" alt="FreeMarker Functions and Directives" width="600"></span></p>
 </div>
 </div>
 <div class="sect4">
@@ -1377,13 +1390,9 @@ The estimated Story Points change as new rules are added to Windup. The values h
 <div class="paragraph">
 <p>Access the feedback form by clicking on the <code>Send Feedback</code> link on the initial index page. The form allows you to rate the product, talk about what you like and what needs to be improved. You can also attach a file.</p>
 </div>
-<div class="exampleblock">
-<div class="content">
 <div class="paragraph">
-<p><strong>Send Feedback Form</strong>
-<span class="image"><img src="images/report-jee-example-send-feedback.png" alt="Form to send feedback" width="600"></span></p>
-</div>
-</div>
+<div class="title">Send Feedback Form</div>
+<p><span class="image"><img src="topics/images/report-jee-example-send-feedback.png" alt="Form to send feedback" width="600"></span></p>
 </div>
 </div>
 </div>
@@ -1619,7 +1628,7 @@ The estimated Story Points change as new rules are added to Windup. The values h
 <p>Create a test for the new rule.</p>
 </li>
 <li>
-<p>Details are provided in the <a href="https://access.redhat.com/documentation/en/red-hat-jboss-migration-toolkit/version-2.4/windup-rules-development-guide">Windup Rules Development Guide</a>.</p>
+<p>Details are provided in the <a href="http://windup.github.io/windup/docs/latest/html/WindupRulesDevelopmentGuide.html">Windup Rules Development Guide</a>.</p>
 </li>
 </ul>
 </div>
@@ -1849,7 +1858,7 @@ The estimated Story Points change as new rules are added to Windup. The values h
 </dd>
 <dt class="hdlist1">Story Point</dt>
 <dd>
-<p>A term commonly used in Scrum Agile software development methodology to estimate the <em>level of effort</em> needed to implement a feature or change. It does not necessarily translate to man-hours, but the value should be consistent across tasks. Story points are covered in more detail in the <a href="https://access.redhat.com/documentation/en/red-hat-jboss-migration-toolkit/version-2.4/windup-rules-development-guide">Windup Rules Development Guide</a>.</p>
+<p>A term commonly used in Scrum Agile software development methodology to estimate the <em>level of effort</em> needed to implement a feature or change. It does not necessarily translate to man-hours, but the value should be consistent across tasks. Story points are covered in more detail in the <a href="http://windup.github.io/windup/docs/latest/html/WindupRulesDevelopmentGuide.html">Windup Rules Development Guide</a>.</p>
 </dd>
 </dl>
 </div>
@@ -1925,7 +1934,7 @@ The estimated Story Points change as new rules are added to Windup. The values h
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-02-01 11:02:48 EST
+Last updated 2016-02-04 13:17:02 EST
 </div>
 </div>
 </body>

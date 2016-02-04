@@ -418,18 +418,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_introduction">1. Introduction</a></li>
 <li><a href="#_get_started">2. Get Started</a>
 <ul class="sectlevel2">
-<li><a href="#Rules-Create-Your-First-Rule">2.1. Create Your First XML Rule</a>
-<ul class="sectlevel3">
-<li><a href="#_overview">2.1.1. Overview</a></li>
-<li><a href="#_rule_example_description">2.1.2. Rule Example Description</a></li>
-<li><a href="#_create_the_directory_structure_for_the_rule">2.1.3. Create the Directory Structure for the Rule</a></li>
-<li><a href="#_create_data_to_test_the_rule">2.1.4. Create Data to Test the Rule</a></li>
-<li><a href="#_create_the_rule">2.1.5. Create the Rule</a></li>
-<li><a href="#_install_the_rule">2.1.6. Install the Rule</a></li>
-<li><a href="#_validate_the_rule_against_the_schema">2.1.7. Validate the Rule Against the Schema</a></li>
-<li><a href="#_test_the_rule">2.1.8. Test the Rule</a></li>
-</ul>
-</li>
+<li><a href="#Rules-Create-Your-First-Rule">2.1. Create Your First XML Rule</a></li>
 </ul>
 </li>
 <li><a href="#_create_and_test_xml_rules">3. Create and Test XML Rules</a>
@@ -517,7 +506,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>This guide is for engineers, consultants, and others who plan to create custom XML-based rules for Windup.</p>
 </div>
 <div class="paragraph">
-<p>If you are new to Windup, it is recommended that you start with the <a href="https://access.redhat.com/documentation/en/red-hat-jboss-migration-toolkit/version-2.4/windup-user-guide">Windup User Guide</a>. It provides detailed information about system requirements and detailed instructions on how to install and execute Windup. It also contains tips to <a href="https://access.redhat.com/documentation/en/red-hat-jboss-migration-toolkit/version-2.4/windup-user-guide#Optimize-Performance">optimize performance</a> and provides links to other sources of information about Windup.</p>
+<p>If you are new to Windup, it is recommended that you start with the <a href="http://windup.github.io/windup/docs/latest/html/WindupUserGuide.html">Windup User Guide</a>. It provides detailed information about system requirements and detailed instructions on how to install and execute Windup. It also contains tips to <a href="http://windup.github.io/windup/docs/latest/html/WindupUserGuide.html#Optimize-Performance">optimize performance</a> and provides links to other sources of information about Windup.</p>
 </div>
 <div class="paragraph">
 <p>If you would like to contribute to the Windup source code base or provide Java-based rule add-ons, see the <a href="https://github.com/windup/windup/wiki">Windup Wiki</a>.</p>
@@ -529,8 +518,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="Rules-Create-Your-First-Rule">2.1. Create Your First XML Rule</h3>
-<div class="sect3">
-<h4 id="_overview">2.1.1. Overview</h4>
+<h4 id="_overview" class="discrete">Overview</h4>
 <div class="paragraph">
 <p>This topic guides you through the process of creating and testing your first Windup XML-based rule.</p>
 </div>
@@ -553,15 +541,11 @@ otherwise(action)</pre>
 <div class="paragraph">
 <p>As you create your first rule, refer to the <a href="http://windup.jboss.org/schema/windup-jboss-ruleset.xsd">Rules Schema</a> for valid XML syntax.</p>
 </div>
-</div>
-<div class="sect3">
-<h4 id="_rule_example_description">2.1.2. Rule Example Description</h4>
+<h4 id="_rule_example_description" class="discrete">Rule Example Description</h4>
 <div class="paragraph">
 <p>In this example, you write a rule to discover instances where an application defines a <code>jboss-web.xml</code> file containing a <code>&lt;class-loading&gt;</code> element and provide a link to the documentation that describes how to migrate the code.</p>
 </div>
-</div>
-<div class="sect3">
-<h4 id="_create_the_directory_structure_for_the_rule">2.1.3. Create the Directory Structure for the Rule</h4>
+<h4 id="_create_the_directory_structure_for_the_rule" class="discrete">Create the Directory Structure for the Rule</h4>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
@@ -578,9 +562,7 @@ $ mkdir -p migration-rules/data</pre>
 </li>
 </ol>
 </div>
-</div>
-<div class="sect3">
-<h4 id="_create_data_to_test_the_rule">2.1.4. Create Data to Test the Rule</h4>
+<h4 id="_create_data_to_test_the_rule" class="discrete">Create Data to Test the Rule</h4>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
@@ -604,9 +586,7 @@ $ mkdir -p migration-rules/data</pre>
 </li>
 </ol>
 </div>
-</div>
-<div class="sect3">
-<h4 id="_create_the_rule">2.1.5. Create the Rule</h4>
+<h4 id="_create_the_rule" class="discrete">Create the Rule</h4>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
@@ -791,9 +771,7 @@ Windup identifies files with the <code>.windup.xml</code> extension as XML-based
 </li>
 </ol>
 </div>
-</div>
-<div class="sect3">
-<h4 id="_install_the_rule">2.1.6. Install the Rule</h4>
+<h4 id="_install_the_rule" class="discrete">Install the Rule</h4>
 <div class="paragraph">
 <p>A Windup rule is installed simply by copying the rule to the appropriate folder.</p>
 </div>
@@ -806,15 +784,11 @@ Windup identifies files with the <code>.windup.xml</code> extension as XML-based
 For Windows: "\Documents and Settings\USER_NAME\.windup\rules\" or "\Users\USER_NAME\.windup\rules\"</pre>
 </div>
 </div>
-</div>
-<div class="sect3">
-<h4 id="_validate_the_rule_against_the_schema">2.1.7. Validate the Rule Against the Schema</h4>
+<h4 id="_validate_the_rule_against_the_schema" class="discrete">Validate the Rule Against the Schema</h4>
 <div class="paragraph">
 <p>To validate your XML rule using the Windup rule schema, see <a href="#Rules-Validate-Rulesets-Against-the-Schema">Validate Rulesets Against the Schema</a>.</p>
 </div>
-</div>
-<div class="sect3">
-<h4 id="_test_the_rule">2.1.8. Test the Rule</h4>
+<h4 id="_test_the_rule" class="discrete">Test the Rule</h4>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
@@ -838,49 +812,45 @@ For Windows:  bin\windup.bat --sourceMode --input migration-rules\data --output 
 </div>
 </div>
 </li>
-<li>
+</ol>
+</div>
+<h4 id="_review_the_reports" class="discrete">Review the Reports</h4>
+<div class="paragraph">
 <p>Access the report at ~/migration-rules/reports/index.html to be sure it provides the expected results.</p>
-<div class="ulist">
-<ul>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
 <li>
 <p>The <em>Overview</em> page displays the <strong>Name</strong> of the input folder, "data", along with the  <strong>Effort</strong> of "1 Story Points".</p>
 <div class="paragraph">
-<p><span class="image"><img src="images/CreateYourFirstRule-ReportOverview.png" alt="Overview" width="500"></span></p>
+<div class="title">Application List</div>
+<p><span class="image"><img src="topics/images/CreateYourFirstRule-ReportOverview.png" alt="Overview" width="500"></span></p>
 </div>
 </li>
 <li>
-<p>Drill down into the <em>Application Report</em> detail by clicking on the "data" link under the <code>Name</code> column. This report displays a link for the name of the file, "jboss-web.xml", along with 3 warnings under <strong>Issues</strong> and 1 <strong>Story Points</strong>.</p>
-<div class="ulist">
-<ul>
-<li>
-<p>JBoss Web Application Descriptor</p>
-</li>
-<li>
-<p>JBoss Web XML</p>
-</li>
-<li>
-<p>JBoss Web XML class-loading element is no longer valid</p>
+<p>Click on the "data" link under the <code>Name</code> column to see the <em>Report Index</em> page and review the migration summary.</p>
 <div class="paragraph">
-<p><span class="image"><img src="images/CreateYourFirstRule-ReportApplication.png" alt="Overview" width="500"></span></p>
-</div>
-</li>
-</ul>
+<div class="title">ReportIndex</div>
+<p><span class="image"><img src="topics/images/CreateYourFirstRule-ReportApplication.png" alt="Overview" width="500"></span></p>
 </div>
 </li>
 <li>
-<p>Drill down into <em>Source Report</em> file detail by clicking on the "jboss-web.xml" file link. This report provides information about the file and summarizes the story points. It also highlights the <code>&lt;class-loading&gt;</code> line in the <code>jboss-web.xml</code> file, provides the message "The class-loading element is no longer valid in the jboss-web.xml file.", and provides a link to the <a href="https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html-single/Migration_Guide/index.html#Create_or_Modify_Files_That_Control_Class_Loading_in_JBoss_Enterprise_Application_Platform_6">Create or Modify Files That Control Class Loading in JBoss EAP 6</a> topic in the JBoss EAP 6 Migration Guide. Click on the link to be sure the link is valid.</p>
+<p>Click on the <strong>Application Details</strong> link to view the application report. This report displays a link for the name of the file, "jboss-web.xml", along with warnings and 1 <strong>Story Points</strong>.</p>
 <div class="paragraph">
-<p><span class="image"><img src="images/CreateYourFirstRule-ReportSource.png" alt="Overview" width="500"></span></p>
+<div class="title">Application Details Report</div>
+<p><span class="image"><img src="topics/images/CreateYourFirstRule-ReportApplicationDetails.png" alt="Overview" width="500"></span></p>
+</div>
+</li>
+<li>
+<p>Drill down into <em>Source Report</em> file detail by clicking on the <strong>jboss-web.xml</strong> file link. This report provides information about the file and summarizes the story points. It also highlights the <code>&lt;class-loading&gt;</code> line in the <code>jboss-web.xml</code> file, provides the message "The class-loading element is no longer valid in the jboss-web.xml file.", and provides a link to the <a href="https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html-single/Migration_Guide/index.html#Create_or_Modify_Files_That_Control_Class_Loading_in_JBoss_Enterprise_Application_Platform_6">Create or Modify Files That Control Class Loading in JBoss EAP 6</a> topic in the JBoss EAP 6 Migration Guide. Click on the link to be sure the link is valid.</p>
+<div class="paragraph">
+<p><span class="image"><img src="topics/images/CreateYourFirstRule-ReportSource.png" alt="Overview" width="500"></span></p>
 </div>
 </li>
 <li>
 <p>Return to the <em>Overview Page</em> and click on the "All Rule" link to view the <em>Rule Provider Executions</em> report. Find the 'JBoss5-web-class-loading' rule in the report and verify that the <strong>Status</strong> shows "Condition met" and the <strong>Result</strong> shows "success".</p>
 </li>
-</ul>
-</div>
-</li>
 </ol>
-</div>
 </div>
 </div>
 </div>
@@ -1244,7 +1214,7 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
 <div class="ulist">
 <ul>
 <li>
-<p>You should have already installed Windup. Installation instruction are provided in the <a href="https://access.redhat.com/documentation/en/red-hat-jboss-migration-toolkit/version-2.4/windup-user-guide">Windup User Guide</a>.</p>
+<p>You should have already installed Windup. Installation instruction are provided in the <a href="http://windup.github.io/windup/docs/latest/html/WindupUserGuide.html">Windup User Guide</a>.</p>
 </li>
 <li>
 <p>Before you begin, you may also want to be familiar with the following documentation:</p>
@@ -3001,7 +2971,7 @@ For Windows: "\Documents and Settings\USER_NAME\.windup\rules\"  -or-  "\Users\U
 <div class="ulist">
 <ul>
 <li>
-<p>More examples of how to run Windup are located in the <a href="https://access.redhat.com/documentation/en/red-hat-jboss-migration-toolkit/version-2.4/windup-user-guide">Windup User Guide</a>.</p>
+<p>More examples of how to run Windup are located in the <a href="http://windup.github.io/windup/docs/latest/html/WindupUserGuide.html">Windup User Guide</a>.</p>
 </li>
 <li>
 <p>Working examples of XML-based rules can be found on GitHub in the <a href="https://github.com/windup/windup/">Windup source code</a> GitHub repository and the Windup quickstarts <a href="https://github.com/windup/windup-quickstarts/">GitHub repository</a> or <a href="https://github.com/windup/windup-quickstarts/releases">latest release ZIP download</a>.</p>
@@ -3042,10 +3012,10 @@ For Windows: "\Documents and Settings\USER_NAME\.windup\rules\"  -or-  "\Users\U
 <div class="ulist">
 <ul>
 <li>
-<p><a href="https://access.redhat.com/documentation/en/red-hat-jboss-migration-toolkit/version-2.4/windup-user-guide">Windup User Guide</a></p>
+<p><a href="http://windup.github.io/windup/docs/latest/html/WindupUserGuide.html">Windup User Guide</a></p>
 </li>
 <li>
-<p><a href="https://access.redhat.com/documentation/en/red-hat-jboss-migration-toolkit/version-2.4/windup-rules-development-guide">Windup Rules Development Guide</a></p>
+<p><a href="http://windup.github.io/windup/docs/latest/html/WindupRulesDevelopmentGuide.html">Windup Rules Development Guide</a></p>
 </li>
 <li>
 <p><a href="http://windup.github.io/windup/docs/latest/html/WindupCoreDevelopmentGuide.html">Windup Core Development Guide</a></p>
@@ -3200,7 +3170,7 @@ For Windows: "\Documents and Settings\USER_NAME\.windup\rules\"  -or-  "\Users\U
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2016-02-01 11:02:48 EST
+Last updated 2016-02-04 13:17:02 EST
 </div>
 </div>
 </body>
