@@ -7,15 +7,17 @@
                 ${problemSummary.issueName}
             </a>
             <div class="problem-file-list list-group" style="display: none;">
-                <div style="width: 100%;">
+                <!--div style="width: 100%;"-->
                     <!-- Internal issues per file table -->
                     <table class="table table-hover table-condensed tablesorter-child tablesorter">
                         <thead>
                             <tr>
                                 <th>File</th>
                                 <th>Incidents Found</th>
-                                <th></th><!-- This column is for links to hide/show the last column -->
-                                <th></th><!-- This column is for shown hint title -->
+                                <!-- This column is for links to hide/show the last column -->
+                                <th></th>
+                                <!-- This column is for shown hint title -->
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -26,7 +28,7 @@
                                         <td>
                                             <@render_link model=fileSummary.file class="list-group-item migration-issues-detailed-item"/><#t>
                                         </td>
-                                        <td>
+                                        <td class="text-right">
                                             <@render_link model=fileSummary.file text="#{fileSummary.occurences}" class="list-group-item migration-issues-detailed-item"/><#t>
                                         </td>
                                         <td>
@@ -49,10 +51,10 @@
                 </div>
             </div>
         </td>
-        <td>${problemSummary.numberFound}</td>
-        <td>${problemSummary.effortPerIncident}</td>
+        <td class="text-right">${problemSummary.numberFound}</td>
+        <td class="text-right">${problemSummary.effortPerIncident}</td>
         <td>${getEffortDescriptionForPoints(problemSummary.effortPerIncident, true)}</td>
-        <td>${problemSummary.numberFound * problemSummary.effortPerIncident}</td>
+        <td class="text-right">${problemSummary.numberFound * problemSummary.effortPerIncident}</td>
     </tr>
 </#macro>
 
@@ -128,7 +130,7 @@
             </div>
 
         <div class="row">
-        	<div class="container-fluid theme-showcase" role="main">
+        	<div class="container theme-showcase" role="main">
 	            <div class="panel panel-default panel-primary">
 	                <div class="panel-heading">
                         <h3 class="panel-title">Analysis Detail</h3>
@@ -146,23 +148,23 @@
                     </#if>
 
                     <#list problemsBySeverity?keys as severity>
-                        <table class="table table-hover table-condensed tablesorter migration-issues-table">
+                        <table class="table table-hover table-bordered table-condensed tablesorter migration-issues-table">
                             <thead>
                                 <tr>
-                                    <th class="sortable">Issue</th>
+                                    <th class="sortable text-center">Issue</th>
                                     <th class="sortable">Incidents Found</th>
                                     <th class="sortable">Story Points per Incident</th>
-                                    <th>Level of Effort</th>
+                                    <th class="text-center">Level of Effort</th>
                                     <th class="sortable">Total Story Points</th>
                                 </tr>
-                                <tr>
+                                <tr style="background: silver;">
                                     <td>
                                         <b>${severity}</b>
                                     </td>
-                                    <td>${getIncidentsFound(problemsBySeverity[severity])}</td>
+                                    <td class="text-right">${getIncidentsFound(problemsBySeverity[severity])}</td>
                                     <td></td>
                                     <td></td>
-                                    <td>${getTotalPoints(problemsBySeverity[severity])}</td>
+                                    <td class="text-right">${getTotalPoints(problemsBySeverity[severity])}</td>
                                 </tr>
                             </thead>
                             <tbody>
@@ -263,7 +265,6 @@
         }
 
         window.onload = resizeTables;
-
 
         </script>
     </body>
