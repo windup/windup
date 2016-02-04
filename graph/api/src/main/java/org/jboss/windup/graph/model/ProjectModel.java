@@ -190,7 +190,7 @@ public interface ProjectModel extends WindupVertexFrame
     Iterable<FileModel> getFileModelsNoDirectories();
 
     /**
-     * Gets all contained files that are not directories
+     * Gets all contained files that unparsable
      */
     @GremlinGroovy("it.out('" + PROJECT_MODEL_TO_FILE + "').has('" + FileModel.PARSE_ERROR + "')")
     Iterable<FileModel> getUnparsableFiles();

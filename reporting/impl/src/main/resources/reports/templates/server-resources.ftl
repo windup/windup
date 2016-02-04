@@ -24,7 +24,7 @@
                     such as datasources, JMS destinations, JMS connection factories, JMS connection factory list, and thread pools.
                 </div>
 
-                <div class="navbar navbar-default">
+                <div id="main-navbar" class="navbar navbar-default">
                     <div class="navbar-header">
                         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
                             <span class="icon-bar"></span>

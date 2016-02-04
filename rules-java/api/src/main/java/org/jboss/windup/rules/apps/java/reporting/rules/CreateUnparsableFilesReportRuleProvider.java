@@ -69,8 +69,27 @@ public class CreateUnparsableFilesReportRuleProvider extends AbstractRuleProvide
     }
     // @formatter:on
 
+    private boolean shouldDisplay(ProjectModel projectModel)
+    {
+        for (FileModel fileModel : projectModel.getUnparsableFiles())
+        {
+            if (fileModel.getOnParseError() != FileModel.OnParseError.IGNORE)
+                return true;
+        }
+
+        for (ProjectModel childProjectModel : projectModel.getChildProjects())
+        {
+            if (shouldDisplay(childProjectModel))
+                return true;
+        }
+        return false;
+    }
+
     private void createReportModel(GraphContext context, ProjectModel rootProjectModel)
     {
+        if (!shouldDisplay(rootProjectModel))
+            return;
+
         GraphService<UnparsablesAppReportModel> service = new GraphService<>(context, UnparsablesAppReportModel.class);
         UnparsablesAppReportModel reportModel = service.create();
         reportModel.setReportPriority(120);
