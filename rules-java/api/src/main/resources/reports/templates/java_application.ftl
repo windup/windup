@@ -174,7 +174,7 @@
                     </td>
                     <td>
                         <div class="tagsBarChart chartBoundary">
-                            <h4>Technologies found - occurence count</h4>
+                            <h4>Technologies found - occurrence count</h4>
                             <!-- Tags bar chart will be appended here. -->
                         </div>
                     </td>
@@ -301,7 +301,7 @@
                         </td>
                         <td>
                             <div class="chartBoundary">
-                                <h4>Technologies found - occurence count</h4>
+                                <h4>Technologies found - occurrence count</h4>
                                 <div id="tagsChartContainer-sum" style="height: 300px; width: 500px;">
                                     <div class="hideWhenComputed" style="position: relative; top: 4ex; left: 4em;">Computing...</div>
                                 </div>
