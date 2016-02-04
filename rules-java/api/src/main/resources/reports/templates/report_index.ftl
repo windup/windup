@@ -14,9 +14,13 @@
     <link href="resources/css/windup.css" rel="stylesheet" media="screen">
     <link rel='stylesheet' type='text/css' href='resources/libraries/snippet/jquery.snippet.min.css' />
     <link href="resources/css/windup.java.css" rel="stylesheet" media="screen">
-    <link rel='stylesheet' type='text/css' href='resources/css/windup-source.css' />
     <link rel='stylesheet' type='text/css' href='resources/libraries/sausage/sausage.css' />
     <link rel='stylesheet' type='text/css' href='resources/libraries/flot/plot.css' />
+    <style>
+.report-index-row {
+  margin-top: 10px;
+}
+    </style>
 </head>
 <body role="document" class="java-report-index">
 
@@ -53,74 +57,97 @@
         </div>
 
         <div class="row container-fluid col-md-12">
-            <div class="row-eq-height">
-                <div class="panel panel-primary col-md-6" style="margin-right: 10px;">
-                    <table class="table table-condensed table-striped" id="incidentsByTypeTable">
-                        <thead>
-                            <tr>
-                                <td>
-                                    <b>Incidents by Category</b>
-                                </td>
-                                <td>
-                                    <b>Incidents</b>
-                                </td>
-                                <td>
-                                    <b>Total Story Points</b>
-                                </td>
-                            </tr>
-                        </thead>
-                        <tbody id="incidentsByTypeTBody">
-                            <tr>
-                                <td colspan="3" style="text-align: center;">
-                                    <div class="row container-fluid">
-                                        <div id="incidentsBySeverityChart" style="float: left;">
-                                        </div>
-                                        <div id="effortAndSeverityChart" style="float: right;">
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+            <div class="panel panel-primary col-md-12">
+                <div class="row col-md-12 report-index-row">
+                    <div class="col-md-3">
+                        <table class="table table-condensed table-striped" id="incidentsByTypeTable">
+                            <thead>
+                                <tr>
+                                    <td>
+                                        <b>Incidents by Category</b>
+                                    </td>
+                                    <td>
+                                        <b>Incidents</b>
+                                    </td>
+                                    <td>
+                                        <b>Total Story Points</b>
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody id="incidentsByTypeTBody">
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="col-md-8">
+                        <div class="col-md-6">
+                            <div style="text-align: center"><strong>Incidents by Category</strong></div>
+                            <div id="incidentsBySeverityChart" style="float: left;"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <div style="text-align: center"><strong>Incidents and Story Points</strong></div>
+                            <div id="effortAndSeverityChart" style="float: right;"></div>
+                        </div>
+                    </div>
                 </div>
-                <div class="panel panel-primary col-md-6" style="margin-left: 10px;">
+
+                <div class="row col-md-12 report-index-row">
+                    <div class="col-md-3">
+                        <table class="table table-condensed table-striped">
+                            <thead>
+                                <tr>
+                                    <td>
+                                        <b>Mandatory Incidents by Type</b>
+                                    </td>
+                                    <td>
+                                        <b>Incidents</b>
+                                    </td>
+                                    <td>
+                                        <b>Total Story Points</b>
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody id="mandatoryIncidentsByEffortTBody">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="col-md-6">
+                            <div style="text-align: center"><strong>Mandatory Incidents by category</strong></div>
+                            <div id="mandatoryIncidentsByEffort" style="float: left;"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <div style="text-align: center"><strong>Mandatory Incidents and Story Points</strong></div>
+                            <div id="mandatoryIncidentsByEffortAndStoryPoints" style="float: right;"></div>
+                        </div>
+                    </div>
+            </div>
+
+            <div class="row col-md-12 report-index-row">
+                <div class="panel col-md-3">
                     <table class="table table-condensed table-striped">
                         <thead>
                             <tr>
                                 <td>
-                                    <b>Mandatory Incidents by Type</b>
+                                    <b>Java Incidents by Package</b>
                                 </td>
                                 <td>
                                     <b>Incidents</b>
                                 </td>
-                                <td>
-                                    <b>Total Story Points</b>
-                                </td>
                             </tr>
                         </thead>
-                        <tbody id="mandatoryIncidentsByEffortTBody">
-                            <tr>
-                                <td colspan="3" style="text-align: center;">
-                                    <div class="row container-fluid">
-                                        <div id="mandatoryIncidentsByEffort" style="float: left;">
-                                        </div>
-                                        <div id="mandatoryIncidentsByEffortAndStoryPoints" style="float: right;">
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
+                        <tbody id="javaIncidentsByPackageTBody">
                         </tbody>
                     </table>
+
+                    Note: this does not include XML files and "possible" issues.
                 </div>
-            </div>
-            <div class="panel panel-primary col-md-12">
                 <div class="panel col-md-6">
-                    <div style="margin-left: 190px;">
+                    <div style="margin-bottom: 10px; margin-left: 190px;">
                         <b>Java Incidents by Package</b>
                     </div>
                     <div id='application_pie' class='windupPieGraph'/>
                 </div>
-                <div class="panel col-md-6"></div>
             </div>
         </div>
 
@@ -176,5 +203,29 @@
     <script type="text/javascript" src="resources/js/report-index-graphs.js"></script>
 
     <@render_pie project=reportModel.projectModel recursive=true elementID="application_pie" includeTags=reportModel.includeTags excludeTags=reportModel.excludeTags />
+
+    <script type="text/javascript">
+        var tbodyElement = $("#javaIncidentsByPackageTBody");
+
+        var rows = "";
+        for (var i = 0; i < WINDUP_PACKAGE_PIE_DATA['application_pie'].length; i++) {
+            var row = "";
+            row += "<tr>";
+
+            row += "<td>";
+            row += WINDUP_PACKAGE_PIE_DATA['application_pie'][i].label;
+            row += "</td>";
+
+            row += "<td>";
+            row += WINDUP_PACKAGE_PIE_DATA['application_pie'][i].data;
+            row += "</td>";
+
+
+            row += "</tr>";
+
+            rows += row;
+        }
+        tbodyElement.prepend(rows);
+    </script>
 </body>
 </html>
