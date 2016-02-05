@@ -17,7 +17,7 @@
 </head>
 <body role="document" class="source-report">
 
-    <div class="navbar navbar-default navbar-fixed-top">
+    <div id="main-navbar" class="navbar navbar-default navbar-fixed-top">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
                 <span class="icon-bar"></span>
