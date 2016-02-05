@@ -82,6 +82,14 @@ public class RenderApplicationPieChartDirective implements WindupFreeMarkerTempl
 
         String dataVarName = "data_" + elementID;
         writer.append("<script type='text/javascript'>");
+        writer.append("\nWINDUP_PACKAGE_PIE_DATA = typeof(WINDUP_PACKAGE_PIE_DATA) == 'undefined' ? {} : WINDUP_PACKAGE_PIE_DATA;");
+        writer.append("\nWINDUP_PACKAGE_PIE_DATA['").append(elementID).append("'] = [];");
+        for (PieSort p : pieList)
+        {
+            writer.append("\nWINDUP_PACKAGE_PIE_DATA['").append(elementID).append("'].push({label: '" + p.label + "', data: ")
+                        .append(p.value.toString()).append("});");
+        }
+
         writer.append("\n$(function () {");
         writer.append("\n  var " + dataVarName + " = [];");
         for (PieSort p : pieList)
@@ -115,7 +123,7 @@ public class RenderApplicationPieChartDirective implements WindupFreeMarkerTempl
         // Add the key/value pairs to the list containing the PieSort(key,value) object.
         for (String key : map.keySet())
         {
-            PieSort p = new PieSort(key + " - " + map.get(key) + "&times;", map.get(key));
+            PieSort p = new PieSort(key + " - " + map.get(key) + "&times;", key, map.get(key));
             list.add(p);
         }
 
@@ -131,7 +139,7 @@ public class RenderApplicationPieChartDirective implements WindupFreeMarkerTempl
 
             list = list.subList(0, top);
             if (other > 0)
-                list.add(new PieSort("Other - " + other + "&times;", other));
+                list.add(new PieSort("Other - " + other + "&times;", "Other", other));
         }
 
         return list;
@@ -139,12 +147,14 @@ public class RenderApplicationPieChartDirective implements WindupFreeMarkerTempl
 
     private static class PieSort implements Comparable<PieSort>
     {
-        public String key;
-        public Integer value;
+        public final String key;
+        public final String label;
+        public final Integer value;
 
-        PieSort(String k, Integer v)
+        PieSort(String k, String label, Integer v)
         {
             this.key = k;
+            this.label = label;
             this.value = v;
         }
 

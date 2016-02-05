@@ -10,25 +10,25 @@ function createTagCharts() {
     var incidentsBySeverityChart = $("#incidentsBySeverityChart");
     incidentsBySeverityChart.css("display", "inline-block")
     incidentsBySeverityChart.css("height", "250px");
-    incidentsBySeverityChart.css("width", "45%");
+    incidentsBySeverityChart.css("width", "100%");
     createBarChart(incidentsBySeverityChart, issuesBySeverityChartData());
 
     var effortAndSeverityChart = $("#effortAndSeverityChart");
     effortAndSeverityChart.css("display", "inline-block");
     effortAndSeverityChart.css("height", "250px");
-    effortAndSeverityChart.css("width", "45%");
+    effortAndSeverityChart.css("width", "100%");
     createLineAndBarChart(effortAndSeverityChart, effortBySeverityChartData(), issuesBySeverityChartData());
 
     var mandatoryIncidentsByEffortChart = $("#mandatoryIncidentsByEffort");
     mandatoryIncidentsByEffortChart.css("display", "inline-block")
     mandatoryIncidentsByEffortChart.css("height", "250px");
-    mandatoryIncidentsByEffortChart.css("width", "45%");
+    mandatoryIncidentsByEffortChart.css("width", "100%");
     createBarChart(mandatoryIncidentsByEffortChart, mandatoryIncidentsByTypeChartData());
 
     var mandatoryIncidentsByEffortAndPointsChart = $("#mandatoryIncidentsByEffortAndStoryPoints");
     mandatoryIncidentsByEffortAndPointsChart.css("display", "inline-block");
     mandatoryIncidentsByEffortAndPointsChart.css("height", "250px");
-    mandatoryIncidentsByEffortAndPointsChart.css("width", "45%");
+    mandatoryIncidentsByEffortAndPointsChart.css("width", "100%");
     createLineAndBarChart(mandatoryIncidentsByEffortAndPointsChart, mandatoryEffortByTypeChartData(), mandatoryIncidentsByTypeChartData());
 
 }

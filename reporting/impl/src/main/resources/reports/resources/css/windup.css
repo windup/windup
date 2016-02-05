@@ -317,3 +317,7 @@ p.windup-contributors  {
   display: -ms-flexbox;
   display:         flex;
 }
+
+strong {
+  font-size: 12px;
+}
