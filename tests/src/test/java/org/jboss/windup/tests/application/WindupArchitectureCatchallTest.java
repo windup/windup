@@ -92,7 +92,7 @@ public class WindupArchitectureCatchallTest extends WindupArchitectureTest
         TestMigrationIssuesReportUtil migrationIssuesReportUtil = new TestMigrationIssuesReportUtil();
         migrationIssuesReportUtil.loadPage(catchallAppReport);
 
-        Assert.assertTrue(migrationIssuesReportUtil.checkIssue("java.util.* found ", 7, 7, "Requires Architectural Change", 49));
+        Assert.assertTrue(migrationIssuesReportUtil.checkIssue("java.util.* found ", 7, 7, "Requires architectural decision or change", 49));
     }
 
     @Singleton

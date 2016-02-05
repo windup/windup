@@ -8,6 +8,7 @@ import org.jboss.windup.reporting.service.EffortReportService;
 import org.jboss.windup.util.ExecutionStatistics;
 
 import freemarker.template.SimpleNumber;
+import freemarker.template.TemplateBooleanModel;
 import freemarker.template.TemplateModelException;
 
 /**
@@ -35,13 +36,19 @@ public class GetEffortDescriptionForPoints implements WindupFreeMarkerMethod
     public Object exec(List arguments) throws TemplateModelException
     {
         ExecutionStatistics.get().begin(NAME);
-        if (arguments.size() != 1)
+        if (arguments.size() < 1)
         {
-            throw new TemplateModelException("Error, method expects one argument (Integer)");
+            throw new TemplateModelException("Error, method expects one or two arguments (Integer, [verbose:boolean])");
         }
         SimpleNumber simpleNumber = (SimpleNumber) arguments.get(0);
         int effort = simpleNumber.getAsNumber().intValue();
-        Map<Integer, String> effortToDescription = EffortReportService.getEffortLevelDescriptionMappings();
+
+        boolean verbose = false;
+        if (arguments.size() > 1)
+            verbose = ((TemplateBooleanModel) arguments.get(1)).getAsBoolean();
+
+        Map<Integer, String> effortToDescription = verbose ? EffortReportService.getVerboseEffortLevelDescriptionMappings()
+                    : EffortReportService.getEffortLevelDescriptionMappings();
         String result = effortToDescription.containsKey(effort) ? effortToDescription.get(effort) : EffortReportService.UNKNOWN;
 
         ExecutionStatistics.get().end(NAME);

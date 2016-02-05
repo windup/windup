@@ -16,6 +16,7 @@ import org.jboss.windup.reporting.model.EffortReportModel;
 public class EffortReportService extends GraphService
 {
     private static Map<Integer, String> effortLevelDescriptionMap = Collections.synchronizedMap(new LinkedHashMap<Integer, String>());
+    private static Map<Integer, String> effortLevelDescriptionVerboseMap = Collections.synchronizedMap(new LinkedHashMap<Integer, String>());
 
     public static final String UNKNOWN = "Unknown";
     public static final String REQUIRES_ARCHITECTURAL_CHANGE = "Requires Architectural Change";
@@ -32,6 +33,13 @@ public class EffortReportService extends GraphService
         effortLevelDescriptionMap.put(5, REDESIGN);
         effortLevelDescriptionMap.put(7, REQUIRES_ARCHITECTURAL_CHANGE);
         effortLevelDescriptionMap.put(13, UNKNOWN);
+
+        effortLevelDescriptionVerboseMap.put(0, "Info");
+        effortLevelDescriptionVerboseMap.put(1, "Trivial change or 1-1 library swap");
+        effortLevelDescriptionVerboseMap.put(3, "Complex change with documented solution");
+        effortLevelDescriptionVerboseMap.put(5, "Complex change with documented solution");
+        effortLevelDescriptionVerboseMap.put(7, "Requires architectural decision or change");
+        effortLevelDescriptionVerboseMap.put(13, "Unknown effort");
     }
 
     public EffortReportService(GraphContext context)
@@ -45,5 +53,13 @@ public class EffortReportService extends GraphService
     public static Map<Integer, String> getEffortLevelDescriptionMappings()
     {
         return effortLevelDescriptionMap;
+    }
+
+    /**
+     * Gets a mapping from effort level to a verbose description.
+     */
+    public static Map<Integer, String> getVerboseEffortLevelDescriptionMappings()
+    {
+        return effortLevelDescriptionVerboseMap;
     }
 }

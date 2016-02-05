@@ -51,7 +51,7 @@
         </td>
         <td>${problemSummary.numberFound}</td>
         <td>${problemSummary.effortPerIncident}</td>
-        <td>${getEffortDescriptionForPoints(problemSummary.effortPerIncident)}</td>
+        <td>${getEffortDescriptionForPoints(problemSummary.effortPerIncident, true)}</td>
         <td>${problemSummary.numberFound * problemSummary.effortPerIncident}</td>
     </tr>
 </#macro>
