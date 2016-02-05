@@ -3,8 +3,10 @@ package org.jboss.windup.reporting.service;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.tools.ant.taskdefs.Length.FileMode;
@@ -62,7 +64,7 @@ public class InlineHintService extends GraphService<InlineHintModel>
     /**
      * Returns the total effort points in all of the {@link InlineHintModel} instances associated with the provided {@link FileModel}.
      */
-    public int getMigrationEffortPoints(FileModel fileModel)
+    public int getMigrationEffortDetails(FileModel fileModel)
     {
         GremlinPipeline<Vertex, Vertex> inlineHintPipeline = new GremlinPipeline<>(fileModel.asVertex());
         inlineHintPipeline.in(InlineHintModel.FILE_MODEL);
@@ -120,8 +122,11 @@ public class InlineHintService extends GraphService<InlineHintModel>
      * <p/>
      * If set to recursive, then also include the effort points from child projects.
      */
-    public int getMigrationEffortPoints(ProjectModel initialProject, Set<String> includeTags, Set<String> excludeTags, boolean recursive)
+    public Map<Integer, Integer> getMigrationEffortDetails(ProjectModel initialProject, Set<String> includeTags, Set<String> excludeTags,
+                boolean recursive)
     {
+        Map<Integer, Integer> results = new HashMap<>();
+
         final Set<Vertex> initialVertices = new HashSet<>();
         if (recursive)
         {
@@ -151,7 +156,6 @@ public class InlineHintService extends GraphService<InlineHintModel>
         });
         inlineHintPipeline.back("hint");
 
-        int hintEffort = 0;
         for (Vertex v : inlineHintPipeline)
         {
             // only check tags if we have some passed in
@@ -162,8 +166,13 @@ public class InlineHintService extends GraphService<InlineHintModel>
                     continue;
             }
 
-            hintEffort += (Integer) v.getProperty(EffortReportModel.EFFORT);
+            int migrationEffort = (Integer) v.getProperty(EffortReportModel.EFFORT);
+
+            if (!results.containsKey(migrationEffort))
+                results.put(migrationEffort, 1);
+            else
+                results.put(migrationEffort, results.get(migrationEffort) + 1);
         }
-        return hintEffort;
+        return results;
     }
 }

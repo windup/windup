@@ -12,6 +12,7 @@ import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.exception.WindupException;
 
 import freemarker.ext.beans.BeanModel;
+import freemarker.template.DefaultListAdapter;
 import freemarker.template.SimpleSequence;
 import freemarker.template.TemplateModelException;
 
@@ -96,6 +97,11 @@ public class SortFilesByPathMethod implements WindupFreeMarkerMethod
         {
             SimpleSequence simpleSequence = (SimpleSequence) arg;
             return (Iterable<FileModel>) simpleSequence.toList();
+        }
+        else if (arg instanceof DefaultListAdapter)
+        {
+            DefaultListAdapter defaultListAdapter = (DefaultListAdapter) arg;
+            return (Iterable<FileModel>) defaultListAdapter.getWrappedObject();
         }
         else
         {

@@ -16,6 +16,10 @@
 </#macro>
 
 <#macro applicationReportRenderer applicationReport>
+        <#assign effortLevels = getEffortDetailsForProject(applicationReport.projectModel, true)>
+        <#assign totalEffort = 0>
+        <#assign totalIncidents = 0>
+
 		<tr>
 			<td>
 				<a href="reports/${applicationReport.reportFilename}">${applicationReport.projectModel.rootFileModel.fileName}</a>
@@ -32,7 +36,17 @@
         		</#list>
     		</td>
     		<td>
-      			${getMigrationEffortPoints(applicationReport.projectModel, true)} Story Points
+      			<#list effortLevels?keys as effortLevel>
+      			    <div class="col-sm-1">${effortLevels?api.get(effortLevel)}</div>
+      			    <div class="col-sm-11">${getEffortDescriptionForPoints(effortLevel, true)}</div>
+      			    <#assign totalEffort = totalEffort + (effortLevel * effortLevels?api.get(effortLevel)) >
+      			    <#assign totalIncidents = totalIncidents + effortLevels?api.get(effortLevel) >
+      			</#list>
+                <div class="col-sm-1">${totalIncidents}</div>
+                <div class="col-sm-11">Total</div>
+    		</td>
+    		<td>
+                ${totalEffort}
     		</td>
 		</tr>
 </#macro>
@@ -101,7 +115,10 @@
             <!-- Table -->
             <table class="table table-striped table-bordered">
                <tr>
-                  <th>Name</th><th>Technology</th><th>Effort</th>
+                  <th>Name</th>
+                  <th>Technology</th>
+                  <th>Incident Count</th>
+                  <th>Total Effort Points</th>
                </tr>
 
                <#list reportModel.relatedResources.applications.list.iterator() as applicationReport>

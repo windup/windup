@@ -3,6 +3,7 @@ package org.jboss.windup.reporting;
 import java.io.File;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -58,7 +59,10 @@ public class InlineHintServiceTest
 
             ProjectModel projectModel = fillData(context);
             Set<String> emptySet = Collections.emptySet();
-            int totalEffort = inlineHintService.getMigrationEffortPoints(projectModel, emptySet, emptySet, true);
+            final Map<Integer, Integer> effortByCategory = inlineHintService.getMigrationEffortDetails(projectModel, emptySet, emptySet, true);
+            int totalEffort = 0;
+            for (Map.Entry<Integer, Integer> effortEntry : effortByCategory.entrySet())
+                totalEffort += effortEntry.getKey() * effortEntry.getValue();
             Assert.assertEquals(153, totalEffort);
 
             boolean foundF1Effort = false;
@@ -67,13 +71,13 @@ public class InlineHintServiceTest
             {
                 if (fm.getFilePath().equals("/f1"))
                 {
-                    int fileEffort = inlineHintService.getMigrationEffortPoints(fm);
+                    int fileEffort = inlineHintService.getMigrationEffortDetails(fm);
                     Assert.assertEquals(150, fileEffort);
                     foundF1Effort = true;
                 }
                 else if (fm.getFilePath().equals("/f2"))
                 {
-                    int fileEffort = inlineHintService.getMigrationEffortPoints(fm);
+                    int fileEffort = inlineHintService.getMigrationEffortDetails(fm);
                     Assert.assertEquals(3, fileEffort);
                     foundF2Effort = true;
                 }

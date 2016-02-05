@@ -2,6 +2,7 @@ package org.jboss.windup.reporting;
 
 import java.io.File;
 import java.util.Collections;
+import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -53,7 +54,11 @@ public class ClassificationServiceTest
 
             ProjectModel projectModel = fillData(context);
             Set<String> emptySet = Collections.emptySet();
-            int totalEffort = classificationService.getMigrationEffortPoints(projectModel, emptySet, emptySet, true);
+            final Map<Integer, Integer> effortByCategory = classificationService.getMigrationEffortDetails(projectModel, emptySet, emptySet, true);
+            int totalEffort = 0;
+            for (Map.Entry<Integer, Integer> effortEntry : effortByCategory.entrySet())
+                totalEffort += effortEntry.getKey() * effortEntry.getValue();
+
             Assert.assertEquals(143, totalEffort);
 
             boolean foundF1Effort = false;
@@ -62,13 +67,13 @@ public class ClassificationServiceTest
             {
                 if (fm.getFilePath().equals("/f1"))
                 {
-                    int fileEffort = classificationService.getMigrationEffortPoints(fm);
+                    int fileEffort = classificationService.getMigrationEffortDetails(fm);
                     Assert.assertEquals(140, fileEffort);
                     foundF1Effort = true;
                 }
                 else if (fm.getFilePath().equals("/f2"))
                 {
-                    int fileEffort = classificationService.getMigrationEffortPoints(fm);
+                    int fileEffort = classificationService.getMigrationEffortDetails(fm);
                     Assert.assertEquals(3, fileEffort);
                     foundF2Effort = true;
                 }

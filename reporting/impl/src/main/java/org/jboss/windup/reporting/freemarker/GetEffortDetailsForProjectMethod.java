@@ -1,7 +1,9 @@
 package org.jboss.windup.reporting.freemarker;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.jboss.windup.config.GraphRewrite;
@@ -27,9 +29,9 @@ import freemarker.template.TemplateModelException;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
  */
-public class GetEffortForProjectMethod implements WindupFreeMarkerMethod
+public class GetEffortDetailsForProjectMethod implements WindupFreeMarkerMethod
 {
-    private static final String NAME = "getMigrationEffortPoints";
+    private static final String NAME = "getEffortDetailsForProject";
     private ClassificationService classificationService;
     private InlineHintService inlineHintService;
 
@@ -80,9 +82,21 @@ public class GetEffortForProjectMethod implements WindupFreeMarkerMethod
             excludeTags = FreeMarkerUtil.simpleSequenceToSet((SimpleSequence) arguments.get(3));
         }
 
-        Object result = classificationService.getMigrationEffortPoints(projectModel, includeTags, excludeTags, recursive)
-                    + inlineHintService.getMigrationEffortPoints(projectModel, includeTags, excludeTags, recursive);
+        Map<Integer, Integer> classificationEffortDetails = classificationService.getMigrationEffortDetails(projectModel, includeTags, excludeTags,
+                    recursive);
+        Map<Integer, Integer> hintEffortDetails = inlineHintService.getMigrationEffortDetails(projectModel, includeTags, excludeTags, recursive);
+
+        Map<Integer, Integer> results = new HashMap<>(classificationEffortDetails.size() + hintEffortDetails.size());
+        results.putAll(classificationEffortDetails);
+        for (Map.Entry<Integer, Integer> entry : hintEffortDetails.entrySet())
+        {
+            if (!results.containsKey(entry.getKey()))
+                results.put(entry.getKey(), entry.getValue());
+            else
+                results.put(entry.getKey(), results.get(entry.getKey()) + entry.getValue());
+        }
+
         ExecutionStatistics.get().end(NAME);
-        return result;
+        return results;
     }
 }

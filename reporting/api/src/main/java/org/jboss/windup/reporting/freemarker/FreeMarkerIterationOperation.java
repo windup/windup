@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -25,9 +26,9 @@ import org.jboss.windup.util.ExecutionStatistics;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 import freemarker.template.Configuration;
+import freemarker.template.DefaultObjectWrapperBuilder;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
-import java.util.Arrays;
 
 /**
  * This class is used to produce a freemarker report from inside of a Windup {@link Iteration}.
@@ -100,6 +101,10 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
             LOG.info("Reporting: Writing template \"" + templatePath + "\" to output file \"" + outputPath.toAbsolutePath().toString() + "\"");
 
             Configuration freemarkerConfig = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
+            DefaultObjectWrapperBuilder objectWrapperBuilder = new DefaultObjectWrapperBuilder(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
+            objectWrapperBuilder.setUseAdaptersForContainers(true);
+            freemarkerConfig.setObjectWrapper(objectWrapperBuilder.build());
+            freemarkerConfig.setAPIBuiltinEnabled(true);
             freemarkerConfig.setTemplateLoader(new FurnaceFreeMarkerTemplateLoader());
             freemarkerConfig.setTemplateUpdateDelayMilliseconds(3600);
 
