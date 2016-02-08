@@ -14,10 +14,7 @@
         <div class="row">
             <div class="page-header page-header-no-border">
                 <h1>
-                    <div class="main"
-                            onmouseover="$(this).parent().parent().addClass('showDesc')"
-                            onmouseout=" $(this).parent().parent().removeClass('showDesc')"
-                                  >Classloader Report</div>
+                    <div class="main">Classloader Report</div>
                     <div class="path">${application.applicationName?html}</div>
                 </h1>
                 <div class="desc">

@@ -93,10 +93,7 @@
             <div class="row">
                 <div class="page-header">
                     <h1>
-                        <div class="main"
-                        onmouseover="$(this).parent().parent().addClass('showDesc')"
-                        onmouseout=" $(this).parent().parent().removeClass('showDesc')"
-                        >Application list</div>
+                        <div class="main">Application list</div>
                         <div class="path">Profiled by Windup</div>
                     </h1>
                     <div class="desc">
