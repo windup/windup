@@ -2,22 +2,22 @@
 <xs:schema targetNamespace="http://windup.jboss.org/schema/jboss-ruleset" xmlns="http://windup.jboss.org/schema/jboss-ruleset" xmlns:xs="http://www.w3.org/2001/XMLSchema"
     elementFormDefault="qualified">
 
-   <!-- Root element for Windup tests rules. -->
-   <xs:element name="ruletest">
-      <xs:annotation>
-         <xs:documentation>Root element of Windup rules test.
-         </xs:documentation>
-      </xs:annotation>
-      <xs:complexType>
-         <xs:sequence>
-            <xs:element name="testDataPath" minOccurs="1" type="xs:string" />
-            <xs:element name="sourceMode" minOccurs="0" maxOccurs="1" type="xs:boolean" />
-            <xs:element name="rulePath" minOccurs="0" type="xs:string" />
-            <xs:element ref="ruleset" minOccurs="0" maxOccurs="unbounded" />
-         </xs:sequence>
-         <xs:attribute type="xs:string" name="id"/>
-      </xs:complexType>
-   </xs:element>
+    <!-- Root element for Windup tests rules. -->
+    <xs:element name="ruletest">
+        <xs:annotation>
+            <xs:documentation>Root element of Windup rules test.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="testDataPath" minOccurs="1" type="xs:string" />
+                <xs:element name="sourceMode" minOccurs="0" maxOccurs="1" type="xs:boolean" />
+                <xs:element name="rulePath" minOccurs="0" type="xs:string" />
+                <xs:element ref="ruleset" minOccurs="0" maxOccurs="unbounded" />
+            </xs:sequence>
+            <xs:attribute type="xs:string" name="id"/>
+        </xs:complexType>
+    </xs:element>
 
     <!-- Root element. -->
     <xs:element name="ruleset">
@@ -186,7 +186,7 @@
             </xs:extension>
         </xs:complexContent>
     </xs:complexType>
-    
+
     <!-- TEST CONDITION DEFINITIONS -->
 
    <xs:element name="classification-exists">
@@ -200,7 +200,7 @@
       <xs:complexType>
          <xs:attribute type="xs:string" name="filename" use="required" />
       </xs:complexType>
-   </xs:element>   
+   </xs:element>
 
    <xs:element name="hint-exists">
       <xs:complexType>
@@ -215,9 +215,9 @@
          <xs:attribute type="xs:string" name="in"/>
       </xs:complexType>
    </xs:element>
-   
+
    <!-- OPERATION DEFINITIONS -->
-   
+
    <xs:element name="fail">
       <xs:complexType>
          <xs:attribute type="xs:string" name="message" />
@@ -238,7 +238,7 @@
             <xs:attribute type="xs:string" name="severity" use="optional" />
             <xs:attribute type="xs:string" name="in" use="optional" />
             <xs:attribute type="xs:byte" name="effort" use="optional" />
-<!--             <xs:attribute type="xs:string" name="message" use="optional"/> -->
+            <!-- <xs:attribute type="xs:string" name="message" use="optional"/> -->
         </xs:complexType>
     </xs:element>
 
@@ -399,7 +399,15 @@
     <xs:complexType name="mapping">
         <xs:attribute type="xs:string" name="from" use="required" />
         <xs:attribute type="xs:string" name="to" use="required" />
+        <xs:attribute type="onParseError-type" name="onParseError" />
     </xs:complexType>
+
+    <xs:simpleType name="onParseError-type">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="ignore"/>
+            <xs:enumeration value="warn"/>
+        </xs:restriction>
+    </xs:simpleType>
 
     <xs:complexType name="javaclass-ignore">
         <xs:attribute type="xs:string" name="reference-prefix" use="required" />
