@@ -18,7 +18,7 @@
     <link rel='stylesheet' type='text/css' href='resources/libraries/flot/plot.css' />
     <style>
 .report-index-row {
-  margin-top: 10px;
+    margin: 10px -32px 0;
 }
     </style>
 </head>
