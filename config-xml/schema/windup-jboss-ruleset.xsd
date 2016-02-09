@@ -234,13 +234,21 @@
                 <xs:element ref="link" minOccurs="0" maxOccurs="unbounded" />
                 <xs:element name="tag" minOccurs="0" maxOccurs="unbounded" type="xs:string" />
             </xs:sequence>
-            <xs:attribute type="xs:string" name="title" use="required"/>
-            <xs:attribute type="xs:string" name="severity" use="optional" />
-            <xs:attribute type="xs:string" name="in" use="optional" />
-            <xs:attribute type="xs:byte" name="effort" use="optional" />
+            <xs:attribute name="title" type="xs:string" use="required"/>
+            <xs:attribute name="severity" type="severity-type" use="optional" />
+            <xs:attribute name="in" type="xs:string" use="optional" />
+            <xs:attribute name="effort" type="xs:byte" use="optional" />
             <!-- <xs:attribute type="xs:string" name="message" use="optional"/> -->
         </xs:complexType>
     </xs:element>
+
+    <xs:simpleType name="severity-type">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="optional"/>
+            <xs:enumeration value="mandatory"/>
+            <xs:enumeration value="potential_issues"/>
+        </xs:restriction>
+    </xs:simpleType>
 
     <!-- Classification -->
     <xs:element name="classification">
@@ -250,10 +258,10 @@
                 <xs:element ref="link" minOccurs="0" maxOccurs="unbounded" />
                 <xs:element name="tag" minOccurs="0" maxOccurs="unbounded" type="xs:string" />
             </xs:sequence>
-            <xs:attribute type="xs:string" name="title" use="required"/>
-            <xs:attribute type="xs:byte" name="effort" use="optional" />
-            <xs:attribute type="xs:string" name="severity" use="optional" />
-            <xs:attribute type="xs:string" name="of" use="optional" />
+            <xs:attribute name="title" type="xs:string" use="required"/>
+            <xs:attribute name="effort" type="xs:byte" use="optional" />
+            <xs:attribute name="severity" type="severity-type" use="optional" />
+            <xs:attribute name="of" type="xs:string" use="optional" />
         </xs:complexType>
     </xs:element>
 

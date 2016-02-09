@@ -121,7 +121,7 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider
                 issueSummaryWriter.write("var severityOrder = [");
                 issueSummaryWriter.write("\"" + Severity.MANDATORY + "\", ");
                 issueSummaryWriter.write("\"" + Severity.OPTIONAL + "\", ");
-                issueSummaryWriter.write("\"" + Severity.POSSIBLE_ISSUES.toString() + "\"");
+                issueSummaryWriter.write("\"" + Severity.POTENTIAL_ISSUES.toString() + "\"");
                 issueSummaryWriter.write("];" + OperatingSystemUtils.getLineSeparator());
             }
         }
