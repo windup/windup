@@ -8,6 +8,8 @@ public enum Severity
 {
     /**
      * It must be migrated
+     *//**
+     * It must be migrated
      */
     MANDATORY("Mandatory"),
     /**
@@ -15,9 +17,9 @@ public enum Severity
      */
     OPTIONAL("Optional"),
     /**
-     * Possible issues
+     * Possible issues - if the rule author can't tell in advance if the occurence will cause issues or not.
      */
-    POSSIBLE_ISSUES("Potential Issues");
+    POTENTIAL_ISSUES("Potential Issues");
 
     private String description;
 
