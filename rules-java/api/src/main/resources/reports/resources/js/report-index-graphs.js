@@ -312,11 +312,11 @@ function createIncidentsByCategoryTable() {
         row += severity;
         row += "</td>";
 
-        row += "<td>";
+        row += "<td class='numeric-column'>";
         row += incidentCount;
         row += "</td>";
 
-        row += "<td>";
+        row += "<td class='numeric-column'>";
         row += totalEffort;
         row += "</td>";
 
@@ -376,11 +376,11 @@ function createIncidentsByEffortTable() {
         row += effortDescription;
         row += "</td>";
 
-        row += "<td>";
+        row += "<td class='numeric-column'>";
         row += byEffortCount[effort];
         row += "</td>";
 
-        row += "<td>";
+        row += "<td class='numeric-column'>";
         row += totalEffort;
         row += "</td>";
 

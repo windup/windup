@@ -83,10 +83,7 @@
         <div class="row">
             <div class="page-header page-header-no-border">
                 <h1>
-                    <div class="main"
-                        onmouseover="$(this).parent().parent().addClass('showDesc')"
-                        onmouseout=" $(this).parent().parent().removeClass('showDesc')"
-                              >Ignored Files Report</div>
+                    <div class="main">Ignored Files Report</div>
                     <div class="path">${reportModel.projectModel.name?html}</div>
                 </h1>
                 <div class="desc">

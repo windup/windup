@@ -113,10 +113,7 @@
             <div class="row">
                 <div class="page-header page-header-no-border">
                     <h1>
-                        <div class="main"
-                        onmouseover="$(this).parent().parent().addClass('showDesc')"
-                        onmouseout=" $(this).parent().parent().removeClass('showDesc')"
-                        >${reportModel.reportName} Report</div>
+                        <div class="main">${reportModel.reportName} Report</div>
                         <#if reportModel.projectModel??>
                             <div class="path">${reportModel.projectModel.name?html}</div>
                         </#if>

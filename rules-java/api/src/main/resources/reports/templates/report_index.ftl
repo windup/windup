@@ -18,7 +18,8 @@
     <link rel='stylesheet' type='text/css' href='resources/libraries/flot/plot.css' />
     <style>
 .report-index-row {
-    margin: 10px -32px 0;
+    margin: 10px -32px 0px 5px;
+    margin-bottom: 25px;
 }
     </style>
 </head>
@@ -66,10 +67,10 @@
                                     <td>
                                         <b>Incidents by Category</b>
                                     </td>
-                                    <td>
+                                    <td class='numeric-column'>
                                         <b>Incidents</b>
                                     </td>
-                                    <td>
+                                    <td class='numeric-column'>
                                         <b>Total Story Points</b>
                                     </td>
                                 </tr>
@@ -99,10 +100,10 @@
                                     <td>
                                         <b>Mandatory Incidents by Type</b>
                                     </td>
-                                    <td>
+                                    <td class='numeric-column'>
                                         <b>Incidents</b>
                                     </td>
-                                    <td>
+                                    <td class='numeric-column'>
                                         <b>Total Story Points</b>
                                     </td>
                                 </tr>
@@ -124,14 +125,14 @@
             </div>
 
             <div class="row col-md-12 report-index-row">
-                <div class="panel col-md-3">
+                <div class="col-md-3">
                     <table class="table table-condensed table-striped">
                         <thead>
                             <tr>
                                 <td>
                                     <b>Java Incidents by Package</b>
                                 </td>
-                                <td>
+                                <td class='numeric-column'>
                                     <b>Incidents</b>
                                 </td>
                             </tr>
@@ -139,8 +140,7 @@
                         <tbody id="javaIncidentsByPackageTBody">
                         </tbody>
                     </table>
-
-                    Note: this does not include XML files and "possible" issues.
+                    <span class="note">Note: this does not include XML files and "possible" issues.</span>
                 </div>
                 <div class="panel col-md-6">
                     <div style="margin-bottom: 10px; margin-left: 190px;">
@@ -216,7 +216,7 @@
             row += WINDUP_PACKAGE_PIE_DATA['application_pie'][i].label;
             row += "</td>";
 
-            row += "<td>";
+            row += "<td class='numeric-column'>";
             row += WINDUP_PACKAGE_PIE_DATA['application_pie'][i].data;
             row += "</td>";
 

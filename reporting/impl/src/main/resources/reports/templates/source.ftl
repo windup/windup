@@ -35,10 +35,7 @@
         <div class="row">
             <div class="page-header page-header-no-border">
                 <h1>
-                    <div class="main"
-                        onmouseover="$(this).parent().parent().addClass('showDesc')"
-                        onmouseout=" $(this).parent().parent().removeClass('showDesc')"
-                              >Source Report</div>
+                    <div class="main">Source Report</div>
                     <div class="path">${reportModel.sourceFileModel.prettyPath?html}</div>
                 </h1>
                 <div class="desc">
