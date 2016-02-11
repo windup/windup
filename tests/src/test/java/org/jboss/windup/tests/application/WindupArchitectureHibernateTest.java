@@ -2,7 +2,6 @@ package org.jboss.windup.tests.application;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -142,7 +141,7 @@ public class WindupArchitectureHibernateTest extends WindupArchitectureTest
                     ReportModel.TEMPLATE_PATH,
                     CreateHibernateReportRuleProvider.TEMPLATE_HIBERNATE_REPORT);
         TestHibernateReportUtil util = new TestHibernateReportUtil();
-        Path reportPath = Paths.get(reportService.getReportDirectory(), reportModel.getReportFilename());
+        Path reportPath = reportService.getReportDirectory().resolve(reportModel.getReportFilename());
         util.loadPage(reportPath);
         Assert.assertTrue(util.checkSessionFactoryPropertyInReport("connection.pool_size", "2"));
         Assert.assertTrue(util.checkSessionFactoryPropertyInReport("cache.provider_class", "org.hibernate.cache.NoCacheProvider"));
@@ -158,7 +157,7 @@ public class WindupArchitectureHibernateTest extends WindupArchitectureTest
     {
         ReportService reportService = new ReportService(context);
         ReportModel reportModel = getMainApplicationReport(context);
-        Path appReportPath = Paths.get(reportService.getReportDirectory(), reportModel.getReportFilename());
+        Path appReportPath = reportService.getReportDirectory().resolve(reportModel.getReportFilename());
 
         TestJavaApplicationOverviewUtil util = new TestJavaApplicationOverviewUtil();
         util.loadPage(appReportPath);

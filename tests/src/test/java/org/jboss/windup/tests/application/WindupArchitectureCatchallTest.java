@@ -1,7 +1,6 @@
 package org.jboss.windup.tests.application;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -78,10 +77,10 @@ public class WindupArchitectureCatchallTest extends WindupArchitectureTest
     {
         ReportService reportService = new ReportService(context);
         ReportModel mainApplicationReportModel = getMainApplicationReport(context);
-        Path mainAppReport = Paths.get(reportService.getReportDirectory(), mainApplicationReportModel.getReportFilename());
+        Path mainAppReport = reportService.getReportDirectory().resolve(mainApplicationReportModel.getReportFilename());
 
         ReportModel catchallApplicationReportModel = getCatchallApplicationReport(context);
-        Path catchallAppReport = Paths.get(reportService.getReportDirectory(), catchallApplicationReportModel.getReportFilename());
+        Path catchallAppReport = reportService.getReportDirectory().resolve(catchallApplicationReportModel.getReportFilename());
 
         TestJavaApplicationOverviewUtil javaApplicationOverviewUtil = new TestJavaApplicationOverviewUtil();
         javaApplicationOverviewUtil.loadPage(mainAppReport);

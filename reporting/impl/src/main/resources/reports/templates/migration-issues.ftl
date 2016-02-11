@@ -10,49 +10,11 @@
         <td class="level">${getEffortDescriptionForPoints(problemSummary.effortPerIncident, 'verbose')}</td>
         <td class="text-right">${problemSummary.numberFound * problemSummary.effortPerIncident}</td>
     </tr>
-    <tr class="tablesorter-childRow bg-info">
+    <tr class="tablesorter-childRow bg-info" data-summary-id="${problemSummary.id?c}">
         <td><div class="indent"><strong>File</strong></div></td>
         <td class="text-right"><strong>Incidents Found</strong></td>
         <td colspan="3"><strong>Hint</strong></td>
     </tr>
-    <#list problemSummary.descriptions as description>
-        <#assign filesCount=problemSummary.getFilesForDescription(description)?size>
-        <#list problemSummary.getFilesForDescription(description) as fileSummary>
-            <tr class="fileSummary tablesorter-childRow">
-                <td>
-                    <div class="indent"> <@render_link model=fileSummary.file class="migration-issues-detailed-item"/> </div>
-                </td>
-                <td class="text-right">
-                    <@render_link model=fileSummary.file text="#{fileSummary.occurences}" class="migration-issues-detailed-item"/><#t>
-                </td>
-                <#if fileSummary?is_first>
-                    <td colspan="3" rowspan="${filesCount}">
-                        <div class="panel panel-default hint-detail-panel">
-                            <div class="panel-heading">
-                                <h4 class="panel-title pull-left">Issue Detail: ${problemSummary.issueName}</h4>
-                                <#if problemSummary.ruleID??>
-                                <div class="pull-right"><a class="sh_url" title="${problemSummary.ruleID}" href="windup_ruleproviders.html#${problemSummary.ruleID}">Show Rule</a></div>
-                                </#if>
-                                <div class="clearfix"></div>
-                            </div>
-                            <div class="panel-body">
-                                ${markdownToHtml(description!"-- No detailed text --")}
-                            </div>
-                            <#list problemSummary.links!>
-                            <div class="panel-body">
-                                <ul>
-                                <#items as link>
-                                    <li><a href="${link.link}">${link.title}</a></li>
-                                </#items>
-                                </ul>
-                            </div>
-                            </#list>
-                        </div>
-                    </td>
-                </#if>
-            </tr>
-        </#list>
-    </#list>
 
 </#macro>
 
@@ -211,6 +173,8 @@
         <script src="resources/js/bootstrap.min.js"></script>
         <script src="resources/js/jquery.tablesorter.min.js"></script>
         <script src="resources/js/jquery.tablesorter.widgets.min.js"></script>
+        <script src="resources/libraries/handlebars/handlebars.4.0.5.min.js"></script>
+
         <script type="text/javascript">
             $(document).ready(function() {
 
@@ -255,48 +219,49 @@
                     })
                     .hide();
 
+                // we need these parsers because we are using comma to separate thousands and are also sorting links
+                $.tablesorter.addParser({
+                     id: 'thousands',
+                     is: function(s) { return true; },
+                     format: function(s) {
+                         return s.replace('$','').replace(/,/g,'');
+                     },
+                     type: 'numeric'
+                });
+                $.tablesorter.addParser({
+                    id: 'a-elements',
+                    is: function(s) { return true; },
+                    format: function(s)
+                    {
+                        // format your data for normalization
+                        return s.replace(new RegExp(/<.*?>/),"");
+                    },
+                    parsed: true,
+                    type: 'text'
+                });
+
                 $table
                     .tablesorter({
                         // this is the default setting
-                        cssChildRow: "tablesorter-childRow"
+                        cssChildRow: "tablesorter-childRow",
+                        sortList: [[1,1]],
+                        headers: {
+                            0: {sorter: 'a-elements'},
+                            1: {sorter: 'thousands'},
+                            2: {sorter: 'thousands'},
+                            3: {sorter: false},
+                            4: {sorter: 'thousands'},
+                        }
                     })
                     .delegate('.toggle', 'click' ,function(){
                         $(this)
                             .closest('tr')
                             .nextUntil('tr.tablesorter-hasChildRow')
-                            .find('td').toggle();
+                            .find('td').first().each(function(index, element) { showDetails(element) });
                         return false;
                     });
 
             });
-
-            // we need these parsers because we are using comma to separate thousands and are also sorting links
-            $.tablesorter.addParser({
-           		 id: 'thousands',
-           		 is: function(s) {
-          		      return true;
-           		 },
-         		 format: function(s) {
-           		     return s.replace('$','').replace(/,/g,'');
-           		 },
-          		 type: 'numeric'
-        	    });
-                $.tablesorter.addParser({
-                id: 'a-elements',
-                is: function(s)
-                {
-                    // return false so this parser is not auto detected
-                    return false;
-                },
-                format: function(s)
-                {
-                    // format your data for normalization
-                    return s.replace(new RegExp(/<.*?>/),"");
-                },
-                type: 'text'
-            });
-
-
 
        	    function resizeTables()
             {
@@ -328,5 +293,128 @@
             window.onload = resizeTables;
 
         </script>
+
+        <#noparse>
+        <script id="detail-row-template" type="text/x-handlebars-template">
+            {{#each problemSummaries}}
+                {{#each files}}
+                    <tr class="fileSummary tablesorter-childRow fileSummary_id_{{../problemSummaryID}}">
+                        <td>
+                            <div class="indent">
+                                {{{link}}}
+                            </div>
+                        </td>
+                        <td class="text-right">
+                            {{occurrences}}
+                        </td>
+
+                        {{#if @first}}
+                            <td colspan="3" rowspan="{{../files.length}}">
+                                <div class="panel panel-default hint-detail-panel">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title pull-left">Issue Detail: {{../issueName}}</h4>
+                                        {{#if ../ruleID}}
+                                            <div class="pull-right">
+                                                <a class="sh_url" title="{{../ruleID}}" href="windup_ruleproviders.html#{{../ruleID}}">Show Rule</a>
+                                            </div>
+                                        {{/if}}
+                                        <div class="clearfix"></div>
+                                    </div>
+                                    <div class="panel-body">
+                                        {{{../description}}}
+                                    </div>
+
+                                    {{#if ../resourceLinks}}
+                                        <div class="panel-body">
+                                            <ul>
+                                                {{#each ../resourceLinks}}
+                                                    <li><a href="{{link}}">{{title}}</a></li>
+                                                {{/each}}
+                                            </ul>
+                                        </div>
+                                    {{/if}}
+                                </div>
+                            </td>
+                        {{/if}}
+                    </tr>
+                {{/each}}
+            {{/each}}
+        </script>
+        </#noparse>
+
+        <script type="text/javascript">
+            var issueDataLoaded = [];
+
+            function showDetails(element) {
+                var problemSummaryID = $(element).parent().attr("data-summary-id")
+                var tr = $(element).parent();
+
+                var issueDataArray = MIGRATION_ISSUES_DETAILS[problemSummaryID];
+                if (!issueDataLoaded[problemSummaryID]) {
+                    // append it and try again in a second
+                    var script = document.createElement("script");
+                    script.type = "text/javascript";
+                    script.src = "data/problem_summary_" + problemSummaryID + ".js";
+                    document.body.appendChild(script);
+
+                    issueDataLoaded[problemSummaryID] = true;
+                    setTimeout(function() { showDetails(element); }, 25);
+                    return;
+                } else if (issueDataArray == null) {
+                    setTimeout(function() { showDetails(element); }, 25);
+                    return;
+                }
+
+                function toggleRow () {
+                    $(tr).find("td").toggle();
+                }
+
+                $(".fileSummary_id_" + problemSummaryID).remove();
+                if ($(element).is(":visible")) {
+                    toggleRow();
+                    return;
+                }
+
+                var source   = $("#detail-row-template").html();
+                var template = Handlebars.compile(source);
+                var html = template({problemSummaries: issueDataArray});
+
+                $(html).insertAfter(tr);
+
+                toggleRow();
+            }
+
+            // summary in JS should go here
+            var MIGRATION_ISSUES_DETAILS = [];
+        </script>
+
+        <#if problemsBySeverity?has_content>
+            <#list problemsBySeverity?keys as severity>
+                <#list problemsBySeverity[severity] as problemSummary>
+                    <@write_to_disk filename="problem_summary_${problemSummary.id?c}.js">
+                        MIGRATION_ISSUES_DETAILS[${problemSummary.id?c}] = [
+                        <#list problemSummary.descriptions as originalDescription>
+                            <#assign description = originalDescription!"-- No detailed text --">
+                            <#assign ruleID = problemSummary.ruleID!"">
+                            <#assign issueName = problemSummary.issueName!"">
+                            {description: "${markdownToHtml(description)    ?js_string}", ruleID: "${ruleID?js_string}", issueName: "${issueName?js_string}",
+                            problemSummaryID: "${problemSummary.id?c}", files: [
+                            <#list problemSummary.getFilesForDescription(originalDescription) as fileSummary>
+                                <#assign renderedLink><@render_link model=fileSummary.file class="migration-issues-detailed-item"/></#assign>
+                                {link: "${renderedLink?js_string}", occurrences: "${fileSummary.occurrences?js_string}"},
+                            </#list>
+                            ], resourceLinks: [
+                                <#list problemSummary.links!>
+                                    <#items as link>
+                                        {href: "${link.link?js_string}", title: "${link.title?js_string}"},
+                                    </#items>
+                                </#list>
+                            ]},
+                        </#list>
+                        ];
+                    </@write_to_disk>
+                </#list>
+            </#list>
+        </#if>
     </body>
 </html>

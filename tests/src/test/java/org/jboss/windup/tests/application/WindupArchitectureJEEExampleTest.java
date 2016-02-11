@@ -2,7 +2,6 @@ package org.jboss.windup.tests.application;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.List;
 
@@ -147,7 +146,7 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
                     ReportModel.TEMPLATE_PATH,
                     CreateEJBReportRuleProvider.TEMPLATE_EJB_REPORT);
         TestEJBReportUtil util = new TestEJBReportUtil();
-        Path reportPath = Paths.get(reportService.getReportDirectory(), reportModel.getReportFilename());
+        Path reportPath = reportService.getReportDirectory().resolve(reportModel.getReportFilename());
         util.loadPage(reportPath);
         Assert.assertTrue(util.checkBeanInReport(EJBType.MDB, "LogEventSubscriber", "com.acme.anvil.service.jms.LogEventSubscriber"));
         Assert.assertTrue(util.checkBeanInReport(EJBType.STATELESS, "ItemLookupBean", "LocalRemote", "com.acme.anvil.service.ItemLookupBean"));
@@ -158,7 +157,7 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
     {
         ReportService reportService = new ReportService(context);
         ReportModel reportModel = getMainApplicationReport(context);
-        Path appReportPath = Paths.get(reportService.getReportDirectory(), reportModel.getReportFilename());
+        Path appReportPath = reportService.getReportDirectory().resolve(reportModel.getReportFilename());
 
         TestJavaApplicationOverviewUtil util = new TestJavaApplicationOverviewUtil();
         util.loadPage(appReportPath);

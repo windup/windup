@@ -39,7 +39,6 @@ public class ProblemSummaryService
         });
         Map<RuleSummaryKey, ProblemSummary> ruleToSummary = new HashMap<>();
 
-        // Hints
         InlineHintService hintService = new InlineHintService(context);
         final Iterable<InlineHintModel> hints = projectModel == null ? hintService.findAll() : hintService.getHintsForProject(projectModel, true);
         for (InlineHintModel hint : hints)
@@ -53,7 +52,7 @@ public class ProblemSummaryService
             ProblemSummary summary = ruleToSummary.get(key);
             if (summary == null)
             {
-                summary = new ProblemSummary(hint.getSeverity(), hint.getRuleID(), hint.getTitle(), 1, hint.getEffort());
+                summary = new ProblemSummary(hint.asVertex().getId(), hint.getSeverity(), hint.getRuleID(), hint.getTitle(), 1, hint.getEffort());
                 for (LinkModel linkM : hint.getLinks()){
                     summary.addLink(linkM.getDescription(), linkM.getLink());
                 }
@@ -67,7 +66,6 @@ public class ProblemSummaryService
             summary.addFile(hint.getHint(), hint.getFile());
         }
 
-        // Classifications
         ClassificationService classificationService = new ClassificationService(context);
         for (ClassificationModel classification : classificationService.findAll())
         {
@@ -105,7 +103,8 @@ public class ProblemSummaryService
             ProblemSummary summary = ruleToSummary.get(key);
             if (summary == null)
             {
-                summary = new ProblemSummary(classification.getSeverity(), classification.getRuleID(), classification.getClassification(),
+                summary = new ProblemSummary(classification.asVertex().getId(), classification.getSeverity(), classification.getRuleID(),
+                            classification.getClassification(),
                             0, classification.getEffort());
                 for (LinkModel linkM : classification.getLinks())
                 {

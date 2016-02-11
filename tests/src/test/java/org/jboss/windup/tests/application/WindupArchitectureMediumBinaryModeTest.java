@@ -2,7 +2,6 @@ package org.jboss.windup.tests.application;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Properties;
 
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -110,7 +109,7 @@ public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTe
                     ReportModel.TEMPLATE_PATH,
                     CreateStaticIPAddressReportRuleProvider.TEMPLATE_REPORT);
         TestStaticIPReportUtil util = new TestStaticIPReportUtil();
-        Path reportPath = Paths.get(reportService.getReportDirectory(), reportModel.getReportFilename());
+        Path reportPath = reportService.getReportDirectory().resolve(reportModel.getReportFilename());
         util.loadPage(reportPath);
         Assert.assertTrue(util
                     .checkStaticIPInReport(
@@ -136,7 +135,7 @@ public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTe
         TestCompatibleReportUtil util = new TestCompatibleReportUtil();
 
 
-        Path reportPath = Paths.get(reportService.getReportDirectory(), reportModel.getReportFilename());
+        Path reportPath = reportService.getReportDirectory().resolve(reportModel.getReportFilename());
         util.loadPage(reportPath);
         Assert.assertTrue(util
                     .checkFileInReport("org/jboss/devconf/openshift/HomePage.class", ""));
@@ -153,7 +152,7 @@ public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTe
     {
         ReportService reportService = new ReportService(context);
         ReportModel reportModel = getMainApplicationReport(context);
-        Path appReportPath = Paths.get(reportService.getReportDirectory(), reportModel.getReportFilename());
+        Path appReportPath = reportService.getReportDirectory().resolve(reportModel.getReportFilename());
         TestJavaApplicationOverviewUtil util = new TestJavaApplicationOverviewUtil();
         util.loadPage(appReportPath);
         util.checkFilePathAndTag("Windup1x-javaee-example.war", "META-INF/maven/javaee/javaee/pom.properties",
@@ -175,7 +174,7 @@ public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTe
         ReportModel reportModel = reportService.getUniqueByProperty(
                     ReportModel.TEMPLATE_PATH,
                     CreateReportIndexRuleProvider.TEMPLATE);
-        Path appReportPath = Paths.get(reportService.getReportDirectory(), reportModel.getReportFilename());
+        Path appReportPath = reportService.getReportDirectory().resolve(reportModel.getReportFilename());
         TestReportIndexReportUtil util = new TestReportIndexReportUtil();
         util.loadPage(appReportPath);
 

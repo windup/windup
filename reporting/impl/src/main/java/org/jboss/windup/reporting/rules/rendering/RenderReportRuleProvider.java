@@ -3,7 +3,6 @@ package org.jboss.windup.reporting.rules.rendering;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Queue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentLinkedDeque;
@@ -76,7 +75,7 @@ public class RenderReportRuleProvider extends AbstractRuleProvider
                 @Override
                 public void perform(GraphRewrite event, EvaluationContext context, ReportResourceFileModel payload) {
                     ReportService reportService = new ReportService(event.getGraphContext());
-                    Path outputDir = Paths.get(reportService.getReportDirectory());
+                    Path outputDir = reportService.getReportDirectory();
 
                     File directory = outputDir.toFile();
                     File fullPath = new File(directory, FilenameUtils.separatorsToSystem("resources/" + payload.getPrettyPath()));

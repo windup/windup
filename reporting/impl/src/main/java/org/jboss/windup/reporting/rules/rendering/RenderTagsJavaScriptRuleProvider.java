@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
@@ -56,7 +55,7 @@ public class RenderTagsJavaScriptRuleProvider extends AbstractRuleProvider
                     TagService tagService = tagServiceHolder.getTagService();
 
                     ReportService reportService = new ReportService(event.getGraphContext());
-                    Path outputDir = Paths.get(reportService.getReportDirectory());
+                    Path outputDir = reportService.getReportDirectory();
                     File tagsDataFile = outputDir.resolve("resources/tagsData.js").toFile();
                     try
                     {

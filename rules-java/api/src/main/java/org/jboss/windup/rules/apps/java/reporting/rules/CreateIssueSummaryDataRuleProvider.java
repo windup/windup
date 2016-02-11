@@ -1,9 +1,7 @@
 package org.jboss.windup.rules.apps.java.reporting.rules;
 
 import java.io.FileWriter;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -41,8 +39,6 @@ import org.jboss.windup.reporting.service.EffortReportService.EffortLevel;
  */
 public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider
 {
-
-    public static final String DATA_DIR = "data";
     public static final String ISSUE_SUMMARIES_JS = "issue_summaries.js";
 
     public CreateIssueSummaryDataRuleProvider()
@@ -71,9 +67,7 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider
 
         try
         {
-            Path dataDirectory = Paths.get(reportService.getReportDirectory(), DATA_DIR);
-            if (!Files.exists(dataDirectory))
-                Files.createDirectories(dataDirectory);
+            Path dataDirectory = reportService.getReportDataDirectory();
 
             Path issueSummaryJSPath = dataDirectory.resolve(ISSUE_SUMMARIES_JS);
             try (FileWriter issueSummaryWriter = new FileWriter(issueSummaryJSPath.toFile()))

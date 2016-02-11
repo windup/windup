@@ -8,7 +8,6 @@ import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -80,7 +79,7 @@ public class CssJsResourceRenderingRuleProvider extends AbstractRuleProvider
     private void copyCssResourcesToOutput(GraphContext context, String outputDir)
     {
         ReportService reportService = new ReportService(context);
-        Path outputPath = Paths.get(reportService.getReportDirectory(), "resources");
+        Path outputPath = reportService.getReportDirectory().resolve("resources");
 
         // iterate through the addons to scan
         for (Addon addonToScan : getAddonsToScan())

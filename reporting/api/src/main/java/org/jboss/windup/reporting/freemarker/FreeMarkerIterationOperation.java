@@ -4,7 +4,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -89,7 +88,7 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
         {
             ReportService reportService = new ReportService(event.getGraphContext());
 
-            Path outputDir = Paths.get(reportService.getReportDirectory());
+            Path outputDir = reportService.getReportDirectory();
 
             if (!Files.isDirectory(outputDir))
             {

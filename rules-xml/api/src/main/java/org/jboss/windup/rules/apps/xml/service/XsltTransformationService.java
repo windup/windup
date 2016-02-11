@@ -3,7 +3,6 @@ package org.jboss.windup.rules.apps.xml.service;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
@@ -31,7 +30,7 @@ public class XsltTransformationService extends GraphService<XsltTransformationMo
     public Path getTransformedXSLTPath()
     {
         ReportService reportService = new ReportService(getGraphContext());
-        Path outputPath = Paths.get(reportService.getReportDirectory()).resolve(TRANSFORMEDXML_DIR_NAME);
+        Path outputPath = reportService.getReportDirectory().resolve(TRANSFORMEDXML_DIR_NAME);
         if (!Files.isDirectory(outputPath))
         {
             try

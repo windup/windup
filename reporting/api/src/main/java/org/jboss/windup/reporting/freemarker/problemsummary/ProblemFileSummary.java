@@ -3,21 +3,23 @@ package org.jboss.windup.reporting.freemarker.problemsummary;
 import org.jboss.windup.graph.model.resource.FileModel;
 
 /**
- * An immutable class that groups the fileModel with the occurences for a single hint. This is useful for Migration Issues report.
+ * An immutable class that groups the fileModel with the occurrences for a single hint. This is useful for Migration Issues report.
  */
 public class ProblemFileSummary
 {
     private final FileModel file;
 
-    private int occurences;
+    private int occurrences;
 
-    public ProblemFileSummary(FileModel file, int occurences) {
+    public ProblemFileSummary(FileModel file, int occurrences)
+    {
         this.file=file;
-        this.occurences=occurences;
+        this.occurrences = occurrences;
     }
 
-    public void addOccurence() {
-        this.occurences +=1;
+    public void addOccurrence()
+    {
+        this.occurrences += 1;
     }
 
     public FileModel getFile()
@@ -25,9 +27,9 @@ public class ProblemFileSummary
         return file;
     }
 
-    public int getOccurences()
+    public int getOccurrences()
     {
-        return occurences;
+        return occurrences;
     }
 
 
