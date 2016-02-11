@@ -1,59 +1,54 @@
 <!DOCTYPE html>
 
 <#macro migrationIssuesRenderer problemSummary>
-    <tr>
+    <tr rospan="2">
         <td>
-            <a href="#" class="problem-link">
+            <a href="#" class="toggle">
                 ${problemSummary.issueName}
             </a>
-            <div class="problem-file-list list-group" style="display: none;">
-                <div style="position:relative; width: 100%;">
-                    <!-- Internal issues per file table -->
-                    <table class="table table-hover table-condensed tablesorter-child tablesorter">
-                        <thead>
-                            <tr>
-                                <th>File</th>
-                                <th>Incidents Found</th>
-                                <th></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <#list problemSummary.descriptions as description>
-                                <#list problemSummary.getFilesForDescription(description) as fileSummary>
-                                    <tr>
-                                        <td>
-                                            <@render_link model=fileSummary.file class="list-group-item migration-issues-detailed-item"/><#t>
-                                        </td>
-                                        <td>
-                                            <@render_link model=fileSummary.file text="#{fileSummary.occurences}" class="list-group-item migration-issues-detailed-item"/><#t>
-                                        </td>
-                                        <td>
-                                            <#if fileSummary?is_first>
-                                                <a href="#" class="show-detailed-hint">Show Hint</a>
-                                            </#if>
-                                        </td>
-                                    </tr>
-                                    <#if fileSummary?is_first>
-                                        <tr class="hint-detail-display" style="display: none;">
-                                            <td colspan="3">
-                                                <div>
-                                                    ${markdownToHtml(description!"-- No detailed text --")}
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </#if>
-                                </#list>
-                            </#list>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
         </td>
-        <td>${problemSummary.numberFound}</td>
-        <td>${problemSummary.effortPerIncident}</td>
+        <td class="text-right">${problemSummary.numberFound}</td>
+        <td class="text-right">${problemSummary.effortPerIncident}</td>
         <td>${getEffortDescriptionForPoints(problemSummary.effortPerIncident, true)}</td>
-        <td>${problemSummary.numberFound * problemSummary.effortPerIncident}</td>
-    </tr>
+        <td class="text-right">${problemSummary.numberFound * problemSummary.effortPerIncident}</td>
+    </tr> 
+    <tr class="tablesorter-childRow bg-info">
+        <td><div class="indent"><strong>File</strong></td>
+        <td><strong>Incidents Found</strong></td>
+        <td colspan="3"><strong>Hint</strong></td>
+    </tr>  
+    <#list problemSummary.descriptions as description>
+        <#assign filesCount=problemSummary.getFilesForDescription(description)?size>
+        <#list problemSummary.getFilesForDescription(description) as fileSummary>
+            <tr class="tablesorter-childRow">
+                <td>
+                    <div class="indent">
+                        <@render_link model=fileSummary.file class="migration-issues-detailed-item"/><#t>
+                    </div>
+                </td>
+                <td class="text-right">
+                    <@render_link model=fileSummary.file text="#{fileSummary.occurences}" class="migration-issues-detailed-item"/><#t>
+                </td>
+                <#if fileSummary?is_first>
+                    <td colspan="3" rowspan="${filesCount}">
+                        <div class="panel panel-default hint-detail-panel">
+                            <div class="panel-heading">                            
+                                <h4 class="panel-title pull-left">Issue Detail: ${problemSummary.issueName}</h4>
+                                <#if problemSummary.ruleID??>
+                                <div class="pull-right"><a class="sh_url" title="${problemSummary.ruleID}" href="windup_ruleproviders.html#${problemSummary.ruleID}">Show Rule</a></div>
+                                </#if>
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="panel-body">
+                                ${markdownToHtml(description!"-- No detailed text --")}
+                            </div>
+                        </div>
+                    </td>
+                    </#if>
+            </tr>
+        </#list>
+    </#list>
+
 </#macro>
 
 <#function getIncidentsFound problemSummaries>
@@ -89,6 +84,7 @@
         <link href="resources/css/bootstrap.min.css" rel="stylesheet">
         <link href="resources/css/windup.css" rel="stylesheet" media="screen">
         <link href="resources/css/windup.java.css" rel="stylesheet" media="screen">
+        <link href="resources/css/jquery-ui.css rel="stylesheet" media="screen">        
     </head>
     <body role="document">
         <!-- Navbar -->
@@ -141,25 +137,26 @@
                             </div>
                         </div>
                     </#if>
-
+                    
+                    <div class="panel-body">
                     <#list problemsBySeverity?keys as severity>
-                        <table class="table table-hover table-condensed tablesorter migration-issues-table">
+                        <table class="table table-hover table-bordered table-condensed tablesorter migration-issues-table">
                             <thead>
                                 <tr>
-                                    <th class="sortable">Issue</th>
+                                    <th class="sortable">Issue by Category</th>
                                     <th class="sortable">Incidents Found</th>
                                     <th class="sortable">Story Points per Incident</th>
                                     <th>Level of Effort</th>
                                     <th class="sortable">Total Story Points</th>
                                 </tr>
-                                <tr>
+                                <tr style="background: silver;">
                                     <td>
                                         <b>${severity}</b>
                                     </td>
-                                    <td>${getIncidentsFound(problemsBySeverity[severity])}</td>
+                                    <td class="text-right">${getIncidentsFound(problemsBySeverity[severity])}</td>
                                     <td></td>
                                     <td></td>
-                                    <td>${getTotalPoints(problemsBySeverity[severity])}</td>
+                                    <td class="text-right">${getTotalPoints(problemsBySeverity[severity])}</td>
                                 </tr>
                             </thead>
                             <tbody>
@@ -169,97 +166,134 @@
                             </tbody>
                         </table>
                     </#list>
+                    </div>
 	            </div>
 	    	</div>
         </div>
 
         <script src="resources/js/jquery-1.10.1.min.js"></script>
+        <script src="resources/js/jquery-ui.min.js"></script>
         <script src="resources/js/bootstrap.min.js"></script>
         <script src="resources/js/jquery.tablesorter.min.js"></script>
+        <script src="resources/js/jquery.tablesorter.widgets.min.js"></script>
         <script type="text/javascript">
-            $(document).ready(function () {
-                $('.problem-link').each(function(index, value) {
-                    $(value).click(function(e) {
-                        e.preventDefault();
-                        $(value).siblings(".problem-file-list").toggle();
+            $(document).ready(function() {
+
+                var $table = $('.tablesorter');
+            
+                // hide child rows & make draggable
+                $table.find('.tablesorter-childRow')
+                    .find('td')
+                    .droppable({
+                        accept: '.draggingSiblings',
+                        drop: function(event, ui) {
+                            if ($(this).closest('tr').length){
+                                $(this).closest('tr').before(
+                                    ui.draggable
+                                        .css({ left: 0, top: 0 })
+                                        .parent()
+                                        .removeClass('draggingRow')
+                                    );
+                                $table
+                                    .find('.draggingSiblingsRow')
+                                    .removeClass('draggingSiblingsRow')
+                                    .find('.draggingSiblings')
+                                    .removeClass('draggingSiblings');
+                                $table.trigger('update');
+                            } else {
+                                return false;
+                            }
+                        }
+                    })
+                    .draggable({
+                        revert: "invalid",
+                        start: function( event, ui ) {
+                            $(this)
+                                .parent()
+                                .addClass('draggingRow')
+                                .prevUntil('.tablesorter-hasChildRow')
+                                .nextUntil('tr:not(.tablesorter-childRow)')
+                                .addClass('draggingSiblingsRow')
+                                .find('td')
+                                .addClass('draggingSiblings');
+                        }
+                    })
+                    .hide();
+        
+                $table
+                    .tablesorter({
+                        // this is the default setting
+                        cssChildRow: "tablesorter-childRow"
+                    })
+                    .delegate('.toggle', 'click' ,function(){                        
+                        $(this)
+                            .closest('tr')
+                            .nextUntil('tr.tablesorter-hasChildRow')
+                            .find('td').toggle();
+                        return false;
                     });
-                });
+            
             });
+            
+        
+        
+        
             // we need these parsers because we are using comma to separate thousands and are also sorting links
             $.tablesorter.addParser({
-   		 id: 'thousands',
-   		 is: function(s) {
-  		      return true;
-   		 },
- 		 format: function(s) {
-   		     return s.replace('$','').replace(/,/g,'');
-   		 },
-  		 type: 'numeric'
-	    });
-        $.tablesorter.addParser({
-        id: 'a-elements',
-        is: function(s)
-        {
-            // return false so this parser is not auto detected 
-            return false;
-        },
-        format: function(s)
-        {
-            // format your data for normalization 
-            return s.replace(new RegExp(/<.*?>/),"");
-        },
-        type: 'text'
-    }); 
-    $(document).ready(function() {
-        $(".show-detailed-hint").click(function (e) {
-            $(this).parent().parent().next(".hint-detail-display").toggle();
-            $(this).text() == "Show Hint" ? $(this).text("Hide Hint") : $(this).text("Show Hint");
-            e.preventDefault();
-        });
-
-        $(".migration-issues-table").tablesorter({
-            selectorHeaders: '> thead > tr > th',
-            sortList: [[4,1]],
-            headers: {
-                // 2nd, 3rd, and 5th columns are parsed using thousands parser
-                0: {sorter:'a-elements'},
-                1: {sorter:'thousands'},
-                2: {sorter:'thousands'},
-                3: {sorter:false},
-                4: {sorter:'thousands'}
-            }
-        });
-    });
-
-   	    function resizeTables()
-        {
-            var tableArr = document.getElementsByClassName('migration-issues-table');
-            var cellWidths = new Array();
-
-            // get widest
-            for(i = 0; i < tableArr.length; i++)
-            {
-                for(j = 0; j < tableArr[i].rows[0].cells.length; j++)
+           		 id: 'thousands',
+           		 is: function(s) {
+          		      return true;
+           		 },
+         		 format: function(s) {
+           		     return s.replace('$','').replace(/,/g,'');
+           		 },
+          		 type: 'numeric'
+        	    });
+                $.tablesorter.addParser({
+                id: 'a-elements',
+                is: function(s)
                 {
-                   var cell = tableArr[i].rows[0].cells[j];
+                    // return false so this parser is not auto detected 
+                    return false;
+                },
+                format: function(s)
+                {
+                    // format your data for normalization 
+                    return s.replace(new RegExp(/<.*?>/),"");
+                },
+                type: 'text'
+            }); 
 
-                   if(!cellWidths[j] || cellWidths[j] < cell.clientWidth)
-                        cellWidths[j] = cell.clientWidth;
+              
+
+       	    function resizeTables()
+            {
+                var tableArr = document.getElementsByClassName('migration-issues-table');
+                var cellWidths = new Array();
+    
+                // get widest
+                for(i = 0; i < tableArr.length; i++)
+                {
+                    for(j = 0; j < tableArr[i].rows[0].cells.length; j++)
+                    {
+                       var cell = tableArr[i].rows[0].cells[j];
+    
+                       if(!cellWidths[j] || cellWidths[j] < cell.clientWidth)
+                            cellWidths[j] = cell.clientWidth;
+                    }
+                }
+    
+                // set all columns to the widest width found
+                for(i = 0; i < tableArr.length; i++)
+                {
+                    for(j = 0; j < tableArr[i].rows[0].cells.length; j++)
+                    {
+                        tableArr[i].rows[0].cells[j].style.width = cellWidths[j]+'px';
+                    }
                 }
             }
-
-            // set all columns to the widest width found
-            for(i = 0; i < tableArr.length; i++)
-            {
-                for(j = 0; j < tableArr[i].rows[0].cells.length; j++)
-                {
-                    tableArr[i].rows[0].cells[j].style.width = cellWidths[j]+'px';
-                }
-            }
-        }
-
-        window.onload = resizeTables;
-
+    
+            window.onload = resizeTables;
 
         </script>
     </body>
