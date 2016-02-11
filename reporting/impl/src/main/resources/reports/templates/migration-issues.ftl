@@ -7,24 +7,28 @@
                 ${problemSummary.issueName}
             </a>
             <div class="problem-file-list list-group" style="display: none;">
-                <div style="position:relative; width: 100%;">
+                <!--div style="width: 100%;"-->
                     <!-- Internal issues per file table -->
                     <table class="table table-hover table-condensed tablesorter-child tablesorter">
                         <thead>
                             <tr>
                                 <th>File</th>
                                 <th>Incidents Found</th>
+                                <!-- This column is for links to hide/show the last column -->
+                                <th></th>
+                                <!-- This column is for shown hint title -->
                                 <th></th>
                             </tr>
                         </thead>
                         <tbody>
                             <#list problemSummary.descriptions as description>
+                                <#assign filesCount=problemSummary.getFilesForDescription(description)?size>
                                 <#list problemSummary.getFilesForDescription(description) as fileSummary>
                                     <tr>
                                         <td>
                                             <@render_link model=fileSummary.file class="list-group-item migration-issues-detailed-item"/><#t>
                                         </td>
-                                        <td>
+                                        <td class="text-right">
                                             <@render_link model=fileSummary.file text="#{fileSummary.occurences}" class="list-group-item migration-issues-detailed-item"/><#t>
                                         </td>
                                         <td>
@@ -32,16 +36,14 @@
                                                 <a href="#" class="show-detailed-hint">Show Hint</a>
                                             </#if>
                                         </td>
+                                        <td rowspan="${filesCount}">
+                                          <#if fileSummary?is_first>
+                                             <div class="hint-detail-display" style="display: none;">
+                                                      ${markdownToHtml(description!"-- No detailed text --")}
+                                             </div>
+                                          </#if>
+                                        </td>
                                     </tr>
-                                    <#if fileSummary?is_first>
-                                        <tr class="hint-detail-display" style="display: none;">
-                                            <td colspan="3">
-                                                <div>
-                                                    ${markdownToHtml(description!"-- No detailed text --")}
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </#if>
                                 </#list>
                             </#list>
                         </tbody>
@@ -49,10 +51,10 @@
                 </div>
             </div>
         </td>
-        <td>${problemSummary.numberFound}</td>
-        <td>${problemSummary.effortPerIncident}</td>
+        <td class="text-right">${problemSummary.numberFound}</td>
+        <td class="text-right">${problemSummary.effortPerIncident}</td>
         <td>${getEffortDescriptionForPoints(problemSummary.effortPerIncident, true)}</td>
-        <td>${problemSummary.numberFound * problemSummary.effortPerIncident}</td>
+        <td class="text-right">${problemSummary.numberFound * problemSummary.effortPerIncident}</td>
     </tr>
 </#macro>
 
@@ -128,7 +130,7 @@
             </div>
 
         <div class="row">
-        	<div class="container-fluid theme-showcase" role="main">
+        	<div class="container theme-showcase" role="main">
 	            <div class="panel panel-default panel-primary">
 	                <div class="panel-heading">
                         <h3 class="panel-title">Analysis Detail</h3>
@@ -146,23 +148,23 @@
                     </#if>
 
                     <#list problemsBySeverity?keys as severity>
-                        <table class="table table-hover table-condensed tablesorter migration-issues-table">
+                        <table class="table table-hover table-bordered table-condensed tablesorter migration-issues-table">
                             <thead>
                                 <tr>
-                                    <th class="sortable">Issue</th>
+                                    <th class="sortable text-center">Issue</th>
                                     <th class="sortable">Incidents Found</th>
                                     <th class="sortable">Story Points per Incident</th>
-                                    <th>Level of Effort</th>
+                                    <th class="text-center">Level of Effort</th>
                                     <th class="sortable">Total Story Points</th>
                                 </tr>
-                                <tr>
+                                <tr style="background: silver;">
                                     <td>
                                         <b>${severity}</b>
                                     </td>
-                                    <td>${getIncidentsFound(problemsBySeverity[severity])}</td>
+                                    <td class="text-right">${getIncidentsFound(problemsBySeverity[severity])}</td>
                                     <td></td>
                                     <td></td>
-                                    <td>${getTotalPoints(problemsBySeverity[severity])}</td>
+                                    <td class="text-right">${getTotalPoints(problemsBySeverity[severity])}</td>
                                 </tr>
                             </thead>
                             <tbody>
@@ -215,7 +217,7 @@
     }); 
     $(document).ready(function() {
         $(".show-detailed-hint").click(function (e) {
-            $(this).parent().parent().next(".hint-detail-display").toggle();
+            $(this).parent().parent().find(".hint-detail-display").toggle();
             $(this).text() == "Show Hint" ? $(this).text("Hide Hint") : $(this).text("Show Hint");
             e.preventDefault();
         });
@@ -233,6 +235,7 @@
             }
         });
     });
+  
 
    	    function resizeTables()
         {
@@ -262,7 +265,6 @@
         }
 
         window.onload = resizeTables;
-
 
         </script>
     </body>
