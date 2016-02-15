@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -77,6 +78,7 @@ public class WindupProcessorImpl implements WindupProcessor
         long startTime = System.currentTimeMillis();
 
         validateConfig(configuration);
+        printConfigInfo(configuration);
 
         GraphContext context = configuration.getGraphContext();
         context.setOptions(configuration.getOptionMap());
@@ -246,6 +248,31 @@ public class WindupProcessorImpl implements WindupProcessor
         Path outputDirectory = windupConfiguration.getOutputDirectory();
         Assert.notNull(outputDirectory, "Output directory must not be null!");
         Checks.checkDirectoryToBeFilled(outputDirectory.toFile(), "Output directory");
+    }
+
+    private void printConfigInfo(WindupConfiguration windupConfiguration)
+    {
+        LOG.info("");
+        if (windupConfiguration.getInputPaths().size() == 1)
+        {
+            LOG.info("Input Application:" + windupConfiguration.getInputPaths().iterator().next());
+        }
+        else
+        {
+            LOG.info("Input Applications:");
+            for (Path inputPath : windupConfiguration.getInputPaths())
+            {
+                LOG.info("\t" + inputPath);
+            }
+            LOG.info("");
+        }
+        LOG.info("Output Path:" + windupConfiguration.getOutputDirectory());
+        LOG.info("");
+
+        for (Map.Entry<String, Object> entrySet : windupConfiguration.getOptionMap().entrySet())
+        {
+            LOG.info("\t" + entrySet.getKey() + ": " + entrySet.getValue());
+        }
     }
 
 }

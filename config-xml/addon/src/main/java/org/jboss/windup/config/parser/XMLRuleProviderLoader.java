@@ -108,7 +108,15 @@ public class XMLRuleProviderLoader implements RuleProviderLoader
         WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(context);
         for (FileModel userRulesFileModel : cfg.getUserRulesPaths())
         {
-            for (URL resource : getWindupUserDirectoryXmlFiles(userRulesFileModel))
+            // Log the files found
+            final Collection<URL> userXmlRulesetFiles = getWindupUserDirectoryXmlFiles(userRulesFileModel);
+            StringBuilder sb = new StringBuilder("\nFound " + userXmlRulesetFiles.size() + " user XML rules in: " + userRulesFileModel.getFilePath());
+            for (URL resource : userXmlRulesetFiles)
+                sb.append("\n\t" + resource.toString());
+            LOG.info(sb.toString());
+
+            // Parse each file
+            for (URL resource : userXmlRulesetFiles)
             {
                 try
                 {

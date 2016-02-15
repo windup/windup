@@ -61,4 +61,11 @@ public class SourceAndTargetPredicate implements Predicate<RuleProvider>
             return new HashSet<>(values);
         }
     }
+
+
+    @Override
+    public String toString()
+    {
+        return "SourceAndTargetPredicate{" + "sources=" + sources + ", targets=" + targets + '}';
+    }
 }
