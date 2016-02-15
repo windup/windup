@@ -146,7 +146,7 @@
                     <div style="margin-bottom: 10px; margin-left: 190px;">
                         <b>Java Incidents by Package</b>
                     </div>
-                    <div id='application_pie' class='windupPieGraph'/>
+                    <div id='application_pie' class='windupPieGraph'></div>
                 </div>
             </div>
         </div>
