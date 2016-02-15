@@ -12,10 +12,11 @@
     <title>${reportModel.projectModel.rootFileModel.fileName?html} - ${reportModel.reportName}</title>
     <link href="resources/css/bootstrap.min.css" rel="stylesheet">
     <link href="resources/css/windup.css" rel="stylesheet" media="screen">
-    <link rel='stylesheet' type='text/css' href='resources/libraries/snippet/jquery.snippet.min.css' />
+    <link rel="stylesheet" type="text/css" href="resources/libraries/snippet/jquery.snippet.min.css" />
     <link href="resources/css/windup.java.css" rel="stylesheet" media="screen">
-    <link rel='stylesheet' type='text/css' href='resources/libraries/sausage/sausage.css' />
-    <link rel='stylesheet' type='text/css' href='resources/libraries/flot/plot.css' />
+    <link rel="stylesheet" type="text/css" href="resources/libraries/sausage/sausage.css" />
+    <link rel="stylesheet" type="text/css" href="resources/libraries/flot/plot.css" />
+    <link href="resources/img/favicon.png" rel="shortcut icon" type="image/x-icon"/>
     <style>
 .report-index-row {
     margin: 10px -32px 0px 5px;
