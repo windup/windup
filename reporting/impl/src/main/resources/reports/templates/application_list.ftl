@@ -59,6 +59,7 @@
 		<!-- Bootstrap -->
 		<link href="reports/resources/css/bootstrap.min.css" rel="stylesheet"/>
 		<link href="reports/resources/css/windup.css" rel="stylesheet" media="screen"/>
+        <link href="reports/resources/img/favicon.png" rel="shortcut icon" type="image/x-icon"/>
 	</head>
 	<body role="document">
 
@@ -98,7 +99,7 @@
                     </h1>
                     <div class="desc">
                         The Application List report shows All applications which were analyzed.
-                        Click on the individual application to see individual reports or you can follow 
+                        Click on the individual application to see individual reports or you can follow
                         Global Migration Issues Report.
                     </div>
                 </div>

@@ -11,12 +11,12 @@
         <td class="text-right">${problemSummary.effortPerIncident}</td>
         <td>${getEffortDescriptionForPoints(problemSummary.effortPerIncident, true)}</td>
         <td class="text-right">${problemSummary.numberFound * problemSummary.effortPerIncident}</td>
-    </tr> 
+    </tr>
     <tr class="tablesorter-childRow bg-info">
         <td><div class="indent"><strong>File</strong></td>
         <td><strong>Incidents Found</strong></td>
         <td colspan="3"><strong>Hint</strong></td>
-    </tr>  
+    </tr>
     <#list problemSummary.descriptions as description>
         <#assign filesCount=problemSummary.getFilesForDescription(description)?size>
         <#list problemSummary.getFilesForDescription(description) as fileSummary>
@@ -32,7 +32,7 @@
                 <#if fileSummary?is_first>
                     <td colspan="3" rowspan="${filesCount}">
                         <div class="panel panel-default hint-detail-panel">
-                            <div class="panel-heading">                            
+                            <div class="panel-heading">
                                 <h4 class="panel-title pull-left">Issue Detail: ${problemSummary.issueName}</h4>
                                 <#if problemSummary.ruleID??>
                                 <div class="pull-right"><a class="sh_url" title="${problemSummary.ruleID}" href="windup_ruleproviders.html#${problemSummary.ruleID}">Show Rule</a></div>
@@ -84,7 +84,8 @@
         <link href="resources/css/bootstrap.min.css" rel="stylesheet">
         <link href="resources/css/windup.css" rel="stylesheet" media="screen">
         <link href="resources/css/windup.java.css" rel="stylesheet" media="screen">
-        <link href="resources/css/jquery-ui.css" rel="stylesheet" media="screen">        
+        <link href="resources/css/jquery-ui.css" rel="stylesheet" media="screen">
+        <link href="resources/img/favicon.png" rel="shortcut icon" type="image/x-icon"/>
     </head>
     <body role="document">
         <!-- Navbar -->
@@ -137,7 +138,7 @@
                             </div>
                         </div>
                     </#if>
-                    
+
                     <div class="panel-body">
                     <#list problemsBySeverity?keys as severity>
                         <table class="table table-hover table-bordered table-condensed tablesorter migration-issues-table">
@@ -180,7 +181,7 @@
             $(document).ready(function() {
 
                 var $table = $('.tablesorter');
-            
+
                 // hide child rows & make draggable
                 $table.find('.tablesorter-childRow')
                     .find('td')
@@ -219,25 +220,25 @@
                         }
                     })
                     .hide();
-        
+
                 $table
                     .tablesorter({
                         // this is the default setting
                         cssChildRow: "tablesorter-childRow"
                     })
-                    .delegate('.toggle', 'click' ,function(){                        
+                    .delegate('.toggle', 'click' ,function(){
                         $(this)
                             .closest('tr')
                             .nextUntil('tr.tablesorter-hasChildRow')
                             .find('td').toggle();
                         return false;
                     });
-            
+
             });
-            
-        
-        
-        
+
+
+
+
             // we need these parsers because we are using comma to separate thousands and are also sorting links
             $.tablesorter.addParser({
            		 id: 'thousands',
@@ -253,36 +254,36 @@
                 id: 'a-elements',
                 is: function(s)
                 {
-                    // return false so this parser is not auto detected 
+                    // return false so this parser is not auto detected
                     return false;
                 },
                 format: function(s)
                 {
-                    // format your data for normalization 
+                    // format your data for normalization
                     return s.replace(new RegExp(/<.*?>/),"");
                 },
                 type: 'text'
-            }); 
+            });
 
-              
+
 
        	    function resizeTables()
             {
                 var tableArr = document.getElementsByClassName('migration-issues-table');
                 var cellWidths = new Array();
-    
+
                 // get widest
                 for(i = 0; i < tableArr.length; i++)
                 {
                     for(j = 0; j < tableArr[i].rows[0].cells.length; j++)
                     {
                        var cell = tableArr[i].rows[0].cells[j];
-    
+
                        if(!cellWidths[j] || cellWidths[j] < cell.clientWidth)
                             cellWidths[j] = cell.clientWidth;
                     }
                 }
-    
+
                 // set all columns to the widest width found
                 for(i = 0; i < tableArr.length; i++)
                 {
@@ -292,7 +293,7 @@
                     }
                 }
             }
-    
+
             window.onload = resizeTables;
 
         </script>

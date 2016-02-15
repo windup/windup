@@ -11,9 +11,10 @@
     <title>Source Report for ${reportModel.reportName?html}</title>
     <link href="resources/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="resources/css/windup.css" rel="stylesheet" media="screen"/>
-    <link rel='stylesheet' type='text/css' href='resources/libraries/snippet/jquery.snippet.min.css' />
-    <link rel='stylesheet' type='text/css' href='resources/css/windup-source.css' />
-    <link rel='stylesheet' type='text/css' href='resources/libraries/sausage/sausage.css' />
+    <link rel="stylesheet" type="text/css" href="resources/libraries/snippet/jquery.snippet.min.css" />
+    <link rel="stylesheet" type="text/css" href="resources/css/windup-source.css" />
+    <link rel="stylesheet" type="text/css" href="resources/libraries/sausage/sausage.css" />
+    <link rel="shortcut icon" href="resources/img/favicon.png" type="image/x-icon"/>
 </head>
 <body role="document" class="source-report">
 
@@ -74,15 +75,15 @@
                             </#list>
 
                             <#list reportModel.sourceFileModel.classificationModels.iterator()>
-                                <ul class='classifications'>
+                                <ul class="classifications">
                                     <#items as item>
                                         <#if item.classification??>
                                             <li>
-                                                <div class='title'>
+                                                <div class="title">
                                                     <em>${item.classification!}</em>
                                                     <@render_rule_link renderType='glyph' ruleID=item.ruleID class='rule-link'/><#-- Link to the rule -->
                                                 </div>
-                                                <#if item.description??><div class='desc'>${item.description}</div></#if>
+                                                <#if item.description??><div class="desc">${item.description}</div></#if>
                                                 <@render_linkable linkable=item layout='ul'/><#-- Link contained in classification -->
                                             </li>
                                         </#if>
@@ -107,7 +108,7 @@
 
 
 
-                <pre id='source'><#t>
+                <pre id="source"><#t>
                     ${reportModel.sourceBody?html}<#t>
                 </pre><#t>
 
@@ -118,15 +119,15 @@
     <script src="resources/js/jquery-1.7.min.js"></script>
     <script src="resources/js/bootstrap.min.js"></script>
 
-    <script type='text/javascript' src='resources/libraries/jquery-ui/jquery.ui.widget.js'></script>
-    <script type='text/javascript' src='resources/libraries/snippet/jquery.snippet.min.js'></script>
-    <script type='text/javascript' src='resources/libraries/snippet/jquery.snippet.java-properties.js'></script>
-    <script type='text/javascript' src='resources/libraries/snippet/jquery.snippet.java-manifest.js'></script>
-    <script type='text/javascript' src='resources/libraries/sausage/jquery.sausage.min.js'></script>
+    <script type="text/javascript" src="resources/libraries/jquery-ui/jquery.ui.widget.js"></script>
+    <script type="text/javascript" src="resources/libraries/snippet/jquery.snippet.min.js"></script>
+    <script type="text/javascript" src="resources/libraries/snippet/jquery.snippet.java-properties.js"></script>
+    <script type="text/javascript" src="resources/libraries/snippet/jquery.snippet.java-manifest.js"></script>
+    <script type="text/javascript" src="resources/libraries/sausage/jquery.sausage.min.js"></script>
 
 
 
-    <script type='text/javascript'>
+    <script type="text/javascript">
         $(window).on("hashchange", function () {
             window.scrollTo(window.scrollX, window.scrollY - 50);
         });
@@ -139,7 +140,7 @@
             offsetAnchor();
         }, 1);
         $(document).ready(function(){
-            $('pre').snippet('${reportModel.sourceType}',{style:'ide-eclipse', showNum:true,boxFill:'#ffeeb9', box: '${reportModel.sourceBlock}' });
+            $("pre").snippet("${reportModel.sourceType}",{style:"ide-eclipse", showNum:true,boxFill:"#ffeeb9", box: "${reportModel.sourceBlock}" });
 
         <#list reportModel.sourceFileModel.inlineHints.iterator() as hintLine>
             <#assign lineNumber = hintLine.lineNumber>

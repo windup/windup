@@ -9,6 +9,7 @@
     <title>${reportModel.projectModel.name} - ${reportModel.reportProperties.embeddedTitle}</title>
     <link href="resources/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="resources/css/windup.css" rel="stylesheet" media="screen"/>
+    <link href="resources/img/favicon.png" rel="shortcut icon" type="image/x-icon"/>
 </head>
 <body role="document">
 

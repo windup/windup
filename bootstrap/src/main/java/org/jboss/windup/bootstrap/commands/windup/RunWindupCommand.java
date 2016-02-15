@@ -480,6 +480,8 @@ public class RunWindupCommand implements Command, FurnaceDependent
      */
     private static List<String> normalizePackagePrefixes(List<String> packages)
     {
+        if (packages == null)
+            return null;
 
         List<String> result = new ArrayList<>(packages.size());
         for (String pkg : packages)
