@@ -42,6 +42,8 @@ import org.jboss.windup.exec.configuration.options.TargetOption;
 import org.jboss.windup.exec.configuration.options.UserRulesDirectoryOption;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
+import org.jboss.windup.rules.apps.java.config.ExcludePackagesOption;
+import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
@@ -245,6 +247,8 @@ public class RunWindupCommand implements Command, FurnaceDependent
         System.out.println("Output Path:" + windupConfiguration.getOutputDirectory());
         System.out.println();
 
+        normalizePackagePrefixes(windupConfiguration);
+
         try (GraphContext graphContext = getGraphContextFactory().create(graphPath))
         {
             WindupProgressMonitor progressMonitor = new ConsoleProgressMonitor();
@@ -265,6 +269,7 @@ public class RunWindupCommand implements Command, FurnaceDependent
 
         deleteGraphDataUnlessInhibited(windupConfiguration, graphPath);
     }
+
 
     private boolean validateInputAndOutputPath(Collection<Path> inputPaths, Path outputPath)
     {
@@ -454,4 +459,37 @@ public class RunWindupCommand implements Command, FurnaceDependent
         }
     }
 
+
+    /**
+     * Removes the .* suffix from the include and exclude packages input.
+     */
+    private void normalizePackagePrefixes(WindupConfiguration windupConfiguration)
+    {
+        List<String> includePackages = windupConfiguration.getOptionValue(ScanPackagesOption.NAME);
+        includePackages = normalizePackagePrefixes(includePackages);
+        windupConfiguration.setOptionValue(ScanPackagesOption.NAME, includePackages);
+
+        List<String> excludePackages = windupConfiguration.getOptionValue(ScanPackagesOption.NAME);
+        excludePackages = normalizePackagePrefixes(excludePackages);
+        windupConfiguration.setOptionValue(ScanPackagesOption.NAME, excludePackages);
+    }
+
+
+    /**
+     * Removes the .* suffix, which is expectable the users will use.
+     */
+    private static List<String> normalizePackagePrefixes(List<String> packages)
+    {
+
+        List<String> result = new ArrayList<>(packages.size());
+        for (String pkg : packages)
+        {
+            if(pkg.endsWith(".*")){
+                System.out.println("Warning: removing the .* suffix from the package prefix: " + pkg);
+            }
+            result.add(StringUtils.removeEndIgnoreCase(pkg, ".*"));
+        }
+
+        return packages;
+    }
 }
