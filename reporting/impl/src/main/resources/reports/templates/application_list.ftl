@@ -37,15 +37,15 @@
     		</td>
     		<td>
       			<#list effortLevels?keys as effortLevel>
+      			    <div class="col-sm-11 text-right">${getEffortDescriptionForPoints(effortLevel, true)}</div>
       			    <div class="col-sm-1">${effortLevels?api.get(effortLevel)}</div>
-      			    <div class="col-sm-11">${getEffortDescriptionForPoints(effortLevel, true)}</div>
       			    <#assign totalEffort = totalEffort + (effortLevel * effortLevels?api.get(effortLevel)) >
       			    <#assign totalIncidents = totalIncidents + effortLevels?api.get(effortLevel) >
       			</#list>
+                <div class="col-sm-11 text-right">Total</div>
                 <div class="col-sm-1">${totalIncidents}</div>
-                <div class="col-sm-11">Total</div>
     		</td>
-    		<td>
+    		<td class="text-right" style="vertical-align:middle">
                 ${totalEffort}
     		</td>
 		</tr>
@@ -114,7 +114,7 @@
                <tr>
                   <th>Name</th>
                   <th>Technology</th>
-                  <th>Incident Count</th>
+                  <th class="text-right">Incident Count</th>
                   <th>Total Effort Points</th>
                </tr>
 

@@ -323,3 +323,7 @@ strong {
     font-size: 12px;
     font-style: italic;
 }
+
+div.indent{
+    padding-left: 20px;
+}
