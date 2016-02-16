@@ -1,4 +1,4 @@
-package org.jboss.windup.rules.files.org.jboss.windup.rules.general;
+package org.jboss.windup.rules.general;
 
 import org.jboss.windup.config.condition.GraphCondition;
 import org.jboss.windup.config.exception.ConfigurationException;

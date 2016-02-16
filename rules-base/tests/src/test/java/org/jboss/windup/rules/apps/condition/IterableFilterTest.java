@@ -27,7 +27,7 @@ import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.rules.files.condition.FileContent;
 import org.jboss.windup.rules.files.condition.ToFileModel;
 import org.jboss.windup.rules.files.model.FileLocationModel;
-import org.jboss.windup.rules.files.org.jboss.windup.rules.general.IterableFilter;
+import org.jboss.windup.rules.general.IterableFilter;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

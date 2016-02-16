@@ -1,4 +1,4 @@
-package org.jboss.windup.rules.files.org.jboss.windup.rules.general;
+package org.jboss.windup.rules.general;
 
 import com.google.common.collect.Iterables;
 import org.jboss.windup.config.GraphRewrite;
