@@ -12,15 +12,18 @@ import org.jboss.windup.graph.model.LinkModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.TagUtil;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.EffortReportModel;
+import org.jboss.windup.reporting.model.Severity;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Compare;
+import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.structures.FramedVertexIterable;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
@@ -42,7 +45,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
     /**
      * Returns the total effort points in all of the {@link ClassificationModel}s associated with the provided {@link FileModel}.
      */
-    public int getMigrationEffortDetails(FileModel fileModel)
+    public int getMigrationEffortPoints(FileModel fileModel)
     {
         GremlinPipeline<Vertex, Vertex> classificationPipeline = new GremlinPipeline<>(fileModel.asVertex());
         classificationPipeline.in(ClassificationModel.FILE_MODEL);
@@ -85,14 +88,71 @@ public class ClassificationService extends GraphService<ClassificationModel>
     }
 
     /**
+     * <p>
      * Returns the total effort points in all of the {@link ClassificationModel}s associated with the files in this project.
-     * 
+     * </p>
+     * <p>
      * If set to recursive, then also include the effort points from child projects.
+     * </p>
+     * <p>
+     * The result is a Map, the key contains the effort level and the value contains the number of incidents.
+     * </p>
      */
-    public Map<Integer, Integer> getMigrationEffortDetails(ProjectModel initialProject, Set<String> includeTags, Set<String> excludeTags,
+    public Map<Integer, Integer> getMigrationEffortByPoints(ProjectModel initialProject, Set<String> includeTags, Set<String> excludeTags,
+                boolean recursive, boolean includeZero)
+    {
+        final Map<Integer, Integer> results = new HashMap<>();
+
+        EffortAccumulatorFunction accumulator = new EffortAccumulatorFunction()
+        {
+            @Override
+            public void accumulate(Vertex effortReportVertex)
+            {
+                Integer migrationEffort = effortReportVertex.getProperty(EffortReportModel.EFFORT);
+                if (!results.containsKey(migrationEffort))
+                    results.put(migrationEffort, 1);
+                else
+                    results.put(migrationEffort, results.get(migrationEffort) + 1);
+            }
+        };
+
+        getMigrationEffortDetails(initialProject, includeTags, excludeTags, recursive, includeZero, accumulator);
+
+        return results;
+    }
+
+    /**
+     * <p>
+     * Returns the total incidents in all of the {@link ClassificationModel}s associated with the files in this project by severity.
+     * </p>
+     */
+    public Map<Severity, Integer> getMigrationEffortBySeverity(ProjectModel initialProject, Set<String> includeTags, Set<String> excludeTags,
                 boolean recursive)
     {
-        Map<Integer, Integer> results = new HashMap<>();
+        final Map<Severity, Integer> results = new HashMap<>();
+
+        EffortAccumulatorFunction accumulator = new EffortAccumulatorFunction()
+        {
+            @Override
+            public void accumulate(Vertex effortReportVertex)
+            {
+                Severity severity = frame(effortReportVertex).getSeverity();
+                if (!results.containsKey(severity))
+                    results.put(severity, 1);
+                else
+                    results.put(severity, results.get(severity) + 1);
+            }
+        };
+
+        getMigrationEffortDetails(initialProject, includeTags, excludeTags, recursive, true, accumulator);
+
+        return results;
+    }
+
+    private void getMigrationEffortDetails(ProjectModel initialProject, Set<String> includeTags, Set<String> excludeTags, boolean recursive,
+                boolean includeZero, EffortAccumulatorFunction accumulatorFunction)
+    {
+        FileService fileService = new FileService(getGraphContext());
 
         final Set<Vertex> initialVertices = new HashSet<>();
         if (recursive)
@@ -107,7 +167,8 @@ public class ClassificationService extends GraphService<ClassificationModel>
 
         GremlinPipeline<Vertex, Vertex> classificationPipeline = new GremlinPipeline<>(getGraphContext().getGraph());
         classificationPipeline.V();
-        classificationPipeline.has(EffortReportModel.EFFORT, Compare.GREATER_THAN, 0);
+        if (!includeZero)
+            classificationPipeline.has(EffortReportModel.EFFORT, Compare.GREATER_THAN, 0);
         classificationPipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, ClassificationModel.TYPE);
 
         classificationPipeline.as("classification");
@@ -125,7 +186,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
 
         for (Vertex v : classificationPipeline)
         {
-            Integer migrationEffort = v.getProperty(ClassificationModel.EFFORT);
+            Integer migrationEffort = v.getProperty(EffortReportModel.EFFORT);
             if (migrationEffort == null)
                 continue;
 
@@ -137,12 +198,13 @@ public class ClassificationService extends GraphService<ClassificationModel>
                     continue;
             }
 
-            if (!results.containsKey(migrationEffort))
-                results.put(migrationEffort, 1);
-            else
-                results.put(migrationEffort, results.get(migrationEffort) + 1);
+            for (Vertex fileVertex : v.getVertices(Direction.OUT, ClassificationModel.FILE_MODEL))
+            {
+                FileModel fileModel = fileService.frame(fileVertex);
+                if (initialVertices.contains(fileModel.getProjectModel().asVertex()))
+                    accumulatorFunction.accumulate(v);
+            }
         }
-        return results;
     }
 
     /**

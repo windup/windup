@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.model.ProjectModel;
+import org.jboss.windup.reporting.model.Severity;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.InlineHintService;
 import org.jboss.windup.util.ExecutionStatistics;
@@ -18,20 +19,21 @@ import freemarker.template.TemplateBooleanModel;
 import freemarker.template.TemplateModelException;
 
 /**
- * Gets the number of effort points involved in migrating this application
- * 
+ * Gets the number of incidents involved in migrating this application
+ *
  * Called from a freemarker template as follows:
- * 
+ *
  * getMigrationEffortPoints(projectModel, recursive):int
- * 
+ *
  * If recursive is true, the effort total includes child projects.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- * 
+ *
  */
-public class GetEffortDetailsForProjectMethod implements WindupFreeMarkerMethod
+public class GetEffortCountForProjectBySeverityMethod implements WindupFreeMarkerMethod
 {
-    private static final String NAME = "getEffortDetailsForProject";
+    private static final String NAME = "getEffortCountForProjectBySeverity";
+
     private ClassificationService classificationService;
     private InlineHintService inlineHintService;
 
@@ -52,7 +54,7 @@ public class GetEffortDetailsForProjectMethod implements WindupFreeMarkerMethod
     public String getDescription()
     {
         return "Takes a " + ProjectModel.class.getSimpleName()
-                    + " as a parameter and returns Map<Integer, Integer> where the key is the effort level and the value is the number of incidents at that particular level of effort.";
+                    + " as a parameter and returns Map<String, int> where the key is the Severity and the value is the number of incidents of that severity.";
     }
 
     @Override
@@ -82,22 +84,29 @@ public class GetEffortDetailsForProjectMethod implements WindupFreeMarkerMethod
             excludeTags = FreeMarkerUtil.simpleSequenceToSet((SimpleSequence) arguments.get(3));
         }
 
-        Map<Integer, Integer> classificationEffortDetails = classificationService.getMigrationEffortByPoints(projectModel, includeTags, excludeTags,
-                    recursive, false);
-        Map<Integer, Integer> hintEffortDetails = inlineHintService.getMigrationEffortByPoints(projectModel, includeTags, excludeTags, recursive,
-                    false);
+        Map<Severity, Integer> classificationEffortDetails = classificationService.getMigrationEffortBySeverity(projectModel, includeTags,
+                    excludeTags,
+                    recursive);
+        Map<Severity, Integer> hintEffortDetails = inlineHintService.getMigrationEffortBySeverity(projectModel, includeTags, excludeTags, recursive);
 
-        Map<Integer, Integer> results = new HashMap<>(classificationEffortDetails.size() + hintEffortDetails.size());
-        results.putAll(classificationEffortDetails);
-        for (Map.Entry<Integer, Integer> entry : hintEffortDetails.entrySet())
-        {
-            if (!results.containsKey(entry.getKey()))
-                results.put(entry.getKey(), entry.getValue());
-            else
-                results.put(entry.getKey(), results.get(entry.getKey()) + entry.getValue());
-        }
+        Map<String, Integer> results = new HashMap<>(classificationEffortDetails.size() + hintEffortDetails.size());
+
+        addAllIncidents(results, classificationEffortDetails);
+
+        addAllIncidents(results, hintEffortDetails);
 
         ExecutionStatistics.get().end(NAME);
         return results;
+    }
+
+    private void addAllIncidents(Map<String, Integer> results, Map<Severity, Integer> effortDetails)
+    {
+        for (Map.Entry<Severity, Integer> entry : effortDetails.entrySet())
+        {
+            if (!results.containsKey(entry.getKey().toString()))
+                results.put(entry.getKey().toString(), entry.getValue());
+            else
+                results.put(entry.getKey().toString(), results.get(entry.getKey().toString()) + entry.getValue());
+        }
     }
 }

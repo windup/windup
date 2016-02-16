@@ -59,7 +59,7 @@ public class InlineHintServiceTest
 
             ProjectModel projectModel = fillData(context);
             Set<String> emptySet = Collections.emptySet();
-            final Map<Integer, Integer> effortByCategory = inlineHintService.getMigrationEffortDetails(projectModel, emptySet, emptySet, true);
+            final Map<Integer, Integer> effortByCategory = inlineHintService.getMigrationEffortByPoints(projectModel, emptySet, emptySet, true, true);
             int totalEffort = 0;
             for (Map.Entry<Integer, Integer> effortEntry : effortByCategory.entrySet())
                 totalEffort += effortEntry.getKey() * effortEntry.getValue();
@@ -71,13 +71,13 @@ public class InlineHintServiceTest
             {
                 if (fm.getFilePath().equals("/f1"))
                 {
-                    int fileEffort = inlineHintService.getMigrationEffortDetails(fm);
+                    int fileEffort = inlineHintService.getMigrationEffortPoints(fm);
                     Assert.assertEquals(150, fileEffort);
                     foundF1Effort = true;
                 }
                 else if (fm.getFilePath().equals("/f2"))
                 {
-                    int fileEffort = inlineHintService.getMigrationEffortDetails(fm);
+                    int fileEffort = inlineHintService.getMigrationEffortPoints(fm);
                     Assert.assertEquals(3, fileEffort);
                     foundF2Effort = true;
                 }

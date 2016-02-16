@@ -18,6 +18,7 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.TagUtil;
 import org.jboss.windup.reporting.model.EffortReportModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
+import org.jboss.windup.reporting.model.Severity;
 import org.jboss.windup.rules.files.model.FileReferenceModel;
 
 import com.thinkaurelius.titan.core.attribute.Text;
@@ -64,7 +65,7 @@ public class InlineHintService extends GraphService<InlineHintModel>
     /**
      * Returns the total effort points in all of the {@link InlineHintModel} instances associated with the provided {@link FileModel}.
      */
-    public int getMigrationEffortDetails(FileModel fileModel)
+    public int getMigrationEffortPoints(FileModel fileModel)
     {
         GremlinPipeline<Vertex, Vertex> inlineHintPipeline = new GremlinPipeline<>(fileModel.asVertex());
         inlineHintPipeline.in(InlineHintModel.FILE_MODEL);
@@ -117,15 +118,71 @@ public class InlineHintService extends GraphService<InlineHintModel>
     }
 
     /**
+     * <p>
      * Returns the total effort points in all of the {@link InlineHintModel} instances associated with the {@link FileMode} instances in the given
      * {@link ProjectModel}.
-     * <p/>
+     * </p>
+     * <p>
      * If set to recursive, then also include the effort points from child projects.
+     * </p>
+     * <p>
+     * The result is a Map, the key contains the effort level and the value contains the number of incidents.
+     * </p>
      */
-    public Map<Integer, Integer> getMigrationEffortDetails(ProjectModel initialProject, Set<String> includeTags, Set<String> excludeTags,
+    public Map<Integer, Integer> getMigrationEffortByPoints(ProjectModel initialProject, Set<String> includeTags, Set<String> excludeTags,
+                boolean recursive, boolean includeZero)
+    {
+        final Map<Integer, Integer> results = new HashMap<>();
+
+        EffortAccumulatorFunction accumulator = new EffortAccumulatorFunction()
+        {
+            @Override
+            public void accumulate(Vertex effortReportVertex)
+            {
+                Integer migrationEffort = effortReportVertex.getProperty(EffortReportModel.EFFORT);
+                if (!results.containsKey(migrationEffort))
+                    results.put(migrationEffort, 1);
+                else
+                    results.put(migrationEffort, results.get(migrationEffort) + 1);
+            }
+        };
+
+        getMigrationEffortDetails(initialProject, includeTags, excludeTags, recursive, includeZero, accumulator);
+
+        return results;
+    }
+
+    /**
+     * <p>
+     * Returns the total incidents in all of the {@link InlineHintModel}s associated with the files in this project by severity.
+     * </p>
+     */
+    public Map<Severity, Integer> getMigrationEffortBySeverity(ProjectModel initialProject, Set<String> includeTags, Set<String> excludeTags,
                 boolean recursive)
     {
-        Map<Integer, Integer> results = new HashMap<>();
+        final Map<Severity, Integer> results = new HashMap<>();
+
+        EffortAccumulatorFunction accumulator = new EffortAccumulatorFunction()
+        {
+            @Override
+            public void accumulate(Vertex effortReportVertex)
+            {
+                Severity severity = frame(effortReportVertex).getSeverity();
+                if (!results.containsKey(severity))
+                    results.put(severity, 1);
+                else
+                    results.put(severity, results.get(severity) + 1);
+            }
+        };
+
+        getMigrationEffortDetails(initialProject, includeTags, excludeTags, recursive, true, accumulator);
+
+        return results;
+    }
+
+    private void getMigrationEffortDetails(ProjectModel initialProject, Set<String> includeTags, Set<String> excludeTags, boolean recursive,
+                boolean includeZero, EffortAccumulatorFunction accumulatorFunction)
+    {
 
         final Set<Vertex> initialVertices = new HashSet<>();
         if (recursive)
@@ -140,7 +197,8 @@ public class InlineHintService extends GraphService<InlineHintModel>
 
         GremlinPipeline<Vertex, Vertex> inlineHintPipeline = new GremlinPipeline<>(getGraphContext().getGraph());
         inlineHintPipeline.V();
-        inlineHintPipeline.has(EffortReportModel.EFFORT, Compare.GREATER_THAN, 0);
+        if (!includeZero)
+            inlineHintPipeline.has(EffortReportModel.EFFORT, Compare.GREATER_THAN, 0);
         inlineHintPipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, InlineHintModel.TYPE);
 
         inlineHintPipeline.as("hint");
@@ -164,15 +222,9 @@ public class InlineHintService extends GraphService<InlineHintModel>
                 InlineHintModel hintModel = frame(v);
                 if (!TagUtil.checkMatchingTags(hintModel.getTags(), includeTags, excludeTags))
                     continue;
+
             }
-
-            int migrationEffort = (Integer) v.getProperty(EffortReportModel.EFFORT);
-
-            if (!results.containsKey(migrationEffort))
-                results.put(migrationEffort, 1);
-            else
-                results.put(migrationEffort, results.get(migrationEffort) + 1);
+            accumulatorFunction.accumulate(v);
         }
-        return results;
     }
 }
