@@ -1,45 +1,67 @@
 package org.jboss.windup.reporting.service;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.EffortReportModel;
 
 /**
- * Contains methods for manipulating {@link EffortReportModel} instances.
+ * Contains constants representing the migration effort levels.
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
+ * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
  */
 public class EffortReportService extends GraphService
 {
-    private static Map<Integer, String> effortLevelDescriptionMap = Collections.synchronizedMap(new LinkedHashMap<Integer, String>());
-    private static Map<Integer, String> effortLevelDescriptionVerboseMap = Collections.synchronizedMap(new LinkedHashMap<Integer, String>());
-
-    public static final String UNKNOWN = "Unknown";
-    public static final String REQUIRES_ARCHITECTURAL_CHANGE = "Requires Architectural Change";
-    public static final String REDESIGN = "Redesign";
-    public static final String COMPLEX = "Complex";
-    public static final String TRIVIAL = "Trivial";
-    public static final String INFO = "Info";
-
-    static
+    public enum Verbosity
     {
-        effortLevelDescriptionMap.put(0, INFO);
-        effortLevelDescriptionMap.put(1, TRIVIAL);
-        effortLevelDescriptionMap.put(3, COMPLEX);
-        effortLevelDescriptionMap.put(5, REDESIGN);
-        effortLevelDescriptionMap.put(7, REQUIRES_ARCHITECTURAL_CHANGE);
-        effortLevelDescriptionMap.put(13, UNKNOWN);
+        ID, SHORT, VERBOSE
+    }
 
-        effortLevelDescriptionVerboseMap.put(0, "Info");
-        effortLevelDescriptionVerboseMap.put(1, "Trivial change or 1-1 library swap");
-        effortLevelDescriptionVerboseMap.put(3, "Complex change with documented solution");
-        effortLevelDescriptionVerboseMap.put(5, "Complex change with documented solution");
-        effortLevelDescriptionVerboseMap.put(7, "Requires architectural decision or change");
-        effortLevelDescriptionVerboseMap.put(13, "Unknown effort");
+    public enum EffortLevel
+    {
+        INFO(0, "Info", "Info"),
+        TRIVIAL(1, "Trivial", "Trivial change or 1-1 library swap"),
+        COMPLEX(3, "Complex", "Complex change with documented solution"),
+        REDESIGN(5, "Redesign", "Requires re-design or library change"),
+        ARCHITECTURAL(7, "Requires Architectural Change", "Requires architectural decision or change"),
+        UNKNOWN(13, "Unknown", "Unknown effort");
+
+        private final int points;
+        private final String shortDesc;
+        private final String verboseDesc;
+
+        EffortLevel(final int points, final String shortDesc, final String verboseDesc)
+        {
+            this.points = points;
+            this.shortDesc = shortDesc;
+            this.verboseDesc = verboseDesc;
+        }
+
+        public static EffortLevel forPoints(int points)
+        {
+            EffortLevel[] levels = EffortLevel.class.getEnumConstants();
+            for (EffortLevel level : levels)
+            {
+                if (level.getPoints() == points)
+                    return level;
+            }
+            return UNKNOWN;
+        }
+
+        public int getPoints()
+        {
+            return points;
+        }
+
+        public String getShortDescription()
+        {
+            return shortDesc;
+        }
+
+        public String getVerboseDescription()
+        {
+            return verboseDesc;
+        }
     }
 
     public EffortReportService(GraphContext context)
@@ -48,18 +70,22 @@ public class EffortReportService extends GraphService
     }
 
     /**
-     * Gets a mapping from effort level to a description.
+     * Returns the right string representation of the effort level based on given number of points.
      */
-    public static Map<Integer, String> getEffortLevelDescriptionMappings()
+    public static String getEffortLevelDescription(Verbosity verbosity, int points)
     {
-        return effortLevelDescriptionMap;
+        EffortLevel level = EffortLevel.forPoints(points);
+
+        switch (verbosity)
+        {
+        case ID:
+            return level.name();
+        case VERBOSE:
+            return level.getVerboseDescription();
+        case SHORT:
+        default:
+            return level.getShortDescription();
+        }
     }
 
-    /**
-     * Gets a mapping from effort level to a verbose description.
-     */
-    public static Map<Integer, String> getVerboseEffortLevelDescriptionMappings()
-    {
-        return effortLevelDescriptionVerboseMap;
-    }
 }

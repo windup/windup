@@ -1,30 +1,26 @@
 <!DOCTYPE html>
 
 <#macro migrationIssuesRenderer problemSummary>
-    <tr rospan="2">
+    <tr class="problemSummary effort${getEffortDescriptionForPoints(problemSummary.effortPerIncident, 'id')}">
         <td>
-            <a href="#" class="toggle">
-                ${problemSummary.issueName}
-            </a>
+            <a href="#" class="toggle">${problemSummary.issueName?html}</a>
         </td>
         <td class="text-right">${problemSummary.numberFound}</td>
         <td class="text-right">${problemSummary.effortPerIncident}</td>
-        <td>${getEffortDescriptionForPoints(problemSummary.effortPerIncident, true)}</td>
+        <td class="level">${getEffortDescriptionForPoints(problemSummary.effortPerIncident, 'verbose')}</td>
         <td class="text-right">${problemSummary.numberFound * problemSummary.effortPerIncident}</td>
     </tr>
     <tr class="tablesorter-childRow bg-info">
-        <td><div class="indent"><strong>File</strong></td>
-        <td><strong>Incidents Found</strong></td>
+        <td><div class="indent"><strong>File</strong></div></td>
+        <td class="text-right"><strong>Incidents Found</strong></td>
         <td colspan="3"><strong>Hint</strong></td>
     </tr>
     <#list problemSummary.descriptions as description>
         <#assign filesCount=problemSummary.getFilesForDescription(description)?size>
         <#list problemSummary.getFilesForDescription(description) as fileSummary>
-            <tr class="tablesorter-childRow">
+            <tr class="fileSummary tablesorter-childRow">
                 <td>
-                    <div class="indent">
-                        <@render_link model=fileSummary.file class="migration-issues-detailed-item"/><#t>
-                    </div>
+                    <div class="indent"> <@render_link model=fileSummary.file class="migration-issues-detailed-item"/> </div>
                 </td>
                 <td class="text-right">
                     <@render_link model=fileSummary.file text="#{fileSummary.occurences}" class="migration-issues-detailed-item"/><#t>
@@ -42,9 +38,18 @@
                             <div class="panel-body">
                                 ${markdownToHtml(description!"-- No detailed text --")}
                             </div>
+                            <#list problemSummary.links!>
+                            <div class="panel-body">
+                                <ul>
+                                <#items as link>
+                                    <li><a href="${link.link}">${link.title}</a></li>
+                                </#items>
+                                </ul>
+                            </div>
+                            </#list>
                         </div>
                     </td>
-                    </#if>
+                </#if>
             </tr>
         </#list>
     </#list>
@@ -86,6 +91,35 @@
         <link href="resources/css/windup.java.css" rel="stylesheet" media="screen">
         <link href="resources/css/jquery-ui.css" rel="stylesheet" media="screen">
         <link href="resources/img/favicon.png" rel="shortcut icon" type="image/x-icon"/>
+        <style>
+            /* Only horizontal lines. */
+            .migration-issues-table.table-bordered > thead > tr > th,
+            .migration-issues-table.table-bordered > tbody > tr > td {
+                border-left-style: none;
+                border-right-style: none;
+            }
+            /* Light yellow bg for the issue info box. */
+            .hint-detail-panel > .panel-heading {
+                border-color: #c2c2c2;
+                background-color: #fbf4b1;
+            }
+            .hint-detail-panel {
+                border-color: #a8d0e3;
+                background-color: #fffcdc;
+            }
+            /* Reduce the padding, default is too big. */
+            .hint-detail-panel > .panel-body { padding-bottom: 0; }
+
+            /* Colors of various effort levels. */
+            /* Commented out for now (jsight - 2016/02/15)
+            tr.problemSummary.effortINFO td.level { color: #1B540E; }
+            tr.problemSummary.effortTRIVIAL td.level { color: #50A40E; }
+            tr.problemSummary.effortCOMPLEX td.level { color: #0065AC; }
+            tr.problemSummary.effortREDESIGN td.level { color: #C67D00; }
+            tr.problemSummary.effortARCHITECTURAL td.level { color: #C42F0E; }
+            tr.problemSummary.effortUNKNOWN td.level { color: #C42F0E; }
+            */
+        </style>
     </head>
     <body role="document">
         <!-- Navbar -->
@@ -141,16 +175,16 @@
 
                     <div class="panel-body">
                     <#list problemsBySeverity?keys as severity>
-                        <table class="table table-hover table-bordered table-condensed tablesorter migration-issues-table">
+                        <table class="table table-bordered table-condensed tablesorter migration-issues-table">
                             <thead>
                                 <tr>
                                     <th class="sortable">Issue by Category</th>
-                                    <th class="sortable">Incidents Found</th>
-                                    <th class="sortable">Story Points per Incident</th>
+                                    <th class="sortable-right text-right">Incidents Found</th>
+                                    <th class="sortable-right text-right">Story Points per Incident</th>
                                     <th>Level of Effort</th>
-                                    <th class="sortable">Total Story Points</th>
+                                    <th class="sortable-right text-right">Total Story Points</th>
                                 </tr>
-                                <tr style="background: silver;">
+                                <tr style="background: rgb(212, 230, 233);">
                                     <td>
                                         <b>${severity}</b>
                                     </td>
@@ -235,9 +269,6 @@
                     });
 
             });
-
-
-
 
             // we need these parsers because we are using comma to separate thousands and are also sorting links
             $.tablesorter.addParser({

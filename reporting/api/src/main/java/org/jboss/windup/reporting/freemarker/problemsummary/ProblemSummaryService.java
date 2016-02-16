@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.LinkModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.TagUtil;
@@ -20,6 +21,7 @@ import org.jboss.windup.reporting.service.InlineHintService;
 
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
+ * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
  */
 public class ProblemSummaryService
 {
@@ -37,6 +39,7 @@ public class ProblemSummaryService
         });
         Map<RuleSummaryKey, ProblemSummary> ruleToSummary = new HashMap<>();
 
+        // Hints
         InlineHintService hintService = new InlineHintService(context);
         final Iterable<InlineHintModel> hints = projectModel == null ? hintService.findAll() : hintService.getHintsForProject(projectModel, true);
         for (InlineHintModel hint : hints)
@@ -51,6 +54,9 @@ public class ProblemSummaryService
             if (summary == null)
             {
                 summary = new ProblemSummary(hint.getSeverity(), hint.getRuleID(), hint.getTitle(), 1, hint.getEffort());
+                for (LinkModel linkM : hint.getLinks()){
+                    summary.addLink(linkM.getDescription(), linkM.getLink());
+                }
                 ruleToSummary.put(key, summary);
                 addToResults(results, summary);
             }
@@ -61,6 +67,7 @@ public class ProblemSummaryService
             summary.addFile(hint.getHint(), hint.getFile());
         }
 
+        // Classifications
         ClassificationService classificationService = new ClassificationService(context);
         for (ClassificationModel classification : classificationService.findAll())
         {
@@ -99,8 +106,11 @@ public class ProblemSummaryService
             if (summary == null)
             {
                 summary = new ProblemSummary(classification.getSeverity(), classification.getRuleID(), classification.getClassification(),
-                            0,
-                            classification.getEffort());
+                            0, classification.getEffort());
+                for (LinkModel linkM : classification.getLinks())
+                {
+                    summary.addLink(linkM.getDescription(), linkM.getLink());
+                }
                 ruleToSummary.put(key, summary);
                 addToResults(results, summary);
             }

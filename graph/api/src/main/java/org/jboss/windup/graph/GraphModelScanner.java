@@ -100,17 +100,13 @@ class GraphModelScanner
             }
         });
         StringBuilder result = new StringBuilder();
-        for (int i = 0; i < list.size(); i++)
+        for (Class<? extends WindupVertexFrame> frameType : list)
         {
-            Class<?> type = list.get(i);
-            result.append(type.getName());
-            if ((i + 1) < list.size())
-            {
-                result.append(OperatingSystemUtils.getLineSeparator());
-            }
+            result.append("\t").append(frameType.getName()).append(NEWLINE);
         }
-        LOG.info("Loaded [" + list.size() + "] WindupVertexFrame sub-types [" + OperatingSystemUtils.getLineSeparator()
-                    + result.toString() + OperatingSystemUtils.getLineSeparator() + "]");
+
+        LOG.info("Loaded [" + list.size() + "] WindupVertexFrame sub-types [" + NEWLINE + result.toString() + "]");
     }
 
+    private static final String NEWLINE = OperatingSystemUtils.getLineSeparator();
 }
