@@ -102,7 +102,7 @@ class GraphModelScanner
         StringBuilder result = new StringBuilder();
         for (Class<? extends WindupVertexFrame> frameType : list)
         {
-            result.append("\t").append(frameType.getName()).append(NEWLINE);;
+            result.append("\t").append(frameType.getName()).append(NEWLINE);
         }
 
         LOG.info("Loaded [" + list.size() + "] WindupVertexFrame sub-types [" + NEWLINE + result.toString() + "]");

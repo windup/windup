@@ -12,7 +12,13 @@ import org.jboss.windup.reporting.model.EffortReportModel;
  */
 public class EffortReportService extends GraphService
 {
-    public static enum EffortLevel {
+    public enum Verbosity
+    {
+        ID, SHORT, VERBOSE
+    }
+
+    public enum EffortLevel
+    {
         INFO(0, "Info", "Info"),
         TRIVIAL(1, "Trivial", "Trivial change or 1-1 library swap"),
         COMPLEX(3, "Complex", "Complex change with documented solution"),
@@ -24,47 +30,39 @@ public class EffortReportService extends GraphService
         private final String shortDesc;
         private final String verboseDesc;
 
-        private EffortLevel(final int points, final String shortDesc, final String verboseDesc)
+        EffortLevel(final int points, final String shortDesc, final String verboseDesc)
         {
             this.points = points;
             this.shortDesc = shortDesc;
             this.verboseDesc = verboseDesc;
         }
 
-        public static EffortLevel forPoints(int points){
-            switch (points)
+        public static EffortLevel forPoints(int points)
+        {
+            EffortLevel[] levels = EffortLevel.class.getEnumConstants();
+            for (EffortLevel level : levels)
             {
-                case 0: return INFO;
-                case 1: case 2: return TRIVIAL;
-                case 3: case 4: return COMPLEX;
-                case 5: case 6: return REDESIGN;
-                case 7: case 8: case 9: case 10: case 11: case 12: return ARCHITECTURAL;
-                case 13: default: return UNKNOWN;
+                if (level.getPoints() == points)
+                    return level;
             }
+            return UNKNOWN;
         }
-
 
         public int getPoints()
         {
             return points;
         }
 
-
         public String getShortDescription()
         {
             return shortDesc;
         }
 
-
         public String getVerboseDescription()
         {
             return verboseDesc;
         }
-
-
     }
-
-    public static enum Verbosity { ID, SHORT, VERBOSE };
 
     public EffortReportService(GraphContext context)
     {
@@ -80,12 +78,13 @@ public class EffortReportService extends GraphService
 
         switch (verbosity)
         {
-            case ID:
-                return level.name();
-            case VERBOSE:
-                return level.getVerboseDescription();
-            case SHORT: default:
-                return level.getShortDescription();
+        case ID:
+            return level.name();
+        case VERBOSE:
+            return level.getVerboseDescription();
+        case SHORT:
+        default:
+            return level.getShortDescription();
         }
     }
 

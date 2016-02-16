@@ -14,11 +14,18 @@ body {
   margin:23px;
 }
 
-.tablesorter > thead > tr > th.sortable{
+.tablesorter > thead > tr > th.sortable {
   cursor:pointer;
   background-position: left center;
   padding-left: 20px;
   background: url(../img/styles/table-sort-bg.gif) no-repeat 0%;
+}
+
+.tablesorter > thead > tr > th.sortable-right {
+  cursor:pointer;
+  padding-right: 20px;
+  background: url(../img/styles/table-sort-bg.gif) no-repeat 0%;
+  background-position: right center;
 }
 
 .btn-xxs {

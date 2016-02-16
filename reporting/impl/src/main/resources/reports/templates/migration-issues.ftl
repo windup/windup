@@ -5,14 +5,14 @@
         <td>
             <a href="#" class="toggle">${problemSummary.issueName?html}</a>
         </td>
-        <td class="text-right">${problemSummary.numberFound}&times;</td>
-        <td class="text-right">${problemSummary.effortPerIncident} sp</td>
-        <td class="level">${getEffortDescriptionForPoints(problemSummary.effortPerIncident, true)}</td>
-        <td class="text-right">${problemSummary.numberFound * problemSummary.effortPerIncident} sp</td>
+        <td class="text-right">${problemSummary.numberFound}</td>
+        <td class="text-right">${problemSummary.effortPerIncident}</td>
+        <td class="level">${getEffortDescriptionForPoints(problemSummary.effortPerIncident, 'verbose')}</td>
+        <td class="text-right">${problemSummary.numberFound * problemSummary.effortPerIncident}</td>
     </tr>
     <tr class="tablesorter-childRow bg-info">
         <td><div class="indent"><strong>File</strong></div></td>
-        <td><strong>Incidents Found</strong></td>
+        <td class="text-right"><strong>Incidents Found</strong></td>
         <td colspan="3"><strong>Hint</strong></td>
     </tr>
     <#list problemSummary.descriptions as description>
@@ -23,7 +23,7 @@
                     <div class="indent"> <@render_link model=fileSummary.file class="migration-issues-detailed-item"/> </div>
                 </td>
                 <td class="text-right">
-                    <@render_link model=fileSummary.file text="#{fileSummary.occurences}&times;" class="migration-issues-detailed-item"/><#t>
+                    <@render_link model=fileSummary.file text="#{fileSummary.occurences}" class="migration-issues-detailed-item"/><#t>
                 </td>
                 <#if fileSummary?is_first>
                     <td colspan="3" rowspan="${filesCount}">
@@ -40,7 +40,6 @@
                             </div>
                             <#list problemSummary.links!>
                             <div class="panel-body">
-                                Related resources:
                                 <ul>
                                 <#items as link>
                                     <li><a href="${link.link}">${link.title}</a></li>
@@ -93,7 +92,13 @@
         <link href="resources/css/jquery-ui.css" rel="stylesheet" media="screen">
         <link href="resources/img/favicon.png" rel="shortcut icon" type="image/x-icon"/>
         <style>
-            .migration-issues-table.table-bordered > thead > tr > td { border-left-style: none; border-right-style: none; }
+            /* Only horizontal lines. */
+            .migration-issues-table.table-bordered > thead > tr > th,
+            .migration-issues-table.table-bordered > tbody > tr > td {
+                border-left-style: none;
+                border-right-style: none;
+            }
+            /* Light yellow bg for the issue info box. */
             .hint-detail-panel > .panel-heading {
                 border-color: #c2c2c2;
                 background-color: #fbf4b1;
@@ -102,13 +107,18 @@
                 border-color: #a8d0e3;
                 background-color: #fffcdc;
             }
+            /* Reduce the padding, default is too big. */
             .hint-detail-panel > .panel-body { padding-bottom: 0; }
+
+            /* Colors of various effort levels. */
+            /* Commented out for now (jsight - 2016/02/15)
             tr.problemSummary.effortINFO td.level { color: #1B540E; }
             tr.problemSummary.effortTRIVIAL td.level { color: #50A40E; }
             tr.problemSummary.effortCOMPLEX td.level { color: #0065AC; }
             tr.problemSummary.effortREDESIGN td.level { color: #C67D00; }
             tr.problemSummary.effortARCHITECTURAL td.level { color: #C42F0E; }
             tr.problemSummary.effortUNKNOWN td.level { color: #C42F0E; }
+            */
         </style>
     </head>
     <body role="document">
@@ -169,16 +179,16 @@
                             <thead>
                                 <tr>
                                     <th class="sortable">Issue by Category</th>
-                                    <th class="sortable">Incidents Found</th>
-                                    <th class="sortable">Story Points per Incident</th>
+                                    <th class="sortable-right text-right">Incidents Found</th>
+                                    <th class="sortable-right text-right">Story Points per Incident</th>
                                     <th>Level of Effort</th>
-                                    <th class="sortable">Total Story Points</th>
+                                    <th class="sortable-right text-right">Total Story Points</th>
                                 </tr>
                                 <tr style="background: rgb(212, 230, 233);">
                                     <td>
                                         <b>${severity}</b>
                                     </td>
-                                    <td class="text-right">${getIncidentsFound(problemsBySeverity[severity])}&times;</td>
+                                    <td class="text-right">${getIncidentsFound(problemsBySeverity[severity])}</td>
                                     <td></td>
                                     <td></td>
                                     <td class="text-right">${getTotalPoints(problemsBySeverity[severity])}</td>
@@ -259,9 +269,6 @@
                     });
 
             });
-
-
-
 
             // we need these parsers because we are using comma to separate thousands and are also sorting links
             $.tablesorter.addParser({
