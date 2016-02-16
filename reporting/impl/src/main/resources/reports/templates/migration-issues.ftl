@@ -93,7 +93,13 @@
         <link href="resources/css/jquery-ui.css" rel="stylesheet" media="screen">
         <link href="resources/img/favicon.png" rel="shortcut icon" type="image/x-icon"/>
         <style>
-            .migration-issues-table.table-bordered > thead > tr > td { border-left-style: none; border-right-style: none; }
+            /* Only horizontal lines. */
+            .migration-issues-table.table-bordered > thead > tr > th,
+            .migration-issues-table.table-bordered > tbody > tr > td {
+                border-left-style: none;
+                border-right-style: none;
+            }
+            /* Light yellow bg for the issue info box. */
             .hint-detail-panel > .panel-heading {
                 border-color: #c2c2c2;
                 background-color: #fbf4b1;
@@ -102,7 +108,10 @@
                 border-color: #a8d0e3;
                 background-color: #fffcdc;
             }
+            /* Reduce the padding, default is too big. */
             .hint-detail-panel > .panel-body { padding-bottom: 0; }
+
+            /* Colors of various effort levels. */
             tr.problemSummary.effortINFO td.level { color: #1B540E; }
             tr.problemSummary.effortTRIVIAL td.level { color: #50A40E; }
             tr.problemSummary.effortCOMPLEX td.level { color: #0065AC; }
