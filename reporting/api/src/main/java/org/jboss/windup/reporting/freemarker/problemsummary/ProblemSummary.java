@@ -1,13 +1,17 @@
 package org.jboss.windup.reporting.freemarker.problemsummary;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.reporting.config.Link;
 import org.jboss.windup.reporting.model.Severity;
 
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
+ * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
  */
 public class ProblemSummary
 {
@@ -17,6 +21,7 @@ public class ProblemSummary
     private int numberFound;
     private final int effortPerIncident;
     private final Map<String, Map<FileModel, ProblemFileSummary>> descriptionToFiles = new LinkedHashMap<>();
+    private final List<Link> links = new ArrayList<>();
 
     /**
      * Creates a new instance with the given information.
@@ -105,6 +110,24 @@ public class ProblemSummary
         }
         return files;
     }
+
+    public void addLink(Link link)
+    {
+        this.links.add(link);
+    }
+
+    public void addLink(String label, String url)
+    {
+        this.links.add(Link.to(label, url));
+    }
+
+
+    public List<Link> getLinks()
+    {
+        return links;
+    }
+
+
 
     /**
      * Adds a file with the provided description.

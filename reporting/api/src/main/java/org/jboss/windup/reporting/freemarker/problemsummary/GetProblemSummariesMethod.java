@@ -19,6 +19,8 @@ import freemarker.template.SimpleSequence;
 import freemarker.template.TemplateModelException;
 
 /**
+ * Returns a summary of all classification and hints found during analysis in the form of a List&lt;ProblemSummary&gt;.
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public class GetProblemSummariesMethod implements WindupFreeMarkerMethod

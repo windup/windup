@@ -76,7 +76,7 @@ public class RuleLoaderImpl implements RuleLoader
         for (RuleProvider phase : sortedPhases)
         {
             Class<?> unproxiedClass = Proxies.unwrap(phase).getClass();
-            rulePhaseSB.append("Phase: ").append(unproxiedClass.getSimpleName()).append("\n");
+            rulePhaseSB.append("\tPhase: ").append(unproxiedClass.getSimpleName()).append("\n");
         }
         LOG.info("Rule Phases: [\n" + rulePhaseSB.toString() + "]");
     }
