@@ -32,6 +32,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.MappingJsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.jboss.windup.reporting.service.EffortReportService.EffortLevel;
 
 /**
  * Generates a .js (javascript) file in the reports directory with detailed issue summary information.
@@ -79,7 +80,7 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider
             {
                 WindupConfigurationModel windupConfiguration = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
 
-                issueSummaryWriter.write("var WINDUP_ISSUE_SUMMARIES = [];" + OperatingSystemUtils.getLineSeparator());
+                issueSummaryWriter.write("var WINDUP_ISSUE_SUMMARIES = [];" + NEWLINE);
 
                 for (FileModel inputApplicationFile : windupConfiguration.getInputPaths())
                 {
@@ -93,36 +94,33 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider
 
                     issueSummaryWriter.write("WINDUP_ISSUE_SUMMARIES['" + inputApplication.asVertex().getId() + "'] = ");
                     objectMapper.writeValue(issueSummaryWriter, summariesBySeverity);
-                    issueSummaryWriter.write(";" + OperatingSystemUtils.getLineSeparator());
+                    issueSummaryWriter.write(";" + NEWLINE);
                 }
 
-                issueSummaryWriter.write("var effortToDescription = [];" + OperatingSystemUtils.getLineSeparator());
-                Map<Integer, String> effortToDescriptionMap = EffortReportService.getEffortLevelDescriptionMappings();
-                for (Map.Entry<Integer, String> effortToDescription : effortToDescriptionMap.entrySet())
+                issueSummaryWriter.write("var effortToDescription = [];" + NEWLINE);
+                ///Map<Integer, String> effortToDescriptionMap = EffortReportService.getEffortLevelDescriptionMappings();
+
+                for (EffortReportService.EffortLevel level : EffortReportService.EffortLevel.values())
                 {
-                    issueSummaryWriter
-                                .write("effortToDescription[" + effortToDescription.getKey() + "] = \"" + effortToDescription.getValue() + "\";");
-                    issueSummaryWriter.write(OperatingSystemUtils.getLineSeparator());
+                    issueSummaryWriter.write("effortToDescription[" + level.getPoints() + "] = \"" + level.getShortDescription()+ "\";");
+                    issueSummaryWriter.write(NEWLINE);
                 }
 
                 issueSummaryWriter.write("var effortOrder = [");
-                boolean first = true;
-                for (Integer effort : effortToDescriptionMap.keySet())
+                String comma = "";
+                for (EffortLevel level : EffortLevel.values())
                 {
-                    if (first)
-                        first = false;
-                    else
-                        issueSummaryWriter.write(", ");
-
-                    issueSummaryWriter.write(String.valueOf(effort));
+                    issueSummaryWriter.write(comma);
+                    comma = ", ";
+                    issueSummaryWriter.write(level.getShortDescription());
                 }
-                issueSummaryWriter.write("];" + OperatingSystemUtils.getLineSeparator());
+                issueSummaryWriter.write("];" + NEWLINE);
 
                 issueSummaryWriter.write("var severityOrder = [");
                 issueSummaryWriter.write("\"" + Severity.MANDATORY + "\", ");
                 issueSummaryWriter.write("\"" + Severity.OPTIONAL + "\", ");
                 issueSummaryWriter.write("\"" + Severity.POTENTIAL_ISSUES.toString() + "\"");
-                issueSummaryWriter.write("];" + OperatingSystemUtils.getLineSeparator());
+                issueSummaryWriter.write("];" + NEWLINE);
             }
         }
         catch (Exception e)
@@ -130,4 +128,5 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider
             throw new WindupException("Error serializing problem details due to: " + e.getMessage(), e);
         }
     }
+    private static final String NEWLINE = OperatingSystemUtils.getLineSeparator();
 }
