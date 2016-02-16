@@ -16,9 +16,8 @@
 </#macro>
 
 <#macro applicationReportRenderer applicationReport>
-        <#assign effortLevels = getEffortDetailsForProject(applicationReport.projectModel, true)>
-        <#assign totalEffort = 0>
-        <#assign totalIncidents = 0>
+        <#assign incidentCountBySeverity = getEffortCountForProjectBySeverity(applicationReport.projectModel, true)>
+        <#assign totalIncidents = 0 >
 
 		<tr>
 			<td>
@@ -36,17 +35,17 @@
         		</#list>
     		</td>
     		<td>
-      			<#list effortLevels?keys as effortLevel>
-      			    <div class="col-sm-11 text-right">${getEffortDescriptionForPoints(effortLevel, true)}</div>
-      			    <div class="col-sm-1">${effortLevels?api.get(effortLevel)}</div>
-      			    <#assign totalEffort = totalEffort + (effortLevel * effortLevels?api.get(effortLevel)) >
-      			    <#assign totalIncidents = totalIncidents + effortLevels?api.get(effortLevel) >
+      			<#list incidentCountBySeverity?keys as severity>
+      			    <div class="col-sm-11 text-right">${severity}</div>
+      			    <div class="col-sm-1 text-right">${incidentCountBySeverity?api.get(severity)}</div>
+      			    <#assign totalIncidents = totalIncidents + incidentCountBySeverity?api.get(severity) >
       			</#list>
                 <div class="col-sm-11 text-right">Total</div>
                 <div class="col-sm-1">${totalIncidents}</div>
     		</td>
     		<td class="text-right" style="vertical-align:middle">
-                ${totalEffort}
+    		    <#include "include/effort_util.ftl">
+                ${getMigrationEffortPointsForProject(applicationReport.projectModel, true)}
     		</td>
 		</tr>
 </#macro>

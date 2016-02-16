@@ -45,7 +45,7 @@ public class ClassificationServiceTest
     private GraphContextFactory factory;
 
     @Test
-    public void testHintEffort() throws Exception
+    public void testClassificationEffort() throws Exception
     {
 
         try (GraphContext context = factory.create())
@@ -54,7 +54,8 @@ public class ClassificationServiceTest
 
             ProjectModel projectModel = fillData(context);
             Set<String> emptySet = Collections.emptySet();
-            final Map<Integer, Integer> effortByCategory = classificationService.getMigrationEffortDetails(projectModel, emptySet, emptySet, true);
+            final Map<Integer, Integer> effortByCategory = classificationService.getMigrationEffortByPoints(projectModel, emptySet, emptySet, true,
+                        true);
             int totalEffort = 0;
             for (Map.Entry<Integer, Integer> effortEntry : effortByCategory.entrySet())
                 totalEffort += effortEntry.getKey() * effortEntry.getValue();
@@ -67,13 +68,13 @@ public class ClassificationServiceTest
             {
                 if (fm.getFilePath().equals("/f1"))
                 {
-                    int fileEffort = classificationService.getMigrationEffortDetails(fm);
+                    int fileEffort = classificationService.getMigrationEffortPoints(fm);
                     Assert.assertEquals(140, fileEffort);
                     foundF1Effort = true;
                 }
                 else if (fm.getFilePath().equals("/f2"))
                 {
-                    int fileEffort = classificationService.getMigrationEffortDetails(fm);
+                    int fileEffort = classificationService.getMigrationEffortPoints(fm);
                     Assert.assertEquals(3, fileEffort);
                     foundF2Effort = true;
                 }
