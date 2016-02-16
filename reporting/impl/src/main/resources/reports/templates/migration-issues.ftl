@@ -42,9 +42,19 @@
                             <div class="panel-body">
                                 ${markdownToHtml(description!"-- No detailed text --")}
                             </div>
+                            <#list problemSummary.links!>
+                            <div class="panel-body">
+                                Related resources:
+                                <ul>
+                                <#items as link>
+                                    <li><a href="${link.link}">${link.title}</a></li>
+                                </#items>
+                                </ul>
+                            </div>
+                            </#list>
                         </div>
                     </td>
-                    </#if>
+                </#if>
             </tr>
         </#list>
     </#list>
@@ -86,6 +96,7 @@
         <link href="resources/css/windup.java.css" rel="stylesheet" media="screen">
         <link href="resources/css/jquery-ui.css" rel="stylesheet" media="screen">
         <link href="resources/img/favicon.png" rel="shortcut icon" type="image/x-icon"/>
+        <style>.hint-detail-panel .panel-body { padding-bottom: 0; }</style>
     </head>
     <body role="document">
         <!-- Navbar -->
