@@ -112,7 +112,9 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider
                 {
                     issueSummaryWriter.write(comma);
                     comma = ", ";
+                    issueSummaryWriter.write("\"");
                     issueSummaryWriter.write(level.getShortDescription());
+                    issueSummaryWriter.write("\"");
                 }
                 issueSummaryWriter.write("];" + NEWLINE);
 
