@@ -35,13 +35,25 @@
         		</#list>
     		</td>
     		<td>
-      			<#list incidentCountBySeverity?keys as severity>
-      			    <div class="col-sm-11 text-right">${severity}</div>
-      			    <div class="col-sm-1 text-right">${incidentCountBySeverity?api.get(severity)}</div>
-      			    <#assign totalIncidents = totalIncidents + incidentCountBySeverity?api.get(severity) >
-      			</#list>
-                <div class="col-sm-11 text-right">Total</div>
-                <div class="col-sm-1">${totalIncidents}</div>
+    		    <table>
+      			    <#list incidentCountBySeverity?keys as severity>
+      			        <#assign totalIncidents = totalIncidents + incidentCountBySeverity?api.get(severity) >
+      			        <tr>
+      			            <td>
+      			                ${severity}
+                            </td>
+                            <td style="text-align: right; padding-left: 10px;">
+                                ${incidentCountBySeverity?api.get(severity)}
+                            </td>
+      			        </tr>
+          			</#list>
+                    <tr>
+                        <td>Total</td>
+                        <td style="text-align: right; padding-left: 10px;">
+                            ${totalIncidents}
+                        </td>
+                    </tr>
+                </table>
     		</td>
     		<td class="text-right" style="vertical-align:middle">
     		    <#include "include/effort_util.ftl">
