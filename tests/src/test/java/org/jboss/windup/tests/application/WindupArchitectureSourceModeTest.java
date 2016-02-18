@@ -259,7 +259,7 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
         Path reportPath = Paths.get(new ReportService(context).getReportDirectory(), reportModel.getReportFilename());
         util.loadPage(reportPath);
 
-        Assert.assertTrue(util.checkIssue("Classification ActivationConfigProperty", 2, 8, "Unknown", 16));
+        Assert.assertTrue(util.checkIssue("Classification ActivationConfigProperty", 2, 8, "Unknown effort", 16));
         Assert.assertTrue(util.checkIssue("Title for Hint from XML", 1, 0, "Info", 0));
         Assert.assertTrue(util.checkIssue("Web Servlet", 1, 0, "Info", 0));
     }
