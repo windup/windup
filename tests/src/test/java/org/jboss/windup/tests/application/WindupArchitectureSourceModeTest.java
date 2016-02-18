@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -175,7 +174,7 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
                     ReportModel.TEMPLATE_PATH,
                     CreateSpringBeanReportRuleProvider.TEMPLATE_SPRING_REPORT);
         TestSpringBeanReportUtil util = new TestSpringBeanReportUtil();
-        Path reportPath = Paths.get(reportService.getReportDirectory(), reportModel.getReportFilename());
+        Path reportPath = reportService.getReportDirectory().resolve(reportModel.getReportFilename());
         util.loadPage(reportPath);
         Assert.assertTrue(util.checkSpringBeanInReport("mysamplebean", "org.example.MyExampleBean"));
     }
@@ -187,7 +186,7 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
                     ReportModel.TEMPLATE_PATH,
                     CreateEJBReportRuleProvider.TEMPLATE_EJB_REPORT);
         TestEJBReportUtil util = new TestEJBReportUtil();
-        Path reportPath = Paths.get(reportService.getReportDirectory(), reportModel.getReportFilename());
+        Path reportPath = reportService.getReportDirectory().resolve(reportModel.getReportFilename());
         util.loadPage(reportPath);
         Assert.assertTrue(util.checkBeanInReport(EJBType.MDB, "MyNameForMessageDrivenBean",
                     "org.windup.examples.ejb.messagedriven.MessageDrivenBean",
@@ -207,7 +206,7 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
         TestCompatibleReportUtil util = new TestCompatibleReportUtil();
 
 
-        Path reportPath = Paths.get(reportService.getReportDirectory(), reportModel.getReportFilename());
+        Path reportPath = reportService.getReportDirectory().resolve(reportModel.getReportFilename());
         util.loadPage(reportPath);
         Assert.assertTrue(util
                     .checkFileInReport("src/main/resources/springexample/spring-sample-file.xml", ""));
@@ -226,7 +225,7 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
         ReportModel reportModel = reportService.getUniqueByProperty(
                     ReportModel.TEMPLATE_PATH,
                     CreateJPAReportRuleProvider.TEMPLATE_JPA_REPORT);
-        Path reportPath = Paths.get(reportService.getReportDirectory(), reportModel.getReportFilename());
+        Path reportPath = reportService.getReportDirectory().resolve(reportModel.getReportFilename());
         util.loadPage(reportPath);
 
         Assert.assertTrue(util.checkEntityInReport("SimpleEntity", "org.windup.examples.ejb.entitybean.SimpleEntity",
@@ -256,7 +255,7 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
         if (reportModel == null)
             throw new RuntimeException("Failed to find migration issues report!");
 
-        Path reportPath = Paths.get(new ReportService(context).getReportDirectory(), reportModel.getReportFilename());
+        Path reportPath = new ReportService(context).getReportDirectory().resolve(reportModel.getReportFilename());
         util.loadPage(reportPath);
 
         Assert.assertTrue(util.checkIssue("Classification ActivationConfigProperty", 2, 8, "Unknown effort", 16));
@@ -271,7 +270,7 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
     {
         ReportService reportService = new ReportService(context);
         ReportModel reportModel = getMainApplicationReport(context);
-        Path appReportPath = Paths.get(reportService.getReportDirectory(), reportModel.getReportFilename());
+        Path appReportPath = reportService.getReportDirectory().resolve(reportModel.getReportFilename());
 
         TestJavaApplicationOverviewUtil util = new TestJavaApplicationOverviewUtil();
         util.loadPage(appReportPath);

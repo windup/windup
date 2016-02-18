@@ -2,7 +2,6 @@ package org.jboss.windup.tooling;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -206,7 +205,7 @@ public class ExecutionBuilderImpl implements ExecutionBuilder, ExecutionBuilderS
         {
             ReportLinkImpl reportLink = new ReportLinkImpl();
             reportLink.setInputFile(sourceReportModel.getSourceFileModel().asFile());
-            Path reportPath = Paths.get(reportService.getReportDirectory()).resolve(sourceReportModel.getReportFilename());
+            Path reportPath = reportService.getReportDirectory().resolve(sourceReportModel.getReportFilename());
             reportLink.setReportFile(reportPath.toFile());
             reportLinks.add(reportLink);
         }

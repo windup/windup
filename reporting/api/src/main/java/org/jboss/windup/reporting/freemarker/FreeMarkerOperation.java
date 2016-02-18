@@ -3,7 +3,6 @@ package org.jboss.windup.reporting.freemarker;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -66,8 +65,8 @@ public class FreeMarkerOperation extends GraphOperation
         try
         {
             ReportService reportService = new ReportService(event.getGraphContext());
-            String outputDir = reportService.getReportDirectory();
-            Path outputPath = Paths.get(outputDir, outputFilename);
+            Path outputDir = reportService.getReportDirectory();
+            Path outputPath = outputDir.resolve(outputFilename);
 
             LOG.info("Reporting: Writing template \"" + templatePath + "\" to output file \""
                         + outputPath.toAbsolutePath().toString() + "\"");

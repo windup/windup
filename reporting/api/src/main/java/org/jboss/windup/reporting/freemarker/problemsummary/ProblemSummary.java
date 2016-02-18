@@ -15,6 +15,7 @@ import org.jboss.windup.reporting.model.Severity;
  */
 public class ProblemSummary
 {
+    private final Object id;
     private final Severity severity;
     private final String ruleID;
     private final String issueName;
@@ -26,13 +27,19 @@ public class ProblemSummary
     /**
      * Creates a new instance with the given information.
      */
-    public ProblemSummary(Severity severity, String ruleID, String issueName, int numberFound, int effortPerIncident)
+    public ProblemSummary(Object id, Severity severity, String ruleID, String issueName, int numberFound, int effortPerIncident)
     {
+        this.id = id;
         this.severity = severity;
         this.ruleID = ruleID;
         this.issueName = issueName;
         this.numberFound = numberFound;
         this.effortPerIncident = effortPerIncident;
+    }
+
+    public Object getId()
+    {
+        return id;
     }
 
     /**
@@ -138,7 +145,7 @@ public class ProblemSummary
 
         if (files.containsKey(fileModel))
         {
-            files.get(fileModel).addOccurence();
+            files.get(fileModel).addOccurrence();
         } else {
             files.put(fileModel, new ProblemFileSummary(fileModel, 1));
         }

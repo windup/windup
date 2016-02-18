@@ -1,7 +1,6 @@
 package org.jboss.windup.tests.application;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -66,7 +65,7 @@ public class UnparsablesReportTest extends WindupArchitectureTest
                     ReportModel.TEMPLATE_PATH,
                     CreateUnparsableFilesReportRuleProvider.TEMPLATE_UNPARSABLE);
         TestUnparsablesUtil util = new TestUnparsablesUtil();
-        Path reportPath = Paths.get(reportService.getReportDirectory(), reportModel.getReportFilename());
+        Path reportPath = reportService.getReportDirectory().resolve(reportModel.getReportFilename());
         util.loadPage(reportPath);
         Assert.assertTrue(util.checkUnparsableFileInReport("NonParsable.class",
                     "archives/jee-example-services.jar/com/NonParsable.class", "BCEL"));

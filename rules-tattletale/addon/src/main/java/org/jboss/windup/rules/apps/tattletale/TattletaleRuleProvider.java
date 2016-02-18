@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -64,15 +63,15 @@ public class TattletaleRuleProvider extends AbstractRuleProvider
             for (FileModel input : configuration.getInputPaths())
             {
                 String inputPath = input.getFilePath();
-                String reportDirectory = new ReportService(event.getGraphContext()).getReportDirectory();
+                Path reportDirectory = new ReportService(event.getGraphContext()).getReportDirectory();
 
                 String tattletaleRelativePath = TATTLETALE_REPORT_SUBDIR + File.separator + input.getFileName();
-                Path tattletaleReportPath = Paths.get(reportDirectory, tattletaleRelativePath);
+                Path tattletaleReportPath = reportDirectory.resolve(tattletaleRelativePath);
 
                 for (int i = 1; Files.exists(tattletaleReportPath); i++)
                 {
                     tattletaleRelativePath = TATTLETALE_REPORT_SUBDIR + File.separator + input.getFileName() + "." + i;
-                    tattletaleReportPath = Paths.get(reportDirectory, tattletaleRelativePath);
+                    tattletaleReportPath = reportDirectory.resolve(tattletaleRelativePath);
                 }
                 String tattletaleDir = tattletaleReportPath.toString();
 

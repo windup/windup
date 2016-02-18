@@ -2,7 +2,6 @@ package org.jboss.windup.tests.application;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -82,7 +81,7 @@ public class WindupArchitectureJspTest extends WindupArchitectureTest
     {
         ReportService reportService = new ReportService(context);
         ReportModel reportModel = super.getMainApplicationReport(context);
-        Path appReportPath = Paths.get(reportService.getReportDirectory(), reportModel.getReportFilename());
+        Path appReportPath = reportService.getReportDirectory().resolve(reportModel.getReportFilename());
 
         TestJavaApplicationOverviewUtil util = new TestJavaApplicationOverviewUtil();
         util.loadPage(appReportPath);

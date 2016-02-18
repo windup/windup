@@ -23,8 +23,10 @@ import org.jboss.windup.util.exception.WindupException;
 public class ReportService extends GraphService<ReportModel>
 {
     private static final String REPORTS_DIR = "reports";
+    private static final String DATA = "data";
 
     private static final Set<String> usedFilenames = new HashSet<>();
+
 
     /**
      * Used to insure uniqueness in report names
@@ -36,13 +38,26 @@ public class ReportService extends GraphService<ReportModel>
         super(context, ReportModel.class);
     }
 
+    public Path getReportDataDirectory()
+    {
+        Path path = getReportDirectory().resolve(DATA);
+        createDirectoryIfNeeded(path);
+        return path;
+    }
+
     /**
      * Returns the output directory for reporting.
      */
-    public String getReportDirectory()
+    public Path getReportDirectory()
     {
         WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(getGraphContext());
         Path path = cfg.getOutputPath().asFile().toPath().resolve(REPORTS_DIR);
+        createDirectoryIfNeeded(path);
+        return path.toAbsolutePath();
+    }
+
+    private void createDirectoryIfNeeded(Path path)
+    {
         if (!Files.isDirectory(path))
         {
             try
@@ -55,7 +70,6 @@ public class ReportService extends GraphService<ReportModel>
                             + e.getMessage(), e);
             }
         }
-        return path.toAbsolutePath().toString();
     }
 
     /**

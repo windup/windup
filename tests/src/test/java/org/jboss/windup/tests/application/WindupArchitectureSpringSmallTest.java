@@ -2,7 +2,6 @@ package org.jboss.windup.tests.application;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -125,7 +124,7 @@ public class WindupArchitectureSpringSmallTest extends WindupArchitectureTest
                     ReportModel.TEMPLATE_PATH,
                     CreateSpringBeanReportRuleProvider.TEMPLATE_SPRING_REPORT);
         TestSpringBeanReportUtil util = new TestSpringBeanReportUtil();
-        Path reportPath = Paths.get(reportService.getReportDirectory(), reportModel.getReportFilename());
+        Path reportPath = reportService.getReportDirectory().resolve(reportModel.getReportFilename());
         util.loadPage(reportPath);
         Assert.assertTrue(util.checkSpringBeanInReport("WEB-INF/spring-mvc-context.xml", "org.springframework.web.servlet.view.InternalResourceViewResolver"));
     }
@@ -134,7 +133,7 @@ public class WindupArchitectureSpringSmallTest extends WindupArchitectureTest
     {
         ReportService reportService = new ReportService(context);
         ReportModel reportModel = getMainApplicationReport(context);
-        Path appReportPath = Paths.get(reportService.getReportDirectory(), reportModel.getReportFilename());
+        Path appReportPath = reportService.getReportDirectory().resolve(reportModel.getReportFilename());
 
         TestJavaApplicationOverviewUtil util = new TestJavaApplicationOverviewUtil();
         util.loadPage(appReportPath);

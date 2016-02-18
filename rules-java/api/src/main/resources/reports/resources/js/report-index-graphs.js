@@ -42,7 +42,7 @@ function mandatoryIncidentsByTypeChartData() {
     var values = [];
     var maxValue = 1;
 
-    var maxEffort = effortOrder[effortOrder.length - 1];
+    var maxEffort = 13;
     var byEffortCount = [];
 
     mandatoryData.forEach(function(problemSummary) {
@@ -67,7 +67,6 @@ function mandatoryIncidentsByTypeChartData() {
         ticks[index] = [index, effortDescription];
 
         var incidentCount = byEffortCount[effort];
-        console.log("Incident count for effort level: " + getDescriptionForEffort(effort) + " is " + incidentCount);
 
         values[index] = [incidentCount, index];
         maxValue = Math.max(maxValue, incidentCount);
@@ -87,7 +86,7 @@ function mandatoryEffortByTypeChartData() {
     var values = [];
     var maxValue = 1;
 
-    var maxEffort = effortOrder[effortOrder.length - 1];
+    var maxEffort = 13;
     var byEffortCount = [];
 
     mandatoryData.forEach(function(problemSummary) {
@@ -110,7 +109,6 @@ function mandatoryEffortByTypeChartData() {
         ticks[index] = [index, getDescriptionForEffort(effort)];
 
         var totalEffort = byEffortCount[effort] * effort;
-        console.log("Incident total effort for effort level: " + getDescriptionForEffort(effort) + " is " + totalEffort);
 
         values[index] = [index, totalEffort];
         maxValue = Math.max(maxValue, totalEffort);
@@ -138,7 +136,6 @@ function effortBySeverityChartData() {
         issueSummaries.forEach(function(problemSummary) {
             totalEffort += (problemSummary.numberFound * problemSummary.effortPerIncident);
         });
-        console.log("Effort for severity: " + severity + " is " + totalEffort);
 
         values[index] = [index, totalEffort];
         maxValue = Math.max(maxValue, totalEffort);
@@ -340,7 +337,7 @@ function getDescriptionForEffort(effort) {
 function createIncidentsByEffortTable() {
     var tbodyElement = $("#mandatoryIncidentsByEffortTBody");
 
-    var maxEffort = effortOrder[effortOrder.length - 1];
+    var maxEffort = 13;
     var byEffortCount = [];
 
     var mandatoryIncidents = getWindupIssueSummaries()["Mandatory"];
