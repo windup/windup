@@ -295,7 +295,6 @@ function createIncidentsByCategoryTable() {
         if (issueSummaries == null)
             issueSummaries = [];
 
-        var row = "";
         var incidentCount = 0;
         var totalEffort = 0;
         issueSummaries.forEach(function(problemSummary) {
@@ -303,20 +302,10 @@ function createIncidentsByCategoryTable() {
             totalEffort += (problemSummary.numberFound * problemSummary.effortPerIncident);
         });
 
-        row += "<tr>";
-
-        row += "<td>";
-        row += severity;
-        row += "</td>";
-
-        row += "<td class='numeric-column'>";
-        row += incidentCount;
-        row += "</td>";
-
-        row += "<td class='numeric-column'>";
-        row += totalEffort;
-        row += "</td>";
-
+        var row = "<tr>";
+        row += "<td>" + severity + "</td>";
+        row += "<td class='occurences numeric-column'><span>" + incidentCount + "</span></td>";
+        row += "<td class='numeric-column'>" + totalEffort + "</td>";
         row += "</tr>";
 
         rows += row;
@@ -365,22 +354,10 @@ function createIncidentsByEffortTable() {
         var totalEffort = effort * byEffortCount[effort];
         var effortDescription = getDescriptionForEffort(effort);
 
-        var row = "";
-
-        row += "<tr>";
-
-        row += "<td>";
-        row += effortDescription;
-        row += "</td>";
-
-        row += "<td class='numeric-column'>";
-        row += byEffortCount[effort];
-        row += "</td>";
-
-        row += "<td class='numeric-column'>";
-        row += totalEffort;
-        row += "</td>";
-
+        var row = "<tr>";
+        row += "<td>" + effortDescription + "</td>";
+        row += "<td class='occurences numeric-column'><span>" + byEffortCount[effort] + "</span></td>";
+        row += "<td class='numeric-column'>" + totalEffort + "</td>";
         row += "</tr>";
 
         rows += row;

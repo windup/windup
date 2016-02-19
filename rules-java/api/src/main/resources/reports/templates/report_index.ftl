@@ -210,20 +210,10 @@
 
         var rows = "";
         for (var i = 0; i < WINDUP_PACKAGE_PIE_DATA['application_pie'].length; i++) {
-            var row = "";
-            row += "<tr>";
-
-            row += "<td>";
-            row += WINDUP_PACKAGE_PIE_DATA['application_pie'][i].label;
-            row += "</td>";
-
-            row += "<td class='numeric-column'>";
-            row += WINDUP_PACKAGE_PIE_DATA['application_pie'][i].data;
-            row += "</td>";
-
-
-            row += "</tr>";
-
+            var row = "<tr> <td>" + WINDUP_PACKAGE_PIE_DATA['application_pie'][i].label + "</td>";
+            row += "<td class='occurences numeric-column'><span>";
+            row +=    WINDUP_PACKAGE_PIE_DATA['application_pie'][i].data;
+            row += "</span></td> </tr>";
             rows += row;
         }
         tbodyElement.prepend(rows);
