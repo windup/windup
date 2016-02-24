@@ -8,7 +8,7 @@
         <version>2.5.0-SNAPSHOT</version>
     </parent>
     <artifactId>windup-rules-tattletale-tests</artifactId>
-    <name>Windup Rules - Tattletale</name>
+    <name>Windup Rules - Tattletale Tests</name>
 
     <dependencies>
         <!-- Addon Dependencies -->
@@ -58,7 +58,7 @@
                 <artifactId>windup-test-harness</artifactId>
                 <version>${project.version}</version>
 		<scope>test</scope>
-        </dependency>  
+        </dependency>
         <dependency>
             <groupId>org.jboss.windup.exec</groupId>
             <artifactId>windup-exec</artifactId>
