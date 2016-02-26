@@ -48,6 +48,11 @@ import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
 
+
+/**
+ * This is the interactive command-line user interface of Windup
+ * which does basic validation of the input and then runs WindupProcessorImpl.
+ */
 public class RunWindupCommand implements Command, FurnaceDependent
 {
     private static final Logger log = Logging.get(RunWindupCommand.class);
@@ -255,6 +260,7 @@ public class RunWindupCommand implements Command, FurnaceDependent
             windupConfiguration
                         .setProgressMonitor(progressMonitor)
                         .setGraphContext(graphContext);
+            // Run Windup.
             getWindupProcessor().execute(windupConfiguration);
 
             Path indexHtmlPath = windupConfiguration.getOutputDirectory().resolve("index.html").normalize().toAbsolutePath();

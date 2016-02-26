@@ -84,4 +84,12 @@ public class TaggedRuleProviderPredicate implements Predicate<RuleProvider>
 
         return result;
     }
+
+
+    @Override
+    public String toString()
+    {
+        return "TaggedRuleProviderPredicate{incl " + includeTags.size() + ", excl" + excludeTags.size() + ", requireAllIncl=" + requireAllIncludeTags + ", requireAllExcl=" + requireAllExcludeTags + '}';
+    }
+
 }
