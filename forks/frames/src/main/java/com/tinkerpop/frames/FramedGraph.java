@@ -43,6 +43,12 @@ public class FramedGraph<T extends Graph> implements Graph, WrapperGraph<T> {
 	private FramedGraphConfiguration config;
 	private boolean configViaFactory;
 
+	public FramedGraph()
+	{
+		// do not use (only here to support proxying)
+		this.baseGraph = null;
+	}
+
 	/**
 	 * @param baseGraph The original graph being framed.
 	 * @param config The configuration for the framed graph.
