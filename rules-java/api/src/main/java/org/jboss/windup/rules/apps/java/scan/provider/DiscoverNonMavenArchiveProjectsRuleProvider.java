@@ -3,6 +3,7 @@ package org.jboss.windup.rules.apps.java.scan.provider;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.tinkerpop.blueprints.Direction;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.MetadataBuilder;
@@ -109,13 +110,17 @@ public class DiscoverNonMavenArchiveProjectsRuleProvider extends AbstractRulePro
                                     for (FileModel f : archiveModel.getContainedFileModels())
                                     {
                                         // don't add archive models, as those really are separate projects...
+                                        if (f instanceof ArchiveModel)
+                                            continue;
+
                                         // also, don't set the project model if one is already set
-                                        if (!(f instanceof ArchiveModel) && f.getProjectModel() == null)
-                                        {
-                                            // only set it if it has not already been set
-                                            f.setProjectModel(projectModel);
-                                            projectModel.addFileModel(f);
-                                        }
+                                        // this uses the edge directly to improve performance
+                                        if (f.asVertex().getVertices(Direction.OUT, FileModel.FILE_TO_PROJECT_MODEL).iterator().hasNext())
+                                            continue;
+
+                                        // only set it if it has not already been set
+                                        f.setProjectModel(projectModel);
+                                        projectModel.addFileModel(f);
                                     }
                                 }
                                 
