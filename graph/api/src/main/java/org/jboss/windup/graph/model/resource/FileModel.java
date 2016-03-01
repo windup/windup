@@ -234,7 +234,11 @@ public interface FileModel extends ResourceModel
     {
         public ProjectModel getApplication()
         {
-            return getProjectModel().getRootProjectModel();
+            ProjectModel projectModel = getProjectModel();
+            if (projectModel == null)
+                return null;
+
+            return projectModel.getRootProjectModel();
         }
 
         public String getPrettyPathWithinProject()
