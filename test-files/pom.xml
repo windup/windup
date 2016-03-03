@@ -30,7 +30,9 @@
                 <executions>
                     <execution>
                         <id>default-jar</id>
+                        <!-- It would be better not to create an empty artifact, but JBoss Nexus would fail validation.
                         <phase>none</phase>
+                        -->
                     </execution>
                 </executions>
             </plugin>
