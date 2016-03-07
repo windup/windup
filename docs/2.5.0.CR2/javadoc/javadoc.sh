@@ -1,1 +1,1 @@
-/home/sgilda/JDKs/jdk1.7.0_71/jre/../bin/javadoc -J-Xmx2400m @options @packages
+/home/sgilda/JDKs/jdk1.8.0_45/jre/../bin/javadoc -J-Xmx2400m @options @packages
