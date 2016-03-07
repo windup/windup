@@ -62,14 +62,14 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
         return Collections.unmodifiableSet(new HashSet<>(getRegisteredTypeMap().values()));
     }
 
-    private Map<String, Class<? extends WindupVertexFrame>> getRegisteredTypeMap()
+    private synchronized Map<String, Class<? extends WindupVertexFrame>> getRegisteredTypeMap()
     {
         if (registeredTypes == null)
             initRegistry();
         return registeredTypes;
     }
 
-    private TypeRegistry getTypeRegistry()
+    private synchronized TypeRegistry getTypeRegistry()
     {
         if (typeRegistry == null)
             initRegistry();
