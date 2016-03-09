@@ -75,7 +75,7 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     {
         Class<?>[] resolvedTypes = new Class<?>[] { VertexFrame.class, InMemoryVertexFrame.class, type };
         return (T) Proxy.newProxyInstance(this.type.getClassLoader(),
-                    resolvedTypes, new FramedElementInMemory<>(context, this.type));
+                    resolvedTypes, new FramedElementInMemory<>(this.type));
     }
 
     /**

@@ -58,7 +58,7 @@ public class InMemoryFrameTest
             Assert.assertFalse(vertices.iterator().hasNext());
 
             InMemoryVertexFrame inMemoryFrame = (InMemoryVertexFrame) inMemoryModel;
-            inMemoryFrame.attachToGraph();
+            inMemoryFrame.attachToGraph(context);
 
             vertices = context.getQuery().type(TestFooModel.class).vertices();
 

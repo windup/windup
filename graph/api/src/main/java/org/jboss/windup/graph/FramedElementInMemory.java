@@ -21,7 +21,6 @@ import com.tinkerpop.frames.VertexFrame;
  */
 public class FramedElementInMemory<T extends VertexFrame> implements InvocationHandler
 {
-    private final GraphContext context;
     private final Class<T> type;
     private final Map<String, Object> values = new HashMap<>();
 
@@ -34,7 +33,7 @@ public class FramedElementInMemory<T extends VertexFrame> implements InvocationH
     {
         try
         {
-            attachMethod = InMemoryVertexFrame.class.getMethod("attachToGraph");
+            attachMethod = InMemoryVertexFrame.class.getMethod("attachToGraph", new Class[] { GraphContext.class });
             hashCodeMethod = Object.class.getMethod("hashCode");
             equalsMethod = Object.class.getMethod("equals", new Class[] { Object.class });
             toStringMethod = Object.class.getMethod("toString");
@@ -45,9 +44,8 @@ public class FramedElementInMemory<T extends VertexFrame> implements InvocationH
         }
     }
 
-    public FramedElementInMemory(GraphContext graphContext, Class<T> type)
+    public FramedElementInMemory(Class<T> type)
     {
-        this.context = graphContext;
         this.type = type;
     }
 
@@ -68,19 +66,33 @@ public class FramedElementInMemory<T extends VertexFrame> implements InvocationH
         }
         else if (method.equals(attachMethod))
         {
-            attach();
+            attach((GraphContext)arguments[0]);
             return null;
         }
 
-        String propertyName;
+        final String propertyName;
         Property propertyAnnotation = method.getAnnotation(Property.class);
         if (propertyAnnotation == null)
         {
             Property windupPropertyAnnnotation = method.getAnnotation(Property.class);
             if (windupPropertyAnnnotation == null)
             {
-                throw new WindupException("Method " + methodName
+                // if this is a getter or setter, try to find the property on the other method
+                if (ClassUtilities.isGetMethod(method)) {
+                    // get the setter
+                    Method setMethod = ClassUtilities.getSetterMethodForGetter(method);
+                    windupPropertyAnnnotation = setMethod.getAnnotation(Property.class);
+                } else if (ClassUtilities.isSetMethod(method)) {
+                    // get the getter
+                    Method getMethod = ClassUtilities.getGetterMethodForSetter(method);
+                    windupPropertyAnnnotation = getMethod.getAnnotation(Property.class);
+                }
+
+                if (windupPropertyAnnnotation == null)
+                    throw new WindupException("Method " + methodName
                             + " called, but has no @Property annotation... only @Property methods are supported");
+                else
+                    propertyName = windupPropertyAnnnotation.value();
             }
             else
             {
@@ -120,7 +132,7 @@ public class FramedElementInMemory<T extends VertexFrame> implements InvocationH
         }
     }
 
-    private void attach()
+    private void attach(GraphContext context)
     {
         T element = context.getFramed().addVertex(null, this.type);
         Vertex v = element.asVertex();
