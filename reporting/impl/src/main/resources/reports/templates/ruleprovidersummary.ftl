@@ -39,7 +39,7 @@
                 <div class="desc">
                     This report lists "rule providers", or sets of Windup rules.
                     They may originate from a <code>.windup.xml</code> file
-                    or a Java class implementing <code>WindupRuleProvider</code>.
+                    or a Java class implementing <code>RuleProvider</code>.
                 </div>
             </div>
         </div>
