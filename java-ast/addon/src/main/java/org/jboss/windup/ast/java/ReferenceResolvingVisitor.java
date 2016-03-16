@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.Annotation;
+import org.eclipse.jdt.core.dom.AnnotationTypeDeclaration;
 import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
 import org.eclipse.jdt.core.dom.ArrayInitializer;
 import org.eclipse.jdt.core.dom.BooleanLiteral;
@@ -20,6 +21,7 @@ import org.eclipse.jdt.core.dom.CastExpression;
 import org.eclipse.jdt.core.dom.CharacterLiteral;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
+import org.eclipse.jdt.core.dom.EnumDeclaration;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
@@ -118,29 +120,27 @@ public class ReferenceResolvingVisitor extends ASTVisitor
                         compilationUnit.getColumnNumber(compilationUnit.getStartPosition()),
                         compilationUnit.getLength(), extractDefinitionLine(typeLine)));
 
+
             if (typeDeclaration instanceof TypeDeclaration)
             {
                 Type superclassType = ((TypeDeclaration) typeDeclaration).getSuperclassType();
                 ITypeBinding resolveBinding = null;
-                if (superclassType != null)
-                {
+                if (superclassType != null) {
                     resolveBinding = superclassType.resolveBinding();
                 }
 
-                while (resolveBinding != null)
-                {
-                    if (superclassType.resolveBinding() != null)
-                    {
+                while (resolveBinding != null) {
+                    if (superclassType.resolveBinding() != null) {
                         String superQualifiedName = resolveBinding.getQualifiedName();
                         String superPackageName = resolveBinding.getPackage().getName();
                         String superClassName = resolveBinding.getName();
 
                         classReferences.add(new ClassReference(resolveBinding.getQualifiedName(), superClassName, superPackageName, null,
-                                    ResolutionStatus.RESOLVED,
-                                    TypeReferenceLocation.TYPE, compilationUnit.getLineNumber(typeDeclaration.getStartPosition()),
-                                    compilationUnit.getColumnNumber(compilationUnit.getStartPosition()),
-                                    compilationUnit.getLength(),
-                                    extractDefinitionLine(typeDeclaration.toString())));
+                                ResolutionStatus.RESOLVED,
+                                TypeReferenceLocation.TYPE, compilationUnit.getLineNumber(typeDeclaration.getStartPosition()),
+                                compilationUnit.getColumnNumber(compilationUnit.getStartPosition()),
+                                compilationUnit.getLength(),
+                                extractDefinitionLine(typeDeclaration.toString())));
                     }
                     resolveBinding = resolveBinding.getSuperclass();
                 }
@@ -749,6 +749,13 @@ public class ReferenceResolvingVisitor extends ASTVisitor
                     processTypeBinding(resolvedSuperClass, ResolutionStatus.RESOLVED, TypeReferenceLocation.INHERITANCE,
                                 compilationUnit.getLineNumber(node.getStartPosition()),
                                 compilationUnit.getColumnNumber(node.getStartPosition()), node.getLength(), extractDefinitionLine(node.toString()));
+
+                    for (ITypeBinding iface : resolvedSuperClass.getInterfaces())
+                    {
+                        processTypeBinding(iface, ResolutionStatus.RESOLVED, TypeReferenceLocation.IMPLEMENTS_TYPE,
+                                compilationUnit.getLineNumber(node.getStartPosition()),
+                                compilationUnit.getColumnNumber(node.getStartPosition()), node.getLength(), extractDefinitionLine(node.toString()));
+                    }
                     resolvedSuperClass = resolvedSuperClass.getSuperclass();
                 }
             }
