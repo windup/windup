@@ -18,5 +18,5 @@ public interface RuleProviderLoader
     /**
      * Return all {@link AbstractRuleProvider} instances that are relevant for this loader.
      */
-    public List<RuleProvider> getProviders(GraphContext context);
+    List<RuleProvider> getProviders(GraphContext context);
 }

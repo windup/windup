@@ -20,5 +20,5 @@ public interface RuleLoader
      * 
      * @param ruleProviderFilter Must accept null.
      */
-    public RuleProviderRegistry loadConfiguration(GraphContext context, Predicate<RuleProvider> ruleProviderFilter);
+    RuleProviderRegistry loadConfiguration(GraphContext context, Predicate<RuleProvider> ruleProviderFilter);
 }
