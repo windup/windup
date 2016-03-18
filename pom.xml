@@ -34,6 +34,7 @@
         <skipDeleteDeps>true</skipDeleteDeps> <!-- Don't delete deps from local repo by default. -->
         <forkCount>.5C</forkCount>
         <jacoco.argLine /> <!-- Will be set by the JaCoCo Maven plugin when active. -->
+        <furnace.dot.skip>true</furnace.dot.skip> <!-- Default to not spending time generating the (expensive to generate) dot files -->
     </properties>
 
     <scm>
