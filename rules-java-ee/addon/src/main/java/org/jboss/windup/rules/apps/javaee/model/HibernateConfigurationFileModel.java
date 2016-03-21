@@ -16,19 +16,19 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 public interface HibernateConfigurationFileModel extends XmlFileModel
 {
 
-    public static final String HIBERNATE_SESSION_FACTORY = "hibernateSessionFactory";
-    public static final String SPECIFICATION_VERSION = "specificationVersion";
-    public static final String TYPE = "HibernateConfigurationFileModel";
+    String HIBERNATE_SESSION_FACTORY = "hibernateSessionFactory";
+    String SPECIFICATION_VERSION = "specificationVersion";
+    String TYPE = "HibernateConfigurationFileModel";
 
     @Property(SPECIFICATION_VERSION)
-    public String getSpecificationVersion();
+    String getSpecificationVersion();
 
     @Property(SPECIFICATION_VERSION)
-    public void setSpecificationVersion(String version);
+    void setSpecificationVersion(String version);
 
     @Adjacency(label = HIBERNATE_SESSION_FACTORY, direction = Direction.OUT)
-    public Iterable<HibernateSessionFactoryModel> getHibernateSessionFactories();
+    Iterable<HibernateSessionFactoryModel> getHibernateSessionFactories();
 
     @Adjacency(label = HIBERNATE_SESSION_FACTORY, direction = Direction.OUT)
-    public void addHibernateSessionFactory(HibernateSessionFactoryModel hibernateSessionFactor);
+    void addHibernateSessionFactory(HibernateSessionFactoryModel hibernateSessionFactor);
 }

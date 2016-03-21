@@ -1,5 +1,6 @@
 package org.jboss.windup.rules.apps.javaee.model;
 
+import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 
@@ -17,70 +18,83 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(HibernateEntityModel.TYPE)
 public interface HibernateEntityModel extends WindupVertexFrame
 {
-    public static final String CATALOG_NAME = "catalogName";
-    public static final String SCHEMA_NAME = "schemaName";
-    public static final String TABLE_NAME = "tableName";
-    public static final String SPECIFICATION_VERSION = "specificationVersion";
-    public static final String HIBERNATE_ENTITY_CLASS = "hibernateEntityClass";
-    public static final String TYPE = "HibernateEntityModel";
+    String CATALOG_NAME = "catalogName";
+    String SCHEMA_NAME = "schemaName";
+    String TABLE_NAME = "tableName";
+    String SPECIFICATION_VERSION = "specificationVersion";
+    String HIBERNATE_ENTITY_CLASS = "hibernateEntityClass";
+    String TYPE = "HibernateEntityModel";
+    String APPLICATION = "application";
+
+    /**
+     * Contains the application in which this Spring Bean was discovered.
+     */
+    @Adjacency(label = APPLICATION, direction = Direction.OUT)
+    ProjectModel getApplication();
+
+    /**
+     * Contains the application in which this Spring Bean  was discovered.
+     */
+    @Adjacency(label = APPLICATION, direction = Direction.OUT)
+    void setApplication(ProjectModel projectModel);
 
     /**
      * Contains the specification version
      */
     @Property(SPECIFICATION_VERSION)
-    public String getSpecificationVersion();
+    String getSpecificationVersion();
 
     /**
      * Contains the specification version
      */
     @Property(SPECIFICATION_VERSION)
-    public void setSpecificationVersion(String version);
+    void setSpecificationVersion(String version);
 
     /**
      * Contains the table name
      */
     @Property(TABLE_NAME)
-    public String getTableName();
+    String getTableName();
 
     /**
      * Contains the table name
      */
     @Property(TABLE_NAME)
-    public void setTableName(String tableName);
+    void setTableName(String tableName);
 
     /**
      * Contains the schema name
      */
     @Property(SCHEMA_NAME)
-    public String getSchemaName();
+    String getSchemaName();
 
     /**
      * Contains the schema name
      */
     @Property(SCHEMA_NAME)
-    public void setSchemaName(String schemaName);
+    void setSchemaName(String schemaName);
 
     /**
      * Contains the catalog name
      */
     @Property(CATALOG_NAME)
-    public String getCatalogName();
+    String getCatalogName();
 
     /**
      * Contains the catalog name
      */
     @Property(CATALOG_NAME)
-    public void setCatalogName(String catalogName);
+    void setCatalogName(String catalogName);
 
     /**
      * Contains the entity class
      */
     @Adjacency(label = HIBERNATE_ENTITY_CLASS, direction = Direction.OUT)
-    public void setJavaClass(JavaClassModel ejbHome);
+    void setJavaClass(JavaClassModel entityClass);
 
     /**
      * Contains the entity class
      */
     @Adjacency(label = HIBERNATE_ENTITY_CLASS, direction = Direction.OUT)
-    public JavaClassModel getJavaClass();
+    JavaClassModel getJavaClass();
 }

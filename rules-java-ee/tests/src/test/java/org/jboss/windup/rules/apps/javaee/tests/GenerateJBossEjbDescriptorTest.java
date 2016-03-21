@@ -16,6 +16,7 @@ import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.rules.apps.javaee.AbstractTest;
 import org.jboss.windup.rules.apps.javaee.model.EjbDeploymentDescriptorModel;
 import org.jboss.windup.rules.apps.javaee.model.WebXmlModel;
 import org.jboss.windup.rules.apps.javaee.rules.jboss.GenerateJBossEjbDescriptorRuleProvider;
@@ -33,17 +34,8 @@ import java.util.Collections;
  *  Tests the {@link GenerateJBossEjbDescriptorRuleProvider}
  */
 @RunWith(Arquillian.class)
-public class GenerateJBossEjbDescriptorTest
+public class GenerateJBossEjbDescriptorTest extends AbstractTest
 {
-    @Deployment
-    @AddonDependencies
-    public static AddonArchive getDeployment()
-    {
-        final AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML();
-        return archive;
-    }
-
     @Inject
     private GraphContextFactory factory;
 

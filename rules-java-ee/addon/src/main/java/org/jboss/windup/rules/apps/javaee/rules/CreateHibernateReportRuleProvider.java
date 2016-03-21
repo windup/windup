@@ -100,14 +100,16 @@ public class CreateHibernateReportRuleProvider extends AbstractRuleProvider
         HibernateEntityService hibernateEntityService = new HibernateEntityService(context);
         GraphService<WindupVertexListModel> listService = new GraphService<>(context, WindupVertexListModel.class);
 
-        WindupVertexListModel hibernateConfigList = listService.create();
-        for (HibernateConfigurationFileModel hibernateConfig : hibernateConfigurationFileService.findAll())
+        @SuppressWarnings("unchecked")
+        WindupVertexListModel<HibernateConfigurationFileModel> hibernateConfigList = listService.create();
+        for (HibernateConfigurationFileModel hibernateConfig : hibernateConfigurationFileService.findAllByApplication(projectModel))
         {
             hibernateConfigList.addItem(hibernateConfig);
         }
 
-        WindupVertexListModel entityList = listService.create();
-        for (HibernateEntityModel entityModel : hibernateEntityService.findAll())
+        @SuppressWarnings("unchecked")
+        WindupVertexListModel<HibernateEntityModel> entityList = listService.create();
+        for (HibernateEntityModel entityModel : hibernateEntityService.findAllByApplication(projectModel))
         {
             entityList.addItem(entityModel);
         }

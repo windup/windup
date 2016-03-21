@@ -1,6 +1,7 @@
 package org.jboss.windup.rules.apps.javaee.rules;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.jboss.forge.furnace.versions.EmptyVersionRange;
@@ -43,7 +44,8 @@ public class CreateSpringBeanReportRuleProvider extends AbstractRuleProvider
     public CreateSpringBeanReportRuleProvider()
     {
         super(MetadataBuilder.forProvider(CreateSpringBeanReportRuleProvider.class, "Create Spring Bean Report")
-                    .setPhase(ReportGenerationPhase.class).addSourceTechnology(new TechnologyReference("spring", new EmptyVersionRange())));
+                    .setPhase(ReportGenerationPhase.class)
+                    .addSourceTechnology(new TechnologyReference("spring", new EmptyVersionRange())));
     }
 
     @Override
@@ -57,7 +59,8 @@ public class CreateSpringBeanReportRuleProvider extends AbstractRuleProvider
             @Override
             public void perform(GraphRewrite event, EvaluationContext context)
             {
-                WindupConfigurationModel windupConfiguration = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
+                WindupConfigurationModel windupConfiguration = WindupConfigurationService
+                            .getConfigurationModel(event.getGraphContext());
                 for (FileModel inputPath : windupConfiguration.getInputPaths())
                 {
                     ProjectModel projectModel = inputPath.getProjectModel();
@@ -84,6 +87,12 @@ public class CreateSpringBeanReportRuleProvider extends AbstractRuleProvider
 
     private void createSpringBeanReport(GraphContext context, ProjectModel projectModel)
     {
+        SpringBeanService springBeanService = new SpringBeanService(context);
+        Iterable<SpringBeanModel> models = springBeanService.findAllByApplication(projectModel);
+        if (!models.iterator().hasNext())
+        {
+            return;
+        }
         ApplicationReportService applicationReportService = new ApplicationReportService(context);
         ApplicationReportModel applicationReportModel = applicationReportService.create();
         applicationReportModel.setReportPriority(500);
@@ -96,14 +105,11 @@ public class CreateSpringBeanReportRuleProvider extends AbstractRuleProvider
         applicationReportModel.setTemplatePath(TEMPLATE_SPRING_REPORT);
         applicationReportModel.setTemplateType(TemplateType.FREEMARKER);
 
-        SpringBeanService springBeanService = new SpringBeanService(context);
         GraphService<WindupVertexListModel> listService = new GraphService<>(context, WindupVertexListModel.class);
 
-        WindupVertexListModel springBeanList = listService.create();
-        for (SpringBeanModel springBeanModel : springBeanService.findAll())
-        {
-            springBeanList.addItem(springBeanModel);
-        }
+        @SuppressWarnings("unchecked")
+        WindupVertexListModel<SpringBeanModel> springBeanList = listService.create();
+        springBeanList.addAll(models);
 
         Map<String, WindupVertexFrame> additionalData = new HashMap<>(2);
         additionalData.put("springBeans", springBeanList);

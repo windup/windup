@@ -18,6 +18,7 @@ import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.service.ProjectService;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
+import org.jboss.windup.rules.apps.javaee.AbstractTest;
 import org.jboss.windup.rules.apps.javaee.model.EjbRemoteServiceModel;
 import org.junit.After;
 import org.junit.Assert;
@@ -33,22 +34,8 @@ import com.google.common.collect.Iterables;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RunWith(Arquillian.class)
-public class EjbRemoteServiceModelServiceTest
+public class EjbRemoteServiceModelServiceTest extends AbstractTest
 {
-    @Deployment
-    @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-ee"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
-    })
-    public static AddonArchive getDeployment()
-    {
-        return ShrinkWrap.create(AddonArchive.class).addBeansXML();
-    }
-
     @Inject
     private GraphContextFactory factory;
 

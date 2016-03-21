@@ -41,14 +41,12 @@ public interface FileModel extends ResourceModel
     String PARSE_ERROR = "parseError";
     String ON_PARSE_ERROR = "onParseError";
 
-    public static enum OnParseError {
+    enum OnParseError {
         IGNORE, WARN;
         OnParseError fromName(String name){
             return EnumUtils.getEnum(OnParseError.class, StringUtils.upperCase(name));
-            //return OnParseError.valueOf(StringUtils.upperCase(name));
         }
     }
-
 
 
     /**
