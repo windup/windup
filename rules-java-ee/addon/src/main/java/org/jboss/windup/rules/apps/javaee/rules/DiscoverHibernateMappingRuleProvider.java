@@ -139,6 +139,7 @@ public class DiscoverHibernateMappingRuleProvider extends IteratingRuleProvider<
             // create the hibernate facet.
             HibernateEntityModel hibernateEntity = hibernateEntityService.create();
             hibernateEntity.setSpecificationVersion(versionInformation);
+            hibernateEntity.setApplication(xml.getApplication());
             hibernateEntity.setJavaClass(clz);
             hibernateEntity.setTableName(tableName);
             hibernateEntity.setSchemaName(schemaName);

@@ -88,8 +88,8 @@ public class CreateSpringBeanReportRuleProvider extends AbstractRuleProvider
     private void createSpringBeanReport(GraphContext context, ProjectModel projectModel)
     {
         SpringBeanService springBeanService = new SpringBeanService(context);
-        List<SpringBeanModel> models = springBeanService.findAllByApplication(projectModel);
-        if (models.isEmpty())
+        Iterable<SpringBeanModel> models = springBeanService.findAllByApplication(projectModel);
+        if (!models.iterator().hasNext())
         {
             return;
         }
@@ -106,7 +106,9 @@ public class CreateSpringBeanReportRuleProvider extends AbstractRuleProvider
         applicationReportModel.setTemplateType(TemplateType.FREEMARKER);
 
         GraphService<WindupVertexListModel> listService = new GraphService<>(context, WindupVertexListModel.class);
-        WindupVertexListModel springBeanList = listService.create();
+
+        @SuppressWarnings("unchecked")
+        WindupVertexListModel<SpringBeanModel> springBeanList = listService.create();
         springBeanList.addAll(models);
 
         Map<String, WindupVertexFrame> additionalData = new HashMap<>(2);

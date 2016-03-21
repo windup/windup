@@ -19,48 +19,48 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(SpringBeanModel.TYPE)
 public interface SpringBeanModel extends WindupVertexFrame
 {
-    public static final String TYPE = "SpringBeanModel";
-    public static final String SPRING_BEAN_TO_JAVA_CLASS = "springBeanToJavaClass";
-    public static final String SPRING_CONFIGURATION = "springConfiguration";
-    public static final String SPRING_BEAN_NAME = "springBeanName";
-    public static final String APPLICATION = "application";
+    String TYPE = "SpringBeanModel";
+    String SPRING_BEAN_TO_JAVA_CLASS = "springBeanToJavaClass";
+    String SPRING_CONFIGURATION = "springConfiguration";
+    String SPRING_BEAN_NAME = "springBeanName";
+    String APPLICATION = "application";
 
     /**
      * The name of this spring bean
      */
     @Indexed
     @Property(SPRING_BEAN_NAME)
-    public String getSpringBeanName();
+    String getSpringBeanName();
 
     /**
      * The name of this spring bean
      */
     @Property(SPRING_BEAN_NAME)
-    public String setSpringBeanName(String springBeanName);
+    String setSpringBeanName(String springBeanName);
 
     /**
      * The Spring configuration file in which this Spring Bean was defined.
      */
     @Adjacency(label = SPRING_CONFIGURATION, direction = Direction.IN)
-    public SpringConfigurationFileModel getSpringConfiguration();
+    SpringConfigurationFileModel getSpringConfiguration();
 
     /**
      * The Spring configuration file in which this Spring Bean was defined.
      */
     @Adjacency(label = SPRING_CONFIGURATION, direction = Direction.IN)
-    public void setSpringConfiguration(SpringConfigurationFileModel springConfiguration);
+    void setSpringConfiguration(SpringConfigurationFileModel springConfiguration);
 
     /**
      * This points to the @{link JavaClassModel} referenced by this Spring Bean
      */
     @Adjacency(label = SPRING_BEAN_TO_JAVA_CLASS, direction = Direction.OUT)
-    public JavaClassModel getJavaClass();
+    JavaClassModel getJavaClass();
 
     /**
      * This points to the @{link JavaClassModel} referenced by this Spring Bean
      */
     @Adjacency(label = SPRING_BEAN_TO_JAVA_CLASS, direction = Direction.OUT)
-    public void setJavaClass(JavaClassModel m);
+    void setJavaClass(JavaClassModel m);
 
     /**
      * Contains the application in which this Spring Bean was discovered.

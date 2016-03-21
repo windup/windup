@@ -23,6 +23,7 @@ import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.rules.apps.javaee.AbstractTest;
 import org.jboss.windup.rules.apps.javaee.model.DataSourceModel;
 import org.junit.Assert;
 import org.junit.Test;
@@ -33,16 +34,8 @@ import org.junit.runner.RunWith;
  * au
  */
 @RunWith(Arquillian.class)
-public class SpringDataSourceExtractionTest
+public class SpringDataSourceExtractionTest extends AbstractTest
 {
-
-    @AddonDependencies
-    @Deployment
-    public static AddonArchive getDeployment()
-    {
-        return ShrinkWrap.create(AddonArchive.class).addBeansXML();
-    }
-
     private static String SPRING_XMLS = "../../test-files/spring-hibernate-jndi-test";
 
     @Inject

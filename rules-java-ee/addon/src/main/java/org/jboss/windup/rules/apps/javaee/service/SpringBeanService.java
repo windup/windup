@@ -4,8 +4,14 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import com.thinkaurelius.titan.core.attribute.Text;
+import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.frames.structures.FramedVertexIterable;
+import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.jboss.forge.roaster._shade.org.eclipse.core.internal.resources.Project;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
+import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.javaee.model.SpringBeanModel;
 
@@ -28,20 +34,16 @@ public class SpringBeanService extends GraphService<SpringBeanModel>
     }
 
     /**
+     * Gets an {@link Iterable} of {@link SpringBeanModel}s for the given {@link ProjectModel}.
      *
-     * @param application
-     * @return an unmodifiable list of SpringBeanModel entries for the given application
+     * @return an iterable of SpringBeanModel entries for the given application
      */
-    public List<SpringBeanModel> findAllByApplication(ProjectModel application)
+    public Iterable<SpringBeanModel> findAllByApplication(ProjectModel application)
     {
-        List<SpringBeanModel> models = new ArrayList<>();
-        for (SpringBeanModel model : findAll())
-        {
-            if (application.equals(model.getApplication()))
-            {
-                models.add(model);
-            }
-        }
-        return models.isEmpty() ? Collections.<SpringBeanModel> emptyList() : Collections.unmodifiableList(models);
+        GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(application.asVertex());
+        pipeline.in(SpringBeanModel.APPLICATION);
+        pipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, SpringBeanModel.TYPE);
+
+        return new FramedVertexIterable<>(getGraphContext().getFramed(), pipeline, SpringBeanModel.class);
     }
 }

@@ -26,6 +26,7 @@ import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.rules.apps.javaee.AbstractTest;
 import org.jboss.windup.rules.apps.javaee.model.EjbMessageDrivenModel;
 import org.jboss.windup.rules.apps.javaee.model.EjbSessionBeanModel;
 import org.jboss.windup.rules.apps.javaee.model.EnvironmentReferenceModel;
@@ -40,16 +41,8 @@ import org.junit.runner.RunWith;
  * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  */
 @RunWith(Arquillian.class)
-public class EjbXmlParsingTest
+public class EjbXmlParsingTest extends AbstractTest
 {
-
-    @AddonDependencies
-    @Deployment
-    public static AddonArchive getDeployment()
-    {
-        return ShrinkWrap.create(AddonArchive.class).addBeansXML();
-    }
-
     private static final String WEBLOGIC_TEST_EJB_XMLS = "../../test-files/ejb/weblogic-ejb-test";
     private static final String WEBSPHERE_TEST_EJB_XMLS = "../../test-files/ejb/websphere-ejb-test";
     private static final String JBOSS_TEST_EJB_XMLS = "../../test-files/ejb/jboss-ejb-test";
