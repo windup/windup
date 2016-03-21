@@ -23,6 +23,8 @@
         <version.tinkerpop.blueprints>2.5.0</version.tinkerpop.blueprints>
         <version.freemarker>2.3.23</version.freemarker>
         <version.jacoco>0.7.5.201505241946</version.jacoco>
+        <!-- We have to use a version less or equal than version used in Furnace -->
+        <version.jandex.plugin>1.0.3</version.jandex.plugin>
 
         <windup.scm.connection>scm:git:https://github.com/windup/windup.git</windup.scm.connection>
         <windup.developer.connection>scm:git:git@github.com:windup/windup.git</windup.developer.connection>
@@ -132,6 +134,21 @@
                     <argLine>-Xms512m -Xmx2048m -XX:MaxPermSize=768m -XX:ReservedCodeCacheSize=128m</argLine>
                     <reuseForks>false</reuseForks>
                 </configuration>
+            </plugin>
+            <!-- Create Jandex index to speed up boostrap - used by Furnace CDI/Weld -->
+            <plugin>
+                <groupId>org.jboss.jandex</groupId>
+                <artifactId>jandex-maven-plugin</artifactId>
+                <version>${version.jandex.plugin}</version>
+                <executions>
+                    <execution>
+                        <id>generate-index</id>
+                        <goals>
+                            <goal>jandex</goal>
+                        </goals>
+                        <inherited>true</inherited>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
 
