@@ -34,10 +34,10 @@ import org.w3c.dom.Element;
 
 /**
  * Discovers spring configuration XML files, and places the metadata into the Graph.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
- * 
+ *
  */
 public class DiscoverSpringConfigurationFilesRuleProvider extends IteratingRuleProvider<XmlFileModel>
 {
@@ -116,6 +116,7 @@ public class DiscoverSpringConfigurationFilesRuleProvider extends IteratingRuleP
             }
 
             SpringBeanModel springBeanRef = springBeanService.create();
+            springBeanRef.setApplication(payload.getApplication());
 
             if (StringUtils.isNotBlank(id))
             {
@@ -152,7 +153,7 @@ public class DiscoverSpringConfigurationFilesRuleProvider extends IteratingRuleP
                 }
             }
         }
-        
+
         // extract map elements
         /*
          * <util:map id="exMap">
@@ -161,15 +162,16 @@ public class DiscoverSpringConfigurationFilesRuleProvider extends IteratingRuleP
          */
         for(Element map : $(element).children("map").get()) {
             String id = $(map).attr("id");
-            
+
             SpringBeanModel springBeanRef = springBeanService.create();
             springBeanRef.setSpringBeanName(id);
+            springBeanRef.setApplication(payload.getApplication());
             springConfigurationModel.addSpringBeanReference(springBeanRef);
-            
+
             JavaClassModel classReference = javaClassService.getOrCreatePhantom("java.util.Map");
             springBeanRef.setJavaClass(classReference);
         }
-        
+
         // extract map elements
         /*
          * <util:set id="exSet">
@@ -178,11 +180,12 @@ public class DiscoverSpringConfigurationFilesRuleProvider extends IteratingRuleP
          */
         for(Element map : $(element).children("set").get()) {
             String id = $(map).attr("id");
-            
+
             SpringBeanModel springBeanRef = springBeanService.create();
             springBeanRef.setSpringBeanName(id);
+            springBeanRef.setApplication(payload.getApplication());
             springConfigurationModel.addSpringBeanReference(springBeanRef);
-            
+
             JavaClassModel classReference = javaClassService.getOrCreatePhantom("java.util.Set");
             springBeanRef.setJavaClass(classReference);
         }
@@ -204,7 +207,8 @@ public class DiscoverSpringConfigurationFilesRuleProvider extends IteratingRuleP
 
                 SpringBeanModel springBeanRef = springBeanService.create();
                 springBeanRef.setSpringBeanName(id);
-                
+                springBeanRef.setApplication(payload.getApplication());
+
                 JNDIResourceModel jndiResource = null;
                 if (StringUtils.isNotBlank(jndiName))
                 {
@@ -214,7 +218,7 @@ public class DiscoverSpringConfigurationFilesRuleProvider extends IteratingRuleP
                         LOG.info(" -- Type: " + expectedType);
                         jndiResourceService.associateTypeJndiResource(jndiResource, expectedType);
                     }
-                    
+
 
                     //this will make it so that we have an association from the SpringBean to the JNDI Resource, layered on top of the typical SpringBean.
                     //this in turn will make this both a SpringBeanModel and a JNDIReferenceModel in the graph, so we can specifically look up Spring Bean JNDI References
@@ -226,9 +230,9 @@ public class DiscoverSpringConfigurationFilesRuleProvider extends IteratingRuleP
                 final String clz = "org.springframework.jndi.JndiObjectFactoryBean";
                 JavaClassModel classReference = javaClassService.getOrCreatePhantom(clz);
                 springBeanRef.setJavaClass(classReference);
-                
-                
-                
+
+
+
                 springConfigurationModel.addSpringBeanReference(springBeanRef);
             }
         }
