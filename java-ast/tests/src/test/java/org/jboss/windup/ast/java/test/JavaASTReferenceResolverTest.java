@@ -149,13 +149,13 @@ public class JavaASTReferenceResolverTest extends AbstractJavaASTTest
 
         Assert.assertTrue(references.contains(
                     new ClassReference("java.util.*", "java.util", null, null, ResolutionStatus.RESOLVED, TypeReferenceLocation.IMPORT, 10, 7, 9,
-                    "import java.util.*;")));
+                                "import java.util.*;")));
         Assert.assertTrue(references.contains(
                     new ClassReference("java.net.*", "java.net", null, null, ResolutionStatus.RESOLVED, TypeReferenceLocation.IMPORT, 11, 7, 8,
-                    "import java.net.*;")));
+                                "import java.net.*;")));
         Assert.assertTrue(references.contains(
                     new ClassReference("java.awt.*", "java.awt", null, null, ResolutionStatus.RESOLVED, TypeReferenceLocation.IMPORT, 12, 7, 8,
-                    "import java.awt.*;")));
+                                "import java.awt.*;")));
     }
 
     @Test
@@ -166,12 +166,12 @@ public class JavaASTReferenceResolverTest extends AbstractJavaASTTest
 
         Assert.assertTrue(references.contains(
                     new ClassReference("com.proprietary.Constants.MY_CONSTANT", "com.proprietary", "Constants", null, ResolutionStatus.RECOVERED,
-                    TypeReferenceLocation.VARIABLE_INITIALIZER,
-                    5, 4, 56, "private int foo=com.proprietary.Constants.MY_CONSTANT;")));
+                                TypeReferenceLocation.VARIABLE_INITIALIZER,
+                                5, 4, 56, "private int foo=com.proprietary.Constants.MY_CONSTANT;")));
         Assert.assertTrue(
                     references.contains(new ClassReference("OtherConstants.OTHER_CONSTANT", "", "OtherConstants", null, ResolutionStatus.RECOVERED,
-                    TypeReferenceLocation.VARIABLE_INITIALIZER,
-                    6, 4, 49, "private int foo2=OtherConstants.OTHER_CONSTANT;")));
+                                TypeReferenceLocation.VARIABLE_INITIALIZER,
+                                6, 4, 49, "private int foo2=OtherConstants.OTHER_CONSTANT;")));
     }
 
     @Test
@@ -182,7 +182,7 @@ public class JavaASTReferenceResolverTest extends AbstractJavaASTTest
 
         Assert.assertTrue(references.contains(
                     new ClassReference("java.rmi.Remote", "java.rmi", "Remote", null, ResolutionStatus.RESOLVED, TypeReferenceLocation.INHERITANCE,
-                    6, 0, 117, "public interface EventServer extends Remote {")));
+                                6, 0, 117, "public interface EventServer extends Remote {")));
     }
 
     @Test
@@ -243,5 +243,19 @@ public class JavaASTReferenceResolverTest extends AbstractJavaASTTest
         Assert.assertTrue(foundUseInnerAnonymous);
         Assert.assertTrue(foundUnresolvedInnerWithoutParen);
         Assert.assertTrue(foundUnresolvedInnerWithParen);
+    }
+
+    @Test
+    public void testWithUnavailableSuperClass()
+    {
+        List<ClassReference> references = ASTProcessor.analyze(getLibraryPaths(), getSourcePaths(),
+                Paths.get("src/test/resources/testclasses/unavailablesuperclass/UnavailableSuperclass.java"));
+
+        Assert.assertTrue(references.contains(
+                new ClassReference("otherpackage.NotOnLibraryPath", "otherpackage", "NotOnLibraryPath", null, ResolutionStatus.RECOVERED, TypeReferenceLocation.TYPE,
+                        5, 0, 177, "public class UnavailableSuperclass extends NotOnLibraryPath {")));
+        Assert.assertTrue(references.contains(
+                new ClassReference("otherpackage.NotOnLibraryPath", "otherpackage", "NotOnLibraryPath", null, ResolutionStatus.RECOVERED, TypeReferenceLocation.INHERITANCE,
+                        5, 0, 94, "public class UnavailableSuperclass extends NotOnLibraryPath {")));
     }
 }

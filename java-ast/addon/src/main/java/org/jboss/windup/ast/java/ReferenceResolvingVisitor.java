@@ -13,7 +13,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jdt.core.dom.ASTVisitor;
 import org.eclipse.jdt.core.dom.AbstractTypeDeclaration;
 import org.eclipse.jdt.core.dom.Annotation;
-import org.eclipse.jdt.core.dom.AnnotationTypeDeclaration;
 import org.eclipse.jdt.core.dom.AnonymousClassDeclaration;
 import org.eclipse.jdt.core.dom.ArrayInitializer;
 import org.eclipse.jdt.core.dom.BooleanLiteral;
@@ -21,7 +20,6 @@ import org.eclipse.jdt.core.dom.CastExpression;
 import org.eclipse.jdt.core.dom.CharacterLiteral;
 import org.eclipse.jdt.core.dom.ClassInstanceCreation;
 import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.EnumDeclaration;
 import org.eclipse.jdt.core.dom.Expression;
 import org.eclipse.jdt.core.dom.FieldAccess;
 import org.eclipse.jdt.core.dom.FieldDeclaration;
@@ -95,6 +93,15 @@ public class ReferenceResolvingVisitor extends ASTVisitor
         this.packageName = packageDeclaration == null ? "" : packageDeclaration.getName().getFullyQualifiedName();
         @SuppressWarnings("unchecked")
         List<TypeDeclaration> types = compilationUnit.types();
+
+        @SuppressWarnings("unchecked")
+        List<ImportDeclaration> importDeclarations = (List<ImportDeclaration>)compilationUnit.imports();
+
+        for (ImportDeclaration importDeclaration : importDeclarations)
+        {
+            processImport(importDeclaration);
+        }
+
         String fqcn = null;
         if (!types.isEmpty())
         {
@@ -125,13 +132,32 @@ public class ReferenceResolvingVisitor extends ASTVisitor
             {
                 Type superclassType = ((TypeDeclaration) typeDeclaration).getSuperclassType();
                 ITypeBinding resolveBinding = null;
-                if (superclassType != null) {
+                if (superclassType != null)
+                {
                     resolveBinding = superclassType.resolveBinding();
                 }
 
-                while (resolveBinding != null) {
-                    if (superclassType.resolveBinding() != null) {
-                        String superQualifiedName = resolveBinding.getQualifiedName();
+                if (resolveBinding == null && superclassType != null)
+                {
+                    ResolveClassnameResult resolvedResult = resolveClassname(superclassType.toString());
+                    PackageAndClassName packageAndClassName = PackageAndClassName.parseFromQualifiedName(resolvedResult.result);
+                    String superPackageName = packageAndClassName.packageName;
+                    String superClassName = packageAndClassName.className;
+
+                    ResolutionStatus superResolutionStatus = resolvedResult.found ? ResolutionStatus.RECOVERED : ResolutionStatus.UNRESOLVED;
+
+                    classReferences.add(new ClassReference(resolvedResult.result, superClassName, superPackageName, null,
+                            superResolutionStatus,
+                            TypeReferenceLocation.TYPE, compilationUnit.getLineNumber(typeDeclaration.getStartPosition()),
+                            compilationUnit.getColumnNumber(compilationUnit.getStartPosition()),
+                            compilationUnit.getLength(),
+                            extractDefinitionLine(typeDeclaration.toString())));
+                }
+
+                while (resolveBinding != null)
+                {
+                    if (superclassType.resolveBinding() != null)
+                    {
                         String superPackageName = resolveBinding.getPackage().getName();
                         String superClassName = resolveBinding.getName();
 
@@ -783,8 +809,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
         return super.visit(node);
     }
 
-    @Override
-    public boolean visit(ImportDeclaration node)
+    private void processImport(ImportDeclaration node)
     {
         String name = node.getName().toString();
         if (node.isOnDemand())
@@ -814,8 +839,6 @@ public class ReferenceResolvingVisitor extends ASTVisitor
             processImport(name, status, compilationUnit.getLineNumber(node.getName().getStartPosition()),
                         compilationUnit.getColumnNumber(node.getName().getStartPosition()), node.getName().getLength(), node.toString().trim());
         }
-
-        return super.visit(node);
     }
 
     /***
