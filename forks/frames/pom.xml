@@ -48,7 +48,7 @@
   </scm>
 
     <properties>
-        <tinkerpop.version>2.6.0</tinkerpop.version>
+        <tinkerpop.version>${version.tinkerpop.blueprints}</tinkerpop.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -69,6 +69,12 @@
             <artifactId>blueprints-sail-graph</artifactId>
             <version>${tinkerpop.version}</version>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.restlet.jse</groupId>
+                    <artifactId>org.restlet</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.tinkerpop.blueprints</groupId>
