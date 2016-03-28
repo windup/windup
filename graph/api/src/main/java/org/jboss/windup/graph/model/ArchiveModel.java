@@ -17,7 +17,6 @@ public interface ArchiveModel extends FileModel
     String ARCHIVE_NAME = TYPE + "archiveName";
     String DECOMPILED_FILES = "decompiledFiles";
     String UNZIPPED_DIRECTORY = "unzippedDirectory";
-    String MANIFEST_FILES = "manifestFiles";
 
     /**
      * Contains the parent archive.
