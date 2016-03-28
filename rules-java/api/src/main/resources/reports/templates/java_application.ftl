@@ -139,8 +139,12 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <th>Version</th>
+                                    <th>Name</th>
                                     <td>${projectModel.name!""?html}</td>
+                                </tr>
+                                <tr>
+                                    <th>Version</th>
+                                    <td>${projectModel.version!""?html}</td>
                                 </tr>
                                 <tr>
                                     <th>Links</th>
