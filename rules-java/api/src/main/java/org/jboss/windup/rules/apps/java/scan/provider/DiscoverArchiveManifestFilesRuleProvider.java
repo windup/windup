@@ -105,7 +105,6 @@ public class DiscoverArchiveManifestFilesRuleProvider extends IteratingRuleProvi
         }
         catch (IOException e)
         {
-            e.printStackTrace();
             LOG.log(Level.WARNING, "Exception reading manifest from file: " + manifestFile.getFilePath(), e);
         }
     }
