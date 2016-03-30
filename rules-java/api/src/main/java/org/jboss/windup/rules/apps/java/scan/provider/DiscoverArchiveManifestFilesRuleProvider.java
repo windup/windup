@@ -74,7 +74,7 @@ public class DiscoverArchiveManifestFilesRuleProvider extends IteratingRuleProvi
         try (InputStream is = manifestFile.asInputStream())
         {
             Manifest manifest = new Manifest(is);
-            if (manifest == null || manifest.getMainAttributes().isEmpty())
+            if (manifest.getMainAttributes().isEmpty())
             {
                 // no manifest found, skip this one
                 return;
@@ -85,6 +85,22 @@ public class DiscoverArchiveManifestFilesRuleProvider extends IteratingRuleProvi
                 String property = StringUtils.trim(key.toString());
                 String propertyValue = StringUtils.trim(manifest.getMainAttributes().get(key).toString());
                 jarManifest.asVertex().setProperty(property, propertyValue);
+            }
+
+            if (StringUtils.isBlank(jarManifest.getName())) {
+                // if the name is still blank, try to get it from the first entry in the file list.
+                // A few apache projects do it this way
+                for (String entry : manifest.getEntries().keySet()) {
+                    for (Object key : manifest.getAttributes(entry).keySet())
+                    {
+                        String property = StringUtils.trim(key.toString());
+                        String propertyValue = StringUtils.trim(manifest.getAttributes(entry).get(key).toString());
+                        if (StringUtils.isBlank((String)jarManifest.asVertex().getProperty(property)))
+                            jarManifest.asVertex().setProperty(property, propertyValue);
+                    }
+                    if (!StringUtils.isBlank(jarManifest.getName()))
+                        break;
+                }
             }
         }
         catch (IOException e)

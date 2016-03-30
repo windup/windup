@@ -7,6 +7,9 @@ import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
+/**
+ * Represents an archive within the input application.
+ */
 @TypeValue(ArchiveModel.TYPE)
 public interface ArchiveModel extends FileModel
 {
@@ -15,47 +18,81 @@ public interface ArchiveModel extends FileModel
     String DECOMPILED_FILES = "decompiledFiles";
     String UNZIPPED_DIRECTORY = "unzippedDirectory";
 
-    
+    /**
+     * Contains the parent archive.
+     */
     @Adjacency(label = "parentArchive", direction = Direction.IN)
-    public ArchiveModel getParentArchive();
+    ArchiveModel getParentArchive();
 
+    /**
+     * Contains the parent archive.
+     */
     @Adjacency(label = "parentArchive", direction = Direction.IN)
-    public void setParentArchive(ArchiveModel resource);
+    void setParentArchive(ArchiveModel resource);
 
+    /**
+     * Contains the name of this archive (filename).
+     */
     @Property(ARCHIVE_NAME)
-    public String getArchiveName();
+    String getArchiveName();
 
+    /**
+     * Contains the name of this archive (filename).
+     */
     @Property(ARCHIVE_NAME)
-    public void setArchiveName(String archiveName);
+    void setArchiveName(String archiveName);
 
+    /**
+     * Contains the children of this archive.
+     */
     @Adjacency(label = "childArchive", direction = Direction.OUT)
-    public Iterable<ArchiveModel> getChildrenArchive();
+    Iterable<ArchiveModel> getChildrenArchive();
 
+    /**
+     * Contains the children of this archive.
+     */
     @Adjacency(label = "childArchive", direction = Direction.OUT)
-    public void addChildArchive(final ArchiveModel resource);
+    void addChildArchive(final ArchiveModel resource);
 
-    @Adjacency(label = "childArchive", direction = Direction.IN)
-    public ArchiveModel getChildArchive();
-
+    /**
+     * Contains the directory to which this archive has been unzipped. It will be null if the archive has not been unzipped.
+     */
     @Adjacency(label = UNZIPPED_DIRECTORY, direction = Direction.OUT)
-    public void setUnzippedDirectory(FileModel fileResourceModel);
+    void setUnzippedDirectory(FileModel fileResourceModel);
 
+    /**
+     * Contains the directory to which this archive has been unzipped. It will be null if the archive has not been unzipped.
+     */
     @Adjacency(label = UNZIPPED_DIRECTORY, direction = Direction.OUT)
-    public FileModel getUnzippedDirectory();
+    FileModel getUnzippedDirectory();
 
+    /**
+     * Contains a list of all files contained within this archive.
+     */
     @Adjacency(label = FileModel.ARCHIVE_FILES, direction = Direction.OUT)
-    public Iterable<FileModel> getContainedFileModels();
+    Iterable<FileModel> getContainedFileModels();
 
+    /**
+     * Contains a list of all files contained within this archive.
+     */
     @Adjacency(label = FileModel.ARCHIVE_FILES, direction = Direction.OUT)
-    public void addContainedFileModel(FileModel archiveFile);
+    void addContainedFileModel(FileModel archiveFile);
 
+    /**
+     * Contains a list of all decompiled files associated with this archive.
+     */
     @Adjacency(label = DECOMPILED_FILES, direction = Direction.OUT)
-    public Iterable<FileModel> getDecompiledFileModels();
+    Iterable<FileModel> getDecompiledFileModels();
 
+    /**
+     * Contains a list of all decompiled files associated with this archive.
+     */
     @Adjacency(label = DECOMPILED_FILES, direction = Direction.OUT)
-    public void addDecompiledFileModel(FileModel archiveFile);
+    void addDecompiledFileModel(FileModel archiveFile);
 
+    /**
+     * Contains a link to the organization which produced this archive.
+     */
     @Adjacency(label = OrganizationModel.ARCHIVE_MODEL, direction = Direction.IN)
-    public Iterable<OrganizationModel> getOrganizationModels();
-
+    Iterable<OrganizationModel> getOrganizationModels();
 }

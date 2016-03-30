@@ -25,18 +25,18 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(ProjectModel.TYPE)
 public interface ProjectModel extends WindupVertexFrame
 {
-    public static final String TYPE = "ProjectModel";
-    public static final String DEPENDENCY = "dependency";
-    public static final String PARENT_PROJECT = "parentProject";
-    public static final String ROOT_FILE_MODEL = "rootFileModel";
-    public static final String PROJECT_MODEL_TO_FILE = "projectModelToFile";
-    public static final String SOURCE_BASED = "sourceBased";
-    public static final String DESCRIPTION = "description";
-    public static final String ORGANIZATION = "organization";
-    public static final String URL = "url";
-    public static final String NAME = "name";
-    public static final String VERSION = "version";
-    public static final String PROJECT_TYPE = "projectType";
+    String TYPE = "ProjectModel";
+    String DEPENDENCY = "dependency";
+    String PARENT_PROJECT = "parentProject";
+    String ROOT_FILE_MODEL = "rootFileModel";
+    String PROJECT_MODEL_TO_FILE = "projectModelToFile";
+    String SOURCE_BASED = "sourceBased";
+    String DESCRIPTION = "description";
+    String ORGANIZATION = "organization";
+    String URL = "url";
+    String NAME = "name";
+    String VERSION = "version";
+    String PROJECT_TYPE = "projectType";
 
     /**
      * This represents the root directory (in the case of a source-based analysis) or root archive (for binary analysis) containing this particular

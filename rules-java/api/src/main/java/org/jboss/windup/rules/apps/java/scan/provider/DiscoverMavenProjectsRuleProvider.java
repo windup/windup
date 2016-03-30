@@ -393,17 +393,9 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
         if (StringUtils.isNotBlank(mavenName))
         {
             sb.append(mavenName);
-            sb.append(" (");
-        }
-
-        if (StringUtils.isNotBlank(groupId) || StringUtils.isNotBlank(artifactId) || StringUtils.isNotBlank(version))
+        } else if (StringUtils.isNotBlank(groupId) || StringUtils.isNotBlank(artifactId) || StringUtils.isNotBlank(version))
         {
             sb.append(groupId).append(":").append(artifactId).append(":").append(version);
-        }
-
-        if (StringUtils.isNotBlank(mavenName))
-        {
-            sb.append(")");
         }
 
         return sb.toString();
