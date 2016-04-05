@@ -83,7 +83,7 @@
 
                     <div class="col-md-8">
                         <div class="col-md-6">
-                            <div style="text-align: center"><strong>Incidents by Category</strong></div>
+                            <div style="text-align: center"><strong>Incidents by Severity</strong></div>
                             <div id="incidentsBySeverityChart" style="float: left;"></div>
                         </div>
                         <div class="col-md-6">
@@ -99,7 +99,7 @@
                             <thead>
                                 <tr>
                                     <td>
-                                        <b>Mandatory Incidents by Type</b>
+                                        <b>Mandatory Incidents by Effort</b>
                                     </td>
                                     <td class='numeric-column'>
                                         <b>Incidents</b>
