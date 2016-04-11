@@ -93,6 +93,15 @@ public class ReferenceResolvingVisitor extends ASTVisitor
         this.packageName = packageDeclaration == null ? "" : packageDeclaration.getName().getFullyQualifiedName();
         @SuppressWarnings("unchecked")
         List<TypeDeclaration> types = compilationUnit.types();
+
+        @SuppressWarnings("unchecked")
+        List<ImportDeclaration> importDeclarations = (List<ImportDeclaration>)compilationUnit.imports();
+
+        for (ImportDeclaration importDeclaration : importDeclarations)
+        {
+            processImport(importDeclaration);
+        }
+
         String fqcn = null;
         if (!types.isEmpty())
         {
@@ -118,6 +127,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
                         compilationUnit.getColumnNumber(compilationUnit.getStartPosition()),
                         compilationUnit.getLength(), extractDefinitionLine(typeLine)));
 
+
             if (typeDeclaration instanceof TypeDeclaration)
             {
                 Type superclassType = ((TypeDeclaration) typeDeclaration).getSuperclassType();
@@ -127,20 +137,36 @@ public class ReferenceResolvingVisitor extends ASTVisitor
                     resolveBinding = superclassType.resolveBinding();
                 }
 
+                if (resolveBinding == null && superclassType != null)
+                {
+                    ResolveClassnameResult resolvedResult = resolveClassname(superclassType.toString());
+                    PackageAndClassName packageAndClassName = PackageAndClassName.parseFromQualifiedName(resolvedResult.result);
+                    String superPackageName = packageAndClassName.packageName;
+                    String superClassName = packageAndClassName.className;
+
+                    ResolutionStatus superResolutionStatus = resolvedResult.found ? ResolutionStatus.RECOVERED : ResolutionStatus.UNRESOLVED;
+
+                    classReferences.add(new ClassReference(resolvedResult.result, superClassName, superPackageName, null,
+                            superResolutionStatus,
+                            TypeReferenceLocation.TYPE, compilationUnit.getLineNumber(typeDeclaration.getStartPosition()),
+                            compilationUnit.getColumnNumber(compilationUnit.getStartPosition()),
+                            compilationUnit.getLength(),
+                            extractDefinitionLine(typeDeclaration.toString())));
+                }
+
                 while (resolveBinding != null)
                 {
                     if (superclassType.resolveBinding() != null)
                     {
-                        String superQualifiedName = resolveBinding.getQualifiedName();
                         String superPackageName = resolveBinding.getPackage().getName();
                         String superClassName = resolveBinding.getName();
 
                         classReferences.add(new ClassReference(resolveBinding.getQualifiedName(), superClassName, superPackageName, null,
-                                    ResolutionStatus.RESOLVED,
-                                    TypeReferenceLocation.TYPE, compilationUnit.getLineNumber(typeDeclaration.getStartPosition()),
-                                    compilationUnit.getColumnNumber(compilationUnit.getStartPosition()),
-                                    compilationUnit.getLength(),
-                                    extractDefinitionLine(typeDeclaration.toString())));
+                                ResolutionStatus.RESOLVED,
+                                TypeReferenceLocation.TYPE, compilationUnit.getLineNumber(typeDeclaration.getStartPosition()),
+                                compilationUnit.getColumnNumber(compilationUnit.getStartPosition()),
+                                compilationUnit.getLength(),
+                                extractDefinitionLine(typeDeclaration.toString())));
                     }
                     resolveBinding = resolveBinding.getSuperclass();
                 }
@@ -749,6 +775,13 @@ public class ReferenceResolvingVisitor extends ASTVisitor
                     processTypeBinding(resolvedSuperClass, ResolutionStatus.RESOLVED, TypeReferenceLocation.INHERITANCE,
                                 compilationUnit.getLineNumber(node.getStartPosition()),
                                 compilationUnit.getColumnNumber(node.getStartPosition()), node.getLength(), extractDefinitionLine(node.toString()));
+
+                    for (ITypeBinding iface : resolvedSuperClass.getInterfaces())
+                    {
+                        processTypeBinding(iface, ResolutionStatus.RESOLVED, TypeReferenceLocation.IMPLEMENTS_TYPE,
+                                compilationUnit.getLineNumber(node.getStartPosition()),
+                                compilationUnit.getColumnNumber(node.getStartPosition()), node.getLength(), extractDefinitionLine(node.toString()));
+                    }
                     resolvedSuperClass = resolvedSuperClass.getSuperclass();
                 }
             }
@@ -776,8 +809,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
         return super.visit(node);
     }
 
-    @Override
-    public boolean visit(ImportDeclaration node)
+    private void processImport(ImportDeclaration node)
     {
         String name = node.getName().toString();
         if (node.isOnDemand())
@@ -807,8 +839,6 @@ public class ReferenceResolvingVisitor extends ASTVisitor
             processImport(name, status, compilationUnit.getLineNumber(node.getName().getStartPosition()),
                         compilationUnit.getColumnNumber(node.getName().getStartPosition()), node.getName().getLength(), node.toString().trim());
         }
-
-        return super.visit(node);
     }
 
     /***
