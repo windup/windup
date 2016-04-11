@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -80,6 +81,20 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
     // public static final String SYSTEM_PROPERTY
 
     private static final Logger log = Logger.getLogger(RuleSubset.class.getName());
+
+    /**
+     * This accumulates all exceptions for later usage if there is not set Halt on Exceptions
+     * Useful for tests or choose your use case ;)
+     */
+    private Map<String, Exception> exceptions = new LinkedHashMap<>();
+
+    /**
+     * @return the exceptions
+     */
+    public Map<String, Exception> getExceptions()
+    {
+        return exceptions;
+    }
 
     /**
      * Used for tracking the time taken by the rules within each RuleProvider. This links from a {@link AbstractRuleProvider} to the ID of a
@@ -320,6 +335,8 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                 halt |= (halt_ instanceof Boolean && ((Boolean) halt_).booleanValue());
                 if (halt)
                     throw new WindupException(exMsg, ex);
+                else
+                    exceptions.put(rule.getId(), ex);
             }
 
         }
