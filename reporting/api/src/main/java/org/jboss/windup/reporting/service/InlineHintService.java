@@ -198,8 +198,14 @@ public class InlineHintService extends GraphService<InlineHintModel>
         GremlinPipeline<Vertex, Vertex> inlineHintPipeline = new GremlinPipeline<>(getGraphContext().getGraph());
         inlineHintPipeline.V();
         if (!includeZero)
+        {
             inlineHintPipeline.has(EffortReportModel.EFFORT, Compare.GREATER_THAN, 0);
-        inlineHintPipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, InlineHintModel.TYPE);
+            inlineHintPipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, InlineHintModel.TYPE);
+        }
+        else
+        {
+            inlineHintPipeline.has(WindupVertexFrame.TYPE_PROP, InlineHintModel.TYPE);
+        }
 
         inlineHintPipeline.as("hint");
         inlineHintPipeline.out(InlineHintModel.FILE_MODEL);

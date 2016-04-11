@@ -168,8 +168,14 @@ public class ClassificationService extends GraphService<ClassificationModel>
         GremlinPipeline<Vertex, Vertex> classificationPipeline = new GremlinPipeline<>(getGraphContext().getGraph());
         classificationPipeline.V();
         if (!includeZero)
+        {
             classificationPipeline.has(EffortReportModel.EFFORT, Compare.GREATER_THAN, 0);
-        classificationPipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, ClassificationModel.TYPE);
+            classificationPipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, ClassificationModel.TYPE);
+        }
+        else
+        {
+            classificationPipeline.has(WindupVertexFrame.TYPE_PROP, ClassificationModel.TYPE);
+        }
 
         classificationPipeline.as("classification");
         classificationPipeline.out(ClassificationModel.FILE_MODEL);

@@ -43,7 +43,6 @@ public class ExportCSVFileRuleProvider extends AbstractRuleProvider
     public static final int COMMIT_INTERVAL = 750;
     public static final int LOG_INTERVAL = 250;
     private static final Logger LOG = Logging.get(ExportCSVFileRuleProvider.class);
-    Map<String, CSVWriter> projectToFile;
 
     public ExportCSVFileRuleProvider()
     {
@@ -70,11 +69,11 @@ public class ExportCSVFileRuleProvider extends AbstractRuleProvider
         @Override
         public void perform(GraphRewrite event, EvaluationContext context, WindupConfigurationModel config)
         {
-            projectToFile = new HashMap<>();
             InlineHintService hintService = new InlineHintService(event.getGraphContext());
             String outputFolderPath = config.getOutputPath().getFilePath() + File.separator;
             ClassificationService classificationService = new ClassificationService(event.getGraphContext());
             ProjectService projectService = new ProjectService(event.getGraphContext());
+            final Map<String, CSVWriter> projectToFile = new HashMap<>();
             final Iterable<InlineHintModel> hints = hintService.findAll();
             final Iterable<ProjectModel> projects = projectService.findAll();
             final Iterable<ClassificationModel> classifications = classificationService.findAll();
@@ -106,7 +105,7 @@ public class ExportCSVFileRuleProvider extends AbstractRuleProvider
                                 projectNameString,
                                 fileName, filePath, String.valueOf(
                                 hint.getLineNumber()), String.valueOf(hint.getEffort()) };
-                    writeCsvRecordForProject(outputFolderPath, parentRootProjectModel, strings);
+                    writeCsvRecordForProject(projectToFile, outputFolderPath, parentRootProjectModel, strings);
 
                 }
                 for (ClassificationModel classification : classifications)
@@ -133,7 +132,7 @@ public class ExportCSVFileRuleProvider extends AbstractRuleProvider
                                     projectNameString, fileName, filePath, "N/A",
                                     String.valueOf(
                                                 classification.getEffort()) };
-                        writeCsvRecordForProject(outputFolderPath, parentRootProjectModel, strings);
+                        writeCsvRecordForProject(projectToFile, outputFolderPath, parentRootProjectModel, strings);
 
                     }
                 }
@@ -170,7 +169,7 @@ public class ExportCSVFileRuleProvider extends AbstractRuleProvider
             return linksString.toString();
         }
 
-        private void writeCsvRecordForProject(String outputFolderPath, ProjectModel projectModel, String[] line)
+        private void writeCsvRecordForProject(Map<String, CSVWriter> projectToFile, String outputFolderPath, ProjectModel projectModel, String[] line)
         {
             if (!projectToFile.containsKey(projectModel.getName()))
             {
