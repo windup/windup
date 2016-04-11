@@ -91,7 +91,8 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
     /**
      * @return the exceptions
      */
-    public Map<String, Exception> getExceptions() {
+    public Map<String, Exception> getExceptions()
+    {
         return exceptions;
     }
 
@@ -332,11 +333,10 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                 boolean halt = alwaysHaltOnFailure || ruleProvider.getMetadata().isHaltOnException();
                 Object halt_ = ruleContext.get(RuleMetadataType.HALT_ON_EXCEPTION);
                 halt |= (halt_ instanceof Boolean && ((Boolean) halt_).booleanValue());
-                if (halt) {
+                if (halt)
                     throw new WindupException(exMsg, ex);
-                } else {
+                else
                     exceptions.put(rule.getId(), ex);
-                }
             }
 
         }
