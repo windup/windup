@@ -19,7 +19,7 @@
             <tr>
                 <th>File</th>
                 <th>Path</th>
-                <th>Ignored by regex</th>
+                <th>Ignored Reason</th>
             </tr>
 
             <#list reportModel.ignoredFiles.iterator() as file>
@@ -35,23 +35,23 @@
 
 
 <#macro fileRegexesRenderer reportModel>
-    <div class="panel panel-primary">
-        <table class="table table-striped table-bordered">
-            <tr>
-                <th>Regex</th>
-                <th>Compilable</th>
-            </tr>
+    <#if reportModel.fileRegexes.iterator()?has_content>
+        <div class="panel panel-primary">
+            <table class="table table-striped table-bordered">
+                <tr>
+                    <th>Regex</th>
+                    <th>Compilable</th>
+                </tr>
 
-            <#list reportModel.fileRegexes.iterator() as regex>
-            <tr>
-                <td> <#if regex.regex?has_content> ${regex.regex} </#if> </td>
-                <td> <#if regex.compilationError?has_content> ${regex.compilationError}
-                     <#else> OK
-                     </#if> </td>
-            </tr>
-            </#list>
-        </table>
-    </div>
+                <#list reportModel.fileRegexes.iterator() as regex>
+                <tr>
+                    <td>${regex.regex!""}</td>
+                    <td>${regex.compilationError!"OK"}</td>
+                </tr>
+                </#list>
+            </table>
+        </div>
+    </#if>
 </#macro>
 
 <head>
@@ -88,12 +88,7 @@
                     <div class="path">${reportModel.projectModel.name?html}</div>
                 </h1>
                 <div class="desc">
-                    This report lists the files which were found in the application,
-                    but based on certain rules and the Windup configuration, both built-in and local,
-                    they were not processed.
-                    See the <code>--userIgnorePath</code> Windup option in
-                    <a href="http://windup.github.io/windup/docs/latest/html/WindupUserGuide.html#command-line-arguments"
-                       >Windup User Guide</a>.
+                    ${reportModel.description}
                 </div>
             </div>
         </div>

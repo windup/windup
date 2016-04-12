@@ -28,6 +28,7 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.rules.apps.java.archives.model.IdentifiedArchiveModel;
+import org.jboss.windup.rules.apps.java.scan.operation.packagemapping.PackageNameMapping;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.ZipUtil;
@@ -78,8 +79,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
     {
         WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(graphContext);
         String windupOutputFolder = cfg.getOutputPath().getFilePath();
-        Path windupTempUnzippedArchiveFolder = Paths.get(windupOutputFolder, ARCHIVES);
-        return windupTempUnzippedArchiveFolder;
+        return Paths.get(windupOutputFolder, ARCHIVES);
     }
 
 
@@ -164,7 +164,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
     /**
      * Recurses the given folder and adds references to these files to the graph as FileModels.
      *
-     * We don't set the parent file model in the case of the inital children, as the direct parent is really the archive itself. For example for file
+     * We don't set the parent file model in the case of the initial children, as the direct parent is really the archive itself. For example for file
      * "root.zip/pom.xml" - the parent for pom.xml is root.zip, not the directory temporary directory that happens to hold it.
      */
     private void recurseAndAddFiles(GraphRewrite event, EvaluationContext context,
@@ -198,7 +198,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
                     subFileModel.setParentArchive(archiveModel);
 
                     // check if this file should be ignored
-                    if (checkIfIgnored(event.getGraphContext(), subFileModel, windupJavaConfigurationService.getIgnoredFileRegexes()))
+                    if (checkIfIgnored(event, subFileModel, windupJavaConfigurationService.getIgnoredFileRegexes()))
                     {
                         continue;
                     }
@@ -221,6 +221,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
                          * New archive must be reloaded in case the archive should be ignored
                          */
                         newArchiveModel = GraphService.refresh(event.getGraphContext(), newArchiveModel);
+
                         unzipToTempDirectory(event, context, tempFolder, newZipFile, newArchiveModel);
                     }
 
@@ -236,7 +237,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
     /**
      * Checks if the {@link FileModel#getFilePath()} + {@link FileModel#getFileName()} is ignored by any of the specified regular expressions.
      */
-    private boolean checkIfIgnored(final GraphContext context, FileModel file, List<String> patterns)
+    private boolean checkIfIgnored(final GraphRewrite event, FileModel file, List<String> patterns)
     {
         boolean ignored = false;
         if (patterns != null && !patterns.isEmpty())
@@ -245,7 +246,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
             {
                 if (file.getFilePath().matches(pattern))
                 {
-                    IgnoredFileModel ignoredFileModel = GraphService.addTypeToModel(context, file, IgnoredFileModel.class);
+                    IgnoredFileModel ignoredFileModel = GraphService.addTypeToModel(event.getGraphContext(), file, IgnoredFileModel.class);
                     ignoredFileModel.setIgnoredRegex(pattern);
                     LOG.info("File/Directory placed in " + file.getFilePath() + " was ignored, because matched [" + pattern + "].");
                     ignored = true;
@@ -253,6 +254,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
                 }
             }
         }
+
         return ignored;
     }
 

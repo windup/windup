@@ -15,12 +15,18 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(IdentifiedArchiveModel.TYPE)
 public interface IdentifiedArchiveModel extends ArchiveModel
 {
-    public static final String TYPE = "identifiedArchive:";
-    public static final String COORDINATE = TYPE + "coordinate";
+    String TYPE = "identifiedArchive:";
+    String COORDINATE = TYPE + "coordinate";
 
+    /**
+     * Contains the Maven GAV, if it was possible to determine this.
+     */
     @Adjacency(label = COORDINATE, direction = Direction.OUT)
-    public ArchiveCoordinateModel getCoordinate();
+    ArchiveCoordinateModel getCoordinate();
 
+    /**
+     * Contains the Maven GAV, if it was possible to determine this.
+     */
     @Adjacency(label = COORDINATE, direction = Direction.OUT)
-    public void setCoordinate(ArchiveCoordinateModel vul);
+    void setCoordinate(ArchiveCoordinateModel vul);
 }

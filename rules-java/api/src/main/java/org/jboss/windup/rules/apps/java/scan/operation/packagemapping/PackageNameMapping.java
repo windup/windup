@@ -1,15 +1,22 @@
 package org.jboss.windup.rules.apps.java.scan.operation.packagemapping;
 
+import java.io.IOException;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.GraphRule;
 import org.jboss.windup.config.PreRulesetEvaluation;
+import org.jboss.windup.rules.apps.java.model.WindupJavaConfigurationModel;
+import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
+import org.jboss.windup.util.PathUtil;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
@@ -66,6 +73,76 @@ public class PackageNameMapping extends GraphRule implements PackageNameMappingW
     {
         setOrganization(organization);
         return this;
+    }
+
+    public static boolean isExclusivelyKnownArchive(GraphRewrite event, String filePath)
+    {
+        String extension = StringUtils.substringAfterLast(filePath, ".");
+
+        if (!StringUtils.equalsIgnoreCase(extension, "jar"))
+            return false;
+
+        ZipFile archive;
+        try
+        {
+            archive = new ZipFile(filePath);
+        } catch (IOException e)
+        {
+            return false;
+        }
+
+        WindupJavaConfigurationService javaConfigurationService = new WindupJavaConfigurationService(event.getGraphContext());
+        WindupJavaConfigurationModel javaConfigurationModel = WindupJavaConfigurationService.getJavaConfigurationModel(event.getGraphContext());
+
+        // indicates that the user did specify some packages to scan explicitly (as opposed to scanning everything)
+        boolean customerPackagesSpecified = javaConfigurationModel.getScanJavaPackages().iterator().hasNext();
+
+        // this should only be true if:
+        // 1) the package does not contain *any* customer packages.
+        // 2) the package contains "known" vendor packages.
+        boolean exclusivelyKnown = false;
+
+        String organization = null;
+        Enumeration<?> e = archive.entries();
+
+        // go through all entries...
+        ZipEntry entry;
+        while (e.hasMoreElements())
+        {
+            entry = (ZipEntry) e.nextElement();
+            String entryName = entry.getName();
+
+            if (entry.isDirectory() || !StringUtils.endsWith(entryName, ".class"))
+                continue;
+
+            String classname = PathUtil.classFilePathToClassname(entryName);
+            // if the package isn't current "known", try to match against known packages for this entry.
+            if (!exclusivelyKnown)
+            {
+                organization = getOrganizationForPackage(event, classname);
+                if (organization != null)
+                {
+                    exclusivelyKnown = true;
+                } else
+                {
+                    // we couldn't find a package definitively, so ignore the archive
+                    exclusivelyKnown = false;
+                    break;
+                }
+            }
+
+            // If the user specified package names and this is in those package names, then scan it anyway
+            if (customerPackagesSpecified && javaConfigurationService.shouldScanFile(classname))
+            {
+                return false;
+            }
+        }
+
+        if (exclusivelyKnown)
+            LOG.info("Known Package: " + archive.getName() + "; Organization: " + organization);
+
+        // Return the evaluated exclusively known value.
+        return exclusivelyKnown;
     }
 
     @Override
