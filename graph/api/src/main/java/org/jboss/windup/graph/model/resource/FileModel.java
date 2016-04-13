@@ -36,8 +36,6 @@ public interface FileModel extends ResourceModel
     String FILE_PATH = "filePath";
     String IS_DIRECTORY = "isDirectory";
     String WINDUP_GENERATED = "windupGenerated";
-    String PRETTY_PATH = "fileModelPrettyPath";
-    String PRETTY_PATH_WITHIN_PROJECT = "fileModelPrettyPathWithinProject";
     String PARSE_ERROR = "parseError";
     String ON_PARSE_ERROR = "onParseError";
 
@@ -98,6 +96,7 @@ public interface FileModel extends ResourceModel
      * Contains a SHA1 Hash of the file
      */
     @Property(SHA1_HASH)
+    @Indexed
     String getSHA1Hash();
 
     /**

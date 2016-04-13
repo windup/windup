@@ -1,11 +1,9 @@
 package org.jboss.windup.rules.apps.java.reporting.rules;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
@@ -33,6 +31,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 /**
  * Creates a report of JAR dependencies.
  *
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public class CreateJarDependencyReportRuleProvider extends AbstractRuleProvider
 {
@@ -58,13 +57,18 @@ public class CreateJarDependencyReportRuleProvider extends AbstractRuleProvider
                         {
                             // configuration of current execution
                             WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
-                            createGlobalReport(event.getGraphContext(), configurationModel);
 
+                            int count = 0;
                             for (FileModel inputPath : configurationModel.getInputPaths())
                             {
                                 ProjectModel projectModel = inputPath.getProjectModel();
                                 createReport(event.getGraphContext(), projectModel);
+                                count++;
                             }
+
+                            // only create a global report if there is more than one application
+                            if (count > 1)
+                                createGlobalReport(event.getGraphContext(), configurationModel);
                         }
 
                         @Override
@@ -76,25 +80,29 @@ public class CreateJarDependencyReportRuleProvider extends AbstractRuleProvider
 
     }
 
-    private void addAll(Set<String> sha1DupeCheck, List<ArchiveModel> projects, ProjectModel project)
+    private void addAll(Collection<ArchiveModel> projects, ProjectModel project)
     {
         FileModel rootFileModel = project.getRootFileModel();
-        if (rootFileModel instanceof ArchiveModel && !sha1DupeCheck.contains(rootFileModel.getSHA1Hash()))
+        if (rootFileModel instanceof ArchiveModel)
         {
-            sha1DupeCheck.add(rootFileModel.getSHA1Hash());
-            projects.add((ArchiveModel) rootFileModel);
+            ArchiveModel archiveModel = (ArchiveModel) rootFileModel;
+
+            // only add it if it appears to be a dependency (don't add root level projects)
+            if (archiveModel.getProjectModel() != null && archiveModel.getProjectModel().getParentProject() != null)
+            {
+                projects.add(archiveModel);
+            }
         }
 
         for (ProjectModel child : project.getChildProjects())
-            addAll(sha1DupeCheck, projects, child);
+            addAll(projects, child);
     }
 
     private void createGlobalReport(GraphContext context, WindupConfigurationModel configuration)
     {
-        Set<String> sha1DupeCheck = new HashSet<>();
-        List<ArchiveModel> dependencies = new ArrayList<>();
+        Collection<ArchiveModel> dependencies = new ArrayList<>();
         for (FileModel inputApplication : configuration.getInputPaths())
-            addAll(sha1DupeCheck, dependencies, inputApplication.getProjectModel());
+            addAll(dependencies, inputApplication.getProjectModel());
 
         ReportService reportService = new ReportService(context);
         ApplicationReportModel reportModel = createReportModel(context, dependencies);
@@ -104,9 +112,8 @@ public class CreateJarDependencyReportRuleProvider extends AbstractRuleProvider
 
     private void createReport(GraphContext context, ProjectModel application)
     {
-        Set<String> sha1DupeCheck = new HashSet<>();
-        List<ArchiveModel> dependencies = new ArrayList<>();
-        addAll(sha1DupeCheck, dependencies, application);
+        Collection<ArchiveModel> dependencies = new ArrayList<>();
+        addAll(dependencies, application);
 
         if (dependencies.isEmpty())
             return;
@@ -117,7 +124,7 @@ public class CreateJarDependencyReportRuleProvider extends AbstractRuleProvider
         reportService.setUniqueFilename(reportModel, "dependency_report_" + application.getName(), "html");
     }
 
-    private ApplicationReportModel createReportModel(GraphContext context, List<ArchiveModel> dependencies)
+    private ApplicationReportModel createReportModel(GraphContext context, Collection<ArchiveModel> dependencies)
     {
         ApplicationReportService applicationReportService = new ApplicationReportService(context);
         ApplicationReportModel applicationReportModel = applicationReportService.create();

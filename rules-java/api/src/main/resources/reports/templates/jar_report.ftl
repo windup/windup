@@ -65,9 +65,11 @@
                                 <td>
                                     <strong>${dependency.archiveName}</strong>
                                     <ul class="list-group">
-                                        <li class="list-group-item">
-                                            Name: ${dependencyProject.name!dependency.archiveName}
-                                        </li>
+                                        <#if dependencyProject.name?? && dependencyProject.name != dependency.archiveName>
+                                            <li class="list-group-item">
+                                                Name: ${dependencyProject.name}
+                                            </li>
+                                        </#if>
                                         <#if dependencyProject.version??>
                                             <li class="list-group-item">
                                                 Version: ${dependencyProject.version}
@@ -78,6 +80,14 @@
                                                 Organization: ${dependencyProject.organization}
                                             </li>
                                         </#if>
+                                        <li class="list-group-item">
+                                            File Paths:
+                                            <ul>
+                                                <#list getArchivesBySHA1(dependency.SHA1Hash).iterator() as instance>
+                                                    <li>${instance.prettyPath}</li>
+                                                </#list>
+                                            </ul>
+                                        </li>
                                     </ul>
                                 </td>
                             </tr>
