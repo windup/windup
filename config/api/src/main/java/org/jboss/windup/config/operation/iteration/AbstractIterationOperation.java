@@ -165,7 +165,7 @@ public abstract class AbstractIterationOperation<T extends WindupVertexFrame> ex
      * identify word boundaries.
      * <p>
      * Examples:
-     * 
+     *
      * <pre>
      *   inflector.camelCase(&quot;active_record&quot;,false)    #=&gt; &quot;activeRecord&quot;
      *   inflector.camelCase(&quot;active_record&quot;,true)     #=&gt; &quot;ActiveRecord&quot;
@@ -174,9 +174,9 @@ public abstract class AbstractIterationOperation<T extends WindupVertexFrame> ex
      *   inflector.camelCase(&quot;name&quot;,false)             #=&gt; &quot;name&quot;
      *   inflector.camelCase(&quot;name&quot;,true)              #=&gt; &quot;Name&quot;
      * </pre>
-     * 
+     *
      * </p>
-     * 
+     *
      * @param lowerCaseAndUnderscoredWord the word that is to be converted to camel case
      * @param uppercaseFirstLetter true if the first character is to be uppercased, or false if the first character is
      *            to be lowercased
@@ -222,7 +222,7 @@ public abstract class AbstractIterationOperation<T extends WindupVertexFrame> ex
      * replacement string to uppercase or lowercase the backreferences. For example, <code>\L1</code> would lowercase
      * the first backreference, and <code>&#92;u3</code> would uppercase the 3rd backreference.
      * </p>
-     * 
+     *
      * @param input
      * @param regex
      * @param groupNumberToUppercase
@@ -241,5 +241,12 @@ public abstract class AbstractIterationOperation<T extends WindupVertexFrame> ex
         }
         matcher.appendTail(sb);
         return sb.toString();
+    }
+
+
+    @Override
+    public String toString()
+    {
+        return this.getClass().getSimpleName() + " with var '" + variableName + "'";
     }
 }

@@ -11,7 +11,7 @@ import org.jboss.windup.config.furnace.FurnaceHolder;
 
 import freemarker.cache.URLTemplateLoader;
 
-class FurnaceFreeMarkerTemplateLoader extends URLTemplateLoader
+public class FurnaceFreeMarkerTemplateLoader extends URLTemplateLoader
 {
     @Override
     protected URL getURL(final String name)

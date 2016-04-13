@@ -112,7 +112,6 @@
         <dependency>
             <groupId>org.jboss.windup</groupId>
             <artifactId>windup-test-harness</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>

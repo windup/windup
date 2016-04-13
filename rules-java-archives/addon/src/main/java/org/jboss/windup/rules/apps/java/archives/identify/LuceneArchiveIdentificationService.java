@@ -1,19 +1,13 @@
 package org.jboss.windup.rules.apps.java.archives.identify;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.logging.Logger;
 
 import org.apache.lucene.document.Document;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TermQuery;
-import org.apache.lucene.search.TopDocs;
 import org.jboss.forge.addon.dependencies.Coordinate;
 import org.jboss.forge.addon.dependencies.builder.CoordinateBuilder;
+import org.jboss.windup.maven.nexusindexer.client.DocTo;
 import org.jboss.windup.util.Logging;
-import org.jboss.windup.util.exception.WindupException;
 
 /**
  * Identifies archives by their hash, using pre-created Lucene index. See the nexus-repository-indexer project.
@@ -23,7 +17,7 @@ import org.jboss.windup.util.exception.WindupException;
  *
  * TODO: This should be in Nexus Indexer - Data (client for Nexus Indexer - Core).
  */
-public class LuceneArchiveIdentificationService extends LuceneIndexServiceBase implements ArchiveIdentificationService
+public class LuceneArchiveIdentificationService extends org.jboss.windup.maven.nexusindexer.client.LuceneIndexServiceBase implements ArchiveIdentificationService
 {
     private static final Logger LOG = Logging.get(LuceneArchiveIdentificationService.class);
 
@@ -42,31 +36,19 @@ public class LuceneArchiveIdentificationService extends LuceneIndexServiceBase i
 
 
     @Override
-    public Coordinate getCoordinate(String checksum)
+    public Coordinate getCoordinate(String sha1)
     {
-        Query query = new TermQuery(new Term(SHA1, checksum));
-        try
+        return this.findSingle(DocTo.Fields.SHA1, sha1, new DocTo<Coordinate>()
         {
-            TopDocs results = searcher.search(query, 100);
-            for (ScoreDoc scoreDoc : results.scoreDocs)
+            public Coordinate convert(Document doc)
             {
-                Document doc = searcher.doc(scoreDoc.doc);
-                String groupId = doc.get(GROUP_ID);
-                String artifactId = doc.get(ARTIFACT_ID);
-                String version = doc.get(VERSION);
-                String classifier = doc.get(CLASSIFIER);
-                String packaging = doc.get(PACKAGING);
-
-                Coordinate coordinate = CoordinateBuilder.create()
-                    .setGroupId(groupId).setArtifactId(artifactId).setVersion(version)
-                    .setClassifier(classifier).setPackaging(packaging);
-                return coordinate;
+                return CoordinateBuilder.create()
+                    .setGroupId(doc.get(GROUP_ID))
+                    .setArtifactId(doc.get(ARTIFACT_ID))
+                    .setVersion(doc.get(VERSION))
+                    .setClassifier(doc.get(CLASSIFIER))
+                    .setPackaging(doc.get(PACKAGING));
             }
-            return null;
-        }
-        catch (IOException e)
-        {
-            throw new WindupException("Failed to find Maven coords for SHA1: " + checksum + " due to: " + e.getMessage(), e);
-        }
+        });
     }
 }

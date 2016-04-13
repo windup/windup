@@ -25,9 +25,9 @@ import freemarker.template.TemplateException;
 
 /**
  * This class is used to produce a freemarker report (and the associated ReportModel) from outside of an Iteration context.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a> <jesse.sightler@gmail.com)
- * 
+ *
  */
 public class FreeMarkerOperation extends GraphOperation
 {
@@ -48,10 +48,8 @@ public class FreeMarkerOperation extends GraphOperation
 
     /**
      * Create a FreeMarkerOperation with the provided furnace instance template path, and varNames.
-     * 
+     *
      * The variables in varNames will be provided to the template, and a new ReportModel will be created with these variables attached.
-     * 
-     * 
      */
     public static FreeMarkerOperation create(Furnace furnace, String templatePath, String outputFilename,
                 String... varNames)
@@ -84,8 +82,7 @@ public class FreeMarkerOperation extends GraphOperation
 
             // just the variables
             Map<String, Object> vars = FreeMarkerUtil.findFreeMarkerContextVariables(varStack,
-                        variableNames.toArray(new String[variableNames
-                                    .size()]));
+                        variableNames.toArray(new String[variableNames.size()]));
 
             // also, extension functions
             Map<String, Object> freeMarkerExtensions = FreeMarkerUtil.findFreeMarkerExtensions(furnace, event);

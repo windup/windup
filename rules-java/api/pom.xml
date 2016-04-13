@@ -35,6 +35,23 @@
             <version>5.0.4</version>
         </dependency>
 
+        <!-- Local Dependencies -->
+        <dependency>
+            <groupId>org.jboss.windup.maven</groupId>
+            <artifactId>nexus-indexer-data</artifactId>
+            <version>6-SNAPSHOT</version>
+            <scope>compile</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-core</artifactId>
+            <version>4.8.1</version>
+            <scope>provided</scope>
+        </dependency>
+
+
+
         <!-- Addon Dependencies -->
         <dependency>
             <groupId>org.jboss.windup.decompiler</groupId>
@@ -126,6 +143,12 @@
             </resource>
             <resource>
                 <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.ftl</include>
+                </includes>
             </resource>
         </resources>
     </build>

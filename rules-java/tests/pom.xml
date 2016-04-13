@@ -16,18 +16,6 @@
         <version.nexus.index>5</version.nexus.index>
     </properties>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-               <groupId>org.jboss.windup</groupId>
-               <artifactId>windup-bom</artifactId>
-               <version>${project.version}</version>
-               <type>pom</type>
-               <scope>import</scope>
-           </dependency>
-        </dependencies>
-    </dependencyManagement>
-
     <dependencies>
         <!-- Local Dependencies -->
         <dependency>
@@ -128,6 +116,7 @@
             <classifier>forge-addon</classifier>
             <scope>test</scope>
         </dependency>
+        <!-- For testing of the Mavenized POMs. -->
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-core</artifactId>
@@ -142,5 +131,27 @@
             <type>pom</type>
         </dependency>
 
+        <!--
+        <dependency>
+            <groupId>org.jboss.windup.rules.apps</groupId>
+            <artifactId>windup-rules-java</artifactId>
+            <classifier>forge-addon</classifier>
+            <scope>test</scope>
+        </dependency>
+        -->
+        <!-- Windup Rules - Java - Archives - Data bundle. -->
+        <dependency>
+            <groupId>org.jboss.windup.maven</groupId>
+            <artifactId>nexus-indexer-data</artifactId>
+            <type>zip</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.shrinkwrap.resolver</groupId>
+            <artifactId>shrinkwrap-resolver-depchain</artifactId>
+            <version>2.2.2</version>
+            <scope>test</scope>
+            <type>pom</type>
+        </dependency>
     </dependencies>
 </project>

@@ -15,11 +15,30 @@
 
         <!-- Local Dependencies -->
         <dependency>
+            <groupId>org.jboss.windup.maven</groupId>
+            <artifactId>nexus-indexer-data</artifactId>
+            <version>6-SNAPSHOT</version>
+            <scope>compile</scope>
+            <optional>true</optional>
+            <exclusions>
+                <exclusion>
+                    <groupId>commons-codec</groupId>
+                    <artifactId>commons-codec</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.lucene</groupId>
+                    <artifactId>lucene-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- The API from nexus-indexer-data could make this unneeded. -->
+        <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-core</artifactId>
             <version>4.8.1</version>
             <scope>provided</scope>
         </dependency>
+
 
         <!-- Addon Dependencies -->
         <dependency>
