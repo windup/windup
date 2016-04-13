@@ -36,6 +36,7 @@ import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.NormalAnnotation;
 import org.eclipse.jdt.core.dom.NumberLiteral;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
+import org.eclipse.jdt.core.dom.ParameterizedType;
 import org.eclipse.jdt.core.dom.QualifiedName;
 import org.eclipse.jdt.core.dom.ReturnStatement;
 import org.eclipse.jdt.core.dom.SimpleName;
@@ -708,6 +709,13 @@ public class ReferenceResolvingVisitor extends ASTVisitor
                 List<?> clzInterfacesList = (List<?>) clzInterfaces;
                 for (Object clzInterface : clzInterfacesList)
                 {
+                    ParameterizedType parameterizedType = null;
+                    if (clzInterface instanceof ParameterizedType)
+                    {
+                        parameterizedType = (ParameterizedType)clzInterface;
+                        clzInterface = parameterizedType.getType();
+                    }
+
                     if (clzInterface instanceof SimpleType)
                     {
                         SimpleType simpleType = (SimpleType) clzInterface;
