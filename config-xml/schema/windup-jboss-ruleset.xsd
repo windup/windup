@@ -13,6 +13,8 @@
                 <xs:element name="testDataPath" minOccurs="1" type="xs:string" />
                 <xs:element name="sourceMode" minOccurs="0" maxOccurs="1" type="xs:boolean" />
                 <xs:element name="rulePath" minOccurs="0" type="xs:string" />
+                <xs:element name="source" minOccurs="0" maxOccurs="1" type="xs:string" />
+                <xs:element name="target" minOccurs="0" maxOccurs="1" type="xs:string" />
                 <xs:element ref="ruleset" minOccurs="0" maxOccurs="unbounded" />
             </xs:sequence>
             <xs:attribute type="xs:string" name="id"/>
