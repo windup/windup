@@ -6,7 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
@@ -26,40 +26,35 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * Scans for classes with JAX-WS related annotations, and adds JAX-WS related metadata for these.
- * 
+ *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
+@RuleMetadata(phase = MigrationRulesPhase.class)
 public class DiscoverRmiRuleProvider extends AbstractRuleProvider
 {
-    private static Logger LOG = Logging.get(DiscoverRmiRuleProvider.class);
+    private static final Logger LOG = Logging.get(DiscoverRmiRuleProvider.class);
     private static final String RMI_INHERITANCE = "rmiInheritance";
-
-    public DiscoverRmiRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(DiscoverRmiRuleProvider.class)
-                    .setPhase(MigrationRulesPhase.class));
-    }
 
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
         String ruleIDPrefix = getClass().getSimpleName();
         return ConfigurationBuilder
-                    .begin()
-                    .addRule()
-                    .when(JavaClass
-                                .references("java.rmi.Remote")
-                                .at(TypeReferenceLocation.IMPORT)
-                                .as(RMI_INHERITANCE))
-                    .perform(Iteration.over(RMI_INHERITANCE).perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
-                    {
-                        @Override
-                        public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
-                        {
-                            extractMetadata(event, payload);
-                        }
-                    }).endIteration())
-                    .withId(ruleIDPrefix + "_RMIInheritanceRule");
+        .begin()
+        .addRule()
+        .when(JavaClass
+                    .references("java.rmi.Remote")
+                    .at(TypeReferenceLocation.IMPORT)
+                    .as(RMI_INHERITANCE))
+        .perform(Iteration.over(RMI_INHERITANCE).perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
+        {
+            @Override
+            public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
+            {
+                extractMetadata(event, payload);
+            }
+        }).endIteration())
+        .withId(ruleIDPrefix + "_RMIInheritanceRule");
     }
 
     private void extractMetadata(GraphRewrite event, JavaTypeReferenceModel typeReference)
@@ -85,7 +80,7 @@ public class DiscoverRmiRuleProvider extends AbstractRuleProvider
 
             // Create the source report for the RMI Implementation.
             JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
-            
+
             if (rmiServiceModel != null && rmiServiceModel.getImplementationClass() != null) {
                 for (JavaSourceFileModel source : javaClassService.getJavaSource(rmiServiceModel.getImplementationClass().getQualifiedName()))
                 {

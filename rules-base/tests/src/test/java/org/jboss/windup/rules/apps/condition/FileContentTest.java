@@ -4,7 +4,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -24,7 +23,7 @@ import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleProvider;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.parameters.ParameterizedIterationOperation;
@@ -41,6 +40,7 @@ import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.service.InlineHintService;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
+import org.jboss.windup.rules.apps.java.scan.provider.AnalyzeJavaFilesRuleProvider;
 import org.jboss.windup.rules.files.condition.FileContent;
 import org.jboss.windup.rules.files.model.FileLocationModel;
 import org.junit.Assert;
@@ -188,6 +188,7 @@ public class FileContentTest
     }
 
     @Singleton
+    @RuleMetadata(phase = InitialAnalysisPhase.class, after = AnalyzeJavaFilesRuleProvider.class)
     public static class FileContentTestRuleProvider extends AbstractRuleProvider
     {
         private List<String> rule1ResultStrings = new ArrayList<>();
@@ -195,12 +196,6 @@ public class FileContentTest
         private List<String> rule2ResultStrings = new ArrayList<>();
         private List<FileLocationModel> rule2ResultModels = new ArrayList<>();
         public int count = 0;
-
-        public FileContentTestRuleProvider()
-        {
-            super(MetadataBuilder.forProvider(FileContentTestRuleProvider.class)
-                        .setPhase(InitialAnalysisPhase.class).setExecuteAfterIDs(Collections.singletonList("AnalyzeJavaFilesRuleProvider")));
-        }
 
         // @formatter:off
         @Override

@@ -2,7 +2,7 @@ package org.jboss.windup.rules.apps.java.reporting.rules;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.graph.GraphContext;
@@ -23,32 +23,28 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
+@RuleMetadata(phase = ReportGenerationPhase.class)
 public class CreateReportIndexRuleProvider extends AbstractRuleProvider
 {
     public static final String REPORT_INDEX = "Report Index";
     public static final String TEMPLATE = "/reports/templates/report_index.ftl";
-
-    public CreateReportIndexRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(CreateReportIndexRuleProvider.class).setPhase(ReportGenerationPhase.class));
-    }
 
     // @formatter:off
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
         return ConfigurationBuilder.begin()
-                .addRule()
-                .perform(new GraphOperation() {
-                    @Override
-                    public void perform(GraphRewrite event, EvaluationContext context) {
-                        WindupConfigurationModel configuration = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
-                        for (FileModel inputPath : configuration.getInputPaths())
-                        {
-                            createReportIndex(event.getGraphContext(), inputPath.getProjectModel());
-                        }
-                    }
-                });
+        .addRule()
+        .perform(new GraphOperation() {
+            @Override
+            public void perform(GraphRewrite event, EvaluationContext context) {
+                WindupConfigurationModel configuration = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
+                for (FileModel inputPath : configuration.getInputPaths())
+                {
+                    createReportIndex(event.getGraphContext(), inputPath.getProjectModel());
+                }
+            }
+        });
     }
     // @formatter:on
 

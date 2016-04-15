@@ -6,6 +6,7 @@ import java.util.Map;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.graph.GraphContext;
@@ -32,16 +33,11 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * Creates a report of EJB data (eg, a list of EJB session beans).
  *
  */
+@RuleMetadata(phase = ReportGenerationPhase.class, id = "Create EJB Report")
 public class CreateEJBReportRuleProvider extends AbstractRuleProvider
 {
     public static final String TEMPLATE_EJB_REPORT = "/reports/templates/ejb.ftl";
     public static final String REPORT_DESCRIPTION = "The EJB report contains a list of EJBs found within the application.";
-
-    public CreateEJBReportRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(CreateEJBReportRuleProvider.class, "Create EJB Report")
-                    .setPhase(ReportGenerationPhase.class));
-    }
 
     @Override
     public Configuration getConfiguration(GraphContext context)

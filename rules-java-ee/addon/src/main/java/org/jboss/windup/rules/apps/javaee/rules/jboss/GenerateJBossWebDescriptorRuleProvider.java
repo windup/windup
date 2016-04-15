@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
 import org.jboss.windup.config.query.Query;
@@ -25,7 +25,6 @@ import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.jboss.windup.reporting.model.TemplateType;
 import org.jboss.windup.reporting.model.WindupVertexListModel;
 import org.jboss.windup.reporting.service.ApplicationReportService;
-import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.rules.apps.javaee.model.EnvironmentReferenceModel;
 import org.jboss.windup.rules.apps.javaee.model.WebXmlModel;
@@ -37,53 +36,46 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * Creates a jboss-ejb3.xml for jndi bindings
- *
  */
+@RuleMetadata(phase = MigrationRulesPhase.class, id = "Generate jboss-web.xml")
 public class GenerateJBossWebDescriptorRuleProvider extends AbstractRuleProvider
 {
     private static final Logger LOG = Logger.getLogger(GenerateJBossWebDescriptorRuleProvider.class.getSimpleName());
     public static final String JBOSS_WEB_TEMPLATE = "/reports/templates/jboss/jboss-web.ftl";
 
-    public GenerateJBossWebDescriptorRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(GenerateJBossWebDescriptorRuleProvider.class, "Generate jboss-web.xml")
-                    .setPhase(MigrationRulesPhase.class));
-    }
-
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
         return ConfigurationBuilder.begin()
-                    .addRule()
-                    .when(Query.fromType(WebXmlModel.class))
-                    .perform(new GraphOperation()
-                    {
-                        @Override
-                        public void perform(GraphRewrite event, EvaluationContext context)
-                        {
-                            // configuration of current execution
-                            WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
+        .addRule()
+        .when(Query.fromType(WebXmlModel.class))
+        .perform(new GraphOperation()
+        {
+            @Override
+            public void perform(GraphRewrite event, EvaluationContext context)
+            {
+                // configuration of current execution
+                WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
 
-                            for (FileModel inputPath : configurationModel.getInputPaths())
-                            {
-                                ProjectModel projectModel = inputPath.getProjectModel();
-                                transformWebXml(context, event.getGraphContext(), projectModel);
-                            }
-                        }
+                for (FileModel inputPath : configurationModel.getInputPaths())
+                {
+                    ProjectModel projectModel = inputPath.getProjectModel();
+                    transformWebXml(context, event.getGraphContext(), projectModel);
+                }
+            }
 
-                        @Override
-                        public String toString()
-                        {
-                            return "Generate jboss-web.xml";
-                        }
-                    });
-
+            @Override
+            public String toString()
+            {
+                return "Generate jboss-web.xml";
+            }
+        });
     }
 
     private void transformWebXml(EvaluationContext evaluationContext, GraphContext context, ProjectModel projectModel)
     {
-        GraphService<WebXmlModel> webDescriptors = new GraphService<>(context, WebXmlModel.class);
-        ClassificationService classificationService = new ClassificationService(context);
+        //GraphService<WebXmlModel> webDescriptors = new GraphService<>(context, WebXmlModel.class);
+        //ClassificationService classificationService = new ClassificationService(context);
         LinkService linkService = new LinkService(context);
         ApplicationReportService applicationReportService = new ApplicationReportService(context);
         VendorSpecificationExtensionService vendorSpecificService = new VendorSpecificationExtensionService(context);
@@ -135,7 +127,7 @@ public class GenerateJBossWebDescriptorRuleProvider extends AbstractRuleProvider
 
     private Iterable<WebXmlModel> findAllWebXmlsInProject(GraphContext context, ProjectModel projectModel) {
         GraphService<WebXmlModel> webDescriptors = new GraphService<>(context, WebXmlModel.class);
-        List<WebXmlModel> resultModels = new ArrayList<WebXmlModel>();
+        List<WebXmlModel> resultModels = new ArrayList<>();
         for (WebXmlModel webXmlModel : webDescriptors.findAll())
         {
             if(webXmlModel.getProjectModel().equals(projectModel)) {

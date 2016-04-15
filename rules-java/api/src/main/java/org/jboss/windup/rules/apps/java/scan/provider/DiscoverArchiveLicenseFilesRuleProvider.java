@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.phase.ArchiveMetadataExtractionPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
@@ -19,32 +19,23 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.TechnologyTagService;
+import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * Discovers Licenses files within archives.
- * 
+ *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  * @author <a href="mailto:hotmana76@gmail.com">Marek Novotny</a>
- * 
  */
-public class DiscoverArchiveLicenseFilesRuleProvider extends
-            IteratingRuleProvider<ArchiveModel>
+@RuleMetadata(phase = ArchiveMetadataExtractionPhase.class)
+public class DiscoverArchiveLicenseFilesRuleProvider extends IteratingRuleProvider<ArchiveModel>
 {
-    private static final Logger LOG = Logger
-                .getLogger(DiscoverArchiveLicenseFilesRuleProvider.class
-                            .getSimpleName());
+    private static final Logger LOG = Logging.get(DiscoverArchiveLicenseFilesRuleProvider.class);
 
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.INFORMATIONAL;
-
-    public DiscoverArchiveLicenseFilesRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(
-                    DiscoverArchiveLicenseFilesRuleProvider.class).setPhase(
-                    ArchiveMetadataExtractionPhase.class));
-    }
 
     @Override
     public String toStringPerform()
@@ -203,13 +194,13 @@ public class DiscoverArchiveLicenseFilesRuleProvider extends
         }
 
     }
-   
+
     private void tagLicenseByTechnologyTag(Rule rule, GraphService<LicenseModel> licenseService,
                 TechnologyTagService technologyTagService, FileModel license,
                 String name, String description, String url)
     {
         LOG.info("Identified: " + license.getFileName() + " as: " + name);
-        
+
         // create license model for future reporting.
         LicenseModel model = licenseService.addTypeToModel(license);
         model.setName(name);

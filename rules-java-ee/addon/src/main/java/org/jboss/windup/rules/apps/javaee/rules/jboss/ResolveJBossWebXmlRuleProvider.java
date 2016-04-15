@@ -6,7 +6,7 @@ import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
@@ -29,20 +29,13 @@ import org.w3c.dom.Element;
 
 /**
  * Discovers JBoss Web XML files and parses the related metadata
- * 
+ *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
- * 
  */
+@RuleMetadata(phase = InitialAnalysisPhase.class, after = DiscoverWebXmlRuleProvider.class)
 public class ResolveJBossWebXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
 {
     private static final Logger LOG = Logger.getLogger(ResolveJBossWebXmlRuleProvider.class.getSimpleName());
-
-    public ResolveJBossWebXmlRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(ResolveJBossWebXmlRuleProvider.class)
-                    .setPhase(InitialAnalysisPhase.class)
-                    .addExecuteAfter(DiscoverWebXmlRuleProvider.class));
-    }
 
     @Override
     public String toStringPerform()
@@ -73,7 +66,7 @@ public class ResolveJBossWebXmlRuleProvider extends IteratingRuleProvider<XmlFil
         VendorSpecificationExtensionService vendorSpecificationService = new VendorSpecificationExtensionService(event.getGraphContext());
         //mark as vendor extension; create reference to web.xml
         vendorSpecificationService.associateAsVendorExtension(payload, "web.xml");
-        
+
         // register beans to JNDI: http://grepcode.com/file/repository.jboss.org/nexus/content/repositories/releases/org.jboss.ejb3/jboss-ejb3-core/0.1.0/test/naming/META-INF/jboss1.xml?av=f
         for (Element resourceRef : $(doc).find("resource-ref").get())
         {
@@ -96,7 +89,7 @@ public class ResolveJBossWebXmlRuleProvider extends IteratingRuleProvider<XmlFil
             processBinding(envRefService, jndiResourceService, payload.getApplication(), resourceRef, "ejb-ref-name", "local-jndi-name");
         }
     }
-    
+
     private void processBinding(EnvironmentReferenceService envRefService, JNDIResourceService jndiResourceService, ProjectModel application,
                 Element resourceRef, String tagName, String tagJndi)
     {

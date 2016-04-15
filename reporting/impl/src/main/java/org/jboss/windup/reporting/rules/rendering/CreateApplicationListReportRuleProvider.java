@@ -8,7 +8,7 @@ import javax.inject.Inject;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.PostReportGenerationPhase;
 import org.jboss.windup.graph.GraphContext;
@@ -24,12 +24,11 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
- * 
  * This renders an application index page listing all applications analyzed by the current execution of windup.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- * 
  */
+@RuleMetadata(phase = PostReportGenerationPhase.class, before = AttachApplicationReportsToIndexRuleProvider.class)
 public class CreateApplicationListReportRuleProvider extends AbstractRuleProvider
 {
     public static final String APPLICATION_LIST_REPORT = "Application List";
@@ -39,11 +38,6 @@ public class CreateApplicationListReportRuleProvider extends AbstractRuleProvide
     @Inject
     private Furnace furnace;
 
-    public CreateApplicationListReportRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(CreateApplicationListReportRuleProvider.class)
-                    .setPhase(PostReportGenerationPhase.class).addExecuteBefore(AttachApplicationReportsToIndexRuleProvider.class));
-    }
 
     // @formatter:off
     @Override

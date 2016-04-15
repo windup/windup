@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
@@ -53,8 +53,8 @@ import org.w3c.dom.Element;
  *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- *
  */
+@RuleMetadata(phase = InitialAnalysisPhase.class)
 public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
 {
     private static final Logger LOG = Logger.getLogger(DiscoverEjbConfigurationXmlRuleProvider.class.getSimpleName());
@@ -62,14 +62,9 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
     private static final String TECH_TAG = "EJB XML";
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.INFORMATIONAL;
 
-    private static final String dtdRegex = "(?i).*enterprise.javabeans.*";
+    private static final String REGEX_DTD = "(?i).*enterprise.javabeans.*";
 
-    public DiscoverEjbConfigurationXmlRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(DiscoverEjbConfigurationXmlRuleProvider.class)
-                    .setPhase(InitialAnalysisPhase.class));
-    }
-
+    
     @Override
     public String toStringPerform()
     {
@@ -176,7 +171,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
     {
         if (StringUtils.isNotBlank(entry.getPublicId()))
         {
-            if (Pattern.matches(dtdRegex, entry.getPublicId()))
+            if (Pattern.matches(REGEX_DTD, entry.getPublicId()))
             {
                 return true;
             }
@@ -184,7 +179,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
 
         if (StringUtils.isNotBlank(entry.getSystemId()))
         {
-            if (Pattern.matches(dtdRegex, entry.getSystemId()))
+            if (Pattern.matches(REGEX_DTD, entry.getSystemId()))
             {
                 return true;
             }

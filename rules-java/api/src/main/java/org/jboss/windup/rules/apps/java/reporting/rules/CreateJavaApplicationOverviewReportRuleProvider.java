@@ -6,7 +6,7 @@ import java.util.Set;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.config.query.Query;
@@ -29,17 +29,12 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 /**
  * Creates the main report HTML page for a Java application.
  */
+@RuleMetadata(phase = ReportGenerationPhase.class)
 public class CreateJavaApplicationOverviewReportRuleProvider extends AbstractRuleProvider
 {
     public static final String DETAILS_REPORT = "Application Details";
     public static final String TEMPLATE_APPLICATION_REPORT = "/reports/templates/java_application.ftl";
     public static final String DESCRIPTION = "This provides a detailed overview of all resources found within the application that may need attention during the migration.";
-
-    public CreateJavaApplicationOverviewReportRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(CreateJavaApplicationOverviewReportRuleProvider.class)
-                    .setPhase(ReportGenerationPhase.class));
-    }
 
     // @formatter:off
     @Override

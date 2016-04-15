@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.config.query.Query;
@@ -27,20 +27,14 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * Creates a report for all the ignored files along with all the regexes they were matched against.
- * 
- * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  *
+ * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  */
+@RuleMetadata(phase = ReportGenerationPhase.class)
 public class CreateJavaIgnoredFilesReportRuleProvider extends AbstractRuleProvider
 {
     public static final String TITLE = "Ignored Files";
     public static final String TEMPLATE_REPORT = "/reports/templates/ignored_files.ftl";
-
-    public CreateJavaIgnoredFilesReportRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(CreateJavaIgnoredFilesReportRuleProvider.class)
-                    .setPhase(ReportGenerationPhase.class));
-    }
 
     // @formatter:off
     @Override

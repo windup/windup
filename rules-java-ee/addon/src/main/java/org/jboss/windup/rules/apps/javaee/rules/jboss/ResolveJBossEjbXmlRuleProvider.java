@@ -6,7 +6,7 @@ import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
@@ -33,20 +33,13 @@ import org.w3c.dom.Element;
 
 /**
  * Discovers JBoss EJB XML files and parses the related metadata Handles XML files prior to EAP 6. (jboss-ejb.xml)
- * 
+ *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
- * 
  */
+@RuleMetadata(phase = InitialAnalysisPhase.class, after = DiscoverEjbConfigurationXmlRuleProvider.class)
 public class ResolveJBossEjbXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
 {
     private static final Logger LOG = Logger.getLogger(ResolveJBossEjbXmlRuleProvider.class.getSimpleName());
-
-    public ResolveJBossEjbXmlRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(ResolveJBossEjbXmlRuleProvider.class)
-                    .setPhase(InitialAnalysisPhase.class)
-                    .addExecuteAfter(DiscoverEjbConfigurationXmlRuleProvider.class));
-    }
 
     @Override
     public String toStringPerform()
@@ -78,20 +71,20 @@ public class ResolveJBossEjbXmlRuleProvider extends IteratingRuleProvider<XmlFil
         EnvironmentReferenceService envRefService = new EnvironmentReferenceService(event.getGraphContext());
         JNDIResourceService jndiResourceService = new JNDIResourceService(event.getGraphContext());
         JmsDestinationService jmsDestinationService = new JmsDestinationService(event.getGraphContext());
-        
+
         GraphService<EjbMessageDrivenModel> mdbService = new GraphService<>(event.getGraphContext(), EjbMessageDrivenModel.class);
 
         ClassificationService classificationService = new ClassificationService(event.getGraphContext());
         classificationService.attachClassification(context, payload, "JBoss Legacy EJB XML",
                     "JBoss Enterprise Java Bean XML Descriptor prior to EAP 6.");
-        
+
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
         technologyTagService.addTagToFileModel(payload, "JBoss EJB XML", TechnologyTagLevel.IMPORTANT);
 
         VendorSpecificationExtensionService vendorSpecificationService = new VendorSpecificationExtensionService(event.getGraphContext());
         //mark as vendor extension; create reference to ejb-jar.xml
         vendorSpecificationService.associateAsVendorExtension(payload, "ejb-jar.xml");
-        
+
         // handle resource-ref
         for (Element resourceRef : $(doc).find("enterprise-beans").find("resource-ref").get())
         {

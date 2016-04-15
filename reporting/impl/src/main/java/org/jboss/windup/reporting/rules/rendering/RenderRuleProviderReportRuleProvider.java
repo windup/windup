@@ -4,7 +4,7 @@ import javax.inject.Inject;
 
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.windup.config.AbstractRuleProvider;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.phase.PostFinalizePhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.freemarker.FreeMarkerOperation;
@@ -15,10 +15,11 @@ import org.ocpsoft.rewrite.config.Rule;
 /**
  * Renders a report of all {@link AbstractRuleProvider}s that were loaded by Windup, as well as the results of each
  * {@link Rule} execution.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
+@RuleMetadata(phase = PostFinalizePhase.class, after = ExecutionTimeReportRuleProvider.class)
 public class RenderRuleProviderReportRuleProvider extends AbstractRuleProvider
 {
     public static final String OUTPUT_FILENAME = "windup_ruleproviders.html";
@@ -26,13 +27,6 @@ public class RenderRuleProviderReportRuleProvider extends AbstractRuleProvider
 
     @Inject
     private Furnace furnace;
-
-    public RenderRuleProviderReportRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(RenderRuleProviderReportRuleProvider.class)
-                    .setPhase(PostFinalizePhase.class)
-                    .addExecuteAfter(ExecutionTimeReportRuleProvider.class));
-    }
 
     @Override
     public Configuration getConfiguration(GraphContext context)

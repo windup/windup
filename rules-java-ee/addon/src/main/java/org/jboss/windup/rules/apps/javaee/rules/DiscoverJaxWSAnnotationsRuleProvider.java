@@ -6,7 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
@@ -29,21 +29,15 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * Scans for classes with JAX-WS related annotations, and adds JAX-WS related metadata for these.
- * 
+ *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
+@RuleMetadata(phase = InitialAnalysisPhase.class, after = AnalyzeJavaFilesRuleProvider.class)
 public class DiscoverJaxWSAnnotationsRuleProvider extends AbstractRuleProvider
 {
     private static final Logger LOG = Logging.get(DiscoverJaxWSAnnotationsRuleProvider.class);
 
     private static final String JAXWS_ANNOTATIONS = "jaxwsAnnotations";
-
-    public DiscoverJaxWSAnnotationsRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(DiscoverJaxWSAnnotationsRuleProvider.class)
-                    .setPhase(InitialAnalysisPhase.class)
-                    .addExecuteAfter(AnalyzeJavaFilesRuleProvider.class));
-    }
 
     @Override
     public Configuration getConfiguration(GraphContext context)

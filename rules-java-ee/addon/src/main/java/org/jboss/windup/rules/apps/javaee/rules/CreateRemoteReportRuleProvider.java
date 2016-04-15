@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.config.query.Query;
@@ -34,46 +34,40 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * Creates a report of EJB data (eg, a list of EJB session beans).
- *
  */
+@RuleMetadata(phase = ReportGenerationPhase.class, id = "Create Remote Service Report")
 public class CreateRemoteReportRuleProvider extends AbstractRuleProvider
 {
     public static final String TEMPLATE_EJB_REPORT = "/reports/templates/remote.ftl";
     public static final String REPORT_DESCRIPTION = "This report displays all remote services references that were found within the application.";
 
-    public CreateRemoteReportRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(CreateRemoteReportRuleProvider.class, "Create Remote Service Report")
-                    .setPhase(ReportGenerationPhase.class));
-    }
-
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
         return ConfigurationBuilder.begin()
-                    .addRule()
-                    .when(Query.fromType(RemoteServiceModel.class))
-                    .perform(new GraphOperation()
-                    {
-                        @Override
-                        public void perform(GraphRewrite event, EvaluationContext context)
-                        {
-                            // configuration of current execution
-                            WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
+        .addRule()
+        .when(Query.fromType(RemoteServiceModel.class))
+        .perform(new GraphOperation()
+        {
+            @Override
+            public void perform(GraphRewrite event, EvaluationContext context)
+            {
+                // configuration of current execution
+                WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
 
-                            for (FileModel inputPath : configurationModel.getInputPaths())
-                            {
-                                ProjectModel projectModel = inputPath.getProjectModel();
-                                createReport(event.getGraphContext(), projectModel);
-                            }
-                        }
+                for (FileModel inputPath : configurationModel.getInputPaths())
+                {
+                    ProjectModel projectModel = inputPath.getProjectModel();
+                    createReport(event.getGraphContext(), projectModel);
+                }
+            }
 
-                        @Override
-                        public String toString()
-                        {
-                            return "CreateRemoteServiceReport";
-                        }
-                    });
+            @Override
+            public String toString()
+            {
+                return "CreateRemoteServiceReport";
+            }
+        });
 
     }
 

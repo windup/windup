@@ -1,9 +1,7 @@
 package org.jboss.windup.rules.apps.javaee.rules;
 
-import java.util.logging.Logger;
-
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.phase.PostMigrationRulesPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
@@ -14,20 +12,12 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * Discovers remote interfaces and marks them for reporting.
- * 
+ *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
- * 
  */
+@RuleMetadata(phase = PostMigrationRulesPhase.class)
 public class DiscoverRemoteEjbRuleProvider extends IteratingRuleProvider<EjbSessionBeanModel>
 {
-    private static final Logger LOG = Logger.getLogger(DiscoverRemoteEjbRuleProvider.class.getSimpleName());
-
-    public DiscoverRemoteEjbRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(DiscoverRemoteEjbRuleProvider.class)
-                    .setPhase(PostMigrationRulesPhase.class));
-    }
-
     @Override
     public String toStringPerform()
     {

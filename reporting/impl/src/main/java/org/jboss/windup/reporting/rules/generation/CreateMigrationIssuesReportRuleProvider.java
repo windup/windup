@@ -2,7 +2,6 @@ package org.jboss.windup.reporting.rules.generation;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.graph.GraphContext;
@@ -20,20 +19,16 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 import com.google.common.collect.Iterables;
+import org.jboss.windup.config.metadata.RuleMetadata;
 
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
+@RuleMetadata(phase = ReportGenerationPhase.class)
 public class CreateMigrationIssuesReportRuleProvider extends AbstractRuleProvider
 {
     public static final String TEMPLATE_PATH = "/reports/templates/migration-issues.ftl";
     public static final String REPORT_DESCRIPTION = "The Migration Issues report provides a concise summary of all issues that require attention.";
-
-    public CreateMigrationIssuesReportRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(CreateMigrationIssuesReportRuleProvider.class)
-                    .setPhase(ReportGenerationPhase.class));
-    }
 
     @Override
     public Configuration getConfiguration(GraphContext context)

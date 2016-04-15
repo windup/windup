@@ -2,7 +2,7 @@ package org.jboss.windup.rules.apps.java.scan.provider;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.DiscoverProjectStructurePhase;
 import org.jboss.windup.graph.GraphContext;
@@ -17,18 +17,12 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * Finds files that were not classified as Maven archives/projects, and adds some generic project information for them.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
+@RuleMetadata(phase = DiscoverProjectStructurePhase.class, after = DiscoverNonMavenArchiveProjectsRuleProvider.class)
 public class DiscoverNonMavenSourceProjectsRuleProvider extends AbstractRuleProvider
 {
-    public DiscoverNonMavenSourceProjectsRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(DiscoverNonMavenSourceProjectsRuleProvider.class)
-                    .setPhase(DiscoverProjectStructurePhase.class)
-                    .addExecuteAfter(DiscoverNonMavenArchiveProjectsRuleProvider.class));
-    }
-
     @Override
     public Configuration getConfiguration(GraphContext arg0)
     {

@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.phase.ArchiveMetadataExtractionPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
@@ -19,27 +19,22 @@ import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.java.model.JarManifestModel;
 import org.jboss.windup.rules.apps.java.service.JarManifestService;
+import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * Discovers MANIFEST.MF files within archives.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- * 
  */
+@RuleMetadata(phase = ArchiveMetadataExtractionPhase.class)
 public class DiscoverArchiveManifestFilesRuleProvider extends IteratingRuleProvider<ArchiveModel>
 {
-    private static final Logger LOG = Logger.getLogger(DiscoverArchiveManifestFilesRuleProvider.class.getSimpleName());
+    private static final Logger LOG = Logging.get(DiscoverArchiveManifestFilesRuleProvider.class);
 
     private static final String TECH_TAG = "Manifest";
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.INFORMATIONAL;
-
-    public DiscoverArchiveManifestFilesRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(DiscoverArchiveManifestFilesRuleProvider.class)
-                    .setPhase(ArchiveMetadataExtractionPhase.class));
-    }
 
     @Override
     public String toStringPerform()

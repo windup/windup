@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.config.query.Query;
@@ -33,51 +33,47 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
+@RuleMetadata(phase = ReportGenerationPhase.class, id = "Create JAR Dependency Report")
 public class CreateJarDependencyReportRuleProvider extends AbstractRuleProvider
 {
     public static final String TEMPLATE = "/reports/templates/jar_report.ftl";
     public static final String REPORT_DESCRIPTION = "This report displays all JAR dependencies found within the application.";
 
-    public CreateJarDependencyReportRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(CreateJarDependencyReportRuleProvider.class, "Create JAR Dependency Report")
-                    .setPhase(ReportGenerationPhase.class));
-    }
-
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
+        // @formatter:off
         return ConfigurationBuilder.begin()
-                    .addRule()
-                    .when(Query.fromType(ArchiveModel.class))
-                    .perform(new GraphOperation()
-                    {
-                        @Override
-                        public void perform(GraphRewrite event, EvaluationContext context)
-                        {
-                            // configuration of current execution
-                            WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
+        .addRule()
+        .when(Query.fromType(ArchiveModel.class))
+        .perform(new GraphOperation()
+        {
+            @Override
+            public void perform(GraphRewrite event, EvaluationContext context)
+            {
+                // configuration of current execution
+                WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
 
-                            int count = 0;
-                            for (FileModel inputPath : configurationModel.getInputPaths())
-                            {
-                                ProjectModel projectModel = inputPath.getProjectModel();
-                                createReport(event.getGraphContext(), projectModel);
-                                count++;
-                            }
+                int count = 0;
+                for (FileModel inputPath : configurationModel.getInputPaths())
+                {
+                    ProjectModel projectModel = inputPath.getProjectModel();
+                    createReport(event.getGraphContext(), projectModel);
+                    count++;
+                }
 
-                            // only create a global report if there is more than one application
-                            if (count > 1)
-                                createGlobalReport(event.getGraphContext(), configurationModel);
-                        }
+                // only create a global report if there is more than one application
+                if (count > 1)
+                    createGlobalReport(event.getGraphContext(), configurationModel);
+            }
 
-                        @Override
-                        public String toString()
-                        {
-                            return "CreateRemoteServiceReport";
-                        }
-                    });
-
+            @Override
+            public String toString()
+            {
+                return "CreateRemoteServiceReport";
+            }
+        });
+        // @formatter:on
     }
 
     private void addAll(Collection<ArchiveModel> projects, ProjectModel project)

@@ -25,7 +25,7 @@ import org.jboss.forge.furnace.addons.AddonDependency;
 import org.jboss.forge.furnace.addons.AddonFilter;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportRenderingPhase;
 import org.jboss.windup.graph.GraphContext;
@@ -36,14 +36,9 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+@RuleMetadata(phase = ReportRenderingPhase.class)
 public class CssJsResourceRenderingRuleProvider extends AbstractRuleProvider
 {
-    public CssJsResourceRenderingRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(CssJsResourceRenderingRuleProvider.class)
-                    .setPhase(ReportRenderingPhase.class));
-    }
-
     @Inject
     private Addon addon;
     @Inject

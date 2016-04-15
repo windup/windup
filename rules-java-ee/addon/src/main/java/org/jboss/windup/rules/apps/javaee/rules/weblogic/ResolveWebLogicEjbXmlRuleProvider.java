@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
@@ -36,20 +36,13 @@ import org.w3c.dom.Element;
 
 /**
  * Discovers WebLogic EJB XML files and parses the related metadata
- * 
+ *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
- * 
  */
+@RuleMetadata(phase = InitialAnalysisPhase.class, after = DiscoverEjbConfigurationXmlRuleProvider.class)
 public class ResolveWebLogicEjbXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
 {
     private static final Logger LOG = Logger.getLogger(ResolveWebLogicEjbXmlRuleProvider.class.getSimpleName());
-
-    public ResolveWebLogicEjbXmlRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(ResolveWebLogicEjbXmlRuleProvider.class)
-                    .setPhase(InitialAnalysisPhase.class)
-                    .addExecuteAfter(DiscoverEjbConfigurationXmlRuleProvider.class));
-    }
 
     @Override
     public String toStringPerform()

@@ -2,7 +2,7 @@ package org.jboss.windup.rules.apps.java.reporting.rules;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.config.query.Query;
@@ -20,20 +20,14 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-
 /**
  * Creates the report HTML page for compatible files - "lift and shift" files.
  */
+@RuleMetadata(phase = ReportGenerationPhase.class)
 public class CreateCompatibleFileReportRuleProvider extends AbstractRuleProvider
 {
     public static final String TEMPLATE_APPLICATION_REPORT = "/reports/templates/compatible_files.ftl";
     public static final String REPORT_DESCRIPTION = "This provides a list of files that are believed to be compatible, potentially requiring no migration effort.";
-
-    public CreateCompatibleFileReportRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(CreateCompatibleFileReportRuleProvider.class)
-                    .setPhase(ReportGenerationPhase.class));
-    }
 
     // @formatter:off
     @Override

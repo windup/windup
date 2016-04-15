@@ -3,7 +3,6 @@ package org.jboss.windup.rules.apps.java.scan.provider;
 import org.jboss.windup.ast.java.data.ResolutionStatus;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.DependentPhase;
 import org.jboss.windup.config.phase.PostMigrationRulesPhase;
@@ -24,6 +23,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.jboss.windup.config.metadata.RuleMetadata;
 
 /**
  * Finds references to Java classes that were not found in the application and also not in the target environment.
@@ -31,19 +31,16 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * @author <a href="mailto:dynawest@gmail.com">Ondrej Zizka</a>
  */
+@RuleMetadata(
+        phase = DependentPhase.class,
+        after = PostMigrationRulesPhase.class,
+        before = PreReportGenerationPhase.class,
+        tags = FindUnboundJavaReferencesRuleProvider.JAVA)
 public class FindUnboundJavaReferencesRuleProvider extends AbstractRuleProvider
 {
     public static final String JAVA = "java";
     public static final String RULE_ID = FindUnboundJavaReferencesRuleProvider.class.getSimpleName();
     public static final String TITLE = "Unresolved Class Binding";
-
-    public FindUnboundJavaReferencesRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(FindUnboundJavaReferencesRuleProvider.class).addTag(JAVA)
-                    .setPhase(DependentPhase.class)
-                    .addExecuteAfter(PostMigrationRulesPhase.class)
-                    .addExecuteBefore(PreReportGenerationPhase.class));
-    }
 
     // @formatter:off
     @Override

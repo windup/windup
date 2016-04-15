@@ -8,7 +8,7 @@ import javax.inject.Inject;
 import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.config.query.Query;
@@ -32,21 +32,15 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 /**
  * Create a report HTML page about Windup.
  */
+@RuleMetadata(phase = ReportGenerationPhase.class)
 public class CreateAboutWindupReportRuleProvider extends AbstractRuleProvider
 {
-
-    public static final String REPORT_DESCRIPTION = "This describes the current version of Windup and provides helpful links for further assistance.";
     @Inject
     Addon addon;
 
+    public static final String REPORT_DESCRIPTION = "This describes the current version of Windup and provides helpful links for further assistance.";
     public static final String REPORT_NAME = "About";
     public static final String TEMPLATE_APPLICATION_REPORT = "/reports/templates/about_windup.ftl";
-
-    public CreateAboutWindupReportRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(CreateAboutWindupReportRuleProvider.class)
-                    .setPhase(ReportGenerationPhase.class));
-    }
 
     // @formatter:off
     @Override
@@ -82,7 +76,6 @@ public class CreateAboutWindupReportRuleProvider extends AbstractRuleProvider
                     .addRule()
                     .when(applicationProjectModelsFound)
                     .perform(addApplicationReport);
-
     }
     // @formatter:on
 

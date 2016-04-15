@@ -1,7 +1,7 @@
 package org.jboss.windup.rules.apps.java.scan.provider;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.phase.ClassifyFileTypesPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryPropertyComparisonType;
@@ -18,19 +18,14 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * Discovers Java-style .properties files and places them into the graph.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
+@RuleMetadata(phase = ClassifyFileTypesPhase.class)
 public class DiscoverPropertiesFilesRuleProvider extends IteratingRuleProvider<FileModel>
 {
     private static final String TECH_TAG = "Properties";
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.INFORMATIONAL;
-
-    public DiscoverPropertiesFilesRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(DiscoverPropertiesFilesRuleProvider.class)
-                    .setPhase(ClassifyFileTypesPhase.class));
-    }
 
     @Override
     public String toStringPerform()

@@ -1,9 +1,8 @@
 package org.jboss.windup.rules.apps.javaee.rules.websphere;
 
-import java.util.logging.Logger;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
@@ -19,21 +18,12 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * Discovers WebSphere EJB Extension XML files and parses the related metadata
- * 
+ *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
- * 
  */
+@RuleMetadata(phase = InitialAnalysisPhase.class, after = DiscoverEjbConfigurationXmlRuleProvider.class)
 public class ResolveWebSphereEjbExtensionXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
 {
-    private static final Logger LOG = Logger.getLogger(ResolveWebSphereEjbExtensionXmlRuleProvider.class.getSimpleName());
-
-    public ResolveWebSphereEjbExtensionXmlRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(ResolveWebSphereEjbExtensionXmlRuleProvider.class)
-                    .setPhase(InitialAnalysisPhase.class)
-                    .addExecuteAfter(DiscoverEjbConfigurationXmlRuleProvider.class));
-    }
-
     @Override
     public String toStringPerform()
     {

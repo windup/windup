@@ -10,7 +10,6 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryGremlinCriterion;
@@ -38,13 +37,15 @@ import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.FramedGraphQuery;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.jboss.windup.config.metadata.RuleMetadata;
 
 /**
  * Discovers Hibernate Configuration Files (eg, hibernate.cfg.xml), extracts their metadata, and places this metadata into the graph.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- * 
+ *
  */
+@RuleMetadata(phase = InitialAnalysisPhase.class)
 public class DiscoverHibernateConfigurationRuleProvider extends IteratingRuleProvider<DoctypeMetaModel>
 {
     private static final Logger LOG = Logging.get(DiscoverHibernateConfigurationRuleProvider.class);
@@ -52,14 +53,9 @@ public class DiscoverHibernateConfigurationRuleProvider extends IteratingRulePro
     private static final String TECH_TAG = "Hibernate Cfg";
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.IMPORTANT;
 
-    private static final String hibernateRegex = "(?i).*hibernate.configuration.*";
+    private static final String REGEX_HIBERNATE = "(?i).*hibernate.configuration.*";
 
-    public DiscoverHibernateConfigurationRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(DiscoverHibernateConfigurationRuleProvider.class)
-                    .setPhase(InitialAnalysisPhase.class));
-    }
-
+    
     @Override
     public String toStringPerform()
     {
@@ -74,10 +70,10 @@ public class DiscoverHibernateConfigurationRuleProvider extends IteratingRulePro
             @Override
             public void query(GraphRewrite event, GremlinPipeline<Vertex, Vertex> pipeline)
             {
-                pipeline.has(DoctypeMetaModel.PROPERTY_PUBLIC_ID, Text.REGEX, hibernateRegex);
+                pipeline.has(DoctypeMetaModel.PROPERTY_PUBLIC_ID, Text.REGEX, REGEX_HIBERNATE);
 
                 FramedGraphQuery systemIDQuery = event.getGraphContext().getQuery().type(DoctypeMetaModel.class)
-                            .has(DoctypeMetaModel.PROPERTY_SYSTEM_ID, Text.REGEX, hibernateRegex);
+                            .has(DoctypeMetaModel.PROPERTY_SYSTEM_ID, Text.REGEX, REGEX_HIBERNATE);
                 GremlinPipeline<Vertex, Vertex> systemIdPipeline = new GremlinPipeline<>(systemIDQuery.vertices());
 
                 pipeline.add(systemIdPipeline);

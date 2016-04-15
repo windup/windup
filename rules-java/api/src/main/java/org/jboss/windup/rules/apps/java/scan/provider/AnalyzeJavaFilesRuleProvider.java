@@ -1,6 +1,5 @@
 package org.jboss.windup.rules.apps.java.scan.provider;
 
-import com.thinkaurelius.titan.util.datastructures.Maps;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -24,7 +23,6 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.jboss.forge.furnace.util.Sets;
 import org.jboss.windup.ast.java.ASTProcessor;
 import org.jboss.windup.ast.java.BatchASTFuture;
 import org.jboss.windup.ast.java.BatchASTListener;
@@ -38,7 +36,7 @@ import org.jboss.windup.ast.java.data.annotations.AnnotationLiteralValue;
 import org.jboss.windup.ast.java.data.annotations.AnnotationValue;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.metadata.TechnologyMetadata;
 import org.jboss.windup.config.metadata.TechnologyMetadataProvider;
 import org.jboss.windup.config.metadata.TechnologyReference;
@@ -74,15 +72,14 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * Scan the Java Source code files and store the used type information from them.
- *
  */
+@RuleMetadata(phase = InitialAnalysisPhase.class, haltOnException = true)
 public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
 {
-    private static final Object lockObject = new Object();
+    private static final Object LOCK_OBJECT = new Object();
 
     static final String UNPARSEABLE_JAVA_CLASSIFICATION = "Unparseable Java File";
     static final String UNPARSEABLE_JAVA_DESCRIPTION = "This Java file could not be parsed";
-
 
     public static final int COMMIT_INTERVAL = 500;
     public static final int LOG_INTERVAL = 250;
@@ -93,13 +90,6 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
 
     @Inject
     private TechnologyMetadataProvider technologyMetadataProvider;
-
-    public AnalyzeJavaFilesRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(AnalyzeJavaFilesRuleProvider.class)
-                    .setPhase(InitialAnalysisPhase.class)
-                    .setHaltOnException(true));
-    }
 
     // @formatter:off
     @Override

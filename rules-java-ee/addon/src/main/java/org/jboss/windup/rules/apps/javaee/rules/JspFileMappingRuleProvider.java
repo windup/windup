@@ -1,7 +1,7 @@
 package org.jboss.windup.rules.apps.javaee.rules;
 
 import org.jboss.windup.config.AbstractRuleProvider;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.phase.ClassifyFileTypesPhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.rules.apps.javaee.model.JspSourceFileModel;
@@ -14,15 +14,9 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
+@RuleMetadata(phase = ClassifyFileTypesPhase.class)
 public class JspFileMappingRuleProvider extends AbstractRuleProvider
 {
-
-    public JspFileMappingRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(JspFileMappingRuleProvider.class)
-                    .setPhase(ClassifyFileTypesPhase.class));
-    }
-
     @Override
     public Configuration getConfiguration(GraphContext context)
     {

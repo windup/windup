@@ -2,7 +2,6 @@ package org.jboss.windup.rules.apps.java.scan.provider;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.phase.DiscoveryPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryGremlinCriterion;
@@ -18,19 +17,15 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.jboss.windup.config.metadata.RuleMetadata;
 
 
 /**
  * Recurses into directories under Windup input(s) and creates FileModel vertices for them in the graph.
  */
+@RuleMetadata(phase = DiscoveryPhase.class)
 public class DiscoverFilesAndTypesRuleProvider extends AbstractRuleProvider
 {
-    public DiscoverFilesAndTypesRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(DiscoverFilesAndTypesRuleProvider.class)
-                    .setPhase(DiscoveryPhase.class));
-    }
-
     // @formatter:off
     @Override
     public Configuration getConfiguration(GraphContext context)

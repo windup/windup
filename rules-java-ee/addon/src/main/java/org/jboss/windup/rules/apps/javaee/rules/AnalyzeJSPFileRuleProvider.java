@@ -13,7 +13,7 @@ import org.jboss.windup.ast.java.data.ResolutionStatus;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.query.Query;
@@ -34,18 +34,11 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
+@RuleMetadata(phase = InitialAnalysisPhase.class, haltOnException = true)
 public class AnalyzeJSPFileRuleProvider extends AbstractRuleProvider
 {
     final static String UNPARSEABLE_JSP_CLASSIFICATION = "Unparseable JSP File";
     final static String UNPARSEABLE_JSP_DESCRIPTION = "This JSP file could not be parsed";
-
-
-    public AnalyzeJSPFileRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(AnalyzeJSPFileRuleProvider.class)
-                    .setPhase(InitialAnalysisPhase.class)
-                    .setHaltOnException(true));
-    }
 
     // @formatter:off
     @Override

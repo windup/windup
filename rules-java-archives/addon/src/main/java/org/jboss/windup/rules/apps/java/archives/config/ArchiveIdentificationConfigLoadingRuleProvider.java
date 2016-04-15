@@ -8,7 +8,7 @@ import javax.inject.Inject;
 import org.jboss.forge.furnace.util.Visitor;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.InitializationPhase;
 import org.jboss.windup.graph.GraphContext;
@@ -30,15 +30,10 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
+@RuleMetadata(phase = InitializationPhase.class)
 public class ArchiveIdentificationConfigLoadingRuleProvider extends AbstractRuleProvider
 {
     private static final Logger log = Logging.get(ArchiveIdentificationConfigLoadingRuleProvider.class);
-
-    public ArchiveIdentificationConfigLoadingRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(ArchiveIdentificationConfigLoadingRuleProvider.class)
-                    .setPhase(InitializationPhase.class));
-    }
 
     @Inject
     private CompositeArchiveIdentificationService identifier;

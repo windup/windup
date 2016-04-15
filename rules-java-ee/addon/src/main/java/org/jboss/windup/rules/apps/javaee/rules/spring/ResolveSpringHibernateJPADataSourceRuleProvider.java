@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
@@ -34,20 +34,13 @@ import org.w3c.dom.Element;
 /**
  * Discovers server resource types from specific Spring bean types eg. Hibernate Dialect in LocalSessionFactoryBean -> Spring Bean JNDI resource ->
  * Oracle Data Source
- * 
+ *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
+@RuleMetadata(phase = InitialAnalysisPhase.class, after = DiscoverSpringConfigurationFilesRuleProvider.class)
 public class ResolveSpringHibernateJPADataSourceRuleProvider extends IteratingRuleProvider<SpringBeanModel>
 {
-    private static final Logger LOG = Logger.getLogger(ResolveSpringHibernateJPADataSourceRuleProvider.class
-                .getSimpleName());
-
-    public ResolveSpringHibernateJPADataSourceRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(ResolveSpringHibernateJPADataSourceRuleProvider.class)
-                    .addExecuteAfter(DiscoverSpringConfigurationFilesRuleProvider.class)
-                    .setPhase(InitialAnalysisPhase.class));
-    }
+    private static final Logger LOG = Logger.getLogger(ResolveSpringHibernateJPADataSourceRuleProvider.class.getSimpleName());
 
     @Override
     public String toStringPerform()

@@ -12,7 +12,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.validator.routines.InetAddressValidator;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
 import org.jboss.windup.graph.GraphContext;
@@ -32,68 +32,63 @@ import org.w3c.dom.Element;
 
 /**
  * Finds files that contain potential static IP addresses, determined by regular expression.
- * 
+ *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
+@RuleMetadata(phase = MigrationRulesPhase.class)
 public class DiscoverStaticIPAddressRuleProvider extends AbstractRuleProvider
 {
     private static final String IP_PATTERN = "(?<![\\w.])\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}(?![\\w.])";
     private static final Logger LOG = Logger.getLogger(DiscoverStaticIPAddressRuleProvider.class.getSimpleName());
 
-    public DiscoverStaticIPAddressRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(DiscoverStaticIPAddressRuleProvider.class)
-                    .setPhase(MigrationRulesPhase.class));
-    }
-
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
         return ConfigurationBuilder
-                    .begin()
-                    .addRule()
-                    // for all files ending in java, properties, and xml,
-                    // query for the regular expression {ip}
-                    .when(FileContent.matches("{ip}").inFileNamed("{*}.{type}"))
-                    .perform(new AbstractIterationOperation<FileLocationModel>()
+        .begin()
+        .addRule()
+        // for all files ending in java, properties, and xml,
+        // query for the regular expression {ip}
+        .when(FileContent.matches("{ip}").inFileNamed("{*}.{type}"))
+        .perform(new AbstractIterationOperation<FileLocationModel>()
+        {
+            // when a result is found, create an inline hint.
+            // reference the inline hint with the static ip marker so that we can query for it
+            // in the static ip report.
+            public void perform(GraphRewrite event, EvaluationContext context, FileLocationModel payload)
+            {
+                // for all file location models that match the regular expression in the where clause, add
+                // the IP Location Model to the
+                // graph
+                if (InetAddressValidator.getInstance().isValid(payload.getSourceSnippit()))
+                {
+                    // if the file is a property file, make sure the line isn't commented out.
+
+                    if (ignoreLine(event.getGraphContext(), payload))
                     {
-                        // when a result is found, create an inline hint.
-                        // reference the inline hint with the static ip marker so that we can query for it
-                        // in the static ip report.
-                        public void perform(GraphRewrite event, EvaluationContext context, FileLocationModel payload)
-                        {
-                            // for all file location models that match the regular expression in the where clause, add
-                            // the IP Location Model to the
-                            // graph
-                            if (InetAddressValidator.getInstance().isValid(payload.getSourceSnippit()))
-                            {
-                                // if the file is a property file, make sure the line isn't commented out.
+                        return;
+                    }
 
-                                if (ignoreLine(event.getGraphContext(), payload))
-                                {
-                                    return;
-                                }
+                    StaticIPLocationModel location = GraphService.addTypeToModel(event.getGraphContext(), payload,
+                                StaticIPLocationModel.class);
+                    location.setRuleID(((Rule) context.get(Rule.class)).getId());
+                    location.setTitle("Static IP Address Detected");
 
-                                StaticIPLocationModel location = GraphService.addTypeToModel(event.getGraphContext(), payload,
-                                            StaticIPLocationModel.class);
-                                location.setRuleID(((Rule) context.get(Rule.class)).getId());
-                                location.setTitle("Static IP Address Detected");
+                    StringBuilder hintBody = new StringBuilder("**Static IP: ");
+                    hintBody.append(payload.getSourceSnippit());
+                    hintBody.append("**");
 
-                                StringBuilder hintBody = new StringBuilder("**Static IP: ");
-                                hintBody.append(payload.getSourceSnippit());
-                                hintBody.append("**");
+                    hintBody.append("\n\n");
+                    hintBody.append("When migrating environments, static IP addresses may need to be modified or eliminated.");
+                    location.setHint(hintBody.toString());
 
-                                hintBody.append("\n\n");
-                                hintBody.append("When migrating environments, static IP addresses may need to be modified or eliminated.");
-                                location.setHint(hintBody.toString());
-
-                                location.setEffort(0);
-                            }
-                        }
-                    })
-                    .where("ip").matches(IP_PATTERN)
-                    .where("type").matches("java|properties|xml")
-                    .withId(getClass().getSimpleName());
+                    location.setEffort(0);
+                }
+            }
+        })
+        .where("ip").matches(IP_PATTERN)
+        .where("type").matches("java|properties|xml")
+        .withId(getClass().getSimpleName());
     }
 
     private boolean ignoreLine(GraphContext context, FileLocationModel model)
@@ -168,7 +163,7 @@ public class DiscoverStaticIPAddressRuleProvider extends AbstractRuleProvider
     /**
      * if this is a maven file, checks to see if "version" tags match the discovered text; if the discovered text does match something in a version
      * tag, it is likely a version, not an IP address
-     * 
+     *
      * @param context
      * @param model
      * @return
