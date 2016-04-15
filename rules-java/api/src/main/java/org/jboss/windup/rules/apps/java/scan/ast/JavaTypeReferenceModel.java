@@ -36,14 +36,14 @@ public interface JavaTypeReferenceModel extends FileLocationModel
     AbstractJavaSourceModel getFile();
 
     /**
-     * Gets the snippit referenced by this {@link FileLocationModel}.
+     * Sets the snippit referenced by this {@link FileLocationModel}.
      */
     @Property(RESOLVED_SOURCE_SNIPPIT)
     @Indexed(IndexType.SEARCH)
     void setResolvedSourceSnippit(String source);
 
     /**
-     * Sets the snippit referenced by this {@link FileLocationModel}.
+     * Gets the snippit referenced by this {@link FileLocationModel}.
      */
     @Property(RESOLVED_SOURCE_SNIPPIT)
     String getResolvedSourceSnippit();

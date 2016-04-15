@@ -98,12 +98,55 @@
         <xs:complexType mixed="true">
             <xs:sequence>
                 <xs:element type="xs:string" name="location" minOccurs="0" maxOccurs="unbounded" />
+                <xs:choice minOccurs="0" maxOccurs="unbounded">
+                    <xs:element ref="annotation-type"/>
+                    <xs:element ref="annotation-list"/>
+                    <xs:element ref="annotation-literal"/>
+                </xs:choice>
             </xs:sequence>
             <xs:attribute type="xs:string" name="references" />
             <xs:attribute type="xs:string" name="matchesSource" />
             <xs:attribute type="xs:string" name="as" use="optional" />
             <xs:attribute type="xs:string" name="from" use="optional" />
             <xs:attribute type="xs:string" name="in" use="optional" />
+        </xs:complexType>
+    </xs:element>
+
+    <!-- Annotation Conditions -->
+    <xs:element name="annotation-type">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:choice minOccurs="0" maxOccurs="unbounded">
+                    <xs:element ref="annotation-type"/>
+                    <xs:element ref="annotation-list"/>
+                    <xs:element ref="annotation-literal"/>
+                </xs:choice>
+            </xs:sequence>
+
+            <xs:attribute type="xs:string" name="name" use="optional"/>
+            <xs:attribute type="xs:string" name="pattern"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="annotation-list">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:choice minOccurs="0" maxOccurs="unbounded">
+                    <xs:element ref="annotation-type"/>
+                    <xs:element ref="annotation-list"/>
+                    <xs:element ref="annotation-literal"/>
+                </xs:choice>
+            </xs:sequence>
+
+            <xs:attribute type="xs:string" name="name" use="optional"/>
+            <xs:attribute type="xs:integer" name="index" use="optional"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="annotation-literal">
+        <xs:complexType>
+            <xs:attribute type="xs:string" name="name" use="optional"/>
+            <xs:attribute type="xs:string" name="pattern"/>
         </xs:complexType>
     </xs:element>
 

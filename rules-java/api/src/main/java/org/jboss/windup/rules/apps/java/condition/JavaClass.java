@@ -23,12 +23,15 @@ import org.jboss.windup.config.query.QueryGremlinCriterion;
 import org.jboss.windup.config.query.QueryPropertyComparisonType;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.rules.apps.java.condition.annotation.AnnotationCondition;
+import org.jboss.windup.rules.apps.java.condition.annotation.AnnotationTypeCondition;
 import org.jboss.windup.rules.apps.java.model.AbstractJavaSourceModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.jboss.windup.rules.apps.java.scan.ast.TypeInterestFactory;
+import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationTypeValueModel;
 import org.jboss.windup.rules.files.model.FileReferenceModel;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.ocpsoft.rewrite.config.Condition;
@@ -62,6 +65,7 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
 
     private final String uniqueID;
     private List<TypeReferenceLocation> locations = Collections.emptyList();
+    private AnnotationTypeCondition annotationCondition;
 
     private final RegexParameterizedPatternParser referencePattern;
     private RegexParameterizedPatternParser lineMatchPattern;
@@ -101,6 +105,15 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
     public JavaClassBuilderLineMatch matchesSource(String lineMatchRegex)
     {
         this.lineMatchPattern = new RegexParameterizedPatternParser(lineMatchRegex);
+        return this;
+    }
+
+    @Override
+    public JavaClassBuilderAt annotationMatches(String element, AnnotationCondition condition)
+    {
+        if (this.annotationCondition == null)
+            this.annotationCondition = new AnnotationTypeCondition("{*}");
+        this.annotationCondition.addCondition(element, condition);
         return this;
     }
 
@@ -263,12 +276,20 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
                             if (referenceResult.matches())
                             {
                                 evaluationStrategy.modelMatched();
+
                                 if (referenceResult.submit(event, context)
                                             && (typeFilterPattern == null || typeFilterPattern.parse(javaClassModel
                                                         .getQualifiedName()).submit(event, context)))
                                 {
-                                    results.add(model);
-                                    evaluationStrategy.modelSubmitted(model);
+                                    boolean annotationMatched = matchAnnotationConditions(event, context, evaluationStrategy, model);
+                                    if (!annotationMatched)
+                                    {
+                                        evaluationStrategy.modelSubmissionRejected();
+                                    } else
+                                    {
+                                        results.add(model);
+                                        evaluationStrategy.modelSubmitted(model);
+                                    }
                                 }
                                 else
                                 {
@@ -291,6 +312,18 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
         {
             ExecutionStatistics.get().end("JavaClass.evaluate");
         }
+    }
+
+    private boolean matchAnnotationConditions(GraphRewrite event, EvaluationContext context, EvaluationStrategy evaluationStrategy, JavaTypeReferenceModel model)
+    {
+        boolean annotationMatched = true;
+        if (this.annotationCondition != null)
+        {
+            annotationMatched = model instanceof JavaAnnotationTypeValueModel;
+
+            annotationMatched &= annotationCondition.evaluate(event, context, evaluationStrategy, (JavaAnnotationTypeValueModel)model);
+        }
+        return annotationMatched;
     }
 
     private final class TypeFilterCriterion implements QueryGremlinCriterion
@@ -381,6 +414,14 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
         {
             builder.append(".at(" + locations + ")");
         }
+
+        if (annotationCondition != null)
+        {
+            builder.append(".annotationConditions(");
+            builder.append(annotationCondition.toString());
+            builder.append(")");
+        }
+
         builder.append(".as(" + getVarname() + ")");
         return builder.toString();
     }

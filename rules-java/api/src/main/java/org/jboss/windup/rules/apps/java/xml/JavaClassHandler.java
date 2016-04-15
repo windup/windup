@@ -3,7 +3,9 @@ package org.jboss.windup.rules.apps.java.xml;
 import static org.joox.JOOX.$;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
@@ -15,6 +17,7 @@ import org.jboss.windup.config.parser.xml.RuleProviderHandler;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
 import org.jboss.windup.rules.apps.java.condition.JavaClassBuilder;
 import org.jboss.windup.rules.apps.java.condition.JavaClassBuilderAt;
+import org.jboss.windup.rules.apps.java.condition.annotation.AnnotationCondition;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Condition;
 import org.w3c.dom.Element;
@@ -28,6 +31,7 @@ import org.w3c.dom.Element;
  * <pre>
  * &lt;javaclass type="javax.servlet.http.HttpServletRequest"&gt;
  *         &lt;location&gt;METHOD_PARAMETER&lt;/location&gt;
+ *         &lt;annotation-list-contion|annotation-literal|annotation-type /&gt;
  * &lt;/javaclass&gt;
  * </pre>
  *
@@ -54,11 +58,26 @@ public class JavaClassHandler implements ElementHandler<JavaClassBuilderAt>
         }
 
         List<TypeReferenceLocation> locations = new ArrayList<>();
-        List<Element> children = $(element).children("location").get();
+        List<Element> children = $(element).children().get();
+
+        Map<String, AnnotationCondition> conditionMap = new HashMap<>();
         for (Element child : children)
         {
-            TypeReferenceLocation location = handlerManager.processElement(child);
-            locations.add(location);
+            switch (child.getNodeName()) {
+                case "location":
+                    TypeReferenceLocation location = handlerManager.processElement(child);
+                    locations.add(location);
+                    break;
+                case AnnotationTypeConditionHandler.ANNOTATION_TYPE:
+                case AnnotationListConditionHandler.ANNOTATION_LIST_CONDITION:
+                case AnnotationLiteralConditionHandler.ANNOTATION_LITERAL:
+                    String name = child.getAttribute(AnnotationConditionHandler.NAME);
+                    AnnotationCondition annotationCondition = handlerManager.processElement(child);
+                    if (conditionMap.containsKey(name))
+                        throw new WindupException("Duplicate condition detected on annotation element: " + name);
+                    conditionMap.put(name, annotationCondition);
+                    break;
+            }
         }
         JavaClassBuilder javaClassReferences;
         if (from != null)
@@ -69,7 +88,8 @@ public class JavaClassHandler implements ElementHandler<JavaClassBuilderAt>
         {
             javaClassReferences = JavaClass.references(type);
         }
-        if(matchesSource !=null) {
+        if (matchesSource != null)
+        {
             javaClassReferences.matchesSource(matchesSource);
         }
 
@@ -81,6 +101,12 @@ public class JavaClassHandler implements ElementHandler<JavaClassBuilderAt>
 
         JavaClassBuilderAt javaClass = javaClassReferences.at(
                     locations.toArray(new TypeReferenceLocation[locations.size()]));
+
+        for (Map.Entry<String, AnnotationCondition> entry : conditionMap.entrySet())
+        {
+            javaClass.annotationMatches(entry.getKey(), entry.getValue());
+        }
+
         if (as != null)
         {
             javaClass.as(as);
