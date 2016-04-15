@@ -39,16 +39,10 @@ import org.w3c.dom.Element;
  *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
-@RuleMetadata(phase = InitialAnalysisPhase.class, after = DiscoverEjbConfigurationXmlRuleProvider.class)
+@RuleMetadata(phase = InitialAnalysisPhase.class, after = DiscoverEjbConfigurationXmlRuleProvider.class, perform = "Discover WebSphere EJB XML Files")
 public class ResolveWebSphereEjbBindingXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
 {
     private static final Logger LOG = Logger.getLogger(ResolveWebSphereEjbBindingXmlRuleProvider.class.getSimpleName());
-
-    @Override
-    public String toStringPerform()
-    {
-        return "Discover WebSphere EJB XML Files";
-    }
 
     @Override
     public ConditionBuilder when()

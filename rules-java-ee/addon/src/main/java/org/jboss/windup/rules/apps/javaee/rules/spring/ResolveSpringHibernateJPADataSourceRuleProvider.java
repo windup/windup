@@ -37,16 +37,10 @@ import org.w3c.dom.Element;
  *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
-@RuleMetadata(phase = InitialAnalysisPhase.class, after = DiscoverSpringConfigurationFilesRuleProvider.class)
+@RuleMetadata(phase = InitialAnalysisPhase.class, after = DiscoverSpringConfigurationFilesRuleProvider.class, perform = "Resolve Spring JNDI to DataSource")
 public class ResolveSpringHibernateJPADataSourceRuleProvider extends IteratingRuleProvider<SpringBeanModel>
 {
     private static final Logger LOG = Logger.getLogger(ResolveSpringHibernateJPADataSourceRuleProvider.class.getSimpleName());
-
-    @Override
-    public String toStringPerform()
-    {
-        return "Resolve Spring JNDI to DataSource";
-    }
 
     @Override
     public ConditionBuilder when()

@@ -28,19 +28,13 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-@RuleMetadata(phase = ArchiveMetadataExtractionPhase.class)
+@RuleMetadata(phase = ArchiveMetadataExtractionPhase.class, perform = "DiscoverManifestFilesInArchives")
 public class DiscoverArchiveManifestFilesRuleProvider extends IteratingRuleProvider<ArchiveModel>
 {
     private static final Logger LOG = Logging.get(DiscoverArchiveManifestFilesRuleProvider.class);
 
     private static final String TECH_TAG = "Manifest";
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.INFORMATIONAL;
-
-    @Override
-    public String toStringPerform()
-    {
-        return "DiscoverManifestFilesInArchives";
-    }
 
     @Override
     public ConditionBuilder when()

@@ -36,16 +36,10 @@ import org.w3c.dom.Element;
  *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
-@RuleMetadata(phase = InitialAnalysisPhase.class, after = DiscoverEjbConfigurationXmlRuleProvider.class)
+@RuleMetadata(phase = InitialAnalysisPhase.class, after = DiscoverEjbConfigurationXmlRuleProvider.class, perform = "Discover JBoss EJB XML Files")
 public class ResolveJBossEjbXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
 {
     private static final Logger LOG = Logger.getLogger(ResolveJBossEjbXmlRuleProvider.class.getSimpleName());
-
-    @Override
-    public String toStringPerform()
-    {
-        return "Discover JBoss EJB XML Files";
-    }
 
     @Override
     public ConditionBuilder when()

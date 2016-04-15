@@ -35,16 +35,10 @@ import org.w3c.dom.Element;
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  *
  */
-@RuleMetadata(phase = InitialAnalysisPhase.class, after = DiscoverWebXmlRuleProvider.class)
+@RuleMetadata(phase = InitialAnalysisPhase.class, after = DiscoverWebXmlRuleProvider.class, perform = "Discover IBM WebSphere Web Binding Files")
 public class ResolveWebSphereWebXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
 {
     private static final Logger LOG = Logger.getLogger(ResolveWebSphereWebXmlRuleProvider.class.getSimpleName());
-
-    @Override
-    public String toStringPerform()
-    {
-        return "Discover IBM WebSphere Web Binding Files";
-    }
 
     @Override
     public ConditionBuilder when()

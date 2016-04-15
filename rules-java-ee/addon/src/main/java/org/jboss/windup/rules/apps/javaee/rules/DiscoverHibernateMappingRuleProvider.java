@@ -39,7 +39,7 @@ import org.jboss.windup.config.metadata.RuleMetadata;
 /**
  * Discovers the hibernate.hbm.xml files.
  */
-@RuleMetadata(phase = InitialAnalysisPhase.class)
+@RuleMetadata(phase = InitialAnalysisPhase.class, perform = "Discover hibernate.hbm.xml files")
 public class DiscoverHibernateMappingRuleProvider extends IteratingRuleProvider<DoctypeMetaModel>
 {
     private static final Logger LOG = Logger.getLogger(DiscoverHibernateMappingRuleProvider.class.getSimpleName());
@@ -49,12 +49,6 @@ public class DiscoverHibernateMappingRuleProvider extends IteratingRuleProvider<
 
     private static final String REGEX_HIBERNATE = "(?i).*hibernate.mapping.*";
 
-
-    @Override
-    public String toStringPerform()
-    {
-        return "Discover hibernate.hbm.xml files";
-    }
 
     @Override
     public ConditionBuilder when()

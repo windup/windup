@@ -30,18 +30,12 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  * @author <a href="mailto:hotmana76@gmail.com">Marek Novotny</a>
  */
-@RuleMetadata(phase = ArchiveMetadataExtractionPhase.class)
+@RuleMetadata(phase = ArchiveMetadataExtractionPhase.class, perform = "DiscoverArchiveLicenseFiles")
 public class DiscoverArchiveLicenseFilesRuleProvider extends IteratingRuleProvider<ArchiveModel>
 {
     private static final Logger LOG = Logging.get(DiscoverArchiveLicenseFilesRuleProvider.class);
 
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.INFORMATIONAL;
-
-    @Override
-    public String toStringPerform()
-    {
-        return "DiscoverArchiveLicenseFiles";
-    }
 
     @Override
     public ConditionBuilder when()

@@ -45,7 +45,7 @@ import org.jboss.windup.config.metadata.RuleMetadata;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
-@RuleMetadata(phase = InitialAnalysisPhase.class)
+@RuleMetadata(phase = InitialAnalysisPhase.class, perform = "Discover hibernate.cfg.xml files")
 public class DiscoverHibernateConfigurationRuleProvider extends IteratingRuleProvider<DoctypeMetaModel>
 {
     private static final Logger LOG = Logging.get(DiscoverHibernateConfigurationRuleProvider.class);
@@ -55,12 +55,6 @@ public class DiscoverHibernateConfigurationRuleProvider extends IteratingRulePro
 
     private static final String REGEX_HIBERNATE = "(?i).*hibernate.configuration.*";
 
-    
-    @Override
-    public String toStringPerform()
-    {
-        return "Discover hibernate.cfg.xml files";
-    }
 
     @Override
     public ConditionBuilder when()

@@ -15,15 +15,9 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
-@RuleMetadata(phase = PostMigrationRulesPhase.class)
+@RuleMetadata(phase = PostMigrationRulesPhase.class, perform = "Mark EJB Remote Class Files")
 public class DiscoverRemoteEjbRuleProvider extends IteratingRuleProvider<EjbSessionBeanModel>
 {
-    @Override
-    public String toStringPerform()
-    {
-        return "Mark EJB Remote Class Files";
-    }
-
     @Override
     public ConditionBuilder when()
     {

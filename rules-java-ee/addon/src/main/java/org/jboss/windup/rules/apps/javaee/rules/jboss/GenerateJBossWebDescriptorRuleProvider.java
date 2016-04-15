@@ -74,8 +74,6 @@ public class GenerateJBossWebDescriptorRuleProvider extends AbstractRuleProvider
 
     private void transformWebXml(EvaluationContext evaluationContext, GraphContext context, ProjectModel projectModel)
     {
-        //GraphService<WebXmlModel> webDescriptors = new GraphService<>(context, WebXmlModel.class);
-        //ClassificationService classificationService = new ClassificationService(context);
         LinkService linkService = new LinkService(context);
         ApplicationReportService applicationReportService = new ApplicationReportService(context);
         VendorSpecificationExtensionService vendorSpecificService = new VendorSpecificationExtensionService(context);

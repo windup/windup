@@ -21,17 +21,11 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-@RuleMetadata(phase = ClassifyFileTypesPhase.class)
+@RuleMetadata(phase = ClassifyFileTypesPhase.class, perform = "Discover Properties Files")
 public class DiscoverPropertiesFilesRuleProvider extends IteratingRuleProvider<FileModel>
 {
     private static final String TECH_TAG = "Properties";
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.INFORMATIONAL;
-
-    @Override
-    public String toStringPerform()
-    {
-        return "Discover Properties Files";
-    }
 
     @Override
     public ConditionBuilder when()

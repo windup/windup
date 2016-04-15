@@ -39,7 +39,7 @@ import org.w3c.dom.Element;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-@RuleMetadata(phase = InitialAnalysisPhase.class)
+@RuleMetadata(phase = InitialAnalysisPhase.class, perform = "Discover web.xml files")
 public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
 {
     private static final Logger LOG = Logger.getLogger(DiscoverWebXmlRuleProvider.class.getSimpleName());
@@ -48,12 +48,6 @@ public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileMod
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.INFORMATIONAL;
 
     private static final String REGEX_DTD = "(?i).*web.application.*";
-
-    @Override
-    public String toStringPerform()
-    {
-        return "Discover web.xml files";
-    }
 
     @Override
     public ConditionBuilder when()

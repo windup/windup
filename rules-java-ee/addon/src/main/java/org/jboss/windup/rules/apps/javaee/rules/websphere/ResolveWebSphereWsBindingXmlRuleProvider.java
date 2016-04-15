@@ -21,15 +21,9 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  *
  */
-@RuleMetadata(phase = InitialAnalysisPhase.class, after = DiscoverXmlFilesRuleProvider.class)
+@RuleMetadata(phase = InitialAnalysisPhase.class, after = DiscoverXmlFilesRuleProvider.class, perform = "Discover WebSphere Web Service Binding XML Files")
 public class ResolveWebSphereWsBindingXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
 {
-    @Override
-    public String toStringPerform()
-    {
-        return "Discover WebSphere Web Service Binding XML Files";
-    }
-
     @Override
     public ConditionBuilder when()
     {

@@ -38,19 +38,13 @@ import org.w3c.dom.Element;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
-@RuleMetadata(phase = InitialAnalysisPhase.class)
+@RuleMetadata(phase = InitialAnalysisPhase.class, perform = "Discover Spring Config Files")
 public class DiscoverSpringConfigurationFilesRuleProvider extends IteratingRuleProvider<XmlFileModel>
 {
     private static final Logger LOG = Logger.getLogger(DiscoverSpringConfigurationFilesRuleProvider.class .getSimpleName());
 
     private static final String TECH_TAG = "Spring XML";
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.IMPORTANT;
-
-    @Override
-    public String toStringPerform()
-    {
-        return "Discover Spring Config Files";
-    }
 
     @Override
     public ConditionBuilder when()

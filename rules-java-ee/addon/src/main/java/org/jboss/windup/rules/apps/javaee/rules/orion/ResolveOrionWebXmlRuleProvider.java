@@ -30,15 +30,9 @@ import org.w3c.dom.Element;
  *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
-@RuleMetadata(phase = InitialAnalysisPhase.class, after = DiscoverWebXmlRuleProvider.class)
+@RuleMetadata(phase = InitialAnalysisPhase.class, after = DiscoverWebXmlRuleProvider.class, perform = "Discover Orion Web XML Files")
 public class ResolveOrionWebXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
 {
-    @Override
-    public String toStringPerform()
-    {
-        return "Discover Orion Web XML Files";
-    }
-
     @Override
     public ConditionBuilder when()
     {

@@ -39,17 +39,11 @@ import org.w3c.dom.Element;
  *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
-@RuleMetadata(phase = InitialAnalysisPhase.class)
+@RuleMetadata(phase = InitialAnalysisPhase.class, perform = "Discover JPA Persistence XML Files")
 public class DiscoverJpaConfigurationXmlRuleProvider extends IteratingRuleProvider<NamespaceMetaModel>
 {
     private static final String TECH_TAG = "JPA XML";
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.INFORMATIONAL;
-
-    @Override
-    public String toStringPerform()
-    {
-        return "Discover JPA Persistence XML Files";
-    }
 
     @Override
     public ConditionBuilder when()

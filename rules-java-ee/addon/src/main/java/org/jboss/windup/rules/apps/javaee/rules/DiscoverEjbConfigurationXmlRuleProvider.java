@@ -54,7 +54,7 @@ import org.w3c.dom.Element;
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-@RuleMetadata(phase = InitialAnalysisPhase.class)
+@RuleMetadata(phase = InitialAnalysisPhase.class, perform = "Discover EJB-JAR XML Files")
 public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
 {
     private static final Logger LOG = Logger.getLogger(DiscoverEjbConfigurationXmlRuleProvider.class.getSimpleName());
@@ -64,12 +64,6 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
 
     private static final String REGEX_DTD = "(?i).*enterprise.javabeans.*";
 
-    
-    @Override
-    public String toStringPerform()
-    {
-        return "Discover EJB-JAR XML Files";
-    }
 
     @Override
     public ConditionBuilder when()
