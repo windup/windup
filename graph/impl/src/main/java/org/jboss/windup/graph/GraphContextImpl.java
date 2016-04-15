@@ -45,6 +45,7 @@ import com.tinkerpop.frames.modules.FrameClassLoaderResolver;
 import com.tinkerpop.frames.modules.Module;
 import com.tinkerpop.frames.modules.gremlingroovy.GremlinGroovyModule;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerModule;
+import org.jboss.windup.graph.service.GraphService;
 
 public class GraphContextImpl implements GraphContext
 {
@@ -413,6 +414,33 @@ public class GraphContextImpl implements GraphContext
         {
             throw new RuntimeException("Failed writing Titan config to " + file.getAbsolutePath() + ": " + ex.getMessage(), ex);
         }
+    }
+
+
+    @Override
+    public <T extends WindupVertexFrame> GraphService<T> service(Class<T> clazz)
+    {
+        return new GraphService<>(this, clazz);
+    }
+
+    // --- Convenience delegations to new GraphService(this) --
+
+    @Override
+    public <T extends WindupVertexFrame> T getUnique(Class<T> clazz)
+    {
+        return service(clazz).getUnique();
+    }
+
+    @Override
+    public <T extends WindupVertexFrame> Iterable<T> findAll(Class<T> clazz)
+    {
+        return service(clazz).findAll();
+    }
+
+    @Override
+    public <T extends WindupVertexFrame> T create(Class<T> clazz)
+    {
+        return service(clazz).getUnique();
     }
 
 }
