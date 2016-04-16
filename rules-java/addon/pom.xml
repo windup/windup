@@ -10,7 +10,7 @@
 
     <artifactId>windup-rules-java</artifactId>
 
-    <name>Windup Rules - Java - Basic</name>
+    <name>Windup Rules - Java - Basic Addon</name>
 
     <dependencies>
         <!-- Local Dependencies -->
@@ -23,7 +23,7 @@
             <artifactId>windup-rules-java-impl</artifactId>
             <optional>true</optional>
         </dependency>
-        
+
 
         <!-- Addon Dependencies -->
         <dependency>
@@ -110,11 +110,11 @@
 
         <!-- Test Dependencies -->
         <dependency>
-                <groupId>org.jboss.windup</groupId>
-                <artifactId>windup-test-harness</artifactId>
-                <version>${project.version}</version>
-		<scope>test</scope>
-        </dependency>  
+            <groupId>org.jboss.windup</groupId>
+            <artifactId>windup-test-harness</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.jboss.windup.exec</groupId>
             <artifactId>windup-exec</artifactId>

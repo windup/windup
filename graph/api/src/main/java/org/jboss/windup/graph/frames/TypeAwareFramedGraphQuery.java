@@ -14,10 +14,18 @@ public class TypeAwareFramedGraphQuery extends FramedGraphQueryImpl {
 	}
 
 	public <T extends Comparable<T>> FramedGraphQuery type(Class<? extends WindupVertexFrame> kind) {
-		TypeValue typeValue = kind.getAnnotation(TypeValue.class);
-		   if (typeValue == null) {
-	            throw new IllegalArgumentException("Must be annotated with 'TypeValue': " + kind.getName());
-		   }
-		return this.has(WindupVertexFrame.TYPE_PROP, typeValue.value());
+		return this.has(WindupVertexFrame.TYPE_PROP, getTypeValue(kind));
 	}
+
+    /**
+     * Returns the type discriminator value for given Frames model class, extracted from the @TypeValue annotation.
+     */
+    public static String getTypeValue(Class<? extends WindupVertexFrame> clazz)
+    {
+        TypeValue typeValueAnnotation = clazz.getAnnotation(TypeValue.class);
+        if (typeValueAnnotation == null)
+            throw new IllegalArgumentException("Class " + clazz.getCanonicalName() + " lacks a @TypeValue annotation");
+
+        return typeValueAnnotation.value();
+    }
 }
