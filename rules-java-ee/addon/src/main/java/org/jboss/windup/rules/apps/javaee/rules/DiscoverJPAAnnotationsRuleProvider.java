@@ -98,13 +98,18 @@ public class DiscoverJPAAnnotationsRuleProvider extends AbstractRuleProvider
         entityTypeReference.getFile().setGenerateSourceReport(true);
         JavaAnnotationTypeReferenceModel entityAnnotationTypeReference = (JavaAnnotationTypeReferenceModel) entityTypeReference;
         JavaAnnotationTypeReferenceModel tableAnnotationTypeReference = null;
-        for (WindupVertexFrame annotationTypeReferenceBase : Variables.instance(event).findVariable(TABLE_ANNOTATIONS_LIST))
+        
+        final Iterable<? extends WindupVertexFrame> annotations_list = Variables.instance(event).findVariable(TABLE_ANNOTATIONS_LIST);
+        if (annotations_list != null)
         {
-            JavaAnnotationTypeReferenceModel annotationTypeReference = (JavaAnnotationTypeReferenceModel) annotationTypeReferenceBase;
-            if (annotationTypeReference.getFile().equals(entityTypeReference.getFile()))
+            for (WindupVertexFrame annotationTypeReferenceBase : annotations_list)
             {
-                tableAnnotationTypeReference = annotationTypeReference;
-                break;
+                JavaAnnotationTypeReferenceModel annotationTypeReference = (JavaAnnotationTypeReferenceModel) annotationTypeReferenceBase;
+                if (annotationTypeReference.getFile().equals(entityTypeReference.getFile()))
+                {
+                    tableAnnotationTypeReference = annotationTypeReference;
+                    break;
+                }
             }
         }
 
