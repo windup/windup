@@ -8,8 +8,8 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 import com.tinkerpop.blueprints.Predicate;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.FramedGraphQuery;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.jboss.windup.graph.frames.TypeAwareFramedGraphQuery;
 
 class QueryTypeCriterion implements QueryFramesCriterion, QueryGremlinCriterion
 {
@@ -19,7 +19,7 @@ class QueryTypeCriterion implements QueryFramesCriterion, QueryGremlinCriterion
     public QueryTypeCriterion(Class<? extends WindupVertexFrame> clazz)
     {
         this.searchedClass = clazz;
-        this.typeValue = getTypeValue(clazz);
+        this.typeValue = TypeAwareFramedGraphQuery.getTypeValue(clazz);
     }
 
     @Override
@@ -28,18 +28,6 @@ class QueryTypeCriterion implements QueryFramesCriterion, QueryGremlinCriterion
         q.has(WindupVertexFrame.TYPE_PROP, typeValue);
     }
 
-    private static String getTypeValue(Class<? extends WindupVertexFrame> clazz)
-    {
-        TypeValue typeValueAnnotation = clazz.getAnnotation(TypeValue.class);
-        if (typeValueAnnotation == null)
-        {
-            throw new IllegalArgumentException("Class " + clazz.getCanonicalName() + " lacks a @TypeValue annotation");
-        }
-        else
-        {
-            return typeValueAnnotation.value();
-        }
-    }
 
     /**
      * Adds a criterion to given pipeline which filters out vertices representing given WindupVertexFrame.
@@ -47,7 +35,7 @@ class QueryTypeCriterion implements QueryFramesCriterion, QueryGremlinCriterion
     public static GremlinPipeline<Vertex, Vertex> addPipeFor(GremlinPipeline<Vertex, Vertex> pipeline,
                 Class<? extends WindupVertexFrame> clazz)
     {
-        pipeline.has(WindupVertexFrame.TYPE_PROP, getTypeValue(clazz));
+        pipeline.has(WindupVertexFrame.TYPE_PROP, TypeAwareFramedGraphQuery.getTypeValue(clazz));
         return pipeline;
     }
 

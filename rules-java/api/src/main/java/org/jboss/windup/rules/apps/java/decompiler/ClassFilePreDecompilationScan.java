@@ -88,7 +88,7 @@ public class ClassFilePreDecompilationScan extends AbstractIterationOperation<Ja
         catch (Exception e)
         {
             final String message = "BCEL was unable to parse class file '" + javaClassFileModel.getFilePath() + "':\n\t" + e.getMessage();
-            LOG.log(Level.WARNING, message, e);
+            LOG.log(Level.WARNING, message);
             ClassificationService classificationService = new ClassificationService(event.getGraphContext());
             classificationService.attachClassification(context, javaClassFileModel, UNPARSEABLE_CLASS_CLASSIFICATION, UNPARSEABLE_CLASS_DESCRIPTION);
             javaClassFileModel.setParseError(message);
