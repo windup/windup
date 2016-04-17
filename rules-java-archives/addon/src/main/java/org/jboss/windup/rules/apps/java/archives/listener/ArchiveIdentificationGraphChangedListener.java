@@ -21,6 +21,7 @@ import org.jboss.windup.util.exception.WindupException;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.util.wrappers.event.listener.GraphChangedListener;
+import org.jboss.windup.util.Logging;
 
 /**
  * {@link GraphChangedListener} responsible for identifying {@link ArchiveModel} instances when they are added to the graph.
@@ -28,18 +29,25 @@ import com.tinkerpop.blueprints.util.wrappers.event.listener.GraphChangedListene
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
-public class ArchiveIdentificationGraphChangedListener implements GraphChangedListener
+public final class ArchiveIdentificationGraphChangedListener implements GraphChangedListener
 {
-    private static final Logger log = Logger.getLogger(ArchiveIdentificationGraphChangedListener.class.getName());
+    private static final Logger LOG = Logging.get(ArchiveIdentificationGraphChangedListener.class);
 
     private final ArchiveIdentificationService identifier;
-
     private GraphContext context;
+    private ArchiveService archiveService;
+
+    public ArchiveIdentificationGraphChangedListener setGraphContext(GraphContext context)
+    {
+        this.context = context;
+        this.archiveService = new ArchiveService(context);
+        return this;
+    }
 
     public ArchiveIdentificationGraphChangedListener(GraphContext context, ArchiveIdentificationService identifier)
     {
         this.identifier = identifier;
-        this.context = context;
+        this.setGraphContext(context);
     }
 
     @Override
@@ -47,7 +55,6 @@ public class ArchiveIdentificationGraphChangedListener implements GraphChangedLi
     {
         if (ArchiveModel.ARCHIVE_NAME.equals(key))
         {
-            ArchiveService archiveService = new ArchiveService(context);
             ArchiveModel archive = archiveService.frame(vertex);
 
             setArchiveHashes(archive);
@@ -55,9 +62,8 @@ public class ArchiveIdentificationGraphChangedListener implements GraphChangedLi
             Coordinate coordinate = identifier.getCoordinate(archive.getSHA1Hash());
             if (coordinate != null)
             {
-                log.info("Identified archive: [" + archive.getFilePath() + "] as [" + coordinate + "] will not be unzipped or analyzed.");
-                IdentifiedArchiveModel identifiedArchive = GraphService
-                            .addTypeToModel(context, archive, IdentifiedArchiveModel.class);
+                LOG.info("Identified archive: [" + archive.getFilePath() + "] as [" + coordinate + "] will not be unzipped or analyzed.");
+                IdentifiedArchiveModel identifiedArchive = GraphService.addTypeToModel(context, archive, IdentifiedArchiveModel.class);
                 ArchiveCoordinateModel coordinateModel = new GraphService<>(context, ArchiveCoordinateModel.class).create();
 
                 coordinateModel.setArtifactId(coordinate.getArtifactId());
@@ -71,7 +77,7 @@ public class ArchiveIdentificationGraphChangedListener implements GraphChangedLi
             }
             else
             {
-                log.info("Archive not identified: " + archive.getFilePath());
+                LOG.info("Archive not identified: " + archive.getFilePath() + " SHA1: " + archive.getSHA1Hash());
             }
         }
     }
@@ -87,8 +93,7 @@ public class ArchiveIdentificationGraphChangedListener implements GraphChangedLi
             }
             catch (IOException e)
             {
-                throw new WindupException("Failed to read archive file at: " + payload.getFilePath() + " due to: "
-                            + e.getMessage(), e);
+                throw new WindupException("Failed to read archive file at: " + payload.getFilePath() + " due to: " + e.getMessage(), e);
             }
         }
 
@@ -101,8 +106,7 @@ public class ArchiveIdentificationGraphChangedListener implements GraphChangedLi
             }
             catch (IOException e)
             {
-                throw new WindupException("Failed to read archive file at: " + payload.getFilePath() + " due to: "
-                            + e.getMessage(), e);
+                throw new WindupException("Failed to read archive file at: " + payload.getFilePath() + " due to: " + e.getMessage(), e);
             }
         }
     }
