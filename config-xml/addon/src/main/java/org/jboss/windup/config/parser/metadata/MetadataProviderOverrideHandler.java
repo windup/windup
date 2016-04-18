@@ -22,7 +22,7 @@ import org.w3c.dom.Element;
 @NamespaceElementHandler(elementName = MetadataProviderOverrideHandler.OVERRIDE_PROVIDER, namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
 public class MetadataProviderOverrideHandler implements ElementHandler<Boolean>
 {
-    public static final String OVERRIDE_PROVIDER = "overrideProvider";
+    public static final String OVERRIDE_PROVIDER = "overrideRules";
 
     @Override
     public Boolean processElement(ParserContext handlerManager, Element element) throws ConfigurationException

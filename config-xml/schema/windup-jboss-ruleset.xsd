@@ -57,7 +57,7 @@
                             <xs:element name="executeAfter" type="xs:string" maxOccurs="unbounded" minOccurs="0" />
                             <xs:element name="executeBefore" type="xs:string" maxOccurs="unbounded" minOccurs="0" />
                             <xs:element name="tag" type="xs:string" maxOccurs="unbounded" minOccurs="0" />
-                            <xs:element name="overrideProvider" type="xs:boolean" maxOccurs="1" minOccurs="0" />
+                            <xs:element name="overrideRules" type="xs:boolean" maxOccurs="1" minOccurs="0" />
                         </xs:sequence>
                     </xs:complexType>
                 </xs:element>
