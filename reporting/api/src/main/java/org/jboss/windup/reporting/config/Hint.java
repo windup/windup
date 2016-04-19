@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
@@ -31,7 +32,7 @@ import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
 /**
  * Used as an intermediate to support the addition of {@link InlineHintModel} objects to the graph via an Operation.
  */
-public class Hint extends ParameterizedIterationOperation<FileLocationModel>implements HintText, HintLink, HintSeverity, HintEffort
+public class Hint extends ParameterizedIterationOperation<FileLocationModel> implements HintText, HintLink, HintSeverity, HintEffort
 {
     private static final Logger LOG = Logging.get(Hint.class);
 
@@ -68,6 +69,17 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel>impl
         return new HintBuilderTitle(title);
     }
 
+    /**
+     * Create a new {@link Hint} in the current {@link FileLocationModel}, and specify the text or content to be displayed in the report.
+     */
+    public static HintText withText(String text)
+    {
+        Assert.notNull(text, "Hint text must not be null.");
+        Hint hint = new Hint();
+        hint.setText(text);
+        return hint;
+    }
+
     @Override
     public HintSeverity withSeverity(Severity severity)
     {
@@ -81,17 +93,6 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel>impl
     public Severity getSeverity()
     {
         return severity;
-    }
-
-    /**
-     * Create a new {@link Hint} in the current {@link FileLocationModel}, and specify the text or content to be displayed in the report.
-     */
-    public static HintText withText(String text)
-    {
-        Assert.notNull(text, "Hint text must not be null.");
-        Hint hint = new Hint();
-        hint.setText(text);
-        return hint;
     }
 
     @Override
@@ -113,7 +114,15 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel>impl
             hintModel.setSeverity(this.severity);
             if (hintTitlePattern != null)
             {
-                hintModel.setTitle(hintTitlePattern.getBuilder().build(event, context));
+                try
+                {
+                    hintModel.setTitle(hintTitlePattern.getBuilder().build(event, context));
+                }
+                catch (Throwable t)
+                {
+                    LOG.log(Level.WARNING, "Failed to generate parameterized Hint title due to: " + t.getMessage(), t);
+                    hintModel.setTitle(hintTitlePattern.toString());
+                }
             }
             else
             {
@@ -121,7 +130,17 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel>impl
                 // (eg, 'Constructing com.otherproduct.Foo()')
                 hintModel.setTitle(locationModel.getDescription());
             }
-            String hintText = hintTextPattern.getBuilder().build(event, context);
+
+            String hintText;
+            try
+            {
+                hintText = hintTextPattern.getBuilder().build(event, context);
+            }
+            catch (Throwable t)
+            {
+                LOG.log(Level.WARNING, "Failed to generate parameterized Hint body due to: " + t.getMessage(), t);
+                hintText = hintTextPattern.toString();
+            }
             hintModel.setHint(hintText);
 
             GraphService<LinkModel> linkService = new GraphService<>(event.getGraphContext(), LinkModel.class);

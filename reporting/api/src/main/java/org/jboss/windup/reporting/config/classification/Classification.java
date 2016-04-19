@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.forge.furnace.util.Assert;
@@ -37,7 +38,7 @@ import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:dynawest@gmail.com">Ondrej Zizka</a>
  */
-public class Classification extends ParameterizedIterationOperation<FileModel>implements ClassificationAs, ClassificationEffort,
+public class Classification extends ParameterizedIterationOperation<FileModel> implements ClassificationAs, ClassificationEffort,
             ClassificationDescription, ClassificationLink, ClassificationTags, ClassificationSeverity
 {
     private static final Logger LOG = Logging.get(Classification.class);
@@ -61,6 +62,25 @@ public class Classification extends ParameterizedIterationOperation<FileModel>im
     }
 
     /**
+     * Create a new classification for the given ref.
+     */
+    public static ClassificationBuilderOf of(String variable)
+    {
+        return new ClassificationBuilderOf(variable);
+    }
+
+    /**
+     * Classify the current {@link FileModel} as the given text.
+     */
+    public static ClassificationAs as(String classification)
+    {
+        Assert.notNull(classification, "Classification text must not be null.");
+        Classification result = new Classification();
+        result.classificationPattern = new RegexParameterizedPatternParser(classification);
+        return result;
+    }
+
+    /**
      * Set the payload to the fileModel of the given instance even though the variable is not directly referencing it. This is mainly to simplify the
      * creation of the rule, when the FileModel itself is not being iterated but just a model referencing it.
      *
@@ -78,14 +98,6 @@ public class Classification extends ParameterizedIterationOperation<FileModel>im
             return (FileModel) payload;
         }
         return null;
-    }
-
-    /**
-     * Create a new classification for the given ref.
-     */
-    public static ClassificationBuilderOf of(String variable)
-    {
-        return new ClassificationBuilderOf(variable);
     }
 
     /**
@@ -139,17 +151,6 @@ public class Classification extends ParameterizedIterationOperation<FileModel>im
         return this;
     }
 
-    /**
-     * Classify the current {@link FileModel} as the given text.
-     */
-    public static ClassificationAs as(String classification)
-    {
-        Assert.notNull(classification, "Classification text must not be null.");
-        Classification result = new Classification();
-        result.classificationPattern = new RegexParameterizedPatternParser(classification);
-        return result;
-    }
-
     private Set<String> getTags()
     {
         return Collections.unmodifiableSet(tags);
@@ -165,9 +166,30 @@ public class Classification extends ParameterizedIterationOperation<FileModel>im
              * Check for duplicate classifications before we do anything. If a classification already exists, then we don't want to add another.
              */
             String description = null;
+
             if (descriptionPattern != null)
-                description = descriptionPattern.getBuilder().build(event, context);
-            String text = classificationPattern.getBuilder().build(event, context);
+            {
+                try
+                {
+                    description = descriptionPattern.getBuilder().build(event, context);
+                }
+                catch (Throwable t)
+                {
+                    LOG.log(Level.WARNING, "Failed to generate parameterized Classification description due to: " + t.getMessage(), t);
+                    description = descriptionPattern.toString();
+                }
+            }
+
+            String text;
+            try
+            {
+                text = classificationPattern.getBuilder().build(event, context);
+            }
+            catch (Throwable t)
+            {
+                LOG.log(Level.WARNING, "Failed to generate parameterized Classification due to: " + t.getMessage(), t);
+                text = classificationPattern.toString();
+            }
 
             GraphContext graphContext = event.getGraphContext();
             ClassificationService classificationService = new ClassificationService(graphContext);

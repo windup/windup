@@ -3,7 +3,10 @@
 <#macro migrationIssuesRenderer problemSummary>
     <tr class="problemSummary effort${getEffortDescriptionForPoints(problemSummary.effortPerIncident, 'id')}">
         <td>
-            <a href="#" class="toggle">${problemSummary.issueName?html}</a>
+            <a href="#" class="toggle">
+                <#assign issueName = problemSummary.issueName!"No name">
+                ${issueName?html}
+            </a>
         </td>
         <td class="text-right">${problemSummary.numberFound}</td>
         <td class="text-right">${problemSummary.effortPerIncident}</td>
