@@ -29,6 +29,14 @@ public class RuleProviderRegistryCacheImpl implements RuleProviderRegistryCache
     private static final Logger LOG = Logger.getLogger(RuleProviderRegistryCache.class.getSimpleName());
     private static final long MAX_CACHE_AGE = 1000L * 60L * 1L;
 
+    /**
+     * This value is a hack to allow us to only print a load error to the console once, even
+     * if we are called multiple times.
+     *
+     * Each incident will still be logged to the detailed log file.
+     */
+    private static boolean loadErrorPrinted = false;
+
     @Inject
     private GraphContextFactory graphContextFactory;
     @Inject
@@ -116,7 +124,11 @@ public class RuleProviderRegistryCacheImpl implements RuleProviderRegistryCache
             }
             catch (Exception e)
             {
-                System.err.println("Failed to load rule information due to: " + e.getMessage());
+                if (!loadErrorPrinted)
+                {
+                    System.err.println("Failed to load rule information due to: " + e.getMessage());
+                    loadErrorPrinted = true;
+                }
                 LOG.log(Level.WARNING, "Failed to load rule information due to: " + e.getMessage(), e);
             }
             return cachedRegistry;
