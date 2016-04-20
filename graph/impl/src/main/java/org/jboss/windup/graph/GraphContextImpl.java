@@ -403,7 +403,6 @@ public class GraphContextImpl implements GraphContext
 
     private void writeToPropertiesFile(Configuration conf, File file)
     {
-        System.out.println("Writing graph config to " + file);
         try
         {
             PropertiesConfiguration propConf = new PropertiesConfiguration(file);
