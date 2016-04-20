@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.tools.ant.util.PackageNameMapper;
 import org.jboss.forge.addon.dependencies.Coordinate;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
@@ -34,12 +35,6 @@ public class ArchiveIdentificationGraphChangedListener implements GraphChangedLi
     private final ArchiveIdentificationService identifier;
 
     private GraphContext context;
-
-    public ArchiveIdentificationGraphChangedListener setGraphContext(GraphContext context)
-    {
-        this.context = context;
-        return this;
-    }
 
     public ArchiveIdentificationGraphChangedListener(GraphContext context, ArchiveIdentificationService identifier)
     {

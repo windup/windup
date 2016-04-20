@@ -13,11 +13,11 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(OrganizationModel.TYPE)
 public interface OrganizationModel extends WindupVertexFrame
 {
-    static final String TYPE = "OrganizationModel";
-    static final String TYPE_PREFIX = TYPE + ":";
-    static final String NAME = TYPE_PREFIX + "name";
-    static final String LINKS = TYPE_PREFIX + "links";
-    static final String ARCHIVE_MODEL = TYPE_PREFIX + "organizationModelToArchiveModel";
+    String TYPE = "OrganizationModel";
+    String TYPE_PREFIX = TYPE + ":";
+    String NAME = TYPE_PREFIX + "name";
+    String LINKS = TYPE_PREFIX + "links";
+    String ARCHIVE_MODEL = TYPE_PREFIX + "organizationModelToArchiveModel";
 
     /**
      * Add a {@link ArchiveModel} associated with this {@link OrganizationModel}.
