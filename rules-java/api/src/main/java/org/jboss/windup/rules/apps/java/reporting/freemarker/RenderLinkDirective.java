@@ -138,10 +138,9 @@ public class RenderLinkDirective implements WindupFreeMarkerTemplateDirective
 
         SourceReportModel result = sourceReportService.getSourceReportForFileModel(obj.getFile());
         if (result == null)
-        {
             writer.write(linkText);
-        }
-        renderLink(writer, cssClass, result.getReportFilename() + "#" + anchor, linkText);
+        else
+            renderLink(writer, cssClass, result.getReportFilename() + "#" + anchor, linkText);
     }
 
     private void processLinkableModel(Writer writer, LayoutType layoutType, String cssClass, LinkableModel obj, String defaultText) throws IOException
