@@ -318,6 +318,10 @@ p.windup-contributors  {
   display:         flex;
 }
 
+
+/* Cross-cutting concerns */
+td.occurences   span::after { content: "\00d7"; } /* &times; */
+
 strong {
   font-size: 12px;
 }

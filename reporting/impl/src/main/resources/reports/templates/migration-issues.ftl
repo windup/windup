@@ -5,10 +5,10 @@
         <td>
             <a href="#" class="toggle">${problemSummary.issueName?html}</a>
         </td>
-        <td class="text-right">${problemSummary.numberFound}</td>
-        <td class="text-right">${problemSummary.effortPerIncident}</td>
+        <td class="text-right occurences"><span>${problemSummary.numberFound}</span></td>
+        <td class="text-right spPerIncident">${problemSummary.effortPerIncident}</td>
         <td class="level">${getEffortDescriptionForPoints(problemSummary.effortPerIncident, 'verbose')}</td>
-        <td class="text-right">${problemSummary.numberFound * problemSummary.effortPerIncident}</td>
+        <td class="text-right spTotal">${problemSummary.numberFound * problemSummary.effortPerIncident}</td>
     </tr>
     <tr class="tablesorter-childRow bg-info" data-summary-id="${problemSummary.id?c}">
         <td><div class="indent"><strong>File</strong></div></td>
@@ -81,6 +81,8 @@
             tr.problemSummary.effortARCHITECTURAL td.level { color: #C42F0E; }
             tr.problemSummary.effortUNKNOWN td.level { color: #C42F0E; }
             */
+
+            td.occurences   span::after { content: "\00d7"; } /* &times; */
         </style>
     </head>
     <body role="document">
@@ -146,11 +148,11 @@
                                     <th>Level of Effort</th>
                                     <th class="sortable-right text-right">Total Story Points</th>
                                 </tr>
-                                <tr style="background: rgb(212, 230, 233);">
+                                <tr class="levelSums" style="background: rgb(212, 230, 233);">
                                     <td>
                                         <b>${severity}</b>
                                     </td>
-                                    <td class="text-right">${getIncidentsFound(problemsBySeverity[severity])}</td>
+                                    <td class="text-right occurences"><span>${getIncidentsFound(problemsBySeverity[severity])}</span></td>
                                     <td></td>
                                     <td></td>
                                     <td class="text-right">${getTotalPoints(problemsBySeverity[severity])}</td>
@@ -304,8 +306,8 @@
                                 {{{link}}}
                             </div>
                         </td>
-                        <td class="text-right">
-                            {{occurrences}}
+                        <td class="text-right occurences">
+                            <span>{{occurrences}}</span>
                         </td>
 
                         {{#if @first}}
