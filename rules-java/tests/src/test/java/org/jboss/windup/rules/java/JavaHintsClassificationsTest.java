@@ -13,6 +13,7 @@ import javax.inject.Singleton;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.RandomStringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
@@ -84,58 +85,50 @@ public class JavaHintsClassificationsTest
     private GraphContextFactory factory;
 
     @Test
+    public void testHintAndClassificationInvalidTitle() throws Exception
+    {
+        Path outputPath = null;
+        try (GraphContext context = factory.create())
+        {
+            outputPath = runWindup(context);
+
+            GraphService<InlineHintModel> hintService = new GraphService<>(context, InlineHintModel.class);
+            GraphService<ClassificationModel> classificationService = new GraphService<>(context,
+                    ClassificationModel.class);
+
+            boolean classificationFound = false;
+            boolean hintFound = false;
+            for (InlineHintModel hint : hintService.findAll())
+            {
+                if (StringUtils.equals("Hint {param} does not exist", hint.getHint()))
+                    hintFound = true;
+            }
+
+            for (ClassificationModel classification : classificationService.findAll())
+            {
+                if (StringUtils.equals("Classification {param} does not exist", classification.getClassification()))
+                    classificationFound = true;
+            }
+
+            Assert.assertTrue("Classification Found", classificationFound);
+            Assert.assertTrue("Hint Found", hintFound);
+        }
+        finally
+        {
+            if (outputPath != null)
+                FileUtils.deleteDirectory(outputPath.toFile());
+        }
+    }
+
+    @Test
     public void testHintsAndClassificationOperation() throws Exception
     {
         try (GraphContext context = factory.create())
         {
-
-            Assert.assertNotNull(context);
-
-            // Output dir.
-            final Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(),
-                        "windup_" + RandomStringUtils.randomAlphanumeric(6));
-            FileUtils.deleteDirectory(outputPath.toFile());
-            Files.createDirectories(outputPath);
-
-            String inputPath = "src/test/resources/org/jboss/windup/rules/java";
-
-            ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
-            pm.setName("Main Project");
-
-            FileModel inputPathFrame = context.getFramed().addVertex(null, FileModel.class);
-            inputPathFrame.setFilePath(inputPath);
-            inputPathFrame.setProjectModel(pm);
-            pm.setRootFileModel(inputPathFrame);
-
-            FileModel fileModel = context.getFramed().addVertex(null, FileModel.class);
-            fileModel.setFilePath(inputPath + "/JavaClassTestFile1.java");
-            fileModel.setProjectModel(pm);
-
-            pm.addFileModel(inputPathFrame);
-            pm.addFileModel(fileModel);
-            fileModel = context.getFramed().addVertex(null, FileModel.class);
-            fileModel.setFilePath(inputPath + "/JavaClassTestFile2.java");
-            fileModel.setProjectModel(pm);
-            pm.addFileModel(fileModel);
-
+            Path outputPath = null;
             try
             {
-
-                Predicate<RuleProvider> predicate =
-                            new AndPredicate(
-                                        new RuleProviderWithDependenciesPredicate(TestHintsClassificationsTestRuleProvider.class),
-                                        new NotPredicate(new EnumeratedRuleProviderPredicate(FindUnboundJavaReferencesRuleProvider.class))
-                            );
-
-                WindupConfiguration configuration = new WindupConfiguration()
-                            .setGraphContext(context)
-                            .setRuleProviderFilter(predicate)
-                            .addInputPath(Paths.get(inputPath))
-                            .setOutputDirectory(outputPath)
-                            .setOptionValue(ScanPackagesOption.NAME, Collections.singletonList(""))
-                            .setOptionValue(SourceModeOption.NAME, true);
-
-                processor.execute(configuration);
+                outputPath = runWindup(context);
 
                 GraphService<InlineHintModel> hintService = new GraphService<>(context, InlineHintModel.class);
                 GraphService<ClassificationModel> classificationService = new GraphService<>(context,
@@ -186,7 +179,7 @@ public class JavaHintsClassificationsTest
                 Assert.assertTrue(foundCallables);
 
                 List<ClassificationModel> classifications = Iterators.asList(classificationService.findAll());
-                Assert.assertEquals(1, classifications.size());
+                Assert.assertEquals(2, classifications.size());
                 classifications.get(0).getDescription().contains("JavaClassTestFile");
 
                 Iterable<FileModel> fileModels = classifications.get(0).getFileModels();
@@ -194,10 +187,41 @@ public class JavaHintsClassificationsTest
             }
             finally
             {
-                FileUtils.deleteDirectory(outputPath.toFile());
+                if (outputPath != null)
+                    FileUtils.deleteDirectory(outputPath.toFile());
             }
         }
 
+    }
+
+    private Path runWindup(GraphContext context) throws Exception
+    {
+        Assert.assertNotNull(context);
+
+        // Output dir.
+        final Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(),
+                "windup_" + RandomStringUtils.randomAlphanumeric(6));
+        FileUtils.deleteDirectory(outputPath.toFile());
+        Files.createDirectories(outputPath);
+
+        String inputPath = "src/test/resources/org/jboss/windup/rules/java";
+
+        Predicate<RuleProvider> predicate =
+                new AndPredicate(
+                        new RuleProviderWithDependenciesPredicate(TestHintsClassificationsTestRuleProvider.class),
+                        new NotPredicate(new EnumeratedRuleProviderPredicate(FindUnboundJavaReferencesRuleProvider.class))
+                );
+
+        WindupConfiguration configuration = new WindupConfiguration()
+                .setGraphContext(context)
+                .setRuleProviderFilter(predicate)
+                .addInputPath(Paths.get(inputPath))
+                .setOutputDirectory(outputPath)
+                .setOptionValue(ScanPackagesOption.NAME, Collections.singletonList(""))
+                .setOptionValue(SourceModeOption.NAME, true);
+
+        processor.execute(configuration);
+        return outputPath;
     }
 
     @Singleton
@@ -225,7 +249,7 @@ public class JavaHintsClassificationsTest
                     typeReferences.add(payload);
                 }
             };
-            
+
             return ConfigurationBuilder.begin()
             .addRule()
             .when(JavaClass.references("org.jboss.forge.furnace.{name}").inType("{file}{suffix}").at(TypeReferenceLocation.IMPORT))
@@ -235,7 +259,14 @@ public class JavaHintsClassificationsTest
                              .withEffort(8)
                     .and(addTypeRefToList))
             )
-            .where("suffix").matches("\\d");
+            .where("suffix").matches("\\d")
+            
+            .addRule()
+            .when(JavaClass.references("org.jboss.forge.furnace.{name}").inType("{file}{suffix}").at(TypeReferenceLocation.IMPORT))
+            .perform(
+                Classification.as("Classification {param} does not exist"),
+                Hint.withText("Hint {param} does not exist").withEffort(8)
+            );
 
         }
         // @formatter:on
