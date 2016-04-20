@@ -32,6 +32,11 @@ public @interface RuleMetadata
     String description() default "";
 
     /**
+     * String used to display the progress of rule execution to the user.
+     */
+    String perform() default "";
+
+    /**
      * Return the {@link RulePhase} in which the {@link Rule} instances from this {@link RuleProvider} should be executed.
      * <p>
      * The default phase is {@link MigrationRulesPhase}.

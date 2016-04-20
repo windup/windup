@@ -5,11 +5,9 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
@@ -24,7 +22,6 @@ import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.InlineHintService;
-import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.PathUtil;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -32,24 +29,18 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 import com.opencsv.CSVWriter;
+import org.jboss.windup.config.metadata.RuleMetadata;
 
 /**
  * RuleProvider generating optional CSV files for every application. This file will contain the main reporting information.
  *
  * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  */
+@RuleMetadata(phase = ReportGenerationPhase.class, haltOnException = true)
 public class ExportCSVFileRuleProvider extends AbstractRuleProvider
 {
     public static final int COMMIT_INTERVAL = 750;
     public static final int LOG_INTERVAL = 250;
-    private static final Logger LOG = Logging.get(ExportCSVFileRuleProvider.class);
-
-    public ExportCSVFileRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(ExportCSVFileRuleProvider.class)
-                    .setPhase(ReportGenerationPhase.class)
-                    .setHaltOnException(true));
-    }
 
     // @formatter:off
     @Override

@@ -1,13 +1,12 @@
 package org.jboss.windup.rules.apps.javaee.rules;
 
-import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.forge.furnace.util.Strings;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.graph.GraphContext;
@@ -25,7 +24,6 @@ import org.jboss.windup.rules.apps.java.scan.provider.AnalyzeJavaFilesRuleProvid
 import org.jboss.windup.rules.apps.javaee.model.EjbMessageDrivenModel;
 import org.jboss.windup.rules.apps.javaee.model.EjbSessionBeanModel;
 import org.jboss.windup.rules.apps.javaee.service.JmsDestinationService;
-import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -33,17 +31,9 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 /**
  * Scans for classes with EJB related annotations, and adds EJB related metadata for these.
  */
+@RuleMetadata(phase = InitialAnalysisPhase.class, after = AnalyzeJavaFilesRuleProvider.class)
 public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
 {
-    private static final Logger LOG = Logging.get(DiscoverEjbAnnotationsRuleProvider.class);
-
-    public DiscoverEjbAnnotationsRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(DiscoverEjbAnnotationsRuleProvider.class)
-                    .setPhase(InitialAnalysisPhase.class)
-                    .addExecuteAfter(AnalyzeJavaFilesRuleProvider.class));
-    }
-
     @Override
     public Configuration getConfiguration(GraphContext context)
     {

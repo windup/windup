@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.graph.GraphContext;
@@ -34,18 +34,12 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * Creates a report of JPA files within the application (eg, session configuration or entity lists).
- *
  */
+@RuleMetadata(phase = ReportGenerationPhase.class, id = "Create JPA Report")
 public class CreateJPAReportRuleProvider extends AbstractRuleProvider
 {
     public static final String TEMPLATE_JPA_REPORT = "/reports/templates/jpa.ftl";
     public static final String REPORT_DESCRIPTION = "This report contains details JPA related resources that were found in the application.";
-
-    public CreateJPAReportRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(CreateJPAReportRuleProvider.class, "Create JPA Report")
-                    .setPhase(ReportGenerationPhase.class));
-    }
 
     @Override
     public Configuration getConfiguration(GraphContext context)
@@ -86,7 +80,7 @@ public class CreateJPAReportRuleProvider extends AbstractRuleProvider
         JPAConfigurationFileService jpaConfigurationFileService = new JPAConfigurationFileService(context);
         JPAEntityService jpaEntityService = new JPAEntityService(context);
         GraphService<JPANamedQueryModel> jpaNamedQueryService = new GraphService<>(context, JPANamedQueryModel.class);
-        
+
 
         List<JPAConfigurationFileModel> jpaConfigList = new ArrayList<>();
         for (JPAConfigurationFileModel jpaConfig : jpaConfigurationFileService.findAll())

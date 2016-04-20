@@ -6,7 +6,7 @@ import java.util.logging.Logger;
 import org.jboss.forge.furnace.util.Visitor;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.InitializationPhase;
 import org.jboss.windup.graph.GraphContext;
@@ -26,15 +26,10 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
+@RuleMetadata(phase = InitializationPhase.class)
 public class IgnoredArchivesConfigLoadingRuleProvider extends AbstractRuleProvider
 {
     private static final Logger log = Logging.get(IgnoredArchivesConfigLoadingRuleProvider.class);
-
-    public IgnoredArchivesConfigLoadingRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(IgnoredArchivesConfigLoadingRuleProvider.class)
-                    .setPhase(InitializationPhase.class));
-    }
 
     @Override
     public Configuration getConfiguration(final GraphContext grCtx)

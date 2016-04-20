@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.graph.GraphContext;
@@ -35,18 +35,12 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * Creates a report of Server Resources within the application (eg, datasources, jms resources).
- *
  */
+@RuleMetadata(phase = ReportGenerationPhase.class, id = "Create Server Resources Report")
 public class CreateServerResourcesReportRuleProvider extends AbstractRuleProvider
 {
     public static final String TEMPLATE_JPA_REPORT = "/reports/templates/server.ftl";
     public static final String REPORT_DESCRIPTION = "This report displays all server resources (for example, JNDI resources) in the input application.";
-
-    public CreateServerResourcesReportRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(CreateServerResourcesReportRuleProvider.class, "Create Server Resources Report")
-                    .setPhase(ReportGenerationPhase.class));
-    }
 
     @Override
     public Configuration getConfiguration(GraphContext context)

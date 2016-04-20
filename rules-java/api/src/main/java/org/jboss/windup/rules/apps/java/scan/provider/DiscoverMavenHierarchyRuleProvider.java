@@ -4,7 +4,7 @@ import java.util.logging.Logger;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.DiscoverProjectStructurePhase;
 import org.jboss.windup.config.query.Query;
@@ -20,21 +20,16 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 /**
  * Links the Maven artifact archives according to their hierarchy.
  */
+@RuleMetadata(phase = DiscoverProjectStructurePhase.class, after = {
+                    DiscoverMavenProjectsRuleProvider.class,
+                    DiscoverNonMavenArchiveProjectsRuleProvider.class,
+                    DiscoverNonMavenSourceProjectsRuleProvider.class})
 public class DiscoverMavenHierarchyRuleProvider extends AbstractRuleProvider
 {
     private static final Logger LOG = Logging.get(DiscoverMavenProjectsRuleProvider.class);
 
-    public DiscoverMavenHierarchyRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(DiscoverMavenHierarchyRuleProvider.class)
-                    .setPhase(DiscoverProjectStructurePhase.class)
-                    .addExecuteAfter(DiscoverMavenProjectsRuleProvider.class)
-                    .addExecuteAfter(DiscoverNonMavenArchiveProjectsRuleProvider.class)
-                    .addExecuteAfter(DiscoverNonMavenSourceProjectsRuleProvider.class));
-    }
-
     @Override
-    public Configuration getConfiguration(GraphContext arg0)
+    public Configuration getConfiguration(GraphContext grCtx)
     {
         AbstractIterationOperation<MavenProjectModel> setupParentModule = new AbstractIterationOperation<MavenProjectModel>()
         {

@@ -6,6 +6,7 @@ import java.util.Map;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.config.query.Query;
@@ -30,45 +31,39 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
+@RuleMetadata(phase = ReportGenerationPhase.class)
 public class CreateStaticIPAddressReportRuleProvider extends AbstractRuleProvider
 {
     private static final String TITLE = "Static IP Addresses";
     public static final String TEMPLATE_REPORT = "/reports/templates/static_ip_addresses.ftl";
     public static final String REPORT_DESCRIPTION = "The Static IP report provides a list of all static IP addresses that were found in the application. These often require review during migration.";
 
-    public CreateStaticIPAddressReportRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(CreateStaticIPAddressReportRuleProvider.class)
-                    .setPhase(ReportGenerationPhase.class));
-    }
-
     @Override
     public Configuration getConfiguration(final GraphContext graphContext)
     {
-
         return ConfigurationBuilder
-                    .begin()
-                    .addRule()
-                    // when a IP Location Model exists...
-                    .when(Query.fromType(StaticIPLocationModel.class))
-                    // perform the write of this report once (GraphOperation)...
-                    .perform(new GraphOperation()
-                    {
+        .begin()
+        .addRule()
+        // when a IP Location Model exists...
+        .when(Query.fromType(StaticIPLocationModel.class))
+        // perform the write of this report once (GraphOperation)...
+        .perform(new GraphOperation()
+        {
 
-                        @Override
-                        public void perform(GraphRewrite event, EvaluationContext context)
-                        {
-                            // configuration of current execution
-                            WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
+            @Override
+            public void perform(GraphRewrite event, EvaluationContext context)
+            {
+                // configuration of current execution
+                WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
 
-                            for (FileModel inputPath : configurationModel.getInputPaths())
-                            {
-                                // reference to input project model
-                                ProjectModel projectModel = inputPath.getProjectModel();
-                                createIPReport(event.getGraphContext(), projectModel);
-                            }
-                        }
-                    });
+                for (FileModel inputPath : configurationModel.getInputPaths())
+                {
+                    // reference to input project model
+                    ProjectModel projectModel = inputPath.getProjectModel();
+                    createIPReport(event.getGraphContext(), projectModel);
+                }
+            }
+        });
     }
 
     private ApplicationReportModel createIPReport(GraphContext context, ProjectModel rootProjectModel)

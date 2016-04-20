@@ -1,9 +1,7 @@
 package org.jboss.windup.rules.apps.javaee.rules.websphere;
 
-import java.util.logging.Logger;
-
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
@@ -18,27 +16,12 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * Discovers WebSphere Web Service Binding XML files and parses the related metadata
- * 
+ *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
- * 
  */
+@RuleMetadata(phase = InitialAnalysisPhase.class, after = DiscoverXmlFilesRuleProvider.class, perform = "Discover WebSphere Web Service Extension XML Files")
 public class ResolveWebSphereWsExtBindingXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
 {
-    private static final Logger LOG = Logger.getLogger(ResolveWebSphereWsExtBindingXmlRuleProvider.class.getSimpleName());
-
-    public ResolveWebSphereWsExtBindingXmlRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(ResolveWebSphereWsExtBindingXmlRuleProvider.class)
-                    .setPhase(InitialAnalysisPhase.class)
-                    .addExecuteAfter(DiscoverXmlFilesRuleProvider.class));
-    }
-
-    @Override
-    public String toStringPerform()
-    {
-        return "Discover WebSphere Web Service Extension XML Files";
-    }
-
     @Override
     public ConditionBuilder when()
     {

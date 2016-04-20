@@ -3,7 +3,7 @@ package org.jboss.windup.rules.apps.java.scan.provider;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.DiscoverProjectStructurePhase;
 import org.jboss.windup.config.query.Query;
@@ -19,29 +19,23 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
+@RuleMetadata(phase = DiscoverProjectStructurePhase.class, after = DiscoverNonMavenArchiveProjectsRuleProvider.class)
 public class DiscoverAdditionalProjectDetails extends AbstractRuleProvider
 {
-    public DiscoverAdditionalProjectDetails()
-    {
-        super(MetadataBuilder.forProvider(DiscoverAdditionalProjectDetails.class)
-                    .setPhase(DiscoverProjectStructurePhase.class)
-                    .addExecuteAfter(DiscoverNonMavenArchiveProjectsRuleProvider.class));
-    }
-
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
         return ConfigurationBuilder.begin()
-                    .addRule()
-                    .when(Query.fromType(ArchiveModel.class))
-                    .perform(new AbstractIterationOperation<ArchiveModel>()
-                    {
-                        @Override
-                        public void perform(GraphRewrite event, EvaluationContext context, ArchiveModel payload)
-                        {
-                            getAdditionalProjectDetails(event.getGraphContext(), payload);
-                        }
-                    });
+        .addRule()
+        .when(Query.fromType(ArchiveModel.class))
+        .perform(new AbstractIterationOperation<ArchiveModel>()
+        {
+            @Override
+            public void perform(GraphRewrite event, EvaluationContext context, ArchiveModel payload)
+            {
+                getAdditionalProjectDetails(event.getGraphContext(), payload);
+            }
+        });
     }
 
     private void getAdditionalProjectDetails(GraphContext context, ArchiveModel archiveModel)

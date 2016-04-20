@@ -4,11 +4,10 @@ import static org.joox.JOOX.$;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
@@ -30,7 +29,6 @@ import org.jboss.windup.rules.apps.javaee.util.HibernateDialectDataSourceTypeRes
 import org.jboss.windup.rules.apps.xml.model.NamespaceMetaModel;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.apps.xml.service.XmlFileService;
-import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.w3c.dom.Document;
@@ -40,26 +38,12 @@ import org.w3c.dom.Element;
  * Discovers persistence.xml files and parses the related metadata
  *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
- *
  */
+@RuleMetadata(phase = InitialAnalysisPhase.class, perform = "Discover JPA Persistence XML Files")
 public class DiscoverJpaConfigurationXmlRuleProvider extends IteratingRuleProvider<NamespaceMetaModel>
 {
-    private static final Logger LOG = Logging.get(DiscoverJpaConfigurationXmlRuleProvider.class);
-
     private static final String TECH_TAG = "JPA XML";
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.INFORMATIONAL;
-
-    public DiscoverJpaConfigurationXmlRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(DiscoverJpaConfigurationXmlRuleProvider.class)
-                    .setPhase(InitialAnalysisPhase.class));
-    }
-
-    @Override
-    public String toStringPerform()
-    {
-        return "Discover JPA Persistence XML Files";
-    }
 
     @Override
     public ConditionBuilder when()

@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
@@ -37,26 +37,13 @@ import org.w3c.dom.Element;
 
 /**
  * Discovers JBoss EJB XML files and parses the related metadata Handles XML files prior to EAP 6. (jboss.xml)
- * 
+ *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
- * 
  */
+@RuleMetadata(phase = InitialAnalysisPhase.class, after = DiscoverEjbConfigurationXmlRuleProvider.class, perform = "Discover JBoss EJB XML Files")
 public class ResolveJBossLegacyEjbXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
 {
     private static final Logger LOG = Logger.getLogger(ResolveJBossLegacyEjbXmlRuleProvider.class.getSimpleName());
-
-    public ResolveJBossLegacyEjbXmlRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(ResolveJBossLegacyEjbXmlRuleProvider.class)
-                    .setPhase(InitialAnalysisPhase.class)
-                    .addExecuteAfter(DiscoverEjbConfigurationXmlRuleProvider.class));
-    }
-
-    @Override
-    public String toStringPerform()
-    {
-        return "Discover JBoss EJB XML Files";
-    }
 
     @Override
     public ConditionBuilder when()
@@ -90,7 +77,7 @@ public class ResolveJBossLegacyEjbXmlRuleProvider extends IteratingRuleProvider<
         VendorSpecificationExtensionService vendorSpecificationService = new VendorSpecificationExtensionService(event.getGraphContext());
         //mark as vendor extension; create reference to ejb-jar.xml
         vendorSpecificationService.associateAsVendorExtension(payload, "ejb-jar.xml");
-        
+
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
         technologyTagService.addTagToFileModel(payload, "JBoss EJB XML", TechnologyTagLevel.IMPORTANT);
 
@@ -103,7 +90,7 @@ public class ResolveJBossLegacyEjbXmlRuleProvider extends IteratingRuleProvider<
             resourceManagerReferences.put(resourceName, resourceJNDI);
             LOG.info("Found Resource Manager: " + resourceName + ", " + resourceJNDI);
         }
-        
+
 
         // register beans to JNDI: http://grepcode.com/file/repository.jboss.org/nexus/content/repositories/releases/org.jboss.ejb3/jboss-ejb3-core/0.1.0/test/naming/META-INF/jboss1.xml?av=f
         for (Element resourceRef : $(doc).find("resource-ref").get())
@@ -131,7 +118,7 @@ public class ResolveJBossLegacyEjbXmlRuleProvider extends IteratingRuleProvider<
             processBinding(envRefService, jndiResourceService, payload.getApplication(), resourceManagerReferences, resourceRef, "ejb-ref-name",
                         "local-jndi-name");
         }
-       
+
 
         for (Element ejbRef : $(doc).find("session").get())
         {
@@ -141,7 +128,7 @@ public class ResolveJBossLegacyEjbXmlRuleProvider extends IteratingRuleProvider<
 
             //transaction timeout
             Map<String, Integer> txTimeouts = parseTxTimeout(ejbRef, ejbName);
-            
+
             if (StringUtils.isNotBlank(ejbName))
             {
                 LOG.info("Looking up name: " + ejbName);
@@ -160,7 +147,7 @@ public class ResolveJBossLegacyEjbXmlRuleProvider extends IteratingRuleProvider<
                         JNDIResourceModel jndiRef = jndiResourceService.createUnique(payload.getApplication(), localJNDI);
                         ejb.setLocalJndiReference(jndiRef);
                     }
-                    
+
                     if(StringUtils.equalsIgnoreCase("true", sessionClustered)) {
                         ejb.setClustered(true);
                     }
@@ -176,7 +163,7 @@ public class ResolveJBossLegacyEjbXmlRuleProvider extends IteratingRuleProvider<
             String ejbName = $(messageDrivenRef).child("ejb-name").text();
 
             Map<String, Integer> txTimeouts = parseTxTimeout(messageDrivenRef, ejbName);
-            
+
             LOG.info("Found MDB: " + ejbName);
             if (StringUtils.isNotBlank(ejbName))
             {
@@ -212,10 +199,10 @@ public class ResolveJBossLegacyEjbXmlRuleProvider extends IteratingRuleProvider<
                 }
             }
         }
-        
+
         return transactionTimeouts;
     }
-    
+
 
     private void processBinding(EnvironmentReferenceService envRefService, JNDIResourceService jndiResourceService, ProjectModel application,
                 Map<String, String> resourceManagerReferences, Element resourceRef, String tagName, String tagJndi)
@@ -226,7 +213,7 @@ public class ResolveJBossLegacyEjbXmlRuleProvider extends IteratingRuleProvider<
 
         LOG.info("Processing binding: "+$(resourceRef).toString());
         LOG.info("JNDI Name: " + jndiLocation + " to Resource: " + resourceRefName);
-        
+
         // resolve jndilocation from resourcename...: https://docs.jboss.org/ejb3/app-server/tutorial/jboss_resource_ref/META-INF/jboss.xml
         if (StringUtils.isBlank(jndiLocation) && StringUtils.isNotBlank(resourceName))
         {

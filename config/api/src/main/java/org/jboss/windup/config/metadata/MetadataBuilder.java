@@ -12,6 +12,7 @@ import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.util.Annotations;
 import org.jboss.forge.furnace.util.Assert;
+import org.jboss.forge.furnace.versions.EmptyVersionRange;
 import org.jboss.forge.furnace.versions.Versions;
 import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.loader.RuleProviderLoader;
@@ -123,7 +124,9 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
             {
                 builder.addSourceTechnology(new TechnologyReference(
                             technology.id(),
-                            Versions.parseVersionRange(technology.versionRange())));
+                            "".equals(technology.versionRange().trim())
+                                    ? new EmptyVersionRange()
+                                    : Versions.parseVersionRange(technology.versionRange())));
             }
         }
 

@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
 import org.jboss.windup.config.query.Query;
@@ -30,7 +30,6 @@ import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.rules.apps.javaee.model.EjbDeploymentDescriptorModel;
 import org.jboss.windup.rules.apps.javaee.model.EjbMessageDrivenModel;
 import org.jboss.windup.rules.apps.javaee.model.EjbSessionBeanModel;
-import org.jboss.windup.rules.apps.javaee.model.WebXmlModel;
 import org.jboss.windup.rules.apps.javaee.model.association.VendorSpecificationExtensionModel;
 import org.jboss.windup.rules.apps.javaee.service.VendorSpecificationExtensionService;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -40,45 +39,39 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 /**
  * Creates a jboss-ejb3.xml for JNDI bindings.
  */
+@RuleMetadata(phase = MigrationRulesPhase.class, id = "Generate jboss-ejb3.xml")
 public class GenerateJBossEjbDescriptorRuleProvider extends AbstractRuleProvider
 {
     private static final Logger LOG = Logger.getLogger(GenerateJBossEjbDescriptorRuleProvider.class.getSimpleName());
     public static final String TEMPLATE_EJB_REPORT = "/reports/templates/jboss/jboss-ejb3.ftl";
 
-    public GenerateJBossEjbDescriptorRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(GenerateJBossEjbDescriptorRuleProvider.class, "Generate jboss-ejb3.xml")
-                    .setPhase(MigrationRulesPhase.class));
-    }
-
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
         return ConfigurationBuilder.begin()
-                    .addRule()
-                    .when(Query.fromType(EjbDeploymentDescriptorModel.class))
-                    .perform(new GraphOperation()
-                    {
-                        @Override
-                        public void perform(GraphRewrite event, EvaluationContext context)
-                        {
-                            // configuration of current execution
-                            WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
+        .addRule()
+        .when(Query.fromType(EjbDeploymentDescriptorModel.class))
+        .perform(new GraphOperation()
+        {
+            @Override
+            public void perform(GraphRewrite event, EvaluationContext context)
+            {
+                // configuration of current execution
+                WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
 
-                            for (FileModel inputPath : configurationModel.getInputPaths())
-                            {
-                                ProjectModel projectModel = inputPath.getProjectModel();
-                                createReport(context, event.getGraphContext(), projectModel);
-                            }
-                        }
+                for (FileModel inputPath : configurationModel.getInputPaths())
+                {
+                    ProjectModel projectModel = inputPath.getProjectModel();
+                    createReport(context, event.getGraphContext(), projectModel);
+                }
+            }
 
-                        @Override
-                        public String toString()
-                        {
-                            return "Generate jboss-ejb3.xml";
-                        }
-                    });
-
+            @Override
+            public String toString()
+            {
+                return "Generate jboss-ejb3.xml";
+            }
+        });
     }
 
     private void createReport(EvaluationContext evaluationContext, GraphContext context, ProjectModel projectModel)

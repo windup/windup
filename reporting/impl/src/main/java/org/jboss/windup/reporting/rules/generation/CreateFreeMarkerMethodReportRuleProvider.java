@@ -2,7 +2,7 @@ package org.jboss.windup.reporting.rules.generation;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.graph.GraphContext;
@@ -13,17 +13,12 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+@RuleMetadata(phase = ReportGenerationPhase.class)
 public class CreateFreeMarkerMethodReportRuleProvider extends AbstractRuleProvider
 {
     private static final String TEMPLATE = "/reports/templates/windupfreemarkerfunctions.ftl";
     private static final String REPORT_NAME = "Windup FreeMarker Function Report";
     private static final String OUTPUT_FILENAME = "windup_freemarkerfunctions.html";
-
-    public CreateFreeMarkerMethodReportRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(CreateFreeMarkerMethodReportRuleProvider.class)
-                    .setPhase(ReportGenerationPhase.class));
-    }
 
     @Override
     public Configuration getConfiguration(GraphContext context)

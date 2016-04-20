@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.config.query.Query;
@@ -33,18 +33,12 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * Creates a report of Hibernate files within the application (eg, session configuration or entity lists).
- *
  */
+@RuleMetadata(phase = ReportGenerationPhase.class, id = "Create Hibernate Report")
 public class CreateHibernateReportRuleProvider extends AbstractRuleProvider
 {
     public static final String TEMPLATE_HIBERNATE_REPORT = "/reports/templates/hibernate.ftl";
     public static final String REPORT_DESCRIPTION = "The Hibernate report contains details on all Hibernate related resources that were found in the application.";
-
-    public CreateHibernateReportRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(CreateHibernateReportRuleProvider.class, "Create Hibernate Report")
-                    .setPhase(ReportGenerationPhase.class));
-    }
 
     @Override
     public Configuration getConfiguration(GraphContext context)

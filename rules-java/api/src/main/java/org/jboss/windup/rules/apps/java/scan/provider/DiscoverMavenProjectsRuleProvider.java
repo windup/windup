@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.DiscoverProjectStructurePhase;
 import org.jboss.windup.config.query.Query;
@@ -40,6 +40,7 @@ import org.w3c.dom.NodeList;
 /**
  * Discover Maven pom files and build a {@link MavenProjectModel} containing this metadata.
  */
+@RuleMetadata(phase = DiscoverProjectStructurePhase.class, haltOnException = true)
 public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
 {
     private static final Logger LOG = Logging.get(DiscoverMavenProjectsRuleProvider.class);
@@ -49,13 +50,6 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
     static
     {
         namespaces.put("pom", "http://maven.apache.org/POM/4.0.0");
-    }
-
-    public DiscoverMavenProjectsRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(DiscoverMavenProjectsRuleProvider.class)
-                    .setPhase(DiscoverProjectStructurePhase.class)
-                    .setHaltOnException(true));
     }
 
     @Override

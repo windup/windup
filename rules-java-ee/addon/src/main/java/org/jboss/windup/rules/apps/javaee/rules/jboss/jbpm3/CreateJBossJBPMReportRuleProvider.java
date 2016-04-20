@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.config.query.Query;
@@ -27,47 +27,40 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
- * Creates a report of Jbpm 3 Process Image Report
- *
+ * Creates a report of JBPM 3 Process Image Report
  */
+@RuleMetadata(phase = ReportGenerationPhase.class, id = "Create JBPM Report")
 public class CreateJBossJBPMReportRuleProvider extends AbstractRuleProvider
 {
     public static final String TEMPLATE_EJB_REPORT = "/reports/templates/jbpm.ftl";
     public static final String REPORT_DESCRIPTION = "This report contains all of the JBPM related resources that were discovered during analysis.";
 
-    public CreateJBossJBPMReportRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(CreateJBossJBPMReportRuleProvider.class, "Create JBPM Report")
-                    .setPhase(ReportGenerationPhase.class));
-    }
-
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
         return ConfigurationBuilder.begin()
-                    .addRule()
-                    .when(Query.fromType(Jbpm3ProcessModel.class))
-                    .perform(new GraphOperation()
-                    {
-                        @Override
-                        public void perform(GraphRewrite event, EvaluationContext context)
-                        {
-                            // configuration of current execution
-                            WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
-                            for (FileModel inputPath : configurationModel.getInputPaths())
-                            {
-                                ProjectModel projectModel = inputPath.getProjectModel();
-                                createJbpmReport(event.getGraphContext(), projectModel);
-                            }
-                        }
+        .addRule()
+        .when(Query.fromType(Jbpm3ProcessModel.class))
+        .perform(new GraphOperation()
+        {
+            @Override
+            public void perform(GraphRewrite event, EvaluationContext context)
+            {
+                // configuration of current execution
+                WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
+                for (FileModel inputPath : configurationModel.getInputPaths())
+                {
+                    ProjectModel projectModel = inputPath.getProjectModel();
+                    createJbpmReport(event.getGraphContext(), projectModel);
+                }
+            }
 
-                        @Override
-                        public String toString()
-                        {
-                            return "CreateJBPM3Report";
-                        }
-                    });
-
+            @Override
+            public String toString()
+            {
+                return "CreateJBPM3Report";
+            }
+        });
     }
 
     private void createJbpmReport(GraphContext context, ProjectModel projectModel)

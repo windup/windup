@@ -3,7 +3,7 @@ package org.jboss.windup.rules.apps.java.decompiler;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.DecompilationPhase;
 import org.jboss.windup.graph.GraphContext;
@@ -15,10 +15,11 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * This will decompile all Java .class files found in the incoming application.
- * 
+ *
  * This will use the Fernflower decompiler by default, however this can be overridden with a system property (
  * {@link DecompileClassesRuleProvider#DECOMPILER_PROPERTY}).
  */
+@RuleMetadata(phase = DecompilationPhase.class, after = BeforeDecompileClassesRuleProvider.class)
 public class DecompileClassesRuleProvider extends AbstractRuleProvider
 {
     /**
@@ -31,12 +32,6 @@ public class DecompileClassesRuleProvider extends AbstractRuleProvider
     {
         PROCYON,
         FERNFLOWER
-    }
-
-    public DecompileClassesRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(DecompileClassesRuleProvider.class)
-                    .setPhase(DecompilationPhase.class).addExecuteAfter(BeforeDecompileClassesRuleProvider.class));
     }
 
     // @formatter:off

@@ -9,7 +9,6 @@ import java.util.Map;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportRenderingPhase;
 import org.jboss.windup.graph.GraphContext;
@@ -30,6 +29,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.MappingJsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.reporting.service.EffortReportService.EffortLevel;
 
 /**
@@ -37,28 +37,24 @@ import org.jboss.windup.reporting.service.EffortReportService.EffortLevel;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
+@RuleMetadata(phase = ReportRenderingPhase.class)
 public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider
 {
     public static final String ISSUE_SUMMARIES_JS = "issue_summaries.js";
-
-    public CreateIssueSummaryDataRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(CreateIssueSummaryDataRuleProvider.class).setPhase(ReportRenderingPhase.class));
-    }
 
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
         return ConfigurationBuilder.begin()
-                    .addRule()
-                    .perform(new GraphOperation()
-                    {
-                        @Override
-                        public void perform(GraphRewrite event, EvaluationContext context)
-                        {
-                            generateDataSummary(event);
-                        }
-                    });
+        .addRule()
+        .perform(new GraphOperation()
+        {
+            @Override
+            public void perform(GraphRewrite event, EvaluationContext context)
+            {
+                generateDataSummary(event);
+            }
+        });
     }
 
     private void generateDataSummary(GraphRewrite event)

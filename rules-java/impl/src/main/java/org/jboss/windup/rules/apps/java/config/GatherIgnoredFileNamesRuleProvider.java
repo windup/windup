@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.phase.InitializationPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
@@ -35,22 +35,14 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 /**
  * Read and add all the ignore regexes (when a file matches the regex, it will not be scanned by windup) that are
  * present in the windup runtime.
- * 
- * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  *
+ * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  */
+@RuleMetadata(phase = InitializationPhase.class, after = CopyJavaConfigToGraphRuleProvider.class)
 public class GatherIgnoredFileNamesRuleProvider extends IteratingRuleProvider<WindupConfigurationModel>
 {
-
     private final String IGNORE_FILE_EXTENSION = "windup-ignore.txt";
-    private static final Logger log = Logger.getLogger(GatherIgnoredFileNamesRuleProvider.class.getName());
-
-    public GatherIgnoredFileNamesRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(GatherIgnoredFileNamesRuleProvider.class)
-                    .setPhase(InitializationPhase.class)
-                    .addExecuteAfter(CopyJavaConfigToGraphRuleProvider.class));
-    }
+    private static final Logger LOG = Logger.getLogger(GatherIgnoredFileNamesRuleProvider.class.getName());
 
     @Override
     public void perform(GraphRewrite event, EvaluationContext context, WindupConfigurationModel payload)
@@ -81,7 +73,7 @@ public class GatherIgnoredFileNamesRuleProvider extends IteratingRuleProvider<Wi
                 }
                 catch (IOException e1)
                 {
-                    log.warning("IOException thrown when trying to access the ignored file regexes in " + ignoredRegexesFileModel.getFilePath());
+                    LOG.warning("IOException thrown when trying to access the ignored file regexes in " + ignoredRegexesFileModel.getFilePath());
                 }
             }
             else

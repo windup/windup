@@ -1,14 +1,12 @@
 package org.jboss.windup.rules.apps.javaee.rules;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import org.jboss.forge.furnace.versions.EmptyVersionRange;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
-import org.jboss.windup.config.metadata.TechnologyReference;
+import org.jboss.windup.config.metadata.RuleMetadata;
+import org.jboss.windup.config.metadata.Technology;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.config.query.Query;
@@ -33,20 +31,17 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
- * Creates a report on the spring configuration (spring beans, etc).
- *
+ * Creates a report on the Spring configuration (Spring beans, etc.).
  */
+@RuleMetadata(
+        phase = ReportGenerationPhase.class,
+        id = "Create Spring Bean Report",
+        sourceTechnologies = @Technology(id = "spring", versionRange = "")
+)
 public class CreateSpringBeanReportRuleProvider extends AbstractRuleProvider
 {
     public static final String TEMPLATE_SPRING_REPORT = "/reports/templates/spring.ftl";
     public static final String REPORT_DESCRIPTION = "This report contains a list of Spring beans found during the analysis.";
-
-    public CreateSpringBeanReportRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(CreateSpringBeanReportRuleProvider.class, "Create Spring Bean Report")
-                    .setPhase(ReportGenerationPhase.class)
-                    .addSourceTechnology(new TechnologyReference("spring", new EmptyVersionRange())));
-    }
 
     @Override
     public Configuration getConfiguration(GraphContext context)

@@ -1,11 +1,10 @@
 package org.jboss.windup.rules.apps.javaee.rules;
 
-import java.util.logging.Logger;
 
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
@@ -19,49 +18,40 @@ import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationTypeR
 import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationTypeValueModel;
 import org.jboss.windup.rules.apps.java.scan.provider.AnalyzeJavaFilesRuleProvider;
 import org.jboss.windup.rules.apps.javaee.service.JaxRSWebServiceModelService;
-import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * Scans for classes with JAX-RS related annotations, and adds JAX-RS related metadata for these.
- * 
+ *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
+@RuleMetadata(phase = InitialAnalysisPhase.class, after = AnalyzeJavaFilesRuleProvider.class)
 public class DiscoverJaxRsAnnotationsRuleProvider extends AbstractRuleProvider
 {
-    private static final Logger LOG = Logging.get(DiscoverJaxRsAnnotationsRuleProvider.class);
-
     private static final String JAXRS_ANNOTATIONS = "jaxrsAnnotations";
-
-    public DiscoverJaxRsAnnotationsRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(DiscoverJaxRsAnnotationsRuleProvider.class)
-                    .setPhase(InitialAnalysisPhase.class)
-                    .addExecuteAfter(AnalyzeJavaFilesRuleProvider.class));
-    }
 
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
         String ruleIDPrefix = getClass().getSimpleName();
         return ConfigurationBuilder
-                    .begin()
-                    .addRule()
-                    .when(JavaClass
-                                .references("javax.ws.rs.Path")
-                                .at(TypeReferenceLocation.ANNOTATION)
-                                .as(JAXRS_ANNOTATIONS))
-                    .perform(Iteration.over(JAXRS_ANNOTATIONS).perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
-                    {
-                        @Override
-                        public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
-                        {
-                            extractMetadata(event, payload);
-                        }
-                    }).endIteration())
-                    .withId(ruleIDPrefix + "_JAXRSAnnotationRule");
+        .begin()
+        .addRule()
+        .when(JavaClass
+                    .references("javax.ws.rs.Path")
+                    .at(TypeReferenceLocation.ANNOTATION)
+                    .as(JAXRS_ANNOTATIONS))
+        .perform(Iteration.over(JAXRS_ANNOTATIONS).perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
+        {
+            @Override
+            public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
+            {
+                extractMetadata(event, payload);
+            }
+        }).endIteration())
+        .withId(ruleIDPrefix + "_JAXRSAnnotationRule");
     }
 
     private void extractMetadata(GraphRewrite event, JavaTypeReferenceModel typeReference)

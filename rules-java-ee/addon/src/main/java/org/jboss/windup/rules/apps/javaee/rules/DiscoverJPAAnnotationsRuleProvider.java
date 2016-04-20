@@ -6,7 +6,7 @@ import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.Variables;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
@@ -32,10 +32,11 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * Scans for classes with JPA related annotations, and adds JPA related metadata for these.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
+@RuleMetadata(phase = InitialAnalysisPhase.class, after = AnalyzeJavaFilesRuleProvider.class)
 public class DiscoverJPAAnnotationsRuleProvider extends AbstractRuleProvider
 {
     private static final Logger LOG = Logging.get(DiscoverJPAAnnotationsRuleProvider.class);
@@ -44,13 +45,6 @@ public class DiscoverJPAAnnotationsRuleProvider extends AbstractRuleProvider
     private static final String TABLE_ANNOTATIONS_LIST = "tableAnnotations";
     private static final String NAMED_QUERY_LIST = "namedQuery";
     private static final String NAMED_QUERIES_LIST = "namedQueries";
-
-    public DiscoverJPAAnnotationsRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(DiscoverJPAAnnotationsRuleProvider.class)
-                    .setPhase(InitialAnalysisPhase.class)
-                    .addExecuteAfter(AnalyzeJavaFilesRuleProvider.class));
-    }
 
     @Override
     public Configuration getConfiguration(GraphContext context)

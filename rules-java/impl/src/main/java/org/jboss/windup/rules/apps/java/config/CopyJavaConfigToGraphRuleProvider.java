@@ -13,6 +13,7 @@ import org.jboss.forge.furnace.util.Visitor;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.InitializationPhase;
 import org.jboss.windup.graph.GraphContext;
@@ -31,16 +32,10 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * Copies configuration data from {@link GraphContext#getOptionMap()} to the graph itself for easy use by other {@link Rule}s.
- *
  */
+@RuleMetadata(phase = InitializationPhase.class, haltOnException = true)
 public class CopyJavaConfigToGraphRuleProvider extends AbstractRuleProvider
 {
-    public CopyJavaConfigToGraphRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(CopyJavaConfigToGraphRuleProvider.class)
-                    .setPhase(InitializationPhase.class).setHaltOnException(true));
-    }
-
     @Override
     public Configuration getConfiguration(GraphContext context)
     {

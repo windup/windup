@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
@@ -36,29 +36,18 @@ import org.w3c.dom.Element;
 
 /**
  * Discovers web.xml files, parses them, and places relevant metadata into the graph.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
+@RuleMetadata(phase = InitialAnalysisPhase.class, perform = "Discover web.xml files")
 public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
 {
     private static final Logger LOG = Logger.getLogger(DiscoverWebXmlRuleProvider.class.getSimpleName());
-    
+
     private static final String TECH_TAG = "Web XML";
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.INFORMATIONAL;
 
-    private static final String dtdRegex = "(?i).*web.application.*";
-
-    public DiscoverWebXmlRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(DiscoverWebXmlRuleProvider.class)
-                    .setPhase(InitialAnalysisPhase.class));
-    }
-
-    @Override
-    public String toStringPerform()
-    {
-        return "Discover web.xml files";
-    }
+    private static final String REGEX_DTD = "(?i).*web.application.*";
 
     @Override
     public ConditionBuilder when()
@@ -128,7 +117,7 @@ public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileMod
     {
         ClassificationService classificationService = new ClassificationService(context);
         TechnologyTagService technologyTagService = new TechnologyTagService(context);
-        
+
         classificationService.attachClassification(evaluationContext, xml, "Web XML", " Web Application Deployment Descriptors");
         TechnologyTagModel technologyTag = technologyTagService.addTagToFileModel(xml, TECH_TAG, TECH_TAG_LEVEL);
         WebXmlService webXmlService = new WebXmlService(context);
@@ -167,7 +156,7 @@ public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileMod
     {
         if (StringUtils.isNotBlank(doctypeMetaModel.getPublicId()))
         {
-            if (Pattern.matches(dtdRegex, doctypeMetaModel.getPublicId()))
+            if (Pattern.matches(REGEX_DTD, doctypeMetaModel.getPublicId()))
             {
                 return true;
             }
@@ -175,7 +164,7 @@ public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileMod
 
         if (StringUtils.isNotBlank(doctypeMetaModel.getSystemId()))
         {
-            if (Pattern.matches(dtdRegex, doctypeMetaModel.getSystemId()))
+            if (Pattern.matches(REGEX_DTD, doctypeMetaModel.getSystemId()))
             {
                 return true;
             }
@@ -224,7 +213,7 @@ public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileMod
         String id = $(element).attr("id");
         String type = $(element).child(typeLocation).text();
         String name = $(element).child(nameLocation).text();
-        
+
         type = StringUtils.trim(type);
         name = StringUtils.trim(name);
 
@@ -235,7 +224,7 @@ public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileMod
             ref.setName(name);
             ref.setReferenceType(type);
             ref.setReferenceTagType(refType);
-            
+
             LOG.info("Added: "+ref);
         }
         else {
@@ -243,9 +232,9 @@ public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileMod
                 LOG.warning("Expected type: "+EnvironmentReferenceTagType.RESOURCE_REF +" but actually: "+ref.getReferenceType());
             }
         }
-        
+
         ref.setReferenceId(id);
         resources.add(ref);
     }
-    
+
 }

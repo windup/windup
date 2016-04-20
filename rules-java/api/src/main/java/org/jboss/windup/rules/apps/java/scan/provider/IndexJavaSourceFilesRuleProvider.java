@@ -18,7 +18,7 @@ import org.jboss.forge.roaster.model.InterfaceCapable;
 import org.jboss.forge.roaster.model.source.JavaSource;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.Commit;
 import org.jboss.windup.config.operation.IterationProgress;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
@@ -51,6 +51,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
+@RuleMetadata(phase = ClassifyFileTypesPhase.class)
 public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
 {
     private static final Logger LOG = Logging.get(IndexJavaSourceFilesRuleProvider.class);
@@ -58,21 +59,15 @@ public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
     public static final String TECH_TAG = "Java Source";
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.INFORMATIONAL;
 
-    public IndexJavaSourceFilesRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(IndexJavaSourceFilesRuleProvider.class)
-                    .setPhase(ClassifyFileTypesPhase.class));
-    }
-
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
         return ConfigurationBuilder.begin()
-                    .addRule()
-                    .when(Query.fromType(JavaSourceFileModel.class))
-                    .perform(new IndexJavaFileIterationOperator()
-                                .and(Commit.every(100))
-                                .and(IterationProgress.monitoring("Index Java Source Files", 250)));
+        .addRule()
+        .when(Query.fromType(JavaSourceFileModel.class))
+        .perform(new IndexJavaFileIterationOperator()
+                    .and(Commit.every(100))
+                    .and(IterationProgress.monitoring("Index Java Source Files", 250)));
     }
 
     private final class IndexJavaFileIterationOperator extends AbstractIterationOperation<JavaSourceFileModel>

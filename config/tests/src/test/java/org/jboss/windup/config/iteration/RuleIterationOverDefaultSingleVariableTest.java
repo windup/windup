@@ -141,13 +141,9 @@ public class RuleIterationOverDefaultSingleVariableTest
         }
     }
 
+    @RuleMetadata
     public class TestRuleIterationOverDefaultSingleVariableProvider extends AbstractRuleProvider
     {
-        public TestRuleIterationOverDefaultSingleVariableProvider()
-        {
-            super(MetadataBuilder.forProvider(TestRuleIterationOverDefaultSingleVariableProvider.class));
-        }
-
         // @formatter:off
         @Override
         public Configuration getConfiguration(GraphContext context)
@@ -208,11 +204,6 @@ public class RuleIterationOverDefaultSingleVariableTest
     @RuleMetadata(haltOnException = true)
     public class TestRuleIterationOverDefaultSingleVariableWithExceptionProvider extends AbstractRuleProvider
     {
-        public TestRuleIterationOverDefaultSingleVariableWithExceptionProvider()
-        {
-            super(MetadataBuilder.forProvider(TestRuleIterationOverDefaultSingleVariableWithExceptionProvider.class));
-        }
-
         // @formatter:off
         @Override
         public Configuration getConfiguration(GraphContext context)

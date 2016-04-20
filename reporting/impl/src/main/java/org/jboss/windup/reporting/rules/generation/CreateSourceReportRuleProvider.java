@@ -7,7 +7,7 @@ import javax.inject.Inject;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.PostReportGenerationPhase;
@@ -41,6 +41,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
+@RuleMetadata(phase = PostReportGenerationPhase.class)
 public class CreateSourceReportRuleProvider extends AbstractRuleProvider
 {
     private static final Logger LOG = Logging.get(CreateSourceReportRuleProvider.class);
@@ -48,12 +49,6 @@ public class CreateSourceReportRuleProvider extends AbstractRuleProvider
 
     @Inject
     private Imported<SourceTypeResolver> resolvers;
-
-    public CreateSourceReportRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(CreateSourceReportRuleProvider.class)
-                    .setPhase(PostReportGenerationPhase.class));
-    }
 
     // @formatter:off
     @Override

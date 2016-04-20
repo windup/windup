@@ -21,6 +21,7 @@ import org.ocpsoft.rewrite.context.ContextBase;
  * execution.
  *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka, I</a>
  */
 public abstract class AbstractRuleProvider extends ContextBase implements RuleProvider
 {

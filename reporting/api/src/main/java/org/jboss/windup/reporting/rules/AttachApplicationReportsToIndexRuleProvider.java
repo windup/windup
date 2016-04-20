@@ -2,7 +2,7 @@ package org.jboss.windup.reporting.rules;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.PostReportGenerationPhase;
 import org.jboss.windup.config.query.Query;
@@ -18,17 +18,12 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * Attaches {@link ApplicationReportModel}s to the {@link ApplicationReportIndexModel}
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
+@RuleMetadata(phase = PostReportGenerationPhase.class)
 public class AttachApplicationReportsToIndexRuleProvider extends AbstractRuleProvider
 {
-    public AttachApplicationReportsToIndexRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(AttachApplicationReportsToIndexRuleProvider.class)
-                    .setPhase(PostReportGenerationPhase.class));
-    }
-
     @Override
     public Configuration getConfiguration(GraphContext context)
     {

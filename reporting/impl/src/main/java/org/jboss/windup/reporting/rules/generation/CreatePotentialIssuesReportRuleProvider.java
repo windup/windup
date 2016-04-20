@@ -5,6 +5,7 @@ import java.util.Collections;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.config.query.Query;
@@ -28,16 +29,11 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
+@RuleMetadata(phase = ReportGenerationPhase.class)
 public class CreatePotentialIssuesReportRuleProvider extends AbstractRuleProvider
 {
     public static final String POTENTIAL_ISSUES = "Potential Issues";
     public static final String TEMPLATE_CATCHALL_REPORT = "/reports/templates/migration-issues.ftl";
-
-    public CreatePotentialIssuesReportRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(CreatePotentialIssuesReportRuleProvider.class)
-                    .setPhase(ReportGenerationPhase.class));
-    }
 
     // @formatter:off
     @Override

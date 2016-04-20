@@ -3,7 +3,7 @@ package org.jboss.windup.rules.apps.java.scan.provider;
 import javax.inject.Inject;
 
 import org.jboss.windup.config.AbstractRuleProvider;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.phase.ArchiveMetadataExtractionPhase;
 import org.jboss.windup.config.query.Query;
@@ -17,16 +17,11 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 /**
  * Iterates over discovered archives and sets their vertices' types.
  */
+@RuleMetadata(phase = ArchiveMetadataExtractionPhase.class)
 public class DiscoverArchiveTypesRuleProvider extends AbstractRuleProvider
 {
     @Inject
     private GraphTypeManager graphTypeManager;
-
-    public DiscoverArchiveTypesRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(DiscoverArchiveTypesRuleProvider.class)
-                    .setPhase(ArchiveMetadataExtractionPhase.class));
-    }
 
     // @formatter:off
     @Override

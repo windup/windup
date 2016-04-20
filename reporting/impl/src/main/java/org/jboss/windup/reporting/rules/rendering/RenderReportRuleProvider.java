@@ -19,7 +19,7 @@ import org.jboss.forge.furnace.Furnace;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.Variables;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.IterationProgress;
@@ -46,6 +46,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
+@RuleMetadata(phase = ReportRenderingPhase.class)
 public class RenderReportRuleProvider extends AbstractRuleProvider
 {
     private static final Logger LOG = Logging.get(RenderReportRuleProvider.class);
@@ -53,42 +54,36 @@ public class RenderReportRuleProvider extends AbstractRuleProvider
     @Inject
     private Furnace furnace;
 
-    public RenderReportRuleProvider()
-    {
-        super(MetadataBuilder.forProvider(RenderReportRuleProvider.class)
-                    .setPhase(ReportRenderingPhase.class));
-    }
-
     // @formatter:off
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
         return ConfigurationBuilder
-            .begin()
-            .addRule()
-            .when(Query.fromType(ReportModel.class).withProperty(ReportModel.TEMPLATE_TYPE, TemplateType.FREEMARKER.toString()))
-            .perform(new FreeMarkerThreadedRenderer(furnace))
+        .begin()
+        .addRule()
+        .when(Query.fromType(ReportModel.class).withProperty(ReportModel.TEMPLATE_TYPE, TemplateType.FREEMARKER.toString()))
+        .perform(new FreeMarkerThreadedRenderer(furnace))
 
-            .addRule()
-            .when(Query.fromType(ReportResourceFileModel.class))
-            .perform(new AbstractIterationOperation<ReportResourceFileModel>() {
-                @Override
-                public void perform(GraphRewrite event, EvaluationContext context, ReportResourceFileModel payload) {
-                    ReportService reportService = new ReportService(event.getGraphContext());
-                    Path outputDir = reportService.getReportDirectory();
+        .addRule()
+        .when(Query.fromType(ReportResourceFileModel.class))
+        .perform(new AbstractIterationOperation<ReportResourceFileModel>() {
+            @Override
+            public void perform(GraphRewrite event, EvaluationContext context, ReportResourceFileModel payload) {
+                ReportService reportService = new ReportService(event.getGraphContext());
+                Path outputDir = reportService.getReportDirectory();
 
-                    File directory = outputDir.toFile();
-                    File fullPath = new File(directory, FilenameUtils.separatorsToSystem("resources/" + payload.getPrettyPath()));
+                File directory = outputDir.toFile();
+                File fullPath = new File(directory, FilenameUtils.separatorsToSystem("resources/" + payload.getPrettyPath()));
 
-                    try {
-                        FileUtils.forceMkdir(fullPath.getParentFile());
-                        FileUtils.copyFile(payload.asFile(), fullPath);
-                        LOG.info("Copied raw file: " + payload.getFilePath() + " to: " + fullPath.getAbsolutePath());
-                    } catch (IOException e) {
-                        LOG.warning("IOException creating file: " + fullPath.getAbsolutePath() + ", due to: " + e.getMessage());
-                    }
+                try {
+                    FileUtils.forceMkdir(fullPath.getParentFile());
+                    FileUtils.copyFile(payload.asFile(), fullPath);
+                    LOG.info("Copied raw file: " + payload.getFilePath() + " to: " + fullPath.getAbsolutePath());
+                } catch (IOException e) {
+                    LOG.warning("IOException creating file: " + fullPath.getAbsolutePath() + ", due to: " + e.getMessage());
                 }
-            });
+            }
+        });
     }
     // @formatter:on
 
