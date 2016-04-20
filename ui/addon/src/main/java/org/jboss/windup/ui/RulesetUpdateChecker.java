@@ -21,15 +21,10 @@ public class RulesetUpdateChecker
     @Inject
     Furnace furnace;
 
-    //@Inject // FORGE-2408
-    //RulesetsUpdater updater;
-
     public void perform(@Observes PostStartup event)
     {
         if (!event.getAddon().getId().getName().contains("org.jboss.windup.ui:windup-ui"))
             return;
-
-
         RulesetsUpdater updater = furnace.getAddonRegistry().getServices(RulesetsUpdater.class).get();
 
         if (!event.getAddon().getRepository().isDeployed(AddonId.from("org.jboss.windup.exec:windup-exec", event.getAddon().getId().getVersion())))
