@@ -202,7 +202,7 @@
     </div>
 
     <script>
-        thisProject = new ProjectNode("${projectModel.rootFileModel.prettyPath?js_string}", "${projectID}");
+        thisProject = new ProjectNode("${projectModel.rootFileModel.fileName?js_string}", "${projectID}");
         thisProject.sourceBased = ${projectModel.sourceBased!false?c};
         var $tagLabels = $("#${projectID} .projectFile .tech .label");
         var $tagWarns = $tagLabels.find(".warning");
