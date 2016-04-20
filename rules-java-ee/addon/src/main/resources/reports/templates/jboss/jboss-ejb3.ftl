@@ -81,7 +81,7 @@
         <#list reportModel.relatedResources.sessionBeans.list.iterator() as sessionBean>
         <session>
             <ejb-name>${sessionBean.beanName}</ejb-name>
-            <session-type>${sessionBean.sessionType}</session-type>
+            <#if sessionBean.sessionType??><session-type>${sessionBean.sessionType}</session-type></#if>
 
             <#if iterableHasContent(sessionBean.environmentReferences)>
                 <#list sessionBean.environmentReferences.iterator() as environmentRef>
