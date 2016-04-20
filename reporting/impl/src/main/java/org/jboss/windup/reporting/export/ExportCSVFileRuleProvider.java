@@ -72,10 +72,8 @@ public class ExportCSVFileRuleProvider extends AbstractRuleProvider
             InlineHintService hintService = new InlineHintService(event.getGraphContext());
             String outputFolderPath = config.getOutputPath().getFilePath() + File.separator;
             ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-            ProjectService projectService = new ProjectService(event.getGraphContext());
             final Map<String, CSVWriter> projectToFile = new HashMap<>();
             final Iterable<InlineHintModel> hints = hintService.findAll();
-            final Iterable<ProjectModel> projects = projectService.findAll();
             final Iterable<ClassificationModel> classifications = classificationService.findAll();
 
             //try{} in case something bad happens, we need to close files
@@ -115,7 +113,7 @@ public class ExportCSVFileRuleProvider extends AbstractRuleProvider
                         final ProjectModel parentRootProjectModel = fileModel.getProjectModel().getRootProjectModel();
                         String links = buildLinkString(classification.getLinks());
                         String ruleId = classification.getRuleID() != null ? classification.getRuleID() : "";
-                        String classifText = classification.getClassification() != null ? classification.getClassification() : "";
+                        String classificationText = classification.getClassification() != null ? classification.getClassification() : "";
                         String description = classification.getDescription() != null ? classification.getDescription() : "";
                         String projectNameString = "";
                         String fileName = "";
@@ -127,7 +125,7 @@ public class ExportCSVFileRuleProvider extends AbstractRuleProvider
                         fileName = fileModel.getFileName();
                         filePath = fileModel.getFilePath();
                         String[] strings = new String[] {
-                                    ruleId, "classification", classifText,
+                                    ruleId, "classification", classificationText,
                                     description, links,
                                     projectNameString, fileName, filePath, "N/A",
                                     String.valueOf(

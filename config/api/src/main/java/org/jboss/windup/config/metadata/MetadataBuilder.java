@@ -48,6 +48,7 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
     private Set<TechnologyReference> targetTechnologies = new HashSet<>();
     private Set<AddonId> requiredAddons = new HashSet<>();
     private boolean haltOnException = false;
+    private boolean overrideProvider = false;
 
     private RulesetMetadata parent = new AbstractRulesetMetadata("NULL");
 
@@ -87,6 +88,8 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
         RuleMetadata metadata = Annotations.getAnnotation(implementationType, RuleMetadata.class);
         if (metadata == null)
             return builder;
+
+        builder.setOverrideProvider(metadata.overrideProvider());
 
         if (StringUtils.isNotBlank(metadata.description()))
             builder.setDescription(metadata.description());
@@ -141,6 +144,27 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
     }
 
     @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (!(o instanceof MetadataBuilder)) return false;
+        if (!super.equals(o)) return false;
+
+        MetadataBuilder that = (MetadataBuilder) o;
+
+        return overrideProvider == that.overrideProvider;
+
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result = super.hashCode();
+        result = 31 * result + (overrideProvider ? 1 : 0);
+        return result;
+    }
+
+    @Override
     public Class<? extends RuleProvider> getType()
     {
         return implementationType;
@@ -157,6 +181,22 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
         if (parent != null)
             this.parent = parent;
 
+        return this;
+    }
+
+    @Override
+    public boolean isOverrideProvider()
+    {
+        return overrideProvider;
+    }
+
+    /**
+     * Sets whether or not this provider's rules should override rules from other providers
+     * with the same ID.
+     */
+    public MetadataBuilder setOverrideProvider(boolean overrideProvider)
+    {
+        this.overrideProvider = overrideProvider;
         return this;
     }
 

@@ -1,4 +1,4 @@
-package org.jboss.windup.config.parser.xml;
+package org.jboss.windup.config.parser.metadata;
 
 import static org.joox.JOOX.$;
 
@@ -12,12 +12,19 @@ import org.jboss.windup.config.metadata.TechnologyReference;
 import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
-import org.jboss.windup.config.parser.metadata.MetadataDescriptionHandler;
+import org.jboss.windup.config.parser.xml.RuleProviderHandler;
 import org.w3c.dom.Element;
 
 @NamespaceElementHandler(elementName = "metadata", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
 public class MetadataRootHandler implements ElementHandler<RulesetMetadata>
 {
+
+    public static final String DEPENDENCIES = "dependencies";
+    public static final String SOURCE_TECHNOLOGY = "sourceTechnology";
+    public static final String TARGET_TECHNOLOGY = "targetTechnology";
+    public static final String TAG = "tag";
+    public static final String EXECUTE_AFTER = "executeAfter";
+    public static final String EXECUTE_BEFORE = "executeBefore";
 
     @Override
     @SuppressWarnings("unchecked")
@@ -31,34 +38,38 @@ public class MetadataRootHandler implements ElementHandler<RulesetMetadata>
 
             switch ($(child).tag())
             {
+            case MetadataProviderOverrideHandler.OVERRIDE_PROVIDER:
+                metadataBuilder.setOverrideProvider((Boolean)result);
+                break;
+
             case MetadataDescriptionHandler.DESCRIPTION:
                 metadataBuilder.setDescription((String) result);
                 break;
 
-            case "dependencies":
+            case DEPENDENCIES:
                 for (AddonId id : (List<AddonId>) result)
                 {
                     metadataBuilder.addRequiredAddon(id);
                 }
                 break;
 
-            case "sourceTechnology":
+            case SOURCE_TECHNOLOGY:
                 metadataBuilder.addSourceTechnology((TechnologyReference) result);
                 break;
 
-            case "targetTechnology":
+            case TARGET_TECHNOLOGY:
                 metadataBuilder.addTargetTechnology((TechnologyReference) result);
                 break;
 
-            case "tag":
+            case TAG:
                 metadataBuilder.addTag((String) result);
                 break;
 
-            case "executeAfter":
+            case EXECUTE_AFTER:
                 metadataBuilder.addExecuteAfterId((String) result);
                 break;
 
-            case "executeBefore":
+            case EXECUTE_BEFORE:
                 metadataBuilder.addExecuteBeforeId((String) result);
                 break;
             }

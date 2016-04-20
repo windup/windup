@@ -190,7 +190,7 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
             throw new IllegalArgumentException("Rewrite must be an instanceof GraphRewrite");
 
         /*
-         * Highly optimized loop - for performance reasons. Think before you change this!
+         * Highly optimized loop - for performance reasons. Think before you change this! (lincolnthree)
          */
         GraphRewrite event = (GraphRewrite) rewrite;
 

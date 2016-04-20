@@ -33,6 +33,7 @@ public class MetaDataHandlerTest
 {
 
     private static final String XML_FILE = "src/test/resources/testxml/metadata.windup.xml";
+    private static final String XML_WITH_OVERRIDE_FILE = "src/test/resources/testxml/metadata.override.windup.xml";
 
     @Deployment
     @AddonDependencies({
@@ -87,6 +88,7 @@ public class MetaDataHandlerTest
         Assert.assertTrue(targetTechnologies.contains(new TechnologyReference("ejb", "(2,3]")));
         Assert.assertTrue(targetTechnologies.contains(new TechnologyReference("ejb", "(2,3]")));
         Assert.assertTrue(targetTechnologies.contains(new TechnologyReference("jsp")));
+        Assert.assertFalse(metadata.isOverrideProvider());
 
         try (GraphContext graphContext = graphContextFactory.create())
         {
@@ -96,4 +98,22 @@ public class MetaDataHandlerTest
         }
     }
 
+    @Test
+    public void testXmlRuleOverrideProviderMetadata() throws Exception
+    {
+        ParserContext parser = new ParserContext(furnace);
+        File fXmlFile = new File(XML_WITH_OVERRIDE_FILE);
+        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+        dbFactory.setNamespaceAware(true);
+        DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+        Document firstXmlFile = dBuilder.parse(fXmlFile);
+        parser.processElement(firstXmlFile.getDocumentElement());
+
+        // verify xmlfile
+        Assert.assertEquals(1, parser.getRuleProviders().size());
+        AbstractRuleProvider abstractRuleProvider = parser.getRuleProviders().get(0);
+        RuleProviderMetadata metadata = abstractRuleProvider.getMetadata();
+
+        Assert.assertTrue(metadata.isOverrideProvider());
+    }
 }

@@ -84,4 +84,12 @@ public @interface RuleMetadata
      * The rule itself is responsible for handling exceptions and storing them into the graph.
      */
     boolean haltOnException() default false;
+
+    /**
+     * Indicates whether or not the rules in this provider should override other rules.
+     *
+     * If this ruleprovider has the same ID as another rule provider, then any rules in this provider
+     * will override rules from that base rule provider that have the same id.
+     */
+    boolean overrideProvider() default false;
 }

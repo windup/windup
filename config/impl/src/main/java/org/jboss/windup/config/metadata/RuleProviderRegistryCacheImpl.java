@@ -13,6 +13,7 @@ import org.jboss.windup.util.PathUtil;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -48,7 +49,11 @@ public class RuleProviderRegistryCacheImpl implements RuleProviderRegistryCache
     public Set<String> getAvailableTags()
     {
         Set<String> tags = new HashSet<>();
-        for (RuleProvider provider : getRuleProviderRegistry().getProviders())
+        RuleProviderRegistry registry = getRuleProviderRegistry();
+        if (registry == null)
+            return Collections.emptySet();
+
+        for (RuleProvider provider : registry.getProviders())
         {
             tags.addAll(provider.getMetadata().getTags());
         }
@@ -59,7 +64,11 @@ public class RuleProviderRegistryCacheImpl implements RuleProviderRegistryCache
     public Set<String> getAvailableSourceTechnologies()
     {
         Set<String> sourceOptions = new HashSet<>();
-        for (RuleProvider provider : getRuleProviderRegistry().getProviders())
+        RuleProviderRegistry registry = getRuleProviderRegistry();
+        if (registry == null)
+            return Collections.emptySet();
+
+        for (RuleProvider provider : registry.getProviders())
         {
             for (TechnologyReference technologyReference : provider.getMetadata().getSourceTechnologies())
             {
@@ -73,7 +82,11 @@ public class RuleProviderRegistryCacheImpl implements RuleProviderRegistryCache
     public Set<String> getAvailableTargetTechnologies()
     {
         Set<String> targetOptions = new HashSet<>();
-        for (RuleProvider provider : getRuleProviderRegistry().getProviders())
+        RuleProviderRegistry registry = getRuleProviderRegistry();
+        if (registry == null)
+            return Collections.emptySet();
+
+        for (RuleProvider provider : registry.getProviders())
         {
             for (TechnologyReference technologyReference : provider.getMetadata().getTargetTechnologies())
             {
@@ -103,6 +116,7 @@ public class RuleProviderRegistryCacheImpl implements RuleProviderRegistryCache
             }
             catch (Exception e)
             {
+                System.err.println("Failed to load rule information due to: " + e.getMessage());
                 LOG.log(Level.WARNING, "Failed to load rule information due to: " + e.getMessage(), e);
             }
             return cachedRegistry;

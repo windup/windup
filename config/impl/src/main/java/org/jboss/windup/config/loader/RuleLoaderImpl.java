@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -59,9 +60,9 @@ public class RuleLoaderImpl implements RuleLoader
     }
 
     /**
-     * Prints all of the {@link RulePhase} objects in the order that they should execute. This is primarily for debug
-     * purposes and should be called before the entire {@link RuleProvider} list is sorted, as this will allow us to
-     * print the {@link RulePhase} list without the risk of user-introduced cycles making the sort impossible.
+     * Prints all of the {@link RulePhase} objects in the order that they should execute. This is primarily for debug purposes and should be called
+     * before the entire {@link RuleProvider} list is sorted, as this will allow us to print the {@link RulePhase} list without the risk of
+     * user-introduced cycles making the sort impossible.
      */
     private void printRulePhases(List<RuleProvider> allProviders)
     {
@@ -131,12 +132,24 @@ public class RuleLoaderImpl implements RuleLoader
 
     private RuleProviderRegistry build(GraphContext context, Predicate<RuleProvider> ruleProviderFilter)
     {
-
-        ConfigurationBuilder result = ConfigurationBuilder.begin();
+        List<Rule> allRules = new ArrayList<>(2000); // estimate of how many rules we will likely see
 
         List<RuleProvider> providers = getProviders(context);
         RuleProviderRegistry registry = new RuleProviderRegistry();
         registry.setProviders(providers);
+
+        Map<RuleKey, Rule> overrideRules = new HashMap<>();
+        for (RuleProvider provider : providers)
+        {
+            if (!provider.getMetadata().isOverrideProvider())
+                continue;
+
+            Configuration cfg = provider.getConfiguration(context);
+            List<Rule> rules = cfg.getRules();
+            for (Rule rule : rules)
+                overrideRules.put(new RuleKey(provider.getMetadata().getID(), rule.getId()), rule);
+        }
+
         for (RuleProvider provider : providers)
         {
             if (ruleProviderFilter != null)
@@ -147,8 +160,26 @@ public class RuleLoaderImpl implements RuleLoader
                     continue;
             }
 
+            // these are not used directly... they only override others
+            if (provider.getMetadata().isOverrideProvider())
+                continue;
+
             Configuration cfg = provider.getConfiguration(context);
-            List<Rule> rules = cfg.getRules();
+
+            // copy it to allow for the option of modification
+            List<Rule> rules = new ArrayList<>(cfg.getRules());
+            ListIterator<Rule> ruleIterator = rules.listIterator();
+            while (ruleIterator.hasNext())
+            {
+                Rule rule = ruleIterator.next();
+                Rule overrideRule = overrideRules.get(new RuleKey(provider.getMetadata().getID(), rule.getId()));
+                if (overrideRule != null)
+                {
+                    LOG.info("Replacing rule " + rule.getId() + " with a user override!");
+                    ruleIterator.set(overrideRule);
+                }
+            }
+
             registry.setRules(provider, rules);
 
             int i = 0;
@@ -163,7 +194,7 @@ public class RuleLoaderImpl implements RuleLoader
                     ((RuleBuilder) rule).withId(generatedRuleID(provider, rule, i));
                 }
 
-                result.addRule(rule);
+                allRules.add(rule);
 
                 if (rule instanceof ParameterizedRule)
                 {
@@ -194,6 +225,12 @@ public class RuleLoaderImpl implements RuleLoader
                     new OperationVisit(rule).accept(operationVisitor);
                 }
             }
+        }
+
+        ConfigurationBuilder result = ConfigurationBuilder.begin();
+        for (Rule rule : allRules)
+        {
+            result.addRule(rule);
         }
 
         registry.setConfiguration(result);
