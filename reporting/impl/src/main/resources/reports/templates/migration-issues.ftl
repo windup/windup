@@ -146,7 +146,7 @@
                                     <th>Level of Effort</th>
                                     <th class="sortable-right text-right">Total Story Points</th>
                                 </tr>
-                                <tr style="background: rgb(212, 230, 233);">
+                                <tr class="tablesorter-ignoreRow" style="background: rgb(212, 230, 233);">
                                     <td>
                                         <b>${severity}</b>
                                     </td>
