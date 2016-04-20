@@ -260,11 +260,12 @@ public class JavaHintsClassificationsTest
                     .and(addTypeRefToList))
             )
             .where("suffix").matches("\\d")
+            
             .addRule()
             .when(JavaClass.references("org.jboss.forge.furnace.{name}").inType("{file}{suffix}").at(TypeReferenceLocation.IMPORT))
             .perform(
-                Classification.as("Classification {param} does not exist")
-                .and(Hint.withText("Hint {param} does not exist").withEffort(8))
+                Classification.as("Classification {param} does not exist"),
+                Hint.withText("Hint {param} does not exist").withEffort(8)
             );
 
         }
