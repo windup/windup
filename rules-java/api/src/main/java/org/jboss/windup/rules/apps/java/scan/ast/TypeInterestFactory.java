@@ -83,6 +83,7 @@ public final class TypeInterestFactory
 
     /**
      * Register a regex pattern to filter interest in certain Java types.
+     * @param  sourceKey Identifier of who gave the pattern to us (so that we can update it)
      */
     public static void registerInterest(String sourceKey, String regex, String rewritePattern, List<TypeReferenceLocation> locations)
     {
@@ -91,6 +92,8 @@ public final class TypeInterestFactory
 
     /**
      * Register a regex pattern to filter interest in certain Java types.
+     * @param  sourceKey Identifier of who gave the pattern to us (so that we can update it).
+     *      This can be any arbitrary string.
      */
     public static void registerInterest(String sourceKey, String regex, String rewritePattern, TypeReferenceLocation... locations)
     {
