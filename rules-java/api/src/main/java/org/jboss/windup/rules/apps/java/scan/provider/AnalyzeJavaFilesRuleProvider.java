@@ -317,13 +317,6 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
 
         private List<ClassReference> filterClassReferences(String filename, List<ClassReference> references, boolean classNotFoundAnalysisEnabled)
         {
-            if (references.size() > 0 && filename.contains("CacheServiceProvider.java"))
-            {
-                for (ClassReference model : references)
-                {
-                    System.out.println("1Reference: " + model.getLineNumber() + ": " + model.getLocation() + ", " + model.getQualifiedName());
-                }
-            }
             List<ClassReference> results = new ArrayList<>(references.size());
             for (ClassReference reference : references)
             {
