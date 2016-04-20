@@ -132,9 +132,9 @@
 
                     <#items as threadPool>
                         <tr>
-                            <td>${threadPool.poolName}</td>
-                            <td>${threadPool.maxPoolSize}</td>
-                            <td>${threadPool.minPoolSize}</td>
+                            <td><#if threadPool.poolName??>${threadPool.poolName}</#if></td>
+                            <td><#if threadPool.maxPoolSize??>${threadPool.maxPoolSize}</#if></td>
+                            <td><#if threadPool.minPoolSize??>${threadPool.minPoolSize}</#if></td>
                             <td><@render_linkable linkable=threadPool layout='horizontal'/></td>
                         </tr>
                     </#items>
