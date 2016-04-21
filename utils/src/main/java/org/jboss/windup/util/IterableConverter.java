@@ -8,33 +8,36 @@ import java.util.Iterator;
  *
  * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
  */
-public abstract class IterableConverter<TFrom, TTo> implements Iterable<TTo>, Converter<TFrom, TTo>
+public abstract class IterableConverter<TFrom, TTo> implements Iterable<TTo>
 {
     final Iterable<TFrom> sourceIterable;
 
+    /**
+     * Creates a new {@link IterableConverter} from the source {@link Iterable}.
+     */
     public IterableConverter(Iterable<TFrom> sourceIterable)
     {
         this.sourceIterable = sourceIterable;
     }
 
+    /**
+     * Implements the conversion from the source type to the destination type.
+     */
     public abstract TTo from(TFrom m);
-
 
     @Override
     public Iterator<TTo> iterator()
     {
-        return new IteratorBacked<>(sourceIterable.iterator(), this);
+        return new IteratorBacked(sourceIterable.iterator());
     }
 
-    class IteratorBacked<TFromX extends TFrom, TToX extends TTo> implements Iterator<TToX> {
+    private class IteratorBacked implements Iterator<TTo>
+    {
+        private final Iterator<TFrom> backIterator;
 
-        private final Iterator<TFromX> backIterator;
-        private final Converter<TFromX, TToX> converter;
-
-        public IteratorBacked(Iterator<TFromX> backIterator, Converter<TFromX, TToX> converter)
+        public IteratorBacked(Iterator<TFrom> backIterator)
         {
             this.backIterator = backIterator;
-            this.converter = converter;
         }
 
         @Override
@@ -43,16 +46,10 @@ public abstract class IterableConverter<TFrom, TTo> implements Iterable<TTo>, Co
             return backIterator.hasNext();
         }
 
-
         @Override
-        public TToX next()
+        public TTo next()
         {
-            return converter.from(backIterator.next());
+            return from(backIterator.next());
         }
-
     }
-
 }
-
-
-

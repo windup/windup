@@ -90,7 +90,7 @@ public class RenderLinkDirective implements WindupFreeMarkerTemplateDirective
         }
         else if (model instanceof JavaClassModel)
         {
-            processJavaClassModel(writer, layoutType, cssClass, (JavaClassModel) model, defaultText);
+            processJavaClassModel(writer, cssClass, (JavaClassModel) model, defaultText);
         }
         else if (model instanceof LinkableModel)
         {
@@ -145,12 +145,11 @@ public class RenderLinkDirective implements WindupFreeMarkerTemplateDirective
 
     private void processLinkableModel(Writer writer, LayoutType layoutType, String cssClass, LinkableModel obj, String defaultText) throws IOException
     {
-        //List<Link> links = Link.fromLinkModels(obj.getLinks());
-        Iterable<Link> links = new IterableConverter<LinkModel, Link>(obj.getLinks()){
-            public Link from(LinkModel m){ return new Link(m.getLink(), m.getDescription()); }
+        Iterable<Link> links = new IterableConverter<LinkModel, Link>(obj.getLinks())
+        {
+            public Link from(LinkModel m) { return new Link(m.getLink(), m.getDescription()); }
         };
-        renderLinks(writer, layoutType, cssClass, links);
-
+        renderLinks(writer, layoutType, links);
     }
 
     private void processFileModel(Writer writer, String cssClass, FileModel fileModel, String defaultText) throws IOException
@@ -164,12 +163,13 @@ public class RenderLinkDirective implements WindupFreeMarkerTemplateDirective
             renderLink(writer, cssClass, result.getReportFilename(), linkText);
     }
 
-    private void processJavaClassModel(Writer writer, LayoutType layoutType, String cssClass, JavaClassModel clz, String defaultText)
+    private void processJavaClassModel(Writer writer, String cssClass, JavaClassModel clz, String defaultText)
                 throws IOException
     {
         Iterator<JavaSourceFileModel> results = javaClassService.getJavaSource(clz.getQualifiedName()).iterator();
 
-        if (!results.hasNext()){
+        if (!results.hasNext())
+        {
             writer.write(clz.getQualifiedName());
             return;
         }
@@ -188,7 +188,7 @@ public class RenderLinkDirective implements WindupFreeMarkerTemplateDirective
         }
     }
 
-    private void renderLinks(Writer writer, LayoutType layoutType, String cssClass, Iterable<Link> linkIterable) throws IOException
+    private void renderLinks(Writer writer, LayoutType layoutType, Iterable<Link> linkIterable) throws IOException
     {
         Iterator<Link> links = linkIterable.iterator();
         if (null == layoutType)
