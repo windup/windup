@@ -7,19 +7,17 @@ package org.jboss.windup.reporting.model;
 public enum Severity
 {
     /**
-     * It must be migrated
-     *//**
-     * It must be migrated
+     * It must be migrated.
      */
     MANDATORY("Mandatory"),
     /**
-     * It is a problem that does not need to be strictly migrated
+     * It is a problem that does not need to be strictly migrated.
      */
     OPTIONAL("Optional"),
     /**
-     * Possible issues - if the rule author can't tell in advance if the occurence will cause issues or not.
+     * Possible issues - if the rule author can't tell in advance if the occurrence will cause issues or not.
      */
-    POTENTIAL_ISSUES("Potential Issues");
+    POTENTIAL("Potential Issues");
 
     private String description;
 

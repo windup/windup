@@ -303,20 +303,10 @@ function createIncidentsByCategoryTable() {
             totalEffort += (problemSummary.numberFound * problemSummary.effortPerIncident);
         });
 
-        row += "<tr>";
-
-        row += "<td>";
-        row += severity;
-        row += "</td>";
-
-        row += "<td class='numeric-column'>";
-        row += incidentCount;
-        row += "</td>";
-
-        row += "<td class='numeric-column'>";
-        row += totalEffort;
-        row += "</td>";
-
+        row += "<tr>"
+        row += "<td>" + severity + "</td>";
+        row += "<td class='numeric-column'>" + incidentCount + "</td>";
+        row += "<td class='numeric-column'>" + totalEffort + "</td>";
         row += "</tr>";
 
         rows += row;
