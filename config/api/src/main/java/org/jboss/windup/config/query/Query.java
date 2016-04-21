@@ -144,23 +144,19 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
             public Boolean execute()
             {
                 Query.this.setInitialFramesSelector(createInitialFramesSelector(Query.this));
-                Iterable<? extends WindupVertexFrame> resultIterable = framesSelector.getFrames(event, context);
-
-                Iterable<? extends WindupVertexFrame> result = resultIterable;
+                Iterable<? extends WindupVertexFrame> result = framesSelector.getFrames(event, context);
                 if (resultFilter != null)
                 {
                     com.google.common.base.Predicate<WindupVertexFrame> guavaPred= new com.google.common.base.Predicate<WindupVertexFrame>() {
-
                         @Override public boolean apply(WindupVertexFrame input)
                         {
                             return resultFilter.accept(input);
                         }
                     };
-                    result= Iterables.filter(result, guavaPred);
+                    result = Iterables.filter(result, guavaPred);
                 }
 
                 setResults(event, outputVar, result);
-
                 return result.iterator().hasNext();
             }
         });
