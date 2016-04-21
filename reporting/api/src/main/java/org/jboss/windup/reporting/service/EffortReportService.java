@@ -23,7 +23,7 @@ public class EffortReportService extends GraphService
         TRIVIAL(1, "Trivial", "Trivial change or 1-1 library swap"),
         COMPLEX(3, "Complex", "Complex change with documented solution"),
         REDESIGN(5, "Redesign", "Requires re-design or library change"),
-        ARCHITECTURAL(7, "Requires Architectural Change", "Requires architectural decision or change"),
+        ARCHITECTURAL(7, "Architectural", "Requires architectural decision or change"),
         UNKNOWN(13, "Unknown", "Unknown effort");
 
         private final int points;
