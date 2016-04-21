@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.logging.Logger;
 import javax.inject.Inject;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 import org.jboss.forge.addon.dependencies.Coordinate;
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.DependencyException;
@@ -123,11 +124,14 @@ public class RulesetsUpdater
     {
         List<Coordinate> availableVersions = depsResolver.resolveVersions(DependencyQueryBuilder.create(coord));
 
-        // Find the latest non-SNAPSHOT version.
+        // Find the latest non-SNAPSHOT and non-CR version.
         for(int i = availableVersions.size()-1; i >= 0; i--)
         {
-            if(!availableVersions.get(i).isSnapshot())
-                return availableVersions.get(i);
+            Coordinate availableCoord = availableVersions.get(i);
+            String versionStr = availableCoord.getVersion();
+
+            if(versionStr != null && !availableCoord.isSnapshot() && !versionStr.matches(".*CR[0-9]$"))
+                return availableCoord;
         }
         return null;
     }
