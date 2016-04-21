@@ -29,6 +29,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.MappingJsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.reporting.service.EffortReportService.EffortLevel;
 
@@ -79,11 +80,19 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider
                     MappingJsonFactory jsonFactory = new MappingJsonFactory();
                     jsonFactory.disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
                     ObjectMapper objectMapper = new ObjectMapper(jsonFactory);
-                    Map<Severity, List<ProblemSummary>> summariesBySeverity = ProblemSummaryService.getProblemSummaries(event.getGraphContext(),
-                                inputApplication, Collections.<String> emptySet(), Collections.<String> emptySet());
+                    Map<Severity, List<ProblemSummary>> summariesBySeverity =
+                        ProblemSummaryService.getProblemSummaries(
+                            event.getGraphContext(), inputApplication, Collections.EMPTY_SET, Collections.EMPTY_SET);
 
                     issueSummaryWriter.write("WINDUP_ISSUE_SUMMARIES['" + inputApplication.asVertex().getId() + "'] = ");
-                    objectMapper.writeValue(issueSummaryWriter, summariesBySeverity);
+                    boolean prettyPrintJavaScript = false;
+                    if (prettyPrintJavaScript){
+                        ObjectWriter prettyWriter = objectMapper.writerWithDefaultPrettyPrinter();
+                        prettyWriter.writeValue(issueSummaryWriter, summariesBySeverity);
+                    }
+                    else {
+                        objectMapper.writeValue(issueSummaryWriter, summariesBySeverity);
+                    }
                     issueSummaryWriter.write(";" + NEWLINE);
                 }
 
@@ -109,9 +118,9 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider
                 issueSummaryWriter.write("];" + NEWLINE);
 
                 issueSummaryWriter.write("var severityOrder = [");
-                issueSummaryWriter.write("\"" + Severity.MANDATORY + "\", ");
-                issueSummaryWriter.write("\"" + Severity.OPTIONAL + "\", ");
-                issueSummaryWriter.write("\"" + Severity.POTENTIAL_ISSUES.toString() + "\"");
+                issueSummaryWriter.write("'" + Severity.MANDATORY + "', ");
+                issueSummaryWriter.write("'" + Severity.OPTIONAL + "', ");
+                issueSummaryWriter.write("'" + Severity.POTENTIAL + "'");
                 issueSummaryWriter.write("];" + NEWLINE);
             }
         }
