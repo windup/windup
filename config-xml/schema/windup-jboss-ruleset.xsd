@@ -249,7 +249,7 @@
         <xs:restriction base="xs:string">
             <xs:enumeration value="optional"/>
             <xs:enumeration value="mandatory"/>
-            <xs:enumeration value="potential_issues"/>
+            <xs:enumeration value="potential"/>
         </xs:restriction>
     </xs:simpleType>
 
