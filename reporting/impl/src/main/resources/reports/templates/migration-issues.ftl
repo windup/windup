@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
 <#macro migrationIssuesRenderer problemSummary>
-    <tr class="problemSummary effort${getEffortDescriptionForPoints(problemSummary.effortPerIncident, 'id')}">
+    <tr class="problemSummary effort${getEffortDescriptionForPoints(problemSummary.effortPerIncident, 'id')} tablesorter-hasChildRow">
         <td>
             <a href="#" class="toggle">
                 <#assign issueName = problemSummary.issueName!"No name">
@@ -13,10 +13,16 @@
         <td class="level">${getEffortDescriptionForPoints(problemSummary.effortPerIncident, 'verbose')}</td>
         <td class="text-right">${problemSummary.numberFound * problemSummary.effortPerIncident}</td>
     </tr>
-    <tr class="tablesorter-childRow bg-info" data-summary-id="${problemSummary.id?c}">
-        <td><div class="indent"><strong>File</strong></div></td>
-        <td class="text-right"><strong>Incidents Found</strong></td>
-        <td colspan="3"><strong>Hint</strong></td>
+    <tr class="tablesorter-childRow bg-info" data-summary-id="${problemSummary.id?c}" role="row">
+        <td colspan="5">
+            <table class="table table-condensed">
+                <tr>
+                    <td><div class="indent"><strong>File</strong></div></td>
+                    <td class="text-right"><strong>Incidents Found</strong></td>
+                    <td colspan="3"><strong>Hint</strong></td>
+                </tr>
+            </table>
+        </td>
     </tr>
 
 </#macro>
@@ -301,7 +307,7 @@
         <script id="detail-row-template" type="text/x-handlebars-template">
             {{#each problemSummaries}}
                 {{#each files}}
-                    <tr class="fileSummary tablesorter-childRow fileSummary_id_{{../problemSummaryID}}">
+                    <tr class="fileSummary tablesorter-childRow fileSummary_id_{{../problemSummaryID}}" role="row">
                         <td>
                             <div class="indent">
                                 {{{link}}}
@@ -370,6 +376,7 @@
 
                 function toggleRow () {
                     $(tr).find("td").toggle();
+                    $(tr).find("td table tbody tr:gt(0) td").toggle();
                 }
 
                 $(".fileSummary_id_" + problemSummaryID).remove();
@@ -382,7 +389,9 @@
                 var template = Handlebars.compile(source);
                 var html = template({problemSummaries: issueDataArray});
 
-                $(html).insertAfter(tr);
+                var childTR = tr.find("td table tbody tr")[0];
+
+                $(html).insertAfter(childTR);
 
                 toggleRow();
             }
