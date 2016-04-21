@@ -310,11 +310,11 @@
                     <tr class="fileSummary tablesorter-childRow fileSummary_id_{{../problemSummaryID}}" role="row">
                         <td>
                             <div class="indent">
-                                {{{link}}}
+                                {{{l}}}
                             </div>
                         </td>
                         <td class="text-right">
-                            {{occurrences}}
+                            {{oc}}
                         </td>
 
                         {{#if @first}}
@@ -337,7 +337,7 @@
                                         <div class="panel-body">
                                             <ul>
                                                 {{#each ../resourceLinks}}
-                                                    <li><a href="{{href}}">{{title}}</a></li>
+                                                    <li><a href="{{h}}">{{t}}</a></li>
                                                 {{/each}}
                                             </ul>
                                         </div>
@@ -404,6 +404,7 @@
             <#list problemsBySeverity?keys as severity>
                 <#list problemsBySeverity[severity] as problemSummary>
                     <@write_to_disk filename="problem_summary_${problemSummary.id?c}.js">
+                        <#compress>
                         MIGRATION_ISSUES_DETAILS[${problemSummary.id?c}] = [
                         <#list problemSummary.descriptions as originalDescription>
                             <#assign description = originalDescription!"-- No detailed text --">
@@ -412,18 +413,17 @@
                             {description: "${markdownToHtml(description)    ?js_string}", ruleID: "${ruleID?js_string}", issueName: "${issueName?js_string}",
                             problemSummaryID: "${problemSummary.id?c}", files: [
                             <#list problemSummary.getFilesForDescription(originalDescription) as fileSummary>
-                                <#assign renderedLink><@render_link model=fileSummary.file class="migration-issues-detailed-item"/></#assign>
-                                {link: "${renderedLink?js_string}", occurrences: "${fileSummary.occurrences?js_string}"},
+                                <#assign renderedLink><@render_link model=fileSummary.file/></#assign>
+                                {l:"${renderedLink?j_string}", oc:"${fileSummary.occurrences?j_string}"},
                             </#list>
                             ], resourceLinks: [
-                                <#list problemSummary.links!>
-                                    <#items as link>
-                                        {href: "${link.link?js_string}", title: "${link.title?js_string}"},
-                                    </#items>
+                                <#list problemSummary.links! as link>
+                                {h:"${link.link?j_string}", t:"${link.title?j_string}"},
                                 </#list>
                             ]},
                         </#list>
                         ];
+                        </#compress>
                     </@write_to_disk>
                 </#list>
             </#list>
