@@ -18,6 +18,7 @@ import org.jboss.windup.rules.apps.java.condition.JavaClass;
 import org.jboss.windup.rules.apps.java.condition.JavaClassBuilder;
 import org.jboss.windup.rules.apps.java.condition.JavaClassBuilderAt;
 import org.jboss.windup.rules.apps.java.condition.annotation.AnnotationCondition;
+import org.jboss.windup.rules.apps.java.condition.annotation.AnnotationTypeCondition;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Condition;
 import org.w3c.dom.Element;
@@ -61,22 +62,36 @@ public class JavaClassHandler implements ElementHandler<JavaClassBuilderAt>
         List<Element> children = $(element).children().get();
 
         Map<String, AnnotationCondition> conditionMap = new HashMap<>();
+        List<AnnotationTypeCondition> additionalAnnotationConditions = new ArrayList<>();
         for (Element child : children)
         {
-            switch (child.getNodeName()) {
-                case "location":
-                    TypeReferenceLocation location = handlerManager.processElement(child);
-                    locations.add(location);
-                    break;
-                case AnnotationTypeConditionHandler.ANNOTATION_TYPE:
-                case AnnotationListConditionHandler.ANNOTATION_LIST_CONDITION:
-                case AnnotationLiteralConditionHandler.ANNOTATION_LITERAL:
-                    String name = child.getAttribute(AnnotationConditionHandler.NAME);
-                    AnnotationCondition annotationCondition = handlerManager.processElement(child);
+            switch (child.getNodeName())
+            {
+            case "location":
+                TypeReferenceLocation location = handlerManager.processElement(child);
+                locations.add(location);
+                break;
+            case AnnotationTypeConditionHandler.ANNOTATION_TYPE:
+            case AnnotationListConditionHandler.ANNOTATION_LIST_CONDITION:
+            case AnnotationLiteralConditionHandler.ANNOTATION_LITERAL:
+                String name = child.getAttribute(AnnotationConditionHandler.NAME);
+                AnnotationCondition annotationCondition = handlerManager.processElement(child);
+                if (StringUtils.isBlank(name))
+                {
+                    if (!(annotationCondition instanceof AnnotationTypeCondition))
+                        throw new WindupException("Additional Annotation Condition must be an " +
+                                AnnotationTypeConditionHandler.ANNOTATION_TYPE + " condition. Could it be that the '" +
+                                AnnotationConditionHandler.NAME + "' property is missing?");
+
+                    additionalAnnotationConditions.add((AnnotationTypeCondition)annotationCondition);
+                }
+                else
+                {
                     if (conditionMap.containsKey(name))
                         throw new WindupException("Duplicate condition detected on annotation element: " + name);
                     conditionMap.put(name, annotationCondition);
-                    break;
+                }
+                break;
             }
         }
         JavaClassBuilder javaClassReferences;
@@ -105,6 +120,11 @@ public class JavaClassHandler implements ElementHandler<JavaClassBuilderAt>
         for (Map.Entry<String, AnnotationCondition> entry : conditionMap.entrySet())
         {
             javaClass.annotationMatches(entry.getKey(), entry.getValue());
+        }
+
+        for (AnnotationTypeCondition condition : additionalAnnotationConditions)
+        {
+            javaClass.annotationMatches(condition);
         }
 
         if (as != null)

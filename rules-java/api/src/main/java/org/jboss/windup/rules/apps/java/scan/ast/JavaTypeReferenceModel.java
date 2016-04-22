@@ -6,6 +6,7 @@ import org.jboss.windup.graph.IndexType;
 import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.rules.apps.java.model.AbstractJavaSourceModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
+import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationTypeReferenceModel;
 import org.jboss.windup.rules.files.model.FileLocationModel;
 
 import com.tinkerpop.blueprints.Direction;
@@ -27,6 +28,12 @@ public interface JavaTypeReferenceModel extends FileLocationModel
     String REFERENCE_TYPE = "referenceType";
     String RESOLVED_SOURCE_SNIPPIT = "resolvedSourceSnippit";
     String RESOLUTION_STATUS = "resolutionStatus";
+
+    /**
+     * Contains the annotations linked to this item.
+     */
+    @Adjacency(label = JavaAnnotationTypeReferenceModel.ORIGINAL_ANNOTATED_TYPE, direction = Direction.IN)
+    Iterable<JavaAnnotationTypeReferenceModel> getAnnotations();
 
     /**
      * Overrides the default behavior to get the {@link JavaSourceFileModel} directly.

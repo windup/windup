@@ -21,7 +21,7 @@ import com.google.common.collect.Iterables;
  * </p>
  *
  * <pre>
- * @Foo(value = [ 1, 2, 3, 4 ])
+ * @Foo(value = { 1, 2, 3, 4 })
  * </pre>
  *
  * <p>
