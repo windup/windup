@@ -5,6 +5,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -336,7 +337,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
         {
             TypeReferenceService typeReferenceService = new TypeReferenceService(context);
 
-            Map<ClassReference, JavaTypeReferenceModel> added = new HashMap<>(references.size());
+            Map<ClassReference, JavaTypeReferenceModel> added = new IdentityHashMap<>(references.size());
 
             for (ClassReference reference : references)
             {
