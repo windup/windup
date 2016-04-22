@@ -51,5 +51,11 @@ public abstract class IterableConverter<TFrom, TTo> implements Iterable<TTo>
         {
             return from(backIterator.next());
         }
+
+        @Override
+        public void remove()
+        {
+            throw new UnsupportedOperationException("remove");
+        }
     }
 }
