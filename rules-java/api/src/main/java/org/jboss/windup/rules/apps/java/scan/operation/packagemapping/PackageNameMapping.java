@@ -14,6 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.GraphRule;
 import org.jboss.windup.config.PreRulesetEvaluation;
+import org.jboss.windup.rules.apps.java.model.PackageModel;
 import org.jboss.windup.rules.apps.java.model.WindupJavaConfigurationModel;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.jboss.windup.util.PathUtil;
@@ -132,7 +133,7 @@ public class PackageNameMapping extends GraphRule implements PackageNameMappingW
             }
 
             // If the user specified package names and this is in those package names, then scan it anyway
-            if (customerPackagesSpecified && javaConfigurationService.shouldScanFile(classname))
+            if (customerPackagesSpecified && javaConfigurationService.shouldScanPackage(classname))
             {
                 return false;
             }
