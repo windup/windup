@@ -357,20 +357,26 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                     Map<String, AnnotationValue> annotationValues = annotationClassReference.getAnnotationValues();
                     JavaAnnotationTypeReferenceModel annotationTypeReferenceModel = addAnnotationValues(context, javaSourceModel, typeReference, annotationValues);
 
-                    // Link the annotaiton to the thing that it is annotating (method, type, etc).
+                    // Link the annotation to the thing that it is annotating (method, type, etc).
                     ClassReference originalReference = annotationClassReference.getOriginalReference();
-                    JavaTypeReferenceModel originalReferenceModel = added.get(originalReference);
-                    if (originalReferenceModel == null)
+                    if (originalReference == null)
                     {
-                        originalReferenceModel = typeReferenceService.createTypeReference(javaSourceModel,
-                                originalReference.getLocation(),
-                                originalReference.getResolutionStatus(),
-                                originalReference.getLineNumber(), originalReference.getColumn(), originalReference.getLength(),
-                                originalReference.getQualifiedName(),
-                                originalReference.getLine());
-                        added.put(originalReference, originalReferenceModel);
+                        LOG.warning("No original reference set for annotation: " + annotationClassReference);
+                    } else
+                    {
+                        JavaTypeReferenceModel originalReferenceModel = added.get(originalReference);
+                        if (originalReferenceModel == null)
+                        {
+                            originalReferenceModel = typeReferenceService.createTypeReference(javaSourceModel,
+                                    originalReference.getLocation(),
+                                    originalReference.getResolutionStatus(),
+                                    originalReference.getLineNumber(), originalReference.getColumn(), originalReference.getLength(),
+                                    originalReference.getQualifiedName(),
+                                    originalReference.getLine());
+                            added.put(originalReference, originalReferenceModel);
+                        }
+                        annotationTypeReferenceModel.setAnnotatedType(originalReferenceModel);
                     }
-                    annotationTypeReferenceModel.setAnnotatedType(originalReferenceModel);
                 }
                 referenceCount.incrementAndGet();
                 commitIfNeeded(context, referenceCount.get());

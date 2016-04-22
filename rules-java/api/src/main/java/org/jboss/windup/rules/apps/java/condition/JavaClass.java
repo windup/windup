@@ -457,6 +457,13 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
             builder.append(")");
         }
 
+        for (AnnotationTypeCondition condition : this.additionalAnnotationConditions)
+        {
+            builder.append(".annotationConditions(");
+            builder.append(condition.toString());
+            builder.append(")");
+        }
+
         builder.append(".as(" + getVarname() + ")");
         return builder.toString();
     }

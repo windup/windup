@@ -477,9 +477,27 @@ public class ReferenceResolvingVisitor extends ASTVisitor
             state.getNames().add(frag.getName().getIdentifier());
             state.getNameInstance().put(frag.getName().toString(), nodeType.toString());
 
-            ClassReference reference = processTypeBinding(node.getType().resolveBinding(), ResolutionStatus.RESOLVED, TypeReferenceLocation.FIELD_DECLARATION,
+            ITypeBinding resolvedTypeBinding = node.getType().resolveBinding();
+            ClassReference reference;
+            if (resolvedTypeBinding != null)
+            {
+                reference = processTypeBinding(resolvedTypeBinding, ResolutionStatus.RESOLVED, TypeReferenceLocation.FIELD_DECLARATION,
                         compilationUnit.getLineNumber(node.getStartPosition()),
                         compilationUnit.getColumnNumber(node.getStartPosition()), node.getLength(), node.toString());
+            } else
+            {
+                ResolveClassnameResult result = resolveClassname(node.getType().toString());
+                ResolutionStatus status = result.found ? ResolutionStatus.RECOVERED : ResolutionStatus.UNRESOLVED;
+
+                PackageAndClassName packageAndClassName = PackageAndClassName.parseFromQualifiedName(result.result);
+                reference = processTypeAsString(result.result,
+                        packageAndClassName.packageName,
+                        packageAndClassName.className,
+                        status,
+                        TypeReferenceLocation.FIELD_DECLARATION,
+                        compilationUnit.getLineNumber(node.getStartPosition()),
+                        compilationUnit.getColumnNumber(node.getStartPosition()), node.getLength(), node.toString());
+            }
             processModifiers(reference, node.modifiers());
         }
         return true;

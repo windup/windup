@@ -2,9 +2,9 @@
 <test xmlns="http://windup.jboss.org/schema/jboss-ruleset">
     <javaclass as="testVariable" references="org.apache.commons.{*}" in="{*}File1">
         <location>METHOD_CALL</location>
-        <annotation-list-condition name="firstName" index="1">
+        <annotation-list name="firstName" index="1">
             <annotation-literal pattern="firstPattern"/>
-        </annotation-list-condition>
+        </annotation-list>
     </javaclass>
     <javaclass references="org.apache.commons.{*}" matchesSource="source-match">
         <location>IMPORT</location>

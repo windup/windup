@@ -16,11 +16,8 @@ import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.ast.java.data.TypeReferenceLocation;
-import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
-import org.jboss.windup.util.exception.WindupException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -68,12 +65,14 @@ public class AnnotationConditionHandlerTest
         JavaClass javaClassCondition1 = parser.<JavaClass> processElement(javaClass1);
 
         String asString1 = javaClassCondition1.toString();
+        System.out.println("Condition 1: " + asString1);
         Assert.assertTrue(asString1.contains("annotationConditions(AnnotationTypeCondition{pattern={*}, conditions={firstName=AnnotationListCondition{index=1, conditions=[AnnotationLiteralCondition{pattern=firstPattern}]}}})"));
 
         Element javaClass2 = javaClassList.get(1);
         JavaClass javaClassCondition2 = parser.<JavaClass> processElement(javaClass2);
 
         String asString2 = javaClassCondition2.toString();
+        System.out.println("Condition 2: " + asString2);
         Assert.assertTrue(asString2.contains("AnnotationTypeCondition{pattern={*}, conditions={secondName"));
         Assert.assertTrue(asString2.contains("{subLiteral=AnnotationLiteralCondition{pattern=subLiteralPattern}"));
     }
