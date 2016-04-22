@@ -475,9 +475,9 @@ public class RunWindupCommand implements Command, FurnaceDependent
         includePackages = normalizePackagePrefixes(includePackages);
         windupConfiguration.setOptionValue(ScanPackagesOption.NAME, includePackages);
 
-        List<String> excludePackages = windupConfiguration.getOptionValue(ScanPackagesOption.NAME);
+        List<String> excludePackages = windupConfiguration.getOptionValue(ExcludePackagesOption.NAME);
         excludePackages = normalizePackagePrefixes(excludePackages);
-        windupConfiguration.setOptionValue(ScanPackagesOption.NAME, excludePackages);
+        windupConfiguration.setOptionValue(ExcludePackagesOption.NAME, excludePackages);
     }
 
 
