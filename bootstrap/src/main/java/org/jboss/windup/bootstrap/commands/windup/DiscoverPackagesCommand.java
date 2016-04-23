@@ -1,8 +1,6 @@
 package org.jboss.windup.bootstrap.commands.windup;
 
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -10,13 +8,10 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 import org.jboss.windup.bootstrap.commands.AbstractListCommand;
 import org.jboss.windup.bootstrap.commands.Command;
@@ -127,7 +122,7 @@ public class DiscoverPackagesCommand extends AbstractListCommand implements Comm
      * Recursively scan the provided path and return a list of all Java packages contained therein.
      */
 
-    public Map<String, Integer> findClasses(Path path)
+    private static Map<String, Integer> findClasses(Path path)
     {
         List<String> paths = findPaths(path, true);
         Map<String, Integer> results = new HashMap<>();
@@ -142,7 +137,7 @@ public class DiscoverPackagesCommand extends AbstractListCommand implements Comm
         return results;
     }
 
-    private void addClassToMap(Map<String, Integer> map, String className)
+    private static void addClassToMap(Map<String, Integer> map, String className)
     {
         Integer count = map.get(className);
         if (count == null)
@@ -154,26 +149,15 @@ public class DiscoverPackagesCommand extends AbstractListCommand implements Comm
     /**
      * Find all paths within the given file (or folder).
      */
-    public Collection<String> findPaths(Path path)
+    private static Collection<String> findPaths(Path path)
     {
         List<String> paths = findPaths(path, false);
-        sortAlphabetically(paths);
+        Collections.sort(paths);
         return paths;
     }
 
-    private void sortAlphabetically(List<String> list)
-    {
-        Collections.sort(list, new Comparator<String>()
-        {
-            @Override
-            public int compare(String o1, String o2)
-            {
-                return o1.compareTo(o2);
-            }
-        });
-    }
 
-    private List<String> findPaths(Path path, boolean relativeOnly)
+    private static List<String> findPaths(Path path, boolean relativeOnly)
     {
         List<String> results = new ArrayList<>();
         results.add(path.normalize().toAbsolutePath().toString());
@@ -193,49 +177,9 @@ public class DiscoverPackagesCommand extends AbstractListCommand implements Comm
         }
         else if (Files.isRegularFile(path) && ZipUtil.endsWithZipExtension(path.toString()))
         {
-            results.addAll(scanZipFile(path, relativeOnly));
+            results.addAll(ZipUtil.scanZipFile(path, relativeOnly));
         }
         return results;
     }
 
-    private List<String> scanZipFile(Path zipFilePath, boolean relativeOnly)
-    {
-        try
-        {
-            try (InputStream is = new FileInputStream(zipFilePath.toFile()))
-            {
-                return scanZipFile(zipFilePath.normalize().toString(), is, relativeOnly);
-            }
-        }
-        catch (IOException e)
-        {
-            System.err.println("Could not read file: " + zipFilePath + " due to: " + e.getMessage());
-            return Collections.emptyList();
-        }
-    }
-
-    private List<String> scanZipFile(String parentPath, InputStream is, boolean relativeOnly)
-    {
-        try
-        {
-            ZipInputStream zis = new ZipInputStream(is);
-            ZipEntry entry;
-            List<String> results = new ArrayList<>();
-            while ((entry = zis.getNextEntry()) != null)
-            {
-                String fullPath = parentPath + "/" + entry.getName();
-                results.add(relativeOnly ? entry.getName() : fullPath);
-                if (!entry.isDirectory() && ZipUtil.endsWithZipExtension(entry.getName()))
-                {
-                    results.addAll(scanZipFile(fullPath, zis, relativeOnly));
-                }
-            }
-            return results;
-        }
-        catch (IOException e)
-        {
-            System.err.println("Could not read file: " + parentPath + " due to: " + e.getMessage());
-            return Collections.emptyList();
-        }
-    }
 }

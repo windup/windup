@@ -1,15 +1,21 @@
 package org.jboss.windup.util;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -129,5 +135,48 @@ public class ZipUtil
         }
 
         return supportedExtensions;
+    }
+
+
+    public static List<String> scanZipFile(Path zipFilePath, boolean relativeOnly)
+    {
+        try
+        {
+            try (final InputStream is = new FileInputStream(zipFilePath.toFile()))
+            {
+                return scanZipFile(zipFilePath.normalize().toString(), is, relativeOnly);
+            }
+        }
+        catch (IOException e)
+        {
+            System.err.println("Could not read file: " + zipFilePath + " due to: " + e.getMessage());
+            return Collections.emptyList();
+        }
+    }
+
+
+    public static List<String> scanZipFile(String parentPath, InputStream is, boolean relativeOnly)
+    {
+        try
+        {
+            ZipInputStream zis = new ZipInputStream(is);
+            ZipEntry entry;
+            List<String> results = new ArrayList<>();
+            while ((entry = zis.getNextEntry()) != null)
+            {
+                String fullPath = parentPath + "/" + entry.getName();
+                results.add(relativeOnly ? entry.getName() : fullPath);
+                if (!entry.isDirectory() && ZipUtil.endsWithZipExtension(entry.getName()))
+                {
+                    results.addAll(scanZipFile(fullPath, zis, relativeOnly));
+                }
+            }
+            return results;
+        }
+        catch (IOException e)
+        {
+            System.err.println("Could not read file: " + parentPath + " due to: " + e.getMessage());
+            return Collections.emptyList();
+        }
     }
 }
