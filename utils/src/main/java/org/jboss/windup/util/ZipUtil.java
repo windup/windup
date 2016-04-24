@@ -22,6 +22,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.jboss.forge.furnace.util.Streams;
 import org.jboss.windup.util.exception.WindupException;
 
+
+/**
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
+ *  @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
+ */
 public class ZipUtil
 {
     private static final Logger log = Logger.getLogger(ZipUtil.class.getName());
@@ -179,4 +184,55 @@ public class ZipUtil
             return Collections.emptyList();
         }
     }
+
+
+    /**
+     * Scans the JAR file and calls the visitor for each class or package encountered.
+     * Packages may occur multiple times if the zip file index is not sorted.
+     * @param zipFilePath
+     * @param onClassFound
+     * @param packagesOnly Return package names rather than class names.
+     */
+    public static void scanClassesInJar(Path zipFilePath, boolean packagesOnly, Visitor<String> onClassFound) throws IOException
+    {
+        try (final InputStream is = new FileInputStream(zipFilePath.toFile()))
+        {
+            try
+            {
+                StringBuilder sb = new StringBuilder();
+                ZipInputStream zis = new ZipInputStream(is);
+                ZipEntry entry;
+                String lastPackageSubpath = null;
+                while ((entry = zis.getNextEntry()) != null)
+                {
+                    String subPath = entry.getName();
+                    if (!subPath.endsWith(".class"))
+                        continue;
+
+                    if (packagesOnly){
+                        String packageSubpath = StringUtils.substringBeforeLast(subPath, "/");
+                        //String packageSubpath = Paths.get(subPath).getParent();
+                        if(packageSubpath.equals(lastPackageSubpath))
+                            continue;
+                        lastPackageSubpath = packageSubpath;
+                        onClassFound.visit(packageSubpath.replace('/', '.'));
+                    }
+                    else {
+                        String qualifiedName = PathUtil.classFilePathToClassname(subPath);
+                        onClassFound.visit(qualifiedName);
+                    }
+                }
+            }
+            catch (IOException ex)
+            {
+                throw new IOException("Could not read ZIP file: " + zipFilePath + " Due to: " + ex.getMessage());
+            }
+        }
+    }
+
+    public interface Visitor<T>
+    {
+        void visit(T item);
+    }
+
 }
