@@ -35,6 +35,11 @@ public class ArchiveIdentificationConfigLoadingRuleProvider extends AbstractRule
 {
     private static final Logger log = Logging.get(ArchiveIdentificationConfigLoadingRuleProvider.class);
 
+    public static final String METADATA_DIR_MARKER_LUCENE = "archive-metadata.lucene.marker";
+    public static final String METADATA_DIR_MARKER_TEXT = ".archive-metadata.txt";
+    public static final String NEXUS_INDEXER_DATA_SUBDIR = "nexus-indexer-data";
+
+
     @Inject
     private CompositeArchiveIdentificationService identifier;
 
@@ -42,10 +47,10 @@ public class ArchiveIdentificationConfigLoadingRuleProvider extends AbstractRule
     public Configuration getConfiguration(final GraphContext grCtx)
     {
         return ConfigurationBuilder.begin()
-                    .addRule()
-                    .perform(new AddDelimitedFileIndexOperation())
-                    .addRule()
-                    .perform(new AddLuceneFileIndexOperation());
+            .addRule()
+            .perform(new AddDelimitedFileIndexOperation())
+            .addRule()
+            .perform(new AddLuceneFileIndexOperation());
     }
 
     private class AddDelimitedFileIndexOperation extends GraphOperation
@@ -70,9 +75,9 @@ public class ArchiveIdentificationConfigLoadingRuleProvider extends AbstractRule
                 }
             };
 
-            FileSuffixPredicate predicate = new FileSuffixPredicate("\\.archive-metadata\\.txt");
-            FileVisit.visit(PathUtil.getUserCacheDir().resolve("nexus-indexer-data").toFile(), predicate, visitor);
-            FileVisit.visit(PathUtil.getWindupCacheDir().resolve("nexus-indexer-data").toFile(), predicate, visitor);
+            FileSuffixPredicate predicate = FileSuffixPredicate.fromLiteral(METADATA_DIR_MARKER_TEXT);
+            FileVisit.visit(PathUtil.getUserCacheDir().resolve(NEXUS_INDEXER_DATA_SUBDIR).toFile(), predicate, visitor);
+            FileVisit.visit(PathUtil.getWindupCacheDir().resolve(NEXUS_INDEXER_DATA_SUBDIR).toFile(), predicate, visitor);
         }
     }
 
@@ -98,9 +103,9 @@ public class ArchiveIdentificationConfigLoadingRuleProvider extends AbstractRule
                 }
             };
 
-            FileSuffixPredicate predicate = new FileSuffixPredicate("archive-metadata\\.lucene\\.marker");
-            FileVisit.visit(PathUtil.getUserCacheDir().resolve("nexus-indexer-data").toFile(), predicate, visitor);
-            FileVisit.visit(PathUtil.getWindupCacheDir().resolve("nexus-indexer-data").toFile(), predicate, visitor);
+            FileSuffixPredicate predicate = FileSuffixPredicate.fromLiteral(METADATA_DIR_MARKER_LUCENE);
+            FileVisit.visit(PathUtil.getUserCacheDir().resolve(NEXUS_INDEXER_DATA_SUBDIR).toFile(), predicate, visitor);
+            FileVisit.visit(PathUtil.getWindupCacheDir().resolve(NEXUS_INDEXER_DATA_SUBDIR).toFile(), predicate, visitor);
         }
     }
 }

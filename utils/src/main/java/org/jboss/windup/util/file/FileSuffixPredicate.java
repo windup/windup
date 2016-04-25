@@ -1,13 +1,15 @@
 package org.jboss.windup.util.file;
 
 import java.io.File;
+import java.util.regex.Pattern;
 
 import org.jboss.forge.furnace.util.Predicate;
 
 /**
  * Accepts a file based on its trailing filename.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
  */
 public class FileSuffixPredicate implements Predicate<File>
 {
@@ -20,6 +22,11 @@ public class FileSuffixPredicate implements Predicate<File>
     {
         super();
         this.suffixPattern = suffixPattern;
+    }
+
+    public static FileSuffixPredicate fromLiteral(String literal)
+    {
+        return new FileSuffixPredicate(Pattern.quote(literal));
     }
 
     @Override
