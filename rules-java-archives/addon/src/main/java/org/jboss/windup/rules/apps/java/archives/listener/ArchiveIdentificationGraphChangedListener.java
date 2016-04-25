@@ -37,17 +37,11 @@ public final class ArchiveIdentificationGraphChangedListener implements GraphCha
     private GraphContext context;
     private ArchiveService archiveService;
 
-    public ArchiveIdentificationGraphChangedListener setGraphContext(GraphContext context)
-    {
-        this.context = context;
-        this.archiveService = new ArchiveService(context);
-        return this;
-    }
-
     public ArchiveIdentificationGraphChangedListener(GraphContext context, ArchiveIdentificationService identifier)
     {
         this.identifier = identifier;
-        this.setGraphContext(context);
+        this.context = context;
+        this.archiveService = new ArchiveService(context);
     }
 
     @Override
