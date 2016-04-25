@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
 <#macro migrationIssuesRenderer problemSummary>
-    <tr class="problemSummary effort${getEffortDescriptionForPoints(problemSummary.effortPerIncident, 'id')} tablesorter-hasChildRow">
+    <tr class="problemSummary effort${getEffortDescriptionForPoints(problemSummary.effortPerIncident, 'id')}">
         <td>
             <a href="#" class="toggle">
                 <#assign issueName = problemSummary.issueName!"No name">
@@ -13,16 +13,10 @@
         <td class="level">${getEffortDescriptionForPoints(problemSummary.effortPerIncident, 'verbose')}</td>
         <td class="text-right">${problemSummary.numberFound * problemSummary.effortPerIncident}</td>
     </tr>
-    <tr class="tablesorter-childRow bg-info" data-summary-id="${problemSummary.id?c}" role="row">
-        <td colspan="5">
-            <table class="table table-condensed">
-                <tr>
-                    <td><div class="indent"><strong>File</strong></div></td>
-                    <td class="text-right"><strong>Incidents Found</strong></td>
-                    <td colspan="3"><strong>Hint</strong></td>
-                </tr>
-            </table>
-        </td>
+    <tr class="tablesorter-childRow bg-info" data-summary-id="${problemSummary.id?c}">
+        <td><div class="indent"><strong>File</strong></div></td>
+        <td class="text-right"><strong>Incidents Found</strong></td>
+        <td colspan="3"><strong>Hint</strong></td>
     </tr>
 
 </#macro>
@@ -307,7 +301,7 @@
         <script id="detail-row-template" type="text/x-handlebars-template">
             {{#each problemSummaries}}
                 {{#each files}}
-                    <tr class="fileSummary tablesorter-childRow fileSummary_id_{{../problemSummaryID}}" role="row">
+                    <tr class="fileSummary tablesorter-childRow fileSummary_id_{{../problemSummaryID}}">
                         <td>
                             <div class="indent">
                                 {{{l}}}
@@ -376,7 +370,6 @@
 
                 function toggleRow () {
                     $(tr).find("td").toggle();
-                    $(tr).find("td table tbody tr:gt(0) td").toggle();
                 }
 
                 $(".fileSummary_id_" + problemSummaryID).remove();
@@ -389,9 +382,10 @@
                 var template = Handlebars.compile(source);
                 var html = template({problemSummaries: issueDataArray});
 
-                var childTR = tr.find("td table tbody tr")[0];
+                $(html).insertAfter(tr);
 
-                $(html).insertAfter(childTR);
+                var issuesTable = $(element).parent().parent().parent();
+                $(issuesTable).trigger("update", [true]);
 
                 toggleRow();
             }
@@ -414,11 +408,11 @@
                             problemSummaryID: "${problemSummary.id?c}", files: [
                             <#list problemSummary.getFilesForDescription(originalDescription) as fileSummary>
                                 <#assign renderedLink><@render_link model=fileSummary.file/></#assign>
-                                {l:"${renderedLink?j_string}", oc:"${fileSummary.occurrences?j_string}"},
+                                {l:"${renderedLink?json_string}", oc:"${fileSummary.occurrences?json_string}"},
                             </#list>
                             ], resourceLinks: [
                                 <#list problemSummary.links! as link>
-                                {h:"${link.link?j_string}", t:"${link.title?j_string}"},
+                                {h:"${link.link?json_string}", t:"${link.title?json_string}"},
                                 </#list>
                             ]},
                         </#list>
