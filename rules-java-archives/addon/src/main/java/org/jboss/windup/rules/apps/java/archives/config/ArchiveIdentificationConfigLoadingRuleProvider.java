@@ -15,6 +15,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.rules.apps.java.archives.identify.CompositeArchiveIdentificationService;
 import org.jboss.windup.rules.apps.java.archives.identify.InMemoryArchiveIdentificationService;
 import org.jboss.windup.rules.apps.java.archives.identify.LuceneArchiveIdentificationService;
+import org.jboss.windup.rules.apps.java.archives.identify.pkg.LucenePackageToArtifactMapper;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.PathUtil;
 import org.jboss.windup.util.exception.WindupException;
@@ -37,8 +38,9 @@ public class ArchiveIdentificationConfigLoadingRuleProvider extends AbstractRule
 
     public static final String METADATA_DIR_MARKER_LUCENE = "archive-metadata.lucene.marker";
     public static final String METADATA_DIR_MARKER_TEXT = ".archive-metadata.txt";
-    public static final String NEXUS_INDEXER_DATA_SUBDIR = "nexus-indexer-data";
+    public static final String PACKAGE_INDEX_DIR_MARKER = "package-archive-map.lucene.marker";
 
+    public static final String NEXUS_INDEXER_DATA_SUBDIR = "nexus-indexer-data";
 
     @Inject
     private CompositeArchiveIdentificationService identifier;
@@ -50,7 +52,7 @@ public class ArchiveIdentificationConfigLoadingRuleProvider extends AbstractRule
             .addRule()
             .perform(new AddDelimitedFileIndexOperation())
             .addRule()
-            .perform(new AddLuceneFileIndexOperation());
+            .perform(new AddLuceneIndexOperation());
     }
 
     private class AddDelimitedFileIndexOperation extends GraphOperation
@@ -58,18 +60,13 @@ public class ArchiveIdentificationConfigLoadingRuleProvider extends AbstractRule
         @Override
         public void perform(GraphRewrite event, EvaluationContext context)
         {
-            Visitor<File> visitor = new Visitor<File>()
-            {
-                @Override
-                public void visit(File file)
-                {
-                    try
-                    {
-                        log.info("Loading archive identification data from [" + file.getAbsolutePath() + "]");
+            Visitor<File> visitor = new Visitor<File>() {
+                @Override public void visit(File file) {
+                    try {
+                        log.info("Loading artifact identification data from [" + file.getAbsolutePath() + "]");
                         identifier.addIdentifier(new InMemoryArchiveIdentificationService().addMappingsFrom(file));
                     }
-                    catch (Exception e)
-                    {
+                    catch (Exception e) {
                         throw new WindupException("Failed to load identification data from file [" + file + "]", e);
                     }
                 }
@@ -81,31 +78,46 @@ public class ArchiveIdentificationConfigLoadingRuleProvider extends AbstractRule
         }
     }
 
-    private class AddLuceneFileIndexOperation extends GraphOperation
+    private class AddLuceneIndexOperation extends GraphOperation
     {
         @Override
         public void perform(GraphRewrite event, EvaluationContext context)
         {
-            Visitor<File> visitor = new Visitor<File>()
             {
-                @Override
-                public void visit(File file)
-                {
-                    try
-                    {
-                        log.info("Loading archive identification data from [" + file.getAbsolutePath() + "]");
-                        identifier.addIdentifier(new LuceneArchiveIdentificationService(file.getParentFile()));
+                Visitor<File> luceneMetadataVisitor = new Visitor<File>() {
+                    @Override public void visit(File file) {
+                        try {
+                            log.info("Loading artifact identification Lucene index from [" + file.getAbsolutePath() + "]");
+                            identifier.addIdentifier(new LuceneArchiveIdentificationService(file.getParentFile()));
+                        }
+                        catch (Exception e) {
+                            throw new WindupException("Failed to load identification data from Lucene index [" + file + "]", e);
+                        }
                     }
-                    catch (Exception e)
-                    {
-                        throw new WindupException("Failed to load identification data from file [" + file + "]", e);
-                    }
-                }
-            };
+                };
 
-            FileSuffixPredicate predicate = FileSuffixPredicate.fromLiteral(METADATA_DIR_MARKER_LUCENE);
-            FileVisit.visit(PathUtil.getUserCacheDir().resolve(NEXUS_INDEXER_DATA_SUBDIR).toFile(), predicate, visitor);
-            FileVisit.visit(PathUtil.getWindupCacheDir().resolve(NEXUS_INDEXER_DATA_SUBDIR).toFile(), predicate, visitor);
+                FileSuffixPredicate predicate = FileSuffixPredicate.fromLiteral(METADATA_DIR_MARKER_LUCENE);
+                FileVisit.visit(PathUtil.getUserCacheDir().resolve(NEXUS_INDEXER_DATA_SUBDIR).toFile(), predicate, luceneMetadataVisitor);
+                FileVisit.visit(PathUtil.getWindupCacheDir().resolve(NEXUS_INDEXER_DATA_SUBDIR).toFile(), predicate, luceneMetadataVisitor);
+            }
+
+            {
+                Visitor<File> lucenePackageMapperVisitor = new Visitor<File>() {
+                    @Override public void visit(File file) {
+                        try {
+                            log.info("Loading artifact identification Lucene index from [" + file.getAbsolutePath() + "]");
+                            identifier.addIdentifier(new LucenePackageToArtifactMapper(file.getParentFile()));
+                        }
+                        catch (Exception e) {
+                            throw new WindupException("Failed to load identification data from Lucene index [" + file + "]", e);
+                        }
+                    }
+                };
+
+                FileSuffixPredicate predicate = FileSuffixPredicate.fromLiteral(PACKAGE_INDEX_DIR_MARKER);
+                FileVisit.visit(PathUtil.getUserCacheDir().resolve(NEXUS_INDEXER_DATA_SUBDIR).toFile(), predicate, lucenePackageMapperVisitor);
+                FileVisit.visit(PathUtil.getWindupCacheDir().resolve(NEXUS_INDEXER_DATA_SUBDIR).toFile(), predicate, lucenePackageMapperVisitor);
+            }
         }
     }
 }

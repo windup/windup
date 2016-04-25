@@ -2,6 +2,7 @@ package org.jboss.windup.rules.apps.java.archives;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import org.jboss.forge.addon.dependencies.Coordinate;
 import org.jboss.forge.addon.dependencies.builder.CoordinateBuilder;
@@ -27,12 +28,14 @@ public class ArchiveCoordinateIdentificationTest
     {
         final File mappingFile = new File(DATA_PATH + "/test.archive-metadata.txt");
         identifier.addMappingsFrom(mappingFile);
-        Coordinate gav = identifier.getCoordinate("11856de4eeea74ce134ef3f910ff8d6f989dab2e");
-        Assert.assertNotNull("IdentifiedArchives.getGAVFromSHA1 returned something", gav);
-        Assert.assertEquals("org.jboss.windup", gav.getGroupId());
-        Assert.assertEquals("windup-bootstrap", gav.getArtifactId());
-        Assert.assertEquals("2.0.0.Beta7", gav.getVersion());
-        Assert.assertEquals(null, gav.getClassifier());
+        List<Coordinate> coords = identifier.getCoordinates("11856de4eeea74ce134ef3f910ff8d6f989dab2e");
+        Assert.assertNotNull("IdentifiedArchives.getGAVFromSHA1 returned something", coords);
+        Assert.assertFalse("IdentifiedArchives.getGAVFromSHA1 returned something", coords.isEmpty());
+        Coordinate coord = coords.get(0);
+        Assert.assertEquals("org.jboss.windup", coord.getGroupId());
+        Assert.assertEquals("windup-bootstrap", coord.getArtifactId());
+        Assert.assertEquals("2.0.0.Beta7", coord.getVersion());
+        Assert.assertEquals(null, coord.getClassifier());
     }
 
     @BeforeClass

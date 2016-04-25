@@ -1,6 +1,7 @@
 package org.jboss.windup.rules.apps.java.archives.identify.test;
 
 import java.io.File;
+import java.util.List;
 
 import org.jboss.forge.addon.dependencies.Coordinate;
 import org.jboss.windup.rules.apps.java.archives.identify.ArchiveIdentificationService;
@@ -22,8 +23,8 @@ public class LuceneFileArchiveIdentificationServiceTest
         Assert.assertTrue("Test file does not exist", file.exists());
         LuceneArchiveIdentificationService ident = new LuceneArchiveIdentificationService(file);
 
-        Coordinate coordinate = ident.getCoordinate("55555555564e84315e83c6ba4a855b07ba51166b");
-        Assert.assertNull("No coordinate for 55555555564e84315e83c6ba4a855b07ba51166b", coordinate);
+        List<Coordinate> coordinates = ident.getCoordinates("55555555564e84315e83c6ba4a855b07ba51166b");
+        Assert.assertNull("No coordinate for 55555555564e84315e83c6ba4a855b07ba51166b", coordinates);
 
         // Position 0
         check(ident, "000005ce9bd9867e24cdc33c06e88a65edce71db", "com.google.apis:google-api-services-genomics:jar::v1beta-rev26-1.18.0-rc");
@@ -46,9 +47,11 @@ public class LuceneFileArchiveIdentificationServiceTest
 
     private static void check(ArchiveIdentificationService ident, String hash, String coordString)
     {
-        Coordinate coord = ident.getCoordinate(hash);
-        Assert.assertNotNull("Coordinate found for " + hash, coord);
-        Assert.assertEquals(hash + " = " + coordString, coordString, coordToString(coord));
+        List<Coordinate> coords = ident.getCoordinates(hash);
+        Assert.assertNotNull("Coordinate found for " + hash, coords);
+        Assert.assertFalse("Coordinate found for " + hash, coords.isEmpty());
+        Assert.assertEquals(hash + " = " + coordString, coordString, coordToString(coords.get(0)));
+        Assert.assertEquals(hash + " = " + coordString, coordString, coordToString(coords.get(0)));
     }
 
 

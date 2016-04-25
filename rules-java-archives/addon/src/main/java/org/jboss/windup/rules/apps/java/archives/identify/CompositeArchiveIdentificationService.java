@@ -1,6 +1,7 @@
 package org.jboss.windup.rules.apps.java.archives.identify;
 
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.inject.Singleton;
@@ -9,13 +10,13 @@ import org.jboss.forge.addon.dependencies.Coordinate;
 
 /**
  * A {@link ArchiveIdentificationService} that delegates to one or more provided {@link ArchiveIdentificationService} instances.
- * 
+ *
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
 @Singleton
 public class CompositeArchiveIdentificationService implements ArchiveIdentificationService
 {
-    private Set<ArchiveIdentificationService> identifiers = new LinkedHashSet<>();
+    protected final Set<ArchiveIdentificationService> identifiers = new LinkedHashSet<>();
 
     /**
      * Create a new {@link CompositeArchiveIdentificationService} instance.
@@ -37,13 +38,13 @@ public class CompositeArchiveIdentificationService implements ArchiveIdentificat
     }
 
     @Override
-    public Coordinate getCoordinate(String checksum)
+    public List<Coordinate> getCoordinates(String checksum)
     {
         for (ArchiveIdentificationService identifier : identifiers)
         {
-            Coordinate coordinate = identifier.getCoordinate(checksum);
-            if (coordinate != null)
-                return coordinate;
+            List<Coordinate> coordinates = identifier.getCoordinates(checksum);
+            if (coordinates != null)
+                return coordinates;
         }
         return null;
     }
@@ -51,7 +52,7 @@ public class CompositeArchiveIdentificationService implements ArchiveIdentificat
     /**
      * Add a {@link ArchiveIdentificationService} instance to this {@link CompositeArchiveIdentificationService}.
      */
-    public CompositeArchiveIdentificationService addIdentifier(ArchiveIdentificationService identifier)
+    public final CompositeArchiveIdentificationService addIdentifier(ArchiveIdentificationService identifier)
     {
         this.identifiers.add(identifier);
         return this;
