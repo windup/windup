@@ -62,16 +62,17 @@ public class TestJavaApplicationOverviewUtil extends TestReportUtil
         String effortString = effortElement.getText().trim();
         effortString = effortString.replace(",", "");
 
+        int effort;
         try
         {
-            int effort = Integer.parseInt(effortString);
-            if (effort != expectedEffort)
-                throw new CheckFailedException("Effort was " + effort + " but was expected to be " + expectedEffort);
+            effort = Integer.parseInt(effortString);
         }
         catch (Exception e)
         {
             throw new CheckFailedException("Effort: " + effortString + " could not be parsed as numeric!");
         }
+        if (effort != expectedEffort)
+            throw new CheckFailedException("Effort was " + effort + " but was expected to be " + expectedEffort);
     }
 
     public void checkAppSectionEffort(String appSection, int expectedEffort)

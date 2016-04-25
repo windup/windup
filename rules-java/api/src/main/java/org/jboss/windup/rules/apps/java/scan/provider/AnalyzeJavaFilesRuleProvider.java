@@ -5,6 +5,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -23,6 +24,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.jboss.forge.roaster.model.JavaType;
 import org.jboss.windup.ast.java.ASTProcessor;
 import org.jboss.windup.ast.java.BatchASTFuture;
 import org.jboss.windup.ast.java.BatchASTListener;
@@ -182,7 +184,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                         {
                             try
                             {
-                                processedPaths.put(new ImmutablePair<>(filePath, filterClassReferences(filePath.getFileName().toString(), references, classNotFoundAnalysisEnabled)));
+                                processedPaths.put(new ImmutablePair<>(filePath, filterClassReferences(references, classNotFoundAnalysisEnabled)));
                             }
                             catch (InterruptedException e)
                             {
@@ -242,8 +244,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                             try
                             {
                                 List<ClassReference> references = ASTProcessor.analyze(importResolver, libraryPaths, sourcePaths, unprocessed);
-                                processReferences(event.getGraphContext(), referenceCount, unprocessed,
-                                            filterClassReferences(unprocessed.getFileName().toString(), references, classNotFoundAnalysisEnabled));
+                                processReferences(event.getGraphContext(), referenceCount, unprocessed, filterClassReferences(references, classNotFoundAnalysisEnabled));
                                 filesToProcess.remove(unprocessed);
                             }
                             catch (Exception e)
@@ -307,7 +308,6 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                 int timeRemainingInMillis = (int) estimate.getTimeRemainingInMillis();
                 if (timeRemainingInMillis > 0)
                 {
-
                     event.ruleEvaluationProgress("Analyze Java", estimate.getWorked(), estimate.getTotal(), timeRemainingInMillis / 1000);
                 }
 
@@ -315,7 +315,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
             }
         }
 
-        private List<ClassReference> filterClassReferences(String filename, List<ClassReference> references, boolean classNotFoundAnalysisEnabled)
+        private List<ClassReference> filterClassReferences(List<ClassReference> references, boolean classNotFoundAnalysisEnabled)
         {
             List<ClassReference> results = new ArrayList<>(references.size());
             for (ClassReference reference : references)
@@ -336,8 +336,14 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
         private void processReferences(GraphContext context, AtomicInteger referenceCount, Path filePath, List<ClassReference> references)
         {
             TypeReferenceService typeReferenceService = new TypeReferenceService(context);
+
+            Map<ClassReference, JavaTypeReferenceModel> added = new IdentityHashMap<>(references.size());
+
             for (ClassReference reference : references)
             {
+                if (added.containsKey(reference))
+                    continue;
+
                 JavaSourceFileModel javaSourceModel = getJavaSourceFileModel(context, filePath);
                 JavaTypeReferenceModel typeReference = typeReferenceService.createTypeReference(javaSourceModel,
                             reference.getLocation(),
@@ -345,10 +351,33 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                             reference.getLineNumber(), reference.getColumn(), reference.getLength(),
                             reference.getQualifiedName(),
                             reference.getLine());
+                added.put(reference, typeReference);
                 if (reference instanceof AnnotationClassReference)
                 {
-                    Map<String, AnnotationValue> annotationValues = ((AnnotationClassReference) reference).getAnnotationValues();
-                    addAnnotationValues(context, javaSourceModel, typeReference, annotationValues);
+                    AnnotationClassReference annotationClassReference = (AnnotationClassReference) reference;
+                    Map<String, AnnotationValue> annotationValues = annotationClassReference.getAnnotationValues();
+                    JavaAnnotationTypeReferenceModel annotationTypeReferenceModel = addAnnotationValues(context, javaSourceModel, typeReference, annotationValues);
+
+                    // Link the annotation to the thing that it is annotating (method, type, etc).
+                    ClassReference originalReference = annotationClassReference.getOriginalReference();
+                    if (originalReference == null)
+                    {
+                        LOG.warning("No original reference set for annotation: " + annotationClassReference);
+                    } else
+                    {
+                        JavaTypeReferenceModel originalReferenceModel = added.get(originalReference);
+                        if (originalReferenceModel == null)
+                        {
+                            originalReferenceModel = typeReferenceService.createTypeReference(javaSourceModel,
+                                    originalReference.getLocation(),
+                                    originalReference.getResolutionStatus(),
+                                    originalReference.getLineNumber(), originalReference.getColumn(), originalReference.getLength(),
+                                    originalReference.getQualifiedName(),
+                                    originalReference.getLine());
+                            added.put(originalReference, originalReferenceModel);
+                        }
+                        annotationTypeReferenceModel.setAnnotatedType(originalReferenceModel);
+                    }
                 }
                 referenceCount.incrementAndGet();
                 commitIfNeeded(context, referenceCount.get());
@@ -363,7 +392,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
         /**
          * Adds parameters contained in the annotation into the annotation type reference
          */
-        private void addAnnotationValues(GraphContext context, JavaSourceFileModel javaSourceFileModel, JavaTypeReferenceModel typeReference,
+        private JavaAnnotationTypeReferenceModel addAnnotationValues(GraphContext context, JavaSourceFileModel javaSourceFileModel, JavaTypeReferenceModel typeReference,
                     Map<String, AnnotationValue> annotationValues)
         {
             GraphService<JavaAnnotationTypeReferenceModel> annotationTypeReferenceService = new GraphService<>(context,
@@ -378,6 +407,8 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
             }
 
             javaAnnotationTypeReferenceModel.setAnnotationValues(valueModels);
+
+            return javaAnnotationTypeReferenceModel;
         }
 
         private JavaAnnotationTypeValueModel getValueModelForAnnotationValue(GraphContext context, JavaSourceFileModel javaSourceFileModel,

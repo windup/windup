@@ -9,22 +9,32 @@ import org.jboss.windup.ast.java.data.ResolutionStatus;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 
 /**
- * Contains annotation information, including a hierachy of all of the properties defined by this annotation.
+ * Contains annotation information, including a hierarchy of all of the properties defined by this annotation.
  * 
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
 public class AnnotationClassReference extends ClassReference implements AnnotationValue
 {
+    private ClassReference originalReference;
     private Map<String, AnnotationValue> annotationValues = new HashMap<>();
 
     /**
      * Indicates that an annotation with the give qualified name is specified at the given line, column, and of the provided length.
      */
-    public AnnotationClassReference(String qualifiedName, String packageName, String className, ResolutionStatus resolutionStatus, int lineNumber,
+    public AnnotationClassReference(ClassReference originalReference, String qualifiedName, String packageName, String className, ResolutionStatus resolutionStatus, int lineNumber,
                 int column, int length, String line)
     {
         super(qualifiedName, packageName, className, null, resolutionStatus, TypeReferenceLocation.ANNOTATION, lineNumber, column, length, line);
+        this.originalReference = originalReference;
+    }
+
+    /**
+     * Gets the item referred to by this Annotation (for example, a method, type, or member variable declaration).
+     */
+    public ClassReference getOriginalReference()
+    {
+        return originalReference;
     }
 
     /**
