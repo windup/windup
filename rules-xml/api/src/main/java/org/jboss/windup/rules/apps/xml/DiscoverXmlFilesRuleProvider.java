@@ -135,7 +135,8 @@ public class DiscoverXmlFilesRuleProvider extends AbstractRuleProvider
             else
             {
                 final String message = "Failed to parse XML entity: " + file.getFilePath() + ", due to: " + e.getMessage();
-                LOG.log(Level.INFO, message, e);
+                LOG.log(Level.INFO, message);
+                LOG.log(Level.FINE, message, e);
                 file.setParseError(message);
             }
             new ClassificationService(event.getGraphContext())
