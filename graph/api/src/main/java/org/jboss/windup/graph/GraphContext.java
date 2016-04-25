@@ -9,11 +9,14 @@ import org.jboss.windup.graph.frames.TypeAwareFramedGraphQuery;
 import com.thinkaurelius.titan.core.TitanGraph;
 import com.tinkerpop.blueprints.util.wrappers.event.EventGraph;
 import com.tinkerpop.frames.FramedGraph;
+import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.graph.service.GraphService;
 
 /**
  * Context for interacting with the underlying graph database API.
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka, I</a>
  */
 public interface GraphContext extends Closeable
 {
@@ -68,4 +71,26 @@ public interface GraphContext extends Closeable
      * Returns the globally configured options as an immutable {@link Map}
      */
     Map<String, Object> getOptionMap();
+
+
+
+    /**
+     * Create a GraphService of given class.
+     */
+    public <T extends WindupVertexFrame> GraphService<T> service(Class<T> clazz);
+
+    /**
+     * Convenience delegation to new GraphService(this)
+     */
+    public <T extends WindupVertexFrame> T getUnique(Class<T> clazz);
+
+    /**
+     * Convenience delegation to new GraphService(this)
+     */
+    public <T extends WindupVertexFrame> Iterable<T> findAll(Class<T> clazz);
+
+    /**
+     * Convenience delegation to new GraphService(this)
+     */
+    public <T extends WindupVertexFrame> T create(Class<T> clazz);
 }
