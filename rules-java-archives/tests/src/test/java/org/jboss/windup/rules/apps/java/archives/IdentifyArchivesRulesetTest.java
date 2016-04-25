@@ -74,6 +74,9 @@ public class IdentifyArchivesRulesetTest
     @Inject
     private CompositeArchiveIdentificationService identifier;
 
+    /**
+     * Run initial Windup rules against the JEE sample app, add a single identification record, and check if the lib is identified.
+     */
     @Test
     public void testJarsAreIdentified() throws Exception
     {

@@ -15,5 +15,5 @@ public interface ArchiveIdentificationService
      * Given a hash of a {@link File}, and given that the hash can be identified as a known {@link Coordinate}, return the {@link Coordinate} for the
      * given hash. (May be <code>null</code>.)
      */
-    public Coordinate getCoordinate(String hash);
+    Coordinate getCoordinate(String hash);
 }
