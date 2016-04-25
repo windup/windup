@@ -62,6 +62,8 @@ import com.tinkerpop.blueprints.Parameter;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.util.wrappers.event.EventGraph;
 import com.tinkerpop.frames.FramedGraph;
+import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.graph.service.GraphService;
 
 /**
  * This tests whether or not the automatic insertion of progress tracking and commit operations is handled correctly.
@@ -541,6 +543,34 @@ public class IterationAutomicCommitTest
         public void close() throws IOException
         {
             delegate.close();
+        }
+
+
+        @Override
+        public <T extends WindupVertexFrame> GraphService<T> service(Class<T> clazz)
+        {
+            return delegate.service(clazz);
+        }
+
+
+        @Override
+        public <T extends WindupVertexFrame> T getUnique(Class<T> clazz)
+        {
+            return delegate.getUnique(clazz);
+        }
+
+
+        @Override
+        public <T extends WindupVertexFrame> Iterable<T> findAll(Class<T> clazz)
+        {
+            return delegate.findAll(clazz);
+        }
+
+
+        @Override
+        public <T extends WindupVertexFrame> T create(Class<T> clazz)
+        {
+            return delegate.create(clazz);
         }
     }
 }
