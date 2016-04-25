@@ -1,21 +1,32 @@
 package org.jboss.windup.util;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.forge.furnace.util.Streams;
 import org.jboss.windup.util.exception.WindupException;
 
+
+/**
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
+ *  @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
+ */
 public class ZipUtil
 {
     private static final Logger log = Logger.getLogger(ZipUtil.class.getName());
@@ -130,4 +141,98 @@ public class ZipUtil
 
         return supportedExtensions;
     }
+
+
+    public static List<String> scanZipFile(Path zipFilePath, boolean relativeOnly)
+    {
+        try
+        {
+            try (final InputStream is = new FileInputStream(zipFilePath.toFile()))
+            {
+                return scanZipFile(zipFilePath.normalize().toString(), is, relativeOnly);
+            }
+        }
+        catch (IOException e)
+        {
+            System.err.println("Could not read file: " + zipFilePath + " due to: " + e.getMessage());
+            return Collections.emptyList();
+        }
+    }
+
+
+    public static List<String> scanZipFile(String parentPath, InputStream is, boolean relativeOnly)
+    {
+        try
+        {
+            ZipInputStream zis = new ZipInputStream(is);
+            ZipEntry entry;
+            List<String> results = new ArrayList<>();
+            while ((entry = zis.getNextEntry()) != null)
+            {
+                String fullPath = parentPath + "/" + entry.getName();
+                results.add(relativeOnly ? entry.getName() : fullPath);
+                if (!entry.isDirectory() && ZipUtil.endsWithZipExtension(entry.getName()))
+                {
+                    results.addAll(scanZipFile(fullPath, zis, relativeOnly));
+                }
+            }
+            return results;
+        }
+        catch (IOException e)
+        {
+            System.err.println("Could not read file: " + parentPath + " due to: " + e.getMessage());
+            return Collections.emptyList();
+        }
+    }
+
+
+    /**
+     * Scans the JAR file and calls the visitor for each class or package encountered.
+     * Packages may occur multiple times if the zip file index is not sorted.
+     * @param zipFilePath
+     * @param onClassFound
+     * @param packagesOnly Return package names rather than class names.
+     */
+    public static void scanClassesInJar(Path zipFilePath, boolean packagesOnly, Visitor<String> onClassFound) throws IOException
+    {
+        try (final InputStream is = new FileInputStream(zipFilePath.toFile()))
+        {
+            try
+            {
+                StringBuilder sb = new StringBuilder();
+                ZipInputStream zis = new ZipInputStream(is);
+                ZipEntry entry;
+                String lastPackageSubpath = null;
+                while ((entry = zis.getNextEntry()) != null)
+                {
+                    String subPath = entry.getName();
+                    if (!subPath.endsWith(".class"))
+                        continue;
+
+                    if (packagesOnly){
+                        String packageSubpath = StringUtils.substringBeforeLast(subPath, "/");
+                        //String packageSubpath = Paths.get(subPath).getParent();
+                        if(packageSubpath.equals(lastPackageSubpath))
+                            continue;
+                        lastPackageSubpath = packageSubpath;
+                        onClassFound.visit(packageSubpath.replace('/', '.'));
+                    }
+                    else {
+                        String qualifiedName = PathUtil.classFilePathToClassname(subPath);
+                        onClassFound.visit(qualifiedName);
+                    }
+                }
+            }
+            catch (IOException ex)
+            {
+                throw new IOException("Could not read ZIP file: " + zipFilePath + " Due to: " + ex.getMessage());
+            }
+        }
+    }
+
+    public interface Visitor<T>
+    {
+        void visit(T item);
+    }
+
 }
