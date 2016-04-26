@@ -1,6 +1,7 @@
 package com.tinkerpop.frames;
 
 import java.lang.annotation.Annotation;
+import java.lang.ref.SoftReference;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.Collections;
@@ -9,6 +10,7 @@ import java.util.Map;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Element;
+import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.util.ElementHelper;
 import com.tinkerpop.frames.annotations.AnnotationHandler;
 import com.tinkerpop.frames.modules.MethodHandler;
@@ -22,13 +24,16 @@ public class FramedElement implements InvocationHandler {
 
     private final Direction direction;
     protected final FramedGraph framedGraph;
-    protected final Element element;
+
+    private final Object id;
+    private final boolean isVertex;
+    protected SoftReference<Element> elementReference;
     private static Method hashCodeMethod;
     private static Method equalsMethod;
     private static Method toStringMethod;
     private static Method asVertexMethod;
     private static Method asEdgeMethod;
-    private static Map<MethodCallEntry, MethodHandlerEntry> methocCallCache = Collections
+    private static Map<MethodCallEntry, MethodHandlerEntry> methodCallCache = Collections
                 .synchronizedMap(new HashMap<MethodCallEntry, MethodHandlerEntry>());
 
     static {
@@ -55,7 +60,9 @@ public class FramedElement implements InvocationHandler {
             throw new IllegalArgumentException("Element can not be null");
         }
 
-        this.element = element;
+        this.id = element.getId();
+        this.isVertex = element instanceof Vertex;
+        this.elementReference = new SoftReference<Element>(element);
         this.framedGraph = framedGraph;
         this.direction = direction;
     }
@@ -67,17 +74,17 @@ public class FramedElement implements InvocationHandler {
     public Object invoke(final Object proxy, final Method originalMethod, final Object[] arguments) {
         MethodCallEntry methodCallEntry = new MethodCallEntry(proxy.getClass(), originalMethod);
 
-        MethodHandlerEntry methodHandlerEntry = methocCallCache.get(methodCallEntry);
+        MethodHandlerEntry methodHandlerEntry = methodCallCache.get(methodCallEntry);
         if (methodHandlerEntry != null)
         {
             // hitCount.incrementAndGet();
             if (methodHandlerEntry.methodHandler != null)
                 return methodHandlerEntry.methodHandler.processElement(proxy, methodHandlerEntry.method, arguments, methodHandlerEntry.annotation,
                             this.framedGraph,
-                            this.element);
+                            this.getElement());
             else if (methodHandlerEntry.annotationHandler != null)
                 return methodHandlerEntry.annotationHandler.processElement(methodHandlerEntry.annotation, methodHandlerEntry.method, arguments,
-                            this.framedGraph, this.element,
+                            this.framedGraph, this.getElement(),
                             this.direction);
         }
         Method method = null;
@@ -120,8 +127,8 @@ public class FramedElement implements InvocationHandler {
             MethodHandler methodHandler = methodHandlers.get(annotation.annotationType());
             if (methodHandler != null)
             {
-                methocCallCache.put(methodCallEntry, new MethodHandlerEntry(method, annotation, methodHandler));
-                return methodHandler.processElement(proxy, method, arguments, annotation, this.framedGraph, this.element);
+                methodCallCache.put(methodCallEntry, new MethodHandlerEntry(method, annotation, methodHandler));
+                return methodHandler.processElement(proxy, method, arguments, annotation, this.framedGraph, this.getElement());
             }
         }
         for (final Annotation annotation : annotations)
@@ -129,21 +136,21 @@ public class FramedElement implements InvocationHandler {
             AnnotationHandler annotationHandler = annotationHandlers.get(annotation.annotationType());
             if (annotationHandler != null)
             {
-                methocCallCache.put(methodCallEntry, new MethodHandlerEntry(method, annotation, annotationHandler));
-                return annotationHandler.processElement(annotation, method, arguments, this.framedGraph, this.element, this.direction);
+                methodCallCache.put(methodCallEntry, new MethodHandlerEntry(method, annotation, annotationHandler));
+                return annotationHandler.processElement(annotation, method, arguments, this.framedGraph, this.getElement(), this.direction);
             }
         }
         
         // Now that we have checked for annotations, check if it is one of the default methods that we 
         // have builtin support for
         if (originalMethod.equals(hashCodeMethod)) {
-            return this.element.hashCode();
+            return this.getElement().hashCode();
         } else if (originalMethod.equals(equalsMethod)) {
             return this.proxyEquals(arguments[0]);
         } else if (originalMethod.equals(toStringMethod)) {
-            return this.element.toString();
+            return this.getElement().toString();
         } else if (originalMethod.equals(asVertexMethod) || originalMethod.equals(asEdgeMethod)) {
-            return this.element;
+            return this.getElement();
         }
         
         if(method.getAnnotations().length == 0) {
@@ -177,18 +184,27 @@ public class FramedElement implements InvocationHandler {
     
     private Boolean proxyEquals(final Object other) {
         if (other instanceof VertexFrame) {
-            return this.element.equals(((VertexFrame) other).asVertex());
+            return this.getElement().equals(((VertexFrame) other).asVertex());
         } if (other instanceof EdgeFrame) {
-            return this.element.equals(((EdgeFrame) other).asEdge());
+            return this.getElement().equals(((EdgeFrame) other).asEdge());
         } else if (other instanceof Element) {
-            return ElementHelper.areEqual(this.element, other);
+            return ElementHelper.areEqual(this.getElement(), other);
         } else {
             return Boolean.FALSE;
         }
     }
 
     public Element getElement() {
-        return this.element;
+        Element element = elementReference.get();
+        if (element == null) {
+            if (this.isVertex)
+                element = framedGraph.getBaseGraph().getVertex(this.id);
+            else
+                element = framedGraph.getBaseGraph().getEdge(this.id);
+
+            elementReference = new SoftReference<Element>(element);
+        }
+        return element;
     }
 
     private class MethodCallEntry
