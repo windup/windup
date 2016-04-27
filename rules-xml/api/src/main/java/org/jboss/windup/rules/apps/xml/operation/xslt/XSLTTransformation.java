@@ -1,9 +1,12 @@
 package org.jboss.windup.rules.apps.xml.operation.xslt;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -25,6 +28,7 @@ import org.apache.commons.lang.StringUtils;
 import org.jboss.forge.furnace.util.ClassLoaders;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
+import org.jboss.windup.config.parser.xml.when.ParamHandler;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.LinkModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
@@ -37,6 +41,7 @@ import org.jboss.windup.rules.apps.xml.model.XsltTransformationModel;
 import org.jboss.windup.rules.apps.xml.service.XsltTransformationService;
 import org.jboss.windup.rules.files.model.FileReferenceModel;
 import org.jboss.windup.util.Logging;
+import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
@@ -166,21 +171,30 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
         return tansformation;
     }
 
-    private InputStream openInputStream() throws IOException
+    private InputStream openInputStream(String pathString) throws IOException
     {
         if (this.contextClassLoader != null)
         {
-            return contextClassLoader.getResourceAsStream(template);
+            LOG.fine("Loading Resource " + pathString + " with classloader: " + pathString);
+            return contextClassLoader.getResourceAsStream(pathString);
         }
         else
         {
-            return new FileInputStream(this.template);
+            Path path = Paths.get(pathString);
+            if (!Files.isRegularFile(path) && !pathString.equals(this.template))
+            {
+                // probably a relative file... try to infer it from the original template path
+                path = Paths.get(this.template).getParent().resolve(path);
+            }
+
+            LOG.fine("Loading File " + path + " with from " + path.toAbsolutePath().normalize().toString());
+            return new FileInputStream(path.toFile());
         }
     }
 
     private void setup()
     {
-        try (InputStream resourceAsStream = openInputStream())
+        try (InputStream resourceAsStream = openInputStream(this.template))
         {
             final Source xsltSource = new StreamSource(resourceAsStream);
             final TransformerFactory tf = TransformerFactory.newInstance();
@@ -198,7 +212,14 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
                                     + href + ": " + base);
                         return null;
                     }
-                    return new StreamSource(Thread.currentThread().getContextClassLoader().getResourceAsStream(href));
+                    try
+                    {
+                        InputStream inputStream = openInputStream(href);
+                        return new StreamSource(inputStream);
+                    } catch (IOException e)
+                    {
+                        throw new WindupException("Failed to load template: " + href + " due to: " + e.getMessage(), e);
+                    }
                 }
             });
             ClassLoaders.executeIn(TransformerFactory.class.getClassLoader(), new Callable<Object>()
