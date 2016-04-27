@@ -99,12 +99,22 @@ public class ClassFilePreDecompilationScan extends AbstractIterationOperation<Ja
 
     private void filterClassesToDecompile(GraphRewrite event, EvaluationContext context, JavaClassFileModel fileModel)
     {
+        if (fileModel.getSkipDecompilation() != null && fileModel.getSkipDecompilation())
+            return;
+
         try (InputStream is = fileModel.asInputStream())
         {
             WindupJavaConfigurationService configurationService = new WindupJavaConfigurationService(event.getGraphContext());
-            if (!configurationService.shouldScanFile(fileModel.getFilePath()))
+            boolean shouldScan;
+            if (fileModel.getPackageName() != null)
+                shouldScan = configurationService.shouldScanPackage(fileModel.getPackageName());
+            else
+                shouldScan = configurationService.shouldScanFile(fileModel.getFilePath());
+
+            if (!shouldScan)
             {
-                fileModel.asVertex().setProperty(JavaClassFileModel.SKIP_DECOMPILATION, true);
+                LOG.fine("Skipping decompilation for: " + fileModel.getFilePath() + " due to configuration!");
+                fileModel.setSkipDecompilation(true);
                 return;
             }
 
@@ -120,7 +130,8 @@ public class ClassFilePreDecompilationScan extends AbstractIterationOperation<Ja
             for (String typeReference : dependencyVisitor.classes)
             {
                 if (shouldIgnore(typeReference)) {
-                    fileModel.asVertex().setProperty(JavaClassFileModel.SKIP_DECOMPILATION, true);
+                    LOG.fine("Skipping decompilation for: " + fileModel.getFilePath() + " due javaclass-ignore!");
+                    fileModel.setSkipDecompilation(true);
                     break;
                 }
             }
