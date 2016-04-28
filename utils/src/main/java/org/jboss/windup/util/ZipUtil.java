@@ -189,9 +189,9 @@ public class ZipUtil
     /**
      * Scans the JAR file and calls the visitor for each class or package encountered.
      * Packages may occur multiple times if the zip file index is not sorted.
-     * @param zipFilePath
-     * @param onClassFound
+     * @param zipFilePath Path to the zip file
      * @param packagesOnly Return package names rather than class names.
+     * @param onClassFound Callback function for each class found
      */
     public static void scanClassesInJar(Path zipFilePath, boolean packagesOnly, Visitor<String> onClassFound) throws IOException
     {
@@ -199,7 +199,6 @@ public class ZipUtil
         {
             try
             {
-                StringBuilder sb = new StringBuilder();
                 ZipInputStream zis = new ZipInputStream(is);
                 ZipEntry entry;
                 String lastPackageSubpath = null;
@@ -209,15 +208,16 @@ public class ZipUtil
                     if (!subPath.endsWith(".class"))
                         continue;
 
-                    if (packagesOnly){
+                    if (packagesOnly)
+                    {
                         String packageSubpath = StringUtils.substringBeforeLast(subPath, "/");
-                        //String packageSubpath = Paths.get(subPath).getParent();
                         if(packageSubpath.equals(lastPackageSubpath))
                             continue;
                         lastPackageSubpath = packageSubpath;
                         onClassFound.visit(packageSubpath.replace('/', '.'));
                     }
-                    else {
+                    else
+                    {
                         String qualifiedName = PathUtil.classFilePathToClassname(subPath);
                         onClassFound.visit(qualifiedName);
                     }
