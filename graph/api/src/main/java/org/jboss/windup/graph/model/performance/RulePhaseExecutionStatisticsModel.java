@@ -4,10 +4,11 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import java.util.Comparator;
 
 /**
  * This stores the time it takes to execute all of the rules within a particular phase of execution.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(RulePhaseExecutionStatisticsModel.TYPE)
@@ -53,4 +54,13 @@ public interface RulePhaseExecutionStatisticsModel extends WindupVertexFrame
      */
     @Property(ORDER_EXECUTED)
     public void setOrderExecuted(int orderExecuted);
+
+    public static final Comparator BY_ORDER_EXECUTED = new Comparator<RulePhaseExecutionStatisticsModel>()
+        {
+            @Override
+            public int compare(RulePhaseExecutionStatisticsModel o1, RulePhaseExecutionStatisticsModel o2)
+            {
+                return o1.getOrderExecuted() - o2.getOrderExecuted();
+            }
+        };
 }
