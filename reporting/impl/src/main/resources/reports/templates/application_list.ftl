@@ -105,13 +105,13 @@
             <div class="row">
                 <div class="page-header">
                     <h1>
-                        <div class="main">Application list</div>
+                        <div class="main">Application List</div>
                         <div class="path">Profiled by Windup</div>
                     </h1>
                     <div class="desc">
-                        The Application List report shows All applications which were analyzed.
-                        Click on the individual application to see individual reports or you can follow
-                        Global Migration Issues Report.
+                        The Application List report shows all applications which were analyzed.
+                        Click on an individual application to see individual reports or you can follow
+                        the global Migration Issues report.
                     </div>
                 </div>
             </div>
