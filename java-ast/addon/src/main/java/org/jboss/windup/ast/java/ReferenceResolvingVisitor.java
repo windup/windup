@@ -1,8 +1,10 @@
 package org.jboss.windup.ast.java;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -57,6 +59,7 @@ import org.jboss.windup.ast.java.data.annotations.AnnotationArrayValue;
 import org.jboss.windup.ast.java.data.annotations.AnnotationClassReference;
 import org.jboss.windup.ast.java.data.annotations.AnnotationLiteralValue;
 import org.jboss.windup.ast.java.data.annotations.AnnotationValue;
+import org.jboss.windup.util.ClassNameUtil;
 
 /**
  * Provides the ability to parse a Java source file and return a {@link List} of {@link ClassReference} objects containing the fully qualified names
@@ -193,6 +196,73 @@ public class ReferenceResolvingVisitor extends ASTVisitor
         return typeLine;
     }
 
+    private static String extractEnumConstant(Class clazz, String line)
+    {
+        String extractedEnum = "";
+
+        // class names
+        String shortName = clazz.getSimpleName() + ".";
+        String longName = clazz.getCanonicalName() + ".";
+
+        // available enum constants
+        List constants = Arrays.asList(clazz.getEnumConstants());
+
+        List lineTokens = Arrays.asList(line.split(" "));
+        for (Iterator iterator = lineTokens.iterator(); iterator.hasNext();)
+        {
+            String object = (String) iterator.next();
+            if (object.contains(shortName))
+            {
+                int totalLen = object.length();
+                int start = object.lastIndexOf(shortName) + shortName.length();
+                String guess = object.substring(start, totalLen - 1);
+                guess = guess.replaceAll("[);.]", "");
+                Enum guessEnum = Enum.valueOf((Class<Enum>) clazz, guess);
+                if (constants.contains(guessEnum))
+                {
+                    extractedEnum = longName + guess;
+                    return extractedEnum;
+                }
+            }
+        }
+
+        return extractedEnum;
+    }
+
+    /**
+     * Extracts Enum constant from string line for a given string clazzName representing a class enum.
+     *
+     * @param clazzName - class for an Enum
+     * @param line - line with referenced Enum constant
+     * @return Fully referenced Enum constant
+     */
+    private static String extractEnumConstantFromString(String clazzName, String line)
+    {
+        Class clazz = null;
+        try
+        {
+            clazz = Class.forName(clazzName);
+        }
+        catch (ClassNotFoundException e)
+        {
+            LOG.fine("Instantiating Enum class failed - " + e.getLocalizedMessage());
+        }
+
+        // this can't be extracted without knowing available constants
+        // fall out to later recognize RECOVERED status and the Enum type reference
+        if (clazz == null)
+        {
+            return null;
+        }
+        else 
+        {
+            if (clazz.isEnum())
+                return extractEnumConstant(clazz, line);
+            else
+                return null;
+        }
+    }
+
     public List<ClassReference> getJavaClassReferences()
     {
         return this.classReferences;
@@ -252,7 +322,71 @@ public class ReferenceResolvingVisitor extends ASTVisitor
             packageName = PackageAndClassName.parseFromQualifiedName(sourceString).packageName;
 
         final String className = type.getName();
+
         return processTypeAsString(sourceString, packageName, className, resolutionStatus, referenceLocation, lineNumber, columnNumber, length, line);
+    }
+
+    private ClassReference processTypeAsEnum(ITypeBinding type, ResolutionStatus resolutionStatus,
+                TypeReferenceLocation referenceLocation, int lineNumber, int columnNumber, int length, String line)
+    {
+        if (type == null)
+            return null;
+
+        if (!type.isEnum())
+            return null;
+
+        String sourceString = getQualifiedName(type);
+        String enumConstant = extractEnumConstantFromString(sourceString, line);
+
+        // Enum constants could not be recognize so fall out to the Enum type only
+        sourceString = (enumConstant == null) ? sourceString : enumConstant;
+
+        ClassReference typeRef = null;
+        if (sourceString != null)
+        {
+            typeRef = new ClassReference(sourceString, packageName, className, null, resolutionStatus, referenceLocation, lineNumber,
+                        columnNumber,
+                        length,
+                        line);
+            if (!this.classReferences.contains(typeRef))
+            {
+                this.classReferences.add(typeRef);
+            }
+        }
+        return typeRef;
+    }
+    
+    private ClassReference processStringAsEnum(PackageAndClassName guess, ResolutionStatus resolutionStatus,
+        TypeReferenceLocation referenceLocation, int lineNumber, int columnNumber, int length, String line)
+    {
+        if (guess == null)
+            return null;
+
+        
+        String sourceString = guess.toString();
+        String enumConstant = extractEnumConstantFromString(sourceString, line);
+
+        // Enum constants could not be recognize so fall out to the Enum type only
+        sourceString = (enumConstant == null) ? sourceString : enumConstant;
+
+        ClassReference typeRef = null;
+        if (sourceString != null) {
+            typeRef = new ClassReference(sourceString,
+                packageName,
+                className,
+                null,
+                resolutionStatus,
+                referenceLocation,
+                lineNumber,
+                columnNumber,
+                length,
+                line);
+            // if (!this.classReferences.contains(typeRef))
+            // {
+            this.classReferences.add(typeRef);
+            // }
+        }
+        return typeRef;
     }
 
     /**
@@ -270,6 +404,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
             ResolveClassnameResult resolvedResult = resolveClassname(type.toString());
             ResolutionStatus status = resolvedResult.found ? ResolutionStatus.RECOVERED : ResolutionStatus.UNRESOLVED;
             PackageAndClassName packageAndClassName = PackageAndClassName.parseFromQualifiedName(resolvedResult.result);
+
             return processTypeAsString(resolvedResult.result, packageAndClassName.packageName, packageAndClassName.className, status,
                         typeReferenceLocation, lineNumber,
                         columnNumber, length, line);
@@ -340,7 +475,6 @@ public class ReferenceResolvingVisitor extends ASTVisitor
                 typeName = resolveClassname(typeName).result;
                 qualifiedArguments.add(typeName);
                 state.getNameInstance().put(type.getName().toString(), typeName);
-
 
                 ClassReference parameterClassReference = processType(type.getType(), TypeReferenceLocation.METHOD_PARAMETER, compilationUnit.getLineNumber(node.getStartPosition()),
                             compilationUnit.getColumnNumber(node.getStartPosition()), node.getLength(), extractDefinitionLine(node.toString()));
@@ -447,6 +581,11 @@ public class ReferenceResolvingVisitor extends ASTVisitor
             nodeType = resolveClassname(nodeType).result;
             VariableDeclarationFragment frag = (VariableDeclarationFragment) node.fragments().get(i);
             Expression expression = frag.getInitializer();
+            
+            final int lineNumber = compilationUnit.getLineNumber(node.getStartPosition());
+            final int columnNumber = compilationUnit.getColumnNumber(node.getStartPosition());
+            final ITypeBinding resolveBinding = node.getType().resolveBinding();
+            
             if (expression instanceof QualifiedName)
             {
                 QualifiedName qualifiedName = (QualifiedName) expression;
@@ -455,48 +594,102 @@ public class ReferenceResolvingVisitor extends ASTVisitor
                 {
                     ResolveClassnameResult result = resolveClassname(qualifiedName.getFullyQualifiedName().toString());
                     ResolutionStatus status = result.found ? ResolutionStatus.RECOVERED : ResolutionStatus.UNRESOLVED;
-
                     PackageAndClassName packageAndClassName = PackageAndClassName.parseFromQualifiedName(result.result);
 
+                    if (packageAndClassName.constantName != null && packageAndClassName.packageName == null)
+                    {
+                        // the Enum Class and Constant doesn't have to be FQCN as package could miss
+                        packageAndClassName = PackageAndClassName.parseFromQualifiedName(state.getClassNameToFQCN().get(packageAndClassName.className) + "."+packageAndClassName.constantName);
+
+                        //additionally add Enum Constant type reference if found in String
+                        ClassReference reference = new ClassReference(packageAndClassName.toString(),
+                                    packageAndClassName.packageName,
+                                    packageAndClassName.className,
+                                    null,
+                                    status, TypeReferenceLocation.ENUM_CONSTANT,
+                                    lineNumber,
+                                    columnNumber, node.getLength(), node.toString());
+                        this.classReferences.add(reference);
+                    }
+                    
                     processTypeAsString(result.result,
                                 packageAndClassName.packageName,
                                 packageAndClassName.className,
                                 status,
                                 TypeReferenceLocation.VARIABLE_INITIALIZER,
-                                compilationUnit.getLineNumber(node.getStartPosition()),
-                                compilationUnit.getColumnNumber(node.getStartPosition()), node.getLength(), node.toString());
+                                lineNumber,
+                                columnNumber, node.getLength(), node.toString());                                        
                 }
                 else
+                {   
+                    //additionally add Enum Constant type reference
+                    if (resolveBinding.isEnum())
+                    {
+                        processTypeAsEnum(resolveBinding, ResolutionStatus.RESOLVED, TypeReferenceLocation.ENUM_CONSTANT, lineNumber, columnNumber, node.getLength(), node.toString());
+                    }
+                    
+                    processTypeBinding(resolveBinding, ResolutionStatus.RESOLVED, TypeReferenceLocation.VARIABLE_INITIALIZER,
+                                lineNumber,
+                                columnNumber, node.getLength(), node.toString());
+                }
+            }
+            else
+            {
+                if (expression != null && ClassNameUtil.isConstant(expression.toString()))
                 {
-                    processTypeBinding(node.getType().resolveBinding(), ResolutionStatus.RESOLVED, TypeReferenceLocation.VARIABLE_INITIALIZER,
-                                compilationUnit.getLineNumber(node.getStartPosition()),
-                                compilationUnit.getColumnNumber(node.getStartPosition()), node.getLength(), node.toString());
+                    // if there is static import and constant is not FQCN
+                    String qualifiedConstant = state.getClassNameToFQCN().get(expression.toString());
+                    
+                    if (qualifiedConstant != null)
+                    {
+                        PackageAndClassName packageAndClassName = PackageAndClassName.parseFromQualifiedName(qualifiedConstant);
+    
+                        // the Enum Class and Constant doesn't have to be FQCN as package could miss 
+                        if (packageAndClassName.constantName != null) 
+                        {
+                            //additionally add Enum Constant type reference if found in String
+                            // verify it is ENUM and pass it ??? FIXME: is it really accesible the enum constant here or just ENUM
+                            processStringAsEnum(packageAndClassName, ResolutionStatus.RECOVERED, TypeReferenceLocation.ENUM_CONSTANT, lineNumber, columnNumber, node.getLength(), node.toString());
+                        }
+                    }
                 }
             }
 
             state.getNames().add(frag.getName().getIdentifier());
             state.getNameInstance().put(frag.getName().toString(), nodeType.toString());
 
-            ITypeBinding resolvedTypeBinding = node.getType().resolveBinding();
+            ITypeBinding resolvedTypeBinding = resolveBinding;
             ClassReference reference;
             if (resolvedTypeBinding != null)
-            {
+            {                    
                 reference = processTypeBinding(resolvedTypeBinding, ResolutionStatus.RESOLVED, TypeReferenceLocation.FIELD_DECLARATION,
-                        compilationUnit.getLineNumber(node.getStartPosition()),
-                        compilationUnit.getColumnNumber(node.getStartPosition()), node.getLength(), node.toString());
-            } else
+                        lineNumber,
+                        columnNumber, node.getLength(), node.toString());
+            }
+            else
             {
                 ResolveClassnameResult result = resolveClassname(node.getType().toString());
                 ResolutionStatus status = result.found ? ResolutionStatus.RECOVERED : ResolutionStatus.UNRESOLVED;
 
                 PackageAndClassName packageAndClassName = PackageAndClassName.parseFromQualifiedName(result.result);
+
+                // the Enum Class and Constant doesn't have to be FQCN as package could miss 
+                if (packageAndClassName.constantName != null && packageAndClassName.packageName == null) 
+                {
+                    packageAndClassName = PackageAndClassName.parseFromQualifiedName(state.getClassNameToFQCN().get(packageAndClassName.className) + packageAndClassName.constantName);
+
+                    //additionally add Enum Constant type reference if found in String
+                    // verify it is ENUM and pass it ??? FIXME: is it really accesible the enum constant here or just ENUM
+                    processStringAsEnum(packageAndClassName, status, TypeReferenceLocation.ENUM_CONSTANT, lineNumber, columnNumber, node.getLength(), node.toString());
+                }
+                
                 reference = processTypeAsString(result.result,
                         packageAndClassName.packageName,
                         packageAndClassName.className,
                         status,
                         TypeReferenceLocation.FIELD_DECLARATION,
-                        compilationUnit.getLineNumber(node.getStartPosition()),
-                        compilationUnit.getColumnNumber(node.getStartPosition()), node.getLength(), node.toString());
+                        lineNumber,
+                        columnNumber, node.getLength(), node.toString());
             }
             processModifiers(reference, node.modifiers());
         }
@@ -860,6 +1053,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
         return super.visit(node);
     }
 
+
     /**
      * Declaration of the variable within a block
      */
@@ -872,13 +1066,18 @@ public class ReferenceResolvingVisitor extends ASTVisitor
             VariableDeclarationFragment frag = (VariableDeclarationFragment) node.fragments().get(i);
             state.getNames().add(frag.getName().getIdentifier());
             state.getNameInstance().put(frag.getName().toString(), nodeType.toString());
+            if (frag.getName().getClass().isEnum())
+            {
+                //TODO: add processing Enums?
+            }
         }
+
         processType(node.getType(), TypeReferenceLocation.VARIABLE_DECLARATION,
                     compilationUnit.getLineNumber(node.getStartPosition()),
                     compilationUnit.getColumnNumber(node.getStartPosition()), node.getLength(), node.toString());
         return super.visit(node);
     }
-
+    
     private void processImport(ImportDeclaration node)
     {
         String name = node.getName().toString();
@@ -902,6 +1101,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
         }
         else
         {
+            //TODO: add processing Enum constant  
             String clzName = StringUtils.substringAfterLast(name, ".");
             state.getClassNameLookedUp().add(clzName);
             state.getClassNameToFQCN().put(clzName, name);
@@ -926,6 +1126,8 @@ public class ReferenceResolvingVisitor extends ASTVisitor
         // get qualified arguments of the method
         IMethodBinding resolveTypeBinding = node.resolveMethodBinding();
         final ResolutionStatus resolutionStatus;
+        int columnNumber = compilationUnit.getColumnNumber(node.getName().getStartPosition());
+        int length = node.getName().getLength();
         if (resolveTypeBinding != null)
         {
             resolutionStatus = ResolutionStatus.RESOLVED;
@@ -934,10 +1136,16 @@ public class ReferenceResolvingVisitor extends ASTVisitor
             for (ITypeBinding type : arguments)
             {
                 argumentsQualified.add(type.getQualifiedName());
+                if (type.isEnum())
+                {
+                    processTypeAsEnum(type, resolutionStatus, TypeReferenceLocation.ENUM_CONSTANT,
+                                compilationUnit.getLineNumber(node.getName().getStartPosition()),
+                                columnNumber,
+                                length, node.toString());
+                }
             }
 
             // find the interface declaring the method
-
             if (resolveTypeBinding != null && resolveTypeBinding.getDeclaringClass() != null)
             {
                 ITypeBinding declaringClass = resolveTypeBinding.getDeclaringClass();
@@ -990,11 +1198,34 @@ public class ReferenceResolvingVisitor extends ASTVisitor
                 if (argumentBinding != null)
                 {
                     argumentsQualified.add(argumentBinding.getQualifiedName());
+
+                    String constantEnum = null;
+                    if (argumentBinding.isEnum())
+                    {
+                        constantEnum = extractEnumConstantFromString(argumentBinding.getQualifiedName(), node.toString());
+                    }
+
+                    if (constantEnum != null)
+                    {
+                        PackageAndClassName guess = PackageAndClassName.parseFromQualifiedName(constantEnum);
+                        processStringAsEnum(guess, resolutionStatus, TypeReferenceLocation.ENUM_CONSTANT, compilationUnit.getLineNumber(node.getName().getStartPosition()),
+                                columnNumber, length, node.toString());
+                    }
                 }
                 else
                 {
-                    // TODO: Is toString good option? Just a name of the argument will be saved
-                    argumentsQualified.add(expression.toString());
+                    PackageAndClassName argumentQualifiedGuess = PackageAndClassName.parseFromQualifiedName(expression.toString());
+                    if (argumentQualifiedGuess.constantName != null && argumentQualifiedGuess.packageName == null)
+                    {
+                        argumentQualifiedGuess = PackageAndClassName.parseFromQualifiedName(state.getClassNameToFQCN().get(argumentQualifiedGuess.className) + "."+argumentQualifiedGuess.constantName);
+                    }
+                    if (argumentQualifiedGuess.constantName != null)
+                    {
+                        processStringAsEnum(argumentQualifiedGuess, resolutionStatus, TypeReferenceLocation.ENUM_CONSTANT, compilationUnit.getLineNumber(node.getName().getStartPosition()),
+                                    columnNumber, length, node.toString());
+                    }
+                    
+                    argumentsQualified.add(argumentQualifiedGuess.toString());
                 }
             }
             qualifiedInstances.add(objRef);
@@ -1007,7 +1238,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
                         node.getName().toString(), argumentsQualified);
             processMethod(methodCall, resolutionStatus, TypeReferenceLocation.METHOD_CALL,
                         compilationUnit.getLineNumber(node.getName().getStartPosition()),
-                        compilationUnit.getColumnNumber(node.getName().getStartPosition()), node.getName().getLength(), node.toString());
+                        columnNumber, length, node.toString());
         }
 
         return super.visit(node);
@@ -1056,7 +1287,15 @@ public class ReferenceResolvingVisitor extends ASTVisitor
             qualifiedClass = getQualifiedName(declaringClass);
             for (ITypeBinding type : constructorBinding.getParameterTypes())
             {
-                constructorMethodQualifiedArguments.add(type.getQualifiedName());
+                String qualifiedArgumentClass = type.getQualifiedName();
+                if (type.isEnum())
+                {
+                    qualifiedArgumentClass = extractEnumConstantFromString(qualifiedArgumentClass, node.toString());
+                }
+                if (qualifiedArgumentClass != null)
+                {
+                    constructorMethodQualifiedArguments.add(qualifiedArgumentClass);
+                }
             }
         }
 
@@ -1095,18 +1334,30 @@ public class ReferenceResolvingVisitor extends ASTVisitor
         {
             resolutionStatus = ResolutionStatus.RESOLVED;
         }
-
+        
+        final int lineNumber = compilationUnit.getLineNumber(node.getType().getStartPosition());
+        final int columnNumber = compilationUnit.getColumnNumber(node.getType().getStartPosition());
+        final int length = node.getType().getLength();
+        
+        // scan arguments if there is not Enum constants
+        for (String argument : constructorMethodQualifiedArguments)
+        {
+            PackageAndClassName qArgument = PackageAndClassName.parseFromQualifiedName(argument);
+            if (qArgument.constantName != null)
+            {
+                processStringAsEnum(qArgument, ResolutionStatus.RECOVERED, TypeReferenceLocation.ENUM_CONSTANT, lineNumber, columnNumber, length, node.toString());
+            }
+        }
         ConstructorType resolvedConstructor = new ConstructorType(qualifiedClass, constructorMethodQualifiedArguments);
-        processConstructor(resolvedConstructor, resolutionStatus, compilationUnit.getLineNumber(node.getType().getStartPosition()),
-                    compilationUnit.getColumnNumber(node.getType().getStartPosition()), node.getType().getLength(), node.toString());
+        processConstructor(resolvedConstructor, resolutionStatus, lineNumber, columnNumber, length, node.toString());
 
         return super.visit(node);
     }
 
-    private List<String> methodParameterGuesser(List<?> arguements)
+    private List<String> methodParameterGuesser(List<?> arguments)
     {
-        List<String> resolvedParams = new ArrayList<>(arguements.size());
-        for (Object o : arguements)
+        List<String> resolvedParams = new ArrayList<>(arguments.size());
+        for (Object o : arguments)
         {
             if (o instanceof SimpleName)
             {
@@ -1201,6 +1452,16 @@ public class ReferenceResolvingVisitor extends ASTVisitor
                 {
                     resolvedParams.add("Undefined");
                 }
+            }
+            else if (o instanceof QualifiedName)
+            {
+                String paramGuessed = ((QualifiedName) o).getFullyQualifiedName();
+                PackageAndClassName qualifiedParam = PackageAndClassName.parseFromQualifiedName(paramGuessed);
+                if (qualifiedParam.constantName != null && qualifiedParam.packageName == null)
+                {
+                    qualifiedParam = PackageAndClassName.parseFromQualifiedName(state.getClassNameToFQCN().get(qualifiedParam.className) + "." +qualifiedParam.constantName);
+                }
+                resolvedParams.add(qualifiedParam.toString());
             }
             else
             {
@@ -1355,13 +1616,36 @@ public class ReferenceResolvingVisitor extends ASTVisitor
     {
         private String packageName;
         private String className;
+        private String constantName;
 
         public PackageAndClassName(String packageName, String className)
         {
             this.packageName = packageName;
             this.className = className;
         }
+        
+        public PackageAndClassName(String packageName, String className, String constantName)
+        {
+            this.packageName = packageName;
+            this.className = className;
+            this.constantName = constantName;
+        }
 
+        public String toString()
+        {
+            StringBuffer sb = new StringBuffer();
+            if (this.packageName != null)
+            {
+                sb.append(this.packageName).append(".");
+            }
+            if (this.className != null)
+                sb.append(this.className);
+            if (this.constantName != null)
+                sb.append(".").append(this.constantName);
+                
+            return sb.toString();
+        }
+        
         public static PackageAndClassName parseFromQualifiedName(String qualifiedName)
         {
             final String packageName;
@@ -1385,6 +1669,14 @@ public class ReferenceResolvingVisitor extends ASTVisitor
                 {
                     packageName = qualifiedName.substring(0, lastDot);
                     className = qualifiedName.substring(lastDot + 1);
+
+                    // adding recognition of qualified CONSTANTS 
+                    if ( ClassNameUtil.isConstant(className) )
+                    {
+                        String constantName = className; 
+                        PackageAndClassName again = PackageAndClassName.parseFromQualifiedName(packageName);
+                        return new PackageAndClassName(again.packageName, again.className, constantName);
+                    }
                 }
             }
             return new PackageAndClassName(packageName, className);
