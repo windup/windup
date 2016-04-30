@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.forge.furnace.proxy.Proxies;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Predicate;

@@ -12,6 +12,7 @@
     <name>Windup Rules - Java EE - Basic</name>
 
     <dependencies>
+        <!-- Local 3rd party Dependencies -->
         <dependency>
             <groupId>org.jooq</groupId>
             <artifactId>joox</artifactId>

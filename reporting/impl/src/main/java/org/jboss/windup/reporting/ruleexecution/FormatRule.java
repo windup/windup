@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.List;
 
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.RuleMetadataType;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;

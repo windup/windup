@@ -13,7 +13,11 @@
 
     <dependencies>
 
-        <!-- Local Dependencies -->
+        <!-- Local 3rd party Dependencies -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
 
         <!-- Addon Dependencies -->
         <dependency>
@@ -24,15 +28,13 @@
         <dependency>
             <groupId>org.jboss.windup.exec</groupId>
             <artifactId>windup-exec-api</artifactId>
-            <version>${project.version}</version>
             <scope>compile</scope>
         </dependency>
-	<dependency>
+        <dependency>
             <groupId>org.jboss.windup.exec</groupId>
             <artifactId>windup-exec</artifactId>
-            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
-	    <scope>provided</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.config</groupId>
@@ -57,7 +59,7 @@
             <artifactId>windup-rules-base-api</artifactId>
             <scope>provided</scope>
         </dependency>
-        
+
         <!-- Furnace Container -->
         <dependency>
             <groupId>org.jboss.forge.furnace.container</groupId>
@@ -65,25 +67,17 @@
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
-        
-        <dependency>
-            <groupId>org.jboss.windup.config</groupId>
-            <artifactId>windup-config-xml</artifactId>
-            <version>${project.version}</version>
-            <scope>provided</scope>
-        </dependency>
+
 
         <!-- Test Dependencies -->
         <dependency>
-                <groupId>org.jboss.windup</groupId>
-                <artifactId>windup-test-harness</artifactId>
-                <version>${project.version}</version>
-		<scope>test</scope>
-        </dependency>  
-          <dependency>
+            <groupId>org.jboss.windup</groupId>
+            <artifactId>windup-test-harness</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
             <groupId>org.jboss.windup.utils</groupId>
             <artifactId>windup-utils</artifactId>
-            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
