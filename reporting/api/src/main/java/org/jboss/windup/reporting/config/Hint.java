@@ -8,8 +8,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.parameters.ParameterizedIterationOperation;
@@ -116,12 +115,12 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
             {
                 try
                 {
-                    hintModel.setTitle(hintTitlePattern.getBuilder().build(event, context));
+                    hintModel.setTitle(StringUtils.trim(hintTitlePattern.getBuilder().build(event, context)));
                 }
                 catch (Throwable t)
                 {
                     LOG.log(Level.WARNING, "Failed to generate parameterized Hint title due to: " + t.getMessage(), t);
-                    hintModel.setTitle(hintTitlePattern.toString());
+                    hintModel.setTitle(hintTitlePattern.toString().trim());
                 }
             }
             else
@@ -141,14 +140,14 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
                 LOG.log(Level.WARNING, "Failed to generate parameterized Hint body due to: " + t.getMessage(), t);
                 hintText = hintTextPattern.toString();
             }
-            hintModel.setHint(hintText);
+            hintModel.setHint(StringUtils.trim(hintText));
 
             GraphService<LinkModel> linkService = new GraphService<>(event.getGraphContext(), LinkModel.class);
             for (Link link : links)
             {
                 LinkModel linkModel = linkService.create();
-                linkModel.setDescription(link.getTitle());
-                linkModel.setLink(link.getLink());
+                linkModel.setDescription(StringUtils.trim(link.getTitle()));
+                linkModel.setLink(StringUtils.trim(link.getLink()));
                 hintModel.addLink(linkModel);
             }
 

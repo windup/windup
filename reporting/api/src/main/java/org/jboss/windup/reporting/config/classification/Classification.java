@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
+import org.apache.commons.lang.StringUtils;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.Iteration;
@@ -201,8 +201,8 @@ public class Classification extends ParameterizedIterationOperation<FileModel> i
                 classification = classificationService.create();
                 classification.setEffort(effort);
                 classification.setSeverity(severity);
-                classification.setDescription(description);
-                classification.setClassification(text);
+                classification.setDescription(StringUtils.trim(description));
+                classification.setClassification(StringUtils.trim(text));
 
                 Set<String> tags = new HashSet<>(this.getTags());
                 TagSetService tagSetService = new TagSetService(event.getGraphContext());
@@ -213,7 +213,9 @@ public class Classification extends ParameterizedIterationOperation<FileModel> i
                 LinkService linkService = new LinkService(graphContext);
                 for (Link link : links)
                 {
-                    LinkModel linkModel = linkService.getOrCreate(link.getTitle(), link.getLink());
+                    LinkModel linkModel = linkService.getOrCreate(
+                            StringUtils.trim(link.getTitle()),
+                            StringUtils.trim(link.getLink()));
                     classification.addLink(linkModel);
                 }
             }
