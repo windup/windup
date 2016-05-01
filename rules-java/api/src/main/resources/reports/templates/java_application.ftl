@@ -127,6 +127,13 @@
                         <!-- Basic info -->
                         <div class="basicInfo">
                             <table class="table">
+                                <#assign gav = projectModel.asVertex().getProperty('mavenIdentifier')! >
+                                <#if gav?? >
+                                <tr>
+                                    <th>Maven coordinates</th>
+                                    <td> ${gav?html} </td>
+                                </tr>
+                                </#if>
                                 <tr>
                                     <th>Organization</th>
                                     <td>
