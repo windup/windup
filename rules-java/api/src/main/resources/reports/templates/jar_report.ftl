@@ -52,7 +52,7 @@
         <div class="row">
             <div class="container-fluid theme-showcase" role="main">
 
-            <#list reportModel.relatedResources.dependencies.list.iterator()>
+            <#list reportModel.relatedResources["dependencies"].list.iterator()>
                 <div class="panel panel-primary">
                     <div class="panel-heading">
                         <h3 class="panel-title">Dependencies</h3>
@@ -65,6 +65,12 @@
                                 <td>
                                     <strong>${dependency.archiveName}</strong>
                                     <ul class="list-group">
+                                        <#assign gav = dependencyProject.asVertex().getProperty('mavenIdentifier')!?trim >
+                                        <#if gav?? && gav?trim?has_content >
+                                            <li class="trait">
+                                                <span>Maven coordinates:</span> ${gav}
+                                            </li>
+                                        </#if>
                                         <#if dependencyProject.name?? && dependencyProject.name != dependency.archiveName>
                                             <li class="list-group-item">
                                                 Name: ${dependencyProject.name}
