@@ -17,21 +17,21 @@ import freemarker.ext.beans.StringModel;
 import freemarker.template.TemplateModelException;
 
 /**
- * 
- * Given a {@link ProjectModel}, return the {@link ArchiveModel} that is associated with the application.
- * 
+ *
+ * Returns the SHA1 hash of the given a {@link ProjectModel}.
+ *
  * The function takes one parameter, and can be called from a freemarker template as follows:
- * 
+ *
  * projectModelToApplicationArchive(projectModel)
- * 
+ *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
- * 
+ *
  */
-public class ProjectModelSha1Archive implements WindupFreeMarkerMethod
+public class ProjectModelToSha1 implements WindupFreeMarkerMethod
 {
-    private static Logger LOG = Logging.get(ProjectModelSha1Archive.class);
+    private static Logger LOG = Logging.get(ProjectModelToSha1.class);
 
-    private static final String NAME = "projectModelSha1Archive";
+    private static final String NAME = "projectModelToSha1";
 
     private ApplicationReportIndexService service;
 
@@ -73,7 +73,7 @@ public class ProjectModelSha1Archive implements WindupFreeMarkerMethod
         	result = projectModel.getRootFileModel().getSHA1Hash();
         }
         ExecutionStatistics.get().end(NAME);
-        
+
         return result;
     }
 }

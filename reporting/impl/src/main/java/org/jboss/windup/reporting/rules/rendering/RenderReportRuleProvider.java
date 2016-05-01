@@ -132,13 +132,12 @@ public class RenderReportRuleProvider extends AbstractRuleProvider
                             try
                             {
                                 Thread.currentThread().setName(reportModel.getTemplatePath() + "_" + reportModel.getReportFilename());
-
                                 iterationProgress.perform(event, context);
                                 freeMarkerIterationOperation.perform(event, context, reportModel);
                             }
                             catch (Throwable t)
                             {
-                                LOG.log(Level.WARNING, "Failed to render freemarker report: " + reportModel + " due to: " + t.getMessage(), t);
+                                LOG.log(Level.WARNING, "Failed to render freemarker report:\n    " + reportModel + "\n    " + t.getMessage(), t);
                             }
                         }
                     }
