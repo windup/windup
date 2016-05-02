@@ -1,20 +1,17 @@
 package org.jboss.windup.reporting.model;
 
-import java.util.Set;
-
+import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.frames.Adjacency;
+import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.javahandler.JavaHandler;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
+import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.association.LinkableModel;
 import org.jboss.windup.rules.files.condition.ToFileModelTransformable;
 import org.ocpsoft.rewrite.config.Rule;
-
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.frames.Adjacency;
-import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
  * This classifies files and provides general background information about a specific {@link FileModel}. (For instance,
@@ -61,7 +58,7 @@ public interface ClassificationModel extends EffortReportModel, LinkableModel, T
      * Set the description text of this {@link ClassificationModel}.
      */
     @Property(DESCRIPTION)
-    void setDescription(String ruleID);
+    void setDescription(String description);
 
     /**
      * Get the description text of this {@link ClassificationModel}.
