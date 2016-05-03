@@ -108,8 +108,8 @@ body.java-application .chartBoundary h4 {
 
 .panel .panel-body  div.basicInfo {
     float: left;
-    position: absolute;
-    margin-left: 18%;
+    /*position: absolute;
+    margin-left: 24%;*/
 }
 
 .panel .panel-body  div.basicInfo > table {
