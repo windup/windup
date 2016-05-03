@@ -62,22 +62,6 @@
     <build>
         <plugins>
             <plugin>
-                <artifactId>furnace-maven-plugin</artifactId>
-                <groupId>org.jboss.forge.furnace</groupId>
-                <executions>
-                    <execution>
-                        <id>generate-dot</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>generate-dot</goal>
-                        </goals>
-                        <configuration>
-                            <attach>true</attach>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
                 <executions>
                     <execution>
