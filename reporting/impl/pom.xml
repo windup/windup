@@ -12,12 +12,17 @@
     <name>Windup Engine - Reporting Impl</name>
 
     <dependencies>
-    
+
         <!-- Local Dependencies -->
         <dependency>
             <groupId>org.jboss.windup.reporting</groupId>
             <artifactId>windup-reporting-api</artifactId>
             <scope>compile</scope>
+        </dependency>
+        <!-- Local 3rd party Dependencies -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jooq</groupId>
@@ -34,37 +39,33 @@
         <dependency>
             <groupId>org.jboss.windup.config</groupId>
             <artifactId>windup-config-api</artifactId>
-            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.config</groupId>
             <artifactId>windup-config-xml</artifactId>
-            <version>${project.version}</version>
+            <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.graph</groupId>
             <artifactId>windup-graph-api</artifactId>
-            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.rules.apps</groupId>
             <artifactId>windup-rules-base-api</artifactId>
-            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
-      
+
         <dependency>
             <groupId>org.jboss.windup.utils</groupId>
             <artifactId>windup-utils</artifactId>
-            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
-        
-       
+
+
 
         <!-- Furnace Container -->
         <dependency>
@@ -78,7 +79,7 @@
             <artifactId>opencsv</artifactId>
             <version>3.4</version>
         </dependency>
-        
+
     </dependencies>
 
 </project>

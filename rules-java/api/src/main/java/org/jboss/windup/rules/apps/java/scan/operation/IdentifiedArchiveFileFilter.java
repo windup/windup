@@ -4,7 +4,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.util.logging.Logger;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.util.Logging;
 

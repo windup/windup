@@ -11,8 +11,10 @@
     <groupId>org.jboss.windup.graph.frames</groupId>
     <artifactId>windup-frames</artifactId>
     <packaging>jar</packaging>
+
     <url>http://frames.tinkerpop.com</url>
     <name>Windup Engine - Frames</name>
+
     <description>
         Windup Frames is an extension of the upstream Frames project, with tools to ease debugging and integration within windup.
     </description>
@@ -63,6 +65,22 @@
             <artifactId>gremlin-groovy</artifactId>
             <version>${tinkerpop.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.utils</groupId>
+            <artifactId>windup-utils</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.javassist</groupId>
+            <artifactId>javassist</artifactId>
+            <version>3.18.0-GA</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>18.0</version>
+        </dependency>
+
         <!-- TEST -->
         <dependency>
             <groupId>com.tinkerpop.blueprints</groupId>
@@ -88,18 +106,9 @@
             <version>1.9.5</version>
             <scope>test</scope>
         </dependency>
-
-        <dependency>
-            <groupId>org.javassist</groupId>
-            <artifactId>javassist</artifactId>
-            <version>3.18.0-GA</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>18.0</version>
-        </dependency>
     </dependencies>
+
+
     <build>
         <directory>${basedir}/target</directory>
         <finalName>${project.artifactId}-${project.version}

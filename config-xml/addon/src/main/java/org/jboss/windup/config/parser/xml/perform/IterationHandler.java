@@ -5,7 +5,7 @@ import static org.joox.JOOX.$;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.config.exception.ConfigurationException;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.iteration.IterationBuilderOtherwise;

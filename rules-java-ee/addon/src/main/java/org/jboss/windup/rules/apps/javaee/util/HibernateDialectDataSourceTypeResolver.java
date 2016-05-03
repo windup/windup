@@ -1,6 +1,6 @@
 package org.jboss.windup.rules.apps.javaee.util;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Resolves a Hibernate Dialect to a Database Type.

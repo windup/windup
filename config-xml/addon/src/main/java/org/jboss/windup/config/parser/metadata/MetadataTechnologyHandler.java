@@ -1,6 +1,6 @@
 package org.jboss.windup.config.parser.metadata;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.forge.furnace.versions.VersionException;
 import org.jboss.forge.furnace.versions.VersionRange;
 import org.jboss.forge.furnace.versions.Versions;

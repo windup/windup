@@ -3,7 +3,7 @@ package org.jboss.windup.rules.apps.java.decompiler;
 import java.io.File;
 import java.nio.file.Paths;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.service.WindupConfigurationService;

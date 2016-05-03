@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.reporting.renderer.GraphWriter;
 import org.jboss.windup.reporting.renderer.dot.DotConstants.DotGraphType;
 

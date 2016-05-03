@@ -2,7 +2,7 @@ package org.jboss.windup.rules.apps.java.scan.operation.packagemapping;
 
 import static org.joox.JOOX.$;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.config.metadata.RuleMetadataType;
 import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;

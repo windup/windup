@@ -27,7 +27,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.forge.furnace.spi.ListenerRegistration;
 import org.jboss.windup.config.metadata.RuleMetadataType;
 import org.jboss.windup.config.phase.RulePhase;
