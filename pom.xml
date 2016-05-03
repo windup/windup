@@ -155,23 +155,6 @@
                         </compilerArgs>
                     </configuration>
                 </plugin>
-                <plugin>
-                    <groupId>org.jboss.forge.furnace</groupId>
-                    <artifactId>furnace-maven-plugin</artifactId>
-                    <version>${version.furnace}</version>
-                    <executions>
-                        <execution>
-                            <id>generate-dot</id>
-                            <phase>prepare-package</phase>
-                            <goals>
-                                <goal>generate-dot</goal>
-                            </goals>
-                            <configuration>
-                                <attach>true</attach>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
             </plugins>
         </pluginManagement>
 
