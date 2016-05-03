@@ -3,10 +3,10 @@ package org.jboss.windup.rules.apps.java.archives.identify;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-
+import java.util.logging.Logger;
 import javax.inject.Singleton;
-
 import org.jboss.forge.addon.dependencies.Coordinate;
+import org.jboss.windup.util.Logging;
 
 /**
  * A {@link ArchiveIdentificationService} that delegates to one or more provided {@link ArchiveIdentificationService} instances.
@@ -16,6 +16,8 @@ import org.jboss.forge.addon.dependencies.Coordinate;
 @Singleton
 public class CompositeArchiveIdentificationService implements ArchiveIdentificationService
 {
+    private static final Logger LOG = Logging.get(CompositeArchiveIdentificationService.class);
+
     protected final Set<ArchiveIdentificationService> identifiers = new LinkedHashSet<>();
 
     /**
@@ -54,6 +56,7 @@ public class CompositeArchiveIdentificationService implements ArchiveIdentificat
      */
     public final CompositeArchiveIdentificationService addIdentifier(ArchiveIdentificationService identifier)
     {
+        LOG.info("Adding identifier: " + identifier);
         this.identifiers.add(identifier);
         return this;
     }

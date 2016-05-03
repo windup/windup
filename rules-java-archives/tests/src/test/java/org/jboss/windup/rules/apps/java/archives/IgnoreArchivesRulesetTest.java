@@ -34,6 +34,7 @@ import org.jboss.windup.rules.apps.java.archives.model.ArchiveCoordinateModel;
 import org.jboss.windup.rules.apps.java.archives.model.IdentifiedArchiveModel;
 import org.jboss.windup.rules.apps.java.archives.model.IgnoredArchiveModel;
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -48,6 +49,8 @@ public class IgnoreArchivesRulesetTest
                 .resolve("test-files/jee-example-app-1.0.0.ear");
     private static final Path OUTPUT_PATH = Paths.get("target/WindupReport");
     public static final String LOG4J_COORDINATE = "log4j:log4j:::1.2.6";
+    private static final String LOG4J_SHA1 = "4bf32b10f459a4ecd4df234ae2ccb32b9d9ba9b7";
+
 
     @Deployment
     @AddonDependencies({
@@ -74,6 +77,15 @@ public class IgnoreArchivesRulesetTest
     @Inject
     private CompositeArchiveIdentificationService identifier;
 
+    /*
+        @Singleton
+        CompositeArchiveIdentificationService is injected
+            here, and
+            in ArchiveIdentificationGraphChangedListener.
+                created in ArchiveIdentificationLifecycleListener.
+        IOW, it should be the same one identifier.
+    */
+
     @Test
     public void testSkippedArchivesFound() throws Exception
     {
@@ -81,14 +93,16 @@ public class IgnoreArchivesRulesetTest
         {
             FileUtils.deleteDirectory(OUTPUT_PATH.toFile());
 
-            InMemoryArchiveIdentificationService inMemoryIdentifier = new InMemoryArchiveIdentificationService();
-            inMemoryIdentifier.addMapping("4bf32b10f459a4ecd4df234ae2ccb32b9d9ba9b7", LOG4J_COORDINATE);
+            InMemoryArchiveIdentificationService identifier1 = new InMemoryArchiveIdentificationService();
+            identifier1.addMapping(LOG4J_SHA1, LOG4J_COORDINATE);
 
-            InMemoryArchiveIdentificationService identificationService = new InMemoryArchiveIdentificationService();
-            identificationService.addMappingsFrom(new File("src/test/resources/testArchiveMapping.txt"));
+            InMemoryArchiveIdentificationService identifier2 = new InMemoryArchiveIdentificationService();
+            identifier2.addMappingsFrom(new File("src/test/resources/testArchiveMapping.txt"));
 
-            identifier.addIdentifier(inMemoryIdentifier);
-            identifier.addIdentifier(identificationService);
+            ///graphContext.getGraph().getListenerIterator();
+            identifier.addIdentifier(identifier1);
+            identifier.addIdentifier(identifier2);
+            Assume.assumeNotNull(identifier.getCoordinates(LOG4J_SHA1));
 
             SkippedArchives.add("log4j:*:*");
 
@@ -97,10 +111,9 @@ public class IgnoreArchivesRulesetTest
             config.addInputPath(INPUT_PATH);
             config.setOutputDirectory(OUTPUT_PATH);
             config.setOptionValue(OverwriteOption.NAME, true);
-            config.setRuleProviderFilter(new NotPredicate(
-                        new RuleProviderPhasePredicate(DecompilationPhase.class, MigrationRulesPhase.class, ReportGenerationPhase.class,
-                                    ReportRenderingPhase.class)
-                        ));
+            config.setRuleProviderFilter(new NotPredicate(new RuleProviderPhasePredicate(
+                    DecompilationPhase.class, MigrationRulesPhase.class, ReportGenerationPhase.class, ReportRenderingPhase.class)
+                ));
 
             processor.execute(config);
 
@@ -112,7 +125,7 @@ public class IgnoreArchivesRulesetTest
                 if (archive.isDirectory())
                     continue;
                 Assert.assertNotNull(archive);
-                Assert.assertTrue(archive instanceof IdentifiedArchiveModel);
+                Assert.assertTrue("Is IdentifiedArchiveModel: " + archive.toPrettyString(), archive instanceof IdentifiedArchiveModel);
                 ArchiveCoordinateModel archiveCoordinate = ((IdentifiedArchiveModel) archive).getCoordinate();
                 Assert.assertNotNull(archiveCoordinate);
 

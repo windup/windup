@@ -39,6 +39,8 @@ import org.junit.runner.RunWith;
 /**
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ *
+ * @see {@LuceneFileArchiveIdentificationServiceTest} for Lucene index test.
  */
 @RunWith(Arquillian.class)
 public class IdentifyArchivesRulesetTest
