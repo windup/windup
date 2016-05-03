@@ -21,6 +21,7 @@ import org.jboss.windup.util.exception.WindupException;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.util.wrappers.event.listener.GraphChangedListener;
+import java.util.List;
 import org.jboss.windup.util.Logging;
 
 /**
@@ -53,9 +54,10 @@ public final class ArchiveIdentificationGraphChangedListener implements GraphCha
 
             setArchiveHashes(archive);
 
-            Coordinate coordinate = identifier.getCoordinate(archive.getSHA1Hash());
-            if (coordinate != null)
+            List<Coordinate> coordinates = identifier.getCoordinates(archive.getSHA1Hash());
+            if (coordinates != null && !coordinates.isEmpty())
             {
+                Coordinate coordinate = coordinates.get(0); // The SHA1 identifier only returns a single coordinate.
                 LOG.info("Identified archive: [" + archive.getFilePath() + "] as [" + coordinate + "] will not be unzipped or analyzed.");
                 IdentifiedArchiveModel identifiedArchive = GraphService.addTypeToModel(context, archive, IdentifiedArchiveModel.class);
                 ArchiveCoordinateModel coordinateModel = new GraphService<>(context, ArchiveCoordinateModel.class).create();

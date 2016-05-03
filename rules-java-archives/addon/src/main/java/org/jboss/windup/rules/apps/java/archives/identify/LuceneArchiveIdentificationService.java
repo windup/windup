@@ -3,6 +3,8 @@ package org.jboss.windup.rules.apps.java.archives.identify;
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.apache.lucene.document.Document;
@@ -26,6 +28,7 @@ import org.jboss.windup.util.exception.WindupException;
  * Identifies archives by their hash, using pre-created Lucene index. See the nexus-repository-indexer project.
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
+ * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
  */
 public class LuceneArchiveIdentificationService implements ArchiveIdentificationService, Closeable
 {
@@ -42,6 +45,12 @@ public class LuceneArchiveIdentificationService implements ArchiveIdentification
     private Directory index;
     private IndexReader reader;
     private IndexSearcher searcher;
+
+
+    protected IndexSearcher getSearcher()
+    {
+        return searcher;
+    }
 
     public LuceneArchiveIdentificationService(File directory)
     {
@@ -70,12 +79,12 @@ public class LuceneArchiveIdentificationService implements ArchiveIdentification
             this.reader.close();
             this.index.close();
         } catch (Exception e) {
-            LOG.warning("Failed to close lucene index at: " + this.directory + " due to: " + e.getMessage());
+            LOG.warning("Failed to close Lucene index at: " + this.directory + " due to: " + e.getMessage());
         }
     }
 
     @Override
-    public Coordinate getCoordinate(String checksum)
+    public List<Coordinate> getCoordinates(String checksum)
     {
 
         Query query = new TermQuery(new Term("sha1", checksum));
@@ -91,9 +100,10 @@ public class LuceneArchiveIdentificationService implements ArchiveIdentification
                 String classifier = doc.get(CLASSIFIER);
                 String packaging = doc.get(PACKAGING);
 
-                Coordinate coordinate = CoordinateBuilder.create().setGroupId(groupId).setArtifactId(artifactId).setVersion(version)
-                            .setClassifier(classifier).setPackaging(packaging);
-                return coordinate;
+                Coordinate coordinate = CoordinateBuilder.create()
+                    .setGroupId(groupId).setArtifactId(artifactId).setVersion(version)
+                    .setClassifier(classifier).setPackaging(packaging);
+                return Collections.singletonList(coordinate);
             }
             return null;
         }

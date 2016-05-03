@@ -30,11 +30,11 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-                <groupId>org.jboss.windup</groupId>
-                <artifactId>windup-test-harness</artifactId>
-                <version>${project.version}</version>
-		<scope>test</scope>
-        </dependency>  
+            <groupId>org.jboss.windup</groupId>
+            <artifactId>windup-test-harness</artifactId>
+            <version>${project.version}</version>
+    		<scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>org.jboss.windup.exec</groupId>
             <artifactId>windup-exec</artifactId>
@@ -53,6 +53,14 @@
             <classifier>forge-addon</classifier>
             <scope>test</scope>
         </dependency>
+        <!--
+        <dependency>
+            <groupId>org.jboss.windup.maven</groupId>
+            <artifactId>nexus-indexer-data</artifactId>
+            <type>jar</type>
+            <scope>test</scope>
+        </dependency>
+        -->
 
         <!-- Test Data Dependencies -->
         <dependency>

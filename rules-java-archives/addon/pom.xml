@@ -68,6 +68,12 @@
             <artifactId>nexus-indexer-data</artifactId>
             <type>zip</type>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jboss.windup.maven</groupId>
+                    <artifactId>nexus-indexer</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 

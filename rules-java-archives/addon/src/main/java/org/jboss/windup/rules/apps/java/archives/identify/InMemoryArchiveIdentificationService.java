@@ -3,6 +3,8 @@ package org.jboss.windup.rules.apps.java.archives.identify;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -24,7 +26,7 @@ public class InMemoryArchiveIdentificationService implements ArchiveIdentificati
     private final Map<String, String> map = new TreeMap<>();
 
     @Override
-    public Coordinate getCoordinate(String checksum)
+    public List<Coordinate> getCoordinates(String checksum)
     {
         if (checksum == null)
             return null;
@@ -34,7 +36,8 @@ public class InMemoryArchiveIdentificationService implements ArchiveIdentificati
         if (coordinate == null)
             return null;
 
-        return CoordinateBuilder.create(coordinate);
+        Coordinate coord = CoordinateBuilder.create(coordinate);
+        return Collections.singletonList(coord);
     }
 
     public InMemoryArchiveIdentificationService addMapping(String checksum, String coordinate)
