@@ -34,6 +34,7 @@ public class WindupArchitectureTestKeepArchivesAndGraphTest extends WindupArchit
                 @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-ee"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-tattletale"),
+                @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
                 @AddonDependency(name = "org.jboss.windup.tests:test-util"),
                 @AddonDependency(name = "org.jboss.windup.config:windup-config-groovy"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),

@@ -9,7 +9,7 @@ import java.lang.reflect.WildcardType;
 import java.util.Map;
 
 import com.tinkerpop.blueprints.Vertex;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class ClassUtilities
 {

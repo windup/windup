@@ -13,7 +13,7 @@
     <name>Windup Rules - Java - Basic API</name>
 
     <dependencies>
-        <!-- Local Dependencies -->
+        <!-- Local 3rd party Dependencies -->
         <dependency>
             <groupId>org.jboss.forge.roaster</groupId>
             <artifactId>roaster-jdt</artifactId>
