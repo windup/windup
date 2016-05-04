@@ -8,23 +8,24 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
+import org.apache.commons.lang3.StringEscapeUtils;
 
 /**
  * <p>
  * {@link ExecutionStatistics} provides a simple system for storing the time taken to perform operations.
  * </p>
- * 
+ *
  * <p>
  * Example usage:
- * 
+ *
  * <pre>
  * ExecutionStatistics.get().begin(&quot;Process-01&quot;);
  * // ... your code to be timed goes here
  * ExecutionStatistics.get().end(&quot;Process-01&quot;);
  * </pre>
- * 
+ *
  * </p>
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
@@ -49,7 +50,7 @@ public class ExecutionStatistics
         Thread currentThread = Thread.currentThread();
         if (stats.get(currentThread) == null)
         {
-            stats.put(currentThread,new ExecutionStatistics());
+            stats.put(currentThread, new ExecutionStatistics());
         }
         return stats.get(currentThread);
     }
@@ -114,14 +115,16 @@ public class ExecutionStatistics
 
         try (FileWriter fw = new FileWriter(outputPath.toFile()))
         {
-            fw.write("Type~Number Of Executions~Total Milliseconds~Milliseconds per execution\n");
+            fw.write("Number Of Executions, Total Milliseconds,  Milliseconds per execution, Type\n");
             for (Map.Entry<String, TimingData> timing : executionInfo.entrySet())
             {
                 TimingData data = timing.getValue();
                 long totalMillis = (data.totalNanos / 1000000);
                 double millisPerExecution = (double) totalMillis / (double) data.numberOfExecutions;
-                fw.write(timing.getKey() + "~" + data.numberOfExecutions + "~" + totalMillis + "~" + millisPerExecution);
-                fw.write("\n");
+                fw.write(String.format("%6d, %6d, %8.2f, %s\n",
+                    data.numberOfExecutions, totalMillis, millisPerExecution,
+                    StringEscapeUtils.escapeCsv(timing.getKey())
+                ));
             }
         }
         catch (Exception e)

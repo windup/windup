@@ -1,6 +1,12 @@
 package org.jboss.windup.util;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.jboss.windup.util.exception.WindupException;
 
 /**
  *
@@ -27,6 +33,19 @@ public class Checks
             throw new IllegalArgumentException(dirDesc + " must not be null.");
         if (outputDir.exists() && !outputDir.isDirectory())
             throw new IllegalArgumentException(dirDesc + " is a file, expected a directory: " + outputDir.getAbsolutePath());
+    }
+
+    public static void createDirectoryToBeFilled(Path dir, String dirDesc) throws IllegalArgumentException
+    {
+        checkDirectoryToBeFilled(dir.toFile(), dirDesc);
+        try
+        {
+            Files.createDirectories(dir);
+        }
+        catch (IOException ex)
+        {
+            throw new WindupException("Error creating stats folder: " + dir.toString() + " due to: " + ex.getMessage(), ex);
+        }
     }
 
     public static void checkDirectoryToBeRead(File rootDir, String dirDesc)
