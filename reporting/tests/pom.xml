@@ -13,12 +13,6 @@
 
     <dependencies>
 
-        <!-- Local 3rd party Dependencies -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-        </dependency>
-
         <!-- Addon Dependencies -->
         <dependency>
             <groupId>org.jboss.windup.reporting</groupId>

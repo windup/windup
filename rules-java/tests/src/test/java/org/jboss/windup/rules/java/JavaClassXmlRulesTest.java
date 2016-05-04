@@ -40,6 +40,7 @@ public class JavaClassXmlRulesTest
                 @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
                 @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+                @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
     public static AddonArchive getDeployment()

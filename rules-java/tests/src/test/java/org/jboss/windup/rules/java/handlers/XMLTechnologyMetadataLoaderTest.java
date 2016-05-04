@@ -46,6 +46,7 @@ public class XMLTechnologyMetadataLoaderTest
                 @AddonDependency(name = "org.jboss.windup.config:windup-config-xml"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
                 @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+                @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
     })
     public static AddonArchive getDeployment()

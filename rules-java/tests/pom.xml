@@ -13,25 +13,18 @@
     <name>Windup Rules - Java - Basic Tests</name>
 
     <dependencies>
-
-        <!-- Project Dependencies -->
-        <dependency>
-            <groupId>org.jboss.windup.rules.apps</groupId>
-            <artifactId>windup-rules-java</artifactId>
-            <classifier>forge-addon</classifier>
-        </dependency>
+        <!-- Local Dependencies -->
         <dependency>
             <groupId>org.jboss.windup.rules.apps</groupId>
             <artifactId>windup-rules-java-api</artifactId>
         </dependency>
 
-        <!-- Local 3rd party Dependencies -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-        </dependency>
-
         <!-- Addon Dependencies -->
+        <dependency>
+            <groupId>org.jboss.windup.rules.apps</groupId>
+            <artifactId>windup-rules-java</artifactId>
+            <classifier>forge-addon</classifier>
+        </dependency>
         <dependency>
             <groupId>org.jboss.windup.decompiler</groupId>
             <artifactId>decompiler-procyon</artifactId>
