@@ -35,19 +35,6 @@ public class Checks
             throw new IllegalArgumentException(dirDesc + " is a file, expected a directory: " + outputDir.getAbsolutePath());
     }
 
-    public static void createDirectoryToBeFilled(Path dir, String dirDesc) throws IllegalArgumentException
-    {
-        checkDirectoryToBeFilled(dir.toFile(), dirDesc);
-        try
-        {
-            Files.createDirectories(dir);
-        }
-        catch (IOException ex)
-        {
-            throw new WindupException("Error creating stats folder: " + dir.toString() + " due to: " + ex.getMessage(), ex);
-        }
-    }
-
     public static void checkDirectoryToBeRead(File rootDir, String dirDesc)
     {
         if (rootDir == null)

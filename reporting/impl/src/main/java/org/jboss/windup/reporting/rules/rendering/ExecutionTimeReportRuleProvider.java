@@ -23,6 +23,7 @@ import org.jboss.windup.graph.service.RuleProviderExecutionStatisticsService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.util.Checks;
 import org.jboss.windup.util.ExecutionStatistics;
+import org.jboss.windup.util.PathUtil;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -56,7 +57,7 @@ public class ExecutionTimeReportRuleProvider extends AbstractRuleProvider
                 // create a directory for the output
                 Path statsDir = Paths.get(outputDir, "stats");
                 FileUtils.deleteQuietly(statsDir.toFile());
-                Checks.createDirectoryToBeFilled(statsDir, "stats folder");
+                PathUtil.createDirectory(statsDir, "stats folder");
 
                 Path detailedExecutionStatsOutputPath = statsDir.resolve("detailed_stats.csv");
                 ExecutionStatistics.get().serializeTimingData(detailedExecutionStatsOutputPath);

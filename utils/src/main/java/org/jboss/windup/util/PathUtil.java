@@ -1,12 +1,16 @@
 package org.jboss.windup.util;
 
+import java.io.IOException;
 import java.io.File;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.logging.Logger;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+
+import org.jboss.windup.util.exception.WindupException;
 
 /**
  * Provides useful methods for manipulating filenames (eg, removing illegal chars from files).
@@ -252,6 +256,21 @@ public class PathUtil
     {
         String qualifiedName = classFilePathToClassname(relativePath);
         return ClassNameUtil.getPackageName(qualifiedName);
+    }
+
+    /**
+     * Creates the given directory. Fails if it already exists.
+     */
+    public static void createDirectory(Path dir, String dirDesc)
+    {
+        try
+        {
+            Files.createDirectories(dir);
+        }
+        catch (IOException ex)
+        {
+            throw new WindupException("Error creating " + dirDesc + " folder: " + dir.toString() + " due to: " + ex.getMessage(), ex);
+        }
     }
 
     /*
