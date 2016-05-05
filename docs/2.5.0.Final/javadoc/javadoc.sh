@@ -1,0 +1,1 @@
+/home/ondra/sw/jdk1.8.0_72/jre/../bin/javadoc -J-Xmx2400m @options @packages
