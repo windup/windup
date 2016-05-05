@@ -58,7 +58,7 @@
             </div>
         </div>
 
-        <div class="row container-fluid col-md-12">
+        <div class="row container-fluid col-md-12 summaryInfo">
             <div class="panel panel-primary col-md-12">
                 <div class="row col-md-12 report-index-row">
                     <div class="col-md-3">
@@ -123,36 +123,37 @@
                             <div id="mandatoryIncidentsByEffortAndStoryPoints" style="float: right;"></div>
                         </div>
                     </div>
-            </div>
+                </div><#-- .row -->
 
-            <div class="row col-md-12 report-index-row">
-                <div class="col-md-3">
-                    <table class="table table-condensed table-striped">
-                        <thead>
-                            <tr>
-                                <td>
-                                    <b>Java Incidents by Package</b>
-                                </td>
-                                <td class='numeric-column'>
-                                    <b>Incidents</b>
-                                </td>
-                            </tr>
-                        </thead>
-                        <tbody id="javaIncidentsByPackageTBody">
-                        </tbody>
-                    </table>
-                    <span class="note">Note: this does not include XML files and "possible" issues.</span>
-                </div>
-                <div class="panel col-md-6">
-                    <div style="margin-bottom: 10px; margin-left: 190px;">
-                        <b>Java Incidents by Package</b>
+                <div class="row col-md-12 report-index-row">
+                    <div class="col-md-3">
+                        <table class="table table-condensed table-striped">
+                            <thead>
+                                <tr>
+                                    <td>
+                                        <b>Java Incidents by Package</b>
+                                    </td>
+                                    <td class='numeric-column'>
+                                        <b>Incidents</b>
+                                    </td>
+                                </tr>
+                            </thead>
+                            <tbody id="javaIncidentsByPackageTBody">
+                            </tbody>
+                        </table>
+                        <span class="note">Note: this does not include XML files and "possible" issues.</span>
                     </div>
-                    <div id='application_pie' class='windupPieGraph'></div>
-                </div>
-            </div>
-        </div>
+                    <div class="panel col-md-6">
+                        <div style="margin-bottom: 10px; margin-left: 190px;">
+                            <b>Java Incidents by Package</b>
+                        </div>
+                        <div id='application_pie' class='windupPieGraph'></div>
+                    </div>
+                </div><#-- .row -->
+            </div><#-- .panel -->
+        </div><#-- .row.summaryInfo -->
 
-        <div class="row container-fluid col-md-12">
+        <div class="row container-fluid col-md-12 additionalReports">
             <div class="panel panel-primary">
                 <div class="panel-heading">
                     Additional Reports
