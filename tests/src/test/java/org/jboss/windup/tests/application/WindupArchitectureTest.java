@@ -35,7 +35,7 @@ import org.junit.Assert;
 
 /**
  * Base class for Windup end-to-end tests.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public abstract class WindupArchitectureTest
@@ -182,7 +182,8 @@ public abstract class WindupArchitectureTest
 
     MigrationIssuesReportModel getCatchallApplicationReport(GraphContext context)
     {
-        return (MigrationIssuesReportModel) getReport(context, "/reports/templates/migration-issues.ftl", "Potential Issues");
+        // Before WINDUP-986: "Potential Issues"
+        return (MigrationIssuesReportModel) getReport(context, "/reports/templates/migration-issues.ftl", "Migration Issues");
     }
 
     ReportModel getReport(GraphContext context, String template, String name)
