@@ -17,8 +17,8 @@
         <!-- Local Dependencies -->
         <dependency>
             <groupId>org.jboss.windup.decompiler.fernflower</groupId>
-            <artifactId>fernflower</artifactId>
-            <version>${project.version}</version>
+            <artifactId>windup-fernflower</artifactId>
+            <version>1.0.0.20160505</version>
         </dependency>
 
         <!-- Addon Dependencies -->
