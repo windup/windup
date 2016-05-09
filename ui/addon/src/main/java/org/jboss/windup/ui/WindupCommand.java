@@ -56,6 +56,7 @@ import org.jboss.windup.graph.GraphContextFactory;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, ozizka at seznam.cz</a>
  */
 public class WindupCommand implements UICommand
 {
@@ -162,21 +163,22 @@ public class WindupCommand implements UICommand
 
             ConfigurationOption option = entry.getKey();
             Object inputValue = getValueForInput(option, inputComponent);
+            if (inputValue == null && !option.isRequired())
+                return;
+
             ValidationResult result = option.validate(inputValue);
 
-            if (result.getLevel().equals(ValidationResult.Level.ERROR))
+            switch (result.getLevel())
             {
-                context.addValidationError(inputComponent, result.getMessage());
-            }
-
-            if (result.getLevel().equals(ValidationResult.Level.PROMPT_TO_CONTINUE))
-            {
-                this.promptMessages.add(result);
-            }
-
-            if (result.getLevel().equals(ValidationResult.Level.WARNING))
-            {
-                context.addValidationWarning(inputComponent, result.getMessage());
+                case ERROR:
+                    context.addValidationError(inputComponent, result.getMessage());
+                    break;
+                case WARNING:
+                    context.addValidationWarning(inputComponent, result.getMessage());
+                    break;
+                case PROMPT_TO_CONTINUE:
+                    this.promptMessages.add(result);
+                    break;
             }
         }
     }
