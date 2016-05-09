@@ -31,7 +31,7 @@ public class RulesetUpdateChecker
             throw new IllegalStateException("windup-exec is not deployed.");
 
         RulesetsUpdater updater = furnace.getAddonRegistry().getServices(RulesetsUpdater.class).get();
-        if (updater.rulesetsNeedUpdate())
+        if (updater.rulesetsNeedUpdate(true))
         {
             System.out.println("\nThe rulesets are outdated: " + updater.getRulesetsDir()
                 + "\nConsider running Windup with --updateRulesets.\n");

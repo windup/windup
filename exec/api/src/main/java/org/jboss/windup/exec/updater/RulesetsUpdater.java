@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Logger;
 import javax.inject.Inject;
 import org.apache.commons.io.FileUtils;
@@ -19,10 +18,7 @@ import org.jboss.forge.addon.maven.resources.MavenModelResource;
 import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.forge.addon.resource.ResourceFactory;
 import org.jboss.forge.furnace.Furnace;
-import org.jboss.forge.furnace.addons.Addon;
-import org.jboss.forge.furnace.addons.AddonFilter;
 import org.jboss.forge.furnace.versions.SingleVersion;
-import org.jboss.windup.config.furnace.FurnaceHolder;
 import org.jboss.windup.util.PathUtil;
 import org.jboss.windup.util.ZipUtil;
 import org.jboss.windup.util.exception.WindupException;
@@ -40,8 +36,6 @@ public class RulesetsUpdater
     private static final String RULESETS_ARTIFACT_ID = "windup-rulesets";
     private static final String RULES_GROUP_ID = "org.jboss.windup.rules";
     public static final String RULESET_CORE_DIRECTORY = "migration-core";
-    private static final String ADDON_ID_WINDUP_EXEC = "org.jboss.windup.exec:windup-exec";
-
 
     @Inject
     private Furnace furnace;
@@ -57,10 +51,8 @@ public class RulesetsUpdater
     // This may be called (and print the message) twice - first in RulesetUpdateChecker, then here.
     // TODO: This should be redesigned - first, do a query for current and latest version.
     //       Then use the result to print and to compare, as needed.
-    public boolean rulesetsNeedUpdate()
+    public boolean rulesetsNeedUpdate(boolean printVersions)
     {
-        printWindupVersions();
-
         SingleVersion latest =  getLatestCoreRulesetVersion();
         if (latest == null)
         {
@@ -75,7 +67,8 @@ public class RulesetsUpdater
             return false;
         }
 
-        printRulesetsVersions(installed, latest);
+        if (printVersions)
+            printRulesetsVersions(installed, latest);
         return 0 > installed.compareTo(latest);
     }
 
@@ -87,7 +80,7 @@ public class RulesetsUpdater
         if (!pomXml.exists())
             return null;
         MavenModelResource pom = (MavenModelResource) factory.create(pomXml);
-        return new SingleVersion(pom.getCurrentModel().getVersion());
+        return SingleVersion.valueOf(pom.getCurrentModel().getVersion());
     }
 
     public void printRulesetsVersions(SingleVersion installed, SingleVersion latest)
@@ -95,30 +88,6 @@ public class RulesetsUpdater
         final String msg = "Core rulesets version: Installed: " + installed + " Latest release: " + latest;
         LOG.info(msg);
         System.out.println(msg); // Print to both to have the info in the log too.
-    }
-
-    public void printWindupVersions()
-    {
-        String windupRunning = "(cannot detect)";
-        String windupLatest  = "(cannot query)";
-        try {
-            windupRunning = StringUtils.defaultString(getCurrentRunningWindupVersion(), windupRunning);
-        }
-        catch (Throwable ex) {}
-        try {
-            windupLatest  = StringUtils.defaultString(queryLatestWindupRelease().getVersion(), windupLatest);
-        }
-        catch (Throwable ex) {}
-
-        printWindupVersions(windupRunning, windupLatest);
-    }
-
-
-    public void printWindupVersions(String windupRunning, String windupLatest)
-    {
-        final String msg = "Windup engine version: Running: " + windupRunning + " Latest release: " + windupLatest;
-        LOG.info(msg);
-        System.out.println(msg);
     }
 
     /**
@@ -133,7 +102,7 @@ public class RulesetsUpdater
 
     public String replaceRulesetsDirectoryWithLatestReleaseIfAny() throws IOException, DependencyException
     {
-        if (!this.rulesetsNeedUpdate())
+        if (!this.rulesetsNeedUpdate(false))
             return null;
 
         Path windupRulesDir = getRulesetsDir();
@@ -210,18 +179,8 @@ public class RulesetsUpdater
      */
     public String getCurrentRunningWindupVersion()
     {
-        Set<Addon> addons = FurnaceHolder.getAddonRegistry().getAddons(new AddonFilter() {
-            public boolean accept(Addon type) {
-                return type.getId().getName().equals(ADDON_ID_WINDUP_EXEC);
-            }
-        });
-
-        if (addons.isEmpty())
-            return null;
-        else
-            return addons.iterator().next().getId().getVersion().toString();
+        return getClass().getPackage().getImplementationVersion();
     }
-
 
     private SingleVersion getLatestCoreRulesetVersion()
     {

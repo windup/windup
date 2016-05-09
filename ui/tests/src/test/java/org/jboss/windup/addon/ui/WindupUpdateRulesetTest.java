@@ -63,10 +63,10 @@ public class WindupUpdateRulesetTest
 
         try
         {
-            boolean rulesetNeedUpdate = this.updater.rulesetsNeedUpdate();
+            boolean rulesetNeedUpdate = this.updater.rulesetsNeedUpdate(true);
             Assert.assertTrue("Rulesets should need an update.", rulesetNeedUpdate);
             updater.replaceRulesetsDirectoryWithLatestReleaseIfAny();
-            Assert.assertFalse("Rulesets should not need an update.", this.updater.rulesetsNeedUpdate());
+            Assert.assertFalse("Rulesets should not need an update.", this.updater.rulesetsNeedUpdate(true));
         }
         catch (Throwable ex)
         {

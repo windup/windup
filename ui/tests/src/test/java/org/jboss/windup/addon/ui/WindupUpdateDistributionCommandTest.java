@@ -183,7 +183,7 @@ public class WindupUpdateDistributionCommandTest
                                                   // currentUiVersion);
         waitForOldWindupUIAddon(furnace);
 
-        boolean rulesetNeedUpdate = updater.rulesetsNeedUpdate();
+        boolean rulesetNeedUpdate = updater.rulesetsNeedUpdate(true);
         Assert.assertTrue(rulesetNeedUpdate);
         try (CommandController controller = uiTestHarness.createCommandController("Windup Update Distribution"))
         {
@@ -194,7 +194,7 @@ public class WindupUpdateDistributionCommandTest
                 // Actually runs the command.
                 Result result = controller.execute();
                 Assert.assertFalse("Windup Update Distribution command should suceed, but it failed.", result instanceof Failed);
-                rulesetNeedUpdate = updater.rulesetsNeedUpdate();
+                rulesetNeedUpdate = updater.rulesetsNeedUpdate(true);
                 Assert.assertFalse("Ruleset should have already been updated to the latest version and as such should not need another update.",
                             rulesetNeedUpdate);
 
