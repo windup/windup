@@ -89,7 +89,7 @@ public class ResolveServerResourceLinksRuleProvider extends AbstractRuleProvider
         LinkModel jmsDestinationLink = linkService
                     .getOrCreate(
                                 "Destination Setup",
-                                "https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html/Administration_and_Configuration_Guide/sect-Configuration.html");
+                                "https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html/Administration_and_Configuration_Guide/sect-Configuration1.html");
         linkable.addLink(jmsDestinationLink);
     }
 
