@@ -31,12 +31,11 @@ import org.jboss.windup.util.exception.WindupException;
  */
 public class RulesetsUpdater
 {
-    private static final Logger log = Logger.getLogger( RulesetsUpdater.class.getName() );
+    private static final Logger LOG = Logger.getLogger( RulesetsUpdater.class.getName() );
 
     private static final String RULESETS_ARTIFACT_ID = "windup-rulesets";
     private static final String RULES_GROUP_ID = "org.jboss.windup.rules";
     public static final String RULESET_CORE_DIRECTORY = "migration-core";
-
 
     @Inject
     private Furnace furnace;
@@ -48,24 +47,48 @@ public class RulesetsUpdater
     ResourceFactory factory;
 
 
-    public boolean rulesetsNeedUpdate()
+
+    // This may be called (and print the message) twice - first in RulesetUpdateChecker, then here.
+    // TODO: This should be redesigned - first, do a query for current and latest version.
+    //       Then use the result to print and to compare, as needed.
+    public boolean rulesetsNeedUpdate(boolean printVersions)
     {
-        Coordinate lastRelease = this.getLatestReleaseOf(RULES_GROUP_ID, RULESETS_ARTIFACT_ID);
+        SingleVersion latest =  getLatestCoreRulesetVersion();
+        if (latest == null)
+        {
+            LOG.info("Could not query the latest core version.");
+            return false;
+        }
+
+        SingleVersion installed = getCurrentCoreRulesetsVersion();
+        if (installed == null)
+        {
+            LOG.warning("Could not detect the current core rulesets version.");
+            return false;
+        }
+
+        if (printVersions)
+            printRulesetsVersions(installed, latest);
+        return 0 > installed.compareTo(latest);
+    }
+
+    private SingleVersion getCurrentCoreRulesetsVersion()
+    {
         Path windupRulesDir = getRulesetsDir();
         Path coreRulesPomPath = windupRulesDir.resolve(RULESET_CORE_DIRECTORY + "/META-INF/maven/org.jboss.windup.rules/windup-rulesets/pom.xml");
         File pomXml = coreRulesPomPath.toFile();
         if (!pomXml.exists())
-            return false;
-
+            return null;
         MavenModelResource pom = (MavenModelResource) factory.create(pomXml);
-        SingleVersion installed = new SingleVersion(pom.getCurrentModel().getVersion());
-        SingleVersion latest = new SingleVersion(lastRelease.getVersion());
-        final String msg = "Core rulesets: Installed: " + installed + " Latest release: " + latest;
-        log.info(msg);
-        System.out.println(msg); // Print to both to have the info in the log too.
-        return 0 > installed.compareTo(latest);
+        return SingleVersion.valueOf(pom.getCurrentModel().getVersion());
     }
 
+    public void printRulesetsVersions(SingleVersion installed, SingleVersion latest)
+    {
+        final String msg = "Core rulesets version: Installed: " + installed + " Latest release: " + latest;
+        LOG.info(msg);
+        System.out.println(msg); // Print to both to have the info in the log too.
+    }
 
     /**
      * @return The directory which this updater works with.
@@ -79,15 +102,15 @@ public class RulesetsUpdater
 
     public String replaceRulesetsDirectoryWithLatestReleaseIfAny() throws IOException, DependencyException
     {
-        if (!this.rulesetsNeedUpdate())
+        if (!this.rulesetsNeedUpdate(false))
             return null;
 
         Path windupRulesDir = getRulesetsDir();
         Path coreRulesetsDir = windupRulesDir.resolve(RULESET_CORE_DIRECTORY);
 
-        Coordinate rulesetsCoord = getLatestReleaseOf("org.jboss.windup.rules", "windup-rulesets");
+        Coordinate rulesetsCoord = getLatestReleaseOf(RULES_GROUP_ID, RULESETS_ARTIFACT_ID);
         if(rulesetsCoord == null)
-            throw new WindupException("No Windup release found.");
+            throw new WindupException("No Windup rulesets release found.");
 
         FileUtils.deleteDirectory(coreRulesetsDir.toFile());
         extractArtifact(rulesetsCoord, coreRulesetsDir.toFile());
@@ -134,6 +157,37 @@ public class RulesetsUpdater
                 return availableCoord;
         }
         return null;
+    }
+
+
+    /**
+     * Connects to a repository and returns the version of the latest windup-distribution.
+     */
+    public Coordinate queryLatestWindupRelease()
+    {
+        final CoordinateBuilder coords = CoordinateBuilder.create()
+                .setGroupId("org.jboss.windup")
+                .setArtifactId("windup-distribution")
+                .setClassifier("offline")
+                .setPackaging("zip");
+        Coordinate coord = this.getLatestReleaseOf(coords);
+        return coord;
+    }
+
+    /**
+     * @return The version of this running instance of Windup. Takes the windup-exec addon version as authoritative.
+     */
+    public String getCurrentRunningWindupVersion()
+    {
+        return getClass().getPackage().getImplementationVersion();
+    }
+
+    private SingleVersion getLatestCoreRulesetVersion()
+    {
+        Coordinate lastRelease = this.getLatestReleaseOf(RULES_GROUP_ID, RULESETS_ARTIFACT_ID);
+        if (lastRelease == null)
+            return null;
+        return new SingleVersion(lastRelease.getVersion());
     }
 
 }

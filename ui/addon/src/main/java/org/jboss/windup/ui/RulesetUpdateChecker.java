@@ -25,12 +25,13 @@ public class RulesetUpdateChecker
     {
         if (!event.getAddon().getId().getName().contains("org.jboss.windup.ui:windup-ui"))
             return;
-        RulesetsUpdater updater = furnace.getAddonRegistry().getServices(RulesetsUpdater.class).get();
 
-        if (!event.getAddon().getRepository().isDeployed(AddonId.from("org.jboss.windup.exec:windup-exec", event.getAddon().getId().getVersion())))
+        final AddonId windupExec = AddonId.from("org.jboss.windup.exec:windup-exec", event.getAddon().getId().getVersion());
+        if (!event.getAddon().getRepository().isDeployed(windupExec))
             throw new IllegalStateException("windup-exec is not deployed.");
 
-        if (updater.rulesetsNeedUpdate())
+        RulesetsUpdater updater = furnace.getAddonRegistry().getServices(RulesetsUpdater.class).get();
+        if (updater.rulesetsNeedUpdate(true))
         {
             System.out.println("\nThe rulesets are outdated: " + updater.getRulesetsDir()
                 + "\nConsider running Windup with --updateRulesets.\n");

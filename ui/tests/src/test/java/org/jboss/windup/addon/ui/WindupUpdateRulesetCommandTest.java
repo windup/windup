@@ -69,14 +69,14 @@ public class WindupUpdateRulesetCommandTest
 
         try (CommandController controller = uiTestHarness.createCommandController(WindupUpdateRulesetCommand.class))
         {
-            boolean rulesetNeedUpdate = updater.rulesetsNeedUpdate();
+            boolean rulesetNeedUpdate = updater.rulesetsNeedUpdate(true);
             Assert.assertTrue("Rulesets should need an update.", rulesetNeedUpdate);
 
             controller.initialize();
             Assert.assertTrue(controller.isEnabled());
             Result result = controller.execute();
             Assert.assertFalse(result instanceof Failed);
-            rulesetNeedUpdate = updater.rulesetsNeedUpdate();
+            rulesetNeedUpdate = updater.rulesetsNeedUpdate(true);
             Assert.assertFalse(rulesetNeedUpdate);
         }
         finally

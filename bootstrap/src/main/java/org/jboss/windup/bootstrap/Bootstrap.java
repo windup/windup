@@ -192,6 +192,8 @@ public class Bootstrap
         List<String> unknownArgs = new ArrayList<>();
 
         List<Command> commands = new ArrayList<>();
+
+        boolean versionCommandAdded = false;
         for (int i = 0; i < arguments.size(); i++)
         {
             final String arg = arguments.get(i);
@@ -234,6 +236,7 @@ public class Bootstrap
             }
             else if ("--version".equals(arg) || "-v".equals(arg))
             {
+                versionCommandAdded = true;
                 commands.add(new DisplayVersionCommand());
             }
             else if ("--listTags".equals(arg))
@@ -275,12 +278,12 @@ public class Bootstrap
                 unknownArgs.add(arg);
             }
         }
+        if (!versionCommandAdded)
+            commands.add(0, new DisplayVersionCommand(CommandResult.CONTINUE));
 
         List<String> windupArguments = new ArrayList<>(unknownArgs);
         if (!windupArguments.isEmpty())
         {
-            commands.add(new DisplayVersionCommand(CommandResult.CONTINUE));
-
             // go ahead and regenerate this every time just in case there are user-added addons that affect the result
             commands.add(new GenerateHelpCacheCommand());
             commands.add(new GenerateCompletionDataCommand(true));
