@@ -40,8 +40,16 @@ pom: class Pom
                 read this as the JBoss stack of the Java EE APIs and related components.  -->
             <dependency>
                 <groupId>org.jboss.bom</groupId>
-                <artifactId>jboss-eap-javaee7</artifactId>
-                <version>7.0.0-build-12</version>
+                <#switch (options.targetPlatform)!>
+                    <#case 6>
+                <artifactId>jboss-javaee-6.0-with-all</artifactId>
+                <version>1.0.7.Final</version>
+                    <#break>
+                    <#case 7>
+                    <#default>
+                <artifactId>wildfly-javaee7-with-tools</artifactId>
+                <version>10.0.1.Final</version>
+                </#switch>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

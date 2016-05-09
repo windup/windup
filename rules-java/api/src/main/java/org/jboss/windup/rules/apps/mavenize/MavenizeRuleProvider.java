@@ -49,6 +49,8 @@ public class MavenizeRuleProvider extends AbstractRuleProvider
 {
     private static final Logger LOG = Logging.get(MavenizeRuleProvider.class);
     public static final MavenCoord JBOSS_PARENT = new MavenCoord("org.jboss", "jboss-parent", "20");
+    public static final MavenCoord JBOSS_BOM_JAVAEE6_WITH_ALL = new MavenCoord("org.jboss.bom", "jboss-javaee-6.0-with-all", "1.0.7.Final");
+    public static final MavenCoord JBOSS_BOM_JAVAEE7_WITH_ALL = new MavenCoord("org.jboss.bom", "wildfly-javaee7-with-tools", "10.0.1.Final");
 
     // @formatter:off
     @Override
@@ -57,30 +59,30 @@ public class MavenizeRuleProvider extends AbstractRuleProvider
         ConditionBuilder applicationProjectModels = Query.fromType(WindupConfigurationModel.class);
 
         return ConfigurationBuilder.begin()
-            // Create the BOM frame
-            .addRule()
-            .perform(new GraphOperation() {
-                public void perform(GraphRewrite event, EvaluationContext context) {
-                    GlobalBomModel bom = event.getGraphContext().getFramed().addVertex(null, GlobalBomModel.class);
-                    ArchiveCoordinateModel jbossParent = event.getGraphContext().getFramed().addVertex(null, ArchiveCoordinateModel.class);
-                    copyTo(JBOSS_PARENT, jbossParent);
-                    bom.setParent(jbossParent);
-                }
-            })
-            .withId("Mavenize-BOM-data-collection")
+        // Create the BOM frame
+        .addRule()
+        .perform(new GraphOperation() {
+            public void perform(GraphRewrite event, EvaluationContext context) {
+                GlobalBomModel bom = event.getGraphContext().getFramed().addVertex(null, GlobalBomModel.class);
+                ArchiveCoordinateModel jbossParent = event.getGraphContext().getFramed().addVertex(null, ArchiveCoordinateModel.class);
+                copyTo(JBOSS_PARENT, jbossParent);
+                bom.setParent(jbossParent);
+            }
+        })
+        .withId("Mavenize-BOM-data-collection")
 
-            // For each IdentifiedArchive, add it to the global BOM.
-            .addRule()
-            .when(Query.fromType(IdentifiedArchiveModel.class))
-            .perform(new MavenizePutNewerVersionToGlobalBomOperation())
-            .withId("Mavenize-BOM-file-creation")
+        // For each IdentifiedArchive, add it to the global BOM.
+        .addRule()
+        .when(Query.fromType(IdentifiedArchiveModel.class))
+        .perform(new MavenizePutNewerVersionToGlobalBomOperation())
+        .withId("Mavenize-BOM-file-creation")
 
-            // For each application given to Windup as input, mavenize it.
-            .addRule()
-            .when(applicationProjectModels, SourceMode.isDisabled())
-            .perform(new MavenizeApplicationOperation())
-            .withId("Mavenize-projects-mavenization")
-            /**/;
+        // For each application given to Windup as input, mavenize it.
+        .addRule()
+        .when(applicationProjectModels, SourceMode.isDisabled())
+        .perform(new MavenizeApplicationOperation())
+        .withId("Mavenize-projects-mavenization")
+        ;
     }
     // @formatter:on
 

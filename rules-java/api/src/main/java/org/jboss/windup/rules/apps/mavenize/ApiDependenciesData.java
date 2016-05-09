@@ -1,5 +1,14 @@
 package org.jboss.windup.rules.apps.mavenize;
 
+/**
+ * This class was originally intended as a static store of various BOM's dependencies.
+ * But it turned out there are so many that it's better to extract them right from the BOM.
+ * That is implemented in nexus-repo-indexer 6.
+ *
+ * This might be deleted in the final version.
+ *
+ * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
+ */
 interface ApiDependenciesData
 {
     // Regex to help transforming from POM XML:

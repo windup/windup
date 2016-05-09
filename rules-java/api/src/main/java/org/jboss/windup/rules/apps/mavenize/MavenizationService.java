@@ -82,6 +82,9 @@ public class MavenizationService
 
         // BOM
         Pom bom = new Pom(new MavenCoord(mavCtx.getUnifiedGroupId(), bomArtifactId, mavCtx.getUnifiedVersion()));
+        bom.bom = getTargetTechnologies().contains("eap7")
+                ? MavenizeRuleProvider.JBOSS_BOM_JAVAEE7_WITH_ALL
+                : MavenizeRuleProvider.JBOSS_BOM_JAVAEE6_WITH_ALL;
         bom.role = Pom.ModuleRole.BOM;
         bom.parent = new Pom(MavenizeRuleProvider.JBOSS_PARENT);
         bom.description = "Bill of Materials. See https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html";
@@ -366,7 +369,7 @@ public class MavenizationService
     }
 
     /**
-     * This will be used to determine which BOM to take.
+     * Used to determine which BOM to take.
      * Currently we only have these tags: eap, eap7.
      */
     private Set<String> getTargetTechnologies()

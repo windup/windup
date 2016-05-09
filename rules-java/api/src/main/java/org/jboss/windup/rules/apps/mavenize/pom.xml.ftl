@@ -1,5 +1,9 @@
-<#-- This file should be kept aligned with JBoss EAP Quickstarts. -->
 <?xml version="1.0" encoding="UTF-8"?>
+<#--
+This file should be kept aligned with JBoss EAP Quickstarts.
+Template input:
+pom: class Pom
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <#-- These constructs are intended for correct formatting of the resulting pom.xml. -->
@@ -84,20 +88,11 @@
     -->
     <repositories>
         <repository>
-            <id>jboss-developer-staging-repository</id>
-            <url>http://jboss-developer.github.io/temp-maven-repo/</url>
-        </repository>
-        <repository>
             <id>jboss-enterprise-maven-repository</id>
             <url>https://maven.repository.redhat.com/ga/</url>
         </repository>
     </repositories>
-
     <pluginRepositories>
-        <pluginRepository>
-            <id>jboss-developer-staging-repository</id>
-            <url>http://jboss-developer.github.io/temp-maven-repo/</url>
-        </pluginRepository>
         <pluginRepository>
             <id>jboss-enterprise-maven-repository</id>
             <url>https://maven.repository.redhat.com/ga/</url>
@@ -132,8 +127,8 @@
                 <version>2.10.1</version>
                 <!-- configuring the EAR plug-in -->
                 <configuration>
-                    <!-- Tell Maven we are using Java EE. -->
-                    <version>6</version>
+                    <!-- Tell Maven to generate Java EE 7 application.xml. -->
+                    <version>7</version>
                     <!-- Use Java EE EAR libraries as needed. Java EE ear libraries
                         are in easy way to package any libraries needed in the EAR, and automatically
                         have any modules (EJB-JARs and WARs) use them. -->
@@ -143,9 +138,9 @@
                         If a custom context root is needed, uncomment the following snippet to
                         register our War as a web module and set the contextRoot property.
                         <webModule>
-                            <groupId>org.jboss.quickstarts.eap</groupId>
-                            <artifactId>jboss-ejb-in-ear-web</artifactId>
-                            <contextRoot>/jboss-ejb-in-ear</contextRoot>
+                            <groupId>${"$"}{project.groupId}</groupId>
+                            <artifactId>...-web</artifactId>
+                            <contextRoot>/${"$"}{project.parent.artifactId}-ear</contextRoot>
                         </webModule>
                     -->
                     </modules>

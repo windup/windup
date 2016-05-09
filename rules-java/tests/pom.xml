@@ -12,9 +12,6 @@
 
     <name>Windup Rules - Java - Basic Tests</name>
 
-    <properties>
-        <version.nexus.index>5</version.nexus.index>
-    </properties>
 
     <dependencies>
         <!-- Local Dependencies -->
@@ -146,12 +143,5 @@
             <type>zip</type>
         </dependency>
 
-        <dependency>
-            <groupId>org.jboss.shrinkwrap.resolver</groupId>
-            <artifactId>shrinkwrap-resolver-depchain</artifactId>
-            <version>2.2.2</version>
-            <scope>test</scope>
-            <type>pom</type>
-        </dependency>
     </dependencies>
 </project>

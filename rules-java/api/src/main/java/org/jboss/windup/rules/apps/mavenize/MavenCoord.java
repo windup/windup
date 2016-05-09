@@ -181,7 +181,7 @@ public class MavenCoord
 
     public String getPackaging()
     {
-        return packaging; // == null ? "pom" : packaging;
+        return packaging;
     }
 
 
