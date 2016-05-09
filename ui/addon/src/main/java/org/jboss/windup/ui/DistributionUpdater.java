@@ -1,6 +1,5 @@
 package org.jboss.windup.ui;
 
-
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -35,17 +34,11 @@ public class DistributionUpdater
 
     public void replaceWindupDirectoryWithLatestDistribution()
     {
-
-        final CoordinateBuilder coords = CoordinateBuilder.create()
-                .setGroupId("org.jboss.windup")
-                .setArtifactId("windup-distribution")
-                .setClassifier("offline")
-                .setPackaging("zip");
-        Coordinate coord = updater.getLatestReleaseOf(coords);
+        Coordinate coord = updater.queryLatestWindupRelease();
         if(coord == null)
             throw new WindupException("No Windup release found.");
-        log.info("Latest windup version available: " + coord.getVersion());
-        log.fine("Latest windup version available: " + coord);
+        log.info("Latest Windup version available: " + coord.getVersion());
+        log.fine("Latest Windup version available: " + coord);
 
         replaceWindupDirectoryWithDistribution(coord);
     }
