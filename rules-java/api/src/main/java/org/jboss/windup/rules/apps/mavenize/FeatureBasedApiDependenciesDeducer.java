@@ -5,34 +5,29 @@ import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.util.Logging;
 
 /**
- * Adds the appropriate API dependencies to Maven POMs based on what's found in the project.
+ * Adds the appropriate API dependencies to Maven POMs based on features found in the project.
  *
  * This is in a prototyping stage. Far away from final implementation.
  *
  * TODO:
  * This could be rule-based in the future, so the users could write their own mapping.
- * Or, the best would be, download all the API JARs, index the classes,
- * and map them to the G:A:V.
- * This index could be prepared in a similar way as the Maven Central index addon.
- * Or maybe - the Maven Central index contains the class data as well?
- *
- * However, we also want to map some older APIs - migration vs. (forced) upgrade.
  *
  * @author Ondrej Zizka, zizka at seznam.cz
  */
-class ApiDependenciesDeducer
+class FeatureBasedApiDependenciesDeducer implements DependencyDeducer
 {
-    private static final Logger LOG = Logging.get(ApiDependenciesDeducer.class);
+    private static final Logger LOG = Logging.get(FeatureBasedApiDependenciesDeducer.class);
 
     private MavenizationService.MavenizationContext mavCtx;
 
-    ApiDependenciesDeducer(MavenizationService.MavenizationContext mavCtx)
+    FeatureBasedApiDependenciesDeducer(MavenizationService.MavenizationContext mavCtx)
     {
         this.mavCtx = mavCtx;
     }
 
 
-    void addAppropriateDependencies(ProjectModel projectModel, Pom modulePom)
+    @Override
+    public void addAppropriateDependencies(ProjectModel projectModel, Pom modulePom)
     {
         addDeploymentTypeBasedDependencies(projectModel, modulePom);
         addHardcodedRecognitionDependencies(projectModel, modulePom);
@@ -46,7 +41,7 @@ class ApiDependenciesDeducer
         for (MavenCoord apiCoords : ApiDependenciesData.API_ARTIFACTS)
         {
             if (packageIndex.moduleContainsPackagesFromAPI(projectModel, apiCoords))
-                modulePom.getDependencies().add(apiCoords);
+                modulePom.getDependencies().add(new SimpleDependency(Dependency.Role.API, apiCoords));
         }
     }
 
@@ -64,15 +59,15 @@ class ApiDependenciesDeducer
             case "ear":
                 break;
             case "war":
-                modulePom.getDependencies().add(ApiDependenciesData.DEP_API_SERVLET_31);
+                modulePom.getDependencies().add(new SimpleDependency(Dependency.Role.API, ApiDependenciesData.DEP_API_SERVLET_31));
                 break;
             case "ejb":
-                modulePom.getDependencies().add(ApiDependenciesData.DEP_API_EJB_32);
-                modulePom.getDependencies().add(ApiDependenciesData.DEP_API_CDI);
-                modulePom.getDependencies().add(ApiDependenciesData.DEP_API_JAVAX_ANN);
+                modulePom.getDependencies().add(new SimpleDependency(Dependency.Role.API, ApiDependenciesData.DEP_API_EJB_32));
+                modulePom.getDependencies().add(new SimpleDependency(Dependency.Role.API, ApiDependenciesData.DEP_API_CDI));
+                modulePom.getDependencies().add(new SimpleDependency(Dependency.Role.API, ApiDependenciesData.DEP_API_JAVAX_ANN));
                 break;
             case "ejb-client":
-                modulePom.getDependencies().add(ApiDependenciesData.DEP_API_EJB_CLIENT);
+                modulePom.getDependencies().add(new SimpleDependency(Dependency.Role.API, ApiDependenciesData.DEP_API_EJB_CLIENT));
                 break;
         }
         return false;
@@ -87,13 +82,13 @@ class ApiDependenciesDeducer
     {
         // TODO: Create a mapping from API occurence in the module into use of
         if (hasJpaEntities(projectModel))
-            modulePom.getDependencies().add(ApiDependenciesData.DEP_API_JPA_21);
+            modulePom.getDependencies().add(new SimpleDependency(Dependency.Role.API, ApiDependenciesData.DEP_API_JPA_21));
 
         if (hasJsf(projectModel))
-            modulePom.getDependencies().add(ApiDependenciesData.DEP_API_JSF);
+            modulePom.getDependencies().add(new SimpleDependency(Dependency.Role.API, ApiDependenciesData.DEP_API_JSF));
 
         if (hasJaxrs(projectModel))
-            modulePom.getDependencies().add(ApiDependenciesData.DEP_API_JAXRS_20);
+            modulePom.getDependencies().add(new SimpleDependency(Dependency.Role.API, ApiDependenciesData.DEP_API_JAXRS_20));
     }
 
 

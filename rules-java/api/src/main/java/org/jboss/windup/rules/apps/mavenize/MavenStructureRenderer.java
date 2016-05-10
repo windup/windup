@@ -21,6 +21,7 @@ import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
 
 /**
+ * Recursively renders the previously created Maven project structure into pom.xml's in a directory tree.
  *
  * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, ozizka at seznam.cz</a>
  */
@@ -96,7 +97,7 @@ public class MavenStructureRenderer
         switch(pom.role) {
             case BOM: template = Paths.get(TEMPLATE_BOM_XML); break;
             default:
-                switch(pom.coords.getPackaging()){
+                switch(pom.coord.getPackaging()){
                     case "pom":
                     case "jar":
                     case "war":

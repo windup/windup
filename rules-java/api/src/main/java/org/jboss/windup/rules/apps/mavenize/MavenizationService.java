@@ -4,7 +4,10 @@ import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.logging.Logger;
+import org.apache.commons.collections4.OrderedMap;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.graph.GraphContext;
@@ -95,13 +98,16 @@ public class MavenizationService
         // BOM - dependencyManagement dependencies
         for( ArchiveCoordinateModel dep : grCtx.getUnique(GlobalBomModel.class).getDependencies() ){
             LOG.info("Adding dep to BOM: " + dep.toPrettyString());
-            bom.dependencies.add(new MavenCoord(dep));
+            bom.dependencies.add(new SimpleDependency(Dependency.Role.LIBRARY, new MavenCoord(dep)));
         }
 
         // 2) Recursively add the modules.
-        mavenizeModule(mavCtx, projectModel, null);
+        mavCtx.rootAppPom = mavenizeModule(mavCtx, projectModel, null);
 
-        // 3) Write the pom.xml's. TODO
+        // Sort the modules.
+        ///mavCtx.rootPom.submodules = sortSubmodulesToReflectDependencies(mavCtx.rootAppPom);
+
+        // 3) Write the pom.xml's.
         new MavenStructureRenderer(mavCtx).createMavenProjectDirectoryTree();
     }
 
@@ -133,9 +139,9 @@ public class MavenizationService
             else if(containingModule == null)
                 LOG.warning("containingModule is null."); // IllegalStateEx?
             else
-                containingModule.dependencies.add(MavenCoord.from(idArch.getCoordinate()));
+                containingModule.dependencies.add(new SimpleDependency(Dependency.Role.LIBRARY, MavenCoord.from(idArch.getCoordinate())));
 
-            // TODO: Log
+            LOG.info("Known library, skipping recursive mavenization: " + idArch.getCoordinate());
             return null;
         }
 
@@ -149,14 +155,14 @@ public class MavenizationService
             {
                 if (skipOrganizations.contains(org.getName().toLowerCase()))
                 {
-                    // TODO: Log
+                    LOG.info("Library from 3rd party vendor ("+org.getName()+"), skipping recursive mavenization: " + arch.getFilePath());
                     return null;
                 }
             }
         }
 
         // A MavenProject.
-        // TODO: This covers both app modules and libraries with pom.xml inside. Need to diferentiate.
+        // TODO: This covers both app modules and libraries with pom.xml inside. Need to diferentiate - skip only libraries.
         // TODO: This should disappear after WINDUP-981
         if (false && projectModel instanceof MavenProjectModel)
         {
@@ -165,8 +171,8 @@ public class MavenizationService
                 LOG.warning("MavenProject's getMavenIdentifier() returned null.");
             else if(containingModule == null)
                 LOG.warning("containingModule is null."); // IllegalStateEx?
-            else
-                containingModule.dependencies.add(MavenCoord.fromGAVPC(mvnProject.getMavenIdentifier()));
+            else if (true /* isLibraryAndNotProjectModule() */)
+                containingModule.dependencies.add(new SimpleDependency(Dependency.Role.LIBRARY, MavenCoord.fromGAVPC(mvnProject.getMavenIdentifier())));
             return null;
         }
 
@@ -186,7 +192,8 @@ public class MavenizationService
 
         // Set up the dependency of the containing module on the contained module. E.g. EAR depends on WAR.
         if(containingModule != null)
-            containingModule.dependencies.add(modulePom.coords);
+            ///containingModule.dependencies.add(new SimpleDependency(Dependency.Role.MODULE, modulePom.coord));
+            containingModule.dependencies.add(modulePom);
 
         // Nested archives
         // For now, only count with the modules of this app. There are likely more in the other apps.
@@ -199,7 +206,7 @@ public class MavenizationService
             // Known library -> simple dependency.
             if(file instanceof IdentifiedArchiveModel){
                 IdentifiedArchiveModel artifact = (IdentifiedArchiveModel) file;
-                modulePom.dependencies.add(new MavenCoord(artifact.getCoordinate()));
+                modulePom.dependencies.add(new SimpleDependency(Dependency.Role.LIBRARY, new MavenCoord(artifact.getCoordinate())));
             }
             // Unknown archives -> nested modules? -> local dependencies.
             else {
@@ -213,7 +220,8 @@ public class MavenizationService
             Pom subModulePom = mavenizeModule(mavCtx, subProject, modulePom);
             if (subModulePom == null)
                 continue;
-            modulePom.dependencies.add(subModulePom.coords);
+            ///modulePom.dependencies.add(new SimpleDependency(Dependency.Role.MODULE, subModulePom.coord));
+            modulePom.dependencies.add(subModulePom);
         }
 
         // Nested module candidates.
@@ -232,7 +240,7 @@ public class MavenizationService
         // One big Java EE API vs. individual?
 
         // TODO: Remove the deps versions overriding the BOM.
-        new ApiDependenciesDeducer(mavCtx).addAppropriateDependencies(projectModel, modulePom);
+        new FeatureBasedApiDependenciesDeducer(mavCtx).addAppropriateDependencies(projectModel, modulePom);
 
         return modulePom;
     }
@@ -320,9 +328,30 @@ public class MavenizationService
 
 
     /**
+     * Sorts the submodules of given Pom so that their cross-dependencies are satisfied if built in that order.
+     * TODO.
+     */
+    private OrderedMap<String, Pom> sortSubmodulesToReflectDependencies(Pom pom)
+    {
+        Set<MavenCoord> dependenciesMet = new HashSet();
+        dependenciesMet.add(pom.coord);
+
+        SortedSet<MavenCoord> dependenciesSatisfied = new TreeSet<>();
+
+        for (Dependency dep : pom.dependencies)
+        {
+            // TODO: Traverse the tree, depth-first, take items at node exit.
+        }
+
+        throw new UnsupportedOperationException("Not implemented yet.");
+    }
+
+
+    /**
      * Context of the mavenization - things to carry around.
      */
-    static class MavenizationContext {
+    static class MavenizationContext
+    {
         private Path mavenizedBaseDir;
         private Pom rootPom;
         private Set<Pom> knownSubmodules = new HashSet<>();
@@ -331,6 +360,7 @@ public class MavenizationService
         private String unifiedAppName;
         private Pom bom; // BOM shared by all other submodules.
         private GraphContext graphContext;
+        private Pom rootAppPom;
 
 
         public Path getMavenizedBaseDir() {
@@ -361,11 +391,19 @@ public class MavenizationService
             return bom;
         }
 
-
         public GraphContext getGraphContext() {
             return graphContext;
         }
 
+        public Pom getRootAppPom()
+        {
+            return rootAppPom;
+        }
+
+        public void setRootAppPom(Pom rootAppPom)
+        {
+            this.rootAppPom = rootAppPom;
+        }
     }
 
     /**

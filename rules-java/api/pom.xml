@@ -39,7 +39,7 @@
         <dependency>
             <groupId>org.jboss.windup.maven</groupId>
             <artifactId>nexus-indexer-data</artifactId>
-            <version>6</version>
+            <version>6.0</version>
             <scope>compile</scope>
             <optional>true</optional>
         </dependency>

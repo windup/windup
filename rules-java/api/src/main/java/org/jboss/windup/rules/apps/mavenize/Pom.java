@@ -11,37 +11,25 @@ import org.apache.commons.collections4.map.LinkedMap;
  *
  *  @author Ondrej Zizka, zizka at seznam.cz
  */
-public class Pom
+public class Pom implements Dependency
 {
-    MavenCoord coords = new MavenCoord();
+    MavenCoord coord = new MavenCoord();
     Pom parent;
     MavenCoord bom;
     String name;
     String description;
-    Set<MavenCoord> dependencies = new LinkedHashSet<>();
+    Set<Dependency> dependencies = new LinkedHashSet<>();
     Set<Pom> localDependencies = new LinkedHashSet<>();
     OrderedMap<String, Pom> submodules = new LinkedMap<>();
     boolean root = false;
 
+
     enum ModuleRole { PARENT, BOM, NORMAL }
     ModuleRole role = ModuleRole.NORMAL;
 
-    /**
-     * Whether the target artifact is internal project's module, third-party library,
-     * or an API definitions for the services provided by the  application server.
-     */
-    enum DependencyRole {
-        /**
-         *
-         */
-        LIBRARY,
-        MODULE,
-        API
-    }
-
 
     Pom(MavenCoord coords){
-        this.coords = coords;
+        this.coord = coords;
     }
 
     public Pom getParent(){
@@ -74,11 +62,11 @@ public class Pom
     /**
      * Third-party library dependencies.
      */
-    public Set<MavenCoord> getDependencies(){
+    public Set<Dependency> getDependencies(){
         return dependencies;
     }
 
-    public Pom setDependencies(Set<MavenCoord> dependencies){
+    public Pom setDependencies(Set<Dependency> dependencies){
         this.dependencies = dependencies;
         return this;
     }
@@ -118,11 +106,11 @@ public class Pom
 
 
     public MavenCoord getCoords(){
-        return coords;
+        return coord;
     }
 
     public Pom setCoords(MavenCoord coords){
-        this.coords = coords;
+        this.coord = coords;
         return this;
     }
 
@@ -137,7 +125,19 @@ public class Pom
 
     @Override
     public String toString(){
-        return "Pom{" + role + " " + coords + ", parent=" + (parent == null ? "" : parent.coords) + ", " + "name=" + name + /*", desc=" + description +*/ ", " + "dependencies=" + CollectionUtils.size(dependencies) + ", " + "localDependencies=" + CollectionUtils.size(localDependencies) + ", " + "submodules=" + CollectionUtils.size(submodules) + '}';
+        return "Pom{" + role + " " + coord + ", parent=" + (parent == null ? "" : parent.coord) + ", " + "name=" + name + /*", desc=" + description +*/ ", " + "dependencies=" + CollectionUtils.size(dependencies) + ", " + "localDependencies=" + CollectionUtils.size(localDependencies) + ", " + "submodules=" + CollectionUtils.size(submodules) + '}';
     }
 
+
+    @Override
+    public MavenCoord getMavenCoord()
+    {
+        return getCoords();
+    }
+
+    @Override
+    public Role getRole()
+    {
+        return Role.MODULE;
+    }
 }
