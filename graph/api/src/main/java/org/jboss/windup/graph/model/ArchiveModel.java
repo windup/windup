@@ -34,16 +34,16 @@ public interface ArchiveModel extends FileModel
      * Contains the parent archive.
      */
     @Adjacency(label = PARENT_ARCHIVE, direction = Direction.IN)
-    void setParentArchive(ArchiveModel resource);
+    void setParentArchive(ArchiveModel archive);
 
     /**
-     * Contains the name of this archive (filename).
+     * Contains the name of this archive (original filename).
      */
     @Property(ARCHIVE_NAME)
     String getArchiveName();
 
     /**
-     * Contains the name of this archive (filename).
+     * Contains the name of this archive (original filename).
      */
     @Property(ARCHIVE_NAME)
     void setArchiveName(String archiveName);
@@ -71,6 +71,9 @@ public interface ArchiveModel extends FileModel
      */
     @JavaHandler
     Iterable<FileModel> getAllFiles();
+
+    @Adjacency(label = DuplicateArchiveModel.ORIGINAL_ARCHIVE, direction = Direction.IN)
+    Iterable<DuplicateArchiveModel> getDuplicateArchives();
 
     abstract class Impl extends FileModel.Impl implements ArchiveModel, JavaHandlerContext<Vertex>
     {

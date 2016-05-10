@@ -5,7 +5,6 @@ import java.util.Comparator;
 import org.jboss.windup.graph.model.ProjectModel;
 
 /**
- * 
  * Returns a comparison based on an ascending alphabetical sort of the RootFileModel's FilePath.
  * 
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
@@ -14,7 +13,7 @@ import org.jboss.windup.graph.model.ProjectModel;
 public class ProjectModelByRootFileComparator implements Comparator<ProjectModel>
 {
 
-    // Use the file path comparor in FilePathComparator
+    // Use the file path comparator in FilePathComparator
     FilePathComparator filePathComparator = new FilePathComparator();
 
     @Override

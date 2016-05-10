@@ -2,13 +2,18 @@ package org.jboss.windup.rules.apps.java.archives.freemarker;
 
 import java.util.List;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import freemarker.template.SimpleScalar;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.service.ArchiveService;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
 
 import freemarker.template.TemplateModelException;
+
+import javax.annotation.Nullable;
 
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
@@ -30,7 +35,18 @@ public class GetArchivesBySHA1Method implements WindupFreeMarkerMethod
         SimpleScalar freemarkerArg = (SimpleScalar) arguments.get(0);
         String sha1 = freemarkerArg.getAsString();
         ArchiveService archiveService = new ArchiveService(context);
-        return archiveService.findBySHA1(sha1);
+
+        // filter out the one in the shared-libs virtual app.
+        Predicate<ArchiveModel> predicate = new Predicate<ArchiveModel>()
+        {
+            @Override
+            public boolean apply(ArchiveModel input)
+            {
+                return !input.getDuplicateArchives().iterator().hasNext();
+                //return true;
+            }
+        };
+        return Iterables.filter(archiveService.findBySHA1(sha1), predicate);
     }
 
     @Override

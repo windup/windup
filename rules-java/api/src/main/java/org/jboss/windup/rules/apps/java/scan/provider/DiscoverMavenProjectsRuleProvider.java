@@ -14,6 +14,7 @@ import org.jboss.windup.config.phase.DiscoverProjectStructurePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
+import org.jboss.windup.graph.model.DuplicateArchiveModel;
 import org.jboss.windup.graph.model.ProjectDependencyModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.FileService;

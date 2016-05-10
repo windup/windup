@@ -176,6 +176,10 @@ public interface FileModel extends ResourceModel
     @JavaHandler
     String getPrettyPath();
 
+    /**
+     * Returns the {@link ArchiveModel} that contains this file. If this file is an {@link ArchiveModel} then it will
+     * return itself.
+     */
     @JavaHandler
     ArchiveModel getArchive();
 
