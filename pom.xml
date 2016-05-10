@@ -66,7 +66,6 @@
         <module>windup-test-harness</module>
         <module>forks/frames</module>
         <module>forks/jdt</module>
-        <module>forks/procyon</module>
         <module>rexster</module>
         <module>graph</module>
 
