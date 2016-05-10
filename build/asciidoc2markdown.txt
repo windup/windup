@@ -1,0 +1,27 @@
+Links:
+(https?://(?:.*))\[(.*)\]
+[$2](http://$1)
+
+https://github.com/windup/windup.jboss.org/fork[Fork]
+
+Sources:
+\Q[options="nowrap"]\E\n----\n([\s\S]+?)\n----\n
+```\n$1\n```\n
+
+=== (.+)\n\n
+# $1\n\n
+
+==== (.+)\n\n
+## $1\n\n
+
+===== (.+)\n\n
+### $1\n\n
+
+====== (.+)\n\n
+#### $1\n\n
+
+Lists
+\n\. (.+)
+\n1. $1
+
+
