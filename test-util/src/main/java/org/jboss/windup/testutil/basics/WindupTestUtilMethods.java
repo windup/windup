@@ -1,5 +1,6 @@
 package org.jboss.windup.testutil.basics;
 
+import java.nio.file.Path;
 import org.jboss.windup.config.DefaultEvaluationContext;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleProvider;
@@ -8,8 +9,8 @@ import org.jboss.windup.graph.GraphContext;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.param.DefaultParameterValueStore;
 import org.ocpsoft.rewrite.param.ParameterValueStore;
-
-import java.util.List;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.RandomStringUtils;
 
 /**
  * A class providing helping static methods for the tests in Windup.
@@ -36,4 +37,11 @@ public class WindupTestUtilMethods
         evaluationContext.put(ParameterValueStore.class, values);
         return evaluationContext;
     }
+
+    public static Path getTempDirectoryForGraph()
+    {
+        return FileUtils.getTempDirectory().toPath().resolve("Windup")
+                    .resolve("graph_" + RandomStringUtils.randomAlphanumeric(6));
+    }
+
 }
