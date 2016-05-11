@@ -10,6 +10,8 @@ import org.jboss.windup.rules.apps.java.model.project.MavenProjectModel;
 
 /**
  * @see MavenProjectModel
+ *
+ * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
  */
 @TypeValue(PomXmlModel.TYPE)
 public interface PomXmlModel extends WindupVertexFrame

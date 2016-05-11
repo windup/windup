@@ -88,6 +88,11 @@ public class ModuleAnalysisHelper
      * Counts the packages prefixes appearing in this project
      * and if some of them make more than half of the total of existing packages,
      * this prefix is returned. Otherwise, returns null.
+     *
+     * This is just a helper, it isn't something really hard-setting the package.
+     * It's something to use if the user didn't specify using --mavenize.groupId,
+     * and the archive or project name is something insane, like few sencences
+     * paragraph (a description) or a number or such.
      */
     String deriveGroupIdFromPackages(ProjectModel projectModel)
     {
@@ -138,10 +143,7 @@ public class ModuleAnalysisHelper
     public class TypePipe extends PropertyFilterPipe<Vertex, Vertex> {
         public TypePipe(Class<? extends WindupVertexFrame> clazz)
         {
-            super(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, TypeAwareFramedGraphQuery.getTypeValue(clazz)); ///
-            /*super(WindupVertexFrame.TYPE_PROP,
-                    new MultipleValueTitanPredicate(), //QueryPropertyComparisonType.CONTAINS_ANY_TOKEN
-                    TypeAwareFramedGraphQuery.getTypeValue(clazz));/**/
+            super(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, TypeAwareFramedGraphQuery.getTypeValue(clazz));
         }
     }
 

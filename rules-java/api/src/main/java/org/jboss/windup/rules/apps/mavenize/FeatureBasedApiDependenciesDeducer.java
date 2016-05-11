@@ -8,11 +8,9 @@ import org.jboss.windup.util.Logging;
  * Adds the appropriate API dependencies to Maven POMs based on features found in the project.
  *
  * This is in a prototyping stage. Far away from final implementation.
+ * It could be rule-based in the future, so the users could write their own mapping.
  *
- * TODO:
- * This could be rule-based in the future, so the users could write their own mapping.
- *
- * @author Ondrej Zizka, zizka at seznam.cz
+ * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
  */
 class FeatureBasedApiDependenciesDeducer implements DependencyDeducer
 {

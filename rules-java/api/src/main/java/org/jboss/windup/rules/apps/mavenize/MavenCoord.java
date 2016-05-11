@@ -10,6 +10,8 @@ import org.jboss.windup.rules.apps.java.archives.model.ArchiveCoordinateModel;
 
 /**
  * A POJO for Maven coordinate. A counterpart for ArchiveCoordinateModel.
+ *
+ * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
  */
 public class MavenCoord
 {
@@ -19,7 +21,7 @@ public class MavenCoord
     private String classifier;
     private String packaging;
 
-    // This should not really be here, but for the simplicity, I keep it here.
+    // This should rather be in some kind of DependencyDeclaration, but for the simplicity, let's keep it here.
     private String scope;
     private String comment;
     private Set<MavenCoord> exclusions = new HashSet<>();

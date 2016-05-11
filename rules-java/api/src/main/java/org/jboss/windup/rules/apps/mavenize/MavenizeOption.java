@@ -8,7 +8,7 @@ import org.jboss.windup.config.ValidationResult;
 /**
  * Gives the user the option to skip class not found analysis.
  *
- *  @author Ondrej Zizka, ozizka at redhat.com
+ * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, ozizka at seznam.cz</a>
  */
 public class MavenizeOption extends AbstractConfigurationOption
 {

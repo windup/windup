@@ -15,7 +15,9 @@ import org.jboss.windup.util.Logging;
 /**
  * This is a service class that provides information about which artifacts contain the given package.
  *
- * @author Ondrej Zizka, ozizka at redhat.com
+ * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
+ *
+ * TODO: This could also be achived through WINDUP-1028, depends on what gets merged when.
  */
 public class PackagesToContainingMavenArtifactsIndex
 {
@@ -32,11 +34,11 @@ public class PackagesToContainingMavenArtifactsIndex
 
 
     /**
-     * Which projcets contain classes which reference the given package (in their imports).
+     * Which projects contain classes which reference the given package (in their imports).
      */
     private Iterable<ProjectModel> getProjectsContainingClassesReferencingPackage(String pkg)
     {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 
@@ -105,7 +107,7 @@ public class PackagesToContainingMavenArtifactsIndex
 
     private Iterable<String> getPackagesInArtifact(MavenCoord apiCoords)
     {
-        // TODO: Either take from index, or download and scan (Jandex?).
+        // TODO: WINDUP-1028, WINDUP-984 - Either take from index, or download and scan (Jandex?).
         return Collections.EMPTY_LIST;
     }
 
@@ -115,8 +117,8 @@ public class PackagesToContainingMavenArtifactsIndex
      */
     private void registerPackageInTypeInterestFactory(String pkg)
     {
-        // TODO
         TypeInterestFactory.registerInterest(pkg + "_pkg", pkg.replace(".", "\\."), pkg, TypeReferenceLocation.IMPORT);
+        // TODO: Finish the implementation
     }
 
 }

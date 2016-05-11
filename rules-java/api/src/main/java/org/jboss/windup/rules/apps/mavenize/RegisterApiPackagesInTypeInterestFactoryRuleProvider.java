@@ -1,7 +1,6 @@
 package org.jboss.windup.rules.apps.mavenize;
 
 
-import java.util.logging.Logger;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.phase.InitializationPhase;
@@ -17,7 +16,9 @@ import org.ocpsoft.rewrite.event.Rewrite;
  * they need to be registered in {@TypeInterestFactory}.
  *
  * This rule does that registration for all packages as provided by the source
- * (currently static; TODO: from Lucene index created by nexus-repository-indexer.)
+ * (currently static; TODO: Take the data from WINDUP-984 - Lucene index created by nexus-repository-indexer.)
+ *
+ * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
  */
 @RuleMetadata(phase = InitializationPhase.class)
 public class RegisterApiPackagesInTypeInterestFactoryRuleProvider extends AbstractRuleProvider
@@ -32,7 +33,7 @@ public class RegisterApiPackagesInTypeInterestFactoryRuleProvider extends Abstra
         {
             public void perform(Rewrite event, EvaluationContext context)
             {
-                for (MavenCoord apiCoords : ApiDependenciesData.API_ARTIFACTS) /// TODO: Get this form the index.
+                for (MavenCoord apiCoords : ApiDependenciesData.API_ARTIFACTS) // TODO: Get this form the index.
                 {
                     packageIndex.registerPackagesFromAPI(apiCoords);
                 }

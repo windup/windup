@@ -15,6 +15,8 @@ import org.jboss.windup.util.Logging;
 
 /**
  * Serves only to identify the unique singleton object in the DB.
+ * 
+ * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
  */
 @TypeValue(GlobalBomModel.TYPE)
 public interface GlobalBomModel extends PomXmlModel

@@ -103,7 +103,7 @@ public class MavenStructureRenderer
                     case "war":
                     case "ear":
                     default: template = Paths.get(TEMPLATE_POM_XML); break;
-                    case "bom": template = Paths.get(TEMPLATE_BOM_XML); break; // Not really used, not a standard Maven packaging.
+                    case "bom": template = Paths.get(TEMPLATE_BOM_XML); break; // Not a standard Maven packaging.
                 }
                 break;
         }
@@ -123,8 +123,6 @@ public class MavenStructureRenderer
         DefaultObjectWrapperBuilder objectWrapperBuilder = new DefaultObjectWrapperBuilder(freemarker.template.Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
         objectWrapperBuilder.setUseAdaptersForContainers(true);
         freemarkerConfig.setObjectWrapper(objectWrapperBuilder.build());
-        //Map<String, Object> objects = new HashMap<>();
-
         freemarkerConfig.setTemplateLoader(new FurnaceFreeMarkerTemplateLoader());
         Template template = freemarkerConfig.getTemplate(templatePath.toString());
         try (FileWriter fw = new FileWriter(outputPath.toFile()))

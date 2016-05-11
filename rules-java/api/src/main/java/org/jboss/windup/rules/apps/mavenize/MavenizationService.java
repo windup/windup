@@ -23,6 +23,7 @@ import org.jboss.windup.rules.apps.java.model.project.MavenProjectModel;
 import org.jboss.windup.util.Logging;
 
 /**
+ * Performs the actions needed to mavenize an application.
  *
  * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, ozizka at seznam.cz</a>
  */
@@ -65,7 +66,6 @@ public class MavenizationService
         mavCtx.graphContext = grCtx;
 
         WindupConfigurationModel config = grCtx.getUnique(WindupConfigurationModel.class);
-        ///mavCtx.mavenizedBaseDir = Paths.get("/tmp/mavenized");
         mavCtx.mavenizedBaseDir = config.getOutputPath().asFile().toPath().resolve(OUTPUT_SUBDIR_MAVENIZED);
         mavCtx.unifiedGroupId = new ModuleAnalysisHelper(grCtx).deriveGroupId(projectModel);
         mavCtx.unifiedAppName = normalizeDirName(projectModel.getName());
@@ -73,10 +73,9 @@ public class MavenizationService
 
         // 1) create the overall structure - a parent, and a BOM.
 
-        // Root pom.xml ( == parent pom.xml in our resulting structure).
+        // Root pom.xml ( serves as a parent pom.xml in our resulting structure).
         mavCtx.rootPom = new Pom(new MavenCoord(mavCtx.getUnifiedGroupId(), mavCtx.getUnifiedAppName() + "-parent", mavCtx.getUnifiedVersion()));
         mavCtx.rootPom.role = Pom.ModuleRole.PARENT;
-        ///PomXmlModel rootPom = grCtx.service(PomXmlModel.class).create();
         mavCtx.rootPom.parent = new Pom(MavenizeRuleProvider.JBOSS_PARENT);
         mavCtx.rootPom.name = projectModel.getName() + " - Parent";
         mavCtx.rootPom.description = "Parent of " + projectModel.getName();
@@ -104,7 +103,7 @@ public class MavenizationService
         // 2) Recursively add the modules.
         mavCtx.rootAppPom = mavenizeModule(mavCtx, projectModel, null);
 
-        // Sort the modules.
+        // TODO: MIGR-236 Sort the modules.
         ///mavCtx.rootPom.submodules = sortSubmodulesToReflectDependencies(mavCtx.rootAppPom);
 
         // 3) Write the pom.xml's.
@@ -115,6 +114,7 @@ public class MavenizationService
     /**
      * Mavenizes the particular project module, i.e. single pom.xml.
      * Then continues recursively to submodules.
+     *
      * @return null if the project can't be processed for some reason, e.g. is from an unparsable jar.
      */
     private Pom mavenizeModule(MavenizationContext mavCtx, ProjectModel projectModel, Pom containingModule)
@@ -192,7 +192,6 @@ public class MavenizationService
 
         // Set up the dependency of the containing module on the contained module. E.g. EAR depends on WAR.
         if(containingModule != null)
-            ///containingModule.dependencies.add(new SimpleDependency(Dependency.Role.MODULE, modulePom.coord));
             containingModule.dependencies.add(modulePom);
 
         // Nested archives
@@ -220,7 +219,6 @@ public class MavenizationService
             Pom subModulePom = mavenizeModule(mavCtx, subProject, modulePom);
             if (subModulePom == null)
                 continue;
-            ///modulePom.dependencies.add(new SimpleDependency(Dependency.Role.MODULE, subModulePom.coord));
             modulePom.dependencies.add(subModulePom);
         }
 
@@ -232,7 +230,7 @@ public class MavenizationService
             //modulePom.dependencies.add(subModulePom.identification);
         }
 
-        // TODO: Determine and add the project internal dependencies (on other submodules, cross-app)
+        // TODO: MIGR-237 Determine and add the project internal dependencies (on other submodules, cross-app)
         // Queues? JNDI? CDI? REST + WS endpoints?
         // Needs to be done after initial mavenization of all apps to have their G:A:V.
 
@@ -253,7 +251,7 @@ public class MavenizationService
     {
         if(name == null)
             return null;
-        return name.toLowerCase().replaceAll("[^a-zA-Z0-9]", "-"); //\p{Alnum}
+        return name.toLowerCase().replaceAll("[^a-zA-Z0-9]", "-");
     }
 
     /**
@@ -274,7 +272,7 @@ public class MavenizationService
             return suffix;
         }
 
-        // TODO: Should we try something more? Used APIs? What if it's a source?
+        // Should we try something more? Used APIs? What if it's a source?
 
         return "unknown";
     }
@@ -329,7 +327,7 @@ public class MavenizationService
 
     /**
      * Sorts the submodules of given Pom so that their cross-dependencies are satisfied if built in that order.
-     * TODO.
+     * TODO - MIGR-236.
      */
     private OrderedMap<String, Pom> sortSubmodulesToReflectDependencies(Pom pom)
     {
@@ -340,7 +338,7 @@ public class MavenizationService
 
         for (Dependency dep : pom.dependencies)
         {
-            // TODO: Traverse the tree, depth-first, take items at node exit.
+            // Traverse the tree, depth-first, take items at node exit.
         }
 
         throw new UnsupportedOperationException("Not implemented yet.");

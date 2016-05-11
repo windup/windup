@@ -34,9 +34,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * Creates a stub of Maven project structure, including pom.xml's and the proper directory structure and dependencies,
  * based on the project structure determined by prior Windup rules (nested deployments) and the libraries included in them.
  *
- * TODO: For nested deployments like EAR with a WAR and JAR, this also creates the appropriate structure and packaging.
- *
- *  @author Ondrej Zizka, zizka at seznam.cz
+ * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, ozizka at seznam.cz</a>
  */
 @RuleMetadata(after = {
     ArchiveMetadataExtractionPhase.class,
@@ -99,18 +97,11 @@ public class MavenizeRuleProvider extends AbstractRuleProvider
         {
             LOG.info("Adding to global BOM: " + archive.getCoordinate().toPrettyString());
             // BOM
-            //Query.fromType(GlobalBomModel.class).getUnique();
             GraphService<GlobalBomModel> bomServ = new GraphService<>(event.getGraphContext(), GlobalBomModel.class);
             GlobalBomModel bom = bomServ.getUnique();
 
             // Check for an existing coord, add the new one
-            /*GraphService<ArchiveCoordinateModel> coordServ = new GraphService<>(event.getGraphContext(), ArchiveCoordinateModel.class);
-            Iterable<ArchiveCoordinateModel> coordsOfGivenGA = coordServ.findAllByProperties(
-                    new String[]{ArchiveCoordinateModel.GROUP_ID, ArchiveCoordinateModel.ARTIFACT_ID},
-                    new String[]{archive.getCoordinate().getGroupId(), archive.getCoordinate().getArtifactId()}
-            );*/
             bom.addNewerDependency(archive.getCoordinate());
-            // TODO
         }
     }
 
