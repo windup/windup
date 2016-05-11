@@ -97,4 +97,9 @@ public @interface RuleMetadata
      * will override rules from that base rule provider that have the same id.
      */
     boolean overrideProvider() default false;
+
+    /**
+     * If true, Windup will skip running this RuleProvider. Meant for development purposes.
+     */
+    boolean disabled() default false;
 }

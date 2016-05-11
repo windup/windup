@@ -113,15 +113,17 @@ public class WindupArchitectureCatchallTest extends WindupArchitectureTest
             otherTags.add("tag3");
 
             return ConfigurationBuilder.begin()
-                        .addRule()
-                        .when(JavaClass.references("java.util.{*}"))
-                        .perform(Hint.titled("java.util.* found").withText("Catchall hint is here").withEffort(7).withTags(catchallTags))
-                        .addRule()
-                        .when(JavaClass.references("java.net.URL"))
-                        .perform(Hint.titled("java.net.URL").withText("Java Net URL is here (no catchall").withEffort(13).withTags(otherTags))
-                        .addRule()
-                        .when(JavaClass.references("java.util.HashMap"))
-                        .perform(Hint.titled("java.util.HashMap").withText("Java Net URL is here (no catchall").withEffort(42));
+            .addRule()
+            .when(JavaClass.references("java.util.{*}"))
+            .perform(Hint.titled("java.util.* found").withText("Catchall hint is here").withEffort(7).withTags(catchallTags))
+
+            .addRule()
+            .when(JavaClass.references("java.net.URL"))
+            .perform(Hint.titled("java.net.URL").withText("Java Net URL is here (no catchall").withEffort(13).withTags(otherTags))
+
+            .addRule()
+            .when(JavaClass.references("java.util.HashMap"))
+            .perform(Hint.titled("java.util.HashMap").withText("Java Net URL is here (no catchall").withEffort(42));
         }
     }
 

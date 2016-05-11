@@ -1,11 +1,18 @@
 package org.jboss.windup.exec;
 
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 import javax.enterprise.inject.Vetoed;
+import org.apache.commons.lang3.mutable.MutableInt;
+import org.jboss.windup.config.AbstractRuleProvider;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleLifecycleListener;
+import org.jboss.windup.config.RuleProvider;
+import org.jboss.windup.config.metadata.RuleMetadataType;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.Rule;
+import org.ocpsoft.rewrite.context.Context;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
@@ -29,7 +36,21 @@ class DefaultRuleLifecycleListener implements RuleLifecycleListener
     @Override
     public void beforeExecution(GraphRewrite event)
     {
-        progressMonitor.beginTask("Executing Windup", configuration.getRules().size());
+        final org.apache.commons.lang3.mutable.MutableInt count = new MutableInt(0);
+        // Only count rulesets that are not disabled.
+        for (Rule rule : configuration.getRules())
+        {
+            count.increment();
+            Context ruleContext = rule instanceof Context ? (Context) rule : null;
+            if (rule == null)
+                return;
+            AbstractRuleProvider ruleProvider = (AbstractRuleProvider) ruleContext.get(RuleMetadataType.RULE_PROVIDER);
+            if (ruleProvider == null)
+                return;
+            if (ruleProvider.getMetadata().isDisabled())
+            count.decrement();
+        }
+        progressMonitor.beginTask("Executing Windup", count.intValue());
     }
 
     @Override

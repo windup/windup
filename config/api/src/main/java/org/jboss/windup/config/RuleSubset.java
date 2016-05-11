@@ -75,11 +75,10 @@ import org.ocpsoft.rewrite.util.Visitor;
  * An {@link Operation} that allows for conditional evaluation of nested {@link Rule} sets.
  *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, I - zizka at seznam.cz</a>
  */
 public class RuleSubset extends DefaultOperationBuilder implements CompositeOperation, Parameterized, CompositeRule
 {
-    // public static final String SYSTEM_PROPERTY
-
     private static final Logger log = Logger.getLogger(RuleSubset.class.getName());
 
     /**
@@ -207,9 +206,17 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
             Rule rule = rules.get(i);
 
             Context ruleContext = rule instanceof Context ? (Context) rule : null;
+
             long ruleTimeStarted = System.currentTimeMillis();
             try
             {
+                AbstractRuleProvider ruleProvider = (AbstractRuleProvider) ruleContext.get(RuleMetadataType.RULE_PROVIDER);
+                if (ruleProvider != null && ruleProvider.getMetadata() != null && ruleProvider.getMetadata().isDisabled())
+                {
+                    log.info("RuleProvider is disabled, skipping: " + ruleProvider.getMetadata().getID());
+                    continue;
+                }
+
                 subContext = new EvaluationContextImpl();
 
                 ParameterStore parameterStore = (ParameterStore) context.get(ParameterStore.class);
@@ -338,7 +345,6 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                 else
                     exceptions.put(rule.getId(), ex);
             }
-
         }
 
         for (RuleLifecycleListener listener : listeners)

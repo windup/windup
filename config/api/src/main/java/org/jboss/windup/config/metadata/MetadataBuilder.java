@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.forge.furnace.addons.Addon;
@@ -18,6 +19,7 @@ import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.loader.RuleProviderLoader;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
 import org.jboss.windup.config.phase.RulePhase;
+import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.Rule;
 
 /**
@@ -33,6 +35,7 @@ import org.ocpsoft.rewrite.config.Rule;
  */
 public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProviderMetadata
 {
+    private static final Logger LOG = Logging.get(MetadataBuilder.class);
     public static final Class<? extends RulePhase> DEFAULT_PHASE = MigrationRulesPhase.class;
 
     private Class<? extends RuleProvider> implementationType;
@@ -45,11 +48,12 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
     private List<String> executeBeforeIDs = new ArrayList<>();
     private String description;
     private Set<String> tags = new HashSet<>();
-    private Set<TechnologyReference> sourceTechnologies = new HashSet<>();
-    private Set<TechnologyReference> targetTechnologies = new HashSet<>();
-    private Set<AddonId> requiredAddons = new HashSet<>();
+    private final Set<TechnologyReference> sourceTechnologies = new HashSet<>();
+    private final Set<TechnologyReference> targetTechnologies = new HashSet<>();
+    private final Set<AddonId> requiredAddons = new HashSet<>();
     private boolean haltOnException = false;
     private boolean overrideProvider = false;
+    private boolean disabled = false;
 
     private RulesetMetadata parent = new AbstractRulesetMetadata("NULL");
 
@@ -142,6 +146,8 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
         }
 
         builder.haltOnException = metadata.haltOnException();
+        builder.disabled = metadata.disabled();
+        LOG.info("Is it disabled? " + providerId + " " + builder.disabled);///
 
         return builder;
     }
@@ -528,6 +534,12 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
         return haltOnException;
     }
 
+    @Override
+    public boolean isDisabled()
+    {
+        return disabled;
+    }
+
     /**
      * Join N sets.
      */
@@ -535,13 +547,13 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
     private final <T> Set<T> join(Set<T>... sets)
     {
         Set<T> result = new HashSet<>();
-        if (sets != null)
+        if (sets == null)
+            return result;
+
+        for (Set<T> set : sets)
         {
-            for (Set<T> set : sets)
-            {
-                if (set != null)
-                    result.addAll(set);
-            }
+            if (set != null)
+                result.addAll(set);
         }
         return result;
     }

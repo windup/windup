@@ -86,4 +86,9 @@ public interface RuleProviderMetadata extends RulesetMetadata
      * will override rules from that base rule provider that have the same id.
      */
     boolean isOverrideProvider();
+
+    /**
+     * If true, Windup will skip running this RuleProvider. Meant for development purposes.
+     */
+    boolean isDisabled();
 }
