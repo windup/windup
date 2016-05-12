@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<#--
+Template variables:
+VictimsReportModel reportModel
+-->
+
+<#assign applicationReportIndexModel = reportModel.applicationReportIndexModel>
+
+<#macro tagRenderer tag>
+    <span class="label label-${tag.level.name()?lower_case}"><#nested/></span>
+</#macro>
+
+<#macro affectedJarsRenderer reportModel>
+    <#-- reportModel.affectedJars is AffectedJarModel extends JarArchiveModel-->
+    <#list reportModel.affectedJars.iterator()>
+        <table class="table">
+            <tr class="header">
+                <th>Affected archive</th>
+                <th>Path</th>
+                <th>CVE</th>
+            </tr>
+            <#items as file>
+            <tr class="archive">
+                <td><#if file.fileName?has_content> ${file.fileName} </#if></td>
+                <td><#if file.filePath?has_content> ${file.filePath} </#if></td>
+                <td>
+                    <ul>
+                        <#list file.vulnerabilities.iterator() as vul>
+                        <li>
+                            <a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=${vul.cve}">${vul.cve}</a>
+                        </li>
+                        </#list>
+                    </ul>
+                </td>
+            </tr>
+            </#items>
+        </table>
+    <#else>
+        <div class="desc"> No archives containing CVE vulnerabilities were found. </div>
+    </#list>
+</#macro>
+
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>${reportModel.projectModel.name} - Vulnerable archives</title>
+    <link href="resources/css/bootstrap.min.css" rel="stylesheet">
+    <link href="resources/css/windup.css" rel="stylesheet" media="screen">
+    <link href="resources/css/windup.java.css" rel="stylesheet" media="screen">
+    <link href="resources/img/favicon.png" rel="shortcut icon" type="image/x-icon"/>
+    <style>
+        .vulnerabilities .listing { padding: 1ex 1em; }
+        .vulnerabilities .listing .header { }
+        .vulnerabilities .listing tr.archive td {
+            padding: 1ex 1em 1ex;
+            border-bottom: 1px solid gray;
+        }
+    </style>
+</head>
+<body role="document" class="reportSecurity">
+	<!-- Navbar -->
+	<div id="main-navbar" class="navbar navbar-default navbar-fixed-top">
+	    <div class="navbar-header">
+	        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
+	            <span class="icon-bar"></span>
+	            <span class="icon-bar"></span>
+	            <span class="icon-bar"></span>
+	        </button>
+	    </div>
+
+	    <#if applicationReportIndexModel??>
+            <div class="navbar-collapse collapse navbar-responsive-collapse">
+	            <#include "/reports/templates/include/navbar.ftl">
+            </div><!-- /.nav-collapse -->
+	    </#if>
+	</div>
+	<!-- / Navbar -->
+
+    <!--  container -->
+	<div class="container-fluid" role="main">
+		<div class="row">
+			<div class="page-header page-header-no-border">
+                <h1>
+                    <div class="main">Vulnerabilities</div>
+                    <#if reportModel.projectModel??>
+                        <div class="path">${reportModel.projectModel.name?html}</div>
+                    </#if>
+                </h1>
+                <div class="desc">
+                    Java applications may contain 3rd party components, exposing them to security vulnerabilities.
+                    The Victims project is a database of known vulnerable JAR files and Maven artifacts affected by known CVE issues (Common Vulnerabilities and Exposures).
+                    This is a listing of the archives found in the scanned application which were recognized as affected by such security issue.
+                    <br />
+                    <strong>Disclaimer:</strong>
+                    This list is only provided as a complement of application migration report.
+                    Not all security issues are covered here.
+                    Even if this list is empty, your application and the libraries used may still contain security risks.
+                    Do not rely on this as a security auditing tool.
+                </div>
+			</div>
+		</div>
+
+		<div class="container-fluid theme-showcase" role="main">
+            <div class="panel panel-primary vulnerabilities">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Security vulnerabilities</h3>
+                </div>
+                <div class="listing">
+                    <@affectedJarsRenderer reportModel />
+                </div>
+            </div>
+        </div>
+	</div>
+	<!-- /container -->
+
+
+	<script src="resources/js/jquery-1.10.1.min.js"></script>
+	<script src="resources/js/bootstrap.min.js"></script>
+</body>
+</html>

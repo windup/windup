@@ -88,7 +88,7 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
         Assert.notNull(providerId, "Rule provider ID must not be null.");
 
         MetadataBuilder builder = new MetadataBuilder(implementationType, providerId)
-                    .setOrigin(implementationType.getName() + " loaded from " + implementationType.getClassLoader().toString());
+            .setOrigin(implementationType.getName() + " loaded from " + implementationType.getClassLoader().toString());
 
         RuleMetadata metadata = Annotations.getAnnotation(implementationType, RuleMetadata.class);
         if (metadata == null)
@@ -147,7 +147,8 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
 
         builder.haltOnException = metadata.haltOnException();
         builder.disabled = metadata.disabled();
-        LOG.info("Is it disabled? " + providerId + " " + builder.disabled);///
+        if (builder.disabled)
+            LOG.info("Disabled rule provider: " + providerId);
 
         return builder;
     }

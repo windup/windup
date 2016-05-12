@@ -1,0 +1,11 @@
+= Victims Addon: A Windup rule that detects usage of Java libraries affected by CVE security vulnerabilities
+
+== What is it?
+
+Java applications may contain 3rd party components, exposing them to security vulnerabilities.
+The Victims project is a database of known vulnerable JAR files and Maven artifacts affected by known CVE issues (Common Vulnerabilities and Exposures).
+
+For more information, see:
+
+* http://victi.ms[Victims site]
+* https://cve.mitre.org[CVE site]
