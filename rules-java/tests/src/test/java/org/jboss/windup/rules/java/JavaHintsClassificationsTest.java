@@ -264,7 +264,7 @@ public class JavaHintsClassificationsTest
             .addRule()
             .when(JavaClass.references("org.jboss.forge.furnace.{name}").inType("{file}{suffix}").at(TypeReferenceLocation.IMPORT))
             .perform(
-                Classification.as("Classification {param} does not exist"),
+                Classification.as("Classification {param} does not exist").withDescription("Described by {file}"),
                 Hint.withText("Hint {param} does not exist").withEffort(8)
             );
 

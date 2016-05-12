@@ -11,9 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -25,12 +22,8 @@ import org.jboss.windup.decompiler.api.DecompilationException;
 import org.jboss.windup.decompiler.api.DecompilationFailure;
 import org.jboss.windup.decompiler.api.DecompilationListener;
 import org.jboss.windup.decompiler.api.DecompilationResult;
-import org.jboss.windup.decompiler.api.Decompiler;
 import org.jboss.windup.decompiler.decompiler.AbstractDecompiler;
 import org.jboss.windup.decompiler.util.Filter;
-import org.jboss.windup.util.Checks;
-import org.jboss.windup.util.threading.WindupChildThreadFactory;
-import org.jboss.windup.util.threading.WindupExecutors;
 import org.jetbrains.java.decompiler.main.Fernflower;
 import org.jetbrains.java.decompiler.main.extern.IBytecodeProvider;
 import org.jetbrains.java.decompiler.main.extern.IFernflowerPreferences;
@@ -165,7 +158,8 @@ public class FernflowerDecompiler extends AbstractDecompiler
 
 
 
-    private List<String> pathsFromDecompilationRequests(List<ClassDecompileRequest> requests) {
+    private List<String> pathsFromDecompilationRequests(List<ClassDecompileRequest> requests)
+    {
         List<String> result = new ArrayList<>();
         for(ClassDecompileRequest request : requests) {
             result.add(request.getClassFile().toString());

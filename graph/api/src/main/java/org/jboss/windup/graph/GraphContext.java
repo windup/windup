@@ -14,7 +14,7 @@ import org.jboss.windup.graph.service.GraphService;
 
 /**
  * Context for interacting with the underlying graph database API.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka, I</a>
  */
@@ -29,18 +29,18 @@ public interface GraphContext extends Closeable
      * Get the underlying {@link EventGraph}, which is itself a wrapper for a {@link TitanGraph}.
      */
     EventGraph<TitanGraph> getGraph();
-    
+
     /**
      * Creates new graph using the configuration. In case there was already a graph located in the specified path, it will be deleted.
      */
     GraphContext create();
-    
+
     /**
      * Loads the graph using the configuration.
      */
     GraphContext load();
-    
-    
+
+
 
     /**
      * Get the {@link FramedGraph} view of the underlying {@link EventGraph}.
@@ -68,7 +68,12 @@ public interface GraphContext extends Closeable
     void setOptions(Map<String, Object> options);
 
     /**
-     * Returns the globally configured options as an immutable {@link Map}
+     * Returns the globally configured options as an immutable {@link Map}.
+     *
+     * Example usage:
+     * <pre>
+     * Boolean overwrite = (Boolean) windupConfiguration.getOptionMap().get(OverwriteOption.NAME);
+     * </pre>
      */
     Map<String, Object> getOptionMap();
 
