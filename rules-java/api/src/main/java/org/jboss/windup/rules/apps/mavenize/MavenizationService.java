@@ -76,7 +76,6 @@ public class MavenizationService
         // Root pom.xml ( serves as a parent pom.xml in our resulting structure).
         mavCtx.rootPom = new Pom(new MavenCoord(mavCtx.getUnifiedGroupId(), mavCtx.getUnifiedAppName() + "-parent", mavCtx.getUnifiedVersion()));
         mavCtx.rootPom.role = Pom.ModuleRole.PARENT;
-        mavCtx.rootPom.parent = new Pom(MavenizeRuleProvider.JBOSS_PARENT);
         mavCtx.rootPom.name = projectModel.getName() + " - Parent";
         mavCtx.rootPom.description = "Parent of " + projectModel.getName();
         mavCtx.rootPom.root = true;
