@@ -9,7 +9,7 @@ package org.jboss.windup.rules.apps.mavenize;
  */
 public interface Dependency
 {
-    MavenCoord getMavenCoord();
+    MavenCoord getCoord();
 
     Role getRole();
 

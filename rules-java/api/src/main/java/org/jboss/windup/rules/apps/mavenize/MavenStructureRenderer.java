@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.reporting.freemarker.FurnaceFreeMarkerTemplateLoader;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
@@ -71,6 +72,7 @@ public class MavenStructureRenderer
     {
         Map vars = new HashMap();
         vars.put("pom", pom);
+        vars.put("config", mavCtx.getGraphContext().getUnique(WindupConfigurationModel.class));
 
         Path template = chooseTemplate(pom);
 

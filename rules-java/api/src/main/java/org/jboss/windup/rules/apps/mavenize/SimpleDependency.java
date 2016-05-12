@@ -15,7 +15,7 @@ public class SimpleDependency implements Dependency
         this.role = role;
     }
 
-    public MavenCoord getMavenCoord()
+    public MavenCoord getCoord()
     {
         return coord;
     }

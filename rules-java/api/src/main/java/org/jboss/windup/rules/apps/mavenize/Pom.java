@@ -28,8 +28,8 @@ public class Pom implements Dependency
     ModuleRole role = ModuleRole.NORMAL;
 
 
-    Pom(MavenCoord coords){
-        this.coord = coords;
+    Pom(MavenCoord coord){
+        this.coord = coord;
     }
 
     public Pom getParent(){
@@ -105,12 +105,12 @@ public class Pom implements Dependency
     }
 
 
-    public MavenCoord getCoords(){
+    public MavenCoord getCoord(){
         return coord;
     }
 
-    public Pom setCoords(MavenCoord coords){
-        this.coord = coords;
+    public Pom setCoord(MavenCoord coord){
+        this.coord = coord;
         return this;
     }
 
@@ -126,13 +126,6 @@ public class Pom implements Dependency
     @Override
     public String toString(){
         return "Pom{" + role + " " + coord + ", parent=" + (parent == null ? "" : parent.coord) + ", " + "name=" + name + /*", desc=" + description +*/ ", " + "dependencies=" + CollectionUtils.size(dependencies) + ", " + "localDependencies=" + CollectionUtils.size(localDependencies) + ", " + "submodules=" + CollectionUtils.size(submodules) + '}';
-    }
-
-
-    @Override
-    public MavenCoord getMavenCoord()
-    {
-        return getCoords();
     }
 
     @Override

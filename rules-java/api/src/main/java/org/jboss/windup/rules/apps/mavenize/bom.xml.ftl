@@ -15,17 +15,17 @@ pom: class Pom
 
     <#if pom.parent??>
     <parent>
-        <groupId>${pom.parent.coords.groupId}</groupId>
-        <artifactId>${pom.parent.coords.artifactId}</artifactId>
-        <version>${pom.parent.coords.version}</version>
+        <groupId>${pom.parent.coord.groupId}</groupId>
+        <artifactId>${pom.parent.coord.artifactId}</artifactId>
+        <version>${pom.parent.coord.version}</version>
     </parent>
     </#if>
 
-    <groupId>${pom.coords.groupId}</groupId>
-    <artifactId>${pom.coords.artifactId}</artifactId>
-    <#if pom.coords.version??>${i1}<version>${pom.coords.version}</version>${"\n"}</#if><#t><#-- Null if same as parent. -->
-    <#if pom.coords.packaging??>${i1}<packaging>${pom.coords.packaging}</packaging>${"\n"}</#if><#t>
-    <#if pom.coords.classifier??>${i1}<classifier>${pom.coords.classifier}</classifier>${"\n"}</#if><#t>
+    <groupId>${pom.coord.groupId}</groupId>
+    <artifactId>${pom.coord.artifactId}</artifactId>
+    <#if pom.coord.version??>${i1}<version>${pom.coord.version}</version>${"\n"}</#if><#t><#-- Null if same as parent. -->
+    <#if pom.coord.packaging??>${i1}<packaging>${pom.coord.packaging}</packaging>${"\n"}</#if><#t>
+    <#if pom.coord.classifier??>${i1}<classifier>${pom.coord.classifier}</classifier>${"\n"}</#if><#t>
 
     <#if pom.name??>${i1}<name>${pom.name}</name>${"\n"}</#if><#t>
     <#if pom.description??>${i1}<description>${pom.description}</description>${"\n"}</#if><#t>
@@ -36,31 +36,24 @@ pom: class Pom
             <!-- JBoss distributes a complete set of Java EE APIs including a Bill
                 of Materials (BOM). A BOM specifies the versions of a "stack" (or a collection)
                 of artifacts. We use this here so that we always get the correct versions
-                of artifacts. Here we use the jboss-eap-javaee7 stack (you can
-                read this as the JBoss stack of the Java EE APIs and related components.  -->
+                of artifacts. -->
             <dependency>
-                <groupId>org.jboss.bom</groupId>
-                <#switch (options.targetPlatform)!>
-                    <#case 6>
-                <artifactId>jboss-javaee-6.0-with-all</artifactId>
-                <version>1.0.7.Final</version>
-                    <#break>
-                    <#case 7>
-                    <#default>
-                <artifactId>wildfly-javaee7-with-tools</artifactId>
-                <version>10.0.1.Final</version>
-                </#switch>
+                <groupId>${pom.bom.groupId}</groupId>
+                <artifactId>${pom.bom.artifactId}</artifactId>
+                <version>${pom.bom.version}</version>
+                <#if pom.bom.classifier??>${i4}<classifier>${pom.bom.classifier}</classifier>${"\n"}</#if><#t>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
 
-        <#list pom.dependencies as dep><#-- MavenCoords -->
+
+        <#list pom.dependencies as dep><#-- MavenCoord -->
             <dependency>
-                <groupId>${dep.groupId}</groupId>
-                <artifactId>${dep.artifactId}</artifactId>
-                <version>${dep.version}</version>
-                <#if dep.classifier??><classifier>${dep.classifier}</classifier></#if><#t>
-                <#if (dep.packaging!"jar") != "jar"><type>${dep.packaging}</type></#if><#t>
+                <groupId>${dep.coord.groupId}</groupId>
+                <artifactId>${dep.coord.artifactId}</artifactId>
+                <version>${dep.coord.version}</version>
+                <#if dep.coord.classifier??>${i4}<classifier>${dep.coord.classifier}</classifier>${"\n"}</#if><#t>
+                <#if (dep.coord.packaging!"jar") != "jar">${i4}<type>${dep.coord.packaging}</type>${"\n"}</#if><#t>
             </dependency>
 
         </#list>

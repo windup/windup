@@ -14,17 +14,17 @@ pom: class Pom
 
     <#if pom.parent??>
     <parent>
-        <groupId>${pom.parent.coords.groupId}</groupId>
-        <artifactId>${pom.parent.coords.artifactId}</artifactId>
-        <version>${pom.parent.coords.version}</version>
+        <groupId>${pom.parent.coord.groupId}</groupId>
+        <artifactId>${pom.parent.coord.artifactId}</artifactId>
+        <version>${pom.parent.coord.version}</version>
     </parent>
     </#if>
 
-    <groupId>${pom.coords.groupId}</groupId>
-    <artifactId>${pom.coords.artifactId}</artifactId>
-    <#if pom.coords.version??>${i1}<version>${pom.coords.version}</version>${"\n"}</#if><#t><#-- Null if same as parent. -->
-    <#if pom.coords.packaging??>${i1}<packaging>${pom.coords.packaging}</packaging>${"\n"}</#if><#t>
-    <#if pom.coords.classifier??>${i1}<classifier>${pom.coords.classifier}</classifier>${"\n"}</#if><#t>
+    <groupId>${pom.coord.groupId}</groupId>
+    <artifactId>${pom.coord.artifactId}</artifactId>
+    <#if pom.coord.version??>${i1}<version>${pom.coord.version}</version>${"\n"}</#if><#t><#-- Null if same as parent. -->
+    <#if pom.coord.packaging??>${i1}<packaging>${pom.coord.packaging}</packaging>${"\n"}</#if><#t>
+    <#if pom.coord.classifier??>${i1}<classifier>${pom.coord.classifier}</classifier>${"\n"}</#if><#t>
 
     <#if pom.name??>${i1}<name>${pom.name}</name>${"\n"}</#if><#t>
     <#if pom.description??>${i1}<description>${pom.description}</description>${"\n"}</#if><#t>
@@ -40,7 +40,7 @@ pom: class Pom
         <version.plugin.exec>1.2.1</version.plugin.exec>
     </properties>
 
-    <#if (pom.coords.packaging!"pom") = "pom" && pom.submodules?has_content>
+    <#if (pom.coord.packaging!"pom") = "pom" && pom.submodules?has_content>
     <modules>
         <#list pom.submodules?keys as modulePath>
         <module>${modulePath}</module>
@@ -67,12 +67,12 @@ pom: class Pom
     <dependencies>
         <#items as dep>
         <dependency>
-            <groupId>${dep.groupId}</groupId>
-            <artifactId>${dep.artifactId}</artifactId>
-            <#if dep.version??>${i3}<version>${dep.version}</version>${"\n"}</#if><#t>
-            <#if dep.classifier!?trim?has_content>${i3}<classifier>${dep.classifier}</classifier>${"\n"}</#if><#t>
-            <#if (dep.packaging!"jar") != "jar">${i3}<type>${dep.packaging!"jar"}</type>${"\n"}</#if><#t>
-            <#if (dep.scope!"compile") != "compile">${i3}<scope>${dep.scope}</scope>${"\n"}</#if><#t>
+            <groupId>${dep.coord.groupId}</groupId>
+            <artifactId>${dep.coord.artifactId}</artifactId>
+            <#if dep.coord.version??>${i3}<version>${dep.coord.version}</version>${"\n"}</#if><#t>
+            <#if dep.coord.classifier!?trim?has_content>${i3}<classifier>${dep.coord.classifier}</classifier>${"\n"}</#if><#t>
+            <#if (dep.coord.packaging!"jar") != "jar">${i3}<type>${dep.coord.packaging!"jar"}</type>${"\n"}</#if><#t>
+            <#if (dep.coord.scope!"compile") != "compile">${i3}<scope>${dep.coord.scope}</scope>${"\n"}</#if><#t>
         </dependency>
         </#items>
     </dependencies>
@@ -116,7 +116,7 @@ pom: class Pom
     </build>
 
     </#if>
-    <#if pom.coords.packaging = "ear">
+    <#if pom.coord.packaging = "ear">
     <build>
         <finalName>${"$"}{project.parent.artifactId}</finalName>
         <plugins>
@@ -160,7 +160,7 @@ pom: class Pom
     </build>
 
     </#if>
-    <#if pom.coords.packaging = "war">
+    <#if pom.coord.packaging = "war">
     <build>
         <finalName>${"$"}{project.artifactId}</finalName>
         <plugins>
