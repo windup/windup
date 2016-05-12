@@ -1,16 +1,17 @@
 package org.jboss.windup.rules.apps.mavenize;
 
-
 import java.util.Iterator;
 import java.util.logging.Logger;
+
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.archives.model.ArchiveCoordinateModel;
 import org.jboss.windup.util.Logging;
 
 /**
+ * Contains methods for searching and creating {@link ArchiveCoordinateModel}s.
  *
- *  @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
+ * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
  */
 public class ArchiveCoordinateService extends GraphService<ArchiveCoordinateModel>
 {
@@ -22,10 +23,11 @@ public class ArchiveCoordinateService extends GraphService<ArchiveCoordinateMode
     }
 
     /**
-     * Returns a single ArchiveCoordinateModel with given G:A:V.
-     * @return null if none found; Logs a WARNING if multiple are found.
+     * Returns a single ArchiveCoordinateModel with given G:A:V. Creates it if it does not already exist.
+     *
      */
-    public ArchiveCoordinateModel getSingleOrCreate(String groupId, String artifactId, String version){
+    public ArchiveCoordinateModel getSingleOrCreate(String groupId, String artifactId, String version)
+    {
         ArchiveCoordinateModel archive = findSingle(groupId, artifactId, version);
         if (archive != null)
             return archive;
@@ -33,25 +35,32 @@ public class ArchiveCoordinateService extends GraphService<ArchiveCoordinateMode
             return create().setGroupId(groupId).setArtifactId(artifactId).setVersion(version);
     }
 
-    public ArchiveCoordinateModel findSingle(String groupId, String artifactId, String version){
+    /**
+     * Returns a single ArchiveCoordinateModel with given G:A:V.
+     *
+     * @return null if none found; Logs a WARNING if multiple are found.
+     */
+    public ArchiveCoordinateModel findSingle(String groupId, String artifactId, String version)
+    {
         Iterable<ArchiveCoordinateModel> archives = findByGAV(groupId, artifactId, version);
         Iterator<ArchiveCoordinateModel> it = archives.iterator();
         if (!it.hasNext())
             return null;
         ArchiveCoordinateModel archive = it.next();
-        if(it.hasNext())
+        if (it.hasNext())
             LOG.warning(String.format("There are multiple %s's like this: %s:%s:%s",
-                    ArchiveCoordinateModel.class.getSimpleName(), groupId, artifactId, version));
+                        ArchiveCoordinateModel.class.getSimpleName(), groupId, artifactId, version));
         return archive;
     }
 
-
+    /**
+     * Finds all {@link ArchiveCoordinateModel}s with the given G:A:V.
+     */
     public Iterable<ArchiveCoordinateModel> findByGAV(String groupId, String artifactId, String version)
     {
         final Iterable<ArchiveCoordinateModel> archives = findAllByProperties(
-                new String[]{ArchiveCoordinateModel.GROUP_ID, ArchiveCoordinateModel.ARTIFACT_ID, ArchiveCoordinateModel.VERSION},
-                new String[]{groupId, artifactId, version}
-        );
+                    new String[] { ArchiveCoordinateModel.GROUP_ID, ArchiveCoordinateModel.ARTIFACT_ID, ArchiveCoordinateModel.VERSION },
+                    new String[] { groupId, artifactId, version });
         return archives;
     }
 }

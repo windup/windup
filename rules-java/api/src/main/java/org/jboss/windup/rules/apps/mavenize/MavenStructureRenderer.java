@@ -116,7 +116,7 @@ public class MavenStructureRenderer
      * Renders the given FreeMarker template to given directory, using given variables.
      */
     private static void renderFreemarkerTemplate(Path templatePath, Map vars, Path outputPath)
-            throws MalformedTemplateNameException, ParseException, IOException, TemplateException
+            throws IOException, TemplateException
     {
         if(templatePath == null)
             throw new WindupException("templatePath is null");

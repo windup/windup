@@ -4,6 +4,7 @@ import java.util.List;
 
 
 /**
+ * Maps from a package name to Artifacts containing that package.
  *
  * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
  */

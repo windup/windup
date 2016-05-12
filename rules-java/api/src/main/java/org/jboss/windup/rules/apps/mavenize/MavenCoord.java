@@ -27,21 +27,16 @@ public class MavenCoord
     private Set<MavenCoord> exclusions = new HashSet<>();
 
 
+    /**
+     * Creates an empty coordinate.
+     */
     MavenCoord()
     {
     }
 
-
-    @Deprecated
-    MavenCoord(ArchiveCoordinateModel coordinate)
-    {
-        this.groupId = coordinate.getGroupId();
-        this.artifactId = coordinate.getArtifactId();
-        this.version = coordinate.getVersion();
-        this.classifier = coordinate.getClassifier();
-        this.packaging = coordinate.getPackaging();
-    }
-
+    /**
+     * Creates a coordinate from the given {@link ArchiveCoordinateModel}.
+     */
     static MavenCoord from(ArchiveCoordinateModel coordinate)
     {
         return new MavenCoord()
@@ -54,6 +49,9 @@ public class MavenCoord
 
     public static final Pattern REGEX_GAVCP = Pattern.compile("([^: ]+):([^: ]+):([^: ]+)(:[^: ]+)?(:[^: ]+)?");
 
+    /**
+     * Creates a {@link MavenCoord} from the given coordinate String.
+     */
     public static MavenCoord fromGAVPC(String coordGavpc)
     {
         Matcher mat = REGEX_GAVCP.matcher(coordGavpc);
@@ -129,77 +127,102 @@ public class MavenCoord
     }
 
 
+    /**
+     * Contains the group id.
+     */
     public String getGroupId()
     {
         return groupId;
     }
 
-
+    /**
+     * Contains the group id.
+     */
     public MavenCoord setGroupId(String groupId)
     {
         this.groupId = groupId;
         return this;
     }
 
-
+    /**
+     * Contains the Artifact id.
+     */
     public String getArtifactId()
     {
         return artifactId;
     }
 
-
+    /**
+     * Contains the Artifact id.
+     */
     public MavenCoord setArtifactId(String artifactId)
     {
         this.artifactId = artifactId;
         return this;
     }
 
-
+    /**
+     * Contains the version.
+     */
     public String getVersion()
     {
         return version;
     }
 
-
+    /**
+     * Contains the version.
+     */
     public MavenCoord setVersion(String version)
     {
         this.version = version;
         return this;
     }
 
-
+    /**
+     * Contains the Classifier.
+     */
     public String getClassifier()
     {
         return classifier;
     }
 
-
+    /**
+     * Contains the Classifier.
+     */
     public MavenCoord setClassifier(String classifier)
     {
         this.classifier = classifier;
         return this;
     }
 
-
+    /**
+     * Contains the Packaging setting (eg, 'jar' or 'ear').
+     */
     public String getPackaging()
     {
         return packaging;
     }
 
-
+    /**
+     * Contains the Packaging setting (eg, 'jar' or 'ear').
+     */
     public MavenCoord setPackaging(String packaging)
     {
         this.packaging = packaging;
         return this;
     }
 
-
+    /**
+     * Contains the scope (eg, 'compile').
+     */
     public String getScope()
     {
         return scope;
     }
 
-
+    /**
+     * Contains the scope (eg, 'compile').
+     */
     public MavenCoord setScope(String scope)
     {
         this.scope = scope;
@@ -207,24 +230,34 @@ public class MavenCoord
     }
 
 
+    /**
+     * Contains a textual comment.
+     */
     public String getComment()
     {
         return comment;
     }
 
-
+    /**
+     * Contains a textual comment.
+     */
     public MavenCoord setComment(String comment)
     {
         this.comment = comment;
         return this;
     }
 
-
+    /**
+     * Contains any exclusions from this dependency.
+     */
     public Set<MavenCoord> getExclusions()
     {
         return exclusions;
     }
 
+    /**
+     * Contains any exclusions from this dependency.
+     */
     public MavenCoord addExclusion(MavenCoord coord){
         this.getExclusions().add(coord);
         return this;

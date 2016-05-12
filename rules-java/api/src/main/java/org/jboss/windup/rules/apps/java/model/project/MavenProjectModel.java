@@ -18,13 +18,13 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(MavenProjectModel.TYPE)
 public interface MavenProjectModel extends ProjectModel
 {
-    public static final String MAVEN_POM = "mavenPom";
-    public static final String PARENT_MAVEN_POM = "parentMavenPOM";
-    public static final String TYPE = "MavenFacet";
-    public static final String ARTIFACT_ID = "artifactId";
-    public static final String GROUP_ID = "groupId";
-    public static final String SPECIFICATION_VERSION = "specificationVersion";
-    public static final String MAVEN_IDENTIFIER = "mavenIdentifier";
+    String MAVEN_POM = "mavenPom";
+    String PARENT_MAVEN_POM = "parentMavenPOM";
+    String TYPE = "MavenFacet";
+    String ARTIFACT_ID = "artifactId";
+    String GROUP_ID = "groupId";
+    String SPECIFICATION_VERSION = "specificationVersion";
+    String MAVEN_IDENTIFIER = "mavenIdentifier";
 
     /**
      * Contains the parent POM (if available).

@@ -97,7 +97,7 @@ public class MavenizationService
         // BOM - dependencyManagement dependencies
         for( ArchiveCoordinateModel dep : grCtx.getUnique(GlobalBomModel.class).getDependencies() ){
             LOG.info("Adding dep to BOM: " + dep.toPrettyString());
-            bom.dependencies.add(new SimpleDependency(Dependency.Role.LIBRARY, new MavenCoord(dep)));
+            bom.dependencies.add(new SimpleDependency(Dependency.Role.LIBRARY, MavenCoord.from(dep)));
         }
 
         // 2) Recursively add the modules.
@@ -205,7 +205,7 @@ public class MavenizationService
             // Known library -> simple dependency.
             if(file instanceof IdentifiedArchiveModel){
                 IdentifiedArchiveModel artifact = (IdentifiedArchiveModel) file;
-                modulePom.dependencies.add(new SimpleDependency(Dependency.Role.LIBRARY, new MavenCoord(artifact.getCoordinate())));
+                modulePom.dependencies.add(new SimpleDependency(Dependency.Role.LIBRARY, MavenCoord.from(artifact.getCoordinate())));
             }
             // Unknown archives -> nested modules? -> local dependencies.
             else {

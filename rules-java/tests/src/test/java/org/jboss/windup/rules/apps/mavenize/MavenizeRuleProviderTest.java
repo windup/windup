@@ -7,7 +7,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.logging.Logger;
+
 import javax.inject.Inject;
+
 import org.apache.commons.io.FileUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -29,7 +31,6 @@ import org.jboss.windup.rules.apps.java.archives.identify.InMemoryArchiveIdentif
 import org.jboss.windup.rules.apps.java.archives.model.IdentifiedArchiveModel;
 import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
-import static org.jboss.windup.rules.apps.mavenize.PackagesToContainingMavenArtifactsIndex.EDGE_USES;
 import org.jboss.windup.testutil.basics.WindupTestUtilMethods;
 import org.junit.Assert;
 import org.junit.Assume;
@@ -39,75 +40,75 @@ import org.junit.runner.RunWith;
 
 /**
  *
- *  @author Ondrej Zizka, ozizka at redhat.com
+ * @author Ondrej Zizka, ozizka at redhat.com
  */
 @RunWith(Arquillian.class)
 public class MavenizeRuleProviderTest
 {
-    private static final Logger LOG = Logger.getLogger( MavenizeRuleProviderTest.class.getName() );
+    private static final Logger LOG = Logger.getLogger(MavenizeRuleProviderTest.class.getName());
+    @Inject
+    MavenizeRuleProvider provider;
+    @Inject
+    private WindupProcessor processor;
+    @Inject
+    private GraphContextFactory factory;
+    @Inject
+    private CompositeArchiveIdentificationService identifier;
 
     @Deployment
     @AddonDependencies({
-        @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
-        @AddonDependency(name = "org.jboss.windup.config:windup-config"),
-        @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-        @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
-        @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-base"),
-        @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-        @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-archives"),
-        //@AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-ee"),
-        //@AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-project"),
-        //@AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-tattletale"),
-        //@AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-xml"),
-        @AddonDependency(name = "org.jboss.windup.tests:test-util"),
-        //@AddonDependency(name = "org.jboss.windup:windup-tooling"),
+                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
+                @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+                @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
+                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-base"),
+                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-archives"),
+                @AddonDependency(name = "org.jboss.windup.tests:test-util"),
     })
     public static AddonArchive getDeployment()
     {
         // See https://github.com/shrinkwrap/resolver/blob/master/README.asciidoc
-        JavaArchive[] archives = Maven.resolver().resolve("org.jboss.windup.maven:nexus-indexer-data:zip:5").withoutTransitivity().as(JavaArchive.class);
+        JavaArchive[] archives = Maven.resolver().resolve("org.jboss.windup.maven:nexus-indexer-data:zip:5").withoutTransitivity()
+                    .as(JavaArchive.class);
         Assert.assertEquals("maven-indexer-data found", 1, archives.length);
         AddonArchive deployment = ShrinkWrap.create(AddonArchive.class)
-                .addBeansXML();
+                    .addBeansXML();
         for (JavaArchive archive : archives)
             deployment.merge(archive);
         return deployment;
     }
 
-    @Inject
-    MavenizeRuleProvider provider;
-
-    @Inject
-    private WindupProcessor processor;
-
-    @Inject
-    private GraphContextFactory factory;
-
-    @Inject
-    private CompositeArchiveIdentificationService identifier;
+    private static void checkPomExistence(Path base, String subdirName, boolean shouldExist)
+    {
+        Path pomPath = base.resolve(subdirName).resolve("pom.xml");
+        if (shouldExist)
+            Assert.assertTrue("Exists: " + pomPath, pomPath.toFile().exists());
+        else
+            Assert.assertFalse("Not exists: " + pomPath, pomPath.toFile().exists());
+    }
 
     @Before
-    public void addMavenCoordsData(){
+    public void addMavenCoordsData()
+    {
         InMemoryArchiveIdentificationService inMemoryIdentifier = new InMemoryArchiveIdentificationService();
         inMemoryIdentifier.addMapping("4bf32b10f459a4ecd4df234ae2ccb32b9d9ba9b7", "log4j:log4j:1.2.6");
         inMemoryIdentifier.addMapping("b0236b252e86419eef20c31a44579d2aee2f0a69", "commons-lang:commons-lang:2.5");
         identifier.addIdentifier(inMemoryIdentifier);
     }
 
-
     @Test
     public void testMavenizeRuleProvider() throws IOException, InstantiationException, IllegalAccessException
     {
-        try (GraphContext grCtx = factory.create(WindupTestUtilMethods.getTempDirectoryForGraph()))
+        try (GraphContext graphContext = factory.create(WindupTestUtilMethods.getTempDirectoryForGraph()))
         {
             final String inputDir = "../../test-files/jee-example-app-1.0.0.ear"; // rules-java/api
             final Class<MavenizeRuleProvider> ruleToRunUpTo = MavenizeRuleProvider.class;
 
-            final Path outputDir = executeWindupAgainstAppUntilRule(inputDir, grCtx, ruleToRunUpTo);
+            final Path outputDir = executeWindupAgainstAppUntilRule(inputDir, graphContext, ruleToRunUpTo);
 
-            Iterable<IdentifiedArchiveModel> identifiedArchives = grCtx.service(IdentifiedArchiveModel.class).findAll();
+            Iterable<IdentifiedArchiveModel> identifiedArchives = graphContext.service(IdentifiedArchiveModel.class).findAll();
             Assume.assumeTrue(identifiedArchives.iterator().hasNext());
-
 
             // Were the pom.xml's created?
             final Path baseMavenDir = outputDir.resolve("mavenized");
@@ -116,30 +117,24 @@ public class MavenizeRuleProviderTest
             Assert.assertTrue("Exists: " + resultRootPomPath, resultRootPomPath.toFile().exists());
 
             checkPomExistence(baseMavenDir, "jee-example-app-bom", true);
-            checkPomExistence(baseMavenDir, "jee-example-ejb-services", true);
+            checkPomExistence(baseMavenDir, "jee-example-services-jar", true);
+            checkPomExistence(baseMavenDir, "jee-example-services", false);
             checkPomExistence(baseMavenDir, "log4j", false);
+            checkPomExistence(baseMavenDir, "log4j-jar", false);
             checkPomExistence(baseMavenDir, "unparsable-jar", false);
 
             // TODO: Load the POM tree with Maven?
-            //ProjectBuilder pb = new DefaultProjectBuilder();
-            //pb.build(new ArrayList<File>(){{add(outputDir.toFile());}}, true, new DefaultProjectBuildingRequest());
+            // ProjectBuilder pb = new DefaultProjectBuilder();
+            // pb.build(new ArrayList<File>(){{add(outputDir.toFile());}}, true, new DefaultProjectBuildingRequest());
         }
     }
 
-    private static void checkPomExistence(Path base, String subdirName, boolean shouldExist){
-        Path pomPath = base.resolve(subdirName).resolve("pom.xml");
-        if (shouldExist)
-            Assert.assertTrue("Exists: " + pomPath, pomPath.toFile().exists());
-        else
-            Assert.assertFalse("Not exists: " + pomPath, pomPath.toFile().exists());
-    }
-
-
-    private Path executeWindupAgainstAppUntilRule(final String inputDir, final GraphContext grCtx, final Class<MavenizeRuleProvider> ruleToRunUpTo) throws IOException, IllegalAccessException, InstantiationException
+    private Path executeWindupAgainstAppUntilRule(final String inputDir, final GraphContext grCtx, final Class<MavenizeRuleProvider> ruleToRunUpTo)
+                throws IOException, IllegalAccessException, InstantiationException
     {
         Assume.assumeTrue("Exists: " + inputDir, new File(inputDir).exists());
 
-        final Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "Windup-Mavenization-output" );
+        final Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "Windup-Mavenization-output");
         FileUtils.deleteDirectory(outputPath.toFile());
         Files.createDirectories(outputPath);
 

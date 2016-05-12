@@ -54,7 +54,7 @@ class QueryPropertyCriterion implements QueryGremlinCriterion
         }
     }
 
-    public final static class MultipleValueTitanPredicate implements TitanPredicate
+    private final static class MultipleValueTitanPredicate implements TitanPredicate
     {
         @Override
         public boolean evaluate(Object first, Object second)

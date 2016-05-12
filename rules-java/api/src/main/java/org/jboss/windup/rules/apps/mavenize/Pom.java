@@ -2,6 +2,7 @@ package org.jboss.windup.rules.apps.mavenize;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.OrderedMap;
 import org.apache.commons.collections4.map.LinkedMap;
@@ -9,7 +10,7 @@ import org.apache.commons.collections4.map.LinkedMap;
 /**
  * A simplified POM model - just G:A:V:C:P and the dependencies.
  *
- *  @author Ondrej Zizka, zizka at seznam.cz
+ * @author Ondrej Zizka, zizka at seznam.cz
  */
 public class Pom implements Dependency
 {
@@ -22,39 +23,60 @@ public class Pom implements Dependency
     Set<Pom> localDependencies = new LinkedHashSet<>();
     OrderedMap<String, Pom> submodules = new LinkedMap<>();
     boolean root = false;
-
-
-    enum ModuleRole { PARENT, BOM, NORMAL }
     ModuleRole role = ModuleRole.NORMAL;
 
-
-    Pom(MavenCoord coord){
+    Pom(MavenCoord coord)
+    {
         this.coord = coord;
     }
 
-    public Pom getParent(){
+    /**
+     * Contains the parent.
+     */
+    public Pom getParent()
+    {
         return parent;
     }
 
-    public Pom setParent(Pom parent){
+    /**
+     * Contains the parent.
+     */
+    public Pom setParent(Pom parent)
+    {
         this.parent = parent;
         return this;
     }
 
-    public String getName(){
+    /**
+     * Contains the name.
+     */
+    public String getName()
+    {
         return name;
     }
 
-    public Pom setName(String name){
+    /**
+     * Contains the name.
+     */
+    public Pom setName(String name)
+    {
         this.name = name;
         return this;
     }
 
-    public String getDescription(){
+    /**
+     * Contains the description.
+     */
+    public String getDescription()
+    {
         return description;
     }
 
-    public Pom setDescription(String description){
+    /**
+     * Contains the description.
+     */
+    public Pom setDescription(String description)
+    {
         this.description = description;
         return this;
     }
@@ -62,11 +84,16 @@ public class Pom implements Dependency
     /**
      * Third-party library dependencies.
      */
-    public Set<Dependency> getDependencies(){
+    public Set<Dependency> getDependencies()
+    {
         return dependencies;
     }
 
-    public Pom setDependencies(Set<Dependency> dependencies){
+    /**
+     * Third-party library dependencies.
+     */
+    public Pom setDependencies(Set<Dependency> dependencies)
+    {
         this.dependencies = dependencies;
         return this;
     }
@@ -74,20 +101,33 @@ public class Pom implements Dependency
     /**
      * Dependencies on other modules of the project.
      */
-    public Set<Pom> getLocalDependencies(){
+    public Set<Pom> getLocalDependencies()
+    {
         return localDependencies;
     }
 
-    public Pom setLocalDependencies(Set<Pom> localDependencies){
+    /**
+     * Dependencies on other modules of the project.
+     */
+    public Pom setLocalDependencies(Set<Pom> localDependencies)
+    {
         this.localDependencies = localDependencies;
         return this;
     }
 
-    public OrderedMap<String, Pom> getSubmodules(){
+    /**
+     * Contains submodules of this Maven module.
+     */
+    public OrderedMap<String, Pom> getSubmodules()
+    {
         return submodules;
     }
 
-    public Pom setSubmodules(OrderedMap<String, Pom> submodules){
+    /**
+     * Contains submodules of this Maven module.
+     */
+    public Pom setSubmodules(OrderedMap<String, Pom> submodules)
+    {
         this.submodules = submodules;
         return this;
     }
@@ -95,42 +135,69 @@ public class Pom implements Dependency
     /**
      * The root pom of the project.
      */
-    public boolean isRoot(){
+    public boolean isRoot()
+    {
         return root;
     }
 
-    public Pom setRoot(boolean root){
+    /**
+     * The root pom of the project.
+     */
+    public Pom setRoot(boolean root)
+    {
         this.root = root;
         return this;
     }
 
-
+    /**
+     * Returns a {@link MavenCoord} representing the Maven coordinates of this POM.
+     */
     public MavenCoord getCoord(){
         return coord;
     }
+
+    /**
+     * Sets a {@link MavenCoord} representing the Maven coordinates of this POM.
+     */
 
     public Pom setCoord(MavenCoord coord){
         this.coord = coord;
         return this;
     }
 
-    public MavenCoord getBom(){
+    /**
+     * Gets the Bom used by this POM.
+     */
+    public MavenCoord getBom()
+    {
         return bom;
     }
 
-    public Pom setBom(MavenCoord bom){
+    /**
+     * Sets the Bom used by this POM.
+     */
+    public Pom setBom(MavenCoord bom)
+    {
         this.bom = bom;
         return this;
     }
 
     @Override
-    public String toString(){
-        return "Pom{" + role + " " + coord + ", parent=" + (parent == null ? "" : parent.coord) + ", " + "name=" + name + /*", desc=" + description +*/ ", " + "dependencies=" + CollectionUtils.size(dependencies) + ", " + "localDependencies=" + CollectionUtils.size(localDependencies) + ", " + "submodules=" + CollectionUtils.size(submodules) + '}';
+    public String toString()
+    {
+        return "Pom{" + role + " " + coord + ", parent=" + (parent == null ? "" : parent.coord) + ", " + "name=" + name
+                    + /* ", desc=" + description + */ ", " + "dependencies=" + CollectionUtils.size(dependencies) + ", " + "localDependencies="
+                    + CollectionUtils.size(localDependencies) + ", " + "submodules=" + CollectionUtils.size(submodules) + '}';
     }
 
     @Override
     public Role getRole()
     {
         return Role.MODULE;
+    }
+
+    enum ModuleRole
+    {
+        PARENT, BOM, NORMAL
     }
 }
