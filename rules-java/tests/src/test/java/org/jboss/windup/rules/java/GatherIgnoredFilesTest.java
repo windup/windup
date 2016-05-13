@@ -75,7 +75,6 @@ public class GatherIgnoredFilesTest
             FileModel ignoreFile = context.getFramed().addVertex(null, FileModel.class);
             ignoreFile.setFilePath("src/test/resources/test-windup-ignore.txt");
             config.addUserIgnorePath(ignoreFile);
-            inputPath.setProjectModel(pm);
             pm.setRootFileModel(inputPath);
 
             Predicate<RuleProvider> predicate = new NotPredicate(new RuleProviderPhasePredicate(ReportGenerationPhase.class));

@@ -223,7 +223,6 @@ public class ProcyonDecompilerOperation extends AbstractDecompilerOperation
                             // only add it to the project model if it is not already there
                             if (decompiledFileModel.getProjectModel() == null || !decompiledFileModel.getProjectModel().equals(projectModel))
                             {
-                                decompiledFileModel.setProjectModel(projectModel);
                                 projectModel.addFileModel(decompiledFileModel);
                             }
 

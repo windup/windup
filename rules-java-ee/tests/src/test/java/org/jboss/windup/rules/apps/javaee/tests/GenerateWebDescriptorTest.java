@@ -55,15 +55,15 @@ public class GenerateWebDescriptorTest extends AbstractTest
         FileModel fm1 =context.getFramed().addVertex(null, FileModel.class);
         FileModel fm2 =context.getFramed().addVertex(null, FileModel.class);
 
-        fm1.setProjectModel(pm1);
-        fm2.setProjectModel(pm2);
+        pm1.addFileModel(fm1);
+        pm2.addFileModel(fm2);
         WindupConfigurationModel configurationModel =context.getFramed().addVertex(null, WindupConfigurationModel.class);
         GraphService<ProjectModel> projectModels = new GraphService<>(context, ProjectModel.class);
         GraphService<WebXmlModel> webDescriptors = new GraphService<>(context, WebXmlModel.class);
         for (ProjectModel projectModel : projectModels.findAll())
         {
             WebXmlModel webXmlModel =  webDescriptors.create();
-            webXmlModel.setProjectModel(projectModel);
+            projectModel.addFileModel(webXmlModel);
         }
         configurationModel.addInputPath(fm1);
         configurationModel.addInputPath(fm2);

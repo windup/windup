@@ -209,7 +209,7 @@ public class InlineHintService extends GraphService<InlineHintModel>
 
         inlineHintPipeline.as("hint");
         inlineHintPipeline.out(InlineHintModel.FILE_MODEL);
-        inlineHintPipeline.out(FileModel.FILE_TO_PROJECT_MODEL);
+        inlineHintPipeline.in(ProjectModel.PROJECT_MODEL_TO_FILE);
         inlineHintPipeline.filter(new PipeFunction<Vertex, Boolean>()
         {
             @Override

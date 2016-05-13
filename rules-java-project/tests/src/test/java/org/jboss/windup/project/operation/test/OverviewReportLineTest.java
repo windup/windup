@@ -96,9 +96,6 @@ public class OverviewReportLineTest
             FileUtils.deleteDirectory(outputPath.toFile());
             Files.createDirectories(outputPath);
 
-            inputPath.setProjectModel(pm);
-            subinputPath.setProjectModel(subProject);
-            subsubinputPath.setProjectModel(subsubProject);
             pm.addFileModel(inputPath);
             pm.setRootFileModel(inputPath);
             subProject.addFileModel(subinputPath);

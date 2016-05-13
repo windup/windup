@@ -38,10 +38,10 @@ public class HibernateConfigurationFileServiceTest extends AbstractTest
 
             HibernateConfigurationFileService service = new HibernateConfigurationFileService(context);
             HibernateConfigurationFileModel bean1 = service.create();
-            bean1.setProjectModel(app1);
+            app1.addFileModel(bean1);
 
             HibernateConfigurationFileModel bean2 = service.create();
-            bean2.setProjectModel(app2);
+            app2.addFileModel(bean2);
 
             service.create();
 

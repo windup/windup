@@ -31,7 +31,6 @@ public interface FileModel extends ResourceModel
     String PARENT_FILE = "parentFile";
     String SHA1_HASH = "sha1Hash";
     String MD5_HASH = "md5Hash";
-    String FILE_TO_PROJECT_MODEL = "fileToProjectModel";
     String FILE_NAME = "fileName";
     String FILE_PATH = "filePath";
     String IS_DIRECTORY = "isDirectory";
@@ -154,16 +153,10 @@ public interface FileModel extends ResourceModel
     void addFileToDirectory(FileModel fileModel);
 
     /**
-     * Gets the ProjectModel that this file is a part of
+     * Gets the {@link ProjectModel} that this file is a part of
      */
-    @Adjacency(label = FILE_TO_PROJECT_MODEL, direction = Direction.OUT)
+    @Adjacency(label = ProjectModel.PROJECT_MODEL_TO_FILE, direction = Direction.IN)
     ProjectModel getProjectModel();
-
-    /**
-     * Sets the ProjectModel that this file is a part of
-     */
-    @Adjacency(label = FILE_TO_PROJECT_MODEL, direction = Direction.OUT)
-    void setProjectModel(ProjectModel projectModel);
 
     /**
      * Gets a {@link File} object representing this file

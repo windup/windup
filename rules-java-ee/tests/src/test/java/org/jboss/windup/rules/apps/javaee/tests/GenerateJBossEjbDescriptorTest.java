@@ -58,15 +58,16 @@ public class GenerateJBossEjbDescriptorTest extends AbstractTest
         FileModel fm1 =context.getFramed().addVertex(null, FileModel.class);
         FileModel fm2 =context.getFramed().addVertex(null, FileModel.class);
 
-        fm1.setProjectModel(pm1);
-        fm2.setProjectModel(pm2);
+        pm1.addFileModel(fm1);
+        pm2.addFileModel(fm2);
+
         WindupConfigurationModel configurationModel =context.getFramed().addVertex(null, WindupConfigurationModel.class);
         GraphService<ProjectModel> projectModels = new GraphService<>(context, ProjectModel.class);
         GraphService<EjbDeploymentDescriptorModel> ejbDescriptors = new GraphService<>(context, EjbDeploymentDescriptorModel.class);
         for (ProjectModel projectModel : projectModels.findAll())
         {
             EjbDeploymentDescriptorModel ejbDescriptor =  ejbDescriptors.create();
-            ejbDescriptor.setProjectModel(projectModel);
+            projectModel.addFileModel(ejbDescriptor);
         }
         configurationModel.addInputPath(fm1);
         configurationModel.addInputPath(fm2);

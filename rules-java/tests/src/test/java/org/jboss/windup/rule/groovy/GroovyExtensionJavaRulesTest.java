@@ -93,18 +93,14 @@ public class GroovyExtensionJavaRulesTest
 
             FileModel inputPathFrame = context.getFramed().addVertex(null, FileModel.class);
             inputPathFrame.setFilePath(inputPath);
-            inputPathFrame.setProjectModel(pm);
             pm.setRootFileModel(inputPathFrame);
 
             FileModel fileModel = context.getFramed().addVertex(null, FileModel.class);
             fileModel.setFilePath(inputPath + "/JavaClassTestFile1.java");
-            fileModel.setProjectModel(pm);
-
             pm.addFileModel(inputPathFrame);
             pm.addFileModel(fileModel);
             fileModel = context.getFramed().addVertex(null, FileModel.class);
             fileModel.setFilePath(inputPath + "/JavaClassTestFile2.java");
-            fileModel.setProjectModel(pm);
             pm.addFileModel(fileModel);
 
             try

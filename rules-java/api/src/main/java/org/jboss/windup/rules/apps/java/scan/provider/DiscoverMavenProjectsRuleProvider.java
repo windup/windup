@@ -86,8 +86,7 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
                     ArchiveModel archiveModel = payload.getArchive();
                     if (archiveModel != null && !isAlreadyMavenProject(archiveModel))
                     {
-                        archiveModel.setProjectModel(mavenProjectModel);
-
+                        mavenProjectModel.addFileModel(archiveModel);
                         mavenProjectModel.setRootFileModel(archiveModel);
 
                         // Attach the project to all files within the archive
@@ -98,7 +97,6 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
                             if (!(f instanceof ArchiveModel) && f.getProjectModel() == null)
                             {
                                 // only set it if it has not already been set
-                                f.setProjectModel(mavenProjectModel);
                                 mavenProjectModel.addFileModel(f);
                             }
                         }
@@ -110,7 +108,6 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
                         FileModel parentFileModel = new FileService(event.getGraphContext()).findByPath(parentFile.getAbsolutePath());
                         if (parentFileModel != null && !isAlreadyMavenProject(parentFileModel))
                         {
-                            parentFileModel.setProjectModel(mavenProjectModel);
                             mavenProjectModel.addFileModel(parentFileModel);
                             mavenProjectModel.setRootFileModel(parentFileModel);
 
@@ -164,7 +161,6 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
             }
         }
 
-        fileModel.setProjectModel(mavenProjectModel);
         mavenProjectModel.addFileModel(fileModel);
 
         // now recursively all files to the project
