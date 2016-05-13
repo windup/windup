@@ -138,18 +138,6 @@ public class MavenizeRuleProviderTest
         FileUtils.deleteDirectory(outputPath.toFile());
         Files.createDirectories(outputPath);
 
-        // Simulate the discovered project
-        ProjectModel pm = grCtx.getFramed().addVertex(null, ProjectModel.class);
-        pm.setName("Main Project");
-
-        // TODO: Add ProjectModel --uses--> ArchiveCoordinateModel to simulate API packages found in Java files.
-
-        FileModel inputPathFrame = grCtx.getFramed().addVertex(null, FileModel.class);
-        inputPathFrame.setFilePath(inputDir);
-        inputPathFrame.setProjectModel(pm);
-        pm.addFileModel(inputPathFrame);
-        pm.setRootFileModel(inputPathFrame);
-
         grCtx.getGraph().getBaseGraph().commit();
 
         // Configure Windup core

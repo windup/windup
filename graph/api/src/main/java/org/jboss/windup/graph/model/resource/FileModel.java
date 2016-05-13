@@ -18,6 +18,7 @@ import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.javahandler.JavaHandler;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.model.WindupVertexFrame;
 
 /**
  * Represents a File on disk.
@@ -27,7 +28,6 @@ public interface FileModel extends ResourceModel
 {
     String TYPE = "FileResource";
 
-    String ARCHIVE_FILES = "archiveFiles";
     String PARENT_FILE = "parentFile";
     String SHA1_HASH = "sha1Hash";
     String MD5_HASH = "md5Hash";
@@ -45,7 +45,6 @@ public interface FileModel extends ResourceModel
             return EnumUtils.getEnum(OnParseError.class, StringUtils.upperCase(name));
         }
     }
-
 
     /**
      * Contains the File Name (the last component of the path). Eg, a file /tmp/foo/bar/file.txt would have fileName set to "file.txt"
@@ -144,8 +143,6 @@ public interface FileModel extends ResourceModel
 
     /**
      * Files contained within this directory
-     *
-     * @return
      */
     @Adjacency(label = PARENT_FILE, direction = Direction.IN)
     Iterable<FileModel> getFilesInDirectory();
@@ -155,18 +152,6 @@ public interface FileModel extends ResourceModel
      */
     @Adjacency(label = PARENT_FILE, direction = Direction.IN)
     void addFileToDirectory(FileModel fileModel);
-
-    /**
-     * Indicates the archive that contained this file
-     */
-    @Adjacency(label = ARCHIVE_FILES, direction = Direction.IN)
-    ArchiveModel getParentArchive();
-
-    /**
-     * Sets the archive that contained this file
-     */
-    @Adjacency(label = ARCHIVE_FILES, direction = Direction.IN)
-    void setParentArchive(ArchiveModel parentArchive);
 
     /**
      * Gets the ProjectModel that this file is a part of
@@ -197,6 +182,9 @@ public interface FileModel extends ResourceModel
      */
     @JavaHandler
     String getPrettyPath();
+
+    @JavaHandler
+    ArchiveModel getArchive();
 
     /**
      * Returns the path of this file within the parent project (format suitable for reporting)
@@ -256,14 +244,7 @@ public interface FileModel extends ResourceModel
                 String filename = getFileName();
                 if (getParentFile() == null)
                 {
-                    if (getParentArchive() != null)
-                    {
-                        result = getParentArchive().getPrettyPathWithinProject();
-                    }
-                    else
-                    {
-                        result = filename;
-                    }
+                    result = filename;
                 }
                 else
                 {
@@ -280,14 +261,7 @@ public interface FileModel extends ResourceModel
             String result;
             if (getParentFile() == null)
             {
-                if (getParentArchive() != null)
-                {
-                    result = getParentArchive().getPrettyPath();
-                }
-                else
-                {
-                    result = filename;
-                }
+                result = filename;
             }
             else
             {
@@ -303,6 +277,22 @@ public interface FileModel extends ResourceModel
             it().setProperty(IS_DIRECTORY, file.isDirectory());
             it().setProperty(FILE_PATH, file.getAbsolutePath());
             it().setProperty(FILE_NAME, file.getName());
+        }
+
+        @Override
+        public ArchiveModel getArchive()
+        {
+            // required due to a quirk of the way frames works with @JavaHandler methods
+            WindupVertexFrame reframed = frame(it(), WindupVertexFrame.class);
+            if (reframed instanceof ArchiveModel)
+            {
+                return (ArchiveModel)reframed;
+            }
+
+            if (getParentFile() == null)
+                return null;
+            else
+                return getParentFile().getArchive();
         }
 
         @Override

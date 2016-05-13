@@ -1,11 +1,17 @@
 package org.jboss.windup.graph.model;
 
+import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.frames.modules.javahandler.JavaHandler;
+import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import org.jboss.windup.graph.model.resource.FileModel;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 /**
  * Represents an archive within the input application.
@@ -15,19 +21,19 @@ public interface ArchiveModel extends FileModel
 {
     String TYPE = "ArchiveModel:";
     String ARCHIVE_NAME = TYPE + "archiveName";
-    String DECOMPILED_FILES = "decompiledFiles";
     String UNZIPPED_DIRECTORY = "unzippedDirectory";
+    String PARENT_ARCHIVE = "parentArchive";
 
     /**
      * Contains the parent archive.
      */
-    @Adjacency(label = "parentArchive", direction = Direction.IN)
+    @Adjacency(label = PARENT_ARCHIVE, direction = Direction.IN)
     ArchiveModel getParentArchive();
 
     /**
      * Contains the parent archive.
      */
-    @Adjacency(label = "parentArchive", direction = Direction.IN)
+    @Adjacency(label = PARENT_ARCHIVE, direction = Direction.IN)
     void setParentArchive(ArchiveModel resource);
 
     /**
@@ -43,56 +49,51 @@ public interface ArchiveModel extends FileModel
     void setArchiveName(String archiveName);
 
     /**
-     * Contains the children of this archive.
+     * Contains the directory to which this archive has been unzipped. It will be null if the archive has not been unzipped.
      */
-    @Adjacency(label = "childArchive", direction = Direction.OUT)
-    Iterable<ArchiveModel> getChildrenArchive();
-
-    /**
-     * Contains the children of this archive.
-     */
-    @Adjacency(label = "childArchive", direction = Direction.OUT)
-    void addChildArchive(final ArchiveModel resource);
+    @Property(UNZIPPED_DIRECTORY)
+    void setUnzippedDirectory(String unzippedPath);
 
     /**
      * Contains the directory to which this archive has been unzipped. It will be null if the archive has not been unzipped.
      */
-    @Adjacency(label = UNZIPPED_DIRECTORY, direction = Direction.OUT)
-    void setUnzippedDirectory(FileModel fileResourceModel);
-
-    /**
-     * Contains the directory to which this archive has been unzipped. It will be null if the archive has not been unzipped.
-     */
-    @Adjacency(label = UNZIPPED_DIRECTORY, direction = Direction.OUT)
-    FileModel getUnzippedDirectory();
-
-    /**
-     * Contains a list of all files contained within this archive.
-     */
-    @Adjacency(label = FileModel.ARCHIVE_FILES, direction = Direction.OUT)
-    Iterable<FileModel> getContainedFileModels();
-
-    /**
-     * Contains a list of all files contained within this archive.
-     */
-    @Adjacency(label = FileModel.ARCHIVE_FILES, direction = Direction.OUT)
-    void addContainedFileModel(FileModel archiveFile);
-
-    /**
-     * Contains a list of all decompiled files associated with this archive.
-     */
-    @Adjacency(label = DECOMPILED_FILES, direction = Direction.OUT)
-    Iterable<FileModel> getDecompiledFileModels();
-
-    /**
-     * Contains a list of all decompiled files associated with this archive.
-     */
-    @Adjacency(label = DECOMPILED_FILES, direction = Direction.OUT)
-    void addDecompiledFileModel(FileModel archiveFile);
+    @Property(UNZIPPED_DIRECTORY)
+    String getUnzippedDirectory();
 
     /**
      * Contains a link to the organization which produced this archive.
      */
     @Adjacency(label = OrganizationModel.ARCHIVE_MODEL, direction = Direction.IN)
     Iterable<OrganizationModel> getOrganizationModels();
+
+    /**
+     * Gets all files in this archive, including subfiles, but not including subfiles of embedded archives.
+     */
+    @JavaHandler
+    Iterable<FileModel> getAllFiles();
+
+    abstract class Impl extends FileModel.Impl implements ArchiveModel, JavaHandlerContext<Vertex>
+    {
+        @Override
+        public Iterable<FileModel> getAllFiles() {
+            Set<FileModel> results = new LinkedHashSet<>();
+
+            for (FileModel child : getFilesInDirectory())
+                addAllFiles(results, child);
+
+            return results;
+        }
+
+        private void addAllFiles(Set<FileModel> files, FileModel file)
+        {
+            files.add(file);
+
+            // don't include children of embedded archives
+            if (file instanceof ArchiveModel)
+                return;
+
+            for (FileModel child : file.getFilesInDirectory())
+                addAllFiles(files, child);
+        }
+    }
 }

@@ -210,7 +210,7 @@ public class DiscoverArchiveLicenseFilesRuleProvider extends IteratingRuleProvid
     {
         Set<FileModel> licenses = new HashSet<>();
 
-        Iterable<FileModel> files = archive.getContainedFileModels();
+        Iterable<FileModel> files = archive.getAllFiles();
         for (FileModel model : files)
         {
             if (model.isDirectory())

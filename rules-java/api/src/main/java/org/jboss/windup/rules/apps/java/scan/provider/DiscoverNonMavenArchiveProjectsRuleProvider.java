@@ -101,7 +101,7 @@ public class DiscoverNonMavenArchiveProjectsRuleProvider extends AbstractRulePro
 
                                     archiveModel.setProjectModel(projectModel);
                                     // Attach the project to all files within the archive
-                                    for (FileModel f : archiveModel.getContainedFileModels())
+                                    for (FileModel f : archiveModel.getAllFiles())
                                     {
                                         // don't add archive models, as those really are separate projects...
                                         if (f instanceof ArchiveModel)
