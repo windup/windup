@@ -39,7 +39,7 @@ import org.junit.runner.RunWith;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RunWith(Arquillian.class)
-public class DiscoverStaticIPAddressTest
+public class DiscoverHardcodedIPAddressTest
 {
     @Deployment
     @AddonDependencies({
@@ -96,11 +96,11 @@ public class DiscoverStaticIPAddressTest
             unexpectedIPs.add("192.168.0.9.3.4");
 
             InlineHintService service = new InlineHintService(context);
-            Pattern ipExtractor = Pattern.compile("\\*\\*Static IP: (.*?)\\*\\*");
+            Pattern ipExtractor = Pattern.compile("\\*\\*Hard-coded IP: (.*?)\\*\\*");
             int numberFound = 0;
             for (InlineHintModel hint : service.findAll())
             {
-                if (StringUtils.equals("Static IP Address Detected", hint.getTitle()))
+                if (StringUtils.equals("Hard-coded IP Address Detected", hint.getTitle()))
                 {
                     Matcher matcher = ipExtractor.matcher(hint.getHint());
                     if (matcher.find())

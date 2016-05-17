@@ -13,7 +13,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.model.ReportModel;
 import org.jboss.windup.reporting.service.ReportService;
-import org.jboss.windup.rules.apps.java.ip.CreateStaticIPAddressReportRuleProvider;
+import org.jboss.windup.rules.apps.java.ip.CreateHardcodedIPAddressReportRuleProvider;
 import org.jboss.windup.rules.apps.java.model.JarManifestModel;
 import org.jboss.windup.rules.apps.java.reporting.rules.CreateCompatibleFileReportRuleProvider;
 import org.jboss.windup.rules.apps.java.reporting.rules.CreateReportIndexRuleProvider;
@@ -107,7 +107,7 @@ public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTe
         ReportService reportService = new ReportService(context);
         ReportModel reportModel = reportService.getUniqueByProperty(
                     ReportModel.TEMPLATE_PATH,
-                    CreateStaticIPAddressReportRuleProvider.TEMPLATE_REPORT);
+                    CreateHardcodedIPAddressReportRuleProvider.TEMPLATE_REPORT);
         TestStaticIPReportUtil util = new TestStaticIPReportUtil();
         Path reportPath = reportService.getReportDirectory().resolve(reportModel.getReportFilename());
         util.loadPage(reportPath);
