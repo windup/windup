@@ -41,6 +41,8 @@ public class FileMappingHandler implements ElementHandler<Void>
     @SuppressWarnings("unchecked")
     public Void processElement(ParserContext context, Element element)
     {
+        String id = $(element).attr("id");
+
         String from = $(element).attr(FROM);
         String to = $(element).attr(TO);
         String onParseError = $(element).attr(ON_PARSE_ERROR);
@@ -91,7 +93,8 @@ public class FileMappingHandler implements ElementHandler<Void>
             types.addAll(matchingTypes);
         }
 
-        Rule rule = FileMapping.from(from).to(types.toArray(new Class[types.size()])).onParseError(FileModel.OnParseError.IGNORE);
+        FileMappingTo mappingTo = FileMapping.from(from).to(types.toArray(new Class[types.size()])).onParseError(FileModel.OnParseError.IGNORE);
+        Rule rule = StringUtils.isNotBlank(id) ? mappingTo.withId(id) : mappingTo;
         if (rule instanceof Context)
             ((Context) rule).put(RuleMetadataType.RULE_XML, XmlUtil.nodeToString(element));
         context.getBuilder().addRule(rule);

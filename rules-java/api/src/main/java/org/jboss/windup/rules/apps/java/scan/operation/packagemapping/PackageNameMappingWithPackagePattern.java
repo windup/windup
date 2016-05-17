@@ -10,5 +10,5 @@ public interface PackageNameMappingWithPackagePattern
     /**
      * Sets the package pattern to match against.
      */
-    Rule toOrganization(String organization);
+    PackageNameMappingWithOrganization toOrganization(String organization);
 }

@@ -36,7 +36,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  *
  */
-public class FileMapping extends GraphRule implements PreRulesetEvaluation, FileMappingFrom, FileMappingTo
+public class FileMapping extends GraphRule implements PreRulesetEvaluation, FileMappingFrom, FileMappingTo, FileMappingWithID
 {
     private static final Logger LOG = Logging.get(FileMapping.class);
 
@@ -45,7 +45,7 @@ public class FileMapping extends GraphRule implements PreRulesetEvaluation, File
     private final List<Class<? extends WindupVertexFrame>> types = new ArrayList<>();
     private OnParseError onParseError = OnParseError.WARN;
 
-    private final String id;
+    private String id;
 
     private FileMapping(Pattern pattern)
     {
@@ -55,6 +55,13 @@ public class FileMapping extends GraphRule implements PreRulesetEvaluation, File
         normalizedPattern = StringUtils.substring(normalizedPattern, 0, 10);
         this.id = this.getClass().getSimpleName()+ "_" + normalizedPattern
                 + "_" + RandomStringUtils.randomAlphanumeric(2);
+    }
+
+    @Override
+    public FileMappingWithID withId(String ruleID)
+    {
+        this.id = ruleID;
+        return this;
     }
 
     /**
