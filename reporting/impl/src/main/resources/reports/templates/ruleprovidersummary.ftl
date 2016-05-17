@@ -75,7 +75,7 @@
                                     </td>
                                     <td>
                                         <a name="${ruleExecutionInfo.rule.id}" class="anchor"></a>
-                                        <span style="white-space: pre">${formatRule(ruleExecutionInfo.rule)?html}</span>
+                                        <span style="white-space: pre-wrap">${formatRule(ruleExecutionInfo.rule)?html}</span>
                                     </td>
                                     <td>
                                         <div>Vertices Created: ${ruleExecutionInfo.vertexIDsAdded}</div>
