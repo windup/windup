@@ -27,6 +27,6 @@ public class CorrectValueOfPackagesParameterTest extends AbstractBootstrapTestWi
         assertFalse(capturedOutput().contains("WARNING: The packages specified to scan are very broad."));
 
         String indexHtml = new String(Files.readAllBytes(tmp.getRoot().toPath().resolve("index.html")), "UTF-8");
-        assertTrue(indexHtml.contains("Decompiled Java File"));
+        assertTrue(indexHtml.contains("Maven XML"));
     }
 }
