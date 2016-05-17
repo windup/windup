@@ -193,19 +193,19 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
         File xmlFile = xmlFileModel.asFile();
 
         // modelVersion
-        String modelVersion = XmlUtil.xpathExtract(document, "/pom:project/pom:modelVersion", namespaces);
-        String name = XmlUtil.xpathExtract(document, "/pom:project/pom:name", namespaces);
-        String organization = XmlUtil.xpathExtract(document, "/pom:project/pom:organization", namespaces);
-        String description = XmlUtil.xpathExtract(document, "/pom:project/pom:description", namespaces);
-        String url = XmlUtil.xpathExtract(document, "/pom:project/pom:url", namespaces);
+        String modelVersion = XmlUtil.xpathExtract(document, "/pom:project/pom:modelVersion | /project/modelVersion", namespaces);
+        String name = XmlUtil.xpathExtract(document, "/pom:project/pom:name | /project/name", namespaces);
+        String organization = XmlUtil.xpathExtract(document, "/pom:project/pom:organization | /project/organization", namespaces);
+        String description = XmlUtil.xpathExtract(document, "/pom:project/pom:description | /project/description", namespaces);
+        String url = XmlUtil.xpathExtract(document, "/pom:project/pom:url | /project/url", namespaces);
 
-        String groupId = XmlUtil.xpathExtract(document, "/pom:project/pom:groupId", namespaces);
-        String artifactId = XmlUtil.xpathExtract(document, "/pom:project/pom:artifactId", namespaces);
-        String version = XmlUtil.xpathExtract(document, "/pom:project/pom:version", namespaces);
+        String groupId = XmlUtil.xpathExtract(document, "/pom:project/pom:groupId | /project/groupId", namespaces);
+        String artifactId = XmlUtil.xpathExtract(document, "/pom:project/pom:artifactId | /project/artifactId", namespaces);
+        String version = XmlUtil.xpathExtract(document, "/pom:project/pom:version | /project/version", namespaces);
 
-        String parentGroupId = XmlUtil.xpathExtract(document, "/pom:project/pom:parent/pom:groupId", namespaces);
-        String parentArtifactId = XmlUtil.xpathExtract(document, "/pom:project/pom:parent/pom:artifactId", namespaces);
-        String parentVersion = XmlUtil.xpathExtract(document, "/pom:project/pom:parent/pom:version", namespaces);
+        String parentGroupId = XmlUtil.xpathExtract(document, "/pom:project/pom:parent/pom:groupId | /project/parent/groupId", namespaces);
+        String parentArtifactId = XmlUtil.xpathExtract(document, "/pom:project/pom:parent/pom:artifactId | /project/parent/artifactId", namespaces);
+        String parentVersion = XmlUtil.xpathExtract(document, "/pom:project/pom:parent/pom:version | /project/parent/version", namespaces);
 
         if (StringUtils.isBlank(groupId) && StringUtils.isNotBlank(parentGroupId))
         {
@@ -299,17 +299,17 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
         }
 
         NodeList nodes = XmlUtil
-                    .xpathNodeList(document, "/pom:project/pom:dependencies/pom:dependency", namespaces);
+                    .xpathNodeList(document, "/pom:project/pom:dependencies/pom:dependency | /project/dependencies/dependency", namespaces);
         for (int i = 0, j = nodes.getLength(); i < j; i++)
         {
             Node node = nodes.item(i);
-            String dependencyGroupId = XmlUtil.xpathExtract(node, "./pom:groupId", namespaces);
-            String dependencyArtifactId = XmlUtil.xpathExtract(node, "./pom:artifactId", namespaces);
-            String dependencyVersion = XmlUtil.xpathExtract(node, "./pom:version", namespaces);
+            String dependencyGroupId = XmlUtil.xpathExtract(node, "./pom:groupId | ./groupId", namespaces);
+            String dependencyArtifactId = XmlUtil.xpathExtract(node, "./pom:artifactId | ./artifactId", namespaces);
+            String dependencyVersion = XmlUtil.xpathExtract(node, "./pom:version | ./version", namespaces);
 
-            String dependencyClassifier = XmlUtil.xpathExtract(node, "./pom:classifier", namespaces);
-            String dependencyScope = XmlUtil.xpathExtract(node, "./pom:scope", namespaces);
-            String dependencyType = XmlUtil.xpathExtract(node, "./pom:type", namespaces);
+            String dependencyClassifier = XmlUtil.xpathExtract(node, "./pom:classifier | ./classifier", namespaces);
+            String dependencyScope = XmlUtil.xpathExtract(node, "./pom:scope | ./scope", namespaces);
+            String dependencyType = XmlUtil.xpathExtract(node, "./pom:type | ./type", namespaces);
 
             dependencyGroupId = resolveProperty(document, namespaces, dependencyGroupId, version);
             dependencyArtifactId = resolveProperty(document, namespaces, dependencyArtifactId, version);
@@ -409,7 +409,7 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
             case "project.version":
                 return projectVersion;
             default:
-                NodeList nodes = XmlUtil.xpathNodeList(document, "//pom:properties/pom:" + propertyName, namespaces);
+                NodeList nodes = XmlUtil.xpathNodeList(document, "//pom:properties/pom:" + propertyName + " | " + "//properties/" + propertyName, namespaces);
 
                 if (nodes.getLength() == 0 || nodes.item(0) == null)
                 {
@@ -418,8 +418,7 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
                 else
                 {
                     Node node = nodes.item(0);
-                    String value = node.getTextContent();
-                    return value;
+                    return node.getTextContent();
                 }
             }
 
