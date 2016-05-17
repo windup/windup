@@ -8,8 +8,8 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
  * Contains the location of a hard-coded IP address within a file
  *
  */
-@TypeValue(StaticIPLocationModel.TYPE)
-public interface StaticIPLocationModel extends InlineHintModel
+@TypeValue(HardcodedIPLocationModel.TYPE)
+public interface HardcodedIPLocationModel extends InlineHintModel
 {
-    String TYPE = "StaticIPLocationModel";
+    String TYPE = "HardcodedIPLocationModel";
 }

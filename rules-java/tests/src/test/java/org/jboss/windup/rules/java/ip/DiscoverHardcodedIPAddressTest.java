@@ -39,7 +39,7 @@ import org.junit.runner.RunWith;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RunWith(Arquillian.class)
-public class DiscoverStaticIPAddressTest
+public class DiscoverHardcodedIPAddressTest
 {
     @Deployment
     @AddonDependencies({

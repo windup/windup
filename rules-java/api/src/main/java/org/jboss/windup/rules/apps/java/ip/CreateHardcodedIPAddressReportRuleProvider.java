@@ -32,7 +32,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
 @RuleMetadata(phase = ReportGenerationPhase.class)
-public class CreateStaticIPAddressReportRuleProvider extends AbstractRuleProvider
+public class CreateHardcodedIPAddressReportRuleProvider extends AbstractRuleProvider
 {
     private static final String TITLE = "Hard-coded IP Addresses";
     public static final String TEMPLATE_REPORT = "/reports/templates/static_ip_addresses.ftl";
@@ -45,7 +45,7 @@ public class CreateStaticIPAddressReportRuleProvider extends AbstractRuleProvide
         .begin()
         .addRule()
         // when a IP Location Model exists...
-        .when(Query.fromType(StaticIPLocationModel.class))
+        .when(Query.fromType(HardcodedIPLocationModel.class))
         // perform the write of this report once (GraphOperation)...
         .perform(new GraphOperation()
         {
@@ -83,12 +83,12 @@ public class CreateStaticIPAddressReportRuleProvider extends AbstractRuleProvide
         applicationReport.setProjectModel(rootProjectModel);
 
         // find all IPLocationModels
-        GraphService<StaticIPLocationModel> ipLocationModelService = new GraphService<>(context, StaticIPLocationModel.class);
-        Iterable<StaticIPLocationModel> results = ipLocationModelService.findAll();
+        GraphService<HardcodedIPLocationModel> ipLocationModelService = new GraphService<>(context, HardcodedIPLocationModel.class);
+        Iterable<HardcodedIPLocationModel> results = ipLocationModelService.findAll();
 
         Map<String, WindupVertexFrame> relatedData = new HashMap<>(1);
         WindupVertexListModel staticIPList = new GraphService<>(context, WindupVertexListModel.class).create();
-        for (StaticIPLocationModel location : results)
+        for (HardcodedIPLocationModel location : results)
         {
             if (location.getFile().getProjectModel().getRootProjectModel().equals(rootProjectModel))
                 staticIPList.addItem(location);

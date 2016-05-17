@@ -37,10 +37,10 @@ import org.w3c.dom.Element;
  * @author <a href="mailto:hotmana76@gmail.com">Marek Novotny</a>
  */
 @RuleMetadata(phase = MigrationRulesPhase.class)
-public class DiscoverStaticIPAddressRuleProvider extends AbstractRuleProvider
+public class DiscoverHardcodedIPAddressRuleProvider extends AbstractRuleProvider
 {
     private static final String IP_PATTERN = "(?<![\\w.])\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}(?![\\w.])";
-    private static final Logger LOG = Logger.getLogger(DiscoverStaticIPAddressRuleProvider.class.getSimpleName());
+    private static final Logger LOG = Logger.getLogger(DiscoverHardcodedIPAddressRuleProvider.class.getSimpleName());
 
     @Override
     public Configuration getConfiguration(GraphContext context)
@@ -70,8 +70,8 @@ public class DiscoverStaticIPAddressRuleProvider extends AbstractRuleProvider
                         return;
                     }
 
-                    StaticIPLocationModel location = GraphService.addTypeToModel(event.getGraphContext(), payload,
-                                StaticIPLocationModel.class);
+                    HardcodedIPLocationModel location = GraphService.addTypeToModel(event.getGraphContext(), payload,
+                        HardcodedIPLocationModel.class);
                     location.setRuleID(((Rule) context.get(Rule.class)).getId());
                     location.setTitle("Hard-coded IP Address Detected");
 
