@@ -27,16 +27,16 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
- * Finds files that contain potential static IP addresses, determined by regular expression.
+ * Finds files that contain potential hard-coded IP addresses, determined by regular expression.
  *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
 @RuleMetadata(phase = ReportGenerationPhase.class)
 public class CreateStaticIPAddressReportRuleProvider extends AbstractRuleProvider
 {
-    private static final String TITLE = "Static IP Addresses";
+    private static final String TITLE = "Hard-coded IP Addresses";
     public static final String TEMPLATE_REPORT = "/reports/templates/static_ip_addresses.ftl";
-    public static final String REPORT_DESCRIPTION = "The Static IP report provides a list of all static IP addresses that were found in the application. These often require review during migration.";
+    public static final String REPORT_DESCRIPTION = "The Hard-coded IP report provides a list of all hard-coded IP addresses that were found in the application. These often require review during migration.";
 
     @Override
     public Configuration getConfiguration(final GraphContext graphContext)

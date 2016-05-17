@@ -5,7 +5,7 @@ import org.jboss.windup.reporting.model.InlineHintModel;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
- * Contains the location of a static ip within a file
+ * Contains the location of a hard-coded IP address within a file
  *
  */
 @TypeValue(StaticIPLocationModel.TYPE)

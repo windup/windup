@@ -31,9 +31,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 /**
- * Finds files that contain potential static IP addresses, determined by regular expression.
+ * Finds files that contain potential hard-coded IP addresses, determined by regular expression.
  *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
+ * @author <a href="mailto:hotmana76@gmail.com">Marek Novotny</a>
  */
 @RuleMetadata(phase = MigrationRulesPhase.class)
 public class DiscoverStaticIPAddressRuleProvider extends AbstractRuleProvider
@@ -72,14 +73,14 @@ public class DiscoverStaticIPAddressRuleProvider extends AbstractRuleProvider
                     StaticIPLocationModel location = GraphService.addTypeToModel(event.getGraphContext(), payload,
                                 StaticIPLocationModel.class);
                     location.setRuleID(((Rule) context.get(Rule.class)).getId());
-                    location.setTitle("Static IP Address Detected");
+                    location.setTitle("Hard-coded IP Address Detected");
 
-                    StringBuilder hintBody = new StringBuilder("**Static IP: ");
+                    StringBuilder hintBody = new StringBuilder("**Hard-coded IP: ");
                     hintBody.append(payload.getSourceSnippit());
                     hintBody.append("**");
 
                     hintBody.append("\n\n");
-                    hintBody.append("When migrating environments, static IP addresses may need to be modified or eliminated.");
+                    hintBody.append("When migrating environments, hard-coded IP addresses may need to be modified or eliminated.");
                     location.setHint(hintBody.toString());
 
                     location.setEffort(0);
