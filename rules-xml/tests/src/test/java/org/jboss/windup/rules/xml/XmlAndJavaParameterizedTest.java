@@ -93,7 +93,7 @@ public class XmlAndJavaParameterizedTest
             FileUtils.deleteDirectory(outputPath.toFile());
             Files.createDirectories(outputPath);
 
-            inputPath.setProjectModel(pm);
+            pm.addFileModel(inputPath);
             pm.setRootFileModel(inputPath);
 
             WindupConfiguration windupConfiguration = new WindupConfiguration()

@@ -84,7 +84,8 @@ public class DiscoverNonMavenArchiveProjectsRuleProvider extends AbstractRulePro
                                 ProjectModel projectModel = archiveModel.getProjectModel();
 
                                 // create the project if we don't already have one
-                                if (projectModel == null) {
+                                if (projectModel == null)
+                                {
                                     projectModel = projectModelService.create();
                                     projectModel.setName(archiveModel.getArchiveName());
                                     projectModel.setRootFileModel(archiveModel);
@@ -99,9 +100,9 @@ public class DiscoverNonMavenArchiveProjectsRuleProvider extends AbstractRulePro
                                         }
                                     }
 
-                                    archiveModel.setProjectModel(projectModel);
+                                    projectModel.addFileModel(archiveModel);
                                     // Attach the project to all files within the archive
-                                    for (FileModel f : archiveModel.getContainedFileModels())
+                                    for (FileModel f : archiveModel.getAllFiles())
                                     {
                                         // don't add archive models, as those really are separate projects...
                                         if (f instanceof ArchiveModel)
@@ -109,11 +110,10 @@ public class DiscoverNonMavenArchiveProjectsRuleProvider extends AbstractRulePro
 
                                         // also, don't set the project model if one is already set
                                         // this uses the edge directly to improve performance
-                                        if (f.asVertex().getVertices(Direction.OUT, FileModel.FILE_TO_PROJECT_MODEL).iterator().hasNext())
+                                        if (f.asVertex().getVertices(Direction.IN, ProjectModel.PROJECT_MODEL_TO_FILE).iterator().hasNext())
                                             continue;
 
                                         // only set it if it has not already been set
-                                        f.setProjectModel(projectModel);
                                         projectModel.addFileModel(f);
                                     }
                                 }

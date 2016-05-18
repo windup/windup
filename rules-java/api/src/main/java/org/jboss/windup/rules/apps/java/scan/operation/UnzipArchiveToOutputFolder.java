@@ -113,13 +113,11 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
             return;
         }
 
-        FileModel newFileModel = fileService.createByFilePath(appArchiveFolder.toString());
         // mark the path to the archive
-        archiveModel.setUnzippedDirectory(newFileModel);
-        newFileModel.setParentArchive(archiveModel);
+        archiveModel.setUnzippedDirectory(appArchiveFolder.toString());
 
         // add all unzipped files, and make sure their parent archive is set
-        recurseAndAddFiles(event, context, tempFolder, fileService, archiveModel, newFileModel);
+        recurseAndAddFiles(event, context, tempFolder, fileService, archiveModel, archiveModel);
     }
 
 
@@ -180,57 +178,49 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
             filter = new IdentifiedArchiveFileFilter(archiveModel);
         }
 
-        File fileReference = parentFileModel.asFile();
+        File fileReference;
+        if (parentFileModel instanceof ArchiveModel)
+            fileReference = new File(((ArchiveModel) parentFileModel).getUnzippedDirectory());
+        else
+            fileReference = parentFileModel.asFile();
+
         WindupJavaConfigurationService windupJavaConfigurationService = new WindupJavaConfigurationService(event.getGraphContext());
-        if (fileReference.isDirectory())
+        File[] subFiles = fileReference.listFiles();
+        if (subFiles == null)
+            return;
+
+        for (File subFile : subFiles)
         {
-            File[] subFiles = fileReference.listFiles();
-            if (subFiles != null)
+            if (!filter.accept(subFile))
+                continue;
+
+            FileModel subFileModel = fileService.createByFilePath(parentFileModel, subFile.getAbsolutePath());
+
+            // check if this file should be ignored
+            if (checkIfIgnored(event, subFileModel, windupJavaConfigurationService.getIgnoredFileRegexes()))
+                continue;
+
+            numberAdded++;
+            if (numberAdded % 250 == 0)
+                event.getGraphContext().getGraph().getBaseGraph().commit();
+
+            if (subFile.isFile() && ZipUtil.endsWithZipExtension(subFileModel.getFilePath()))
             {
-                for (File subFile : subFiles)
-                {
-                    if (!filter.accept(subFile))
-                    {
-                        continue;
-                    }
+                File newZipFile = subFileModel.asFile();
+                ArchiveModel newArchiveModel = GraphService.addTypeToModel(event.getGraphContext(), subFileModel, ArchiveModel.class);
+                newArchiveModel.setParentArchive(archiveModel);
+                newArchiveModel.setArchiveName(newZipFile.getName());
 
-                    FileModel subFileModel = fileService.createByFilePath(parentFileModel, subFile.getAbsolutePath());
-                    subFileModel.setParentArchive(archiveModel);
+                /*
+                 * New archive must be reloaded in case the archive should be ignored
+                 */
+                newArchiveModel = GraphService.refresh(event.getGraphContext(), newArchiveModel);
 
-                    // check if this file should be ignored
-                    if (checkIfIgnored(event, subFileModel, windupJavaConfigurationService.getIgnoredFileRegexes()))
-                    {
-                        continue;
-                    }
-
-                    numberAdded++;
-                    if (numberAdded % 250 == 0)
-                    {
-                        event.getGraphContext().getGraph().getBaseGraph().commit();
-                    }
-
-                    if (subFile.isFile() && ZipUtil.endsWithZipExtension(subFileModel.getFilePath()))
-                    {
-                        File newZipFile = subFileModel.asFile();
-                        ArchiveModel newArchiveModel = GraphService.addTypeToModel(event.getGraphContext(), subFileModel, ArchiveModel.class);
-                        newArchiveModel.setParentArchive(archiveModel);
-                        newArchiveModel.setArchiveName(newZipFile.getName());
-                        archiveModel.addChildArchive(newArchiveModel);
-
-                        /*
-                         * New archive must be reloaded in case the archive should be ignored
-                         */
-                        newArchiveModel = GraphService.refresh(event.getGraphContext(), newArchiveModel);
-
-                        unzipToTempDirectory(event, context, tempFolder, newZipFile, newArchiveModel);
-                    }
-
-                    if (subFile.isDirectory())
-                    {
-                        recurseAndAddFiles(event, context, tempFolder, fileService, archiveModel, subFileModel);
-                    }
-                }
+                unzipToTempDirectory(event, context, tempFolder, newZipFile, newArchiveModel);
             }
+
+            if (subFile.isDirectory())
+                recurseAndAddFiles(event, context, tempFolder, fileService, archiveModel, subFileModel);
         }
     }
 

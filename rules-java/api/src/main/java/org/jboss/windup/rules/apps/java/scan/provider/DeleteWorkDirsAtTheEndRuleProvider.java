@@ -47,7 +47,7 @@ public class DeleteWorkDirsAtTheEndRuleProvider extends AbstractRuleProvider
         .addRule()
         .when(
                 Not.any(WindupConfigurationQuery.hasOption(WindupConfigurationModel.KEEP_WORKING_DIRECTORIES, true).as("discard")),
-                Query.fromType(ArchiveModel.class).piped(new OutAndBackCriterion(ArchiveModel.UNZIPPED_DIRECTORY)).as("archives")
+                Query.fromType(ArchiveModel.class).withProperty(ArchiveModel.UNZIPPED_DIRECTORY).as("archives")
         )
         .perform(
                 Iteration.over("archives").perform(

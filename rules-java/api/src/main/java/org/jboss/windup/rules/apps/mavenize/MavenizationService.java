@@ -61,7 +61,7 @@ public class MavenizationService
      */
     void mavenizeApp(ProjectModel projectModel)
     {
-        LOG.info("Mavenizing  ProjectModel " + projectModel.toPrettyString());
+        LOG.info("Mavenizing ProjectModel " + projectModel.toPrettyString());
         MavenizationContext mavCtx = new MavenizationContext();
         mavCtx.graphContext = grCtx;
 

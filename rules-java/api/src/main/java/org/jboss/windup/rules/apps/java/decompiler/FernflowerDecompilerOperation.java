@@ -250,18 +250,13 @@ public class FernflowerDecompilerOperation extends AbstractDecompilerOperation
                                     FileModel.FILE_PATH, classFilePath.toAbsolutePath().toString());
                         if (classFileModel != null && classFileModel instanceof JavaClassFileModel)
                         {
-                            decompiledFileModel.setParentArchive(classFileModel.getParentArchive());
                             ProjectModel projectModel = classFileModel.getProjectModel();
 
                             // only add it to the project model if it is not already there
                             if (decompiledFileModel.getProjectModel() == null || !decompiledFileModel.getProjectModel().equals(projectModel))
                             {
-                                decompiledFileModel.setProjectModel(projectModel);
                                 projectModel.addFileModel(decompiledFileModel);
                             }
-
-                            if (decompiledFileModel.getParentArchive() != null)
-                                decompiledFileModel.getParentArchive().addDecompiledFileModel(decompiledFileModel);
 
                             JavaClassFileModel classModel = (JavaClassFileModel) classFileModel;
                             classModel.getJavaClass().setDecompiledSource(decompiledSourceFileModel);

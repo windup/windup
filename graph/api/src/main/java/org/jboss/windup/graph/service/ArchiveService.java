@@ -6,6 +6,8 @@ import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.structures.FramedVertexIterable;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
@@ -42,17 +44,14 @@ public class ArchiveService extends GraphService<ArchiveModel>
      * Eg, getChildFile(ArchiveModel, "/META-INF/MANIFEST.MF") will return a {@link FileModel} if a file named
      * /META-INF/MANIFEST.MF exists within the archive
      * 
-     * This function expects filePath to use "/" characters to index within the archive, regardless of the underlying
-     * operating system platform being used.
-     * 
      * @return Returns the located {@link FileModel} or null if no file with this path could be located
      */
     public FileModel getChildFile(ArchiveModel archiveModel, String filePath)
     {
+        filePath = FilenameUtils.separatorsToUnix(filePath);
         StringTokenizer stk = new StringTokenizer(filePath, "/");
 
-        FileModel currentFileModel = archiveModel.getUnzippedDirectory();
-
+        FileModel currentFileModel = archiveModel;
         while (stk.hasMoreTokens() && currentFileModel != null)
         {
             String pathElement = stk.nextToken();

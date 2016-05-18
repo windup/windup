@@ -179,7 +179,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
 
         classificationPipeline.as("classification");
         classificationPipeline.out(ClassificationModel.FILE_MODEL);
-        classificationPipeline.out(FileModel.FILE_TO_PROJECT_MODEL);
+        classificationPipeline.in(ProjectModel.PROJECT_MODEL_TO_FILE);
         classificationPipeline.filter(new PipeFunction<Vertex, Boolean>()
         {
             @Override

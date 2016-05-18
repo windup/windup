@@ -1,5 +1,6 @@
 package org.jboss.windup.rules.apps.java.scan.operation;
 
+import java.io.File;
 import java.util.logging.Logger;
 import org.apache.commons.io.FileUtils;
 import org.jboss.windup.config.GraphRewrite;
@@ -35,7 +36,7 @@ public class DeleteWorkDirsOperation extends AbstractIterationOperation<ArchiveM
     public void perform(GraphRewrite event, EvaluationContext context, ArchiveModel archive)
     {
         LOG.info("Deleting archive files: " + archive.getArchiveName());
-        FileUtils.deleteQuietly(archive.getUnzippedDirectory().asFile());
+        FileUtils.deleteQuietly(new File(archive.getUnzippedDirectory()));
     }
 
 

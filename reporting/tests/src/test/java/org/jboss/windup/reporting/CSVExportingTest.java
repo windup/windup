@@ -130,11 +130,9 @@ public class CSVExportingTest
 
         FileModel f1 = context.getFramed().addVertex(null, FileModel.class);
         f1.setFilePath("/f1");
-        f1.setProjectModel(projectModel);
         projectModel.addFileModel(f1);
         FileModel f2 = context.getFramed().addVertex(null, FileModel.class);
         f2.setFilePath("/f2");
-        f2.setProjectModel(projectModel2);
         projectModel2.addFileModel(f2);
 
         InlineHintModel b1 = inlineHintService.create();

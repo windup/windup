@@ -47,7 +47,6 @@ public class DiscoverNonMavenSourceProjectsRuleProvider extends AbstractRuleProv
                     mainProjectModel.setName(mainFileModel.getFileName());
                     mainProjectModel.setDescription("Source Directory");
 
-                    mainFileModel.setProjectModel(mainProjectModel);
                     mainProjectModel.setRootFileModel(mainFileModel);
                     mainProjectModel.addFileModel(mainFileModel);
                 }
@@ -63,7 +62,6 @@ public class DiscoverNonMavenSourceProjectsRuleProvider extends AbstractRuleProv
                 if (childFile.getProjectModel() == null)
                 {
                     projectModel.addFileModel(childFile);
-                    childFile.setProjectModel(projectModel);
                 }
                 else if (childFile.getProjectModel().getParentProject() == null && !childFile.getProjectModel().equals(projectModel))
                 {

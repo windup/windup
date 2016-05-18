@@ -86,7 +86,7 @@ public class DiscoverMavenHierarchyRuleProvider extends AbstractRuleProvider
         }
         else
         {
-            setParentProject(fileModel.getParentArchive(), projectModel);
+            setParentProject(fileModel.getParentFile(), projectModel);
         }
     }
 

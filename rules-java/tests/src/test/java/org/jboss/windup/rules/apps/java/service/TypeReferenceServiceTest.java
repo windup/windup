@@ -92,9 +92,7 @@ public class TypeReferenceServiceTest
 
         ProjectModel projectModel = context.getFramed().addVertex(null, ProjectModel.class);
         projectModel.addFileModel(f1);
-        f1.setProjectModel(projectModel);
         projectModel.addFileModel(f2);
-        f2.setProjectModel(projectModel);
 
         return projectModel;
     }
