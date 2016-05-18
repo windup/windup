@@ -370,6 +370,8 @@
 
                 function toggleRow () {
                     $(tr).find("td").toggle();
+                    var issuesTable = $(element).parent().parent().parent();
+                    $(issuesTable).trigger("update", [true]);
                 }
 
                 $(".fileSummary_id_" + problemSummaryID).remove();
@@ -383,9 +385,6 @@
                 var html = template({problemSummaries: issueDataArray});
 
                 $(html).insertAfter(tr);
-
-                var issuesTable = $(element).parent().parent().parent();
-                $(issuesTable).trigger("update", [true]);
 
                 toggleRow();
             }
