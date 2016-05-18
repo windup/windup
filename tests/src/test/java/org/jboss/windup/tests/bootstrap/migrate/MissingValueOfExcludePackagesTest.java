@@ -24,6 +24,6 @@ public class MissingValueOfExcludePackagesTest extends AbstractBootstrapTestWith
                 "--excludePackages");
 
         String indexHtml = new String(Files.readAllBytes(tmp.getRoot().toPath().resolve("index.html")), "UTF-8");
-        assertTrue(indexHtml.contains("Decompiled Java File"));
+        assertTrue(indexHtml.contains("Maven XML"));
     }
 }

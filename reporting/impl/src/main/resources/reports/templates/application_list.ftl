@@ -19,47 +19,46 @@
         <#assign incidentCountBySeverity = getEffortCountForProjectBySeverity(applicationReport.projectModel, true)>
         <#assign totalIncidents = 0 >
 
-		<tr>
-			<td>
-				<a href="reports/${applicationReport.reportFilename}">${applicationReport.projectModel.rootFileModel.fileName}</a>
-			</td>
-			<td>
+        <#-- Total Effort Points, Name, Technologies, Incident Count per Severity-->
+		<div class="appInfo">
+            <div class="stats">
+                <div class="effortPoints">
+                    <#include "include/effort_util.ftl">
+                    <span class="points">${getMigrationEffortPointsForProject(applicationReport.projectModel, true)}</span>
+                    <span class="legend">story points</span>
+                </div>
+                <div class="incidentsCount">
+                    <table>
+                        <#list incidentCountBySeverity?keys as severity>
+                            <#assign totalIncidents = totalIncidents + incidentCountBySeverity?api.get(severity) >
+                            <tr>
+                                <td class="label_"> ${severity} </td>
+                                <td class="count"> ${incidentCountBySeverity?api.get(severity)}&times; </td>
+                            </tr>
+                        </#list>
+                        <tr class="total">
+                            <td class="label_"> <span>Total</span> </td>
+                            <td class="count"> <span>${totalIncidents}&times;</span> </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
 
-				<#list getTechnologyTagsForProject(applicationReport.projectModel) as tag>
-					<@tagRenderer tag>
-						<#if tag.version?has_content> ${tag.name} ${tag.version}
-						<#else>
-							${tag.name}
-						</#if>
-		    		</@tagRenderer>
-        		</#list>
-    		</td>
-    		<td>
-    		    <table>
-      			    <#list incidentCountBySeverity?keys as severity>
-      			        <#assign totalIncidents = totalIncidents + incidentCountBySeverity?api.get(severity) >
-      			        <tr>
-      			            <td>
-      			                ${severity}
-                            </td>
-                            <td style="text-align: right; padding-left: 10px;">
-                                ${incidentCountBySeverity?api.get(severity)}
-                            </td>
-      			        </tr>
-          			</#list>
-                    <tr>
-                        <td>Total</td>
-                        <td style="text-align: right; padding-left: 10px;">
-                            ${totalIncidents}
-                        </td>
-                    </tr>
-                </table>
-    		</td>
-    		<td class="text-right" style="vertical-align:middle">
-    		    <#include "include/effort_util.ftl">
-                ${getMigrationEffortPointsForProject(applicationReport.projectModel, true)}
-    		</td>
-		</tr>
+            <div class="traits">
+                <div class="fileName">
+                    <a href="reports/${applicationReport.reportFilename}">${applicationReport.projectModel.rootFileModel.fileName}</a>
+                </div>
+                <div class="techs">
+                    <#list getTechnologyTagsForProject(applicationReport.projectModel) as tag>
+                        <#if tag.name != "Decompiled Java File">
+                        <@tagRenderer tag>
+                            ${tag.name} <#if tag.version?has_content>${tag.version}</#if>
+                        </@tagRenderer>
+                        </#if>
+                    </#list>
+                </div>
+            </div>
+		</div>
 </#macro>
 
 	<head>
@@ -71,8 +70,28 @@
 		<link href="reports/resources/css/bootstrap.min.css" rel="stylesheet"/>
 		<link href="reports/resources/css/windup.css" rel="stylesheet" media="screen"/>
         <link href="reports/resources/img/favicon.png" rel="shortcut icon" type="image/x-icon"/>
+        <style>
+            body.viewAppList .apps  { margin: 0 2ex; }
+            body.viewAppList .apps .appInfo {
+                border-bottom: 1px solid gray;
+                overflow: auto; width: 100%; /* clearing */
+                margin: 1ex 0;
+                padding: 1ex 0 2ex;
+            }
+            body.viewAppList .apps .appInfo .stats { float: left; width: 330px; padding: 0.4ex 0; }
+            body.viewAppList .apps .appInfo .stats .effortPoints { float: left; width: 160px; padding: 0.3ex 0.2em 0; font-size: 33pt; }
+            body.viewAppList .apps .appInfo .stats .effortPoints span { display: block; margin: auto; text-align: center; }
+            body.viewAppList .apps .appInfo .stats .effortPoints .points { line-height: 1; color: rgb(41, 69, 147); }
+            body.viewAppList .apps .appInfo .stats .effortPoints .legend { font-size: 7pt; }
+            body.viewAppList .apps .appInfo .stats .incidentsCount { float: left; margin:  0 2ex;}
+            body.viewAppList .apps .appInfo .stats .incidentsCount table tr.total td { border-top: 1px solid silver; }
+            body.viewAppList .apps .appInfo .stats .incidentsCount .count { text-align: right; padding-left: 10px; }
+            body.viewAppList .apps .appInfo .traits { margin-left: 340px; }
+            body.viewAppList .apps .appInfo .traits .fileName { padding: 0.0ex 0em 0.2ex; font-size: 18pt; }
+            body.viewAppList .apps .appInfo .traits .techs { }
+        </style>
 	</head>
-	<body role="document">
+	<body role="document" class="viewAppList">
 
         <!-- Navbar -->
         <div id="main-navbar" class="navbar navbar-default navbar-fixed-top">
@@ -122,26 +141,19 @@
         <div class="container-fluid theme-showcase" role="main">
 
             <!-- Table -->
-            <table class="table table-striped table-bordered">
-               <tr>
-                  <th>Name</th>
-                  <th>Technology</th>
-                  <th class="text-right">Incident Count</th>
-                  <th>Total Effort Points</th>
-               </tr>
-
-               <#list reportModel.relatedResources.applications.list.iterator() as applicationReport>
-                  <@applicationReportRenderer applicationReport/>
-               </#list>
-            </table>
+            <div class="apps">
+                <#list reportModel.relatedResources.applications.list.iterator() as applicationReport>
+                    <@applicationReportRenderer applicationReport/>
+                </#list>
+            </div>
 
 
         <div style="width: 100%; text-align: center">
-            <a href="reports/windup_ruleproviders.html">All Rules</a>
+            <a href="reports/windup_ruleproviders.html">Executed rules overview</a>
                 |
-            <a href="reports/windup_freemarkerfunctions.html">Windup FreeMarker Methods</a>
+            <a href="reports/windup_freemarkerfunctions.html">Windup FreeMarker methods</a>
                 |
-            <a href="#" id="jiraFeedbackTriggerBottomLink">Send Feedback</a>
+            <a href="#" id="jiraFeedbackTriggerBottomLink">Send feedback</a>
             <script type="text/javascript" src="https://issues.jboss.org/s/f215932e68571747ac58d0f5d554396f-T/en_US-r7luaf/6346/82/1.4.16/_/download/batch/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector/com.atlassian.jira.collector.plugin.jira-issue-collector-plugin:issuecollector.js?locale=en-US&amp;collectorId=8b9e338b"></script>
             <script type="text/javascript">
                 var existingTriggerFunction = window.ATL_JQ_PAGE_PROPS.triggerFunction;

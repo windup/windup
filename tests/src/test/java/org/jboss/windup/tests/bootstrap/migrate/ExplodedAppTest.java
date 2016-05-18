@@ -31,7 +31,7 @@ public class ExplodedAppTest extends AbstractBootstrapTestWithRules {
 
         String indexHtml = new String(Files.readAllBytes(output.toPath().resolve("index.html")), "UTF-8");
         assertTrue(indexHtml.contains("exploded-app-directory"));
-        assertTrue(indexHtml.contains("Decompiled Java File"));
+        assertTrue(indexHtml.contains("Properties"));
         assertTrue(indexHtml.contains("Maven XML"));
     }
 }
