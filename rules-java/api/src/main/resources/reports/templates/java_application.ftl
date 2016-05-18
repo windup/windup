@@ -101,11 +101,11 @@
     </#if>
 </#macro>
 
-<#macro traverseProject traversal>
+<#macro traverseAndRenderProject traversal>
     <@projectModelRenderer traversal.originalProject />
 
     <#list sortProjectTraversalsByPathAscending(traversal.children) as childTraversal>
-        <@traverseProject childTraversal/>
+        <@traverseAndRenderProject childTraversal/>
     </#list>
 </#macro>
 
@@ -344,7 +344,7 @@
                     <a id="collapseAll" href="javascript:collapseAll()">Collapse All</a>
                     <a id="expandAll" href="javascript:expandAll()">Expand All</a>
                 </div>
-                <@traverseProject projectTraversal />
+                <@traverseAndRenderProject projectTraversal />
 
             </div> <!-- /container -->
         </div>

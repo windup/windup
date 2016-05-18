@@ -125,7 +125,7 @@
                     </div>
                 </div><#-- .row -->
 
-                <div class="row col-md-12 report-index-row">
+                <div class="row col-md-12 report-index-row" id="javaIncidentsByPackageRow">
                     <div class="col-md-3">
                         <table class="table table-condensed table-striped">
                             <thead>
@@ -209,16 +209,21 @@
     <script type="text/javascript">
         var tbodyElement = $("#javaIncidentsByPackageTBody");
 
-        var rows = "";
-        for (var i = 0; i < WINDUP_PACKAGE_PIE_DATA['application_pie'].length; i++) {
-            var row = "";
-            row += "<tr>";
-            row += "<td>" + WINDUP_PACKAGE_PIE_DATA['application_pie'][i].label + "</td>";
-            row += "<td class='numeric-column'>" + WINDUP_PACKAGE_PIE_DATA['application_pie'][i].data + "</td>";
-            row += "</tr>";
-            rows += row;
+        <#-- Make sure that the data exists before trying to use it -->
+        if (typeof(WINDUP_PACKAGE_PIE_DATA) !== 'undefined') {
+            var rows = "";
+            for (var i = 0; i < WINDUP_PACKAGE_PIE_DATA['application_pie'].length; i++) {
+                var row = "";
+                row += "<tr>";
+                row += "<td>" + WINDUP_PACKAGE_PIE_DATA['application_pie'][i].label + "</td>";
+                row += "<td class='numeric-column'>" + WINDUP_PACKAGE_PIE_DATA['application_pie'][i].data + "</td>";
+                row += "</tr>";
+                rows += row;
+            }
+            tbodyElement.prepend(rows);
+        } else {
+            $("#javaIncidentsByPackageRow").remove();
         }
-        tbodyElement.prepend(rows);
     </script>
 </body>
 </html>

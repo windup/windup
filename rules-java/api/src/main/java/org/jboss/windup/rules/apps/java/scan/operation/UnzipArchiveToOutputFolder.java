@@ -2,20 +2,14 @@ package org.jboss.windup.rules.apps.java.scan.operation;
 
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.logging.Logger;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 import org.apache.commons.io.filefilter.TrueFileFilter;
-import org.jboss.forge.furnace.util.Streams;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.graph.GraphContext;
@@ -29,7 +23,6 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.rules.apps.java.archives.model.IdentifiedArchiveModel;
-import org.jboss.windup.rules.apps.java.scan.operation.packagemapping.PackageNameMapping;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.ZipUtil;
@@ -196,7 +189,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
                 {
                     // handle as duplicate
                     DuplicateArchiveModel duplicateArchive = GraphService.addTypeToModel(event.getGraphContext(), newArchiveModel, DuplicateArchiveModel.class);
-                    duplicateArchive.setOriginalArchive(originalArchiveModel);
+                    duplicateArchive.setCanonicalArchive(originalArchiveModel);
 
                     // create dupes for child archives
                     unzipToTempDirectory(event, context, tempFolder, newZipFile, duplicateArchive, true);

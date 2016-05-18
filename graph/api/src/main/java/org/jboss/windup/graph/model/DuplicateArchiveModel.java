@@ -5,6 +5,12 @@ import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
+ * Indicates that this {@link ArchiveModel} is actually a duplicate of another archive. This will be linked
+ * back to the canonical archive.
+ *
+ * The duplicate will generally contain no files and the canonical archive ({@see DuplicateArchiveModel#getCanonicalArchive})
+ * should be used for finding the included files.
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(DuplicateArchiveModel.TYPE)
@@ -12,11 +18,17 @@ public interface DuplicateArchiveModel extends ArchiveModel
 {
     String TYPE = "DuplicateArchive";
 
-    String ORIGINAL_ARCHIVE = "originalArchive";
+    String CANONICAL_ARCHIVE = TYPE + ":canonicalArchive";
 
-    @Adjacency(label = ORIGINAL_ARCHIVE, direction = Direction.OUT)
-    ArchiveModel getOriginalArchive();
+    /**
+     * Contains a link to the canonical archive from this duplicate instance.
+     */
+    @Adjacency(label = CANONICAL_ARCHIVE, direction = Direction.OUT)
+    ArchiveModel getCanonicalArchive();
 
-    @Adjacency(label = ORIGINAL_ARCHIVE, direction = Direction.OUT)
-    DuplicateArchiveModel setOriginalArchive(ArchiveModel original);
+    /**
+     * Contains a link to the canonical archive from this duplicate instance.
+     */
+    @Adjacency(label = CANONICAL_ARCHIVE, direction = Direction.OUT)
+    DuplicateArchiveModel setCanonicalArchive(ArchiveModel original);
 }

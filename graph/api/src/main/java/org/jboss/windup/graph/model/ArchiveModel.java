@@ -72,13 +72,14 @@ public interface ArchiveModel extends FileModel
     @JavaHandler
     Iterable<FileModel> getAllFiles();
 
-    @Adjacency(label = DuplicateArchiveModel.ORIGINAL_ARCHIVE, direction = Direction.IN)
+    @Adjacency(label = DuplicateArchiveModel.CANONICAL_ARCHIVE, direction = Direction.IN)
     Iterable<DuplicateArchiveModel> getDuplicateArchives();
 
     abstract class Impl extends FileModel.Impl implements ArchiveModel, JavaHandlerContext<Vertex>
     {
         @Override
-        public Iterable<FileModel> getAllFiles() {
+        public Iterable<FileModel> getAllFiles()
+        {
             Set<FileModel> results = new LinkedHashSet<>();
 
             for (FileModel child : getFilesInDirectory())

@@ -13,9 +13,9 @@ import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
 
 import freemarker.template.TemplateModelException;
 
-import javax.annotation.Nullable;
-
 /**
+ * This class gets all archives by their SHA1 hash.
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public class GetArchivesBySHA1Method implements WindupFreeMarkerMethod
@@ -37,13 +37,14 @@ public class GetArchivesBySHA1Method implements WindupFreeMarkerMethod
         ArchiveService archiveService = new ArchiveService(context);
 
         // filter out the one in the shared-libs virtual app.
+        // This needs to be updated as this isn't really the right solution here to get the Jar depedency report
+        // to fully work.
         Predicate<ArchiveModel> predicate = new Predicate<ArchiveModel>()
         {
             @Override
             public boolean apply(ArchiveModel input)
             {
                 return !input.getDuplicateArchives().iterator().hasNext();
-                //return true;
             }
         };
         return Iterables.filter(archiveService.findBySHA1(sha1), predicate);

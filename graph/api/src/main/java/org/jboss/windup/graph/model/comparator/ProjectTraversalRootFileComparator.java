@@ -2,7 +2,6 @@ package org.jboss.windup.graph.model.comparator;
 
 import java.util.Comparator;
 
-import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.ProjectModelTraversal;
 
 /**
@@ -18,8 +17,6 @@ public class ProjectTraversalRootFileComparator implements Comparator<ProjectMod
     @Override
     public int compare(ProjectModelTraversal o1, ProjectModelTraversal o2)
     {
-        //String filePath1 = o1.getRootFileModel().getFilePath();
-        //String filePath2 = o2.getRootFileModel().getFilePath();
         String filePath1 = o1.getFilePath(o1.getOriginalProject().getRootFileModel());
         String filePath2 = o2.getFilePath(o2.getOriginalProject().getRootFileModel());
         return filePathComparator.compare(filePath1, filePath2);

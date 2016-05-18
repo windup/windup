@@ -12,6 +12,12 @@ import com.google.common.collect.Iterables;
  * This should make it easier to calculate the actual path within the application without regard to where the original
  * project was actually stored.
  *
+ * Cases where this is used include:
+ * <ul>
+ *   <li>Listing all of the files in the application with accurate paths, regardless of how they are stored in the graph</li>
+ *   <li>The application details report, which traverses the applications in a hierarchical manner.</li>
+ * </ul>
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public class ProjectModelTraversal
@@ -97,7 +103,7 @@ public class ProjectModelTraversal
         if (projectModel instanceof DuplicateProjectModel)
         {
             DuplicateProjectModel duplicate = (DuplicateProjectModel) projectModel;
-            return getOriginalProject(duplicate.getOriginalProject());
+            return getOriginalProject(duplicate.getCanonicalProject());
         }
         else
         {

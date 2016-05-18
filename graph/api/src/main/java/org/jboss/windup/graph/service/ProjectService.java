@@ -1,6 +1,5 @@
 package org.jboss.windup.graph.service;
 
-import com.tinkerpop.blueprints.Vertex;
 import org.apache.commons.lang.RandomStringUtils;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -15,7 +14,8 @@ import java.nio.file.Path;
  */
 public class ProjectService extends GraphService<ProjectModel>
 {
-    private static final String SHARED_LIBS_APP = "<shared-libs>";
+    public static final String SHARED_LIBS_APP_NAME = "<shared-libs>";
+    public static final String SHARED_LIBS_FILENAME = "shared-libs";
 
     public ProjectService(GraphContext context)
     {
@@ -37,15 +37,15 @@ public class ProjectService extends GraphService<ProjectModel>
     public ProjectModel getSharedLibsProject()
     {
         ProjectService service = new ProjectService(getGraphContext());
-        ProjectModel sharedLibs = service.getByName(SHARED_LIBS_APP);
+        ProjectModel sharedLibs = service.getByName(SHARED_LIBS_APP_NAME);
         if (sharedLibs == null)
         {
             sharedLibs = service.create();
-            sharedLibs.setName(SHARED_LIBS_APP);
+            sharedLibs.setName(SHARED_LIBS_APP_NAME);
 
             // attach a directory to it, as we generally assume that all projects have a location on disk
             Path archivesDirectory = WindupConfigurationService.getArchivesPath(getGraphContext());
-            Path sharedLibsPath = archivesDirectory.resolve("shared-libs-" + RandomStringUtils.randomAlphabetic(6)).resolve("shared-libs");
+            Path sharedLibsPath = archivesDirectory.resolve("shared-libs-" + RandomStringUtils.randomAlphabetic(6)).resolve(SHARED_LIBS_FILENAME);
             PathUtil.createDirectory(sharedLibsPath, "Shared libs folder");
 
             FileModel sharedLibsFileModel = new FileService(getGraphContext()).createByFilePath(sharedLibsPath.toString());

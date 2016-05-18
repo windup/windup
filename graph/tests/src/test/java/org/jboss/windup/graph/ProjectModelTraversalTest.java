@@ -32,7 +32,7 @@ import org.junit.runner.RunWith;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RunWith(Arquillian.class)
-public class ProjectTraversalTest
+public class ProjectModelTraversalTest
 {
     @Inject
     private GraphContextFactory factory;
