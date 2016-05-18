@@ -33,6 +33,8 @@ public class PackageNameMappingHandler implements ElementHandler<Void>
     @Override
     public Void processElement(ParserContext context, Element element)
     {
+        String id = $(element).attr("id");
+
         String from = $(element).attr(FROM);
         String to = $(element).attr(TO);
         if (StringUtils.isBlank(from))
@@ -44,7 +46,10 @@ public class PackageNameMappingHandler implements ElementHandler<Void>
             throw new WindupException("The '" + ELEM_NAME + "' element must have a non-empty '" + TO + "' attribute");
         }
 
-        Rule rule = PackageNameMapping.fromPackage(from).toOrganization(to);
+        PackageNameMappingWithOrganization withOrganization = PackageNameMapping.fromPackage(from).toOrganization(to);
+
+        Rule rule = StringUtils.isNotBlank(id) ? withOrganization.withId(id) : withOrganization;
+
         if (rule instanceof Context)
             ((Context) rule).put(RuleMetadataType.RULE_XML, XmlUtil.nodeToString(element));
         context.getBuilder().addRule(rule);

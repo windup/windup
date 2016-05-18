@@ -15,4 +15,9 @@ public interface FileMappingTo extends Rule
      * Specifies the {@link WindupVertexFrame} type to which files matching the specified pattern should be mapped.
      */
     FileMappingTo onParseError(OnParseError onParseError);
+
+    /**
+     * Attach an ID to this rule.
+     */
+    FileMappingWithID withId(String ruleID);
 }

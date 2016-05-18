@@ -23,11 +23,11 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 /**
  * Maps from a package to a organization name.
  */
-public class PackageNameMapping extends GraphRule implements PackageNameMappingWithPackagePattern, PreRulesetEvaluation
+public class PackageNameMapping extends GraphRule implements PackageNameMappingWithPackagePattern, PackageNameMappingWithOrganization, PreRulesetEvaluation
 {
     private static final Logger LOG = Logger.getLogger(PackageNameMapping.class.getSimpleName());
 
-    private final String id = this.getClass().getName() + "_" + UUID.randomUUID().toString();
+    private String id = this.getClass().getName() + "_" + UUID.randomUUID().toString();
 
     private String organization;
     private String packagePattern;
@@ -65,11 +65,18 @@ public class PackageNameMapping extends GraphRule implements PackageNameMappingW
         return packageNameMapping;
     }
 
+    @Override
+    public Rule withId(String id)
+    {
+        this.id = id;
+        return this;
+    }
+
     /**
      * Sets the organization to map the package to.
      */
     @Override
-    public Rule toOrganization(String organization)
+    public PackageNameMappingWithOrganization toOrganization(String organization)
     {
         setOrganization(organization);
         return this;
