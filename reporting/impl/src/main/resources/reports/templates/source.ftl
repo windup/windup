@@ -108,7 +108,7 @@
 
 
 
-                <pre id="source"><#t>
+                <pre id="source">
                     ${reportModel.sourceBody?html}<#t>
                 </pre><#t>
 

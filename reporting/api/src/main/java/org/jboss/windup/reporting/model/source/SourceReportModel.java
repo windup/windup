@@ -17,28 +17,43 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
  * Represents a report on a application source code file (eg, .java file, or .xml file).
- * 
  */
 @TypeValue(SourceReportModel.TYPE)
 public interface SourceReportModel extends ReportModel
 {
-    public static final String TYPE = "SourceReportModel";
-    public static final String SOURCE_REPORT_TO_SOURCE_FILE_MODEL = "sourceReportSourceFileModel";
+    String TYPE = "SourceReportModel";
+    String SOURCE_REPORT_TO_SOURCE_FILE_MODEL = "sourceReportSourceFileModel";
+    String SOURCE_TYPE = "sourceType";
 
-    @Property("sourceType")
-    public void setSourceType(String sourceType);
+    /**
+     * Indicates the type of source code (for example, "java" or "xml").
+     */
+    @Property(SOURCE_TYPE)
+    void setSourceType(String sourceType);
 
-    @Property("sourceType")
-    public String getSourceType();
+    /**
+     * Indicates the type of source code (for example, "java" or "xml").
+     */
+    @Property(SOURCE_TYPE)
+    String getSourceType();
 
+    /**
+     * Contains a link to the source file.
+     */
     @Adjacency(label = SOURCE_REPORT_TO_SOURCE_FILE_MODEL, direction = Direction.OUT)
-    public void setSourceFileModel(ReportFileModel fileModel);
+    void setSourceFileModel(ReportFileModel fileModel);
 
+    /**
+     * Contains a link to the source file.
+     */
     @Adjacency(label = SOURCE_REPORT_TO_SOURCE_FILE_MODEL, direction = Direction.OUT)
-    public ReportFileModel getSourceFileModel();
+    ReportFileModel getSourceFileModel();
 
+    /**
+     * Gets the source file contents.
+     */
     @JavaHandler
-    public String getSourceBody();
+    String getSourceBody();
 
     abstract class Impl implements SourceReportModel, JavaHandlerContext<Vertex>
     {
