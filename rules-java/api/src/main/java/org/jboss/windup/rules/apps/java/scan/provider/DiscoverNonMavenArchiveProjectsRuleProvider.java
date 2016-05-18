@@ -15,6 +15,8 @@ import org.jboss.windup.config.phase.DiscoverProjectStructurePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
+import org.jboss.windup.graph.model.DuplicateArchiveModel;
+import org.jboss.windup.graph.model.DuplicateProjectModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.ProjectService;
@@ -46,7 +48,7 @@ public class DiscoverNonMavenArchiveProjectsRuleProvider extends AbstractRulePro
                     @Override
                     public boolean evaluate(GraphRewrite event, EvaluationContext context, ArchiveModel payload)
                     {
-                        return payload.getProjectModel() == null;
+                        return !(payload instanceof DuplicateArchiveModel) && payload.getProjectModel() == null;
                     }
                     @Override
                     public String toString()

@@ -57,10 +57,9 @@ public class DiscoverMavenHierarchyRuleProvider extends AbstractRuleProvider
     private void setParentProject(ArchiveModel archiveModel, MavenProjectModel projectModel)
     {
         if (archiveModel == null)
-        {
             return;
-        }
-        else if (archiveModel.getProjectModel() != null)
+
+        if (archiveModel.getProjectModel() != null)
         {
             String mavenGAV = projectModel.getGroupId() + ":" + projectModel.getArtifactId() + ":"
                         + projectModel.getVersion();
@@ -77,9 +76,8 @@ public class DiscoverMavenHierarchyRuleProvider extends AbstractRuleProvider
     private void setParentProject(FileModel fileModel, MavenProjectModel projectModel)
     {
         if (fileModel == null)
-        {
             return;
-        }
+
         else if (fileModel.getProjectModel() != null)
         {
             projectModel.setParentProject(fileModel.getProjectModel());
@@ -93,12 +91,12 @@ public class DiscoverMavenHierarchyRuleProvider extends AbstractRuleProvider
     private void setMavenParentProject(MavenProjectModel projectModel)
     {
         FileModel fileModel = projectModel.getRootFileModel();
+
+        // skip if no file was discovered for it
         if (fileModel == null)
-        {
-            // skip if no file was discovered for it
             return;
-        }
-        else if (fileModel instanceof ArchiveModel)
+
+        if (fileModel instanceof ArchiveModel)
         {
             ArchiveModel archiveModel = (ArchiveModel) fileModel;
             // look at the parent archive first

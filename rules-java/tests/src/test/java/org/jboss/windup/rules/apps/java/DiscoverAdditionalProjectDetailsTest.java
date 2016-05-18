@@ -27,6 +27,7 @@ import org.jboss.windup.exec.rulefilters.NotPredicate;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ArchiveModel;
+import org.jboss.windup.graph.model.DuplicateArchiveModel;
 import org.jboss.windup.graph.service.ArchiveService;
 import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
@@ -93,6 +94,9 @@ public class DiscoverAdditionalProjectDetailsTest
             boolean jarVersionFound = false;
             for (ArchiveModel archiveModel : archiveService.findAllByProperty(ArchiveModel.ARCHIVE_NAME, "log4j-1.2.6.jar"))
             {
+                if (archiveModel instanceof DuplicateArchiveModel)
+                    archiveModel = ((DuplicateArchiveModel)archiveModel).getOriginalArchive();
+
                 JarManifestService jarManifestService = new JarManifestService(context);
                 for (JarManifestModel manifest : jarManifestService.getManifestsByArchive(archiveModel))
                 {

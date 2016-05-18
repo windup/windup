@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.logging.Logger;
 
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.tools.ant.util.PackageNameMapper;
 import org.jboss.forge.addon.dependencies.Coordinate;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;

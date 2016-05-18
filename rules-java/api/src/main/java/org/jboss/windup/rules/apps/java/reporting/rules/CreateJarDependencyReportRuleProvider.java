@@ -13,6 +13,7 @@ import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
+import org.jboss.windup.graph.model.DuplicateArchiveModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
@@ -45,7 +46,6 @@ public class CreateJarDependencyReportRuleProvider extends AbstractRuleProvider
         // @formatter:off
         return ConfigurationBuilder.begin()
         .addRule()
-        .when(Query.fromType(ArchiveModel.class))
         .perform(new GraphOperation()
         {
             @Override

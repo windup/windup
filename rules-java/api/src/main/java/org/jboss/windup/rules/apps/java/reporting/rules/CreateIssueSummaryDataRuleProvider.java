@@ -82,22 +82,14 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider
                     ObjectMapper objectMapper = new ObjectMapper(jsonFactory);
                     Map<Severity, List<ProblemSummary>> summariesBySeverity =
                         ProblemSummaryService.getProblemSummaries(
-                            event.getGraphContext(), inputApplication, Collections.EMPTY_SET, Collections.EMPTY_SET);
+                            event.getGraphContext(), inputApplication, Collections.<String>emptySet(), Collections.<String>emptySet());
 
                     issueSummaryWriter.write("WINDUP_ISSUE_SUMMARIES['" + inputApplication.asVertex().getId() + "'] = ");
-                    boolean prettyPrintJavaScript = false;
-                    if (prettyPrintJavaScript){
-                        ObjectWriter prettyWriter = objectMapper.writerWithDefaultPrettyPrinter();
-                        prettyWriter.writeValue(issueSummaryWriter, summariesBySeverity);
-                    }
-                    else {
-                        objectMapper.writeValue(issueSummaryWriter, summariesBySeverity);
-                    }
+                    objectMapper.writeValue(issueSummaryWriter, summariesBySeverity);
                     issueSummaryWriter.write(";" + NEWLINE);
                 }
 
                 issueSummaryWriter.write("var effortToDescription = [];" + NEWLINE);
-                ///Map<Integer, String> effortToDescriptionMap = EffortReportService.getEffortLevelDescriptionMappings();
 
                 for (EffortReportService.EffortLevel level : EffortReportService.EffortLevel.values())
                 {
