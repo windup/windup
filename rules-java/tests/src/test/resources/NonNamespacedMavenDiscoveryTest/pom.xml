@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>testgroupid</groupId>
+    <artifactId>testartifactid</artifactId>
+    <name>testname</name>
+    <version>1.0.0.testversion</version>
+    <description>testdescription</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>testdependency-groupid</groupId>
+            <artifactId>testdependency-artifactid</artifactId>
+            <version>1.4</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+</project>
