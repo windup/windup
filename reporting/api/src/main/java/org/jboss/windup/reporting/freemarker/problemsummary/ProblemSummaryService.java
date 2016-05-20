@@ -25,7 +25,7 @@ import org.jboss.windup.reporting.service.InlineHintService;
  */
 public class ProblemSummaryService
 {
-    public static Map<Severity, List<ProblemSummary>> getProblemSummaries(GraphContext context, ProjectModel projectModel, Set<String> includeTags,
+    public static Map<Severity, List<ProblemSummary>> getProblemSummaries(GraphContext context, Set<ProjectModel> projectModels, Set<String> includeTags,
                 Set<String> excludeTags)
     {
         // The key is the severity as a String
@@ -40,7 +40,7 @@ public class ProblemSummaryService
         Map<RuleSummaryKey, ProblemSummary> ruleToSummary = new HashMap<>();
 
         InlineHintService hintService = new InlineHintService(context);
-        final Iterable<InlineHintModel> hints = projectModel == null ? hintService.findAll() : hintService.getHintsForProject(projectModel, true);
+        final Iterable<InlineHintModel> hints = projectModels == null ? hintService.findAll() : hintService.getHintsForProjects(projectModels);
         for (InlineHintModel hint : hints)
         {
             Set<String> tags = hint.getTags();
@@ -53,8 +53,8 @@ public class ProblemSummaryService
             if (summary == null)
             {
                 summary = new ProblemSummary(hint.asVertex().getId(), hint.getSeverity(), hint.getRuleID(), hint.getTitle(), 1, hint.getEffort());
-                for (LinkModel linkM : hint.getLinks()){
-                    summary.addLink(linkM.getDescription(), linkM.getLink());
+                for (LinkModel link : hint.getLinks()){
+                    summary.addLink(link.getDescription(), link.getLink());
                 }
                 ruleToSummary.put(key, summary);
                 addToResults(results, summary);
@@ -76,21 +76,10 @@ public class ProblemSummaryService
             List<FileModel> newFileModels = new ArrayList<>();
             for (FileModel file : classification.getFileModels())
             {
-                if (projectModel != null)
+                if (projectModels != null)
                 {
                     // make sure this one is in the project
-                    boolean projectMatches = false;
-                    ProjectModel fileProject = file.getProjectModel();
-                    while (fileProject != null)
-                    {
-                        if (fileProject.equals(projectModel))
-                        {
-                            projectMatches = true;
-                            break;
-                        }
-                        fileProject = fileProject.getParentProject();
-                    }
-                    if (!projectMatches)
+                    if (!projectModels.contains(file.getProjectModel()))
                         continue;
                 }
                 newFileModels.add(file);
@@ -106,9 +95,9 @@ public class ProblemSummaryService
                 summary = new ProblemSummary(classification.asVertex().getId(), classification.getSeverity(), classification.getRuleID(),
                             classification.getClassification(),
                             0, classification.getEffort());
-                for (LinkModel linkM : classification.getLinks())
+                for (LinkModel link : classification.getLinks())
                 {
-                    summary.addLink(linkM.getDescription(), linkM.getLink());
+                    summary.addLink(link.getDescription(), link.getLink());
                 }
                 ruleToSummary.put(key, summary);
                 addToResults(results, summary);

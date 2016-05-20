@@ -5,11 +5,17 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import javax.annotation.Nullable;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.model.comparator.FilePathComparator;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.exception.WindupException;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 
 import freemarker.ext.beans.BeanModel;
 import freemarker.template.DefaultListAdapter;
@@ -33,7 +39,7 @@ import freemarker.template.TemplateModelException;
  * <li>/foo/car/caz.class</li>
  * </ul>
  * 
- * Can be called as follows: sortFilesByPathAscending(Iterable<FileModel>)
+ * Can be called as follows: sortFilesByPathAscending(Iterable<FileModel>) or sortFilesByPathAscending(Iterable<String>)
  * 
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
@@ -51,7 +57,7 @@ public class SortFilesByPathMethod implements WindupFreeMarkerMethod
     @Override
     public String getDescription()
     {
-        return "Takes an Iterable<" + FileModel.class.getSimpleName() + "> and returns them, ordered alphabetically.";
+        return "Takes an Iterable<" + FileModel.class.getSimpleName() + "> or Iterable<String> and returns them, ordered alphabetically.";
     }
 
     @Override
@@ -62,46 +68,58 @@ public class SortFilesByPathMethod implements WindupFreeMarkerMethod
         {
             throw new TemplateModelException("Error, method expects one argument (Iterable<FileModel>)");
         }
-        Iterable<FileModel> fileModelIterable = getList(arguments.get(0));
+        Iterable<Object> pathIterable = getIterable(arguments.get(0));
 
-        Comparator<FileModel> fileModelComparator = new Comparator<FileModel>()
+        Comparator<Object> fileModelComparator = new Comparator<Object>()
         {
             final FilePathComparator filePathComparator = new FilePathComparator();
 
             @Override
-            public int compare(FileModel o1, FileModel o2)
+            public int compare(Object o1, Object o2)
             {
-                return filePathComparator.compare(o1.getFilePath(), o2.getFilePath());
+                return filePathComparator.compare(getFilePath(o1), getFilePath(o2));
+            }
+
+            private String getFilePath(Object o)
+            {
+                if (o == null)
+                    return null;
+                else if (o instanceof FileModel)
+                    return ((FileModel)o).getFilePath();
+                else if (o instanceof String)
+                    return (String)o;
+                else
+                    throw new IllegalArgumentException("Unrecognized type: " + o.getClass().getName());
             }
         };
 
-        SortedSet<FileModel> fileModelSet = new TreeSet<>(fileModelComparator);
-        for (FileModel fm : fileModelIterable)
+        SortedSet<Object> resultSet = new TreeSet<>(fileModelComparator);
+        for (Object fm : pathIterable)
         {
-            fileModelSet.add(fm);
+            resultSet.add(fm);
         }
 
         ExecutionStatistics.get().end(NAME);
-        return fileModelSet;
+        return resultSet;
     }
 
     @SuppressWarnings("unchecked")
-    private Iterable<FileModel> getList(Object arg) throws TemplateModelException
+    private Iterable<Object> getIterable(Object arg) throws TemplateModelException
     {
         if (arg instanceof BeanModel)
         {
             BeanModel beanModel = (BeanModel) arg;
-            return (Iterable<FileModel>) beanModel.getWrappedObject();
+            return (Iterable<Object>) beanModel.getWrappedObject();
         }
         else if (arg instanceof SimpleSequence)
         {
             SimpleSequence simpleSequence = (SimpleSequence) arg;
-            return (Iterable<FileModel>) simpleSequence.toList();
+            return (Iterable<Object>) simpleSequence.toList();
         }
         else if (arg instanceof DefaultListAdapter)
         {
             DefaultListAdapter defaultListAdapter = (DefaultListAdapter) arg;
-            return (Iterable<FileModel>) defaultListAdapter.getWrappedObject();
+            return (Iterable<Object>) defaultListAdapter.getWrappedObject();
         }
         else
         {

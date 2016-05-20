@@ -11,6 +11,7 @@ import java.util.Set;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
+import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.reporting.freemarker.FreeMarkerUtil;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerTemplateDirective;
 import org.jboss.windup.rules.apps.java.service.TypeReferenceService;
@@ -23,6 +24,7 @@ import freemarker.template.TemplateBooleanModel;
 import freemarker.template.TemplateDirectiveBody;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateModel;
+import org.jboss.windup.util.exception.WindupException;
 
 /**
  * Renders a JavaScript block that calls <a href="http://www.flotcharts.org/">Flot</a>. This depends upon the template already loading the JQuery and
@@ -35,6 +37,8 @@ import freemarker.template.TemplateModel;
  */
 public class RenderApplicationPieChartDirective implements WindupFreeMarkerTemplateDirective
 {
+    public static final String NAME = "render_pie";
+
     private GraphContext context;
 
     @Override
@@ -50,7 +54,19 @@ public class RenderApplicationPieChartDirective implements WindupFreeMarkerTempl
                 throws TemplateException, IOException
     {
         StringModel projectStringModel = (StringModel) params.get("project");
-        ProjectModel projectModel = (ProjectModel) projectStringModel.getWrappedObject();
+        ProjectModel projectModel = null;
+        if (projectStringModel != null)
+            projectModel = (ProjectModel) projectStringModel.getWrappedObject();
+
+        StringModel projectTraversalStringModel = (StringModel) params.get("projectTraversal");
+        ProjectModelTraversal projectTraversal = null;
+        if (projectTraversalStringModel != null)
+            projectTraversal = (ProjectModelTraversal) projectTraversalStringModel.getWrappedObject();
+
+        if (projectModel != null && projectTraversal != null)
+            throw new WindupException(NAME + " both 'project' and 'projectTraversal' were specified. Only one of these values should be specified.");
+        else if (projectModel == null && projectTraversal == null)
+            throw new WindupException(NAME + " neither 'project' nor 'projectTraversal' were specified. At least one of these must be specified.");
 
         TemplateBooleanModel recursiveBooleanModel = (TemplateBooleanModel) params.get("recursive");
         boolean recursive = recursiveBooleanModel.getAsBoolean();
@@ -61,7 +77,12 @@ public class RenderApplicationPieChartDirective implements WindupFreeMarkerTempl
         Set<String> excludeTags = FreeMarkerUtil.simpleSequenceToSet((SimpleSequence) params.get("excludeTags"));
 
         TypeReferenceService typeReferenceService = new TypeReferenceService(context);
-        Map<String, Integer> data = typeReferenceService.getPackageUseFrequencies(projectModel, includeTags, excludeTags, 2, recursive);
+        Map<String, Integer> data;
+        if (projectModel != null)
+            data = typeReferenceService.getPackageUseFrequencies(projectModel, includeTags, excludeTags, 2, recursive);
+        else
+            data = typeReferenceService.getPackageUseFrequencies(projectTraversal, includeTags, excludeTags, 2, recursive);
+
         if (data.keySet().size() > 0)
         {
             drawPie(env.getOut(), data, elementID);
@@ -113,7 +134,7 @@ public class RenderApplicationPieChartDirective implements WindupFreeMarkerTempl
     @Override
     public String getDirectiveName()
     {
-        return "render_pie";
+        return NAME;
     }
 
     private List<PieSort> topX(Map<String, Integer> map, int top)

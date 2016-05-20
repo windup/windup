@@ -1,12 +1,11 @@
 /* ========   Collapsible panels ========== */
 
-function togglePanelSlide(event)
-{
+function togglePanelSlide(event) {
     var $panelHeading = $(this);
     setPanelSlide($panelHeading, $panelHeading.hasClass("panel-collapsed"));
 }
 
-function setPanelSlide($panelHeading, expand){
+function setPanelSlide($panelHeading, expand) {
     var projectGuid = $panelHeading.parent().data("windup-projectguid");
     $.sessionStorage.set(projectGuid, expand ? "true" : "false");
     $panelHeading.parents(".panel").find(".panel-body")["slide" + (expand ? "Down" : "Up")]();
@@ -15,7 +14,7 @@ function setPanelSlide($panelHeading, expand){
     $panelHeading.find("i").toggleClass("glyphicon-expand", !expand).toggleClass("glyphicon-collapse-up", expand);
 }
 
-function expandMemory(){
+function expandMemory() {
     expandMemory.elements$ = [];
     var t0 = Date.now();
 	$('.panel-heading').each(function() {
@@ -28,11 +27,10 @@ function expandMemory(){
 function expandMemory_delayed() {
     var BATCH_SIZE = 25;
     console.log("PERF: expandMemory_delayed(), next " + BATCH_SIZE + " projects.");///
-    for (var i = BATCH_SIZE; i > 0; i--)
-    {
+    for (var i = BATCH_SIZE; i > 0; i--) {
         var $element = expandMemory.elements$.shift();
         //console.log($element);///
-        if($element == undefined){
+        if($element == undefined) {
             // All project boxes were processed.
             showCollapseExpandLinksAsNeeded();
             return;
@@ -56,7 +54,7 @@ function expandMemory_delayed() {
 
 
 //
-function expandAll(){
+function expandAll() {
     $('.panel-body').slideDown();
     $('.panel-heading').find('i').removeClass('glyphicon-expand').addClass('glyphicon-collapse-up');
     $('.panel-heading').addClass('panel-boarding').removeClass('panel-collapsed');
@@ -65,7 +63,7 @@ function expandAll(){
     $('#collapseAll').show();
 }
 
-function collapseAll(){
+function collapseAll() {
     $('.panel-body').slideUp();
     $('.panel-heading').find('i').removeClass('glyphicon-collapse-up').addClass('glyphicon-expand');
 	$('.panel-heading').addClass('panel-collapsed').removeClass('panel-boarding');
@@ -74,7 +72,7 @@ function collapseAll(){
 	$('#collapseAll').hide();
 }
 
-function showCollapseExpandLinksAsNeeded(){
+function showCollapseExpandLinksAsNeeded() {
     $('#collapseAll').toggle( $('.panel-heading').find('.glyphicon-collapse-up').length > 0 );
     $('#expandAll').toggle( $('.panel-heading').find('.glyphicon-expand').length > 0 );
 }
@@ -82,8 +80,7 @@ function showCollapseExpandLinksAsNeeded(){
 
 /* ========   Projects TreeView   ========== */
 
-function renderAppTreeView(rootProject)
-{
+function renderAppTreeView(rootProject) {
     var start = t0 = Date.now();
     var jsTreeData = prepareJsTreeData(rootProject);
     console.log("PERF: prepareJsTreeData() took " + (Date.now() - start) + " ms.");
@@ -96,12 +93,15 @@ function renderAppTreeView(rootProject)
         types : {
             ok : { icon : "glyphicon glyphicon-ok" },
             alert : { icon : "glyphicon glyphicon-alert" }
-        },
+        }
     });
 
     // Handler for selection change.
     $('#treeView-Projects').on("changed.jstree", function(event, data) {
-        var projectId = data.selected[0].substring("treeNode-".length);
+        var nodeId = data.selected[0];
+        console.log("Possible project id: " + nodeId);
+        var projectId = data.selected[0].substring(nodeId.lastIndexOf("-")+1);
+        console.log("calculated project id: " + projectId);
         $panel = $("#"+projectId);
         setPanelSlide($panel.find(".panel-heading"), true);
         var pageHeader = 60; // Should go global.
@@ -142,12 +142,10 @@ function createTagCharts() {
     window.setTimeout(processNextChart, 50);
 }
 
-function processNextChart()
-{
+function processNextChart() {
     var BATCH_SIZE = 25;
     console.log("PERF: processNextChart(), next " + BATCH_SIZE + " projects.");
-    for (var i = BATCH_SIZE; i > 0; i--)
-    {
+    for (var i = BATCH_SIZE; i > 0; i--) {
         var $projectBox = window.projectBoxes$.shift();
         if (!$projectBox) {
             summaryChart();
@@ -164,9 +162,9 @@ function processNextChart()
         // Create the tag -> count map.
         // This query is an optimized form of .find(".projectFile") / .find(".tech .tag")
         ///$projectBox.find(".projectFile").each(function(iFile){
-        $projectBox.children("div.panel-body").children("table.subprojects").children("tbody").children("tr.projectFile").each(function(iFile){
+        $projectBox.children("div.panel-body").children("table.subprojects").children("tbody").children("tr.projectFile").each(function(iFile) {
             ///$(this).find(".tech .tag").each(function(iTag){
-            $(this).children("td.tech").children("span.tag").each(function(iTag){
+            $(this).children("td.tech").children("span.tag").each(function(iTag) {
                 var tagName = $(this).data("windup-tag");
                 // Get the nearest root tag, as per definitions in *.tags.xml.
                 if(!tagName)
@@ -174,13 +172,13 @@ function processNextChart()
                 var rootTags = window.tagService.getNearestRoots(tagName);
                 if (rootTags == null)
                     return;
-                for (var i = 0; i < rootTags.length; i++){
+                for (var i = 0; i < rootTags.length; i++) {
                     tagName = rootTags[i].getTitleOrName();
                     rootProjCountMap[ tagName ] = ++rootProjCountMap[ tagName ] || 1; // Sum map.
                     curProjCountsMap[ tagName ] = ++curProjCountsMap[ tagName ] || 1;
                 }
-            })
-        })
+            });
+        });
 
         // Don't draw the chart if there's just one tag.
         if (curProjCountsMap.length < 2)
@@ -190,12 +188,11 @@ function processNextChart()
 
         // Render the bar chart for this project.
         // We need to render it somewhere where it is visible and then move to the collapsed subproject divs.
-        $(document.body).append('<div class="tagChart" style="height: ' + chartHeight + 'px; width: 500px;"></div>'); // Returns body.
+        $(document.body).append('<div class="tagChart" style="height: ' + chartHeight + 'px; width: 500px;"></div>');
         var chartDiv = $("body > .tagChart")[0];
         curProjCountsMap = sortMapByValues(curProjCountsMap);
         // Store the chart object for later use. Not used yet.
-        chartObjects[projectId + "-tags"] =
-                createChart(chartDiv, curProjCountsMap);
+        chartObjects[projectId + "-tags"] = createChart(chartDiv, curProjCountsMap);
         $("body > .tagChart").appendTo( $projectBox.find(".summaryMargin .tagsBarChart") );
         $projectBox.find(".summaryMargin .tagsBarChart").append( $("body > .tagChart") );
     }
@@ -207,8 +204,7 @@ function processNextChart()
 /**
  * Creates the summary chart at the top.
  */
-function summaryChart()
-{
+function summaryChart() {
     // Sum tags chart
     var rootProjCountMap = sortMapByValues(window.rootProjCountMap);
     createChart("#tagsChartContainer-sum", rootProjCountMap);
@@ -218,8 +214,7 @@ function summaryChart()
 }
 
 
-var TagService = function()
-{
+var TagService = function() {
     this.tags = {};
 }
 
@@ -239,11 +234,11 @@ TagService.prototype.registerTag = function(/*Tag*/ tag, /*String[]*/ parentTagN
         tag.parents.push(parent);
         //parent.addChild(tag);
     }
-}
+};
 
 TagService.prototype.getOrCreateTag = /*Tag*/ function(/*String*/ name) {
     return this.tags[name] || (this.tags[name] = new Tag(name));
-}
+};
 
 TagService.prototype.getNearestRoots = /*Tag*/ function(/*String*/ tagName) {
     var tag = this.tags[tagName];
@@ -279,11 +274,11 @@ TagService.prototype.getNearestRoots = /*Tag*/ function(/*String*/ tagName) {
         currentSet = nextSet;
     }
     return roots;
-}
+};
 
-TagService.prototype.toString = function(){
+TagService.prototype.toString = function() {
     return "TagService{ " + (this.tags == null ? "null" : this.tags.size()) + " }";
-}
+};
 
 /**
  * Windup Tag.
@@ -295,19 +290,18 @@ TagService.prototype.toString = function(){
  * @param {Tag[]}   parents  Tags which are "above" this one.
  * @returns {Tag}
  */
-var Tag = function(name, title, isRoot, isPseudo, color, parents)
-{
+var Tag = function(name, title, isRoot, isPseudo, color, parents) {
     this.name = name;
     this.title = title;
     this.isRoot = isRoot;
     this.isPseudo = isPseudo;
     this.color = color;
     this.parents = parents instanceof Array || [];
-}
+};
 
-Tag.prototype.getTitleOrName = function(){
+Tag.prototype.getTitleOrName = function() {
     return this.title || this.name;
-}
+};
 
 Tag.prototype.mergeFrom = function(/*Tag*/ tag) {
     this.color = tag.color;
@@ -320,8 +314,7 @@ Tag.prototype.mergeFrom = function(/*Tag*/ tag) {
         else
             this.parents = tag.parents;
     }
-}
-
+};
 
 
 // Prepare the data in the format [[value,index], ...].
@@ -352,7 +345,7 @@ function createFlotChart(divSelectorOrElement, flotData, isLogarithmic) {
         bars: {
             align: "center",
             barWidth: 0.6,
-            lineWidth: 1,
+            lineWidth: 1
         },
         grid: {
             hoverable: true,
@@ -360,7 +353,7 @@ function createFlotChart(divSelectorOrElement, flotData, isLogarithmic) {
             borderColor: "#B0B0B0",
             backgroundColor: { colors: ["#FFFFFF", "#EDF5FF"] },
             margin: 3, // Doesn't work
-            minBorderMargin: 3,
+            minBorderMargin: 3
         },
         xaxis: {
             axisLabel: "Count",
@@ -370,7 +363,7 @@ function createFlotChart(divSelectorOrElement, flotData, isLogarithmic) {
             axisLabelPadding: 10,
             max: flotData.maxValue * 1.1, // Substitutes grid: { margin: ... }
             tickDecimals: 0,
-            tickFormatter: function(value, axis){ return value + "x"; },
+            tickFormatter: function(value, axis){ return value + "x"; }
         },
         yaxis: {
             axisLabel: "Technology",
@@ -380,7 +373,7 @@ function createFlotChart(divSelectorOrElement, flotData, isLogarithmic) {
             ticks: flotData.ticks,
             // Otherwise Flot uses "smaller" which breaks alignment.
             //font: { size: "14px", color: "black" }, // doesn't work
-        },
+        }
     };
 
     if (isLogarithmic) {

@@ -99,15 +99,19 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
         }
         catch (Throwable e)
         {
+            // only mark the canonical archive, as we only need to add this classification once
+            ArchiveModel canonicalArchive = archiveModel;
+            if (canonicalArchive instanceof DuplicateArchiveModel)
+                canonicalArchive = ((DuplicateArchiveModel)canonicalArchive).getCanonicalArchive();
+
             ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-            classificationService.attachClassification(context, archiveModel, MALFORMED_ARCHIVE, "Cannot unzip the file");
+            classificationService.attachClassification(context, canonicalArchive, MALFORMED_ARCHIVE, "Cannot unzip the file");
             archiveModel.setParseError("Cannot unzip the file: " + e.getMessage());
             LOG.warning("Cannot unzip the file " + inputZipFile.getPath() + " to " + appArchiveFolder.toString()
                         + ". The ArchiveModel was classified as malformed.");
             return;
         }
 
-        FileModel newFileModel = fileService.createByFilePath(appArchiveFolder.toString());
         // mark the path to the archive
         archiveModel.setUnzippedDirectory(appArchiveFolder.toString());
 
@@ -175,21 +179,21 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
                  */
                 newArchiveModel = GraphService.refresh(event.getGraphContext(), newArchiveModel);
 
-                ArchiveModel originalArchiveModel = null;
+                ArchiveModel canonicalArchiveModel = null;
                 for (FileModel otherMatches : fileService.findAllByProperty(FileModel.SHA1_HASH, newArchiveModel.getSHA1Hash()))
                 {
                     if (otherMatches instanceof ArchiveModel && !otherMatches.equals(newArchiveModel) && !(otherMatches instanceof DuplicateArchiveModel))
                     {
-                        originalArchiveModel = (ArchiveModel)otherMatches;
+                        canonicalArchiveModel = (ArchiveModel)otherMatches;
                         break;
                     }
                 }
 
-                if (originalArchiveModel != null)
+                if (canonicalArchiveModel != null)
                 {
                     // handle as duplicate
                     DuplicateArchiveModel duplicateArchive = GraphService.addTypeToModel(event.getGraphContext(), newArchiveModel, DuplicateArchiveModel.class);
-                    duplicateArchive.setCanonicalArchive(originalArchiveModel);
+                    duplicateArchive.setCanonicalArchive(canonicalArchiveModel);
 
                     // create dupes for child archives
                     unzipToTempDirectory(event, context, tempFolder, newZipFile, duplicateArchive, true);

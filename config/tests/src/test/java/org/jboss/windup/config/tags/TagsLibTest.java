@@ -64,7 +64,7 @@ public class TagsLibTest
         }
 
         StringWriter writer = new StringWriter((int) file.length());
-        tagService.dumpTagsToJavaScript(writer);
+        tagService.writeTagsToJavaScript(writer);
         final String javascript = writer.toString();
         System.out.println(javascript);
         Assert.assertTrue(javascript.contains("function"));

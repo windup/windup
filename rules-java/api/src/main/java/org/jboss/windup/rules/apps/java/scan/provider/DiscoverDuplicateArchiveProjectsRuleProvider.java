@@ -45,19 +45,19 @@ public class DiscoverDuplicateArchiveProjectsRuleProvider extends AbstractRulePr
     {
         GraphService<DuplicateProjectModel> duplicateProjectService = event.getGraphContext().service(DuplicateProjectModel.class);
 
-        ProjectModel originalProject = duplicateArchive.getCanonicalArchive().getProjectModel();
+        ProjectModel canonicalProject = duplicateArchive.getCanonicalArchive().getProjectModel();
 
         DuplicateProjectModel duplicateProject = duplicateProjectService.create();
-        duplicateProject.setCanonicalProject(originalProject);
-        duplicateProject.setName(originalProject.getName());
+        duplicateProject.setCanonicalProject(canonicalProject);
+        duplicateProject.setName(canonicalProject.getName());
         duplicateProject.setParentProject(duplicateArchive.getParentArchive().getProjectModel());
         duplicateProject.setRootFileModel(duplicateArchive);
 
-        if (originalProject.getParentProject() == null)
+        if (canonicalProject.getParentProject() == null)
         {
             ProjectService projectService = new ProjectService(event.getGraphContext());
             ProjectModel sharedLibsProject = projectService.getSharedLibsProject();
-            originalProject.setParentProject(sharedLibsProject);
+            canonicalProject.setParentProject(sharedLibsProject);
         }
 
         duplicateProject.addFileModel(duplicateArchive);

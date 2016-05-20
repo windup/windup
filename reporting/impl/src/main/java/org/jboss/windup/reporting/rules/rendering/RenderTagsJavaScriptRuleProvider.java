@@ -69,7 +69,7 @@ public class RenderTagsJavaScriptRuleProvider extends AbstractRuleProvider
 
                     try(FileWriter writer = new FileWriter(tagsDataFile))
                     {
-                        tagService.dumpTagsToJavaScript(writer);
+                        tagService.writeTagsToJavaScript(writer);
                         LOG.info("Exporting tags data to file: " + tagsDataFile.getPath());
                     }
                     catch (IOException e)

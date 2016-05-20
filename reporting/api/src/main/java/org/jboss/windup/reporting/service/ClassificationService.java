@@ -1,5 +1,6 @@
 package org.jboss.windup.reporting.service;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -14,6 +15,7 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.reporting.TagUtil;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.EffortReportModel;
@@ -98,8 +100,8 @@ public class ClassificationService extends GraphService<ClassificationModel>
      * The result is a Map, the key contains the effort level and the value contains the number of incidents.
      * </p>
      */
-    public Map<Integer, Integer> getMigrationEffortByPoints(ProjectModel initialProject, Set<String> includeTags, Set<String> excludeTags,
-                boolean recursive, boolean includeZero)
+    public Map<Integer, Integer> getMigrationEffortByPoints(ProjectModelTraversal initialProject, Set<String> includeTags, Set<String> excludeTags,
+                                                            boolean recursive, boolean includeZero)
     {
         final Map<Integer, Integer> results = new HashMap<>();
 
@@ -126,7 +128,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
      * Returns the total incidents in all of the {@link ClassificationModel}s associated with the files in this project by severity.
      * </p>
      */
-    public Map<Severity, Integer> getMigrationEffortBySeverity(ProjectModel initialProject, Set<String> includeTags, Set<String> excludeTags,
+    public Map<Severity, Integer> getMigrationEffortBySeverity(ProjectModelTraversal traversal, Set<String> includeTags, Set<String> excludeTags,
                 boolean recursive)
     {
         final Map<Severity, Integer> results = new HashMap<>();
@@ -144,26 +146,17 @@ public class ClassificationService extends GraphService<ClassificationModel>
             }
         };
 
-        getMigrationEffortDetails(initialProject, includeTags, excludeTags, recursive, true, accumulator);
+        getMigrationEffortDetails(traversal, includeTags, excludeTags, recursive, true, accumulator);
 
         return results;
     }
 
-    private void getMigrationEffortDetails(ProjectModel initialProject, Set<String> includeTags, Set<String> excludeTags, boolean recursive,
+    private void getMigrationEffortDetails(ProjectModelTraversal traversal, Set<String> includeTags, Set<String> excludeTags, boolean recursive,
                 boolean includeZero, EffortAccumulatorFunction accumulatorFunction)
     {
         FileService fileService = new FileService(getGraphContext());
 
-        final Set<Vertex> initialVertices = new HashSet<>();
-        if (recursive)
-        {
-            for (ProjectModel projectModel1 : initialProject.getAllProjectModels())
-                initialVertices.add(projectModel1.asVertex());
-        }
-        else
-        {
-            initialVertices.add(initialProject.asVertex());
-        }
+        final Set<Vertex> initialVertices = traversal.getAllProjectsAsVertices(recursive);
 
         GremlinPipeline<Vertex, Vertex> classificationPipeline = new GremlinPipeline<>(getGraphContext().getGraph());
         classificationPipeline.V();

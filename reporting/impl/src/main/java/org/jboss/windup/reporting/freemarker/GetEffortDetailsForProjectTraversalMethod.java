@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.model.ProjectModel;
+import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.InlineHintService;
 import org.jboss.windup.util.ExecutionStatistics;
@@ -29,9 +30,9 @@ import freemarker.template.TemplateModelException;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
  */
-public class GetEffortDetailsForProjectMethod implements WindupFreeMarkerMethod
+public class GetEffortDetailsForProjectTraversalMethod implements WindupFreeMarkerMethod
 {
-    private static final String NAME = "getEffortDetailsForProject";
+    private static final String NAME = "getEffortDetailsForProjectTraversal";
     private ClassificationService classificationService;
     private InlineHintService inlineHintService;
 
@@ -64,8 +65,8 @@ public class GetEffortDetailsForProjectMethod implements WindupFreeMarkerMethod
             throw new TemplateModelException(
                         "Error, method expects at least two arguments (projectModel:ProjectModel, recursive:Boolean, [includeTags:Set<String>]. [excludeTags:Set<String>])");
         }
-        StringModel projectModelArg = (StringModel) arguments.get(0);
-        ProjectModel projectModel = (ProjectModel) projectModelArg.getWrappedObject();
+        StringModel projectModelTraversalArg = (StringModel) arguments.get(0);
+        ProjectModelTraversal projectModelTraversal = (ProjectModelTraversal) projectModelTraversalArg.getWrappedObject();
 
         TemplateBooleanModel recursiveBooleanModel = (TemplateBooleanModel) arguments.get(1);
         boolean recursive = recursiveBooleanModel.getAsBoolean();
@@ -82,9 +83,9 @@ public class GetEffortDetailsForProjectMethod implements WindupFreeMarkerMethod
             excludeTags = FreeMarkerUtil.simpleSequenceToSet((SimpleSequence) arguments.get(3));
         }
 
-        Map<Integer, Integer> classificationEffortDetails = classificationService.getMigrationEffortByPoints(projectModel, includeTags, excludeTags,
+        Map<Integer, Integer> classificationEffortDetails = classificationService.getMigrationEffortByPoints(projectModelTraversal, includeTags, excludeTags,
                     recursive, false);
-        Map<Integer, Integer> hintEffortDetails = inlineHintService.getMigrationEffortByPoints(projectModel, includeTags, excludeTags, recursive,
+        Map<Integer, Integer> hintEffortDetails = inlineHintService.getMigrationEffortByPoints(projectModelTraversal, includeTags, excludeTags, recursive,
                     false);
 
         Map<Integer, Integer> results = new HashMap<>(classificationEffortDetails.size() + hintEffortDetails.size());

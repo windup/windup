@@ -31,7 +31,7 @@ import java.util.List;
 @RunWith(Arquillian.class)
 public class WindupArchitectureDuplicateTest extends WindupArchitectureTest
 {
-    private static final String MAIN_APP_FILENAME = "Windup1x-javaee-example.war";
+    private static final String MAIN_APP_FILENAME = "jee-example-app-1.0.0.ear";
     public static final String COPY_EAR_FILENAME = "copy.ear";
 
     @Deployment
@@ -91,17 +91,17 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest
 
         reportIndex.loadPage(mainReportPath);
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Mandatory", 0, 0));
-        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Optional", 3, 2));
+        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Optional", 2, 0));
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Potential Issues", 0, 0));
 
         reportIndex.loadPage(copyAppPath);
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Mandatory", 0, 0));
-        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Optional", 3, 2));
+        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Optional", 2, 0));
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Potential Issues", 0, 0));
 
         reportIndex.loadPage(sharedLibsPath);
-        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Mandatory", 0, 0));
-        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Optional", 289, 2208));
+        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Mandatory", 2, 6));
+        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Optional", 86, 584));
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Potential Issues", 0, 0));
     }
 
