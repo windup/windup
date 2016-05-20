@@ -2,25 +2,23 @@ package org.jboss.windup.graph.model.comparator;
 
 import java.util.Comparator;
 
-import org.jboss.windup.graph.model.ProjectModel;
+import org.jboss.windup.graph.model.ProjectModelTraversal;
 
 /**
  * Returns a comparison based on an ascending alphabetical sort of the RootFileModel's FilePath.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- * 
  */
-public class ProjectModelByRootFileComparator implements Comparator<ProjectModel>
+public class ProjectTraversalRootFileComparator implements Comparator<ProjectModelTraversal>
 {
-
     // Use the file path comparator in FilePathComparator
     FilePathComparator filePathComparator = new FilePathComparator();
 
     @Override
-    public int compare(ProjectModel o1, ProjectModel o2)
+    public int compare(ProjectModelTraversal o1, ProjectModelTraversal o2)
     {
-        String filePath1 = o1.getRootFileModel().getFilePath();
-        String filePath2 = o2.getRootFileModel().getFilePath();
+        String filePath1 = o1.getFilePath(o1.getOriginalProject().getRootFileModel());
+        String filePath2 = o2.getFilePath(o2.getOriginalProject().getRootFileModel());
         return filePathComparator.compare(filePath1, filePath2);
     }
 }

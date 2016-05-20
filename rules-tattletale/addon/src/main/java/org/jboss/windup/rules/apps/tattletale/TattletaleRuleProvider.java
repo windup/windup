@@ -4,9 +4,11 @@ import java.io.File;
 import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.common.base.StandardSystemProperty;
 import org.jboss.tattletale.Main;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
@@ -84,13 +86,23 @@ public class TattletaleRuleProvider extends AbstractRuleProvider
                     // The only way Tattletale accepts configuration is through a file.
                     new File(tattletaleDir).mkdirs();
                     File configPath = new File(tattletaleDir, TTALE_CONFIG_FILE_NAME);
-                    PrintStream str = new PrintStream(configPath);
-                    str.append("enableDot=false\n"); // Whether to generate .dot and .png
-                    str.append("graphvizDot=dot\n"); // Dot executable
-                    str.close();
+                    try (PrintStream str = new PrintStream(configPath))
+                    {
+                        str.append("enableDot=false\n"); // Whether to generate .dot and .png
+                        str.append("graphvizDot=dot\n"); // Dot executable
+                        str.close();
+                    }
                     main.setConfiguration(configPath.getAbsolutePath());
 
+                    /*
+                     * HACK - reset temp directory temporarily as otherwise there are cases where tattletale
+                     * will actually overwrite the input file. This can happen in cases where the application
+                     * being analyzed is actually in the temp directory, due to a bug in Tattletale. (2016/05/19)
+                     */
+                    String previousTmpDir = StandardSystemProperty.JAVA_IO_TMPDIR.value();
+                    System.setProperty(StandardSystemProperty.JAVA_IO_TMPDIR.key(), Paths.get(tattletaleDir).resolve("tattletaletmp").toString());
                     main.execute();
+                    System.setProperty(StandardSystemProperty.JAVA_IO_TMPDIR.key(), previousTmpDir);
 
                     createReportModel(event.getGraphContext(), input, tattletaleRelativePath);
                 }

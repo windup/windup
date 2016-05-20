@@ -3,6 +3,9 @@ package org.jboss.windup.graph.service;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 /**
  * Helper methods for accessing the WindupConfigurationModel and associated data.
  * 
@@ -10,9 +13,18 @@ import org.jboss.windup.graph.model.WindupConfigurationModel;
  */
 public class WindupConfigurationService extends GraphService<WindupConfigurationModel>
 {
+    private static final String ARCHIVES = "archives";
+
     public WindupConfigurationService(GraphContext context)
     {
         super(context, WindupConfigurationModel.class);
+    }
+
+    public static Path getArchivesPath(final GraphContext graphContext)
+    {
+        WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(graphContext);
+        String windupOutputFolder = cfg.getOutputPath().getFilePath();
+        return Paths.get(windupOutputFolder, ARCHIVES);
     }
 
     /**

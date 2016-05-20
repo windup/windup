@@ -18,7 +18,7 @@ public class TestReportIndexReportUtil extends TestReportUtil
         WebElement element = getDriver().findElement(By.id("incidentsByTypeTable"));
         if (element == null)
         {
-            throw new CheckFailedException("Unable to find ejb beans table element");
+            throw new CheckFailedException("Unable to find incidents by type table element");
         }
         return checkValueInTable(element, category, String.valueOf(incidents), String.valueOf(totalStoryPoints));
     }

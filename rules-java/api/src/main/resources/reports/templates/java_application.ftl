@@ -101,6 +101,13 @@
     </#if>
 </#macro>
 
+<#macro traverseAndRenderProject traversal>
+    <@projectModelRenderer traversal.originalProject />
+
+    <#list sortProjectTraversalsByPathAscending(traversal.children) as childTraversal>
+        <@traverseAndRenderProject childTraversal/>
+    </#list>
+</#macro>
 
 <#macro projectModelRenderer projectModel>
 	<#assign panelStoryPoints = getMigrationEffortPointsForProject(projectModel, false, reportModel.includeTags, reportModel.excludeTags)>
@@ -223,9 +230,7 @@
             parentProject.addSubproject(thisProject);
         parentProject = thisProject;
     </script>
-    <#list sortProjectsByPathAscending(projectModel.childProjects) as childProject>
-        <@projectModelRenderer childProject/>
-    </#list>
+
     <script>
         parentProject = parentProject.getParent();
     </script>
@@ -330,6 +335,8 @@
             var thisProject = null;
         </script>
 
+        <#assign projectTraversal = getProjectTraversal(reportModel.projectModel)>
+
         <div class="row container-fluid">
             <div class="theme-showcase" role="main">
                 <@reportLineRenderer reportModel.applicationReportLines />
@@ -337,7 +344,8 @@
                     <a id="collapseAll" href="javascript:collapseAll()">Collapse All</a>
                     <a id="expandAll" href="javascript:expandAll()">Expand All</a>
                 </div>
-                <@projectModelRenderer reportModel.projectModel />
+                <@traverseAndRenderProject projectTraversal />
+
             </div> <!-- /container -->
         </div>
 

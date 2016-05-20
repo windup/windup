@@ -56,7 +56,6 @@ public class SetInPropertiesTest
     }
 
     @Test
-    // @Ignore("WINDUP-168")
     public void testSetWithBlankPrefixHandling() throws Exception
     {
         try (GraphContext context = contextFactory.create())

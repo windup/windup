@@ -1,6 +1,7 @@
 package org.jboss.windup.graph.model;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.jboss.windup.graph.model.resource.FileModel;
