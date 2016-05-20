@@ -1,14 +1,11 @@
 package org.jboss.windup.exec;
 
-import java.util.function.Consumer;
-import java.util.stream.Stream;
 import javax.enterprise.inject.Vetoed;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.jboss.windup.config.AbstractRuleProvider;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleLifecycleListener;
-import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.metadata.RuleMetadataType;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.Rule;
