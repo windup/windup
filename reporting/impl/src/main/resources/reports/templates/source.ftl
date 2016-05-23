@@ -116,7 +116,7 @@
         </div><!-- /row-->
     </div><!-- /container main-->
 
-    <script src="resources/js/jquery-1.7.min.js"></script>
+    <script src="resources/js/jquery-1.10.1.min.js"></script>
     <script src="resources/js/bootstrap.min.js"></script>
 
     <script type="text/javascript" src="resources/libraries/jquery-ui/jquery.ui.widget.js"></script>
