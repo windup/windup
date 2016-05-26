@@ -1,7 +1,9 @@
 package org.jboss.windup.ast.java.test;
 
 import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.windup.ast.java.ASTProcessor;
@@ -33,22 +35,25 @@ public class JavaEnumerationScanningTest extends AbstractJavaASTTest
         Assert.assertEquals(3, counter);
 
         ClassReference referenceTest = new ClassReference("java.nio.file.AccessMode.WRITE", "java.nio.file", "AccessMode", null,
-                    ResolutionStatus.RESOLVED, TypeReferenceLocation.ENUM_CONSTANT, 12, 4, 39, "AccessMode testMode=AccessMode.WRITE;\n");
-        Assert.assertTrue(references.contains(referenceTest));
-
-        referenceTest = new ClassReference("java.nio.file.AccessMode.READ", "java.nio.file", "AccessMode", null,
-                    ResolutionStatus.RECOVERED, TypeReferenceLocation.ENUM_CONSTANT, 31, 41, 21, "new EnumerationClassUsage(AccessMode.READ)");
+                    ResolutionStatus.RESOLVED, TypeReferenceLocation.ENUM_CONSTANT, 12, 4, 39, "AccessMode testMode=AccessMode.WRITE;");
         Assert.assertTrue(references.contains(referenceTest));
 
         referenceTest = new ClassReference("java.nio.file.AccessMode.WRITE", "java.nio.file", "AccessMode", null,
                     ResolutionStatus.RESOLVED, TypeReferenceLocation.ENUM_CONSTANT, 17, 30, 18, "EnumerationClassUsage.testAccessibleEnum(AccessMode.WRITE)");
+        Assert.assertTrue(references.contains(referenceTest));
+
+        referenceTest = new ClassReference("java.nio.file.AccessMode.READ", "java.nio.file", "AccessMode", null,
+                ResolutionStatus.RESOLVED, TypeReferenceLocation.ENUM_CONSTANT, 31, 41, 21, "new EnumerationClassUsage(AccessMode.READ)");
         Assert.assertTrue(references.contains(referenceTest));
     }
     
     @Test
     public void testEnumConstWithoutClassOnClasspath()
     {
-        List<ClassReference> references = ASTProcessor.analyze(getLibraryPaths(), getSourcePaths(),
+        Set<String> libraryPaths = new HashSet<>();
+        libraryPaths.add("src/test/resources/testclasses/enumeration/dependency/hibernate-search-engine-5.5.3.Final.jar");
+
+        List<ClassReference> references = ASTProcessor.analyze(libraryPaths, getSourcePaths(),
                     Paths.get("src/test/resources/testclasses/enumeration/EnumConstClassNotOnClasspath.java"));
         int counter = 0;
         for (ClassReference reference : references)
@@ -64,25 +69,25 @@ public class JavaEnumerationScanningTest extends AbstractJavaASTTest
 
         ClassReference referenceTest = new ClassReference("org.hibernate.search.backend.configuration.impl.IndexWriterSetting.MAX_THREAD_STATES",
                     "org.hibernate.search.backend.configuration.impl", "IndexWriterSetting", null,
-                    ResolutionStatus.RECOVERED, TypeReferenceLocation.ENUM_CONSTANT, 13, 4, 72,
-                    "IndexWriterSetting writerSetting=IndexWriterSetting.MAX_THREAD_STATES;\n");
+                    ResolutionStatus.RESOLVED, TypeReferenceLocation.ENUM_CONSTANT, 13, 4, 72,
+                    "IndexWriterSetting writerSetting=IndexWriterSetting.MAX_THREAD_STATES;");
         Assert.assertTrue(references.contains(referenceTest));
 
         referenceTest = new ClassReference("org.hibernate.search.backend.configuration.impl.IndexWriterSetting.MAX_THREAD_STATES",
                     "org.hibernate.search.backend.configuration.impl", "IndexWriterSetting", null,
-                    ResolutionStatus.RECOVERED, TypeReferenceLocation.ENUM_CONSTANT, 15, 4, 54,
-                    "IndexWriterSetting writerSetting1=MAX_THREAD_STATES;\n");
+                    ResolutionStatus.RESOLVED, TypeReferenceLocation.ENUM_CONSTANT, 15, 4, 54,
+                    "IndexWriterSetting writerSetting1=MAX_THREAD_STATES;");
         Assert.assertTrue(references.contains(referenceTest));
 
         referenceTest = new ClassReference("org.hibernate.search.backend.configuration.impl.IndexWriterSetting.TERM_INDEX_INTERVAL",
                     "org.hibernate.search.backend.configuration.impl", "IndexWriterSetting", null,
-                    ResolutionStatus.RECOVERED, TypeReferenceLocation.ENUM_CONSTANT, 20, 30, 8,
+                    ResolutionStatus.RESOLVED, TypeReferenceLocation.ENUM_CONSTANT, 20, 30, 8,
                     "EnumerationClassUsage.testEnum(IndexWriterSetting.TERM_INDEX_INTERVAL)");
         Assert.assertTrue(references.contains(referenceTest));
 
         referenceTest = new ClassReference("org.hibernate.search.backend.configuration.impl.IndexWriterSetting.TERM_INDEX_INTERVAL",
                     "org.hibernate.search.backend.configuration.impl", "IndexWriterSetting", null,
-                    ResolutionStatus.RECOVERED, TypeReferenceLocation.ENUM_CONSTANT, 34, 48, 28,
+                    ResolutionStatus.RESOLVED, TypeReferenceLocation.ENUM_CONSTANT, 34, 48, 28,
                     "new EnumConstClassNotOnClasspath(IndexWriterSetting.TERM_INDEX_INTERVAL)");
         Assert.assertTrue(references.contains(referenceTest));
     }

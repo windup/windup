@@ -170,6 +170,8 @@ public class ClassReference
     {
         return "ClassReference{" +
                     "qualifiedName='" + qualifiedName + '\'' +
+                    ", packageName='" + packageName + '\'' +
+                    ", className='" + className + '\'' +
                     ", resolutionStatus=" + resolutionStatus +
                     ", lineNumber=" + lineNumber +
                     ", column=" + column +

@@ -13,24 +13,4 @@ public class ClassNameUtil
             packageName = qualifiedName.substring(0, qualifiedName.lastIndexOf("."));
         return packageName;
     }
-    
-    /*
-     * This method assumes constants are upper cased
-     */
-    public static boolean isConstant(String fqcn)
-    {
-        return isUpperCase(fqcn);
-    }
-    
-    public static boolean isUpperCase(String s)
-    {
-        for (int i=0; i<s.length(); i++)
-        {
-            if (Character.isLowerCase(s.charAt(i)))
-            {
-                return false;
-            }
-        }
-        return true;
-    }
 }

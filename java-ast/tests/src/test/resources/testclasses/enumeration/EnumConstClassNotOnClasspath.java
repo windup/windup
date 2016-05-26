@@ -1,7 +1,7 @@
 package testclasses.enumeration;
 
 import org.hibernate.search.backend.configuration.impl.IndexWriterSetting;
-static import org.hibernate.search.backend.configuration.impl.IndexWriterSetting.MAX_THREAD_STATES;
+import static org.hibernate.search.backend.configuration.impl.IndexWriterSetting.MAX_THREAD_STATES;
 
 public class EnumConstClassNotOnClasspath
 {
