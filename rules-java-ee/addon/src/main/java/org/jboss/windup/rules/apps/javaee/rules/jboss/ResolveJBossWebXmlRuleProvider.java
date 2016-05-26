@@ -52,8 +52,7 @@ public class ResolveJBossWebXmlRuleProvider extends IteratingRuleProvider<XmlFil
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
         technologyTagService.addTagToFileModel(payload, "JBoss Web XML", TechnologyTagLevel.IMPORTANT);
 
-        ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-        classificationService.attachClassification(context, payload, "JBoss Web XML", "JBoss Web XML Descriptor.");
+        // Classification done by jboss-eap5-xml-09000 - see WINDUPRULE-164
 
         Document doc = xmlFileService.loadDocumentQuiet(context, payload);
 

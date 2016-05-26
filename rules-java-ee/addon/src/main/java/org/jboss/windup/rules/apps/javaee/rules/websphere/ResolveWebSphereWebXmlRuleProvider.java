@@ -54,10 +54,7 @@ public class ResolveWebSphereWebXmlRuleProvider extends IteratingRuleProvider<Xm
         XmlFileService xmlFileService = new XmlFileService(event.getGraphContext());
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
 
-        ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-        ClassificationModel classification = classificationService.attachClassification(context, payload, "WebSphere Web Binding",
-                    "WebSphere Web Binding XML Descriptor");
-        classification.setEffort(1);
+        // Classification done by websphere-xml-06000 - see WINDUPRULE-164
 
         Document doc = xmlFileService.loadDocumentQuiet(context, payload);
 
