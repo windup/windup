@@ -24,6 +24,15 @@ or subscribe to the link:https://lists.jboss.org/mailman/listinfo/windup-dev[win
 You may download the link:http://windup.jboss.org/download.html[latest Windup release].
 After that, follow the link:https://github.com/windup/windup/wiki/Execute[User Guide, Execute Windup].
 
+Windup distribution contains a sample file to try Windup with. Try the following command in a console:
+
+    bin/windup --target eap --input samples/jee-example-app-1.0.0.ear
+
+This will create a report next to the scanned archive:
+
+    samples/jee-example-app-1.0.0.ear.report/index.html
+
+
 === Project Source Code Format
 
 This project has an agreed upon source format style documented via an
