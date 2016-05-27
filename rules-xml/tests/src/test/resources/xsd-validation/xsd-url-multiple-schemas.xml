@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+	<mvc:resources mapping="/resources/**" location="/" />
+	
+	<!-- 
+	<context:property-placeholder location="classpath:app.properties" />
+	 -->
+	 
+	<!-- Declares explicit support for annotation-driven MVC controllers  @RequestMapping, @Controller -->
+	<mvc:annotation-driven />	
+	
+	<context:component-scan base-package="com.ats" />
+	
+	<mvc:default-servlet-handler />
+	
+	<!-- Maps logical view names to .jsp templates in /WEB-INF/flows -->
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+		<property name="viewClass" value="com.ats.sea.util.SEAJstlView"/>
+		<property name="prefix" value="/WEB-INF" />
+	</bean>
+	
+	<!-- Dispatches requests mapped to flows to FlowHandler implementations -->
+	<bean class="org.springframework.webflow.mvc.servlet.FailsafeFlowHandlerAdapter">
+		<property name="flowExecutor" ref="flowExecutor"/>
+		<property name="useExpiresHeader" value="false"/>
+		<property name="useCacheControlHeader" value="false"/>
+	</bean>
+
+	<bean id="multipartResolver" class="com.ats.sea.web.multipart.commons.MultipartResolverWrapper">
+		<constructor-arg >
+			<bean class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		        <property name="maxUploadSize" value="10000000" />
+			</bean>
+		</constructor-arg>
+	</bean>
+
+	<bean id="mvcViewFactoryCreator" class="org.springframework.webflow.mvc.builder.MvcViewFactoryCreator"> 
+		<property name="viewResolvers" ref="viewResolver"/>
+		<property name="useSpringBeanBinding" value="true" />
+	</bean>  
+
+	<bean id="applicationContextProvider" class="com.atsistemas.spring.ApplicationContextProvider"/> 
+	
+</beans>

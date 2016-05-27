@@ -20,25 +20,13 @@ import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.apps.xml.xml.ValidateXmlFilesRuleProvider;
 import org.jboss.windup.testutil.basics.WindupTestUtilMethods;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.xml.sax.SAXException;
 
 import javax.inject.Inject;
-import javax.xml.transform.Source;
-import javax.xml.validation.Schema;
-import javax.xml.validation.SchemaFactory;
-import javax.xml.validation.Validator;
-import java.io.FileNotFoundException;
-import java.net.URL;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
 
 /**
  * Tests the {@link ValidateXmlFilesRuleProvider} and simulates good internet access with mocks
@@ -48,9 +36,6 @@ import static org.mockito.Mockito.when;
 @RunWith(Arquillian.class)
 public class ValidateXmlFilesRuleProviderWithInternetTest extends AbstractXsdValidationTest
 {
-
-    private RuleProvider ruleProvider;
-
     @Deployment
     @AddonDependencies({
                 @AddonDependency(name = "org.jboss.windup.config:windup-config"),
@@ -65,13 +50,9 @@ public class ValidateXmlFilesRuleProviderWithInternetTest extends AbstractXsdVal
     })
     public static AddonArchive getDeployment()
     {
-        final AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-                    .addClass(ValidateXmlFilesRuleProviderWithoutInternetTest.class)
-                    .addClass(ValidateXmlFilesRuleProviderWithInternetTest.class)
+        return ShrinkWrap.create(AddonArchive.class)
                     .addClass(AbstractXsdValidationTest.class)
                     .addBeansXML();
-
-        return archive;
     }
 
     @Inject
@@ -80,37 +61,8 @@ public class ValidateXmlFilesRuleProviderWithInternetTest extends AbstractXsdVal
     @Inject
     private GraphContextFactory factory;
 
-    private Validator mockValidator;
-    private SchemaFactory mockSchema;
-
-    @Before
-    public void initMocksDefault() throws SAXException
-    {
-        mockSchema = Mockito.mock(SchemaFactory.class);
-        Schema schema = Mockito.mock(Schema.class);
-        mockValidator = Mockito.mock(Validator.class);
-
-        when(mockSchema.newSchema(any(URL.class))).thenReturn(schema);
-        when(schema.newValidator()).thenReturn(mockValidator);
-        ruleProvider=new ValidateXmlFilesRuleProvider(mockSchema);
-    }
-
-    @Test
-    public void testValidXmlWithoutClassification() throws Exception
-    {
-        try (GraphContext context = factory.create())
-        {
-            initOnlineWindupConfiguration(context);
-            addFileModel(context, VALID_XML);
-            List<? extends RuleProvider> ruleProviders = Collections.singletonList(ruleProvider);
-            WindupTestUtilMethods.runOnlyRuleProviders(ruleProviders, context);
-
-            GraphService<ClassificationModel> classificationService = new GraphService<>(context,
-                        ClassificationModel.class);
-            Iterable<ClassificationModel> classifications = classificationService.findAll();
-            Assert.assertEquals(0, Iterables.size(classifications));
-        }
-    }
+    @Inject
+    private ValidateXmlFilesRuleProvider validateXmlRuleProvider;
 
     @Test
     public void testNotValidXml() throws Exception
@@ -120,9 +72,7 @@ public class ValidateXmlFilesRuleProviderWithInternetTest extends AbstractXsdVal
             initOnlineWindupConfiguration(context);
             addFileModel(context, NOT_VALID_XML);
 
-            doThrow(new SAXException()).when(mockValidator).validate(any(Source.class));
-
-            List<? extends RuleProvider> ruleProviders = Collections.singletonList(ruleProvider);
+            List<? extends RuleProvider> ruleProviders = Arrays.asList(validateXmlRuleProvider);
             WindupTestUtilMethods.runOnlyRuleProviders(ruleProviders, context);
 
             GraphService<ClassificationModel> classificationService = new GraphService<>(context,
@@ -136,7 +86,6 @@ public class ValidateXmlFilesRuleProviderWithInternetTest extends AbstractXsdVal
             Assert.assertEquals(1, Iterables.size(notValidClassification.getFileModels()));
             FileModel fileWithClassification = notValidClassification.getFileModels().iterator().next();
             Assert.assertEquals(parseFileName(NOT_VALID_XML), fileWithClassification.getFileName());
-
         }
     }
 
@@ -148,25 +97,32 @@ public class ValidateXmlFilesRuleProviderWithInternetTest extends AbstractXsdVal
             initOnlineWindupConfiguration(context);
             addFileModel(context, NOT_VALID_XSD_SCHEMA_URL);
 
-            when(mockSchema.newSchema(any(URL.class))).thenThrow(new SAXException(new FileNotFoundException()));
-
-            List<? extends RuleProvider> ruleProviders = Collections.singletonList(ruleProvider);
+            List<? extends RuleProvider> ruleProviders = Collections.singletonList(validateXmlRuleProvider);
             WindupTestUtilMethods.runOnlyRuleProviders(ruleProviders, context);
 
             GraphService<ClassificationModel> classificationService = new GraphService<>(context,
                         ClassificationModel.class);
             Iterable<ClassificationModel> classifications = classificationService.findAll();
-            Assert.assertEquals(0, Iterables.size(classifications));
+            Assert.assertEquals(1, Iterables.size(classifications));
 
             InlineHintService hintService = new InlineHintService(context);
             Iterable<InlineHintModel> hints = hintService.findAll();
-            Assert.assertEquals(1, Iterables.size(hints));
-
-            final InlineHintModel notValidHint = hints.iterator().next();
-            Assert.assertEquals(XmlFileModel.XSD_URL_NOT_VALID,notValidHint.getTitle());
-            Assert.assertEquals(1, notValidHint.getEffort());
-            Assert.assertEquals(parseFileName(NOT_VALID_XSD_SCHEMA_URL), notValidHint.getFile().getFileName());
-
+            Assert.assertEquals(2, Iterables.size(hints));
+            for (InlineHintModel hint : hints)
+            {
+                switch (hint.getTitle())
+                {
+                    case XmlFileModel.XSD_URL_NOT_VALID:
+                        Assert.assertEquals(XmlFileModel.XSD_URL_NOT_VALID, hint.getTitle());
+                        Assert.assertEquals(1, hint.getEffort());
+                        Assert.assertEquals(parseFileName(NOT_VALID_XSD_SCHEMA_URL), hint.getFile().getFileName());
+                        break;
+                    case "XML File is not valid":
+                        break;
+                    default:
+                        Assert.fail("Unrecognized hint: " + hint.getTitle());
+                }
+            }
         }
     }
 
@@ -178,14 +134,13 @@ public class ValidateXmlFilesRuleProviderWithInternetTest extends AbstractXsdVal
             addFileModel(context, NO_XSD_SCHEMA_URL);
             initOnlineWindupConfiguration(context);
 
-            List<? extends RuleProvider> ruleProviders = Collections.singletonList(ruleProvider);
+            List<? extends RuleProvider> ruleProviders = Collections.singletonList(validateXmlRuleProvider);
             WindupTestUtilMethods.runOnlyRuleProviders(ruleProviders, context);
 
             GraphService<ClassificationModel> classificationService = new GraphService<>(context,
                         ClassificationModel.class);
             Iterable<ClassificationModel> classifications = classificationService.findAll();
             Assert.assertEquals(0, Iterables.size(classifications));
-
         }
     }
 
@@ -197,9 +152,7 @@ public class ValidateXmlFilesRuleProviderWithInternetTest extends AbstractXsdVal
             initOfflineWindupConfiguration(context);
             addFileModel(context, NOT_VALID_XML);
 
-            doThrow(new SAXException()).when(mockValidator).validate(any(Source.class));
-
-            List<? extends RuleProvider> ruleProviders = Collections.singletonList(ruleProvider);
+            List<? extends RuleProvider> ruleProviders = Collections.singletonList(validateXmlRuleProvider);
             WindupTestUtilMethods.runOnlyRuleProviders(ruleProviders, context);
 
             GraphService<ClassificationModel> classificationService = new GraphService<>(context,
@@ -218,21 +171,47 @@ public class ValidateXmlFilesRuleProviderWithInternetTest extends AbstractXsdVal
             initOnlineWindupConfiguration(context);
             addFileModel(context, URL_NOT_PARSABLE);
 
-            List<? extends RuleProvider> ruleProviders = Collections.singletonList(ruleProvider);
+            List<? extends RuleProvider> ruleProviders = Collections.singletonList(validateXmlRuleProvider);
             WindupTestUtilMethods.runOnlyRuleProviders(ruleProviders, context);
 
             GraphService<InlineHintModel> hintService = new GraphService<>(context,
                         InlineHintModel.class);
             Iterable<InlineHintModel> hints = hintService.findAll();
-            Assert.assertEquals(1, Iterables.size(hints));
+            Assert.assertEquals(2, Iterables.size(hints));
 
-            final InlineHintModel hint = hints.iterator().next();
-            Assert.assertEquals(XmlFileModel.XSD_URL_NOT_VALID,hint.getTitle());
+            for (InlineHintModel hint : hints)
+            {
+                switch (hint.getTitle())
+                {
+                    case XmlFileModel.XSD_URL_NOT_VALID:
+                        break;
+                    case "XML File is not valid":
+                        break;
+                    default:
+                        Assert.fail("Unrecognized hint: " + hint.getTitle());
+                }
+            }
 
         }
     }
 
 
+    @Test
+    public void testMultipleSchemas() throws Exception
+    {
+        try (GraphContext context = factory.create())
+        {
+            initOnlineWindupConfiguration(context);
+            addFileModel(context, URL_MULTIPLE_SCHEMAS);
 
+            ValidateXmlFilesRuleProvider ruleProviderNoMocks = new ValidateXmlFilesRuleProvider();
+            List<? extends RuleProvider> ruleProviders = Collections.singletonList(ruleProviderNoMocks);
+            WindupTestUtilMethods.runOnlyRuleProviders(ruleProviders, context);
+
+            GraphService<InlineHintModel> hintService = context.service(InlineHintModel.class);
+            Iterable<InlineHintModel> hints = hintService.findAll();
+            Assert.assertEquals(0, Iterables.size(hints));
+        }
+    }
 
 }
