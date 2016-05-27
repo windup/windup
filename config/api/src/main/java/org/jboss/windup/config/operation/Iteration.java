@@ -45,12 +45,14 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.event.Rewrite;
 
 import com.google.common.collect.Iterables;
+import org.ocpsoft.rewrite.config.CompositeCondition;
 
 /**
  * Used to iterate over an implicit or explicit variable defined within the corresponding {@link ConfigurationRuleBuilder#when(Condition)} clause in
  * the current rule.
  *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="http://ondra.zizka.cz">Ondrej Zizka, I, zizka@seznam.cz</a>
  */
 public class Iteration extends DefaultOperationBuilder
             implements IterationBuilderVar, IterationBuilderOver,
@@ -247,11 +249,8 @@ public class Iteration extends DefaultOperationBuilder
                 boolean conditionResult = true;
                 if (condition != null)
                 {
-                    // automatically set the input variable to point to the current payload
-                    if (condition instanceof GraphCondition)
-                    {
-                        ((GraphCondition) condition).setInputVariablesName(getPayloadVariableName(event, context));
-                    }
+                    final String payloadVariableName = getPayloadVariableName(event, context);
+                    passInputVariableNameToConditionTree(condition, payloadVariableName);
                     conditionResult = condition.evaluate(event, context);
                     /*
                      * Add special clear layer for perform, because condition used one and could have added new variables. The condition result put into
@@ -293,6 +292,25 @@ public class Iteration extends DefaultOperationBuilder
         finally
         {
             event.getRewriteContext().put(DEFAULT_VARIABLE_LIST_STRING, null);
+        }
+    }
+
+
+    private void passInputVariableNameToConditionTree(Condition condition, String payloadVariableName) throws IllegalStateException
+    {
+        // Automatically set the input variable to point to the current payload.
+        if (condition instanceof GraphCondition)
+        {
+            ((GraphCondition) condition).setInputVariablesName(payloadVariableName);
+        }
+        // WINDUP-1057 - we need to pass the variable name manually to the GraphCondition's nested in CompositeCondition's.
+        if (condition instanceof CompositeCondition)
+        {
+            CompositeCondition composite = (CompositeCondition) condition;
+            for (Condition childCondition : composite.getConditions())
+            {
+                passInputVariableNameToConditionTree(childCondition, payloadVariableName);
+            }
         }
     }
 
