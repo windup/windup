@@ -2,7 +2,6 @@ package org.jboss.windup.util;
 
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- * @author <a href="mailto:hotmana76@gmail.com">Marek Novotny</a>
  */
 public class ClassNameUtil
 {

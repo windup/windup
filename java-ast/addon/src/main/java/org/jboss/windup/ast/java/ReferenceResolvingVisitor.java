@@ -1,10 +1,8 @@
 package org.jboss.windup.ast.java;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -60,7 +58,6 @@ import org.jboss.windup.ast.java.data.annotations.AnnotationArrayValue;
 import org.jboss.windup.ast.java.data.annotations.AnnotationClassReference;
 import org.jboss.windup.ast.java.data.annotations.AnnotationLiteralValue;
 import org.jboss.windup.ast.java.data.annotations.AnnotationValue;
-import org.jboss.windup.util.ClassNameUtil;
 
 /**
  * Provides the ability to parse a Java source file and return a {@link List} of {@link ClassReference} objects containing the fully qualified names
@@ -256,7 +253,6 @@ public class ReferenceResolvingVisitor extends ASTVisitor
             packageName = PackageAndClassName.parseFromQualifiedName(sourceString).packageName;
 
         final String className = type.getName();
-
         return processTypeAsString(sourceString, packageName, className, resolutionStatus, referenceLocation, lineNumber, columnNumber, length, line);
     }
 
@@ -531,7 +527,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
             ITypeBinding resolvedTypeBinding = resolveBinding;
             ClassReference reference;
             if (resolvedTypeBinding != null)
-            {                    
+            {
                 reference = processTypeBinding(resolvedTypeBinding, ResolutionStatus.RESOLVED, TypeReferenceLocation.FIELD_DECLARATION,
                         lineNumber,
                         columnNumber, node.getLength(), node.toString());
@@ -542,7 +538,6 @@ public class ReferenceResolvingVisitor extends ASTVisitor
                 ResolutionStatus status = result.found ? ResolutionStatus.RECOVERED : ResolutionStatus.UNRESOLVED;
 
                 PackageAndClassName packageAndClassName = PackageAndClassName.parseFromQualifiedName(result.result);
-
                 reference = processTypeAsString(result.result,
                         packageAndClassName.packageName,
                         packageAndClassName.className,
@@ -913,7 +908,6 @@ public class ReferenceResolvingVisitor extends ASTVisitor
         return super.visit(node);
     }
 
-
     /**
      * Declaration of the variable within a block
      */
@@ -926,10 +920,6 @@ public class ReferenceResolvingVisitor extends ASTVisitor
             VariableDeclarationFragment frag = (VariableDeclarationFragment) node.fragments().get(i);
             state.getNames().add(frag.getName().getIdentifier());
             state.getNameInstance().put(frag.getName().toString(), nodeType.toString());
-            if (frag.getName().getClass().isEnum())
-            {
-                //TODO: add processing Enums?
-            }
         }
 
         processType(node.getType(), TypeReferenceLocation.VARIABLE_DECLARATION,
@@ -937,7 +927,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
                     compilationUnit.getColumnNumber(node.getStartPosition()), node.getLength(), node.toString());
         return super.visit(node);
     }
-    
+
     private void processImport(ImportDeclaration node)
     {
         String name = node.getName().toString();
@@ -961,7 +951,6 @@ public class ReferenceResolvingVisitor extends ASTVisitor
         }
         else
         {
-            //TODO: add processing Enum constant  
             String clzName = StringUtils.substringAfterLast(name, ".");
             state.getClassNameLookedUp().add(clzName);
             state.getClassNameToFQCN().put(clzName, name);
@@ -993,18 +982,23 @@ public class ReferenceResolvingVisitor extends ASTVisitor
             resolutionStatus = ResolutionStatus.RESOLVED;
             ITypeBinding[] argumentTypeBindings = resolveTypeBinding.getParameterTypes();
             List<Expression> arguments = node.arguments();
-
             int index = 0;
             for (ITypeBinding type : argumentTypeBindings)
             {
-                Expression expression = arguments.get(index++);
                 argumentsQualified.add(type.getQualifiedName());
+
                 if (type.isEnum())
                 {
-                    processTypeAsEnum(type, expression, resolutionStatus,
+                    // there is different number of passed arguments and possible arguments from declaration
+                    if (arguments.size() > index)
+                    {
+                        Expression expression = arguments.get(index);
+                        processTypeAsEnum(type, expression, resolutionStatus,
                                 compilationUnit.getLineNumber(node.getName().getStartPosition()),
                                 columnNumber,
                                 length, extractDefinitionLine(node.toString()));
+                    }
+                    index++;
                 }
             }
 
@@ -1024,7 +1018,6 @@ public class ReferenceResolvingVisitor extends ASTVisitor
                         {
                             if (interfaceMethod.getName().equals(node.getName().toString()))
                             {
-
                                 List<String> interfaceMethodArguments = new ArrayList<>();
                                 for (ITypeBinding type : interfaceMethod.getParameterTypes())
                                 {
@@ -1037,7 +1030,6 @@ public class ReferenceResolvingVisitor extends ASTVisitor
                             }
                         }
                     }
-
                 }
             }
 
@@ -1076,7 +1068,6 @@ public class ReferenceResolvingVisitor extends ASTVisitor
                 else
                 {
                     PackageAndClassName argumentQualifiedGuess = PackageAndClassName.parseFromQualifiedName(expression.toString());
-
                     argumentsQualified.add(argumentQualifiedGuess.toString());
                 }
             }
@@ -1137,7 +1128,6 @@ public class ReferenceResolvingVisitor extends ASTVisitor
         IMethodBinding constructorBinding = node.resolveConstructorBinding();
         String qualifiedClass = "";
         List<String> constructorMethodQualifiedArguments = new ArrayList<>();
-        List<String> enumArgumentValues = new ArrayList<>();
         if (constructorBinding != null && constructorBinding.getDeclaringClass() != null)
         {
             ITypeBinding declaringClass = constructorBinding.getDeclaringClass();
@@ -1148,12 +1138,18 @@ public class ReferenceResolvingVisitor extends ASTVisitor
             int index = 0;
             for (ITypeBinding type : constructorBinding.getParameterTypes())
             {
-                Expression argument = arguments.get(index++);
-                String qualifiedArgumentClass = type.getQualifiedName();
                 if (type.isEnum())
                 {
-                    processTypeAsEnum(type, argument, ResolutionStatus.RESOLVED, lineNumber, columnNumber, length, extractDefinitionLine(node.toString()));
+                    // there is different number of passed arguments and possible arguments from declaration
+                    if (arguments.size() > index)
+                    {
+                        Expression argument = arguments.get(index);
+                        processTypeAsEnum(type, argument, ResolutionStatus.RESOLVED, lineNumber, columnNumber, length, extractDefinitionLine(node.toString()));
+                    }
                 }
+                index++;
+
+                String qualifiedArgumentClass = type.getQualifiedName();
                 if (qualifiedArgumentClass != null)
                 {
                     constructorMethodQualifiedArguments.add(qualifiedArgumentClass);
@@ -1196,7 +1192,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
         {
             resolutionStatus = ResolutionStatus.RESOLVED;
         }
-        
+
         ConstructorType resolvedConstructor = new ConstructorType(qualifiedClass, constructorMethodQualifiedArguments);
         processConstructor(resolvedConstructor, resolutionStatus, lineNumber, columnNumber, length, node.toString());
 

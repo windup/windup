@@ -91,4 +91,5 @@ public class JavaEnumerationScanningTest extends AbstractJavaASTTest
                     "new EnumConstClassNotOnClasspath(IndexWriterSetting.TERM_INDEX_INTERVAL)");
         Assert.assertTrue(references.contains(referenceTest));
     }
+    
 }
