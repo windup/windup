@@ -5,9 +5,9 @@ import org.jboss.windup.config.InputType;
 import org.jboss.windup.config.ValidationResult;
 
 /**
- * Indicates that all operations should function in "Offline" mode (without accessing the internet).
+ * If used, Windup will update the Victims database of vulnerabilities.
  *
- * @author Ondrej Zizka
+ * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
  */
 public class VictimsUpdateOption extends AbstractConfigurationOption
 {
@@ -16,7 +16,7 @@ public class VictimsUpdateOption extends AbstractConfigurationOption
     @Override
     public String getDescription()
     {
-        return "Indicates whether to download new Victims database";
+        return "Indicates whether to download new Victims database.";
     }
 
     @Override

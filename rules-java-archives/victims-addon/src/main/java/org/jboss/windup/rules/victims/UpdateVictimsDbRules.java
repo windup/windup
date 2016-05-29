@@ -54,6 +54,10 @@ public class UpdateVictimsDbRules extends AbstractRuleProvider
                 @Override
                 public void perform(GraphRewrite event, EvaluationContext context)
                 {
+                    Boolean updateVictims = (Boolean) event.getGraphContext().getOptionMap().get(VictimsUpdateOption.NAME);
+                    if (updateVictims == null || !updateVictims)
+                        return;
+
                     try {
                         VictimsDBInterface db = VictimsDB.db();
                         // Update (goes to ~/.victims)

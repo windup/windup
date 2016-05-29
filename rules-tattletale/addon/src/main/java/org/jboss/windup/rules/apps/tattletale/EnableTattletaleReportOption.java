@@ -5,7 +5,6 @@ import org.jboss.windup.config.InputType;
 import org.jboss.windup.config.ValidationResult;
 
 /**
- *
  * Indicates that the Tattletale report should be generated.
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
