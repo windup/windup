@@ -7,7 +7,7 @@ import org.jboss.windup.rules.apps.java.model.JarArchiveModel;
 
 /**
  *
- *  @author Ondrej Zizka, ozizka at redhat.com
+ * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
  */
 @TypeValue(AffectedJarModel.TYPE)
 public interface AffectedJarModel extends JarArchiveModel
@@ -15,9 +15,15 @@ public interface AffectedJarModel extends JarArchiveModel
     public static final String TYPE = "victims:affectedJar";
     public static final String VULN = "victims:affectedBy";
 
+    /**
+     * The CVE vulnerabilities this archive is affected by.
+     */
     @Adjacency(label = VULN, direction = Direction.OUT)
     public Iterable<VulnerabilityModel> getVulnerabilities();
 
+    /**
+     * Adds a CVE vulnerability this archive is affected by.
+     */
     @Adjacency(label = VULN, direction = Direction.OUT)
     public AffectedJarModel addVulnerability(VulnerabilityModel vul);
-}// class
+}

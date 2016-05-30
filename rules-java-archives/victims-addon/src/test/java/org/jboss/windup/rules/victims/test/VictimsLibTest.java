@@ -31,7 +31,8 @@ public class VictimsLibTest
     @Test
     public void testUpdate() throws IOException, VictimsException
     {
-        try {
+        try
+        {
             VictimsDBInterface db = VictimsDB.db();
             System.out.println(" DB records:   " + db.getRecordCount());
             System.out.println(" Syncing...");
@@ -40,7 +41,8 @@ public class VictimsLibTest
             System.out.println(" DB records:   " + db.getRecordCount());
             System.out.println("Database last updated on: " + db.lastUpdated().toString());
         }
-        catch (VictimsException ex){
+        catch (VictimsException ex)
+        {
             // Prevent failure if offline. Just a warning.
             if ("Failed to sync database".equals(ex.getMessage()))
                 log.warning(ex.getMessage());
