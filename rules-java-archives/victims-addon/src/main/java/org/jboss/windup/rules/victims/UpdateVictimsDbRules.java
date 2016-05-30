@@ -21,11 +21,15 @@ import com.redhat.victims.database.VictimsDB;
 import com.redhat.victims.database.VictimsDBInterface;
 
 /**
- * Victi.ms related rules: database update, archive hashes comparison.
+ * Victims related rules: database update, archive hashes comparison.
+ *
+ * Currently this is done through the Victims API. However that's not too well implemented.
+ * We could download the data, store it and simply use it through a HashMap.
+ * http://www.victi.ms/service/v2/update/1900-05-26T16:28:26/
  *
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
-@RuleMetadata(tags = {"java"}, phase = InitializationPhase.class)
+@RuleMetadata(tags = {"java", "security"}, phase = InitializationPhase.class)
 public class UpdateVictimsDbRules extends AbstractRuleProvider
 {
     private static final Logger log = Logging.get(UpdateVictimsDbRules.class);
@@ -44,7 +48,15 @@ public class UpdateVictimsDbRules extends AbstractRuleProvider
             {
                 public boolean evaluate(GraphRewrite event, EvaluationContext context)
                 {
-                    return !WindupConfigurationService.getConfigurationModel(event.getGraphContext()).isOfflineMode();
+                    boolean offline = WindupConfigurationService.getConfigurationModel(event.getGraphContext()).isOfflineMode();
+                    if (offline)
+                        return false;
+
+                    Boolean updateVictims = (Boolean) event.getGraphContext().getOptionMap().get(VictimsUpdateOption.NAME);
+                    if (updateVictims == null || !updateVictims)
+                        return false;
+
+                    return true;
                 }
             }
         )
@@ -54,17 +66,14 @@ public class UpdateVictimsDbRules extends AbstractRuleProvider
                 @Override
                 public void perform(GraphRewrite event, EvaluationContext context)
                 {
-                    Boolean updateVictims = (Boolean) event.getGraphContext().getOptionMap().get(VictimsUpdateOption.NAME);
-                    if (updateVictims == null || !updateVictims)
-                        return;
-
                     try {
                         VictimsDBInterface db = VictimsDB.db();
-                        // Update (goes to ~/.victims)
+                        // Update (goes to ~/.victims).
+                        // That is configurable by sysprop victims.home .
                         db.synchronize();
                     }
                     catch(VictimsException ex){
-                        log.log(Level.WARNING, "Failed updating Victi.ms database: " + ex.getMessage(), ex);
+                        log.log(Level.WARNING, "Failed updating Victims database: " + ex.getMessage(), ex);
                     }
                 }
             }

@@ -72,7 +72,8 @@ public class CheckArchivesWithVictimsRules extends AbstractRuleProvider
             .perform(
                 new AbstractIterationOperation<ArchiveModel>() {
                     @Override
-                    public void perform(GraphRewrite event, EvaluationContext context, ArchiveModel archive) {
+                    public void perform(GraphRewrite event, EvaluationContext context, ArchiveModel archive)
+                    {
                         log.info("\tVictims is checking archive: " + archive.getFilePath());
                         GraphService<VulnerabilityModel> vulGS = new GraphService<>(event.getGraphContext(), VulnerabilityModel.class);
                         String hash = archive.asVertex().getProperty(ComputeArchivesSHA512Rules.KEY_SHA512);
@@ -84,13 +85,13 @@ public class CheckArchivesWithVictimsRules extends AbstractRuleProvider
                             AffectedJarModel jar = GraphService.addTypeToModel(event.getGraphContext(), archive, AffectedJarModel.class);
                             for (String vul : vuls) {
                                 log.info("\t\tVulnerability found in " + archive.getFilePath() + ": " + vul);
-                                VulnerabilityModel vulM = vulGS.create().setCve(vul);//.setArchive(jar);
+                                VulnerabilityModel vulM = vulGS.create().setCve(vul);
                                 vulM.setArchive(jar);
-                                log.info("" + vulM);
                                 jar.addVulnerability(vulM);
                             }
-                        } catch (VictimsException ex) {
-                            log.severe("Error in Victims when getting vulnerabilities for " + archive.getArchiveName());
+                        }
+                        catch (VictimsException ex) {
+                            log.severe("Error in Victims when getting vulnerabilities for: " + archive.getArchiveName());
                         }
                         vulGS.commit();
                     }
