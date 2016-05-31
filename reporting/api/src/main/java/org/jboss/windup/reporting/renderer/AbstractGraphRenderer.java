@@ -3,20 +3,20 @@ package org.jboss.windup.reporting.renderer;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-
-import org.jboss.windup.graph.model.WindupConfigurationModel;
+import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.util.exception.WindupException;
 
 /**
  * @author jsigtler
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
  */
 public abstract class AbstractGraphRenderer implements GraphRenderer
 {
-    protected Path createOutputFolder(WindupConfigurationModel configuration, String name)
+    protected Path createOutputFolder(GraphContext graphContext, String name)
     {
-        Path outputPath = getOutputPath(configuration);
+        Path outputPath = getOutputPath(graphContext);
         Path outputFolder = outputPath.resolve(name);
         try
         {
@@ -29,8 +29,8 @@ public abstract class AbstractGraphRenderer implements GraphRenderer
         return outputFolder;
     }
 
-    private Path getOutputPath(WindupConfigurationModel configuration)
+    private Path getOutputPath(GraphContext graphContext)
     {
-        return Paths.get(configuration.getOutputPath().getFilePath(), "renderedGraph");
+        return new ReportService(graphContext).getReportDirectory().resolve("renderedGraph");
     }
 }

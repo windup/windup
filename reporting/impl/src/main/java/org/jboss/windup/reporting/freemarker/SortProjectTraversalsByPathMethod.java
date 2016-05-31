@@ -5,9 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.ProjectModelTraversal;
-import org.jboss.windup.graph.model.comparator.ProjectModelByRootFileComparator;
 import org.jboss.windup.graph.model.comparator.ProjectTraversalRootFileComparator;
 import org.jboss.windup.util.ExecutionStatistics;
 
