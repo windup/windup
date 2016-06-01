@@ -18,6 +18,11 @@ public enum TypeReferenceLocation
     TYPE("Declares type"),
 
     /**
+     * A Java class declares the enumeration.
+     */
+    ENUM_CONSTANT("Declares enumeration constant"),
+
+    /**
      * A Java class declares the referenced method.
      */
     METHOD("Declares method"),
