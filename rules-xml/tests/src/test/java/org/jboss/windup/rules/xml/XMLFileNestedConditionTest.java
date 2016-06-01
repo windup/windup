@@ -84,7 +84,7 @@ public class XMLFileNestedConditionTest
             ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
             pm.setName("Main Project");
             FileModel inputPath = context.getFramed().addVertex(null, FileModel.class);
-            inputPath.setFilePath("src/test/resources/");
+            inputPath.setFilePath("src/test/resources/xml_nested_condition_data");
 
             Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windup_"
                         + UUID.randomUUID().toString());
@@ -118,10 +118,9 @@ public class XMLFileNestedConditionTest
             Iterator<FileModel> iterator = classifications.get(0).getFileModels().iterator();
             for (FileModel fileModel : classifications.get(0).getFileModels())
             {
-                System.out.println("model");
+                System.out.println("model: " + fileModel);
             }
 
-            Assert.assertNotNull(iterator.next());
             Assert.assertNotNull(iterator.next());
             Assert.assertNotNull(iterator.next());
             Assert.assertFalse(iterator.hasNext());
