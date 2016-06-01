@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.lucene.document.Document;
+import org.jboss.windup.maven.nexusindexer.ZipUtil;
 import org.jboss.windup.maven.nexusindexer.client.DocTo;
-import org.jboss.windup.util.ZipUtil;
 
 /**
  * Returns the artifacts which are known to contain given package, using pre-created Lucene index.

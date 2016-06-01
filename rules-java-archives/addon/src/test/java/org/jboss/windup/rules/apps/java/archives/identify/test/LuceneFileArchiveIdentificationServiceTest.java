@@ -38,7 +38,6 @@ public class LuceneFileArchiveIdentificationServiceTest
         check(ident, "4e031bb61df09069aeb2bffb4019e7a5034a4ee0", "junit:junit:jar::4.11");
         check(ident, "4e0334465984c00cbcf177b1702805bd4b5d6d27", "org.soitoolkit.refapps.sd:soitoolkit-refapps-sample-schemas:jar::0.6.1");
         check(ident, "4e034d862d9650df285b8ee98f7f770db6c19029", "org.apache.cxf:cxf-rt-bindings-soap:jar::2.4.8");
-        check(ident, "4e035cf698423199fbaa68a9be9fc264c758727c", "org.apache.maven.reporting:maven-reporting-impl:zip:source-release:2.0.5");
 
         // Some which caused issues.
         check(ident, "7ff0d167a6816aa113b1b4a8a37515701a74b288", "org.kill-bill.billing:killbill-platform-osgi-bundles-lib-slf4j-osgi:jar::0.1.0");
