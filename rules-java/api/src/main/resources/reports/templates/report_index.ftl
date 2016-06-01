@@ -204,7 +204,7 @@
 
     <script type="text/javascript" src="resources/js/report-index-graphs.js"></script>
 
-    <@render_pie project=reportModel.projectModel recursive=true elementID="application_pie" includeTags=reportModel.includeTags excludeTags=reportModel.excludeTags />
+    <@render_pie projectTraversal=getProjectTraversal(reportModel.projectModel, 'only_once') recursive=true elementID="application_pie" includeTags=reportModel.includeTags excludeTags=reportModel.excludeTags />
 
     <script type="text/javascript">
         var tbodyElement = $("#javaIncidentsByPackageTBody");

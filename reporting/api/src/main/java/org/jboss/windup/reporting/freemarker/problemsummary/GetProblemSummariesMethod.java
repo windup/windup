@@ -63,7 +63,8 @@ public class GetProblemSummariesMethod implements WindupFreeMarkerMethod
         Set<String> includeTags = FreeMarkerUtil.simpleSequenceToSet((SimpleSequence) arguments.get(1));
         Set<String> excludeTags = FreeMarkerUtil.simpleSequenceToSet((SimpleSequence) arguments.get(2));
 
-        Map<Severity, List<ProblemSummary>> problemSummariesOriginal = ProblemSummaryService.getProblemSummaries(context, projectModel, includeTags,
+        Set<ProjectModel> projectModels = projectModel == null ? null : projectModel.getAllProjectModels();
+        Map<Severity, List<ProblemSummary>> problemSummariesOriginal = ProblemSummaryService.getProblemSummaries(context, projectModels, includeTags,
                     excludeTags);
 
         // Convert the keys to String to make Freemarker happy

@@ -7,10 +7,13 @@ import java.util.Set;
 import org.jboss.windup.ast.java.data.ResolutionStatus;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.DuplicateProjectModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.graph.traversal.ProjectModelTraversal;
+import org.jboss.windup.graph.traversal.TraversalStrategy;
 import org.jboss.windup.reporting.TagUtil;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.service.InlineHintService;
@@ -33,6 +36,36 @@ public class TypeReferenceService extends GraphService<JavaTypeReferenceModel>
     }
 
     /**
+     * This performs the same function as {@link TypeReferenceService#getPackageUseFrequencies(ProjectModel, Set, Set, int, boolean)},
+     * however it is designed to use a {@link ProjectModelTraversal} instead of only {@link ProjectModel}.
+     *
+     * This is useful for cases where the {@link ProjectModelTraversal} needs to use a custom {@link TraversalStrategy}.
+     */
+    public Map<String, Integer> getPackageUseFrequencies(ProjectModelTraversal projectTraversal, Set<String> includeTags,
+                                                         Set<String> excludeTags, int nameDepth, boolean recursive)
+    {
+        Map<String, Integer> packageUseCount = new HashMap<>();
+        getPackageUseFrequencies(packageUseCount, projectTraversal, includeTags, excludeTags, nameDepth, recursive);
+        return packageUseCount;
+    }
+
+    private Map<String, Integer> getPackageUseFrequencies(Map<String, Integer> packageUseCount,
+                                                          ProjectModelTraversal projectTraversal, Set<String> includeTags,
+                                                          Set<String> excludeTags, int nameDepth, boolean recursive)
+    {
+        getPackageUseFrequencies(packageUseCount, projectTraversal.getCurrent(), includeTags, excludeTags, nameDepth, false);
+
+        if (recursive)
+        {
+            for (ProjectModelTraversal childTraversal : projectTraversal.getChildren())
+            {
+                getPackageUseFrequencies(packageUseCount, childTraversal, includeTags, excludeTags, nameDepth, recursive);
+            }
+        }
+        return packageUseCount;
+    }
+
+    /**
      * Returns the list of most frequently hinted packages (based upon JavaInlineHintModel references) within the given ProjectModel. If recursive is
      * set to true, then also include child projects.
      *
@@ -52,6 +85,8 @@ public class TypeReferenceService extends GraphService<JavaTypeReferenceModel>
                 int nameDepth, boolean recursive)
     {
         ExecutionStatistics.get().begin("TypeReferenceService.getPackageUseFrequencies(data,projectModel,nameDepth,recursive)");
+        if (projectModel instanceof DuplicateProjectModel)
+            projectModel = ((DuplicateProjectModel)projectModel).getCanonicalProject();
 
         InlineHintService hintService = new InlineHintService(getGraphContext());
 

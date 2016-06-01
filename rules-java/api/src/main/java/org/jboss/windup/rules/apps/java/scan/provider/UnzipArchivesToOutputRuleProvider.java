@@ -51,36 +51,36 @@ public class UnzipArchivesToOutputRuleProvider extends AbstractRuleProvider
     {
 
         @Override
-        public void perform(GraphRewrite event, EvaluationContext context, ArchiveModel originalArchive)
+        public void perform(GraphRewrite event, EvaluationContext context, ArchiveModel canonicalArchive)
         {
             // Skip if there were no duplicates
-            if (!originalArchive.getDuplicateArchives().iterator().hasNext())
+            if (!canonicalArchive.getDuplicateArchives().iterator().hasNext())
             {
                 return;
             }
 
-            // Get the original archive and remove it from its current position in the tree
-            ArchiveModel originalParentArchive = originalArchive.getParentArchive();
-            FileModel originalArchiveParentFile = originalArchive.getParentFile();
-            originalArchive.setParentFile(null);
-            originalArchive.setParentArchive(null);
+            // Get the canonical archive and remove it from its current position in the tree
+            ArchiveModel canonicalParentArchive = canonicalArchive.getParentArchive();
+            FileModel canonicalArchiveParentFile = canonicalArchive.getParentFile();
+            canonicalArchive.setParentFile(null);
+            canonicalArchive.setParentArchive(null);
 
             /*
-             * Create the duplicate archive, link it to the original archive and
+             * Create the duplicate archive, link it to the canonical archive and
              * place it in the tree.
              *
-             * Essentially this will replace the original Archive vertex with a vertex that points back to the
+             * Essentially this will replace the canonical Archive vertex with a vertex that points back to the
              * single canonical source for this archive.
              */
             GraphService<DuplicateArchiveModel> duplicateArchiveService = event.getGraphContext().service(DuplicateArchiveModel.class);
             DuplicateArchiveModel duplicateArchive = duplicateArchiveService.create();
-            duplicateArchive.setCanonicalArchive(originalArchive);
-            duplicateArchive.setSHA1Hash(originalArchive.getSHA1Hash());
-            duplicateArchive.setFilePath(originalArchive.getFilePath());
-            duplicateArchive.setArchiveName(originalArchive.getArchiveName());
-            duplicateArchive.setFileName(originalArchive.getFileName());
-            duplicateArchive.setParentArchive(originalParentArchive);
-            duplicateArchive.setParentFile(originalArchiveParentFile);
+            duplicateArchive.setCanonicalArchive(canonicalArchive);
+            duplicateArchive.setSHA1Hash(canonicalArchive.getSHA1Hash());
+            duplicateArchive.setFilePath(canonicalArchive.getFilePath());
+            duplicateArchive.setArchiveName(canonicalArchive.getArchiveName());
+            duplicateArchive.setFileName(canonicalArchive.getFileName());
+            duplicateArchive.setParentArchive(canonicalParentArchive);
+            duplicateArchive.setParentFile(canonicalArchiveParentFile);
         }
     }
 }

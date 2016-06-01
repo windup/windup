@@ -20,6 +20,7 @@ import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.ProjectService;
+import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.service.InlineHintService;
 import org.junit.Assert;
@@ -58,8 +59,9 @@ public class InlineHintServiceTest
             InlineHintService inlineHintService = new InlineHintService(context);
 
             ProjectModel projectModel = fillData(context);
+            ProjectModelTraversal projectModelTraversal = new ProjectModelTraversal(projectModel);
             Set<String> emptySet = Collections.emptySet();
-            final Map<Integer, Integer> effortByCategory = inlineHintService.getMigrationEffortByPoints(projectModel, emptySet, emptySet, true, true);
+            final Map<Integer, Integer> effortByCategory = inlineHintService.getMigrationEffortByPoints(projectModelTraversal, emptySet, emptySet, true, true);
             int totalEffort = 0;
             for (Map.Entry<Integer, Integer> effortEntry : effortByCategory.entrySet())
                 totalEffort += effortEntry.getKey() * effortEntry.getValue();

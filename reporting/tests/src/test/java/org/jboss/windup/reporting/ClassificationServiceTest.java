@@ -17,6 +17,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.junit.Assert;
@@ -53,8 +54,9 @@ public class ClassificationServiceTest
             ClassificationService classificationService = new ClassificationService(context);
 
             ProjectModel projectModel = fillData(context);
+            ProjectModelTraversal projectModelTraversal = new ProjectModelTraversal(projectModel);
             Set<String> emptySet = Collections.emptySet();
-            final Map<Integer, Integer> effortByCategory = classificationService.getMigrationEffortByPoints(projectModel, emptySet, emptySet, true,
+            final Map<Integer, Integer> effortByCategory = classificationService.getMigrationEffortByPoints(projectModelTraversal, emptySet, emptySet, true,
                         true);
             int totalEffort = 0;
             for (Map.Entry<Integer, Integer> effortEntry : effortByCategory.entrySet())

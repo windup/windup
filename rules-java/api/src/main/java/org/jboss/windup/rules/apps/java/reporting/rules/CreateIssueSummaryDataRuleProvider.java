@@ -16,6 +16,8 @@ import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.WindupConfigurationService;
+import org.jboss.windup.graph.traversal.OnlyOnceTraversalStrategy;
+import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.reporting.freemarker.problemsummary.ProblemSummary;
 import org.jboss.windup.reporting.freemarker.problemsummary.ProblemSummaryService;
 import org.jboss.windup.reporting.model.Severity;
@@ -29,7 +31,6 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.MappingJsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.reporting.service.EffortReportService.EffortLevel;
 
@@ -76,13 +77,14 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider
                 for (FileModel inputApplicationFile : windupConfiguration.getInputPaths())
                 {
                     ProjectModel inputApplication = inputApplicationFile.getProjectModel();
+                    ProjectModelTraversal projectModelTraversal = new ProjectModelTraversal(inputApplication, new OnlyOnceTraversalStrategy());
 
                     MappingJsonFactory jsonFactory = new MappingJsonFactory();
                     jsonFactory.disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
                     ObjectMapper objectMapper = new ObjectMapper(jsonFactory);
                     Map<Severity, List<ProblemSummary>> summariesBySeverity =
                         ProblemSummaryService.getProblemSummaries(
-                            event.getGraphContext(), inputApplication, Collections.<String>emptySet(), Collections.<String>emptySet());
+                            event.getGraphContext(), projectModelTraversal.getAllProjects(true), Collections.<String>emptySet(), Collections.<String>emptySet());
 
                     issueSummaryWriter.write("WINDUP_ISSUE_SUMMARIES['" + inputApplication.asVertex().getId() + "'] = ");
                     objectMapper.writeValue(issueSummaryWriter, summariesBySeverity);

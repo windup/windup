@@ -16,7 +16,9 @@
 </#macro>
 
 <#macro applicationReportRenderer applicationReport>
-        <#assign incidentCountBySeverity = getEffortCountForProjectBySeverity(applicationReport.projectModel, true)>
+        <#assign allTraversal = getProjectTraversal(applicationReport.projectModel, 'all')>
+
+        <#assign incidentCountBySeverity = getEffortCountForProjectBySeverity(allTraversal, true)>
         <#assign totalIncidents = 0 >
 
         <#-- Total Effort Points, Name, Technologies, Incident Count per Severity-->
@@ -24,7 +26,7 @@
             <div class="stats">
                 <div class="effortPoints">
                     <#include "include/effort_util.ftl">
-                    <span class="points">${getMigrationEffortPointsForProject(applicationReport.projectModel, true)}</span>
+                    <span class="points">${getMigrationEffortPointsForProject(allTraversal, true)}</span>
                     <span class="legend">story points</span>
                 </div>
                 <div class="incidentsCount">

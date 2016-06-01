@@ -20,7 +20,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.KeepWorkDirsOption;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
-import org.jboss.windup.graph.model.ProjectModelTraversal;
+import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.WindupConfigurationService;
@@ -78,7 +78,6 @@ public class ProjectModelTraversalTest
             FileUtils.copyFile(inputPath1.toFile(), inputPath2.toFile());
 
             runTest(context, Arrays.asList(inputPath1.toString(), inputPath2.toString()));
-            // runTest(context, Arrays.asList(inputPath1.toString()));
 
             final List<String> log4jPathList = new ArrayList<>();
             final List<String> migrationSupportPathList = new ArrayList<>();
@@ -129,9 +128,10 @@ public class ProjectModelTraversalTest
     {
         String indent = StringUtils.repeat(" ", indentLevel * 3);
 
-        System.out.println(indent + "Project: " + traversal.getOriginalProject().getName());
+        System.out.println(indent + "Project: " + traversal.getCanonicalProject().getName());
+        System.out.println("Root file: " + traversal.getFilePath(traversal.getCurrent().getRootFileModel()));
         System.out.println(indent + "Files: ");
-        for (FileModel fileModel : traversal.getOriginalProject().getFileModels())
+        for (FileModel fileModel : traversal.getCanonicalProject().getFileModels())
         {
             System.out.println(indent + "   " + traversal.getFilePath(fileModel));
             callback.fileFound(traversal, fileModel);

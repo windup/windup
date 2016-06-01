@@ -4,7 +4,7 @@
 <#include "include/effort_util.ftl">
 
 <#assign applicationReportIndexModel = reportModel.applicationReportIndexModel>
-
+<#assign allTraversal = getProjectTraversal(reportModel.projectModel, 'all')>
 
 <#macro tagRenderer tag class="">
     <span title="${tag.level}" class="label label-${(tag.level! == 'IMPORTANT')?then('danger','info')} tag-${tag.name?replace(' ','')} ${class!}"
@@ -101,21 +101,73 @@
     </#if>
 </#macro>
 
-<#macro traverseAndRenderProject traversal>
-    <@projectModelRenderer traversal.originalProject />
+<#-- Note that it is possible for projectModel and canonicalProject to be the same. However, if a duplicate project is involved,
+ then "projectModel" will be the duplicate and "canonicalProject" will the the canonical instance. -->
+<#macro renderAppTreeData projectModel canonicalProject>
+    <script>
+        <#assign projectID = "project_${projectModel.asVertex().id?c}">
+        <#assign canonicalProjectID = "project_${canonicalProject.asVertex().id?c}">
+
+        thisProject = new ProjectNode("${projectModel.rootFileModel.fileName?js_string}", "${projectID}-${canonicalProjectID}");
+        thisProject.sourceBased = ${projectModel.sourceBased!false?c};
+        var $tagLabels = $("#${projectID} .projectFile .tech .label");
+        var $tagWarns = $tagLabels.find(".warning");
+        $tagWarns.add( $tagLabels.find(".danger") );
+        thisProject.warnings = $tagWarns.size();
+        thisProject.tags = []; /// TODO: Need to execute all this after the tag JS analysis.
+
+        if (parentProject == null) {
+            rootProject = thisProject;
+            console.log("Root project set to: " + rootProject.name + ", id: " + rootProject.id);
+        } else {
+            parentProject.addSubproject(thisProject);
+            console.log("Adding child: " + thisProject.name + "," + thisProject.id + " to parent: " + parentProject.name + "," + parentProject.id);
+        }
+        parentProject = thisProject;
+    </script>
+</#macro>
+
+<#macro traverseAndRenderAppTreeData traversal>
+    <@renderAppTreeData traversal.current traversal.canonicalProject />
 
     <#list sortProjectTraversalsByPathAscending(traversal.children) as childTraversal>
-        <@traverseAndRenderProject childTraversal/>
+            <@traverseAndRenderAppTreeData childTraversal/>
+    </#list>
+
+    <script>
+        parentProject = parentProject.getParent();
+    </script>
+</#macro>
+
+<#macro traverseAndRenderProject traversal sha1ToPathsMapper>
+    <@projectModelRenderer traversal sha1ToPathsMapper/>
+
+    <#list sortProjectTraversalsByPathAscending(traversal.children) as childTraversal>
+        <@traverseAndRenderProject childTraversal sha1ToPathsMapper/>
     </#list>
 </#macro>
 
-<#macro projectModelRenderer projectModel>
-	<#assign panelStoryPoints = getMigrationEffortPointsForProject(projectModel, false, reportModel.includeTags, reportModel.excludeTags)>
-    <#assign projectID = "project_${projectModel.asVertex().id?c}">
+<#-- Renders the current project in the traversal -->
+<#macro projectModelRenderer traversal sha1ToPathsMapper>
+    <#assign projectModel = traversal.current>
+    <#assign canonicalProject = traversal.canonicalProject>
+    <#assign rootFilePath = traversal.getFilePath(projectModel.rootFileModel)>
+    <#assign duplicatePaths = sha1ToPathsMapper.getPathsBySHA1(projectModel.rootFileModel.SHA1Hash)>
+    <#assign isDuplicateProject = duplicatePaths?size &gt; 1>
+
+	<#assign panelStoryPoints = getMigrationEffortPointsForProject(traversal, false, reportModel.includeTags, reportModel.excludeTags)>
+    <#assign projectID = "project_${canonicalProject.asVertex().id?c}">
     <div class="panel panel-primary projectBox" id="${projectID}" data-windup-projectguid="${generateGUID()}" data-windup-project-storypoints="${panelStoryPoints}">
         <div class="panel-heading panel-collapsed clickable">
             <span class="pull-left"><i class="glyphicon glyphicon-expand arrowIcon"></i></span>
-            <h3 class="panel-title">${projectModel.rootFileModel.prettyPath?html}
+            <h3 class="panel-title">
+                <#if isDuplicateProject>
+                    [Shared] ${projectModel.rootFileModel.fileName}
+                <#else>
+                    ${rootFilePath?html}
+                </#if>
+
+
                 <span class="storyPoints">(${panelStoryPoints} story points)</span>
             </h3>
         </div>
@@ -134,7 +186,7 @@
                         <!-- Basic info -->
                         <div class="basicInfo">
                             <table class="table">
-                                <#assign gav = projectModel.asVertex().getProperty('mavenIdentifier')! >
+                                <#assign gav = canonicalProject.asVertex().getProperty('mavenIdentifier')! >
                                 <#if gav?? >
                                 <tr>
                                     <th>Maven coordinates</th>
@@ -144,7 +196,7 @@
                                 <tr>
                                     <th>Organization</th>
                                     <td>
-                                        <#assign organizations = projectModelToOrganizations(projectModel)>
+                                        <#assign organizations = projectModelToOrganizations(canonicalProject)>
                                         <#if iterableHasContent(organizations)>
                                             <#list organizations.iterator() as organization>
                                                 ${organization.name?html}
@@ -154,21 +206,21 @@
                                 </tr>
                                 <tr>
                                     <th>Name</th>
-                                    <td>${projectModel.name!""?html}</td>
+                                    <td>${canonicalProject.name!""?html}</td>
                                 </tr>
                                 <tr>
                                     <th>Version</th>
-                                    <td>${projectModel.version!""?html}</td>
+                                    <td>${canonicalProject.version!""?html}</td>
                                 </tr>
                                 <tr>
                                     <th>Links</th>
                                     <td>
-                                        <#if projectModel.url?has_content>
-                                            <a href="${projectModel.url?html}">Project Site</a>
+                                        <#if canonicalProject.url?has_content>
+                                            <a href="${canonicalProject.url?html}">Project Site</a>
                                         </#if>
 
-                                        <#if projectModelToSha1(projectModel)?has_content>
-                                            <#assign sha1URL = '|ga|1|1:"' + projectModelToSha1(projectModel) + '"'>
+                                        <#if projectModelToSha1(canonicalProject)?has_content>
+                                            <#assign sha1URL = '|ga|1|1:"' + projectModelToSha1(canonicalProject) + '"'>
                                             <#assign sha1URL = 'http://search.maven.org/#search' + sha1URL?url('ISO-8859-1')>
                                             <a href="${sha1URL?html}">Maven Central</a>
                                         </#if>
@@ -177,9 +229,21 @@
                                 <tr>
                                     <th>Description</th>
                                     <td>
-                                        ${projectModel.description!""}
+                                        ${canonicalProject.description!""}
                                     </td>
                                 </tr>
+                                <#if isDuplicateProject>
+                                    <tr>
+                                        <th>Duplicates</th>
+                                        <td>
+                                            <#list sortFilesByPathAscending(duplicatePaths) as path>
+                                                <div>
+                                                    ${path}
+                                                </div>
+                                            </#list>
+                                        </td>
+                                    </tr>
+                                </#if>
                             </table>
                         </div><!-- /.basicInfo -->
                     </td>
@@ -189,7 +253,7 @@
                         <!-- Packages pie chart -->
                         <div class="chartBoundary">
                             <h4>Java Incidents by Package</h4>
-                            <div id="project_${projectModel.asVertex().id?c}_pie" class="windupPieGraph"></div>
+                            <div id="project_${canonicalProject.asVertex().id?c}_pie" class="windupPieGraph"></div>
                         </div>
                     </td>
                     <td>
@@ -202,38 +266,18 @@
             </table>
 
         </div>
-        <#if iterableHasContent(projectModel.fileModelsNoDirectories)>
+        <#if iterableHasContent(canonicalProject.fileModelsNoDirectories)>
         <table class="subprojects table table-striped table-bordered">
             <tr>
                 <th>Name</th><th>Technology</th><th>Issues</th><th>Story Points</th>
             </tr>
-            <#list sortFilesByPathAscending(projectModel.fileModelsNoDirectories) as fileModel>
+            <#list sortFilesByPathAscending(canonicalProject.fileModelsNoDirectories) as fileModel>
                 <@fileModelRenderer fileModel/>
             </#list>
         </table>
         </#if>
         </div>
     </div>
-
-    <script>
-        thisProject = new ProjectNode("${projectModel.rootFileModel.fileName?js_string}", "${projectID}");
-        thisProject.sourceBased = ${projectModel.sourceBased!false?c};
-        var $tagLabels = $("#${projectID} .projectFile .tech .label");
-        var $tagWarns = $tagLabels.find(".warning");
-        $tagWarns.add( $tagLabels.find(".danger") );
-        thisProject.warnings = $tagWarns.size();
-        thisProject.tags = []; /// TODO: Need to execute all this after the tag JS analysis.
-
-        if (parentProject == null)
-            rootProject = thisProject;
-        else
-            parentProject.addSubproject(thisProject);
-        parentProject = thisProject;
-    </script>
-
-    <script>
-        parentProject = parentProject.getParent();
-    </script>
 </#macro>
 
 
@@ -293,7 +337,7 @@
                     <tr>
                         <td colspan="2">
                             <div class="points" style="text-align: center; color: #00254b; padding-bottom: 1ex;">
-                                <div class="number">${getMigrationEffortPointsForProject(reportModel.projectModel, true, reportModel.includeTags, reportModel.excludeTags)}</div>
+                                <div class="number">${getMigrationEffortPointsForProject(allTraversal, true, reportModel.includeTags, reportModel.excludeTags)}</div>
                                 <div>Story Points</div>
                             </div>
                             <div id="treeView-Projects-wrap" class="short">
@@ -335,7 +379,6 @@
             var thisProject = null;
         </script>
 
-        <#assign projectTraversal = getProjectTraversal(reportModel.projectModel)>
 
         <div class="row container-fluid">
             <div class="theme-showcase" role="main">
@@ -344,7 +387,11 @@
                     <a id="collapseAll" href="javascript:collapseAll()">Collapse All</a>
                     <a id="expandAll" href="javascript:expandAll()">Expand All</a>
                 </div>
-                <@traverseAndRenderProject projectTraversal />
+                <#assign allTraversal = getProjectTraversal(reportModel.projectModel, 'all')>
+                <#assign sha1ToPathsMapper = getArchiveSHA1ToPathMapper(allTraversal)>
+
+                <@traverseAndRenderAppTreeData allTraversal/>
+                <@traverseAndRenderProject getProjectTraversal(reportModel.projectModel, 'only_once') sha1ToPathsMapper/>
 
             </div> <!-- /container -->
         </div>
@@ -360,17 +407,17 @@
         <script src="resources/js/windup-overview.js"></script>
         <script src="resources/js/bootstrap.min.js"></script>
 
-        <@render_pie project=reportModel.projectModel recursive=true elementID="application_pie" includeTags=reportModel.includeTags excludeTags=reportModel.excludeTags />
+        <@render_pie projectTraversal=getProjectTraversal(reportModel.projectModel, 'only_once') recursive=true elementID="application_pie" includeTags=reportModel.includeTags excludeTags=reportModel.excludeTags />
 
-        <#macro projectPieRenderer projectModel>
-            <@render_pie project=projectModel recursive=false elementID="project_${projectModel.asVertex().id?c}_pie" includeTags=reportModel.includeTags excludeTags=reportModel.excludeTags />
+        <#macro projectPieRenderer projectTraversal>
+            <@render_pie project=projectTraversal.current recursive=false elementID="project_${projectTraversal.canonicalProject.asVertex().id?c}_pie" includeTags=reportModel.includeTags excludeTags=reportModel.excludeTags />
 
-            <#list projectModel.childProjects.iterator() as childProject>
-                <@projectPieRenderer childProject />
+            <#list sortProjectTraversalsByPathAscending(projectTraversal.children) as childTraversal>
+                <@projectPieRenderer childTraversal/>
             </#list>
         </#macro>
 
-        <@projectPieRenderer reportModel.projectModel />
+        <@projectPieRenderer getProjectTraversal(reportModel.projectModel, 'only_once') />
 
 
         <script>
