@@ -42,13 +42,11 @@ public class EnhancedEntityResolver2 implements EntityResolver2
         HttpURLConnection httpConnection = (HttpURLConnection)connection;
 
         int status = httpConnection.getResponseCode();
-        if ((status != HttpURLConnection.HTTP_OK) &&
-                    (status == HttpURLConnection.HTTP_MOVED_TEMP
-                                || status == HttpURLConnection.HTTP_MOVED_PERM
-                                || status == HttpURLConnection.HTTP_SEE_OTHER))
+        for (int i = 0; i < 4 && isRedirect(status); i++)
         {
             String newUrl = httpConnection.getHeaderField("Location");
             httpConnection = (HttpURLConnection) new URL(newUrl).openConnection();
+            status = httpConnection.getResponseCode();
         }
 
         InputSource inputSource = new InputSource(httpConnection.getInputStream());
@@ -58,4 +56,11 @@ public class EnhancedEntityResolver2 implements EntityResolver2
 
     }
 
+    private boolean isRedirect(int status)
+    {
+        return (status != HttpURLConnection.HTTP_OK) &&
+                (status == HttpURLConnection.HTTP_MOVED_TEMP
+                        || status == HttpURLConnection.HTTP_MOVED_PERM
+                        || status == HttpURLConnection.HTTP_SEE_OTHER);
+    }
 }
