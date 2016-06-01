@@ -11,19 +11,7 @@
     <artifactId>windup-reporting-impl</artifactId>
     <name>Windup Engine - Reporting Impl</name>
 
-    <build>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <excludes>
-                    <exclude>**/viz.js</exclude>
-                </excludes>
-            </resource>
-        </resources>
-    </build>
-
     <dependencies>
-
         <!-- Local Dependencies -->
         <dependency>
             <groupId>org.jboss.windup.reporting</groupId>

@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jboss.windup.reporting.renderer.GraphWriter;
+import org.jboss.windup.reporting.renderer.GraphDataSerializer;
 import org.jboss.windup.reporting.renderer.dot.DotConstants.DotGraphType;
 
 import com.tinkerpop.blueprints.Direction;
@@ -15,7 +15,7 @@ import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Vertex;
 
-public class DotWriter implements GraphWriter
+public class DotWriter implements GraphDataSerializer
 {
 
     private final Graph graph;
@@ -41,13 +41,7 @@ public class DotWriter implements GraphWriter
         this.edgeLabel = edgeLabel;
     }
 
-    @Override
     public void writeGraph(OutputStream os) throws IOException
-    {
-        writeDot(os);
-    }
-
-    private void writeDot(OutputStream os) throws IOException
     {
         writeGraphTag(os);
     }

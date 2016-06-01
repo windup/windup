@@ -1,17 +1,13 @@
 package org.jboss.windup.reporting.renderer;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.logging.Level;
 
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.WindupConfigurationModel;
-import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.renderer.dot.VizJSHtmlWriter;
 import org.jboss.windup.reporting.renderer.gexf.SigmaJSHtmlWriter;
 import org.jboss.windup.reporting.renderer.graphlib.DagreD3JSHtmlWriter;
-import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.util.Logging;
 
 import com.tinkerpop.blueprints.Graph;
@@ -25,43 +21,51 @@ public class GraphExporter extends AbstractGraphRenderer
     {
         Graph graph = context.getGraph();
 
-        WindupConfigurationModel configuration = WindupConfigurationService.getConfigurationModel(context);
-        Path vizJSOutFile   = createOutputFolder(context, "visjs").resolve("index.html");
-        Path sigmaOutFile   = createOutputFolder(context, "sigma").resolve("index.html");
-        Path dagreD3OutFile = createOutputFolder(context, "dagred3").resolve("index.html");
+        Path vizJSOutPath = createOutputFolder(context, "visjs");
+        Path sigmaOutPath = createOutputFolder(context, "sigma");
+        Path dagreD3OutPath = createOutputFolder(context, "dagred3");
 
-        renderVizjs(graph, vizJSOutFile.toFile(), "label", "id");
-        renderSigma(graph, sigmaOutFile.toFile(), "label", "id");
-        renderDagreD3(graph, dagreD3OutFile.toFile(), "label", "id");
+        renderVizjs(graph, vizJSOutPath, "label", "id");
+        renderSigma(graph, sigmaOutPath, "label", "id");
+        renderDagreD3(graph, dagreD3OutPath, "label", "id");
     }
 
-    public void renderVizjs(Graph graph, File output, String vertexLabelProperty, String edgeLabel)
+    public void renderVizjs(Graph graph, Path output, String vertexLabelProperty, String edgeLabel)
     {
-        LOG.fine("Writing Vizjs graph to: " + output.getAbsolutePath());
-        render(new VizJSHtmlWriter(graph, vertexLabelProperty, edgeLabel), output);
-    }
-
-    public void renderSigma(Graph graph, File output, String vertexLabelProperty, String edgeLabel)
-    {
-        LOG.fine("Writing Sigmajs graph to: " + output.getAbsolutePath());
-        render(new SigmaJSHtmlWriter(graph, vertexLabelProperty, edgeLabel), output);
-    }
-
-    public void renderDagreD3(Graph graph, File output, String vertexLabelProperty, String edgeLabel)
-    {
-        LOG.fine("Writing DagreD3 graph to: " + output.getAbsolutePath());
-        render(new DagreD3JSHtmlWriter(graph, vertexLabelProperty, edgeLabel), output);
-    }
-
-    private void render(GraphWriter writer, File output)
-    {
-        try (FileOutputStream fos = new FileOutputStream(output))
+        LOG.fine("Writing Vizjs graph to: " + output.toAbsolutePath());
+        try
         {
-            writer.writeGraph(fos);
+            new VizJSHtmlWriter(graph, vertexLabelProperty, edgeLabel).writeGraph(output);
         }
         catch (IOException e)
         {
-            throw new WindupException("Failed to render report due to: " + e.getMessage(), e);
+            LOG.log(Level.WARNING, "Failed to write graph visualization due to: " + e.getMessage(), e);
+        }
+    }
+
+    public void renderSigma(Graph graph, Path output, String vertexLabelProperty, String edgeLabel)
+    {
+        LOG.fine("Writing Sigmajs graph to: " + output.toAbsolutePath());
+        try
+        {
+            new SigmaJSHtmlWriter(graph, vertexLabelProperty, edgeLabel).writeGraph(output);
+        }
+        catch (IOException e)
+        {
+            LOG.log(Level.WARNING, "Failed to write graph visualization due to: " + e.getMessage(), e);
+        }
+    }
+
+    public void renderDagreD3(Graph graph, Path output, String vertexLabelProperty, String edgeLabel)
+    {
+        LOG.fine("Writing DagreD3 graph to: " + output.toAbsolutePath());
+        try
+        {
+            new DagreD3JSHtmlWriter(graph, vertexLabelProperty, edgeLabel).writeGraph(output);
+        }
+        catch (IOException e)
+        {
+            LOG.log(Level.WARNING, "Failed to write graph visualization due to: " + e.getMessage(), e);
         }
     }
 }

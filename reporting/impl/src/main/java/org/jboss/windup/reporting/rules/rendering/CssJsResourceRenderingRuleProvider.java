@@ -54,8 +54,7 @@ public class CssJsResourceRenderingRuleProvider extends AbstractRuleProvider
             {
                 final WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(event
                             .getGraphContext());
-                String outputPath = cfg.getOutputPath().getFilePath();
-                copyCssResourcesToOutput(event.getGraphContext(), outputPath);
+                copyCssResourcesToOutput(event.getGraphContext());
             }
 
             @Override
@@ -71,7 +70,7 @@ public class CssJsResourceRenderingRuleProvider extends AbstractRuleProvider
         return configuration;
     }
 
-    private void copyCssResourcesToOutput(GraphContext context, String outputDir)
+    private void copyCssResourcesToOutput(GraphContext context)
     {
         ReportService reportService = new ReportService(context);
         Path outputPath = reportService.getReportDirectory().resolve("resources");

@@ -20,7 +20,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-@Vetoed // When enabling, also delete the <exclude>**/viz.js</exlude> from POM.
+@Vetoed
 @RuleMetadata(phase = PostReportRenderingPhase.class)
 public class RenderGraphRuleProvider extends AbstractRuleProvider
 {
