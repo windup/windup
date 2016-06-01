@@ -5,7 +5,7 @@
     <properties>
         <version.forge>2.20.2.Final</version.forge>
         <version.furnace>2.22.10.Final</version.furnace>
-        <version.nexus.index>5</version.nexus.index>
+        <version.nexus.index>6.1</version.nexus.index>
     </properties>
 
     <!-- Does NOT use windup-parent - this is a BOM. -->
@@ -253,6 +253,12 @@
                 <version>${project.version}</version>
             </dependency>
             <!-- Windup Rules - Java - Archives - Data bundle. -->
+            <dependency>
+                <groupId>org.jboss.windup.maven</groupId>
+                <artifactId>nexus-indexer-data</artifactId>
+                <type>jar</type>
+                <version>${version.nexus.index}</version>
+            </dependency>
             <dependency>
                 <groupId>org.jboss.windup.maven</groupId>
                 <artifactId>nexus-indexer-data</artifactId>
