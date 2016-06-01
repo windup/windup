@@ -26,9 +26,9 @@ public class GraphExporter extends AbstractGraphRenderer
         Graph graph = context.getGraph();
 
         WindupConfigurationModel configuration = WindupConfigurationService.getConfigurationModel(context);
-        Path vizJSOutFile = createOutputFolder(configuration, "visjs").resolve("index.html");
-        Path sigmaOutFile = createOutputFolder(configuration, "sigma").resolve("index.html");
-        Path dagreD3OutFile = createOutputFolder(configuration, "dagred3").resolve("index.html");
+        Path vizJSOutFile   = createOutputFolder(context, "visjs").resolve("index.html");
+        Path sigmaOutFile   = createOutputFolder(context, "sigma").resolve("index.html");
+        Path dagreD3OutFile = createOutputFolder(context, "dagred3").resolve("index.html");
 
         renderVizjs(graph, vizJSOutFile.toFile(), "label", "id");
         renderSigma(graph, sigmaOutFile.toFile(), "label", "id");

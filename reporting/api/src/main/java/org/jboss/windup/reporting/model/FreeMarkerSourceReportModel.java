@@ -23,7 +23,7 @@ public interface FreeMarkerSourceReportModel extends SourceReportModel
     @JavaHandler
     public String getSourceBlock();
 
-    
+
     abstract class Impl implements FreeMarkerSourceReportModel, JavaHandlerContext<Vertex>
     {
         public String getSourceBlock()
