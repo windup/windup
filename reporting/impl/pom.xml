@@ -12,7 +12,6 @@
     <name>Windup Engine - Reporting Impl</name>
 
     <dependencies>
-
         <!-- Local Dependencies -->
         <dependency>
             <groupId>org.jboss.windup.reporting</groupId>

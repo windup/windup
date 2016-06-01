@@ -6,8 +6,6 @@ import java.io.FileOutputStream;
 import java.nio.file.Path;
 
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.WindupConfigurationModel;
-import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.openrdf.model.Namespace;
 import org.openrdf.model.Statement;
 import org.openrdf.rio.RDFFormat;
@@ -27,8 +25,7 @@ public class GraphRDFRenderer extends AbstractGraphRenderer
     {
         try
         {
-            WindupConfigurationModel configuration = WindupConfigurationService.getConfigurationModel(context);
-            Path outputFolder = createOutputFolder(configuration, "rdf");
+            Path outputFolder = createOutputFolder(context, "rdf");
             Path outputFile = outputFolder.resolve("graph.rdf");
 
             Graph graph = context.getGraph();

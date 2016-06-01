@@ -13,5 +13,5 @@ public interface GraphRenderer
     /**
      * Render the given {@link GraphContext}.
      */
-    public void renderGraph(GraphContext context);
+    void renderGraph(GraphContext context);
 }

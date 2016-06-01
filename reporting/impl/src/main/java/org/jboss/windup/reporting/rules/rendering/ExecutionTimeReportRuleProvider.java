@@ -21,7 +21,6 @@ import org.jboss.windup.graph.model.performance.RuleProviderExecutionStatisticsM
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.RuleProviderExecutionStatisticsService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
-import org.jboss.windup.util.Checks;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.PathUtil;
 import org.jboss.windup.util.exception.WindupException;
