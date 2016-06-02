@@ -26,3 +26,4 @@ atlassian-ide-plugin.xml
 *-test-result.html
 rexster.xml
 /tests/cache/
+*.ftl.html
