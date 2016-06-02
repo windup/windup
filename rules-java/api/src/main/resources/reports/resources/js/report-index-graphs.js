@@ -1,5 +1,7 @@
-function createTagCharts() {
 
+var CHART_HEIGHT = "280px";
+
+function createTagCharts() {
     var count = 0;
     for (var severity in getWindupIssueSummaries()) {
         if (!getWindupIssueSummaries().hasOwnProperty(severity))
@@ -7,20 +9,17 @@ function createTagCharts() {
         count++;
     }
 
-
     var effortAndSeverityChart = $("#effortAndSeverityChart");
     effortAndSeverityChart.css("display", "inline-block");
-    effortAndSeverityChart.css("height", "250px");
+    effortAndSeverityChart.css("height", CHART_HEIGHT);
     effortAndSeverityChart.css("width", "100%");
     createLineAndBarChart(effortAndSeverityChart, effortBySeverityChartData(), issuesBySeverityChartData());
 
-
     var mandatoryIncidentsByEffortAndPointsChart = $("#mandatoryIncidentsByEffortAndStoryPoints");
     mandatoryIncidentsByEffortAndPointsChart.css("display", "inline-block");
-    mandatoryIncidentsByEffortAndPointsChart.css("height", "250px");
+    mandatoryIncidentsByEffortAndPointsChart.css("height", CHART_HEIGHT);
     mandatoryIncidentsByEffortAndPointsChart.css("width", "100%");
     createLineAndBarChart(mandatoryIncidentsByEffortAndPointsChart, mandatoryEffortByTypeChartData(), mandatoryIncidentsByTypeChartData());
-
 }
 
 function mandatoryIncidentsByTypeChartData() {
