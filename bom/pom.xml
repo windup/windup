@@ -306,7 +306,14 @@
                 <version>${project.version}</version>
             </dependency>
 
+            <!-- Windup Rules - Victims addon -->
+            <dependency>
+                <groupId>org.jboss.windup.rules.apps</groupId>
+                <artifactId>windup-rules-java-victims</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
+            <!-- Windup Test Harness -->
             <dependency>
                 <groupId>org.jboss.windup</groupId>
                 <artifactId>windup-test-harness</artifactId>

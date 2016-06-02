@@ -16,6 +16,7 @@
 
     <modules>
         <module>addon</module>
+        <module>victims-addon</module>
         <module>tests</module>
     </modules>
 

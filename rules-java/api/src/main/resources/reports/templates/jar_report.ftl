@@ -21,6 +21,7 @@
         body.reportJar .dependency * { font-size: 12pt !important; }
         body.reportJar .dependency ul.traits li.trait { display: block; }
         body.reportJar .dependency .traits .trait span { font-weight: bold; font-size: 11pt !important; }
+        body.reportJar .dependency .vulnerability * { color: #C5351F; /* Darker red. */ }
     </style>
 </head>
 <body role="document" class="reportJar">
@@ -105,8 +106,20 @@
                             <li class="trait">
                                 <span>Found at paths:</span>
                                 <ul>
-                                    <#list getArchivesBySHA1(dependency.SHA1Hash).iterator() as instance>
-                                        <li>${instance.prettyPath}</li>
+                                    <#list getArchivesBySHA1(dependency.SHA1Hash).iterator() as archive>
+                                        <li>
+                                            ${archive.prettyPath}
+                                            <#-- This will need to be moved higher, to the level of the dependency, not individual jar copies. -->
+                                            <#list ((archive.vulnerabilities!).iterator())! >
+                                                Security vulnerabilities:
+                                                <#items as vul >
+                                                    <span class="vulnerability">
+                                                    <a href="http://cve.mitre.org/cgi-bin/cvename.cgi?name=${vul.cve}">${vul.cve}</a>
+                                                    </span>
+                                                    <#sep>, </#sep>
+                                                </#items>
+                                            </#list>
+                                        </li>
                                     </#list>
                                 </ul>
                             </li>

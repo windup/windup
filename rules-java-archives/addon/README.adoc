@@ -1,0 +1,159 @@
+[[ejb-beanutils-asyn-windup-rule-that-detects-seam-asynchronous-annotation-in-remote-ejbs]]
+= victi.ms: Windup Rule That Detects Usage of Java Libraries Affected by CVE Security Vulnerabilities
+
+Author: Ondra Zizka +
+Level: Intermediate +
+Summary: Windup rule that reports on use of Java libraries affected by CVE security vulnerabilites + 
+Source: https://github.com/windup/windup-quickstarts/ +
+
+[[what-is-it]]
+== What is it?
+
+Java developers can easily incorporate 3rd party components and JARs into applications, exposing them to security vulnerabilities. The victi.ms is a database of known vulnerable JAR files and Java artifacts affected by known CVE (Common Vulnerabilities and Exposures) issues. 
+
+This quickstart demonstrates advanced Ruleset authoring with interacting rules and an external dependency.
+
+For more information, see:
+
+* http://victi.ms[Victims site]
+* https://cve.mitre.org[CVE site]
+
+These instructions use the following replaceable variables. 
+
+* `WINDUP_HOME`: Replace this variable with the fully qualified path to your Windup installation.
+* `QUICKSTART_HOME`: Replace this variable with the fully qualified path to the root directory of this quickstart.
+
+
+[[review-the-quickstart-code]]
+== Review the Quickstart Code
+
+The `victi.ms` quickstart contains the following rules.
+
+* `CheckArchivesWithVictimsRules` extends `AbstractRuleProvider` and implements Victi.ms related rules.
+* `ComputeArchivesSHA512Rules` extends `IteratingRuleProvider` and calculates SHA512 hash for each archive.
+* `UpdateVictimsDbRules` extends `AbstractRuleProvider` and implements Victi.ms rule related to database update and archive hash comparisons.
+* `VictimsReportRules` extends `AbstractRuleProvider` and creates a report for all the ignored files, including the regexes they were matched against. 
+
+The Windup JavaDoc is located here: http://windup.github.io/windup/docs/latest/javadoc/
+
+[[system-requirements]]
+== System requirements
+
+The rule this project produces is designed to be run on Windup 2.x or later.
+
+This project requires Java 7 (Java SDK 1.7) or later and Maven 3.0 or later.
+
+[[install-windup]]
+== Install Windup
+
+If you have not installed Windup, follow the instructions here: https://github.com/windup/windup/wiki/Install[Download and Install Windup].
+
+[[configure-maven]]
+== Configure Maven
+
+If you have not yet installed and configured Maven, follow the instructions here: https://github.com/windup/windup/wiki/Install-and-Configure-Maven[Install and Configure Maven].
+
+[[build-the-quickstart-rule]]
+== Build the Quickstart Rule Add-on
+
+Before Windup can use this rule, it must be compiled and added to the local Maven repository.
+
+. Open a command prompt and navigate to the `QUICKSTART_HOME/rules-java/` directory.
+. Type the following command to compile the quickstart and install it into the local Maven repository:
++
+----
+mvn clean install
+----
+. You should see the message `BUILD SUCCESS`
+
+
+[[add-the-quickstart-to-windup]]
+== Add the Quickstart Rule to Windup
+
+You add the rule to Windup using its Maven GAV (groupId, artifactId, and optional version), which is defined in the quickstart POM file. 
+The command takes the following form:
+----
+WINDUP_HOME/bin/windup --install GROUP_ID:ARTIFACT_ID[,VERSION]
+----
+
+To find these values, open the  QUICKSTART_HOME/pom.xml file. These values are located near the beginning of the file.
+
+[source,xml]
+----
+<groupId>org.jboss.windup.quickstarts</groupId>
+<artifactId>windup-victims</artifactId>
+<version>2.6.0-SNAPSHOT
+</version>
+----
+
+Follow these steps to add the rule to Windup.
+
+. Open a command prompt and navigate to the `WINDUP_HOME` directory.
+. Type the following command.
++
+----
+bin/windup --install org.jboss.windup.quickstarts:windup-victims
+----
+. At the following prompt, choose `Y`.
++
+----
+Confirm installation [Y/n]? Y
+----
+
+. You should see the following result.
++
+----
+Installation completed successfully.
+----
+. Type `exit` to exit the Windup console.
+
+
+[[run-the-arquillian-tests]]
+== Run the Arquillian Tests
+
+This quickstart provides Arquillian tests.
+
+. Open a command prompt and navigate to the `QUICKSTART_HOME/rules-java/` directory.
+. Type the following command to run the test goal.
++
+----
+mvn clean test
+----
+. You should see the following results.
++
+----
+Results :
+
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0
+----
+
+
+[[remove-the-quickstart-rule-from-windup]]
+== Remove the Quickstart Rule from Windup
+
+You remove the rule from Windup using its Maven GAV (groupId, artifactId, and optional version).
+ 
+The command takes the following form:
+----
+WINDUP_HOME/bin/windup --remove GROUP_ID:ARTIFACT_ID[,VERSION]
+----
+
+Follow these steps to remove the rule to Windup.
+
+. Open a command prompt and navigate to the `WINDUP_HOME` directory.
+. Type the following command.
++
+----
+bin/windup --remove org.jboss.windup.quickstarts:windup-victims
+----
+
+. You should see the following response.
++
+----
+***SUCCESS*** Removed addons: org.jboss.windup.quickstarts:windup-victims
+----
+
+
+
+
+

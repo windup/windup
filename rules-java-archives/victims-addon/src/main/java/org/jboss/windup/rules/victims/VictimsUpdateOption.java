@@ -1,22 +1,22 @@
-package org.jboss.windup.rules.apps.tattletale;
+package org.jboss.windup.rules.victims;
 
 import org.jboss.windup.config.AbstractConfigurationOption;
 import org.jboss.windup.config.InputType;
 import org.jboss.windup.config.ValidationResult;
 
 /**
- * Indicates that the Tattletale report should be generated.
+ * If used, Windup will update the Victims database of vulnerabilities.
  *
- * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
+ * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
  */
-public class EnableTattletaleReportOption extends AbstractConfigurationOption
+public class VictimsUpdateOption extends AbstractConfigurationOption
 {
-    public static final String NAME = "enableTattletale";
+    public static final String NAME = "victimsUpdate";
 
     @Override
     public String getDescription()
     {
-        return "If set, Windup will generate a report a Tattletale report for each application.";
+        return "Indicates whether to download new Victims database.";
     }
 
     @Override
@@ -28,7 +28,7 @@ public class EnableTattletaleReportOption extends AbstractConfigurationOption
     @Override
     public String getLabel()
     {
-        return "Should Windup generate a Tattletale report?";
+        return "Update Victims database";
     }
 
     @Override
@@ -49,11 +49,16 @@ public class EnableTattletaleReportOption extends AbstractConfigurationOption
         return false;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public ValidationResult validate(Object value)
+    public ValidationResult validate(Object valueObj)
     {
         return ValidationResult.SUCCESS;
     }
 
+
+    @Override
+    public Object getDefaultValue()
+    {
+        return true;
+    }
 }

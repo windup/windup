@@ -180,6 +180,7 @@ a.windup-file-location {
 }
 
 /* Description of the report, showing when .page-header has .showDesc . */
+/* This is the ? icon. */
 .page-header div.desc:before {
     content: "\e085"; /* Glyphicons question-sign */
     font-family:'Glyphicons Halflings';
@@ -194,6 +195,8 @@ a.windup-file-location {
     cursor: help;
 }
 
+/* This is the info box. */
+.panel-primary div.desc,
 .page-header div.desc {
     display: inline-block;
     border: 1px solid #888;
@@ -294,6 +297,9 @@ p.windup-contributors  {
 }
 .tattletale-nav-logo {
 	background: url(../img/styles/tattletale-small-white-icon.png);
+}
+.victims-nav-logo {
+	/*glyphicons glyphicons-hazard-sign*/
 }
 /** /Navigation **/
 
