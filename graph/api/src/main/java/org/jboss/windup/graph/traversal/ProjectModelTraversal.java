@@ -2,7 +2,6 @@ package org.jboss.windup.graph.traversal;
 
 import com.tinkerpop.blueprints.Vertex;
 import org.apache.commons.lang3.StringUtils;
-import org.jboss.forge.furnace.util.Sets;
 import org.jboss.windup.graph.model.DuplicateProjectModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -25,6 +24,7 @@ import java.util.Set;
  * </ul>
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
+ * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
  */
 public class ProjectModelTraversal
 {
@@ -59,8 +59,7 @@ public class ProjectModelTraversal
      * Creates a new {@link ProjectModelTraversal} based upon the provided {@link ProjectModel}. The {@link ProjectModel}
      * should be a "root" model (an application) rather than a subpart of an application.
      *
-     * The provided {@link TraversalStrategy} will determine
-     *
+     * The provided {@link TraversalStrategy} will determine how the ProjectModel's subprojects tree will be traversed.
      */
     public ProjectModelTraversal(ProjectModel current, TraversalStrategy traversalStrategy)
     {
@@ -195,4 +194,26 @@ public class ProjectModelTraversal
             return projectModel;
         }
     }
+
+
+    @Override
+    public String toString()
+    {
+        FileModel rootFileModel = current == null ? null : current.getRootFileModel();
+        String checksum = rootFileModel == null ? null : StringUtils.substring(rootFileModel.getMD5Hash(), 0, 8);
+        String name     = rootFileModel == null ? current.getName() : rootFileModel.getFileName();
+        String projectInfo = current == null ? null : checksum + " " + name + " (" + current.getProjectType() + ')';
+        String strategyInfo = traversalStrategy == null ? null : traversalStrategy.getClass().getSimpleName();
+        return "Trav@" + this.hashCode() + "{cur: " + projectInfo + ", strategy: " + strategyInfo + ", prev: " + previous + '}';
+    }
+
+
+    /**
+     * Resets the state of this traversal, so it can be reused.
+     */
+    public void reset()
+    {
+        this.traversalStrategy.reset();
+    }
+
 }

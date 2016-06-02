@@ -162,13 +162,13 @@
             <span class="pull-left"><i class="glyphicon glyphicon-expand arrowIcon"></i></span>
             <h3 class="panel-title">
                 <#if isDuplicateProject>
-                    [Included Multiple Times] ${projectModel.rootFileModel.fileName}
+                    <span class="shared">[Included Multiple Times]</span> <span class="name">${projectModel.rootFileModel.fileName}</span>
                 <#else>
-                    ${rootFilePath?html}
+                    <span class="name">${rootFilePath?html}</span>
                 </#if>
 
-
-                <span class="storyPoints">(${panelStoryPoints} story points)</span>
+                <span class="storyPoints">(<span class="points">${panelStoryPoints}</span> <span class="legend">story points</span>)</span>
+                <span title="${(projectModel.rootFileModel.SHA1Hash[0..*8])!}">&nbsp;</span>
             </h3>
         </div>
         <div class="panel-body" style="display:none">

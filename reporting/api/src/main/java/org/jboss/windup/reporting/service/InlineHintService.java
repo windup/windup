@@ -3,10 +3,7 @@ package org.jboss.windup.reporting.service;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -19,7 +16,6 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.traversal.ProjectModelTraversal;
-import org.jboss.windup.reporting.TagUtil;
 import org.jboss.windup.reporting.model.EffortReportModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.model.Severity;
@@ -30,10 +26,8 @@ import com.tinkerpop.blueprints.Compare;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.structures.FramedVertexIterable;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
-import com.tinkerpop.pipes.PipeFunction;
-
-import javax.annotation.Nullable;
-import org.jboss.windup.reporting.model.ClassificationModel;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This provides helper functions for finding and creating {@link InlineHintModel} instances within the graph.
@@ -42,6 +36,8 @@ import org.jboss.windup.reporting.model.ClassificationModel;
  */
 public class InlineHintService extends GraphService<InlineHintModel>
 {
+    public static final Logger LOG = Logger.getLogger(InlineHintService.class.getName());
+
     public InlineHintService(GraphContext context)
     {
         super(context, InlineHintModel.class);
@@ -187,6 +183,9 @@ public class InlineHintService extends GraphService<InlineHintModel>
     private void getMigrationEffortDetails(ProjectModelTraversal traversal, Set<String> includeTags, Set<String> excludeTags, boolean recursive,
                 boolean includeZero, EffortAccumulatorFunction accumulatorFunction)
     {
+        LOG.log(Level.INFO, String.format("\n\t\t\tEFFORT H: getMigrationEffortDetails() with: %s, %srecur, %sincludeZero, %s, tags: %s, excl: %s",
+                traversal, recursive ? "" : "!", includeZero ? "" : "!", accumulatorFunction, includeTags, excludeTags));
+
         final Set<Vertex> initialVertices = traversal.getAllProjectsAsVertices(recursive);
 
         GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(this.getGraphContext().getGraph());
