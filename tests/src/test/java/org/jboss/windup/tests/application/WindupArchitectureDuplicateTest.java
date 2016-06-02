@@ -9,12 +9,18 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.ProjectModel;
+import org.jboss.windup.graph.model.WindupConfigurationModel;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.ProjectService;
+import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
+import org.jboss.windup.reporting.model.MigrationIssuesReportModel;
 import org.jboss.windup.reporting.model.ReportModel;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.rules.apps.java.reporting.rules.CreateReportIndexRuleProvider;
+import org.jboss.windup.testutil.html.TestMigrationIssuesReportUtil;
 import org.jboss.windup.testutil.html.TestReportIndexReportUtil;
 import org.junit.Assert;
 import org.junit.Test;
@@ -70,9 +76,10 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest
 
             super.runTest(context, inputPaths, false);
             validateReportIndex(context);
+            validateMigrationIssues(context);
         } finally
         {
-            //FileUtils.deleteDirectory(testTempPath.toFile());
+            FileUtils.deleteDirectory(testTempPath.toFile());
         }
     }
 
@@ -105,6 +112,34 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Potential Issues", 0, 0));
     }
 
+    private void validateMigrationIssues(GraphContext graphContext)
+    {
+        WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(graphContext);
+        ProjectModel mainProject = null;
+        ProjectModel copyProject = null;
+        for (FileModel inputFile : configurationModel.getInputPaths())
+        {
+            if (inputFile.getFileName().equals(MAIN_APP_FILENAME))
+                mainProject = inputFile.getProjectModel();
+            else if (inputFile.getFileName().equals(COPY_EAR_FILENAME))
+                copyProject = inputFile.getProjectModel();
+        }
+        Assert.assertNotNull(mainProject);
+        Assert.assertNotNull(copyProject);
+
+        MigrationIssuesReportModel mainIssuesReportModel = getMigrationIssuesReport(graphContext, mainProject);
+        MigrationIssuesReportModel copyIssuesReportModel = getMigrationIssuesReport(graphContext, copyProject);
+
+        TestMigrationIssuesReportUtil migrationIssuesReportUtil = new TestMigrationIssuesReportUtil();
+        migrationIssuesReportUtil.loadPage(getPathForReport(graphContext, mainIssuesReportModel));
+        Assert.assertTrue(migrationIssuesReportUtil.checkIssue("Maven POM", 6, 0, "Info", 0));
+        Assert.assertTrue(migrationIssuesReportUtil.checkIssue("Unparsable XML File", 2, 0, "Info", 0));
+
+        migrationIssuesReportUtil.loadPage(getPathForReport(graphContext, copyIssuesReportModel));
+        Assert.assertTrue(migrationIssuesReportUtil.checkIssue("Maven POM", 6, 0, "Info", 0));
+        Assert.assertTrue(migrationIssuesReportUtil.checkIssue("Unparsable XML File", 2, 0, "Info", 0));
+    }
+
     private Path getReportIndex(GraphContext graphContext, String applicationFilename)
     {
         GraphService<ApplicationReportModel> service = graphContext.service(ApplicationReportModel.class);
@@ -114,8 +149,13 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest
         for (ApplicationReportModel report : reports)
         {
             if (StringUtils.equals(applicationFilename, report.getProjectModel().getRootFileModel().getFileName()))
-                return new ReportService(graphContext).getReportDirectory().resolve(report.getReportFilename());;
+                return getPathForReport(graphContext, report);
         }
         return null;
+    }
+
+    private Path getPathForReport(GraphContext graphContext, ReportModel report)
+    {
+        return new ReportService(graphContext).getReportDirectory().resolve(report.getReportFilename());
     }
 }

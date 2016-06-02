@@ -10,6 +10,8 @@ import java.util.TreeMap;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
+import org.jboss.windup.graph.traversal.OnlyOnceTraversalStrategy;
+import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.reporting.freemarker.FreeMarkerUtil;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
 import org.jboss.windup.reporting.model.Severity;
@@ -63,7 +65,7 @@ public class GetProblemSummariesMethod implements WindupFreeMarkerMethod
         Set<String> includeTags = FreeMarkerUtil.simpleSequenceToSet((SimpleSequence) arguments.get(1));
         Set<String> excludeTags = FreeMarkerUtil.simpleSequenceToSet((SimpleSequence) arguments.get(2));
 
-        Set<ProjectModel> projectModels = projectModel == null ? null : projectModel.getAllProjectModels();
+        Set<ProjectModel> projectModels = getProjects(projectModel);
         Map<Severity, List<ProblemSummary>> problemSummariesOriginal = ProblemSummaryService.getProblemSummaries(context, projectModels, includeTags,
                     excludeTags);
 
@@ -90,6 +92,15 @@ public class GetProblemSummariesMethod implements WindupFreeMarkerMethod
         }
 
         return primarySummariesByString;
+    }
+
+    private Set<ProjectModel> getProjects(ProjectModel projectModel)
+    {
+        if (projectModel == null)
+            return null;
+
+        ProjectModelTraversal traversal = new ProjectModelTraversal(projectModel, new OnlyOnceTraversalStrategy());
+        return traversal.getAllProjects(true);
     }
 
     @Override

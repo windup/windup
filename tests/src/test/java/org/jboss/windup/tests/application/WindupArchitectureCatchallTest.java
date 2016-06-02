@@ -79,7 +79,7 @@ public class WindupArchitectureCatchallTest extends WindupArchitectureTest
         ReportModel mainApplicationReportModel = getMainApplicationReport(context);
         Path mainAppReport = reportService.getReportDirectory().resolve(mainApplicationReportModel.getReportFilename());
 
-        ReportModel catchallApplicationReportModel = getCatchallApplicationReport(context);
+        ReportModel catchallApplicationReportModel = getMigrationIssuesReport(context);
         Path catchallAppReport = reportService.getReportDirectory().resolve(catchallApplicationReportModel.getReportFilename());
 
         TestJavaApplicationOverviewUtil javaApplicationOverviewUtil = new TestJavaApplicationOverviewUtil();
