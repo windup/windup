@@ -58,9 +58,9 @@
             </div>
         </div>
 
-        <div class="row container-fluid col-md-12 summaryInfo">
+        <div class="row container-fluid summaryInfo">
             <div class="panel panel-primary col-md-12">
-                <div class="row col-md-12 report-index-row">
+                <div class="row report-index-row">
                     <div class="col-md-3">
                         <table class="table table-condensed table-striped" id="incidentsByTypeTable">
                             <thead>
@@ -81,19 +81,13 @@
                         </table>
                     </div>
 
-                    <div class="col-md-8">
-                        <div class="col-md-6">
-                            <div style="text-align: center"><strong>Incidents by Category</strong></div>
-                            <div id="incidentsBySeverityChart" style="float: left;"></div>
-                        </div>
-                        <div class="col-md-6">
-                            <div style="text-align: center"><strong>Incidents and Story Points</strong></div>
-                            <div id="effortAndSeverityChart" style="float: right;"></div>
-                        </div>
+                    <div class="col-md-8  col-md-offset-1" style="max-width: 560px;">
+                        <div style="text-align: center"><strong>Incidents and Story Points</strong></div>
+                        <div id="effortAndSeverityChart" style="float: right;"></div>
                     </div>
                 </div>
 
-                <div class="row col-md-12 report-index-row">
+                <div class="row report-index-row">
                     <div class="col-md-3">
                         <table class="table table-condensed table-striped">
                             <thead>
@@ -113,19 +107,13 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="col-md-8">
-                        <div class="col-md-6">
-                            <div style="text-align: center"><strong>Mandatory Incidents by category</strong></div>
-                            <div id="mandatoryIncidentsByEffort" style="float: left;"></div>
-                        </div>
-                        <div class="col-md-6">
-                            <div style="text-align: center"><strong>Mandatory Incidents and Story Points</strong></div>
-                            <div id="mandatoryIncidentsByEffortAndStoryPoints" style="float: right;"></div>
-                        </div>
+                    <div class="col-md-8  col-md-offset-1" style="max-width: 560px;">
+                        <div style="text-align: center"><strong>Mandatory Incidents and Story Points</strong></div>
+                        <div id="mandatoryIncidentsByEffortAndStoryPoints" style="float: right;"></div>
                     </div>
                 </div><#-- .row -->
 
-                <div class="row col-md-12 report-index-row" id="javaIncidentsByPackageRow">
+                <div class="row report-index-row" id="javaIncidentsByPackageRow">
                     <div class="col-md-3">
                         <table class="table table-condensed table-striped">
                             <thead>
@@ -143,9 +131,9 @@
                         </table>
                         <span class="note">Note: this does not include XML files and "possible" issues.</span>
                     </div>
-                    <div class="panel col-md-6">
-                        <div style="margin-bottom: 10px; margin-left: 190px;">
-                            <b>Java Incidents by Package</b>
+                    <div class="panel col-md-6  col-md-offset-1" style="max-width: 560px;">
+                        <div style="margin-bottom: 15px; margin-left: 48px;">
+                            <strong>Java Incidents by Package</strong>
                         </div>
                         <div id='application_pie' class='windupPieGraph'></div>
                     </div>
@@ -153,7 +141,7 @@
             </div><#-- .panel -->
         </div><#-- .row.summaryInfo -->
 
-        <div class="row container-fluid col-md-12 additionalReports">
+        <div class="row container-fluid additionalReports">
             <div class="panel panel-primary">
                 <div class="panel-heading">
                     Additional Reports
