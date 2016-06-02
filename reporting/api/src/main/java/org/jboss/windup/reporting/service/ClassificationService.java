@@ -217,8 +217,8 @@ public class ClassificationService extends GraphService<ClassificationModel>
     }
 
     /**
-     * This method just attaches the {@link ClassificationModel} to the {@link Length.FileMode}. It will only do so if this link is not already
-     * present.
+     * This method just attaches the {@link ClassificationModel} to the {@link Length.FileMode}.
+     * It will only do so if this link is not already present.
      */
     public ClassificationModel attachClassification(ClassificationModel classificationModel, FileModel fileModel)
     {

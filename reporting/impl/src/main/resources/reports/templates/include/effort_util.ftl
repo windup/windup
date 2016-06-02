@@ -1,11 +1,22 @@
-<#-- getMigrationEffortPointsForProject(traversal, recursive, includeTags (optional), excludeTags (optional)) -->
-<#function getMigrationEffortPointsForProject traversal recursive includeAndExcludeTagParameters...>
+<#--
+    getMigrationEffortPointsForProject(
+        traversal,
+        recursive,
+        includeTags (optional),
+        excludeTags (optional)
+    )
+-->
+<#assign SP_UNIQUE = "UNIQUE" >
+<#assign SP_SHARED = "SHARED" >
+<#assign SP_MIXED  = "MIXED" >
+
+<#function getMigrationEffortPointsForProject traversal recursive spMode includeAndExcludeTagParameters...>
     <#if includeAndExcludeTagParameters?size == 0>
-        <#assign effortLevels = getEffortDetailsForProjectTraversal(traversal, recursive)>
+        <#assign effortLevels = getEffortDetailsForProjectTraversal(traversal, recursive, spMode)>
     <#elseif includeAndExcludeTagParameters?size == 1>
-        <#assign effortLevels = getEffortDetailsForProjectTraversal(traversal, recursive, includeAndExcludeTagParameters[0])>
+        <#assign effortLevels = getEffortDetailsForProjectTraversal(traversal, recursive, spMode, includeAndExcludeTagParameters[0])>
     <#elseif includeAndExcludeTagParameters?size gt 1>
-        <#assign effortLevels = getEffortDetailsForProjectTraversal(traversal, recursive, includeAndExcludeTagParameters[0], includeAndExcludeTagParameters[1])>
+        <#assign effortLevels = getEffortDetailsForProjectTraversal(traversal, recursive, spMode, includeAndExcludeTagParameters[0], includeAndExcludeTagParameters[1])>
     </#if>
 
     <#assign totalEffort = 0>

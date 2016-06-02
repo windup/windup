@@ -19,16 +19,29 @@ import freemarker.template.TemplateBooleanModel;
 import freemarker.template.TemplateModelException;
 
 /**
- * Gets the number of effort points involved in migrating this application
- * 
- * Called from a freemarker template as follows:
- * 
- * getMigrationEffortPoints(projectModel, recursive):int
- * 
- * If recursive is true, the effort total includes child projects.
- * 
+ * Gets the number of effort points involved in migrating this application.
+ *
+ * <p> Called from a freemarker template as follows:
+ *
+ *      <pre>getMigrationEffortPoints(
+ *              projectModel: ProjectModel,
+ *              recursive: Boolean,
+ *              storyPointsMode: SP_UNIQUE | SP_SHARED | SP_MIXED
+ *              [includeTags: Set<String>],
+ *              [excludeTags: Set<String>]
+ *           ) : int
+ *      </pre>
+ *
+ * <p> If recursive is true, the effort total includes child projects.
+ *
+ * <p> StoryPointsMode determines which story points are counted:
+ *    <ul>
+ *    <li><strong>SP_UNIQUE</strong> - only the story points of effort needed to migrate unique application code.</li>
+ *    <li><strong>SP_SHARED</strong> - only the story points of modules of this app which are also used in other application.</li>
+ *    <li><strong>SP_MIXED</strong> -  story points for both of the above, i.e. everything that is used in given application.</li>
+ *    </ul>
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- * 
  */
 public class GetEffortDetailsForProjectTraversalMethod implements WindupFreeMarkerMethod
 {
@@ -59,11 +72,14 @@ public class GetEffortDetailsForProjectTraversalMethod implements WindupFreeMark
     @Override
     public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
     {
+        // Process arguments
         ExecutionStatistics.get().begin(NAME);
         if (arguments.size() < 2)
         {
             throw new TemplateModelException(
-                        "Error, method expects at least two arguments (projectModel:ProjectModel, recursive:Boolean, [includeTags:Set<String>]. [excludeTags:Set<String>])");
+                "Error, method expects at least three arguments"
+                + " (projectModel: ProjectModel, recursive: Boolean, storyPointsMode: SP_UNIQUE | SP_SHARED | SP_MIXED, "
+                + "[includeTags: Set<String>], [excludeTags: Set<String>])");
         }
         StringModel projectModelTraversalArg = (StringModel) arguments.get(0);
         ProjectModelTraversal projectModelTraversal = (ProjectModelTraversal) projectModelTraversalArg.getWrappedObject();
@@ -71,22 +87,26 @@ public class GetEffortDetailsForProjectTraversalMethod implements WindupFreeMark
         TemplateBooleanModel recursiveBooleanModel = (TemplateBooleanModel) arguments.get(1);
         boolean recursive = recursiveBooleanModel.getAsBoolean();
 
+        StringModel storyPointsModeArg = (StringModel) arguments.get(2);
+        String storyPointsMode = storyPointsModeArg.getAsString();
+
         Set<String> includeTags = Collections.emptySet();
-        if (arguments.size() >= 3)
+        if (arguments.size() >= 4)
         {
-            includeTags = FreeMarkerUtil.simpleSequenceToSet((SimpleSequence) arguments.get(2));
+            includeTags = FreeMarkerUtil.simpleSequenceToSet((SimpleSequence) arguments.get(3));
         }
 
         Set<String> excludeTags = Collections.emptySet();
-        if (arguments.size() >= 4)
+        if (arguments.size() >= 5)
         {
-            excludeTags = FreeMarkerUtil.simpleSequenceToSet((SimpleSequence) arguments.get(3));
+            excludeTags = FreeMarkerUtil.simpleSequenceToSet((SimpleSequence) arguments.get(4));
         }
 
-        Map<Integer, Integer> classificationEffortDetails = classificationService.getMigrationEffortByPoints(projectModelTraversal, includeTags, excludeTags,
-                    recursive, false);
-        Map<Integer, Integer> hintEffortDetails = inlineHintService.getMigrationEffortByPoints(projectModelTraversal, includeTags, excludeTags, recursive,
-                    false);
+        // Get values for classification and hints.
+        Map<Integer, Integer> classificationEffortDetails =
+                classificationService.getMigrationEffortByPoints(projectModelTraversal, includeTags, excludeTags, recursive, false);
+        Map<Integer, Integer> hintEffortDetails =
+                inlineHintService.getMigrationEffortByPoints(projectModelTraversal, includeTags, excludeTags, recursive, false);
 
         Map<Integer, Integer> results = new HashMap<>(classificationEffortDetails.size() + hintEffortDetails.size());
         results.putAll(classificationEffortDetails);

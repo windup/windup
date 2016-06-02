@@ -25,11 +25,15 @@
 
     <#-- Total Effort Points, Name, Technologies, Incident Count per Severity-->
     <div class="appInfo">
+        <#include "include/effort_util.ftl">
         <div class="stats">
-            <div class="effortPoints">
-                <#include "include/effort_util.ftl">
-                <span class="points">${getMigrationEffortPointsForProject(allTraversal, true)}</span>
+            <div class="effortPoints unique">
+                <span class="points">${getMigrationEffortPointsForProject(allTraversal, true, SP_UNIQUE)}</span>
                 <span class="legend">story points</span>
+            </div>
+            <div class="effortPoints shared">
+                <span class="points">${getMigrationEffortPointsForProject(allTraversal, true, SP_SHARED)}</span>
+                <span class="legend">in shared libs</span>
             </div>
             <div class="incidentsCount">
                 <table>

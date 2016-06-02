@@ -155,7 +155,7 @@
     <#assign duplicatePaths = sha1ToPathsMapper.getPathsBySHA1(projectModel.rootFileModel.SHA1Hash)>
     <#assign isDuplicateProject = duplicatePaths?size &gt; 1>
 
-	<#assign panelStoryPoints = getMigrationEffortPointsForProject(traversal, false, reportModel.includeTags, reportModel.excludeTags)>
+	<#assign panelStoryPoints = getMigrationEffortPointsForProject(traversal, false, SP_UNIQUE, reportModel.includeTags, reportModel.excludeTags)>
     <#assign projectID = "project_${canonicalProject.asVertex().id?c}">
     <div class="panel panel-primary projectBox" id="${projectID}" data-windup-projectguid="${generateGUID()}" data-windup-project-storypoints="${panelStoryPoints}">
         <div class="panel-heading panel-collapsed clickable">
@@ -337,7 +337,7 @@
                     <tr>
                         <td colspan="2">
                             <div class="points" style="text-align: center; color: #00254b; padding-bottom: 1ex;">
-                                <div class="number">${getMigrationEffortPointsForProject(allTraversal, true, reportModel.includeTags, reportModel.excludeTags)}</div>
+                                <div class="number">${getMigrationEffortPointsForProject(allTraversal, true, SP_UNIQUE, reportModel.includeTags, reportModel.excludeTags)}</div>
                                 <div>Story Points</div>
                             </div>
                             <div id="treeView-Projects-wrap" class="short">
