@@ -161,10 +161,8 @@
             </div>
 
             <div class="tooltipLikeMessage">
-                The following application reports are not based on real applications.
-                They are created artificially and serve for grouping of data.
-                For instance, the Shared Libraries report aggregates information about libraries and modules
-                which appeared multiple times in different applications.
+                These reports contain information about all issues found in archives which were included multiple
+                times in one or more applications.
             </div>
 
             <div class="virtual">
