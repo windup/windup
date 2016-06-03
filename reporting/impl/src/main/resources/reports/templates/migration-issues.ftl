@@ -13,7 +13,7 @@
         <td class="level">${getEffortDescriptionForPoints(problemSummary.effortPerIncident, 'verbose')}</td>
         <td class="text-right">${problemSummary.numberFound * problemSummary.effortPerIncident}</td>
     </tr>
-    <tr class="tablesorter-childRow bg-info" data-summary-id="${problemSummary.id?c}">
+    <tr class="tablesorter-childRow bg-info" data-summary-id="${problemSummary.id}">
         <td><div class="indent"><strong>File</strong></div></td>
         <td class="text-right"><strong>Incidents Found</strong></td>
         <td colspan="3"><strong>Hint</strong></td>
@@ -396,15 +396,15 @@
         <#if problemsBySeverity?has_content>
             <#list problemsBySeverity?keys as severity>
                 <#list problemsBySeverity[severity] as problemSummary>
-                    <@write_to_disk filename="problem_summary_${problemSummary.id?c}.js">
+                    <@write_to_disk filename="problem_summary_${problemSummary.id}.js">
                         <#compress>
-                        MIGRATION_ISSUES_DETAILS[${problemSummary.id?c}] = [
+                        MIGRATION_ISSUES_DETAILS["${problemSummary.id}"] = [
                         <#list problemSummary.descriptions as originalDescription>
                             <#assign description = originalDescription!"-- No detailed text --">
                             <#assign ruleID = problemSummary.ruleID!"">
                             <#assign issueName = problemSummary.issueName!"">
-                            {description: "${markdownToHtml(description)    ?js_string}", ruleID: "${ruleID?js_string}", issueName: "${issueName?js_string}",
-                            problemSummaryID: "${problemSummary.id?c}", files: [
+                            {description: "${markdownToHtml(description)?js_string}", ruleID: "${ruleID?js_string}", issueName: "${issueName?js_string}",
+                            problemSummaryID: "${problemSummary.id}", files: [
                             <#list problemSummary.getFilesForDescription(originalDescription) as fileSummary>
                                 <#assign renderedLink><@render_link model=fileSummary.file/></#assign>
                                 {l:"${renderedLink?json_string}", oc:"${fileSummary.occurrences?json_string}"},

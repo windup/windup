@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.UUID;
 
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.LinkModel;
@@ -20,11 +21,17 @@ import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.InlineHintService;
 
 /**
+ * Gets information about incidents found during the analysis and provides methods for summarizing and analyzing
+ * this data.
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
  */
 public class ProblemSummaryService
 {
+    /**
+     * Gets lists of {@link ProblemSummary} objects organized by {@link Severity}.
+     */
     public static Map<Severity, List<ProblemSummary>> getProblemSummaries(GraphContext context, Set<ProjectModel> projectModels, Set<String> includeTags,
                 Set<String> excludeTags)
     {
@@ -47,13 +54,14 @@ public class ProblemSummaryService
             if (!TagUtil.checkMatchingTags(tags, includeTags, excludeTags, false))
                 continue;
 
-            RuleSummaryKey key = new RuleSummaryKey(hint.getRuleID(), hint.getTitle());
+            RuleSummaryKey key = new RuleSummaryKey(hint.getEffort(), hint.getRuleID(), hint.getTitle());
 
             ProblemSummary summary = ruleToSummary.get(key);
             if (summary == null)
             {
-                summary = new ProblemSummary(hint.asVertex().getId(), hint.getSeverity(), hint.getRuleID(), hint.getTitle(), 1, hint.getEffort());
-                for (LinkModel link : hint.getLinks()){
+                summary = new ProblemSummary(UUID.randomUUID().toString(), hint.getSeverity(), hint.getRuleID(), hint.getTitle(), 1, hint.getEffort());
+                for (LinkModel link : hint.getLinks())
+                {
                     summary.addLink(link.getDescription(), link.getLink());
                 }
                 ruleToSummary.put(key, summary);
@@ -88,11 +96,11 @@ public class ProblemSummaryService
             if (newFileModels.isEmpty())
                 continue;
 
-            RuleSummaryKey key = new RuleSummaryKey(classification.getRuleID(), classification.getClassification());
+            RuleSummaryKey key = new RuleSummaryKey(classification.getEffort(), classification.getRuleID(), classification.getClassification());
             ProblemSummary summary = ruleToSummary.get(key);
             if (summary == null)
             {
-                summary = new ProblemSummary(classification.asVertex().getId(), classification.getSeverity(), classification.getRuleID(),
+                summary = new ProblemSummary(UUID.randomUUID().toString(), classification.getSeverity(), classification.getRuleID(),
                             classification.getClassification(),
                             0, classification.getEffort());
                 for (LinkModel link : classification.getLinks())
