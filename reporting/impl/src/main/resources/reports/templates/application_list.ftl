@@ -16,51 +16,53 @@
 </#macro>
 
 <#macro applicationReportRenderer applicationReport>
-        <#assign allTraversal = getProjectTraversal(applicationReport.projectModel, 'all')>
+    <#-- applicationReport : ApplicationReportModel -->
 
-        <#assign incidentCountBySeverity = getEffortCountForProjectBySeverity(allTraversal, true)>
-        <#assign totalIncidents = 0 >
+    <#assign allTraversal = getProjectTraversal(applicationReport.projectModel, 'all')>
 
-        <#-- Total Effort Points, Name, Technologies, Incident Count per Severity-->
-		<div class="appInfo">
-            <div class="stats">
-                <div class="effortPoints">
-                    <#include "include/effort_util.ftl">
-                    <span class="points">${getMigrationEffortPointsForProject(allTraversal, true)}</span>
-                    <span class="legend">story points</span>
-                </div>
-                <div class="incidentsCount">
-                    <table>
-                        <#list incidentCountBySeverity?keys as severity>
-                            <#assign totalIncidents = totalIncidents + incidentCountBySeverity?api.get(severity) >
-                            <tr>
-                                <td class="label_"> ${severity} </td>
-                                <td class="count"> ${incidentCountBySeverity?api.get(severity)}&times; </td>
-                            </tr>
-                        </#list>
-                        <tr class="total">
-                            <td class="label_"> <span>Total</span> </td>
-                            <td class="count"> <span>${totalIncidents}&times;</span> </td>
+    <#assign incidentCountBySeverity = getEffortCountForProjectBySeverity(allTraversal, true)>
+    <#assign totalIncidents = 0 >
+
+    <#-- Total Effort Points, Name, Technologies, Incident Count per Severity-->
+    <div class="appInfo">
+        <div class="stats">
+            <div class="effortPoints">
+                <#include "include/effort_util.ftl">
+                <span class="points">${getMigrationEffortPointsForProject(allTraversal, true)}</span>
+                <span class="legend">story points</span>
+            </div>
+            <div class="incidentsCount">
+                <table>
+                    <#list incidentCountBySeverity?keys as severity>
+                        <#assign totalIncidents = totalIncidents + incidentCountBySeverity?api.get(severity) >
+                        <tr>
+                            <td class="label_"> ${severity} </td>
+                            <td class="count"> ${incidentCountBySeverity?api.get(severity)}&times; </td>
                         </tr>
-                    </table>
-                </div>
-            </div>
-
-            <div class="traits">
-                <div class="fileName">
-                    <a href="reports/${applicationReport.reportFilename}">${applicationReport.projectModel.rootFileModel.fileName}</a>
-                </div>
-                <div class="techs">
-                    <#list getTechnologyTagsForProject(applicationReport.projectModel) as tag>
-                        <#if tag.name != "Decompiled Java File">
-                        <@tagRenderer tag>
-                            ${tag.name} <#if tag.version?has_content>${tag.version}</#if>
-                        </@tagRenderer>
-                        </#if>
                     </#list>
-                </div>
+                    <tr class="total">
+                        <td class="label_"> <span>Total</span> </td>
+                        <td class="count"> <span>${totalIncidents}&times;</span> </td>
+                    </tr>
+                </table>
             </div>
-		</div>
+        </div>
+
+        <div class="traits">
+            <div class="fileName">
+                <a href="reports/${applicationReport.reportFilename}">${applicationReport.projectModel.rootFileModel.fileName}</a>
+            </div>
+            <div class="techs">
+                <#list getTechnologyTagsForProject(applicationReport.projectModel) as tag>
+                    <#if tag.name != "Decompiled Java File">
+                    <@tagRenderer tag>
+                        ${tag.name} <#if tag.version?has_content>${tag.version}</#if>
+                    </@tagRenderer>
+                    </#if>
+                </#list>
+            </div>
+        </div>
+    </div>
 </#macro>
 
 <head>
@@ -89,8 +91,12 @@
         body.viewAppList .apps .appInfo .stats .incidentsCount table tr.total td { border-top: 1px solid silver; }
         body.viewAppList .apps .appInfo .stats .incidentsCount .count { text-align: right; padding-left: 10px; }
         body.viewAppList .apps .appInfo .traits { margin-left: 340px; }
-        body.viewAppList .apps .appInfo .traits .fileName { padding: 0.0ex 0em 0.2ex; font-size: 18pt; }
+        body.viewAppList .apps .appInfo .traits .fileName { padding: 0.0ex 0em 0.2ex; font-size: 18pt; /* color: #008cba; (Default BS link color) */ }
         body.viewAppList .apps .appInfo .traits .techs { }
+
+        /* Specifics for virtual apps. */
+        body.viewAppList .apps .virtual .appInfo .traits .fileName { font-style: italic; color: #477280; }
+
     </style>
 </head>
 <body role="document" class="viewAppList">
@@ -136,18 +142,33 @@
                 </div>
             </div>
         </div>
-    </div>
 
 
+        <!-- Apps -->
+        <section class="apps">
+            <div class="real">
+                <#list reportModel.relatedResources.applications.list.iterator() as applicationReport>
+                    <#if applicationReport.projectModel.projectType! != "VIRTUAL" >
+                        <@applicationReportRenderer applicationReport/>
+                    </#if>
+                </#list>
+            </div>
 
-    <div class="container-fluid theme-showcase" role="main">
+            <div class="tooltipLikeMessage">
+                The following application reports are not based on real applications.
+                They are created artificially and serve for grouping of data.
+                For instance, the Shared Libraries report aggregates information about libraries and modules
+                which appeared multiple times in different applications.
+            </div>
 
-        <!-- Table -->
-        <div class="apps">
-            <#list reportModel.relatedResources.applications.list.iterator() as applicationReport>
-                <@applicationReportRenderer applicationReport/>
-            </#list>
-        </div>
+            <div class="virtual">
+                <#list reportModel.relatedResources.applications.list.iterator() as applicationReport>
+                    <#if applicationReport.projectModel.projectType! = "VIRTUAL" >
+                        <@applicationReportRenderer applicationReport/>
+                    </#if>
+                </#list>
+            </div>
+        <section>
 
 
         <div style="width: 100%; text-align: center">

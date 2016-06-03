@@ -39,6 +39,8 @@ public interface ProjectModel extends WindupVertexFrame
     String VERSION = "version";
     String PROJECT_TYPE = "projectType";
 
+    String TYPE_VIRTUAL = "VIRTUAL";
+
     /**
      * This represents the root directory (in the case of a source-based analysis) or root archive (for binary analysis) containing this particular
      * project.
