@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.UUID;
 
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.LinkModel;
@@ -58,7 +59,7 @@ public class ProblemSummaryService
             ProblemSummary summary = ruleToSummary.get(key);
             if (summary == null)
             {
-                summary = new ProblemSummary(hint.asVertex().getId(), hint.getSeverity(), hint.getRuleID(), hint.getTitle(), 1, hint.getEffort());
+                summary = new ProblemSummary(UUID.randomUUID().toString(), hint.getSeverity(), hint.getRuleID(), hint.getTitle(), 1, hint.getEffort());
                 for (LinkModel link : hint.getLinks())
                 {
                     summary.addLink(link.getDescription(), link.getLink());
@@ -99,7 +100,7 @@ public class ProblemSummaryService
             ProblemSummary summary = ruleToSummary.get(key);
             if (summary == null)
             {
-                summary = new ProblemSummary(classification.asVertex().getId(), classification.getSeverity(), classification.getRuleID(),
+                summary = new ProblemSummary(UUID.randomUUID().toString(), classification.getSeverity(), classification.getRuleID(),
                             classification.getClassification(),
                             0, classification.getEffort());
                 for (LinkModel link : classification.getLinks())
