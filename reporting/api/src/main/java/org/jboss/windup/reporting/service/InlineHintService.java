@@ -33,6 +33,7 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
 import com.tinkerpop.pipes.PipeFunction;
 
 import javax.annotation.Nullable;
+import org.jboss.windup.reporting.model.ClassificationModel;
 
 /**
  * This provides helper functions for finding and creating {@link InlineHintModel} instances within the graph.
@@ -190,9 +191,16 @@ public class InlineHintService extends GraphService<InlineHintModel>
 
         GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(this.getGraphContext().getGraph());
         pipeline.V();
+        // If the multivalue index is not 1st, then it doesn't work - https://github.com/thinkaurelius/titan/issues/403
         if (!includeZero)
+        {
             pipeline.has(EffortReportModel.EFFORT, Compare.GREATER_THAN, 0);
-        pipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, InlineHintModel.TYPE);
+            pipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, InlineHintModel.TYPE);
+        }
+        else
+        {
+            pipeline.has(WindupVertexFrame.TYPE_PROP, InlineHintModel.TYPE);
+        }
         pipeline.as("hint");
         pipeline.out(InlineHintModel.FILE_MODEL);
         pipeline.in(ProjectModel.PROJECT_MODEL_TO_FILE);

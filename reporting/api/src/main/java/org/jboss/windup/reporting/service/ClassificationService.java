@@ -1,8 +1,5 @@
 package org.jboss.windup.reporting.service;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -13,10 +10,8 @@ import org.jboss.windup.graph.model.LinkModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.traversal.ProjectModelTraversal;
-import org.jboss.windup.reporting.TagUtil;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.EffortReportModel;
 import org.jboss.windup.reporting.model.Severity;
@@ -29,7 +24,7 @@ import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.structures.FramedVertexIterable;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
-import com.tinkerpop.pipes.PipeFunction;
+import org.apache.tools.ant.taskdefs.Length.FileMode;
 
 /**
  * Adds methods for loading and querying ClassificationModel related data.
@@ -136,9 +131,16 @@ public class ClassificationService extends GraphService<ClassificationModel>
 
         GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(this.getGraphContext().getGraph());
         pipeline.V();
+        // If the multivalue index is not 1st, then it doesn't work - https://github.com/thinkaurelius/titan/issues/403
         if (!includeZero)
+        {
             pipeline.has(EffortReportModel.EFFORT, Compare.GREATER_THAN, 0);
-        pipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, ClassificationModel.TYPE);
+            pipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, ClassificationModel.TYPE);
+        }
+        else
+        {
+            pipeline.has(WindupVertexFrame.TYPE_PROP, ClassificationModel.TYPE);
+        }
         pipeline.as("classification");
         // For each classification, count it repeatedly for each file that is within given set of Projects (from the traversal).
         pipeline.out(ClassificationModel.FILE_MODEL);
