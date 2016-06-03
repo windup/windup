@@ -1,7 +1,6 @@
 package org.jboss.windup.graph.model;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -36,13 +35,18 @@ public interface ProjectModel extends WindupVertexFrame
     String ORGANIZATION = "organization";
     String URL = "url";
     String NAME = "name";
+    String UNIQUE_ID = "uniqueID";
     String VERSION = "version";
     String PROJECT_TYPE = "projectType";
 
     /**
+     * Denotes the virtual projects, such like Shared Libraries.
+     */
+    String TYPE_VIRTUAL = "VIRTUAL";
+
+    /**
      * This represents the root directory (in the case of a source-based analysis) or root archive (for binary analysis) containing this particular
      * project.
-     *
      */
     @Adjacency(label = ROOT_FILE_MODEL, direction = Direction.OUT)
     void setRootFileModel(FileModel fileModel);
@@ -101,16 +105,32 @@ public interface ProjectModel extends WindupVertexFrame
     void setVersion(String version);
 
     /**
-     * Contains the project's name.
+     * Project's name.
+     * This is often derived Maven name or MANIFEST.MF name or from project's root filename.
      */
     @Property(NAME)
     String getName();
 
     /**
-     * Contains the project's name.
+     * Project's name.
+     * This is often derived Maven name or MANIFEST.MF name or from project's root filename.
      */
     @Property(NAME)
     void setName(String name);
+
+    /**
+     * Project's unique ID. Not necessarily set for all projects,
+     * only those special, such like shared-libs.
+     */
+    @Property(UNIQUE_ID)
+    String getUniqueID();
+
+    /**
+     * Project's unique ID. Not necessarily set for all projects,
+     * only those special, such like shared-libs.
+     */
+    @Property(UNIQUE_ID)
+    void setUniqueID(String name);
 
     /**
      * Contains the project's description.

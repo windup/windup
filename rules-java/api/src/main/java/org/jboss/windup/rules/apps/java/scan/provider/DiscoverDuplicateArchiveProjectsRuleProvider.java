@@ -56,7 +56,7 @@ public class DiscoverDuplicateArchiveProjectsRuleProvider extends AbstractRulePr
         if (canonicalProject.getParentProject() == null)
         {
             ProjectService projectService = new ProjectService(event.getGraphContext());
-            ProjectModel sharedLibsProject = projectService.getSharedLibsProject();
+            ProjectModel sharedLibsProject = projectService.getOrCreateSharedLibsProject();
             canonicalProject.setParentProject(sharedLibsProject);
         }
 

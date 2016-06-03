@@ -179,8 +179,23 @@ a.windup-file-location {
     color: #005387;
 }
 
-/* Description of the report, showing when .page-header has .showDesc . */
-.page-header div.desc:before {
+/* Used mostly as description of the report. */
+.page-header div.desc,
+div.tooltipLikeMessage {
+    display: inline-block;
+    border: 1px solid #888;
+    background: beige;
+    font-size: 12pt;
+    font-weight: normal;
+    padding: 1ex 1em;
+    color: black;
+    background-color: beige;
+}
+.page-header div.desc { margin: 0px 15px 15px 30px; }
+div.tooltipLikeMessage { margin: 15px 0px 0px 0px; }
+
+.page-header div.desc:before,
+div.tooltipLikeMessage:before {
     content: "\e085"; /* Glyphicons question-sign */
     font-family:'Glyphicons Halflings';
     position:relative; top:1px; line-height:1; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
@@ -194,17 +209,6 @@ a.windup-file-location {
     cursor: help;
 }
 
-.page-header div.desc {
-    display: inline-block;
-    border: 1px solid #888;
-    background: beige;
-    font-size: 12pt;
-    font-weight: normal;
-    padding: 1ex 1em;
-    margin: 0px 15px 15px 30px;
-    color: black;
-    background-color: beige;
-}
 
 .page-header h1 div.path {
     margin-left: 2em;

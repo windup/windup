@@ -14,7 +14,8 @@ import java.nio.file.Path;
  */
 public class ProjectService extends GraphService<ProjectModel>
 {
-    public static final String SHARED_LIBS_APP_NAME = "<shared-libs>";
+    public static final String SHARED_LIBS_UNIQUE_ID = "<shared-libs>";
+    public static final String SHARED_LIBS_APP_NAME = "Shared Libraries";
     public static final String SHARED_LIBS_FILENAME = "shared-libs";
 
     public ProjectService(GraphContext context)
@@ -30,33 +31,40 @@ public class ProjectService extends GraphService<ProjectModel>
         return getUnique(getTypedQuery().has(ProjectModel.NAME, name));
     }
 
+    public ProjectModel getByUniqueID(String id)
+    {
+        return getUnique(getTypedQuery().has(ProjectModel.UNIQUE_ID, id));
+    }
+
     /**
      * Gets the project model used for shared libraries (libraries duplicated in multiple places within one or
      * more applications).
      */
-    public ProjectModel getSharedLibsProject()
+    public ProjectModel getOrCreateSharedLibsProject()
     {
         ProjectService service = new ProjectService(getGraphContext());
-        ProjectModel sharedLibs = service.getByName(SHARED_LIBS_APP_NAME);
-        if (sharedLibs == null)
+        ProjectModel sharedLibsProject = service.getByUniqueID(SHARED_LIBS_UNIQUE_ID);
+        if (sharedLibsProject == null)
         {
-            sharedLibs = service.create();
-            sharedLibs.setName(SHARED_LIBS_APP_NAME);
+            sharedLibsProject = service.create();
+            sharedLibsProject.setName(SHARED_LIBS_APP_NAME);
+            sharedLibsProject.setUniqueID(SHARED_LIBS_UNIQUE_ID);
+            sharedLibsProject.setProjectType(ProjectModel.TYPE_VIRTUAL);
 
             // attach a directory to it, as we generally assume that all projects have a location on disk
             Path archivesDirectory = WindupConfigurationService.getArchivesPath(getGraphContext());
             Path sharedLibsPath = archivesDirectory.resolve("shared-libs-" + RandomStringUtils.randomAlphabetic(6)).resolve(SHARED_LIBS_FILENAME);
-            PathUtil.createDirectory(sharedLibsPath, "Shared libs folder");
+            PathUtil.createDirectory(sharedLibsPath, "shared libs virtual app");
 
             FileModel sharedLibsFileModel = new FileService(getGraphContext()).createByFilePath(sharedLibsPath.toString());
-            sharedLibs.setRootFileModel(sharedLibsFileModel);
-            sharedLibs.addFileModel(sharedLibsFileModel);
+            sharedLibsProject.setRootFileModel(sharedLibsFileModel);
+            sharedLibsProject.addFileModel(sharedLibsFileModel);
 
             // attach this to the configuration, so that reporting treats it as a standalone app
             WindupConfigurationModel configuration = WindupConfigurationService.getConfigurationModel(getGraphContext());
             configuration.addInputPath(sharedLibsFileModel);
         }
 
-        return sharedLibs;
+        return sharedLibsProject;
     }
 }
