@@ -186,44 +186,26 @@ public class InlineHintService extends GraphService<InlineHintModel>
     private void getMigrationEffortDetails(ProjectModelTraversal traversal, Set<String> includeTags, Set<String> excludeTags, boolean recursive,
                 boolean includeZero, EffortAccumulatorFunction accumulatorFunction)
     {
-
         final Set<Vertex> initialVertices = traversal.getAllProjectsAsVertices(recursive);
 
-        GremlinPipeline<Vertex, Vertex> inlineHintPipeline = new GremlinPipeline<>(this.getGraphContext().getGraph());
-        inlineHintPipeline.V();
+        GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(this.getGraphContext().getGraph());
+        pipeline.V();
         if (!includeZero)
-        {
-            inlineHintPipeline.has(EffortReportModel.EFFORT, Compare.GREATER_THAN, 0);
-            inlineHintPipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, InlineHintModel.TYPE);
-        }
-        else
-        {
-            inlineHintPipeline.has(WindupVertexFrame.TYPE_PROP, InlineHintModel.TYPE);
-        }
+            pipeline.has(EffortReportModel.EFFORT, Compare.GREATER_THAN, 0);
+        pipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, InlineHintModel.TYPE);
+        pipeline.as("hint");
+        pipeline.out(InlineHintModel.FILE_MODEL);
+        pipeline.in(ProjectModel.PROJECT_MODEL_TO_FILE);
+        pipeline.filter(new SetMembersFilter(initialVertices));
+        pipeline.back("hint");
 
-        inlineHintPipeline.as("hint");
-        inlineHintPipeline.out(InlineHintModel.FILE_MODEL);
-        inlineHintPipeline.in(ProjectModel.PROJECT_MODEL_TO_FILE);
-        inlineHintPipeline.filter(new PipeFunction<Vertex, Boolean>()
-        {
-            @Override
-            public Boolean compute(Vertex argument)
-            {
-                return initialVertices.contains(argument);
-            }
-        });
-        inlineHintPipeline.back("hint");
-
-        for (Vertex v : inlineHintPipeline)
+        boolean checkTags = !includeTags.isEmpty() || !excludeTags.isEmpty();
+        for (Vertex v : pipeline)
         {
             // only check tags if we have some passed in
-            if (!includeTags.isEmpty() || !excludeTags.isEmpty())
-            {
-                InlineHintModel hintModel = frame(v);
-                if (!TagUtil.checkMatchingTags(hintModel.getTags(), includeTags, excludeTags))
-                    continue;
+            if (checkTags && !frame(v).matchesTags(includeTags, excludeTags))
+                continue;
 
-            }
             accumulatorFunction.accumulate(v);
         }
     }

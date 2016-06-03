@@ -132,55 +132,33 @@ public class ClassificationService extends GraphService<ClassificationModel>
     private void getMigrationEffortDetails(ProjectModelTraversal traversal, Set<String> includeTags, Set<String> excludeTags, boolean recursive,
                 boolean includeZero, EffortAccumulatorFunction accumulatorFunction)
     {
-        FileService fileService = new FileService(this.getGraphContext());
-
         final Set<Vertex> initialVertices = traversal.getAllProjectsAsVertices(recursive);
 
-        GremlinPipeline<Vertex, Vertex> classificationPipeline = new GremlinPipeline<>(this.getGraphContext().getGraph());
-        classificationPipeline.V();
+        GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(this.getGraphContext().getGraph());
+        pipeline.V();
         if (!includeZero)
-        {
-            classificationPipeline.has(EffortReportModel.EFFORT, Compare.GREATER_THAN, 0);
-            classificationPipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, ClassificationModel.TYPE);
-        }
-        else
-        {
-            classificationPipeline.has(WindupVertexFrame.TYPE_PROP, ClassificationModel.TYPE);
-        }
+            pipeline.has(EffortReportModel.EFFORT, Compare.GREATER_THAN, 0);
+        pipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, ClassificationModel.TYPE);
+        pipeline.as("classification");
+        // For each classification, count it repeatedly for each file that is within given set of Projects (from the traversal).
+        pipeline.out(ClassificationModel.FILE_MODEL);
+        pipeline.in(ProjectModel.PROJECT_MODEL_TO_FILE);
+        pipeline.filter(new SetMembersFilter(initialVertices));
+        pipeline.back("classification");
 
-        classificationPipeline.as("classification");
-        classificationPipeline.out(ClassificationModel.FILE_MODEL);
-        classificationPipeline.in(ProjectModel.PROJECT_MODEL_TO_FILE);
-        classificationPipeline.filter(new PipeFunction<Vertex, Boolean>()
+        boolean checkTags = !includeTags.isEmpty() || !excludeTags.isEmpty();
+        for (Vertex v : pipeline)
         {
-            @Override
-            public Boolean compute(Vertex argument)
-            {
-                return initialVertices.contains(argument);
-            }
-        });
-        classificationPipeline.back("classification");
-
-        for (Vertex v : classificationPipeline)
-        {
-            Integer migrationEffort = v.getProperty(EffortReportModel.EFFORT);
-            if (migrationEffort == null)
+            // only check tags if we have some passed in
+            if (checkTags && !frame(v).matchesTags(includeTags, excludeTags))
                 continue;
 
-            // only check tags if we have some passed in
-            if (!includeTags.isEmpty() || !excludeTags.isEmpty())
-            {
-                ClassificationModel classificationModel = this.frame(v);
-                if (!TagUtil.checkMatchingTags(classificationModel.getTags(), includeTags, excludeTags))
-                    continue;
-            }
-
+            // For each classification, count it repeatedly for each file.
+            // TODO: .accumulate(v, count);
+            // TODO: This could be all done just within the query (provided that the tags would be taken care of).
+            //       Accumulate could be a PipeFunction.
             for (Vertex fileVertex : v.getVertices(Direction.OUT, ClassificationModel.FILE_MODEL))
-            {
-                FileModel fileModel = fileService.frame(fileVertex);
-                if (initialVertices.contains(fileModel.getProjectModel().asVertex()))
-                    accumulatorFunction.accumulate(v);
-            }
+               accumulatorFunction.accumulate(v);
         }
     }
 
