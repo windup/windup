@@ -15,10 +15,10 @@
 		<#nested/></span>
 </#macro>
 
-<#macro applicationReportRenderer applicationReport>
-    <#-- applicationReport : ApplicationReportModel -->
+<#macro applicationReportRenderer appReport>
+    <#-- appReport : ApplicationReportModel -->
 
-    <#assign allTraversal = getProjectTraversal(applicationReport.projectModel, 'all')>
+    <#assign allTraversal = getProjectTraversal(appReport.projectModel, 'all')>
 
     <#assign incidentCountBySeverity = getEffortCountForProjectBySeverity(allTraversal, true)>
     <#assign totalIncidents = 0 >
@@ -50,10 +50,16 @@
 
         <div class="traits">
             <div class="fileName">
-                <a href="reports/${applicationReport.reportFilename}">${applicationReport.projectModel.rootFileModel.fileName}</a>
+                <a href="reports/${appReport.reportFilename}">
+                    <#-- For virtual apps, use name rather than the file name. -->
+                    ${ (appReport.projectModel.projectType! = "VIRTUAL"
+                        && appReport.projectModel.name??)?then(
+                            appReport.projectModel.name,
+                            appReport.projectModel.rootFileModel.fileName)}
+                </a>
             </div>
             <div class="techs">
-                <#list getTechnologyTagsForProject(applicationReport.projectModel) as tag>
+                <#list getTechnologyTagsForProject(appReport.projectModel) as tag>
                     <#if tag.name != "Decompiled Java File">
                     <@tagRenderer tag>
                         ${tag.name} <#if tag.version?has_content>${tag.version}</#if>
