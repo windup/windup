@@ -6,8 +6,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * This implementation holds a Map, and for each vertex, it increases the key
+ * that is determined from the vertex by supplied implementation of vertexToKey({@link Vertex}).
  *
- *  @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
+ * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
  */
 abstract class MapSumEffortAccumulatorFunction<T> implements EffortAccumulatorFunction
 {
