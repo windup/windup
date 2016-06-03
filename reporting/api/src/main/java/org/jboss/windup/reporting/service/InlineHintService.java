@@ -145,8 +145,8 @@ public class InlineHintService extends GraphService<InlineHintModel>
 
     /**
      * <p>
-     * Returns the total effort points in all of the {@link InlineHintModel} instances associated with the {@link FileMode} instances in the given
-     * {@link ProjectModel}.
+     * Returns the total effort points in all of the {@link InlineHintModel}s
+     * associated with the {@link FileMode} instances in the given {@link ProjectModelTraversal}.
      * </p>
      * <p>
      * If set to recursive, then also include the effort points from child projects.
@@ -155,55 +155,32 @@ public class InlineHintService extends GraphService<InlineHintModel>
      * The result is a Map, the key contains the effort level and the value contains the number of incidents.
      * </p>
      */
-    public Map<Integer, Integer> getMigrationEffortByPoints(ProjectModelTraversal traversal, Set<String> includeTags, Set<String> excludeTags,
-                                                            boolean recursive, boolean includeZero)
+    public Map<Integer, Integer> getMigrationEffortByPoints(
+        ProjectModelTraversal traversal, Set<String> includeTags, Set<String> excludeTags, boolean recursive, boolean includeZero)
     {
-        final Map<Integer, Integer> results = new HashMap<>();
-
-        EffortAccumulatorFunction accumulator = new EffortAccumulatorFunction()
-        {
-            @Override
-            public void accumulate(Vertex effortReportVertex)
-            {
+        MapSumEffortAccumulatorFunction<Integer> accumulator = new MapSumEffortAccumulatorFunction(){
+            public Object vertexToKey(Vertex effortReportVertex) {
                 Integer migrationEffort = effortReportVertex.getProperty(EffortReportModel.EFFORT);
-                if (!results.containsKey(migrationEffort))
-                    results.put(migrationEffort, 1);
-                else
-                    results.put(migrationEffort, results.get(migrationEffort) + 1);
+                return migrationEffort;
             }
         };
-
         getMigrationEffortDetails(traversal, includeTags, excludeTags, recursive, includeZero, accumulator);
-
-        return results;
+        return accumulator.getResults();
     }
 
     /**
-     * <p>
      * Returns the total incidents in all of the {@link InlineHintModel}s associated with the files in this project by severity.
-     * </p>
      */
     public Map<Severity, Integer> getMigrationEffortBySeverity(ProjectModelTraversal traversal, Set<String> includeTags, Set<String> excludeTags,
                 boolean recursive)
     {
-        final Map<Severity, Integer> results = new HashMap<>();
-
-        EffortAccumulatorFunction accumulator = new EffortAccumulatorFunction()
-        {
-            @Override
-            public void accumulate(Vertex effortReportVertex)
-            {
-                Severity severity = frame(effortReportVertex).getSeverity();
-                if (!results.containsKey(severity))
-                    results.put(severity, 1);
-                else
-                    results.put(severity, results.get(severity) + 1);
+        MapSumEffortAccumulatorFunction<Severity> accumulator = new MapSumEffortAccumulatorFunction(){
+            public Severity vertexToKey(Vertex effortReportVertex) {
+                return frame(effortReportVertex).getSeverity();
             }
         };
-
-        getMigrationEffortDetails(traversal, includeTags, excludeTags, recursive, true, accumulator);
-
-        return results;
+        this.getMigrationEffortDetails(traversal, includeTags, excludeTags, recursive, true, accumulator);
+        return accumulator.getResults();
     }
 
     private void getMigrationEffortDetails(ProjectModelTraversal traversal, Set<String> includeTags, Set<String> excludeTags, boolean recursive,
@@ -212,7 +189,7 @@ public class InlineHintService extends GraphService<InlineHintModel>
 
         final Set<Vertex> initialVertices = traversal.getAllProjectsAsVertices(recursive);
 
-        GremlinPipeline<Vertex, Vertex> inlineHintPipeline = new GremlinPipeline<>(getGraphContext().getGraph());
+        GremlinPipeline<Vertex, Vertex> inlineHintPipeline = new GremlinPipeline<>(this.getGraphContext().getGraph());
         inlineHintPipeline.V();
         if (!includeZero)
         {
