@@ -7,14 +7,16 @@ package org.jboss.windup.reporting.freemarker.problemsummary;
  */
 public class RuleSummaryKey
 {
+    private final int effort;
     private final String ruleID;
     private final String title;
 
     /**
      * Creates a key with the given rule id and title.
      */
-    public RuleSummaryKey(String ruleID, String title)
+    public RuleSummaryKey(Integer effort, String ruleID, String title)
     {
+        this.effort = effort == null ? 0 : effort;
         this.ruleID = ruleID;
         this.title = title;
     }
@@ -40,21 +42,24 @@ public class RuleSummaryKey
     {
         if (this == o)
             return true;
-        if (o == null || getClass() != o.getClass())
+        if (!(o instanceof RuleSummaryKey))
             return false;
 
         RuleSummaryKey that = (RuleSummaryKey) o;
 
+        if (effort != that.effort)
+            return false;
         if (ruleID != null ? !ruleID.equals(that.ruleID) : that.ruleID != null)
             return false;
-        return !(title != null ? !title.equals(that.title) : that.title != null);
+        return title != null ? title.equals(that.title) : that.title == null;
 
     }
 
     @Override
     public int hashCode()
     {
-        int result = ruleID != null ? ruleID.hashCode() : 0;
+        int result = effort;
+        result = 31 * result + (ruleID != null ? ruleID.hashCode() : 0);
         result = 31 * result + (title != null ? title.hashCode() : 0);
         return result;
     }

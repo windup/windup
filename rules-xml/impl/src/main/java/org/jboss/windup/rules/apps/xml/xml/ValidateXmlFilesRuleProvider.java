@@ -87,15 +87,21 @@ public class ValidateXmlFilesRuleProvider extends AbstractRuleProvider
                 {
                     for (SAXParseException exception : handler.getParseExceptions())
                     {
-                        validationFailed = true;
-                        createSAXParseHint(event, context, sourceFile, exception);
+                        if (isExceptionRelatedToSource(sourceFile, exception))
+                        {
+                            validationFailed = true;
+                            createSAXParseHint(event, context, sourceFile, exception);
+                        }
                     }
                 }
             }
             catch (SAXParseException e)
             {
-                validationFailed = true;
-                createSAXParseHint(event, context, sourceFile, e);
+                if (isExceptionRelatedToSource(sourceFile, e))
+                {
+                    validationFailed = true;
+                    createSAXParseHint(event, context, sourceFile, e);
+                }
             }
             catch (ParserConfigurationException | IOException | SAXException e)
             {
@@ -104,16 +110,19 @@ public class ValidateXmlFilesRuleProvider extends AbstractRuleProvider
             finally
             {
                 if (validationFailed)
-                {
-                    sourceFile.setGenerateSourceReport(true);
-
-                    ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-                    ClassificationModel model = classificationService.attachClassification(context, sourceFile, XmlFileModel.NOT_VALID_XML,
-                                null);
-                    TagSetService tagSetService = new TagSetService(event.getGraphContext());
-                    model.setTagModel(tagSetService.getOrCreate(event, Collections.singleton(NOT_VALID_XML_TAG)));
-                }
+                    createParseFailureClassification(event, context, sourceFile);
             }
+        }
+
+        private boolean isExceptionRelatedToSource(XmlFileModel sourceFile, SAXParseException e)
+        {
+            if (e.getSystemId() == null)
+                return true;  // Just assume that it is related, in the absence of other information
+
+            if (e.getSystemId().startsWith("http://") || e.getSystemId().startsWith("https://") || e.getSystemId().startsWith("ftp://"))
+                return false;
+
+            return e.getSystemId().endsWith(sourceFile.getFileName());
         }
 
         private void createSAXParseHint(GraphRewrite event, EvaluationContext context, XmlFileModel sourceFile, SAXParseException e)
@@ -150,5 +159,15 @@ public class ValidateXmlFilesRuleProvider extends AbstractRuleProvider
 
             sourceFile.setGenerateSourceReport(true);
         }
+    }
+
+    private void createParseFailureClassification(GraphRewrite event, EvaluationContext context, XmlFileModel sourceFile) {
+        sourceFile.setGenerateSourceReport(true);
+
+        ClassificationService classificationService = new ClassificationService(event.getGraphContext());
+        ClassificationModel model = classificationService.attachClassification(context, sourceFile, XmlFileModel.NOT_VALID_XML,
+                    null);
+        TagSetService tagSetService = new TagSetService(event.getGraphContext());
+        model.setTagModel(tagSetService.getOrCreate(event, Collections.singleton(NOT_VALID_XML_TAG)));
     }
 }
