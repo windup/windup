@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 import org.apache.commons.io.FileUtils;
@@ -19,6 +20,7 @@ import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.exec.configuration.options.UserRulesDirectoryOption;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
+import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.MigrationIssuesReportModel;
 import org.jboss.windup.reporting.model.ReportModel;
@@ -33,6 +35,10 @@ import org.jboss.windup.rules.apps.java.reporting.rules.EnableCompatibleFilesRep
 import org.jboss.windup.rules.apps.tattletale.EnableTattletaleReportOption;
 import org.junit.Assert;
 
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+
 /**
  * Base class for Windup end-to-end tests.
  *
@@ -40,6 +46,7 @@ import org.junit.Assert;
  */
 public abstract class WindupArchitectureTest
 {
+    public static final String REPORTS_TEMPLATES_MIGRATION_ISSUES_FTL = "/reports/templates/migration-issues.ftl";
     @Inject
     private WindupProcessor processor;
 
@@ -180,10 +187,40 @@ public abstract class WindupArchitectureTest
                     CreateJavaApplicationOverviewReportRuleProvider.DETAILS_REPORT);
     }
 
-    MigrationIssuesReportModel getCatchallApplicationReport(GraphContext context)
+    MigrationIssuesReportModel getMigrationIssuesReport(GraphContext context, final ProjectModel projectModel)
     {
-        // Before WINDUP-986: "Potential Issues"
-        return (MigrationIssuesReportModel) getReport(context, "/reports/templates/migration-issues.ftl", "Migration Issues");
+        Iterable<ReportModel> reportModels = Iterables.filter(getReports(context, REPORTS_TEMPLATES_MIGRATION_ISSUES_FTL),
+                    new Predicate<ReportModel>()
+                    {
+                        @Override
+                        public boolean apply(@Nullable ReportModel input)
+                        {
+                            if (!(input instanceof MigrationIssuesReportModel))
+                                return false;
+
+                            MigrationIssuesReportModel migrationIssuesReportModel = (MigrationIssuesReportModel) input;
+                            return projectModel == null || projectModel.equals(migrationIssuesReportModel.getProjectModel());
+                        }
+                    });
+
+        if (!reportModels.iterator().hasNext())
+            return null;
+
+        if (Iterables.size(reportModels) > 1)
+            Assert.fail("Only one migration issues report expected for the application!");
+
+        return (MigrationIssuesReportModel)reportModels.iterator().next();
+    }
+
+    MigrationIssuesReportModel getMigrationIssuesReport(GraphContext context)
+    {
+        return (MigrationIssuesReportModel) getReport(context, REPORTS_TEMPLATES_MIGRATION_ISSUES_FTL, "Migration Issues");
+    }
+
+    Iterable<ReportModel> getReports(GraphContext context, String template)
+    {
+        ReportService reportService = new ReportService(context);
+        return reportService.findAllByProperty(ReportModel.TEMPLATE_PATH, template);
     }
 
     ReportModel getReport(GraphContext context, String template, String name)
