@@ -1,8 +1,5 @@
 package org.jboss.windup.reporting.service;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -13,10 +10,8 @@ import org.jboss.windup.graph.model.LinkModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.traversal.ProjectModelTraversal;
-import org.jboss.windup.reporting.TagUtil;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.EffortReportModel;
 import org.jboss.windup.reporting.model.Severity;
@@ -29,13 +24,13 @@ import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.structures.FramedVertexIterable;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
-import com.tinkerpop.pipes.PipeFunction;
+import org.apache.tools.ant.taskdefs.Length.FileMode;
 
 /**
  * Adds methods for loading and querying ClassificationModel related data.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- * 
+ *
  */
 public class ClassificationService extends GraphService<ClassificationModel>
 {
@@ -91,7 +86,8 @@ public class ClassificationService extends GraphService<ClassificationModel>
 
     /**
      * <p>
-     * Returns the total effort points in all of the {@link ClassificationModel}s associated with the files in this project.
+     * Returns the total effort points in all of the {@link ClassificationModel}s
+     * associated with the {@link FileMode} instances in the given {@link ProjectModelTraversal}.
      * </p>
      * <p>
      * If set to recursive, then also include the effort points from child projects.
@@ -100,109 +96,71 @@ public class ClassificationService extends GraphService<ClassificationModel>
      * The result is a Map, the key contains the effort level and the value contains the number of incidents.
      * </p>
      */
-    public Map<Integer, Integer> getMigrationEffortByPoints(ProjectModelTraversal initialProject, Set<String> includeTags, Set<String> excludeTags,
+    public Map<Integer, Integer> getMigrationEffortByPoints(ProjectModelTraversal traversal, Set<String> includeTags, Set<String> excludeTags,
                                                             boolean recursive, boolean includeZero)
     {
-        final Map<Integer, Integer> results = new HashMap<>();
-
-        EffortAccumulatorFunction accumulator = new EffortAccumulatorFunction()
-        {
-            @Override
-            public void accumulate(Vertex effortReportVertex)
-            {
+        MapSumEffortAccumulatorFunction<Integer> accumulator = new MapSumEffortAccumulatorFunction(){
+            public Integer vertexToKey(Vertex effortReportVertex) {
                 Integer migrationEffort = effortReportVertex.getProperty(EffortReportModel.EFFORT);
-                if (!results.containsKey(migrationEffort))
-                    results.put(migrationEffort, 1);
-                else
-                    results.put(migrationEffort, results.get(migrationEffort) + 1);
+                return migrationEffort;
             }
         };
-
-        getMigrationEffortDetails(initialProject, includeTags, excludeTags, recursive, includeZero, accumulator);
-
-        return results;
+        getMigrationEffortDetails(traversal, includeTags, excludeTags, recursive, includeZero, accumulator);
+        return accumulator.getResults();
     }
 
     /**
-     * <p>
      * Returns the total incidents in all of the {@link ClassificationModel}s associated with the files in this project by severity.
-     * </p>
      */
-    public Map<Severity, Integer> getMigrationEffortBySeverity(ProjectModelTraversal traversal, Set<String> includeTags, Set<String> excludeTags,
-                boolean recursive)
+    public Map<Severity, Integer> getMigrationEffortBySeverity(
+        ProjectModelTraversal traversal, Set<String> includeTags, Set<String> excludeTags, boolean recursive)
     {
-        final Map<Severity, Integer> results = new HashMap<>();
-
-        EffortAccumulatorFunction accumulator = new EffortAccumulatorFunction()
-        {
-            @Override
-            public void accumulate(Vertex effortReportVertex)
-            {
-                Severity severity = frame(effortReportVertex).getSeverity();
-                if (!results.containsKey(severity))
-                    results.put(severity, 1);
-                else
-                    results.put(severity, results.get(severity) + 1);
+        MapSumEffortAccumulatorFunction<Severity> accumulator = new MapSumEffortAccumulatorFunction(){
+            public Severity vertexToKey(Vertex effortReportVertex) {
+                return frame(effortReportVertex).getSeverity();
             }
         };
-
-        getMigrationEffortDetails(traversal, includeTags, excludeTags, recursive, true, accumulator);
-
-        return results;
+        this.getMigrationEffortDetails(traversal, includeTags, excludeTags, recursive, true, accumulator);
+        return accumulator.getResults();
     }
 
     private void getMigrationEffortDetails(ProjectModelTraversal traversal, Set<String> includeTags, Set<String> excludeTags, boolean recursive,
                 boolean includeZero, EffortAccumulatorFunction accumulatorFunction)
     {
-        FileService fileService = new FileService(getGraphContext());
-
         final Set<Vertex> initialVertices = traversal.getAllProjectsAsVertices(recursive);
 
-        GremlinPipeline<Vertex, Vertex> classificationPipeline = new GremlinPipeline<>(getGraphContext().getGraph());
-        classificationPipeline.V();
+        GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(this.getGraphContext().getGraph());
+        pipeline.V();
+        // If the multivalue index is not 1st, then it doesn't work - https://github.com/thinkaurelius/titan/issues/403
         if (!includeZero)
         {
-            classificationPipeline.has(EffortReportModel.EFFORT, Compare.GREATER_THAN, 0);
-            classificationPipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, ClassificationModel.TYPE);
+            pipeline.has(EffortReportModel.EFFORT, Compare.GREATER_THAN, 0);
+            pipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, ClassificationModel.TYPE);
         }
         else
         {
-            classificationPipeline.has(WindupVertexFrame.TYPE_PROP, ClassificationModel.TYPE);
+            pipeline.has(WindupVertexFrame.TYPE_PROP, ClassificationModel.TYPE);
         }
+        pipeline.as("classification");
+        // For each classification, count it repeatedly for each file that is within given set of Projects (from the traversal).
+        pipeline.out(ClassificationModel.FILE_MODEL);
+        pipeline.in(ProjectModel.PROJECT_MODEL_TO_FILE);
+        pipeline.filter(new SetMembersFilter(initialVertices));
+        pipeline.back("classification");
 
-        classificationPipeline.as("classification");
-        classificationPipeline.out(ClassificationModel.FILE_MODEL);
-        classificationPipeline.in(ProjectModel.PROJECT_MODEL_TO_FILE);
-        classificationPipeline.filter(new PipeFunction<Vertex, Boolean>()
+        boolean checkTags = !includeTags.isEmpty() || !excludeTags.isEmpty();
+        for (Vertex v : pipeline)
         {
-            @Override
-            public Boolean compute(Vertex argument)
-            {
-                return initialVertices.contains(argument);
-            }
-        });
-        classificationPipeline.back("classification");
-
-        for (Vertex v : classificationPipeline)
-        {
-            Integer migrationEffort = v.getProperty(EffortReportModel.EFFORT);
-            if (migrationEffort == null)
+            // only check tags if we have some passed in
+            if (checkTags && !frame(v).matchesTags(includeTags, excludeTags))
                 continue;
 
-            // only check tags if we have some passed in
-            if (!includeTags.isEmpty() || !excludeTags.isEmpty())
-            {
-                ClassificationModel classificationModel = frame(v);
-                if (!TagUtil.checkMatchingTags(classificationModel.getTags(), includeTags, excludeTags))
-                    continue;
-            }
-
+            // For each classification, count it repeatedly for each file.
+            // TODO: .accumulate(v, count);
+            // TODO: This could be all done just within the query (provided that the tags would be taken care of).
+            //       Accumulate could be a PipeFunction.
             for (Vertex fileVertex : v.getVertices(Direction.OUT, ClassificationModel.FILE_MODEL))
-            {
-                FileModel fileModel = fileService.frame(fileVertex);
-                if (initialVertices.contains(fileModel.getProjectModel().asVertex()))
-                    accumulatorFunction.accumulate(v);
-            }
+               accumulatorFunction.accumulate(v);
         }
     }
 
