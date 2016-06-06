@@ -336,7 +336,7 @@ public class Bootstrap
 
             System.out.println();
             System.out.println(message);
-            for (String item : items)
+            for (String item : sorted)
             {
                 System.out.println("\t" + item);
             }
