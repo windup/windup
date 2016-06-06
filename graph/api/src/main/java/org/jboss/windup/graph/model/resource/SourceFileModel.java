@@ -1,5 +1,8 @@
 package org.jboss.windup.graph.model.resource;
 
+import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.frames.modules.javahandler.JavaHandler;
+import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import org.jboss.windup.graph.model.LinkModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
@@ -35,12 +38,22 @@ public interface SourceFileModel extends WindupVertexFrame
     /**
      * Contains a boolean indicating that the reporting system should generate a source report for this {@link SourceFileModel}.
      */
-    @Property(GENERATE_SOURCE_REPORT)
-    Boolean isGenerateSourceReport();
+    @JavaHandler
+    boolean isGenerateSourceReport();
 
     /**
      * Contains a boolean indicating that the reporting system should generate a source report for this {@link SourceFileModel}.
      */
     @Property(GENERATE_SOURCE_REPORT)
     void setGenerateSourceReport(boolean generateSourceReport);
+
+    abstract class Impl implements SourceFileModel, JavaHandlerContext<Vertex>
+    {
+        @Override
+        public boolean isGenerateSourceReport()
+        {
+            Boolean result = it().getProperty(GENERATE_SOURCE_REPORT);
+            return result == null ? false : result;
+        }
+    }
 }

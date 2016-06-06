@@ -61,8 +61,8 @@
                             </tr>
                             <#list reportModel.relatedResources.springBeans.list.iterator() as springBean>
                                 <tr>
-                                   <td><@render_link model=springBean.springConfiguration text=springBean.springBeanName/></td>
-                                   <td><@render_link model=springBean.javaClass /></td>
+                                   <td><@render_link model=springBean.springConfiguration project=reportModel.projectModel text=springBean.springBeanName/></td>
+                                   <td><@render_link model=springBean.javaClass project=reportModel.projectModel/></td>
                                 </tr>
                             </#list>
                         </table>

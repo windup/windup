@@ -44,7 +44,7 @@
     <tr class="projectFile">
         <#-- Name -->
         <td class="path">
-            <a href="${sourceReportModel.reportFilename}">
+            <a href="${sourceReportModel.reportFilename}?project=${reportModel.projectModel.asVertex().id?c}">
                 ${getPrettyPathForFile(fileModel)}
             </a>
         </td>

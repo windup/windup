@@ -65,7 +65,7 @@
                                     ${datasource.databaseTypeName}<#if datasource.databaseTypeVersion??> ${datasource.databaseTypeVersion}</#if>
                                 </#if>
                             </td>
-                            <td><@render_linkable linkable=datasource layout='horizontal'/></td>
+                            <td><@render_link model=datasource project=reportModel.projectModel layout='horizontal'/></td>
                         </tr>
                     </#items>
                     </table>
@@ -88,7 +88,7 @@
                         <tr>
                             <td>${jmsDestination.jndiLocation}</td>
                             <td><#if jmsDestination.destinationType??>${jmsDestination.destinationType}</#if></td>
-                            <td><@render_linkable linkable=jmsDestination layout='horizontal'/></td>
+                            <td><@render_link model=jmsDestination project=reportModel.projectModel layout='horizontal'/></td>
                         </tr>
                     </#items>
                     </table>
@@ -135,7 +135,7 @@
                             <td>${threadPool.poolName!""}</td>
                             <td>${threadPool.maxPoolSize!""}</td>
                             <td>${threadPool.minPoolSize!""}</td>
-                            <td><@render_linkable linkable=threadPool layout='horizontal'/></td>
+                            <td><@render_link model=threadPool project=reportModel.projectModel layout='horizontal'/></td>
                         </tr>
                     </#items>
                     </table>

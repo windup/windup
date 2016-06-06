@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.LinkModel;
+import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.ReportResourceFileModel;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerTemplateDirective;
@@ -42,7 +43,12 @@ import org.jboss.windup.util.IterableConverter;
 public class RenderLinkDirective implements WindupFreeMarkerTemplateDirective
 {
     private static final Logger LOG = Logging.get(RenderLinkDirective.class);
+
     public static final String NAME = "render_link";
+    public static final String MODEL = "model";
+    public static final String TEXT = "text";
+    public static final String PROJECT = "project";
+
     private GraphContext context;
     private SourceReportService sourceReportService;
     private JavaClassService javaClassService;
@@ -58,10 +64,10 @@ public class RenderLinkDirective implements WindupFreeMarkerTemplateDirective
                 throws TemplateException, IOException
     {
         final Writer writer = env.getOut();
-        StringModel stringModel = (StringModel) params.get("model");
+        StringModel stringModel = (StringModel) params.get(MODEL);
 
-        SimpleScalar defaultTextModel = (SimpleScalar) params.get("text");
-        String defaultText = params.get("text") == null ? null : defaultTextModel.getAsString();
+        SimpleScalar defaultTextModel = (SimpleScalar) params.get(TEXT);
+        String defaultText = defaultTextModel == null ? null : defaultTextModel.getAsString();
 
         if (stringModel == null || stringModel.getWrappedObject() == null)
         {
@@ -75,6 +81,11 @@ public class RenderLinkDirective implements WindupFreeMarkerTemplateDirective
             return;
         }
 
+        StringModel projectStringModel = (StringModel) params.get(PROJECT);
+        ProjectModel project = null;
+        if (projectStringModel != null && projectStringModel.getWrappedObject() instanceof ProjectModel)
+            project = (ProjectModel)projectStringModel.getWrappedObject();
+
         Object model = stringModel.getWrappedObject();
 
         LayoutType layoutType = resolveLayoutType(params);
@@ -82,19 +93,19 @@ public class RenderLinkDirective implements WindupFreeMarkerTemplateDirective
 
         if (model instanceof FileLocationModel)
         {
-            processFileLocationModel(writer, cssClass, (FileLocationModel) model, defaultText);
+            processFileLocationModel(writer, cssClass, project, (FileLocationModel) model, defaultText);
         }
         else if (model instanceof FileModel)
         {
-            processFileModel(writer, cssClass, (FileModel) model, defaultText);
+            processFileModel(writer, cssClass, project, (FileModel) model, defaultText);
         }
         else if (model instanceof JavaClassModel)
         {
-            processJavaClassModel(writer, cssClass, (JavaClassModel) model, defaultText);
+            processJavaClassModel(writer, cssClass, project, (JavaClassModel) model, defaultText);
         }
         else if (model instanceof LinkableModel)
         {
-            processLinkableModel(writer, layoutType, cssClass, (LinkableModel) model, defaultText);
+            processLinkableModel(writer, layoutType, cssClass, project, (LinkableModel) model, defaultText);
         }
         else
         {
@@ -130,7 +141,7 @@ public class RenderLinkDirective implements WindupFreeMarkerTemplateDirective
         return layoutType;
     }
 
-    private void processFileLocationModel(Writer writer, String cssClass, FileLocationModel obj, String defaultText) throws IOException
+    private void processFileLocationModel(Writer writer, String cssClass, ProjectModel project, FileLocationModel obj, String defaultText) throws IOException
     {
         String position = " (" + obj.getLineNumber() + ", " + obj.getColumnNumber() + ")";
         String linkText = StringUtils.isBlank(defaultText) ? getPrettyPathForFile(obj.getFile()) + position : defaultText;
@@ -140,19 +151,19 @@ public class RenderLinkDirective implements WindupFreeMarkerTemplateDirective
         if (result == null)
             writer.write(linkText);
         else
-            renderLink(writer, cssClass, result.getReportFilename() + "#" + anchor, linkText);
+            renderLink(writer, cssClass, project, result.getReportFilename() + "#" + anchor, linkText);
     }
 
-    private void processLinkableModel(Writer writer, LayoutType layoutType, String cssClass, LinkableModel obj, String defaultText) throws IOException
+    private void processLinkableModel(Writer writer, LayoutType layoutType, String cssClass, ProjectModel project, LinkableModel obj, String defaultText) throws IOException
     {
         Iterable<Link> links = new IterableConverter<LinkModel, Link>(obj.getLinks())
         {
             public Link from(LinkModel m) { return new Link(m.getLink(), m.getDescription()); }
         };
-        renderLinks(writer, layoutType, links);
+        renderLinks(writer, layoutType, project, links);
     }
 
-    private void processFileModel(Writer writer, String cssClass, FileModel fileModel, String defaultText) throws IOException
+    private void processFileModel(Writer writer, String cssClass, ProjectModel project, FileModel fileModel, String defaultText) throws IOException
     {
         String linkText = StringUtils.isBlank(defaultText) ? getPrettyPathForFile(fileModel) : defaultText;
 
@@ -160,10 +171,10 @@ public class RenderLinkDirective implements WindupFreeMarkerTemplateDirective
         if (result == null)
             writer.write(linkText);
         else
-            renderLink(writer, cssClass, result.getReportFilename(), linkText);
+            renderLink(writer, cssClass, project, result.getReportFilename(), linkText);
     }
 
-    private void processJavaClassModel(Writer writer, String cssClass, JavaClassModel clz, String defaultText)
+    private void processJavaClassModel(Writer writer, String cssClass, ProjectModel project, JavaClassModel clz, String defaultText)
                 throws IOException
     {
         Iterator<JavaSourceFileModel> results = javaClassService.getJavaSource(clz.getQualifiedName()).iterator();
@@ -183,12 +194,12 @@ public class RenderLinkDirective implements WindupFreeMarkerTemplateDirective
             if (result == null)
                 writer.write(linkText);
             else
-                renderLink(writer, cssClass, result.getReportFilename(), linkText);
+                renderLink(writer, cssClass, project, result.getReportFilename(), linkText);
             linkText = " (" + i++ + ")";
         }
     }
 
-    private void renderLinks(Writer writer, LayoutType layoutType, Iterable<Link> linkIterable) throws IOException
+    private void renderLinks(Writer writer, LayoutType layoutType, ProjectModel project, Iterable<Link> linkIterable) throws IOException
     {
         Iterator<Link> links = linkIterable.iterator();
         if (null == layoutType)
@@ -196,35 +207,37 @@ public class RenderLinkDirective implements WindupFreeMarkerTemplateDirective
         switch (layoutType)
         {
             case UL:
-                renderAsLI(writer, links, true);
+                renderAsLI(writer, project, links, true);
                 break;
             case LI:
-                renderAsLI(writer, links, false);
+                renderAsLI(writer, project, links, false);
                 break;
             case DL:
-                renderAsDT(writer, links, true);
+                renderAsDT(writer, project, links, true);
                 break;
             case DT:
-                renderAsDT(writer, links, false);
+                renderAsDT(writer, project, links, false);
                 break;
             default:
-                renderAsHorizontal(writer, links);
+                renderAsHorizontal(writer, project, links);
                 break;
         }
     }
 
-    private void renderLink(Writer writer, String cssClass, String href, String linkText) throws IOException
+    private void renderLink(Writer writer, String cssClass, ProjectModel project, String href, String linkText) throws IOException
     {
         writer.append("<a");
         if (cssClass != null)
             writer.append(" class='" + cssClass + "'");
-        writer.append(" href='").append(href).append("'>").append(linkText).append("</a>");
+        writer.append(" href='").append(href);
+        appendProject(writer, project);
+        writer.append("'>").append(linkText).append("</a>");
     }
 
     /**
      * Renders in LI tags, Wraps with UL tags optionally.
      */
-    private void renderAsLI(Writer writer, Iterator<Link> links, boolean wrap) throws IOException
+    private void renderAsLI(Writer writer, ProjectModel project, Iterator<Link> links, boolean wrap) throws IOException
     {
         if (!links.hasNext())
             return;
@@ -235,7 +248,7 @@ public class RenderLinkDirective implements WindupFreeMarkerTemplateDirective
         {
             Link link = links.next();
             writer.append("<li>");
-            renderLink(writer, link);
+            renderLink(writer, project, link);
             writer.append("</li>");
         }
         if (wrap)
@@ -245,7 +258,7 @@ public class RenderLinkDirective implements WindupFreeMarkerTemplateDirective
     /*
      * Renders as DT elements, optionally wraps in DL
      */
-    private void renderAsDT(Writer writer, Iterator<Link> links, boolean wrap) throws IOException
+    private void renderAsDT(Writer writer, ProjectModel project, Iterator<Link> links, boolean wrap) throws IOException
     {
         if (!links.hasNext())
             return;
@@ -256,28 +269,37 @@ public class RenderLinkDirective implements WindupFreeMarkerTemplateDirective
         {
             Link link = links.next();
             writer.append("<dt>").append(link.getDescription());
-            writer.append("</dt><dd><a href='" + link.getLink() + "'>Link</a></dd>");
+            writer.append("</dt><dd><a href='").append(link.getLink());
+            appendProject(writer, project);
+            writer.append("'>Link</a></dd>");
         }
         if (wrap)
             writer.append("</dl>");
     }
 
-    private void renderAsHorizontal(Writer writer, Iterator<Link> links) throws IOException
+    private void appendProject(Writer writer, ProjectModel project) throws IOException {
+        if (project != null)
+            writer.append("?project=").append(String.valueOf(project.asVertex().getId()));
+    }
+
+    private void renderAsHorizontal(Writer writer, ProjectModel project, Iterator<Link> links) throws IOException
     {
         if (links.hasNext())
             return;
 
-        renderLink(writer, links.next());
+        renderLink(writer, project, links.next());
         while (links.hasNext())
         {
             writer.append(" | ");
-            renderLink(writer, links.next());
+            renderLink(writer, project, links.next());
         }
     }
 
-    private void renderLink(Writer writer, Link link) throws IOException
+    private void renderLink(Writer writer, ProjectModel project, Link link) throws IOException
     {
-        writer.append("<a href='" + link.getLink() + "'>");
+        writer.append("<a href='").append(link.getLink());
+        appendProject(writer, project);
+        writer.append("'>");
         writer.append(link.getDescription());
         writer.append("</a>");
     }

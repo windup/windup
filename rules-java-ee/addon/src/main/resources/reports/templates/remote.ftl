@@ -57,7 +57,7 @@
                             <tr>
                                 <td>${service.path}</td>
                                 <td>
-                                    <@render_link model=service.implementationClass/>
+                                    <@render_link model=service.implementationClass project=reportModel.projectModel/>
                                 </td>
                             </tr>
                         </#items>
@@ -77,10 +77,10 @@
                         <#items as service>
                             <tr>
                                 <td>
-                                    <@render_link model=service.interface/>
+                                    <@render_link model=service.interface project=reportModel.projectModel/>
                                 </td>
                                 <td>
-                                    <@render_link model=service.implementationClass/>
+                                    <@render_link model=service.implementationClass project=reportModel.projectModel/>
                                 </td>
                             </tr>
                         </#items>
@@ -100,10 +100,10 @@
                         <#items as service>
                             <tr>
                                 <td>
-                                    <@render_link model=service.interface/>
+                                    <@render_link model=service.interface project=reportModel.projectModel/>
                                 </td>
                                 <td>
-                                    <@render_link model=service.implementationClass/>
+                                    <@render_link model=service.implementationClass project=reportModel.projectModel/>
                                 </td>
                             </tr>
                         </#items>
@@ -123,10 +123,10 @@
                         <#items as service>
                             <tr>
                                 <td>
-                                    <@render_link model=service.interface/>
+                                    <@render_link model=service.interface project=reportModel.projectModel/>
                                 </td>
                                 <td>
-                                    <@render_link model=service.implementationClass/>
+                                    <@render_link model=service.implementationClass project=reportModel.projectModel/>
                                 </td>
                             </tr>
                         </#items>

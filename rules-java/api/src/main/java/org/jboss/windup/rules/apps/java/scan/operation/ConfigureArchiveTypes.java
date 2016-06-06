@@ -13,6 +13,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphTypeManager;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.ArchiveType;
+import org.jboss.windup.graph.model.WindupFrame;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -75,13 +76,20 @@ public class ConfigureArchiveTypes extends AbstractIterationOperation<ArchiveMod
 
     private void initTypes()
     {
-        Set<Class<? extends WindupVertexFrame>> frameClasses = graphTypeManager.getRegisteredTypes();
-        for (Class<? extends WindupVertexFrame> frameClass : frameClasses)
+        Set<Class<? extends WindupFrame<?>>> frameClasses = graphTypeManager.getRegisteredTypes();
+        for (Class<? extends WindupFrame<?>> frameClass : frameClasses)
         {
+            // only use vertex frames for this mapping
+            if (!WindupVertexFrame.class.isAssignableFrom(frameClass))
+                continue;
+
+            @SuppressWarnings("unchecked")
+            Class<? extends WindupVertexFrame> vertexFrame = (Class<? extends WindupVertexFrame>)frameClass;
+
             ArchiveType archiveType = frameClass.getAnnotation(ArchiveType.class);
             if (archiveType != null)
             {
-                this.suffixToModelClass.put(archiveType.value(), frameClass);
+                this.suffixToModelClass.put(archiveType.value(), vertexFrame);
             }
         }
     }

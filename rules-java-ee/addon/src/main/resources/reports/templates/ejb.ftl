@@ -5,9 +5,9 @@
 
 <#macro mdbRenderer mdb>
     <tr>
-        <td><@render_link model=mdb.ejbDeploymentDescriptor text=mdb.beanName /></td>
+        <td><@render_link model=mdb.ejbDeploymentDescriptor project=reportModel.projectModel text=mdb.beanName/></td>
         <td>
-            <@render_link model=mdb.ejbClass/>
+            <@render_link model=mdb.ejbClass project=reportModel.projectModel/>
         </td>
         <td>${(mdb.destination.jndiLocation)!}</td>
     </tr>
@@ -17,22 +17,22 @@
 <#macro ejbRenderer ejb>
     <tr>
         <td>
-            <@render_link model=ejb.ejbDeploymentDescriptor text=ejb.beanName/>
+            <@render_link model=ejb.ejbDeploymentDescriptor project=reportModel.projectModel text=ejb.beanName/>
         </td>
         <td style="text-align:center">
             <#if ejb.ejbLocal??>
-                <@render_link model=ejb.ejbLocal text="Local" class="btn btn-xxs btn-success"/><#t>
+                <@render_link model=ejb.ejbLocal project=reportModel.projectModel text="Local" class="btn btn-xxs btn-success"/><#t>
             <#else>
                 <a style="visibility:hidden" class="btn btn-xxs btn-default disabled">Local</a><#t>
             </#if>
             <#if ejb.ejbRemote??>
-                <@render_link model=ejb.ejbRemote text="Remote" class="btn btn-xxs btn-danger"/><#t>
+                <@render_link model=ejb.ejbRemote project=reportModel.projectModel text="Remote" class="btn btn-xxs btn-danger"/><#t>
             <#else>
                 <a style="visibility:hidden" class="btn btn-xxs btn-default disabled">Remote</a><#t>
             </#if>
         </td>
         <td>
-            <@render_link model=ejb.ejbClass/>
+            <@render_link model=ejb.ejbClass project=reportModel.projectModel/>
         </td>
         <td>
         	${(ejb.jndiReference.jndiLocation)!}
@@ -43,10 +43,10 @@
 <#macro entityRenderer ejb>
     <tr>
         <td>
-            <@render_link model=ejb.ejbDeploymentDescriptor text=ejb.beanName />
+            <@render_link model=ejb.ejbDeploymentDescriptor project=reportModel.projectModel text=ejb.beanName />
         </td>
         <td>
-            <@render_link model=ejb.ejbClass/>
+            <@render_link model=ejb.ejbClass project=reportModel.projectModel/>
         </td>
         <td>${ejb.tableName!""}</td>
         <td>${ejb.persistenceType!""}</td>

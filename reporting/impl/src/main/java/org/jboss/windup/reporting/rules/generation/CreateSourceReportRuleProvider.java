@@ -9,26 +9,26 @@ import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
-import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.PostReportGenerationPhase;
-import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
+import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.graph.service.WindupConfigurationService;
+import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.reporting.SourceTypeResolver;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.jboss.windup.reporting.model.FreeMarkerSourceReportModel;
 import org.jboss.windup.reporting.model.ReportFileModel;
 import org.jboss.windup.reporting.model.TemplateType;
 import org.jboss.windup.reporting.model.source.SourceReportModel;
-import org.jboss.windup.reporting.query.FindSourceReportFilesGremlinCriterion;
+import org.jboss.windup.reporting.model.source.SourceReportToProjectEdgeModel;
 import org.jboss.windup.reporting.service.ApplicationReportService;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.reporting.service.SourceReportService;
 import org.jboss.windup.util.Logging;
-import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -54,43 +54,18 @@ public class CreateSourceReportRuleProvider extends AbstractRuleProvider
     @Override
     public Configuration getConfiguration(GraphContext context)
     {
-        /*
-         * Find all files for which there is at least one classification or blacklist
-         */
-        Condition finder = Query.fromType(SourceFileModel.class).piped(new FindSourceReportFilesGremlinCriterion());
-
-        GraphOperation addSourceReport = new AbstractIterationOperation<FileModel>()
+        GraphOperation addSourceReports = new GraphOperation()
         {
-            public void perform(GraphRewrite event, EvaluationContext context, FileModel payload)
+            @Override
+            public void perform(GraphRewrite event, EvaluationContext context)
             {
-                SourceReportService sourceReportModelService = new SourceReportService(
-                            event.getGraphContext());
-                SourceReportModel sm = sourceReportModelService.create();
-                ReportFileModel reportFileModel = GraphService.addTypeToModel(event.getGraphContext(), payload,
-                            ReportFileModel.class);
-                sm.setSourceFileModel(reportFileModel);
-                if (reportFileModel.getProjectModel() == null)
+                WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
+                Iterable<FileModel> inputApplications = configurationModel.getInputPaths();
+                for (FileModel inputApplication : inputApplications)
                 {
-                    LOG.warning("Error, source report created for file: " + payload.getFilePath() + ", but this file does not have a " +
-                                ProjectModel.class.getSimpleName() + " associated. Execution will continue, however the source report " +
-                                "for this file may be malformed");
+                    ProjectModelTraversal projectModelTraversal = new ProjectModelTraversal(inputApplication.getProjectModel());
+                    traverse(event, projectModelTraversal);
                 }
-
-                sm.setReportName(payload.getPrettyPath());
-                sm.setSourceType(resolveSourceType(payload));
-
-                sm.setReportName(payload.getFileName());
-                sm.setTemplatePath(TEMPLATE);
-                sm.setTemplateType(TemplateType.FREEMARKER);
-                ApplicationReportService applicationReportService = new ApplicationReportService(event.getGraphContext());
-                ApplicationReportModel mainAppReport = applicationReportService.getMainApplicationReportForFile(payload);
-                if (mainAppReport != null) {
-                    sm.setParentReport(mainAppReport);
-                }
-
-                GraphService.addTypeToModel(event.getGraphContext(), sm, FreeMarkerSourceReportModel.class);
-                ReportService reportService = new ReportService(event.getGraphContext());
-                reportService.setUniqueFilename(sm, payload.getFileName(), "html");
             }
 
             @Override
@@ -102,11 +77,70 @@ public class CreateSourceReportRuleProvider extends AbstractRuleProvider
 
         return ConfigurationBuilder.begin()
                     .addRule()
-                    .when(finder)
-                    .perform(addSourceReport);
+                    .perform(addSourceReports);
+    }
+    // @formatter:on
+
+    private void traverse(GraphRewrite event, ProjectModelTraversal traversal)
+    {
+        for (FileModel fileModel : traversal.getCanonicalProject().getFileModels())
+        {
+            if (fileModel instanceof SourceFileModel && ((SourceFileModel) fileModel).isGenerateSourceReport())
+                createSourceReport(event, traversal, fileModel);
+        }
+
+        for (ProjectModelTraversal child : traversal.getChildren())
+        {
+            traverse(event, child);
+        }
     }
 
-    // @formatter:on
+    private void createSourceReport(GraphRewrite event, ProjectModelTraversal traversal, FileModel sourceFile)
+    {
+        ProjectModel application = traversal.getCurrent().getRootProjectModel();
+        SourceReportService sourceReportService = new SourceReportService(
+                event.getGraphContext());
+        SourceReportModel sourceReportModel = sourceReportService.getSourceReportForFileModel(sourceFile);
+        if (sourceReportModel != null)
+        {
+            for (SourceReportToProjectEdgeModel existing : sourceReportModel.getProjectEdges())
+            {
+                if (existing.getProjectModel().equals(application))
+                    return;
+            }
+
+            // just add another project to this report
+            SourceReportToProjectEdgeModel toProjectEdge = sourceReportModel.addProjectModel(application);
+            toProjectEdge.setFullPath(traversal.getFilePath(sourceFile));
+            return;
+        }
+
+        sourceReportModel = sourceReportService.create();
+
+        ReportFileModel reportFileModel = GraphService.addTypeToModel(event.getGraphContext(), sourceFile,
+                ReportFileModel.class);
+        sourceReportModel.setSourceFileModel(reportFileModel);
+
+        SourceReportToProjectEdgeModel toProjectEdge = sourceReportModel.addProjectModel(application);
+        toProjectEdge.setFullPath(traversal.getFilePath(sourceFile));
+
+        sourceReportModel.setReportName(sourceFile.getPrettyPath());
+        sourceReportModel.setSourceType(resolveSourceType(sourceFile));
+
+        sourceReportModel.setReportName(sourceFile.getFileName());
+        sourceReportModel.setTemplatePath(TEMPLATE);
+        sourceReportModel.setTemplateType(TemplateType.FREEMARKER);
+        ApplicationReportService applicationReportService = new ApplicationReportService(event.getGraphContext());
+        ApplicationReportModel mainAppReport = applicationReportService.getMainApplicationReportForFile(sourceFile);
+        if (mainAppReport != null)
+        {
+            sourceReportModel.setParentReport(mainAppReport);
+        }
+
+        GraphService.addTypeToModel(event.getGraphContext(), sourceReportModel, FreeMarkerSourceReportModel.class);
+        ReportService reportService = new ReportService(event.getGraphContext());
+        reportService.setUniqueFilename(sourceReportModel, sourceFile.getFileName(), "html");
+    }
 
     private String resolveSourceType(FileModel f)
     {

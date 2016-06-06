@@ -59,7 +59,7 @@
                             <div class="panel-body">
                                 <dl class="dl-horizontal small">
                                     <dt>Process</dt>
-                                    <dd><@render_link model=process /></dd>
+                                    <dd><@render_link model=process project=reportModel.projectModel/></dd>
 
                                     <#if process.processName??>
                                         <dt>Name</dt>
@@ -104,7 +104,7 @@
                                         </tr>
                                         <#items as actionHandler>
                                             <tr>
-                                                <td><@render_link model=actionHandler/></td>
+                                                <td><@render_link model=actionHandler project=reportModel.projectModel/></td>
                                             </tr>
                                         </#items>
                                     </table>
@@ -117,7 +117,7 @@
                                         </tr>
                                         <#items as decisionHandler>
                                             <tr>
-                                                <td><@render_link model=decisionHandler/></td>
+                                                <td><@render_link model=decisionHandler project=reportModel.projectModel/></td>
                                             </tr>
                                         </#items>
                                     </table>

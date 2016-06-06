@@ -28,7 +28,7 @@ public class FindSourceReportFilesGremlinCriterion implements QueryGremlinCriter
     {
         GraphContext context = event.getGraphContext();
 
-        // create a pipeline to get all blacklisted items
+        // create a pipeline to get all hinted items
         GremlinPipeline<Vertex, Vertex> hintPipeline = new GremlinPipeline<>(
                     context.getQuery().type(FileModel.class).vertices());
         hintPipeline.as("fileModel1").in(FileLocationModel.FILE_MODEL)

@@ -6,11 +6,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * A windup-specific annotation that is used within
+ * A windup-specific annotation that is used within to indicate the default value for a boolean Property.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
-public @interface FrameBooleanDefaultValue {
-
+public @interface FrameBooleanDefaultValue
+{
     boolean value();
 }
