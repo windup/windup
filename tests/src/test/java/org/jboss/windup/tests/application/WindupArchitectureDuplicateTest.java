@@ -19,7 +19,9 @@ import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.jboss.windup.reporting.model.MigrationIssuesReportModel;
 import org.jboss.windup.reporting.model.ReportModel;
 import org.jboss.windup.reporting.service.ReportService;
+import org.jboss.windup.rules.apps.java.reporting.rules.CreateJarDependencyReportRuleProvider;
 import org.jboss.windup.rules.apps.java.reporting.rules.CreateReportIndexRuleProvider;
+import org.jboss.windup.testutil.html.TestJarDependencyReportUtil;
 import org.jboss.windup.testutil.html.TestMigrationIssuesReportUtil;
 import org.jboss.windup.testutil.html.TestReportIndexReportUtil;
 import org.junit.Assert;
@@ -77,6 +79,7 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest
             super.runTest(context, inputPaths, false);
             validateReportIndex(context);
             validateMigrationIssues(context);
+            validateJarDependencyReport(context);
         } finally
         {
             FileUtils.deleteDirectory(testTempPath.toFile());
@@ -110,6 +113,16 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Mandatory", 2, 6));
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Optional", 86, 584));
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Potential Issues", 0, 0));
+    }
+
+    private void validateJarDependencyReport(GraphContext graphContext)
+    {
+        Path dependencyReport = getJarDependencyReportPath(graphContext);
+        Assert.assertNotNull(dependencyReport);
+        TestJarDependencyReportUtil jarDependencyReportUtil = new TestJarDependencyReportUtil();
+        jarDependencyReportUtil.loadPage(dependencyReport);
+        Assert.assertEquals(8, jarDependencyReportUtil.getNumberOfJarsOnPage());
+        Assert.assertTrue(jarDependencyReportUtil.findDependencyElement("jee-example-services.jar", "JEE Example EJB Services", "org.windup.example:jee-example-services:1.0.0", null, "1.0.0", "", Arrays.asList(FOUND_PATHS) ) );
     }
 
     private void validateMigrationIssues(GraphContext graphContext)
@@ -149,6 +162,24 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest
         for (ApplicationReportModel report : reports)
         {
             if (StringUtils.equals(applicationFilename, report.getProjectModel().getRootFileModel().getFileName()))
+                return getPathForReport(graphContext, report);
+        }
+        return null;
+    }
+
+    private static final String[] FOUND_PATHS = {
+        "copy.ear/jee-example-services.jar",
+        "jee-example-app-1.0.0.ear/jee-example-services.jar"};
+
+    private Path getJarDependencyReportPath(GraphContext graphContext)
+    {
+        GraphService<ApplicationReportModel> service = graphContext.service(ApplicationReportModel.class);
+        Iterable<ApplicationReportModel> reports = service.findAllByProperty(ReportModel.TEMPLATE_PATH,
+                    CreateJarDependencyReportRuleProvider.TEMPLATE);
+        for (ApplicationReportModel report : reports)
+        {
+            // test checks only Global Jar Dependencies report 
+            if ("dependency_report.html".equals(report.getReportFilename()))
                 return getPathForReport(graphContext, report);
         }
         return null;

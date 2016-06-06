@@ -2,18 +2,14 @@ package org.jboss.windup.reporting.freemarker;
 
 import java.util.List;
 
-import freemarker.ext.beans.StringModel;
-import freemarker.template.SimpleScalar;
 import org.jboss.windup.config.GraphRewrite;
-
-import freemarker.template.TemplateModelException;
 import org.jboss.windup.graph.model.ProjectModel;
-import org.jboss.windup.graph.traversal.AllTraversalStrategy;
 import org.jboss.windup.graph.traversal.ArchiveSHA1ToFilePathMapper;
-import org.jboss.windup.graph.traversal.OnlyOnceTraversalStrategy;
 import org.jboss.windup.graph.traversal.ProjectModelTraversal;
-import org.jboss.windup.graph.traversal.TraversalStrategy;
 import org.jboss.windup.util.ExecutionStatistics;
+
+import freemarker.ext.beans.StringModel;
+import freemarker.template.TemplateModelException;
 
 /**
  * <p>

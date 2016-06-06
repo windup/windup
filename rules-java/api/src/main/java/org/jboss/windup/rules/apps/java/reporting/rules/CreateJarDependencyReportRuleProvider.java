@@ -33,6 +33,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 @RuleMetadata(phase = ReportGenerationPhase.class, id = "Create JAR Dependency Report")
 public class CreateJarDependencyReportRuleProvider extends AbstractRuleProvider
 {
+    public static final String REPORT_NAME = "JAR Dependencies";
     public static final String TEMPLATE = "/reports/templates/jar_report.ftl";
     public static final String REPORT_DESCRIPTION = "This report displays all JAR dependencies found within the application.";
 
@@ -126,7 +127,7 @@ public class CreateJarDependencyReportRuleProvider extends AbstractRuleProvider
         ApplicationReportModel applicationReportModel = applicationReportService.create();
         applicationReportModel.setReportPriority(120);
         applicationReportModel.setDisplayInApplicationReportIndex(true);
-        applicationReportModel.setReportName("JAR Dependencies");
+        applicationReportModel.setReportName(REPORT_NAME);
         applicationReportModel.setDescription(REPORT_DESCRIPTION);
         applicationReportModel.setReportIconClass("glyphicon glyphicon-flag");
         applicationReportModel.setTemplatePath(TEMPLATE);

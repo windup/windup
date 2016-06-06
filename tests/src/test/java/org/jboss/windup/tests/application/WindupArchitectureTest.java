@@ -22,6 +22,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.jboss.windup.reporting.model.MigrationIssuesReportModel;
 import org.jboss.windup.reporting.model.ReportModel;
 import org.jboss.windup.reporting.service.ReportService;
@@ -30,12 +31,12 @@ import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.rules.apps.java.model.JavaApplicationOverviewReportModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
+import org.jboss.windup.rules.apps.java.reporting.rules.CreateJarDependencyReportRuleProvider;
 import org.jboss.windup.rules.apps.java.reporting.rules.CreateJavaApplicationOverviewReportRuleProvider;
 import org.jboss.windup.rules.apps.java.reporting.rules.EnableCompatibleFilesReportOption;
 import org.jboss.windup.rules.apps.tattletale.EnableTattletaleReportOption;
 import org.junit.Assert;
 
-import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
@@ -47,6 +48,7 @@ import com.google.common.collect.Iterables;
 public abstract class WindupArchitectureTest
 {
     public static final String REPORTS_TEMPLATES_MIGRATION_ISSUES_FTL = "/reports/templates/migration-issues.ftl";
+
     @Inject
     private WindupProcessor processor;
 
@@ -160,7 +162,7 @@ public abstract class WindupArchitectureTest
         windupConfiguration.setOptionValue(SourceModeOption.NAME, sourceMode);
         windupConfiguration.setOptionValue(ScanPackagesOption.NAME, includePackages);
         windupConfiguration.setOptionValue(ExcludePackagesOption.NAME, excludePackages);
-        windupConfiguration.setOptionValue(EnableTattletaleReportOption.NAME, true);
+        windupConfiguration.setOptionValue(EnableTattletaleReportOption.NAME, false);
         windupConfiguration.setOptionValue(EnableCompatibleFilesReportOption.NAME, true);
 
         for (Map.Entry<String, Object> otherOption : otherOptions.entrySet())
@@ -215,6 +217,11 @@ public abstract class WindupArchitectureTest
     MigrationIssuesReportModel getMigrationIssuesReport(GraphContext context)
     {
         return (MigrationIssuesReportModel) getReport(context, REPORTS_TEMPLATES_MIGRATION_ISSUES_FTL, "Migration Issues");
+    }
+
+    ApplicationReportModel getJarDependencyReport(GraphContext context)
+    {
+        return (ApplicationReportModel) getReport(context, CreateJarDependencyReportRuleProvider.TEMPLATE, CreateJarDependencyReportRuleProvider.REPORT_NAME);
     }
 
     Iterable<ReportModel> getReports(GraphContext context, String template)

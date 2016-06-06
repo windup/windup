@@ -68,43 +68,43 @@
                 <#items as dependency>
                     <#assign dependencyProject = dependency.projectModel>
                     <#if dependencyProject??>
-                    <div class="dependency">
+                    <div id="${dependency.archiveName}" class="dependency">
                         <h4>${dependency.archiveName}</h4>
                         <ul class="traits">
                             <#assign gav = dependencyProject.asVertex().getProperty('mavenIdentifier')!?trim >
                             <#assign sha1 = projectModelToSha1(dependencyProject)!>
                             <#if gav?? && gav?trim?has_content >
                                 <li class="trait">
-                                    <span>Maven coordinates:</span>
+                                    <span id="${dependency.archiveName}-maven">Maven coordinates:</span>
                                         <#if sha1?has_content>
                                             <#assign sha1URL = 'http://search.maven.org/#search|ga|1|1:"' + sha1?url('ISO-8859-1') + '"'>
-                                            <a href="${sha1URL?html}" target="_blank">${gav}</a>
+                                            <a id="${dependency.archiveName}-gav" href="${sha1URL?html}" target="_blank">${gav}</a>
                                         <#else>
                                             ${gav}
                                         </#if>
                                 </li>
                             </#if>
                             <#if sha1?trim?has_content>
-                                <li class="trait"> <span>SHA1 hash:</span> ${sha1} </li>
+                                <li class="trait"> <span id="${dependency.archiveName}-hash>SHA1 hash:</span> ${sha1} </li>
                             </#if>
                             <#if dependencyProject.name?? && dependencyProject.name != dependency.archiveName>
                                 <li class="trait">
-                                    <span>Name:</span> ${dependencyProject.name}
+                                    <span id="${dependency.archiveName}-name">Name:</span> ${dependencyProject.name}
                                 </li>
                             </#if>
                             <#if dependencyProject.version??>
                                 <li class="trait">
-                                    <span>Version:</span> ${dependencyProject.version}
+                                    <span id="${dependency.archiveName}-version">Version:</span> ${dependencyProject.version}
                                 </li>
                             </#if>
                             <#if dependencyProject.organization??>
                                 <li class="trait">
-                                    <span>Organization:</span> ${dependencyProject.organization}
+                                    <span id="${dependency.archiveName}-org">Organization:</span> ${dependencyProject.organization}
                                 </li>
                             </#if>
                             <li class="trait">
                                 <span>Found at paths:</span>
-                                <ul>
+                                <ul id="${dependency.archiveName}-paths">
                                     <#list getArchivesBySHA1(dependency.SHA1Hash).iterator() as instance>
                                         <li>${instance.prettyPath}</li>
                                     </#list>
