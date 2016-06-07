@@ -6,7 +6,9 @@ import java.io.InputStream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.EnumUtils;
+import org.jboss.windup.graph.IndexType;
 import org.jboss.windup.graph.Indexed;
+import org.jboss.windup.graph.Indexes;
 import org.jboss.windup.graph.frames.FrameBooleanDefaultValue;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -54,7 +56,10 @@ public interface FileModel extends ResourceModel
     /**
      * Contains the File Name (the last component of the path). Eg, a file /tmp/foo/bar/file.txt would have fileName set to "file.txt"
      */
-    @Indexed
+    @Indexes({
+        @Indexed,
+        @Indexed(value=IndexType.SEARCH, name="filenamesearchindex")
+    })
     @Property(FILE_NAME)
     void setFileName(String filename);
 
