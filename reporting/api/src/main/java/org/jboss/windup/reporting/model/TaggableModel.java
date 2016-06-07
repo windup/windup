@@ -39,9 +39,17 @@ public interface TaggableModel extends WindupVertexFrame
     @Adjacency(label = TAG, direction = Direction.OUT)
     TagSetModel getTagModel();
 
+    /**
+     * Gets the {@link Set} of tags associated with this vertex.
+     */
     @JavaHandler
     Set<String> getTags();
 
+    /**
+     * Returns true if this {@link TaggableModel} matches the provided inclusion and exclusion tags.
+     *
+     * {@see TagUtil}
+     */
     @JavaHandler
     boolean matchesTags(Set<String> includeTags, Set<String> excludeTags);
 
