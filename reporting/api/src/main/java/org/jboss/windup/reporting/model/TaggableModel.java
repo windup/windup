@@ -11,6 +11,7 @@ import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.modules.javahandler.JavaHandler;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.reporting.TagUtil;
 
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
@@ -38,8 +39,20 @@ public interface TaggableModel extends WindupVertexFrame
     @Adjacency(label = TAG, direction = Direction.OUT)
     TagSetModel getTagModel();
 
+    /**
+     * Gets the {@link Set} of tags associated with this vertex.
+     */
     @JavaHandler
     Set<String> getTags();
+
+    /**
+     * Returns true if this {@link TaggableModel} matches the provided inclusion and exclusion tags.
+     *
+     * {@see TagUtil}
+     */
+    @JavaHandler
+    boolean matchesTags(Set<String> includeTags, Set<String> excludeTags);
+
 
     abstract class Impl implements TaggableModel, JavaHandlerContext<Vertex>
     {
@@ -50,6 +63,11 @@ public interface TaggableModel extends WindupVertexFrame
             if (tagSetModel == null)
                 return Collections.emptySet();
             return tagSetModel.getTags();
+        }
+
+        public boolean matchesTags(Set<String> includeTags, Set<String> excludeTags)
+        {
+            return TagUtil.checkMatchingTags(this.getTags(), includeTags, excludeTags);
         }
     }
 }
