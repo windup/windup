@@ -10,6 +10,7 @@ import org.jboss.windup.graph.model.LinkModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.reporting.model.ClassificationModel;
@@ -99,8 +100,10 @@ public class ClassificationService extends GraphService<ClassificationModel>
     public Map<Integer, Integer> getMigrationEffortByPoints(ProjectModelTraversal traversal, Set<String> includeTags, Set<String> excludeTags,
                                                             boolean recursive, boolean includeZero)
     {
-        MapSumEffortAccumulatorFunction<Integer> accumulator = new MapSumEffortAccumulatorFunction(){
-            public Integer vertexToKey(Vertex effortReportVertex) {
+        MapSumEffortAccumulatorFunction<Integer> accumulator = new MapSumEffortAccumulatorFunction()
+        {
+            public Integer vertexToKey(Vertex effortReportVertex)
+            {
                 Integer migrationEffort = effortReportVertex.getProperty(EffortReportModel.EFFORT);
                 return migrationEffort;
             }
@@ -115,8 +118,10 @@ public class ClassificationService extends GraphService<ClassificationModel>
     public Map<Severity, Integer> getMigrationEffortBySeverity(
         ProjectModelTraversal traversal, Set<String> includeTags, Set<String> excludeTags, boolean recursive)
     {
-        MapSumEffortAccumulatorFunction<Severity> accumulator = new MapSumEffortAccumulatorFunction(){
-            public Severity vertexToKey(Vertex effortReportVertex) {
+        MapSumEffortAccumulatorFunction<Severity> accumulator = new MapSumEffortAccumulatorFunction()
+        {
+            public Severity vertexToKey(Vertex effortReportVertex)
+            {
                 return frame(effortReportVertex).getSeverity();
             }
         };
@@ -149,6 +154,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
         pipeline.back("classification");
 
         boolean checkTags = !includeTags.isEmpty() || !excludeTags.isEmpty();
+        FileService fileService = new FileService(getGraphContext());
         for (Vertex v : pipeline)
         {
             // only check tags if we have some passed in
@@ -156,11 +162,14 @@ public class ClassificationService extends GraphService<ClassificationModel>
                 continue;
 
             // For each classification, count it repeatedly for each file.
-            // TODO: .accumulate(v, count);
-            // TODO: This could be all done just within the query (provided that the tags would be taken care of).
-            //       Accumulate could be a PipeFunction.
             for (Vertex fileVertex : v.getVertices(Direction.OUT, ClassificationModel.FILE_MODEL))
-               accumulatorFunction.accumulate(v);
+            {
+                // Make sure that this file is actually in an accepted project. The pipeline condition will return
+                // classifications that aren't necessarily in the same project.
+                FileModel fileModel = fileService.frame(fileVertex);
+                if (initialVertices.contains(fileModel.getProjectModel().asVertex()))
+                    accumulatorFunction.accumulate(v);
+            }
         }
     }
 
