@@ -7,6 +7,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.tuple.Pair;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
@@ -17,6 +18,8 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.service.FileService;
+import org.jboss.windup.graph.service.ProjectService;
 import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.service.ClassificationService;
@@ -36,10 +39,9 @@ public class ClassificationServiceTest
     })
     public static AddonArchive getDeployment()
     {
-        AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
+        return ShrinkWrap.create(AddonArchive.class)
                     .addBeansXML()
                     .addAsResource(new File("src/test/resources/reports"));
-        return archive;
     }
 
     @Inject
@@ -48,12 +50,11 @@ public class ClassificationServiceTest
     @Test
     public void testClassificationEffort() throws Exception
     {
-
         try (GraphContext context = factory.create())
         {
             ClassificationService classificationService = new ClassificationService(context);
 
-            ProjectModel projectModel = fillData(context);
+            ProjectModel projectModel = fillData(context)[0];
             ProjectModelTraversal projectModelTraversal = new ProjectModelTraversal(projectModel);
             Set<String> emptySet = Collections.emptySet();
             final Map<Integer, Integer> effortByCategory = classificationService.getMigrationEffortByPoints(projectModelTraversal, emptySet, emptySet, true,
@@ -86,13 +87,39 @@ public class ClassificationServiceTest
         }
     }
 
-    private ProjectModel fillData(GraphContext context)
+    /**
+     * This tests covers the case where a single {@link ClassificationModel} crosses more than one project boundary.
+     */
+    @Test
+    public void testClassificationAcrossProjectBoundaries() throws Exception
+    {
+        try (GraphContext context = factory.create())
+        {
+            ClassificationService classificationService = new ClassificationService(context);
+
+            ProjectModel projectModel = fillData(context)[1];
+
+            ProjectModelTraversal projectModelTraversal = new ProjectModelTraversal(projectModel);
+            Set<String> emptySet = Collections.emptySet();
+            final Map<Integer, Integer> effortByCategory = classificationService.getMigrationEffortByPoints(projectModelTraversal, emptySet, emptySet, true,
+                    true);
+            int totalEffort = 0;
+            for (Map.Entry<Integer, Integer> effortEntry : effortByCategory.entrySet())
+                totalEffort += effortEntry.getKey() * effortEntry.getValue();
+
+            Assert.assertEquals(3, totalEffort);
+        }
+    }
+
+    private ProjectModel[] fillData(GraphContext context)
     {
         ClassificationService classificationService = new ClassificationService(context);
+        FileService fileService = new FileService(context);
+        ProjectService projectService = new ProjectService(context);
 
-        FileModel f1 = context.getFramed().addVertex(null, FileModel.class);
+        FileModel f1 = fileService.create();
         f1.setFilePath("/f1");
-        FileModel f2 = context.getFramed().addVertex(null, FileModel.class);
+        FileModel f2 = fileService.create();
         f2.setFilePath("/f2");
 
         ClassificationModel b1 = classificationService.create();
@@ -106,11 +133,17 @@ public class ClassificationServiceTest
         b2.addFileModel(f2);
         b2.setEffort(3);
 
-        ProjectModel projectModel = context.getFramed().addVertex(null, ProjectModel.class);
+        ProjectModel projectModel = projectService.create();
         projectModel.addFileModel(f1);
         projectModel.addFileModel(f2);
 
-        return projectModel;
+        ProjectModel projectModel2 = projectService.create();
+        FileModel f3 = fileService.create();
+        f3.setFilePath("/f3");
+        projectModel2.addFileModel(f3);
+        b2.addFileModel(f3);
+
+        return new ProjectModel[]{projectModel, projectModel2};
     }
 
 }
