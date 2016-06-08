@@ -29,10 +29,10 @@ import com.google.common.collect.Iterables;
  *      <li>another.jar</li>
  *  </ul>
  *
- *  Then this will only iterate root.ear, foo.war, duplicated.jar (one time only), and WEB-INF/lib/other.jar.
+ *  Then this will only iterate root.ear, foo.war, duplicated.jar (one time only), WEB-INF/lib/other.jar, and another.jar.
  * </p>
  * <p>
- *     This is most useful in cases where you care about the contents of an project hierarchy but where representing them
+ *     This is most useful in cases where you care about the contents of a project hierarchy but where representing them
  *     more than once would be redundant.
  * </p>
  *

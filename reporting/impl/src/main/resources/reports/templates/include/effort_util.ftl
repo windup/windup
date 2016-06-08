@@ -1,10 +1,13 @@
 <#--
     getMigrationEffortPointsForProject(
-        traversal,
-        recursive,
-        includeTags (optional),
-        excludeTags (optional)
+        traversal : ProjectModelTraversal - can be created by getProjectTraversal(ProjectModel project, String mode)
+        recursive : boolean
+        spMode : String - "UNIQUE" | "SHARED" | "MIXED"
+        includeTags : Set<String> (optional)
+        excludeTags : Set<String> (optional)
     )
+
+    Traverses through the project tree using given traversal and sums all effort (story) points.
 -->
 <#assign SP_UNIQUE = "UNIQUE" >
 <#assign SP_SHARED = "SHARED" >
