@@ -17,6 +17,8 @@ import freemarker.ext.beans.StringModel;
 import freemarker.template.SimpleSequence;
 import freemarker.template.TemplateBooleanModel;
 import freemarker.template.TemplateModelException;
+import freemarker.template.TemplateScalarModel;
+import java.util.logging.Logger;
 
 /**
  * Gets the number of effort points involved in migrating this application.
@@ -45,6 +47,8 @@ import freemarker.template.TemplateModelException;
  */
 public class GetEffortDetailsForProjectTraversalMethod implements WindupFreeMarkerMethod
 {
+    public static Logger LOG = Logger.getLogger(GetEffortDetailsForProjectTraversalMethod.class.getName());
+
     private static final String NAME = "getEffortDetailsForProjectTraversal";
     private ClassificationService classificationService;
     private InlineHintService inlineHintService;
@@ -87,7 +91,8 @@ public class GetEffortDetailsForProjectTraversalMethod implements WindupFreeMark
         TemplateBooleanModel recursiveBooleanModel = (TemplateBooleanModel) arguments.get(1);
         boolean recursive = recursiveBooleanModel.getAsBoolean();
 
-        StringModel storyPointsModeArg = (StringModel) arguments.get(2);
+        LOG.info("GetEffortDetailsForProjectTraversalMethod spMode: " + arguments.get(2).toString() + " " + arguments.get(2).getClass());///
+        TemplateScalarModel storyPointsModeArg = (TemplateScalarModel) arguments.get(2);
         String storyPointsMode = storyPointsModeArg.getAsString();
 
         Set<String> includeTags = Collections.emptySet();

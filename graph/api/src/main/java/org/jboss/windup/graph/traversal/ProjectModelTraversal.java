@@ -2,7 +2,6 @@ package org.jboss.windup.graph.traversal;
 
 import com.tinkerpop.blueprints.Vertex;
 import org.apache.commons.lang3.StringUtils;
-import org.jboss.forge.furnace.util.Sets;
 import org.jboss.windup.graph.model.DuplicateProjectModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -59,8 +58,7 @@ public class ProjectModelTraversal
      * Creates a new {@link ProjectModelTraversal} based upon the provided {@link ProjectModel}. The {@link ProjectModel}
      * should be a "root" model (an application) rather than a subpart of an application.
      *
-     * The provided {@link TraversalStrategy} will determine
-     *
+     * The provided {@link TraversalStrategy} will determine how the ProjectModel's subprojects tree will be traversed.
      */
     public ProjectModelTraversal(ProjectModel current, TraversalStrategy traversalStrategy)
     {
