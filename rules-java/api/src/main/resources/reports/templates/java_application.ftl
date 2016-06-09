@@ -162,7 +162,7 @@
             <span class="pull-left"><i class="glyphicon glyphicon-expand arrowIcon"></i></span>
             <h3 class="panel-title">
                 <#if isDuplicateProject>
-                    [Shared] ${projectModel.rootFileModel.fileName}
+                    [Included Multiple Times] ${projectModel.rootFileModel.fileName}
                 <#else>
                     ${rootFilePath?html}
                 </#if>
