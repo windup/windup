@@ -71,7 +71,7 @@
                 </h1>
                 <div class="desc">
                     The hard-coded IP report lists the places where an IP address is found in the application.
-                    This may include places where the IP address is  hard-coded in the code rather than
+                    This may include places where the IP address is specified directly in the code rather than
                     externalized into the configuration files.
                 </div>
             </div>
