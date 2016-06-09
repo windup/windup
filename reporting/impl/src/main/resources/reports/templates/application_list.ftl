@@ -19,7 +19,6 @@
     <#-- appReport : ApplicationReportModel -->
 
     <#assign allTraversal  = getProjectTraversal(appReport.projectModel, 'all')>
-    <#assign onceTraversal = getProjectTraversal(appReport.projectModel, 'only_once')>
     <#assign sharedTraversal = getProjectTraversal(appReport.projectModel, 'shared')>
 
     <#assign incidentCountBySeverity = getEffortCountForProjectBySeverity(allTraversal, true)>
@@ -27,7 +26,6 @@
 
     <#include "include/effort_util.ftl">
     <#assign pointsFromAllTraversal  = getMigrationEffortPointsForProject(allTraversal, true, 'UNIQUE') >
-    <#assign pointsFromOnceTraversal = getMigrationEffortPointsForProject(onceTraversal, true, 'SHARED') >
     <#assign pointsFromSharedTraversal = getMigrationEffortPointsForProject(sharedTraversal, true, 'SHARED') >
 
     <#-- Total Effort Points, Name, Technologies, Incident Count per Severity-->
@@ -39,7 +37,7 @@
             </div>
             <div class="effortPoints shared">
                 <span class="points">${pointsFromSharedTraversal}</span>
-                <span class="legend">in shared libs ${pointsFromOnceTraversal}</span>
+                <span class="legend">in shared libs</span>
             </div>
             <div class="incidentsCount">
                 <table>
