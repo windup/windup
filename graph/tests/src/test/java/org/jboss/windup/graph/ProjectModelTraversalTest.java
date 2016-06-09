@@ -4,6 +4,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -20,6 +21,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.KeepWorkDirsOption;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
+import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -101,14 +103,12 @@ public class ProjectModelTraversalTest
                 traverse(new ProjectModelTraversal(inputApplication.getProjectModel()), 0, fileFoundCallback);
             }
 
-
             Assert.assertTrue(log4jPathList.contains("jee-example-app-1.0.0.ear/jee-example-web.war/WEB-INF/lib/log4j-1.2.6.jar"));
             Assert.assertTrue(log4jPathList.contains("copy-of-ear.ear/jee-example-web.war/WEB-INF/lib/log4j-1.2.6.jar"));
             Assert.assertTrue(log4jPathList.contains("shared-libs/jee-example-web.war/WEB-INF/lib/log4j-1.2.6.jar"));
             Assert.assertTrue(log4jPathList.contains("jee-example-app-1.0.0.ear/log4j-1.2.6.jar"));
             Assert.assertTrue(log4jPathList.contains("copy-of-ear.ear/log4j-1.2.6.jar"));
             Assert.assertTrue(log4jPathList.contains("shared-libs/log4j-1.2.6.jar"));
-
 
             Assert.assertTrue(migrationSupportPathList.contains("jee-example-app-1.0.0.ear/jee-example-web.war/WEB-INF/lib/migration-support-1.0.0.jar"));
             Assert.assertTrue(migrationSupportPathList.contains("copy-of-ear.ear/jee-example-web.war/WEB-INF/lib/migration-support-1.0.0.jar"));
@@ -121,6 +121,59 @@ public class ProjectModelTraversalTest
         finally
         {
             FileUtils.deleteDirectory(tempDirectory.toFile());
+        }
+    }
+
+    @Test
+    public void testDuplicateFilesWithDifferingNames() throws Exception
+    {
+        Path tempDirectory = getTempDirectory();
+        try (GraphContext context = createGraphContext(tempDirectory))
+        {
+            final Path inputPath1 = Paths.get("src/test/resources/project_model_traversal/app.ear");
+
+            runTest(context, Collections.singleton(inputPath1.toString()));
+
+            final List<String> pathList = new ArrayList<>();
+            FileFoundCallback fileFoundCallback = new FileFoundCallback()
+            {
+                @Override
+                public void fileFound(ProjectModelTraversal traversal, FileModel fileModel)
+                {
+                    if (!(fileModel instanceof ArchiveModel))
+                        return;
+
+                    String path = traversal.getFilePath(fileModel);
+
+                    pathList.add(path);
+                }
+            };
+
+            WindupConfigurationModel windupConfiguration = WindupConfigurationService.getConfigurationModel(context);
+            for (FileModel inputApplication : windupConfiguration.getInputPaths())
+            {
+                System.out.println("---------------------------------------------");
+                System.out.println("Input App: " + inputApplication.getFileName() + ", project: " + inputApplication.getProjectModel().getName());
+                traverseRoots(new ProjectModelTraversal(inputApplication.getProjectModel()), fileFoundCallback);
+            }
+
+            Assert.assertTrue(pathList.contains("app.ear/xercesImpl-2.11.0.jar"));
+            Assert.assertTrue(pathList.contains("app.ear/xercesImpl-other.jar"));
+            System.out.println("Done!");
+        }
+        finally
+        {
+            FileUtils.deleteDirectory(tempDirectory.toFile());
+        }
+    }
+
+    private void traverseRoots(ProjectModelTraversal traversal, FileFoundCallback callback)
+    {
+        callback.fileFound(traversal, traversal.getCurrent().getRootFileModel());
+
+        for (ProjectModelTraversal child : traversal.getChildren())
+        {
+            traverseRoots(child, callback);
         }
     }
 
