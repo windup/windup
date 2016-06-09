@@ -28,20 +28,12 @@ import java.util.logging.Logger;
  *      <pre>getMigrationEffortPoints(
  *              projectModel: ProjectModel,
  *              recursive: Boolean,
- *              storyPointsMode: SP_UNIQUE | SP_SHARED | SP_MIXED
  *              [includeTags: Set<String>],
  *              [excludeTags: Set<String>]
  *           ) : int
  *      </pre>
  *
  * <p> If recursive is true, the effort total includes child projects.
- *
- * <p> StoryPointsMode determines which story points are counted:
- *    <ul>
- *    <li><strong>SP_UNIQUE</strong> - only the story points of effort needed to migrate unique application code.</li>
- *    <li><strong>SP_SHARED</strong> - only the story points of modules of this app which are also used in other application.</li>
- *    <li><strong>SP_MIXED</strong> -  story points for both of the above, i.e. everything that is used in given application.</li>
- *    </ul>
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
@@ -82,8 +74,7 @@ public class GetEffortDetailsForProjectTraversalMethod implements WindupFreeMark
         {
             throw new TemplateModelException(
                 "Error, method expects at least three arguments"
-                + " (projectModel: ProjectModel, recursive: Boolean, storyPointsMode: SP_UNIQUE | SP_SHARED | SP_MIXED, "
-                + "[includeTags: Set<String>], [excludeTags: Set<String>])");
+                + " (projectModel: ProjectModel, recursive: Boolean, [includeTags: Set<String>], [excludeTags: Set<String>])");
         }
         StringModel projectModelTraversalArg = (StringModel) arguments.get(0);
         ProjectModelTraversal projectModelTraversal = (ProjectModelTraversal) projectModelTraversalArg.getWrappedObject();
@@ -91,20 +82,16 @@ public class GetEffortDetailsForProjectTraversalMethod implements WindupFreeMark
         TemplateBooleanModel recursiveBooleanModel = (TemplateBooleanModel) arguments.get(1);
         boolean recursive = recursiveBooleanModel.getAsBoolean();
 
-        LOG.info("GetEffortDetailsForProjectTraversalMethod spMode: " + arguments.get(2).toString() + " " + arguments.get(2).getClass());///
-        TemplateScalarModel storyPointsModeArg = (TemplateScalarModel) arguments.get(2);
-        String storyPointsMode = storyPointsModeArg.getAsString();
-
         Set<String> includeTags = Collections.emptySet();
-        if (arguments.size() >= 4)
+        if (arguments.size() >= 3)
         {
-            includeTags = FreeMarkerUtil.simpleSequenceToSet((SimpleSequence) arguments.get(3));
+            includeTags = FreeMarkerUtil.simpleSequenceToSet((SimpleSequence) arguments.get(2));
         }
 
         Set<String> excludeTags = Collections.emptySet();
-        if (arguments.size() >= 5)
+        if (arguments.size() >= 4)
         {
-            excludeTags = FreeMarkerUtil.simpleSequenceToSet((SimpleSequence) arguments.get(4));
+            excludeTags = FreeMarkerUtil.simpleSequenceToSet((SimpleSequence) arguments.get(3));
         }
 
         // Get values for classification and hints.

@@ -24,7 +24,7 @@ import freemarker.template.TemplateModelException;
  *
  * Called from a freemarker template as follows:
  *
- * getMigrationEffortPoints(projectModel, recursive):int
+ *    <pre>getEffortCountForProjectBySeverity(projectModel, recursive) : int</pre>
  *
  * If recursive is true, the effort total includes child projects.
  *

@@ -25,8 +25,8 @@
     <#assign totalIncidents = 0 >
 
     <#include "include/effort_util.ftl">
-    <#assign pointsFromAllTraversal  = getMigrationEffortPointsForProject(allTraversal, true, 'UNIQUE') >
-    <#assign pointsFromSharedTraversal = getMigrationEffortPointsForProject(sharedTraversal, true, 'SHARED') >
+    <#assign pointsFromAllTraversal  = getMigrationEffortPointsForProject(allTraversal, true) >
+    <#assign pointsFromSharedTraversal = getMigrationEffortPointsForProject(sharedTraversal, true) >
 
     <#-- Total Effort Points, Name, Technologies, Incident Count per Severity-->
     <div class="appInfo">
