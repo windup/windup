@@ -85,7 +85,7 @@ public class ProjectModelTraversal
      * {@link Set}. The exact projects returns will be affected by the {@link TraversalStrategy} in use by the
      * current traversal.
      *
-     * This is the same as {@link ProjectModelTraversal#getAllProjects()} except that it returns a Set of vertices
+     * This is the same as {@link ProjectModelTraversal#getAllProjects(boolean)} except that it returns a Set of vertices
      * instead of frames.
      */
     public Set<Vertex> getAllProjectsAsVertices(boolean recursive)
@@ -135,13 +135,14 @@ public class ProjectModelTraversal
      */
     public String getFilePath(FileModel fileModel)
     {
-        FileModel rootFileModel = getCanonicalProject().getRootFileModel();
+        FileModel rootFileModel = getCurrent().getRootFileModel();
+        FileModel canonicalRootFileModel = getCanonicalProject().getRootFileModel();
 
         String base = "";
 
         // get the path from the chain up until this project
         if (previous != null)
-            base = combinePaths(base, previous.getFilePath(rootFileModel));
+            base = combinePaths(base, previous.getFilePath(canonicalRootFileModel));
 
         // get the path of the root file within its project
         if (current.getRootFileModel().getParentFile() != null)
