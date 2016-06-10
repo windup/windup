@@ -11,6 +11,7 @@ import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.DuplicateArchiveModel;
+import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.archives.model.IgnoredArchiveModel;
@@ -58,6 +59,33 @@ public class UnzipArchivesToOutputRuleProvider extends AbstractRuleProvider
             {
                 return;
             }
+
+            /*
+             * Indicates that the duplicates were all within the same application. If this is found to be the case,
+             * then don't move it to the shared project as that is only intended for projects that are shared between
+             * multiple applications.
+             */
+            boolean exclusiveToApplication = true;
+
+            /*
+             * This is the root of the current archive hierarchy.
+             */
+            ArchiveModel rootArchive = canonicalArchive.getRootArchiveModel();
+            for (DuplicateArchiveModel duplicateArchiveModel : canonicalArchive.getDuplicateArchives())
+            {
+                if (!rootArchive.containsArchive(duplicateArchiveModel))
+                {
+                    exclusiveToApplication = false;
+                    break;
+                }
+            }
+
+            /*
+             * We do not remove it from its present location if it is exclusive to a single application (or a single
+             * "root archive").
+             */
+            if (exclusiveToApplication)
+                return;
 
             // Get the canonical archive and remove it from its current position in the tree
             ArchiveModel canonicalParentArchive = canonicalArchive.getParentArchive();

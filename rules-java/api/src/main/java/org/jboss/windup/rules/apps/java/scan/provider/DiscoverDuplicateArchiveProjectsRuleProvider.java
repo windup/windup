@@ -7,6 +7,7 @@ import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.DiscoverProjectStructurePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.DuplicateArchiveModel;
 import org.jboss.windup.graph.model.DuplicateProjectModel;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -44,8 +45,9 @@ public class DiscoverDuplicateArchiveProjectsRuleProvider extends AbstractRulePr
     private void setupProject(GraphRewrite event, DuplicateArchiveModel duplicateArchive)
     {
         GraphService<DuplicateProjectModel> duplicateProjectService = event.getGraphContext().service(DuplicateProjectModel.class);
+        ArchiveModel canonicalArchive = duplicateArchive.getCanonicalArchive();
 
-        ProjectModel canonicalProject = duplicateArchive.getCanonicalArchive().getProjectModel();
+        ProjectModel canonicalProject = canonicalArchive.getProjectModel();
 
         DuplicateProjectModel duplicateProject = duplicateProjectService.create();
         duplicateProject.setCanonicalProject(canonicalProject);

@@ -72,8 +72,25 @@ public interface ArchiveModel extends FileModel
     @JavaHandler
     Iterable<FileModel> getAllFiles();
 
+    /**
+     * Gets the {@link ArchiveModel}s that are duplicates of this archive.
+     */
     @Adjacency(label = DuplicateArchiveModel.CANONICAL_ARCHIVE, direction = Direction.IN)
     Iterable<DuplicateArchiveModel> getDuplicateArchives();
+
+    /**
+     * Gets the "root" archive model. The root is defined as the model for which {@link #getParentArchive()} would return
+     * null. If the current archive is the root, then this will return itself.
+     */
+    @JavaHandler
+    ArchiveModel getRootArchiveModel();
+
+    /**
+     * Indicates whether or not the passed in {@link ArchiveModel} is a child or other descendant of the current
+     * archive.
+     */
+    @JavaHandler
+    boolean containsArchive(ArchiveModel archiveModel);
 
     abstract class Impl extends FileModel.Impl implements ArchiveModel, JavaHandlerContext<Vertex>
     {
@@ -98,6 +115,31 @@ public interface ArchiveModel extends FileModel
 
             for (FileModel child : file.getFilesInDirectory())
                 addAllFiles(files, child);
+        }
+
+        @Override
+        public ArchiveModel getRootArchiveModel()
+        {
+            ArchiveModel archiveModel = this;
+            while (archiveModel.getParentArchive() != null)
+            {
+                archiveModel = archiveModel.getParentArchive();
+            }
+
+            // reframe it to make sure that we return a proxy
+            // (otherwise, it may return this method handler implementation, which will have some unexpected side effects)
+            return frame(archiveModel.asVertex());
+        }
+
+        @Override
+        public boolean containsArchive(ArchiveModel archiveModel)
+        {
+            if (this.asVertex().equals(archiveModel.asVertex()))
+                return true;
+            else if (archiveModel.getParentArchive() != null)
+                return containsArchive(archiveModel.getParentArchive());
+            else
+                return false;
         }
     }
 }

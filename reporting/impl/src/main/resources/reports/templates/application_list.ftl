@@ -160,18 +160,28 @@
                 </#list>
             </div>
 
-            <div class="tooltipLikeMessage">
-                These reports contain information about all issues found in archives which were included multiple
-                times in one or more applications.
-            </div>
+            <#assign virtualAppExists = false>
+            <#list reportModel.relatedResources.applications.list.iterator() as applicationReport>
+                <#if applicationReport.projectModel.projectType! = "VIRTUAL">
+                    <#assign virtualAppExists = true>
+                </#if>
+            </#list>
 
-            <div class="virtual">
-                <#list reportModel.relatedResources.applications.list.iterator() as applicationReport>
-                    <#if applicationReport.projectModel.projectType! = "VIRTUAL" >
-                        <@applicationReportRenderer applicationReport/>
-                    </#if>
-                </#list>
-            </div>
+
+            <#if virtualAppExists>
+                <div class="tooltipLikeMessage">
+                    These reports contain information about all issues found in archives which were included multiple
+                    times in one or more applications.
+                </div>
+
+                <div class="virtual">
+                    <#list reportModel.relatedResources.applications.list.iterator() as applicationReport>
+                        <#if applicationReport.projectModel.projectType! = "VIRTUAL" >
+                            <@applicationReportRenderer applicationReport/>
+                        </#if>
+                    </#list>
+                </div>
+            </#if>
         <section>
 
 
