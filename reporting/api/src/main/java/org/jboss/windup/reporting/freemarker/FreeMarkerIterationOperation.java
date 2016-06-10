@@ -31,9 +31,9 @@ import freemarker.template.TemplateException;
 
 /**
  * This class is used to produce a freemarker report from inside of a Windup {@link Iteration}.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a> <jesse.sightler@gmail.com)
- * 
+ *
  */
 public class FreeMarkerIterationOperation extends AbstractIterationOperation<ReportModel>
 {
@@ -146,7 +146,9 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
         catch (IOException | TemplateException e)
         {
             LOG.log(Level.WARNING,
-                        "Template \"" + templatePath + "\" Failed to write report at \"" + outputFilename + "\" due to: " + e.getMessage(), e);
+                  "\n  Failed to write template: " + templatePath
+                + "\n  To: " + outputFilename
+                + "\n  Due to: " + e.getMessage(), e);
         }
         finally
         {
