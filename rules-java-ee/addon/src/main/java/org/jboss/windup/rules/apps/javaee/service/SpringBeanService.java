@@ -41,7 +41,7 @@ public class SpringBeanService extends GraphService<SpringBeanModel>
     public Iterable<SpringBeanModel> findAllByApplication(ProjectModel application)
     {
         GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(application.asVertex());
-        pipeline.in(SpringBeanModel.APPLICATION);
+        pipeline.in(SpringBeanModel.APPLICATIONS);
         pipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, SpringBeanModel.TYPE);
 
         return new FramedVertexIterable<>(getGraphContext().getFramed(), pipeline, SpringBeanModel.class);

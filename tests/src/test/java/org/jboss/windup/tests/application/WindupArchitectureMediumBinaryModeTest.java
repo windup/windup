@@ -21,7 +21,7 @@ import org.jboss.windup.rules.apps.java.service.JarManifestService;
 import org.jboss.windup.testutil.html.TestCompatibleReportUtil;
 import org.jboss.windup.testutil.html.TestJavaApplicationOverviewUtil;
 import org.jboss.windup.testutil.html.TestReportIndexReportUtil;
-import org.jboss.windup.testutil.html.TestStaticIPReportUtil;
+import org.jboss.windup.testutil.html.TestHardcodedPReportUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -108,19 +108,19 @@ public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTe
         ReportModel reportModel = reportService.getUniqueByProperty(
                     ReportModel.TEMPLATE_PATH,
                     CreateHardcodedIPAddressReportRuleProvider.TEMPLATE_REPORT);
-        TestStaticIPReportUtil util = new TestStaticIPReportUtil();
+        TestHardcodedPReportUtil util = new TestHardcodedPReportUtil();
         Path reportPath = reportService.getReportDirectory().resolve(reportModel.getReportFilename());
         util.loadPage(reportPath);
         Assert.assertTrue(util
-                    .checkStaticIPInReport(
+                    .checkHardcodedIPInReport(
                                 "org.apache.wicket.protocol.http.mock.MockHttpServletRequest (67, 32)",
                                 "Line: 67, Position: 32", "127.0.0.1"));
         Assert.assertTrue(util
-                    .checkStaticIPInReport(
+                    .checkHardcodedIPInReport(
                                 "org.apache.wicket.protocol.http.mock.MockHttpServletRequest (723, 14)",
                                 "Line: 723, Position: 14", "127.0.0.1"));
         Assert.assertTrue(util
-                    .checkStaticIPInReport(
+                    .checkHardcodedIPInReport(
                                 "org.apache.wicket.protocol.http.mock.MockHttpServletRequest (727, 14)",
                                 "Line: 727, Position: 14", "127.0.0.1"));
 

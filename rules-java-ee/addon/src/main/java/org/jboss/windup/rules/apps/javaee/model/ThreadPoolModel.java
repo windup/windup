@@ -18,19 +18,19 @@ public interface ThreadPoolModel extends WindupVertexFrame
     String POOL_NAME = "poolName";
     String MIN_POOL_SIZE = "minPoolSize";
     String MAX_POOL_SIZE = "maxPoolSize";
-    String APPLICATION = "application";
+    String APPLICATIONS = "applications";
 
     /**
      * Contains the application in which this thread pool was discovered
      */
-    @Adjacency(label = APPLICATION, direction = Direction.OUT)
-    ProjectModel getApplication();
+    @Adjacency(label = APPLICATIONS, direction = Direction.OUT)
+    Iterable<ProjectModel> getApplications();
 
     /**
      * Contains the application in which this thread pool was discovered
      */
-    @Adjacency(label = APPLICATION, direction = Direction.OUT)
-    void setApplication(ProjectModel projectModel);
+    @Adjacency(label = APPLICATIONS, direction = Direction.OUT)
+    void setApplications(Iterable<ProjectModel> applications);
 
     /**
      * Max pool size

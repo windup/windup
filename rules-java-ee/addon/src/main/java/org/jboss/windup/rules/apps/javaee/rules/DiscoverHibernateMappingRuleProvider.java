@@ -13,6 +13,7 @@ import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryGremlinCriterion;
 import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
+import org.jboss.windup.config.projecttraversal.ProjectTraversalCache;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
@@ -129,7 +130,7 @@ public class DiscoverHibernateMappingRuleProvider extends IteratingRuleProvider<
             // create the hibernate facet.
             HibernateEntityModel hibernateEntity = hibernateEntityService.create();
             hibernateEntity.setSpecificationVersion(versionInformation);
-            hibernateEntity.setApplication(xml.getApplication());
+            hibernateEntity.setApplications(ProjectTraversalCache.getApplicationsForProject(event.getGraphContext(), xml.getProjectModel()));
             hibernateEntity.setJavaClass(clz);
             hibernateEntity.setTableName(tableName);
             hibernateEntity.setSchemaName(schemaName);

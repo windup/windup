@@ -17,6 +17,7 @@ import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.ProjectService;
+import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.model.TechnologyTagModel;
 import org.junit.Assert;
@@ -88,7 +89,8 @@ public class TechnologyTagServiceTest
             child3.addFileModel(fm5);
 
             Set<TechnologyTagModel> foundTags = new HashSet<>();
-            for (TechnologyTagModel techTag : techTagService.findTechnologyTagsForProject(parent))
+            ProjectModelTraversal traversal = new ProjectModelTraversal(parent);
+            for (TechnologyTagModel techTag : techTagService.findTechnologyTagsForProject(traversal))
             {
                 foundTags.add(techTag);
             }

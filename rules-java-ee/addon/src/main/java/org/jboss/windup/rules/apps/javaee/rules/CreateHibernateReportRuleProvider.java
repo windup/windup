@@ -1,6 +1,8 @@
 package org.jboss.windup.rules.apps.javaee.rules;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.jboss.windup.config.AbstractRuleProvider;
@@ -55,12 +57,12 @@ public class CreateHibernateReportRuleProvider extends AbstractRuleProvider
 
                 for (FileModel inputPath : windupConfiguration.getInputPaths())
                 {
-                    ProjectModel projectModel = inputPath.getProjectModel();
-                    if (projectModel == null)
+                    ProjectModel application = inputPath.getProjectModel();
+                    if (application == null)
                     {
                         throw new WindupException("Error, no project found in: " + inputPath.getFilePath());
                     }
-                    createHibernateReport(event.getGraphContext(), projectModel);
+                    createHibernateReport(event.getGraphContext(), application);
                 }
             }
 
@@ -77,8 +79,25 @@ public class CreateHibernateReportRuleProvider extends AbstractRuleProvider
                     .perform(addReport);
     }
 
-    private void createHibernateReport(GraphContext context, ProjectModel projectModel)
+    private void createHibernateReport(GraphContext context, ProjectModel application)
     {
+        HibernateConfigurationFileService hibernateConfigurationFileService = new HibernateConfigurationFileService(context);
+        HibernateEntityService hibernateEntityService = new HibernateEntityService(context);
+        List<HibernateConfigurationFileModel> configurationFileModels = new ArrayList<>();
+        List<HibernateEntityModel> entityModels = new ArrayList<>();
+        for (HibernateConfigurationFileModel hibernateConfig : hibernateConfigurationFileService.findAllByApplication(application))
+        {
+            configurationFileModels.add(hibernateConfig);
+        }
+        for (HibernateEntityModel entityModel : hibernateEntityService.findAllByApplication(application))
+        {
+            entityModels.add(entityModel);
+        }
+
+        // Skip if there is no data for this application
+        if (configurationFileModels.isEmpty() && entityModels.isEmpty())
+            return;
+
         ApplicationReportService applicationReportService = new ApplicationReportService(context);
         ApplicationReportModel applicationReportModel = applicationReportService.create();
         applicationReportModel.setReportPriority(400);
@@ -86,27 +105,21 @@ public class CreateHibernateReportRuleProvider extends AbstractRuleProvider
         applicationReportModel.setReportName("Hibernate");
         applicationReportModel.setDescription(REPORT_DESCRIPTION);
         applicationReportModel.setReportIconClass("glyphicon hibernate-nav-logo");
-        applicationReportModel.setProjectModel(projectModel);
+        applicationReportModel.setProjectModel(application);
         applicationReportModel.setTemplatePath(TEMPLATE_HIBERNATE_REPORT);
         applicationReportModel.setTemplateType(TemplateType.FREEMARKER);
 
-        HibernateConfigurationFileService hibernateConfigurationFileService = new HibernateConfigurationFileService(context);
-        HibernateEntityService hibernateEntityService = new HibernateEntityService(context);
+
         GraphService<WindupVertexListModel> listService = new GraphService<>(context, WindupVertexListModel.class);
 
         @SuppressWarnings("unchecked")
         WindupVertexListModel<HibernateConfigurationFileModel> hibernateConfigList = listService.create();
-        for (HibernateConfigurationFileModel hibernateConfig : hibernateConfigurationFileService.findAllByApplication(projectModel))
-        {
-            hibernateConfigList.addItem(hibernateConfig);
-        }
+        hibernateConfigList.addAll(configurationFileModels);
 
         @SuppressWarnings("unchecked")
         WindupVertexListModel<HibernateEntityModel> entityList = listService.create();
-        for (HibernateEntityModel entityModel : hibernateEntityService.findAllByApplication(projectModel))
-        {
-            entityList.addItem(entityModel);
-        }
+        entityList.addAll(entityModels);
+
 
         Map<String, WindupVertexFrame> additionalData = new HashMap<>(2);
         additionalData.put("hibernateConfiguration", hibernateConfigList);
@@ -115,6 +128,6 @@ public class CreateHibernateReportRuleProvider extends AbstractRuleProvider
 
         // Set the filename for the report
         ReportService reportService = new ReportService(context);
-        reportService.setUniqueFilename(applicationReportModel, "hibernate_" + projectModel.getName(), "html");
+        reportService.setUniqueFilename(applicationReportModel, "hibernate_" + application.getName(), "html");
     }
 }

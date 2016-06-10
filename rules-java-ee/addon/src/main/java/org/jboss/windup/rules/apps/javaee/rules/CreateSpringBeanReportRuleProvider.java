@@ -58,12 +58,12 @@ public class CreateSpringBeanReportRuleProvider extends AbstractRuleProvider
                             .getConfigurationModel(event.getGraphContext());
                 for (FileModel inputPath : windupConfiguration.getInputPaths())
                 {
-                    ProjectModel projectModel = inputPath.getProjectModel();
-                    if (projectModel == null)
+                    ProjectModel application = inputPath.getProjectModel();
+                    if (application == null)
                     {
                         throw new WindupException("Error, no project found in: " + inputPath.getFilePath());
                     }
-                    createSpringBeanReport(event.getGraphContext(), projectModel);
+                    createSpringBeanReport(event.getGraphContext(), application);
                 }
             }
 
@@ -80,10 +80,10 @@ public class CreateSpringBeanReportRuleProvider extends AbstractRuleProvider
                     .perform(addReport);
     }
 
-    private void createSpringBeanReport(GraphContext context, ProjectModel projectModel)
+    private void createSpringBeanReport(GraphContext context, ProjectModel application)
     {
         SpringBeanService springBeanService = new SpringBeanService(context);
-        Iterable<SpringBeanModel> models = springBeanService.findAllByApplication(projectModel);
+        Iterable<SpringBeanModel> models = springBeanService.findAllByApplication(application);
         if (!models.iterator().hasNext())
         {
             return;
@@ -95,7 +95,7 @@ public class CreateSpringBeanReportRuleProvider extends AbstractRuleProvider
         applicationReportModel.setReportName("Spring Beans");
         applicationReportModel.setDescription(REPORT_DESCRIPTION);
         applicationReportModel.setReportIconClass("glyphicon glyphicon-leaf");
-        applicationReportModel.setProjectModel(projectModel);
+        applicationReportModel.setProjectModel(application);
         applicationReportModel.setReportIconClass("glyphicon glyphicon-leaf");
         applicationReportModel.setTemplatePath(TEMPLATE_SPRING_REPORT);
         applicationReportModel.setTemplateType(TemplateType.FREEMARKER);
@@ -112,6 +112,6 @@ public class CreateSpringBeanReportRuleProvider extends AbstractRuleProvider
 
         // Set the filename for the report
         ReportService reportService = new ReportService(context);
-        reportService.setUniqueFilename(applicationReportModel, "springbeans_" + projectModel.getName(), "html");
+        reportService.setUniqueFilename(applicationReportModel, "springbeans_" + application.getName(), "html");
     }
 }

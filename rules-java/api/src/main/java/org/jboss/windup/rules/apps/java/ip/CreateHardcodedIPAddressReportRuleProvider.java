@@ -1,11 +1,13 @@
 package org.jboss.windup.rules.apps.java.ip;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
@@ -17,6 +19,7 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
+import org.jboss.windup.config.projecttraversal.ProjectTraversalCache;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.jboss.windup.reporting.model.TemplateType;
 import org.jboss.windup.reporting.model.WindupVertexListModel;
@@ -35,7 +38,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 public class CreateHardcodedIPAddressReportRuleProvider extends AbstractRuleProvider
 {
     private static final String TITLE = "Hard-coded IP Addresses";
-    public static final String TEMPLATE_REPORT = "/reports/templates/static_ip_addresses.ftl";
+    public static final String TEMPLATE_REPORT = "/reports/templates/hardcoded_ip_addresses.ftl";
     public static final String REPORT_DESCRIPTION = "The Hard-coded IP report provides a list of all hard-coded IP addresses that were found in the application. These often require review during migration.";
 
     @Override
@@ -66,8 +69,22 @@ public class CreateHardcodedIPAddressReportRuleProvider extends AbstractRuleProv
         });
     }
 
-    private ApplicationReportModel createIPReport(GraphContext context, ProjectModel rootProjectModel)
+    private void createIPReport(GraphContext context, ProjectModel rootProjectModel)
     {
+        GraphService<HardcodedIPLocationModel> ipLocationModelService = new GraphService<>(context, HardcodedIPLocationModel.class);
+        List<HardcodedIPLocationModel> hardcodedIPArrayList = new ArrayList<>();
+        // find all IPLocationModels
+        for (HardcodedIPLocationModel location : ipLocationModelService.findAll())
+        {
+            Set<ProjectModel> applicationsForFile = ProjectTraversalCache.getApplicationsForProject(context, location.getFile().getProjectModel());
+            if (applicationsForFile.contains(rootProjectModel))
+                hardcodedIPArrayList.add(location);
+        }
+
+        // There were not hardcoded IPs for this application
+        if (hardcodedIPArrayList.isEmpty())
+            return;
+
         ApplicationReportService applicationReportService = new ApplicationReportService(context);
 
         // create a reference in the graph to the static ip location report.
@@ -82,25 +99,22 @@ public class CreateHardcodedIPAddressReportRuleProvider extends AbstractRuleProv
         applicationReport.setTemplateType(TemplateType.FREEMARKER);
         applicationReport.setProjectModel(rootProjectModel);
 
-        // find all IPLocationModels
-        GraphService<HardcodedIPLocationModel> ipLocationModelService = new GraphService<>(context, HardcodedIPLocationModel.class);
-        Iterable<HardcodedIPLocationModel> results = ipLocationModelService.findAll();
+
+
 
         Map<String, WindupVertexFrame> relatedData = new HashMap<>(1);
-        WindupVertexListModel staticIPList = new GraphService<>(context, WindupVertexListModel.class).create();
-        for (HardcodedIPLocationModel location : results)
-        {
-            if (location.getFile().getProjectModel().getRootProjectModel().equals(rootProjectModel))
-                staticIPList.addItem(location);
-        }
-        relatedData.put("staticIPLocations", staticIPList);
+
+        @SuppressWarnings("unchecked")
+        WindupVertexListModel<HardcodedIPLocationModel> hardcodedIPListModel = new GraphService<>(context, WindupVertexListModel.class).create();
+        hardcodedIPListModel.addAll(hardcodedIPArrayList);
+
+        relatedData.put("hardcodedIPLocations", hardcodedIPListModel);
         applicationReport.setRelatedResource(relatedData);
 
         // performs methods on the graph to create a unique file name.
         ReportService reportService = new ReportService(context);
 
         // uses project model's name for the report name.
-        reportService.setUniqueFilename(applicationReport, "static_ips" + rootProjectModel.getName(), "html");
-        return applicationReport;
+        reportService.setUniqueFilename(applicationReport, "hardcoded_ips" + rootProjectModel.getName(), "html");
     }
 }

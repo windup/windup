@@ -32,7 +32,13 @@ public interface JNDIResourceModel extends WindupVertexFrame
      * Contains the application in which this JNDI resource was discovered.
      */
     @Adjacency(label = APPLICATIONS, direction = Direction.OUT)
-    void addApplication(ProjectModel projectModel);
+    void addApplication(ProjectModel application);
+
+    /**
+     * Contains the application in which this JNDI resource was discovered.
+     */
+    @Adjacency(label = APPLICATIONS, direction = Direction.OUT)
+    void setApplications(Iterable<ProjectModel> applications);
 
     /**
      * Indicates whether this {@link JNDIResourceModel} is associated with the given application.

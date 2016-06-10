@@ -2,6 +2,7 @@ package org.jboss.windup.rules.apps.javaee.rules.weblogic;
 
 import static org.joox.JOOX.$;
 
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
@@ -10,6 +11,8 @@ import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
+import org.jboss.windup.graph.model.ProjectModel;
+import org.jboss.windup.config.projecttraversal.ProjectTraversalCache;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.javaee.model.EnvironmentReferenceModel;
@@ -55,6 +58,7 @@ public class ResolveWebLogicWebXmlRuleProvider extends IteratingRuleProvider<Xml
         vendorSpecificationService.associateAsVendorExtension(payload, "web.xml");
 
         technologyTagService.addTagToFileModel(payload, "WebLogic Web XML", TechnologyTagLevel.IMPORTANT);
+        Set<ProjectModel> applications = ProjectTraversalCache.getApplicationsForProject(event.getGraphContext(), payload.getProjectModel());
         for (Element resourceRef : $(doc).find("resource-description").get())
         {
             String jndiLocation = $(resourceRef).child("jndi-name").text();
@@ -62,7 +66,7 @@ public class ResolveWebLogicWebXmlRuleProvider extends IteratingRuleProvider<Xml
 
             if (StringUtils.isNotBlank(jndiLocation))
             {
-                JNDIResourceModel resource = jndiResourceService.createUnique(payload.getApplication(), jndiLocation);
+                JNDIResourceModel resource = jndiResourceService.createUnique(applications, jndiLocation);
 
                 LOG.info("JNDI: " + jndiLocation + " Resource: " + resourceName);
                 // now, look up the resource by name, and associate the type which is resolved by DiscoverWebXmlRuleProvider

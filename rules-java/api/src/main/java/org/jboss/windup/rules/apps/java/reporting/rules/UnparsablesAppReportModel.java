@@ -1,12 +1,10 @@
 package org.jboss.windup.rules.apps.java.reporting.rules;
 
+import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.frames.Adjacency;
 import org.jboss.windup.graph.model.ProjectModel;
-import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
-import org.jboss.windup.rules.apps.java.archives.model.IgnoredArchiveModel;
 
-import com.tinkerpop.frames.annotations.gremlin.GremlinGroovy;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
@@ -18,32 +16,17 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 public interface UnparsablesAppReportModel extends ApplicationReportModel
 {
     String TYPE = "UnparsablesAppReport";
+    String ALL_SUB_PROJECTS = "allSubProjects";
 
     /**
-     * Files that had problems while parsing.
+     * All related (canonical) projects.
      */
-    @GremlinGroovy("it"
-            + ".out('"+REPORT_TO_PROJECT_MODEL+"')"
-            + ".as('x')"
-            + ".in('"+ProjectModel.PARENT_PROJECT+"')"
-            + ".simplePath"
-            + ".loop('x'){true}{true}"
-            + ".out('"+ProjectModel.ROOT_FILE_MODEL+"')"
-            + ".hasNot('"+WindupVertexFrame.TYPE_PROP+"', '"+IgnoredArchiveModel.TYPE+"')"
-            + ".back(2)")
+    @Adjacency(label = ALL_SUB_PROJECTS, direction = Direction.OUT)
     Iterable<ProjectModel> getAllSubProjects();
 
     /**
-     * Gets a tables of all unparseable files.
+     * All related (canonical) projects.
      */
-    @GremlinGroovy(frame = false, value = "it.out('"+REPORT_TO_PROJECT_MODEL+"').as('x')"
-            + ".in('"+ProjectModel.PARENT_PROJECT+"')"
-            + ".simplePath"
-            + ".loop('x'){true}{true}"
-            + ".as('prj')"
-            + ".out('" + ProjectModel.PROJECT_MODEL_TO_FILE + "').has('" + FileModel.PARSE_ERROR + "').as('file')"
-            + ".table.cap"
-    )
-    Object getAllSubProjectsAndTheirUnparsablesTable();
-
+    @Adjacency(label = ALL_SUB_PROJECTS, direction = Direction.OUT)
+    void setAllSubProjects(Iterable<ProjectModel> projects);
 }

@@ -2,6 +2,7 @@
 <html lang="en">
 
 <#assign applicationReportIndexModel = reportModel.applicationReportIndexModel>
+<#assign allTraversal = getProjectTraversal(reportModel.projectModel, 'all')>
 
 <#macro tagRenderer tag>
     <#if tag.level?? && tag.level == "IMPORTANT">
@@ -45,7 +46,8 @@
     </#if>
 </#macro>
 
-<#macro projectModelRenderer projectModel>
+<#macro projectModelRenderer traversal>
+    <#assign projectModel = traversal.canonicalProject>
     <#assign fileModelCollection = sortFilesByPathAscending(findFilesNotClassifiedOrHinted(projectModel.fileModelsNoDirectories))>
     <#if iterableHasContent(fileModelCollection)>
         <div class="panel panel-primary">
@@ -62,8 +64,8 @@
             </table>
         </div>
     </#if>
-    <#list sortProjectsByPathAscending(projectModel.childProjects) as childProject>
-        <@projectModelRenderer childProject/>
+    <#list sortProjectTraversalsByPathAscending(traversal.children) as childTraversal>
+        <@projectModelRenderer childTraversal/>
     </#list>
 </#macro>
 
@@ -122,7 +124,7 @@
 
         <div class="row">
             <div class="container-fluid theme-showcase" role="main">
-                <@projectModelRenderer reportModel.projectModel />
+                <@projectModelRenderer allTraversal />
             </div> <!-- /container -->
         </div>
     </div>

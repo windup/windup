@@ -4,6 +4,7 @@ import static org.joox.JOOX.$;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
@@ -12,6 +13,8 @@ import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.ProjectModel;
+import org.jboss.windup.config.projecttraversal.ProjectTraversalCache;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.model.TechnologyTagModel;
 import org.jboss.windup.reporting.service.TechnologyTagService;
@@ -92,6 +95,7 @@ public class DiscoverJpaConfigurationXmlRuleProvider extends IteratingRuleProvid
             jpaConfigurationModel.setSpecificationVersion(version);
         }
 
+        Set<ProjectModel> applications = ProjectTraversalCache.getApplicationsForProject(graphContext, xmlFileModel.getProjectModel());
         for (Element element : $(doc).find("persistence-unit").get())
         {
             JPAPersistenceUnitModel persistenceUnitModel = jpaPersistenceUnitService.create();
@@ -110,7 +114,7 @@ public class DiscoverJpaConfigurationXmlRuleProvider extends IteratingRuleProvid
                     dataSourceName = StringUtils.substringAfterLast(dataSourceName, "/");
                 }
 
-                DataSourceModel dataSource = dataSourceService.createUnique(xmlFileModel.getApplication(), dataSourceName, dataSourceJndiName);
+                DataSourceModel dataSource = dataSourceService.createUnique(applications, dataSourceName, dataSourceJndiName);
                 persistenceUnitModel.addDataSource(dataSource);
             }
 
@@ -123,7 +127,7 @@ public class DiscoverJpaConfigurationXmlRuleProvider extends IteratingRuleProvid
                     dataSourceName = StringUtils.substringAfterLast(dataSourceName, "/");
                 }
 
-                DataSourceModel dataSource = dataSourceService.createUnique(xmlFileModel.getApplication(), dataSourceName, dataSourceJndiName);
+                DataSourceModel dataSource = dataSourceService.createUnique(applications, dataSourceName, dataSourceJndiName);
                 persistenceUnitModel.addDataSource(dataSource);
             }
 
@@ -133,7 +137,7 @@ public class DiscoverJpaConfigurationXmlRuleProvider extends IteratingRuleProvid
                 JavaClassModel javaClz = javaClassService.getOrCreatePhantom(clzName);
 
                 JPAEntityModel entityModel = jpaEntityService.create();
-                entityModel.setApplication(xmlFileModel.getApplication());
+                entityModel.setApplications(applications);
                 entityModel.setJavaClass(javaClz);
             }
 

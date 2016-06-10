@@ -3,27 +3,27 @@
 
 <#assign applicationReportIndexModel = reportModel.applicationReportIndexModel>
 
-<#macro staticIpFileRenderer reportModel>
+<#macro hardcodedIpFileRenderer reportModel>
     <div class="panel panel-primary">
         <div class="panel-heading">
             <h3 class="panel-title">Hard-coded IP Addresses</h3>
         </div>
 
-        <#if iterableHasContent(reportModel.relatedResources.staticIPLocations)>
-            <table class="table table-striped table-bordered" id="staticIPTable">
+        <#if iterableHasContent(reportModel.relatedResources.hardcodedIPLocations)>
+            <table class="table table-striped table-bordered" id="hardcodedIPTable">
                 <tr>
                     <th>File</th>
                     <th>Location</th>
                     <th>IP Address</th>
                 </tr>
 
-                <#list reportModel.relatedResources.staticIPLocations.list.iterator() as staticIpRef>
+                <#list reportModel.relatedResources.hardcodedIPLocations.list.iterator() as hardcodedIpRef>
                 <tr>
                     <td>
-                        <@render_link model=staticIpRef project=reportModel.projectModel/>
+                        <@render_link model=hardcodedIpRef project=reportModel.projectModel/>
                     </td>
-                    <td> <#if staticIpRef.lineNumber?has_content>Line: ${staticIpRef.lineNumber}, </#if><#if staticIpRef.columnNumber?has_content>Position: ${staticIpRef.columnNumber} </#if> </td>
-                    <td> <#if staticIpRef.sourceSnippit?has_content> ${staticIpRef.sourceSnippit} </#if> </td>
+                    <td> <#if hardcodedIpRef.lineNumber?has_content>Line: ${hardcodedIpRef.lineNumber}, </#if><#if hardcodedIpRef.columnNumber?has_content>Position: ${hardcodedIpRef.columnNumber} </#if> </td>
+                    <td> <#if hardcodedIpRef.sourceSnippit?has_content> ${hardcodedIpRef.sourceSnippit} </#if> </td>
                 </tr>
                 </#list>
             </table>
@@ -79,7 +79,7 @@
 
         <div class="row">
             <div class="container-fluid theme-showcase" role="main">
-                <@staticIpFileRenderer reportModel />
+                <@hardcodedIpFileRenderer reportModel />
             </div>
         </div>
     </div> <!-- /container -->

@@ -2,6 +2,7 @@ package org.jboss.windup.rules.apps.javaee.service;
 
 import java.util.Collections;
 
+import com.google.common.collect.Iterables;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
@@ -27,7 +28,7 @@ public class EjbRemoteServiceModelService extends GraphService<EjbRemoteServiceM
     /**
      * Either creates a new {@link EjbRemoteServiceModel} or returns an existing one if one already exists.
      */
-    public EjbRemoteServiceModel getOrCreate(ProjectModel application, JavaClassModel remoteInterface, JavaClassModel implementationClass)
+    public EjbRemoteServiceModel getOrCreate(Iterable<ProjectModel> applications, JavaClassModel remoteInterface, JavaClassModel implementationClass)
     {
         GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(getGraphContext().getGraph());
         pipeline.V().has(WindupVertexFrame.TYPE_PROP, EjbRemoteServiceModel.TYPE);
@@ -43,16 +44,17 @@ public class EjbRemoteServiceModelService extends GraphService<EjbRemoteServiceM
         if (pipeline.hasNext())
         {
             EjbRemoteServiceModel result = frame(pipeline.next());
-            if (!result.isAssociatedWithApplication(application))
+            for (ProjectModel application : applications)
             {
-                result.addApplication(application);
+                if (!Iterables.contains(result.getApplications(), application))
+                    result.addApplication(application);
             }
             return result;
         }
         else
         {
             EjbRemoteServiceModel model = create();
-            model.addApplication(application);
+            model.setApplications(applications);
             model.setInterface(remoteInterface);
             model.setImplementationClass(implementationClass);
             return model;

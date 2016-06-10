@@ -46,12 +46,12 @@ public class CreateCompatibleFileReportRuleProvider extends AbstractRuleProvider
             {
                 for (FileModel inputPath : payload.getInputPaths())
                 {
-                    ProjectModel projectModel = inputPath.getProjectModel();
-                    if (projectModel == null)
+                    ProjectModel application = inputPath.getProjectModel();
+                    if (application == null)
                     {
                         throw new WindupException("Error, no project found in: " + inputPath.getFilePath());
                     }
-                    createApplicationReport(event.getGraphContext(), projectModel);
+                    createApplicationReport(event.getGraphContext(), application);
                 }
             }
 
@@ -70,7 +70,7 @@ public class CreateCompatibleFileReportRuleProvider extends AbstractRuleProvider
     }
     // @formatter:on
 
-    private ApplicationReportModel createApplicationReport(GraphContext context, ProjectModel projectModel)
+    private ApplicationReportModel createApplicationReport(GraphContext context, ProjectModel application)
     {
         ApplicationReportService applicationReportService = new ApplicationReportService(context);
         ApplicationReportModel applicationReportModel = applicationReportService.create();
@@ -80,13 +80,13 @@ public class CreateCompatibleFileReportRuleProvider extends AbstractRuleProvider
         applicationReportModel.setDescription(REPORT_DESCRIPTION);
         applicationReportModel.setReportIconClass("glyphicon glyphicon-check");
         applicationReportModel.setMainApplicationReport(false);
-        applicationReportModel.setProjectModel(projectModel);
+        applicationReportModel.setProjectModel(application);
         applicationReportModel.setTemplatePath(TEMPLATE_APPLICATION_REPORT);
         applicationReportModel.setTemplateType(TemplateType.FREEMARKER);
 
         // Set the filename for the report
         ReportService reportService = new ReportService(context);
-        reportService.setUniqueFilename(applicationReportModel, "compatiblefiles_" + projectModel.getName(), "html");
+        reportService.setUniqueFilename(applicationReportModel, "compatiblefiles_" + application.getName(), "html");
 
         return applicationReportModel;
     }

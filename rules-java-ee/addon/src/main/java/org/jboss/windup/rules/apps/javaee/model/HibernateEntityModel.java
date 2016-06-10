@@ -24,19 +24,19 @@ public interface HibernateEntityModel extends WindupVertexFrame
     String SPECIFICATION_VERSION = "specificationVersion";
     String HIBERNATE_ENTITY_CLASS = "hibernateEntityClass";
     String TYPE = "HibernateEntityModel";
-    String APPLICATION = "application";
+    String APPLICATIONS = "applications";
 
     /**
-     * Contains the application in which this Spring Bean was discovered.
+     * Contains the applications in which this entity was discovered.
      */
-    @Adjacency(label = APPLICATION, direction = Direction.OUT)
-    ProjectModel getApplication();
+    @Adjacency(label = APPLICATIONS, direction = Direction.OUT)
+    Iterable<ProjectModel> getApplications();
 
     /**
-     * Contains the application in which this Spring Bean  was discovered.
+     * Contains the applications in which this entity was discovered.
      */
-    @Adjacency(label = APPLICATION, direction = Direction.OUT)
-    void setApplication(ProjectModel projectModel);
+    @Adjacency(label = APPLICATIONS, direction = Direction.OUT)
+    void setApplications(Iterable<ProjectModel> applications);
 
     /**
      * Contains the specification version

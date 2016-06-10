@@ -13,6 +13,7 @@ import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.config.projecttraversal.ProjectTraversalCache;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
 import org.jboss.windup.rules.apps.java.model.AbstractJavaSourceModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
@@ -124,7 +125,7 @@ public class DiscoverJPAAnnotationsRuleProvider extends AbstractRuleProvider
 
         JPAEntityService jpaService = new JPAEntityService(event.getGraphContext());
         JPAEntityModel jpaEntity = jpaService.create();
-        jpaEntity.setApplication(entityTypeReference.getFile().getApplication());
+        jpaEntity.setApplications(ProjectTraversalCache.getApplicationsForProject(event.getGraphContext(), entityTypeReference.getFile().getProjectModel()));
         jpaEntity.setEntityName(ejbName);
         jpaEntity.setJavaClass(ejbClass);
         jpaEntity.setTableName(tableName);

@@ -11,6 +11,7 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.reporting.model.DefaultTechnologyTagComparator;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.model.TechnologyTagModel;
@@ -96,11 +97,11 @@ public class TechnologyTagService extends GraphService<TechnologyTagModel>
     /**
      * Return an {@link Iterable} containing all {@link TechnologyTagModel}s that are directly associated with the provided {@link ProjectModel}.
      */
-    public Iterable<TechnologyTagModel> findTechnologyTagsForProject(ProjectModel projectModel)
+    public Iterable<TechnologyTagModel> findTechnologyTagsForProject(ProjectModelTraversal traversal)
     {
         Set<TechnologyTagModel> results = new TreeSet<>(new DefaultTechnologyTagComparator());
 
-        GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(projectModel.asVertex());
+        GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(traversal.getCanonicalProject().asVertex());
         pipeline.out(ProjectModel.PROJECT_MODEL_TO_FILE);
         pipeline.in(TechnologyTagModel.TECH_TAG_TO_FILE_MODEL).has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, TechnologyTagModel.TYPE);
 
@@ -108,9 +109,9 @@ public class TechnologyTagService extends GraphService<TechnologyTagModel>
                     TechnologyTagModel.class);
         results.addAll(Iterators.asSet(modelIterable));
 
-        for (ProjectModel childProjectModel : projectModel.getChildProjects())
+        for (ProjectModelTraversal childTraversal : traversal.getChildren())
         {
-            results.addAll(Iterators.asSet(findTechnologyTagsForProject(childProjectModel)));
+            results.addAll(Iterators.asSet(findTechnologyTagsForProject(childTraversal)));
         }
 
         return results;

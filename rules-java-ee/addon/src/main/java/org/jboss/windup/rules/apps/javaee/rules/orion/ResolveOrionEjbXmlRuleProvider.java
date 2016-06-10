@@ -2,6 +2,7 @@ package org.jboss.windup.rules.apps.javaee.rules.orion;
 
 import static org.joox.JOOX.$;
 
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
@@ -10,7 +11,9 @@ import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
+import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.config.projecttraversal.ProjectTraversalCache;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.javaee.model.EjbMessageDrivenModel;
@@ -64,6 +67,8 @@ public class ResolveOrionEjbXmlRuleProvider extends IteratingRuleProvider<XmlFil
         vendorSpecificationService.associateAsVendorExtension(payload, "ejb-jar.xml");
 
         technologyTagService.addTagToFileModel(payload, "Orion EJB XML", TechnologyTagLevel.IMPORTANT);
+
+        Set<ProjectModel> applications = ProjectTraversalCache.getApplicationsForProject(event.getGraphContext(), payload.getProjectModel());
         for (Element resourceRef : $(doc).find("resource-ref-mapping").get())
         {
             String jndiLocation = $(resourceRef).attr("location");
@@ -71,7 +76,7 @@ public class ResolveOrionEjbXmlRuleProvider extends IteratingRuleProvider<XmlFil
 
             if (StringUtils.isNotBlank(jndiLocation) && StringUtils.isNotBlank(resourceName))
             {
-                JNDIResourceModel resource = jndiResourceService.createUnique(payload.getApplication(), jndiLocation);
+                JNDIResourceModel resource = jndiResourceService.createUnique(applications, jndiLocation);
                 LOG.info("JNDI Name: " + jndiLocation + " to Resource: " + resourceName);
                 // now, look up the resource which is resolved by DiscoverEjbConfigurationXmlRuleProvider
                 for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceName))
@@ -94,7 +99,7 @@ public class ResolveOrionEjbXmlRuleProvider extends IteratingRuleProvider<XmlFil
 
                     if (StringUtils.isNotBlank(destination))
                     {
-                        JNDIResourceModel jndiRef = jndiResourceService.createUnique(payload.getApplication(), destination);
+                        JNDIResourceModel jndiRef = jndiResourceService.createUnique(applications, destination);
                         ejb.setGlobalJndiReference(jndiRef);
                     }
                 }
@@ -127,7 +132,7 @@ public class ResolveOrionEjbXmlRuleProvider extends IteratingRuleProvider<XmlFil
 
                     if (StringUtils.isNotBlank(destination))
                     {
-                        JmsDestinationModel jndiRef = jmsDestinationService.createUnique(payload.getApplication(), destination);
+                        JmsDestinationModel jndiRef = jmsDestinationService.createUnique(applications, destination);
                         mdb.setDestination(jndiRef);
                     }
                 }

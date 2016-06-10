@@ -7,6 +7,8 @@ import org.jboss.windup.rules.apps.javaee.model.JNDIResourceModel;
 import org.jboss.windup.rules.apps.javaee.model.JmsDestinationModel;
 import org.jboss.windup.rules.apps.javaee.model.JmsDestinationType;
 
+import java.util.Set;
+
 /**
  * Contains methods for querying, updating, and deleting {@link JmsDestinationModel}
  * 
@@ -29,19 +31,19 @@ public class JmsDestinationService extends GraphService<JmsDestinationModel>
     /**
      * Creates a new instance with the given name, or converts an existing instance at this location if one already exists
      */
-    public JmsDestinationModel createUnique(ProjectModel application, String jndiName, JmsDestinationType destinationType)
+    public JmsDestinationModel createUnique(Set<ProjectModel> applications, String jndiName, JmsDestinationType destinationType)
     {
-        JmsDestinationModel model = createUnique(application, jndiName);
+        JmsDestinationModel model = createUnique(applications, jndiName);
         model.setDestinationType(destinationType);
 
         return model;
     }
 
-    public JmsDestinationModel createUnique(ProjectModel application, String jndiName)
+    public JmsDestinationModel createUnique(Set<ProjectModel> applications, String jndiName)
     {
         JmsDestinationModel model = null;
 
-        JNDIResourceModel jndiRef = jndiResourceService.createUnique(application, jndiName);
+        JNDIResourceModel jndiRef = jndiResourceService.createUnique(applications, jndiName);
         if (jndiRef instanceof JmsDestinationModel)
         {
             model = (JmsDestinationModel) jndiRef;

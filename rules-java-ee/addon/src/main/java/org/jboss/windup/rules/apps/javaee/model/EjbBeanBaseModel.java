@@ -28,19 +28,19 @@ public interface EjbBeanBaseModel extends WindupVertexFrame
     String TRANSACTION_TYPE = "transactionType";
     String SESSION_TYPE = "sessionType";
     String EJB_BEAN_NAME = "ejbBeanName";
-    String APPLICATION = "application";
+    String APPLICATIONS = "applications";
 
     /**
      * Contains the application in which this EJB was discovered.
      */
-    @Adjacency(label = APPLICATION, direction = Direction.OUT)
-    ProjectModel getApplication();
+    @Adjacency(label = APPLICATIONS, direction = Direction.OUT)
+    Iterable<ProjectModel> getApplications();
 
     /**
      * Contains the application in which this EJB was discovered.
      */
-    @Adjacency(label = APPLICATION, direction = Direction.OUT)
-    void setApplication(ProjectModel projectModel);
+    @Adjacency(label = APPLICATIONS, direction = Direction.OUT)
+    void setApplications(Iterable<ProjectModel> applications);
 
     /**
      * Contains the bean's display name

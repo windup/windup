@@ -1,7 +1,10 @@
 package org.jboss.windup.rules.apps.javaee.rules.jboss.jbpm3;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
@@ -16,6 +19,7 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
+import org.jboss.windup.config.projecttraversal.ProjectTraversalCache;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.jboss.windup.reporting.model.TemplateType;
 import org.jboss.windup.reporting.model.WindupVertexListModel;
@@ -50,8 +54,8 @@ public class CreateJBossJBPMReportRuleProvider extends AbstractRuleProvider
                 WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
                 for (FileModel inputPath : configurationModel.getInputPaths())
                 {
-                    ProjectModel projectModel = inputPath.getProjectModel();
-                    createJbpmReport(event.getGraphContext(), projectModel);
+                    ProjectModel application = inputPath.getProjectModel();
+                    createJbpmReport(event.getGraphContext(), application);
                 }
             }
 
@@ -63,8 +67,21 @@ public class CreateJBossJBPMReportRuleProvider extends AbstractRuleProvider
         });
     }
 
-    private void createJbpmReport(GraphContext context, ProjectModel projectModel)
+    private void createJbpmReport(GraphContext context, ProjectModel application)
     {
+        GraphService<Jbpm3ProcessModel> jbpmProcessService = new GraphService<>(context, Jbpm3ProcessModel.class);
+        List<Jbpm3ProcessModel> processModelList = new ArrayList<>();
+        for (Jbpm3ProcessModel processModel : jbpmProcessService.findAll())
+        {
+            Set<ProjectModel> applicationsContainingFile = ProjectTraversalCache.getApplicationsForProject(context, processModel.getProjectModel());
+            if (applicationsContainingFile.contains(application))
+                processModelList.add(processModel);
+        }
+
+        // Return early if none were found
+        if (processModelList.isEmpty())
+            return;
+
         ApplicationReportService applicationReportService = new ApplicationReportService(context);
         ApplicationReportModel applicationReportModel = applicationReportService.create();
         applicationReportModel.setReportPriority(300);
@@ -72,25 +89,21 @@ public class CreateJBossJBPMReportRuleProvider extends AbstractRuleProvider
         applicationReportModel.setReportName("JBPM");
         applicationReportModel.setDescription(REPORT_DESCRIPTION);
         applicationReportModel.setReportIconClass("glyphicon bpm-nav-logo");
-        applicationReportModel.setProjectModel(projectModel);
+        applicationReportModel.setProjectModel(application);
         applicationReportModel.setTemplatePath(TEMPLATE_EJB_REPORT);
         applicationReportModel.setTemplateType(TemplateType.FREEMARKER);
 
-        GraphService<Jbpm3ProcessModel> jbpmProcessService = new GraphService<>(context, Jbpm3ProcessModel.class);
         GraphService<WindupVertexListModel> listService = new GraphService<>(context, WindupVertexListModel.class);
 
-        WindupVertexListModel processes = listService.create();
+        @SuppressWarnings("unchecked")
+        WindupVertexListModel<Jbpm3ProcessModel> processes = listService.create();
+        processes.addAll(processModelList);
 
-        for (Jbpm3ProcessModel processModel : jbpmProcessService.findAll())
-        {
-            processes.addItem(processModel);
-        }
-
-        Map<String, WindupVertexFrame> additionalData = new HashMap<>(4);
+        Map<String, WindupVertexFrame> additionalData = new HashMap<>(1);
         additionalData.put("processes", processes);
         applicationReportModel.setRelatedResource(additionalData);
 
         ReportService reportService = new ReportService(context);
-        reportService.setUniqueFilename(applicationReportModel, "jbpmreport_" + projectModel.getName(), "html");
+        reportService.setUniqueFilename(applicationReportModel, "jbpmreport_" + application.getName(), "html");
     }
 }

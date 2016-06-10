@@ -9,6 +9,8 @@ import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
+import org.jboss.windup.graph.model.ProjectModel;
+import org.jboss.windup.config.projecttraversal.ProjectTraversalCache;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.model.TechnologyTagModel;
 import org.jboss.windup.reporting.service.TechnologyTagService;
@@ -24,6 +26,8 @@ import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import java.util.Set;
 
 /**
  * Discovers Orion Web XML files and parses the related metadata
@@ -54,6 +58,7 @@ public class ResolveOrionWebXmlRuleProvider extends IteratingRuleProvider<XmlFil
         vendorSpecificationService.associateAsVendorExtension(payload, "web.xml");
 
         TechnologyTagModel technologyTag = technologyTagService.addTagToFileModel(payload, "Orion Web XML", TechnologyTagLevel.IMPORTANT);
+        Set<ProjectModel> applications = ProjectTraversalCache.getApplicationsForProject(event.getGraphContext(), payload.getProjectModel());
         for (Element orionWeb : $(doc).child("orion-web-app"))
         {
             String majorVersion = $(orionWeb).attr("schema-major-version");
@@ -75,7 +80,7 @@ public class ResolveOrionWebXmlRuleProvider extends IteratingRuleProvider<XmlFil
             String jndiLocation = $(resourceRef).attr("location");
             String resourceName = $(resourceRef).attr("name");
 
-            JNDIResourceModel resource = jndiResourceService.createUnique(payload.getApplication(), jndiLocation);
+            JNDIResourceModel resource = jndiResourceService.createUnique(applications, jndiLocation);
 
             // now, look up the resource
             for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceName))

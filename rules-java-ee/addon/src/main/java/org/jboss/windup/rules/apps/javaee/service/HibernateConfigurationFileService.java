@@ -2,10 +2,12 @@ package org.jboss.windup.rules.apps.javaee.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.config.projecttraversal.ProjectTraversalCache;
 import org.jboss.windup.rules.apps.javaee.model.HibernateConfigurationFileModel;
 
 /**
@@ -30,8 +32,8 @@ public class HibernateConfigurationFileService extends GraphService<HibernateCon
 
         for (HibernateConfigurationFileModel model : findAll())
         {
-            ProjectModel modelApp = model.getApplication();
-            if (modelApp != null && modelApp.equals(application))
+            Set<ProjectModel> modelApplications = ProjectTraversalCache.getApplicationsForProject(getGraphContext(), model.getProjectModel());
+            if (modelApplications.contains(application))
                 results.add(model);
         }
         return results;

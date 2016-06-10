@@ -5,6 +5,7 @@ import java.util.List;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
+import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.reporting.model.TechnologyTagModel;
 import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.util.ExecutionStatistics;
@@ -13,19 +14,26 @@ import freemarker.ext.beans.StringModel;
 import freemarker.template.TemplateModelException;
 
 /**
- * Gets all technology tags for the provided {@link ProjectModel} and all of its subprojects (eg, "EJB", "Web XML").
- * 
- * Example call:
- * 
- * getTechnologyTagsForProject(ProjectModel).
- * 
- * The method will return an Iterable containing {@link TechnologyTagModel} instances.
- * 
+ * <p>
+ *  Gets all technology tags for the provided {@link ProjectModelTraversal} and all of its subprojects (eg, "EJB", "Web XML").
+ * </p>
+ * <p>
+ *  Example call:
+ * </p>
+ *
+ * <pre>
+ *  getTechnologyTagsForProjectTraversal(ProjectModelTraversal).
+ * </pre>
+ *
+ * <p>
+ *  The method will return an Iterable containing {@link TechnologyTagModel} instances.
+ * </p>
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public class GetTechnologyTagsForProject implements WindupFreeMarkerMethod
 {
-    private static final String NAME = "getTechnologyTagsForProject";
+    private static final String NAME = "getTechnologyTagsForProjectTraversal";
     private GraphContext context;
 
     @Override
@@ -40,11 +48,11 @@ public class GetTechnologyTagsForProject implements WindupFreeMarkerMethod
         ExecutionStatistics.get().begin(NAME);
         if (arguments.size() != 1)
         {
-            throw new TemplateModelException("Error, method expects one argument (" + ProjectModel.class.getSimpleName() + ")");
+            throw new TemplateModelException("Error, method expects one argument (" + ProjectModelTraversal.class.getSimpleName() + ")");
         }
         StringModel stringModelArg = (StringModel) arguments.get(0);
-        ProjectModel projectModel = (ProjectModel) stringModelArg.getWrappedObject();
-        Iterable<TechnologyTagModel> result = new TechnologyTagService(this.context).findTechnologyTagsForProject(projectModel);
+        ProjectModelTraversal projectTraversal = (ProjectModelTraversal) stringModelArg.getWrappedObject();
+        Iterable<TechnologyTagModel> result = new TechnologyTagService(this.context).findTechnologyTagsForProject(projectTraversal);
         ExecutionStatistics.get().end(NAME);
         return result;
     }
