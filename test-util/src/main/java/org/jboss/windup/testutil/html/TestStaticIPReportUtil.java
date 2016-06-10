@@ -17,7 +17,7 @@ public class TestStaticIPReportUtil extends TestReportUtil
         WebElement element = getDriver().findElement(By.id("staticIPTable"));
         if (element == null)
         {
-            throw new CheckFailedException("Unable to find static IP table element");
+            throw new CheckFailedException("Unable to find hard-coded IP table element");
         }
         return checkValueInTable(element, filename, locationInFile, ip);
     }

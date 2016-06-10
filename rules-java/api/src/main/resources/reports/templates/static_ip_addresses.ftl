@@ -6,7 +6,7 @@
 <#macro staticIpFileRenderer reportModel>
     <div class="panel panel-primary">
         <div class="panel-heading">
-            <h3 class="panel-title">Static IP Addresses</h3>
+            <h3 class="panel-title">Hard-coded IP Addresses</h3>
         </div>
 
         <#if iterableHasContent(reportModel.relatedResources.staticIPLocations)>
@@ -29,7 +29,7 @@
             </table>
         <#else>
             <div class="panel-body">
-                No Static IP Addresses.
+                No Hard-coded IP Addresses.
             </div>
         </#if>
     </div>
@@ -38,7 +38,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>${reportModel.projectModel.name} - Static IP Address Files</title>
+    <title>${reportModel.projectModel.name} - Hard-coded IP Address Files</title>
     <link href="resources/css/bootstrap.min.css" rel="stylesheet">
     <link href="resources/css/windup.css" rel="stylesheet" media="screen">
     <link href="resources/css/windup.java.css" rel="stylesheet" media="screen">
@@ -66,12 +66,12 @@
         <div class="row">
             <div class="page-header page-header-no-border">
                 <h1>
-                    <div class="main">Static IP Report</div>
+                    <div class="main">Hard-coded IP Report</div>
                     <div class="path">${reportModel.projectModel.name?html}</div>
                 </h1>
                 <div class="desc">
-                    The static IP report lists the places where an IP address is found in the application.
-                    This may include places where the IP address is  hard-coded in the code rather than
+                    The hard-coded IP report lists the places where an IP address is found in the application.
+                    This may include places where the IP address is specified directly in the code rather than
                     externalized into the configuration files.
                 </div>
             </div>
