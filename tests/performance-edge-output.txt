@@ -1,0 +1,13 @@
+
+Getting output from StandardWithEdgePropertyQuery took 901,261 ms.
+
+Getting output from GremlinWithEdgePropertyQuery took 809,775 ms.
+
+Getting output from GremlinWithoutEdgePropertyQuery took 2,949,336 ms.
+
+Getting output from StandardWithoutEdgePropertyQuery took 2,941,363 ms.
+
+
+INITIALIZATION TIME:
+Total initialization of data without edge took: 25235771 ms. 
+Total initialization of data with edge took: 23861796 ms.

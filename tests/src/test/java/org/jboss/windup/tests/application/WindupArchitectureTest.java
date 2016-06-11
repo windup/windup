@@ -67,7 +67,7 @@ public abstract class WindupArchitectureTest
                     .resolve("windupgraph_" + RandomStringUtils.randomAlphanumeric(6));
     }
 
-    GraphContext createGraphContext()
+    protected GraphContext createGraphContext()
     {
         return createGraphContext(getDefaultPath());
     }
