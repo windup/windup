@@ -1,7 +1,6 @@
 <!DOCTYPE html>
-
 <#assign applicationReportIndexModel = reportModel.applicationReportIndexModel>
-
+                            
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -58,7 +57,7 @@
 
         <div class="row">
             <div class="container-fluid theme-showcase" role="main">
-
+                
             <#list reportModel.relatedResources["dependencies"].list.iterator()>
             <div class="panel panel-primary">
                 <div class="panel-heading">
@@ -105,9 +104,11 @@
                             <li class="trait">
                                 <span>Found at paths:</span>
                                 <ul id="${dependency.archiveName}-paths">
-                                    <#list getArchivesBySHA1(dependency.SHA1Hash).iterator() as instance>
-                                        <li>${instance.prettyPath}</li>
-                                    </#list>
+                                    <#list reportModel.projectEdges.iterator() as edge>
+                                        <div>
+                                            ${edge.fullPath?html}
+                                        </div>
+q                                    </#list>
                                 </ul>
                             </li>
                         </ul>

@@ -72,7 +72,7 @@ public class CreateApplicationListReportRuleProvider extends AbstractRuleProvide
         WindupVertexListModel<ApplicationReportModel> applications = listService.create();
         for (ApplicationReportModel applicationReportModel : applicationReportService.findAll())
         {
-            if (applicationReportModel.isMainApplicationReport())
+            if (applicationReportModel.isMainApplicationReport() != null && applicationReportModel.isMainApplicationReport())
                 applications.addItem(applicationReportModel);
         }
         Map<String, WindupVertexFrame> relatedData = new HashMap<>();
