@@ -11,6 +11,7 @@ import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.FileService;
+import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.reporting.model.ClassificationModel;
@@ -162,6 +163,9 @@ public class ClassificationService extends GraphService<ClassificationModel>
                 continue;
 
             // For each classification, count it repeatedly for each file.
+            // TODO: .accumulate(v, count);
+            // TODO: This could be all done just within the query (provided that the tags would be taken care of).
+            //       Accumulate could be a PipeFunction.
             for (Vertex fileVertex : v.getVertices(Direction.OUT, ClassificationModel.FILE_MODEL))
             {
                 // Make sure that this file is actually in an accepted project. The pipeline condition will return
@@ -186,15 +190,15 @@ public class ClassificationService extends GraphService<ClassificationModel>
             model.setClassification(classificationText);
             model.setDescription(description);
             model.setEffort(0);
-            model.addFileModel(fileModel);
             model.setRuleID(rule.getId());
-        }
-        else
-        {
-            return attachClassification(model, fileModel);
+            model.addFileModel(fileModel);
+            if (fileModel instanceof SourceFileModel)
+                ((SourceFileModel) fileModel).setGenerateSourceReport(true);
+
+            return model;
         }
 
-        return model;
+        return attachClassification(model, fileModel);
     }
 
     /**
@@ -221,12 +225,17 @@ public class ClassificationService extends GraphService<ClassificationModel>
         if (!isClassificationLinkedToFileModel(classificationModel, fileModel))
         {
             classificationModel.addFileModel(fileModel);
+            if (fileModel instanceof SourceFileModel)
+                ((SourceFileModel) fileModel).setGenerateSourceReport(true);
         }
         ClassificationServiceCache.cacheClassificationFileModel(classificationModel, fileModel, true);
 
         return classificationModel;
     }
 
+    /**
+     * Attach the given link to the classification, while checking for duplicates.
+     */
     public ClassificationModel attachLink(ClassificationModel classificationModel, LinkModel linkModel)
     {
         for (LinkModel existing : classificationModel.getLinks())

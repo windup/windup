@@ -230,6 +230,9 @@ public interface ProjectModel extends WindupVertexFrame
     @JavaHandler
     Set<ProjectModel> getAllProjectModels();
 
+    @Adjacency(label = DuplicateProjectModel.CANONICAL_PROJECT, direction = Direction.IN)
+    Iterable<DuplicateProjectModel> getDuplicateProjects();
+
     abstract class Impl implements ProjectModel, JavaHandlerContext<Vertex>
     {
         @Override

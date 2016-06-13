@@ -20,7 +20,7 @@
                 <#list reportModel.relatedResources.staticIPLocations.list.iterator() as staticIpRef>
                 <tr>
                     <td>
-                        <@render_link model=staticIpRef />
+                        <@render_link model=staticIpRef project=reportModel.projectModel/>
                     </td>
                     <td> <#if staticIpRef.lineNumber?has_content>Line: ${staticIpRef.lineNumber}, </#if><#if staticIpRef.columnNumber?has_content>Position: ${staticIpRef.columnNumber} </#if> </td>
                     <td> <#if staticIpRef.sourceSnippit?has_content> ${staticIpRef.sourceSnippit} </#if> </td>

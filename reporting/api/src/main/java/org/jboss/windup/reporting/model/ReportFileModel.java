@@ -15,33 +15,33 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(ReportFileModel.TYPE)
 public interface ReportFileModel extends FileModel
 {
-    public static final String TYPE = "ReportFileModel";
-    public static final String RELATED_HINTS_QUERY = "it.in(\"" + FileReferenceModel.FILE_MODEL
+    String TYPE = "ReportFileModel";
+    String RELATED_HINTS_QUERY = "it.in(\"" + FileReferenceModel.FILE_MODEL
                 + "\").has(\"" + WindupVertexFrame.TYPE_PROP
                 + "\", com.thinkaurelius.titan.core.attribute.Text.CONTAINS, \"" + InlineHintModel.TYPE + "\")";
-    public static final String RELATED_CLASSIFICATIONS_QUERY = "it.in(\"" + ClassificationModel.FILE_MODEL + "\")";
+    String RELATED_CLASSIFICATIONS_QUERY = "it.in(\"" + ClassificationModel.FILE_MODEL + "\")";
 
     /**
      * Get the number of {@link InlineHintModel} instances attached to this {@link ReportFileModel}
      */
     @GremlinGroovy(frame = false, value = RELATED_HINTS_QUERY + ".count()")
-    public long getInlineHintCount();
+    long getInlineHintCount();
 
     /**
      * Get all {@link InlineHintModel} instances attached to this {@link ReportFileModel}
      */
     @GremlinGroovy(frame = true, value = RELATED_HINTS_QUERY)
-    public Iterable<InlineHintModel> getInlineHints();
+    Iterable<InlineHintModel> getInlineHints();
 
     /**
      * Get all {@link ClassificationModel} instances attached to this {@link ReportFileModel}
      */
     @Adjacency(label = ClassificationModel.FILE_MODEL, direction = Direction.IN)
-    public Iterable<ClassificationModel> getClassificationModels();
+    Iterable<ClassificationModel> getClassificationModels();
 
     /**
      * Get the number of {@link ClassificationModel} instances attached to this {@link ReportFileModel}
      */
     @GremlinGroovy(frame = false, value = RELATED_CLASSIFICATIONS_QUERY + ".count()")
-    public long getClassificationCount();
+    long getClassificationCount();
 }

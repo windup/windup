@@ -11,6 +11,7 @@ import java.util.Set;
 
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
+import org.jboss.windup.graph.model.WindupFrame;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.util.furnace.FurnaceClasspathScanner;
 
@@ -37,7 +38,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
  */
 public class GraphTypeManager implements TypeResolver, FrameInitializer
 {
-    private Map<String, Class<? extends WindupVertexFrame>> registeredTypes;
+    private Map<String, Class<? extends WindupFrame<?>>> registeredTypes;
     private TypeRegistry typeRegistry;
 
     public GraphTypeManager()
@@ -57,12 +58,12 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
         }
     }
 
-    public Set<Class<? extends WindupVertexFrame>> getRegisteredTypes()
+    public Set<Class<? extends WindupFrame<?>>> getRegisteredTypes()
     {
         return Collections.unmodifiableSet(new HashSet<>(getRegisteredTypeMap().values()));
     }
 
-    private synchronized Map<String, Class<? extends WindupVertexFrame>> getRegisteredTypeMap()
+    private synchronized Map<String, Class<? extends WindupFrame<?>>> getRegisteredTypeMap()
     {
         if (registeredTypes == null)
             initRegistry();

@@ -2,7 +2,9 @@ package org.jboss.windup.reporting.model.source;
 
 import java.io.IOException;
 
+import com.tinkerpop.frames.Incidence;
 import org.apache.commons.io.IOUtils;
+import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.reporting.model.ReportFileModel;
 import org.jboss.windup.reporting.model.ReportModel;
 import org.jboss.windup.util.exception.WindupException;
@@ -24,6 +26,7 @@ public interface SourceReportModel extends ReportModel
     String TYPE = "SourceReportModel";
     String SOURCE_REPORT_TO_SOURCE_FILE_MODEL = "sourceReportSourceFileModel";
     String SOURCE_TYPE = "sourceType";
+    String SOURCE_REPORT_TO_PROJECT_MODEL = "sourceReportToProjectModel";
 
     /**
      * Indicates the type of source code (for example, "java" or "xml").
@@ -55,8 +58,22 @@ public interface SourceReportModel extends ReportModel
     @JavaHandler
     String getSourceBody();
 
+    /**
+     * Contains all {@link ProjectModel}s that contain this file, including any duplicate {@link ProjectModel}s.
+     */
+    @Incidence(label = SOURCE_REPORT_TO_PROJECT_MODEL, direction = Direction.OUT)
+    Iterable<SourceReportToProjectEdgeModel> getProjectEdges();
+
+    /**
+     * Contains all {@link ProjectModel}s that contain this file, including any duplicate {@link ProjectModel}s.
+     */
+    @Incidence(label = SOURCE_REPORT_TO_PROJECT_MODEL, direction = Direction.OUT)
+    SourceReportToProjectEdgeModel addProjectModel(ProjectModel projectModel);
+
     abstract class Impl implements SourceReportModel, JavaHandlerContext<Vertex>
     {
+
+        @Override
         public String getSourceBody()
         {
             try

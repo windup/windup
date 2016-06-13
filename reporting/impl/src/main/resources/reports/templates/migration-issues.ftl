@@ -406,7 +406,16 @@
                             {description: "${markdownToHtml(description)?js_string}", ruleID: "${ruleID?js_string}", issueName: "${issueName?js_string}",
                             problemSummaryID: "${problemSummary.id}", files: [
                             <#list problemSummary.getFilesForDescription(originalDescription) as fileSummary>
-                                <#assign renderedLink><@render_link model=fileSummary.file/></#assign>
+                                <#--
+                                    If this is an application specific report, then the report model will contain the
+                                     correct application. In this case the non-canonical project will be used.
+
+                                     If it is a global report, then the file model can be used to find the application associated
+                                     with that file. In this case, the canonical local will be used.
+                                -->
+                                <#assign application = reportModel.projectModel!fileSummary.file.projectModel.rootProjectModel>
+
+                                <#assign renderedLink><@render_link model=fileSummary.file project=application/></#assign>
                                 {l:"${renderedLink?json_string}", oc:"${fileSummary.occurrences?json_string}"},
                             </#list>
                             ], resourceLinks: [

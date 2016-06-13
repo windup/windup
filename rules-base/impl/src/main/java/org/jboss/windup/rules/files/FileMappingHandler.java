@@ -15,6 +15,7 @@ import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.config.parser.xml.RuleProviderHandler;
 import org.jboss.windup.graph.GraphTypeManager;
+import org.jboss.windup.graph.model.WindupFrame;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.util.exception.WindupException;
@@ -63,12 +64,12 @@ public class FileMappingHandler implements ElementHandler<Void>
         }
 
 
-        List<Class<? extends WindupVertexFrame>> types = new ArrayList<>();
+        List<Class<? extends WindupFrame<?>>> types = new ArrayList<>();
         List<String> typeNames = Arrays.asList(to.trim().split("\\s*,\\s*"));
         for (String name : typeNames)
         {
-            List<Class<? extends WindupVertexFrame>> matchingTypes = new ArrayList<>();
-            for (Class<? extends WindupVertexFrame> modelType : typeManager.getRegisteredTypes())
+            List<Class<? extends WindupFrame<?>>> matchingTypes = new ArrayList<>();
+            for (Class<? extends WindupFrame<?>> modelType : typeManager.getRegisteredTypes())
             {
                 if (modelType.getName().equals(name) ||
                     modelType.getSimpleName().equals(name + ".class") ||

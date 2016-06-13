@@ -16,8 +16,10 @@ import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.ClassificationModel;
+import org.jboss.windup.reporting.model.source.SourceReportModel;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.rules.apps.java.model.PropertiesModel;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
@@ -54,8 +56,8 @@ public class DiscoverHardcodedIPAddressRuleProvider extends AbstractRuleProvider
         .perform(new AbstractIterationOperation<FileLocationModel>()
         {
             // when a result is found, create an inline hint.
-            // reference the inline hint with the static ip marker so that we can query for it
-            // in the static ip report.
+            // reference the inline hint with the hardcoded ip marker so that we can query for it
+            // in the hardcoded ip report.
             public void perform(GraphRewrite event, EvaluationContext context, FileLocationModel payload)
             {
                 // for all file location models that match the regular expression in the where clause, add
@@ -69,6 +71,9 @@ public class DiscoverHardcodedIPAddressRuleProvider extends AbstractRuleProvider
                     {
                         return;
                     }
+
+                    if (payload.getFile() instanceof SourceFileModel)
+                        ((SourceFileModel) payload.getFile()).setGenerateSourceReport(true);
 
                     HardcodedIPLocationModel location = GraphService.addTypeToModel(event.getGraphContext(), payload,
                         HardcodedIPLocationModel.class);

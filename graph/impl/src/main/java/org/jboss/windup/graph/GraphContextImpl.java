@@ -22,6 +22,7 @@ import org.jboss.forge.furnace.util.Annotations;
 import org.jboss.windup.graph.frames.TypeAwareFramedGraphQuery;
 import org.jboss.windup.graph.listeners.AfterGraphInitializationListener;
 import org.jboss.windup.graph.listeners.BeforeGraphCloseListener;
+import org.jboss.windup.graph.model.WindupFrame;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import com.sleepycat.je.LockMode;
@@ -171,8 +172,8 @@ public class GraphContextImpl implements GraphContext
         Map<String, Class<?>> searchIndexKeys = new HashMap<>();
         Map<String, Class<?>> listIndexKeys = new HashMap<>();
 
-        Set<Class<? extends WindupVertexFrame>> modelTypes = graphTypeManager.getRegisteredTypes();
-        for (Class<? extends WindupVertexFrame> type : modelTypes)
+        Set<Class<? extends WindupFrame<?>>> modelTypes = graphTypeManager.getRegisteredTypes();
+        for (Class<? extends WindupFrame<?>> type : modelTypes)
         {
             for (Method method : type.getDeclaredMethods())
             {

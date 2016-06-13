@@ -1,10 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<#if reportModel.sourceFileModel.projectModel??>
-<#assign applicationReportIndexModel = projectModelToApplicationIndex(reportModel.sourceFileModel.projectModel)>
-</#if>
-
 <head>
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
@@ -18,7 +14,7 @@
 </head>
 <body role="document" class="source-report">
 
-    <div id="main-navbar" class="navbar navbar-default navbar-fixed-top">
+    <div class="navbar navbar-default navbar-fixed-top" id="main-navbar" style="display: none">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
                 <span class="icon-bar"></span>
@@ -26,9 +22,17 @@
                 <span class="icon-bar"></span>
             </button>
         </div>
-        <div class="navbar-collapse collapse navbar-responsive-collapse">
-            <#include "include/navbar.ftl">
-        </div><!-- /.nav-collapse -->
+
+        <#include "include/navbar_macro.ftl">
+
+        <#list reportModel.projectEdges.iterator() as toProjectEdge>
+            <#assign applicationIndex = projectModelToApplicationIndex(toProjectEdge.projectModel)/>
+            <#if applicationIndex??>
+                <div class="navbar-collapse collapse navbar-responsive-collapse project-specific" data-project-id="${toProjectEdge.projectModel.asVertex().id?c}">
+                    <@renderNavbar applicationIndex/>
+                </div><!-- /.nav-collapse -->
+            </#if>
+        </#list>
     </div>
 
 
@@ -37,7 +41,12 @@
             <div class="page-header page-header-no-border">
                 <h1>
                     <div class="main">Source Report</div>
-                    <div class="path">${reportModel.sourceFileModel.prettyPath?html}</div>
+
+                    <#list reportModel.projectEdges.iterator() as toProjectEdge>
+                        <div class="path project-specific" data-project-id="${toProjectEdge.projectModel.asVertex().id?c}">
+                            ${toProjectEdge.fullPath?html}
+                        </div>
+                    </#list>
                 </h1>
                 <div class="desc">
                     This report displays what Windup found in individual files.
@@ -84,7 +93,7 @@
                                                     <@render_rule_link renderType='glyph' ruleID=item.ruleID class='rule-link'/><#-- Link to the rule -->
                                                 </div>
                                                 <#if item.description??><div class="desc">${item.description}</div></#if>
-                                                <@render_linkable linkable=item layout='ul'/><#-- Link contained in classification -->
+                                                <@render_link model=item layout='ul'/><#-- Link contained in classification -->
                                             </li>
                                         </#if>
                                     </#items>
@@ -126,7 +135,7 @@
     <script type="text/javascript" src="resources/libraries/snippet/jquery.snippet.java-manifest.js"></script>
     <script type="text/javascript" src="resources/libraries/sausage/jquery.sausage.min.js"></script>
 
-
+    <@renderNavbarJavaScript />
 
     <script type="text/javascript">
         $(window).on("hashchange", function () {
@@ -190,6 +199,30 @@
                  }
             });
             $(window).sausage({ page: 'li.box' });
+        });
+
+        function qs(key) {
+            key = key.replace(/[*+?^$.\[\]{}()|\\\/]/g, "\\$&"); // escape RegEx meta chars
+            var match = location.search.match(new RegExp("[?&]"+key+"=([^&]+)(&|$)"));
+            return match && decodeURIComponent(match[1].replace(/\+/g, " "));
+        }
+
+        $(document).ready(function() {
+            <#-- Leave a marker to indicate which project id is canonical -->
+            var defaultProjectID = ${reportModel.sourceFileModel.projectModel.rootProjectModel.asVertex().id?c};
+            var selectedProject = qs("project");
+            if (!selectedProject)
+                selectedProject = defaultProjectID;
+
+            $(".project-specific").each(function(index, element) {
+                var currentProject = $(element).data("project-id");
+
+                if (currentProject == selectedProject)
+                    $(element).show();
+                else
+                    $(element).remove();
+            });
+            $("#main-navbar").show();
         });
     </script>
 

@@ -8,6 +8,7 @@ import org.apache.tools.ant.BuildException;
 import org.jboss.windup.graph.FramedElementInMemory;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.InMemoryVertexFrame;
+import org.jboss.windup.graph.model.WindupFrame;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.exception.NonUniqueResultException;
 import org.jboss.windup.util.ExecutionStatistics;
@@ -330,7 +331,7 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
      * Adds the specified type to this frame, and returns a new object that implements this type.
      */
     public static <T extends WindupVertexFrame> T addTypeToModel(GraphContext graphContext, WindupVertexFrame frame,
-                Class<T> type)
+                                                           Class<T> type)
     {
         Vertex vertex = frame.asVertex();
         graphContext.getGraphTypeManager().addTypeToElement(type, vertex);

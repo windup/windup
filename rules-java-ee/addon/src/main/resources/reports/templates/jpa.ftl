@@ -106,7 +106,7 @@
                             <tr>
                                 <td>${entity.entityName!""}</td>
                                 <td>
-                                    <@render_link model=entity.javaClass/>
+                                    <@render_link model=entity.javaClass project=reportModel.projectModel/>
                                 </td>
                                 <td>${entity.tableName!""}</td>
                             </tr>

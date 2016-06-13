@@ -9,6 +9,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.DefaultTechnologyTagComparator;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
@@ -51,6 +52,9 @@ public class TechnologyTagService extends GraphService<TechnologyTagModel>
             technologyTag.setName(tagName);
             technologyTag.setLevel(level);
         }
+        if (fileModel instanceof SourceFileModel)
+            ((SourceFileModel) fileModel).setGenerateSourceReport(true);
+
         technologyTag.addFileModel(fileModel);
         return technologyTag;
     }
