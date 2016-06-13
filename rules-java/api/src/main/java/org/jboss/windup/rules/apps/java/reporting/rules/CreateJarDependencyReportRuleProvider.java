@@ -1,7 +1,5 @@
 package org.jboss.windup.rules.apps.java.reporting.rules;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,10 +8,8 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
-import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
-import org.jboss.windup.graph.model.DuplicateArchiveModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
@@ -76,7 +72,7 @@ public class CreateJarDependencyReportRuleProvider extends AbstractRuleProvider
         // @formatter:on
     }
 
-    private void addAll(Collection<ArchiveModel> projects, ProjectModel project)
+    private void addAll(Map<String, ArchiveModel> projects, ProjectModel project)
     {
         FileModel rootFileModel = project.getRootFileModel();
         if (rootFileModel instanceof ArchiveModel)
@@ -86,7 +82,11 @@ public class CreateJarDependencyReportRuleProvider extends AbstractRuleProvider
             // only add it if it appears to be a dependency (don't add root level projects)
             if (archiveModel.getProjectModel() != null && archiveModel.getProjectModel().getParentProject() != null)
             {
-                projects.add(archiveModel);
+                String archiveName = archiveModel.getArchiveName();
+                if (!archiveName.equals(projects.containsKey(archiveName)))
+                {
+                    projects.put(archiveModel.getArchiveName(), archiveModel);
+                }
             }
         }
 
@@ -96,7 +96,7 @@ public class CreateJarDependencyReportRuleProvider extends AbstractRuleProvider
 
     private void createGlobalReport(GraphContext context, WindupConfigurationModel configuration)
     {
-        Collection<ArchiveModel> dependencies = new ArrayList<>();
+        Map<String, ArchiveModel> dependencies = new HashMap<>();
         for (FileModel inputApplication : configuration.getInputPaths())
             addAll(dependencies, inputApplication.getProjectModel());
 
@@ -108,7 +108,7 @@ public class CreateJarDependencyReportRuleProvider extends AbstractRuleProvider
 
     private void createReport(GraphContext context, ProjectModel application)
     {
-        Collection<ArchiveModel> dependencies = new ArrayList<>();
+        Map<String, ArchiveModel> dependencies = new HashMap<>();
         addAll(dependencies, application);
 
         if (dependencies.isEmpty())
@@ -120,7 +120,7 @@ public class CreateJarDependencyReportRuleProvider extends AbstractRuleProvider
         reportService.setUniqueFilename(reportModel, "dependency_report_" + application.getName(), "html");
     }
 
-    private ApplicationReportModel createReportModel(GraphContext context, Collection<ArchiveModel> dependencies)
+    private ApplicationReportModel createReportModel(GraphContext context, Map<String, ArchiveModel> dependencies)
     {
         ApplicationReportService applicationReportService = new ApplicationReportService(context);
         ApplicationReportModel applicationReportModel = applicationReportService.create();
@@ -134,7 +134,7 @@ public class CreateJarDependencyReportRuleProvider extends AbstractRuleProvider
 
         GraphService<WindupVertexListModel> listService = new GraphService<>(context, WindupVertexListModel.class);
         Map<String, WindupVertexFrame> data = new HashMap<>(1);
-        data.put("dependencies", listService.create().addAll(dependencies));
+        data.put("dependencies", listService.create().addAll(dependencies.values()));
         applicationReportModel.setRelatedResource(data);
         return applicationReportModel;
     }
