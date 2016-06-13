@@ -38,9 +38,7 @@ public class CreateJavaIgnoredFilesReportRuleProvider extends AbstractRuleProvid
     public static final String DESCRIPTION = "This report lists the files which were found in the application,\n" +
             "                    but based on certain rules and the Windup configuration, both built-in and local,\n" +
             "                    they were not processed.\n" +
-            "                    See the <code>--userIgnorePath</code> Windup option in\n" +
-            "                    <a href=\"http://windup.github.io/windup/docs/latest/html/WindupUserGuide.html#command-line-arguments\"\n" +
-            "                       >Windup User Guide</a>.";
+            "                    See the <code>--userIgnorePath</code> Windup option in the Windup User Guide.";
 
     // @formatter:off
     @Override
