@@ -31,7 +31,7 @@ public class MavenizeGroupIdOption extends AbstractConfigurationOption
     public String getDescription()
     {
         return "All pom.xml files will use this value as their <groupId>. If the parameter"
-            + " is ommited, Windup tries to guess some value based on the application,"
+            + " is omitted, Windup tries to guess some value based on the application,"
             + " but this guess may be wrong. Last resort default value is '"+ModuleAnalysisHelper.LAST_RESORT_DEFAULT_GROUP_ID+"'.";
     }
 
@@ -63,8 +63,8 @@ public class MavenizeGroupIdOption extends AbstractConfigurationOption
             return new ValidationResult(ValidationResult.Level.ERROR, NAME + " option must be a String, was: " + value.getClass().getName());
 
         String strValue = value.toString();
-        if (strValue.matches(REGEX_GROUP_ID))
-            return new ValidationResult(ValidationResult.Level.ERROR, "Must follow the Maven groupId format - e.g. com.mycompany.groupId.");
+        if (!strValue.matches(REGEX_GROUP_ID))
+            return new ValidationResult(ValidationResult.Level.ERROR, "Must follow the Maven groupId format - e.g. 'com.mycompany.groupId'.");
 
         return ValidationResult.SUCCESS;
     }
