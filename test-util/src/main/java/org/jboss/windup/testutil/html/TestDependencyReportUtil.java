@@ -14,7 +14,7 @@ import org.openqa.selenium.WebElement;
  * @author mnovotny
  *
  */
-public class TestJarDependencyReportUtil extends TestReportUtil
+public class TestDependencyReportUtil extends TestReportUtil
 {
 
     public boolean findDependencyElement(String fileName, String name, String gav, String dependencyHash, String version, String org, List<String> paths)
@@ -47,6 +47,14 @@ public class TestJarDependencyReportUtil extends TestReportUtil
         return (elements != null) ?  elements.size() : 0;
     }
 
+    public int getNumberOfArchivePathsOnPage(String archiveName)
+    {
+        String id = archiveName + "-paths";
+        //List<WebElement> pathElements = getDriver().findElements(By.id(id));
+        List<WebElement> pathElements = getDriver().findElements(By.xpath("//ul[@id='"+id+"']/li"));
+        return (pathElements != null) ?  pathElements.size() : 0;
+    }
+    
     boolean checkDependency (WebElement dependencyElement, String name, String fileName, String gav, String dependencyHash, String version, String org, List paths)
     {
         boolean found = false;
@@ -72,13 +80,13 @@ public class TestJarDependencyReportUtil extends TestReportUtil
         return found;
     }
     
-    private boolean isDependencyPathsExists(WebElement traitsElement, String key, List<String> foundPathsLog4j, String dependencyName)
+    private boolean isDependencyPathsExists(WebElement traitsElement, String key, List<String> foundPaths, String dependencyName)
     {
         String id = dependencyName + "-"+key;
         try
         {
             WebElement header = traitsElement.findElement(By.id(id));
-            for (String foundPath : foundPathsLog4j)
+            for (String foundPath : foundPaths)
             {
                 WebElement property = header.findElement(By.xpath("//ul/li[text()='"+ foundPath +"']"));
                 if (property != null)

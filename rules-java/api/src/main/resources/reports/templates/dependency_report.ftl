@@ -9,17 +9,17 @@
         <#if reportModel.projectModel??>
             ${reportModel.projectModel.name} -
         </#if>
-        JAR Dependency Report
+        ${reportModel.reportName}
     </title>
     <link href="resources/css/bootstrap.min.css" rel="stylesheet">
     <link href="resources/css/windup.css" rel="stylesheet" media="screen">
     <link href="resources/img/favicon.png" rel="shortcut icon" type="image/x-icon"/>
     <style>
         body.reportJar .dependency { padding: 1ex 1em 1ex; margin: 0ex 1em; border-bottom: 1px solid gray; }
-        body.reportJar .dependency h4 { font-size: 14pt !important; color: #286ba4; }
+        body.reportJar .dependency h4 { font-size: 14pt !important; color: #286ba4; background-color: #f2f2f2 }
         body.reportJar .dependency * { font-size: 12pt !important; }
-        body.reportJar .dependency ul.traits li.trait { display: block; }
-        body.reportJar .dependency .traits .trait span { font-weight: bold; font-size: 11pt !important; }
+        body.reportJar .dependency dl.traits dt.trait { display: block; }
+        <!-- body.reportJar .dependency .traits .trait { font-size: 11pt !important; }-->
     </style>
 </head>
 <body role="document" class="reportJar">
@@ -43,14 +43,13 @@
         <div class="row">
             <div class="page-header page-header-no-border">
                 <h1>
-                    <div class="main">JAR Dependency Report</div>
+                    <div class="main">${reportModel.reportName}</div>
                     <#if reportModel.projectModel??>
                         <div class="path">${reportModel.projectModel.name?html}</div>
                     </#if>
                 </h1>
                 <div class="desc">
-                    This report lists Java dependencies in order to provide useful information for locating
-                    outdated or incompatible dependencies.
+                    ${reportModel.description}
                 </div>
             </div>
         </div>
@@ -58,7 +57,7 @@
         <div class="row">
             <div class="container-fluid theme-showcase" role="main">
                 
-            <#list reportModel.archiveGroups.iterator()>
+            <#list sortDependencyGroupArchivesByPathAscending(reportModel.archiveGroups)>
             <div class="panel panel-primary">
                 <div class="panel-heading">
                     <h3 class="panel-title">Dependencies</h3>
@@ -68,51 +67,47 @@
                     <#assign dependencyProject = dependency.canonicalProject>
                     <#assign archiveName = dependencyProject.rootFileModel.fileName>
                     <#if dependencyProject??>
-                    <div class="dependency">
+                    <div id="${archiveName}" class="dependency panel panel-default">
                         <h4>${archiveName}</h4>
-                        <ul class="traits">
+                        <dl class="traits dl-horizontal">
                             <#assign gav = dependencyProject.mavenIdentifier!?trim >
                             <#assign sha1 = dependency.SHA1!"">
                             <#if gav?? && gav?trim?has_content>
-                                <li class="trait">
-                                    <span>Maven coordinates:</span>
-                                        <#if sha1?has_content>
-                                            <#assign sha1URL = 'http://search.maven.org/#search|ga|1|1:"' + sha1?url('ISO-8859-1') + '"'>
-                                            <a id="${archiveName}-gav" href="${sha1URL?html}" target="_blank">${gav}</a>
-                                        <#else>
-                                            ${gav}
-                                        </#if>
-                                </li>
+                                <dt class="trait">Maven coordinates:</dt>
+                                <dd>
+                                    <#if sha1?has_content>
+                                        <#assign sha1URL = 'http://search.maven.org/#search|ga|1|1:"' + sha1?url('ISO-8859-1') + '"'>
+                                        <a id="${archiveName}-gav" href="${sha1URL?html}" target="_blank">${gav}</a>
+                                    <#else>
+                                        ${gav}
+                                    </#if>
+                                </dd>
                             </#if>
                             <#if sha1?trim?has_content>
-                                <li class="trait"> <span id="${archiveName}-hash>SHA1 hash:</span> ${sha1} </li>
+                                <dt class="trait" id="${archiveName}-hash">SHA1 hash:</dt>
+                                <dd>${sha1}</dd>
                             </#if>
                             <#if dependencyProject.name?? && dependencyProject.name != archiveName>
-                                <li class="trait">
-                                    <span id="${archiveName}-name">Name:</span> ${dependencyProject.name}
-                                </li>
+                                <dt id="${archiveName}-name" class="trait">Name:</dt>
+                                <dd>${dependencyProject.name}</dd>
                             </#if>
                             <#if dependencyProject.version??>
-                                <li class="trait">
-                                    <span id="${archiveName}-version">Version:</span> ${dependencyProject.version}
-                                </li>
+                                <dt id="${archiveName}-version" class="trait">Version:</dt>
+                                <dd>${dependencyProject.version}</dd>
                             </#if>
                             <#if dependencyProject.organization??>
-                                <li class="trait">
-                                    <span id="${archiveName}-org">Organization:</span> ${dependencyProject.organization}
-                                </li>
+                                <dt id="${archiveName}-org" class="trait">Organization:</dt>
+                                <dd>${dependencyProject.organization}</dd>
                             </#if>
-                            <li class="trait">
-                                <span>Found at paths:</span>
-                                <ul id="${archiveName}-paths">
-                                    <#list dependency.archives.iterator() as edge>
-                                        <div>
-                                            ${edge.fullPath?html}
-                                        </div>
+                            <dt class="trait">Found at path:</dt>
+                            <dd>
+                                <ul id="${archiveName}-paths" class="list-unstyled">                                    
+                                    <#list sortDependencyArchivesByPathAscending(dependency.archives) as edge>
+                                        <li>${edge.fullPath}</li>
                                     </#list>
                                 </ul>
-                            </li>
-                        </ul>
+                            </dd>
+                        </dl>
                     </div>
                     </#if>
                 </#items>

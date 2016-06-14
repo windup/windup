@@ -29,9 +29,9 @@ import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.rules.apps.java.config.ExcludePackagesOption;
 import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
+import org.jboss.windup.rules.apps.java.dependencyreport.CreateDependencyReportRuleProvider;
 import org.jboss.windup.rules.apps.java.model.JavaApplicationOverviewReportModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
-import org.jboss.windup.rules.apps.java.reporting.rules.CreateJarDependencyReportRuleProvider;
 import org.jboss.windup.rules.apps.java.reporting.rules.CreateJavaApplicationOverviewReportRuleProvider;
 import org.jboss.windup.rules.apps.java.reporting.rules.EnableCompatibleFilesReportOption;
 import org.jboss.windup.rules.apps.tattletale.EnableTattletaleReportOption;
@@ -221,7 +221,7 @@ public abstract class WindupArchitectureTest
 
     ApplicationReportModel getJarDependencyReport(GraphContext context)
     {
-        return (ApplicationReportModel) getReport(context, CreateJarDependencyReportRuleProvider.TEMPLATE, CreateJarDependencyReportRuleProvider.REPORT_NAME);
+        return (ApplicationReportModel) getReport(context, CreateDependencyReportRuleProvider.TEMPLATE, CreateDependencyReportRuleProvider.REPORT_NAME);
     }
 
     Iterable<ReportModel> getReports(GraphContext context, String template)

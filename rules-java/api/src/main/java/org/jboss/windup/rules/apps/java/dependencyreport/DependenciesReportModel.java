@@ -1,13 +1,10 @@
 package org.jboss.windup.rules.apps.java.dependencyreport;
 
-import com.tinkerpop.frames.Adjacency;
-import org.jboss.windup.graph.model.ArchiveModel;
-import org.jboss.windup.graph.model.ProjectModel;
+import org.jboss.windup.reporting.model.ApplicationReportModel;
 
 import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.frames.Incidence;
+import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
-import org.jboss.windup.reporting.model.ApplicationReportModel;
 
 /**
  * This represents Jar Dependencies report model

@@ -28,12 +28,12 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-@RuleMetadata(phase = ReportGenerationPhase.class, id = "Create JAR Dependency Report")
+@RuleMetadata(phase = ReportGenerationPhase.class, id = "Create Java Dependency Report")
 public class CreateDependencyReportRuleProvider extends AbstractRuleProvider
 {
-    public static final String REPORT_NAME = "JAR Dependencies";
+    public static final String REPORT_NAME = "Dependencies";
     public static final String TEMPLATE = "/reports/templates/dependency_report.ftl";
-    public static final String REPORT_DESCRIPTION = "This report displays all JAR dependencies found within the application.";
+    public static final String REPORT_DESCRIPTION = "This report displays all Java packaged dependencies found within the application.";
 
     @Override
     public Configuration getConfiguration(GraphContext context)
@@ -166,7 +166,7 @@ public class CreateDependencyReportRuleProvider extends AbstractRuleProvider
         applicationReportModel.setReportPriority(120);
         applicationReportModel.setReportName(REPORT_NAME);
         applicationReportModel.setDescription(REPORT_DESCRIPTION);
-        applicationReportModel.setReportIconClass("glyphicon glyphicon-flag");
+        applicationReportModel.setReportIconClass("glyphicon glyphicon-compressed");
         applicationReportModel.setTemplatePath(TEMPLATE);
         applicationReportModel.setTemplateType(TemplateType.FREEMARKER);
         return applicationReportModel;
