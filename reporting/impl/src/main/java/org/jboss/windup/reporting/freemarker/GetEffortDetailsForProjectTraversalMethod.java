@@ -1,5 +1,6 @@
 package org.jboss.windup.reporting.freemarker;
 
+import com.google.common.collect.Maps;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +18,6 @@ import freemarker.ext.beans.StringModel;
 import freemarker.template.SimpleSequence;
 import freemarker.template.TemplateBooleanModel;
 import freemarker.template.TemplateModelException;
-import freemarker.template.TemplateScalarModel;
 import java.util.logging.Logger;
 
 /**
@@ -39,7 +39,7 @@ import java.util.logging.Logger;
  */
 public class GetEffortDetailsForProjectTraversalMethod implements WindupFreeMarkerMethod
 {
-    public static Logger LOG = Logger.getLogger(GetEffortDetailsForProjectTraversalMethod.class.getName());
+    public static final Logger LOG = Logger.getLogger(GetEffortDetailsForProjectTraversalMethod.class.getName());
 
     private static final String NAME = "getEffortDetailsForProjectTraversal";
     private ClassificationService classificationService;
@@ -111,6 +111,21 @@ public class GetEffortDetailsForProjectTraversalMethod implements WindupFreeMark
         }
 
         ExecutionStatistics.get().end(NAME);
+
+
+        int points = sum(results);
+        LOG.info(String.format("getMigrationEffortPointsForProject() FM function called:\n  EFFORT: %3d; %s, %srecur, tags: %s, excl: %s",
+                points, projectModelTraversal, recursive ? "" : "!", includeTags, excludeTags));
+
         return results;
+    }
+
+
+    private int sum(Map<Integer, Integer> results)
+    {
+        int sum = 0;
+        for (Integer val : results.values())
+            sum += val;
+        return sum;
     }
 }

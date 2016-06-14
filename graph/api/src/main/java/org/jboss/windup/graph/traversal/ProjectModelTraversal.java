@@ -193,4 +193,14 @@ public class ProjectModelTraversal
             return projectModel;
         }
     }
+
+
+    @Override
+    public String toString()
+    {
+        String projectInfo = current == null ? null : current.getName() + " (" + current.getProjectType() + ')';
+        String strategyInfo = traversalStrategy == null ? null : traversalStrategy.getClass().getSimpleName();
+        return "Trav{cur: " + projectInfo + ", strategy: " + strategyInfo + ", prev: " + previous + '}';
+    }
+
 }
