@@ -441,7 +441,7 @@ public class GraphContextImpl implements GraphContext
     @Override
     public <T extends WindupVertexFrame> T create(Class<T> clazz)
     {
-        return service(clazz).getUnique();
+        return service(clazz).create();
     }
 
 }
