@@ -22,7 +22,7 @@ import freemarker.template.SimpleSequence;
 
 /**
  * This class contains several useful utility functions that can be used for rendering a freemarker template within Windup.
- * 
+ *
  */
 public class FreeMarkerUtil
 {
@@ -97,7 +97,7 @@ public class FreeMarkerUtil
 
     /**
      * Finds all variables in the context with the given names, and also attaches all WindupFreeMarkerMethods from all addons into the map.
-     * 
+     *
      * This allows external addons to extend the capabilities in the freemarker reporting system.
      */
     public static Map<String, Object> findFreeMarkerContextVariables(Variables variables, String... varNames)
@@ -158,9 +158,9 @@ public class FreeMarkerUtil
             }
             else
             {
-                throw new WindupException("Unrecognized variable type: " + value.getClass().getCanonicalName()
-                            + " encountered!");
+                throw new WindupException("Unrecognized report data type encountered: " + value.getClass().getCanonicalName());
             }
         }
+        reportModel.setRelatedResource(relatedResources);
     }
 }
