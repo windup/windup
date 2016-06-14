@@ -19,13 +19,16 @@
     <#-- appReport : ApplicationReportModel -->
 
     <#assign allTraversal  = getProjectTraversal(appReport.projectModel, 'all')>
-    <#assign sharedTraversal = getProjectTraversal(appReport.projectModel, 'shared')>
-
     <#assign incidentCountBySeverity = getEffortCountForProjectBySeverity(allTraversal, true)>
-    <#assign totalIncidents = 0 >
 
     <#include "include/effort_util.ftl">
-    <#assign pointsFromAllTraversal  = getMigrationEffortPointsForProject(allTraversal, true) >
+    <#assign allTraversal  = getProjectTraversal(appReport.projectModel, 'all')>
+    <#assign pointsFromAllTraversal = getMigrationEffortPointsForProject(allTraversal, true) >
+
+    <#assign onceTraversal  = getProjectTraversal(appReport.projectModel, 'only_once')>
+    <#assign pointsFromOnceTraversal = getMigrationEffortPointsForProject(onceTraversal, true) >
+
+    <#assign sharedTraversal = getProjectTraversal(appReport.projectModel, 'shared')>
     <#assign pointsFromSharedTraversal = getMigrationEffortPointsForProject(sharedTraversal, true) >
 
     <#-- Total Effort Points, Name, Technologies, Incident Count per Severity-->
@@ -36,11 +39,12 @@
                 <span class="legend">story points</span>
             </div>
             <div class="effortPoints shared">
-                <span class="points">${pointsFromSharedTraversal}</span>
+                <span class="points">${pointsFromSharedTraversal}, o: ${pointsFromOnceTraversal}</span>
                 <span class="legend">in shared libs</span>
             </div>
             <div class="incidentsCount">
                 <table>
+                    <#assign totalIncidents = 0 >
                     <#list incidentCountBySeverity?keys as severity>
                         <#assign totalIncidents = totalIncidents + incidentCountBySeverity?api.get(severity) >
                         <tr>

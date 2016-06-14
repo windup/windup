@@ -198,9 +198,12 @@ public class ProjectModelTraversal
     @Override
     public String toString()
     {
-        String projectInfo = current == null ? null : current.getName() + " (" + current.getProjectType() + ')';
+        FileModel rootFileModel = current == null ? null : current.getRootFileModel();
+        String checksum = rootFileModel == null ? null : StringUtils.substring(rootFileModel.getMD5Hash(), 0, 8);
+        String name     = rootFileModel == null ? current.getName() : rootFileModel.getFileName();
+        String projectInfo = current == null ? null : checksum + " " + name + " (" + current.getProjectType() + ')';
         String strategyInfo = traversalStrategy == null ? null : traversalStrategy.getClass().getSimpleName();
-        return "Trav{cur: " + projectInfo + ", strategy: " + strategyInfo + ", prev: " + previous + '}';
+        return "Trav@" + this.hashCode() + "{cur: " + projectInfo + ", strategy: " + strategyInfo + ", prev: " + previous + '}';
     }
 
 }

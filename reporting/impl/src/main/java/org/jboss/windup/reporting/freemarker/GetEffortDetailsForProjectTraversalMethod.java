@@ -114,8 +114,9 @@ public class GetEffortDetailsForProjectTraversalMethod implements WindupFreeMark
 
 
         int points = sum(results);
-        LOG.info(String.format("getMigrationEffortPointsForProject() FM function called:\n  EFFORT: %3d; %s, %srecur, tags: %s, excl: %s",
-                points, projectModelTraversal, recursive ? "" : "!", includeTags, excludeTags));
+        LOG.info(String.format("getMigrationEffortPointsForProject() FM function called:\n\t\t\tEFFORT: %3d = %s = C%s + H%s; %s, %srecur, tags: %s, excl: %s",
+                points, results, classificationEffortDetails, hintEffortDetails,
+                projectModelTraversal, recursive ? "" : "!", includeTags, excludeTags));
 
         return results;
     }
@@ -124,8 +125,10 @@ public class GetEffortDetailsForProjectTraversalMethod implements WindupFreeMark
     private int sum(Map<Integer, Integer> results)
     {
         int sum = 0;
-        for (Integer val : results.values())
-            sum += val;
+        for (Map.Entry<Integer, Integer> entry : results.entrySet())
+        {
+            sum += entry.getKey() * entry.getValue();
+        }
         return sum;
     }
 }

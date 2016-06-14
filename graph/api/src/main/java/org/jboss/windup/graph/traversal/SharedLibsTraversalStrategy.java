@@ -9,7 +9,10 @@ import org.jboss.windup.graph.model.resource.FileModel;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
+import java.util.logging.Logger;
 import org.jboss.windup.graph.model.DuplicateArchiveModel;
+import org.jboss.windup.graph.model.DuplicateProjectModel;
+import org.jboss.windup.graph.service.ProjectService;
 
 /**
  * <p>
@@ -51,6 +54,8 @@ import org.jboss.windup.graph.model.DuplicateArchiveModel;
  */
 public class SharedLibsTraversalStrategy implements TraversalStrategy
 {
+    public static final Logger LOG = Logger.getLogger(SharedLibsTraversalStrategy.class.getName());
+
     // maintains a Set of all archive hashes found so far
     private Set<String> alreadySeenHashes = new HashSet<>();
 
@@ -73,14 +78,31 @@ public class SharedLibsTraversalStrategy implements TraversalStrategy
             @Override
             public boolean apply(ProjectModelTraversal input)
             {
-                FileModel rootFile = input.getCurrent().getRootFileModel();
+                final ProjectModel project = input.getCurrent();
+                FileModel rootFile = project.getRootFileModel();
+
+                LOG.info("    TRYING " + rootFile.getFilePath() + " - " + rootFile);
+
+                // We only want the duplicated projects,
+                if (!(project instanceof DuplicateProjectModel))
+                    return false;
+                LOG.info("    ...OK, duplicated project");///
 
                 // We only want the duplicated archives,
                 if (!(rootFile instanceof DuplicateArchiveModel))
                     return false;
+                LOG.info("    ...OK, duplicated archive");///
+
+                // which are shared between apps.
+                if (!ProjectService.SHARED_LIBS_UNIQUE_ID.equals(input.getCanonicalProject().getRootProjectModel().getUniqueID()))
+
+                LOG.info("    ...OK, shared");///
+
+                final boolean added = alreadySeenHashes.add(rootFile.getSHA1Hash());
+                LOG.info("    ...Added: " + added);///
 
                 //  but only once within 1 app.
-                return alreadySeenHashes.add(rootFile.getSHA1Hash());
+                return added;
             }
         });
     }

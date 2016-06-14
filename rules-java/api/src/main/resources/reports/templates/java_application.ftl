@@ -168,6 +168,7 @@
                 </#if>
 
                 <span class="storyPoints">(<span class="points">${panelStoryPoints}</span> <span class="legend">story points</span>)</span>
+                <span title="${(projectModel.rootFileModel.SHA1Hash[0..*8])!}">&nbsp;</span>
             </h3>
         </div>
         <div class="panel-body" style="display:none">
