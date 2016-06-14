@@ -58,57 +58,58 @@
         <div class="row">
             <div class="container-fluid theme-showcase" role="main">
                 
-            <#list reportModel.relatedResources["dependencies"].list.iterator()>
+            <#list reportModel.archiveGroups.iterator()>
             <div class="panel panel-primary">
                 <div class="panel-heading">
                     <h3 class="panel-title">Dependencies</h3>
                 </div>
                 <div class="dependencies">
                 <#items as dependency>
-                    <#assign dependencyProject = dependency.projectModel>
+                    <#assign dependencyProject = dependency.canonicalProject>
+                    <#assign archiveName = dependencyProject.rootFileModel.fileName>
                     <#if dependencyProject??>
-                    <div id="${dependency.archiveName}" class="dependency">
-                        <h4>${dependency.archiveName}</h4>
+                    <div class="dependency">
+                        <h4>${archiveName}</h4>
                         <ul class="traits">
-                            <#assign gav = dependencyProject.asVertex().getProperty('mavenIdentifier')!?trim >
-                            <#assign sha1 = projectModelToSha1(dependencyProject)!>
-                            <#if gav?? && gav?trim?has_content >
+                            <#assign gav = dependencyProject.mavenIdentifier!?trim >
+                            <#assign sha1 = dependency.SHA1!"">
+                            <#if gav?? && gav?trim?has_content>
                                 <li class="trait">
-                                    <span id="${dependency.archiveName}-maven">Maven coordinates:</span>
+                                    <span>Maven coordinates:</span>
                                         <#if sha1?has_content>
                                             <#assign sha1URL = 'http://search.maven.org/#search|ga|1|1:"' + sha1?url('ISO-8859-1') + '"'>
-                                            <a id="${dependency.archiveName}-gav" href="${sha1URL?html}" target="_blank">${gav}</a>
+                                            <a id="${archiveName}-gav" href="${sha1URL?html}" target="_blank">${gav}</a>
                                         <#else>
                                             ${gav}
                                         </#if>
                                 </li>
                             </#if>
                             <#if sha1?trim?has_content>
-                                <li class="trait"> <span id="${dependency.archiveName}-hash>SHA1 hash:</span> ${sha1} </li>
+                                <li class="trait"> <span id="${archiveName}-hash>SHA1 hash:</span> ${sha1} </li>
                             </#if>
-                            <#if dependencyProject.name?? && dependencyProject.name != dependency.archiveName>
+                            <#if dependencyProject.name?? && dependencyProject.name != archiveName>
                                 <li class="trait">
-                                    <span id="${dependency.archiveName}-name">Name:</span> ${dependencyProject.name}
+                                    <span id="${archiveName}-name">Name:</span> ${dependencyProject.name}
                                 </li>
                             </#if>
                             <#if dependencyProject.version??>
                                 <li class="trait">
-                                    <span id="${dependency.archiveName}-version">Version:</span> ${dependencyProject.version}
+                                    <span id="${archiveName}-version">Version:</span> ${dependencyProject.version}
                                 </li>
                             </#if>
                             <#if dependencyProject.organization??>
                                 <li class="trait">
-                                    <span id="${dependency.archiveName}-org">Organization:</span> ${dependencyProject.organization}
+                                    <span id="${archiveName}-org">Organization:</span> ${dependencyProject.organization}
                                 </li>
                             </#if>
                             <li class="trait">
                                 <span>Found at paths:</span>
-                                <ul id="${dependency.archiveName}-paths">
-                                    <#list reportModel.projectEdges.iterator() as edge>
+                                <ul id="${archiveName}-paths">
+                                    <#list dependency.archives.iterator() as edge>
                                         <div>
                                             ${edge.fullPath?html}
                                         </div>
-q                                    </#list>
+                                    </#list>
                                 </ul>
                             </li>
                         </ul>
