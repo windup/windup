@@ -4,6 +4,7 @@ import static org.joox.JOOX.$;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
@@ -12,7 +13,9 @@ import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
+import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.config.projecttraversal.ProjectTraversalCache;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.Severity;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
@@ -78,6 +81,7 @@ public class ResolveWebLogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
         // mark as vendor extension; create reference to ejb-jar.xml
         vendorSpecificationService.associateAsVendorExtension(weblogicEjbXml, "ejb-jar.xml");
 
+        Set<ProjectModel> applications = ProjectTraversalCache.getApplicationsForProject(event.getGraphContext(), weblogicEjbXml.getProjectModel());
         for (Element resourceRef : $(doc).find("resource-description").get())
         {
             String jndiLocation = $(resourceRef).child("jndi-name").text();
@@ -85,7 +89,7 @@ public class ResolveWebLogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
 
             if (StringUtils.isNotBlank(jndiLocation) && StringUtils.isNotBlank(resourceName))
             {
-                JNDIResourceModel resource = jndiResourceService.createUnique(weblogicEjbXml.getApplication(), jndiLocation);
+                JNDIResourceModel resource = jndiResourceService.createUnique(applications, jndiLocation);
                 LOG.info("JNDI Name: " + jndiLocation + " to Resource: " + resourceName);
                 // now, look up the resource which is resolved by DiscoverEjbConfigurationXmlRuleProvider
                 for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceName))
@@ -103,7 +107,7 @@ public class ResolveWebLogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
 
             if (StringUtils.isNotBlank(jndiLocation) && StringUtils.isNotBlank(resourceName))
             {
-                JNDIResourceModel resource = jndiResourceService.createUnique(weblogicEjbXml.getApplication(), jndiLocation);
+                JNDIResourceModel resource = jndiResourceService.createUnique(applications, jndiLocation);
                 LOG.info("JNDI Name: " + jndiLocation + " to Resource: " + resourceName);
                 // now, look up the resource which is resolved by DiscoverEjbConfigurationXmlRuleProvider
                 for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceName))
@@ -144,7 +148,7 @@ public class ResolveWebLogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
                 String maxSize = $(poolDescriptor).child("max-beans-in-free-pool").text();
                 String minSize = $(poolDescriptor).child("initial-beans-in-free-pool").text();
                 threadPoolModel = threadPoolService.create();
-                threadPoolModel.setApplication(weblogicEjbXml.getApplication());
+                threadPoolModel.setApplications(ProjectTraversalCache.getApplicationsForProject(event.getGraphContext(), weblogicEjbXml.getProjectModel()));
                 threadPoolModel.setPoolName(ejbName + "-ThreadPool");
 
                 if (StringUtils.isNotBlank(maxSize))
@@ -189,7 +193,7 @@ public class ResolveWebLogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
 
             if (StringUtils.isNotBlank(jndiLocation) && StringUtils.isNotBlank(ejbName))
             {
-                JNDIResourceModel jndiRef = jndiResourceService.createUnique(weblogicEjbXml.getApplication(), jndiLocation);
+                JNDIResourceModel jndiRef = jndiResourceService.createUnique(applications, jndiLocation);
                 // look up the EJB by the name, and associate to JNDI.
                 for (EjbSessionBeanModel sessionBean : ejbSessionBeanService.findAllByProperty(EjbSessionBeanModel.EJB_BEAN_NAME, ejbName))
                 {
@@ -201,7 +205,7 @@ public class ResolveWebLogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
             if (StringUtils.isNotBlank(localJndiLocation) && StringUtils.isNotBlank(ejbName))
             {
                 // look up the EJB by the name, and associate to JNDI.
-                JNDIResourceModel localJndiRef = jndiResourceService.createUnique(weblogicEjbXml.getApplication(), localJndiLocation);
+                JNDIResourceModel localJndiRef = jndiResourceService.createUnique(applications, localJndiLocation);
 
                 for (EjbSessionBeanModel sessionBean : ejbSessionBeanService.findAllByProperty(EjbSessionBeanModel.EJB_BEAN_NAME, ejbName))
                 {
@@ -226,7 +230,7 @@ public class ResolveWebLogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
                     String destination = $(messageDrivenDescriptor).child("destination-jndi-name").text();
                     if (StringUtils.isNotBlank(destination))
                     {
-                        JmsDestinationModel jndiRef = jmsDestinationService.createUnique(weblogicEjbXml.getApplication(), destination);
+                        JmsDestinationModel jndiRef = jmsDestinationService.createUnique(applications, destination);
                         mdb.setDestination(jndiRef);
                     }
 

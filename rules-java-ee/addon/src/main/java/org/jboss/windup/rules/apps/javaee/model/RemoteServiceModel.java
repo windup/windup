@@ -32,7 +32,13 @@ public interface RemoteServiceModel extends WindupVertexFrame
      * Contains the application in which this JNDI resource was discovered.
      */
     @Adjacency(label = APPLICATIONS, direction = Direction.OUT)
-    void addApplication(ProjectModel projectModel);
+    void addApplication(ProjectModel application);
+
+    /**
+     * Contains the application in which this JNDI resource was discovered.
+     */
+    @Adjacency(label = APPLICATIONS, direction = Direction.OUT)
+    void setApplications(Iterable<ProjectModel> applications);
 
     /**
      * Indicates whether this {@link JNDIResourceModel} is associated with the given application.
@@ -44,16 +50,12 @@ public interface RemoteServiceModel extends WindupVertexFrame
     {
         public boolean isAssociatedWithApplication(ProjectModel application)
         {
-            boolean alreadyExists = false;
             for (ProjectModel existing : getApplications())
             {
                 if (existing.equals(application))
-                {
-                    alreadyExists = true;
-                    break;
-                }
+                    return true;
             }
-            return alreadyExists;
+            return false;
         }
     }
 }

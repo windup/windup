@@ -74,8 +74,6 @@ public class CreateRemoteReportRuleProvider extends AbstractRuleProvider
     @SuppressWarnings("unchecked")
     private void createReport(GraphContext context, ProjectModel projectModel)
     {
-
-
         GraphService<RemoteServiceModel> remoteServices = new GraphService<>(context, RemoteServiceModel.class);
 
         List<JaxRSWebServiceModel> jaxRsList = new ArrayList<>();

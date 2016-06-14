@@ -26,19 +26,19 @@ public interface JPAEntityModel extends WindupVertexFrame
     String NAMED_QUERY = "namedQuery";
     String JPA_ENTITY_CLASS = "jpaEntityClass";
     String SPECIFICATION_VERSION = "specificationVersion";
-    String APPLICATION = "application";
+    String APPLICATIONS = "applicationS";
 
     /**
      * Contains the application in which this JPA entity was discovered.
      */
-    @Adjacency(label = APPLICATION, direction = Direction.OUT)
-    ProjectModel getApplication();
+    @Adjacency(label = APPLICATIONS, direction = Direction.OUT)
+    Iterable<ProjectModel> getApplications();
 
     /**
      * Contains the application in which this JPA entity was discovered.
      */
-    @Adjacency(label = APPLICATION, direction = Direction.OUT)
-    void setApplication(ProjectModel projectModel);
+    @Adjacency(label = APPLICATIONS, direction = Direction.OUT)
+    void setApplications(Iterable<ProjectModel> applications);
 
     /**
      * Contains the entity name

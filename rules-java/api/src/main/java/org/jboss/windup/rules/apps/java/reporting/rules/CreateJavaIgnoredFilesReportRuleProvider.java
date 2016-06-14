@@ -2,6 +2,7 @@ package org.jboss.windup.rules.apps.java.reporting.rules;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
@@ -17,6 +18,7 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.IgnoredFileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
+import org.jboss.windup.config.projecttraversal.ProjectTraversalCache;
 import org.jboss.windup.rules.apps.java.model.IgnoredFilesReportModel;
 import org.jboss.windup.reporting.model.TemplateType;
 import org.jboss.windup.reporting.service.ReportService;
@@ -54,8 +56,8 @@ public class CreateJavaIgnoredFilesReportRuleProvider extends AbstractRuleProvid
                 WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
                 for (FileModel inputPath : configurationModel.getInputPaths())
                 {
-                    ProjectModel projectModel = inputPath.getProjectModel();
-                    createIgnoredFilesReport(event.getGraphContext(), payload, projectModel);
+                    ProjectModel application = inputPath.getProjectModel();
+                    createIgnoredFilesReport(event.getGraphContext(), payload, application);
                 }
             }
 
@@ -78,14 +80,24 @@ public class CreateJavaIgnoredFilesReportRuleProvider extends AbstractRuleProvid
     // @formatter:on
 
     private void createIgnoredFilesReport(GraphContext context,
-                WindupJavaConfigurationModel javaCfg, ProjectModel rootProjectModel)
+                WindupJavaConfigurationModel javaCfg, ProjectModel application)
     {
         GraphService<IgnoredFileModel> ignoredFilesModelService = new GraphService<>(context,
                 IgnoredFileModel.class);
-        Iterable<IgnoredFileModel> allIgnoredFiles = ignoredFilesModelService.findAll();
+
+        List<IgnoredFileModel> ignoredFileModelsInApplication = new ArrayList<>();
+
+        for (IgnoredFileModel file : ignoredFilesModelService.findAll())
+        {
+            Set<ProjectModel> fileApplications = ProjectTraversalCache.getApplicationsForProject(context, file.getProjectModel());
+            if (fileApplications.contains(application))
+            {
+                ignoredFileModelsInApplication.add(file);
+            }
+        }
 
         // Do not create the report if there are no ignored files
-        if (!allIgnoredFiles.iterator().hasNext())
+        if (ignoredFileModelsInApplication.isEmpty())
             return;
 
         GraphService<IgnoredFilesReportModel> ignoredFilesService = new GraphService<>(context, IgnoredFilesReportModel.class);
@@ -96,18 +108,15 @@ public class CreateJavaIgnoredFilesReportRuleProvider extends AbstractRuleProvid
         ignoredFilesReportModel.setMainApplicationReport(false);
         ignoredFilesReportModel.setDisplayInApplicationReportIndex(true);
         ignoredFilesReportModel.setReportIconClass("glyphicon glyphicon-eye-close");
-        ignoredFilesReportModel.setProjectModel(rootProjectModel);
+        ignoredFilesReportModel.setProjectModel(application);
         ignoredFilesReportModel.setTemplatePath(TEMPLATE_REPORT);
         ignoredFilesReportModel.setTemplateType(TemplateType.FREEMARKER);
 
-        for (IgnoredFileModel file : allIgnoredFiles)
+        for (IgnoredFileModel ignoredFileModel : ignoredFileModelsInApplication)
         {
-            List<String> allProjectPaths = getAllFatherProjectPaths(file.getProjectModel());
-            if (allProjectPaths.contains(rootProjectModel.getRootFileModel().getFilePath()))
-            {
-                ignoredFilesReportModel.addIgnoredFile(file);
-            }
+            ignoredFilesReportModel.addIgnoredFile(ignoredFileModel);
         }
+
 
         for (IgnoredFileRegexModel ignoreRegexModel : javaCfg.getIgnoredFileRegexes())
         {
@@ -116,18 +125,7 @@ public class CreateJavaIgnoredFilesReportRuleProvider extends AbstractRuleProvid
 
         // Set the filename for the report
         ReportService reportService = new ReportService(context);
-        reportService.setUniqueFilename(ignoredFilesReportModel, "ignoredfiles_" + rootProjectModel.getName(), "html");
+        reportService.setUniqueFilename(ignoredFilesReportModel, "ignoredfiles_" + application.getName(), "html");
     }
 
-    private List<String> getAllFatherProjectPaths(ProjectModel projectModel)
-    {
-        List<String> paths = new ArrayList<>();
-        paths.add(projectModel.getRootFileModel().getFilePath());
-        while (projectModel.getParentProject() != null)
-        {
-            projectModel = projectModel.getParentProject();
-            paths.add(projectModel.getRootFileModel().getFilePath());
-        }
-        return paths;
-    }
 }

@@ -4,6 +4,7 @@ import static org.joox.JOOX.$;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
@@ -15,6 +16,7 @@ import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.config.projecttraversal.ProjectTraversalCache;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.TechnologyTagService;
@@ -81,6 +83,8 @@ public class ResolveJBossLegacyEjbXmlRuleProvider extends IteratingRuleProvider<
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
         technologyTagService.addTagToFileModel(payload, "JBoss EJB XML", TechnologyTagLevel.IMPORTANT);
 
+        Set<ProjectModel> applications = ProjectTraversalCache.getApplicationsForProject(event.getGraphContext(), payload.getProjectModel());
+
         // first, find all resource managers for later resolution.
         Map<String, String> resourceManagerReferences = new HashMap<>();
         for (Element resourceRef : $(doc).find("resource-managers").children("resource-manager").get())
@@ -95,27 +99,27 @@ public class ResolveJBossLegacyEjbXmlRuleProvider extends IteratingRuleProvider<
         // register beans to JNDI: http://grepcode.com/file/repository.jboss.org/nexus/content/repositories/releases/org.jboss.ejb3/jboss-ejb3-core/0.1.0/test/naming/META-INF/jboss1.xml?av=f
         for (Element resourceRef : $(doc).find("resource-ref").get())
         {
-            processBinding(envRefService, jndiResourceService, payload.getApplication(), resourceManagerReferences, resourceRef, "res-ref-name",
+            processBinding(envRefService, jndiResourceService, applications, resourceManagerReferences, resourceRef, "res-ref-name",
                         "jndi-name");
         }
         for (Element resourceRef : $(doc).find("resource-env-ref").get())
         {
-            processBinding(envRefService, jndiResourceService, payload.getApplication(), resourceManagerReferences, resourceRef,
+            processBinding(envRefService, jndiResourceService, applications, resourceManagerReferences, resourceRef,
                         "resource-env-ref-name", "jndi-name");
         }
         for (Element resourceRef : $(doc).find("message-destination-ref").get())
         {
-            processBinding(envRefService, jndiResourceService, payload.getApplication(), resourceManagerReferences, resourceRef,
+            processBinding(envRefService, jndiResourceService, applications, resourceManagerReferences, resourceRef,
                         "message-destination-ref-name", "jndi-name");
         }
         for (Element resourceRef : $(doc).find("ejb-ref").get())
         {
-            processBinding(envRefService, jndiResourceService, payload.getApplication(), resourceManagerReferences, resourceRef, "ejb-ref-name",
+            processBinding(envRefService, jndiResourceService, applications, resourceManagerReferences, resourceRef, "ejb-ref-name",
                         "jndi-name");
         }
         for (Element resourceRef : $(doc).find("ejb-local-ref").get())
         {
-            processBinding(envRefService, jndiResourceService, payload.getApplication(), resourceManagerReferences, resourceRef, "ejb-ref-name",
+            processBinding(envRefService, jndiResourceService, applications, resourceManagerReferences, resourceRef, "ejb-ref-name",
                         "local-jndi-name");
         }
 
@@ -138,13 +142,13 @@ public class ResolveJBossLegacyEjbXmlRuleProvider extends IteratingRuleProvider<
                     String localJNDI = $(ejbRef).child("local-jndi-name").content();
                     if (StringUtils.isNotBlank(jndi))
                     {
-                        JNDIResourceModel jndiRef = jndiResourceService.createUnique(payload.getApplication(), jndi);
+                        JNDIResourceModel jndiRef = jndiResourceService.createUnique(applications, jndi);
                         ejb.setGlobalJndiReference(jndiRef);
                     }
 
                     if (StringUtils.isNotBlank(localJNDI))
                     {
-                        JNDIResourceModel jndiRef = jndiResourceService.createUnique(payload.getApplication(), localJNDI);
+                        JNDIResourceModel jndiRef = jndiResourceService.createUnique(applications, localJNDI);
                         ejb.setLocalJndiReference(jndiRef);
                     }
 
@@ -173,7 +177,7 @@ public class ResolveJBossLegacyEjbXmlRuleProvider extends IteratingRuleProvider<
 
                     if (StringUtils.isNotBlank(destination))
                     {
-                        JmsDestinationModel jndiRef = jmsDestinationService.createUnique(payload.getApplication(), destination);
+                        JmsDestinationModel jndiRef = jmsDestinationService.createUnique(applications, destination);
                         mdb.setDestination(jndiRef);
                     }
                     mdb.setTxTimeouts(txTimeouts);
@@ -204,7 +208,7 @@ public class ResolveJBossLegacyEjbXmlRuleProvider extends IteratingRuleProvider<
     }
 
 
-    private void processBinding(EnvironmentReferenceService envRefService, JNDIResourceService jndiResourceService, ProjectModel application,
+    private void processBinding(EnvironmentReferenceService envRefService, JNDIResourceService jndiResourceService, Set<ProjectModel> applications,
                 Map<String, String> resourceManagerReferences, Element resourceRef, String tagName, String tagJndi)
     {
         String jndiLocation = $(resourceRef).child(tagJndi).text();
@@ -223,7 +227,7 @@ public class ResolveJBossLegacyEjbXmlRuleProvider extends IteratingRuleProvider<
 
         if (StringUtils.isNotBlank(jndiLocation) && StringUtils.isNotBlank(resourceRefName))
         {
-            JNDIResourceModel resource = jndiResourceService.createUnique(application, jndiLocation);
+            JNDIResourceModel resource = jndiResourceService.createUnique(applications, jndiLocation);
             LOG.info("JNDI Name: " + jndiLocation + " to Resource: " + resourceRefName);
             // now, look up the resource which is resolved by DiscoverEjbConfigurationXmlRuleProvider
             for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceRefName))

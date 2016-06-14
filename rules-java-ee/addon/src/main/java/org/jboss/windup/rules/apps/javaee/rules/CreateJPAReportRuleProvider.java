@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import com.google.common.collect.Iterables;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.RuleMetadata;
@@ -17,6 +19,7 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
+import org.jboss.windup.config.projecttraversal.ProjectTraversalCache;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.jboss.windup.reporting.model.TemplateType;
 import org.jboss.windup.reporting.model.WindupVertexListModel;
@@ -53,12 +56,12 @@ public class CreateJPAReportRuleProvider extends AbstractRuleProvider
 
                 for (FileModel inputPath : windupConfiguration.getInputPaths())
                 {
-                    ProjectModel projectModel = inputPath.getProjectModel();
-                    if (projectModel == null)
+                    ProjectModel application = inputPath.getProjectModel();
+                    if (application == null)
                     {
                         throw new WindupException("Error, no project found in: " + inputPath.getFilePath());
                     }
-                    createJPAReport(event.getGraphContext(), projectModel);
+                    createJPAReport(event.getGraphContext(), application);
                 }
             }
 
@@ -74,7 +77,7 @@ public class CreateJPAReportRuleProvider extends AbstractRuleProvider
                     .perform(addReport);
     }
 
-    private void createJPAReport(GraphContext context, ProjectModel projectModel)
+    private void createJPAReport(GraphContext context, ProjectModel application)
     {
 
         JPAConfigurationFileService jpaConfigurationFileService = new JPAConfigurationFileService(context);
@@ -85,21 +88,22 @@ public class CreateJPAReportRuleProvider extends AbstractRuleProvider
         List<JPAConfigurationFileModel> jpaConfigList = new ArrayList<>();
         for (JPAConfigurationFileModel jpaConfig : jpaConfigurationFileService.findAll())
         {
-            if (jpaConfig.getApplication().equals(projectModel))
+            Set<ProjectModel> applications = ProjectTraversalCache.getApplicationsForProject(context, jpaConfig.getProjectModel());
+            if (applications.contains(application))
                 jpaConfigList.add(jpaConfig);
         }
 
         List<JPAEntityModel> entityList = new ArrayList<>();
         for (JPAEntityModel entityModel : jpaEntityService.findAll())
         {
-            if (entityModel.getApplication().equals(projectModel))
+            if (Iterables.contains(entityModel.getApplications(), application))
                 entityList.add(entityModel);
         }
 
         List<JPANamedQueryModel> namedQueryList = new ArrayList<>();
         for (JPANamedQueryModel namedQuery : jpaNamedQueryService.findAll())
         {
-            if (namedQuery.getJpaEntity().getApplication().equals(projectModel))
+            if (Iterables.contains(namedQuery.getJpaEntity().getApplications(), application))
                 namedQueryList.add(namedQuery);
         }
 
@@ -120,7 +124,7 @@ public class CreateJPAReportRuleProvider extends AbstractRuleProvider
         applicationReportModel.setReportName("JPA");
         applicationReportModel.setDescription(REPORT_DESCRIPTION);
         applicationReportModel.setReportIconClass("glyphicon jpa-nav-logo");
-        applicationReportModel.setProjectModel(projectModel);
+        applicationReportModel.setProjectModel(application);
         applicationReportModel.setTemplatePath(TEMPLATE_JPA_REPORT);
         applicationReportModel.setTemplateType(TemplateType.FREEMARKER);
 
@@ -128,6 +132,6 @@ public class CreateJPAReportRuleProvider extends AbstractRuleProvider
 
         // Set the filename for the report
         ReportService reportService = new ReportService(context);
-        reportService.setUniqueFilename(applicationReportModel, "jpa_" + projectModel.getName(), "html");
+        reportService.setUniqueFilename(applicationReportModel, "jpa_" + application.getName(), "html");
     }
 }

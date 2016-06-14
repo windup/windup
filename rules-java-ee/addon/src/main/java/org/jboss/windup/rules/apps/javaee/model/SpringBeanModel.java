@@ -10,6 +10,8 @@ import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
+import java.util.Set;
+
 /**
  * Contains metadata associated with a Spring Bean.
  *
@@ -23,7 +25,7 @@ public interface SpringBeanModel extends WindupVertexFrame
     String SPRING_BEAN_TO_JAVA_CLASS = "springBeanToJavaClass";
     String SPRING_CONFIGURATION = "springConfiguration";
     String SPRING_BEAN_NAME = "springBeanName";
-    String APPLICATION = "application";
+    String APPLICATIONS = "applicationS";
 
     /**
      * The name of this spring bean
@@ -65,12 +67,12 @@ public interface SpringBeanModel extends WindupVertexFrame
     /**
      * Contains the application in which this Spring Bean was discovered.
      */
-    @Adjacency(label = APPLICATION, direction = Direction.OUT)
-    ProjectModel getApplication();
+    @Adjacency(label = APPLICATIONS, direction = Direction.OUT)
+    Set<ProjectModel> getApplications();
 
     /**
      * Contains the application in which this Spring Bean  was discovered.
      */
-    @Adjacency(label = APPLICATION, direction = Direction.OUT)
-    void setApplication(ProjectModel projectModel);
+    @Adjacency(label = APPLICATIONS, direction = Direction.OUT)
+    void setApplications(Iterable<ProjectModel> applications);
 }

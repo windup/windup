@@ -29,7 +29,7 @@ public class HibernateEntityService extends GraphService<HibernateEntityModel>
     public Iterable<HibernateEntityModel> findAllByApplication(ProjectModel application)
     {
         GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(application.asVertex());
-        pipeline.in(HibernateEntityModel.APPLICATION);
+        pipeline.in(HibernateEntityModel.APPLICATIONS);
         pipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, HibernateEntityModel.TYPE);
 
         return new FramedVertexIterable<>(getGraphContext().getFramed(), pipeline, HibernateEntityModel.class);

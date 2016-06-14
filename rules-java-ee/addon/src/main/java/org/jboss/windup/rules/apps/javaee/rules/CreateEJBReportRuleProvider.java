@@ -3,6 +3,7 @@ package org.jboss.windup.rules.apps.javaee.rules;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.common.collect.Iterables;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.MetadataBuilder;
@@ -54,8 +55,8 @@ public class CreateEJBReportRuleProvider extends AbstractRuleProvider
 
                             for (FileModel inputPath : configurationModel.getInputPaths())
                             {
-                                ProjectModel projectModel = inputPath.getProjectModel();
-                                createEJBReport(event.getGraphContext(), projectModel);
+                                ProjectModel application = inputPath.getProjectModel();
+                                createEJBReport(event.getGraphContext(), application);
                             }
                         }
 
@@ -69,7 +70,7 @@ public class CreateEJBReportRuleProvider extends AbstractRuleProvider
     }
 
     @SuppressWarnings("unchecked")
-    private void createEJBReport(GraphContext context, ProjectModel projectModel)
+    private void createEJBReport(GraphContext context, ProjectModel application)
     {
         EjbBeanService ejbService = new EjbBeanService(context);
         GraphService<WindupVertexListModel> listService = new GraphService<>(context, WindupVertexListModel.class);
@@ -82,7 +83,7 @@ public class CreateEJBReportRuleProvider extends AbstractRuleProvider
         boolean itemAdded = false;
         for (EjbBeanBaseModel ejbModel : ejbService.findAll())
         {
-            if (!ejbModel.getApplication().equals(projectModel))
+            if (!Iterables.contains(ejbModel.getApplications(), application))
                 continue;
 
             itemAdded = true;
@@ -118,7 +119,7 @@ public class CreateEJBReportRuleProvider extends AbstractRuleProvider
         applicationReportModel.setReportName("EJBs");
         applicationReportModel.setDescription(REPORT_DESCRIPTION);
         applicationReportModel.setReportIconClass("glyphicon ejb-nav-logo");
-        applicationReportModel.setProjectModel(projectModel);
+        applicationReportModel.setProjectModel(application);
         applicationReportModel.setTemplatePath(TEMPLATE_EJB_REPORT);
         applicationReportModel.setTemplateType(TemplateType.FREEMARKER);
 
@@ -130,6 +131,6 @@ public class CreateEJBReportRuleProvider extends AbstractRuleProvider
         applicationReportModel.setRelatedResource(data);
 
         ReportService reportService = new ReportService(context);
-        reportService.setUniqueFilename(applicationReportModel, "ejbreport_" + projectModel.getName(), "html");
+        reportService.setUniqueFilename(applicationReportModel, "ejbreport_" + application.getName(), "html");
     }
 }

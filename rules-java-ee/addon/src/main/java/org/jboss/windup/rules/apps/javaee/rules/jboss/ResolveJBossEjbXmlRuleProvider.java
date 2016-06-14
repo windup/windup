@@ -2,6 +2,7 @@ package org.jboss.windup.rules.apps.javaee.rules.jboss;
 
 import static org.joox.JOOX.$;
 
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
@@ -10,8 +11,10 @@ import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
+import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.config.projecttraversal.ProjectTraversalCache;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.TechnologyTagService;
@@ -79,6 +82,8 @@ public class ResolveJBossEjbXmlRuleProvider extends IteratingRuleProvider<XmlFil
         //mark as vendor extension; create reference to ejb-jar.xml
         vendorSpecificationService.associateAsVendorExtension(payload, "ejb-jar.xml");
 
+        Set<ProjectModel> applications = ProjectTraversalCache.getApplicationsForProject(event.getGraphContext(), payload.getProjectModel());
+
         // handle resource-ref
         for (Element resourceRef : $(doc).find("enterprise-beans").find("resource-ref").get())
         {
@@ -93,7 +98,7 @@ public class ResolveJBossEjbXmlRuleProvider extends IteratingRuleProvider<XmlFil
 
             if (StringUtils.isNotBlank(jndiLocation) && StringUtils.isNotBlank(resourceRefName))
             {
-                JNDIResourceModel resource = jndiResourceService.createUnique(payload.getApplication(), jndiLocation);
+                JNDIResourceModel resource = jndiResourceService.createUnique(applications, jndiLocation);
                 LOG.info("JNDI Name: " + jndiLocation + " to Resource: " + resourceRefName);
                 // now, look up the resource which is resolved by DiscoverEjbConfigurationXmlRuleProvider
                 for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceRefName))
@@ -117,7 +122,7 @@ public class ResolveJBossEjbXmlRuleProvider extends IteratingRuleProvider<XmlFil
 
             if (StringUtils.isNotBlank(jndiLocation) && StringUtils.isNotBlank(resourceRefName))
             {
-                JNDIResourceModel resource = jndiResourceService.createUnique(payload.getApplication(), jndiLocation);
+                JNDIResourceModel resource = jndiResourceService.createUnique(applications, jndiLocation);
                 LOG.info("JNDI Name: " + jndiLocation + " to Resource: " + resourceRefName);
                 // now, look up the resource which is resolved by DiscoverEjbConfigurationXmlRuleProvider
                 for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.NAME, resourceRefName))
@@ -152,7 +157,7 @@ public class ResolveJBossEjbXmlRuleProvider extends IteratingRuleProvider<XmlFil
                 {
                     if (StringUtils.isNotBlank(destination))
                     {
-                        JmsDestinationModel jndiRef = jmsDestinationService.createUnique(payload.getApplication(), destination);
+                        JmsDestinationModel jndiRef = jmsDestinationService.createUnique(applications, destination);
                         mdb.setDestination(jndiRef);
                     }
                 }

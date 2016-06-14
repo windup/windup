@@ -59,7 +59,7 @@
                 </a>
             </div>
             <div class="techs">
-                <#list getTechnologyTagsForProject(appReport.projectModel) as tag>
+                <#list getTechnologyTagsForProjectTraversal(allTraversal) as tag>
                     <#if tag.name != "Decompiled Java File">
                     <@tagRenderer tag>
                         ${tag.name} <#if tag.version?has_content>${tag.version}</#if>

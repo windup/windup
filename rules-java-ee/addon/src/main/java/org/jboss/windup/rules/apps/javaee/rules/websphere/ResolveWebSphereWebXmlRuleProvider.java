@@ -2,6 +2,7 @@ package org.jboss.windup.rules.apps.javaee.rules.websphere;
 
 import static org.joox.JOOX.$;
 
+import java.util.Set;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
@@ -11,10 +12,9 @@ import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
 import org.jboss.windup.graph.model.ProjectModel;
-import org.jboss.windup.reporting.model.ClassificationModel;
+import org.jboss.windup.config.projecttraversal.ProjectTraversalCache;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.model.TechnologyTagModel;
-import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.javaee.model.EnvironmentReferenceModel;
 import org.jboss.windup.rules.apps.javaee.model.JNDIResourceModel;
@@ -63,21 +63,22 @@ public class ResolveWebSphereWebXmlRuleProvider extends IteratingRuleProvider<Xm
         vendorSpecificationService.associateAsVendorExtension(payload, "web.xml");
 
         TechnologyTagModel technologyTag = technologyTagService.addTagToFileModel(payload, "WebSphere Web XML", TechnologyTagLevel.IMPORTANT);
+        Set<ProjectModel> applications = ProjectTraversalCache.getApplicationsForProject(event.getGraphContext(), payload.getProjectModel());
         for (Element resourceRef : $(doc).find("resRefBindings").get())
         {
-            processBinding(envRefService, jndiResourceService, payload.getApplication(), resourceRef, "bindingResourceRef");
+            processBinding(envRefService, jndiResourceService, applications, resourceRef, "bindingResourceRef");
         }
         for (Element resourceRef : $(doc).find("ejbRefBindings").get())
         {
-            processBinding(envRefService, jndiResourceService, payload.getApplication(), resourceRef, "bindingEjbRef");
+            processBinding(envRefService, jndiResourceService, applications, resourceRef, "bindingEjbRef");
         }
         for (Element resourceRef : $(doc).find("messageDestinationRefBindings").get())
         {
-            processBinding(envRefService, jndiResourceService, payload.getApplication(), resourceRef, "bindingMessageDestinationRef");
+            processBinding(envRefService, jndiResourceService, applications, resourceRef, "bindingMessageDestinationRef");
         }
     }
 
-    private void processBinding(EnvironmentReferenceService envRefService, JNDIResourceService jndiResourceService, ProjectModel application,
+    private void processBinding(EnvironmentReferenceService envRefService, JNDIResourceService jndiResourceService, Set<ProjectModel> applications,
                 Element resourceRef, String tagName)
     {
         String jndiLocation = $(resourceRef).attr("jndiName");
@@ -92,7 +93,7 @@ public class ResolveWebSphereWebXmlRuleProvider extends IteratingRuleProvider<Xm
 
         if (StringUtils.isNotBlank(jndiLocation))
         {
-            JNDIResourceModel resource = jndiResourceService.createUnique(application, jndiLocation);
+            JNDIResourceModel resource = jndiResourceService.createUnique(applications, jndiLocation);
             LOG.info("JNDI: " + jndiLocation + " Resource: " + resourceId);
             // now, look up the resource
             for (EnvironmentReferenceModel ref : envRefService.findAllByProperty(EnvironmentReferenceModel.REFERENCE_ID, resourceId))

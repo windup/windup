@@ -9,78 +9,105 @@ import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
-
+/**
+ * Contains information regarding a JBPM 3 process model.
+ */
 @TypeValue(Jbpm3ProcessModel.TYPE)
 public interface Jbpm3ProcessModel extends XmlFileModel
 {
-    public static final String TYPE = "Jbpm3ProcessModel";
-    public static final String PROCESS_NAME = "processName";
-    public static final String STATE_COUNT = "stateCount";
-    public static final String NODE_COUNT = "nodeCount";
-    public static final String DECISION_COUNT = "decisionCount";
-    public static final String FORK_COUNT = "forkCount";
-    public static final String SUBPROCESS_COUNT = "subProcessCount";
-    public static final String TASK_COUNT = "taskCount";
+    String TYPE = "Jbpm3ProcessModel";
+    String PROCESS_NAME = "processName";
+    String STATE_COUNT = "stateCount";
+    String NODE_COUNT = "nodeCount";
+    String DECISION_COUNT = "decisionCount";
+    String FORK_COUNT = "forkCount";
+    String SUBPROCESS_COUNT = "subProcessCount";
+    String TASK_COUNT = "taskCount";
+    String ACTION_HANDLERS = "actionHandlers";
+    String DECISION_HANDLERS = "decisionHandlers";
 
+    /**
+     * Contains the name of the process.
+     */
     @Property(PROCESS_NAME)
-    public String getProcessName();
+    String getProcessName();
 
+    /**
+     * Contains the name of the process.
+     */
     @Property(PROCESS_NAME)
-    public String setProcessName(String processName);
-    
+    String setProcessName(String processName);
+
+    /**
+     * Contains a link to an image representing the process.
+     */
     @Adjacency(label = ReportResourceFileModel.TYPE, direction = Direction.OUT)
-    public ReportResourceFileModel getProcessImage();
-    
+    ReportResourceFileModel getProcessImage();
+
+    /**
+     * Contains a link to an image representing the process.
+     */
     @Adjacency(label = ReportResourceFileModel.TYPE, direction = Direction.OUT)
-    public void setProcessImage(ReportResourceFileModel processImage);
+    void setProcessImage(ReportResourceFileModel processImage);
     
     @Property(DECISION_COUNT)
-    public Integer getDecisionCount();
+    Integer getDecisionCount();
 
     @Property(DECISION_COUNT)
-    public Integer setDecisionCount(Integer decisionCount);
+    Integer setDecisionCount(Integer decisionCount);
     
     @Property(STATE_COUNT)
-    public Integer getStateCount();
+    Integer getStateCount();
 
     @Property(STATE_COUNT)
-    public Integer setStateCount(Integer stateCount);
+    Integer setStateCount(Integer stateCount);
     
     @Property(NODE_COUNT)
-    public Integer getNodeCount();
+    Integer getNodeCount();
 
     @Property(NODE_COUNT)
-    public Integer setNodeCount(Integer nodeCount);
+    Integer setNodeCount(Integer nodeCount);
     
     @Property(FORK_COUNT)
-    public Integer getForkCount();
+    Integer getForkCount();
 
     @Property(FORK_COUNT)
-    public Integer setForkCount(Integer forkCount);
+    Integer setForkCount(Integer forkCount);
     
     @Property(SUBPROCESS_COUNT)
-    public Integer getSubProcessCount();
+    Integer getSubProcessCount();
 
     @Property(SUBPROCESS_COUNT)
-    public Integer setSubProcessCount(Integer subProcessCount);
+    Integer setSubProcessCount(Integer subProcessCount);
 
     @Property(TASK_COUNT)
-    public Integer getTaskCount();
+    Integer getTaskCount();
 
     @Property(TASK_COUNT)
-    public Integer setTaskCount(Integer taskCount);
-    
-    @Adjacency(label = "actionHandlers", direction = Direction.OUT)
+    Integer setTaskCount(Integer taskCount);
+
+    /**
+     * Contains a list of action handlers used by this process.
+     */
+    @Adjacency(label = ACTION_HANDLERS, direction = Direction.OUT)
     void addActionHandler(final JavaClassModel javaClass);
 
-    @Adjacency(label = "actionHandlers", direction = Direction.OUT)
+    /**
+     * Contains a list of action handlers used by this process.
+     */
+    @Adjacency(label = ACTION_HANDLERS, direction = Direction.OUT)
     Iterable<JavaClassModel> getActionHandlers();
 
-    
-    @Adjacency(label = "decisionHandlers", direction = Direction.OUT)
+    /**
+     * Contains a list of decision handlers used by this process.
+     */
+    @Adjacency(label = DECISION_HANDLERS, direction = Direction.OUT)
     void addDecisionHandler(final JavaClassModel javaClass);
 
-    @Adjacency(label = "decisionHandlers", direction = Direction.OUT)
+    /**
+     * Contains a list of decision handlers used by this process.
+     */
+    @Adjacency(label = DECISION_HANDLERS, direction = Direction.OUT)
     Iterable<JavaClassModel> getDecisionHandlers();
 
 }

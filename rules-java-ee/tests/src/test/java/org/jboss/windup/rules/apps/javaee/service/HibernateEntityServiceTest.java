@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import javax.inject.Inject;
+import java.util.Collections;
 
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
@@ -37,10 +38,10 @@ public class HibernateEntityServiceTest extends AbstractTest
 
             HibernateEntityService service = new HibernateEntityService(context);
             HibernateEntityModel bean1 = service.create();
-            bean1.setApplication(app1);
+            bean1.setApplications(Collections.singleton(app1));
 
             HibernateEntityModel bean2 = service.create();
-            bean2.setApplication(app2);
+            bean2.setApplications(Collections.singleton(app2));
 
             service.create();
 

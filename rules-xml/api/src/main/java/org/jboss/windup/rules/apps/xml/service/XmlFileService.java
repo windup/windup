@@ -93,17 +93,7 @@ public class XmlFileService extends GraphService<XmlFileModel>
             document = LocationAwareXmlReader.readXML(is);
             XMLDocumentCache.cache(model, document);
         }
-        catch (SAXException e)
-        {
-            XMLDocumentCache.cacheParseFailure(model);
-            document = null;
-            final String message = "Failed to parse XML file: " + model.getFilePath() + ", due to: " + e.getMessage();
-            LOG.log(Level.WARNING, message);
-            classificationService.attachClassification(context, model, UNPARSEABLE_XML_CLASSIFICATION, UNPARSEABLE_XML_DESCRIPTION);
-            model.setParseError(message);
-            throw new WindupException(message, e);
-        }
-        catch (IOException e)
+        catch (SAXException | IOException e)
         {
             XMLDocumentCache.cacheParseFailure(model);
             document = null;

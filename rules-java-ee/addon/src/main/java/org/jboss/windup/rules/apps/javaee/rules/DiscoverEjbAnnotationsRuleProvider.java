@@ -10,8 +10,10 @@ import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.Service;
+import org.jboss.windup.config.projecttraversal.ProjectTraversalCache;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
 import org.jboss.windup.rules.apps.java.model.AbstractJavaSourceModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
@@ -27,6 +29,8 @@ import org.jboss.windup.rules.apps.javaee.service.JmsDestinationService;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
+
+import java.util.Set;
 
 /**
  * Scans for classes with EJB related annotations, and adds EJB related metadata for these.
@@ -97,7 +101,9 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
 
         Service<EjbSessionBeanModel> sessionBeanService = new GraphService<>(event.getGraphContext(), EjbSessionBeanModel.class);
         EjbSessionBeanModel sessionBean = sessionBeanService.create();
-        sessionBean.setApplication(javaTypeReference.getFile().getApplication());
+
+        Set<ProjectModel> applications = ProjectTraversalCache.getApplicationsForProject(event.getGraphContext(), javaTypeReference.getFile().getProjectModel());
+        sessionBean.setApplications(applications);
         sessionBean.setBeanName(ejbName);
         sessionBean.setEjbClass(ejbClass);
         sessionBean.setSessionType(sessionType);
@@ -125,14 +131,15 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
 
         Service<EjbMessageDrivenModel> messageDrivenService = new GraphService<>(event.getGraphContext(), EjbMessageDrivenModel.class);
         EjbMessageDrivenModel messageDrivenBean = messageDrivenService.create();
-        messageDrivenBean.setApplication(javaTypeReference.getFile().getApplication());
+        Set<ProjectModel> applications = ProjectTraversalCache.getApplicationsForProject(event.getGraphContext(), javaTypeReference.getFile().getProjectModel());
+        messageDrivenBean.setApplications(applications);
         messageDrivenBean.setBeanName(ejbName);
         messageDrivenBean.setEjbClass(ejbClass);
 
         if (StringUtils.isNotBlank(destination))
         {
             JmsDestinationService jmsDestinationService = new JmsDestinationService(event.getGraphContext());
-            messageDrivenBean.setDestination(jmsDestinationService.createUnique(javaTypeReference.getFile().getApplication(), destination));
+            messageDrivenBean.setDestination(jmsDestinationService.createUnique(applications, destination));
         }
 
     }

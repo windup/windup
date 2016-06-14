@@ -4,6 +4,7 @@ import static org.joox.JOOX.$;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -15,7 +16,9 @@ import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryGremlinCriterion;
 import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.config.projecttraversal.ProjectTraversalCache;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.javaee.model.DataSourceModel;
@@ -112,6 +115,7 @@ public class DiscoverHibernateConfigurationRuleProvider extends IteratingRulePro
             hibernateConfigurationModel.setSpecificationVersion(versionInformation);
         }
 
+        Set<ProjectModel> applications = ProjectTraversalCache.getApplicationsForProject(event.getGraphContext(), xmlFileModel.getProjectModel());
         Document doc = new XmlFileService(graphContext).loadDocumentQuiet(context, xmlFileModel);
         for (Element element : $(doc).find("session-factory").get())
         {
@@ -136,7 +140,7 @@ public class DiscoverHibernateConfigurationRuleProvider extends IteratingRulePro
                     dataSourceName = StringUtils.substringAfterLast(dataSourceName, "/");
                 }
 
-                DataSourceModel dataSource = dataSourceService.createUnique(xmlFileModel.getApplication(), dataSourceName, dataSourceJndiName);
+                DataSourceModel dataSource = dataSourceService.createUnique(applications, dataSourceName, dataSourceJndiName);
 
                 if (sessionFactoryProperties.containsKey("hibernate.dialect"))
                 {

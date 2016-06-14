@@ -4,6 +4,7 @@ import static org.joox.JOOX.$;
 import static org.joox.JOOX.attr;
 
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,7 +14,9 @@ import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
+import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.config.projecttraversal.ProjectTraversalCache;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
@@ -84,6 +87,8 @@ public class DiscoverSpringConfigurationFilesRuleProvider extends IteratingRuleP
         SpringConfigurationFileModel springConfigurationModel = springConfigurationFileService
                     .addTypeToModel(payload);
 
+        Set<ProjectModel> applications = ProjectTraversalCache.getApplicationsForProject(event.getGraphContext(), payload.getProjectModel());
+
         // create bean models
         List<Element> beans = $(element).children("bean").get();
         for (Element bean : beans)
@@ -103,7 +108,7 @@ public class DiscoverSpringConfigurationFilesRuleProvider extends IteratingRuleP
             }
 
             SpringBeanModel springBeanRef = springBeanService.create();
-            springBeanRef.setApplication(payload.getApplication());
+            springBeanRef.setApplications(applications);
 
             if (StringUtils.isNotBlank(id))
             {
@@ -128,7 +133,7 @@ public class DiscoverSpringConfigurationFilesRuleProvider extends IteratingRuleP
                 LOG.info("Found JNDI in Bean Spring: " + jndiName);
                 if (StringUtils.isNotBlank(jndiName))
                 {
-                    JNDIResourceModel jndiResource = jndiResourceService.createUnique(payload.getApplication(), jndiName);
+                    JNDIResourceModel jndiResource = jndiResourceService.createUnique(applications, jndiName);
                     if (StringUtils.isNotBlank(expectedType))
                     {
                         LOG.info(" -- Type: " + expectedType);
@@ -152,7 +157,7 @@ public class DiscoverSpringConfigurationFilesRuleProvider extends IteratingRuleP
 
             SpringBeanModel springBeanRef = springBeanService.create();
             springBeanRef.setSpringBeanName(id);
-            springBeanRef.setApplication(payload.getApplication());
+            springBeanRef.setApplications(applications);
             springConfigurationModel.addSpringBeanReference(springBeanRef);
 
             JavaClassModel classReference = javaClassService.getOrCreatePhantom("java.util.Map");
@@ -170,7 +175,7 @@ public class DiscoverSpringConfigurationFilesRuleProvider extends IteratingRuleP
 
             SpringBeanModel springBeanRef = springBeanService.create();
             springBeanRef.setSpringBeanName(id);
-            springBeanRef.setApplication(payload.getApplication());
+            springBeanRef.setApplications(applications);
             springConfigurationModel.addSpringBeanReference(springBeanRef);
 
             JavaClassModel classReference = javaClassService.getOrCreatePhantom("java.util.Set");
@@ -194,12 +199,12 @@ public class DiscoverSpringConfigurationFilesRuleProvider extends IteratingRuleP
 
                 SpringBeanModel springBeanRef = springBeanService.create();
                 springBeanRef.setSpringBeanName(id);
-                springBeanRef.setApplication(payload.getApplication());
+                springBeanRef.setApplications(applications);
 
                 JNDIResourceModel jndiResource = null;
                 if (StringUtils.isNotBlank(jndiName))
                 {
-                    jndiResource = jndiResourceService.createUnique(payload.getApplication(), jndiName);
+                    jndiResource = jndiResourceService.createUnique(applications, jndiName);
                     if (StringUtils.isNotBlank(expectedType))
                     {
                         LOG.info(" -- Type: " + expectedType);

@@ -29,7 +29,7 @@ public class DiscoverRemoteEjbRuleProvider extends IteratingRuleProvider<EjbSess
         if (payload.getEjbRemote() != null)
         {
             EjbRemoteServiceModelService service = new EjbRemoteServiceModelService(event.getGraphContext());
-            service.getOrCreate(payload.getApplication(), payload.getEjbRemote(), payload.getEjbClass());
+            service.getOrCreate(payload.getApplications(), payload.getEjbRemote(), payload.getEjbClass());
         }
     }
 }

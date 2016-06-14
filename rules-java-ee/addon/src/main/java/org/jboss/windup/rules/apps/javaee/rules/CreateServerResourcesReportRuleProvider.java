@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.Iterables;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.RuleMetadata;
@@ -54,12 +55,12 @@ public class CreateServerResourcesReportRuleProvider extends AbstractRuleProvide
 
                 for (FileModel inputPath : windupConfiguration.getInputPaths())
                 {
-                    ProjectModel projectModel = inputPath.getProjectModel();
-                    if (projectModel == null)
+                    ProjectModel application = inputPath.getProjectModel();
+                    if (application == null)
                     {
                         throw new WindupException("Error, no project found in: " + inputPath.getFilePath());
                     }
-                    createServerResourcesReport(event.getGraphContext(), projectModel);
+                    createServerResourcesReport(event.getGraphContext(), application);
                 }
             }
 
@@ -75,7 +76,7 @@ public class CreateServerResourcesReportRuleProvider extends AbstractRuleProvide
                     .perform(addReport);
     }
 
-    private void createServerResourcesReport(GraphContext context, ProjectModel projectModel)
+    private void createServerResourcesReport(GraphContext context, ProjectModel application)
     {
         JNDIResourceService jndiResourceService = new JNDIResourceService(context);
         GraphService<ThreadPoolModel> threadPoolService = new GraphService<>(context, ThreadPoolModel.class);
@@ -88,7 +89,7 @@ public class CreateServerResourcesReportRuleProvider extends AbstractRuleProvide
 
         for (JNDIResourceModel jndi : jndiResourceService.findAll())
         {
-            if (!jndi.isAssociatedWithApplication(projectModel))
+            if (!jndi.isAssociatedWithApplication(application))
                 continue;
 
             if (jndi instanceof DataSourceModel)
@@ -111,7 +112,7 @@ public class CreateServerResourcesReportRuleProvider extends AbstractRuleProvide
 
         for (ThreadPoolModel tp : threadPoolService.findAll())
         {
-            if (tp.getApplication().equals(projectModel))
+            if (Iterables.contains(tp.getApplications(), application))
                 threadPoolList.add(tp);
         }
 
@@ -128,7 +129,7 @@ public class CreateServerResourcesReportRuleProvider extends AbstractRuleProvide
         applicationReportModel.setReportName("Server Resources");
         applicationReportModel.setDescription(REPORT_DESCRIPTION);
         applicationReportModel.setReportIconClass("glyphicon server-resource-nav-logo");
-        applicationReportModel.setProjectModel(projectModel);
+        applicationReportModel.setProjectModel(application);
         applicationReportModel.setTemplatePath(TEMPLATE_JPA_REPORT);
         applicationReportModel.setTemplateType(TemplateType.FREEMARKER);
 
@@ -142,6 +143,6 @@ public class CreateServerResourcesReportRuleProvider extends AbstractRuleProvide
 
         // Set the filename for the report
         ReportService reportService = new ReportService(context);
-        reportService.setUniqueFilename(applicationReportModel, "server_resources_" + projectModel.getName(), "html");
+        reportService.setUniqueFilename(applicationReportModel, "server_resources_" + application.getName(), "html");
     }
 }

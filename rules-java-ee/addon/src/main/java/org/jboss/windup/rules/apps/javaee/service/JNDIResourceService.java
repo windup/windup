@@ -10,6 +10,8 @@ import org.jboss.windup.rules.apps.javaee.model.JmsConnectionFactoryModel;
 import org.jboss.windup.rules.apps.javaee.model.JmsDestinationModel;
 import org.jboss.windup.rules.apps.javaee.model.JmsDestinationType;
 
+import java.util.Set;
+
 /**
  * Contains methods for querying, updating, and deleting {@link JNDIResourceModel}
  * 
@@ -26,19 +28,22 @@ public class JNDIResourceService extends GraphService<JNDIResourceModel>
     /**
      * Create unique; if existing convert an existing {@link DataSourceModel} if one exists.
      */
-    public synchronized JNDIResourceModel createUnique(ProjectModel application, String jndiName)
+    public synchronized JNDIResourceModel createUnique(Set<ProjectModel> applications, String jndiName)
     {
         JNDIResourceModel jndiResourceModel = getUniqueByProperty(DataSourceModel.JNDI_LOCATION, jndiName);
         if (jndiResourceModel == null)
         {
             jndiResourceModel = super.create();
             jndiResourceModel.setJndiLocation(jndiName);
-            jndiResourceModel.addApplication(application);
+            jndiResourceModel.setApplications(applications);
         }
         else
         {
-            if (!jndiResourceModel.isAssociatedWithApplication(application))
-                jndiResourceModel.addApplication(application);
+            for (ProjectModel application : applications)
+            {
+                if (!jndiResourceModel.isAssociatedWithApplication(application))
+                    jndiResourceModel.addApplication(application);
+            }
         }
         return jndiResourceModel;
     }

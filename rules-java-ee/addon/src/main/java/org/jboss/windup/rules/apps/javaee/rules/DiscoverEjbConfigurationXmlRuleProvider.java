@@ -5,6 +5,7 @@ import static org.joox.JOOX.$;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
@@ -15,8 +16,10 @@ import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.Service;
+import org.jboss.windup.config.projecttraversal.ProjectTraversalCache;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.model.TechnologyTagModel;
 import org.jboss.windup.reporting.service.ClassificationService;
@@ -196,6 +199,8 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
     {
         JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
 
+        Set<ProjectModel> applications = ProjectTraversalCache.getApplicationsForProject(event.getGraphContext(), ejbConfig.getProjectModel());
+
         JavaClassModel home = null;
         JavaClassModel localHome = null;
         JavaClassModel remote = null;
@@ -246,7 +251,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
 
         Service<EjbSessionBeanModel> sessionBeanService = new GraphService<>(event.getGraphContext(), EjbSessionBeanModel.class);
         EjbSessionBeanModel sessionBean = sessionBeanService.create();
-        sessionBean.setApplication(ejbConfig.getApplication());
+        sessionBean.setApplications(applications);
         sessionBean.setEjbId(ejbId);
         sessionBean.setDisplayName(displayName);
         sessionBean.setBeanName(ejbName);
@@ -271,6 +276,8 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
     {
         JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
         JavaClassModel ejb = null;
+
+        Set<ProjectModel> applications = ProjectTraversalCache.getApplicationsForProject(event.getGraphContext(), ejbConfig.getProjectModel());
 
         String ejbId = extractAttributeAndTrim(element, "id");
         String displayName = extractChildTagAndTrim(element, "display-name");
@@ -301,7 +308,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
 
         Service<EjbMessageDrivenModel> sessionBeanService = new GraphService<>(event.getGraphContext(), EjbMessageDrivenModel.class);
         EjbMessageDrivenModel mdb = sessionBeanService.create();
-        mdb.setApplication(ejbConfig.getApplication());
+        mdb.setApplications(applications);
         mdb.setEjbClass(ejb);
         mdb.setBeanName(ejbName);
         mdb.setDisplayName(displayName);
@@ -312,7 +319,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
         if (StringUtils.isNotBlank(destination))
         {
             JmsDestinationService jmsDestinationService = new JmsDestinationService(event.getGraphContext());
-            JmsDestinationModel jndiRef = jmsDestinationService.createUnique(ejbConfig.getApplication(), destination);
+            JmsDestinationModel jndiRef = jmsDestinationService.createUnique(applications, destination);
             mdb.setDestination(jndiRef);
         }
 
@@ -331,6 +338,8 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
         JavaClassModel localHome = null;
         JavaClassModel local = null;
         JavaClassModel ejb = null;
+
+        Set<ProjectModel> applications = ProjectTraversalCache.getApplicationsForProject(event.getGraphContext(), ejbConfig.getProjectModel());
 
         String ejbId = extractAttributeAndTrim(element, "id");
         String displayName = extractChildTagAndTrim(element, "display-name");
@@ -363,7 +372,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
         // create new entity facet.
         Service<EjbEntityBeanModel> ejbEntityService = new GraphService<>(event.getGraphContext(), EjbEntityBeanModel.class);
         EjbEntityBeanModel entity = ejbEntityService.create();
-        entity.setApplication(ejbConfig.getApplication());
+        entity.setApplications(applications);
         entity.setPersistenceType(persistenceType);
         entity.setEjbId(ejbId);
         entity.setDisplayName(displayName);

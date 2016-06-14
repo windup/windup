@@ -1,6 +1,7 @@
 package org.jboss.windup.rules.apps.javaee.service;
 
 import java.nio.file.Path;
+import java.util.Collections;
 
 import javax.inject.Inject;
 
@@ -69,7 +70,7 @@ public class EjbRemoteServiceModelServiceTest extends AbstractTest
         Assert.assertFalse(serviceModelService.findAll().iterator().hasNext());
 
         ProjectModel application = new ProjectService(context).create();
-        EjbRemoteServiceModel model = serviceModelService.getOrCreate(application, interfaceClass, implementationClass);
+        EjbRemoteServiceModel model = serviceModelService.getOrCreate(Collections.singleton(application), interfaceClass, implementationClass);
         Assert.assertNotNull(model);
 
         Assert.assertEquals(interfaceClass, model.getInterface());
@@ -91,7 +92,7 @@ public class EjbRemoteServiceModelServiceTest extends AbstractTest
         Assert.assertEquals(1, Iterables.size(serviceModelService.findAll()));
 
         ProjectModel application = new ProjectService(context).create();
-        EjbRemoteServiceModel model = serviceModelService.getOrCreate(application, interfaceClass, null);
+        EjbRemoteServiceModel model = serviceModelService.getOrCreate(Collections.singleton(application), interfaceClass, null);
         Assert.assertNotNull(model);
 
         Assert.assertEquals(interfaceClass, model.getInterface());
@@ -113,7 +114,7 @@ public class EjbRemoteServiceModelServiceTest extends AbstractTest
         Assert.assertEquals(1, Iterables.size(serviceModelService.findAll()));
 
         ProjectModel application = new ProjectService(context).create();
-        EjbRemoteServiceModel model = serviceModelService.getOrCreate(application, null, implementationClass);
+        EjbRemoteServiceModel model = serviceModelService.getOrCreate(Collections.singleton(application), null, implementationClass);
         Assert.assertNotNull(model);
 
         Assert.assertEquals(interfaceClass, model.getInterface());
@@ -135,7 +136,7 @@ public class EjbRemoteServiceModelServiceTest extends AbstractTest
         Assert.assertEquals(1, Iterables.size(serviceModelService.findAll()));
 
         ProjectModel application = new ProjectService(context).create();
-        EjbRemoteServiceModel model = serviceModelService.getOrCreate(application, interfaceClass, implementationClass);
+        EjbRemoteServiceModel model = serviceModelService.getOrCreate(Collections.singleton(application), interfaceClass, implementationClass);
         Assert.assertNotNull(model);
 
         Assert.assertEquals(interfaceClass, model.getInterface());
