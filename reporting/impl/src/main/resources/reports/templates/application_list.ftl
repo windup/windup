@@ -50,13 +50,13 @@
                     <#list incidentCountBySeverity?keys as severity>
                         <#assign totalIncidents = totalIncidents + incidentCountBySeverity?api.get(severity) >
                         <tr>
-                            <td class="label_"> ${severity} </td>
-                            <td class="count"> ${incidentCountBySeverity?api.get(severity)}&times; </td>
+                            <td class="count">${incidentCountBySeverity?api.get(severity)}</td>
+                            <td class="label_">${severity}</td>
                         </tr>
                     </#list>
                     <tr class="total">
+                        <td class="count"> <span>${totalIncidents}</span> </td>
                         <td class="label_"> <span>Total</span> </td>
-                        <td class="count"> <span>${totalIncidents}&times;</span> </td>
                     </tr>
                 </table>
             </div>
@@ -110,7 +110,7 @@
         body.viewAppList .apps .appInfo .stats .effortPoints.shared .points { color: #8491a8; /* Like normal, but grayed. */ }
         body.viewAppList .apps .appInfo .stats .incidentsCount { float: left; margin:  0 2ex;}
         body.viewAppList .apps .appInfo .stats .incidentsCount table tr.total td { border-top: 1px solid silver; }
-        body.viewAppList .apps .appInfo .stats .incidentsCount .count { text-align: right; padding-left: 10px; }
+        body.viewAppList .apps .appInfo .stats .incidentsCount .count { text-align: right; padding-right: 1ex; }
         body.viewAppList .apps .appInfo .traits { margin-left: px; }
         body.viewAppList .apps .appInfo .traits .fileName { padding: 0.0ex 0em 0.2ex; font-size: 18pt; /* color: #008cba; (Default BS link color) */ }
         body.viewAppList .apps .appInfo .traits .techs { }
