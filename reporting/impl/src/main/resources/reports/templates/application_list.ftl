@@ -169,21 +169,16 @@
 
         <!-- Apps -->
         <section class="apps">
+            <#assign virtualAppExists = false>
             <div class="real">
                 <#list reportModel.relatedResources.applications.list.iterator() as applicationReport>
                     <#if applicationReport.projectModel.projectType! != "VIRTUAL" >
                         <@applicationReportRenderer applicationReport/>
+                    <#else>
+                        <#assign virtualAppExists = true>
                     </#if>
                 </#list>
             </div>
-
-            <#assign virtualAppExists = false>
-            <#list reportModel.relatedResources.applications.list.iterator() as applicationReport>
-                <#if applicationReport.projectModel.projectType! = "VIRTUAL">
-                    <#assign virtualAppExists = true>
-                </#if>
-            </#list>
-
 
             <#if virtualAppExists>
                 <div class="tooltipLikeMessage">
@@ -208,7 +203,6 @@
             <a href="reports/windup_freemarkerfunctions.html">Windup FreeMarker methods</a>
                 |
             <a href="#" id="jiraFeedbackTriggerBottomLink">Send feedback</a>
-
         </div>
 
     </div> <!-- /container -->
