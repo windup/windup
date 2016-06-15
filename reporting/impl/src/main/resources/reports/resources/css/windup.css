@@ -99,18 +99,18 @@ h3.panel-title span.s {
 
 
 .mainGraphContainer .points,
-.projectBox         .points,
-.panel .panel-body  .points { float: left; text-align: center; color: #00254b; }
+.projectBox         .panel-body .points,
+.panel              .panel-body .points { float: left; text-align: center; color: #00254b; }
 
 .mainGraphContainer .points .number  { font-size: 85pt; width: 1.5em; }
-.projectBox         .points          { width: 24%; }
-.projectBox         .points .number  { font-size: 70pt; }
-.panel .panel-body  .points .number  { font-size: 50pt; width: 1.5em; }
-.panel .panel-body  .points .mainNumber  { font-size: 50pt;}
+.projectBox         .panel-body .points          { width: 24%; }
+.projectBox         .panel-body .points .number  { font-size: 70pt; }
+.panel              .panel-body .points .number  { font-size: 50pt; width: 1.5em; }
+.panel              .panel-body .points .mainNumber  { font-size: 50pt;}
 
-.panel .panel-body .info h4 { font-weight: bold; font-size: 11pt; margin: 6pt 0 4pt 0; }
-.panel .panel-body .info h4:first-child { margin-top: 0; }
-.panel .panel-body .info .rule-link.tag { font-variant-position: super; font-weight: normal; position: relative; top: -0.3ex; }
+.panel              .panel-body .info h4 { font-weight: bold; font-size: 11pt; margin: 6pt 0 4pt 0; }
+.panel              .panel-body .info h4:first-child { margin-top: 0; }
+.panel              .panel-body .info .rule-link.tag { font-variant-position: super; font-weight: normal; position: relative; top: -0.3ex; }
 
 .java-application .notifications li.warning small { color: #888; font-style: italic; }
 

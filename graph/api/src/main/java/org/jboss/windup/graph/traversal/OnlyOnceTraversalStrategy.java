@@ -29,19 +29,31 @@ import com.google.common.collect.Iterables;
  *      <li>another.jar</li>
  *  </ul>
  *
- *  Then this will only iterate root.ear, foo.war, duplicated.jar (one time only), and WEB-INF/lib/other.jar.
+ *  Then this will only iterate root.ear, foo.war, duplicated.jar (one time only), WEB-INF/lib/other.jar, and another.jar.
  * </p>
  * <p>
- *     This is most useful in cases where you care about the contents of an project hierarchy but where representing them
+ *     This is most useful in cases where you care about the contents of a project hierarchy but where representing them
  *     more than once would be redundant.
  * </p>
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
+ * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
  */
 public class OnlyOnceTraversalStrategy implements TraversalStrategy
 {
-    // maintains a Set of all archive hashes found so far
-    private Set<String> alreadySeenHashes = new HashSet<>();
+    private Set<String> alreadySeenHashes;
+
+
+    public OnlyOnceTraversalStrategy()
+    {
+        reset();
+    }
+
+    @Override
+    public void reset()
+    {
+        this.alreadySeenHashes = new HashSet<>();
+    }
 
     @Override
     public Iterable<ProjectModelTraversal> getChildren(final ProjectModelTraversal traversal)

@@ -18,21 +18,33 @@
 <#macro applicationReportRenderer appReport>
     <#-- appReport : ApplicationReportModel -->
 
-    <#assign allTraversal = getProjectTraversal(appReport.projectModel, 'all')>
-
+    <#assign allTraversal  = getProjectTraversal(appReport.projectModel, 'all')>
     <#assign incidentCountBySeverity = getEffortCountForProjectBySeverity(allTraversal, true)>
-    <#assign totalIncidents = 0 >
+
+    <#include "include/effort_util.ftl">
+    <#assign allTraversal  = getProjectTraversal(appReport.projectModel, 'all')>
+    <#assign pointsFromAllTraversal = getMigrationEffortPointsForProject(allTraversal, true) >
+
+    <#--assign onceTraversal  = getProjectTraversal(appReport.projectModel, 'only_once')>
+    <#assign pointsFromOnceTraversal = getMigrationEffortPointsForProject(onceTraversal, true) -->
+
+    <#assign sharedTraversal = getProjectTraversal(appReport.projectModel, 'shared')>
+    <#assign pointsFromSharedTraversal = getMigrationEffortPointsForProject(sharedTraversal, true) >
 
     <#-- Total Effort Points, Name, Technologies, Incident Count per Severity-->
     <div class="appInfo">
         <div class="stats">
-            <div class="effortPoints">
-                <#include "include/effort_util.ftl">
-                <span class="points">${getMigrationEffortPointsForProject(allTraversal, true)}</span>
+            <div class="effortPoints unique">
+                <span class="points">${pointsFromAllTraversal}</span>
                 <span class="legend">story points</span>
+            </div>
+            <div class="effortPoints shared">
+                <span class="points">${pointsFromSharedTraversal}</span>
+                <span class="legend">in shared libs <#--<br/>once: ${pointsFromOnceTraversal}--></span>
             </div>
             <div class="incidentsCount">
                 <table>
+                    <#assign totalIncidents = 0 >
                     <#list incidentCountBySeverity?keys as severity>
                         <#assign totalIncidents = totalIncidents + incidentCountBySeverity?api.get(severity) >
                         <tr>
@@ -88,11 +100,12 @@
             margin: 1ex 0;
             padding: 1ex 0 2ex;
         }
-        body.viewAppList .apps .appInfo .stats { float: left; width: 330px; padding: 0.4ex 0; }
+        body.viewAppList .apps .appInfo .stats { float: left; width: 496px; padding: 0.4ex 0; }
         body.viewAppList .apps .appInfo .stats .effortPoints { float: left; width: 160px; padding: 0.3ex 0.2em 0; font-size: 33pt; }
-        body.viewAppList .apps .appInfo .stats .effortPoints span { display: block; margin: auto; text-align: center; }
-        body.viewAppList .apps .appInfo .stats .effortPoints .points { line-height: 1; color: rgb(41, 69, 147); }
-        body.viewAppList .apps .appInfo .stats .effortPoints .legend { font-size: 7pt; }
+        body.viewAppList .apps .appInfo .stats .effortPoints        span { display: block; margin: auto; text-align: center; }
+        body.viewAppList .apps .appInfo .stats .effortPoints        .points { line-height: 1; color: rgb(41, 69, 147); }
+        body.viewAppList .apps .appInfo .stats .effortPoints        .legend { font-size: 7pt; }
+        body.viewAppList .apps .appInfo .stats .effortPoints.shared .points { color: #8491a8; /* Like normal, but grayed. */ }
         body.viewAppList .apps .appInfo .stats .incidentsCount { float: left; margin:  0 2ex;}
         body.viewAppList .apps .appInfo .stats .incidentsCount table tr.total td { border-top: 1px solid silver; }
         body.viewAppList .apps .appInfo .stats .incidentsCount .count { text-align: right; padding-left: 10px; }

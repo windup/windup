@@ -1,4 +1,13 @@
-<#-- getMigrationEffortPointsForProject(traversal, recursive, includeTags (optional), excludeTags (optional)) -->
+<#--
+    getMigrationEffortPointsForProject(
+        traversal : ProjectModelTraversal - can be created by getProjectTraversal(ProjectModel project, String mode)
+        recursive : boolean
+        includeTags : Set<String> (optional)
+        excludeTags : Set<String> (optional)
+    )
+
+    Traverses through the project tree using given traversal and sums all effort (story) points.
+-->
 <#function getMigrationEffortPointsForProject traversal recursive includeAndExcludeTagParameters...>
     <#if includeAndExcludeTagParameters?size == 0>
         <#assign effortLevels = getEffortDetailsForProjectTraversal(traversal, recursive)>

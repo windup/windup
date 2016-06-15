@@ -33,4 +33,11 @@ public class AllTraversalStrategy implements TraversalStrategy
             }
         });
     }
+
+
+    @Override
+    public void reset()
+    {
+        // No-op.
+    }
 }

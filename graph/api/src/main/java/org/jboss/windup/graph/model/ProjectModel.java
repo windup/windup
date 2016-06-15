@@ -13,6 +13,7 @@ import com.tinkerpop.frames.annotations.gremlin.GremlinGroovy;
 import com.tinkerpop.frames.modules.javahandler.JavaHandler;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.Indexed;
 
 /**
  * Base interface representing an abstract project model with a project name, version, type, and location on disk. Projects may be source-based or
@@ -122,6 +123,7 @@ public interface ProjectModel extends WindupVertexFrame
      * Project's unique ID. Not necessarily set for all projects,
      * only those special, such like shared-libs.
      */
+    @Indexed
     @Property(UNIQUE_ID)
     String getUniqueID();
 
