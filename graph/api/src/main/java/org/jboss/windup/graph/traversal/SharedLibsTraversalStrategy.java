@@ -57,7 +57,19 @@ public class SharedLibsTraversalStrategy implements TraversalStrategy
     public static final Logger LOG = Logger.getLogger(SharedLibsTraversalStrategy.class.getName());
 
     // maintains a Set of all archive hashes found so far
-    private Set<String> alreadySeenHashes = new HashSet<>();
+    private Set<String> alreadySeenHashes;
+
+
+    public SharedLibsTraversalStrategy()
+    {
+        reset();
+    }
+
+    @Override
+    public void reset()
+    {
+        this.alreadySeenHashes = new HashSet<>();
+    }
 
     @Override
     public Iterable<ProjectModelTraversal> getChildren(final ProjectModelTraversal traversal)
@@ -95,7 +107,7 @@ public class SharedLibsTraversalStrategy implements TraversalStrategy
 
                 // which are shared between apps.
                 if (!ProjectService.SHARED_LIBS_UNIQUE_ID.equals(input.getCanonicalProject().getRootProjectModel().getUniqueID()))
-
+                    return false;
                 LOG.info("    ...OK, shared");///
 
                 final boolean added = alreadySeenHashes.add(rootFile.getSHA1Hash());

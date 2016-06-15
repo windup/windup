@@ -39,8 +39,8 @@
                 <span class="legend">story points</span>
             </div>
             <div class="effortPoints shared">
-                <span class="points">${pointsFromSharedTraversal}, o: ${pointsFromOnceTraversal}</span>
-                <span class="legend">in shared libs</span>
+                <span class="points">${pointsFromSharedTraversal}</span>
+                <span class="legend">in shared libs<br/>once: ${pointsFromOnceTraversal}</span>
             </div>
             <div class="incidentsCount">
                 <table>

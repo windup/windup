@@ -24,6 +24,7 @@ import java.util.Set;
  * </ul>
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
+ * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
  */
 public class ProjectModelTraversal
 {
@@ -204,6 +205,15 @@ public class ProjectModelTraversal
         String projectInfo = current == null ? null : checksum + " " + name + " (" + current.getProjectType() + ')';
         String strategyInfo = traversalStrategy == null ? null : traversalStrategy.getClass().getSimpleName();
         return "Trav@" + this.hashCode() + "{cur: " + projectInfo + ", strategy: " + strategyInfo + ", prev: " + previous + '}';
+    }
+
+
+    /**
+     * Resets the state of this traversal, so it can be reused.
+     */
+    public void reset()
+    {
+        this.traversalStrategy.reset();
     }
 
 }

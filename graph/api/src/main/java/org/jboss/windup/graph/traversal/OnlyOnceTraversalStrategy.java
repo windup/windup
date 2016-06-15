@@ -37,11 +37,23 @@ import com.google.common.collect.Iterables;
  * </p>
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
+ * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
  */
 public class OnlyOnceTraversalStrategy implements TraversalStrategy
 {
-    // maintains a Set of all archive hashes found so far
-    private Set<String> alreadySeenHashes = new HashSet<>();
+    private Set<String> alreadySeenHashes;
+
+
+    public OnlyOnceTraversalStrategy()
+    {
+        reset();
+    }
+
+    @Override
+    public void reset()
+    {
+        this.alreadySeenHashes = new HashSet<>();
+    }
 
     @Override
     public Iterable<ProjectModelTraversal> getChildren(final ProjectModelTraversal traversal)

@@ -95,8 +95,10 @@ public class GetEffortDetailsForProjectTraversalMethod implements WindupFreeMark
         }
 
         // Get values for classification and hints.
+        projectModelTraversal.reset();
         Map<Integer, Integer> classificationEffortDetails =
                 classificationService.getMigrationEffortByPoints(projectModelTraversal, includeTags, excludeTags, recursive, false);
+        projectModelTraversal.reset();
         Map<Integer, Integer> hintEffortDetails =
                 inlineHintService.getMigrationEffortByPoints(projectModelTraversal, includeTags, excludeTags, recursive, false);
 
@@ -106,7 +108,7 @@ public class GetEffortDetailsForProjectTraversalMethod implements WindupFreeMark
 
 
         int points = sum(results);
-        LOG.info(String.format("getMigrationEffortPointsForProject() FM function called:\n\t\t\tEFFORT: %3d = %s = C%s + H%s; %s, %srecur, tags: %s, excl: %s",
+        LOG.info(String.format(NAME + "() FM function called:\n\t\t\tEFFORT: %3d = %s = C%s + H%s; %s, %srecur, tags: %s, excl: %s",
                 points, results, classificationEffortDetails, hintEffortDetails,
                 projectModelTraversal, recursive ? "" : "!", includeTags, excludeTags));
 

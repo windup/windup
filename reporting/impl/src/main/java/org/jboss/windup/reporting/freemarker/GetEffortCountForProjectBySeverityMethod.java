@@ -68,7 +68,7 @@ public class GetEffortCountForProjectBySeverityMethod implements WindupFreeMarke
                         "Error, method expects at least two arguments (projectModel:ProjectModel, recursive:Boolean, [includeTags:Set<String>]. [excludeTags:Set<String>])");
         }
         StringModel projectModelTraversalArg = (StringModel) arguments.get(0);
-        ProjectModelTraversal projectModelTraversal = (ProjectModelTraversal) projectModelTraversalArg.getWrappedObject();
+        ProjectModelTraversal traversal = (ProjectModelTraversal) projectModelTraversalArg.getWrappedObject();
 
         TemplateBooleanModel recursiveBooleanModel = (TemplateBooleanModel) arguments.get(1);
         boolean recursive = recursiveBooleanModel.getAsBoolean();
@@ -85,15 +85,13 @@ public class GetEffortCountForProjectBySeverityMethod implements WindupFreeMarke
             excludeTags = FreeMarkerUtil.simpleSequenceToSet((SimpleSequence) arguments.get(3));
         }
 
-        Map<Severity, Integer> classificationEffortDetails = classificationService.getMigrationEffortBySeverity(projectModelTraversal, includeTags,
-                    excludeTags,
-                    recursive);
-        Map<Severity, Integer> hintEffortDetails = inlineHintService.getMigrationEffortBySeverity(projectModelTraversal, includeTags, excludeTags, recursive);
+        traversal.reset();
+        Map<Severity, Integer> classifEffortDetails = classificationService.getMigrationEffortBySeverity(traversal, includeTags, excludeTags, recursive);
+        traversal.reset();
+        Map<Severity, Integer> hintEffortDetails = inlineHintService.getMigrationEffortBySeverity(traversal, includeTags, excludeTags, recursive);
 
-        Map<String, Integer> results = new HashMap<>(classificationEffortDetails.size() + hintEffortDetails.size());
-
-        addAllIncidents(results, classificationEffortDetails);
-
+        Map<String, Integer> results = new HashMap<>(classifEffortDetails.size() + hintEffortDetails.size());
+        addAllIncidents(results, classifEffortDetails);
         addAllIncidents(results, hintEffortDetails);
 
         ExecutionStatistics.get().end(NAME);
