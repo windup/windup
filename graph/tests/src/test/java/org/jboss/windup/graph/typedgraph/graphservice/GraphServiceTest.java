@@ -24,6 +24,9 @@ import org.junit.runner.RunWith;
 import com.thinkaurelius.titan.core.attribute.Cmp;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.FramedGraphQuery;
+import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import java.util.List;
+import org.jboss.windup.graph.model.WindupFrame;
 
 @RunWith(Arquillian.class)
 public class GraphServiceTest
@@ -156,4 +159,41 @@ public class GraphServiceTest
             context.getFramed().removeVertex(model.asVertex());
         }
     }
+
+
+
+
+    @Test
+    public void testServiceDeletagesInGraphContext() throws Exception
+    {
+        try (GraphContext context = factory.create())
+        {
+            TestFooModel created = context.create(TestFooSubModel.class);
+
+            checkObject(created);
+
+            created = context.getUnique(TestFooSubModel.class);
+            checkObject(created);
+
+            Iterable<TestFooSubModel> findAll = context.findAll(TestFooSubModel.class);
+            Assert.assertNotNull(findAll);
+            final Iterator<TestFooSubModel> iterator = findAll.iterator();
+            Assert.assertTrue(iterator.hasNext());
+            created = iterator.next();
+            Assert.assertFalse(iterator.hasNext());
+
+            checkObject(created);
+        }
+    }
+
+    private void checkObject(TestFooModel created)
+    {
+        Assert.assertNotNull(created);
+        Assert.assertNotNull(created.asVertex());
+        Assert.assertNotNull(created.asVertex().getProperty(WindupFrame.TYPE_PROP));
+        Assert.assertTrue(created instanceof TestFooSubModel);
+        Assert.assertTrue(((List)created.asVertex().getProperty(WindupFrame.TYPE_PROP))
+                .contains(TestFooSubModel.class.getAnnotation(TypeValue.class).value()));
+    }
+
 }
