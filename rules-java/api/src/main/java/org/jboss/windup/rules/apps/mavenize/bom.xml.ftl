@@ -41,7 +41,7 @@ pom: class Pom
                 <groupId>${pom.bom.groupId}</groupId>
                 <artifactId>${pom.bom.artifactId}</artifactId>
                 <version>${pom.bom.version}</version>
-                <#if pom.bom.classifier??>${i4}<classifier>${pom.bom.classifier}</classifier>${"\n"}</#if><#t>
+                <#if pom.bom.classifier!?trim?has_content>${i4}<classifier>${pom.bom.classifier}</classifier>${"\n"}</#if><#t>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -52,7 +52,7 @@ pom: class Pom
                 <groupId>${dep.coord.groupId}</groupId>
                 <artifactId>${dep.coord.artifactId}</artifactId>
                 <version>${dep.coord.version}</version>
-                <#if dep.coord.classifier??>${i4}<classifier>${dep.coord.classifier}</classifier>${"\n"}</#if><#t>
+                <#if dep.coord.classifier!?trim?has_content>${i4}<classifier>${dep.coord.classifier}</classifier>${"\n"}</#if><#t>
                 <#if (dep.coord.packaging!"jar") != "jar">${i4}<type>${dep.coord.packaging}</type>${"\n"}</#if><#t>
             </dependency>
 
