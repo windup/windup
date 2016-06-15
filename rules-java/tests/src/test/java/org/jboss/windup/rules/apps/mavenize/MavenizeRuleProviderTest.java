@@ -24,8 +24,6 @@ import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
-import org.jboss.windup.graph.model.ProjectModel;
-import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.rules.apps.java.archives.identify.CompositeArchiveIdentificationService;
 import org.jboss.windup.rules.apps.java.archives.identify.InMemoryArchiveIdentificationService;
 import org.jboss.windup.rules.apps.java.archives.model.IdentifiedArchiveModel;
