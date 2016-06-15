@@ -169,21 +169,17 @@
 
         <!-- Apps -->
         <section class="apps">
+            <#assign virtualAppExists = false>
             <div class="real">
                 <#list reportModel.relatedResources.applications.list.iterator() as applicationReport>
                     <#if applicationReport.projectModel.projectType! != "VIRTUAL" >
                         <@applicationReportRenderer applicationReport/>
+                    <#else>
+                        <#assign virtualAppExists = true>
                     </#if>
                 </#list>
             </div>
-
-            <#assign virtualAppExists = false>
-            <#list reportModel.relatedResources.applications.list.iterator() as applicationReport>
-                <#if applicationReport.projectModel.projectType! = "VIRTUAL">
-                    <#assign virtualAppExists = true>
-                </#if>
-            </#list>
-        <section>
+        </section>
 
         <#if virtualAppExists>
         <div class="row">
