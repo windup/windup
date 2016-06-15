@@ -23,12 +23,12 @@ pom: class Pom
 
     <groupId>${pom.coord.groupId}</groupId>
     <artifactId>${pom.coord.artifactId}</artifactId>
-    <#if pom.coord.version??>${i1}<version>${pom.coord.version}</version>${"\n"}</#if><#t><#-- Null if same as parent. -->
-    <#if pom.coord.packaging??>${i1}<packaging>${pom.coord.packaging}</packaging>${"\n"}</#if><#t>
-    <#if pom.coord.classifier??>${i1}<classifier>${pom.coord.classifier}</classifier>${"\n"}</#if><#t>
+    <#if pom.coord.version!?trim?has_content>${i1}<version>${pom.coord.version}</version>${"\n"}</#if><#t><#-- Null if same as parent. -->
+    <#if pom.coord.packaging!?trim?has_content>${i1}<packaging>${pom.coord.packaging}</packaging>${"\n"}</#if><#t>
+    <#if pom.coord.classifier!?trim?has_content>${i1}<classifier>${pom.coord.classifier}</classifier>${"\n"}</#if><#t>
 
-    <#if pom.name??>${i1}<name>${pom.name}</name>${"\n"}</#if><#t>
-    <#if pom.description??>${i1}<description>${pom.description}</description>${"\n"}</#if><#t>
+    <#if pom.name!?trim?has_content>${i1}<name>${pom.name}</name>${"\n"}</#if><#t>
+    <#if pom.description!?trim?has_content>${i1}<description>${pom.description}</description>${"\n"}</#if><#t>
 
     <dependencyManagement>
         <dependencies>
