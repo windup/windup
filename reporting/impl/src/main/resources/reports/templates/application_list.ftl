@@ -25,8 +25,8 @@
     <#assign allTraversal  = getProjectTraversal(appReport.projectModel, 'all')>
     <#assign pointsFromAllTraversal = getMigrationEffortPointsForProject(allTraversal, true) >
 
-    <#assign onceTraversal  = getProjectTraversal(appReport.projectModel, 'only_once')>
-    <#assign pointsFromOnceTraversal = getMigrationEffortPointsForProject(onceTraversal, true) >
+    <#--assign onceTraversal  = getProjectTraversal(appReport.projectModel, 'only_once')>
+    <#assign pointsFromOnceTraversal = getMigrationEffortPointsForProject(onceTraversal, true) -->
 
     <#assign sharedTraversal = getProjectTraversal(appReport.projectModel, 'shared')>
     <#assign pointsFromSharedTraversal = getMigrationEffortPointsForProject(sharedTraversal, true) >
@@ -40,7 +40,7 @@
             </div>
             <div class="effortPoints shared">
                 <span class="points">${pointsFromSharedTraversal}</span>
-                <span class="legend">in shared libs<br/>once: ${pointsFromOnceTraversal}</span>
+                <span class="legend">in shared libs <#--<br/>once: ${pointsFromOnceTraversal}--></span>
             </div>
             <div class="incidentsCount">
                 <table>
