@@ -16,9 +16,9 @@ import org.jboss.windup.graph.service.ProjectService;
 
 /**
  * <p>
- * Provides a traversal over children that are duplicated across multiple applications
- * (i.e. those which are contained in the 'shared-libs' project),
- * but only one instance within the given app.
+ * Provides a traversal over children that are shared across multiple applications
+ * (i.e. those which are contained in the 'shared-libs' project);
+ * if duplicated within the given application, it takes only one instance.
  * </p>
  *
  * <p>
