@@ -113,7 +113,7 @@
         body.viewAppList .apps .appInfo .stats .effortPoints.shared .points { color: #8491a8; /* Like normal, but grayed. */ }
         body.viewAppList .apps .appInfo .stats .incidentsCount { float: left; margin:  0 2ex;}
         body.viewAppList .apps .appInfo .stats .incidentsCount table tr.total td { border-top: 1px solid silver; }
-        body.viewAppList .apps .appInfo .stats .incidentsCount .count { text-align: right; padding-right: 1ex; }
+        body.viewAppList .apps .appInfo .stats .incidentsCount .count { text-align: right; padding-right: 1ex; min-width: 6ex; }
         body.viewAppList .apps .appInfo .traits { margin-left: 0px; }
         body.viewAppList .apps .appInfo .traits .fileName { padding: 0.0ex 0em 0.2ex; font-size: 18pt; /* color: #008cba; (Default BS link color) */ }
         body.viewAppList .apps .appInfo .traits .techs { }
