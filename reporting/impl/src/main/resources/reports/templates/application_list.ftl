@@ -46,6 +46,9 @@
             </div>
             <div class="incidentsCount">
                 <table>
+                    <tr>
+                        <td colspan="2">Number of incidents</td>
+                    </tr>
                     <#assign totalIncidents = 0 >
                     <#list incidentCountBySeverity?keys as severity>
                         <#assign totalIncidents = totalIncidents + incidentCountBySeverity?api.get(severity) >
@@ -111,7 +114,7 @@
         body.viewAppList .apps .appInfo .stats .incidentsCount { float: left; margin:  0 2ex;}
         body.viewAppList .apps .appInfo .stats .incidentsCount table tr.total td { border-top: 1px solid silver; }
         body.viewAppList .apps .appInfo .stats .incidentsCount .count { text-align: right; padding-right: 1ex; }
-        body.viewAppList .apps .appInfo .traits { margin-left: px; }
+        body.viewAppList .apps .appInfo .traits { margin-left: 0px; }
         body.viewAppList .apps .appInfo .traits .fileName { padding: 0.0ex 0em 0.2ex; font-size: 18pt; /* color: #008cba; (Default BS link color) */ }
         body.viewAppList .apps .appInfo .traits .techs { }
 
