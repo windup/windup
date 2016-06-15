@@ -1,6 +1,5 @@
 package org.jboss.windup.reporting.freemarker;
 
-import com.google.common.collect.Maps;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -36,6 +35,7 @@ import java.util.logging.Logger;
  * <p> If recursive is true, the effort total includes child projects.
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
+ * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
  */
 public class GetEffortDetailsForProjectTraversalMethod implements WindupFreeMarkerMethod
 {
@@ -100,15 +100,7 @@ public class GetEffortDetailsForProjectTraversalMethod implements WindupFreeMark
         Map<Integer, Integer> hintEffortDetails =
                 inlineHintService.getMigrationEffortByPoints(projectModelTraversal, includeTags, excludeTags, recursive, false);
 
-        Map<Integer, Integer> results = new HashMap<>(classificationEffortDetails.size() + hintEffortDetails.size());
-        results.putAll(classificationEffortDetails);
-        for (Map.Entry<Integer, Integer> entry : hintEffortDetails.entrySet())
-        {
-            if (!results.containsKey(entry.getKey()))
-                results.put(entry.getKey(), entry.getValue());
-            else
-                results.put(entry.getKey(), results.get(entry.getKey()) + entry.getValue());
-        }
+        Map<Integer, Integer> results = sumMaps(classificationEffortDetails, hintEffortDetails);
 
         ExecutionStatistics.get().end(NAME);
 
@@ -118,6 +110,21 @@ public class GetEffortDetailsForProjectTraversalMethod implements WindupFreeMark
                 points, results, classificationEffortDetails, hintEffortDetails,
                 projectModelTraversal, recursive ? "" : "!", includeTags, excludeTags));
 
+        return results;
+    }
+
+
+    private Map<Integer, Integer> sumMaps(Map<Integer, Integer> classificationEffortDetails, Map<Integer, Integer> hintEffortDetails)
+    {
+        Map<Integer, Integer> results = new HashMap<>(classificationEffortDetails.size() + hintEffortDetails.size());
+        results.putAll(classificationEffortDetails);
+        for (Map.Entry<Integer, Integer> entry : hintEffortDetails.entrySet())
+        {
+            if (!results.containsKey(entry.getKey()))
+                results.put(entry.getKey(), entry.getValue());
+            else
+                results.put(entry.getKey(), results.get(entry.getKey()) + entry.getValue());
+        }
         return results;
     }
 
