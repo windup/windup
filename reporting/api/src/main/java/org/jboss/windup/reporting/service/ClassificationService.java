@@ -137,7 +137,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
     private void getMigrationEffortDetails(ProjectModelTraversal traversal, Set<String> includeTags, Set<String> excludeTags, boolean recursive,
                 boolean includeZero, EffortAccumulatorFunction accumulatorFunction)
     {
-        LOG.log(Level.INFO, String.format("\n\t\t\tEFFORT: getMigrationEffortDetails() with: %s, %srecur, %sincludeZero, %s, tags: %s, excl: %s",
+        LOG.log(Level.INFO, String.format("\n\t\t\tEFFORT C: getMigrationEffortDetails() with: %s, %srecur, %sincludeZero, %s, tags: %s, excl: %s",
                 traversal, recursive ? "" : "!", includeZero ? "" : "!", accumulatorFunction, includeTags, excludeTags));
 
         final Set<Vertex> initialVertices = traversal.getAllProjectsAsVertices(recursive);
@@ -165,6 +165,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
         FileService fileService = new FileService(getGraphContext());
         for (Vertex v : pipeline)
         {
+            LOG.info("\t\t\t\tAAA " + frame(v));///
             // only check tags if we have some passed in
             if (checkTags && !frame(v).matchesTags(includeTags, excludeTags))
                 continue;
@@ -181,6 +182,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
                 if (initialVertices.contains(fileModel.getProjectModel().asVertex()))
                     accumulatorFunction.accumulate(v);
             }
+            LOG.info("\t\t\t\tBBB " + ((MapSumEffortAccumulatorFunction)accumulatorFunction).getResults());///
         }
     }
 
