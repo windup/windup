@@ -22,12 +22,12 @@ pom: class Pom
 
     <groupId>${pom.coord.groupId}</groupId>
     <artifactId>${pom.coord.artifactId}</artifactId>
-    <#if pom.coord.version??>${i1}<version>${pom.coord.version}</version>${"\n"}</#if><#t><#-- Null if same as parent. -->
-    <#if pom.coord.packaging??>${i1}<packaging>${pom.coord.packaging}</packaging>${"\n"}</#if><#t>
-    <#if pom.coord.classifier??>${i1}<classifier>${pom.coord.classifier}</classifier>${"\n"}</#if><#t>
+    <#if pom.coord.version!?trim?has_content>${i1}<version>${pom.coord.version}</version>${"\n"}</#if><#t><#-- Null if same as parent. -->
+    <#if pom.coord.packaging!?trim?has_content>${i1}<packaging>${pom.coord.packaging}</packaging>${"\n"}</#if><#t>
+    <#if pom.coord.classifier!?trim?has_content>${i1}<classifier>${pom.coord.classifier}</classifier>${"\n"}</#if><#t>
 
     <#if pom.name??>${i1}<name>${pom.name}</name>${"\n"}</#if><#t>
-    <#if pom.description??>${i1}<description>${pom.description}</description>${"\n"}</#if><#t>
+    <#if pom.description!?trim?has_content>${i1}<description>${pom.description}</description>${"\n"}</#if><#t>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -55,7 +55,7 @@ pom: class Pom
                 <groupId>${pom.bom.groupId}</groupId>
                 <artifactId>${pom.bom.artifactId}</artifactId>
                 <version>${pom.bom.version}</version>
-                <#if pom.bom.classifier??>${i4}<classifier>${pom.bom.classifier}</classifier>${"\n"}</#if><#t>
+                <#if pom.bom.classifier!?trim?has_content>${i4}<classifier>${pom.bom.classifier}</classifier>${"\n"}</#if><#t>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -69,7 +69,7 @@ pom: class Pom
         <dependency>
             <groupId>${dep.coord.groupId}</groupId>
             <artifactId>${dep.coord.artifactId}</artifactId>
-            <#if dep.coord.version??>${i3}<version>${dep.coord.version}</version>${"\n"}</#if><#t>
+            <#if dep.coord.version!?trim?has_content>${i3}<version>${dep.coord.version}</version>${"\n"}</#if><#t>
             <#if dep.coord.classifier!?trim?has_content>${i3}<classifier>${dep.coord.classifier}</classifier>${"\n"}</#if><#t>
             <#if (dep.coord.packaging!"jar") != "jar">${i3}<type>${dep.coord.packaging!"jar"}</type>${"\n"}</#if><#t>
             <#if (dep.coord.scope!"compile") != "compile">${i3}<scope>${dep.coord.scope}</scope>${"\n"}</#if><#t>
