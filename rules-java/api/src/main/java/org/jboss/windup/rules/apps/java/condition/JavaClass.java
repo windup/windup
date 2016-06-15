@@ -21,6 +21,7 @@ import org.jboss.windup.config.query.QueryBuilderFrom;
 import org.jboss.windup.config.query.QueryBuilderPiped;
 import org.jboss.windup.config.query.QueryGremlinCriterion;
 import org.jboss.windup.config.query.QueryPropertyComparisonType;
+import org.jboss.windup.graph.TitanUtil;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.rules.apps.java.condition.annotation.AnnotationCondition;
@@ -191,11 +192,6 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
 
         return result;
     }
-    /** Used to alter the regex so it will be compatible with lucene **/
-    private String titanify(Pattern pattern)
-    {
-        return pattern.pattern().replace("\\Q", "\"").replace("\\E", "\"").replace("?:", "");
-    }
 
     private boolean evaluate(GraphRewrite event, EvaluationContext context, EvaluationStrategy evaluationStrategy)
     {
@@ -232,7 +228,7 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
             {
                 GremlinPipeline<Vertex, Vertex> resolvedTextSearch = new GremlinPipeline<>(event.getGraphContext().getGraph());
                 resolvedTextSearch.V();
-                resolvedTextSearch.has(JavaTypeReferenceModel.RESOLVED_SOURCE_SNIPPIT, Text.REGEX, titanify(compiledPattern));
+                resolvedTextSearch.has(JavaTypeReferenceModel.RESOLVED_SOURCE_SNIPPIT, Text.REGEX, TitanUtil.titanifyRegex(compiledPattern.pattern()));
 
                 if (!resolvedTextSearch.iterator().hasNext())
                     return false;

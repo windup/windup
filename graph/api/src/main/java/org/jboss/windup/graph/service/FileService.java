@@ -1,8 +1,13 @@
 package org.jboss.windup.graph.service;
 
 import java.nio.file.Paths;
+import java.util.regex.Pattern;
 
+import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.frames.structures.FramedVertexIterable;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.TitanUtil;
+import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.util.ExecutionStatistics;
 
@@ -44,6 +49,15 @@ public class FileService extends GraphService<FileModel>
         // make the path absolute (as we only store absolute paths)
         filePath = Paths.get(filePath).toAbsolutePath().toString();
         return getUniqueByProperty(FileModel.FILE_PATH, filePath);
+    }
+
+    public Iterable<FileModel> findByFilenameRegex(String filenameRegex)
+    {
+        filenameRegex = TitanUtil.titanifyRegex(filenameRegex);
+        Iterable<Vertex> vertices = getGraphContext().getFramed().query()
+                .has(FileModel.FILE_NAME, Text.REGEX, filenameRegex)
+                .has(WindupVertexFrame.TYPE_PROP, FileModel.TYPE).vertices();
+        return new FramedVertexIterable<>(getGraphContext().getFramed(), vertices, FileModel.class);
     }
 
     public Iterable<FileModel> findArchiveEntryWithExtension(String... values)

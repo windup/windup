@@ -307,8 +307,8 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
             //in case the filename is the first operation generating result, we can use the graph regex index. That's why we distinguish that in this clause
             if (vertices.isEmpty() && StringUtils.isBlank(getInputVariablesName()))
             {
-                FileService fileModelService = new FileService(event.getGraphContext());
-                for (FileModel fileModel : fileModelService.findAllByPropertyMatchingRegex(FileModel.FILE_NAME, filenameRegex.pattern()))
+                FileService fileService = new FileService(event.getGraphContext());
+                for (FileModel fileModel : fileService.findByFilenameRegex(filenameRegex.pattern()))
                 {
                     vertices.add(fileModel);
                 }

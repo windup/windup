@@ -30,4 +30,6 @@ public @interface Indexed
      * Indicates the type for the property. The default is {@link String}.
      */
     Class<?> dataType() default String.class;
+
+    String name() default "";
 }

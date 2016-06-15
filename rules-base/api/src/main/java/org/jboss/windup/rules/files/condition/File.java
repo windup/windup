@@ -225,7 +225,7 @@ public class File extends ParameterizedGraphCondition
             if (vertices.isEmpty() && StringUtils.isBlank(getInputVariablesName()))
             {
                 FileService fileModelService = new FileService(event.getGraphContext());
-                for (FileModel fileModel : fileModelService.findAllByPropertyMatchingRegex(FileModel.FILE_NAME, filenameRegex.pattern()))
+                for (FileModel fileModel : fileModelService.findByFilenameRegex(filenameRegex.pattern()))
                 {
                     vertices.add(fileModel);
                 }

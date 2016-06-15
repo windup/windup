@@ -3,9 +3,11 @@ package org.jboss.windup.graph;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -16,6 +18,7 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Annotations;
@@ -24,6 +27,7 @@ import org.jboss.windup.graph.listeners.AfterGraphInitializationListener;
 import org.jboss.windup.graph.listeners.BeforeGraphCloseListener;
 import org.jboss.windup.graph.model.WindupFrame;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.graph.service.GraphService;
 
 import com.sleepycat.je.LockMode;
 import com.thinkaurelius.titan.core.Cardinality;
@@ -46,30 +50,26 @@ import com.tinkerpop.frames.modules.FrameClassLoaderResolver;
 import com.tinkerpop.frames.modules.Module;
 import com.tinkerpop.frames.modules.gremlingroovy.GremlinGroovyModule;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerModule;
-import org.jboss.windup.graph.service.GraphService;
 
 public class GraphContextImpl implements GraphContext
 {
     private static final Logger log = Logger.getLogger(GraphContextImpl.class.getName());
 
     private final Furnace furnace;
-    private Map<String, Object> configurationOptions;
     private final GraphTypeManager graphTypeManager;
-    private EventGraph<TitanGraph> eventGraph;
-    private BatchGraph<TitanGraph> batchGraph;
-    private FramedGraph<EventGraph<TitanGraph>> framed;
-    private Configuration conf;
-
     private final Path graphDir;
-
     private final GraphApiCompositeClassLoaderProvider classLoaderProvider;
-
     /**
      * Used to save all the {@link BeforeGraphCloseListener}s that are also {@link AfterGraphInitializationListener}. This is due a need to call
      * {@link BeforeGraphCloseListener#beforeGraphClose()} on the same instance on which
      * {@link AfterGraphInitializationListener#afterGraphStarted(Map, GraphContext)} } was called
      */
     private final Map<String, BeforeGraphCloseListener> beforeGraphCloseListenerBuffer = new HashMap<>();
+    private Map<String, Object> configurationOptions;
+    private EventGraph<TitanGraph> eventGraph;
+    private BatchGraph<TitanGraph> batchGraph;
+    private FramedGraph<EventGraph<TitanGraph>> framed;
+    private Configuration conf;
 
     public GraphContextImpl(Furnace furnace, GraphTypeManager typeManager,
                 GraphApiCompositeClassLoaderProvider classLoaderProvider, Path graphDir)
@@ -154,8 +154,6 @@ public class GraphContextImpl implements GraphContext
             }
         };
 
-
-
         FramedGraphFactory factory = new FramedGraphFactory(
                     addModules,
                     new JavaHandlerModule(),   // Supports @JavaHandler
@@ -166,19 +164,36 @@ public class GraphContextImpl implements GraphContext
         framed = factory.create(eventGraph);
     }
 
+    private List<Indexed> getIndexAnnotations(Method method)
+    {
+        List<Indexed> results = new ArrayList<>();
+        Indexed index = method.getAnnotation(Indexed.class);
+        if (index != null)
+            results.add(index);
+
+        Indexes indexes = method.getAnnotation(Indexes.class);
+        if (indexes != null)
+        {
+            Collections.addAll(results, indexes.value());
+        }
+
+        return results;
+    }
+
     private void initializeTitanIndexes(TitanGraph titanGraph)
     {
-        Map<String, Class<?>> defaultIndexKeys = new HashMap<>();
-        Map<String, Class<?>> searchIndexKeys = new HashMap<>();
-        Map<String, Class<?>> listIndexKeys = new HashMap<>();
+        Map<String, IndexData> defaultIndexKeys = new HashMap<>();
+        Map<String, IndexData> searchIndexKeys = new HashMap<>();
+        Map<String, IndexData> listIndexKeys = new HashMap<>();
 
         Set<Class<? extends WindupFrame<?>>> modelTypes = graphTypeManager.getRegisteredTypes();
         for (Class<? extends WindupFrame<?>> type : modelTypes)
         {
             for (Method method : type.getDeclaredMethods())
             {
-                Indexed index = method.getAnnotation(Indexed.class);
-                if (index != null)
+                List<Indexed> annotations = getIndexAnnotations(method);
+
+                for (Indexed index : annotations)
                 {
                     Property property = Annotations.getAnnotation(method, Property.class);
                     if (property != null)
@@ -187,15 +202,15 @@ public class GraphContextImpl implements GraphContext
                         switch (index.value())
                         {
                         case DEFAULT:
-                            defaultIndexKeys.put(property.value(), dataType);
+                            defaultIndexKeys.put(property.value(), new IndexData(property.value(), index.name(), dataType));
                             break;
 
                         case SEARCH:
-                            searchIndexKeys.put(property.value(), dataType);
+                            searchIndexKeys.put(property.value(), new IndexData(property.value(), index.name(), dataType));
                             break;
 
                         case LIST:
-                            listIndexKeys.put(property.value(), dataType);
+                            listIndexKeys.put(property.value(), new IndexData(property.value(), index.name(), dataType));
                             break;
 
                         default:
@@ -210,49 +225,63 @@ public class GraphContextImpl implements GraphContext
          * This is the root Model index that enables us to query on frame-type (by subclass type, etc.) Without this, every typed query would be slow.
          * Do not remove this unless something really paradigm-shifting has happened.
          */
-        listIndexKeys.put(WindupVertexFrame.TYPE_PROP, String.class);
+        listIndexKeys.put(WindupVertexFrame.TYPE_PROP, new IndexData(WindupVertexFrame.TYPE_PROP, "", String.class));
 
         log.info("Detected and initialized [" + defaultIndexKeys.size() + "] default indexes: " + defaultIndexKeys);
         log.info("Detected and initialized [" + searchIndexKeys.size() + "] search indexes: " + searchIndexKeys);
         log.info("Detected and initialized [" + listIndexKeys.size() + "] list indexes: " + listIndexKeys);
 
         TitanManagement titan = titanGraph.getManagementSystem();
-        for (Map.Entry<String, Class<?>> entry : defaultIndexKeys.entrySet())
+        for (Map.Entry<String, IndexData> entry : defaultIndexKeys.entrySet())
         {
             String key = entry.getKey();
-            Class<?> dataType = entry.getValue();
+            IndexData indexData = entry.getValue();
 
-            PropertyKey propKey = titan.makePropertyKey(key).dataType(dataType).cardinality(Cardinality.SINGLE).make();
-            titan.buildIndex(key, Vertex.class).addKey(propKey).buildCompositeIndex();
+            Class<?> dataType = indexData.type;
+
+            PropertyKey propKey = getOrCreatePropertyKey(titan, key, dataType, Cardinality.SINGLE);
+            titan.buildIndex(indexData.getIndexName(), Vertex.class).addKey(propKey).buildCompositeIndex();
         }
 
-        for (Map.Entry<String, Class<?>> entry : searchIndexKeys.entrySet())
+        for (Map.Entry<String, IndexData> entry : searchIndexKeys.entrySet())
         {
             String key = entry.getKey();
-            Class<?> dataType = entry.getValue();
+            IndexData indexData = entry.getValue();
+            Class<?> dataType = indexData.type;
 
             if (dataType == String.class)
             {
-                PropertyKey propKey = titan.makePropertyKey(key).dataType(String.class).cardinality(Cardinality.SINGLE).make();
-                titan.buildIndex(key, Vertex.class).addKey(propKey, Mapping.STRING.getParameter()).buildMixedIndex("search");
+                PropertyKey propKey = getOrCreatePropertyKey(titan, key, String.class, Cardinality.SINGLE);
+                titan.buildIndex(indexData.getIndexName(), Vertex.class).addKey(propKey, Mapping.STRING.getParameter()).buildMixedIndex("search");
             }
             else
             {
-                PropertyKey propKey = titan.makePropertyKey(key).dataType(dataType).cardinality(Cardinality.SINGLE).make();
-                titan.buildIndex(key, Vertex.class).addKey(propKey).buildMixedIndex("search");
+                PropertyKey propKey = getOrCreatePropertyKey(titan, key, dataType, Cardinality.SINGLE);
+                titan.buildIndex(indexData.getIndexName(), Vertex.class).addKey(propKey).buildMixedIndex("search");
             }
         }
 
-        for (Map.Entry<String, Class<?>> entry : listIndexKeys.entrySet())
+        for (Map.Entry<String, IndexData> entry : listIndexKeys.entrySet())
         {
             String key = entry.getKey();
-            Class<?> dataType = entry.getValue();
+            IndexData indexData = entry.getValue();
+            Class<?> dataType = indexData.type;
 
-            PropertyKey propKey = titan.makePropertyKey(key).dataType(dataType).cardinality(Cardinality.LIST).make();
-            titan.buildIndex(key, Vertex.class).addKey(propKey).buildCompositeIndex();
+            PropertyKey propKey = getOrCreatePropertyKey(titan, key, dataType, Cardinality.LIST);
+            titan.buildIndex(indexData.getIndexName(), Vertex.class).addKey(propKey).buildCompositeIndex();
         }
 
         titan.commit();
+    }
+
+    private PropertyKey getOrCreatePropertyKey(TitanManagement titanGraph, String key, Class<?> dataType, Cardinality cardinality)
+    {
+        PropertyKey propertyKey = titanGraph.getPropertyKey(key);
+        if (propertyKey == null)
+        {
+            propertyKey = titanGraph.makePropertyKey(key).dataType(dataType).cardinality(cardinality).make();
+        }
+        return propertyKey;
     }
 
     private TitanGraph initializeTitanGraph()
@@ -417,20 +446,19 @@ public class GraphContextImpl implements GraphContext
         }
     }
 
-
     @Override
     public <T extends WindupVertexFrame> GraphService<T> service(Class<T> clazz)
     {
         return new GraphService<>(this, clazz);
     }
 
-    // --- Convenience delegations to new GraphService(this) --
-
     @Override
     public <T extends WindupVertexFrame> T getUnique(Class<T> clazz)
     {
         return service(clazz).getUnique();
     }
+
+    // --- Convenience delegations to new GraphService(this) --
 
     @Override
     public <T extends WindupVertexFrame> Iterable<T> findAll(Class<T> clazz)
@@ -442,6 +470,45 @@ public class GraphContextImpl implements GraphContext
     public <T extends WindupVertexFrame> T create(Class<T> clazz)
     {
         return service(clazz).create();
+    }
+
+    private class IndexData
+    {
+        private final String propertyName;
+        private final String indexName;
+        private final Class<?> type;
+
+        public IndexData(String propertyName, String indexName, Class<?> type)
+        {
+            this.propertyName = propertyName;
+            this.indexName = indexName;
+            this.type = type;
+        }
+
+        public String getPropertyName()
+        {
+            return propertyName;
+        }
+
+        public String getIndexName()
+        {
+            return StringUtils.defaultIfBlank(indexName, propertyName);
+        }
+
+        public Class<?> getType()
+        {
+            return type;
+        }
+
+        @Override
+        public String toString()
+        {
+            return "IndexData{" +
+                    "propertyName='" + propertyName + '\'' +
+                    ", indexName='" + indexName + '\'' +
+                    ", type=" + type +
+                    '}';
+        }
     }
 
 }
