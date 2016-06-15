@@ -102,7 +102,7 @@
             margin: 1ex 0;
             padding: 1ex 0 2ex;
         }
-        body.viewAppList .apps .appInfo .stats { float: left; width: 496px; padding: 0.4ex 0; }
+        body.viewAppList .apps .appInfo .stats { float: right; width: 496px; padding: 0.4ex 0; }
         body.viewAppList .apps .appInfo .stats .effortPoints { float: left; width: 160px; padding: 0.3ex 0.2em 0; font-size: 33pt; }
         body.viewAppList .apps .appInfo .stats .effortPoints        span { display: block; margin: auto; text-align: center; }
         body.viewAppList .apps .appInfo .stats .effortPoints        .points { line-height: 1; color: rgb(41, 69, 147); }
@@ -111,7 +111,7 @@
         body.viewAppList .apps .appInfo .stats .incidentsCount { float: left; margin:  0 2ex;}
         body.viewAppList .apps .appInfo .stats .incidentsCount table tr.total td { border-top: 1px solid silver; }
         body.viewAppList .apps .appInfo .stats .incidentsCount .count { text-align: right; padding-left: 10px; }
-        body.viewAppList .apps .appInfo .traits { margin-left: 340px; }
+        body.viewAppList .apps .appInfo .traits { margin-left: px; }
         body.viewAppList .apps .appInfo .traits .fileName { padding: 0.0ex 0em 0.2ex; font-size: 18pt; /* color: #008cba; (Default BS link color) */ }
         body.viewAppList .apps .appInfo .traits .techs { }
 
