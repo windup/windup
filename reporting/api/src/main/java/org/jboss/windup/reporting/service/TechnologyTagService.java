@@ -53,7 +53,7 @@ public class TechnologyTagService extends GraphService<TechnologyTagModel>
             technologyTag.setName(tagName);
             technologyTag.setLevel(level);
         }
-        if (fileModel instanceof SourceFileModel)
+        if (level == TechnologyTagLevel.IMPORTANT && fileModel instanceof SourceFileModel)
             ((SourceFileModel) fileModel).setGenerateSourceReport(true);
 
         technologyTag.addFileModel(fileModel);
