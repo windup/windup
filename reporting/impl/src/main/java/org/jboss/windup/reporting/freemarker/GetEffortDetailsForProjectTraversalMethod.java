@@ -17,21 +17,30 @@ import freemarker.ext.beans.StringModel;
 import freemarker.template.SimpleSequence;
 import freemarker.template.TemplateBooleanModel;
 import freemarker.template.TemplateModelException;
+import java.util.logging.Logger;
 
 /**
- * Gets the number of effort points involved in migrating this application
- * 
- * Called from a freemarker template as follows:
- * 
- * getMigrationEffortPoints(projectModel, recursive):int
- * 
- * If recursive is true, the effort total includes child projects.
- * 
+ * Gets the number of effort points involved in migrating this application.
+ *
+ * <p> Called from a freemarker template as follows:
+ *
+ *      <pre>getMigrationEffortPoints(
+ *              projectModel: ProjectModel,
+ *              recursive: Boolean,
+ *              [includeTags: Set<String>],
+ *              [excludeTags: Set<String>]
+ *           ) : int
+ *      </pre>
+ *
+ * <p> If recursive is true, the effort total includes child projects.
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- * 
+ * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
  */
 public class GetEffortDetailsForProjectTraversalMethod implements WindupFreeMarkerMethod
 {
+    public static final Logger LOG = Logger.getLogger(GetEffortDetailsForProjectTraversalMethod.class.getName());
+
     private static final String NAME = "getEffortDetailsForProjectTraversal";
     private ClassificationService classificationService;
     private InlineHintService inlineHintService;
@@ -59,11 +68,13 @@ public class GetEffortDetailsForProjectTraversalMethod implements WindupFreeMark
     @Override
     public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
     {
+        // Process arguments
         ExecutionStatistics.get().begin(NAME);
         if (arguments.size() < 2)
         {
             throw new TemplateModelException(
-                        "Error, method expects at least two arguments (projectModel:ProjectModel, recursive:Boolean, [includeTags:Set<String>]. [excludeTags:Set<String>])");
+                "Error, method expects at least three arguments"
+                + " (projectModel: ProjectModel, recursive: Boolean, [includeTags: Set<String>], [excludeTags: Set<String>])");
         }
         StringModel projectModelTraversalArg = (StringModel) arguments.get(0);
         ProjectModelTraversal projectModelTraversal = (ProjectModelTraversal) projectModelTraversalArg.getWrappedObject();
@@ -83,11 +94,30 @@ public class GetEffortDetailsForProjectTraversalMethod implements WindupFreeMark
             excludeTags = FreeMarkerUtil.simpleSequenceToSet((SimpleSequence) arguments.get(3));
         }
 
-        Map<Integer, Integer> classificationEffortDetails = classificationService.getMigrationEffortByPoints(projectModelTraversal, includeTags, excludeTags,
-                    recursive, false);
-        Map<Integer, Integer> hintEffortDetails = inlineHintService.getMigrationEffortByPoints(projectModelTraversal, includeTags, excludeTags, recursive,
-                    false);
+        // Get values for classification and hints.
+        projectModelTraversal.reset();
+        Map<Integer, Integer> classificationEffortDetails =
+                classificationService.getMigrationEffortByPoints(projectModelTraversal, includeTags, excludeTags, recursive, false);
+        projectModelTraversal.reset();
+        Map<Integer, Integer> hintEffortDetails =
+                inlineHintService.getMigrationEffortByPoints(projectModelTraversal, includeTags, excludeTags, recursive, false);
 
+        Map<Integer, Integer> results = sumMaps(classificationEffortDetails, hintEffortDetails);
+
+        ExecutionStatistics.get().end(NAME);
+
+
+        int points = sumPoints(results);
+        LOG.info(String.format("%s() FM function called:\n\t\t\tEFFORT: %3d = %s = C%s + H%s; %s, %srecur, tags: %s, excl: %s",
+                NAME, points, results, classificationEffortDetails, hintEffortDetails,
+                projectModelTraversal, recursive ? "" : "!", includeTags, excludeTags));
+
+        return results;
+    }
+
+
+    private Map<Integer, Integer> sumMaps(Map<Integer, Integer> classificationEffortDetails, Map<Integer, Integer> hintEffortDetails)
+    {
         Map<Integer, Integer> results = new HashMap<>(classificationEffortDetails.size() + hintEffortDetails.size());
         results.putAll(classificationEffortDetails);
         for (Map.Entry<Integer, Integer> entry : hintEffortDetails.entrySet())
@@ -97,8 +127,17 @@ public class GetEffortDetailsForProjectTraversalMethod implements WindupFreeMark
             else
                 results.put(entry.getKey(), results.get(entry.getKey()) + entry.getValue());
         }
-
-        ExecutionStatistics.get().end(NAME);
         return results;
+    }
+
+
+    private int sumPoints(Map<Integer, Integer> results)
+    {
+        int sum = 0;
+        for (Map.Entry<Integer, Integer> entry : results.entrySet())
+        {
+            sum += entry.getKey() * entry.getValue();
+        }
+        return sum;
     }
 }

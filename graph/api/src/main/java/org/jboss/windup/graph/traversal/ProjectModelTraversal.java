@@ -2,7 +2,6 @@ package org.jboss.windup.graph.traversal;
 
 import com.tinkerpop.blueprints.Vertex;
 import org.apache.commons.lang3.StringUtils;
-import org.jboss.forge.furnace.util.Sets;
 import org.jboss.windup.graph.model.DuplicateProjectModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -25,9 +24,26 @@ import java.util.Set;
  * </ul>
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
+ * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
  */
 public class ProjectModelTraversal
 {
+    public enum TraversalState
+    {
+        /**
+         * Traverse this node and all children.
+         */
+        ALL,
+        /**
+         * Skip the current node, but do include the children
+         */
+        CHILDREN_ONLY,
+        /**
+         * Do not traverse this node and also do not traverse the children.
+         */
+        NONE
+    }
+
     private final ProjectModelTraversal previous;
     private final ProjectModel current;
     private final TraversalStrategy traversalStrategy;
@@ -59,8 +75,7 @@ public class ProjectModelTraversal
      * Creates a new {@link ProjectModelTraversal} based upon the provided {@link ProjectModel}. The {@link ProjectModel}
      * should be a "root" model (an application) rather than a subpart of an application.
      *
-     * The provided {@link TraversalStrategy} will determine
-     *
+     * The provided {@link TraversalStrategy} will determine how the ProjectModel's subprojects tree will be traversed.
      */
     public ProjectModelTraversal(ProjectModel current, TraversalStrategy traversalStrategy)
     {
@@ -98,10 +113,15 @@ public class ProjectModelTraversal
 
     private Set<ProjectModel> addProjects(Set<ProjectModel> existingVertices, ProjectModelTraversal traversal)
     {
-        existingVertices.add(traversal.getCanonicalProject());
+        TraversalState nodeTraversalState = traversal.getTraversalState();
+        if (nodeTraversalState == TraversalState.ALL)
+            existingVertices.add(traversal.getCanonicalProject());
 
-        for (ProjectModelTraversal child : traversal.getChildren())
-            addProjects(existingVertices, child);
+        if (nodeTraversalState != TraversalState.NONE)
+        {
+            for (ProjectModelTraversal child : traversal.getChildren())
+                addProjects(existingVertices, child);
+        }
 
         return existingVertices;
     }
@@ -168,6 +188,15 @@ public class ProjectModelTraversal
     }
 
     /**
+     * Returns a status indicating whether or not this should skip certain parts of the traversal for this node.
+     */
+    public TraversalState getTraversalState()
+    {
+        TraversalState calculatedState = traversalStrategy.getTraversalState(this);
+        return calculatedState == null ? TraversalState.ALL : calculatedState;
+    }
+
+    /**
      * Gets the canonical Project by unwrapping any {@link DuplicateProjectModel}s wrapping it.
      */
     public ProjectModel getCanonicalProject()
@@ -195,4 +224,24 @@ public class ProjectModelTraversal
             return projectModel;
         }
     }
+
+    @Override
+    public String toString()
+    {
+        FileModel rootFileModel = current == null ? null : current.getRootFileModel();
+        String checksum = rootFileModel == null ? null : StringUtils.substring(rootFileModel.getMD5Hash(), 0, 8);
+        String name     = rootFileModel == null ? current.getName() : rootFileModel.getFileName();
+        String projectInfo = current == null ? null : checksum + " " + name + " (" + current.getProjectType() + ')';
+        String strategyInfo = traversalStrategy == null ? null : traversalStrategy.getClass().getSimpleName();
+        return "Trav@" + this.hashCode() + "{cur: " + projectInfo + ", strategy: " + strategyInfo + ", prev: " + previous + '}';
+    }
+
+    /**
+     * Resets the internal state of this traversal, so it can be reused.
+     */
+    public void reset()
+    {
+        this.traversalStrategy.reset();
+    }
+
 }

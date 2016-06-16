@@ -1,5 +1,6 @@
 package org.jboss.windup.reporting.service;
 
+import java.util.logging.Logger;
 import java.util.Map;
 import java.util.Set;
 
@@ -26,6 +27,7 @@ import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.structures.FramedVertexIterable;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
+import java.util.logging.Level;
 import org.apache.tools.ant.taskdefs.Length.FileMode;
 
 /**
@@ -36,6 +38,8 @@ import org.apache.tools.ant.taskdefs.Length.FileMode;
  */
 public class ClassificationService extends GraphService<ClassificationModel>
 {
+    public static final Logger LOG = Logger.getLogger(ClassificationService.class.getName());
+
     public ClassificationService(GraphContext context)
     {
         super(context, ClassificationModel.class);
@@ -133,6 +137,9 @@ public class ClassificationService extends GraphService<ClassificationModel>
     private void getMigrationEffortDetails(ProjectModelTraversal traversal, Set<String> includeTags, Set<String> excludeTags, boolean recursive,
                 boolean includeZero, EffortAccumulatorFunction accumulatorFunction)
     {
+        LOG.log(Level.INFO, String.format("\n\t\t\tEFFORT C: getMigrationEffortDetails() with: %s, %srecur, %sincludeZero, %s, tags: %s, excl: %s",
+                traversal, recursive ? "" : "!", includeZero ? "" : "!", accumulatorFunction, includeTags, excludeTags));
+
         final Set<Vertex> initialVertices = traversal.getAllProjectsAsVertices(recursive);
 
         GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(this.getGraphContext().getGraph());
@@ -217,8 +224,8 @@ public class ClassificationService extends GraphService<ClassificationModel>
     }
 
     /**
-     * This method just attaches the {@link ClassificationModel} to the {@link Length.FileMode}. It will only do so if this link is not already
-     * present.
+     * This method just attaches the {@link ClassificationModel} to the {@link Length.FileMode}.
+     * It will only do so if this link is not already present.
      */
     public ClassificationModel attachClassification(ClassificationModel classificationModel, FileModel fileModel)
     {

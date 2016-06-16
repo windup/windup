@@ -20,6 +20,11 @@ import com.google.common.collect.Iterables;
 public class AllTraversalStrategy implements TraversalStrategy
 {
     @Override
+    public ProjectModelTraversal.TraversalState getTraversalState(ProjectModelTraversal traversal) {
+        return ProjectModelTraversal.TraversalState.ALL;
+    }
+
+    @Override
     public Iterable<ProjectModelTraversal> getChildren(final ProjectModelTraversal traversal)
     {
         ProjectModel canonicalProject = traversal.getCanonicalProject();
@@ -32,5 +37,12 @@ public class AllTraversalStrategy implements TraversalStrategy
                 return new ProjectModelTraversal(traversal, input, AllTraversalStrategy.this);
             }
         });
+    }
+
+
+    @Override
+    public void reset()
+    {
+        // No-op.
     }
 }

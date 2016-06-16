@@ -13,13 +13,12 @@ import freemarker.template.TemplateModelException;
 
 /**
  * Gets the number of effort points involved in migrating this particular file
- * 
+ *
  * Called from a freemarker template as follows:
- * 
+ *
  * getMigrationEffortPointsForFile(FileModel):int
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- * 
  */
 public class GetEffortForFile implements WindupFreeMarkerMethod
 {
@@ -52,8 +51,7 @@ public class GetEffortForFile implements WindupFreeMarkerMethod
         ExecutionStatistics.get().begin(NAME);
         if (arguments.size() != 1)
         {
-            throw new TemplateModelException(
-                        "Error, method expects one argument (FileModel)");
+            throw new TemplateModelException("Error, method expects one argument (FileModel)");
         }
         StringModel fileModelArg = (StringModel) arguments.get(0);
         FileModel fileModel = (FileModel) fileModelArg.getWrappedObject();

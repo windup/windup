@@ -140,8 +140,6 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
             {
                 template.process(objects, fw);
             }
-
-            FreeMarkerUtil.addAssociatedReportData(event.getGraphContext(), payload, vars);
         }
         catch (IOException | TemplateException e)
         {
