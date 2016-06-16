@@ -22,6 +22,7 @@ import org.jboss.windup.reporting.rules.CreateApplicationListReportRuleProvider;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.rules.apps.java.dependencyreport.CreateDependencyReportRuleProvider;
 import org.jboss.windup.rules.apps.java.reporting.rules.CreateReportIndexRuleProvider;
+import org.jboss.windup.testutil.html.TestApplicationListUtil;
 import org.jboss.windup.testutil.html.TestDependencyReportUtil;
 import org.jboss.windup.testutil.html.TestMigrationIssuesReportUtil;
 import org.jboss.windup.testutil.html.TestReportIndexReportUtil;
@@ -147,9 +148,9 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest
         Assert.assertNotNull(dependencyReport);
         TestDependencyReportUtil dependencyReportUtil = new TestDependencyReportUtil();
         dependencyReportUtil.loadPage(dependencyReport);
-        Assert.assertEquals(8, dependencyReportUtil.getNumberOfJarsOnPage());
-        Assert.assertEquals(4, dependencyReportUtil.getNumberOfArchivePathsOnPage("log4j-1.2.6.jar"));
-        Assert.assertEquals(3, dependencyReportUtil.getNumberOfArchivePathsOnPage("jee-example-services.jar"));
+        Assert.assertEquals(9, dependencyReportUtil.getNumberOfJarsOnPage());
+        Assert.assertEquals(6, dependencyReportUtil.getNumberOfArchivePathsOnPage("log4j-1.2.6.jar"));
+        Assert.assertEquals(4, dependencyReportUtil.getNumberOfArchivePathsOnPage("jee-example-services.jar"));
         Assert.assertTrue(dependencyReportUtil.findDependencyElement("jee-example-services.jar", "JEE Example EJB Services",
                     "org.windup.example:jee-example-services:1.0.0", "d910370c02710f4bb7f7856e18f50803f1c37e16", "1.0.0", "",
                     Arrays.asList(FOUND_PATHS)));
