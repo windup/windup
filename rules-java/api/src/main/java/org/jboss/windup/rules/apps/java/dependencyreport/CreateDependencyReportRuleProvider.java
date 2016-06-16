@@ -15,6 +15,7 @@ import org.jboss.windup.graph.model.DuplicateArchiveModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.service.ProjectService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.reporting.model.TemplateType;
@@ -137,6 +138,12 @@ public class CreateDependencyReportRuleProvider extends AbstractRuleProvider
         Map<String, DependencyReportDependencyGroupModel> sha1ToGroup = new HashMap<>();
         for (FileModel inputApplication : configuration.getInputPaths())
         {
+            ProjectModel projectModel = inputApplication.getProjectModel();
+
+            // Do not include shared libs in the global report as this is not really a user app
+            if (StringUtils.equals(projectModel.getUniqueID(), ProjectService.SHARED_LIBS_UNIQUE_ID))
+                continue;
+
             ProjectModelTraversal traversal = new ProjectModelTraversal(inputApplication.getProjectModel());
             addAll(context, reportModel, traversal, sha1ToGroup);
         }
