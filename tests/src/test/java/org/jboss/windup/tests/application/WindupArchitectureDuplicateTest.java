@@ -1,6 +1,5 @@
 package org.jboss.windup.tests.application;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -149,14 +148,14 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest
         TestDependencyReportUtil dependencyReportUtil = new TestDependencyReportUtil();
         dependencyReportUtil.loadPage(dependencyReport);
         Assert.assertEquals(9, dependencyReportUtil.getNumberOfJarsOnPage());
-        Assert.assertEquals(6, dependencyReportUtil.getNumberOfArchivePathsOnPage("log4j-1.2.6.jar"));
+        Assert.assertEquals(8, dependencyReportUtil.getNumberOfArchivePathsOnPage("log4j-1.2.6.jar"));
         Assert.assertEquals(4, dependencyReportUtil.getNumberOfArchivePathsOnPage("jee-example-services.jar"));
         Assert.assertTrue(dependencyReportUtil.findDependencyElement("jee-example-services.jar", "JEE Example EJB Services",
                     "org.windup.example:jee-example-services:1.0.0", "d910370c02710f4bb7f7856e18f50803f1c37e16", "1.0.0", "",
-                    Arrays.asList(FOUND_PATHS)));
+                    Arrays.asList(FOUND_PATHS_JEE_EXAMPLE_SERVICES)));
         Assert.assertTrue(dependencyReportUtil.findDependencyElement("commons-lang-2.5.jar", "Commons Lang",
                     "commons-lang:commons-lang:2.5", "b0236b252e86419eef20c31a44579d2aee2f0a69", "2.5", "The Apache Software Foundation",
-                    Arrays.asList("jee-example-app-1.0.0.ear/jee-example-web.war/WEB-INF/lib/commons-lang-2.5.jar")));
+                    Arrays.asList(FOUND_PATHS_COMMONS_LANG)));
     }
 
     private void validateMigrationIssues(GraphContext graphContext)
@@ -201,9 +200,18 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest
         return null;
     }
 
-    private static final String[] FOUND_PATHS = {
-        "copy.ear/jee-example-services.jar",
-        "jee-example-app-1.0.0.ear/jee-example-services.jar"};
+    private static final String[] FOUND_PATHS_JEE_EXAMPLE_SERVICES = {
+        "duplicate-ear-test-1.ear/jee-example-services.jar",
+        "duplicate-ear-test-2.ear/jee-example-services.jar",
+        "duplicate-ear-test-3.ear/jee-example-services.jar",
+        "shared-libs/jee-example-services.jar"};
+
+    private static final String[] FOUND_PATHS_COMMONS_LANG = {
+            "shared-libs/commons-lang-2.5.jar",
+            "duplicate-ear-test-1.ear/jee-example-web.war/WEB-INF/lib/commons-lang-2.5.jar",
+            "duplicate-ear-test-2.ear/jee-example-web.war/WEB-INF/lib/commons-lang-2.5.jar",
+            "duplicate-ear-test-3.ear/jee-example-web.war/WEB-INF/lib/commons-lang-2.5.jar",
+    };
 
     private Path getDependencyReportPath(GraphContext graphContext)
     {

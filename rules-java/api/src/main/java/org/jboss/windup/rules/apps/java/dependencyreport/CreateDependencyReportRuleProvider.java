@@ -3,6 +3,7 @@ package org.jboss.windup.rules.apps.java.dependencyreport;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.RuleMetadata;
@@ -105,10 +106,11 @@ public class CreateDependencyReportRuleProvider extends AbstractRuleProvider
             }
 
             // 3. If the group already has this archive, don't do anything
+            String path = traversal.getFilePath(rootFileModel);
             boolean archiveAlreadyLinked = false;
             for (DependencyReportToArchiveEdgeModel groupEdge : groupModel.getArchives())
             {
-                if (groupEdge.getArchive().equals(archiveModel))
+                if (StringUtils.equals(groupEdge.getFullPath(), path))
                 {
                     archiveAlreadyLinked = true;
                     break;
@@ -118,7 +120,6 @@ public class CreateDependencyReportRuleProvider extends AbstractRuleProvider
             // Don't add projects that have already been added
             if (!archiveAlreadyLinked)
             {
-                String path = traversal.getFilePath(rootFileModel);
                 DependencyReportToArchiveEdgeModel edge = groupModel.addArchiveModel(archiveModel);
                 edge.setFullPath(path);
             }
