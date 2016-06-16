@@ -1,10 +1,6 @@
 package org.jboss.windup.rules.apps.mavenize;
 
-import freemarker.core.ParseException;
-import freemarker.template.DefaultObjectWrapperBuilder;
-import freemarker.template.MalformedTemplateNameException;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,11 +11,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
+
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.reporting.freemarker.FurnaceFreeMarkerTemplateLoader;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
+
+import freemarker.core.ParseException;
+import freemarker.template.DefaultObjectWrapperBuilder;
+import freemarker.template.Template;
+import freemarker.template.TemplateException;
 
 /**
  * Recursively renders the previously created Maven project structure into pom.xml's in a directory tree.
@@ -43,15 +45,16 @@ public class MavenStructureRenderer
     void createMavenProjectDirectoryTree()
     {
         try {
+            Path mavenizedAppPath = mavCtx.getMavenizedBaseDir().resolve(mavCtx.getUnifiedAppName());
             // Root POM
-            renderPomXml(mavCtx, mavCtx.getRootPom(), mavCtx.getMavenizedBaseDir().resolve("pom.xml"));
+            renderPomXml(mavCtx, mavCtx.getRootPom(), mavenizedAppPath.resolve("pom.xml"));
 
             List<Throwable> exceptions = new ArrayList<>();
             for (Map.Entry<String, Pom> entry : mavCtx.getRootPom().submodules.entrySet())
             {
                 try {
                     String subDir = entry.getKey();
-                    Path resultPomXmlPath = mavCtx.getMavenizedBaseDir().resolve(subDir).resolve("pom.xml");
+                    Path resultPomXmlPath = mavenizedAppPath.resolve(subDir).resolve("pom.xml");
                     LOG.info("Writing " + subDir + "/pom.xml" + "\n > " + entry.getValue());
                     renderPomXml(mavCtx, entry.getValue(), resultPomXmlPath);
                 }
