@@ -148,8 +148,8 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest
         TestDependencyReportUtil dependencyReportUtil = new TestDependencyReportUtil();
         dependencyReportUtil.loadPage(dependencyReport);
         Assert.assertEquals(9, dependencyReportUtil.getNumberOfJarsOnPage());
-        Assert.assertEquals(8, dependencyReportUtil.getNumberOfArchivePathsOnPage("log4j-1.2.6.jar"));
-        Assert.assertEquals(4, dependencyReportUtil.getNumberOfArchivePathsOnPage("jee-example-services.jar"));
+        Assert.assertEquals(6, dependencyReportUtil.getNumberOfArchivePathsOnPage("log4j-1.2.6.jar"));
+        Assert.assertEquals(3, dependencyReportUtil.getNumberOfArchivePathsOnPage("jee-example-services.jar"));
         Assert.assertTrue(dependencyReportUtil.findDependencyElement("jee-example-services.jar", "JEE Example EJB Services",
                     "org.windup.example:jee-example-services:1.0.0", "d910370c02710f4bb7f7856e18f50803f1c37e16", "1.0.0", "",
                     Arrays.asList(FOUND_PATHS_JEE_EXAMPLE_SERVICES)));
@@ -203,11 +203,9 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest
     private static final String[] FOUND_PATHS_JEE_EXAMPLE_SERVICES = {
         "duplicate-ear-test-1.ear/jee-example-services.jar",
         "duplicate-ear-test-2.ear/jee-example-services.jar",
-        "duplicate-ear-test-3.ear/jee-example-services.jar",
-        "shared-libs/jee-example-services.jar"};
+        "duplicate-ear-test-3.ear/jee-example-services.jar"};
 
     private static final String[] FOUND_PATHS_COMMONS_LANG = {
-            "shared-libs/commons-lang-2.5.jar",
             "duplicate-ear-test-1.ear/jee-example-web.war/WEB-INF/lib/commons-lang-2.5.jar",
             "duplicate-ear-test-2.ear/jee-example-web.war/WEB-INF/lib/commons-lang-2.5.jar",
             "duplicate-ear-test-3.ear/jee-example-web.war/WEB-INF/lib/commons-lang-2.5.jar",
