@@ -45,7 +45,7 @@ public class MavenStructureRenderer
     void createMavenProjectDirectoryTree()
     {
         try {
-            Path mavenizedAppPath = (new File(mavCtx.getMavenizedBaseDir().toString(), mavCtx.getUnifiedAppName())).toPath();
+            Path mavenizedAppPath = mavCtx.getMavenizedBaseDir().resolve(mavCtx.getUnifiedAppName());
             // Root POM
             renderPomXml(mavCtx, mavCtx.getRootPom(), mavenizedAppPath.resolve("pom.xml"));
 
