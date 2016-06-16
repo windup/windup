@@ -43,10 +43,15 @@ public class OnlyOnceTraversalStrategy implements TraversalStrategy
 {
     private Set<String> alreadySeenHashes;
 
-
     public OnlyOnceTraversalStrategy()
     {
         reset();
+    }
+
+    @Override
+    public ProjectModelTraversal.TraversalState getTraversalState(ProjectModelTraversal traversal)
+    {
+        return ProjectModelTraversal.TraversalState.ALL;
     }
 
     @Override

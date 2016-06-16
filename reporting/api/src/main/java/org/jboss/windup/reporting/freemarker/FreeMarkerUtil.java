@@ -131,36 +131,4 @@ public class FreeMarkerUtil
         }
         return results;
     }
-
-    /**
-     * Add report data as associations to this report instance
-     */
-    @SuppressWarnings("unchecked")
-    public static void addAssociatedReportData(GraphContext context, ReportModel reportModel,
-                Map<String, Object> reportData)
-    {
-        Map<String, WindupVertexFrame> relatedResources = new HashMap<>();
-        for (Map.Entry<String, Object> varEntry : reportData.entrySet())
-        {
-            Object value = varEntry.getValue();
-            if (value instanceof WindupVertexFrame)
-            {
-                relatedResources.put(varEntry.getKey(), (WindupVertexFrame) varEntry.getValue());
-            }
-            else if (value instanceof Iterable)
-            {
-                WindupVertexListModel list = context.getFramed().addVertex(null, WindupVertexListModel.class);
-                for (WindupVertexFrame frame : (Iterable<? extends WindupVertexFrame>) value)
-                {
-                    list.addItem(frame);
-                }
-                relatedResources.put(varEntry.getKey(), list);
-            }
-            else
-            {
-                throw new WindupException("Unrecognized report data type encountered: " + value.getClass().getCanonicalName());
-            }
-        }
-        reportModel.setRelatedResource(relatedResources);
-    }
 }

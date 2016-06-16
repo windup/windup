@@ -1,4 +1,4 @@
-package org.jboss.windup.reporting.rules.rendering;
+package org.jboss.windup.reporting.rules;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +33,7 @@ public class CreateApplicationListReportRuleProvider extends AbstractRuleProvide
 {
     public static final String APPLICATION_LIST_REPORT = "Application List";
     private static final String OUTPUT_FILENAME = "../index.html";
-    private static final String TEMPLATE_PATH = "/reports/templates/application_list.ftl";
+    public static final String TEMPLATE_PATH = "/reports/templates/application_list.ftl";
 
     @Inject
     private Furnace furnace;

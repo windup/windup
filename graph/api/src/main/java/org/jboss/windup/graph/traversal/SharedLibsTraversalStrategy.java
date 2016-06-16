@@ -56,19 +56,23 @@ public class SharedLibsTraversalStrategy implements TraversalStrategy
 {
     public static final Logger LOG = Logger.getLogger(SharedLibsTraversalStrategy.class.getName());
 
-    // maintains a Set of all archive hashes found so far
-    private Set<String> alreadySeenHashes;
-
-
     public SharedLibsTraversalStrategy()
     {
         reset();
     }
 
     @Override
+    public ProjectModelTraversal.TraversalState getTraversalState(ProjectModelTraversal traversal)
+    {
+        if (ProjectService.SHARED_LIBS_UNIQUE_ID.equals(traversal.getCanonicalProject().getRootProjectModel().getUniqueID()))
+            return ProjectModelTraversal.TraversalState.ALL;
+        else
+            return ProjectModelTraversal.TraversalState.CHILDREN_ONLY;
+    }
+
+    @Override
     public void reset()
     {
-        this.alreadySeenHashes = new HashSet<>();
     }
 
     @Override
@@ -90,31 +94,9 @@ public class SharedLibsTraversalStrategy implements TraversalStrategy
             @Override
             public boolean apply(ProjectModelTraversal input)
             {
-                final ProjectModel project = input.getCurrent();
-                FileModel rootFile = project.getRootFileModel();
-
-                LOG.info("    TRYING " + rootFile.getFilePath() + " - " + rootFile);
-
-                // We only want the duplicated projects,
-                if (!(project instanceof DuplicateProjectModel))
-                    return false;
-                LOG.info("    ...OK, duplicated project");///
-
-                // We only want the duplicated archives,
-                if (!(rootFile instanceof DuplicateArchiveModel))
-                    return false;
-                LOG.info("    ...OK, duplicated archive");///
-
                 // which are shared between apps.
-                if (!ProjectService.SHARED_LIBS_UNIQUE_ID.equals(input.getCanonicalProject().getRootProjectModel().getUniqueID()))
-                    return false;
-                LOG.info("    ...OK, shared");///
-
-                final boolean added = alreadySeenHashes.add(rootFile.getSHA1Hash());
-                LOG.info("    ...Added: " + added);///
-
-                //  but only once within 1 app.
-                return added;
+                ProjectModelTraversal.TraversalState traversalState = getTraversalState(input);
+                return traversalState != ProjectModelTraversal.TraversalState.NONE;
             }
         });
     }

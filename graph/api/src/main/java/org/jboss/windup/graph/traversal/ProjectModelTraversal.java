@@ -28,6 +28,22 @@ import java.util.Set;
  */
 public class ProjectModelTraversal
 {
+    public enum TraversalState
+    {
+        /**
+         * Traverse this node and all children.
+         */
+        ALL,
+        /**
+         * Skip the current node, but do include the children
+         */
+        CHILDREN_ONLY,
+        /**
+         * Do not traverse this node and also do not traverse the children.
+         */
+        NONE
+    }
+
     private final ProjectModelTraversal previous;
     private final ProjectModel current;
     private final TraversalStrategy traversalStrategy;
@@ -97,10 +113,15 @@ public class ProjectModelTraversal
 
     private Set<ProjectModel> addProjects(Set<ProjectModel> existingVertices, ProjectModelTraversal traversal)
     {
-        existingVertices.add(traversal.getCanonicalProject());
+        TraversalState nodeTraversalState = traversal.getTraversalState();
+        if (nodeTraversalState == TraversalState.ALL)
+            existingVertices.add(traversal.getCanonicalProject());
 
-        for (ProjectModelTraversal child : traversal.getChildren())
-            addProjects(existingVertices, child);
+        if (nodeTraversalState != TraversalState.NONE)
+        {
+            for (ProjectModelTraversal child : traversal.getChildren())
+                addProjects(existingVertices, child);
+        }
 
         return existingVertices;
     }
@@ -167,6 +188,15 @@ public class ProjectModelTraversal
     }
 
     /**
+     * Returns a status indicating whether or not this should skip certain parts of the traversal for this node.
+     */
+    public TraversalState getTraversalState()
+    {
+        TraversalState calculatedState = traversalStrategy.getTraversalState(this);
+        return calculatedState == null ? TraversalState.ALL : calculatedState;
+    }
+
+    /**
      * Gets the canonical Project by unwrapping any {@link DuplicateProjectModel}s wrapping it.
      */
     public ProjectModel getCanonicalProject()
@@ -195,7 +225,6 @@ public class ProjectModelTraversal
         }
     }
 
-
     @Override
     public String toString()
     {
@@ -207,9 +236,8 @@ public class ProjectModelTraversal
         return "Trav@" + this.hashCode() + "{cur: " + projectInfo + ", strategy: " + strategyInfo + ", prev: " + previous + '}';
     }
 
-
     /**
-     * Resets the state of this traversal, so it can be reused.
+     * Resets the internal state of this traversal, so it can be reused.
      */
     public void reset()
     {

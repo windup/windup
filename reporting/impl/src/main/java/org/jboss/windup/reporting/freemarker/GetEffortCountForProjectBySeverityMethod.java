@@ -86,12 +86,12 @@ public class GetEffortCountForProjectBySeverityMethod implements WindupFreeMarke
         }
 
         traversal.reset();
-        Map<Severity, Integer> classifEffortDetails = classificationService.getMigrationEffortBySeverity(traversal, includeTags, excludeTags, recursive);
+        Map<Severity, Integer> classificationEffortDetails = classificationService.getMigrationEffortBySeverity(traversal, includeTags, excludeTags, recursive);
         traversal.reset();
         Map<Severity, Integer> hintEffortDetails = inlineHintService.getMigrationEffortBySeverity(traversal, includeTags, excludeTags, recursive);
 
-        Map<String, Integer> results = new HashMap<>(classifEffortDetails.size() + hintEffortDetails.size());
-        addAllIncidents(results, classifEffortDetails);
+        Map<String, Integer> results = new HashMap<>(classificationEffortDetails.size() + hintEffortDetails.size());
+        addAllIncidents(results, classificationEffortDetails);
         addAllIncidents(results, hintEffortDetails);
 
         ExecutionStatistics.get().end(NAME);

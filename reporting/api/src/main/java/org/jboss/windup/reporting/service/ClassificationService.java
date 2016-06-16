@@ -165,7 +165,6 @@ public class ClassificationService extends GraphService<ClassificationModel>
         FileService fileService = new FileService(getGraphContext());
         for (Vertex v : pipeline)
         {
-            LOG.info("\t\t\t\tAAA " + frame(v));///
             // only check tags if we have some passed in
             if (checkTags && !frame(v).matchesTags(includeTags, excludeTags))
                 continue;
@@ -182,7 +181,6 @@ public class ClassificationService extends GraphService<ClassificationModel>
                 if (initialVertices.contains(fileModel.getProjectModel().asVertex()))
                     accumulatorFunction.accumulate(v);
             }
-            LOG.info("\t\t\t\tBBB " + ((MapSumEffortAccumulatorFunction)accumulatorFunction).getResults());///
         }
     }
 

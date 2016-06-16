@@ -1,6 +1,5 @@
 package org.jboss.windup.tests.application;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -18,8 +17,10 @@ import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.jboss.windup.reporting.model.MigrationIssuesReportModel;
 import org.jboss.windup.reporting.model.ReportModel;
+import org.jboss.windup.reporting.rules.CreateApplicationListReportRuleProvider;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.rules.apps.java.reporting.rules.CreateReportIndexRuleProvider;
+import org.jboss.windup.testutil.html.TestApplicationListUtil;
 import org.jboss.windup.testutil.html.TestMigrationIssuesReportUtil;
 import org.jboss.windup.testutil.html.TestReportIndexReportUtil;
 import org.junit.Assert;
@@ -37,8 +38,9 @@ import java.util.List;
 @RunWith(Arquillian.class)
 public class WindupArchitectureDuplicateTest extends WindupArchitectureTest
 {
-    private static final String MAIN_APP_FILENAME = "jee-example-app-1.0.0.ear";
-    public static final String COPY_EAR_FILENAME = "copy.ear";
+    private static final String MAIN_APP_FILENAME = "duplicate-ear-test-1.ear";
+    private static final String SECOND_APP_FILENAME = "duplicate-ear-test-2.ear";
+    private static final String THIRD_APP_FILENAME = "duplicate-ear-test-3.ear";
 
     @Deployment
     @AddonDependencies({
@@ -57,30 +59,54 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest
         return ShrinkWrap.create(AddonArchive.class)
                 .addBeansXML()
                 .addClass(WindupArchitectureTest.class)
-                .addAsResource(new File("src/test/groovy/GroovyExampleRule.windup.groovy"));
+                .addAsResource(new File("src/test/groovy/GroovyExampleRule.windup.groovy"))
+                .addAsResource(new File("src/test/xml/DuplicateTestRules.windup.xml"));
     }
 
     @Test
     public void testRunWindupDuplicateEAR() throws Exception
     {
-        final String path = "../test-files/" + MAIN_APP_FILENAME;
-        final Path testTempPath = getDefaultPath();
-        final Path copyOfMainApp = testTempPath.resolve(COPY_EAR_FILENAME);
-        FileUtils.copyFile(new File(path), copyOfMainApp.toFile());
-
-        final Path outputPath = testTempPath.resolve("reports");
+        final String path1 = "../test-files/duplicate/" + MAIN_APP_FILENAME;
+        final String path2 = "../test-files/duplicate/" + SECOND_APP_FILENAME;
+        final String path3 = "../test-files/duplicate/" + THIRD_APP_FILENAME;
+        final Path outputPath = getDefaultPath();
 
         try (GraphContext context = createGraphContext(outputPath))
         {
-            List<String> inputPaths = Arrays.asList(path, copyOfMainApp.toString());
+            List<String> inputPaths = Arrays.asList(path1, path2, path3);
 
             super.runTest(context, inputPaths, false);
+            validateApplicationList(context);
             validateReportIndex(context);
             validateMigrationIssues(context);
         } finally
         {
-            FileUtils.deleteDirectory(testTempPath.toFile());
+            //FileUtils.deleteDirectory(testTempPath.toFile());
         }
+    }
+
+    private void validateApplicationList(GraphContext graphContext)
+    {
+        GraphService<ReportModel> service = graphContext.service(ReportModel.class);
+        ReportModel report = service.getUniqueByProperty(ReportModel.TEMPLATE_PATH, CreateApplicationListReportRuleProvider.TEMPLATE_PATH);
+        Assert.assertNotNull(report);
+
+        Path reportPath = getPathForReport(graphContext, report);
+        Assert.assertNotNull(reportPath);
+
+        TestApplicationListUtil util = new TestApplicationListUtil();
+        util.loadPage(reportPath);
+
+        Assert.assertEquals(642, util.getTotalStoryPoints(MAIN_APP_FILENAME));
+        Assert.assertEquals(590, util.getSharedStoryPoints(MAIN_APP_FILENAME));
+
+        Assert.assertEquals(642, util.getTotalStoryPoints(SECOND_APP_FILENAME));
+        Assert.assertEquals(590, util.getSharedStoryPoints(SECOND_APP_FILENAME));
+
+        Assert.assertEquals(582, util.getTotalStoryPoints(THIRD_APP_FILENAME));
+        Assert.assertEquals(582, util.getSharedStoryPoints(THIRD_APP_FILENAME));
+
+        Assert.assertEquals(590, util.getTotalStoryPoints("Shared Libraries"));
     }
 
     private void validateReportIndex(GraphContext graphContext)
@@ -88,8 +114,8 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest
         Path mainReportPath = getReportIndex(graphContext, MAIN_APP_FILENAME);
         Assert.assertNotNull(mainReportPath);
 
-        Path copyAppPath = getReportIndex(graphContext, COPY_EAR_FILENAME);
-        Assert.assertNotNull(copyAppPath);
+        Path secondAppPath = getReportIndex(graphContext, SECOND_APP_FILENAME);
+        Assert.assertNotNull(secondAppPath);
 
         Path sharedLibsPath = getReportIndex(graphContext, ProjectService.SHARED_LIBS_FILENAME);
         Assert.assertNotNull(sharedLibsPath);
@@ -98,12 +124,12 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest
 
         reportIndex.loadPage(mainReportPath);
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Mandatory", 2, 6));
-        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Optional", 88, 584));
+        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Optional", 90, 636));
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Potential Issues", 0, 0));
 
-        reportIndex.loadPage(copyAppPath);
+        reportIndex.loadPage(secondAppPath);
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Mandatory", 2, 6));
-        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Optional", 88, 584));
+        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Optional", 90, 636));
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Potential Issues", 0, 0));
 
         reportIndex.loadPage(sharedLibsPath);
@@ -121,7 +147,7 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest
         {
             if (inputFile.getFileName().equals(MAIN_APP_FILENAME))
                 mainProject = inputFile.getProjectModel();
-            else if (inputFile.getFileName().equals(COPY_EAR_FILENAME))
+            else if (inputFile.getFileName().equals(SECOND_APP_FILENAME))
                 copyProject = inputFile.getProjectModel();
         }
         Assert.assertNotNull(mainProject);

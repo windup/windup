@@ -11,6 +11,12 @@ package org.jboss.windup.graph.traversal;
 public interface TraversalStrategy
 {
     /**
+     * Calculates a traversal state for the given {@link ProjectModelTraversal}. This can be used to indicate to
+     * a client that it should skip a particular node.
+     */
+    ProjectModelTraversal.TraversalState getTraversalState(ProjectModelTraversal traversal);
+
+    /**
      * Returns the child projects of the current project in the traversal.
      */
     Iterable<ProjectModelTraversal> getChildren(ProjectModelTraversal traversal);
@@ -20,5 +26,5 @@ public interface TraversalStrategy
      * Resets the state of this strategy, so it can be reused.
      * For instance, if the strategy is keeping some intermediate data like a set of visited projects etc.
      */
-    public void reset();
+    void reset();
 }
