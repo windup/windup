@@ -1,5 +1,6 @@
 package org.jboss.windup.tests.application;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -19,8 +20,10 @@ import org.jboss.windup.reporting.model.MigrationIssuesReportModel;
 import org.jboss.windup.reporting.model.ReportModel;
 import org.jboss.windup.reporting.rules.CreateApplicationListReportRuleProvider;
 import org.jboss.windup.reporting.service.ReportService;
+import org.jboss.windup.rules.apps.java.dependencyreport.CreateDependencyReportRuleProvider;
 import org.jboss.windup.rules.apps.java.reporting.rules.CreateReportIndexRuleProvider;
 import org.jboss.windup.testutil.html.TestApplicationListUtil;
+import org.jboss.windup.testutil.html.TestDependencyReportUtil;
 import org.jboss.windup.testutil.html.TestMigrationIssuesReportUtil;
 import org.jboss.windup.testutil.html.TestReportIndexReportUtil;
 import org.junit.Assert;
@@ -79,6 +82,7 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest
             validateApplicationList(context);
             validateReportIndex(context);
             validateMigrationIssues(context);
+            validateJarDependencyReport(context);
         } finally
         {
             //FileUtils.deleteDirectory(testTempPath.toFile());
@@ -138,6 +142,23 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Potential Issues", 0, 0));
     }
 
+    private void validateJarDependencyReport(GraphContext graphContext)
+    {
+        Path dependencyReport = getDependencyReportPath(graphContext);
+        Assert.assertNotNull(dependencyReport);
+        TestDependencyReportUtil dependencyReportUtil = new TestDependencyReportUtil();
+        dependencyReportUtil.loadPage(dependencyReport);
+        Assert.assertEquals(9, dependencyReportUtil.getNumberOfJarsOnPage());
+        Assert.assertEquals(6, dependencyReportUtil.getNumberOfArchivePathsOnPage("log4j-1.2.6.jar"));
+        Assert.assertEquals(4, dependencyReportUtil.getNumberOfArchivePathsOnPage("jee-example-services.jar"));
+        Assert.assertTrue(dependencyReportUtil.findDependencyElement("jee-example-services.jar", "JEE Example EJB Services",
+                    "org.windup.example:jee-example-services:1.0.0", "d910370c02710f4bb7f7856e18f50803f1c37e16", "1.0.0", "",
+                    Arrays.asList(FOUND_PATHS)));
+        Assert.assertTrue(dependencyReportUtil.findDependencyElement("commons-lang-2.5.jar", "Commons Lang",
+                    "commons-lang:commons-lang:2.5", "b0236b252e86419eef20c31a44579d2aee2f0a69", "2.5", "The Apache Software Foundation",
+                    Arrays.asList("jee-example-app-1.0.0.ear/jee-example-web.war/WEB-INF/lib/commons-lang-2.5.jar")));
+    }
+
     private void validateMigrationIssues(GraphContext graphContext)
     {
         WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(graphContext);
@@ -175,6 +196,24 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest
         for (ApplicationReportModel report : reports)
         {
             if (StringUtils.equals(applicationFilename, report.getProjectModel().getRootFileModel().getFileName()))
+                return getPathForReport(graphContext, report);
+        }
+        return null;
+    }
+
+    private static final String[] FOUND_PATHS = {
+        "copy.ear/jee-example-services.jar",
+        "jee-example-app-1.0.0.ear/jee-example-services.jar"};
+
+    private Path getDependencyReportPath(GraphContext graphContext)
+    {
+        GraphService<ApplicationReportModel> service = graphContext.service(ApplicationReportModel.class);
+        Iterable<ApplicationReportModel> reports = service.findAllByProperty(ReportModel.TEMPLATE_PATH,
+                    CreateDependencyReportRuleProvider.TEMPLATE);
+        for (ApplicationReportModel report : reports)
+        {
+            // test checks only Global Jar Dependencies report 
+            if ("dependency_report_global.html".equals(report.getReportFilename()))
                 return getPathForReport(graphContext, report);
         }
         return null;
