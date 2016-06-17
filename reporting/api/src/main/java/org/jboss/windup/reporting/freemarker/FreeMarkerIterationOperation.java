@@ -99,13 +99,7 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
 
             LOG.info("Reporting: Writing template \"" + templatePath + "\" to output file \"" + outputPath.toAbsolutePath().toString() + "\"");
 
-            Configuration freemarkerConfig = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
-            DefaultObjectWrapperBuilder objectWrapperBuilder = new DefaultObjectWrapperBuilder(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
-            objectWrapperBuilder.setUseAdaptersForContainers(true);
-            freemarkerConfig.setObjectWrapper(objectWrapperBuilder.build());
-            freemarkerConfig.setAPIBuiltinEnabled(true);
-            freemarkerConfig.setTemplateLoader(new FurnaceFreeMarkerTemplateLoader());
-            freemarkerConfig.setTemplateUpdateDelayMilliseconds(3600);
+            Configuration freemarkerConfig = FreeMarkerUtil.getDefaultFreemarkerConfiguration();
 
             Template template = freemarkerConfig.getTemplate(templatePath);
 
