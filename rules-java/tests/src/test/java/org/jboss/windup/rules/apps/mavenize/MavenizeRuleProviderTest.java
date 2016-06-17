@@ -109,7 +109,7 @@ public class MavenizeRuleProviderTest
             Assume.assumeTrue(identifiedArchives.iterator().hasNext());
 
             // Were the pom.xml's created?
-            final Path baseMavenDir = outputDir.resolve("mavenized");
+            final Path baseMavenDir = outputDir.resolve("mavenized/jee-example-app");
 
             Path resultRootPomPath = baseMavenDir.resolve("pom.xml");
             Assert.assertTrue("Exists: " + resultRootPomPath, resultRootPomPath.toFile().exists());
