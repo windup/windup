@@ -3,6 +3,8 @@
  */
 package org.jboss.windup.testutil.html;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.openqa.selenium.By;
@@ -54,45 +56,67 @@ public class TestDependencyReportUtil extends TestReportUtil
         List<WebElement> pathElements = getDriver().findElements(By.xpath("//ul[@id='"+id+"']/li"));
         return (pathElements != null) ?  pathElements.size() : 0;
     }
-    
-    boolean checkDependency (WebElement dependencyElement, String name, String fileName, String gav, String dependencyHash, String version, String org, List paths)
+
+    boolean checkDependency (WebElement dependencyElement, String name, String fileName, String gav, String dependencyHash, String version, String org, List<String> paths)
     {
         boolean found = false;
         //1. Maven coordinates 
         if (gav != null && !gav.isEmpty())
+        {
             found = isDependencyPropertyExists(dependencyElement, "maven", gav, fileName);
-            found = isDependencyPropertyURLExists(dependencyElement, "maven", gav, fileName);
+            if (found)
+            {
+                found = isDependencyPropertyURLExists(dependencyElement, "maven", gav, fileName);
+            }
+        }
         //2. SHA1 hash
-        if (dependencyHash != null && !dependencyHash.isEmpty())
+        if (dependencyHash != null && !dependencyHash.isEmpty() && found)
+        {
             found = isDependencyPropertyExists(dependencyElement, "hash", dependencyHash, fileName);
+        }
         //3. Name
-        if (name != null && !name.isEmpty())
+        if (name != null && !name.isEmpty() && found)
+        {
             found = isDependencyPropertyExists(dependencyElement, "name", name, fileName);
+        }
         //4. Version
-        if (version != null && !version.isEmpty())
+        if (version != null && !version.isEmpty() && found)
+        {
             found = isDependencyPropertyExists(dependencyElement, "version", version, fileName);
+        }
         //5. Organization
-        if (org != null && !org.isEmpty())
+        if (org != null && !org.isEmpty() && found)
+        {
             found = isDependencyPropertyExists(dependencyElement, "org", org, fileName);
+        }
         //6. Found paths
-        if (paths != null && !paths.isEmpty())
+        if (paths != null && !paths.isEmpty() && found)
+        {
             found = isDependencyPathsExists(dependencyElement, "paths", paths, fileName);
+        }
         return found;
     }
-    
-    private boolean isDependencyPathsExists(WebElement traitsElement, String key, List<String> foundPaths, String dependencyName)
+
+    private boolean isDependencyPathsExists(WebElement traitsElement, String key, final List<String> foundPaths, String dependencyName)
     {
         String id = dependencyName + "-"+key;
         try
         {
-            WebElement header = traitsElement.findElement(By.id(id));
-            for (String foundPath : foundPaths)
+            List<WebElement> pathElements = traitsElement.findElements(By.xpath("//ul[@id='" + id +"']/li"));
+            if ( pathElements.size() != foundPaths.size())
             {
-                WebElement property = header.findElement(By.xpath("//ul/li[text()='"+ foundPath +"']"));
-                if (property != null)
-                {
-                    return true;
-                }
+                return false;
+            }
+            List<String> pathsOnPage = new ArrayList<>();
+            for (WebElement webElement : pathElements)
+            {
+                 pathsOnPage.add(webElement.getText());
+            }
+            
+            pathsOnPage.removeAll(foundPaths);
+            if (pathsOnPage.isEmpty())
+            {
+                return true;
             }
         } 
         catch (org.openqa.selenium.NoSuchElementException e) 
@@ -130,15 +154,9 @@ public class TestDependencyReportUtil extends TestReportUtil
         try
         {
             WebElement header = traitsElement.findElement(By.id(id));
-            if (header != null)
+            if (header != null && header.getText().endsWith(value))
             {
-                WebElement parent = header.findElement(By.xpath(".."));
-
-                String parentText = parent.getText();
-                if (parentText != null && parentText.endsWith(value))
-                {
-                    return true;
-                }
+                return true;
             }
         }
         catch (org.openqa.selenium.NoSuchElementException e) 
