@@ -69,13 +69,7 @@ public class FreeMarkerOperation extends GraphOperation
             LOG.info("Reporting: Writing template \"" + templatePath + "\" to output file \""
                         + outputPath.toAbsolutePath().toString() + "\"");
 
-            freemarker.template.Configuration freemarkerConfig = new freemarker.template.Configuration();
-            DefaultObjectWrapperBuilder objectWrapperBuilder = new DefaultObjectWrapperBuilder(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
-            objectWrapperBuilder.setUseAdaptersForContainers(true);
-            freemarkerConfig.setObjectWrapper(objectWrapperBuilder.build());
-
-            freemarkerConfig.setTemplateLoader(new FurnaceFreeMarkerTemplateLoader());
-            freemarkerConfig.setTemplateUpdateDelayMilliseconds(3600);
+            freemarker.template.Configuration freemarkerConfig = FreeMarkerUtil.getDefaultFreemarkerConfiguration();
             Template template = freemarkerConfig.getTemplate(templatePath);
 
             Variables varStack = Variables.instance(event);
