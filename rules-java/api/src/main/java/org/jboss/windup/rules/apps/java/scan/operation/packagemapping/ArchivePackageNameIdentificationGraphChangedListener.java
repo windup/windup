@@ -5,9 +5,11 @@ import java.util.logging.Logger;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.model.ArchiveModel;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.IgnoredFileModel;
 import org.jboss.windup.graph.service.ArchiveService;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.rules.apps.java.archives.model.IdentifiedArchiveModel;
 import org.jboss.windup.rules.apps.java.archives.model.IgnoredArchiveModel;
 
@@ -48,6 +50,13 @@ public class ArchivePackageNameIdentificationGraphChangedListener implements Gra
 
                 // check if it can be ignored as a vendor archive
                 boolean exclusivelyKnown = PackageNameMapping.isExclusivelyKnownArchive(event, archive.getFilePath());
+
+                // If this is a file that the user specified as the input application, do not ignore it
+                for (FileModel inputFile : WindupConfigurationService.getConfigurationModel(this.event.getGraphContext()).getInputPaths())
+                {
+                    if (inputFile.equals(archive))
+                        exclusivelyKnown = false;
+                }
 
                 if (exclusivelyKnown)
                 {
