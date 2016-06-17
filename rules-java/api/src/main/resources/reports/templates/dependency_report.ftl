@@ -74,7 +74,7 @@
                             <#assign sha1 = dependency.SHA1!"">
                             <#if gav?? && gav?trim?has_content>
                                 <dt class="trait">Maven coordinates:</dt>
-                                <dd>
+                                <dd id="${archiveName}-maven">
                                     <#if sha1?has_content>
                                         <#assign sha1URL = 'http://search.maven.org/#search|ga|1|1:"' + sha1?url('ISO-8859-1') + '"'>
                                         <a id="${archiveName}-gav" href="${sha1URL?html}" target="_blank">${gav}</a>
@@ -84,20 +84,20 @@
                                 </dd>
                             </#if>
                             <#if sha1?trim?has_content>
-                                <dt class="trait" id="${archiveName}-hash">SHA1 hash:</dt>
-                                <dd>${sha1}</dd>
+                                <dt class="trait">SHA1 hash:</dt>
+                                <dd id="${archiveName}-hash">${sha1}</dd>
                             </#if>
                             <#if dependencyProject.name?? && dependencyProject.name != archiveName>
-                                <dt id="${archiveName}-name" class="trait">Name:</dt>
-                                <dd>${dependencyProject.name}</dd>
+                                <dt class="trait">Name:</dt>
+                                <dd id="${archiveName}-name">${dependencyProject.name}</dd>
                             </#if>
                             <#if dependencyProject.version??>
-                                <dt id="${archiveName}-version" class="trait">Version:</dt>
-                                <dd>${dependencyProject.version}</dd>
+                                <dt class="trait">Version:</dt>
+                                <dd id="${archiveName}-version">${dependencyProject.version}</dd>
                             </#if>
                             <#if dependencyProject.organization??>
-                                <dt id="${archiveName}-org" class="trait">Organization:</dt>
-                                <dd>${dependencyProject.organization}</dd>
+                                <dt class="trait">Organization:</dt>
+                                <dd id="${archiveName}-org">${dependencyProject.organization}</dd>
                             </#if>
                             <dt class="trait">Found at path:</dt>
                             <dd>
