@@ -32,9 +32,9 @@
     <#assign pointsFromSharedTraversal = getMigrationEffortPointsForProject(sharedTraversal, true) >
 
     <#-- Total Effort Points, Name, Technologies, Incident Count per Severity-->
-    <div class="appInfo">
+    <div class="appInfo pointsShared${pointsFromSharedTraversal}">
         <div class="stats">
-            <div class="effortPoints unique">
+            <div class="effortPoints total">
                 <span class="points">${pointsFromAllTraversal}</span>
                 <span class="legend">story points</span>
             </div>
@@ -42,6 +42,12 @@
                 <#if appReport.projectModel.projectType! != "VIRTUAL">
                     <span class="points">${pointsFromSharedTraversal}</span>
                     <span class="legend">in shared libs <#--<br/>once: ${pointsFromOnceTraversal}--></span>
+                </#if>
+            </div>
+            <div class="effortPoints unique">
+                <#if appReport.projectModel.projectType! != "VIRTUAL">
+                    <span class="points">${pointsFromAllTraversal - pointsFromSharedTraversal}</span>
+                    <span class="legend">only in this app</span>
                 </#if>
             </div>
             <div class="incidentsCount">
@@ -105,15 +111,21 @@
             margin: 1ex 0;
             padding: 1ex 0 2ex;
         }
-        body.viewAppList .apps .appInfo .stats { float: right; width: 496px; padding: 0.4ex 0; }
+        body.viewAppList .apps .appInfo .stats { float: right; width: 610px; padding: 0.4ex 0; }
         body.viewAppList .apps .appInfo .stats .effortPoints { float: left; width: 160px; padding: 0.3ex 0.2em 0; font-size: 33pt; }
         body.viewAppList .apps .appInfo .stats .effortPoints        span { display: block; margin: auto; text-align: center; }
-        body.viewAppList .apps .appInfo .stats .effortPoints        .points { line-height: 1; color: rgb(41, 69, 147); }
+        body.viewAppList .apps .appInfo .stats .effortPoints        .points { line-height: 1; color: #294593; }
         body.viewAppList .apps .appInfo .stats .effortPoints        .legend { font-size: 7pt; }
-        body.viewAppList .apps .appInfo .stats .effortPoints.shared .points { color: #8491a8; /* Like normal, but grayed. */ }
+        body.viewAppList .apps .appInfo .stats .effortPoints.shared,
+        body.viewAppList .apps .appInfo .stats .effortPoints.unique { width: 100px; font-size: 24pt; margin-top: 13px; }
+        body.viewAppList .apps .appInfo.pointsShared0 .stats .effortPoints.shared,
+        body.viewAppList .apps .appInfo.pointsShared0 .stats .effortPoints.unique { display: hidden; }
+        body.viewAppList .apps .appInfo .stats .effortPoints.shared .points,
+        body.viewAppList .apps .appInfo .stats .effortPoints.unique .points { color: #8491a8; /* Like normal, but grayed. */ }
+
         body.viewAppList .apps .appInfo .stats .incidentsCount { float: left; margin:  0 2ex;}
         body.viewAppList .apps .appInfo .stats .incidentsCount table tr.total td { border-top: 1px solid silver; }
-        body.viewAppList .apps .appInfo .stats .incidentsCount .count { text-align: right; padding-right: 1ex; min-width: 6ex; }
+        body.viewAppList .apps .appInfo .stats .incidentsCount .count { text-align: right; padding-right: 1ex; min-width: 7.4ex; }
         body.viewAppList .apps .appInfo .traits { margin-left: 0px; }
         body.viewAppList .apps .appInfo .traits .fileName { padding: 0.0ex 0em 0.2ex; font-size: 18pt; /* color: #008cba; (Default BS link color) */ }
         body.viewAppList .apps .appInfo .traits .techs { }
@@ -123,7 +135,7 @@
 
     </style>
 </head>
-<body role="document" class="viewAppList">
+<body role="document" class="viewAppList" style="max-width: 1480px; margin: auto;">
 
     <!-- Navbar -->
     <div id="main-navbar" class="navbar navbar-default navbar-fixed-top">
