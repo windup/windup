@@ -116,7 +116,7 @@
         body.viewAppList .apps .appInfo .traits .techs { }
 
         /* Specifics for virtual apps. */
-        body.viewAppList .apps .virtual .appInfo .traits .fileName { font-style: italic; color: #477280; }
+        body.viewAppList .apps .virtual .appInfo .traits .fileName { color: #477280; }
 
     </style>
 </head>
@@ -180,9 +180,10 @@
                     <#assign virtualAppExists = true>
                 </#if>
             </#list>
+        <section>
 
-
-            <#if virtualAppExists>
+        <#if virtualAppExists>
+        <section class="apps">
                 <div class="tooltipLikeMessage">
                     These reports contain information about all issues found in archives which were included multiple
                     times in one or more applications.
@@ -195,8 +196,8 @@
                         </#if>
                     </#list>
                 </div>
-            </#if>
         <section>
+        </#if>
 
 
         <div style="width: 100%; text-align: center">
