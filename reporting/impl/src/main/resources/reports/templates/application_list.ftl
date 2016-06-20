@@ -183,19 +183,25 @@
         <section>
 
         <#if virtualAppExists>
-        <section class="apps">
-                <div class="tooltipLikeMessage">
+        <div class="row">
+            <div class="page-header">
+                <h1>
+                    <div class="main">Cross-application reports</div>
+                </h1>
+                <div class="desc">
                     These reports contain information about all issues found in archives which were included multiple
                     times in one or more applications.
                 </div>
-
-                <div class="virtual">
-                    <#list reportModel.relatedResources.applications.list.iterator() as applicationReport>
-                        <#if applicationReport.projectModel.projectType! = "VIRTUAL" >
-                            <@applicationReportRenderer applicationReport/>
-                        </#if>
-                    </#list>
-                </div>
+            </div>
+        </div>
+        <section class="apps">
+            <div class="virtual">
+                <#list reportModel.relatedResources.applications.list.iterator() as applicationReport>
+                    <#if applicationReport.projectModel.projectType! = "VIRTUAL" >
+                        <@applicationReportRenderer applicationReport/>
+                    </#if>
+                </#list>
+            </div>
         <section>
         </#if>
 
@@ -206,10 +212,9 @@
             <a href="reports/windup_freemarkerfunctions.html">Windup FreeMarker methods</a>
                 |
             <a href="#" id="jiraFeedbackTriggerBottomLink">Send feedback</a>
-
         </div>
 
-    </div> <!-- /container -->
+    </div> <!-- /.container-fluid -->
     <script src="reports/resources/js/jquery-1.10.1.min.js"></script>
     <script type="text/javascript">
         jQuery("#jiraFeedbackTriggerBottomLink").click(function(e) {
