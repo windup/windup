@@ -38,12 +38,14 @@
                 <span class="points">${pointsFromAllTraversal}</span>
                 <span class="legend">story points</span>
             </div>
+            <#if (pointsFromSharedTraversal > 0) >
             <div class="effortPoints shared">
                 <#if appReport.projectModel.projectType! != "VIRTUAL">
                     <span class="points">${pointsFromSharedTraversal}</span>
                     <span class="legend">in shared libs <#--<br/>once: ${pointsFromOnceTraversal}--></span>
                 </#if>
             </div>
+            </#if>
             <div class="incidentsCount">
                 <table>
                     <#assign totalIncidents = 0 >
