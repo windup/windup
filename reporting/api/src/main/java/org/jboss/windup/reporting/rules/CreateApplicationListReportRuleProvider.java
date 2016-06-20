@@ -1,9 +1,15 @@
 package org.jboss.windup.reporting.rules;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
+import org.apache.commons.collections4.IterableUtils;
+import org.apache.commons.lang3.ObjectUtils;
 
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.windup.config.AbstractRuleProvider;
@@ -18,7 +24,6 @@ import org.jboss.windup.graph.service.ProjectService;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.jboss.windup.reporting.model.TemplateType;
 import org.jboss.windup.reporting.model.WindupVertexListModel;
-import org.jboss.windup.reporting.rules.AttachApplicationReportsToIndexRuleProvider;
 import org.jboss.windup.reporting.service.ApplicationReportService;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -29,7 +34,11 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-@RuleMetadata(phase = PostReportGenerationPhase.class, before = AttachApplicationReportsToIndexRuleProvider.class)
+@RuleMetadata(
+        phase = PostReportGenerationPhase.class,
+        before = AttachApplicationReportsToIndexRuleProvider.class,
+        haltOnException = true
+)
 public class CreateApplicationListReportRuleProvider extends AbstractRuleProvider
 {
     public static final String APPLICATION_LIST_REPORT = "Application List";
@@ -70,19 +79,52 @@ public class CreateApplicationListReportRuleProvider extends AbstractRuleProvide
         report.setReportFilename(OUTPUT_FILENAME);
 
         GraphService<WindupVertexListModel> listService = new GraphService<>(context, WindupVertexListModel.class);
-        WindupVertexListModel<ApplicationReportModel> applications = listService.create();
+        WindupVertexListModel<ApplicationReportModel> appsListVertex = listService.create();
         Map<String, WindupVertexFrame> relatedData = new HashMap<>();
-        for (ApplicationReportModel applicationReportModel : applicationReportService.findAll())
+        final Iterable<ApplicationReportModel> apps = applicationReportService.findAll();
+        List<ApplicationReportModel> appsList = new ArrayList();
+        for (ApplicationReportModel applicationReportModel : apps)
         {
             if (applicationReportModel.isMainApplicationReport() != null && applicationReportModel.isMainApplicationReport())
             {
-                applications.addItem(applicationReportModel);
+                appsList.add(applicationReportModel);
                 if (ProjectService.SHARED_LIBS_UNIQUE_ID.equals(applicationReportModel.getProjectModel().getUniqueID()))
                     relatedData.put("sharedLibsApplicationReport", applicationReportModel); // Used as kind of boolean in the template.
             }
         }
-        relatedData.put("applications", applications);
+        relatedData.put("applications", appsListVertex);
+
+        // Our current model doesn't keep the list order, but once I wrote, I'm leaving the sorting here for when it does.
+        Collections.sort(appsList, new AppRootFileNameComparator());
+
+        for (ApplicationReportModel applicationReportModel : appsList)
+            appsListVertex.addItem(applicationReportModel);
 
         report.setRelatedResource(relatedData);
+    }
+
+
+
+    private static class AppRootFileNameComparator implements Comparator<ApplicationReportModel>
+    {
+        public int compare(ApplicationReportModel o1, ApplicationReportModel o2)
+        {
+            // If the info is missing, put that to the end. This may be the case of virtual apps.
+            if (null == o1.getProjectModel() || null == o1.getProjectModel().getRootFileModel() || null == o1.getProjectModel().getRootFileModel().getFileName() )
+                return 1;
+            if (null == o2.getProjectModel() || null == o2.getProjectModel().getRootFileModel() || null == o2.getProjectModel().getRootFileModel().getFileName() )
+                return -1;
+
+            // On error resume next.
+            try {
+                return ObjectUtils.compare(
+                    o1.getProjectModel().getRootFileModel().getFileName(),
+                    o2.getProjectModel().getRootFileModel().getFileName());
+            }
+            catch (Throwable ex)
+            {
+                return 0;
+            }
+        }
     }
 }

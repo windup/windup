@@ -8,7 +8,6 @@ import org.apache.tools.ant.BuildException;
 import org.jboss.windup.graph.FramedElementInMemory;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.InMemoryVertexFrame;
-import org.jboss.windup.graph.model.WindupFrame;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.exception.NonUniqueResultException;
 import org.jboss.windup.util.ExecutionStatistics;
