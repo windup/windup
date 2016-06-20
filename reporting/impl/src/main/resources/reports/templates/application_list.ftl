@@ -116,7 +116,7 @@
         body.viewAppList .apps .appInfo .traits .techs { }
 
         /* Specifics for virtual apps. */
-        body.viewAppList .apps .virtual .appInfo .traits .fileName { font-style: italic; color: #477280; }
+        body.viewAppList .apps .virtual .appInfo .traits .fileName { color: #477280; }
 
     </style>
 </head>
@@ -180,23 +180,30 @@
                     <#assign virtualAppExists = true>
                 </#if>
             </#list>
+        <section>
 
-
-            <#if virtualAppExists>
-                <div class="tooltipLikeMessage">
+        <#if virtualAppExists>
+        <div class="row">
+            <div class="page-header">
+                <h1>
+                    <div class="main">Cross-application reports</div>
+                </h1>
+                <div class="desc">
                     These reports contain information about all issues found in archives which were included multiple
                     times in one or more applications.
                 </div>
-
-                <div class="virtual">
-                    <#list reportModel.relatedResources.applications.list.iterator() as applicationReport>
-                        <#if applicationReport.projectModel.projectType! = "VIRTUAL" >
-                            <@applicationReportRenderer applicationReport/>
-                        </#if>
-                    </#list>
-                </div>
-            </#if>
+            </div>
+        </div>
+        <section class="apps">
+            <div class="virtual">
+                <#list reportModel.relatedResources.applications.list.iterator() as applicationReport>
+                    <#if applicationReport.projectModel.projectType! = "VIRTUAL" >
+                        <@applicationReportRenderer applicationReport/>
+                    </#if>
+                </#list>
+            </div>
         <section>
+        </#if>
 
 
         <div style="width: 100%; text-align: center">
@@ -205,10 +212,9 @@
             <a href="reports/windup_freemarkerfunctions.html">Windup FreeMarker methods</a>
                 |
             <a href="#" id="jiraFeedbackTriggerBottomLink">Send feedback</a>
-
         </div>
 
-    </div> <!-- /container -->
+    </div> <!-- /.container-fluid -->
     <script src="reports/resources/js/jquery-1.10.1.min.js"></script>
     <script type="text/javascript">
         jQuery("#jiraFeedbackTriggerBottomLink").click(function(e) {

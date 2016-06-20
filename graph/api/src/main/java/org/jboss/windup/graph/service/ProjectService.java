@@ -15,7 +15,7 @@ import java.nio.file.Path;
 public class ProjectService extends GraphService<ProjectModel>
 {
     public static final String SHARED_LIBS_UNIQUE_ID = "<shared-libs>";
-    public static final String SHARED_LIBS_APP_NAME = "Shared Libraries";
+    public static final String SHARED_LIBS_APP_NAME = "Modules Shared Across Multiple Applications";
     public static final String SHARED_LIBS_FILENAME = "shared-libs";
 
     public ProjectService(GraphContext context)
