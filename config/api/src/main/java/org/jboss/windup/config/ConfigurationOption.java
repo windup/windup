@@ -3,7 +3,7 @@ package org.jboss.windup.config;
 import java.util.Collection;
 
 /**
- * Specifies details regarding a particular configuraiton option that can be passed into the Windup executor. This information is used by the UI to
+ * Specifies details regarding a particular configuration option that can be passed into the Windup executor. This information is used by the UI to
  * determine the available options for running Windup.
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
