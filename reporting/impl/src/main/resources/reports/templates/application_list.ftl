@@ -38,12 +38,14 @@
                 <span class="points">${pointsFromAllTraversal}</span>
                 <span class="legend">story points</span>
             </div>
+            <#if virtualAppExists >
             <div class="effortPoints shared">
                 <#if appReport.projectModel.projectType! != "VIRTUAL">
                     <span class="points">${pointsFromSharedTraversal}</span>
                     <span class="legend">in shared libs <#--<br/>once: ${pointsFromOnceTraversal}--></span>
                 </#if>
             </div>
+            </#if>
             <div class="incidentsCount">
                 <table>
                     <#assign totalIncidents = 0 >
@@ -166,6 +168,13 @@
 
         <!-- Apps -->
         <section class="apps">
+            <#assign virtualAppExists = false>
+            <#list reportModel.relatedResources.applications.list.iterator() as applicationReport>
+                <#if applicationReport.projectModel.projectType! = "VIRTUAL">
+                    <#assign virtualAppExists = true>
+                </#if>
+            </#list>
+        
             <div class="real">
                 <#list reportModel.relatedResources.applications.list.iterator() as applicationReport>
                     <#if applicationReport.projectModel.projectType! != "VIRTUAL" >
@@ -173,14 +182,6 @@
                     </#if>
                 </#list>
             </div>
-
-            <#assign virtualAppExists = false>
-            <#list reportModel.relatedResources.applications.list.iterator() as applicationReport>
-                <#if applicationReport.projectModel.projectType! = "VIRTUAL">
-                    <#assign virtualAppExists = true>
-                </#if>
-            </#list>
-
 
             <#if virtualAppExists>
                 <div class="tooltipLikeMessage">
