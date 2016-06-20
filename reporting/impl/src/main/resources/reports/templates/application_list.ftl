@@ -44,21 +44,30 @@
                     <span class="legend">in shared libs <#--<br/>once: ${pointsFromOnceTraversal}--></span>
                 </#if>
             </div>
-            <div class="incidentsCount">
-                <table>
-                    <#assign totalIncidents = 0 >
-                    <#list incidentCountBySeverity?keys as severity>
-                        <#assign totalIncidents = totalIncidents + incidentCountBySeverity?api.get(severity) >
-                        <tr>
-                            <td class="label_"> ${severity} </td>
-                            <td class="count"> ${incidentCountBySeverity?api.get(severity)}&times; </td>
-                        </tr>
-                    </#list>
-                    <tr class="total">
-                        <td class="label_"> <span>Total</span> </td>
-                        <td class="count"> <span>${totalIncidents}&times;</span> </td>
-                    </tr>
-                </table>
+            <div class="effortPoints incidents" onmouseover="$(this).addClass('showDetails')" onmouseout="$(this).removeClass('showDetails')">
+                <div class="incidentsCount" style="position: absolute;">
+                    <table>
+                        <!-- <tr>
+                            <td colspan="2">Number of incidents</td>
+                        </tr> -->
+                        <#assign totalIncidents = 0 >
+                        <#list incidentCountBySeverity?keys as severity>
+                            <#assign totalIncidents = totalIncidents + incidentCountBySeverity?api.get(severity) >
+                            <tr>
+                                <td class="count">${incidentCountBySeverity?api.get(severity)}</td>
+                                <td class="label_">${severity}</td>
+                            </tr>
+                        </#list>
+                        <!--
+                        <tr class="total">
+                            <td class="count"> <span>${totalIncidents}</span> </td>
+                            <td class="label_"> <span>Total</span> </td>
+                        </tr> -->
+                    </table>
+                    <div class="nib"></div>
+                </div>
+                <span class="points">${totalIncidents}</span>
+                <span class="legend">incidents found</span>
             </div>
         </div>
 
@@ -102,16 +111,27 @@
             margin: 1ex 0;
             padding: 1ex 0 2ex;
         }
-        body.viewAppList .apps .appInfo .stats { float: left; width: 496px; padding: 0.4ex 0; }
+        body.viewAppList .apps .appInfo .stats { float: right; width: 496px; padding: 0.4ex 0; }
         body.viewAppList .apps .appInfo .stats .effortPoints { float: left; width: 160px; padding: 0.3ex 0.2em 0; font-size: 33pt; }
         body.viewAppList .apps .appInfo .stats .effortPoints        span { display: block; margin: auto; text-align: center; }
-        body.viewAppList .apps .appInfo .stats .effortPoints        .points { line-height: 1; color: rgb(41, 69, 147); }
+        body.viewAppList .apps .appInfo .stats .effortPoints        .points { line-height: 1; color: rgb(41, 69, 147); /* Dark blue. */ }
         body.viewAppList .apps .appInfo .stats .effortPoints        .legend { font-size: 7pt; }
         body.viewAppList .apps .appInfo .stats .effortPoints.shared .points { color: #8491a8; /* Like normal, but grayed. */ }
-        body.viewAppList .apps .appInfo .stats .incidentsCount { float: left; margin:  0 2ex;}
+        body.viewAppList .apps .appInfo .stats .effortPoints.incidents .points { color: #243554; /* Very dark blue. */ }
+
+        body.viewAppList .apps .appInfo .stats .effortPoints.incidents             .incidentsCount { display: none; position: absolute; margin-top: -3.5ex; }
+        body.viewAppList .apps .appInfo .stats .effortPoints.incidents.showDetails .incidentsCount { display: block; }
+        body.viewAppList .apps .appInfo .stats .incidentsCount {
+            width: 160px; padding: 0.5ex; background-color: white; border: 1px solid black; border-radius: 0.4ex; }
         body.viewAppList .apps .appInfo .stats .incidentsCount table tr.total td { border-top: 1px solid silver; }
-        body.viewAppList .apps .appInfo .stats .incidentsCount .count { text-align: right; padding-left: 10px; }
-        body.viewAppList .apps .appInfo .traits { margin-left: 340px; }
+        body.viewAppList .apps .appInfo .stats .incidentsCount .count { text-align: right; padding-right: 1ex; min-width: 6ex; }
+        body.viewAppList .apps .appInfo .stats .incidentsCount .nib {
+            position: absolute; transform: rotate(45deg);
+            background-color: white; border-right: 1px solid black; border-bottom: 1px solid black;
+            width: 10px; height: 10px;
+            bottom: -5px; left: 20%
+        }
+        body.viewAppList .apps .appInfo .traits { margin-left: 0px; }
         body.viewAppList .apps .appInfo .traits .fileName { padding: 0.0ex 0em 0.2ex; font-size: 18pt; /* color: #008cba; (Default BS link color) */ }
         body.viewAppList .apps .appInfo .traits .techs { }
 
@@ -166,21 +186,16 @@
 
         <!-- Apps -->
         <section class="apps">
+            <#assign virtualAppExists = false>
             <div class="real">
                 <#list reportModel.relatedResources.applications.list.iterator() as applicationReport>
                     <#if applicationReport.projectModel.projectType! != "VIRTUAL" >
                         <@applicationReportRenderer applicationReport/>
+                    <#else>
+                        <#assign virtualAppExists = true>
                     </#if>
                 </#list>
             </div>
-
-            <#assign virtualAppExists = false>
-            <#list reportModel.relatedResources.applications.list.iterator() as applicationReport>
-                <#if applicationReport.projectModel.projectType! = "VIRTUAL">
-                    <#assign virtualAppExists = true>
-                </#if>
-            </#list>
-
 
             <#if virtualAppExists>
                 <div class="tooltipLikeMessage">
@@ -205,7 +220,6 @@
             <a href="reports/windup_freemarkerfunctions.html">Windup FreeMarker methods</a>
                 |
             <a href="#" id="jiraFeedbackTriggerBottomLink">Send feedback</a>
-
         </div>
 
     </div> <!-- /container -->
