@@ -125,7 +125,7 @@
         body.viewAppList .apps .appInfo .stats .effortPoints.unique { width: 90px; font-size: 18pt; margin-top: 23px; }
         /* Hide the "cell" if the app has 0 shared points". */
         body.viewAppList .apps .appInfo.pointsShared0 .stats .effortPoints.shared,
-        body.viewAppList .apps .appInfo.pointsShared0 .stats .effortPoints.unique { display: hidden; }
+        body.viewAppList .apps .appInfo.pointsShared0 .stats .effortPoints.unique { visibility: hidden; }
         /* Hide the whole "column" if there's no virtual app (i.e. no shared-libs app). */
         body.viewAppList.noVirtualApp .apps .appInfo  .stats .effortPoints.shared,
         body.viewAppList.noVirtualApp .apps .appInfo  .stats .effortPoints.unique { display: none; }
