@@ -48,7 +48,7 @@
             <#if sharedLibsExists>
                 <div class="effortPoints shared">
                     <span class="points">${pointsFromSharedTraversal}</span>
-                    <span class="legend">in shared libs</span>
+                    <span class="legend">in shared archives</span>
                 </div>
                 <div class="effortPoints unique">
                     <span class="points">${pointsFromAllTraversal - pointsFromSharedTraversal}</span>
@@ -210,11 +210,11 @@
         <div class="row">
             <div class="page-header">
                 <h1>
-                    <div class="main">Cross-application reports</div>
+                    <div class="main">Cross-application Reports</div>
                 </h1>
                 <div class="desc">
-                    These reports contain information about all issues found in archives which were included multiple
-                    times in one or more applications.
+                    These reports contain information about all issues found in archives which were included in 
+                    multiple applications.
                 </div>
             </div>
         </div>
