@@ -28,8 +28,14 @@
     <#--assign onceTraversal  = getProjectTraversal(appReport.projectModel, 'only_once')>
     <#assign pointsFromOnceTraversal = getMigrationEffortPointsForProject(onceTraversal, true) -->
 
-    <#assign sharedTraversal = getProjectTraversal(appReport.projectModel, 'shared')>
-    <#assign pointsFromSharedTraversal = getMigrationEffortPointsForProject(sharedTraversal, true) >
+    <#-- For VIRTUAL apps, or if there is no VIRTUAL app, skip computing of the shared points. -->
+    <#assign showSharedPoints = appReport.projectModel.projectType! != "VIRTUAL" && sharedLibsExists>
+    <#if showSharedPoints>
+        <#assign sharedTraversal = getProjectTraversal(appReport.projectModel, 'shared')>
+        <#assign pointsFromSharedTraversal = getMigrationEffortPointsForProject(sharedTraversal, true) >
+    <#else>
+        <#assign pointsFromSharedTraversal = 0 >
+    </#if>
 
     <#-- Total Effort Points, Name, Technologies, Incident Count per Severity-->
     <div class="appInfo pointsShared${pointsFromSharedTraversal}">
@@ -38,18 +44,17 @@
                 <span class="points">${pointsFromAllTraversal}</span>
                 <span class="legend">story points</span>
             </div>
-            <div class="effortPoints shared">
-                <#if appReport.projectModel.projectType! != "VIRTUAL">
+            <#-- If there is no Shared Libraries virtual app, don't show the "column". -->
+            <#if sharedLibsExists>
+                <div class="effortPoints shared">
                     <span class="points">${pointsFromSharedTraversal}</span>
-                    <span class="legend">in shared libs <#--<br/>once: ${pointsFromOnceTraversal}--></span>
-                </#if>
-            </div>
-            <div class="effortPoints unique">
-                <#if appReport.projectModel.projectType! != "VIRTUAL">
+                    <span class="legend">in shared libs</span>
+                </div>
+                <div class="effortPoints unique">
                     <span class="points">${pointsFromAllTraversal - pointsFromSharedTraversal}</span>
                     <span class="legend">only in this app</span>
-                </#if>
-            </div>
+                </div>
+            </#if>
             <div class="incidentsCount">
                 <table>
                     <tr>
@@ -184,6 +189,9 @@
 
 
         <!-- Apps -->
+
+        <#assign sharedLibsExists = reportModel.relatedResources["sharedLibsExists"]!?has_content >
+
         <section class="apps">
             <#assign virtualAppExists = false>
             <div class="real">
