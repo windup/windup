@@ -85,9 +85,7 @@ public class GetEffortCountForProjectBySeverityMethod implements WindupFreeMarke
             excludeTags = FreeMarkerUtil.simpleSequenceToSet((SimpleSequence) arguments.get(3));
         }
 
-        traversal.reset();
         Map<Severity, Integer> classificationEffortDetails = classificationService.getMigrationEffortBySeverity(traversal, includeTags, excludeTags, recursive);
-        traversal.reset();
         Map<Severity, Integer> hintEffortDetails = inlineHintService.getMigrationEffortBySeverity(traversal, includeTags, excludeTags, recursive);
 
         Map<String, Integer> results = new HashMap<>(classificationEffortDetails.size() + hintEffortDetails.size());
