@@ -95,7 +95,14 @@ public class MavenizeRuleProvider extends AbstractRuleProvider
         @Override
         public void perform(GraphRewrite event, EvaluationContext context, IdentifiedArchiveModel archive)
         {
+            if (archive.getCoordinate() == null)
+            {
+                LOG.info("Warning: archive.getCoordinate() is null: " + archive.toPrettyString());
+                return;
+            }
+
             LOG.info("Adding to global BOM: " + archive.getCoordinate().toPrettyString());
+            
             // BOM
             GraphService<GlobalBomModel> bomServ = new GraphService<>(event.getGraphContext(), GlobalBomModel.class);
             GlobalBomModel bom = bomServ.getUnique();
