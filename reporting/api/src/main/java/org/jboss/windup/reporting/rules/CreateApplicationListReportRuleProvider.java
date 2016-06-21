@@ -14,6 +14,7 @@ import org.jboss.windup.config.phase.PostReportGenerationPhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.graph.service.ProjectService;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.jboss.windup.reporting.model.TemplateType;
 import org.jboss.windup.reporting.model.WindupVertexListModel;
@@ -70,12 +71,16 @@ public class CreateApplicationListReportRuleProvider extends AbstractRuleProvide
 
         GraphService<WindupVertexListModel> listService = new GraphService<>(context, WindupVertexListModel.class);
         WindupVertexListModel<ApplicationReportModel> applications = listService.create();
+        Map<String, WindupVertexFrame> relatedData = new HashMap<>();
         for (ApplicationReportModel applicationReportModel : applicationReportService.findAll())
         {
             if (applicationReportModel.isMainApplicationReport() != null && applicationReportModel.isMainApplicationReport())
+            {
                 applications.addItem(applicationReportModel);
+                if (ProjectService.SHARED_LIBS_UNIQUE_ID.equals(applicationReportModel.getProjectModel().getUniqueID()))
+                    relatedData.put("sharedLibsApplicationReport", applicationReportModel); // Used as kind of boolean in the template.
+            }
         }
-        Map<String, WindupVertexFrame> relatedData = new HashMap<>();
         relatedData.put("applications", applications);
 
         report.setRelatedResource(relatedData);

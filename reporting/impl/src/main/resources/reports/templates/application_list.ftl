@@ -28,35 +28,49 @@
     <#--assign onceTraversal  = getProjectTraversal(appReport.projectModel, 'only_once')>
     <#assign pointsFromOnceTraversal = getMigrationEffortPointsForProject(onceTraversal, true) -->
 
-    <#assign sharedTraversal = getProjectTraversal(appReport.projectModel, 'shared')>
-    <#assign pointsFromSharedTraversal = getMigrationEffortPointsForProject(sharedTraversal, true) >
+    <#-- For VIRTUAL apps, or if there is no VIRTUAL app, skip computing of the shared points. -->
+    <#assign showSharedPoints = appReport.projectModel.projectType! != "VIRTUAL" && sharedLibsExists>
+    <#if showSharedPoints>
+        <#assign sharedTraversal = getProjectTraversal(appReport.projectModel, 'shared')>
+        <#assign pointsFromSharedTraversal = getMigrationEffortPointsForProject(sharedTraversal, true) >
+    <#else>
+        <#assign pointsFromSharedTraversal = 0 >
+    </#if>
 
     <#-- Total Effort Points, Name, Technologies, Incident Count per Severity-->
-    <div class="appInfo">
+    <div class="appInfo pointsShared${pointsFromSharedTraversal}">
         <div class="stats">
-            <div class="effortPoints unique">
+            <div class="effortPoints total">
                 <span class="points">${pointsFromAllTraversal}</span>
                 <span class="legend">story points</span>
             </div>
-            <div class="effortPoints shared">
-                <#if appReport.projectModel.projectType! != "VIRTUAL">
+            <#-- If there is no Shared Libraries virtual app, don't show the "column". -->
+            <#if sharedLibsExists>
+                <div class="effortPoints shared">
                     <span class="points">${pointsFromSharedTraversal}</span>
-                    <span class="legend">in shared libs <#--<br/>once: ${pointsFromOnceTraversal}--></span>
-                </#if>
-            </div>
+                    <span class="legend">in shared libs</span>
+                </div>
+                <div class="effortPoints unique">
+                    <span class="points">${pointsFromAllTraversal - pointsFromSharedTraversal}</span>
+                    <span class="legend">only in this app</span>
+                </div>
+            </#if>
             <div class="incidentsCount">
                 <table>
+                    <tr>
+                        <td colspan="2">Number of incidents</td>
+                    </tr>
                     <#assign totalIncidents = 0 >
                     <#list incidentCountBySeverity?keys as severity>
                         <#assign totalIncidents = totalIncidents + incidentCountBySeverity?api.get(severity) >
                         <tr>
-                            <td class="label_"> ${severity} </td>
-                            <td class="count"> ${incidentCountBySeverity?api.get(severity)}&times; </td>
+                            <td class="count">${incidentCountBySeverity?api.get(severity)}</td>
+                            <td class="label_">${severity}</td>
                         </tr>
                     </#list>
                     <tr class="total">
+                        <td class="count"> <span>${totalIncidents}</span> </td>
                         <td class="label_"> <span>Total</span> </td>
-                        <td class="count"> <span>${totalIncidents}&times;</span> </td>
                     </tr>
                 </table>
             </div>
@@ -102,16 +116,26 @@
             margin: 1ex 0;
             padding: 1ex 0 2ex;
         }
-        body.viewAppList .apps .appInfo .stats { float: left; width: 496px; padding: 0.4ex 0; }
+        body.viewAppList .apps .appInfo .stats { float: right; width: 610px; padding: 0.4ex 0; }
         body.viewAppList .apps .appInfo .stats .effortPoints { float: left; width: 160px; padding: 0.3ex 0.2em 0; font-size: 33pt; }
         body.viewAppList .apps .appInfo .stats .effortPoints        span { display: block; margin: auto; text-align: center; }
-        body.viewAppList .apps .appInfo .stats .effortPoints        .points { line-height: 1; color: rgb(41, 69, 147); }
+        body.viewAppList .apps .appInfo .stats .effortPoints        .points { line-height: 1; color: #294593; }
         body.viewAppList .apps .appInfo .stats .effortPoints        .legend { font-size: 7pt; }
-        body.viewAppList .apps .appInfo .stats .effortPoints.shared .points { color: #8491a8; /* Like normal, but grayed. */ }
+        body.viewAppList .apps .appInfo .stats .effortPoints.shared,
+        body.viewAppList .apps .appInfo .stats .effortPoints.unique { width: 90px; font-size: 18pt; margin-top: 23px; }
+        /* Hide the "cell" if the app has 0 shared points". */
+        body.viewAppList .apps .appInfo.pointsShared0 .stats .effortPoints.shared,
+        body.viewAppList .apps .appInfo.pointsShared0 .stats .effortPoints.unique { display: hidden; }
+        /* Hide the whole "column" if there's no virtual app (i.e. no shared-libs app). */
+        body.viewAppList.noVirtualApp .apps .appInfo  .stats .effortPoints.shared,
+        body.viewAppList.noVirtualApp .apps .appInfo  .stats .effortPoints.unique { display: none; }
+        body.viewAppList .apps .appInfo .stats .effortPoints.shared .points,
+        body.viewAppList .apps .appInfo .stats .effortPoints.unique .points { color: #8491a8; /* Like normal, but grayed. */ }
+
         body.viewAppList .apps .appInfo .stats .incidentsCount { float: left; margin:  0 2ex;}
         body.viewAppList .apps .appInfo .stats .incidentsCount table tr.total td { border-top: 1px solid silver; }
-        body.viewAppList .apps .appInfo .stats .incidentsCount .count { text-align: right; padding-left: 10px; }
-        body.viewAppList .apps .appInfo .traits { margin-left: 340px; }
+        body.viewAppList .apps .appInfo .stats .incidentsCount .count { text-align: right; padding-right: 1ex; min-width: 7.4ex; }
+        body.viewAppList .apps .appInfo .traits { margin-left: 0px; }
         body.viewAppList .apps .appInfo .traits .fileName { padding: 0.0ex 0em 0.2ex; font-size: 18pt; /* color: #008cba; (Default BS link color) */ }
         body.viewAppList .apps .appInfo .traits .techs { }
 
@@ -120,7 +144,7 @@
 
     </style>
 </head>
-<body role="document" class="viewAppList">
+<body role="document" class="viewAppList" style="max-width: 1480px; margin: auto;">
 
     <!-- Navbar -->
     <div id="main-navbar" class="navbar navbar-default navbar-fixed-top">
@@ -165,22 +189,21 @@
 
 
         <!-- Apps -->
+
+        <#assign sharedLibsExists = reportModel.relatedResources["sharedLibsApplicationReport"]!?has_content >
+
         <section class="apps">
+            <#assign virtualAppExists = false>
             <div class="real">
                 <#list reportModel.relatedResources.applications.list.iterator() as applicationReport>
                     <#if applicationReport.projectModel.projectType! != "VIRTUAL" >
                         <@applicationReportRenderer applicationReport/>
+                    <#else>
+                        <#assign virtualAppExists = true>
                     </#if>
                 </#list>
             </div>
-
-            <#assign virtualAppExists = false>
-            <#list reportModel.relatedResources.applications.list.iterator() as applicationReport>
-                <#if applicationReport.projectModel.projectType! = "VIRTUAL">
-                    <#assign virtualAppExists = true>
-                </#if>
-            </#list>
-        <section>
+        </section>
 
         <#if virtualAppExists>
         <div class="row">
@@ -202,7 +225,9 @@
                     </#if>
                 </#list>
             </div>
-        <section>
+        </section>
+        <#else>
+            <script>$("body").addClass("noVirtualApp");</script>
         </#if>
 
 
