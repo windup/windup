@@ -78,7 +78,7 @@ public class CreateApplicationListReportRuleProvider extends AbstractRuleProvide
             {
                 applications.addItem(applicationReportModel);
                 if (ProjectService.SHARED_LIBS_UNIQUE_ID.equals(applicationReportModel.getProjectModel().getUniqueID()))
-                    relatedData.put("sharedLibsExists", applicationReportModel); // Instead of a boolean.
+                    relatedData.put("sharedLibsApplicationReport", applicationReportModel); // Used as kind of boolean in the template.
             }
         }
         relatedData.put("applications", applications);

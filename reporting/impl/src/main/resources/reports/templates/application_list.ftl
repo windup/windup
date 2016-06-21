@@ -190,7 +190,7 @@
 
         <!-- Apps -->
 
-        <#assign sharedLibsExists = reportModel.relatedResources["sharedLibsExists"]!?has_content >
+        <#assign sharedLibsExists = reportModel.relatedResources["sharedLibsApplicationReport"]!?has_content >
 
         <section class="apps">
             <#assign virtualAppExists = false>
