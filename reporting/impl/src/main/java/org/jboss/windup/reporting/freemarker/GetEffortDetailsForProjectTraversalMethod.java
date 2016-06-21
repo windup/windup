@@ -95,10 +95,8 @@ public class GetEffortDetailsForProjectTraversalMethod implements WindupFreeMark
         }
 
         // Get values for classification and hints.
-        projectModelTraversal.reset();
         Map<Integer, Integer> classificationEffortDetails =
                 classificationService.getMigrationEffortByPoints(projectModelTraversal, includeTags, excludeTags, recursive, false);
-        projectModelTraversal.reset();
         Map<Integer, Integer> hintEffortDetails =
                 inlineHintService.getMigrationEffortByPoints(projectModelTraversal, includeTags, excludeTags, recursive, false);
 
