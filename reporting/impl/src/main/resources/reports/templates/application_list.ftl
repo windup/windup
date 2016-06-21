@@ -195,6 +195,7 @@
         <section class="apps">
             <#assign virtualAppExists = false>
             <div class="real">
+                <#-- See CreateApplicationListReportRuleProvider -->
                 <#list reportModel.relatedResources.applications.list.iterator() as applicationReport>
                     <#if applicationReport.projectModel.projectType! != "VIRTUAL" >
                         <@applicationReportRenderer applicationReport/>
@@ -241,9 +242,14 @@
 
     </div> <!-- /.container-fluid -->
     <script src="reports/resources/js/jquery-1.10.1.min.js"></script>
+    <script src="reports/resources/js/windup-utils.js"></script>
     <script type="text/javascript">
         jQuery("#jiraFeedbackTriggerBottomLink").click(function(e) {
             displayFeedbackForm();
+        });
+
+        $("body.viewAppList .apps .real .appInfo").sortElements(function(a, b){
+            return $(a).find(".traits .fileName").first().text().trim() > $(b).find(".traits .fileName").first().text().trim() ? 1 : -1;
         });
     </script>
     <script src="reports/resources/js/bootstrap.min.js"></script>

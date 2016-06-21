@@ -102,14 +102,17 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest
 
         Assert.assertEquals(642, util.getTotalStoryPoints(MAIN_APP_FILENAME));
         Assert.assertEquals(590, util.getSharedStoryPoints(MAIN_APP_FILENAME));
+        Assert.assertEquals(52, util.getUniqueStoryPoints(MAIN_APP_FILENAME));
 
         Assert.assertEquals(642, util.getTotalStoryPoints(SECOND_APP_FILENAME));
         Assert.assertEquals(590, util.getSharedStoryPoints(SECOND_APP_FILENAME));
+        Assert.assertEquals(52, util.getUniqueStoryPoints(SECOND_APP_FILENAME));
 
         Assert.assertEquals(582, util.getTotalStoryPoints(THIRD_APP_FILENAME));
         Assert.assertEquals(582, util.getSharedStoryPoints(THIRD_APP_FILENAME));
+        Assert.assertEquals(0, util.getUniqueStoryPoints(THIRD_APP_FILENAME));
 
-        Assert.assertEquals(590, util.getTotalStoryPoints("Shared Libraries"));
+        Assert.assertEquals(590, util.getTotalStoryPoints("Modules Shared Across Multiple Applications"));
     }
 
     private void validateReportIndex(GraphContext graphContext)

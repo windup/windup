@@ -19,7 +19,7 @@ public class TestApplicationListUtil extends TestReportUtil
      */
     public int getTotalStoryPoints(String applicationName)
     {
-        return getEffortPoints(applicationName, "unique");
+        return getEffortPoints(applicationName, "total");
     }
 
     /**
@@ -29,6 +29,15 @@ public class TestApplicationListUtil extends TestReportUtil
     public int getSharedStoryPoints(String applicationName)
     {
         return getEffortPoints(applicationName, "shared");
+    }
+
+    /**
+     * Gets the unique story points for the given application name. This will return -1 if it
+     * could not find the story point information.
+     */
+    public int getUniqueStoryPoints(String applicationName)
+    {
+        return getEffortPoints(applicationName, "unique");
     }
 
     /**
