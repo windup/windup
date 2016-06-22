@@ -61,6 +61,9 @@ public class MavenizeRuleProvider extends AbstractRuleProvider
         .addRule()
         .perform(new GraphOperation() {
             public void perform(GraphRewrite event, EvaluationContext context) {
+                if (!isPerformMavenization(event.getGraphContext()))
+                    return;
+
                 GlobalBomModel bom = event.getGraphContext().getFramed().addVertex(null, GlobalBomModel.class);
                 ArchiveCoordinateModel jbossParent = event.getGraphContext().getFramed().addVertex(null, ArchiveCoordinateModel.class);
                 copyTo(JBOSS_PARENT, jbossParent);
@@ -95,6 +98,15 @@ public class MavenizeRuleProvider extends AbstractRuleProvider
         @Override
         public void perform(GraphRewrite event, EvaluationContext context, IdentifiedArchiveModel archive)
         {
+            if (!isPerformMavenization(event.getGraphContext()))
+                return;
+
+            if (archive.getCoordinate() == null)
+            {
+                LOG.info("Warning: archive.getCoordinate() is null: " + archive.toPrettyString());
+                return;
+            }
+
             LOG.info("Adding to global BOM: " + archive.getCoordinate().toPrettyString());
             // BOM
             GraphService<GlobalBomModel> bomServ = new GraphService<>(event.getGraphContext(), GlobalBomModel.class);
@@ -118,8 +130,7 @@ public class MavenizeRuleProvider extends AbstractRuleProvider
         @Override
         public void perform(GraphRewrite event, EvaluationContext evalContext, WindupConfigurationModel config)
         {
-            Map<String, Object> options = event.getGraphContext().getOptionMap();
-            if (Boolean.FALSE.equals((Boolean) options.get(MavenizeOption.NAME)))
+            if (!isPerformMavenization(event.getGraphContext()))
                 return;
 
             for (FileModel inputPath : config.getInputPaths())
@@ -143,4 +154,33 @@ public class MavenizeRuleProvider extends AbstractRuleProvider
         to.setPackaging(from.getPackaging());
     }
 
+    /**
+     * @return the value of the option with given name. null if the value was null.
+     * @throws IllegalStateException if the value is not Boolean.
+     */
+    public static Boolean getBooleanOption(GraphContext graphContext, String name)
+    {
+        Map<String, Object> options = graphContext.getOptionMap();
+        final Object value = options.get(name);
+        if ( value != null && !(value instanceof Boolean))
+            throw new IllegalStateException("Option value expected to be Boolean, but was: " + value.getClass());
+        return (Boolean) options.get(name);
+    }
+
+    /**
+     * @return the boolean value of the option with given name. Given default_ value if the value was null.
+     * @throws IllegalStateException if the value is not Boolean.
+     */
+    public static boolean getBooleanOption(GraphContext graphContext, String name, boolean default_)
+    {
+        Boolean val = getBooleanOption(graphContext, name);
+        if (val == null)
+            return default_;
+        return val;
+    }
+
+    private static boolean isPerformMavenization(GraphContext graphContext)
+    {
+        return getBooleanOption(graphContext, MavenizeOption.NAME, false);
+    }
 }
