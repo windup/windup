@@ -19,18 +19,18 @@
 -docencoding
 'UTF-8'
 -doctitle
-'Windup $VER Javadoc API'
+'Windup 2.6.0.Final Javadoc API'
 -footer
-'Windup $VER Javadoc'
+'Windup 2.6.0.Final Javadoc'
 -group
 'Windup Rules' 'org.jboss.windup.rules.*'
 -group
 'Windup Core' 'org.jboss.windup.*'
 -header
-'Windup $VER Javadoc'
+'Windup 2.6.0.Final Javadoc'
 -linkoffline
 'http://docs.oracle.com/javase/7/docs/api' '/home/jsightler/project/migration/windup-release/windup_tmp_dir/windup/target/javadoc-bundle-options'
 -use
 -version
 -windowtitle
-'Windup $VER Javadoc API'
+'Windup 2.6.0.Final Javadoc API'
