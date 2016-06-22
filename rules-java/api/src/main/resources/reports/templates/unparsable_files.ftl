@@ -10,7 +10,7 @@
         <div class="panel-heading">
             <h3 class="panel-title">${subProject.rootFileModel.prettyPath?html}</h3>
         </div>
-        <table class="table" id="unparsableFiles">
+        <table class="table unparsableFiles">
             <#items as file>
             <tr>
                 <td>
