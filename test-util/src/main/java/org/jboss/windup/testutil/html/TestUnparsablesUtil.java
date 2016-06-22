@@ -15,14 +15,23 @@ public class TestUnparsablesUtil extends TestReportUtil
     /**
      * Checks that a Hibernate entity is listed with the given entity classname and tablename
      */
-    public boolean checkUnparsableFileInReport(String fileName, String path, String messageContains)
+    public boolean checkUnparsableFileInReport(String sectionName, String fileName)
     {
-        WebElement table = getDriver().findElement(By.id("unparsableFiles"));
-        if (table == null)
+        List<WebElement> tables = getDriver().findElements(By.className("unparsableFiles"));
+        if (tables == null || tables.isEmpty())
         {
-            throw new CheckFailedException("Can't find the table #unparsableFiles");
+            throw new CheckFailedException("Can't find the table unparsableFiles");
         }
-        return checkStringInRows(table, fileName);
+
+        for (WebElement table : tables)
+        {
+            WebElement headingElement = table.findElement(By.xpath("..")).findElement(By.className("panel-title"));
+            if (headingElement.getText().trim().equals(sectionName))
+            {
+                return checkStringInRows(table, fileName);
+            }
+        }
+        return false;
     }
 
 
