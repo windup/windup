@@ -4,6 +4,7 @@ import java.util.Collection;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.config.AbstractConfigurationOption;
 import org.jboss.windup.config.InputType;
 import org.jboss.windup.config.ValidationResult;
@@ -74,6 +75,9 @@ public class SourceOption extends AbstractConfigurationOption
         {
             for (Object value : (Iterable<?>) values)
             {
+                if (value instanceof String && ((String) value).contains(":"))
+                    value = StringUtils.substringBefore((String)value, ":");
+
                 if (!getAvailableValues().contains(value))
                     return new ValidationResult(ValidationResult.Level.ERROR,
                                 NAME + " value (" + value + ") not found, must be one of: " + getAvailableValues());

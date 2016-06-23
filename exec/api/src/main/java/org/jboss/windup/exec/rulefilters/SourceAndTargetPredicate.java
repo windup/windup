@@ -2,21 +2,30 @@ package org.jboss.windup.exec.rulefilters;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.forge.furnace.util.Predicate;
+import org.jboss.forge.furnace.versions.VersionRange;
+import org.jboss.forge.furnace.versions.Versions;
 import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.metadata.TechnologyReference;
 
 /**
+ * Provides filtering of the {@link RuleProvider}s by source and target.
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public class SourceAndTargetPredicate implements Predicate<RuleProvider>
 {
-    private final Set<String> sources;
-    private final Set<String> targets;
+    private final Map<String, VersionRange> sources;
+    private final Map<String, VersionRange> targets;
 
+    /**
+     * Creates a new instance with the given set of source and target filters.
+     */
     public SourceAndTargetPredicate(Collection<String> sources, Collection<String> targets)
     {
         this.sources = initSet(sources);
@@ -32,7 +41,7 @@ public class SourceAndTargetPredicate implements Predicate<RuleProvider>
         return (techMatches(sources, providerSources) && techMatches(targets, providerTargets));
     }
 
-    private boolean techMatches(Set<String> techs, Set<TechnologyReference> technologyReferences)
+    private boolean techMatches(Map<String, VersionRange> techs, Set<TechnologyReference> technologyReferences)
     {
         if (techs.isEmpty() || technologyReferences.isEmpty())
         {
@@ -41,25 +50,44 @@ public class SourceAndTargetPredicate implements Predicate<RuleProvider>
 
         for (TechnologyReference technologyReference : technologyReferences)
         {
-            if (techs.contains(technologyReference.getId()))
+            if (techs.containsKey(technologyReference.getId()))
             {
-                return true;
+                VersionRange expectedRange = techs.get(technologyReference.getId());
+                if (expectedRange == null)
+                    return true;
+
+                return VersionRangeUtil.versionRangesOverlap(expectedRange, technologyReference.getVersionRange());
             }
         }
 
         return false;
     }
 
-    private Set<String> initSet(Collection<String> values)
+    private Map<String, VersionRange> initSet(Collection<String> values)
     {
         if (values == null)
         {
-            return Collections.emptySet();
+            return Collections.emptyMap();
         }
-        else
+
+        Map<String, VersionRange> result = new HashMap<>();
+        for (String value : values)
         {
-            return new HashSet<>(values);
+            if (value.contains(":"))
+            {
+                String tech = StringUtils.substringBefore(value, ":");
+                String versionRangeString = StringUtils.substringAfter(value, ":");
+                if (!versionRangeString.matches("^[(\\[].*[)\\]]"))
+                    versionRangeString = "[" + versionRangeString + "]";
+
+                VersionRange versionRange = Versions.parseVersionRange(versionRangeString);
+                result.put(tech, versionRange);
+            } else
+            {
+                result.put(value, null);
+            }
         }
+        return result;
     }
 
 
