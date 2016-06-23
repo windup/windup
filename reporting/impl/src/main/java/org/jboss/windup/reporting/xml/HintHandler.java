@@ -66,7 +66,7 @@ public class HintHandler implements ElementHandler<Hint>
             {
                 if (child.getNodeName().equals("message"))
                 {
-                    messageBuilder.append(handlerManager.processElement(child));
+                    messageBuilder.append((String)handlerManager.processElement(child));
                 }
             }
             message = messageBuilder.toString();
