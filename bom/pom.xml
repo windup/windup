@@ -3,8 +3,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <properties>
-        <version.forge>2.20.2.Final</version.forge>
-        <version.furnace>2.22.10.Final</version.furnace>
+        <version.forge>3.2.2.Final</version.forge>
+        <version.furnace>2.23.5.Final</version.furnace>
         <version.nexus.index>6.2</version.nexus.index>
     </properties>
 
@@ -12,7 +12,7 @@
     <parent>
         <groupId>org.jboss</groupId>
         <artifactId>jboss-parent</artifactId>
-        <version>19</version>
+        <version>20</version>
         <relativePath />
     </parent>
 
