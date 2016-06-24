@@ -53,10 +53,7 @@ public class SourceAndTargetPredicate implements Predicate<RuleProvider>
             if (techs.containsKey(technologyReference.getId()))
             {
                 VersionRange expectedRange = techs.get(technologyReference.getId());
-                if (expectedRange == null)
-                    return true;
-
-                return VersionRangeUtil.versionRangesOverlap(expectedRange, technologyReference.getVersionRange());
+                return technologyReference.versionRangesOverlap(expectedRange);
             }
         }
 
@@ -73,19 +70,9 @@ public class SourceAndTargetPredicate implements Predicate<RuleProvider>
         Map<String, VersionRange> result = new HashMap<>();
         for (String value : values)
         {
-            if (value.contains(":"))
-            {
-                String tech = StringUtils.substringBefore(value, ":");
-                String versionRangeString = StringUtils.substringAfter(value, ":");
-                if (!versionRangeString.matches("^[(\\[].*[)\\]]"))
-                    versionRangeString = "[" + versionRangeString + "]";
-
-                VersionRange versionRange = Versions.parseVersionRange(versionRangeString);
-                result.put(tech, versionRange);
-            } else
-            {
-                result.put(value, null);
-            }
+            TechnologyReference reference = TechnologyReference.parseFromIDAndVersion(value);
+            result.put(reference.getId(), reference.getVersionRange());
+            result.put(value, null);
         }
         return result;
     }

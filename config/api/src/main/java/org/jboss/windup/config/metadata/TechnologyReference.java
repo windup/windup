@@ -1,5 +1,7 @@
 package org.jboss.windup.config.metadata;
 
+import org.apache.commons.lang3.StringUtils;
+import org.jboss.forge.furnace.versions.MultipleVersionRange;
 import org.jboss.forge.furnace.versions.VersionRange;
 import org.jboss.forge.furnace.versions.Versions;
 import org.jboss.windup.graph.model.TechnologyReferenceModel;
@@ -47,6 +49,25 @@ public class TechnologyReference
     }
 
     /**
+     * Parses a {@link TechnologyReference} from a string that is formatted as either
+     * "id" or "id:versionRange".
+     */
+    public static TechnologyReference parseFromIDAndVersion(String idAndVersion)
+    {
+        if (idAndVersion.contains(":"))
+        {
+            String tech = StringUtils.substringBefore(idAndVersion, ":");
+            String versionRangeString = StringUtils.substringAfter(idAndVersion, ":");
+            if (!versionRangeString.matches("^[(\\[].*[)\\]]"))
+                versionRangeString = "[" + versionRangeString + "]";
+
+            VersionRange versionRange = Versions.parseVersionRange(versionRangeString);
+            return new TechnologyReference(tech, versionRange);
+        }
+        return new TechnologyReference(idAndVersion);
+    }
+
+    /**
      * Get the name/ID of this {@link TechnologyReference}.
      */
     public String getId()
@@ -60,6 +81,49 @@ public class TechnologyReference
     public VersionRange getVersionRange()
     {
         return versionRange;
+    }
+
+    /**
+     * Returns true if the other {@link TechnologyReference} has the same technology id and the two version ranges overlap.
+     */
+    public boolean matches(TechnologyReference other)
+    {
+        return StringUtils.equals(getId(), other.getId()) && versionRangesOverlap(other.getVersionRange());
+    }
+
+    /**
+     * Takes the given {@link VersionRange} objects and returns true if there is any overlap between the two
+     * ranges.
+     *
+     * If either is null, then it is treated as overlapping.
+     */
+    public boolean versionRangesOverlap(VersionRange otherRange)
+    {
+        if (this.getVersionRange() == null || otherRange == null)
+            return true;
+
+        /*
+         * FIXME HACK - The code in MultipleVersionRange works pretty well for this calculation, so we are reusing that.
+         *
+         * Some of the other range intersection algorithms have design flaws that make them return results incorrectly.
+         *
+         * This hack needs an extensive unit test to insure that it retains the behavior that we expect.
+         */
+        MultipleVersionRange range1Multiple;
+        if (getVersionRange() instanceof MultipleVersionRange)
+            range1Multiple = (MultipleVersionRange)getVersionRange();
+        else
+            range1Multiple = new MultipleVersionRange(getVersionRange());
+
+        try
+        {
+            VersionRange intersection = range1Multiple.getIntersection(otherRange);
+            return intersection != null && !intersection.isEmpty();
+        } catch (Throwable t)
+        {
+            // This generally only occurs if there was no intersection
+            return false;
+        }
     }
 
     @Override
@@ -97,5 +161,47 @@ public class TechnologyReference
         else if (!versionRange.equals(other.versionRange))
             return false;
         return true;
+    }
+
+    /**
+     * This provides a parsable version string based upon the current {@link VersionRange}. If the version
+     * range is null, this will return null.
+     */
+    public String getVersionRangeAsString()
+    {
+        if (this.versionRange == null)
+            return null;
+
+        String rangeString = this.versionRange.toString();
+
+        /**
+         * FIXME
+         *
+         * Workaround a bug in Forge that causes VersionRange to sometimes return a string like [7,7] when
+         * it should only return "[7]". This seems to be an issue with the way Versions.parseVersionRange()
+         * works.
+         *
+         * See also: FORGE-2667
+         */
+        if (StringUtils.startsWith(rangeString, "[") &&
+            StringUtils.endsWith(rangeString, "]") &&
+            StringUtils.countMatches(rangeString, ",") == 1)
+        {
+            String firstVersion = StringUtils.substringBefore(rangeString, ",").substring(1);
+            String secondString = StringUtils.stripEnd(StringUtils.substringAfter(rangeString, ","), "]");
+            if (StringUtils.equals(firstVersion, secondString))
+                return "[" + firstVersion + "]";
+            else
+                return rangeString;
+        }
+        return rangeString;
+    }
+
+    @Override
+    public String toString()
+    {
+        String rangeString = getVersionRangeAsString();
+        String range = rangeString== null ? "" : ":" + rangeString;
+        return id + range;
     }
 }

@@ -49,7 +49,6 @@ public abstract class MetadataTechnologyHandler implements ElementHandler<Techno
             }
         }
 
-        TechnologyReference reference = new TechnologyReference(id, versionRange);
-        return reference;
+        return new TechnologyReference(id, versionRange);
     }
 }
