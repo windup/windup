@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.jboss</groupId>
         <artifactId>jboss-parent</artifactId>
-        <version>19</version>
+        <version>20</version>
     </parent>
 
     <groupId>org.jboss.windup</groupId>
@@ -17,8 +17,8 @@
     <description>Migration Tools</description>
 
     <properties>
-        <version.forge>2.20.2.Final</version.forge>
-        <version.furnace>2.22.10.Final</version.furnace>
+        <version.forge>3.2.2.Final </version.forge>
+        <version.furnace>2.23.5.Final</version.furnace>
         <version.titangraph>0.5.4</version.titangraph>
         <version.tinkerpop.blueprints>2.5.0</version.tinkerpop.blueprints>
         <version.freemarker>2.3.23</version.freemarker>
