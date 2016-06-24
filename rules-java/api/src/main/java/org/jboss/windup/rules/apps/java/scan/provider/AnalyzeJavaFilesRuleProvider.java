@@ -19,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -155,8 +156,12 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                     if (technologyMetadata != null && technologyMetadata instanceof JavaTechnologyMetadata)
                     {
                         JavaTechnologyMetadata javaMetadata = (JavaTechnologyMetadata) technologyMetadata;
-                        for (Path additionalClasspath : javaMetadata.getAdditionalClasspaths())
-                            libraryPaths.add(additionalClasspath.toString());
+                        libraryPaths.addAll(
+                                javaMetadata
+                                        .getAdditionalClasspaths()
+                                        .stream()
+                                        .map(Path::toString)
+                                        .collect(Collectors.toList()));
                     }
                 }
 
