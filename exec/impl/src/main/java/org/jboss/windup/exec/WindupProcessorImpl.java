@@ -7,7 +7,9 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -23,6 +25,8 @@ import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.RuleSubset;
 import org.jboss.windup.config.loader.RuleLoader;
 import org.jboss.windup.config.metadata.RuleProviderRegistry;
+import org.jboss.windup.config.metadata.TechnologyReference;
+import org.jboss.windup.config.metadata.TechnologyReferenceTransformer;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.exec.configuration.options.ExcludeTagsOption;
 import org.jboss.windup.exec.configuration.options.IncludeTagsOption;
@@ -43,12 +47,10 @@ import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Configuration;
-import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.config.RuleVisit;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.param.DefaultParameterValueStore;
 import org.ocpsoft.rewrite.param.ParameterValueStore;
-import org.ocpsoft.rewrite.util.Visitor;
 
 /**
  * Loads and executes the Rules from RuleProviders according to given WindupConfiguration.
@@ -95,7 +97,7 @@ public class WindupProcessorImpl implements WindupProcessor
         configurationModel.setOutputPath(getFileModel(context, configuration.getOutputDirectory()));
         configurationModel.setOfflineMode(configuration.isOffline());
         configurationModel.setExportingCSV(configuration.isExportingCSV());
-        configurationModel.setKeepWorkDirectories((Boolean) configuration.getOptionValue(KeepWorkDirsOption.NAME));
+        configurationModel.setKeepWorkDirectories(configuration.getOptionValue(KeepWorkDirsOption.NAME));
         for (Path path : configuration.getAllUserRulesDirectories())
         {
             System.out.println("Using user rules dir: " + path);
@@ -112,21 +114,22 @@ public class WindupProcessorImpl implements WindupProcessor
             configurationModel.addUserIgnorePath(getFileModel(context, path));
         }
 
-        addSourceAndTargetInformation(context, configuration, configurationModel);
-        configureRuleProviderAndTagFilters(configuration);
-
-        RuleProviderRegistry providerRegistry = ruleLoader.loadConfiguration(context, configuration.getRuleProviderFilter());
-        Configuration rules = providerRegistry.getConfiguration();
-
         List<RuleLifecycleListener> listeners = new ArrayList<>();
         for (RuleLifecycleListener listener : this.listeners)
         {
             listeners.add(listener);
         }
+
+        final GraphRewrite event = new GraphRewrite(listeners, context);
+        configureRuleProviderAndTagFilters(event, configuration);
+        addSourceAndTargetInformation(event, configuration, configurationModel);
+
+        RuleProviderRegistry providerRegistry = ruleLoader.loadConfiguration(context, configuration.getRuleProviderFilter());
+        Configuration rules = providerRegistry.getConfiguration();
+
         if (configuration.getProgressMonitor() != null)
             listeners.add(new DefaultRuleLifecycleListener(configuration.getProgressMonitor(), rules));
 
-        final GraphRewrite event = new GraphRewrite(listeners, context);
         event.getRewriteContext().put(RuleProviderRegistry.class, providerRegistry);
 
         RuleSubset ruleSubset = RuleSubset.create(rules);
@@ -137,16 +140,10 @@ public class WindupProcessorImpl implements WindupProcessor
             ruleSubset.addLifecycleListener(listener);
         }
 
-        new RuleVisit(ruleSubset).accept(new Visitor<Rule>()
+        new RuleVisit(ruleSubset).accept((rule) ->
         {
-            @Override
-            public void visit(Rule r)
-            {
-                if (r instanceof PreRulesetEvaluation)
-                {
-                    ((PreRulesetEvaluation) r).preRulesetEvaluation(event);
-                }
-            }
+            if (rule instanceof PreRulesetEvaluation)
+                ((PreRulesetEvaluation) rule).preRulesetEvaluation(event);
         });
 
         ruleSubset.perform(event, createEvaluationContext());
@@ -158,35 +155,39 @@ public class WindupProcessorImpl implements WindupProcessor
         ExecutionStatistics.get().reset();
     }
 
-    private void addSourceAndTargetInformation(GraphContext context, WindupConfiguration configuration, WindupConfigurationModel configurationModel)
+    private void addSourceAndTargetInformation(GraphRewrite event, WindupConfiguration configuration, WindupConfigurationModel configurationModel)
     {
+        @SuppressWarnings("unchecked")
         Collection<String> sources = (Collection<String>) configuration.getOptionMap().get(SourceOption.NAME);
+        @SuppressWarnings("unchecked")
         Collection<String> targets = (Collection<String>) configuration.getOptionMap().get(TargetOption.NAME);
 
-        GraphService<TechnologyReferenceModel> technologyReferenceService = new GraphService<>(context, TechnologyReferenceModel.class);
+        GraphService<TechnologyReferenceModel> technologyReferenceService = new GraphService<>(event.getGraphContext(), TechnologyReferenceModel.class);
+        Function<String, TechnologyReferenceModel> createReferenceModel = (techID) -> {
+            TechnologyReference reference = TechnologyReference.parseFromIDAndVersion(techID);
+            TechnologyReferenceModel technologyReferenceModel = technologyReferenceService.create();
+            technologyReferenceModel.setTechnologyID(reference.getId());
+            technologyReferenceModel.setVersionRange(reference.getVersionRangeAsString());
+            return technologyReferenceModel;
+        };
+
         if (sources != null)
         {
-            for (String sourceID : sources)
-            {
-                TechnologyReferenceModel technologyReferenceModel = technologyReferenceService.create();
-                technologyReferenceModel.setTechnologyID(sourceID);
-                configurationModel.addSourceTechnology(technologyReferenceModel);
-            }
+            sources.forEach((sourceID) -> {
+                configurationModel.addSourceTechnology(createReferenceModel.apply(sourceID));
+            });
         }
 
         if (targets != null)
         {
-            for (String targetID : targets)
-            {
-                TechnologyReferenceModel technologyReferenceModel = technologyReferenceService.create();
-                technologyReferenceModel.setTechnologyID(targetID);
-                configurationModel.addTargetTechnology(technologyReferenceModel);
-            }
+            targets.forEach((targetID) -> {
+                configurationModel.addTargetTechnology(createReferenceModel.apply(targetID));
+            });
         }
     }
 
     @SuppressWarnings("unchecked")
-    private void configureRuleProviderAndTagFilters(WindupConfiguration config)
+    private void configureRuleProviderAndTagFilters(GraphRewrite event, WindupConfiguration config)
     {
         Collection<String> includeTags = (Collection<String>) config.getOptionMap().get(IncludeTagsOption.NAME);
         Collection<String> excludeTags = (Collection<String>) config.getOptionMap().get(ExcludeTagsOption.NAME);
@@ -198,13 +199,50 @@ public class WindupProcessorImpl implements WindupProcessor
         if(sources != null && sources.isEmpty()) sources = null;
         if(targets != null && targets.isEmpty()) targets = null;
 
-
-
         if (includeTags != null || excludeTags != null || sources != null || targets != null)
         {
             Predicate<RuleProvider> configuredPredicate = config.getRuleProviderFilter();
 
             final TaggedRuleProviderPredicate tagPredicate = new TaggedRuleProviderPredicate(includeTags, excludeTags);
+
+            List<TechnologyReferenceTransformer> transformers = TechnologyReferenceTransformer.getTransformers(event);
+
+        /*
+         * Create a Map based upon the ID of the original to be transformed.
+         */
+        Map<String, List<TechnologyReferenceTransformer>> transformerMap = transformers
+            .stream()
+            .collect(Collectors.toMap(
+                // This is the Map key
+                transformer -> transformer.getOriginal().getId(),
+
+                // Create a List for each entry
+                (transformer) -> {
+                    List<TechnologyReferenceTransformer> list = new ArrayList<>();
+                    list.add(transformer);
+                    return list;
+                },
+
+                // Merge the list if there are multiple entries for the same id
+                (old, latest) -> {
+                    old.addAll(latest);
+                    return old;
+                }));
+
+            // Use the tech transformers to transform the IDs
+            Function<String, String> transformTechFunction = (technologyID) -> {
+                if (transformerMap.containsKey(technologyID)) {
+                    for (TechnologyReferenceTransformer transformer : transformerMap.get(TechnologyReference.parseFromIDAndVersion(technologyID).getId()))
+                        technologyID = transformer.transform(technologyID).toString();
+                }
+                return technologyID;
+            };
+
+            sources = (sources == null) ? null : sources.stream().map(transformTechFunction).collect(Collectors.toSet());
+            config.setOptionValue(SourceOption.NAME, sources);
+            targets = (targets== null) ? null : targets.stream().map(transformTechFunction).collect(Collectors.toSet());
+            config.setOptionValue(TargetOption.NAME, targets);
+
             final SourceAndTargetPredicate sourceAndTargetPredicate = new SourceAndTargetPredicate(sources, targets);
 
             Predicate<RuleProvider> providerFilter = new AndPredicate(tagPredicate, sourceAndTargetPredicate);

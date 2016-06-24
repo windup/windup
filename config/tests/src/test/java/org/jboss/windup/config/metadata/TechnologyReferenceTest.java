@@ -1,15 +1,14 @@
-package org.jboss.windup.exec.test;
+package org.jboss.windup.config.metadata;
 
 import org.jboss.forge.furnace.versions.VersionRange;
 import org.jboss.forge.furnace.versions.Versions;
-import org.jboss.windup.exec.rulefilters.VersionRangeUtil;
 import org.junit.Assert;
 import org.junit.Test;
 
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class VersionRangeUtilTest
+public class TechnologyReferenceTest
 {
 
     @Test
@@ -17,8 +16,9 @@ public class VersionRangeUtilTest
     {
         VersionRange versionRange1 = Versions.parseVersionRange("(10,20)");
         VersionRange versionRange2 = Versions.parseVersionRange("(12,17]");
+        TechnologyReference technologyReference = new TechnologyReference("tech", versionRange1);
 
-        boolean overlap = VersionRangeUtil.versionRangesOverlap(versionRange1, versionRange2);
+        boolean overlap = technologyReference.versionRangesOverlap(versionRange2);
         Assert.assertTrue(overlap);
     }
 
@@ -27,8 +27,9 @@ public class VersionRangeUtilTest
     {
         VersionRange versionRange1 = Versions.parseVersionRange("[10,20)");
         VersionRange versionRange2 = Versions.parseVersionRange("[10,17]");
+        TechnologyReference technologyReference = new TechnologyReference("tech", versionRange1);
 
-        boolean overlap = VersionRangeUtil.versionRangesOverlap(versionRange1, versionRange2);
+        boolean overlap = technologyReference.versionRangesOverlap(versionRange2);
         Assert.assertTrue(overlap);
     }
 
@@ -37,8 +38,9 @@ public class VersionRangeUtilTest
     {
         VersionRange versionRange1 = Versions.parseVersionRange("[10]");
         VersionRange versionRange2 = Versions.parseVersionRange("(10,17]");
+        TechnologyReference technologyReference = new TechnologyReference("tech", versionRange1);
 
-        boolean overlap = VersionRangeUtil.versionRangesOverlap(versionRange1, versionRange2);
+        boolean overlap = technologyReference.versionRangesOverlap(versionRange2);
         Assert.assertFalse(overlap);
     }
 
@@ -46,10 +48,11 @@ public class VersionRangeUtilTest
     public void testVersionRangeIntersectionSingleVersionInclusiveBegin()
     {
         VersionRange versionRange1 = Versions.parseVersionRange("[10]");
-        VersionRange versionRange2 = Versions.parseVersionRange("(10,17]");
+        VersionRange versionRange2 = Versions.parseVersionRange("[10,17]");
+        TechnologyReference technologyReference = new TechnologyReference("tech", versionRange1);
 
-        boolean overlap = VersionRangeUtil.versionRangesOverlap(versionRange1, versionRange2);
-        Assert.assertFalse(overlap);
+        boolean overlap = technologyReference.versionRangesOverlap(versionRange2);
+        Assert.assertTrue(overlap);
     }
 
     @Test
@@ -57,8 +60,9 @@ public class VersionRangeUtilTest
     {
         VersionRange versionRange1 = Versions.parseVersionRange("(10,20)");
         VersionRange versionRange2 = Versions.parseVersionRange("(8,9]");
+        TechnologyReference technologyReference = new TechnologyReference("tech", versionRange1);
 
-        boolean overlap = VersionRangeUtil.versionRangesOverlap(versionRange1, versionRange2);
+        boolean overlap = technologyReference.versionRangesOverlap(versionRange2);
         Assert.assertFalse(overlap);
     }
 
@@ -67,8 +71,9 @@ public class VersionRangeUtilTest
     {
         VersionRange versionRange1 = Versions.parseVersionRange("(10,20)");
         VersionRange versionRange2 = Versions.parseVersionRange("(18,22)");
+        TechnologyReference technologyReference = new TechnologyReference("tech", versionRange1);
 
-        boolean overlap = VersionRangeUtil.versionRangesOverlap(versionRange1, versionRange2);
+        boolean overlap = technologyReference.versionRangesOverlap(versionRange2);
         Assert.assertTrue(overlap);
     }
 
@@ -77,8 +82,9 @@ public class VersionRangeUtilTest
     {
         VersionRange versionRange1 = Versions.parseVersionRange("(10,20)");
         VersionRange versionRange2 = Versions.parseVersionRange("(18,22)");
+        TechnologyReference technologyReference = new TechnologyReference("tech", versionRange2);
 
-        boolean overlap = VersionRangeUtil.versionRangesOverlap(versionRange2, versionRange1);
+        boolean overlap = technologyReference.versionRangesOverlap(versionRange1);
         Assert.assertTrue(overlap);
     }
 
@@ -87,8 +93,9 @@ public class VersionRangeUtilTest
     {
         VersionRange versionRange1 = Versions.parseVersionRange("(10,20)");
         VersionRange versionRange2 = Versions.parseVersionRange("(7,13)");
+        TechnologyReference technologyReference = new TechnologyReference("tech", versionRange1);
 
-        boolean overlap = VersionRangeUtil.versionRangesOverlap(versionRange1, versionRange2);
+        boolean overlap = technologyReference.versionRangesOverlap(versionRange2);
         Assert.assertTrue(overlap);
     }
 
@@ -97,8 +104,9 @@ public class VersionRangeUtilTest
     {
         VersionRange versionRange1 = Versions.parseVersionRange("(10,20)");
         VersionRange versionRange2 = Versions.parseVersionRange("(7,13)");
+        TechnologyReference technologyReference = new TechnologyReference("tech", versionRange1);
 
-        boolean overlap = VersionRangeUtil.versionRangesOverlap(versionRange2, versionRange1);
+        boolean overlap = technologyReference.versionRangesOverlap(versionRange2);
         Assert.assertTrue(overlap);
     }
 }

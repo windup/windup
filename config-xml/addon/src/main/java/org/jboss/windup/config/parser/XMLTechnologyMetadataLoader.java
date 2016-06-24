@@ -25,8 +25,6 @@ import org.jboss.windup.util.file.FileVisit;
  */
 public class XMLTechnologyMetadataLoader implements TechnologyMetadataLoader
 {
-    private static final Logger LOG = Logging.get(XMLTechnologyMetadataLoader.class);
-
     private static final String XML_EXTENSION = "\\.technology\\.metadata\\.xml";
 
     @Inject
