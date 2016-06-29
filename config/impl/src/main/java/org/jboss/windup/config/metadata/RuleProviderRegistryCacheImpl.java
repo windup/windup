@@ -1,5 +1,6 @@
 package org.jboss.windup.config.metadata;
 
+import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.loader.RuleLoader;
 import org.jboss.windup.graph.GraphContext;
@@ -16,9 +17,12 @@ import java.nio.file.Path;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
@@ -44,6 +48,7 @@ public class RuleProviderRegistryCacheImpl implements RuleProviderRegistryCache
 
     private Set<Path> userRulesPaths = new LinkedHashSet<>();
 
+    private List<TechnologyReferenceTransformer> cachedTransformers;
     private RuleProviderRegistry cachedRegistry;
     private long cacheRefreshTime;
 
@@ -71,7 +76,7 @@ public class RuleProviderRegistryCacheImpl implements RuleProviderRegistryCache
     @Override
     public Set<String> getAvailableSourceTechnologies()
     {
-        Set<String> sourceOptions = new HashSet<>();
+        Set<TechnologyReference> sourceOptions = new HashSet<>();
         RuleProviderRegistry registry = getRuleProviderRegistry();
         if (registry == null)
             return Collections.emptySet();
@@ -80,16 +85,18 @@ public class RuleProviderRegistryCacheImpl implements RuleProviderRegistryCache
         {
             for (TechnologyReference technologyReference : provider.getMetadata().getSourceTechnologies())
             {
-                sourceOptions.add(technologyReference.getId());
+                sourceOptions.add(technologyReference);
             }
         }
-        return sourceOptions;
+        addTransformers(sourceOptions);
+
+        return sourceOptions.stream().map(TechnologyReference::getId).collect(Collectors.toSet());
     }
 
     @Override
     public Set<String> getAvailableTargetTechnologies()
     {
-        Set<String> targetOptions = new HashSet<>();
+        Set<TechnologyReference> targetOptions = new HashSet<>();
         RuleProviderRegistry registry = getRuleProviderRegistry();
         if (registry == null)
             return Collections.emptySet();
@@ -98,10 +105,34 @@ public class RuleProviderRegistryCacheImpl implements RuleProviderRegistryCache
         {
             for (TechnologyReference technologyReference : provider.getMetadata().getTargetTechnologies())
             {
-                targetOptions.add(technologyReference.getId());
+                targetOptions.add(technologyReference);
             }
         }
-        return targetOptions;
+        addTransformers(targetOptions);
+
+        return targetOptions.stream().map(TechnologyReference::getId).collect(Collectors.toSet());
+    }
+
+    private void addTransformers(Set<TechnologyReference> techs)
+    {
+        techs.addAll(getTechnologyTransformers()
+                .stream()
+
+                // Only include it if the target of the transformation will match one of the items
+                //   already in the list.
+                .filter(transformer -> {
+                    for (TechnologyReference originalTech : techs)
+                    {
+                        if (originalTech.matches(transformer.getTarget()))
+                        {
+                            return true;
+                        }
+                    }
+                    return false;
+                })
+
+                .map(TechnologyReferenceTransformer::getOriginal)
+                .collect(Collectors.toList()));
     }
 
     @Override
@@ -138,6 +169,17 @@ public class RuleProviderRegistryCacheImpl implements RuleProviderRegistryCache
     @Override
     public RuleProviderRegistry getRuleProviderRegistry(GraphContext graphContext)
     {
+        initCaches(graphContext);
+        return this.cachedRegistry;
+    }
+
+    private List<TechnologyReferenceTransformer> getTechnologyTransformers()
+    {
+        return this.cachedTransformers;
+    }
+
+    private void initCaches(GraphContext graphContext)
+    {
         WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(graphContext);
         FileModel windupRulesPath = new FileService(graphContext).createByFilePath(PathUtil.getWindupRulesDir().toString());
         FileModel userRulesPath = new FileService(graphContext).createByFilePath(PathUtil.getUserRulesDir().toString());
@@ -161,8 +203,9 @@ public class RuleProviderRegistryCacheImpl implements RuleProviderRegistryCache
         }
 
         this.cachedRegistry = ruleLoader.loadConfiguration(graphContext, null);
+        GraphRewrite event = new GraphRewrite(graphContext);
+        this.cachedTransformers = TechnologyReferenceTransformer.getTransformers(event);
         this.cacheRefreshTime = System.currentTimeMillis();
-        return this.cachedRegistry;
     }
 
     private boolean cacheValid()
