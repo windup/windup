@@ -11,8 +11,8 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.ProjectService;
+import org.jboss.windup.graph.service.Service;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.jboss.windup.reporting.model.MigrationIssuesReportModel;
@@ -90,7 +90,7 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest
 
     private void validateApplicationList(GraphContext graphContext)
     {
-        GraphService<ReportModel> service = graphContext.service(ReportModel.class);
+        Service<ReportModel> service = graphContext.service(ReportModel.class);
         ReportModel report = service.getUniqueByProperty(ReportModel.TEMPLATE_PATH, CreateApplicationListReportRuleProvider.TEMPLATE_PATH);
         Assert.assertNotNull(report);
 
@@ -191,7 +191,7 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest
 
     private Path getReportIndex(GraphContext graphContext, String applicationFilename)
     {
-        GraphService<ApplicationReportModel> service = graphContext.service(ApplicationReportModel.class);
+        Service<ApplicationReportModel> service = graphContext.service(ApplicationReportModel.class);
         Iterable<ApplicationReportModel> reports = service.findAllByProperty(ReportModel.TEMPLATE_PATH,
                 CreateReportIndexRuleProvider.TEMPLATE);
 
@@ -216,7 +216,7 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest
 
     private Path getDependencyReportPath(GraphContext graphContext)
     {
-        GraphService<ApplicationReportModel> service = graphContext.service(ApplicationReportModel.class);
+        Service<ApplicationReportModel> service = graphContext.service(ApplicationReportModel.class);
         Iterable<ApplicationReportModel> reports = service.findAllByProperty(ReportModel.TEMPLATE_PATH,
                     CreateDependencyReportRuleProvider.TEMPLATE);
         for (ApplicationReportModel report : reports)

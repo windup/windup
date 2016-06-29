@@ -472,6 +472,12 @@ public class GraphContextImpl implements GraphContext
         return service(clazz).create();
     }
 
+    @Override
+    public void commit()
+    {
+        getGraph().getBaseGraph().commit();
+    }
+
     private class IndexData
     {
         private final String propertyName;

@@ -11,9 +11,8 @@ import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.DuplicateArchiveModel;
-import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.graph.service.Service;
 import org.jboss.windup.rules.apps.java.archives.model.IgnoredArchiveModel;
 import org.jboss.windup.rules.apps.java.scan.operation.UnzipArchiveToOutputFolder;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -100,7 +99,7 @@ public class UnzipArchivesToOutputRuleProvider extends AbstractRuleProvider
              * Essentially this will replace the canonical Archive vertex with a vertex that points back to the
              * single canonical source for this archive.
              */
-            GraphService<DuplicateArchiveModel> duplicateArchiveService = event.getGraphContext().service(DuplicateArchiveModel.class);
+            Service<DuplicateArchiveModel> duplicateArchiveService = event.getGraphContext().service(DuplicateArchiveModel.class);
             DuplicateArchiveModel duplicateArchive = duplicateArchiveService.create();
             duplicateArchive.setCanonicalArchive(canonicalArchive);
             duplicateArchive.setSHA1Hash(canonicalArchive.getSHA1Hash());

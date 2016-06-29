@@ -30,6 +30,7 @@ import org.jboss.windup.graph.frames.TypeAwareFramedGraphQuery;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.FileService;
+import org.jboss.windup.graph.service.Service;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -63,7 +64,6 @@ import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.util.wrappers.event.EventGraph;
 import com.tinkerpop.frames.FramedGraph;
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.graph.service.GraphService;
 
 /**
  * This tests whether or not the automatic insertion of progress tracking and commit operations is handled correctly.
@@ -547,7 +547,7 @@ public class IterationAutomicCommitTest
 
 
         @Override
-        public <T extends WindupVertexFrame> GraphService<T> service(Class<T> clazz)
+        public <T extends WindupVertexFrame> Service<T> service(Class<T> clazz)
         {
             return delegate.service(clazz);
         }
@@ -571,6 +571,12 @@ public class IterationAutomicCommitTest
         public <T extends WindupVertexFrame> T create(Class<T> clazz)
         {
             return delegate.create(clazz);
+        }
+
+        @Override
+        public void commit()
+        {
+            delegate.commit();
         }
     }
 }
