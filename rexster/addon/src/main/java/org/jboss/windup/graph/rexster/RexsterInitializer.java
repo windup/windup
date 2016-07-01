@@ -1,14 +1,22 @@
 package org.jboss.windup.graph.rexster;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.logging.Logger;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.jboss.forge.furnace.addons.Addon;
@@ -72,7 +80,7 @@ public class RexsterInitializer implements AfterGraphInitializationListener, Bef
                 File rexsterAddonDir = new File(path);
 
                 new File(rexsterExtractDirectory).mkdirs();
-                extractZipFile(rexsterAddonDir, rexsterExtractDirectory);
+                extractJarFile(rexsterAddonDir, rexsterExtractDirectory);
             }
             else
             {
@@ -92,13 +100,10 @@ public class RexsterInitializer implements AfterGraphInitializationListener, Bef
             started = true;
 
         }
-        catch (FileNotFoundException e)
-        {
-            log.warning("rexster was not able to run");
-        }
         catch (Exception e)
         {
-            log.warning("Error while creating rexster.xml");
+            log.severe("Error while creating rexster.xml - more details: " + e.getLocalizedMessage());
+            e.printStackTrace();
         }
     }
 
@@ -107,29 +112,45 @@ public class RexsterInitializer implements AfterGraphInitializationListener, Bef
         return started;
     }
 
-    private void extractZipFile(File jarFile, String destDir) throws IOException
+    private void extractJarFile(File jarFile, String destinationDirectory)
     {
-        java.util.jar.JarFile jar = new java.util.jar.JarFile(jarFile);
-        java.util.Enumeration enumEntries = jar.entries();
-        while (enumEntries.hasMoreElements())
+        byte[] buffer = new byte[1024];
+        try( ZipInputStream zis = new ZipInputStream(new FileInputStream(jarFile)) )
         {
-            java.util.jar.JarEntry file = (java.util.jar.JarEntry) enumEntries.nextElement();
-            java.io.File f = new java.io.File(destDir + java.io.File.separator + file.getName());
-            if (file.isDirectory())
-            { // if its a directory, create it
-                f.mkdir();
-                continue;
-            }
-            try (java.io.InputStream is = jar.getInputStream(file) // get the input stream
-            )
+            // create output directory is not exists
+            File folder = new File(destinationDirectory);
+            if (!folder.exists())
             {
-                java.io.FileOutputStream fos = new java.io.FileOutputStream(f);
-                while (is.available() > 0)
-                {  // write contents of 'is' to 'fos'
-                    fos.write(is.read());
+                folder.mkdir();
+            }
+
+            // get the zipped file list entry
+            ZipEntry ze = null;
+            while ( (ze = zis.getNextEntry()) != null)
+            {
+
+                String fileName = ze.getName();
+                File newFile = new File(destinationDirectory + File.separator + fileName);
+
+                // create all non exists folders
+                // else you will hit FileNotFoundException for compressed folder
+                new File(newFile.getParent()).mkdirs();
+
+                FileOutputStream fos = new FileOutputStream(newFile);
+
+                int len;
+                while ((len = zis.read(buffer)) > 0)
+                {
+                    fos.write(buffer, 0, len);
                 }
                 fos.close();
+                ze = zis.getNextEntry();
             }
+            zis.closeEntry();
+        }
+        catch (IOException ex)
+        {
+            log.severe("Exception while extracting jar file -> " + jarFile.getAbsolutePath() + " : " + ex.getLocalizedMessage());
         }
     }
 
