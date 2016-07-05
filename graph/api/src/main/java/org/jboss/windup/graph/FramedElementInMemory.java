@@ -4,7 +4,11 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
+import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.blueprints.Edge;
+import com.tinkerpop.blueprints.VertexQuery;
 import org.jboss.windup.graph.model.InMemoryVertexFrame;
 import org.jboss.windup.util.exception.WindupException;
 
@@ -22,9 +26,11 @@ import com.tinkerpop.frames.VertexFrame;
 public class FramedElementInMemory<T extends VertexFrame> implements InvocationHandler
 {
     private final Class<T> type;
+    private final Object id;
     private final Map<String, Object> values = new HashMap<>();
 
     private static final Method attachMethod;
+    private static final Method asVertexMethod;
     private static final Method hashCodeMethod;
     private static final Method equalsMethod;
     private static final Method toStringMethod;
@@ -34,6 +40,7 @@ public class FramedElementInMemory<T extends VertexFrame> implements InvocationH
         try
         {
             attachMethod = InMemoryVertexFrame.class.getMethod("attachToGraph", new Class[] { GraphContext.class });
+            asVertexMethod = VertexFrame.class.getMethod("asVertex");
             hashCodeMethod = Object.class.getMethod("hashCode");
             equalsMethod = Object.class.getMethod("equals", new Class[] { Object.class });
             toStringMethod = Object.class.getMethod("toString");
@@ -46,7 +53,13 @@ public class FramedElementInMemory<T extends VertexFrame> implements InvocationH
 
     public FramedElementInMemory(Class<T> type)
     {
+        this(type, null);
+    }
+
+    public FramedElementInMemory(Class<T> type, Object id)
+    {
         this.type = type;
+        this.id = id;
     }
 
     public Object invoke(final Object proxy, final Method method, final Object[] arguments)
@@ -68,6 +81,10 @@ public class FramedElementInMemory<T extends VertexFrame> implements InvocationH
         {
             attach((GraphContext)arguments[0]);
             return null;
+        }
+        else if (method.equals(asVertexMethod))
+        {
+            return asVertex();
         }
 
         final String propertyName;
@@ -140,6 +157,72 @@ public class FramedElementInMemory<T extends VertexFrame> implements InvocationH
         {
             v.setProperty(entry.getKey(), entry.getValue());
         }
+    }
+
+    private Vertex asVertex()
+    {
+        return new Vertex()
+        {
+            @Override
+            public Iterable<Edge> getEdges(Direction direction, String... labels)
+            {
+                throw new RuntimeException("Method not supported for FramedElementInMemory");
+            }
+
+            @Override
+            public Iterable<Vertex> getVertices(Direction direction, String... labels)
+            {
+                throw new RuntimeException("Method not supported for FramedElementInMemory");
+            }
+
+            @Override
+            public VertexQuery query()
+            {
+                throw new RuntimeException("Method not supported for FramedElementInMemory");
+            }
+
+            @Override
+            public Edge addEdge(String label, Vertex inVertex)
+            {
+                throw new RuntimeException("Method not supported for FramedElementInMemory");
+            }
+
+            @Override
+            public <T> T getProperty(String key)
+            {
+                return (T)values.get(key);
+            }
+
+            @Override
+            public Set<String> getPropertyKeys()
+            {
+                return values.keySet();
+            }
+
+            @Override
+            public void setProperty(String key, Object value)
+            {
+                values.put(key, value);
+            }
+
+            @Override
+            public <T> T removeProperty(String key)
+            {
+                return (T)values.remove(key);
+            }
+
+            @Override
+            public void remove()
+            {
+                throw new RuntimeException("Method not supported for FramedElementInMemory");
+            }
+
+            @Override
+            public Object getId()
+            {
+                return id;
+            }
+        };
     }
 
     @Override

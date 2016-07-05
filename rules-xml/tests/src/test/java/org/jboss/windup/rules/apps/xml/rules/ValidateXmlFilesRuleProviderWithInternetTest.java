@@ -13,6 +13,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.graph.service.Service;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.service.InlineHintService;
@@ -208,7 +209,7 @@ public class ValidateXmlFilesRuleProviderWithInternetTest extends AbstractXsdVal
             List<? extends RuleProvider> ruleProviders = Collections.singletonList(ruleProviderNoMocks);
             WindupTestUtilMethods.runOnlyRuleProviders(ruleProviders, context);
 
-            GraphService<InlineHintModel> hintService = context.service(InlineHintModel.class);
+            Service<InlineHintModel> hintService = context.service(InlineHintModel.class);
             Iterable<InlineHintModel> hints = hintService.findAll();
             Assert.assertEquals(0, Iterables.size(hints));
         }

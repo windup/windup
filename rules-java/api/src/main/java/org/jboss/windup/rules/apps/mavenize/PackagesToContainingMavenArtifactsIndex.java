@@ -7,7 +7,7 @@ import java.util.logging.Logger;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
-import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.graph.service.Service;
 import org.jboss.windup.rules.apps.java.archives.model.ArchiveCoordinateModel;
 import org.jboss.windup.rules.apps.java.scan.ast.TypeInterestFactory;
 import org.jboss.windup.util.Logging;
@@ -68,7 +68,7 @@ public class PackagesToContainingMavenArtifactsIndex
      */
     public void markProjectsUsingPackagesFromAPI(MavenCoord apiCoords)
     {
-        final GraphService<ArchiveCoordinateModel> coordsService = graphContext.service(ArchiveCoordinateModel.class);
+        final Service<ArchiveCoordinateModel> coordsService = graphContext.service(ArchiveCoordinateModel.class);
 
         Iterable<String> packages = this.getPackagesInArtifact(apiCoords);
         for (String pkg : packages)

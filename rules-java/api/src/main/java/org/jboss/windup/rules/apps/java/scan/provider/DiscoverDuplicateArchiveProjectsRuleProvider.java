@@ -11,8 +11,8 @@ import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.DuplicateArchiveModel;
 import org.jboss.windup.graph.model.DuplicateProjectModel;
 import org.jboss.windup.graph.model.ProjectModel;
-import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.ProjectService;
+import org.jboss.windup.graph.service.Service;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -44,7 +44,7 @@ public class DiscoverDuplicateArchiveProjectsRuleProvider extends AbstractRulePr
 
     private void setupProject(GraphRewrite event, DuplicateArchiveModel duplicateArchive)
     {
-        GraphService<DuplicateProjectModel> duplicateProjectService = event.getGraphContext().service(DuplicateProjectModel.class);
+        Service<DuplicateProjectModel> duplicateProjectService = event.getGraphContext().service(DuplicateProjectModel.class);
         ArchiveModel canonicalArchive = duplicateArchive.getCanonicalArchive();
 
         ProjectModel canonicalProject = canonicalArchive.getProjectModel();
