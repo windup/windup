@@ -52,10 +52,7 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
 
         this.registeredTypes = new HashMap<>();
         this.typeRegistry = new TypeRegistry();
-        for (Class<? extends WindupVertexFrame> frameType : GraphModelScanner.loadFrames(furnaceClasspathScanner))
-        {
-            addTypeToRegistry(frameType);
-        }
+        GraphModelScanner.loadFrames(furnaceClasspathScanner).forEach(this::addTypeToRegistry);
     }
 
     public Set<Class<? extends WindupFrame<?>>> getRegisteredTypes()
@@ -100,7 +97,7 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
     /**
      * Remove the given type from the provided {@link Element}.
      */
-    public void removeTypeFromElement(Class<? extends VertexFrame> kind, Element element)
+    public void removeTypeFromElement(Class<? extends WindupFrame> kind, Element element)
     {
         StandardVertex v = GraphTypeManager.asTitanVertex(element);
         Class<?> typeHoldingTypeField = getTypeRegistry().getTypeHoldingTypeField(kind);
@@ -140,11 +137,24 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
         return typeValueAnnotation.value();
     }
 
+    /**
+     * Adds the type value to the field denoting which type the element represents. This is similar
+     * to {@link GraphTypeManager#addTypeToElement(Class, Element)}, however it uses a String type instead. The
+     * String type will be looked up from the type registry to determine the class type to use.
+     */
+    public void addTypeToElement(String typeString, Element element)
+    {
+        Class<? extends WindupFrame<?>> kind = getRegisteredTypeMap().get(typeString);
+        if (kind == null)
+            throw new IllegalArgumentException("Unrecognized type: " + typeString);
+
+        addTypeToElement(kind, element);
+    }
 
     /**
      * Adds the type value to the field denoting which type the element represents.
      */
-    public void addTypeToElement(Class<? extends VertexFrame> kind, Element element)
+    public void addTypeToElement(Class<? extends WindupFrame> kind, Element element)
     {
         StandardVertex v = GraphTypeManager.asTitanVertex(element);
         Class<?> typeHoldingTypeField = getTypeRegistry().getTypeHoldingTypeField(kind);
@@ -172,13 +182,13 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
     }
 
     @SuppressWarnings("unchecked")
-    private void addSuperclassType(Class<? extends VertexFrame> kind, Element element)
+    private void addSuperclassType(Class<? extends WindupFrame> kind, Element element)
     {
         for (Class<?> superInterface : kind.getInterfaces())
         {
             if (WindupVertexFrame.class.isAssignableFrom(superInterface))
             {
-                addTypeToElement((Class<? extends VertexFrame>) superInterface, element);
+                addTypeToElement((Class<? extends WindupFrame>) superInterface, element);
             }
         }
 
@@ -227,7 +237,7 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
         return false;
     }
 
-    private static StandardVertex asTitanVertex(Element e)
+    public static StandardVertex asTitanVertex(Element e)
     {
         if (e instanceof StandardVertex)
         {
@@ -308,7 +318,7 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
     {
         if (VertexFrame.class.isAssignableFrom(kind))
         {
-            addTypeToElement((Class<? extends VertexFrame>) kind, element);
+            addTypeToElement((Class<? extends WindupFrame>) kind, element);
         }
     }
 
