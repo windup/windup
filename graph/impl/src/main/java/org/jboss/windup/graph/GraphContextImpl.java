@@ -1,5 +1,6 @@
 package org.jboss.windup.graph;
 
+import org.jboss.windup.graph.tsgen.TypeScriptModelsGenerator;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.nio.file.Path;
@@ -25,7 +26,6 @@ import org.jboss.forge.furnace.util.Annotations;
 import org.jboss.windup.graph.frames.TypeAwareFramedGraphQuery;
 import org.jboss.windup.graph.listeners.AfterGraphInitializationListener;
 import org.jboss.windup.graph.listeners.BeforeGraphCloseListener;
-import org.jboss.windup.graph.model.WindupFrame;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
 
@@ -50,6 +50,10 @@ import com.tinkerpop.frames.modules.FrameClassLoaderResolver;
 import com.tinkerpop.frames.modules.Module;
 import com.tinkerpop.frames.modules.gremlingroovy.GremlinGroovyModule;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerModule;
+import java.nio.file.Paths;
+import org.jboss.windup.graph.model.WindupFrame;
+import org.jboss.windup.graph.tsgen.TypeScriptModelsGenerator.AdjacentMode;
+import org.jboss.windup.util.PathUtil;
 
 public class GraphContextImpl implements GraphContext
 {
@@ -85,6 +89,7 @@ public class GraphContextImpl implements GraphContext
         FileUtils.deleteQuietly(graphDir.toFile());
         TitanGraph titan = initializeTitanGraph();
         initializeTitanIndexes(titan);
+        generateTypeScriptModels();
         createFramed(titan);
         fireListeners();
         return this;
@@ -178,6 +183,14 @@ public class GraphContextImpl implements GraphContext
         }
 
         return results;
+    }
+
+    private void generateTypeScriptModels()
+    {
+        Set<Class<? extends WindupFrame<?>>> modelTypes = graphTypeManager.getRegisteredTypes();
+        // TODO: Get reports dir
+
+        new TypeScriptModelsGenerator(PathUtil.getUserCacheDir().resolve("typescriptModels")).generate(modelTypes, AdjacentMode.MATERIALIZED);
     }
 
     private void initializeTitanIndexes(TitanGraph titanGraph)

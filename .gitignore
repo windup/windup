@@ -27,3 +27,4 @@ atlassian-ide-plugin.xml
 rexster.xml
 /tests/cache/
 *.ftl.html
+/graph/impl/nbproject/
