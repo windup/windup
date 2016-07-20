@@ -9,6 +9,8 @@ import java.nio.file.Path;
  */
 public interface GraphContextFactory
 {
+    public static final String DEFAULT_GRAPH_SUBDIRECTORY = "graph";
+
     /**
      * Create a new {@link GraphContext} using the given {@link Path} as a file storage location. The {@link Path} will
      * be created if it does not already exist. (<b>**WARNING**: This will potentially delete all data in the given
