@@ -9,7 +9,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(IgnoredFileModel.TYPE)
 public interface IgnoredFileModel extends FileModel
 {
-    String TYPE = "IgnoredFileModel";
+    String TYPE = "IgnoredFile";
     String IGNORED_BY_REGEX = "IgnoredByRegex";
     
     /**

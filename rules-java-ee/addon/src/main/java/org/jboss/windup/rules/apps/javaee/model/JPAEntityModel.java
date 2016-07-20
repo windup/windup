@@ -18,7 +18,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(JPAEntityModel.TYPE)
 public interface JPAEntityModel extends WindupVertexFrame
 {
-    String TYPE = "JPAEntityModel";
+    String TYPE = "JPAEntity";
     String ENTITY_NAME = "entityName";
     String CATALOG_NAME = "catalogName";
     String SCHEMA_NAME = "schemaName";

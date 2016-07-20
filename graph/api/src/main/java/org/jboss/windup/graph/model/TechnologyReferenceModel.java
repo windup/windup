@@ -11,7 +11,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(TechnologyReferenceModel.TYPE)
 public interface TechnologyReferenceModel extends WindupVertexFrame
 {
-    String TYPE = "TechnologyReferenceModel";
+    String TYPE = "TechnologyReference";
     String TECHNOLOGY_ID = "technologyID";
     String VERSION_RANGE = "versionRange";
 

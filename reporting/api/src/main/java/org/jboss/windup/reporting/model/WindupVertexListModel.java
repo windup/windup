@@ -20,7 +20,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(WindupVertexListModel.TYPE)
 public interface WindupVertexListModel<T extends WindupVertexFrame> extends WindupVertexFrame, Iterable<T>
 {
-    String TYPE = "WindupVertexListModel";
+    String TYPE = "WindupVertexList";
 
     /**
      * Returns the list as an {@link Iterable<T>}.

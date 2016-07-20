@@ -10,6 +10,6 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(ReportResourceFileModel.TYPE)
 public interface ReportResourceFileModel extends FileModel
 {
-    public static final String TYPE = "RawFileModel";
+    public static final String TYPE = "RawFile";
 
 }

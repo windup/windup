@@ -11,7 +11,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(AboutWindupModel.TYPE)
 public interface AboutWindupModel extends WindupVertexFrame
 {
-    public static final String TYPE = "AboutWindupModel";
+    public static final String TYPE = "AboutWindup";
     public static final String WINDUP_RUNTIME_VERSION = "windupRuntimeVersion";
 
     /**

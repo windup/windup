@@ -30,7 +30,7 @@ public interface XmlFileModel extends FileModel, SourceFileModel
     String ROOT_TAG_NAME = "rootTagName";
     String NAMESPACE = "namespace";
     String DOCTYPE = "doctype";
-    String TYPE = "XmlFileModel";
+    String TYPE = "XmlFile";
 
     @Adjacency(label = DOCTYPE, direction = Direction.OUT)
     void setDoctype(DoctypeMetaModel doctype);

@@ -24,7 +24,7 @@ public interface TaggableModel extends WindupVertexFrame
      */
     String CATCHALL_TAG = "catchall";
 
-    String TYPE = "TaggableModel";
+    String TYPE = "Taggable";
     String TAG = "tag";
 
     /**

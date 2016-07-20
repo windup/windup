@@ -11,5 +11,5 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(HardcodedIPLocationModel.TYPE)
 public interface HardcodedIPLocationModel extends InlineHintModel
 {
-    String TYPE = "HardcodedIPLocationModel";
+    String TYPE = "HardcodedIPLocation";
 }

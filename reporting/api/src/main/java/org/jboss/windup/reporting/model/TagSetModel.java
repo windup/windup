@@ -16,7 +16,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(TagSetModel.TYPE)
 public interface TagSetModel extends WindupVertexFrame
 {
-    String TYPE = "TagSetModel";
+    String TYPE = "TagSet";
     String PREFIX = "TAGS";
 
     /**

@@ -21,7 +21,7 @@ import java.util.Set;
 @TypeValue(SpringBeanModel.TYPE)
 public interface SpringBeanModel extends WindupVertexFrame
 {
-    String TYPE = "SpringBeanModel";
+    String TYPE = "SpringBean";
     String SPRING_BEAN_TO_JAVA_CLASS = "springBeanToJavaClass";
     String SPRING_CONFIGURATION = "springConfiguration";
     String SPRING_BEAN_NAME = "springBeanName";

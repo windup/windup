@@ -12,7 +12,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 public interface JmsDestinationModel extends JNDIResourceModel
 {
     public static final String JMS_DESTINATION = "jmsDestination";
-    public static final String TYPE = "JmsDestinationModel";
+    public static final String TYPE = "JmsDestination";
     public static final String DESTINATION_TYPE = "destinationType";
     public static final String NAME = "destinationName";
 

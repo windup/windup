@@ -6,7 +6,7 @@ import org.jboss.windup.graph.MapInProperties;
 
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
-@TypeValue("MapInPropsBlankSubModel")
+@TypeValue("MapInPropsBlankSub")
 public interface TestMapBlankSubModel extends TestMapPrefixModel
 {
     @MapInProperties(propertyPrefix = "")

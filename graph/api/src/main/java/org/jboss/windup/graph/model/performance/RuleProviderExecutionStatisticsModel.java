@@ -14,7 +14,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(RuleProviderExecutionStatisticsModel.TYPE)
 public interface RuleProviderExecutionStatisticsModel extends WindupVertexFrame
 {
-    public static final String TYPE = "RuleProviderExecutionStatisticsModel";
+    public static final String TYPE = "RuleProviderExecutionStatistics";
     public static final String TIME_TAKEN = "timeTaken";
     public static final String RULE_INDEX = "ruleIndex";
     public static final String RULE_PROVIDER_ID = "ruleProviderID";
