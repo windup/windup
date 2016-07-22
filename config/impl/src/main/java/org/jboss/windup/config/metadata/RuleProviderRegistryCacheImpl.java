@@ -18,11 +18,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
@@ -89,8 +87,13 @@ public class RuleProviderRegistryCacheImpl implements RuleProviderRegistryCache
             }
         }
         addTransformers(sourceOptions);
-
-        return sourceOptions.stream().map(TechnologyReference::getId).collect(Collectors.toSet());
+        
+        Set<String> sourceTechnologies = new HashSet<>();
+        for (TechnologyReference technologyReference : sourceOptions)
+        {
+            sourceTechnologies.add(technologyReference.getId());
+        }
+        return sourceTechnologies;
     }
 
     @Override
@@ -110,29 +113,24 @@ public class RuleProviderRegistryCacheImpl implements RuleProviderRegistryCache
         }
         addTransformers(targetOptions);
 
-        return targetOptions.stream().map(TechnologyReference::getId).collect(Collectors.toSet());
+        Set<String> targetTechnologies = new HashSet<>();
+        for (TechnologyReference technologyReference : targetOptions)
+        {
+            targetTechnologies.add(technologyReference.getId());
+        }
+        return targetTechnologies;
     }
 
     private void addTransformers(Set<TechnologyReference> techs)
     {
-        techs.addAll(getTechnologyTransformers()
-                .stream()
-
-                // Only include it if the target of the transformation will match one of the items
-                //   already in the list.
-                .filter(transformer -> {
-                    for (TechnologyReference originalTech : techs)
-                    {
-                        if (originalTech.matches(transformer.getTarget()))
-                        {
-                            return true;
-                        }
-                    }
-                    return false;
-                })
-
-                .map(TechnologyReferenceTransformer::getOriginal)
-                .collect(Collectors.toList()));
+        for (TechnologyReferenceTransformer transformer : getTechnologyTransformers())
+        {
+            TechnologyReference originalTech = transformer.getOriginal();
+            if (originalTech.matches(transformer.getTarget()))
+            {
+                techs.add(originalTech);
+            }
+        }
     }
 
     @Override

@@ -49,9 +49,10 @@ public class TechnologyReferenceTransformer
         List<TechnologyReferenceTransformer> transformerList = new ArrayList<>();
         Iterable<TechnologyReferenceTransformerLoader> loaders = FurnaceHolder.getFurnace().getAddonRegistry()
                     .getServices(TechnologyReferenceTransformerLoader.class);
-        loaders.forEach((loader) -> {
+        for (TechnologyReferenceTransformerLoader loader : loaders)
+        {
             transformerList.addAll(loader.loadTransformers(event.getGraphContext()));
-        });
+        }
         return transformerList;
     }
 

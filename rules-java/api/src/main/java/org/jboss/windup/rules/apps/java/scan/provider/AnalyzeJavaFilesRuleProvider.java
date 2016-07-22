@@ -156,12 +156,8 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                     if (technologyMetadata != null && technologyMetadata instanceof JavaTechnologyMetadata)
                     {
                         JavaTechnologyMetadata javaMetadata = (JavaTechnologyMetadata) technologyMetadata;
-                        libraryPaths.addAll(
-                                javaMetadata
-                                        .getAdditionalClasspaths()
-                                        .stream()
-                                        .map(Path::toString)
-                                        .collect(Collectors.toList()));
+                        for (Path additionalClasspath : javaMetadata.getAdditionalClasspaths())
+                            libraryPaths.add(additionalClasspath.toString());
                     }
                 }
 

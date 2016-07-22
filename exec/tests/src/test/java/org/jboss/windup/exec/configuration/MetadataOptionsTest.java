@@ -59,6 +59,7 @@ public class MetadataOptionsTest
     {
         Collection<?> availableValues = sourceOption.getAvailableValues();
 
+        Assert.assertTrue(availableValues.contains("sourceTech"));
         Assert.assertTrue(availableValues.contains("sourceTech1"));
         Assert.assertTrue(availableValues.contains("sourceTech2"));
     }
@@ -68,8 +69,9 @@ public class MetadataOptionsTest
     {
         Collection<?> availableValues = targetOption.getAvailableValues();
 
+        Assert.assertTrue(availableValues.contains("targetTech"));
         Assert.assertTrue(availableValues.contains("targetTech1"));
-        Assert.assertTrue(availableValues.contains("targetTech1"));
+        Assert.assertTrue(availableValues.contains("targetTech2"));
     }
 
     @Test
@@ -94,11 +96,11 @@ public class MetadataOptionsTest
 
     @RuleMetadata(
                 sourceTechnologies = {
-                            @Technology(id = "sourceTech1", versionRange = "[0, ]"),
+                            @Technology(id = "sourceTech", versionRange = "[1, ]"),
                             @Technology(id = "sourceTech2", versionRange = "[0, ]")
                 },
                 targetTechnologies = {
-                            @Technology(id = "targetTech1", versionRange = "[0, ]"),
+                            @Technology(id = "targetTech", versionRange = "[1, ]"),
                             @Technology(id = "targetTech2", versionRange = "[0, ]")
                 },
                 tags = { "tag1", "tag2", "tag3" })
