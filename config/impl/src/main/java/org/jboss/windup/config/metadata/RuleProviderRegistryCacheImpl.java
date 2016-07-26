@@ -123,14 +123,18 @@ public class RuleProviderRegistryCacheImpl implements RuleProviderRegistryCache
 
     private void addTransformers(Set<TechnologyReference> techs)
     {
+        Set<TechnologyReference> newTechs = new HashSet<>();
         for (TechnologyReferenceTransformer transformer : getTechnologyTransformers())
         {
-            TechnologyReference originalTech = transformer.getOriginal();
-            if (originalTech.matches(transformer.getTarget()))
+            for (TechnologyReference originalTech : techs)
             {
-                techs.add(originalTech);
+                if (originalTech.matches(transformer.getTarget()))
+                {
+                    newTechs.add(transformer.getOriginal());
+                }
             }
         }
+        techs.addAll(newTechs);
     }
 
     @Override

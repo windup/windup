@@ -19,13 +19,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.jboss.forge.roaster.model.JavaType;
 import org.jboss.windup.ast.java.ASTProcessor;
 import org.jboss.windup.ast.java.BatchASTFuture;
 import org.jboss.windup.ast.java.BatchASTListener;
