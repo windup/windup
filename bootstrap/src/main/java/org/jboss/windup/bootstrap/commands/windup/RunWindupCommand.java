@@ -57,8 +57,6 @@ public class RunWindupCommand implements Command, FurnaceDependent
 {
     private static final Logger log = Logging.get(RunWindupCommand.class);
 
-    private static final String GRAPH_DATA_SUBDIR = "graph";
-
     private Furnace furnace;
     private final List<String> arguments;
     private final AtomicBoolean batchMode;
@@ -233,7 +231,7 @@ public class RunWindupCommand implements Command, FurnaceDependent
         }
 
         FileUtils.deleteQuietly(windupConfiguration.getOutputDirectory().toFile());
-        Path graphPath = windupConfiguration.getOutputDirectory().resolve(GRAPH_DATA_SUBDIR);
+        Path graphPath = windupConfiguration.getOutputDirectory().resolve(GraphContextFactory.DEFAULT_GRAPH_SUBDIRECTORY);
 
         System.out.println();
         if (windupConfiguration.getInputPaths().size() == 1)

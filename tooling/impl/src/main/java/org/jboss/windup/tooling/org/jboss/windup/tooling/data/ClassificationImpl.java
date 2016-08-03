@@ -15,6 +15,7 @@ import org.jboss.windup.tooling.data.Link;
  */
 public class ClassificationImpl implements Classification
 {
+    private final Object id;
     private File file;
     private String classification;
     private String description;
@@ -22,6 +23,22 @@ public class ClassificationImpl implements Classification
     private int effort;
     private Severity severity;
     private String ruleID;
+
+    /**
+     * Constructs a {@link Classification} with the given id.
+     */
+    public ClassificationImpl(Object id)
+    {
+        this.id = id;
+    }
+
+    /**
+     * Contains the unique identifier for the {@link Classification}.
+     */
+    public Object getID()
+    {
+        return id;
+    }
 
     /**
      * This is the {@link File} that this {@link Classification} refers to.

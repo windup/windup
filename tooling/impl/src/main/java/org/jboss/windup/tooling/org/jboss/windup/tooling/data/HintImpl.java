@@ -15,6 +15,7 @@ import org.jboss.windup.tooling.data.Link;
  */
 public class HintImpl implements Hint
 {
+    private final Object id;
     private File file;
     private String title;
     private String hint;
@@ -27,6 +28,23 @@ public class HintImpl implements Hint
     private int length;
     private String sourceSnippit;
     private String ruleID;
+
+    /**
+     * Constructs a {@link Hint} with the given id.
+     */
+    public HintImpl(Object id)
+    {
+        this.id = id;
+    }
+
+    /**
+     * Contains the unique identifier for this {@link Hint}.
+     */
+    @Override
+    public Object getID()
+    {
+        return id;
+    }
 
     /**
      * This references the {@link File} referenced by this {@link Hint}.

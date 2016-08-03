@@ -14,6 +14,11 @@ import org.jboss.windup.reporting.model.Severity;
 public interface Classification
 {
     /**
+     * Gets the unique identifier of this classification.
+     */
+    Object getID();
+
+    /**
      * This is the {@link File} that this {@link Classification} refers to.
      */
     File getFile();

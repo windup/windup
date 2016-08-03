@@ -1,11 +1,13 @@
 package org.jboss.windup.tooling;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import com.google.common.collect.Iterables;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -62,6 +64,9 @@ public class ExecutionBuilderTest
     private ExecutionBuilder builder;
 
     @Inject
+    private GraphLoader graphLoader;
+
+    @Inject
     private TestProvider testProvider;
 
     @Test
@@ -73,21 +78,42 @@ public class ExecutionBuilderTest
         Path input = Paths.get("../../test-files/src_example");
         Path output = getDefaultPath();
 
-        ExecutionResults results = builder.begin(Paths.get("."))
-                    .setInput(input)
-                    .setOutput(output)
-                    .includePackage("org.windup.examples.ejb.messagedriven")
-                    .ignore("\\.class$")
-                    .setOption(SourceModeOption.NAME, true)
-                    .setOption(OfflineModeOption.NAME, true)
-                    .execute();
-
+        ExecutionResults results = executeWindup(input, output);
         Assert.assertNotNull(results.getClassifications());
         Assert.assertNotNull(results.getHints());
         Assert.assertTrue(results.getHints().iterator().hasNext());
         Assert.assertTrue(results.getClassifications().iterator().hasNext());
         Assert.assertTrue(testProvider.sourceMode);
         Assert.assertTrue(testProvider.offlineMode);
+    }
+
+    @Test
+    public void testReloadGraph() throws IOException
+    {
+        Path input = Paths.get("../../test-files/src_example");
+        Path output = getDefaultPath();
+
+        ExecutionResults resultsOriginal = executeWindup(input, output);
+
+        ExecutionResults resultsLater = graphLoader.loadResults(output);
+        Assert.assertTrue(resultsLater.getClassifications().iterator().hasNext());
+        Assert.assertTrue(resultsLater.getHints().iterator().hasNext());
+
+        Assert.assertEquals(Iterables.size(resultsOriginal.getClassifications()), Iterables.size(resultsLater.getClassifications()));
+        Assert.assertEquals(Iterables.size(resultsOriginal.getHints()), Iterables.size(resultsLater.getHints()));
+        Assert.assertEquals(Iterables.size(resultsOriginal.getReportLinks()), Iterables.size(resultsLater.getReportLinks()));
+    }
+
+    private ExecutionResults executeWindup(Path input, Path output)
+    {
+        return builder.begin(Paths.get("."))
+                .setInput(input)
+                .setOutput(output)
+                .includePackage("org.windup.examples.ejb.messagedriven")
+                .ignore("\\.class$")
+                .setOption(SourceModeOption.NAME, true)
+                .setOption(OfflineModeOption.NAME, true)
+                .execute();
     }
 
     private Path getDefaultPath()

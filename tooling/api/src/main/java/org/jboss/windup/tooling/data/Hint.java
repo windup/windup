@@ -14,6 +14,11 @@ import org.jboss.windup.reporting.model.Severity;
 public interface Hint
 {
     /**
+     * Contains a unique identifier for this hint.
+     */
+    Object getID();
+
+    /**
      * This references the {@link File} referenced by this {@link Hint}.
      */
     File getFile();
@@ -66,5 +71,5 @@ public interface Hint
     /**
      * This contains the id of the rule that produced this {@link Classification}.
      */
-    public String getRuleID();
+    String getRuleID();
 }
