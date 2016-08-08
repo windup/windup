@@ -23,14 +23,70 @@
     <!-- additional rewriting just for not mentioned things -->
     <rewriteURI rewritePrefix="http://www.w3.org/TR/xhtml1/DTD" uriStartString="catalog/dtd" />
     <rewriteURI rewritePrefix="http://www.w3.org/TR/html4" uriStartString="catalog/dtd" />
-
     <!-- XML standards definitions-->
     <uri name="http://schemas.xmlsoap.org/wsdl/http/" uri="catalog/xsd/http.xsd" />
     <uri name="http://schemas.xmlsoap.org/wsdl/soap/" uri="catalog/xsd/soap.xsd"/>
     <uri name="http://www.w3.org/2001/06/soap-encoding" uri="catalog/xsd/soapenc.xsd"/>
     <uri name="http://www.w3.org/2001/06/soap-envelope" uri="catalog/xsd/soapenv.xsd"/>
-    <uri name="" uri="catalog/xsd/ws-securitypolicy-1.2.xsd"/>
-    <uri name="" uri=""/>
     <uri name="http://schemas.xmlsoap.org/wsdl/mime/" uri="catalog/xsd/wsdl-mime.xsd"/>
     <uri name="http://schemas.xmlsoap.org/wsdl/" uri="catalog/xsd/wsdl.xsd"/>
+    <!-- jpa -->
+    <uri name="http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd" uri="catalog/xsd/persistence_2_1.xsd" />
+    <uri name="http://xmlns.jcp.org/xml/ns/persistence/persistence_2_0.xsd" uri="catalog/xsd/persistence_2_0.xsd" />
+    <uri name="http://xmlns.jcp.org/xml/ns/persistence/persistence_1_0.xsd" uri="catalog/xsd/persistence_1_0.xsd" />
+    <uri name="http://xmlns.jcp.org/xml/ns/persistence/orm_2_1.xsd" uri="catalog/xsd/orm_2_1.xsd" />    
+    <uri name="http://xmlns.jcp.org/xml/ns/persistence/orm_2_0.xsd" uri="catalog/xsd/orm_2_0.xsd" />
+    <uri name="http://xmlns.jcp.org/xml/ns/persistence/orm_1_0.xsd" uri="catalog/xsd/orm_1_0.xsd" />
+    <!-- java ee 5 -->
+    <uri name="http://xmlns.jcp.org/xml/ns/javaee/application-client_5.xsd" uri="catalog/xsd/application-client_5.xsd" />
+    <uri name="http://xmlns.jcp.org/xml/ns/javaee/application_5.xsd" uri="catalog/xsd/application_5.xsd" />
+    <uri name="http://xmlns.jcp.org/xml/ns/javaee/ejb-jar_3_0.xsd" uri="catalog/xsd/ejb-jar_3_0.xsd" />
+    <uri name="http://xmlns.jcp.org/xml/ns/javaee/javaee_web_services_client_1_2.xsd" uri="catalog/xsd/javaee_web_services_client_1_2.xsd" />
+    <uri name="http://java.sun.com/xml/ns/javaee/javaee_web_services_metadata_handler_2_0.xsd" uri="catalog/xsd/javaee_web_services_metadata_handler_2_0.xsd" />
+    <uri name="http://xmlns.jcp.org/xml/ns/javaee/javaee_web_services_1_2.xsd" uri="catalog/xsd/javaee_web_services_1_2.xsd" />
+    <uri name="http://xmlns.jcp.org/xml/ns/javaee/javaee_5.xsd" uri="catalog/xsd/javaee_5.xsd" />
+    <uri name="http://xmlns.jcp.org/xml/ns/javaee/jsp_2_1.xsd" uri="catalog/xsd/jsp_2_1.xsd" />
+    <uri name="http://xmlns.jcp.org/xml/ns/javaee/web-app_2_5.xsd" uri="catalog/xsd/web-app_2_5.xsd" />
+    <uri name="http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_1_2.xsd" uri="catalog/xsd/web-facesconfig_1_2.xsd" />
+    <uri name="http://xmlns.jcp.org/xml/ns/javaee/web-jsptaglibrary_2_1.xsd" uri="catalog/xsd/web-jsptaglibrary_2_1.xsd" />
+    <!-- java ee 6 -->
+    <uri name="http://xmlns.jcp.org/xml/ns/javaee/application-client_6.xsd" uri="catalog/xsd/application-client_6.xsd" />
+    <uri name="http://xmlns.jcp.org/xml/ns/javaee/application_6.xsd" uri="catalog/xsd/application_6.xsd" />
+    <uri name="http://xmlns.jcp.org/xml/ns/javaee/ejb-jar_3_1.xsd" uri="catalog/xsd/ejb-jar_3_1.xsd" />
+    <uri name="http://java.sun.com/xml/ns/javaee/beans_1_0.xsd" uri="catalog/xsd/beans_1_0.xsd" />
+    <uri name="http://java.sun.com/xml/ns/javaee/connector_1_6.xsd" uri="catalog/xsd/connector_1_6.xsd" />
+    <uri name="http://xmlns.jcp.org/xml/ns/javaee/javaee_web_services_1_3.xsd" uri="catalog/xsd/javaee_web_services_client_1_3.xsd" />
+    <uri name="http://xmlns.jcp.org/xml/ns/javaee/javaee_web_services_client_1_3.xsd" uri="catalog/xsd/javaee_web_services_1_3.xsd" />
+    <uri name="http://xmlns.jcp.org/xml/ns/javaee/javaee_6.xsd" uri="catalog/xsd/javaee_6.xsd" />
+    <uri name="http://xmlns.jcp.org/xml/ns/javaee/jsp_2_2.xsd" uri="catalog/xsd/jsp_2_2.xsd" />
+    <uri name="http://xmlns.jcp.org/xml/ns/javaee/web-app_3_0.xsd" uri="catalog/xsd/web-app_3_0.xsd" />
+    <uri name="http://xmlns.jcp.org/xml/ns/javaee/web-common_3_0.xsd" uri="catalog/xsd/web-common_3_0.xsd" />
+    <uri name="http://xmlns.jcp.org/xml/ns/javaee/web-facelettaglibrary_2_0.xsd" uri="catalog/xsd/web-facelettaglibrary_2_0.xsd" />
+    <uri name="http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_0.xsd" uri="catalog/xsd/web-facesconfig_2_0.xsd" />
+    <uri name="http://xmlns.jcp.org/xml/ns/javaee/web-facesuicomponent_2_0.xsd" uri="catalog/xsd/web-facesuicomponent_2_0.xsd" />
+    <uri name="http://xmlns.jcp.org/xml/ns/javaee/web-fragment_3_0.xsd" uri="catalog/xsd/web-fragment_3_0.xsd" />
+    <uri name="http://xmlns.jcp.org/xml/ns/javaee/web-partialresponse_2_0.xsd" uri="catalog/xsd/web-partialresponse_2_0.xsd" />
+    <!-- java ee 7 -->
+    <uri name="http://xmlns.jcp.org/xml/ns/javaee/application-client_7.xsd" uri="catalog/xsd/application-client_7.xsd" />
+    <uri name="http://xmlns.jcp.org/xml/ns/javaee/application_7.xsd" uri="catalog/xsd/application_7.xsd" />
+    <uri name="http://xmlns.jcp.org/xml/ns/javaee/batchXML_1_0.xsd" uri="catalog/xsd/batchXML_1_0.xsd" />
+    <uri name="http://xmlns.jcp.org/xml/ns/javaee/beans_1_1.xsd" uri="catalog/xsd/beans_1_1.xsd" />
+    <uri name="http://xmlns.jcp.org/xml/ns/javaee/connector_1_7.xsd" uri="catalog/xsd/connector_1_7.xsd" />
+    <uri name="http://xmlns.jcp.org/xml/ns/javaee/ejb-jar_3_2.xsd" uri="catalog/xsd/ejb-jar_3_2.xsd" />
+    <uri name="http://xmlns.jcp.org/xml/ns/javaee/javaee_web_services_client_1_4.xsd" uri="catalog/xsd/javaee_web_services_client_1_4.xsd" />
+    <uri name="http://xmlns.jcp.org/xml/ns/javaee/javaee_web_services_1_4.xsd" uri="catalog/xsd/javaee_web_services_1_4.xsd" />
+    <uri name="http://xmlns.jcp.org/xml/ns/javaee/javaee_7.xsd" uri="catalog/xsd/javaee_7.xsd" />
+    <uri name="http://xmlns.jcp.org/xml/ns/javaee/jobXML_1_0.xsd" uri="catalog/xsd/jobXML_1_0.xsd" />
+    <uri name="http://xmlns.jcp.org/xml/ns/javaee/jsp_2_3.xsd" uri="catalog/xsd/jsp_2_3.xsd" />
+    <uri name="http://xmlns.jcp.org/xml/ns/javaee/permissions_7.xsd" uri="catalog/xsd/permissions_7.xsd" />
+    <uri name="http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" uri="catalog/xsd/web-app_3_1.xsd" />
+    <uri name="http://xmlns.jcp.org/xml/ns/javaee/web-common_3_1.xsd" uri="catalog/xsd/web-common_3_1.xsd" />
+    <uri name="http://xmlns.jcp.org/xml/ns/javaee/web-facelettaglibrary_2_2.xsd" uri="catalog/xsd/web-facelettaglibrary_2_2.xsd" />
+    <uri name="http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd" uri="catalog/xsd/web-facesconfig_2_2.xsd" />
+    <uri name="http://xmlns.jcp.org/xml/ns/javaee/web-fragment_3_1.xsd" uri="catalog/xsd/web-fragment_3_1.xsd" />
+    <uri name="http://xmlns.jcp.org/xml/ns/javaee/web-partialresponse_2_2.xsd" uri="catalog/xsd/web-partialresponse_2_2.xsd" />
+    <!-- special schemas -->
+    <system systemId="http://www.w3.org/2001/xml.xsd" uri="catalog/xsd/xml.xsd"/>
+    <uri name="urn:oasis:names:tc:entity:xmlns:xml:catalog" uri="catalog/xsd/xmlcatalog11.xsd"/>
 </catalog>
+
