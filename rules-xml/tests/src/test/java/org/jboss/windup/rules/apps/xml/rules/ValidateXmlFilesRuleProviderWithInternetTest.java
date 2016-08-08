@@ -186,7 +186,7 @@ public class ValidateXmlFilesRuleProviderWithInternetTest extends AbstractXsdVal
                 {
                     case XmlFileModel.XSD_URL_NOT_VALID:
                         break;
-                    case "XML File is not valid":
+                    case XmlFileModel.NOT_VALID_XML:
                         break;
                     default:
                         Assert.fail("Unrecognized hint: " + hint.getTitle());

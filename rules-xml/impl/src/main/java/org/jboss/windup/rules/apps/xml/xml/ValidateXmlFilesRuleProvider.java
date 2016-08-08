@@ -35,11 +35,13 @@ import org.xml.sax.SAXParseException;
  * A rule provider validating all of the xml files and registering the classification in case the xml file is not valid.
  *
  * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
+ * @author <a href="mailto:hotmana76@gmail.com">Marek Novotny</a>
  */
 public class ValidateXmlFilesRuleProvider extends AbstractRuleProvider
 {
     public static final String NOT_VALID_XML_TAG = "Not valid XML";
     private static final String JAXP_SCHEMA_LANGUAGE = "http://java.sun.com/xml/jaxp/properties/schemaLanguage";
+    
 
     public ValidateXmlFilesRuleProvider()
     {
@@ -167,6 +169,9 @@ public class ValidateXmlFilesRuleProvider extends AbstractRuleProvider
         ClassificationService classificationService = new ClassificationService(event.getGraphContext());
         ClassificationModel model = classificationService.attachClassification(context, sourceFile, XmlFileModel.NOT_VALID_XML,
                     null);
+        model.setEffort(0); // do not rely on default 0 value and set it that transparently
+        model.setSeverity(Severity.POTENTIAL);
+        
         TagSetService tagSetService = new TagSetService(event.getGraphContext());
         model.setTagModel(tagSetService.getOrCreate(event, Collections.singleton(NOT_VALID_XML_TAG)));
     }
