@@ -39,9 +39,9 @@ public interface ProjectDependencyModel extends WindupVertexFrame
      * A reference to the project represented by this dependency (whether that be a project representing a binary jar,
      * or a project representing a different source module within the current application).
      */
-    @Adjacency(label = "project", direction = Direction.OUT)
+    @Adjacency(label = TYPE + ".representedProject", direction = Direction.OUT)
     void setProject(ProjectModel projectModel);
 
-    @Adjacency(label = "project", direction = Direction.OUT)
+    @Adjacency(label = TYPE + ".representedProject", direction = Direction.OUT)
     ProjectModel getProjectModel();
 }
