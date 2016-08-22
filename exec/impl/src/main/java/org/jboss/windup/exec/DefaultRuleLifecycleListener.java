@@ -6,6 +6,7 @@ import org.jboss.windup.config.AbstractRuleProvider;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleLifecycleListener;
+import org.jboss.windup.config.RuleUtils;
 import org.jboss.windup.config.metadata.RuleMetadataType;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.Rule;
