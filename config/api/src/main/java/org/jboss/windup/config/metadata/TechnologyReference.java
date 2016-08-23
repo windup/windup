@@ -179,29 +179,7 @@ public class TechnologyReference
         if (this.versionRange == null)
             return null;
 
-        String rangeString = this.versionRange.toString();
-
-        /**
-         * FIXME
-         *
-         * Workaround a bug in Forge that causes VersionRange to sometimes return a string like [7,7] when
-         * it should only return "[7]". This seems to be an issue with the way Versions.parseVersionRange()
-         * works.
-         *
-         * See also: FORGE-2667
-         */
-        if (StringUtils.startsWith(rangeString, "[") &&
-            StringUtils.endsWith(rangeString, "]") &&
-            StringUtils.countMatches(rangeString, ",") == 1)
-        {
-            String firstVersion = StringUtils.substringBefore(rangeString, ",").substring(1);
-            String secondString = StringUtils.stripEnd(StringUtils.substringAfter(rangeString, ","), "]");
-            if (StringUtils.equals(firstVersion, secondString))
-                return "[" + firstVersion + "]";
-            else
-                return rangeString;
-        }
-        return rangeString;
+        return this.versionRange.toString();
     }
 
     @Override

@@ -182,13 +182,6 @@ public class GroovyWindupRuleProviderLoader implements RuleProviderLoader
 
     private Collection<URL> getScripts(Path userRulesPath)
     {
-        /*
-         * FIXME - This shouldn't be necessary -
-         *    https://issues.jboss.org/browse/FORGE-2674
-         */
-        if (Proxies.isForgeProxy(userRulesPath))
-            userRulesPath = Proxies.unwrap(userRulesPath);
-
         if (!Files.isDirectory(userRulesPath))
         {
             LOG.warning("Not scanning: " + userRulesPath.normalize().toString() + " for rules as the directory could not be found!");
