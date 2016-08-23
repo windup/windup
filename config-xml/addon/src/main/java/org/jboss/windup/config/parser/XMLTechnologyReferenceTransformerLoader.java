@@ -37,7 +37,12 @@ public class XMLTechnologyReferenceTransformerLoader implements TechnologyRefere
 
         for (Path userRulesPath : ruleLoaderContext.getRulePaths())
         {
-            Visitor<File> visitor = (file) -> transformers.addAll(loadTransformers(file));
+            Visitor<File> visitor = new Visitor<File>() {
+                @Override
+                public void visit(File file) {
+                    transformers.addAll(loadTransformers(file));
+                }
+            };
 
             FileVisit.visit(userRulesPath.toFile(), new FileSuffixPredicate(XML_EXTENSION), visitor);
         }

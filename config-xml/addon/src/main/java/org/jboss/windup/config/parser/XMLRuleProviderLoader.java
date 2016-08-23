@@ -27,6 +27,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.Addon;
+import org.jboss.forge.furnace.proxy.Proxies;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.builder.RuleProviderBuilder;
@@ -159,6 +160,13 @@ public class XMLRuleProviderLoader implements RuleProviderLoader
 
     private Collection<URL> getWindupUserDirectoryXmlFiles(Path userRulesPath)
     {
+        /*
+         * FIXME - This shouldn't be necessary -
+         *    https://issues.jboss.org/browse/FORGE-2674
+         */
+        if (Proxies.isForgeProxy(userRulesPath))
+            userRulesPath = Proxies.unwrap(userRulesPath);
+
         // no user dir, so just return the ones that we found in the classpath
         if (userRulesPath == null)
         {

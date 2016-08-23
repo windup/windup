@@ -11,7 +11,6 @@ import java.net.URL;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
@@ -30,16 +29,13 @@ import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.addons.AddonDependency;
 import org.jboss.forge.furnace.addons.AddonFilter;
+import org.jboss.forge.furnace.proxy.Proxies;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.builder.RuleProviderBuilder;
 import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.loader.RuleProviderLoader;
-import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.WindupConfigurationModel;
-import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.util.FurnaceCompositeClassLoader;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
@@ -186,6 +182,13 @@ public class GroovyWindupRuleProviderLoader implements RuleProviderLoader
 
     private Collection<URL> getScripts(Path userRulesPath)
     {
+        /*
+         * FIXME - This shouldn't be necessary -
+         *    https://issues.jboss.org/browse/FORGE-2674
+         */
+        if (Proxies.isForgeProxy(userRulesPath))
+            userRulesPath = Proxies.unwrap(userRulesPath);
+
         if (!Files.isDirectory(userRulesPath))
         {
             LOG.warning("Not scanning: " + userRulesPath.normalize().toString() + " for rules as the directory could not be found!");
