@@ -30,7 +30,7 @@ public class DefaultRuleProviderLoader implements RuleProviderLoader
     private Furnace furnace;
 
     @Override
-    public List<RuleProvider> getProviders(GraphContext context)
+    public List<RuleProvider> getProviders(RuleLoaderContext ruleLoaderContext)
     {
         return furnace.getLockManager().performLocked(LockMode.READ, new Callable<List<RuleProvider>>()
         {

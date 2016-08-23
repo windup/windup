@@ -22,6 +22,7 @@ import org.jboss.windup.config.AbstractRuleLifecycleListener;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleProvider;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.metadata.RuleMetadataType;
 import org.jboss.windup.config.operation.Log;
@@ -213,7 +214,7 @@ public class TagsIncludeExcludeTest
     public abstract static class NoopRuleProvider extends AbstractRuleProvider
     {
         @Override
-        public Configuration getConfiguration(GraphContext context)
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
         {
             return ConfigurationBuilder.begin().addRule()
                         .perform(Log.message(Logger.Level.TRACE, "Performing Rule: " + this.getClass().getSimpleName()));

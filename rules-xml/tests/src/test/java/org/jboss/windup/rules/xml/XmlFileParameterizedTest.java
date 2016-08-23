@@ -19,6 +19,7 @@ import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
@@ -212,7 +213,7 @@ public class XmlFileParameterizedTest
 
         // @formatter:off
         @Override
-        public Configuration getConfiguration(GraphContext context)
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
         {
             // Using three separate instances as there is some mutable state in the implementations of these classes
             AbstractIterationOperation<FileLocationModel> addTypeRefToList1 = new AddTypeRefToListOperation();

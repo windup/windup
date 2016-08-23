@@ -12,11 +12,11 @@ import java.util.zip.ZipFile;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.ClassifyFileTypesPhase;
 import org.jboss.windup.config.query.Query;
-import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.service.OrganizationService;
 import org.jboss.windup.rules.apps.java.scan.operation.packagemapping.PackageNameMapping;
@@ -37,16 +37,15 @@ public class DiscoverOrganizationByPackageStructureProvider extends AbstractRule
 
     // @formatter:off
     @Override
-    public Configuration getConfiguration(GraphContext context)
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
-        final OrganizationService organizationService = new OrganizationService(context);
         return ConfigurationBuilder.begin()
                     .addRule()
                     .when(Query.fromType(ArchiveModel.class))
                     .perform(
                         new AbstractIterationOperation<ArchiveModel>() {
                             public void perform(GraphRewrite event, EvaluationContext context, ArchiveModel payload) {
-
+                                final OrganizationService organizationService = new OrganizationService(event.getGraphContext());
                                 LOG.info("Processing Archive: "+payload.getArchiveName());
                                 Set<String> packageSet = new HashSet<>();
                                 Set<String> possibleOrganization = new HashSet<>();

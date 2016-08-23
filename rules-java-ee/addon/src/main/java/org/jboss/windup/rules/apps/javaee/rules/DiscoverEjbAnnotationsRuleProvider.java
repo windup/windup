@@ -6,10 +6,10 @@ import org.jboss.forge.furnace.util.Strings;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
-import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.Service;
@@ -39,7 +39,7 @@ import java.util.Set;
 public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
 {
     @Override
-    public Configuration getConfiguration(GraphContext context)
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
 
         String ruleIDPrefix = getClass().getSimpleName();

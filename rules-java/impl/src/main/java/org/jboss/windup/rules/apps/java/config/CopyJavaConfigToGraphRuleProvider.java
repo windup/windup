@@ -12,7 +12,7 @@ import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.forge.furnace.util.Visitor;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.InitializationPhase;
@@ -37,7 +37,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 public class CopyJavaConfigToGraphRuleProvider extends AbstractRuleProvider
 {
     @Override
-    public Configuration getConfiguration(GraphContext context)
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
         GraphOperation copyConfigToGraph = new GraphOperation()
         {

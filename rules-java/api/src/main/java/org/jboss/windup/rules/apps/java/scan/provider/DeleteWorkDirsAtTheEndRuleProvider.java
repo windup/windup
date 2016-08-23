@@ -4,16 +4,15 @@ import java.io.File;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.KeepWorkDirsOption;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.IterationProgress;
 import org.jboss.windup.config.phase.PostFinalizePhase;
 import org.jboss.windup.config.phase.PostReportRenderingPhase;
-import org.jboss.windup.config.query.OutAndBackCriterion;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.WindupConfigurationQuery;
-import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.service.WindupConfigurationService;
@@ -39,7 +38,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 public class DeleteWorkDirsAtTheEndRuleProvider extends AbstractRuleProvider
 {
     @Override
-    public Configuration getConfiguration(GraphContext graphContext)
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
         // @formatter:off
         return ConfigurationBuilder.begin()

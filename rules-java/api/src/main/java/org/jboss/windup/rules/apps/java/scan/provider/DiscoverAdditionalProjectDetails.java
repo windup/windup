@@ -3,6 +3,7 @@ package org.jboss.windup.rules.apps.java.scan.provider;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.DiscoverProjectStructurePhase;
@@ -23,7 +24,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 public class DiscoverAdditionalProjectDetails extends AbstractRuleProvider
 {
     @Override
-    public Configuration getConfiguration(GraphContext context)
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
         return ConfigurationBuilder.begin()
         .addRule()

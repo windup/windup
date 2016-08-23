@@ -12,6 +12,7 @@ import com.google.common.base.StandardSystemProperty;
 import org.jboss.tattletale.Main;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.graph.GraphContext;
@@ -43,7 +44,7 @@ public class TattletaleRuleProvider extends AbstractRuleProvider
     }
 
     @Override
-    public Configuration getConfiguration(GraphContext context)
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
         return ConfigurationBuilder.begin()
                     .addRule()

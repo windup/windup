@@ -17,6 +17,7 @@ import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.engine.predicates.RuleProviderWithDependenciesPredicate;
@@ -156,7 +157,7 @@ public class SourceModeTest
 
         // @formatter:off
         @Override
-        public Configuration getConfiguration(GraphContext context)
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
         {
             return ConfigurationBuilder.begin()
             .addRule().when(

@@ -2,6 +2,7 @@ package org.jboss.windup.reporting.rules;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.PostReportGenerationPhase;
@@ -25,7 +26,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 public class AttachApplicationReportsToIndexRuleProvider extends AbstractRuleProvider
 {
     @Override
-    public Configuration getConfiguration(GraphContext context)
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
         ConditionBuilder applicationReportFound = Query.fromType(ApplicationReportModel.class);
 

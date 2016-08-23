@@ -15,6 +15,7 @@ import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.DefaultEvaluationContext;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleSubset;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.Iteration;
@@ -98,7 +99,7 @@ public class RuleIterationWhenTest
                         .getAbsolutePath()));
 
             TestWhenProvider provider = new TestWhenProvider();
-            Configuration configuration = provider.getConfiguration(context);
+            Configuration configuration = provider.getConfiguration(null);
 
             // this should call perform()
             RuleSubset.create(configuration).perform(event, evaluationContext);
@@ -126,7 +127,7 @@ public class RuleIterationWhenTest
 
         // @formatter:off
         @Override
-        public Configuration getConfiguration(GraphContext context)
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
         {
             Configuration configuration = ConfigurationBuilder.begin()
                         .addRule()

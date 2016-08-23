@@ -117,7 +117,7 @@ public class QueryConditionTest
             methodModelToString.setMethodName("toString");
 
             TestGremlinQueryOnlyRuleProvider provider = new TestGremlinQueryOnlyRuleProvider();
-            Configuration configuration = provider.getConfiguration(context);
+            Configuration configuration = provider.getConfiguration(null);
 
             RuleSubset.create(configuration).perform(event, evaluationContext);
 
@@ -156,7 +156,7 @@ public class QueryConditionTest
             methodModelToString.setMethodName("toString");
 
             TestWindupConfigurationExampleRuleProvider provider = new TestWindupConfigurationExampleRuleProvider();
-            Configuration configuration = provider.getConfiguration(context);
+            Configuration configuration = provider.getConfiguration(null);
 
             RuleSubset.create(configuration).perform(event, evaluationContext);
 
@@ -204,7 +204,7 @@ public class QueryConditionTest
             methodModelToString.setMethodName("toString");
 
             TestJavaExampleRuleProvider provider = new TestJavaExampleRuleProvider();
-            Configuration configuration = provider.getConfiguration(context);
+            Configuration configuration = provider.getConfiguration(null);
 
             RuleSubset.create(configuration).perform(event, evaluationContext);
 
@@ -235,7 +235,7 @@ public class QueryConditionTest
 
             // build a configuration, and make sure it matches what we expect (4 items)
             TestMavenExampleRuleProvider provider = new TestMavenExampleRuleProvider();
-            Configuration configuration = provider.getConfiguration(context);
+            Configuration configuration = provider.getConfiguration(null);
             RuleSubset.create(configuration).perform(event, evaluationContext);
 
             Assert.assertEquals(4, provider.getSearchResults().size());
@@ -259,7 +259,7 @@ public class QueryConditionTest
 
             // build a configuration, and make sure it matches what we expect (4 items)
             TestXmlExampleRuleProvider1 provider = new TestXmlExampleRuleProvider1();
-            Configuration configuration = provider.getConfiguration(context);
+            Configuration configuration = provider.getConfiguration(null);
             RuleSubset.create(configuration).perform(event, evaluationContext);
 
             Assert.assertEquals(4, provider.getTypeSearchResults().size());
@@ -291,7 +291,7 @@ public class QueryConditionTest
 
             // build a configuration, and make sure it matches what we expect (4 items)
             TestXmlExampleRuleProvider2 provider = new TestXmlExampleRuleProvider2();
-            Configuration configuration = provider.getConfiguration(context);
+            Configuration configuration = provider.getConfiguration(null);
             RuleSubset.create(configuration).perform(event, evaluationContext);
 
             Assert.assertEquals(1, provider.getTypeSearchResults().size());
@@ -315,7 +315,7 @@ public class QueryConditionTest
 
             // build a configuration, and make sure it matches what we expect (4 items)
             TestXmlExampleRuleProvider3 provider = new TestXmlExampleRuleProvider3();
-            Configuration configuration = provider.getConfiguration(context);
+            Configuration configuration = provider.getConfiguration(null);
             RuleSubset.create(configuration).perform(event, evaluationContext);
 
             Assert.assertEquals(1, provider.getTypeSearchResults().size());

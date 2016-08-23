@@ -92,7 +92,7 @@ public class MetaDataHandlerTest
 
         try (GraphContext graphContext = graphContextFactory.create())
         {
-            Configuration configuration = abstractRuleProvider.getConfiguration(graphContext);
+            Configuration configuration = abstractRuleProvider.getConfiguration(null);
             Assert.assertFalse(configuration.getRules().isEmpty());
             Assert.assertTrue(configuration.getRules().get(0).toString().contains("test {foo} iteration perform"));
         }

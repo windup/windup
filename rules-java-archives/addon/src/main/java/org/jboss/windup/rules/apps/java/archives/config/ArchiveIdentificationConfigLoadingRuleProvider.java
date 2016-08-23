@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import org.jboss.forge.furnace.util.Visitor;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.InitializationPhase;
@@ -39,7 +40,7 @@ public class ArchiveIdentificationConfigLoadingRuleProvider extends AbstractRule
     private CompositeArchiveIdentificationService identifier;
 
     @Override
-    public Configuration getConfiguration(final GraphContext grCtx)
+    public Configuration getConfiguration(final RuleLoaderContext ruleLoaderContext)
     {
         return ConfigurationBuilder.begin()
                     .addRule()

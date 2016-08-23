@@ -3,22 +3,21 @@ package org.jboss.windup.config.metadata;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.loader.RuleLoader;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
-import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.FileService;
-import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.util.PathUtil;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,8 +40,6 @@ public class RuleProviderRegistryCacheImpl implements RuleProviderRegistryCache
      */
     private static boolean loadErrorPrinted = false;
 
-    @Inject
-    private GraphContextFactory graphContextFactory;
     @Inject
     private RuleLoader ruleLoader;
 
@@ -147,11 +144,12 @@ public class RuleProviderRegistryCacheImpl implements RuleProviderRegistryCache
             this.cachedRegistry = null;
             try
             {
-                try (GraphContext graphContext = graphContextFactory.create())
-                {
-                    getRuleProviderRegistry(graphContext);
-                    graphContext.clear();
-                }
+                List<Path> defaultRulePaths = new ArrayList<>();
+                defaultRulePaths.add(PathUtil.getWindupRulesDir());
+                defaultRulePaths.add(PathUtil.getUserRulesDir());
+
+                RuleLoaderContext ruleLoaderContext = new RuleLoaderContext(defaultRulePaths, null);
+                getRuleProviderRegistry(ruleLoaderContext);
             }
             catch (Exception e)
             {
@@ -167,9 +165,9 @@ public class RuleProviderRegistryCacheImpl implements RuleProviderRegistryCache
     }
 
     @Override
-    public RuleProviderRegistry getRuleProviderRegistry(GraphContext graphContext)
+    public RuleProviderRegistry getRuleProviderRegistry(RuleLoaderContext ruleLoaderContext)
     {
-        initCaches(graphContext);
+        initCaches(ruleLoaderContext);
         return this.cachedRegistry;
     }
 
@@ -178,33 +176,10 @@ public class RuleProviderRegistryCacheImpl implements RuleProviderRegistryCache
         return this.cachedTransformers;
     }
 
-    private void initCaches(GraphContext graphContext)
+    private void initCaches(RuleLoaderContext ruleLoaderContext)
     {
-        WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(graphContext);
-        FileModel windupRulesPath = new FileService(graphContext).createByFilePath(PathUtil.getWindupRulesDir().toString());
-        FileModel userRulesPath = new FileService(graphContext).createByFilePath(PathUtil.getUserRulesDir().toString());
-
-        boolean pathAlreadyAdded = false;
-        for (FileModel existingRulePath : configurationModel.getUserRulesPaths())
-        {
-            if (existingRulePath.equals(windupRulesPath))
-                pathAlreadyAdded = true;
-        }
-
-        if (!pathAlreadyAdded)
-        {
-            configurationModel.addUserRulesPath(windupRulesPath);
-            configurationModel.addUserRulesPath(userRulesPath);
-        }
-        for (Path additionalUserRulesPath : this.userRulesPaths)
-        {
-            FileModel additionalRulesFileModel = new FileService(graphContext).createByFilePath(additionalUserRulesPath.toString());
-            configurationModel.addUserRulesPath(additionalRulesFileModel);
-        }
-
-        this.cachedRegistry = ruleLoader.loadConfiguration(graphContext, null);
-        GraphRewrite event = new GraphRewrite(graphContext);
-        this.cachedTransformers = TechnologyReferenceTransformer.getTransformers(event);
+        this.cachedRegistry = ruleLoader.loadConfiguration(ruleLoaderContext);
+        this.cachedTransformers = TechnologyReferenceTransformer.getTransformers(ruleLoaderContext);
         this.cacheRefreshTime = System.currentTimeMillis();
     }
 

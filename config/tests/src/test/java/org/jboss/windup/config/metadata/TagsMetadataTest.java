@@ -1,5 +1,6 @@
 package org.jboss.windup.config.metadata;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,6 +16,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.loader.RuleLoader;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.engine.predicates.EnumeratedRuleProviderPredicate;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
@@ -95,26 +97,24 @@ public class TagsMetadataTest
             }
         }
 
-        try (GraphContext context = factory.create())
+        Predicate<RuleProvider> rulesToRun = new EnumeratedRuleProviderPredicate(provider);
+
+        RuleLoaderContext ruleLoaderContext = new RuleLoaderContext(Collections.emptyList(), rulesToRun);
+        Configuration config = loader.loadConfiguration(ruleLoaderContext).getConfiguration();
+
+        Assert.assertTrue("Rule loaded", !config.getRules().isEmpty());
+        Assert.assertTrue("Rule instanceof Context", config.getRules().get(0) instanceof Context);
+
+        Context rule = (Context) config.getRules().get(0);
+
+        @SuppressWarnings("unchecked")
+        Set<String> tags = (Set<String>) rule.get(RuleMetadataType.TAGS);
+        Assert.assertNotNull(tags);
+        Assert.assertTrue(tags instanceof Set);
+        Assert.assertEquals(expected.size(), tags.size());
+        for (String tag : expected)
         {
-            Predicate<RuleProvider> rulesToRun = new EnumeratedRuleProviderPredicate(provider);
-
-            Configuration config = loader.loadConfiguration(context, rulesToRun).getConfiguration();
-
-            Assert.assertTrue("Rule loaded", !config.getRules().isEmpty());
-            Assert.assertTrue("Rule instanceof Context", config.getRules().get(0) instanceof Context);
-
-            Context rule = (Context) config.getRules().get(0);
-
-            @SuppressWarnings("unchecked")
-            Set<String> tags = (Set<String>) rule.get(RuleMetadataType.TAGS);
-            Assert.assertNotNull(tags);
-            Assert.assertTrue(tags instanceof Set);
-            Assert.assertEquals(expected.size(), tags.size());
-            for (String tag : expected)
-            {
-                Assert.assertTrue(tags.contains(tag));
-            }
+            Assert.assertTrue(tags.contains(tag));
         }
     }
 
@@ -161,7 +161,7 @@ public class TagsMetadataTest
         }
 
         @Override
-        public Configuration getConfiguration(GraphContext context)
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
         {
             return ConfigurationBuilder.begin()
                         .addRule(new Rule()

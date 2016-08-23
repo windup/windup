@@ -23,6 +23,7 @@ import org.jboss.forge.furnace.util.Iterators;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
@@ -139,7 +140,7 @@ public class XMLFileNestedConditionTest
 
         // @formatter:off
         @Override
-        public Configuration getConfiguration(GraphContext context)
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
         {
             AbstractIterationOperation<FileLocationModel> addTypeRefToList = new AbstractIterationOperation<FileLocationModel>()
             {

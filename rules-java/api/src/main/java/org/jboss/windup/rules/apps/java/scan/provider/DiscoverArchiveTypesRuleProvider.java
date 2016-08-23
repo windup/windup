@@ -3,11 +3,11 @@ package org.jboss.windup.rules.apps.java.scan.provider;
 import javax.inject.Inject;
 
 import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.phase.ArchiveMetadataExtractionPhase;
 import org.jboss.windup.config.query.Query;
-import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphTypeManager;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.rules.apps.java.scan.operation.ConfigureArchiveTypes;
@@ -25,7 +25,7 @@ public class DiscoverArchiveTypesRuleProvider extends AbstractRuleProvider
 
     // @formatter:off
     @Override
-    public Configuration getConfiguration(GraphContext context)
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
         return ConfigurationBuilder.begin()
             .addRule()

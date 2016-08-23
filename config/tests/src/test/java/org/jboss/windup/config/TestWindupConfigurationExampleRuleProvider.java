@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
@@ -50,7 +51,7 @@ public class TestWindupConfigurationExampleRuleProvider extends AbstractRuleProv
 
     // @formatter:off
     @Override
-    public Configuration getConfiguration(GraphContext context)
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
         QueryGremlinCriterion methodNameCriterion = new QueryGremlinCriterion()
         {

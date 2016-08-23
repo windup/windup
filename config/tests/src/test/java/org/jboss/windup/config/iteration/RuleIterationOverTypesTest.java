@@ -15,6 +15,7 @@ import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.DefaultEvaluationContext;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleSubset;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.Iteration;
@@ -94,7 +95,7 @@ public class RuleIterationOverTypesTest
                         .getAbsolutePath()));
 
             TestRuleIterationOverTypesProvider provider = new TestRuleIterationOverTypesProvider();
-            Configuration configuration = provider.getConfiguration(context);
+            Configuration configuration = provider.getConfiguration(null);
 
             // this should call perform()
             RuleSubset.create(configuration).perform(event, evaluationContext);
@@ -128,7 +129,7 @@ public class RuleIterationOverTypesTest
                         .createByFilePath(OperatingSystemUtils.createTempDir().getAbsolutePath()));
 
             TestRuleIterationOverTypesWithExceptionProvider provider = new TestRuleIterationOverTypesWithExceptionProvider();
-            Configuration configuration = provider.getConfiguration(context);
+            Configuration configuration = provider.getConfiguration(null);
 
             // this should call perform()
             RuleSubset.create(configuration).perform(event, evaluationContext);
@@ -151,7 +152,7 @@ public class RuleIterationOverTypesTest
 
         // @formatter:off
         @Override
-        public Configuration getConfiguration(GraphContext context)
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
         {
             Configuration configuration = ConfigurationBuilder.begin()
             .addRule()
@@ -197,7 +198,7 @@ public class RuleIterationOverTypesTest
 
         // @formatter:off
         @Override
-        public Configuration getConfiguration(GraphContext context)
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
         {
             Configuration configuration = ConfigurationBuilder.begin()
             .addRule()

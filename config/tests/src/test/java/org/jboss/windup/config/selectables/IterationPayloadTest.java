@@ -18,6 +18,7 @@ import org.jboss.windup.config.DefaultEvaluationContext;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleSubset;
 import org.jboss.windup.config.Variables;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
@@ -77,7 +78,7 @@ public class IterationPayloadTest
 
             fillData(context);
 
-            RuleSubset.create(provider.getConfiguration(context)).perform(event, evaluationContext);
+            RuleSubset.create(provider.getConfiguration(null)).perform(event, evaluationContext);
 
             Assert.assertEquals(3, provider.getChildCount());
             Assert.assertEquals(2, provider.getParentCount());
@@ -100,7 +101,7 @@ public class IterationPayloadTest
 
             fillData(context);
 
-            RuleSubset.create(nestedIterationRuleProvider.getConfiguration(context)).perform(event, evaluationContext);
+            RuleSubset.create(nestedIterationRuleProvider.getConfiguration(null)).perform(event, evaluationContext);
 
             Assert.assertEquals(2, nestedIterationRuleProvider.outerVertices.size());
             Assert.assertEquals(3, nestedIterationRuleProvider.innerVertices.size());
@@ -142,7 +143,7 @@ public class IterationPayloadTest
         }
 
         @Override
-        public Configuration getConfiguration(GraphContext context)
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
         {
             return ConfigurationBuilder.begin()
                         .addRule()

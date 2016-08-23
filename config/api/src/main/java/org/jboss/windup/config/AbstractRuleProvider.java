@@ -7,6 +7,7 @@
 package org.jboss.windup.config;
 
 import org.jboss.forge.furnace.util.Annotations;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.metadata.RuleMetadataType;
@@ -64,7 +65,7 @@ public abstract class AbstractRuleProvider extends ContextBase implements RulePr
     @Override
     public boolean handles(Object payload)
     {
-        return payload instanceof GraphContext;
+        return payload instanceof RuleLoaderContext;
     }
 
     /**

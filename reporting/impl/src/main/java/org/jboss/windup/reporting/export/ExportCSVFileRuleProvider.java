@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
@@ -43,7 +44,7 @@ public class ExportCSVFileRuleProvider extends AbstractRuleProvider
 
     // @formatter:off
     @Override
-    public Configuration getConfiguration(GraphContext context)
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
         return ConfigurationBuilder.begin()
                 .addRule()

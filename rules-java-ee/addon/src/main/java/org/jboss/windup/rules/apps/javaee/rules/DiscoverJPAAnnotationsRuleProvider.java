@@ -6,11 +6,11 @@ import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.Variables;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
-import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.config.projecttraversal.ProjectTraversalCache;
@@ -48,7 +48,7 @@ public class DiscoverJPAAnnotationsRuleProvider extends AbstractRuleProvider
     private static final String NAMED_QUERIES_LIST = "namedQueries";
 
     @Override
-    public Configuration getConfiguration(GraphContext context)
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
         String ruleIDPrefix = getClass().getSimpleName();
         return ConfigurationBuilder

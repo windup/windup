@@ -6,6 +6,7 @@ import java.util.List;
 import com.tinkerpop.blueprints.Direction;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.IterationProgress;
@@ -13,10 +14,8 @@ import org.jboss.windup.config.operation.iteration.AbstractIterationFilter;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.DiscoverProjectStructurePhase;
 import org.jboss.windup.config.query.Query;
-import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.DuplicateArchiveModel;
-import org.jboss.windup.graph.model.DuplicateProjectModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.ProjectService;
@@ -35,7 +34,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 public class DiscoverNonMavenArchiveProjectsRuleProvider extends AbstractRuleProvider
 {
     @Override
-    public Configuration getConfiguration(GraphContext arg0)
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
         // @formatter:off
         return ConfigurationBuilder.begin()

@@ -2,6 +2,8 @@ package org.jboss.windup.rules.apps.java.reporting.rules;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.condition.GraphCondition;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
@@ -15,7 +17,6 @@ import org.jboss.windup.reporting.model.TemplateType;
 import org.jboss.windup.reporting.service.ApplicationReportService;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.util.exception.WindupException;
-import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -31,13 +32,21 @@ public class CreateCompatibleFileReportRuleProvider extends AbstractRuleProvider
 
     // @formatter:off
     @Override
-    public Configuration getConfiguration(GraphContext context)
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
-        Boolean generateReport = (Boolean)context.getOptionMap().get(EnableCompatibleFilesReportOption.NAME);
-        if (generateReport == null || !generateReport)
-            return ConfigurationBuilder.begin();
 
-        ConditionBuilder applicationProjectModelsFound = Query.fromType(WindupConfigurationModel.class);
+        GraphCondition graphCondition = new GraphCondition()
+        {
+            @Override
+            public boolean evaluate(GraphRewrite event, EvaluationContext context)
+            {
+                Boolean generateReport = (Boolean)event.getGraphContext().getOptionMap().get(EnableCompatibleFilesReportOption.NAME);
+                if (generateReport == null)
+                    generateReport = false;
+
+                return generateReport && Query.fromType(WindupConfigurationModel.class).evaluate(event, context);
+            }
+        };
 
         AbstractIterationOperation<WindupConfigurationModel> addApplicationReport = new AbstractIterationOperation<WindupConfigurationModel>()
         {
@@ -64,7 +73,7 @@ public class CreateCompatibleFileReportRuleProvider extends AbstractRuleProvider
 
         return ConfigurationBuilder.begin()
                     .addRule()
-                    .when(applicationProjectModelsFound)
+                    .when(graphCondition)
                     .perform(addApplicationReport);
 
     }

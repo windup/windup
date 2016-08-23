@@ -18,10 +18,10 @@ import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.exec.configuration.options.OfflineModeOption;
-import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.config.Hint;
@@ -133,7 +133,7 @@ public class ExecutionBuilderTest
         }
 
         @Override
-        public Configuration getConfiguration(GraphContext context)
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
         {
             return ConfigurationBuilder.begin()
                         .addRule()

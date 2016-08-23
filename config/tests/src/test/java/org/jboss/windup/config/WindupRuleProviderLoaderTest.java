@@ -1,6 +1,7 @@
 package org.jboss.windup.config;
 
 import java.io.IOException;
+import java.util.Collections;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -12,6 +13,7 @@ import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.loader.RuleProviderLoader;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.graph.GraphContext;
@@ -50,34 +52,32 @@ public class WindupRuleProviderLoaderTest
     @Test
     public void testRuleProviderWithFilter() throws IOException
     {
-        try (GraphContext context = factory.create())
-        {
-            boolean foundProvider1 = false;
-            boolean foundProvider2 = false;
+        boolean foundProvider1 = false;
+        boolean foundProvider2 = false;
 
-            for (RuleProviderLoader loader : loaders)
+        RuleLoaderContext ruleLoaderContext = new RuleLoaderContext();
+        for (RuleProviderLoader loader : loaders)
+        {
+            for (RuleProvider provider : loader.getProviders(ruleLoaderContext))
             {
-                for (RuleProvider provider : loader.getProviders(context))
+                if (provider instanceof TestRuleProvider1)
                 {
-                    if (provider instanceof TestRuleProvider1)
-                    {
-                        Assert.assertTrue(provider.getMetadata().getOrigin()
-                                    .contains("org.jboss.windup.config.WindupRuleProviderLoaderTest$TestRuleProvider1"));
-                        Assert.assertTrue(provider.getMetadata().getOrigin().contains("_DEFAULT_"));
-                        foundProvider1 = true;
-                    }
-                    else if (provider instanceof TestRuleProvider2)
-                    {
-                        Assert.assertTrue(provider.getMetadata().getOrigin()
-                                    .contains("org.jboss.windup.config.WindupRuleProviderLoaderTest$TestRuleProvider2"));
-                        Assert.assertTrue(provider.getMetadata().getOrigin().contains("_DEFAULT_"));
-                        foundProvider2 = true;
-                    }
+                    Assert.assertTrue(provider.getMetadata().getOrigin()
+                                .contains("org.jboss.windup.config.WindupRuleProviderLoaderTest$TestRuleProvider1"));
+                    Assert.assertTrue(provider.getMetadata().getOrigin().contains("_DEFAULT_"));
+                    foundProvider1 = true;
+                }
+                else if (provider instanceof TestRuleProvider2)
+                {
+                    Assert.assertTrue(provider.getMetadata().getOrigin()
+                                .contains("org.jboss.windup.config.WindupRuleProviderLoaderTest$TestRuleProvider2"));
+                    Assert.assertTrue(provider.getMetadata().getOrigin().contains("_DEFAULT_"));
+                    foundProvider2 = true;
                 }
             }
-            Assert.assertTrue(foundProvider1);
-            Assert.assertTrue(foundProvider2);
         }
+        Assert.assertTrue(foundProvider1);
+        Assert.assertTrue(foundProvider2);
     }
 
     @Singleton
@@ -89,7 +89,7 @@ public class WindupRuleProviderLoaderTest
         }
 
         @Override
-        public Configuration getConfiguration(GraphContext context)
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
         {
             return ConfigurationBuilder.begin()
                         .addRule(new Rule()
@@ -123,7 +123,7 @@ public class WindupRuleProviderLoaderTest
         }
 
         @Override
-        public Configuration getConfiguration(GraphContext context)
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
         {
             return ConfigurationBuilder.begin()
                         .addRule(new Rule()

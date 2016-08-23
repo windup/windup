@@ -9,9 +9,9 @@ import java.util.Map;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportRenderingPhase;
-import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -45,7 +45,7 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider
     public static final String ISSUE_SUMMARIES_JS = "issue_summaries.js";
 
     @Override
-    public Configuration getConfiguration(GraphContext context)
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
         return ConfigurationBuilder.begin()
         .addRule()

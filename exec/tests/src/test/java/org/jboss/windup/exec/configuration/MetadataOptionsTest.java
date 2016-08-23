@@ -11,13 +11,13 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.metadata.Technology;
 import org.jboss.windup.exec.configuration.options.ExcludeTagsOption;
 import org.jboss.windup.exec.configuration.options.IncludeTagsOption;
 import org.jboss.windup.exec.configuration.options.SourceOption;
 import org.jboss.windup.exec.configuration.options.TargetOption;
-import org.jboss.windup.graph.GraphContext;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -105,7 +105,7 @@ public class MetadataOptionsTest
     public static class MetadataRuleProvider extends AbstractRuleProvider
     {
         @Override
-        public Configuration getConfiguration(GraphContext context)
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
         {
             return ConfigurationBuilder.begin();
         }

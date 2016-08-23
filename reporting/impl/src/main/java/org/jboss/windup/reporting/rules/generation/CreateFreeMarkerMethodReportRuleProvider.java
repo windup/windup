@@ -2,6 +2,7 @@ package org.jboss.windup.reporting.rules.generation;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
@@ -21,7 +22,7 @@ public class CreateFreeMarkerMethodReportRuleProvider extends AbstractRuleProvid
     private static final String OUTPUT_FILENAME = "windup_freemarkerfunctions.html";
 
     @Override
-    public Configuration getConfiguration(GraphContext context)
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
         return ConfigurationBuilder.begin()
                     .addRule()

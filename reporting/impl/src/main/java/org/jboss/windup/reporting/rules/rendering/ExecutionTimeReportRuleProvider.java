@@ -11,6 +11,7 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.PostFinalizePhase;
@@ -41,7 +42,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 public class ExecutionTimeReportRuleProvider extends AbstractRuleProvider
 {
     @Override
-    public Configuration getConfiguration(GraphContext context)
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
         return ConfigurationBuilder.begin()
         .addRule()

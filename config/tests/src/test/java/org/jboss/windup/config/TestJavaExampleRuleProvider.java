@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
@@ -17,7 +18,6 @@ import org.jboss.windup.config.phase.DiscoveryPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryGremlinCriterion;
 import org.jboss.windup.config.query.QueryPropertyComparisonType;
-import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaMethodModel;
 import org.jboss.windup.util.Logging;
@@ -46,7 +46,7 @@ public class TestJavaExampleRuleProvider extends AbstractRuleProvider
 
     // @formatter:off
     @Override
-    public Configuration getConfiguration(GraphContext context)
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
         QueryGremlinCriterion methodNameCriterion = new QueryGremlinCriterion()
         {

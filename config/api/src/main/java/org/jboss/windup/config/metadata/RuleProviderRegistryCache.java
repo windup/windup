@@ -1,6 +1,7 @@
 package org.jboss.windup.config.metadata;
 
 import org.jboss.windup.config.RuleProvider;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.graph.GraphContext;
 
 import java.nio.file.Path;
@@ -43,5 +44,5 @@ public interface RuleProviderRegistryCache
     /**
      * Load the registry using the given {@link GraphContext}.
      */
-    RuleProviderRegistry getRuleProviderRegistry(GraphContext graphContext);
+    RuleProviderRegistry getRuleProviderRegistry(RuleLoaderContext ruleLoaderContext);
 }

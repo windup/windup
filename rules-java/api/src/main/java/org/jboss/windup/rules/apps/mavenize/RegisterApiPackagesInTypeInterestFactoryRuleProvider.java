@@ -2,14 +2,14 @@ package org.jboss.windup.rules.apps.mavenize;
 
 
 import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
+import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.InitializationPhase;
-import org.jboss.windup.graph.GraphContext;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
-import org.ocpsoft.rewrite.config.Operation;
 import org.ocpsoft.rewrite.context.EvaluationContext;
-import org.ocpsoft.rewrite.event.Rewrite;
 
 /**
  * To actually get the queriable data about certain classes into the graph,
@@ -24,24 +24,25 @@ import org.ocpsoft.rewrite.event.Rewrite;
 public class RegisterApiPackagesInTypeInterestFactoryRuleProvider extends AbstractRuleProvider
 {
     @Override
-    public Configuration getConfiguration(GraphContext grCtx)
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
-        final PackagesToContainingMavenArtifactsIndex packageIndex = new PackagesToContainingMavenArtifactsIndex(grCtx);
         // @formatter:off
         return ConfigurationBuilder.begin()
-        .addRule().perform(new Operation()
+        .addRule().perform(new GraphOperation()
         {
-            public void perform(Rewrite event, EvaluationContext context)
+            public void perform(GraphRewrite event, EvaluationContext context)
             {
+                final PackagesToContainingMavenArtifactsIndex packageIndex = new PackagesToContainingMavenArtifactsIndex(event.getGraphContext());
                 for (MavenCoord apiCoords : ApiDependenciesData.API_ARTIFACTS) // TODO: Get this form the index.
                 {
                     packageIndex.registerPackagesFromAPI(apiCoords);
                 }
             }
-        }).addRule().perform(new Operation()
+        }).addRule().perform(new GraphOperation()
         {
-            public void perform(Rewrite event, EvaluationContext context)
+            public void perform(GraphRewrite event, EvaluationContext context)
             {
+                final PackagesToContainingMavenArtifactsIndex packageIndex = new PackagesToContainingMavenArtifactsIndex(event.getGraphContext());
                 for (MavenCoord apiCoords : ApiDependenciesData.API_ARTIFACTS)
                 {
                     packageIndex.markProjectsUsingPackagesFromAPI(apiCoords);

@@ -2,6 +2,7 @@ package org.jboss.windup.reporting.rules.generation;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.graph.GraphContext;
@@ -31,7 +32,7 @@ public class CreateMigrationIssuesReportRuleProvider extends AbstractRuleProvide
     public static final String REPORT_DESCRIPTION = "The Migration Issues report provides a concise summary of all issues that require attention.";
 
     @Override
-    public Configuration getConfiguration(GraphContext context)
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
         return ConfigurationBuilder.begin()
                     .addRule()

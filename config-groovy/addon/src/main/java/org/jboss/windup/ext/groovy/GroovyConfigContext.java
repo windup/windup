@@ -1,6 +1,6 @@
 package org.jboss.windup.ext.groovy;
 
-import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 
 /**
  * Context for creating {@link GroovyConfigMethod} closure callbacks.
@@ -11,7 +11,7 @@ import org.jboss.windup.graph.GraphContext;
 public interface GroovyConfigContext
 {
     /**
-     * Get the {@link GraphContext}
+     * Get the {@link RuleLoaderContext}
      */
-    GraphContext getGraphContext();
+    RuleLoaderContext getRuleLoaderContext();
 }

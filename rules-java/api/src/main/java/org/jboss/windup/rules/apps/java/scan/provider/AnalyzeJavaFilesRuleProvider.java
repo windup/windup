@@ -25,7 +25,6 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.jboss.forge.roaster.model.JavaType;
 import org.jboss.windup.ast.java.ASTProcessor;
 import org.jboss.windup.ast.java.BatchASTFuture;
 import org.jboss.windup.ast.java.BatchASTListener;
@@ -39,6 +38,7 @@ import org.jboss.windup.ast.java.data.annotations.AnnotationLiteralValue;
 import org.jboss.windup.ast.java.data.annotations.AnnotationValue;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.metadata.TechnologyMetadata;
 import org.jboss.windup.config.metadata.TechnologyMetadataProvider;
@@ -96,7 +96,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
 
     // @formatter:off
     @Override
-    public Configuration getConfiguration(GraphContext context)
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
         return ConfigurationBuilder.begin()
             .addRule()

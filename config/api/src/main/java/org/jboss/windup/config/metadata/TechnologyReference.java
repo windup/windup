@@ -16,6 +16,13 @@ public class TechnologyReference
     private String id;
     private VersionRange versionRange;
 
+    /**
+     * DO NOT USE -- This is just here to make proxies possible
+     */
+    public TechnologyReference()
+    {
+    }
+
     public TechnologyReference(TechnologyReferenceModel model)
     {
         this(model.getTechnologyID(), model.getVersionRange());

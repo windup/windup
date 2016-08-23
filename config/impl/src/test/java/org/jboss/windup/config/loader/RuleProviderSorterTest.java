@@ -113,7 +113,7 @@ public class RuleProviderSorterTest
         }
 
         @Override
-        public Configuration getConfiguration(GraphContext context)
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
         {
             return null;
         }
@@ -129,7 +129,7 @@ public class RuleProviderSorterTest
         }
 
         @Override
-        public Configuration getConfiguration(GraphContext context)
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
         {
             return null;
         }
@@ -144,7 +144,7 @@ public class RuleProviderSorterTest
         }
 
         @Override
-        public Configuration getConfiguration(GraphContext context)
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
         {
             return null;
         }
@@ -160,7 +160,7 @@ public class RuleProviderSorterTest
         }
 
         @Override
-        public Configuration getConfiguration(GraphContext context)
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
         {
             return null;
         }
@@ -175,7 +175,7 @@ public class RuleProviderSorterTest
         }
 
         @Override
-        public Configuration getConfiguration(GraphContext context)
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
         {
             return null;
         }
@@ -192,7 +192,7 @@ public class RuleProviderSorterTest
         }
 
         @Override
-        public Configuration getConfiguration(GraphContext context)
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
         {
             return null;
         }
@@ -208,7 +208,7 @@ public class RuleProviderSorterTest
         }
 
         @Override
-        public Configuration getConfiguration(GraphContext context)
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
         {
             return null;
         }
@@ -224,7 +224,7 @@ public class RuleProviderSorterTest
         }
 
         @Override
-        public Configuration getConfiguration(GraphContext context)
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
         {
             return null;
         }
@@ -240,7 +240,7 @@ public class RuleProviderSorterTest
         }
 
         @Override
-        public Configuration getConfiguration(GraphContext context)
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
         {
             return null;
         }
@@ -257,7 +257,7 @@ public class RuleProviderSorterTest
         }
 
         @Override
-        public Configuration getConfiguration(GraphContext context)
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
         {
             return null;
         }

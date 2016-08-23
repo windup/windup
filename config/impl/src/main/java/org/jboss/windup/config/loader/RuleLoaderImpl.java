@@ -54,9 +54,9 @@ public class RuleLoaderImpl implements RuleLoader
     }
 
     @Override
-    public RuleProviderRegistry loadConfiguration(GraphContext context, Predicate<RuleProvider> ruleProviderFilter)
+    public RuleProviderRegistry loadConfiguration(RuleLoaderContext ruleLoaderContext)
     {
-        return build(context, ruleProviderFilter);
+        return build(ruleLoaderContext);
     }
 
     /**
@@ -112,12 +112,12 @@ public class RuleLoaderImpl implements RuleLoader
         }
     }
 
-    private List<RuleProvider> getProviders(GraphContext context)
+    private List<RuleProvider> getProviders(RuleLoaderContext ruleLoaderContext)
     {
         List<RuleProvider> unsortedProviders = new ArrayList<>();
         for (RuleProviderLoader loader : loaders)
         {
-            unsortedProviders.addAll(loader.getProviders(context));
+            unsortedProviders.addAll(loader.getProviders(ruleLoaderContext));
         }
 
         checkForDuplicateProviders(unsortedProviders);
@@ -130,11 +130,11 @@ public class RuleLoaderImpl implements RuleLoader
         return Collections.unmodifiableList(sortedProviders);
     }
 
-    private RuleProviderRegistry build(GraphContext context, Predicate<RuleProvider> ruleProviderFilter)
+    private RuleProviderRegistry build(RuleLoaderContext ruleLoaderContext)
     {
         List<Rule> allRules = new ArrayList<>(2000); // estimate of how many rules we will likely see
 
-        List<RuleProvider> providers = getProviders(context);
+        List<RuleProvider> providers = getProviders(ruleLoaderContext);
         RuleProviderRegistry registry = new RuleProviderRegistry();
         registry.setProviders(providers);
 
@@ -144,7 +144,7 @@ public class RuleLoaderImpl implements RuleLoader
             if (!provider.getMetadata().isOverrideProvider())
                 continue;
 
-            Configuration cfg = provider.getConfiguration(context);
+            Configuration cfg = provider.getConfiguration(null);
             List<Rule> rules = cfg.getRules();
             for (Rule rule : rules)
                 overrideRules.put(new RuleKey(provider.getMetadata().getID(), rule.getId()), rule);
@@ -152,10 +152,10 @@ public class RuleLoaderImpl implements RuleLoader
 
         for (RuleProvider provider : providers)
         {
-            if (ruleProviderFilter != null)
+            if (ruleLoaderContext.getRuleProviderFilter() != null)
             {
-                boolean accepted = ruleProviderFilter.accept(provider);
-                LOG.info((accepted ? "Accepted" : "Skipped") + ": [" + provider + "] by filter [" + ruleProviderFilter + "]");
+                boolean accepted = ruleLoaderContext.getRuleProviderFilter().accept(provider);
+                LOG.info((accepted ? "Accepted" : "Skipped") + ": [" + provider + "] by filter [" + ruleLoaderContext.getRuleProviderFilter() + "]");
                 if (!accepted)
                     continue;
             }
@@ -164,7 +164,7 @@ public class RuleLoaderImpl implements RuleLoader
             if (provider.getMetadata().isOverrideProvider())
                 continue;
 
-            Configuration cfg = provider.getConfiguration(context);
+            Configuration cfg = provider.getConfiguration(null);
 
             // copy it to allow for the option of modification
             List<Rule> rules = new ArrayList<>(cfg.getRules());

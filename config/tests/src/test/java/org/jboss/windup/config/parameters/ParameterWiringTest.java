@@ -18,6 +18,7 @@ import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.DefaultEvaluationContext;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleSubset;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
@@ -98,7 +99,7 @@ public class ParameterWiringTest
             model9.setValue("The stupid fox slept under the stupid fox.");
 
             ParameterWiringTestRuleProvider provider = new ParameterWiringTestRuleProvider();
-            RuleSubset.create(provider.getConfiguration(context)).perform(event, evaluationContext);
+            RuleSubset.create(provider.getConfiguration(null)).perform(event, evaluationContext);
 
             Assert.assertEquals(2, provider.getMatchCount());
             Assert.assertTrue(provider.getResults().contains(model7));
@@ -117,7 +118,7 @@ public class ParameterWiringTest
         private List<ParameterWiringTestModel> results = new ArrayList<>();
 
         @Override
-        public Configuration getConfiguration(GraphContext context)
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
         {
             return ConfigurationBuilder.begin()
                         .addRule()
@@ -197,7 +198,7 @@ public class ParameterWiringTest
             model9.setValue("The stupid fox slept under the stupid fox.");
 
             ParameterWiringTestRuleProvider2 provider = new ParameterWiringTestRuleProvider2();
-            RuleSubset.create(provider.getConfiguration(context)).perform(event, evaluationContext);
+            RuleSubset.create(provider.getConfiguration(null)).perform(event, evaluationContext);
 
             Assert.assertEquals(3, provider.getMatchCount());
             Assert.assertTrue(provider.getResults().contains(model7));
@@ -223,7 +224,7 @@ public class ParameterWiringTest
         private List<String> resultParameterValues = new ArrayList<>();
 
         @Override
-        public Configuration getConfiguration(GraphContext context)
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
         {
             return ConfigurationBuilder.begin()
                         .addRule()
@@ -340,7 +341,7 @@ public class ParameterWiringTest
             model14.setValue("some stupid.");
 
             ParameterWiringTestRuleProvider3 provider = new ParameterWiringTestRuleProvider3();
-            RuleSubset.create(provider.getConfiguration(context)).perform(event, evaluationContext);
+            RuleSubset.create(provider.getConfiguration(null)).perform(event, evaluationContext);
 
             Assert.assertEquals(1, provider.getMatchCount());
             Assert.assertEquals(model14, provider.getResults().iterator().next());
@@ -358,7 +359,7 @@ public class ParameterWiringTest
         }
 
         @Override
-        public Configuration getConfiguration(GraphContext context)
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
         {
             return ConfigurationBuilder
                         .begin()
@@ -436,7 +437,7 @@ public class ParameterWiringTest
             model5.setValue("The quick brown fox jumped over the lazy fox.");
 
             ParameterWiringTestRuleProvider4 provider = new ParameterWiringTestRuleProvider4();
-            RuleSubset.create(provider.getConfiguration(context)).perform(event, evaluationContext);
+            RuleSubset.create(provider.getConfiguration(null)).perform(event, evaluationContext);
 
             Assert.assertEquals(4, provider.getMatchCount());
             Assert.assertTrue(provider.getResults().contains(model1));
@@ -457,7 +458,7 @@ public class ParameterWiringTest
         }
 
         @Override
-        public Configuration getConfiguration(GraphContext context)
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
         {
             return ConfigurationBuilder
                         .begin()

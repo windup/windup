@@ -2,6 +2,7 @@ package org.jboss.windup.config.phase;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.RuleProvider;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.metadata.RuleProviderMetadata;
 import org.jboss.windup.graph.GraphContext;
@@ -36,7 +37,7 @@ public abstract class RulePhase extends AbstractRuleProvider
      * {@link Rule}s.
      */
     @Override
-    public final Configuration getConfiguration(GraphContext context)
+    public final Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
         return ConfigurationBuilder.begin();
     }
