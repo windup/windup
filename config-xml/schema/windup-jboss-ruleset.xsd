@@ -279,6 +279,7 @@
                 <xs:element name="message" minOccurs="0" maxOccurs="1" type="xs:string" />
                 <xs:element ref="link" minOccurs="0" maxOccurs="unbounded" />
                 <xs:element name="tag" minOccurs="0" maxOccurs="unbounded" type="xs:string" />
+                <xs:element ref="quickfix" minOccurs="0" maxOccurs="unbounded"/>
             </xs:sequence>
             <xs:attribute name="title" type="xs:string" use="required"/>
             <xs:attribute name="severity" type="severity-type" use="optional" />
@@ -295,6 +296,21 @@
             <xs:enumeration value="potential"/>
         </xs:restriction>
     </xs:simpleType>
+    
+    <xs:simpleType name="quickfix-type">
+        <xs:annotation>
+            <xs:documentation><![CDATA[
+            This describes type of quick fix in type attribute.
+            There are currently 3 types supported 
+            for replacement -> REPLACE, addition -> INSERT_LINE and deleting -> DELETE_LINE.]]>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="REPLACE"/>
+            <xs:enumeration value="DELETE_LINE"/>
+            <xs:enumeration value="INSERT_LINE"/>
+        </xs:restriction>
+    </xs:simpleType>
 
     <!-- Classification -->
     <xs:element name="classification">
@@ -303,6 +319,7 @@
                 <xs:element name="description" minOccurs="0" maxOccurs="unbounded" type="xs:string" />
                 <xs:element ref="link" minOccurs="0" maxOccurs="unbounded" />
                 <xs:element name="tag" minOccurs="0" maxOccurs="unbounded" type="xs:string" />
+                <xs:element ref="quickfix" minOccurs="0" maxOccurs="unbounded"/>
             </xs:sequence>
             <xs:attribute name="title" type="xs:string" use="required"/>
             <xs:attribute name="effort" type="xs:byte" use="optional" />
@@ -321,6 +338,22 @@
             </xs:simpleContent>
         </xs:complexType>
     </xs:element>
+    
+    <xs:element name="quickfix">
+        <xs:annotation>
+            <xs:documentation>
+                Quick fix is supported element targeting tools to replace, delete or insert lines/strings.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexType mixed="true">
+            <xs:sequence>
+                <xs:element name="newline" type="xs:string" />
+                <xs:element name="replacement" type="xs:string" />
+                <xs:element name="search" type="xs:string" />
+            </xs:sequence>
+            <xs:attribute type="quickfix-type" name="type" use="required" />
+        </xs:complexType>
+    </xs:element>    
 
     <xs:element name="log">
         <xs:complexType>
