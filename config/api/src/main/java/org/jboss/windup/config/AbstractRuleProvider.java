@@ -6,6 +6,7 @@
  */
 package org.jboss.windup.config;
 
+import org.jboss.forge.furnace.proxy.Proxies;
 import org.jboss.forge.furnace.util.Annotations;
 import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.MetadataBuilder;
@@ -31,6 +32,16 @@ public abstract class AbstractRuleProvider extends ContextBase implements RulePr
 
     public AbstractRuleProvider()
     {
+        /*
+         * In the case of a proxy, the no-args constructor will be called. This is the case even if the provider
+         * itself would normally have a metadata param passed in.
+         *
+         * Once completed, the getMetadata() method will be proxied correctly, so this is ok. Just allow it to pass
+         * in this case.
+         */
+        if (Proxies.isForgeProxy(this) && !Annotations.isAnnotationPresent(getClass(), RuleMetadata.class))
+            return;
+
         if (!Annotations.isAnnotationPresent(getClass(), RuleMetadata.class))
         {
             throw new IllegalStateException(getClass().getName() + " must either "
