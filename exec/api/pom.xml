@@ -34,6 +34,11 @@
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jboss.forge.furnace</groupId>
+            <artifactId>furnace-proxy</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
 
         <!-- Furnace Container -->
