@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.model.TestXmlMetaFacetModel;
 import org.jboss.windup.config.operation.Iteration;
@@ -18,7 +19,6 @@ import org.jboss.windup.config.operation.iteration.AbstractIterationFilter;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.DiscoveryPhase;
 import org.jboss.windup.config.query.Query;
-import org.jboss.windup.graph.GraphContext;
 import org.junit.Assert;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -42,7 +42,7 @@ public class TestXmlExampleRuleProvider1 extends AbstractRuleProvider
 
     // @formatter:off
     @Override
-    public Configuration getConfiguration(GraphContext context)
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
         Configuration configuration = ConfigurationBuilder.begin()
         .addRule()

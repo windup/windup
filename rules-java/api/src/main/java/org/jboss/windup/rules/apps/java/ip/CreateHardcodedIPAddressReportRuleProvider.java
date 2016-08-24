@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
@@ -42,7 +43,7 @@ public class CreateHardcodedIPAddressReportRuleProvider extends AbstractRuleProv
     public static final String REPORT_DESCRIPTION = "The Hard-coded IP report provides a list of all hard-coded IP addresses that were found in the application. These often require review during migration.";
 
     @Override
-    public Configuration getConfiguration(final GraphContext graphContext)
+    public Configuration getConfiguration(final RuleLoaderContext ruleLoaderContext)
     {
         return ConfigurationBuilder
         .begin()

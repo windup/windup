@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
@@ -44,7 +45,7 @@ public class CreateAboutWindupReportRuleProvider extends AbstractRuleProvider
 
     // @formatter:off
     @Override
-    public Configuration getConfiguration(GraphContext context)
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
         ConditionBuilder applicationProjectModelsFound = Query
                     .fromType(WindupConfigurationModel.class);

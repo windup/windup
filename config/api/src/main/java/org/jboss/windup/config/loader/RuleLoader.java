@@ -2,9 +2,7 @@ package org.jboss.windup.config.loader;
 
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.windup.config.AbstractRuleProvider;
-import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.metadata.RuleProviderRegistry;
-import org.jboss.windup.graph.GraphContext;
 import org.ocpsoft.rewrite.config.Configuration;
 
 /**
@@ -20,5 +18,5 @@ public interface RuleLoader
      * 
      * @param ruleProviderFilter Must accept null.
      */
-    RuleProviderRegistry loadConfiguration(GraphContext context, Predicate<RuleProvider> ruleProviderFilter);
+    RuleProviderRegistry loadConfiguration(RuleLoaderContext ruleLoaderContext);
 }

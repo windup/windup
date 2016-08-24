@@ -4,10 +4,10 @@ import org.jboss.forge.furnace.util.Annotations;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleProvider;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.metadata.RuleProviderMetadata;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
-import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -78,7 +78,7 @@ public abstract class IteratingRuleProvider<PAYLOADTYPE extends WindupVertexFram
     }
 
     @Override
-    public final Configuration getConfiguration(GraphContext context)
+    public final Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
         return ConfigurationBuilder.begin()
                     .addRule()

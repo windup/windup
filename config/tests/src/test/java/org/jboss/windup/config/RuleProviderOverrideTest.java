@@ -13,6 +13,7 @@ import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.loader.RuleLoader;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
 import org.jboss.windup.graph.GraphContext;
@@ -49,26 +50,15 @@ public class RuleProviderOverrideTest
     @Test
     public void testOverride() throws IOException
     {
-        try (GraphContext context = factory.create())
+        RuleLoaderContext ruleLoaderContext = new RuleLoaderContext();
+        Configuration configuration = loader.loadConfiguration(ruleLoaderContext).getConfiguration();
+        int count = 0;
+        for (Rule rule : configuration.getRules())
         {
-            Predicate<RuleProvider> predicate = new Predicate<RuleProvider>()
-            {
-                @Override
-                public boolean accept(RuleProvider provider)
-                {
-                    return true;
-                }
-            };
-
-            Configuration configuration = loader.loadConfiguration(context, predicate).getConfiguration();
-            int count = 0;
-            for (Rule rule : configuration.getRules())
-            {
-                count++;
-                Assert.assertTrue("Override", rule.toString().contains("RuleOverride"));
-            }
-            Assert.assertEquals(1, count);
+            count++;
+            Assert.assertTrue("Override", rule.toString().contains("RuleOverride"));
         }
+        Assert.assertEquals(1, count);
     }
 
     @Singleton
@@ -80,7 +70,7 @@ public class RuleProviderOverrideTest
         }
 
         @Override
-        public Configuration getConfiguration(GraphContext context)
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
         {
             return ConfigurationBuilder.begin()
                     .addRule(new Rule()
@@ -116,7 +106,7 @@ public class RuleProviderOverrideTest
             }
 
             @Override
-            public Configuration getConfiguration(GraphContext context) {
+            public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
                 return ConfigurationBuilder.begin()
                         .addRule(new Rule() {
                             @Override

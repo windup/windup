@@ -4,11 +4,11 @@ import java.util.logging.Logger;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.DiscoverProjectStructurePhase;
 import org.jboss.windup.config.query.Query;
-import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.rules.apps.java.model.project.MavenProjectModel;
@@ -29,7 +29,7 @@ public class DiscoverMavenHierarchyRuleProvider extends AbstractRuleProvider
     private static final Logger LOG = Logging.get(DiscoverMavenProjectsRuleProvider.class);
 
     @Override
-    public Configuration getConfiguration(GraphContext grCtx)
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
         AbstractIterationOperation<MavenProjectModel> setupParentModule = new AbstractIterationOperation<MavenProjectModel>()
         {

@@ -27,6 +27,7 @@ import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.metadata.TechnologyReference;
 import org.jboss.windup.config.operation.GraphOperation;
@@ -36,7 +37,6 @@ import org.jboss.windup.exec.configuration.options.InputPathOption;
 import org.jboss.windup.exec.configuration.options.OutputPathOption;
 import org.jboss.windup.exec.configuration.options.SourceOption;
 import org.jboss.windup.exec.configuration.options.TargetOption;
-import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.ui.WindupCommand;
 import org.junit.Assert;
 import org.junit.Before;
@@ -218,7 +218,7 @@ public class WindupCommandRuleFilteringTest
         }
 
         @Override
-        public Configuration getConfiguration(GraphContext context)
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
         {
             return ConfigurationBuilder.begin().addRule()
                         .perform(
@@ -248,7 +248,7 @@ public class WindupCommandRuleFilteringTest
         }
 
         @Override
-        public Configuration getConfiguration(GraphContext context)
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
         {
             return ConfigurationBuilder.begin().addRule()
                         .perform(
@@ -278,7 +278,7 @@ public class WindupCommandRuleFilteringTest
         }
 
         @Override
-        public Configuration getConfiguration(GraphContext context)
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
         {
             return ConfigurationBuilder.begin().addRule()
                         .perform(
@@ -308,7 +308,7 @@ public class WindupCommandRuleFilteringTest
         }
 
         @Override
-        public Configuration getConfiguration(GraphContext context)
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
         {
             return ConfigurationBuilder.begin().addRule()
                         .perform(

@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.metadata.Technology;
 import org.jboss.windup.config.operation.GraphOperation;
@@ -44,7 +45,7 @@ public class CreateSpringBeanReportRuleProvider extends AbstractRuleProvider
     public static final String REPORT_DESCRIPTION = "This report contains a list of Spring beans found during the analysis.";
 
     @Override
-    public Configuration getConfiguration(GraphContext context)
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
         // only build this when there are spring beans to report.
         ConditionBuilder applicationProjectModelsFound = Query.fromType(SpringBeanModel.class);

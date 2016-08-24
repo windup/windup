@@ -18,6 +18,7 @@ import org.jboss.forge.roaster.model.InterfaceCapable;
 import org.jboss.forge.roaster.model.source.JavaSource;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.Commit;
 import org.jboss.windup.config.operation.IterationProgress;
@@ -60,7 +61,7 @@ public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.INFORMATIONAL;
 
     @Override
-    public Configuration getConfiguration(GraphContext context)
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
         return ConfigurationBuilder.begin()
         .addRule()

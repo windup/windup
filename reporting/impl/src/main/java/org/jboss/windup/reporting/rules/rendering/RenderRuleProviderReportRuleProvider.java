@@ -4,6 +4,7 @@ import javax.inject.Inject;
 
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.phase.PostFinalizePhase;
 import org.jboss.windup.graph.GraphContext;
@@ -29,7 +30,7 @@ public class RenderRuleProviderReportRuleProvider extends AbstractRuleProvider
     private Furnace furnace;
 
     @Override
-    public Configuration getConfiguration(GraphContext context)
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
         FreeMarkerOperation generateReportOperation =
                     FreeMarkerOperation.create(furnace, TEMPLATE, OUTPUT_FILENAME);

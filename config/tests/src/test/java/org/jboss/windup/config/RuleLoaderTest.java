@@ -1,6 +1,7 @@
 package org.jboss.windup.config;
 
 import java.io.IOException;
+import java.util.Collections;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -13,6 +14,7 @@ import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.loader.RuleLoader;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.phase.ArchiveExtractionPhase;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
@@ -54,16 +56,12 @@ public class RuleLoaderTest
     {
         try (GraphContext context = factory.create())
         {
-            Predicate<RuleProvider> predicate = new Predicate<RuleProvider>()
-            {
-                @Override
-                public boolean accept(RuleProvider provider)
-                {
+            Predicate<RuleProvider> predicate = (provider) -> {
                     return provider.getMetadata().getPhase() == MigrationRulesPhase.class;
-                }
             };
 
-            Configuration configuration1 = loader.loadConfiguration(context, predicate).getConfiguration();
+            RuleLoaderContext ruleLoaderContext = new RuleLoaderContext(Collections.emptyList(), predicate);
+            Configuration configuration1 = loader.loadConfiguration(ruleLoaderContext).getConfiguration();
             boolean found1 = false;
             boolean found2 = false;
             for (Rule rule : configuration1.getRules())
@@ -91,7 +89,7 @@ public class RuleLoaderTest
         }
 
         @Override
-        public Configuration getConfiguration(GraphContext context)
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
         {
             return ConfigurationBuilder.begin()
                         .addRule(new Rule()
@@ -126,7 +124,7 @@ public class RuleLoaderTest
         }
 
         @Override
-        public Configuration getConfiguration(GraphContext context)
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
         {
             return ConfigurationBuilder.begin()
                         .addRule(new Rule()

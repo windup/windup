@@ -3,6 +3,7 @@ package org.jboss.windup.rules.apps.java.scan.provider;
 import org.jboss.windup.ast.java.data.ResolutionStatus;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.DependentPhase;
 import org.jboss.windup.config.phase.PostMigrationRulesPhase;
@@ -44,7 +45,7 @@ public class FindUnboundJavaReferencesRuleProvider extends AbstractRuleProvider
 
     // @formatter:off
     @Override
-    public Configuration getConfiguration(GraphContext context)
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
         return ConfigurationBuilder.begin()
                 .addRule()

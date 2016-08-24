@@ -2,8 +2,8 @@ package org.jboss.windup.tests.application.rules;
 
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.MetadataBuilder;
-import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.config.Hint;
 import org.jboss.windup.reporting.config.Link;
 import org.jboss.windup.reporting.config.classification.Classification;
@@ -24,7 +24,7 @@ public class TestServletAnnotationRuleProvider extends AbstractRuleProvider
     }
 
     @Override
-    public Configuration getConfiguration(GraphContext context)
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
         return ConfigurationBuilder
                     .begin()

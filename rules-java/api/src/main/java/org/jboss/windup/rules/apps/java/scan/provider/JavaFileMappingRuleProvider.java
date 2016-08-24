@@ -1,9 +1,9 @@
 package org.jboss.windup.rules.apps.java.scan.provider;
 
 import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.phase.ClassifyFileTypesPhase;
-import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.files.FileMapping;
@@ -17,7 +17,7 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 public class JavaFileMappingRuleProvider extends AbstractRuleProvider
 {
     @Override
-    public Configuration getConfiguration(GraphContext context)
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
         return ConfigurationBuilder.begin()
         .addRule(FileMapping.from(".*\\.java$").to(JavaSourceFileModel.class))

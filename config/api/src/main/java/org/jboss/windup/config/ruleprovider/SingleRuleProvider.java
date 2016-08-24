@@ -3,8 +3,8 @@ package org.jboss.windup.config.ruleprovider;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleProvider;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleProviderMetadata;
-import org.jboss.windup.graph.GraphContext;
 import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -42,7 +42,7 @@ public abstract class SingleRuleProvider extends AbstractRuleProvider implements
     }
 
     @Override
-    public final Configuration getConfiguration(GraphContext context)
+    public final Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
         return ConfigurationBuilder.begin()
                     .addRule()

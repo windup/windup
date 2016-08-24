@@ -4,11 +4,11 @@ package org.jboss.windup.rules.apps.javaee.rules;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
-import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
 import org.jboss.windup.rules.apps.java.model.AbstractJavaSourceModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
@@ -33,7 +33,7 @@ public class DiscoverJaxRsAnnotationsRuleProvider extends AbstractRuleProvider
     private static final String JAXRS_ANNOTATIONS = "jaxrsAnnotations";
 
     @Override
-    public Configuration getConfiguration(GraphContext context)
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
         String ruleIDPrefix = getClass().getSimpleName();
         return ConfigurationBuilder

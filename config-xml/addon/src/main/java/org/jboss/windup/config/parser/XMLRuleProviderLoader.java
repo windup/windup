@@ -27,9 +27,11 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.Addon;
+import org.jboss.forge.furnace.proxy.Proxies;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.builder.RuleProviderBuilder;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.loader.RuleProviderLoader;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
@@ -62,7 +64,7 @@ public class XMLRuleProviderLoader implements RuleProviderLoader
     private FurnaceClasspathScanner scanner;
 
     @Override
-    public List<RuleProvider> getProviders(GraphContext context)
+    public List<RuleProvider> getProviders(RuleLoaderContext ruleLoaderContext)
     {
         List<RuleProvider> providers = new ArrayList<>();
 
@@ -105,12 +107,11 @@ public class XMLRuleProviderLoader implements RuleProviderLoader
             }
         }
 
-        WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(context);
-        for (FileModel userRulesFileModel : cfg.getUserRulesPaths())
+        for (Path userRulesPath : ruleLoaderContext.getRulePaths())
         {
             // Log the files found
-            final Collection<URL> userXmlRulesetFiles = getWindupUserDirectoryXmlFiles(userRulesFileModel);
-            StringBuilder sb = new StringBuilder("\nFound " + userXmlRulesetFiles.size() + " user XML rules in: " + userRulesFileModel.getFilePath());
+            final Collection<URL> userXmlRulesetFiles = getWindupUserDirectoryXmlFiles(userRulesPath);
+            StringBuilder sb = new StringBuilder("\nFound " + userXmlRulesetFiles.size() + " user XML rules in: " + userRulesPath);
             for (URL resource : userXmlRulesetFiles)
                 sb.append("\n\t" + resource.toString());
             LOG.info(sb.toString());
@@ -123,9 +124,8 @@ public class XMLRuleProviderLoader implements RuleProviderLoader
                     Document doc = dBuilder.parse(resource.toURI().toString());
                     ParserContext parser = new ParserContext(furnace);
 
-                    String userRulesPath = userRulesFileModel.getFilePath();
                     parser.setXmlInputPath(Paths.get(resource.toURI()));
-                    parser.setXmlInputRootPath(Paths.get(userRulesPath));
+                    parser.setXmlInputRootPath(userRulesPath);
 
                     parser.processElement(doc.getDocumentElement());
                     List<AbstractRuleProvider> parsedProviders = parser.getRuleProviders();
@@ -134,7 +134,6 @@ public class XMLRuleProviderLoader implements RuleProviderLoader
                 }
                 catch (Exception e)
                 {
-                    userRulesFileModel.setParseError("Failed to parse XML configuration: " + e.getClass().getSimpleName() + ": " + e.getMessage());
                     throw new WindupException("Failed to parse XML configuration at: " + resource.toString() + " due to: " + e.getMessage(), e);
                 }
             }
@@ -159,16 +158,14 @@ public class XMLRuleProviderLoader implements RuleProviderLoader
         return scanner.scanForAddonMap(new FileExtensionFilter(XML_RULES_EXTENSION));
     }
 
-    private Collection<URL> getWindupUserDirectoryXmlFiles(FileModel userRulesFileModel)
+    private Collection<URL> getWindupUserDirectoryXmlFiles(Path userRulesPath)
     {
-        String userRulesDirectory = userRulesFileModel == null ? null : userRulesFileModel.getFilePath();
-
         // no user dir, so just return the ones that we found in the classpath
-        if (userRulesDirectory == null)
+        if (userRulesPath == null)
         {
             return Collections.emptyList();
         }
-        Path userRulesPath = Paths.get(userRulesDirectory);
+
         if (!Files.isDirectory(userRulesPath))
         {
             LOG.warning("Not scanning: " + userRulesPath.normalize().toString() + " for rules as the directory could not be found!");
@@ -180,7 +177,7 @@ public class XMLRuleProviderLoader implements RuleProviderLoader
             return Collections.emptyList();
         }
 
-        // create the results as a copy (as we will be adding user groovy files to them)
+        // create the results as a copy (as we will be adding user xml files to them)
         final List<URL> results = new ArrayList<>();
 
         try
@@ -200,7 +197,7 @@ public class XMLRuleProviderLoader implements RuleProviderLoader
         }
         catch (IOException e)
         {
-            throw new WindupException("Failed to search userdir: \"" + userRulesDirectory + "\" for groovy rules due to: "
+            throw new WindupException("Failed to search userdir: \"" + userRulesPath + "\" for XML rules due to: "
                         + e.getMessage(), e);
         }
 

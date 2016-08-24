@@ -2,19 +2,15 @@ package org.jboss.windup.config.parser;
 
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.util.Visitor;
-import org.jboss.windup.config.metadata.TechnologyMetadata;
-import org.jboss.windup.config.metadata.TechnologyReference;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.TechnologyReferenceTransformer;
 import org.jboss.windup.config.metadata.TechnologyReferenceTransformerLoader;
-import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.WindupConfigurationModel;
-import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.util.file.FileSuffixPredicate;
 import org.jboss.windup.util.file.FileVisit;
 
 import javax.inject.Inject;
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -35,18 +31,20 @@ public class XMLTechnologyReferenceTransformerLoader implements TechnologyRefere
     private Furnace furnace;
 
     @Override
-    public Collection<TechnologyReferenceTransformer> loadTransformers(GraphContext graphContext)
+    public Collection<TechnologyReferenceTransformer> loadTransformers(RuleLoaderContext ruleLoaderContext)
     {
         List<TechnologyReferenceTransformer> transformers = new ArrayList<>();
 
-        WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(graphContext);
-        for (FileModel userRulesFileModel : cfg.getUserRulesPaths())
+        for (Path userRulesPath : ruleLoaderContext.getRulePaths())
         {
-            Visitor<File> visitor = (file) -> {
-                transformers.addAll(loadTransformers(file));
+            Visitor<File> visitor = new Visitor<File>() {
+                @Override
+                public void visit(File file) {
+                    transformers.addAll(loadTransformers(file));
+                }
             };
 
-            FileVisit.visit(userRulesFileModel.asFile(), new FileSuffixPredicate(XML_EXTENSION), visitor);
+            FileVisit.visit(userRulesPath.toFile(), new FileSuffixPredicate(XML_EXTENSION), visitor);
         }
 
         return transformers;

@@ -11,6 +11,7 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.junit.Test;
@@ -32,9 +33,7 @@ public class ReadXMLConfigurationTest
     })
     public static AddonArchive getDeployment()
     {
-        final AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML();
-        return archive;
+        return ShrinkWrap.create(AddonArchive.class).addBeansXML();
     }
 
     @Inject
@@ -46,8 +45,9 @@ public class ReadXMLConfigurationTest
         final Path folder = File.createTempFile("windupGraph", "").toPath();
         try (final GraphContext context = factory.create(folder))
         {
-            final ConfigurationLoader loader = ConfigurationLoader.create(context);
-            final Configuration configuration = loader.loadConfiguration(context);
+            RuleLoaderContext ruleLoaderContext = new RuleLoaderContext();
+            final ConfigurationLoader loader = ConfigurationLoader.create(ruleLoaderContext);
+            final Configuration configuration = loader.loadConfiguration(ruleLoaderContext);
 
             final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
 

@@ -9,6 +9,7 @@ package org.jboss.windup.config;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.model.TestXmlMetaFacetModel;
 import org.jboss.windup.config.operation.GraphOperation;
@@ -16,7 +17,6 @@ import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.graph.TypeOperation;
 import org.jboss.windup.config.phase.DiscoveryPhase;
 import org.jboss.windup.config.query.Query;
-import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.rules.apps.java.model.project.MavenProjectModel;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -38,7 +38,7 @@ public class TestMavenExampleRuleProvider extends AbstractRuleProvider
 
     // @formatter:off
     @Override
-    public Configuration getConfiguration(GraphContext context)
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
         Configuration configuration = ConfigurationBuilder.begin()
 

@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.DiscoverProjectStructurePhase;
@@ -54,14 +55,11 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
     }
 
     @Override
-    public Configuration getConfiguration(GraphContext context)
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
         ConditionBuilder fileWhen = Query
                     .fromType(XmlFileModel.class)
                     .withProperty(FileModel.FILE_NAME, "pom.xml");
-
-        final ClassificationService classificationService = new ClassificationService(context);
-        final TechnologyTagService technologyTagService = new TechnologyTagService(context);
 
         AbstractIterationOperation<XmlFileModel> evaluatePomFiles = new AbstractIterationOperation<XmlFileModel>()
         {
@@ -73,6 +71,9 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
                  */
                 if (payload.getProjectModel() != null)
                     return;
+
+                final ClassificationService classificationService = new ClassificationService(event.getGraphContext());
+                final TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
 
                 // get a default name from the parent file (if the maven project doesn't contain one)
                 String defaultName = payload.getArchive() == null ? payload.asFile().getParentFile().getName() : payload.getArchive()

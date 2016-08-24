@@ -1,5 +1,6 @@
 package org.jboss.windup.config.metadata;
 
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.graph.GraphContext;
 
 import java.util.Collection;
@@ -12,5 +13,5 @@ import java.util.Collection;
  */
 public interface TechnologyReferenceTransformerLoader
 {
-    Collection<TechnologyReferenceTransformer> loadTransformers(GraphContext graphContext);
+    Collection<TechnologyReferenceTransformer> loadTransformers(RuleLoaderContext ruleLoaderContext);
 }

@@ -1,5 +1,6 @@
 package org.jboss.windup.rules.apps.java.scan.operation.packagemapping;
 
+import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -7,6 +8,7 @@ import javax.inject.Inject;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleSubset;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleProviderRegistry;
 import org.jboss.windup.config.metadata.RuleProviderRegistryCache;
 import org.jboss.windup.graph.GraphContext;
@@ -16,9 +18,7 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.util.PathUtil;
-import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.config.RuleVisit;
-import org.ocpsoft.rewrite.util.Visitor;
 
 /**
  * This registry is conceptually similar to the {@link RuleProviderRegistryCache} except that it is designed for {@link PackageNameMapping}. It allows
@@ -48,19 +48,15 @@ public class PackageNameMappingRegistry
             WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(graphContext);
             FileModel windupRulesPath = new FileService(graphContext).createByFilePath(PathUtil.getWindupRulesDir().toString());
             configurationModel.addUserRulesPath(windupRulesPath);
+            RuleLoaderContext ruleLoaderContext = new RuleLoaderContext(Collections.singleton(PathUtil.getWindupRulesDir()), null);
 
-            RuleProviderRegistry registry = cache.getRuleProviderRegistry(graphContext);
+            RuleProviderRegistry registry = cache.getRuleProviderRegistry(ruleLoaderContext);
             this.event = new GraphRewrite(graphContext);
             RuleSubset ruleSubset = RuleSubset.create(registry.getConfiguration());
-            new RuleVisit(ruleSubset).accept(new Visitor<Rule>()
-            {
-                @Override
-                public void visit(Rule r)
+            new RuleVisit(ruleSubset).accept((r) -> {
+                if (r instanceof PackageNameMapping)
                 {
-                    if (r instanceof PackageNameMapping)
-                    {
-                        ((PackageNameMapping) r).preRulesetEvaluation(event);
-                    }
+                    ((PackageNameMapping) r).preRulesetEvaluation(event);
                 }
             });
 

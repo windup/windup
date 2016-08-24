@@ -1,7 +1,7 @@
 package org.jboss.windup.config;
 
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleProviderMetadata;
-import org.jboss.windup.graph.GraphContext;
 import org.ocpsoft.rewrite.config.ConfigurationProvider;
 import org.ocpsoft.rewrite.config.Rule;
 
@@ -11,10 +11,10 @@ import org.ocpsoft.rewrite.config.Rule;
  * 
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-public interface RuleProvider extends ConfigurationProvider<GraphContext>
+public interface RuleProvider extends ConfigurationProvider<RuleLoaderContext>
 {
     /**
      * Get the {@link RuleProviderMetadata} for this {@link RuleProvider}.
      */
-    public RuleProviderMetadata getMetadata();
+    RuleProviderMetadata getMetadata();
 }

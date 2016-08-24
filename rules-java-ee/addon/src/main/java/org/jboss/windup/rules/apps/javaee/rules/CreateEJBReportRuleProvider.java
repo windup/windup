@@ -6,6 +6,7 @@ import java.util.Map;
 import com.google.common.collect.Iterables;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
@@ -41,7 +42,7 @@ public class CreateEJBReportRuleProvider extends AbstractRuleProvider
     public static final String REPORT_DESCRIPTION = "The EJB report contains a list of EJBs found within the application.";
 
     @Override
-    public Configuration getConfiguration(GraphContext context)
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
         return ConfigurationBuilder.begin()
                     .addRule()

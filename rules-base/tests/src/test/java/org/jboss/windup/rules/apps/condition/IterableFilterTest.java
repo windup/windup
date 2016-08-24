@@ -11,6 +11,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleProvider;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
@@ -25,7 +26,6 @@ import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.rules.files.condition.FileContent;
-import org.jboss.windup.rules.files.condition.ToFileModel;
 import org.jboss.windup.rules.files.model.FileLocationModel;
 import org.jboss.windup.rules.general.IterableFilter;
 import org.junit.Assert;
@@ -40,8 +40,6 @@ import javax.inject.Singleton;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -127,7 +125,7 @@ public class IterableFilterTest
 
         // @formatter:off
         @Override
-        public Configuration getConfiguration(GraphContext context)
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
         {
 
             return ConfigurationBuilder.begin()

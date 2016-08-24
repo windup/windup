@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.furnace.FurnaceHolder;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 
 /**
  * Provides a mechanism for transforming from one {@link TechnologyReference} to another.
@@ -30,27 +31,13 @@ public class TechnologyReferenceTransformer
     /**
      * Gets the transformers for the given graph context, or loads them if necessary.
      */
-    public static List<TechnologyReferenceTransformer> getTransformers(GraphRewrite event)
-    {
-        @SuppressWarnings("unchecked")
-        List<TechnologyReferenceTransformer> transformers = (List<TechnologyReferenceTransformer>) event.getRewriteContext()
-                    .get(KEY);
-        if (transformers == null)
-        {
-            transformers = loadTransformers(event);
-
-            event.getRewriteContext().put(KEY, transformers);
-        }
-        return transformers;
-    }
-
-    private static List<TechnologyReferenceTransformer> loadTransformers(GraphRewrite event)
+    public static List<TechnologyReferenceTransformer> getTransformers(RuleLoaderContext ruleLoaderContext)
     {
         List<TechnologyReferenceTransformer> transformerList = new ArrayList<>();
         Iterable<TechnologyReferenceTransformerLoader> loaders = FurnaceHolder.getFurnace().getAddonRegistry()
-                    .getServices(TechnologyReferenceTransformerLoader.class);
+                .getServices(TechnologyReferenceTransformerLoader.class);
         loaders.forEach((loader) -> {
-            transformerList.addAll(loader.loadTransformers(event.getGraphContext()));
+            transformerList.addAll(loader.loadTransformers(ruleLoaderContext));
         });
         return transformerList;
     }

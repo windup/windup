@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
@@ -40,7 +41,7 @@ public class CreateJBossJBPMReportRuleProvider extends AbstractRuleProvider
     public static final String REPORT_DESCRIPTION = "This report contains all of the JBPM related resources that were discovered during analysis.";
 
     @Override
-    public Configuration getConfiguration(GraphContext context)
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
         return ConfigurationBuilder.begin()
         .addRule()

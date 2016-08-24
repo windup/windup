@@ -60,18 +60,18 @@ public class TechnologyReferenceTransformerHandlerTest
         // verify xmlfile
         Assert.assertEquals(2, transformers.size());
         Assert.assertEquals("sampleinput1", transformers.get(0).getOriginal().getId());
-        Assert.assertEquals("[1,1]", transformers.get(0).getOriginal().getVersionRange().toString());
+        Assert.assertEquals("[1]", transformers.get(0).getOriginal().getVersionRange().toString());
         Assert.assertEquals("sampleoutput2", transformers.get(0).getTarget().getId());
-        Assert.assertEquals("[2,2]", transformers.get(0).getTarget().getVersionRange().toString());
+        Assert.assertEquals("[2]", transformers.get(0).getTarget().getVersionRange().toString());
 
         TechnologyReference input1 = new TechnologyReference("sampleinput1", Versions.parseVersionRange("[1]"));
         TechnologyReference output2 = transformers.get(0).transform(input1);
         Assert.assertEquals("sampleoutput2", output2.getId());
-        Assert.assertEquals("[2,2]", output2.getVersionRange().toString());
+        Assert.assertEquals("[2]", output2.getVersionRange().toString());
 
         Assert.assertEquals("sampleinput3", transformers.get(1).getOriginal().getId());
-        Assert.assertEquals("[3,3]", transformers.get(1).getOriginal().getVersionRange().toString());
+        Assert.assertEquals("[3]", transformers.get(1).getOriginal().getVersionRange().toString());
         Assert.assertEquals("sampleoutput4", transformers.get(1).getTarget().getId());
-        Assert.assertEquals("[4,4]", transformers.get(1).getTarget().getVersionRange().toString());
+        Assert.assertEquals("[4]", transformers.get(1).getTarget().getVersionRange().toString());
     }
 }

@@ -5,6 +5,7 @@ import java.util.Collection;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.RuleProvider;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.Log;
 import org.jboss.windup.graph.GraphContext;
@@ -67,7 +68,7 @@ public class TaggedRuleProviderPredicateTest
     public abstract static class NoopRuleProvider extends AbstractRuleProvider
     {
         @Override
-        public Configuration getConfiguration(GraphContext context)
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
         {
             return ConfigurationBuilder.begin().addRule()
                         .perform(Log.message(Logger.Level.TRACE, "Performing Rule: " + this.getClass().getSimpleName()));

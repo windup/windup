@@ -3,6 +3,7 @@ package org.jboss.windup.config.builder;
 import javax.enterprise.inject.Vetoed;
 
 import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
@@ -25,8 +26,6 @@ public final class RuleProviderBuilder extends AbstractRuleProvider implements
 {
     private final ConfigurationBuilder configurationBuilder;
     private MetadataBuilder metadata;
-
-    
    
     /**
      * Begin creating a new dynamic {@link AbstractRuleProvider}.
@@ -104,7 +103,7 @@ public final class RuleProviderBuilder extends AbstractRuleProvider implements
     }
 
     @Override
-    public Configuration getConfiguration(GraphContext context)
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
         return configurationBuilder;
     }

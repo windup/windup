@@ -17,6 +17,7 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleSubset;
 import org.jboss.windup.config.iteration.TestSimple1Model;
 import org.jboss.windup.config.iteration.TestSimple2Model;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
@@ -89,7 +90,7 @@ public class IterationPayLoadPassTest
             windupCfg.addInputPath(fileModelService.createByFilePath("/tmp/testpath"));
 
             TestIterationPayLoadPassProvider provider = new TestIterationPayLoadPassProvider();
-            Configuration configuration = provider.getConfiguration(context);
+            Configuration configuration = provider.getConfiguration(null);
 
             // this should call perform()
             RuleSubset.create(configuration).perform(event, evaluationContext);
@@ -117,7 +118,7 @@ public class IterationPayLoadPassTest
             windupCfg.addInputPath(fileModelService.createByFilePath("/tmp/testpath"));
 
             TestIterationPayLoadNotPassProvider provider = new TestIterationPayLoadNotPassProvider();
-            Configuration configuration = provider.getConfiguration(context);
+            Configuration configuration = provider.getConfiguration(null);
 
             // this should call perform()
             RuleSubset.create(configuration).perform(event, evaluationContext);
@@ -135,7 +136,7 @@ public class IterationPayLoadPassTest
 
         // @formatter:off
         @Override
-        public Configuration getConfiguration(GraphContext context)
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
         {
             Configuration configuration = ConfigurationBuilder.begin()
             .addRule()
@@ -168,7 +169,7 @@ public class IterationPayLoadPassTest
 
         // @formatter:off
         @Override
-        public Configuration getConfiguration(GraphContext context)
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
         {
             Configuration configuration = ConfigurationBuilder
             .begin()

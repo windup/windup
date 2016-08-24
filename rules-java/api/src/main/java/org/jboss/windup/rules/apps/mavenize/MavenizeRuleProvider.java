@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.logging.Logger;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
@@ -52,7 +53,7 @@ public class MavenizeRuleProvider extends AbstractRuleProvider
 
     // @formatter:off
     @Override
-    public Configuration getConfiguration(GraphContext grCtx)
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
         ConditionBuilder applicationProjectModels = Query.fromType(WindupConfigurationModel.class);
 

@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.ClassifyFileTypesPhase;
@@ -45,10 +46,9 @@ public class DiscoverXmlFilesRuleProvider extends AbstractRuleProvider
     }
 
     @Override
-    public Configuration getConfiguration(GraphContext context)
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
         return ConfigurationBuilder.begin()
-
             .addRule(FileMapping.from(".*\\.xml$").to(XmlFileModel.class))
             .addRule(FileMapping.from(".*\\.xmi$").to(XmlFileModel.class))
             .addRule(FileMapping.from(".*\\.jsf$").to(XmlFileModel.class))

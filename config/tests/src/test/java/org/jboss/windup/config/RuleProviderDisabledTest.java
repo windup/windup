@@ -9,10 +9,10 @@ import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.loader.RuleLoader;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
-import org.jboss.windup.exec.rulefilters.RuleProviderPhasePredicate;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
@@ -29,6 +29,7 @@ import org.ocpsoft.rewrite.param.ParameterValueStore;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.nio.file.Path;
+import java.util.Collections;
 
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
@@ -84,15 +85,10 @@ public class RuleProviderDisabledTest
             windupCfg.addInputPath(fileModelService.createByFilePath(folder.toAbsolutePath().toString()));
             windupCfg.setOfflineMode(true);
 
-            Predicate<RuleProvider> all = new Predicate<RuleProvider>()
-            {
-                @Override
-                public boolean accept(RuleProvider provider)
-                {
-                    return provider.getMetadata().getPhase() == MigrationRulesPhase.class;
-                }
-            };
-            Configuration configuration = loader.loadConfiguration(context, all).getConfiguration();
+            Predicate<RuleProvider> migrationPhase = (provider) -> provider.getMetadata().getPhase() == MigrationRulesPhase.class;
+
+            RuleLoaderContext ruleLoaderContext = new RuleLoaderContext(Collections.emptyList(), migrationPhase);
+            Configuration configuration = loader.loadConfiguration(ruleLoaderContext).getConfiguration();
 
             RuleSubset.create(configuration).perform(event, evaluationContext);
 
@@ -107,7 +103,7 @@ public class RuleProviderDisabledTest
         private boolean executed;
 
         @Override
-        public Configuration getConfiguration(GraphContext context) {
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
             return ConfigurationBuilder
                     .begin()
                     .addRule()
@@ -128,7 +124,7 @@ public class RuleProviderDisabledTest
         private boolean executed;
 
         @Override
-        public Configuration getConfiguration(GraphContext context) {
+        public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext) {
             return ConfigurationBuilder
                     .begin()
                     .addRule()

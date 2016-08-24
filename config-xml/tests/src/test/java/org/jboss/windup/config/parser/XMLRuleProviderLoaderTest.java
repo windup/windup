@@ -13,6 +13,7 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.RuleProvider;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.phase.DiscoveryPhase;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
@@ -59,32 +60,30 @@ public class XMLRuleProviderLoaderTest
     {
         Assert.assertNotNull(loader);
 
-        try (GraphContext graphContext = graphContextFactory.create())
-        {
-            List<RuleProvider> providers = loader.getProviders(graphContext);
-            Assert.assertNotNull(providers);
-            Assert.assertTrue(providers.size() == 1);
+        RuleLoaderContext ruleLoaderContext = new RuleLoaderContext();
+        List<RuleProvider> providers = loader.getProviders(ruleLoaderContext);
+        Assert.assertNotNull(providers);
+        Assert.assertTrue(providers.size() == 1);
 
-            RuleProvider provider = providers.get(0);
-            String id = provider.getMetadata().getID();
-            Assert.assertEquals("testruleprovider", id);
-            Assert.assertEquals(DiscoveryPhase.class, provider.getMetadata().getPhase());
-            Assert.assertTrue(provider.getMetadata().getOrigin().matches("jar:file:.*/DEFAULT.*/Test1.windup.xml"));
-            List<Rule> rules = provider.getConfiguration(graphContext).getRules();
-            Assert.assertEquals(4, rules.size());
+        RuleProvider provider = providers.get(0);
+        String id = provider.getMetadata().getID();
+        Assert.assertEquals("testruleprovider", id);
+        Assert.assertEquals(DiscoveryPhase.class, provider.getMetadata().getPhase());
+        Assert.assertTrue(provider.getMetadata().getOrigin().matches("jar:file:.*/DEFAULT.*/Test1.windup.xml"));
+        List<Rule> rules = provider.getConfiguration(null).getRules();
+        Assert.assertEquals(4, rules.size());
 
-            RuleBuilder rule1 = (RuleBuilder) rules.get(0);
-            checkRule1(rule1);
+        RuleBuilder rule1 = (RuleBuilder) rules.get(0);
+        checkRule1(rule1);
 
-            RuleBuilder rule2 = (RuleBuilder) rules.get(1);
-            checkRule2(rule2);
+        RuleBuilder rule2 = (RuleBuilder) rules.get(1);
+        checkRule2(rule2);
 
-            RuleBuilder rule2_otherwise = (RuleBuilder) rules.get(2);
-            checkRule2_Otherwise(rule2_otherwise);
+        RuleBuilder rule2_otherwise = (RuleBuilder) rules.get(2);
+        checkRule2_Otherwise(rule2_otherwise);
 
-            RuleBuilder rule3 = (RuleBuilder) rules.get(3);
-            checkRule3(rule3);
-        }
+        RuleBuilder rule3 = (RuleBuilder) rules.get(3);
+        checkRule3(rule3);
     }
 
     private void checkRule1(RuleBuilder rule)

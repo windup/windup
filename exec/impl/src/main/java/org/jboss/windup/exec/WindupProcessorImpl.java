@@ -24,6 +24,7 @@ import org.jboss.windup.config.RuleLifecycleListener;
 import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.RuleSubset;
 import org.jboss.windup.config.loader.RuleLoader;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleProviderRegistry;
 import org.jboss.windup.config.metadata.TechnologyReference;
 import org.jboss.windup.config.metadata.TechnologyReferenceTransformer;
@@ -121,10 +122,11 @@ public class WindupProcessorImpl implements WindupProcessor
         }
 
         final GraphRewrite event = new GraphRewrite(listeners, context);
-        configureRuleProviderAndTagFilters(event, configuration);
+        RuleLoaderContext ruleLoaderContext = new RuleLoaderContext(configuration.getAllUserRulesDirectories(), configuration.getRuleProviderFilter());
+        ruleLoaderContext = configureRuleProviderAndTagFilters(ruleLoaderContext, configuration);
         addSourceAndTargetInformation(event, configuration, configurationModel);
 
-        RuleProviderRegistry providerRegistry = ruleLoader.loadConfiguration(context, configuration.getRuleProviderFilter());
+        RuleProviderRegistry providerRegistry = ruleLoader.loadConfiguration(ruleLoaderContext);
         Configuration rules = providerRegistry.getConfiguration();
 
         if (configuration.getProgressMonitor() != null)
@@ -187,7 +189,7 @@ public class WindupProcessorImpl implements WindupProcessor
     }
 
     @SuppressWarnings("unchecked")
-    private void configureRuleProviderAndTagFilters(GraphRewrite event, WindupConfiguration config)
+    private RuleLoaderContext configureRuleProviderAndTagFilters(RuleLoaderContext ruleLoaderContext, WindupConfiguration config)
     {
         Collection<String> includeTags = (Collection<String>) config.getOptionMap().get(IncludeTagsOption.NAME);
         Collection<String> excludeTags = (Collection<String>) config.getOptionMap().get(ExcludeTagsOption.NAME);
@@ -205,7 +207,7 @@ public class WindupProcessorImpl implements WindupProcessor
 
             final TaggedRuleProviderPredicate tagPredicate = new TaggedRuleProviderPredicate(includeTags, excludeTags);
 
-            List<TechnologyReferenceTransformer> transformers = TechnologyReferenceTransformer.getTransformers(event);
+            List<TechnologyReferenceTransformer> transformers = TechnologyReferenceTransformer.getTransformers(ruleLoaderContext);
 
         /*
          * Create a Map based upon the ID of the original to be transformed.
@@ -252,6 +254,8 @@ public class WindupProcessorImpl implements WindupProcessor
             LOG.info("RuleProvider filter: " + providerFilter);
             config.setRuleProviderFilter(providerFilter);
         }
+
+        return new RuleLoaderContext(ruleLoaderContext.getRulePaths(), config.getRuleProviderFilter());
     }
 
     private FileModel getFileModel(GraphContext context, Path file)

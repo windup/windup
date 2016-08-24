@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
@@ -43,7 +44,7 @@ public class CreateHibernateReportRuleProvider extends AbstractRuleProvider
     public static final String REPORT_DESCRIPTION = "The Hibernate report contains details on all Hibernate related resources that were found in the application.";
 
     @Override
-    public Configuration getConfiguration(GraphContext context)
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
         ConditionBuilder applicationProjectModelsFound = Query.fromType(HibernateConfigurationFileModel.class).or(
                     Query.fromType(HibernateEntityModel.class));

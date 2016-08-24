@@ -25,7 +25,7 @@ public class WindupTestUtilMethods
 
         for (RuleProvider provider : providers)
         {
-            Configuration configuration = provider.getConfiguration(context);
+            Configuration configuration = provider.getConfiguration(null);
             RuleSubset.create(configuration).perform(event, evaluationContext);
         }
     }

@@ -67,7 +67,7 @@ public class FreeMarkerIterationOperationTest
             DefaultEvaluationContext evaluationContext = createEvalContext(event);
             fillData(context);
 
-            Configuration configuration = provider.getConfiguration(context);
+            Configuration configuration = provider.getConfiguration(null);
 
             RuleSubset.create(configuration).perform(event, evaluationContext);
 
