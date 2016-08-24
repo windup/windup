@@ -29,32 +29,31 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-
 /**
  * Create a report HTML page about Windup.
  */
 @RuleMetadata(phase = ReportGenerationPhase.class)
 public class CreateAboutWindupReportRuleProvider extends AbstractRuleProvider
 {
-    @Inject
-    Addon addon;
-
     public static final String REPORT_DESCRIPTION = "This describes the current version of Windup and provides helpful links for further assistance.";
     public static final String REPORT_NAME = "About";
     public static final String TEMPLATE_APPLICATION_REPORT = "/reports/templates/about_windup.ftl";
+    @Inject
+    Addon addon;
 
     // @formatter:off
     @Override
     public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
-        ConditionBuilder applicationProjectModelsFound = Query
-                    .fromType(WindupConfigurationModel.class);
+        ConditionBuilder windupConfigurationFound = Query.fromType(WindupConfigurationModel.class);
 
         AbstractIterationOperation<WindupConfigurationModel> addApplicationReport = new AbstractIterationOperation<WindupConfigurationModel>()
         {
             @Override
             public void perform(GraphRewrite event, EvaluationContext context, WindupConfigurationModel payload)
             {
+                createAboutWindup(event.getGraphContext(), null);
+
                 for (FileModel inputPath : payload.getInputPaths())
                 {
                     ProjectModel projectModel = inputPath.getProjectModel();
@@ -62,7 +61,7 @@ public class CreateAboutWindupReportRuleProvider extends AbstractRuleProvider
                     {
                         throw new WindupException("Error, no project found in: " + inputPath.getFilePath());
                     }
-                    createApplicationReport(event.getGraphContext(), projectModel);
+                    createAboutWindup(event.getGraphContext(), projectModel);
                 }
             }
 
@@ -75,24 +74,28 @@ public class CreateAboutWindupReportRuleProvider extends AbstractRuleProvider
 
         return ConfigurationBuilder.begin()
                     .addRule()
-                    .when(applicationProjectModelsFound)
+                    .when(windupConfigurationFound)
                     .perform(addApplicationReport);
     }
     // @formatter:on
 
-    private ApplicationReportModel createApplicationReport(GraphContext context, ProjectModel projectModel)
+    private ApplicationReportModel createAboutWindup(GraphContext context, ProjectModel projectModel)
     {
-    	ApplicationReportService applicationReportService = new ApplicationReportService(context);
-    	ApplicationReportModel applicationReportModel = applicationReportService.create();
+        ApplicationReportService applicationReportService = new ApplicationReportService(context);
+        ApplicationReportModel applicationReportModel = applicationReportService.create();
 
-    	applicationReportModel.setReportPriority(10000);
-        applicationReportModel.setDisplayInApplicationReportIndex(true);
+        applicationReportModel.setReportPriority(10000);
         applicationReportModel.setReportName(REPORT_NAME);
         applicationReportModel.setDescription(REPORT_DESCRIPTION);
         applicationReportModel.setReportIconClass("glyphicon glyphicon-info-sign");
         applicationReportModel.setMainApplicationReport(false);
-        applicationReportModel.setDisplayInGlobalApplicationIndex(true);
-        applicationReportModel.setProjectModel(projectModel);
+        applicationReportModel.setDisplayInApplicationReportIndex(true);
+
+        if (projectModel == null)
+            applicationReportModel.setDisplayInGlobalApplicationIndex(true);
+        else
+            applicationReportModel.setProjectModel(projectModel);
+
         applicationReportModel.setTemplatePath(TEMPLATE_APPLICATION_REPORT);
         applicationReportModel.setTemplateType(TemplateType.FREEMARKER);
 
@@ -106,11 +109,10 @@ public class CreateAboutWindupReportRuleProvider extends AbstractRuleProvider
 
         // Set the filename for the report
         ReportService reportService = new ReportService(context);
-        reportService.setUniqueFilename(applicationReportModel, "about_"+projectModel.getName(), "html");
+        String filename = projectModel == null ? "about_global" : "about_" + projectModel.getName();
+        reportService.setUniqueFilename(applicationReportModel, filename, "html");
 
         return applicationReportModel;
     }
 
 }
-
-
