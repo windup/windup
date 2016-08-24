@@ -1,4 +1,4 @@
-package org.jboss.windup.tooling.org.jboss.windup.tooling.data;
+package org.jboss.windup.tooling.data;
 
 import org.jboss.windup.tooling.data.Link;
 
