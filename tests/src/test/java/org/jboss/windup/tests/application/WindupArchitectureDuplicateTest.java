@@ -130,17 +130,17 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest
 
         reportIndex.loadPage(mainReportPath);
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Mandatory", 2, 6));
-        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Optional", 90, 636));
+        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Optional", 92, 636));
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Potential Issues", 0, 0));
 
         reportIndex.loadPage(secondAppPath);
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Mandatory", 2, 6));
-        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Optional", 90, 636));
+        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Optional", 92, 636));
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Potential Issues", 0, 0));
 
         reportIndex.loadPage(sharedLibsPath);
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Mandatory", 2, 6));
-        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Optional", 86, 584));
+        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Optional", 88, 584));
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Potential Issues", 0, 0));
     }
 

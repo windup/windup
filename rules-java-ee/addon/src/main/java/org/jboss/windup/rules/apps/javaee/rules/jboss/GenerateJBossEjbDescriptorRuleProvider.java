@@ -61,8 +61,8 @@ public class GenerateJBossEjbDescriptorRuleProvider extends AbstractRuleProvider
 
                 for (FileModel inputPath : configurationModel.getInputPaths())
                 {
-                    ProjectModel projectModel = inputPath.getProjectModel();
-                    createReport(context, event.getGraphContext(), projectModel);
+                    ProjectModel application = inputPath.getProjectModel();
+                    createReport(context, event.getGraphContext(), application);
                 }
             }
 
@@ -76,7 +76,6 @@ public class GenerateJBossEjbDescriptorRuleProvider extends AbstractRuleProvider
 
     private void createReport(EvaluationContext evaluationContext, GraphContext context, ProjectModel projectModel)
     {
-        GraphService<EjbDeploymentDescriptorModel> ejbDescriptors = new GraphService<>(context, EjbDeploymentDescriptorModel.class);
         ClassificationService classificationService = new ClassificationService(context);
         VendorSpecificationExtensionService vendorSpecificService = new VendorSpecificationExtensionService(context);
         LinkService linkService = new LinkService(context);
@@ -134,12 +133,14 @@ public class GenerateJBossEjbDescriptorRuleProvider extends AbstractRuleProvider
 
     }
 
-    private Iterable<EjbDeploymentDescriptorModel> findAllEjbDescsInProject(GraphContext context, ProjectModel projectModel) {
-        GraphService<EjbDeploymentDescriptorModel> webDescriptors = new GraphService<>(context, EjbDeploymentDescriptorModel.class);
-        List<EjbDeploymentDescriptorModel> resultModels = new ArrayList<EjbDeploymentDescriptorModel>();
-        for (EjbDeploymentDescriptorModel ejbDesc : webDescriptors.findAll())
+    private Iterable<EjbDeploymentDescriptorModel> findAllEjbDescsInProject(GraphContext context, ProjectModel application)
+    {
+        GraphService<EjbDeploymentDescriptorModel> ejbDescriptorService = new GraphService<>(context, EjbDeploymentDescriptorModel.class);
+        List<EjbDeploymentDescriptorModel> resultModels = new ArrayList<>();
+        for (EjbDeploymentDescriptorModel ejbDesc : ejbDescriptorService.findAll())
         {
-            if(ejbDesc.getProjectModel().equals(projectModel)) {
+            if(ejbDesc.getProjectModel().getRootProjectModel().equals(application))
+            {
                 resultModels.add(ejbDesc);
             }
         }

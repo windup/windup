@@ -123,12 +123,14 @@ public class GenerateJBossWebDescriptorRuleProvider extends AbstractRuleProvider
         }
     }
 
-    private Iterable<WebXmlModel> findAllWebXmlsInProject(GraphContext context, ProjectModel projectModel) {
+    private Iterable<WebXmlModel> findAllWebXmlsInProject(GraphContext context, ProjectModel projectModel)
+    {
         GraphService<WebXmlModel> webDescriptors = new GraphService<>(context, WebXmlModel.class);
         List<WebXmlModel> resultModels = new ArrayList<>();
         for (WebXmlModel webXmlModel : webDescriptors.findAll())
         {
-            if(webXmlModel.getProjectModel().equals(projectModel)) {
+            if(webXmlModel.getProjectModel().getRootProjectModel().equals(projectModel))
+            {
                 resultModels.add(webXmlModel);
             }
 
