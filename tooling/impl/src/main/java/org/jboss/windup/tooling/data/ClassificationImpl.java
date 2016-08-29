@@ -20,6 +20,9 @@ public class ClassificationImpl implements Classification
     private String classification;
     private String description;
     private Iterable<Link> links;
+    private Iterable<Quickfix> quickfixes;
+
+
     private int effort;
     private Severity severity;
     private String ruleID;
@@ -35,6 +38,7 @@ public class ClassificationImpl implements Classification
     /**
      * Contains the unique identifier for the {@link Classification}.
      */
+    @Override
     public Object getID()
     {
         return id;
@@ -157,5 +161,26 @@ public class ClassificationImpl implements Classification
     public void setRuleID(String ruleID)
     {
         this.ruleID = ruleID;
+    }
+
+    /**
+     * This gives all quickfixes for classification
+     *
+     * @return all quickfixes
+     */
+    @Override
+    public Iterable<Quickfix> getQuickfixes()
+    {
+        return quickfixes;
+    }
+
+    /**
+     * Sets the quickfixes
+     *
+     * @param quickfixes the quickfixes to set
+     */
+    public void setQuickfixes(Iterable<Quickfix> quickfixes)
+    {
+        this.quickfixes = quickfixes;
     }
 }

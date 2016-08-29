@@ -22,6 +22,13 @@ public interface HintText
     HintLink with(Link link);
 
     /**
+     * Provide quickfix for later tooling or other processing
+     *
+     * @return
+     */
+    HintQuickfix withQuickfix(Quickfix fix);
+
+    /**
      * Adds effort to the Hint. The effort represents the level of effort required to fix a task. Use this only if you do not want to specify the
      * link, otherwise you will specify the effort later.
      *

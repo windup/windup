@@ -2,6 +2,7 @@ package org.jboss.windup.tooling;
 
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.LinkModel;
+import org.jboss.windup.graph.model.QuickfixModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
@@ -11,13 +12,15 @@ import org.jboss.windup.reporting.service.InlineHintService;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.reporting.service.SourceReportService;
 import org.jboss.windup.tooling.data.Classification;
+import org.jboss.windup.tooling.data.ClassificationImpl;
 import org.jboss.windup.tooling.data.Hint;
+import org.jboss.windup.tooling.data.HintImpl;
 import org.jboss.windup.tooling.data.Link;
+import org.jboss.windup.tooling.data.LinkImpl;
+import org.jboss.windup.tooling.data.Quickfix;
+import org.jboss.windup.tooling.data.QuickfixImpl;
 import org.jboss.windup.tooling.data.ReportLink;
-import org.jboss.windup.tooling.org.jboss.windup.tooling.data.ClassificationImpl;
-import org.jboss.windup.tooling.org.jboss.windup.tooling.data.HintImpl;
-import org.jboss.windup.tooling.org.jboss.windup.tooling.data.LinkImpl;
-import org.jboss.windup.tooling.org.jboss.windup.tooling.data.ReportLinkImpl;
+import org.jboss.windup.tooling.data.ReportLinkImpl;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -27,6 +30,7 @@ import java.util.List;
  * Contains an implementation of {@link ExecutionResults} that loads its results from a {@link GraphContext}.
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
+ * @author <a href="mailto:hotmana76@gmail.com">Marek Novotny</a>
  */
 public class ExecutionResultsImpl implements ExecutionResults
 {
@@ -92,6 +96,7 @@ public class ExecutionResultsImpl implements ExecutionResults
             hint.setLength(hintModel.getLength());
             hint.setSourceSnippit(hintModel.getSourceSnippit());
             hint.setRuleID(hintModel.getRuleID());
+            hint.setQuickfixes(asQuickfixes(hintModel.getQuickfixes()));
 
             hint.setLinks(asLinks(hintModel.getLinks()));
             hints.add(hint);
@@ -117,6 +122,8 @@ public class ExecutionResultsImpl implements ExecutionResults
 
                 classification.setLinks(asLinks(classificationModel.getLinks()));
                 classifications.add(classification);
+                
+                classification.setQuickfixes(asQuickfixes(classificationModel.getQuickfixes()));
             }
         }
         return classifications;
@@ -133,5 +140,22 @@ public class ExecutionResultsImpl implements ExecutionResults
             links.add(link);
         }
         return links;
+    }
+    
+    private List<Quickfix> asQuickfixes(Iterable<QuickfixModel> quickfixModels)
+    {
+        List<Quickfix> fixes = new ArrayList<>();
+        for (QuickfixModel quickfixModel : quickfixModels)
+        {
+            QuickfixImpl quickfix = new QuickfixImpl();
+            quickfix.setType(quickfixModel.getQuickfixType());
+            quickfix.setName(quickfixModel.getName());
+            quickfix.setNewline(quickfixModel.getNewline());
+            quickfix.setReplacement(quickfixModel.getReplacement());
+            quickfix.setSearch(quickfixModel.getSearch());
+
+            fixes.add(quickfix);
+        }
+        return fixes;
     }
 }

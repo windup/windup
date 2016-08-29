@@ -352,6 +352,7 @@
                 <xs:element name="search" type="xs:string" />
             </xs:sequence>
             <xs:attribute type="quickfix-type" name="type" use="required" />
+            <xs:attribute type="xs:string" name="name" use="required" />
         </xs:complexType>
     </xs:element>    
 

@@ -49,6 +49,12 @@ public interface Hint
     List<Link> getLinks();
 
     /**
+     * This contains a list of {@link Quickfix}s for follow up in tools
+     * @return
+     */
+    Iterable<Quickfix> getQuickfixes();
+
+    /**
      * This contains the line number of the problem.
      */
     int getLineNumber();

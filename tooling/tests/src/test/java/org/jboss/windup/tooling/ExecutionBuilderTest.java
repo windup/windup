@@ -7,7 +7,6 @@ import java.nio.file.Paths;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import com.google.common.collect.Iterables;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
@@ -22,9 +21,11 @@ import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.exec.configuration.options.OfflineModeOption;
+import org.jboss.windup.graph.model.QuickfixType;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.config.Hint;
+import org.jboss.windup.reporting.config.Quickfix;
 import org.jboss.windup.reporting.config.classification.Classification;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
@@ -36,6 +37,8 @@ import org.junit.runner.RunWith;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
+
+import com.google.common.collect.Iterables;
 
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
@@ -82,9 +85,26 @@ public class ExecutionBuilderTest
         Assert.assertNotNull(results.getClassifications());
         Assert.assertNotNull(results.getHints());
         Assert.assertTrue(results.getHints().iterator().hasNext());
+        checkQuickfixInHints(results.getHints());
         Assert.assertTrue(results.getClassifications().iterator().hasNext());
         Assert.assertTrue(testProvider.sourceMode);
         Assert.assertTrue(testProvider.offlineMode);
+    }
+
+    private void checkQuickfixInHints(Iterable<org.jboss.windup.tooling.data.Hint> hints)
+    {
+        int quickfixCount = 0;
+        for (org.jboss.windup.tooling.data.Hint hintDTO : hints)
+        {
+            Iterable<org.jboss.windup.tooling.data.Quickfix> quickfixes = hintDTO.getQuickfixes();
+            for (org.jboss.windup.tooling.data.Quickfix quickfix : quickfixes)
+            {
+                Assert.assertEquals("quickfix1", quickfix.getName());
+                Assert.assertEquals(QuickfixType.DELETE_LINE, quickfix.getType());
+                quickfixCount++;
+            }
+        }
+        Assert.assertTrue(quickfixCount > 0);
     }
 
     @Test
@@ -138,7 +158,7 @@ public class ExecutionBuilderTest
             return ConfigurationBuilder.begin()
                         .addRule()
                         .when(JavaClass.references("javax.{*}"))
-                        .perform(Hint.withText("References javax.*").withEffort(43)
+                        .perform(Hint.withText("References javax.*").withQuickfix(createTestQuickfix()).withEffort(43)
                                     .and(Classification.as("References some javax stuff")))
                         .addRule()
                         .perform(new GraphOperation()
@@ -154,6 +174,17 @@ public class ExecutionBuilderTest
                                 sourceMode = javaConfiguration.isSourceMode();
                             }
                         });
+        }
+
+        /**
+         * Create a delete quickfix type for test
+         */
+        private Quickfix createTestQuickfix()
+        {
+            Quickfix quickfix = new Quickfix();
+            quickfix.setName("quickfix1");
+            quickfix.setType(QuickfixType.DELETE_LINE);
+            return quickfix;
         }
     }
 }

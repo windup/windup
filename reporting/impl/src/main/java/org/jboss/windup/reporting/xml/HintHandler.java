@@ -16,6 +16,7 @@ import org.jboss.windup.config.parser.xml.RuleProviderHandler;
 import org.jboss.windup.reporting.config.Hint;
 import org.jboss.windup.reporting.config.HintText;
 import org.jboss.windup.reporting.config.Link;
+import org.jboss.windup.reporting.config.Quickfix;
 import org.jboss.windup.reporting.config.classification.Classification;
 import org.jboss.windup.reporting.model.Severity;
 import org.jboss.windup.util.exception.WindupException;
@@ -113,7 +114,8 @@ public class HintHandler implements ElementHandler<Hint>
         List<Element> children = $(element).children().get();
         for (Element child : children)
         {
-            switch(child.getNodeName()){
+            switch (child.getNodeName())
+            {
                 case "link":
                     Link link = handlerManager.processElement(child);
                     hint.with(link);
@@ -121,11 +123,14 @@ public class HintHandler implements ElementHandler<Hint>
                 case "tag":
                     tags.add(child.getTextContent());
                     break;
+                case "quickfix":
+                    Quickfix quickfix = handlerManager.processElement(child);
+                    hint.withQuickfix(quickfix);
+                    break;
             }
         }
 
         hint.withTags(tags);
-
         return (Hint) hint;
     }
 

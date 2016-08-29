@@ -39,6 +39,12 @@ public interface Classification
     Iterable<Link> getLinks();
 
     /**
+     * This contains a list of {@link Quickfix}s for follow up in tools
+     * @return
+     */
+    Iterable<Quickfix> getQuickfixes();
+
+    /**
      * This contains the effort level as an integer (Story Points). This is based on the Scrum "modified-Fibonacci" system of effort estimation.
      */
     int getEffort();

@@ -14,11 +14,14 @@ import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.parameters.ParameterizedIterationOperation;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.LinkModel;
+import org.jboss.windup.graph.model.QuickfixModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.graph.service.LinkService;
+import org.jboss.windup.graph.service.QuickfixService;
 import org.jboss.windup.reporting.config.Link;
+import org.jboss.windup.reporting.config.Quickfix;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.EffortReportModel;
 import org.jboss.windup.reporting.model.Severity;
@@ -39,12 +42,21 @@ import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
  * @author <a href="mailto:dynawest@gmail.com">Ondrej Zizka</a>
  */
 public class Classification extends ParameterizedIterationOperation<FileModel> implements ClassificationAs, ClassificationEffort,
-            ClassificationDescription, ClassificationLink, ClassificationTags, ClassificationSeverity
+            ClassificationDescription, ClassificationLink, ClassificationTags, ClassificationSeverity, ClassificationQuickfix
 {
     private static final Logger LOG = Logging.get(Classification.class);
 
     private List<Link> links = new ArrayList<>();
     private Set<String> tags = new HashSet<>();
+    private List<Quickfix> quickfixes = new ArrayList<>();
+
+    /**
+     * @return the quickfixes
+     */
+    public List<Quickfix> getQuickfixes()
+    {
+        return quickfixes;
+    }
 
     private RegexParameterizedPatternParser classificationPattern;
     private RegexParameterizedPatternParser descriptionPattern;
@@ -136,6 +148,12 @@ public class Classification extends ParameterizedIterationOperation<FileModel> i
         return this;
     }
 
+    public ClassificationQuickfix withQuickfix(Quickfix fix)
+    {
+        this.quickfixes.add(fix);
+        return this;
+    }
+
     /**
      * Add the given tags to this {@link Classification}.
      */
@@ -217,6 +235,19 @@ public class Classification extends ParameterizedIterationOperation<FileModel> i
                             StringUtils.trim(link.getTitle()),
                             StringUtils.trim(link.getLink()));
                     classification.addLink(linkModel);
+                }
+
+                QuickfixService quickfixService = new QuickfixService(graphContext);
+                for (Quickfix quickfix : quickfixes)
+                {
+                    QuickfixModel quickfixModel = quickfixService.create();
+                    quickfixModel.setQuickfixType(quickfix.getType());
+                    quickfixModel.setName(StringUtils.trim(quickfix.getName()));
+                    quickfixModel.setReplacement(StringUtils.trim(quickfix.getReplacementStr()));
+                    quickfixModel.setSearch(StringUtils.trim(quickfix.getSearchStr()));
+                    quickfixModel.setNewline(StringUtils.trim(quickfix.getNewline()));
+
+                    classification.addQuickfix(quickfixModel);
                 }
             }
 

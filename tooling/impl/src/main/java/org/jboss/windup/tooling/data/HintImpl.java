@@ -29,6 +29,8 @@ public class HintImpl implements Hint
     private String sourceSnippit;
     private String ruleID;
 
+    private Iterable<Quickfix> quickfixes;
+
     /**
      * Constructs a {@link Hint} with the given id.
      */
@@ -231,5 +233,19 @@ public class HintImpl implements Hint
     public void setRuleID(String ruleID)
     {
         this.ruleID = ruleID;
+    }
+
+    @Override
+    public Iterable<Quickfix> getQuickfixes()
+    {
+        return quickfixes;
+    }
+
+    /**
+     * @param quickfixes the quickfixes to set
+     */
+    public void setQuickfixes(Iterable<Quickfix> quickfixes)
+    {
+        this.quickfixes = quickfixes;
     }
 }
