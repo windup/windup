@@ -1,6 +1,6 @@
 package org.jboss.windup.tooling.data;
 
-import org.jboss.windup.graph.model.QuickfixType;
+import org.jboss.windup.reporting.model.QuickfixType;
 
 /**
  * QuickfixImpl object parsed from XML rule definition

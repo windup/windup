@@ -3,7 +3,7 @@
  */
 package org.jboss.windup.reporting.config;
 
-import org.jboss.windup.graph.model.QuickfixType;
+import org.jboss.windup.reporting.model.QuickfixType;
 
 /**
  * This is a pojo for setting and getting Quickfix

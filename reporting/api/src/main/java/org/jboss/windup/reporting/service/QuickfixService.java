@@ -1,10 +1,11 @@
-package org.jboss.windup.graph.service;
+package org.jboss.windup.reporting.service;
 
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.QuickfixModel;
-import org.jboss.windup.graph.model.QuickfixType;
 
 import com.tinkerpop.blueprints.Vertex;
+import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.reporting.model.QuickfixModel;
+import org.jboss.windup.reporting.model.QuickfixType;
 
 /**
  * Contains methods for loading, querying, and deleting {@link QuickfixModel}s.

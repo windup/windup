@@ -21,7 +21,7 @@ import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.exec.configuration.options.OfflineModeOption;
-import org.jboss.windup.graph.model.QuickfixType;
+import org.jboss.windup.reporting.model.QuickfixType;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.config.Hint;

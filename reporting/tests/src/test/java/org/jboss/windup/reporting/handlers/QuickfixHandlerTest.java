@@ -18,7 +18,7 @@ import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.parser.ParserContext;
-import org.jboss.windup.graph.model.QuickfixType;
+import org.jboss.windup.reporting.model.QuickfixType;
 import org.jboss.windup.reporting.config.Hint;
 import org.jboss.windup.reporting.config.Link;
 import org.jboss.windup.reporting.config.Quickfix;

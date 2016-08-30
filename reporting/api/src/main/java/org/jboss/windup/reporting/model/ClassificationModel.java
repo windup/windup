@@ -8,7 +8,6 @@ import com.tinkerpop.frames.modules.javahandler.JavaHandler;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import org.jboss.windup.graph.Indexed;
-import org.jboss.windup.graph.model.QuickfixModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.association.LinkableModel;
 import org.jboss.windup.rules.files.condition.ToFileModelTransformable;

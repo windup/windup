@@ -13,7 +13,7 @@ import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.config.parser.xml.RuleProviderHandler;
-import org.jboss.windup.graph.model.QuickfixType;
+import org.jboss.windup.reporting.model.QuickfixType;
 import org.jboss.windup.reporting.config.Quickfix;
 import org.w3c.dom.Element;
 

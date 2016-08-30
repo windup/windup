@@ -14,7 +14,7 @@ import org.jboss.forge.furnace.util.Assert;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.parameters.ParameterizedIterationOperation;
 import org.jboss.windup.graph.model.LinkModel;
-import org.jboss.windup.graph.model.QuickfixModel;
+import org.jboss.windup.reporting.model.QuickfixModel;
 import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.EffortReportModel;

@@ -2,7 +2,7 @@ package org.jboss.windup.tooling;
 
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.LinkModel;
-import org.jboss.windup.graph.model.QuickfixModel;
+import org.jboss.windup.reporting.model.QuickfixModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;

@@ -1,4 +1,4 @@
-package org.jboss.windup.graph.model;
+package org.jboss.windup.reporting.model;
 
 /**
  * QuickfixType specifies what type of Quickfix it is.
