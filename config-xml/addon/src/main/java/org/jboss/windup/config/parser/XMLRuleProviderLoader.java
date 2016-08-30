@@ -54,8 +54,6 @@ public class XMLRuleProviderLoader implements RuleProviderLoader
 {
     private static final Logger LOG = Logging.get(XMLRuleProviderLoader.class);
 
-    public static final String CURRENT_WINDUP_SCRIPT = "CURRENT_WINDUP_SCRIPT";
-
     private static final String XML_RULES_EXTENSION = "windup.xml";
 
     @Inject
@@ -162,45 +160,46 @@ public class XMLRuleProviderLoader implements RuleProviderLoader
     {
         // no user dir, so just return the ones that we found in the classpath
         if (userRulesPath == null)
-        {
             return Collections.emptyList();
-        }
 
-        if (!Files.isDirectory(userRulesPath))
-        {
-            LOG.warning("Not scanning: " + userRulesPath.normalize().toString() + " for rules as the directory could not be found!");
-            return Collections.emptyList();
-        }
-        if (!Files.isDirectory(userRulesPath))
-        {
-            LOG.warning("Not scanning: " + userRulesPath.normalize().toString() + " for rules as the directory could not be read!");
-            return Collections.emptyList();
-        }
-
-        // create the results as a copy (as we will be adding user xml files to them)
-        final List<URL> results = new ArrayList<>();
 
         try
         {
+            // Deal with the case of a single file here
+            if (Files.isRegularFile(userRulesPath) && pathMatchesNamePattern(userRulesPath))
+                return Collections.singletonList(userRulesPath.toUri().toURL());
+
+            if (!Files.isDirectory(userRulesPath))
+            {
+                LOG.warning("Not scanning: " + userRulesPath.normalize().toString() + " for rules as the directory could not be read!");
+                return Collections.emptyList();
+            }
+
+            // create the results as a copy (as we will be adding user xml files to them)
+            final List<URL> results = new ArrayList<>();
+
             Files.walkFileTree(userRulesPath, new SimpleFileVisitor<Path>()
             {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException
                 {
-                    if (file.getFileName().toString().toLowerCase().endsWith("." + XML_RULES_EXTENSION))
+                    if (pathMatchesNamePattern(file))
                     {
                         results.add(file.toUri().toURL());
                     }
                     return FileVisitResult.CONTINUE;
                 }
             });
+            return results;
         }
         catch (IOException e)
         {
             throw new WindupException("Failed to search userdir: \"" + userRulesPath + "\" for XML rules due to: "
                         + e.getMessage(), e);
         }
+    }
 
-        return results;
+    private boolean pathMatchesNamePattern(Path file) {
+        return file.getFileName().toString().toLowerCase().endsWith("." + XML_RULES_EXTENSION);
     }
 }
