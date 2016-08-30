@@ -24,6 +24,7 @@ public interface InlineHintModel extends EffortReportModel, FileLocationModel, T
     String RULE_ID = TYPE_PREFIX + "ruleID";
     String LINKS = TYPE_PREFIX + "links";
     String FILE_LOCATION_REFERENCE = TYPE_PREFIX + "fileLocationReference";
+    String QUICKFIXES = TYPE_PREFIX + "quickfixes";
 
     /**
      * A short descriptive text describing the problem covered by this hint
@@ -72,6 +73,12 @@ public interface InlineHintModel extends EffortReportModel, FileLocationModel, T
      */
     @Adjacency(label = LINKS, direction = Direction.OUT)
     Iterable<LinkModel> getLinks();
+
+    @Adjacency(label = QUICKFIXES, direction = Direction.OUT)
+    void addQuickfix(QuickfixModel quickfixModel);
+
+    @Adjacency(label = QUICKFIXES, direction = Direction.OUT)
+    Iterable<QuickfixModel> getQuickfixes();
 
     /**
      * Set the ID of the rule that triggered this particular blacklist entry

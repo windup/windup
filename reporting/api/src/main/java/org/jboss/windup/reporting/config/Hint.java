@@ -8,11 +8,13 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.parameters.ParameterizedIterationOperation;
 import org.jboss.windup.graph.model.LinkModel;
+import org.jboss.windup.reporting.model.QuickfixModel;
 import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.EffortReportModel;
@@ -31,7 +33,7 @@ import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
 /**
  * Used as an intermediate to support the addition of {@link InlineHintModel} objects to the graph via an Operation.
  */
-public class Hint extends ParameterizedIterationOperation<FileLocationModel> implements HintText, HintLink, HintSeverity, HintEffort
+public class Hint extends ParameterizedIterationOperation<FileLocationModel> implements HintText, HintLink, HintSeverity, HintEffort, HintQuickfix
 {
     private static final Logger LOG = Logging.get(Hint.class);
 
@@ -41,6 +43,7 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
     private Severity severity = EffortReportModel.DEFAULT_SEVERITY;
     private List<Link> links = new ArrayList<>();
     private Set<String> tags = Collections.emptySet();
+    private List<Quickfix> quickfixes = new ArrayList<>();
 
     protected Hint(String variable)
     {
@@ -149,6 +152,19 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
                 linkModel.setDescription(StringUtils.trim(link.getTitle()));
                 linkModel.setLink(StringUtils.trim(link.getLink()));
                 hintModel.addLink(linkModel);
+            }
+
+            GraphService<QuickfixModel> quickfixService = new GraphService<>(event.getGraphContext(), QuickfixModel.class);
+            for (Quickfix quickfix : quickfixes)
+            {
+                QuickfixModel quickfixModel = quickfixService.create();
+                quickfixModel.setQuickfixType(quickfix.getType());
+                quickfixModel.setName(StringUtils.trim(quickfix.getName()));
+                quickfixModel.setReplacement(StringUtils.trim(quickfix.getReplacementStr()));
+                quickfixModel.setSearch(StringUtils.trim(quickfix.getSearchStr()));
+                quickfixModel.setNewline(StringUtils.trim(quickfix.getNewline()));
+
+                hintModel.addQuickfix(quickfixModel);
             }
 
             Set<String> tags = new HashSet<>(this.getTags());
@@ -265,4 +281,20 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
         return result.toString();
     }
 
+    /**
+     * @return the quickfixes
+     */
+    public List<Quickfix> getQuickfixes()
+    {
+        return quickfixes;
+    }
+
+    /**
+     * @param quickfix the quickfixes to set
+     */
+    public HintQuickfix withQuickfix(Quickfix quickfix)
+    {
+        this.quickfixes.add(quickfix);
+        return this;
+    }
 }

@@ -13,6 +13,7 @@ import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.config.parser.xml.RuleProviderHandler;
 import org.jboss.windup.reporting.config.Link;
+import org.jboss.windup.reporting.config.Quickfix;
 import org.jboss.windup.reporting.config.classification.Classification;
 import org.jboss.windup.reporting.model.Severity;
 import org.jboss.windup.util.exception.WindupException;
@@ -94,6 +95,14 @@ public class ClassificationHandler implements ElementHandler<Classification>
             tags.add(child.getTextContent());
         }
         classification.withTags(tags);
+        
+        // Quickfix parsing 
+        children = $(element).children("quickfix").get();
+        for (Element child : children)
+        {
+            Quickfix quickfix = handlerManager.processElement(child);
+            classification.withQuickfix(quickfix);
+        }
 
         return classification;
     }

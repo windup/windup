@@ -28,6 +28,7 @@ public interface ClassificationModel extends EffortReportModel, LinkableModel, T
     String DESCRIPTION = TYPE_PREFIX + "description";
 
     String FILE_MODEL = TYPE_PREFIX + "classificationModelToFileModel";
+    String QUICKFIXES = TYPE_PREFIX + "quickfixes";
 
     /**
      * Add a {@link FileModel} associated with this {@link ClassificationModel}.
@@ -78,7 +79,11 @@ public interface ClassificationModel extends EffortReportModel, LinkableModel, T
     @Property(RULE_ID)
     String getRuleID();
 
+    @Adjacency(label = QUICKFIXES, direction = Direction.OUT)
+    void addQuickfix(QuickfixModel quickfixModel);
 
+    @Adjacency(label = QUICKFIXES, direction = Direction.OUT)
+    Iterable<QuickfixModel> getQuickfixes();
 
     @JavaHandler
     @Override
