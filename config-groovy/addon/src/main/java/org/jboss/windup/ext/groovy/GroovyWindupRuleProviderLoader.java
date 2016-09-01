@@ -182,39 +182,41 @@ public class GroovyWindupRuleProviderLoader implements RuleProviderLoader
 
     private Collection<URL> getScripts(Path userRulesPath)
     {
-        if (!Files.isDirectory(userRulesPath))
-        {
-            LOG.warning("Not scanning: " + userRulesPath.normalize().toString() + " for rules as the directory could not be found!");
-            return Collections.emptyList();
-        }
-        if (!Files.isDirectory(userRulesPath))
-        {
-            LOG.warning("Not scanning: " + userRulesPath.normalize().toString() + " for rules as the directory could not be read!");
-            return Collections.emptyList();
-        }
-
-        final List<URL> results = new ArrayList<>();
         try
         {
+            // Deal with the case of a single file here
+            if (Files.isRegularFile(userRulesPath) && pathMatchesNamePattern(userRulesPath))
+                return Collections.singletonList(userRulesPath.toUri().toURL());
+
+            final List<URL> results = new ArrayList<>();
+            if (!Files.isDirectory(userRulesPath))
+            {
+                LOG.warning("Not scanning: " + userRulesPath.normalize().toString() + " for rules as the directory could not be found!");
+                return Collections.emptyList();
+            }
+
             Files.walkFileTree(userRulesPath, new SimpleFileVisitor<Path>()
             {
                 @Override
                 public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException
                 {
-                    if (file.getFileName().toString().endsWith(GROOVY_RULES_EXTENSION))
+                    if (pathMatchesNamePattern(file))
                     {
                         results.add(file.toUri().toURL());
                     }
                     return FileVisitResult.CONTINUE;
                 }
             });
+            return results;
         }
         catch (IOException e)
         {
             throw new WindupException("Failed to search userdir: \"" + userRulesPath + "\" for groovy rules due to: "
                         + e.getMessage(), e);
         }
+    }
 
-        return results;
+    private boolean pathMatchesNamePattern(Path file) {
+        return file.getFileName().toString().toLowerCase().endsWith("." + GROOVY_RULES_EXTENSION);
     }
 }
