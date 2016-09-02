@@ -347,9 +347,9 @@
         </xs:annotation>
         <xs:complexType mixed="true">
             <xs:sequence>
-                <xs:element name="newline" type="xs:string" />
-                <xs:element name="replacement" type="xs:string" />
-                <xs:element name="search" type="xs:string" />
+                <xs:element name="newline" type="xs:string" maxOccurs="1" minOccurs="0" />
+                <xs:element name="replacement" type="xs:string" maxOccurs="1" minOccurs="0" />
+                <xs:element name="search" type="xs:string" maxOccurs="1" minOccurs="0" />
             </xs:sequence>
             <xs:attribute type="quickfix-type" name="type" use="required" />
             <xs:attribute type="xs:string" name="name" use="required" />
