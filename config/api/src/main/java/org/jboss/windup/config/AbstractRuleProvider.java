@@ -13,7 +13,6 @@ import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.metadata.RuleMetadataType;
 import org.jboss.windup.config.metadata.RuleProviderMetadata;
-import org.jboss.windup.graph.GraphContext;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.Context;
 import org.ocpsoft.rewrite.context.ContextBase;
