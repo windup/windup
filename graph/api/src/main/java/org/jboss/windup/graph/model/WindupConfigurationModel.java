@@ -24,6 +24,7 @@ public interface WindupConfigurationModel extends WindupVertexFrame
     String TARGET_TECHNOLOGY = "targetTechnology";
     String CSV_MODE = "csv";
     String KEEP_WORKING_DIRECTORIES = "keepWorkDirs";
+    String SKIP_REPORTS_RENDERING = "skipReports";
 
     /**
      * The input path to scan
@@ -138,4 +139,19 @@ public interface WindupConfigurationModel extends WindupVertexFrame
      */
     @Property(KEEP_WORKING_DIRECTORIES)
     void setKeepWorkDirectories(Boolean keep);
+
+    /**
+     * Indicate whether skip all reports rendering
+     * 
+     * @return
+     */
+    @Property(SKIP_REPORTS_RENDERING)
+    Boolean isSkipReportsRendering();
+
+    /**
+     * Indicate whether skip all reports rendering
+     * 
+     */
+    @Property(SKIP_REPORTS_RENDERING)
+    void setSkipReportsRendering();
 }

@@ -29,6 +29,7 @@ import org.jboss.windup.bootstrap.commands.FurnaceDependent;
 import org.jboss.windup.config.ConfigurationOption;
 import org.jboss.windup.config.InputType;
 import org.jboss.windup.config.KeepWorkDirsOption;
+import org.jboss.windup.config.SkipReportsRenderingOption;
 import org.jboss.windup.config.ValidationResult;
 import org.jboss.windup.config.metadata.RuleProviderRegistryCache;
 import org.jboss.windup.exec.WindupProcessor;
@@ -42,6 +43,7 @@ import org.jboss.windup.exec.configuration.options.TargetOption;
 import org.jboss.windup.exec.configuration.options.UserRulesDirectoryOption;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
+import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.rules.apps.java.config.ExcludePackagesOption;
 import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
@@ -261,9 +263,18 @@ public class RunWindupCommand implements Command, FurnaceDependent
             // Run Windup.
             getWindupProcessor().execute(windupConfiguration);
 
-            Path indexHtmlPath = windupConfiguration.getOutputDirectory().resolve("index.html").normalize().toAbsolutePath();
-            System.out.println("Windup report created: " + indexHtmlPath + System.getProperty("line.separator")
-                        + "              Access it at this URL: " + indexHtmlPath.toUri());
+            final Boolean skipReports = (Boolean) windupConfiguration.getOptionMap().get(SkipReportsRenderingOption.NAME);
+            if (!skipReports)
+            {
+                Path indexHtmlPath = windupConfiguration.getOutputDirectory().resolve("index.html").normalize().toAbsolutePath();
+                System.out.println("Windup report created: " + indexHtmlPath + System.getProperty("line.separator")
+                            + "              Access it at this URL: " + indexHtmlPath.toUri());
+            }
+            else
+            {
+                System.out.println("Generating reports were disabled by option --skipReports");
+                System.out.println("If using that option was unintentional, please run Windup again to generate reports.");
+            }
         }
         catch (Exception e)
         {

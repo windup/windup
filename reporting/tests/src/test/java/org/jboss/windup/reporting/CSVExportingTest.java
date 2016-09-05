@@ -22,7 +22,7 @@ import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.RuleProvider;
-import org.jboss.windup.config.phase.ReportGenerationPhase;
+import org.jboss.windup.config.phase.FinalizePhase;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.exec.rulefilters.RuleProviderPhasePredicate;
@@ -86,7 +86,7 @@ public class CSVExportingTest
         {
             fillData(context);
             String inputPath = "src/test/resources";
-            Predicate<RuleProvider> predicate = new RuleProviderPhasePredicate(ReportGenerationPhase.class);
+            Predicate<RuleProvider> predicate = new RuleProviderPhasePredicate(FinalizePhase.class);
             WindupConfiguration configuration = new WindupConfiguration()
                         .setGraphContext(context)
                         .setRuleProviderFilter(predicate)

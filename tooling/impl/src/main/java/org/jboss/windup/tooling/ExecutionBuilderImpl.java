@@ -12,9 +12,15 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.jboss.forge.furnace.util.Lists;
+import org.jboss.windup.config.SkipReportsRenderingOption;
+import org.jboss.windup.config.phase.PostReportGenerationPhase;
+import org.jboss.windup.config.phase.PostReportRenderingPhase;
+import org.jboss.windup.config.phase.ReportGenerationPhase;
+import org.jboss.windup.config.phase.ReportRenderingPhase;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.WindupProgressMonitor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
+import org.jboss.windup.exec.rulefilters.RuleProviderPhasePredicate;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.report.IgnoredFileRegexModel;
@@ -46,6 +52,27 @@ public class ExecutionBuilderImpl implements ExecutionBuilder, ExecutionBuilderS
     private Set<String> includePackagePrefixSet = new HashSet<>();
     private Set<String> excludePackagePrefixSet = new HashSet<>();
     private Map<String, Object> options = new HashMap<>();
+    private boolean skipReportsRendering;
+
+    /**
+     * Is the option to skip Report preparing and generation set?
+     * 
+     * @return the skipReportsRendering
+     */
+    public boolean isSkipReportsRendering()
+    {
+        return skipReportsRendering;
+    }
+
+    /**
+     * Sets the option to skip Report preparing and generation
+     * 
+     * @param skipReportsRendering the skipReportsRendering to set
+     */
+    public void setSkipReportsRendering(boolean skipReportsRendering)
+    {
+        this.skipReportsRendering = skipReportsRendering;
+    }
 
     @Override
     public ExecutionBuilderSetInput begin(Path windupHome)
@@ -119,6 +146,7 @@ public class ExecutionBuilderImpl implements ExecutionBuilder, ExecutionBuilderS
         windupConfiguration.addInputPath(this.input);
         windupConfiguration.setOutputDirectory(this.output);
         windupConfiguration.setProgressMonitor(this.progressMonitor);
+        windupConfiguration.setOptionValue(SkipReportsRenderingOption.NAME, skipReportsRendering);
 
         Path graphPath = output.resolve(GraphContextFactory.DEFAULT_GRAPH_SUBDIRECTORY);
         try (final GraphContext graphContext = graphContextFactory.create(graphPath))
@@ -142,9 +170,11 @@ public class ExecutionBuilderImpl implements ExecutionBuilder, ExecutionBuilderS
                 windupConfiguration.setOptionValue(option.getKey(), option.getValue());
             }
 
+            
             windupConfiguration
                         .setProgressMonitor(progressMonitor)
                         .setGraphContext(graphContext);
+            
             processor.execute(windupConfiguration);
 
             return new ExecutionResultsImpl(graphContext);

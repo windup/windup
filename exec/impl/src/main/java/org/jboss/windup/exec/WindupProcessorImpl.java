@@ -16,6 +16,7 @@ import javax.inject.Inject;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.forge.furnace.util.Predicate;
+import org.jboss.windup.exec.rulefilters.NotPredicate;
 import org.jboss.windup.config.DefaultEvaluationContext;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.KeepWorkDirsOption;
@@ -23,17 +24,24 @@ import org.jboss.windup.config.PreRulesetEvaluation;
 import org.jboss.windup.config.RuleLifecycleListener;
 import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.RuleSubset;
+import org.jboss.windup.config.SkipReportsRenderingOption;
 import org.jboss.windup.config.loader.RuleLoader;
 import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleProviderRegistry;
 import org.jboss.windup.config.metadata.TechnologyReference;
 import org.jboss.windup.config.metadata.TechnologyReferenceTransformer;
+import org.jboss.windup.config.phase.PostReportGenerationPhase;
+import org.jboss.windup.config.phase.PostReportRenderingPhase;
+import org.jboss.windup.config.phase.PreReportGenerationPhase;
+import org.jboss.windup.config.phase.ReportGenerationPhase;
+import org.jboss.windup.config.phase.ReportRenderingPhase;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.exec.configuration.options.ExcludeTagsOption;
 import org.jboss.windup.exec.configuration.options.IncludeTagsOption;
 import org.jboss.windup.exec.configuration.options.SourceOption;
 import org.jboss.windup.exec.configuration.options.TargetOption;
 import org.jboss.windup.exec.rulefilters.AndPredicate;
+import org.jboss.windup.exec.rulefilters.RuleProviderPhasePredicate;
 import org.jboss.windup.exec.rulefilters.SourceAndTargetPredicate;
 import org.jboss.windup.exec.rulefilters.TaggedRuleProviderPredicate;
 import org.jboss.windup.graph.GraphContext;
@@ -209,27 +217,27 @@ public class WindupProcessorImpl implements WindupProcessor
 
             List<TechnologyReferenceTransformer> transformers = TechnologyReferenceTransformer.getTransformers(ruleLoaderContext);
 
-        /*
-         * Create a Map based upon the ID of the original to be transformed.
-         */
-        Map<String, List<TechnologyReferenceTransformer>> transformerMap = transformers
-            .stream()
-            .collect(Collectors.toMap(
-                // This is the Map key
-                transformer -> transformer.getOriginal().getId(),
+            /*
+             * Create a Map based upon the ID of the original to be transformed.
+             */
+            Map<String, List<TechnologyReferenceTransformer>> transformerMap = transformers
+                        .stream()
+                        .collect(Collectors.toMap(
+                                    // This is the Map key
+                                    transformer -> transformer.getOriginal().getId(),
 
-                // Create a List for each entry
-                (transformer) -> {
-                    List<TechnologyReferenceTransformer> list = new ArrayList<>();
-                    list.add(transformer);
-                    return list;
-                },
+                                    // Create a List for each entry
+                                    (transformer) -> {
+                                        List<TechnologyReferenceTransformer> list = new ArrayList<>();
+                                        list.add(transformer);
+                                        return list;
+                                    },
 
-                // Merge the list if there are multiple entries for the same id
-                (old, latest) -> {
-                    old.addAll(latest);
-                    return old;
-                }));
+                                    // Merge the list if there are multiple entries for the same id
+                                    (old, latest) -> {
+                                        old.addAll(latest);
+                                        return old;
+                                    }));
 
             // Use the tech transformers to transform the IDs
             Function<String, String> transformTechFunction = (technologyID) -> {
@@ -252,6 +260,28 @@ public class WindupProcessorImpl implements WindupProcessor
                 providerFilter = new AndPredicate(configuredPredicate, tagPredicate, sourceAndTargetPredicate);
 
             LOG.info("RuleProvider filter: " + providerFilter);
+            config.setRuleProviderFilter(providerFilter);
+        }
+
+        Boolean skipReports = false;
+        // if skipReportsRendering option is set filter rules in related phases
+        if (config.getOptionMap().containsKey(SkipReportsRenderingOption.NAME))
+        {
+            skipReports = (Boolean) config.getOptionMap().get(SkipReportsRenderingOption.NAME);
+        }
+        if (skipReports)
+        {
+            NotPredicate skipReportsProviderFilter = new NotPredicate(
+                        new RuleProviderPhasePredicate(PreReportGenerationPhase.class, ReportGenerationPhase.class,
+                                    ReportRenderingPhase.class, PostReportGenerationPhase.class, PostReportRenderingPhase.class));
+            Predicate<RuleProvider> configuredProvider = config.getRuleProviderFilter();
+            Predicate<RuleProvider> providerFilter = new AndPredicate(skipReportsProviderFilter);
+            if (configuredProvider != null)
+            {
+                providerFilter = new AndPredicate(configuredProvider, skipReportsProviderFilter);
+            }
+
+            LOG.info("Adding RuleProvider filter for skipping reports: " + providerFilter);
             config.setRuleProviderFilter(providerFilter);
         }
 
