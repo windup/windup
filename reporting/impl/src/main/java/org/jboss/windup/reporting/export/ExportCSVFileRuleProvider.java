@@ -9,11 +9,11 @@ import java.util.Map;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.loader.RuleLoaderContext;
+import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
-import org.jboss.windup.config.phase.ReportGenerationPhase;
+import org.jboss.windup.config.phase.FinalizePhase;
 import org.jboss.windup.config.query.Query;
-import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.LinkModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
@@ -29,14 +29,13 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 import com.opencsv.CSVWriter;
-import org.jboss.windup.config.metadata.RuleMetadata;
 
 /**
  * RuleProvider generating optional CSV files for every application. This file will contain the main reporting information.
  *
  * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  */
-@RuleMetadata(phase = ReportGenerationPhase.class, haltOnException = true)
+@RuleMetadata(phase = FinalizePhase.class, haltOnException = true)
 public class ExportCSVFileRuleProvider extends AbstractRuleProvider
 {
     public static final int COMMIT_INTERVAL = 750;

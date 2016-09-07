@@ -25,8 +25,7 @@ public class RuleProviderWithDependenciesPredicate implements Predicate<RuleProv
                 throws InstantiationException, IllegalAccessException
     {
         /*
-         * FIXME This assumes that the providers can be instantiated with the default constructor. It should really
-         * request an instance from Furance.
+         * FIXME This assumes that the providers can be instantiated with the default constructor. It should really request an instance from Furnace.
          */
         ruleProviders = new ArrayList<>();
         ruleProviders.add(provider.newInstance());
