@@ -3,6 +3,7 @@ package org.jboss.windup.rules.apps.xml.xml;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -79,9 +80,13 @@ class ValidateXmlHandler extends DefaultHandler2
                 // validate the xsd urls
                 for (String xsdUrl : xsdURLs)
                 {
-                    // this will throw if it invalid
-                    try (InputStream is = new URL(xsdUrl).openStream())
+                    try
                     {
+                        URLConnection urlConnection = new URL(xsdUrl).openConnection();
+                        urlConnection.setConnectTimeout(10000);
+                        urlConnection.setReadTimeout(10000);
+                        // this will throw if invalid
+                        InputStream inputStream = urlConnection.getInputStream();
                     }
                     catch (IOException e)
                     {

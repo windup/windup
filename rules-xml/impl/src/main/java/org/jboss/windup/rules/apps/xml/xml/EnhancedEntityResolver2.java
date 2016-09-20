@@ -71,6 +71,8 @@ public class EnhancedEntityResolver2 implements EntityResolver2
         {
             String newUrl = httpConnection.getHeaderField("Location");
             httpConnection = (HttpURLConnection) new URL(newUrl).openConnection();
+            httpConnection.setConnectTimeout(10000);
+            httpConnection.setReadTimeout(10000);
             status = httpConnection.getResponseCode();
         }
 
