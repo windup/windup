@@ -7,7 +7,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(TestXmlMetaFacetModel.TYPE)
 public interface TestXmlMetaFacetModel extends WindupVertexFrame
 {
-    public static final String TYPE = "XmlMetaFacetModel";
+    public static final String TYPE = "XmlMetaFacet";
     public static final String PROPERTY_ROOT_TAG_NAME = "rootTagName";
 
     @Property(PROPERTY_ROOT_TAG_NAME)

@@ -23,7 +23,7 @@ public interface HibernateEntityModel extends WindupVertexFrame
     String TABLE_NAME = "tableName";
     String SPECIFICATION_VERSION = "specificationVersion";
     String HIBERNATE_ENTITY_CLASS = "hibernateEntityClass";
-    String TYPE = "HibernateEntityModel";
+    String TYPE = "HibernateEntity";
     String APPLICATIONS = "applications";
 
     /**

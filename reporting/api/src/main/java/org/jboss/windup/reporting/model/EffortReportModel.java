@@ -20,7 +20,7 @@ public interface EffortReportModel extends WindupVertexFrame
 {
     Severity DEFAULT_SEVERITY = Severity.OPTIONAL;
 
-    String TYPE = "EffortReportModel";
+    String TYPE = "EffortReport";
     String TYPE_PREFIX = TYPE + ":";
     String EFFORT = "EffortReportModelEffort"; // don't use the prefix as we can't name the index with an "_"
     String SEVERITY = TYPE_PREFIX + "severity";

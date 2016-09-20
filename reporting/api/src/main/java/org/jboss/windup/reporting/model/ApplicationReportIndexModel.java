@@ -22,7 +22,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
  */
-@TypeValue("ApplicationReportIndexModel")
+@TypeValue("ApplicationReportIndex")
 public interface ApplicationReportIndexModel extends WindupVertexFrame
 {
     public static final String APPLICATION_REPORT_INDEX_TO_PROJECT_MODEL = "appReportIndexToProjectModel";

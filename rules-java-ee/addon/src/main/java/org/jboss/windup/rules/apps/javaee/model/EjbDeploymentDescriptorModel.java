@@ -21,7 +21,7 @@ public interface EjbDeploymentDescriptorModel extends XmlFileModel
     public static final String EJB_ENTITY_BEAN = "ejbEntityBean";
     public static final String EJB_SESSION_BEAN = "ejbSessionBean";
     public static final String SPECIFICATION_VERSION = "specificationVersion";
-    public static final String TYPE = "EjbDeploymentDescriptorModel";
+    public static final String TYPE = "EjbDeploymentDescriptor";
 
     /**
      * The EJB Specification Version

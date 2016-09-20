@@ -21,7 +21,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(PropertiesModel.TYPE)
 public interface PropertiesModel extends FileModel, SourceFileModel
 {
-    public static final String TYPE = "PropertiesModel";
+    public static final String TYPE = "Properties";
 
     /**
      * Gets the contents of the file as a {@link Properties} object.

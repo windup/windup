@@ -9,7 +9,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(LinkModel.TYPE)
 public interface LinkModel extends WindupVertexFrame
 {
-    String TYPE = "LinkModel";
+    String TYPE = "Link";
     String PROPERTY_LINK = "href";
     String PROPERTY_DESCRIPTION = "description";
 

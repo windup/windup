@@ -16,7 +16,7 @@ public interface RulePhaseExecutionStatisticsModel extends WindupVertexFrame
 {
     String ORDER_EXECUTED = "orderExecuted";
     String RULE_PHASE = "rulePhase";
-    String TYPE = "RulePhaseExecutionStatisticsModel";
+    String TYPE = "RulePhaseExecutionStatistics";
     String TIME_TAKEN = "timeTaken";
 
     /**

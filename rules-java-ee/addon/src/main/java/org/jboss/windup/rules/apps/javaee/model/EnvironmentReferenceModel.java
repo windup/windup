@@ -20,7 +20,7 @@ public interface EnvironmentReferenceModel extends WindupVertexFrame
     public static final String REFERENCE_TYPE = "referenceType";
     public static final String NAME = "name";
     public static final String REFERENCE_ID = "referenceId";
-    public static final String TYPE = "EnvironmentReferenceModel";
+    public static final String TYPE = "EnvironmentReference";
     public static final String TAG_TYPE = "referenceTagType";
 
     /**

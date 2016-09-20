@@ -26,7 +26,7 @@ import org.jboss.windup.graph.Indexed;
 @TypeValue(ProjectModel.TYPE)
 public interface ProjectModel extends WindupVertexFrame
 {
-    String TYPE = "ProjectModel";
+    String TYPE = "Project";
     String DEPENDENCY = "dependency";
     String PARENT_PROJECT = "parentProject";
     String ROOT_FILE_MODEL = "rootFileModel";

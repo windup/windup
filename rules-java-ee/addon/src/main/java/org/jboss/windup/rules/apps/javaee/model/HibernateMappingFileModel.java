@@ -15,7 +15,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(HibernateMappingFileModel.TYPE)
 public interface HibernateMappingFileModel extends XmlFileModel
 {
-    public static final String TYPE = "HibernateMappingFileModel";
+    public static final String TYPE = "HibernateMappingFile";
     public static final String HIBERNATE_ENTITY = "hibernateEntity";
     public static final String SPECIFICATION_VERSION = "specificationVersion";
 

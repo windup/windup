@@ -16,7 +16,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 public interface SpringConfigurationFileModel extends XmlFileModel
 {
     public static final String SPECIFICATION_VERSION = "specificationVersion";
-    public static final String TYPE = "SpringConfigurationFileModel";
+    public static final String TYPE = "SpringConfigurationFile";
 
     /**
      * The Spring specification version.

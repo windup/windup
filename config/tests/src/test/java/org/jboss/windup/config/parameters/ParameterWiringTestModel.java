@@ -8,7 +8,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
-@TypeValue("parameterwiringmodel")
+@TypeValue("parameterwiring")
 public interface ParameterWiringTestModel extends WindupVertexFrame
 {
     String VALUE = "value";

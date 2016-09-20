@@ -21,7 +21,7 @@ import org.ocpsoft.rewrite.config.Rule;
 @TypeValue(ClassificationModel.TYPE)
 public interface ClassificationModel extends EffortReportModel, LinkableModel, ToFileModelTransformable, TaggableModel
 {
-    String TYPE = "ClassificationModel";
+    String TYPE = "Classification";
     String TYPE_PREFIX = TYPE + ":";
     String RULE_ID = TYPE_PREFIX + "ruleID";
     String CLASSIFICATION = TYPE_PREFIX + "classification";

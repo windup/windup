@@ -15,7 +15,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(Jbpm3ProcessModel.TYPE)
 public interface Jbpm3ProcessModel extends XmlFileModel
 {
-    String TYPE = "Jbpm3ProcessModel";
+    String TYPE = "Jbpm3Process";
     String PROCESS_NAME = "processName";
     String STATE_COUNT = "stateCount";
     String NODE_COUNT = "nodeCount";

@@ -45,7 +45,7 @@ public class RenderLinkDirective implements WindupFreeMarkerTemplateDirective
     private static final Logger LOG = Logging.get(RenderLinkDirective.class);
 
     public static final String NAME = "render_link";
-    public static final String MODEL = "model";
+    public static final String MODEL = "";
     public static final String TEXT = "text";
     public static final String PROJECT = "project";
 

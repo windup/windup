@@ -13,5 +13,5 @@ public interface JavaSourceFileModel extends AbstractJavaSourceModel
     ///String UNPARSEABLE_JAVA_CLASSIFICATION = "Unparseable Java File";
     ///String UNPARSEABLE_JAVA_DESCRIPTION = "This Java file could not be parsed";
 
-    String TYPE = "JavaSourceFileModel";
+    String TYPE = "JavaSourceFile";
 }

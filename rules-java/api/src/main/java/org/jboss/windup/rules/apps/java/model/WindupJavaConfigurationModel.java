@@ -22,7 +22,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(WindupJavaConfigurationModel.TYPE)
 public interface WindupJavaConfigurationModel extends WindupVertexFrame
 {
-    String TYPE = "WindupJavaConfigurationModel";
+    String TYPE = "WindupJavaConfiguration";
     String SOURCE_MODE = "sourceMode";
     String EXCLUDE_JAVA_PACKAGES = "excludeJavaPackages";
     String SCAN_JAVA_PACKAGES = "scanJavaPackages";

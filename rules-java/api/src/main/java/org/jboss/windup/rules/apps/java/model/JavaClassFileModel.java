@@ -17,7 +17,7 @@ public interface JavaClassFileModel extends FileModel
 {
     String MINOR_VERSION = "minorVersion";
     String MAJOR_VERSION = "majorVersion";
-    String TYPE = "JavaClassFileModel";
+    String TYPE = "JavaClassFile";
     String PROPERTY_PACKAGE_NAME = "packageName";
     String SKIP_DECOMPILATION = "skipDecompilation";
 

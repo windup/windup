@@ -7,7 +7,7 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
-@TypeValue("MapInPropsPrefixModel")
+@TypeValue("MapInPropsPrefix")
 public interface TestMapPrefixModel extends WindupVertexFrame
 {
     @MapInProperties(propertyPrefix = "map")

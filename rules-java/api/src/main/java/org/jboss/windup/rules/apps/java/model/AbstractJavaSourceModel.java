@@ -22,7 +22,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(AbstractJavaSourceModel.TYPE)
 public interface AbstractJavaSourceModel extends FileModel, SourceFileModel
 {
-    String TYPE = "AbstractJavaSourceModel";
+    String TYPE = "AbstractJavaSource";
     String PACKAGE_NAME = "packageName";
     String JAVA_CLASS_MODEL = "javaClass";
     String ROOT_SOURCE_FOLDER = "rootSourceFolder";

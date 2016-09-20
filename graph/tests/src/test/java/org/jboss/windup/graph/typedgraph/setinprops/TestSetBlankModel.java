@@ -7,7 +7,7 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
-@TypeValue("SetInPropsBlankModel")
+@TypeValue("SetInPropsBlank")
 public interface TestSetBlankModel extends WindupVertexFrame
 {
     @SetInProperties(propertyPrefix = "")
