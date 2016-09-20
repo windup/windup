@@ -26,7 +26,7 @@ public class QuickfixService extends GraphService<QuickfixModel>
      */
     public QuickfixModel getOrCreate(String name, QuickfixType type)
     {
-        Iterable<Vertex> results = getTypedQuery().has(QuickfixModel.PROPERTY_TYPE, type).has(QuickfixModel.PROPERTY_NAME, name).vertices();
+        Iterable<Vertex> results = getTypedQuery().has(QuickfixModel.PROPERTY_TYPE, type).has(QuickfixModel.PROPERTY_DESCRIPTION, name).vertices();
         if (!results.iterator().hasNext())
         {
             QuickfixModel model = create();
