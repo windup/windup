@@ -147,7 +147,8 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
 
         builder.haltOnException = metadata.haltOnException();
         builder.disabled = metadata.disabled();
-        LOG.info("Is it disabled? " + providerId + " " + builder.disabled);///
+        if (builder.disabled)
+            LOG.info("Disabled provider: " + providerId);
 
         return builder;
     }
