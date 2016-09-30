@@ -88,6 +88,7 @@ public abstract class AbstractPathConfigurationOption extends AbstractConfigurat
             }
             return ValidationResult.SUCCESS;
         }
-        return ValidationResult.SUCCESS;
+
+        return validatePath(castToPath(fileObject));
     }
 }
