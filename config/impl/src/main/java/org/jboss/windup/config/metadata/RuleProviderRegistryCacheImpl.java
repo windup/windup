@@ -1,13 +1,8 @@
 package org.jboss.windup.config.metadata;
 
-import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.loader.RuleLoader;
 import org.jboss.windup.config.loader.RuleLoaderContext;
-import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.GraphContextFactory;
-import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.util.PathUtil;
 
 import javax.inject.Inject;
@@ -52,6 +47,8 @@ public class RuleProviderRegistryCacheImpl implements RuleProviderRegistryCache
     @Override
     public void addUserRulesPath(Path path)
     {
+        this.cachedRegistry = null;
+        this.cachedTransformers = null;
         userRulesPaths.add(path);
     }
 
@@ -144,9 +141,12 @@ public class RuleProviderRegistryCacheImpl implements RuleProviderRegistryCache
             this.cachedRegistry = null;
             try
             {
-                List<Path> defaultRulePaths = new ArrayList<>();
+                Set<Path> defaultRulePaths = new HashSet<>();
                 defaultRulePaths.add(PathUtil.getWindupRulesDir());
                 defaultRulePaths.add(PathUtil.getUserRulesDir());
+
+                defaultRulePaths.addAll(this.userRulesPaths);
+
 
                 RuleLoaderContext ruleLoaderContext = new RuleLoaderContext(defaultRulePaths, null);
                 getRuleProviderRegistry(ruleLoaderContext);
