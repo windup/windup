@@ -36,7 +36,7 @@ public interface LicenseModel extends FileModel, SourceFileModel {
     /**
      * Indicates the license url.
      */
-    @Property(NAME)
+    @Property(URL)
     void setURL(String url);
 
 }
