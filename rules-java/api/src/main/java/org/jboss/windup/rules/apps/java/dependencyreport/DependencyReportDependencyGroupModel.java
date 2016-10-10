@@ -4,6 +4,7 @@ import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Incidence;
 import com.tinkerpop.frames.Property;
+import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
@@ -13,10 +14,11 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
+@TypeValue(DependencyReportDependencyGroupModel.TYPE)
 public interface DependencyReportDependencyGroupModel extends WindupVertexFrame
 {
-    String TYPE = "w:dependencyreportgroup";
-    String DEPENDENCY_SHA1 = "dependencySHA1";
+    String TYPE = "depReportGroup";
+    String DEPENDENCY_SHA1 = "depSHA1";
     String DEPENDENCY_GROUP_TO_ARCHIVE = "dependencyGroupToArchive";
     String CANONICAL_PROJECT = "canonicalProject";
 
