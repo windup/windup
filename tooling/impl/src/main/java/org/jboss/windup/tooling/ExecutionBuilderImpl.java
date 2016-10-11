@@ -2,12 +2,14 @@ package org.jboss.windup.tooling;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
@@ -49,6 +51,27 @@ public class ExecutionBuilderImpl implements ExecutionBuilder, ExecutionBuilderS
     private Set<String> excludePackagePrefixSet = new HashSet<>();
     private Set<String> userRulesPathSet = new HashSet<>();
     private Map<String, Object> options = new HashMap<>();
+    private boolean skipReportsRendering;
+
+    /**
+     * Is the option to skip Report preparing and generation set?
+     * 
+     * @return the skipReportsRendering
+     */
+    public boolean isSkipReportsRendering()
+    {
+        return skipReportsRendering;
+    }
+
+    /**
+     * Sets the option to skip Report preparing and generation
+     * 
+     * @param skipReportsRendering the skipReportsRendering to set
+     */
+    public void setSkipReportsRendering(boolean skipReportsRendering)
+    {
+        this.skipReportsRendering = skipReportsRendering;
+    }
 
     @Override
     public ExecutionBuilderSetInput begin(Path windupHome)
@@ -167,7 +190,6 @@ public class ExecutionBuilderImpl implements ExecutionBuilder, ExecutionBuilderS
     {
         PathUtil.setWindupHome(this.windupHome);
         WindupConfiguration windupConfiguration = new WindupConfiguration();
-
         try
         {
             windupConfiguration.useDefaultDirectories();
@@ -179,11 +201,16 @@ public class ExecutionBuilderImpl implements ExecutionBuilder, ExecutionBuilderS
         windupConfiguration.addInputPath(this.input);
         windupConfiguration.setOutputDirectory(this.output);
         windupConfiguration.setProgressMonitor(this.progressMonitor);
-
-        for (String rulesPath : this.userRulesPathSet)
-            windupConfiguration.addDefaultUserRulesDirectory(Paths.get(rulesPath));
+        windupConfiguration.setOptionValue(SkipReportsRenderingOption.NAME, skipReportsRendering);
 
         Path graphPath = output.resolve(GraphContextFactory.DEFAULT_GRAPH_SUBDIRECTORY);
+
+        Logger globalLogger = Logger.getLogger("");
+        WindupProgressLoggingHandler loggingHandler = null;
+        if (progressMonitor instanceof WindupToolingProgressMonitor) {
+            loggingHandler = new WindupProgressLoggingHandler((WindupToolingProgressMonitor)progressMonitor);
+            globalLogger.addHandler(loggingHandler);
+        }
 
         try (final GraphContext graphContext = graphContextFactory.create(graphPath))
         {
@@ -218,6 +245,41 @@ public class ExecutionBuilderImpl implements ExecutionBuilder, ExecutionBuilderS
         catch (IOException e)
         {
             throw new WindupException("Failed to instantiate graph due to: " + e.getMessage(), e);
+        } finally
+        {
+            if (loggingHandler != null)
+                globalLogger.removeHandler(loggingHandler);
+        }
+    }
+
+    private class WindupProgressLoggingHandler extends Handler
+    {
+        private final WindupToolingProgressMonitor monitor;
+
+        public WindupProgressLoggingHandler(WindupToolingProgressMonitor monitor)
+        {
+            this.monitor = monitor;
+        }
+
+        @Override
+        public void publish(LogRecord record)
+        {
+            if (this.monitor == null)
+                return;
+
+            this.monitor.logMessage(record);
+        }
+
+        @Override
+        public void flush()
+        {
+
+        }
+
+        @Override
+        public void close() throws SecurityException
+        {
+
         }
     }
 }
