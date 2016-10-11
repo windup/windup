@@ -2,6 +2,9 @@ package org.jboss.windup.tooling;
 
 import org.jboss.windup.config.ConfigurationOption;
 
+import java.nio.file.Path;
+import java.util.Collection;
+
 /**
  * Allows configuring options on Windup.
  *
@@ -20,9 +23,39 @@ public interface ExecutionBuilderSetOptions
     ExecutionBuilderSetOptions includePackage(String includePackagePrefix);
 
     /**
+     * Includes the provided list of package prefixes.
+     */
+    ExecutionBuilderSetOptions includePackages(Collection<String> includePackagePrefixes);
+
+    /**
      * Sets the package name prefixes to ignore.
      */
     ExecutionBuilderSetOptions excludePackage(String excludePackagePrefix);
+
+    /**
+     * Sets a list of package name prefixes to ignore.
+     */
+    ExecutionBuilderSetOptions excludePackages(Collection<String> excludePackagePrefixes);
+
+    /**
+     * Switches the engine to run in source only mode (no decompilation).
+     */
+    ExecutionBuilderSetOptions sourceOnlyMode();
+
+    /**
+     * Indicates that Windup should not generate reports at the end.
+     */
+    ExecutionBuilderSetOptions skipReportGeneration();
+
+    /**
+     * Adds a custom uer rules path.
+     */
+    ExecutionBuilderSetOptions addUserRulesPath(Path rulesPath);
+
+    /**
+     * Adds a set of custom uer rules paths.
+     */
+    ExecutionBuilderSetOptions addUserRulesPaths(Iterable<Path> rulesPath);
 
     /**
      * Sets the option with the specified name to the specified value. Option names can be found in static variables on {@link ConfigurationOption}
