@@ -54,7 +54,7 @@ public class PackageNameMappingRegistry
             WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(graphContext);
             FileModel windupRulesPath = new FileService(graphContext).createByFilePath(rulesPath.toString());
             configurationModel.addUserRulesPath(windupRulesPath);
-            RuleLoaderContext ruleLoaderContext = new RuleLoaderContext(Collections.singleton(PathUtil.getWindupRulesDir()), null);
+            RuleLoaderContext ruleLoaderContext = new RuleLoaderContext(Collections.singleton(rulesPath), null);
 
             RuleProviderRegistry registry = cache.getRuleProviderRegistry(ruleLoaderContext);
             this.event = new GraphRewrite(graphContext);
