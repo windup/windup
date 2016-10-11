@@ -1,5 +1,6 @@
 package org.jboss.windup.rules.apps.java.scan.operation.packagemapping;
 
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -43,12 +44,17 @@ public class PackageNameMappingRegistry
 
     public void loadPackageMappings()
     {
+        loadPackageMappings(PathUtil.getWindupRulesDir());
+    }
+
+    public void loadPackageMappings(Path rulesPath)
+    {
         try (GraphContext graphContext = graphContextFactory.create())
         {
             WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(graphContext);
-            FileModel windupRulesPath = new FileService(graphContext).createByFilePath(PathUtil.getWindupRulesDir().toString());
+            FileModel windupRulesPath = new FileService(graphContext).createByFilePath(rulesPath.toString());
             configurationModel.addUserRulesPath(windupRulesPath);
-            RuleLoaderContext ruleLoaderContext = new RuleLoaderContext(Collections.singleton(PathUtil.getWindupRulesDir()), null);
+            RuleLoaderContext ruleLoaderContext = new RuleLoaderContext(Collections.singleton(rulesPath), null);
 
             RuleProviderRegistry registry = cache.getRuleProviderRegistry(ruleLoaderContext);
             this.event = new GraphRewrite(graphContext);
