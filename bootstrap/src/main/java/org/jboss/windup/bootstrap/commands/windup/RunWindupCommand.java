@@ -253,13 +253,11 @@ public class RunWindupCommand implements Command, FurnaceDependent
 
         normalizePackagePrefixes(windupConfiguration);
 
-        try (GraphContext graphContext = getGraphContextFactory().create(graphPath))
+        try
         {
             WindupProgressMonitor progressMonitor = new ConsoleProgressMonitor();
-            windupConfiguration
-                        .setProgressMonitor(progressMonitor)
-                        .setGraphContext(graphContext);
-            // Run Windup.
+            windupConfiguration.setProgressMonitor(progressMonitor);
+            // Run Windup
             getWindupProcessor().execute(windupConfiguration);
 
             final Boolean skipReports = (Boolean) windupConfiguration.getOptionMap().get(SkipReportsRenderingOption.NAME);
