@@ -5,7 +5,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.tools.ant.taskdefs.Length;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.LinkModel;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -28,7 +27,6 @@ import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.structures.FramedVertexIterable;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 import java.util.logging.Level;
-import org.apache.tools.ant.taskdefs.Length.FileMode;
 
 /**
  * Adds methods for loading and querying ClassificationModel related data.
@@ -93,7 +91,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
     /**
      * <p>
      * Returns the total effort points in all of the {@link ClassificationModel}s
-     * associated with the {@link FileMode} instances in the given {@link ProjectModelTraversal}.
+     * associated with the {@link FileModel} instances in the given {@link ProjectModelTraversal}.
      * </p>
      * <p>
      * If set to recursive, then also include the effort points from child projects.
@@ -224,7 +222,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
     }
 
     /**
-     * This method just attaches the {@link ClassificationModel} to the {@link Length.FileMode}.
+     * This method just attaches the {@link ClassificationModel} to the {@link FileModel}.
      * It will only do so if this link is not already present.
      */
     public ClassificationModel attachClassification(ClassificationModel classificationModel, FileModel fileModel)

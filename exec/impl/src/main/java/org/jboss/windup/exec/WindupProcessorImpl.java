@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
@@ -94,86 +95,99 @@ public class WindupProcessorImpl implements WindupProcessor
 
         validateConfig(configuration);
 
+        boolean autoCloseGraph = false;
         if (configuration.getGraphContext() == null)
         {
+            // Since we created it, we should clean it up
+            autoCloseGraph = true;
             Path graphPath = configuration.getOutputDirectory().resolve(GraphContextFactory.DEFAULT_GRAPH_SUBDIRECTORY);
             GraphContext graphContext = this.graphContextFactory.create(graphPath);
             configuration.setGraphContext(graphContext);
         }
-        printConfigInfo(configuration);
 
-        GraphContext context = configuration.getGraphContext();
-        context.setOptions(configuration.getOptionMap());
-
-        WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(context);
-
-        Set<FileModel> inputPathModels = new LinkedHashSet<>();
-        for (Path inputPath : configuration.getInputPaths())
+        try
         {
-            inputPathModels.add(getFileModel(context, inputPath));
-        }
-        configurationModel.setInputPaths(inputPathModels);
+            printConfigInfo(configuration);
 
-        configurationModel.setOutputPath(getFileModel(context, configuration.getOutputDirectory()));
-        configurationModel.setOfflineMode(configuration.isOffline());
-        configurationModel.setExportingCSV(configuration.isExportingCSV());
-        configurationModel.setKeepWorkDirectories(configuration.getOptionValue(KeepWorkDirsOption.NAME));
-        for (Path path : configuration.getAllUserRulesDirectories())
-        {
-            System.out.println("Using user rules dir: " + path);
-            if (path == null)
-            {
-                throw new WindupException("Null path found (all paths are: "
-                            + configuration.getAllUserRulesDirectories() + ")");
+            GraphContext context = configuration.getGraphContext();
+            context.setOptions(configuration.getOptionMap());
+
+            WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(context);
+
+            Set<FileModel> inputPathModels = new LinkedHashSet<>();
+            for (Path inputPath : configuration.getInputPaths()) {
+                inputPathModels.add(getFileModel(context, inputPath));
             }
-            configurationModel.addUserRulesPath(getFileModel(context, path));
-        }
+            configurationModel.setInputPaths(inputPathModels);
 
-        for (Path path : configuration.getAllIgnoreDirectories())
+            configurationModel.setOutputPath(getFileModel(context, configuration.getOutputDirectory()));
+            configurationModel.setOfflineMode(configuration.isOffline());
+            configurationModel.setExportingCSV(configuration.isExportingCSV());
+            configurationModel.setKeepWorkDirectories(configuration.getOptionValue(KeepWorkDirsOption.NAME));
+            for (Path path : configuration.getAllUserRulesDirectories()) {
+                System.out.println("Using user rules dir: " + path);
+                if (path == null) {
+                    throw new WindupException("Null path found (all paths are: "
+                            + configuration.getAllUserRulesDirectories() + ")");
+                }
+                configurationModel.addUserRulesPath(getFileModel(context, path));
+            }
+
+            for (Path path : configuration.getAllIgnoreDirectories()) {
+                configurationModel.addUserIgnorePath(getFileModel(context, path));
+            }
+
+            List<RuleLifecycleListener> listeners = new ArrayList<>();
+            for (RuleLifecycleListener listener : this.listeners) {
+                listeners.add(listener);
+            }
+
+            final GraphRewrite event = new GraphRewrite(listeners, context);
+            RuleLoaderContext ruleLoaderContext = new RuleLoaderContext(configuration.getAllUserRulesDirectories(), configuration.getRuleProviderFilter());
+            ruleLoaderContext = configureRuleProviderAndTagFilters(ruleLoaderContext, configuration);
+            addSourceAndTargetInformation(event, configuration, configurationModel);
+
+            RuleProviderRegistry providerRegistry = ruleLoader.loadConfiguration(ruleLoaderContext);
+            Configuration rules = providerRegistry.getConfiguration();
+
+            if (configuration.getProgressMonitor() != null)
+                listeners.add(new DefaultRuleLifecycleListener(configuration.getProgressMonitor(), rules));
+
+            event.getRewriteContext().put(RuleProviderRegistry.class, providerRegistry);
+
+            RuleSubset ruleSubset = RuleSubset.create(rules);
+            ruleSubset.setAlwaysHaltOnFailure(configuration.isAlwaysHaltOnException());
+
+            for (RuleLifecycleListener listener : listeners) {
+                ruleSubset.addLifecycleListener(listener);
+            }
+
+            new RuleVisit(ruleSubset).accept((rule) ->
+            {
+                if (rule instanceof PreRulesetEvaluation)
+                    ((PreRulesetEvaluation) rule).preRulesetEvaluation(event);
+            });
+
+            ruleSubset.perform(event, createEvaluationContext());
+        } finally
         {
-            configurationModel.addUserIgnorePath(getFileModel(context, path));
+            if (autoCloseGraph)
+            {
+                try
+                {
+                    configuration.getGraphContext().close();
+                } catch (Throwable t)
+                {
+                    LOG.log(Level.WARNING, "Failed to close graph due to: " + t.getMessage(), t);
+                }
+            }
+
+            long endTime = System.currentTimeMillis();
+            long seconds = (endTime - startTime) / 1000L;
+            LOG.info("Windup execution took " + seconds + " seconds to execute on input: " + configuration.getInputPaths() + "!");
+
+            ExecutionStatistics.get().reset();
         }
-
-        List<RuleLifecycleListener> listeners = new ArrayList<>();
-        for (RuleLifecycleListener listener : this.listeners)
-        {
-            listeners.add(listener);
-        }
-
-        final GraphRewrite event = new GraphRewrite(listeners, context);
-        RuleLoaderContext ruleLoaderContext = new RuleLoaderContext(configuration.getAllUserRulesDirectories(), configuration.getRuleProviderFilter());
-        ruleLoaderContext = configureRuleProviderAndTagFilters(ruleLoaderContext, configuration);
-        addSourceAndTargetInformation(event, configuration, configurationModel);
-
-        RuleProviderRegistry providerRegistry = ruleLoader.loadConfiguration(ruleLoaderContext);
-        Configuration rules = providerRegistry.getConfiguration();
-
-        if (configuration.getProgressMonitor() != null)
-            listeners.add(new DefaultRuleLifecycleListener(configuration.getProgressMonitor(), rules));
-
-        event.getRewriteContext().put(RuleProviderRegistry.class, providerRegistry);
-
-        RuleSubset ruleSubset = RuleSubset.create(rules);
-        ruleSubset.setAlwaysHaltOnFailure(configuration.isAlwaysHaltOnException());
-
-        for (RuleLifecycleListener listener : listeners)
-        {
-            ruleSubset.addLifecycleListener(listener);
-        }
-
-        new RuleVisit(ruleSubset).accept((rule) ->
-        {
-            if (rule instanceof PreRulesetEvaluation)
-                ((PreRulesetEvaluation) rule).preRulesetEvaluation(event);
-        });
-
-        ruleSubset.perform(event, createEvaluationContext());
-
-        long endTime = System.currentTimeMillis();
-        long seconds = (endTime - startTime) / 1000L;
-        LOG.info("Windup execution took " + seconds + " seconds to execute on input: " + configuration.getInputPaths() + "!");
-
-        ExecutionStatistics.get().reset();
     }
 
     private void addSourceAndTargetInformation(GraphRewrite event, WindupConfiguration configuration, WindupConfigurationModel configurationModel)
