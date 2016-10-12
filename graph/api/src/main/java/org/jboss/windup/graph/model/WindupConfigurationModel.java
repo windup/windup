@@ -153,5 +153,5 @@ public interface WindupConfigurationModel extends WindupVertexFrame
      * 
      */
     @Property(SKIP_REPORTS_RENDERING)
-    void setSkipReportsRendering();
+    void setSkipReportsRendering(Boolean skip);
 }
