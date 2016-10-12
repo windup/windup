@@ -45,6 +45,7 @@ import org.jboss.windup.exec.rulefilters.RuleProviderPhasePredicate;
 import org.jboss.windup.exec.rulefilters.SourceAndTargetPredicate;
 import org.jboss.windup.exec.rulefilters.TaggedRuleProviderPredicate;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.TechnologyReferenceModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -75,6 +76,9 @@ public class WindupProcessorImpl implements WindupProcessor
     private RuleLoader ruleLoader;
 
     @Inject
+    private GraphContextFactory graphContextFactory;
+
+    @Inject
     private Imported<RuleLifecycleListener> listeners;
 
     @Override
@@ -89,6 +93,13 @@ public class WindupProcessorImpl implements WindupProcessor
         long startTime = System.currentTimeMillis();
 
         validateConfig(configuration);
+
+        if (configuration.getGraphContext() == null)
+        {
+            Path graphPath = configuration.getOutputDirectory().resolve(GraphContextFactory.DEFAULT_GRAPH_SUBDIRECTORY);
+            GraphContext graphContext = this.graphContextFactory.create(graphPath);
+            configuration.setGraphContext(graphContext);
+        }
         printConfigInfo(configuration);
 
         GraphContext context = configuration.getGraphContext();
@@ -305,9 +316,6 @@ public class WindupProcessorImpl implements WindupProcessor
     {
         Assert.notNull(windupConfiguration,
                     "Windup configuration must not be null. (Call default execution if no configuration is required.)");
-
-        GraphContext context = windupConfiguration.getGraphContext();
-        Assert.notNull(context, "Windup GraphContext must not be null!");
 
         Collection<Path> inputPaths = windupConfiguration.getInputPaths();
         Assert.notNull(inputPaths, "Path to the application must not be null!");
