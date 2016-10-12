@@ -9,7 +9,6 @@ import java.util.Set;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
-import org.apache.tools.ant.taskdefs.Length.FileMode;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
@@ -143,7 +142,7 @@ public class InlineHintService extends GraphService<InlineHintModel>
     /**
      * <p>
      * Returns the total effort points in all of the {@link InlineHintModel}s
-     * associated with the {@link FileMode} instances in the given {@link ProjectModelTraversal}.
+     * associated with the {@link FileModel} instances in the given {@link ProjectModelTraversal}.
      * </p>
      * <p>
      * If set to recursive, then also include the effort points from child projects.

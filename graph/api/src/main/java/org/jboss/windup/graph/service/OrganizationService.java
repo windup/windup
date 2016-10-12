@@ -1,6 +1,5 @@
 package org.jboss.windup.graph.service;
 
-import org.apache.tools.ant.taskdefs.Length;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.LinkModel;
@@ -42,7 +41,7 @@ public class OrganizationService extends GraphService<OrganizationModel>
     }
 
     /**
-     * This method just attaches the {@link OrganizationModel} to the {@link Length.FileMode}. It will only do so if this link is not already
+     * This method just attaches the {@link OrganizationModel} to the {@link FileModel}. It will only do so if this link is not already
      * present.
      */
     public OrganizationModel attachOrganization(OrganizationModel organizationModel, ArchiveModel archiveModel)
@@ -61,7 +60,7 @@ public class OrganizationService extends GraphService<OrganizationModel>
     
 
     /**
-     * This method just attaches the {@link LinkModel} to the {@link ClassificationModel}. It will only do so if this link is not already
+     * This method just attaches the {@link LinkModel} to the {@link OrganizationModel}. It will only do so if this link is not already
      * present.
      */
     public OrganizationModel attachLink(OrganizationModel organizationModel, LinkModel linkModel)

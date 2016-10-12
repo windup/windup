@@ -4,7 +4,6 @@ import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.Iterator;
 
-import org.apache.tools.ant.BuildException;
 import org.jboss.windup.graph.FramedElementInMemory;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.InMemoryVertexFrame;
@@ -60,7 +59,7 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
         return ExecutionStatistics.performBenchmarked("GraphService.count", new Task<Long>()
         {
             @Override
-            public Long execute() throws BuildException
+            public Long execute()
             {
                 GremlinPipeline<Iterable<?>, Object> pipe = new GremlinPipeline<>();
                 long result = pipe.start(obj).count();
@@ -87,7 +86,7 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
         return ExecutionStatistics.performBenchmarked("GraphService.create", new Task<T>()
         {
             @Override
-            public T execute() throws BuildException
+            public T execute()
             {
                 return context.getFramed().addVertex(null, type);
             }
@@ -100,7 +99,7 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
         return ExecutionStatistics.performBenchmarked("GraphService.addTypeToModel", new Task<T>()
         {
             @Override
-            public T execute() throws BuildException
+            public T execute()
             {
                 return GraphService.addTypeToModel(getGraphContext(), model, type);
             }
@@ -124,7 +123,7 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
         return ExecutionStatistics.performBenchmarked("GraphService.findAllByProperties(" + Arrays.asList(keys) + ")", new Task<Iterable<T>>()
         {
             @Override
-            public Iterable<T> execute() throws BuildException
+            public Iterable<T> execute()
             {
                 FramedGraphQuery query = findAllQuery();
 
@@ -147,7 +146,7 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
         return ExecutionStatistics.performBenchmarked("GraphService.findAllByProperty(" + key + ")", new Task<Iterable<T>>()
         {
             @Override
-            public Iterable<T> execute() throws BuildException
+            public Iterable<T> execute()
             {
                 return context.getFramed().getVertices(key, value, type);
             }
@@ -160,7 +159,7 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
         return ExecutionStatistics.performBenchmarked("GraphService.findAllWithoutProperty(" + key + ")", new Task<Iterable<T>>()
         {
             @Override
-            public Iterable<T> execute() throws BuildException
+            public Iterable<T> execute()
             {
                 return findAllQuery().hasNot(key, value).vertices(type);
             }
@@ -173,7 +172,7 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
         return ExecutionStatistics.performBenchmarked("GraphService.findAllWithoutProperty(" + key + ")", new Task<Iterable<T>>()
         {
             @Override
-            public Iterable<T> execute() throws BuildException
+            public Iterable<T> execute()
             {
                 return findAllQuery().hasNot(key).vertices(type);
             }
@@ -186,7 +185,7 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
         return ExecutionStatistics.performBenchmarked("GraphService.findAllByPropertyMatchingRegex(" + key + ")", new Task<Iterable<T>>()
         {
             @Override
-            public Iterable<T> execute() throws BuildException
+            public Iterable<T> execute()
             {
                 if (regex.length == 0)
                     return IterablesUtil.emptyIterable();
