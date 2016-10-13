@@ -47,7 +47,6 @@ public class SkipReportsRenderingOption extends AbstractConfigurationOption
         return false;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public ValidationResult validate(Object value)
     {

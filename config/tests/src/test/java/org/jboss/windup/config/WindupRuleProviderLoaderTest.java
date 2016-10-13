@@ -1,8 +1,6 @@
 package org.jboss.windup.config;
 
 import java.io.IOException;
-import java.util.Collections;
-
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -16,7 +14,6 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.loader.RuleProviderLoader;
 import org.jboss.windup.config.metadata.MetadataBuilder;
-import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.junit.Assert;
 import org.junit.Test;

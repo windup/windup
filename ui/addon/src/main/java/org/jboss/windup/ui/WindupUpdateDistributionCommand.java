@@ -1,7 +1,7 @@
 package org.jboss.windup.ui;
 
-import org.jboss.windup.exec.updater.RulesetsUpdater;
 import javax.inject.Inject;
+
 import org.jboss.forge.addon.dependencies.Coordinate;
 import org.jboss.forge.addon.dependencies.DependencyResolver;
 import org.jboss.forge.addon.ui.command.UICommand;
@@ -17,6 +17,7 @@ import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.versions.SingleVersion;
 import org.jboss.forge.furnace.versions.Version;
+import org.jboss.windup.exec.updater.RulesetsUpdater;
 
 
 /**
@@ -61,7 +62,7 @@ public class WindupUpdateDistributionCommand implements UICommand
 
         // Find the latest version.
         Coordinate latestDist = this.updater.getLatestReleaseOf("org.jboss.windup", "windup-distribution");
-        Version latestVersion = new SingleVersion(latestDist.getVersion());
+        Version latestVersion = SingleVersion.valueOf(latestDist.getVersion());
         Version installedVersion = currentAddon.getId().getVersion();
         if (latestVersion.compareTo(installedVersion) <= 0)
         {

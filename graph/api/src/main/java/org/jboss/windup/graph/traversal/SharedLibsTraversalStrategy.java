@@ -1,17 +1,10 @@
 package org.jboss.windup.graph.traversal;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import com.google.common.base.Function;
 import org.jboss.windup.graph.model.ProjectModel;
-import org.jboss.windup.graph.model.resource.FileModel;
-
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import java.util.logging.Logger;
-import org.jboss.windup.graph.model.DuplicateArchiveModel;
-import org.jboss.windup.graph.model.DuplicateProjectModel;
 import org.jboss.windup.graph.service.ProjectService;
 
 /**

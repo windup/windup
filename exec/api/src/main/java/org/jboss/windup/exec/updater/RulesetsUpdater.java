@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.logging.Logger;
 import javax.inject.Inject;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.jboss.forge.addon.dependencies.Coordinate;
 import org.jboss.forge.addon.dependencies.Dependency;
 import org.jboss.forge.addon.dependencies.DependencyException;

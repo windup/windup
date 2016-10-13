@@ -1,7 +1,6 @@
 package org.jboss.windup.config.loader;
 
 import java.nio.file.Path;
-import java.util.Collection;
 import java.util.Collections;
 
 import org.jboss.forge.furnace.util.Predicate;

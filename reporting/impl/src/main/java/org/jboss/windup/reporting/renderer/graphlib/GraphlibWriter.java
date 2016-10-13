@@ -2,12 +2,9 @@ package org.jboss.windup.reporting.renderer.graphlib;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.file.Path;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.reporting.renderer.GraphDataSerializer;
-import org.jboss.windup.reporting.renderer.GraphWriter;
 import org.jboss.windup.reporting.renderer.graphlib.GraphvizConstants.GraphvizDirection;
 import org.jboss.windup.reporting.renderer.graphlib.GraphvizConstants.GraphvizType;
 

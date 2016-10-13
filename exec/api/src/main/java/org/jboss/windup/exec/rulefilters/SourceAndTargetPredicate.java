@@ -6,10 +6,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.forge.furnace.versions.VersionRange;
-import org.jboss.forge.furnace.versions.Versions;
 import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.metadata.TechnologyReference;
 

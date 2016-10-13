@@ -3,11 +3,9 @@ package org.jboss.windup.decompiler.fernflower;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.jar.Manifest;
 
-import org.jboss.windup.decompiler.api.ClassDecompileRequest;
 import org.jboss.windup.decompiler.api.DecompilationListener;
 import org.jetbrains.java.decompiler.main.extern.IResultSaver;
 

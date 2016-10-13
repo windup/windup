@@ -5,17 +5,11 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import javax.annotation.Nullable;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.model.comparator.FilePathComparator;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.exception.WindupException;
-
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
 
 import freemarker.ext.beans.BeanModel;
 import freemarker.template.DefaultListAdapter;

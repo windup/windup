@@ -8,7 +8,6 @@ import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.config.parser.xml.RuleProviderHandler;
 import org.jboss.windup.rules.apps.java.condition.annotation.AnnotationCondition;
 import org.jboss.windup.rules.apps.java.condition.annotation.AnnotationListCondition;
-import org.jboss.windup.util.exception.WindupException;
 import org.w3c.dom.Element;
 
 import java.util.List;

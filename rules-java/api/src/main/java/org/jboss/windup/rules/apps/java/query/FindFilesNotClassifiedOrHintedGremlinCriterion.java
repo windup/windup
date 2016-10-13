@@ -12,7 +12,6 @@ import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.files.model.FileLocationModel;
-import org.jboss.windup.rules.files.model.FileReferenceModel;
 import org.jboss.windup.util.ExecutionStatistics;
 
 import java.util.HashSet;

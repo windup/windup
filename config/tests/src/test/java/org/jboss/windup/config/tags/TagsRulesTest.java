@@ -20,7 +20,6 @@ import org.jboss.windup.config.RuleSubset;
 import org.jboss.windup.config.operation.Log;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
-import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;

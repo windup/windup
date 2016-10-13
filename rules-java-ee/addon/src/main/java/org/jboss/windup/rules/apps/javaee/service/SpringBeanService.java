@@ -1,14 +1,9 @@
 package org.jboss.windup.rules.apps.javaee.service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.structures.FramedVertexIterable;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
-import org.jboss.forge.roaster._shade.org.eclipse.core.internal.resources.Project;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;

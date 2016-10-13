@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.RuleProvider;
-import org.jboss.windup.graph.GraphContext;
 
 /**
  * Each configuration extension will implement this interface to provide a list of WindupRuleProviders. A

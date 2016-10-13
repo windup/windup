@@ -9,7 +9,6 @@ import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.phase.DependentPhase;
 import org.jboss.windup.config.phase.RulePhase;
-import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.util.exception.WindupMultiStringException;
 import org.junit.Assert;
 import org.junit.Test;
