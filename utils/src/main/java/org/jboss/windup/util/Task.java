@@ -7,12 +7,12 @@ package org.jboss.windup.util;
  *
  * @param <RETURN_TYPE>
  */
-public abstract class Task<RETURN_TYPE>
+public interface Task<RETURN_TYPE>
 {
     /**
      * Perform the task.
      * 
      * @return The result, if any. (May be null.)
      */
-    public abstract RETURN_TYPE execute();
+    RETURN_TYPE execute();
 }

@@ -7,6 +7,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
+import org.jboss.windup.util.ExecutionStatistics;
 
 public class GraphContextFactoryImpl implements GraphContextFactory
 {
@@ -40,21 +41,25 @@ public class GraphContextFactoryImpl implements GraphContextFactory
     @Override
     public GraphContext create()
     {
-        return new GraphContextImpl(
+        return ExecutionStatistics.performBenchmarked(GraphContextFactory.class.getName() + ".create(Path)", () ->
+            new GraphContextImpl(
                     getFurnace(),
                     getGraphTypeManager(),
                     getGraphApiCompositeClassLoaderProvider(),
-                    getTempGraphDirectory()).create();
+                    getTempGraphDirectory()).create()
+        );
     }
 
     @Override
     public GraphContext create(Path graphDir)
     {
-        return new GraphContextImpl(
-                    getFurnace(),
-                    getGraphTypeManager(),
-                    getGraphApiCompositeClassLoaderProvider(),
-                    graphDir).create();
+        return ExecutionStatistics.performBenchmarked(GraphContextFactory.class.getName() + ".create(Path)", () ->
+            new GraphContextImpl(
+                  getFurnace(),
+                  getGraphTypeManager(),
+                  getGraphApiCompositeClassLoaderProvider(),
+                  graphDir).create()
+        );
     }
 
     @Override
