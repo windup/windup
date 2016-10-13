@@ -44,7 +44,6 @@
         <dependency>
             <groupId>org.jboss.windup.rules.apps</groupId>
             <artifactId>windup-rules-tattletale</artifactId>
-            <version>${project.version}</version>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
@@ -102,7 +101,6 @@
         <dependency>
             <groupId>org.jboss.windup</groupId>
             <artifactId>windup-bootstrap</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -121,8 +119,7 @@
         <dependency>
                 <groupId>org.jboss.windup</groupId>
                 <artifactId>windup-test-harness</artifactId>
-                <version>${project.version}</version>
-		<scope>test</scope>
+                <scope>test</scope>
         </dependency>  
 
     </dependencies>
@@ -132,7 +129,6 @@
             <plugin>
                 <groupId>org.jboss.forge.furnace</groupId>
                 <artifactId>furnace-maven-plugin</artifactId>
-                <version>${version.furnace}</version>
                 <executions>
                     <execution>
                         <id>deploy-addons-for-bootstrap-tests</id>
