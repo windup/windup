@@ -3,8 +3,6 @@ package org.jboss.windup.config.parser;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
-
 import javax.inject.Inject;
 
 import org.jboss.forge.furnace.Furnace;
@@ -16,7 +14,6 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.WindupConfigurationService;
-import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.file.FileSuffixPredicate;
 import org.jboss.windup.util.file.FileVisit;
 

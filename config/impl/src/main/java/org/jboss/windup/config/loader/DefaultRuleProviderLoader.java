@@ -15,7 +15,6 @@ import org.jboss.forge.furnace.util.AddonFilters;
 import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.metadata.RulesetMetadata;
-import org.jboss.windup.graph.GraphContext;
 
 /**
  * Default implementation of {@link RuleProviderLoader} that uses {@link Furnace} to load {@link RuleProvider} instances

@@ -4,7 +4,6 @@ import javax.inject.Inject;
 
 import com.google.common.collect.Iterables;
 import org.jboss.arquillian.junit.Arquillian;
-import org.jboss.forge.roaster._shade.org.eclipse.core.internal.resources.Project;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;

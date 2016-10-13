@@ -2,7 +2,6 @@ package org.jboss.windup.rules.apps.javaee;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.forge.arquillian.AddonDependencies;
-import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 

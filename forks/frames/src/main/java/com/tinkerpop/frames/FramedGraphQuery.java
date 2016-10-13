@@ -2,7 +2,6 @@ package com.tinkerpop.frames;
 
 import com.tinkerpop.blueprints.GraphQuery;
 import com.tinkerpop.blueprints.Predicate;
-import com.tinkerpop.blueprints.Query.Compare;
 
 /**
  * GraphQuery that allows framing of results. 

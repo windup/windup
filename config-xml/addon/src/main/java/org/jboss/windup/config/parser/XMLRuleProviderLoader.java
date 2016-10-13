@@ -27,16 +27,11 @@ import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.Addon;
-import org.jboss.forge.furnace.proxy.Proxies;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.RuleProvider;
 import org.jboss.windup.config.builder.RuleProviderBuilder;
 import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.loader.RuleProviderLoader;
-import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.WindupConfigurationModel;
-import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.util.furnace.FileExtensionFilter;

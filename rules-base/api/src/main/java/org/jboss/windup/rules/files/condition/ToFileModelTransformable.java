@@ -1,6 +1,5 @@
 package org.jboss.windup.rules.files.condition;
 
-import com.tinkerpop.frames.modules.javahandler.JavaHandler;
 import org.jboss.windup.graph.model.resource.FileModel;
 
 /**

@@ -48,7 +48,6 @@ public class KeepWorkDirsOption extends AbstractConfigurationOption
         return false;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public ValidationResult validate(Object value)
     {

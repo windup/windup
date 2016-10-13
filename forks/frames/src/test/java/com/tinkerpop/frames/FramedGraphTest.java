@@ -6,9 +6,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 
+import org.junit.Assert;
 import org.junit.Test;
-
-import junit.framework.Assert;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;

@@ -1,6 +1,5 @@
 package org.jboss.windup.rules.apps.xml.operation.xslt;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,7 +27,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jboss.forge.furnace.util.ClassLoaders;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
-import org.jboss.windup.config.parser.xml.when.ParamHandler;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.LinkModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;

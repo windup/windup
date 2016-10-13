@@ -12,7 +12,6 @@ import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.InitializationPhase;
-import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.rules.apps.java.archives.identify.CompositeArchiveIdentificationService;
 import org.jboss.windup.rules.apps.java.archives.identify.InMemoryArchiveIdentificationService;
 import org.jboss.windup.rules.apps.java.archives.identify.LuceneArchiveIdentificationService;

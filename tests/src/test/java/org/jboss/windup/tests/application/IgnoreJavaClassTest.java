@@ -10,8 +10,6 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.Service;
-import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
-import org.jboss.windup.rules.apps.java.scan.ast.ignore.JavaClassIgnoreResolver;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

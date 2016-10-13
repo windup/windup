@@ -45,7 +45,6 @@ public class IterableHasContent implements WindupFreeMarkerMethod
         }
     }
 
-    @SuppressWarnings("unchecked")
     private boolean hasContent(Object arg) throws TemplateModelException
     {
         if (arg instanceof BeanModel)

@@ -13,7 +13,6 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeTrue;
 
 @RunWith(Parameterized.class)
 public class InstallRemoveAddonCommandsTest extends AbstractBootstrapTest {

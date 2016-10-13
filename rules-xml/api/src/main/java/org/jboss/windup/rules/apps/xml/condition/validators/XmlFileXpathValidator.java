@@ -1,7 +1,6 @@
 package org.jboss.windup.rules.apps.xml.condition.validators;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.xml.condition.XmlFile;

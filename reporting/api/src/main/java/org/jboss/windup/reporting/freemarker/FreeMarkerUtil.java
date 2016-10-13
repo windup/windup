@@ -3,7 +3,6 @@ package org.jboss.windup.reporting.freemarker;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -14,10 +13,7 @@ import org.jboss.forge.furnace.services.Imported;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.Variables;
 import org.jboss.windup.config.operation.Iteration;
-import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.reporting.model.ReportModel;
-import org.jboss.windup.reporting.model.WindupVertexListModel;
 import org.jboss.windup.util.exception.WindupException;
 
 import freemarker.template.SimpleScalar;

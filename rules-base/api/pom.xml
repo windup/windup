@@ -30,7 +30,6 @@
         <dependency>
             <groupId>org.jboss.windup.config</groupId>
             <artifactId>windup-config-api</artifactId>
-            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -42,14 +41,12 @@
         <dependency>
             <groupId>org.jboss.windup.graph</groupId>
             <artifactId>windup-graph-api</artifactId>
-            <version>${project.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.utils</groupId>
             <artifactId>windup-utils</artifactId>
-            <version>${project.version}</version>
-       	    <classifier>forge-addon</classifier>
+            <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
 

@@ -1,8 +1,6 @@
 package org.jboss.windup.config.metadata;
 
 import org.jboss.windup.config.loader.RuleLoaderContext;
-import org.jboss.windup.graph.GraphContext;
-
 import java.util.Collection;
 
 /**

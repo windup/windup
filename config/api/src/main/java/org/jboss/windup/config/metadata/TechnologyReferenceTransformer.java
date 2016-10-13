@@ -3,7 +3,6 @@ package org.jboss.windup.config.metadata;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.furnace.FurnaceHolder;
 import org.jboss.windup.config.loader.RuleLoaderContext;
 

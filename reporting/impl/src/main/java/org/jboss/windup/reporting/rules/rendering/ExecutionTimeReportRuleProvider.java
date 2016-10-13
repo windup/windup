@@ -15,7 +15,6 @@ import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.PostFinalizePhase;
-import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.performance.RulePhaseExecutionStatisticsModel;
 import org.jboss.windup.graph.model.performance.RuleProviderExecutionStatisticsModel;

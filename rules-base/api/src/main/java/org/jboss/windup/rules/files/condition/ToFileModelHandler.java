@@ -11,8 +11,6 @@ import org.w3c.dom.Element;
 
 import java.util.List;
 
-import static org.joox.JOOX.$;
-
 /**
  *
  * Example:

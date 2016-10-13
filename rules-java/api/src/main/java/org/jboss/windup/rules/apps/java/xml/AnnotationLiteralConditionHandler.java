@@ -6,7 +6,6 @@ import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.config.parser.xml.RuleProviderHandler;
-import org.jboss.windup.rules.apps.java.condition.annotation.AnnotationListCondition;
 import org.jboss.windup.rules.apps.java.condition.annotation.AnnotationLiteralCondition;
 import org.jboss.windup.util.exception.WindupException;
 import org.w3c.dom.Element;

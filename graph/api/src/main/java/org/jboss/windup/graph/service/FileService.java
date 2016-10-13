@@ -1,8 +1,6 @@
 package org.jboss.windup.graph.service;
 
 import java.nio.file.Paths;
-import java.util.regex.Pattern;
-
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.structures.FramedVertexIterable;
 import org.jboss.windup.graph.GraphContext;

@@ -76,6 +76,6 @@ public class LineHandlerTest
         Document doc = dBuilder.parse(fXmlFile);
         List<Element> lineItemList = $(doc).children("lineitem").get();
         Element firstLineItem = lineItemList.get(1);
-        LineItem lineItem = parser.<LineItem> processElement(firstLineItem);
+        parser.<LineItem> processElement(firstLineItem);
     }
 }

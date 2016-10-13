@@ -18,7 +18,6 @@ import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.PreReportGenerationPhase;
 import org.jboss.windup.config.tags.TagService;
 import org.jboss.windup.config.tags.TagServiceHolder;
-import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.Configuration;
