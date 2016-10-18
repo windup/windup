@@ -66,12 +66,6 @@
             <artifactId>windup-utils</artifactId>
             <classifier>forge-addon</classifier>
         </dependency>
-        <dependency>
-            <groupId>org.jboss.windup.reporting</groupId>
-            <artifactId>windup-reporting</artifactId>
-            <classifier>forge-addon</classifier>
-            <scope>provided</scope>
-        </dependency>
 
         <!-- Furnace Container -->
         <dependency>
