@@ -63,7 +63,7 @@ public class DiscoverPackagesCommand extends AbstractListCommand implements Comm
             return CommandResult.EXIT;
         }
 
-        final Map<String, Integer> classes = findClasses(Paths.get(input));
+        final Map<String, Integer> classes = findClasses(Paths.get(input), input);
         PackageNameMappingRegistry packageNameMappingRegistry = getFurnace().getAddonRegistry().getServices(PackageNameMappingRegistry.class).get();
         packageNameMappingRegistry.loadPackageMappings();
 
@@ -122,7 +122,7 @@ public class DiscoverPackagesCommand extends AbstractListCommand implements Comm
      * Recursively scan the provided path and return a list of all Java packages contained therein.
      */
 
-    private static Map<String, Integer> findClasses(Path path)
+    private static Map<String, Integer> findClasses(Path path, String sourceRoot)
     {
         List<String> paths = findPaths(path, true);
         Map<String, Integer> results = new HashMap<>();
@@ -130,7 +130,14 @@ public class DiscoverPackagesCommand extends AbstractListCommand implements Comm
         {
             if (subPath.endsWith(".java") || subPath.endsWith(".class"))
             {
-                String qualifiedName = PathUtil.classFilePathToClassname(subPath);
+                String relativePath = subPath;
+
+                if (subPath.contains(sourceRoot))
+                {
+                    relativePath = subPath.substring(sourceRoot.length());
+                }
+
+                String qualifiedName = PathUtil.classFilePathToClassname(relativePath);
                 addClassToMap(results, qualifiedName);
             }
         }
