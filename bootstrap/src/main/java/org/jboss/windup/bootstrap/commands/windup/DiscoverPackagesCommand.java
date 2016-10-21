@@ -22,17 +22,14 @@ public class DiscoverPackagesCommand extends AbstractListCommand implements Comm
     private Map<String, List<String>> knownPackages = new HashMap<>();
     private Map<String, Integer> unknownPackages = new HashMap<>();
 
-    protected PackageNameMappingRegistry packageNameMappingRegistry;
-
     public DiscoverPackagesCommand(List<String> arguments)
     {
         this.arguments = arguments;
-        this.init();
     }
 
-    protected void init()
+    protected PackageNameMappingRegistry getPackageNameMappingRegistry()
     {
-        this.packageNameMappingRegistry = getFurnace().getAddonRegistry().getServices(PackageNameMappingRegistry.class).get();
+        return getFurnace().getAddonRegistry().getServices(PackageNameMappingRegistry.class).get();
     }
 
     @Override
@@ -63,6 +60,7 @@ public class DiscoverPackagesCommand extends AbstractListCommand implements Comm
         }
 
         final Map<String, Integer> classes = findClasses(Paths.get(input), input);
+        PackageNameMappingRegistry packageNameMappingRegistry = this.getPackageNameMappingRegistry();
         packageNameMappingRegistry.loadPackageMappings();
 
         Map<String, String> packageToOrganization = new TreeMap<>(new PackageComparator());
