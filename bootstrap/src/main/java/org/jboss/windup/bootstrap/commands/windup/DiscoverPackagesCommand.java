@@ -5,27 +5,12 @@ import java.nio.file.DirectoryStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
-import org.jboss.windup.bootstrap.commands.AbstractListCommand;
-import org.jboss.windup.bootstrap.commands.Command;
-import org.jboss.windup.bootstrap.commands.CommandPhase;
-import org.jboss.windup.bootstrap.commands.CommandResult;
-import org.jboss.windup.bootstrap.commands.FurnaceDependent;
+import org.jboss.windup.bootstrap.commands.*;
 import org.jboss.windup.exec.configuration.options.InputPathOption;
 import org.jboss.windup.rules.apps.java.scan.operation.packagemapping.PackageNameMappingRegistry;
-import org.jboss.windup.util.ClassNameUtil;
-import org.jboss.windup.util.PackageComparator;
-import org.jboss.windup.util.PackageFrequencyTrie;
-import org.jboss.windup.util.PackageFrequencyTrieVisitor;
-import org.jboss.windup.util.PathUtil;
-import org.jboss.windup.util.ZipUtil;
+import org.jboss.windup.util.*;
 
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
@@ -34,14 +19,28 @@ public class DiscoverPackagesCommand extends AbstractListCommand implements Comm
 {
     private final List<String> arguments;
 
+    private Map<String, List<String>> knownPackages = new HashMap<>();
+    private Map<String, Integer> unknownPackages = new HashMap<>();
+
+    protected PackageNameMappingRegistry packageNameMappingRegistry;
+
     public DiscoverPackagesCommand(List<String> arguments)
     {
         this.arguments = arguments;
+        this.init();
+    }
+
+    protected void init()
+    {
+        this.packageNameMappingRegistry = getFurnace().getAddonRegistry().getServices(PackageNameMappingRegistry.class).get();
     }
 
     @Override
     public CommandResult execute()
     {
+        this.knownPackages.clear();
+        this.unknownPackages.clear();
+
         String input = null;
         for (int i = 0; i < this.arguments.size(); i++)
         {
@@ -64,7 +63,6 @@ public class DiscoverPackagesCommand extends AbstractListCommand implements Comm
         }
 
         final Map<String, Integer> classes = findClasses(Paths.get(input), input);
-        PackageNameMappingRegistry packageNameMappingRegistry = getFurnace().getAddonRegistry().getServices(PackageNameMappingRegistry.class).get();
         packageNameMappingRegistry.loadPackageMappings();
 
         Map<String, String> packageToOrganization = new TreeMap<>(new PackageComparator());
@@ -75,9 +73,20 @@ public class DiscoverPackagesCommand extends AbstractListCommand implements Comm
             String packageName = ClassNameUtil.getPackageName(qualifiedName);
             String organization = packageNameMappingRegistry.getOrganizationForPackage(packageName);
             if (organization == null)
+            {
                 frequencyTrie.addClass(qualifiedName);
+            }
             else
+            {
                 packageToOrganization.put(packageName, organization);
+
+                if (!this.knownPackages.containsKey(organization))
+                {
+                    this.knownPackages.put(organization, new ArrayList<>());
+                }
+
+                this.knownPackages.get(organization).add(packageName);
+            }
         }
 
         System.out.println("Known Packages:");
@@ -100,11 +109,17 @@ public class DiscoverPackagesCommand extends AbstractListCommand implements Comm
                 String packageName = trie.getPackageName();
                 int recursiveClassCount = trie.getClassCount(true);
                 if (depth == 1 || (depth > 1 && recursiveClassCount > 100))
-                    System.out.println(packageName + " - Classes: " + recursiveClassCount);
-
-                if (depth == 0 && trie.getClassCount(false) > 0)
                 {
-                    System.out.println("Default Package - Classes: " + trie.getClassCount(false));
+                    System.out.println(packageName + " - Classes: " + recursiveClassCount);
+                    unknownPackages.put(packageName, recursiveClassCount);
+                }
+
+                Integer nonRecursiveClassCount = trie.getClassCount(false);
+
+                if (depth == 0 && nonRecursiveClassCount > 0)
+                {
+                    System.out.println("Default Package - Classes: " + nonRecursiveClassCount);
+                    unknownPackages.put("", nonRecursiveClassCount);
                 }
             }
         });
@@ -163,7 +178,6 @@ public class DiscoverPackagesCommand extends AbstractListCommand implements Comm
         return paths;
     }
 
-
     private static List<String> findPaths(Path path, boolean relativeOnly)
     {
         List<String> results = new ArrayList<>();
@@ -189,4 +203,13 @@ public class DiscoverPackagesCommand extends AbstractListCommand implements Comm
         return results;
     }
 
+    public Map<String, List<String>> getKnownPackages()
+    {
+        return knownPackages;
+    }
+
+    public Map<String, Integer> getUnknownPackages()
+    {
+        return unknownPackages;
+    }
 }
