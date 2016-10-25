@@ -30,7 +30,7 @@ def items2 = [
     [key: "stats.serverResources.db.xaJdbcDatasources", label: "XA JDBC datasources"],
     [key: "stats.serverResources.msg.jms.queues", label: "JMS queues"],
     [key: "stats.serverResources.msg.jms.topics", label: "JMS topics"],
-    [key: "stats.serverResources.msg.jms.connectionFactories", label: "connection factories"],
+    [key: "stats.serverResources.msg.jms.connectionFactories", label: "JMS connection factories"],
     [key: "stats.serverResources.security.realms", label: "security realms"],
     [key: "stats.serverResources.jndi.totalEntries", label: "total JNDI entries"],
     
