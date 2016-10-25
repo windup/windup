@@ -1,8 +1,12 @@
 package org.jboss.windup.rules.apps.javaee.model.stats;
 
+import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import java.util.Date;
+import java.util.Map;
+import org.jboss.windup.graph.MapInAdjacentVertices;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 /**
@@ -21,110 +25,115 @@ public interface TechnologiesStatsModel extends WindupVertexFrame
     @Property(COMPUTED)
     void setComputed(Date when);
     
-
+    /*
+    @MapInAdjacentVertices(label = "filesStats")
+    Map<String, GeneralStatsItemModel> getFilesStats();
+    void setFilesStats(Map<String, GeneralStatsItemModel> filesStats);
+    */
+    
     String STATS_FILES_BYTYPE_JAVA_PERCENT = "stats.files.byType.java.percent";
-    @Property(STATS_FILES_BYTYPE_JAVA_PERCENT) int getStatsFilesByTypeJavaPercent();
-    @Property(STATS_FILES_BYTYPE_JAVA_PERCENT) TechnologiesStatsModel setStatsFilesByTypeJavaPercent(int qty);
+    @Adjacency(label = STATS_FILES_BYTYPE_JAVA_PERCENT, direction = Direction.OUT) GeneralStatsItemModel getStatsFilesByTypeJavaPercent();
+    @Adjacency(label = STATS_FILES_BYTYPE_JAVA_PERCENT, direction = Direction.OUT) TechnologiesStatsModel setStatsFilesByTypeJavaPercent(GeneralStatsItemModel item);
 
     String STATS_FILES_BYTYPE_HTML_PERCENT = "stats.files.byType.html.percent";
-    @Property(STATS_FILES_BYTYPE_HTML_PERCENT) int getStatsFilesByTypeHtmlPercent();
-    @Property(STATS_FILES_BYTYPE_HTML_PERCENT) TechnologiesStatsModel setStatsFilesByTypeHtmlPercent(int qty);
+    @Adjacency(label = STATS_FILES_BYTYPE_HTML_PERCENT, direction = Direction.OUT) GeneralStatsItemModel getStatsFilesByTypeHtmlPercent();
+    @Adjacency(label = STATS_FILES_BYTYPE_HTML_PERCENT, direction = Direction.OUT) TechnologiesStatsModel setStatsFilesByTypeHtmlPercent(GeneralStatsItemModel item);
 
     String STATS_FILES_BYTYPE_XML_PERCENT = "stats.files.byType.xml.percent";
-    @Property(STATS_FILES_BYTYPE_XML_PERCENT) int getStatsFilesByTypeXmlPercent();
-    @Property(STATS_FILES_BYTYPE_XML_PERCENT) TechnologiesStatsModel setStatsFilesByTypeXmlPercent(int qty);
+    @Adjacency(label = STATS_FILES_BYTYPE_XML_PERCENT, direction = Direction.OUT) GeneralStatsItemModel getStatsFilesByTypeXmlPercent();
+    @Adjacency(label = STATS_FILES_BYTYPE_XML_PERCENT, direction = Direction.OUT) TechnologiesStatsModel setStatsFilesByTypeXmlPercent(GeneralStatsItemModel item);
 
     String STATS_FILES_BYTYPE_FMT_PERCENT = "stats.files.byType.fmt.percent";
-    @Property(STATS_FILES_BYTYPE_FMT_PERCENT) int getStatsFilesByTypeFmtPercent();
-    @Property(STATS_FILES_BYTYPE_FMT_PERCENT) TechnologiesStatsModel setStatsFilesByTypeFmtPercent(int qty);
+    @Adjacency(label = STATS_FILES_BYTYPE_FMT_PERCENT, direction = Direction.OUT) GeneralStatsItemModel getStatsFilesByTypeFmtPercent();
+    @Adjacency(label = STATS_FILES_BYTYPE_FMT_PERCENT, direction = Direction.OUT) TechnologiesStatsModel setStatsFilesByTypeFmtPercent(GeneralStatsItemModel item);
 
     String STATS_FILES_BYTYPE_JS_PERCENT = "stats.files.byType.js.percent";
-    @Property(STATS_FILES_BYTYPE_JS_PERCENT) int getStatsFilesByTypeJsPercent();
-    @Property(STATS_FILES_BYTYPE_JS_PERCENT) TechnologiesStatsModel setStatsFilesByTypeJsPercent(int qty);
+    @Adjacency(label = STATS_FILES_BYTYPE_JS_PERCENT, direction = Direction.OUT) GeneralStatsItemModel getStatsFilesByTypeJsPercent();
+    @Adjacency(label = STATS_FILES_BYTYPE_JS_PERCENT, direction = Direction.OUT) TechnologiesStatsModel setStatsFilesByTypeJsPercent(GeneralStatsItemModel item);
 
     String STATS_FILES_BYTYPE_CSS_PERCENT = "stats.files.byType.css.percent";
-    @Property(STATS_FILES_BYTYPE_CSS_PERCENT) int getStatsFilesByTypeCssPercent();
-    @Property(STATS_FILES_BYTYPE_CSS_PERCENT) TechnologiesStatsModel setStatsFilesByTypeCssPercent(int qty);
+    @Adjacency(label = STATS_FILES_BYTYPE_CSS_PERCENT, direction = Direction.OUT) GeneralStatsItemModel getStatsFilesByTypeCssPercent();
+    @Adjacency(label = STATS_FILES_BYTYPE_CSS_PERCENT, direction = Direction.OUT) TechnologiesStatsModel setStatsFilesByTypeCssPercent(GeneralStatsItemModel item);
 
     String STATS_SERVICES_EJB_STATELESS = "stats.services.ejb.stateless";
-    @Property(STATS_SERVICES_EJB_STATELESS) int getStatsServicesEjbStateless();
-    @Property(STATS_SERVICES_EJB_STATELESS) TechnologiesStatsModel setStatsServicesEjbStateless(int qty);
+    @Adjacency(label = STATS_SERVICES_EJB_STATELESS, direction = Direction.OUT) GeneralStatsItemModel getStatsServicesEjbStateless();
+    @Adjacency(label = STATS_SERVICES_EJB_STATELESS, direction = Direction.OUT) TechnologiesStatsModel setStatsServicesEjbStateless(GeneralStatsItemModel item);
 
     
     String STATS_SERVICES_EJB_STATEFUL = "stats.services.ejb.stateful";
-    @Property(STATS_SERVICES_EJB_STATEFUL) int getStatsServicesEjbStateful();
-    @Property(STATS_SERVICES_EJB_STATEFUL) TechnologiesStatsModel setStatsServicesEjbStateful(int qty);
+    @Adjacency(label = STATS_SERVICES_EJB_STATEFUL, direction = Direction.OUT) GeneralStatsItemModel getStatsServicesEjbStateful();
+    @Adjacency(label = STATS_SERVICES_EJB_STATEFUL, direction = Direction.OUT) TechnologiesStatsModel setStatsServicesEjbStateful(GeneralStatsItemModel item);
 
     String STATS_SERVICES_EJB_MESSAGEDRIVEN = "stats.services.ejb.messageDriven";
-    @Property(STATS_SERVICES_EJB_MESSAGEDRIVEN) int getStatsServicesEjbMessageDriven();
-    @Property(STATS_SERVICES_EJB_MESSAGEDRIVEN) TechnologiesStatsModel setStatsServicesEjbMessageDriven(int qty);
+    @Adjacency(label = STATS_SERVICES_EJB_MESSAGEDRIVEN, direction = Direction.OUT) GeneralStatsItemModel getStatsServicesEjbMessageDriven();
+    @Adjacency(label = STATS_SERVICES_EJB_MESSAGEDRIVEN, direction = Direction.OUT) TechnologiesStatsModel setStatsServicesEjbMessageDriven(GeneralStatsItemModel item);
 
     String STATS_SERVICES_HTTP_JAX_RS = "stats.services.http.jax-rs";
-    @Property(STATS_SERVICES_HTTP_JAX_RS) int getStatsServicesHttpJaxRs();
-    @Property(STATS_SERVICES_HTTP_JAX_RS) TechnologiesStatsModel setStatsServicesHttpJaxRs(int qty);
+    @Adjacency(label = STATS_SERVICES_HTTP_JAX_RS, direction = Direction.OUT) GeneralStatsItemModel getStatsServicesHttpJaxRs();
+    @Adjacency(label = STATS_SERVICES_HTTP_JAX_RS, direction = Direction.OUT) TechnologiesStatsModel setStatsServicesHttpJaxRs(GeneralStatsItemModel item);
 
     String STATS_SERVICES_HTTP_JAX_WS = "stats.services.http.jax-ws";
-    @Property(STATS_SERVICES_HTTP_JAX_WS) int getStatsServicesHttpJaxWs();
-    @Property(STATS_SERVICES_HTTP_JAX_WS) TechnologiesStatsModel setStatsServicesHttpJaxWs(int qty);
+    @Adjacency(label = STATS_SERVICES_HTTP_JAX_WS, direction = Direction.OUT) GeneralStatsItemModel getStatsServicesHttpJaxWs();
+    @Adjacency(label = STATS_SERVICES_HTTP_JAX_WS, direction = Direction.OUT) TechnologiesStatsModel setStatsServicesHttpJaxWs(GeneralStatsItemModel item);
 
     String STATS_SERVICES_JPA_PERSISTENCEUNITS = "stats.services.jpa.persistenceUnits";
-    @Property(STATS_SERVICES_JPA_PERSISTENCEUNITS) int getStatsServicesJpaPersistenceUnits();
-    @Property(STATS_SERVICES_JPA_PERSISTENCEUNITS) TechnologiesStatsModel setStatsServicesJpaPersistenceUnits(int qty);
+    @Adjacency(label = STATS_SERVICES_JPA_PERSISTENCEUNITS, direction = Direction.OUT) GeneralStatsItemModel getStatsServicesJpaPersistenceUnits();
+    @Adjacency(label = STATS_SERVICES_JPA_PERSISTENCEUNITS, direction = Direction.OUT) TechnologiesStatsModel setStatsServicesJpaPersistenceUnits(GeneralStatsItemModel item);
 
     String STATS_SERVICES_JPA_NAMEDQUERIES = "stats.services.jpa.namedQueries";
-    @Property(STATS_SERVICES_JPA_NAMEDQUERIES) int getStatsServicesJpaNamedQueries();
-    @Property(STATS_SERVICES_JPA_NAMEDQUERIES) TechnologiesStatsModel setStatsServicesJpaNamedQueries(int qty);
+    @Adjacency(label = STATS_SERVICES_JPA_NAMEDQUERIES, direction = Direction.OUT) GeneralStatsItemModel getStatsServicesJpaNamedQueries();
+    @Adjacency(label = STATS_SERVICES_JPA_NAMEDQUERIES, direction = Direction.OUT) TechnologiesStatsModel setStatsServicesJpaNamedQueries(GeneralStatsItemModel item);
 
     String STATS_SERVICES_JPA_ENTITITES = "stats.services.jpa.entitites";
-    @Property(STATS_SERVICES_JPA_ENTITITES) int getStatsServicesJpaEntitites();
-    @Property(STATS_SERVICES_JPA_ENTITITES) TechnologiesStatsModel setStatsServicesJpaEntitites(int qty);
+    @Adjacency(label = STATS_SERVICES_JPA_ENTITITES, direction = Direction.OUT) GeneralStatsItemModel getStatsServicesJpaEntitites();
+    @Adjacency(label = STATS_SERVICES_JPA_ENTITITES, direction = Direction.OUT) TechnologiesStatsModel setStatsServicesJpaEntitites(GeneralStatsItemModel item);
 
     String STATS_SERVICES_RMI_SERVICES = "stats.services.rmi.services";
-    @Property(STATS_SERVICES_RMI_SERVICES) int getStatsServicesRmiServices();
-    @Property(STATS_SERVICES_RMI_SERVICES) TechnologiesStatsModel setStatsServicesRmiServices(int qty);
+    @Adjacency(label = STATS_SERVICES_RMI_SERVICES, direction = Direction.OUT) GeneralStatsItemModel getStatsServicesRmiServices();
+    @Adjacency(label = STATS_SERVICES_RMI_SERVICES, direction = Direction.OUT) TechnologiesStatsModel setStatsServicesRmiServices(GeneralStatsItemModel item);
 
     String STATS_SERVERRESOURCES_DB_JDBCDATASOURCES = "stats.serverResources.db.jdbcDatasources";
-    @Property(STATS_SERVERRESOURCES_DB_JDBCDATASOURCES) int getStatsServerResourcesDbJdbcDatasources();
-    @Property(STATS_SERVERRESOURCES_DB_JDBCDATASOURCES) TechnologiesStatsModel setStatsServerResourcesDbJdbcDatasources(int qty);
+    @Adjacency(label = STATS_SERVERRESOURCES_DB_JDBCDATASOURCES, direction = Direction.OUT) GeneralStatsItemModel getStatsServerResourcesDbJdbcDatasources();
+    @Adjacency(label = STATS_SERVERRESOURCES_DB_JDBCDATASOURCES, direction = Direction.OUT) TechnologiesStatsModel setStatsServerResourcesDbJdbcDatasources(GeneralStatsItemModel item);
 
     String STATS_SERVERRESOURCES_DB_XAJDBCDATASOURCES = "stats.serverResources.db.xaJdbcDatasources";
-    @Property(STATS_SERVERRESOURCES_DB_XAJDBCDATASOURCES) int getStatsServerResourcesDbXaJdbcDatasources();
-    @Property(STATS_SERVERRESOURCES_DB_XAJDBCDATASOURCES) TechnologiesStatsModel setStatsServerResourcesDbXaJdbcDatasources(int qty);
+    @Adjacency(label = STATS_SERVERRESOURCES_DB_XAJDBCDATASOURCES, direction = Direction.OUT) GeneralStatsItemModel getStatsServerResourcesDbXaJdbcDatasources();
+    @Adjacency(label = STATS_SERVERRESOURCES_DB_XAJDBCDATASOURCES, direction = Direction.OUT) TechnologiesStatsModel setStatsServerResourcesDbXaJdbcDatasources(GeneralStatsItemModel item);
 
     String STATS_SERVERRESOURCES_MSG_JMS_QUEUES = "stats.serverResources.msg.jms.queues";
-    @Property(STATS_SERVERRESOURCES_MSG_JMS_QUEUES) int getStatsServerResourcesMsgJmsQueues();
-    @Property(STATS_SERVERRESOURCES_MSG_JMS_QUEUES) TechnologiesStatsModel setStatsServerResourcesMsgJmsQueues(int qty);
+    @Adjacency(label = STATS_SERVERRESOURCES_MSG_JMS_QUEUES, direction = Direction.OUT) GeneralStatsItemModel getStatsServerResourcesMsgJmsQueues();
+    @Adjacency(label = STATS_SERVERRESOURCES_MSG_JMS_QUEUES, direction = Direction.OUT) TechnologiesStatsModel setStatsServerResourcesMsgJmsQueues(GeneralStatsItemModel item);
 
     String STATS_SERVERRESOURCES_MSG_JMS_TOPICS = "stats.serverResources.msg.jms.topics";
-    @Property(STATS_SERVERRESOURCES_MSG_JMS_TOPICS) int getStatsServerResourcesMsgJmsTopics();
-    @Property(STATS_SERVERRESOURCES_MSG_JMS_TOPICS) TechnologiesStatsModel setStatsServerResourcesMsgJmsTopics(int qty);
+    @Adjacency(label = STATS_SERVERRESOURCES_MSG_JMS_TOPICS, direction = Direction.OUT) GeneralStatsItemModel getStatsServerResourcesMsgJmsTopics();
+    @Adjacency(label = STATS_SERVERRESOURCES_MSG_JMS_TOPICS, direction = Direction.OUT) TechnologiesStatsModel setStatsServerResourcesMsgJmsTopics(GeneralStatsItemModel item);
 
     String STATS_SERVERRESOURCES_MSG_JMS_CONNECTIONFACTORIES = "stats.serverResources.msg.jms.connectionFactories";
-    @Property(STATS_SERVERRESOURCES_MSG_JMS_CONNECTIONFACTORIES) int getStatsServerResourcesMsgJmsConnectionFactories();
-    @Property(STATS_SERVERRESOURCES_MSG_JMS_CONNECTIONFACTORIES) TechnologiesStatsModel setStatsServerResourcesMsgJmsConnectionFactories(int qty);
+    @Adjacency(label = STATS_SERVERRESOURCES_MSG_JMS_CONNECTIONFACTORIES, direction = Direction.OUT) GeneralStatsItemModel getStatsServerResourcesMsgJmsConnectionFactories();
+    @Adjacency(label = STATS_SERVERRESOURCES_MSG_JMS_CONNECTIONFACTORIES, direction = Direction.OUT) TechnologiesStatsModel setStatsServerResourcesMsgJmsConnectionFactories(GeneralStatsItemModel item);
 
     String STATS_SERVERRESOURCES_SECURITY_REALMS = "stats.serverResources.security.realms";
-    @Property(STATS_SERVERRESOURCES_SECURITY_REALMS) int getStatsServerResourcesSecurityRealms();
-    @Property(STATS_SERVERRESOURCES_SECURITY_REALMS) TechnologiesStatsModel setStatsServerResourcesSecurityRealms(int qty);
+    @Adjacency(label = STATS_SERVERRESOURCES_SECURITY_REALMS, direction = Direction.OUT) GeneralStatsItemModel getStatsServerResourcesSecurityRealms();
+    @Adjacency(label = STATS_SERVERRESOURCES_SECURITY_REALMS, direction = Direction.OUT) TechnologiesStatsModel setStatsServerResourcesSecurityRealms(GeneralStatsItemModel item);
 
     String STATS_SERVERRESOURCES_JNDI_TOTALENTRIES = "stats.serverResources.jndi.totalEntries";
-    @Property(STATS_SERVERRESOURCES_JNDI_TOTALENTRIES) int getStatsServerResourcesJndiTotalEntries();
-    @Property(STATS_SERVERRESOURCES_JNDI_TOTALENTRIES) TechnologiesStatsModel setStatsServerResourcesJndiTotalEntries(int qty);
+    @Adjacency(label = STATS_SERVERRESOURCES_JNDI_TOTALENTRIES, direction = Direction.OUT) GeneralStatsItemModel getStatsServerResourcesJndiTotalEntries();
+    @Adjacency(label = STATS_SERVERRESOURCES_JNDI_TOTALENTRIES, direction = Direction.OUT) TechnologiesStatsModel setStatsServerResourcesJndiTotalEntries(GeneralStatsItemModel item);
 
     String STATS_JAVA_CLASSES_ORIGINAL = "stats.java.classes.original";
-    @Property(STATS_JAVA_CLASSES_ORIGINAL) int getStatsJavaClassesOriginal();
-    @Property(STATS_JAVA_CLASSES_ORIGINAL) TechnologiesStatsModel setStatsJavaClassesOriginal(int qty);
+    @Adjacency(label = STATS_JAVA_CLASSES_ORIGINAL, direction = Direction.OUT) GeneralStatsItemModel getStatsJavaClassesOriginal();
+    @Adjacency(label = STATS_JAVA_CLASSES_ORIGINAL, direction = Direction.OUT) TechnologiesStatsModel setStatsJavaClassesOriginal(GeneralStatsItemModel item);
 
     String STATS_JAVA_JARS_ORIGINAL = "stats.java.jars.original";
-    @Property(STATS_JAVA_JARS_ORIGINAL) int getStatsJavaJarsOriginal();
-    @Property(STATS_JAVA_JARS_ORIGINAL) TechnologiesStatsModel setStatsJavaJarsOriginal(int qty);
+    @Adjacency(label = STATS_JAVA_JARS_ORIGINAL, direction = Direction.OUT) GeneralStatsItemModel getStatsJavaJarsOriginal();
+    @Adjacency(label = STATS_JAVA_JARS_ORIGINAL, direction = Direction.OUT) TechnologiesStatsModel setStatsJavaJarsOriginal(GeneralStatsItemModel item);
 
     String STATS_JAVA_CLASSES_TOTAL = "stats.java.classes.total";
-    @Property(STATS_JAVA_CLASSES_TOTAL) int getStatsJavaClassesTotal();
-    @Property(STATS_JAVA_CLASSES_TOTAL) TechnologiesStatsModel setStatsJavaClassesTotal(int qty);
+    @Adjacency(label = STATS_JAVA_CLASSES_TOTAL, direction = Direction.OUT) GeneralStatsItemModel getStatsJavaClassesTotal();
+    @Adjacency(label = STATS_JAVA_CLASSES_TOTAL, direction = Direction.OUT) TechnologiesStatsModel setStatsJavaClassesTotal(GeneralStatsItemModel item);
 
     String STATS_JAVA_JARS_TOTAL = "stats.java.jars.total";
-    @Property(STATS_JAVA_JARS_TOTAL) int getStatsJavaJarsTotal();
-    @Property(STATS_JAVA_JARS_TOTAL) TechnologiesStatsModel setStatsJavaJarsTotal(int qty);
+    @Adjacency(label = STATS_JAVA_JARS_TOTAL, direction = Direction.OUT) GeneralStatsItemModel getStatsJavaJarsTotal();
+    @Adjacency(label = STATS_JAVA_JARS_TOTAL, direction = Direction.OUT) TechnologiesStatsModel setStatsJavaJarsTotal(GeneralStatsItemModel item);
 
 }
