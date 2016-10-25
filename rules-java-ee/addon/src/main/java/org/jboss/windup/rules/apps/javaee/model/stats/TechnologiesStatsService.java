@@ -1,20 +1,15 @@
 package org.jboss.windup.rules.apps.javaee.model.stats;
 
-import com.tinkerpop.blueprints.Element;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
 
-import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.FramedGraphQuery;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.graph.frames.TypeAwareFramedGraphQuery;
 import org.jboss.windup.graph.model.WindupVertexFrame;
@@ -55,59 +50,65 @@ public class TechnologiesStatsService extends GraphService<TechnologiesStatsMode
     {
         TechnologiesStatsModel stats = this.create();
         stats.setComputed(new Date());
+        /*
+        stats.setFilesStats(new HashMap<String, GeneralStatsItemModel>(){{
+            put("foo", item(123));
+            put("bar", item(234));
+        }});*/
         
         // Files type share
         Map<String, Integer> suffixToCount = countFilesBySuffix();
         Map<String, Integer> fileTypeShares = countFilesShareBySuffix(suffixToCount);
         
-        stats.setStatsFilesByTypeJavaPercent(fileTypeShares.getOrDefault("class", 0) + fileTypeShares.getOrDefault("java", 0));
-        stats.setStatsFilesByTypeJsPercent(fileTypeShares.getOrDefault("js", 0));
-        stats.setStatsFilesByTypeHtmlPercent(fileTypeShares.getOrDefault("html", 0));
-        stats.setStatsFilesByTypeCssPercent(fileTypeShares.getOrDefault("css", 0));
-        stats.setStatsFilesByTypeXmlPercent(fileTypeShares.getOrDefault("xml", 0));
-        stats.setStatsFilesByTypeFmtPercent(fileTypeShares.getOrDefault("fmt", 0));
+        stats.setStatsFilesByTypeJavaPercent(item(fileTypeShares.getOrDefault("class", 0) + fileTypeShares.getOrDefault("java", 0)));
+        stats.setStatsFilesByTypeJsPercent(item(fileTypeShares.getOrDefault("js", 0)));
+        stats.setStatsFilesByTypeHtmlPercent(item(fileTypeShares.getOrDefault("html", 0)));
+        stats.setStatsFilesByTypeCssPercent(item(fileTypeShares.getOrDefault("css", 0)));
+        stats.setStatsFilesByTypeXmlPercent(item(fileTypeShares.getOrDefault("xml", 0)));
+        stats.setStatsFilesByTypeFmtPercent(item(fileTypeShares.getOrDefault("fmt", 0)));
         
         
         // Amounts
         // For the commented, we don't have a graph representation.
-        stats.setStatsServicesEjbStateless((int) countByType(EjbSessionBeanModel.class, EjbBeanBaseModel.SESSION_TYPE, "stateless"));
-        stats.setStatsServicesEjbStateful((int) countByType(EjbSessionBeanModel.class,  EjbBeanBaseModel.SESSION_TYPE, "stateful"));
-        stats.setStatsServicesEjbMessageDriven((int) countByType(EjbMessageDrivenModel.class));
+        stats.setStatsServicesEjbStateless(item(countByType(EjbSessionBeanModel.class, EjbBeanBaseModel.SESSION_TYPE, "stateless")));
+        //stats.setStatsServicesEjbStateless(item("A", "B", EjbBeanBaseModel.class, null)); /// Works
+        stats.setStatsServicesEjbStateful(item(countByType(EjbSessionBeanModel.class,  EjbBeanBaseModel.SESSION_TYPE, "stateful")));
+        stats.setStatsServicesEjbMessageDriven(item(countByType(EjbMessageDrivenModel.class)));
         
-        stats.setStatsServicesJpaEntitites((int) countByType(EjbEntityBeanModel.class));
-        stats.setStatsServicesJpaNamedQueries((int) countByType(JPANamedQueryModel.class));
-        stats.setStatsServicesJpaPersistenceUnits((int) countByType(JPAPersistenceUnitModel.class));
-        //stats.setStatsServicesRmiServices((int) countByType(.class));
+        stats.setStatsServicesJpaEntitites(item(countByType(EjbEntityBeanModel.class)));
+        stats.setStatsServicesJpaNamedQueries(item(countByType(JPANamedQueryModel.class)));
+        stats.setStatsServicesJpaPersistenceUnits(item(countByType(JPAPersistenceUnitModel.class)));
+        //stats.setStatsServicesRmiServices(item(countByType(.class)));
         
-        //stats.setStatsServerResourcesDbJdbcDatasources((int) countByType(.class));
-        //stats.setStatsServerResourcesDbXaJdbcDatasources((int) countByType(.class));
+        //stats.setStatsServerResourcesDbJdbcDatasources(item(countByType(.class)));
+        //stats.setStatsServerResourcesDbXaJdbcDatasources(item(countByType(.class)));
         
-        stats.setStatsServicesHttpJaxRs((int) countByType(JaxRSWebServiceModel.class));
-        stats.setStatsServicesHttpJaxWs((int) countByType(JaxWSWebServiceModel.class));
+        stats.setStatsServicesHttpJaxRs(item(countByType(JaxRSWebServiceModel.class)));
+        stats.setStatsServicesHttpJaxWs(item(countByType(JaxWSWebServiceModel.class)));
         
-        stats.setStatsServerResourcesMsgJmsQueues((int) countByType(JmsDestinationModel.class, JmsDestinationModel.DESTINATION_TYPE, JmsDestinationType.QUEUE.name()));
-        stats.setStatsServerResourcesMsgJmsTopics((int) countByType(JmsDestinationModel.class, JmsDestinationModel.DESTINATION_TYPE, JmsDestinationType.TOPIC.name()));
-        stats.setStatsServerResourcesMsgJmsConnectionFactories((int) countByType(JmsConnectionFactoryModel.class));
+        stats.setStatsServerResourcesMsgJmsQueues(item(countByType(JmsDestinationModel.class, JmsDestinationModel.DESTINATION_TYPE, JmsDestinationType.QUEUE.name())));
+        stats.setStatsServerResourcesMsgJmsTopics(item(countByType(JmsDestinationModel.class, JmsDestinationModel.DESTINATION_TYPE, JmsDestinationType.TOPIC.name())));
+        stats.setStatsServerResourcesMsgJmsConnectionFactories(item(countByType(JmsConnectionFactoryModel.class)));
         
-        //stats.setStatsServerResourcesSecurityRealms((int) countByType(.class));
-        //stats.setStatsServerResourcesJndiTotalEntries((int) countByType(.class));
+        //stats.setStatsServerResourcesSecurityRealms(item(countByType(.class)));
+        //stats.setStatsServerResourcesJndiTotalEntries(item(countByType(.class)));
         
-        ///stats.setStatsJavaClassesOriginal((int) countByType(.class));
-        stats.setStatsJavaClassesTotal((int) countByType(JavaClassModel.class));
-        //stats.setStatsJavaJarsOriginal((int) countByType(JavaClassModel.class));
-        stats.setStatsJavaJarsTotal((int) countByType(JarArchiveModel.class));
+        ///stats.setStatsJavaClassesOriginal(item(countByType(.class)));
+        stats.setStatsJavaClassesTotal(item(countByType(JavaClassModel.class)));
+        //stats.setStatsJavaJarsOriginal(item(countByType(JavaClassModel.class)));
+        stats.setStatsJavaJarsTotal(item(countByType(JarArchiveModel.class)));
         
         this.commit();
         return stats;
     }
 
     
-    private <T extends WindupVertexFrame> long countByType(Class<T> clazz)
+    private <T extends WindupVertexFrame> int countByType(Class<T> clazz)
     {
         return countByType(clazz, null, null);
     }
 
-    private <T extends WindupVertexFrame> long countByType(Class<T> clazz, String propName, String value)
+    private <T extends WindupVertexFrame> int countByType(Class<T> clazz, String propName, String value)
     {
         LOG.info("Counting: Frame class == " + clazz.getSimpleName() + " && " + propName + " == " + value);
         FramedGraphQuery query = this.getGraphContext().getQuery().type(clazz);
@@ -119,7 +120,7 @@ public class TechnologiesStatsService extends GraphService<TechnologiesStatsMode
         
         long count = this.count(query.vertices());
         LOG.info(" ==> " + count);
-        return count;
+        return (int) count;
     }
 
     
@@ -151,6 +152,44 @@ public class TechnologiesStatsService extends GraphService<TechnologiesStatsMode
                 e -> e.getValue() / sum
         ));
         return shares;
+    }
+
+    /*
+     * Shortcut methods when only the qty is needed.
+     */
+    
+    private GeneralStatsItemModel item(int i) {
+        return this.getGraphContext().create(GeneralStatsItemModel.class).setQuantity(i);
+    }
+    
+    private GeneralStatsItemModel item(
+            String key, String label, Class<? extends WindupVertexFrame> type, Map<String, String> props
+    ) {
+        GeneralStatsItemModel item = this.getGraphContext().create(GeneralStatsItemModel.class).setKey(key).setLabel(label);
+        long qty = countGraphVertices(type, props);
+        item.setQuantity((int) qty);
+        return item;
+    }
+
+    private long countGraphVertices(Class<? extends WindupVertexFrame> clazz, Map<String, String> props) {
+        if (clazz == null)
+            throw new IllegalArgumentException("Frame type must be set (was null).");
+        
+        LOG.info("Counting: Frame class == " + clazz.getSimpleName() + " && " + CollectionUtils.size(props) + " props.");
+        FramedGraphQuery query = this.getGraphContext().getQuery().type(clazz);
+        //props.entrySet().forEach( e -> {
+        if (props != null)
+            for (Map.Entry<String, String> e : props.entrySet()) {
+                String key = e.getKey();
+                if (key != null && !key.isEmpty())
+                    if (e.getValue() == null)
+                        query = query.has(key);
+                    else
+                        query = query.has(key, e.getValue());
+            }
+        long count = this.count(query.vertices());
+        LOG.info(" ==> " + count);
+        return count;
     }
     
 }

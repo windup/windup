@@ -14,12 +14,12 @@ public interface GeneralStatsItemModel extends WindupVertexFrame
     String KEY      = TYPE + "_key";
     String LABEL    = TYPE + "_label";
     String QUANTITY = TYPE + "_qty";
-
+    
     @Property(KEY) String getKey();
     @Property(KEY) GeneralStatsItemModel setKey(String key);
     
     @Property(LABEL) String getLabel();
-    @Property(LABEL) GeneralStatsItemModel getLabel(String label);
+    @Property(LABEL) GeneralStatsItemModel setLabel(String label);
     
     @Property(QUANTITY) int getQuantity();
     @Property(QUANTITY) GeneralStatsItemModel setQuantity(int qty);
