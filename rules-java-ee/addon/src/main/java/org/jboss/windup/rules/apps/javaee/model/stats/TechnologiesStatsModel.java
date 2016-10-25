@@ -50,6 +50,7 @@ public interface TechnologiesStatsModel extends WindupVertexFrame
     @Property(STATS_SERVICES_EJB_STATELESS) int getStatsServicesEjbStateless();
     @Property(STATS_SERVICES_EJB_STATELESS) TechnologiesStatsModel setStatsServicesEjbStateless(int qty);
 
+    
     String STATS_SERVICES_EJB_STATEFUL = "stats.services.ejb.stateful";
     @Property(STATS_SERVICES_EJB_STATEFUL) int getStatsServicesEjbStateful();
     @Property(STATS_SERVICES_EJB_STATEFUL) TechnologiesStatsModel setStatsServicesEjbStateful(int qty);
