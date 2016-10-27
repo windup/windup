@@ -78,6 +78,11 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.reporting</groupId>
+            <artifactId>windup-reporting-freemarker</artifactId>
+            <version>3.0.0-SNAPSHOT</version>
+        </dependency>
 
     </dependencies>
 

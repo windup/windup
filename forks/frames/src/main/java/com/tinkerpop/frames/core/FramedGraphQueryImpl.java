@@ -13,6 +13,11 @@ public class FramedGraphQueryImpl implements FramedGraphQuery {
 	private GraphQuery graphQuery;
 	private FramedGraph<?> graph;
 
+	// FOR DI CONTAINER
+	protected FramedGraphQueryImpl() {
+
+	}
+
 	public FramedGraphQueryImpl(FramedGraph<?> graph, GraphQuery graphQuery) {
 		this.graph = graph;
 		this.graphQuery = graphQuery;
