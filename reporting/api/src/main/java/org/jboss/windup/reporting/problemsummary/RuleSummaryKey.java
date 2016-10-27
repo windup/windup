@@ -1,4 +1,4 @@
-package org.jboss.windup.reporting.freemarker.problemsummary;
+package org.jboss.windup.reporting.problemsummary;
 
 /**
  * Contains a key that can uniquely identify a RuleSummary by title and rule ID.

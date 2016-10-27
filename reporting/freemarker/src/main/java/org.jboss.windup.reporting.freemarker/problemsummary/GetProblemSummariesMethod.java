@@ -1,11 +1,6 @@
 package org.jboss.windup.reporting.freemarker.problemsummary;
 
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
@@ -19,6 +14,8 @@ import org.jboss.windup.reporting.model.Severity;
 import freemarker.ext.beans.StringModel;
 import freemarker.template.SimpleSequence;
 import freemarker.template.TemplateModelException;
+import org.jboss.windup.reporting.problemsummary.ProblemSummary;
+import org.jboss.windup.reporting.problemsummary.ProblemSummaryService;
 
 /**
  * Returns a summary of all classification and hints found during analysis in the form of a List&lt;ProblemSummary&gt;.
