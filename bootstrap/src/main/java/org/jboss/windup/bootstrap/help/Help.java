@@ -29,6 +29,10 @@ public class Help
     private static final String OPTION = "option";
     private static final String NAME = "name";
     private static final String DESCRIPTION = "description";
+    public static final String TYPE = "type";
+    public static final String AVAILABLE_OPTIONS = "available-options";
+    public static final String AVAILABLE_OPTION = "option";
+    public static final String UI_TYPE = "ui-type";
 
     private List<OptionDescription> options = new ArrayList<>();
 
@@ -64,9 +68,22 @@ public class Help
                 Element optionElement = (Element) optionElementIterator.next();
 
                 String name = optionElement.attributeValue(NAME);
-                String description = optionElement.element(DESCRIPTION).getText();
+                String description = optionElement.element(DESCRIPTION).getTextTrim();
+                String type = optionElement.element(TYPE).getTextTrim();
+                String uiType = optionElement.element(UI_TYPE).getTextTrim();
 
-                OptionDescription option = new OptionDescription(name, description);
+                List<String> availableOptions = null;
+
+                if (optionElement.element(AVAILABLE_OPTIONS) != null)
+                {
+                    availableOptions = new ArrayList<>();
+                    for (Element availableOption : (List<Element>)optionElement.element(AVAILABLE_OPTIONS).elements(AVAILABLE_OPTION))
+                    {
+                        availableOptions.add(availableOption.getTextTrim());
+                    }
+                }
+
+                OptionDescription option = new OptionDescription(name, description, type, uiType, availableOptions);
                 result.addOption(option);
             }
         }
@@ -89,6 +106,30 @@ public class Help
             Element descriptionElement = new DOMElement(DESCRIPTION);
             descriptionElement.setText(option.getDescription());
             optionElement.add(descriptionElement);
+
+            // Type
+            Element typeElement = new DOMElement(TYPE);
+            typeElement.setText(option.getType().getSimpleName());
+            optionElement.add(typeElement);
+
+            // UI Type
+            Element uiTypeElement = new DOMElement(UI_TYPE);
+            uiTypeElement.setText(option.getUIType().name());
+            optionElement.add(uiTypeElement);
+
+            // Available Options
+            Element availableOptionsElement = new DOMElement(AVAILABLE_OPTIONS);
+            for (Object availableValueObject : option.getAvailableValues())
+            {
+                if (availableValueObject == null)
+                    continue;
+
+                Element availableOption = new DOMElement(AVAILABLE_OPTION);
+                availableOption.setText(String.valueOf(availableValueObject));
+                availableOptionsElement.add(availableOption);
+            }
+            if (!availableOptionsElement.elements().isEmpty())
+                optionElement.add(availableOptionsElement);
 
             doc.getRootElement().add(optionElement);
         }
