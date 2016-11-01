@@ -1,4 +1,4 @@
-package org.jboss.windup.reporting.freemarker.problemsummary;
+package org.jboss.windup.reporting.problemsummary;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

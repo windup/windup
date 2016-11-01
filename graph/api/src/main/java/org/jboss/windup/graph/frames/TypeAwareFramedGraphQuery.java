@@ -9,6 +9,11 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 public class TypeAwareFramedGraphQuery extends FramedGraphQueryImpl {
 
+    // FOR DI CONTAINER
+    protected TypeAwareFramedGraphQuery() {
+        super();
+    }
+
 	public TypeAwareFramedGraphQuery(FramedGraph<?> graph) {
 		super(graph, graph.getBaseGraph().query());
 	}

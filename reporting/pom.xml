@@ -19,6 +19,7 @@
         <module>api</module>
         <module>impl</module>
         <module>tests</module>
+        <module>freemarker</module>
     </modules>
 
     <dependencyManagement>

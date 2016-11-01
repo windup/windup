@@ -8,39 +8,21 @@
         <version>3.0.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>windup-reporting-impl</artifactId>
-    <name>Windup Engine - Reporting Impl</name>
+    <artifactId>windup-reporting-freemarker</artifactId>
+    <name>Windup Engine - Reporting Freemarker</name>
 
     <dependencies>
-        <!-- Local Dependencies -->
-        <dependency>
-            <groupId>org.jboss.windup.reporting</groupId>
-            <artifactId>windup-reporting-api</artifactId>
-            <scope>compile</scope>
-        </dependency>
-
         <!-- Local 3rd party Dependencies -->
         <dependency>
-            <groupId>org.jooq</groupId>
-            <artifactId>joox</artifactId>
-            <version>1.2.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.pegdown</groupId>
-            <artifactId>pegdown</artifactId>
-            <version>1.4.2</version>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
+            <version>${version.freemarker}</version>
         </dependency>
 
         <!-- Addon Dependencies -->
         <dependency>
             <groupId>org.jboss.windup.config</groupId>
             <artifactId>windup-config-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.windup.config</groupId>
-            <artifactId>windup-config-xml</artifactId>
-            <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -59,6 +41,11 @@
             <classifier>forge-addon</classifier>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>org.jboss.forge.furnace</groupId>
+            <artifactId>furnace-proxy</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- Furnace Container -->
         <dependency>
@@ -66,22 +53,9 @@
             <artifactId>cdi-api</artifactId>
             <scope>provided</scope>
         </dependency>
-
-        <dependency>
-            <groupId>com.opencsv</groupId>
-            <artifactId>opencsv</artifactId>
-            <version>3.4</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.commons</groupId>
-                    <artifactId>commons-lang3</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
         <dependency>
             <groupId>org.jboss.windup.reporting</groupId>
-            <artifactId>windup-reporting-freemarker</artifactId>
-            <version>3.0.0-SNAPSHOT</version>
+            <artifactId>windup-reporting-api</artifactId>
         </dependency>
 
     </dependencies>

@@ -1,13 +1,6 @@
-package org.jboss.windup.reporting.freemarker.problemsummary;
+package org.jboss.windup.reporting.problemsummary;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.UUID;
+import java.util.*;
 
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.LinkModel;
