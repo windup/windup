@@ -20,9 +20,11 @@ import org.jboss.windup.graph.traversal.OnlyOnceTraversalStrategy;
 import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.reporting.freemarker.problemsummary.ProblemSummary;
 import org.jboss.windup.reporting.freemarker.problemsummary.ProblemSummaryService;
-import org.jboss.windup.reporting.model.Severity;
 import org.jboss.windup.reporting.service.EffortReportService;
 import org.jboss.windup.reporting.service.ReportService;
+import org.jboss.windup.reporting.severity.IssueCategory;
+import org.jboss.windup.reporting.severity.IssueCategoryModel;
+import org.jboss.windup.reporting.severity.IssueCategoryRegistry;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -82,9 +84,9 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider
                     MappingJsonFactory jsonFactory = new MappingJsonFactory();
                     jsonFactory.disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
                     ObjectMapper objectMapper = new ObjectMapper(jsonFactory);
-                    Map<Severity, List<ProblemSummary>> summariesBySeverity =
+                    Map<IssueCategoryModel, List<ProblemSummary>> summariesBySeverity =
                         ProblemSummaryService.getProblemSummaries(
-                            event.getGraphContext(), projectModelTraversal.getAllProjects(true), Collections.<String>emptySet(), Collections.<String>emptySet());
+                            event, projectModelTraversal.getAllProjects(true), Collections.emptySet(), Collections.emptySet());
 
                     issueSummaryWriter.write("WINDUP_ISSUE_SUMMARIES['" + inputApplication.asVertex().getId() + "'] = ");
                     objectMapper.writeValue(issueSummaryWriter, summariesBySeverity);
@@ -112,9 +114,11 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider
                 issueSummaryWriter.write("];" + NEWLINE);
 
                 issueSummaryWriter.write("var severityOrder = [");
-                issueSummaryWriter.write("'" + Severity.MANDATORY + "', ");
-                issueSummaryWriter.write("'" + Severity.OPTIONAL + "', ");
-                issueSummaryWriter.write("'" + Severity.POTENTIAL + "'");
+                IssueCategoryRegistry issueCategoryRegistry = IssueCategoryRegistry.instance(event.getRewriteContext());
+                for (IssueCategory issueCategory : issueCategoryRegistry.getIssueCategories())
+                {
+                    issueSummaryWriter.write("'" + issueCategory.getCategoryID() + "', ");
+                }
                 issueSummaryWriter.write("];" + NEWLINE);
             }
         }

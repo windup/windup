@@ -7,11 +7,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.traversal.ProjectModelTraversal;
-import org.jboss.windup.reporting.model.Severity;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.InlineHintService;
+import org.jboss.windup.reporting.severity.IssueCategoryModel;
 import org.jboss.windup.util.ExecutionStatistics;
 
 import freemarker.ext.beans.StringModel;
@@ -24,7 +23,9 @@ import freemarker.template.TemplateModelException;
  *
  * Called from a freemarker template as follows:
  *
- *    <pre>getEffortCountForProjectBySeverity(projectModel, recursive) : int</pre>
+ * <pre>
+ * getEffortCountForProjectBySeverity(projectModel, recursive) : int
+ * </pre>
  *
  * If recursive is true, the effort total includes child projects.
  *
@@ -54,39 +55,43 @@ public class GetEffortCountForProjectBySeverityMethod implements WindupFreeMarke
     @Override
     public String getDescription()
     {
-        return "Takes a " + ProjectModel.class.getSimpleName()
-                    + " as a parameter and returns Map<String, int> where the key is the Severity and the value is the number of incidents of that severity.";
+        return "Parameters are (GraphRewrite, ProjectModelTraversal, [recursive]) and returns Map<String, int> where the key is the Severity and the value is the number of incidents of that severity.";
     }
 
     @Override
     public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
     {
         ExecutionStatistics.get().begin(NAME);
-        if (arguments.size() < 2)
+        if (arguments.size() < 3)
         {
             throw new TemplateModelException(
-                        "Error, method expects at least two arguments (projectModel:ProjectModel, recursive:Boolean, [includeTags:Set<String>]. [excludeTags:Set<String>])");
+                        "Error, method expects at least three arguments (event:GraphRewrite, projectModelTraversal:ProjectModelTraversal, recursive:Boolean, [includeTags:Set<String>]. [excludeTags:Set<String>])");
         }
-        StringModel projectModelTraversalArg = (StringModel) arguments.get(0);
+
+        GraphRewrite event = (GraphRewrite)((StringModel)arguments.get(0)).getWrappedObject();
+
+        StringModel projectModelTraversalArg = (StringModel) arguments.get(1);
         ProjectModelTraversal traversal = (ProjectModelTraversal) projectModelTraversalArg.getWrappedObject();
 
-        TemplateBooleanModel recursiveBooleanModel = (TemplateBooleanModel) arguments.get(1);
+        TemplateBooleanModel recursiveBooleanModel = (TemplateBooleanModel) arguments.get(2);
         boolean recursive = recursiveBooleanModel.getAsBoolean();
 
         Set<String> includeTags = Collections.emptySet();
         if (arguments.size() >= 3)
         {
-            includeTags = FreeMarkerUtil.simpleSequenceToSet((SimpleSequence) arguments.get(2));
+            includeTags = FreeMarkerUtil.simpleSequenceToSet((SimpleSequence) arguments.get(3));
         }
 
         Set<String> excludeTags = Collections.emptySet();
         if (arguments.size() >= 4)
         {
-            excludeTags = FreeMarkerUtil.simpleSequenceToSet((SimpleSequence) arguments.get(3));
+            excludeTags = FreeMarkerUtil.simpleSequenceToSet((SimpleSequence) arguments.get(4));
         }
 
-        Map<Severity, Integer> classificationEffortDetails = classificationService.getMigrationEffortBySeverity(traversal, includeTags, excludeTags, recursive);
-        Map<Severity, Integer> hintEffortDetails = inlineHintService.getMigrationEffortBySeverity(traversal, includeTags, excludeTags, recursive);
+        Map<IssueCategoryModel, Integer> classificationEffortDetails = classificationService.getMigrationEffortBySeverity(event, traversal, includeTags,
+                    excludeTags, recursive);
+        Map<IssueCategoryModel, Integer> hintEffortDetails = inlineHintService.getMigrationEffortBySeverity(event, traversal, includeTags, excludeTags,
+                    recursive);
 
         Map<String, Integer> results = new HashMap<>(classificationEffortDetails.size() + hintEffortDetails.size());
         addAllIncidents(results, classificationEffortDetails);
@@ -96,9 +101,9 @@ public class GetEffortCountForProjectBySeverityMethod implements WindupFreeMarke
         return results;
     }
 
-    private void addAllIncidents(Map<String, Integer> results, Map<Severity, Integer> effortDetails)
+    private void addAllIncidents(Map<String, Integer> results, Map<IssueCategoryModel, Integer> effortDetails)
     {
-        for (Map.Entry<Severity, Integer> entry : effortDetails.entrySet())
+        for (Map.Entry<IssueCategoryModel, Integer> entry : effortDetails.entrySet())
         {
             if (!results.containsKey(entry.getKey().toString()))
                 results.put(entry.getKey().toString(), entry.getValue());

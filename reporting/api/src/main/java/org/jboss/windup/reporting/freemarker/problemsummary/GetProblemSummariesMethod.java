@@ -14,11 +14,11 @@ import org.jboss.windup.graph.traversal.OnlyOnceTraversalStrategy;
 import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.reporting.freemarker.FreeMarkerUtil;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
-import org.jboss.windup.reporting.model.Severity;
 
 import freemarker.ext.beans.StringModel;
 import freemarker.template.SimpleSequence;
 import freemarker.template.TemplateModelException;
+import org.jboss.windup.reporting.severity.IssueCategoryModel;
 
 /**
  * Returns a summary of all classification and hints found during analysis in the form of a List&lt;ProblemSummary&gt;.
@@ -47,11 +47,17 @@ public class GetProblemSummariesMethod implements WindupFreeMarkerMethod
     @Override
     public Object exec(List arguments) throws TemplateModelException
     {
+        if (arguments.size() == 0)
+            throw new TemplateModelException("Method " + NAME + " requires the following parameters (GraphRewrite event, [ProjectModel project])");
+
+        // Gets the graph rewrite event
+        final GraphRewrite event = (GraphRewrite)((StringModel)arguments.get(0)).getWrappedObject();
+
         // Get the project if one was passed in
         final ProjectModel projectModel;
-        if (arguments.size() > 0)
+        if (arguments.size() > 1)
         {
-            StringModel projectModelArg = (StringModel) arguments.get(0);
+            StringModel projectModelArg = (StringModel) arguments.get(1);
             if (projectModelArg == null)
                 projectModel = null;
             else
@@ -66,26 +72,26 @@ public class GetProblemSummariesMethod implements WindupFreeMarkerMethod
         Set<String> excludeTags = FreeMarkerUtil.simpleSequenceToSet((SimpleSequence) arguments.get(2));
 
         Set<ProjectModel> projectModels = getProjects(projectModel);
-        Map<Severity, List<ProblemSummary>> problemSummariesOriginal = ProblemSummaryService.getProblemSummaries(context, projectModels, includeTags,
+        Map<IssueCategoryModel, List<ProblemSummary>> problemSummariesOriginal = ProblemSummaryService.getProblemSummaries(event, projectModels, includeTags,
                     excludeTags);
 
         // Convert the keys to String to make Freemarker happy
-        Comparator<Severity> severityComparator = new Comparator<Severity>()
+        Comparator<IssueCategoryModel> severityComparator = new Comparator<IssueCategoryModel>()
         {
             @Override
-            public int compare(Severity severity1, Severity severity2)
+            public int compare(IssueCategoryModel severity1, IssueCategoryModel severity2)
             {
-                int ordinal1 = severity1 == null ? 0 : severity1.ordinal();
-                int ordinal2 = severity2 == null ? 0 : severity2.ordinal();
+                int ordinal1 = severity1 == null ? 0 : severity1.getPriority();
+                int ordinal2 = severity2 == null ? 0 : severity2.getPriority();
 
                 return ordinal1 - ordinal2;
             }
         };
-        Map<Severity, List<ProblemSummary>> problemSummaries = new TreeMap<>(severityComparator);
+        Map<IssueCategoryModel, List<ProblemSummary>> problemSummaries = new TreeMap<>(severityComparator);
         problemSummaries.putAll(problemSummariesOriginal);
 
         Map<String, List<ProblemSummary>> primarySummariesByString = new LinkedHashMap<>(problemSummariesOriginal.size());
-        for (Map.Entry<Severity, List<ProblemSummary>> entry : problemSummaries.entrySet())
+        for (Map.Entry<IssueCategoryModel, List<ProblemSummary>> entry : problemSummaries.entrySet())
         {
             String severityString = entry.getKey() == null ? null : entry.getKey().toString();
             primarySummariesByString.put(severityString, entry.getValue());

@@ -1,7 +1,7 @@
 package org.jboss.windup.reporting.config;
 
 import java.util.Set;
-import org.jboss.windup.reporting.model.Severity;
+import org.jboss.windup.reporting.severity.IssueCategory;
 import org.ocpsoft.rewrite.config.OperationBuilder;
 
 /**
@@ -38,9 +38,9 @@ public interface HintText
     HintEffort withEffort(int effort);
 
     /**
-     * Specifies the {@link Severity} level. This will default to {@link Hint#DEFAULT_SEVERITY} if not set here.
+     * Specifies the {@link IssueCategory}.
      */
-    HintSeverity withSeverity(Severity severity);
+    HintWithIssueCategory withIssueCategory(IssueCategory issueCategory);
 
     OperationBuilder withTags(Set<String> tags);
 }

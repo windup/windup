@@ -63,7 +63,7 @@ public class XMLRuleProviderLoader implements RuleProviderLoader
 
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         dbFactory.setNamespaceAware(true);
-        DocumentBuilder dBuilder = null;
+        DocumentBuilder dBuilder;
 
         try
         {
@@ -83,7 +83,7 @@ public class XMLRuleProviderLoader implements RuleProviderLoader
                 try
                 {
                     Document doc = dBuilder.parse(resource.toURI().toString());
-                    ParserContext parser = new ParserContext(furnace);
+                    ParserContext parser = new ParserContext(furnace, ruleLoaderContext);
 
                     parser.setAddonContainingInputXML(addon);
 
@@ -115,7 +115,7 @@ public class XMLRuleProviderLoader implements RuleProviderLoader
                 try
                 {
                     Document doc = dBuilder.parse(resource.toURI().toString());
-                    ParserContext parser = new ParserContext(furnace);
+                    ParserContext parser = new ParserContext(furnace, ruleLoaderContext);
 
                     parser.setXmlInputPath(Paths.get(resource.toURI()));
                     parser.setXmlInputRootPath(userRulesPath);

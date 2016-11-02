@@ -3,6 +3,7 @@ package org.jboss.windup.reporting.handlers;
 import static org.joox.JOOX.$;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -16,10 +17,11 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.reporting.config.Link;
 import org.jboss.windup.reporting.config.classification.Classification;
-import org.jboss.windup.reporting.model.Severity;
+import org.jboss.windup.reporting.severity.IssueCategoryRegistry;
 import org.jboss.windup.util.exception.WindupException;
 import org.junit.Assert;
 import org.junit.Test;
@@ -51,8 +53,9 @@ public class ClassificationHandlerTest
     @Test
     public void testClassificationParsing() throws Exception
     {
-        ParserContext parser = new ParserContext(furnace);
         File fXmlFile = new File(CLASSIFICATION_XML_FILE);
+        RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
+        ParserContext parser = new ParserContext(furnace, loaderContext);
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         dbFactory.setNamespaceAware(true);
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -61,7 +64,7 @@ public class ClassificationHandlerTest
         Element firstClassification = classificationList.get(0);
         Classification classification = parser.<Classification> processElement(firstClassification);
 
-        Assert.assertEquals(Severity.OPTIONAL, classification.getSeverity());
+        Assert.assertNull(classification.getIssueCategory());
         Assert.assertEquals("testVariable", classification.getVariableName());
         Assert.assertEquals(5, classification.getEffort());
         Assert.assertEquals("test message", classification.getClassificationPattern().toString());
@@ -74,7 +77,7 @@ public class ClassificationHandlerTest
         Element secondClassification = classificationList.get(1);
         classification = parser.<Classification> processElement(secondClassification);
         Assert.assertEquals(null, classification.getVariableName());
-        Assert.assertEquals(Severity.OPTIONAL, classification.getSeverity());
+        Assert.assertEquals(IssueCategoryRegistry.OPTIONAL, classification.getIssueCategory().getCategoryID());
         Assert.assertEquals(0, classification.getEffort());
         Assert.assertEquals("test-message", classification.getClassificationPattern().toString());
         Assert.assertEquals(null, classification.getDescriptionPattern());
@@ -92,8 +95,9 @@ public class ClassificationHandlerTest
     @Test(expected = WindupException.class)
     public void testClassificationWithoutMessage() throws Exception
     {
-        ParserContext parser = new ParserContext(furnace);
         File fXmlFile = new File(CLASSIFICATION_XML_FILE);
+        RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
+        ParserContext parser = new ParserContext(furnace, loaderContext);
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         dbFactory.setNamespaceAware(true);
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -106,8 +110,9 @@ public class ClassificationHandlerTest
     @Test(expected = WindupException.class)
     public void testClassificationWithWrongEffort() throws Exception
     {
-        ParserContext parser = new ParserContext(furnace);
         File fXmlFile = new File(CLASSIFICATION_XML_FILE);
+        RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
+        ParserContext parser = new ParserContext(furnace, loaderContext);
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         dbFactory.setNamespaceAware(true);
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();

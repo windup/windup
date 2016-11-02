@@ -9,6 +9,7 @@ import java.util.Set;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
+import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
@@ -17,7 +18,8 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.reporting.model.EffortReportModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
-import org.jboss.windup.reporting.model.Severity;
+import org.jboss.windup.reporting.severity.IssueCategoryModel;
+import org.jboss.windup.reporting.severity.IssueCategoryRegistry;
 import org.jboss.windup.rules.files.model.FileReferenceModel;
 
 import com.thinkaurelius.titan.core.attribute.Text;
@@ -167,12 +169,14 @@ public class InlineHintService extends GraphService<InlineHintModel>
     /**
      * Returns the total incidents in all of the {@link InlineHintModel}s associated with the files in this project by severity.
      */
-    public Map<Severity, Integer> getMigrationEffortBySeverity(ProjectModelTraversal traversal, Set<String> includeTags, Set<String> excludeTags,
-                boolean recursive)
+    public Map<IssueCategoryModel, Integer> getMigrationEffortBySeverity(GraphRewrite event, ProjectModelTraversal traversal, Set<String> includeTags, Set<String> excludeTags,
+                                                                    boolean recursive)
     {
-        MapSumEffortAccumulatorFunction<Severity> accumulator = new MapSumEffortAccumulatorFunction(){
-            public Severity vertexToKey(Vertex effortReportVertex) {
-                return frame(effortReportVertex).getSeverity();
+        MapSumEffortAccumulatorFunction<IssueCategoryModel> accumulator = new MapSumEffortAccumulatorFunction<IssueCategoryModel>()
+        {
+            public IssueCategoryModel vertexToKey(Vertex effortReportVertex)
+            {
+                return frame(effortReportVertex).getIssueCategory();
             }
         };
         this.getMigrationEffortDetails(traversal, includeTags, excludeTags, recursive, true, accumulator);

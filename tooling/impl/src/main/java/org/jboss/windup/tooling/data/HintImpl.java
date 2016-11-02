@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.List;
 
 import org.jboss.windup.reporting.model.InlineHintModel;
-import org.jboss.windup.reporting.model.Severity;
+import org.jboss.windup.reporting.severity.IssueCategory;
 import org.jboss.windup.tooling.data.Hint;
 import org.jboss.windup.tooling.data.Link;
 
@@ -19,7 +19,7 @@ public class HintImpl implements Hint
     private File file;
     private String title;
     private String hint;
-    private Severity severity;
+    private IssueCategory issueCategory;
     private int effort;
     private List<Link> links;
 
@@ -103,17 +103,17 @@ public class HintImpl implements Hint
      * This is a hint as to the severity of the problem. This may be used for supplying an icon or glyph in the report to the user.
      */
     @Override
-    public Severity getSeverity()
+    public IssueCategory getIssueCategory()
     {
-        return severity;
+        return this.issueCategory;
     }
 
     /**
      * This is a hint as to the severity of the problem. This may be used for supplying an icon or glyph in the report to the user.
      */
-    public void setSeverity(Severity severity)
+    public void setIssueCategory(IssueCategory issueCategory)
     {
-        this.severity = severity;
+        this.issueCategory = issueCategory;
     }
 
     /**

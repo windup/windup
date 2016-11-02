@@ -1,7 +1,6 @@
 package org.jboss.windup.reporting.config.classification;
 
 import org.jboss.windup.reporting.config.Link;
-import org.jboss.windup.reporting.model.Severity;
 
 /**
  * Contains the methods that can be called after the {@link Severity} has been set.

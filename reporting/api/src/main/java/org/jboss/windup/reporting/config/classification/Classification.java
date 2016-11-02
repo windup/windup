@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.apache.commons.lang.StringUtils;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.windup.config.GraphRewrite;
@@ -14,19 +15,20 @@ import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.parameters.ParameterizedIterationOperation;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.LinkModel;
-import org.jboss.windup.reporting.model.QuickfixModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.graph.service.LinkService;
-import org.jboss.windup.reporting.service.QuickfixService;
 import org.jboss.windup.reporting.config.Link;
 import org.jboss.windup.reporting.config.Quickfix;
 import org.jboss.windup.reporting.model.ClassificationModel;
-import org.jboss.windup.reporting.model.EffortReportModel;
-import org.jboss.windup.reporting.model.Severity;
+import org.jboss.windup.reporting.model.QuickfixModel;
 import org.jboss.windup.reporting.service.ClassificationService;
+import org.jboss.windup.reporting.service.QuickfixService;
 import org.jboss.windup.reporting.service.TagSetService;
+import org.jboss.windup.reporting.severity.IssueCategory;
+import org.jboss.windup.reporting.severity.IssueCategoryModel;
+import org.jboss.windup.reporting.severity.IssueCategoryRegistry;
 import org.jboss.windup.rules.files.model.FileReferenceModel;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.Logging;
@@ -49,20 +51,10 @@ public class Classification extends ParameterizedIterationOperation<FileModel> i
     private List<Link> links = new ArrayList<>();
     private Set<String> tags = new HashSet<>();
     private List<Quickfix> quickfixes = new ArrayList<>();
-
-    /**
-     * @return the quickfixes
-     */
-    public List<Quickfix> getQuickfixes()
-    {
-        return quickfixes;
-    }
-
     private RegexParameterizedPatternParser classificationPattern;
     private RegexParameterizedPatternParser descriptionPattern;
     private int effort;
-    private Severity severity = EffortReportModel.DEFAULT_SEVERITY;
-
+    private IssueCategory issueCategory = null;
     Classification(String variable)
     {
         super(variable);
@@ -93,6 +85,14 @@ public class Classification extends ParameterizedIterationOperation<FileModel> i
     }
 
     /**
+     * @return the quickfixes
+     */
+    public List<Quickfix> getQuickfixes()
+    {
+        return quickfixes;
+    }
+
+    /**
      * Set the payload to the fileModel of the given instance even though the variable is not directly referencing it. This is mainly to simplify the
      * creation of the rule, when the FileModel itself is not being iterated but just a model referencing it.
      *
@@ -113,20 +113,20 @@ public class Classification extends ParameterizedIterationOperation<FileModel> i
     }
 
     /**
-     * Gets the configured {@link Severity} level.
+     * Gets the configured {@link IssueCategory} level.
      */
-    public Severity getSeverity()
+    public IssueCategory getIssueCategory()
     {
-        return severity;
+        return issueCategory;
     }
 
     /**
-     * Sets the {@link Severity} to a non-default level.
+     * Sets the {@link IssueCategory} to a non-default level.
      */
     @Override
-    public ClassificationSeverity withSeverity(Severity severity)
+    public ClassificationSeverity withIssueCategory(IssueCategory issueCategory)
     {
-        this.severity = severity;
+        this.issueCategory = issueCategory;
         return this;
     }
 
@@ -218,7 +218,14 @@ public class Classification extends ParameterizedIterationOperation<FileModel> i
             {
                 classification = classificationService.create();
                 classification.setEffort(effort);
-                classification.setSeverity(severity);
+
+                IssueCategoryModel issueCategoryModel;
+                if (this.issueCategory == null)
+                    issueCategoryModel = IssueCategoryRegistry.loadFromGraph(event.getGraphContext(), IssueCategoryRegistry.DEFAULT);
+                else
+                    issueCategoryModel = IssueCategoryRegistry.loadFromGraph(event.getGraphContext(), this.issueCategory.getCategoryID());
+
+                classification.setIssueCategory(issueCategoryModel);
                 classification.setDescription(StringUtils.trim(description));
                 classification.setClassification(StringUtils.trim(text));
 
@@ -232,8 +239,8 @@ public class Classification extends ParameterizedIterationOperation<FileModel> i
                 for (Link link : links)
                 {
                     LinkModel linkModel = linkService.getOrCreate(
-                            StringUtils.trim(link.getTitle()),
-                            StringUtils.trim(link.getLink()));
+                                StringUtils.trim(link.getTitle()),
+                                StringUtils.trim(link.getLink()));
                     classification.addLink(linkModel);
                 }
 

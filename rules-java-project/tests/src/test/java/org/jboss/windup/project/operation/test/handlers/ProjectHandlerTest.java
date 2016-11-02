@@ -3,6 +3,7 @@ package org.jboss.windup.project.operation.test.handlers;
 import static org.joox.JOOX.$;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -16,6 +17,7 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.project.condition.Artifact;
 import org.jboss.windup.project.condition.Project;
@@ -51,8 +53,9 @@ public class ProjectHandlerTest
     @Test
     public void testLineItemWithMessage() throws Exception
     {
-        ParserContext parser = new ParserContext(furnace);
         File fXmlFile = new File(PROJECT_XML_FILE);
+        RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
+        ParserContext parser = new ParserContext(furnace, loaderContext);
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         dbFactory.setNamespaceAware(true);
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();

@@ -8,6 +8,7 @@ import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.versions.Versions;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.junit.Assert;
@@ -19,6 +20,7 @@ import javax.inject.Inject;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -49,8 +51,9 @@ public class TechnologyReferenceTransformerHandlerTest
     @Test
     public void testXmlParsinfOfRulesetMetadata() throws Exception
     {
-        ParserContext parser = new ParserContext(furnace);
         File fXmlFile = new File(XML_FILE);
+        RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
+        ParserContext parser = new ParserContext(furnace, loaderContext);
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         dbFactory.setNamespaceAware(true);
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();

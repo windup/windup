@@ -143,7 +143,7 @@ public class WindupProcessorImpl implements WindupProcessor
             }
 
             final GraphRewrite event = new GraphRewrite(listeners, context);
-            RuleLoaderContext ruleLoaderContext = new RuleLoaderContext(configuration.getAllUserRulesDirectories(), configuration.getRuleProviderFilter());
+            RuleLoaderContext ruleLoaderContext = new RuleLoaderContext(event.getRewriteContext(), configuration.getAllUserRulesDirectories(), configuration.getRuleProviderFilter());
             ruleLoaderContext = configureRuleProviderAndTagFilters(ruleLoaderContext, configuration);
             addSourceAndTargetInformation(event, configuration, configurationModel);
 
@@ -310,7 +310,7 @@ public class WindupProcessorImpl implements WindupProcessor
             config.setRuleProviderFilter(providerFilter);
         }
 
-        return new RuleLoaderContext(ruleLoaderContext.getRulePaths(), config.getRuleProviderFilter());
+        return new RuleLoaderContext(ruleLoaderContext.getContext(), ruleLoaderContext.getRulePaths(), config.getRuleProviderFilter());
     }
 
     private FileModel getFileModel(GraphContext context, Path file)

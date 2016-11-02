@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,6 +25,7 @@ import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.util.Iterators;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.exec.WindupProcessor;
@@ -77,9 +79,10 @@ public class XSLTTransformationHandlerTest
     @Test
     public void testXSLTOperation() throws Exception
     {
-        ParserContext parser = new ParserContext(furnace);
-        parser.setAddonContainingInputXML(addon);
         File fXmlFile = new File(XSLT_FILE);
+        RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
+        ParserContext parser = new ParserContext(furnace, loaderContext);
+        parser.setAddonContainingInputXML(addon);
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         dbFactory.setNamespaceAware(true);
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -142,9 +145,10 @@ public class XSLTTransformationHandlerTest
     @Test(expected = WindupException.class)
     public void testXSLTWithoutExtension() throws Exception
     {
-        ParserContext parser = new ParserContext(furnace);
-        parser.setAddonContainingInputXML(addon);
         File fXmlFile = new File(XSLT_FILE);
+        RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
+        ParserContext parser = new ParserContext(furnace, loaderContext);
+        parser.setAddonContainingInputXML(addon);
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         dbFactory.setNamespaceAware(true);
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -158,9 +162,10 @@ public class XSLTTransformationHandlerTest
     @Test(expected = WindupException.class)
     public void testXSLTWithoutTemplate() throws Exception
     {
-        ParserContext parser = new ParserContext(furnace);
-        parser.setAddonContainingInputXML(addon);
         File fXmlFile = new File(XSLT_FILE);
+        RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
+        ParserContext parser = new ParserContext(furnace, loaderContext);
+        parser.setAddonContainingInputXML(addon);
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         dbFactory.setNamespaceAware(true);
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();

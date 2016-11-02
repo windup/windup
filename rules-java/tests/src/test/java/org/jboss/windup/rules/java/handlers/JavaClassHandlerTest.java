@@ -3,6 +3,7 @@ package org.jboss.windup.rules.java.handlers;
 import static org.joox.JOOX.$;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -17,6 +18,7 @@ import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
@@ -56,8 +58,9 @@ public class JavaClassHandlerTest
     @Test
     public void testJavaClassCondition() throws Exception
     {
-        ParserContext parser = new ParserContext(furnace);
         File fXmlFile = new File(JAVA_CLASS_XML_FILE);
+        RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
+        ParserContext parser = new ParserContext(furnace, loaderContext);
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         dbFactory.setNamespaceAware(true);
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -92,8 +95,9 @@ public class JavaClassHandlerTest
     @Test(expected = WindupException.class)
     public void testXmlFileWithoutPublidIdAndXpath() throws Exception
     {
-        ParserContext parser = new ParserContext(furnace);
         File fXmlFile = new File(JAVA_CLASS_XML_FILE);
+        RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
+        ParserContext parser = new ParserContext(furnace, loaderContext);
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         dbFactory.setNamespaceAware(true);
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();

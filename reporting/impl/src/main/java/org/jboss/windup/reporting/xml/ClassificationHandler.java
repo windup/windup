@@ -15,7 +15,8 @@ import org.jboss.windup.config.parser.xml.RuleProviderHandler;
 import org.jboss.windup.reporting.config.Link;
 import org.jboss.windup.reporting.config.Quickfix;
 import org.jboss.windup.reporting.config.classification.Classification;
-import org.jboss.windup.reporting.model.Severity;
+import org.jboss.windup.reporting.severity.IssueCategory;
+import org.jboss.windup.reporting.severity.IssueCategoryRegistry;
 import org.jboss.windup.util.exception.WindupException;
 import org.w3c.dom.Element;
 
@@ -48,7 +49,7 @@ public class ClassificationHandler implements ElementHandler<Classification>
         }
         String of = $(element).attr("of");
         String effortStr = $(element).attr("effort");
-        String severityStr = $(element).attr("severity");
+        String issueCategoryID = $(element).attr("categoryID");
 
         Set<String> tags = new HashSet<>();
 
@@ -70,10 +71,11 @@ public class ClassificationHandler implements ElementHandler<Classification>
             }
         }
 
-        if (StringUtils.isNotBlank(severityStr))
+        if (StringUtils.isNotBlank(issueCategoryID))
         {
-            Severity severity = Severity.valueOf(severityStr.toUpperCase());
-            classification.withSeverity(severity);
+            IssueCategoryRegistry issueCategoryRegistry = IssueCategoryRegistry.instance(handlerManager.getRuleLoaderContext().getContext());
+            IssueCategory issueCategory = issueCategoryRegistry.getByID(issueCategoryID);
+            classification.withIssueCategory(issueCategory);
         }
 
         String description = $(element).child("description").text();

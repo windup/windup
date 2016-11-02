@@ -13,5 +13,5 @@ public interface ElementHandler<T>
      * 
      * See also {@link XMLRuleProviderLoader}.
      */
-    public T processElement(ParserContext handlerManager, Element element) throws ConfigurationException;
+    T processElement(ParserContext handlerManager, Element element) throws ConfigurationException;
 }

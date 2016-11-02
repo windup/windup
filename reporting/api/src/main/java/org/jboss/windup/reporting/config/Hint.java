@@ -17,10 +17,11 @@ import org.jboss.windup.graph.model.LinkModel;
 import org.jboss.windup.reporting.model.QuickfixModel;
 import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.graph.service.GraphService;
-import org.jboss.windup.reporting.model.EffortReportModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
-import org.jboss.windup.reporting.model.Severity;
 import org.jboss.windup.reporting.service.TagSetService;
+import org.jboss.windup.reporting.severity.IssueCategory;
+import org.jboss.windup.reporting.severity.IssueCategoryModel;
+import org.jboss.windup.reporting.severity.IssueCategoryRegistry;
 import org.jboss.windup.rules.files.model.FileLocationModel;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.Logging;
@@ -33,14 +34,14 @@ import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
 /**
  * Used as an intermediate to support the addition of {@link InlineHintModel} objects to the graph via an Operation.
  */
-public class Hint extends ParameterizedIterationOperation<FileLocationModel> implements HintText, HintLink, HintSeverity, HintEffort, HintQuickfix
+public class Hint extends ParameterizedIterationOperation<FileLocationModel> implements HintText, HintLink, HintWithIssueCategory, HintEffort, HintQuickfix
 {
     private static final Logger LOG = Logging.get(Hint.class);
 
     private RegexParameterizedPatternParser hintTitlePattern;
     private RegexParameterizedPatternParser hintTextPattern;
     private int effort;
-    private Severity severity = EffortReportModel.DEFAULT_SEVERITY;
+    private IssueCategory issueCategory;
     private List<Link> links = new ArrayList<>();
     private Set<String> tags = Collections.emptySet();
     private List<Quickfix> quickfixes = new ArrayList<>();
@@ -83,18 +84,18 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
     }
 
     @Override
-    public HintSeverity withSeverity(Severity severity)
+    public HintWithIssueCategory withIssueCategory(IssueCategory issueCategory)
     {
-        this.severity = severity;
+        this.issueCategory = issueCategory;
         return this;
     }
 
     /**
-     * Returns the currently set {@link Severity}.
+     * Returns the currently set {@link IssueCategory}.
      */
-    public Severity getSeverity()
+    public IssueCategory getIssueCategory()
     {
-        return severity;
+        return this.issueCategory;
     }
 
     @Override
@@ -113,7 +114,15 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
             hintModel.setFileLocationReference(locationModel);
             hintModel.setFile(locationModel.getFile());
             hintModel.setEffort(effort);
-            hintModel.setSeverity(this.severity);
+
+            IssueCategoryRegistry issueCategoryRegistry = IssueCategoryRegistry.instance(event.getRewriteContext());
+            IssueCategoryModel issueCategoryModel;
+            if (this.issueCategory == null)
+                issueCategoryModel = issueCategoryRegistry.loadFromGraph(event.getGraphContext(), IssueCategoryRegistry.DEFAULT);
+            else
+                issueCategoryModel = issueCategoryRegistry.loadFromGraph(event.getGraphContext(), this.issueCategory.getCategoryID());
+
+            hintModel.setIssueCategory(issueCategoryModel);
             if (hintTitlePattern != null)
             {
                 try

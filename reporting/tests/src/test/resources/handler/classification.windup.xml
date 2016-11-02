@@ -6,7 +6,7 @@
         <link href="someUrl" title="someDescription" />
     </classification>
 
-    <classification title="test-message" severity='optional'>
+    <classification title="test-message" categoryID='optional'>
         <link href="url1" title="description1" />
         <link href="url2" title="description2" />
         <link href="url3" title="description3" />

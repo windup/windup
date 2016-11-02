@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.List;
 
 import org.jboss.windup.reporting.model.InlineHintModel;
-import org.jboss.windup.reporting.model.Severity;
+import org.jboss.windup.reporting.severity.IssueCategory;
 
 /**
  * This is equivalent to a {@link InlineHintModel}, however it contains no dependencies on having an open instance of the graph in order to operate.
@@ -36,7 +36,7 @@ public interface Hint
     /**
      * This is a hint as to the severity of the problem. This may be used for supplying an icon or glyph in the report to the user.
      */
-    Severity getSeverity();
+    IssueCategory getIssueCategory();
 
     /**
      * This contains the effort level as an integer (Story Points). This is based on the Scrum "modified-Fibonacci" system of effort estimation.

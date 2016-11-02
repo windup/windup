@@ -282,19 +282,15 @@
                 <xs:element ref="quickfix" minOccurs="0" maxOccurs="unbounded"/>
             </xs:sequence>
             <xs:attribute name="title" type="xs:string" use="required"/>
-            <xs:attribute name="severity" type="severity-type" use="optional" />
+            <xs:attribute name="categoryID" type="category-id-type" use="optional" />
             <xs:attribute name="in" type="xs:string" use="optional" />
             <xs:attribute name="effort" type="xs:byte" use="optional" />
             <!-- <xs:attribute type="xs:string" name="message" use="optional"/> -->
         </xs:complexType>
     </xs:element>
 
-    <xs:simpleType name="severity-type">
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="optional"/>
-            <xs:enumeration value="mandatory"/>
-            <xs:enumeration value="potential"/>
-        </xs:restriction>
+    <xs:simpleType name="category-id-type">
+        <xs:restriction base="xs:string" />
     </xs:simpleType>
     
     <xs:simpleType name="quickfix-type">
@@ -323,7 +319,7 @@
             </xs:sequence>
             <xs:attribute name="title" type="xs:string" use="required"/>
             <xs:attribute name="effort" type="xs:byte" use="optional" />
-            <xs:attribute name="severity" type="severity-type" use="optional" />
+            <xs:attribute name="categoryID" type="category-id-type" use="optional" />
             <xs:attribute name="of" type="xs:string" use="optional" />
         </xs:complexType>
     </xs:element>
