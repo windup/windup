@@ -9,7 +9,7 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 
 /**
  * Model which maps the stats as adjacent vertices.
- * 
+ *
  * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
  */
 @TypeValue(GeneralStatsModel.TYPE)
@@ -18,11 +18,20 @@ public interface GeneralStatsModel extends WindupVertexFrame
     String TYPE = "GeneralStats";
     String COMPUTED = TYPE + "_computed";
     String ITEMS = TYPE + "_items";
- 
+
     @Property(COMPUTED)
     Date getComputed();
-    
-    @Adjacency(label = ITEMS, direction = Direction.OUT) Iterable<GeneralStatsItemModel> getStatsItems();
-    @Adjacency(label = ITEMS, direction = Direction.OUT) GeneralStatsModel addStatsItem(GeneralStatsItemModel item);
-    
+
+    /**
+     * The statistics items contained in this model.
+     */
+    @Adjacency(label = ITEMS, direction = Direction.OUT)
+    Iterable<GeneralStatsItemModel> getStatsItems();
+
+    /**
+     * The statistics items contained in this model.
+     */
+    @Adjacency(label = ITEMS, direction = Direction.OUT)
+    GeneralStatsModel addStatsItem(GeneralStatsItemModel item);
+
 }
