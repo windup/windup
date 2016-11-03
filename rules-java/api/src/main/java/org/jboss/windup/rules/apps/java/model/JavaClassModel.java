@@ -13,24 +13,24 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
  * Represents a JavaClass, either from a .class file or a .java source file.
- * 
+ *
  */
 @TypeValue(JavaClassModel.TYPE)
 public interface JavaClassModel extends WindupVertexFrame
 {
+    String TYPE = "JavaClass";
+
     String JAVA_METHOD = "javaMethod";
     String CLASS_FILE = "classFile";
     String ORIGINAL_SOURCE = "originalSource";
     String DECOMPILED_SOURCE = "decompiledSource";
     String INTERFACES = "interfaces";
     String EXTENDS = "extends";
-    String TYPE = "JavaClassResource";
     String QUALIFIED_NAME = "qualifiedName";
     String CLASS_NAME = "className";
     String PACKAGE_NAME = "packageName";
     String IS_PUBLIC = "isPublic";
     String IS_INTERFACE = "isInterface";
-
     String MAJOR_VERSION = "majorVersion";
     String MINOR_VERSION = "minorVersion";
 
