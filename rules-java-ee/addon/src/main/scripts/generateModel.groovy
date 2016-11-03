@@ -1,9 +1,17 @@
 package org.jboss.windup.reporting.stats;
 
 import java.lang.String;
+import java.util.Map;
 
 /**
- * Generates the source snippets for statistics: 1) Frames model 2) Angular template.
+ * Generates the source snippets for statistics:
+ *   1) Frames model
+ *   2) Angular template.
+ *
+ * Usage:
+ *     $ groovy generateModel.groovy
+ *
+ *     Then simply copy the releavant snippet to the TechnologiesStatsModel.java.
  *
  * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
  */
@@ -85,5 +93,3 @@ items2.each({item ->
     //println "<tr> <td>${item["label"]}</td> <td>{{variousStatsMap.get('${key}').quantity}}</td> </tr>";
     println "<tr> <td>${item["label"]}</td> <td>{{technologiesStats?.${keyMethod}?.quantity}}</td> </tr>";
 });
-/*
-*/
