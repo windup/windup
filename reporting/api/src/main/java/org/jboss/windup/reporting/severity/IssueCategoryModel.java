@@ -4,6 +4,8 @@ import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
+import java.util.Comparator;
+
 /**
  * Provides a way to represent {@link IssueCategory}s in the graph.
  *
@@ -48,4 +50,20 @@ public interface IssueCategoryModel extends WindupVertexFrame
 
     @Property(PRIORITY)
     void setPriority(Integer priority);
+
+    class IssueSummaryPriorityComparator implements Comparator<IssueCategoryModel>
+    {
+        @Override
+        public int compare(IssueCategoryModel issueCategory1, IssueCategoryModel issueCategory2)
+        {
+            int ordinal1 = issueCategory1 == null ? 0 : issueCategory1.getPriority();
+            String id1 = issueCategory1 == null ? "" : issueCategory1.getCategoryID();
+            int ordinal2 = issueCategory2 == null ? 0 : issueCategory2.getPriority();
+            String id2 = issueCategory2 == null ? "" : issueCategory2.getCategoryID();
+
+            if (ordinal1 == ordinal2)
+                return id1.compareTo(id2);
+            return ordinal1 - ordinal2;
+        }
+    }
 }

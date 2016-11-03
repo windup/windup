@@ -56,6 +56,11 @@ public class HintHandler implements ElementHandler<Hint>
     {
         String title = $(element).attr("title");
         String categoryID = $(element).attr("categoryID");
+
+        // Backwards compatibility with old rules
+        if (StringUtils.isBlank(categoryID))
+            categoryID = $(element).attr("severity");
+
         String message = $(element).attr("message");
         String in = $(element).attr("in");
         Set<String> tags = new HashSet<>();

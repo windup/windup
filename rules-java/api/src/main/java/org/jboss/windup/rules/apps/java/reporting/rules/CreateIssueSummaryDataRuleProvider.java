@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.windup.config.AbstractRuleProvider;
@@ -84,9 +85,10 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider
                     MappingJsonFactory jsonFactory = new MappingJsonFactory();
                     jsonFactory.disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
                     ObjectMapper objectMapper = new ObjectMapper(jsonFactory);
-                    Map<IssueCategoryModel, List<ProblemSummary>> summariesBySeverity =
+                    Map<String, List<ProblemSummary>> summariesBySeverity =
                         ProblemSummaryService.getProblemSummaries(
-                            event, projectModelTraversal.getAllProjects(true), Collections.emptySet(), Collections.emptySet());
+                            event, projectModelTraversal.getAllProjects(true), Collections.emptySet(), Collections.emptySet())
+                            .entrySet().stream().collect(Collectors.toMap((e) -> e.getKey().getName(), Map.Entry::getValue));
 
                     issueSummaryWriter.write("WINDUP_ISSUE_SUMMARIES['" + inputApplication.asVertex().getId() + "'] = ");
                     objectMapper.writeValue(issueSummaryWriter, summariesBySeverity);
@@ -117,7 +119,7 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider
                 IssueCategoryRegistry issueCategoryRegistry = IssueCategoryRegistry.instance(event.getRewriteContext());
                 for (IssueCategory issueCategory : issueCategoryRegistry.getIssueCategories())
                 {
-                    issueSummaryWriter.write("'" + issueCategory.getCategoryID() + "', ");
+                    issueSummaryWriter.write("'" + issueCategory.getName() + "', ");
                 }
                 issueSummaryWriter.write("];" + NEWLINE);
             }

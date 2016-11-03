@@ -36,14 +36,7 @@ public class ProblemSummaryService
                                                                                Set<String> excludeTags)
     {
         // The key is the severity as a String
-        Map<IssueCategoryModel, List<ProblemSummary>> results = new TreeMap<>(new Comparator<IssueCategoryModel>()
-        {
-            @Override
-            public int compare(IssueCategoryModel severity1, IssueCategoryModel severity2)
-            {
-                return severity1.getPriority() - severity2.getPriority();
-            }
-        });
+        Map<IssueCategoryModel, List<ProblemSummary>> results = new TreeMap<>(new IssueCategoryModel.IssueSummaryPriorityComparator());
         Map<RuleSummaryKey, ProblemSummary> ruleToSummary = new HashMap<>();
 
         InlineHintService hintService = new InlineHintService(event.getGraphContext());

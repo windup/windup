@@ -127,7 +127,7 @@
                         <h3 class="panel-title">Analysis Detail</h3>
                     </div>
 
-                    <#assign problemsBySeverity = getProblemSummaries(reportModel.projectModel, reportModel.includeTags, reportModel.excludeTags)>
+                    <#assign problemsBySeverity = getProblemSummaries(event, reportModel.projectModel, reportModel.includeTags, reportModel.excludeTags)>
                     <#if !problemsBySeverity?has_content>
                         <div class="panel-body">
                             <div>

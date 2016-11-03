@@ -51,6 +51,10 @@ public class ClassificationHandler implements ElementHandler<Classification>
         String effortStr = $(element).attr("effort");
         String issueCategoryID = $(element).attr("categoryID");
 
+        // Backwards compatibility with old rules
+        if (StringUtils.isBlank(issueCategoryID))
+            issueCategoryID = $(element).attr("severity");
+
         Set<String> tags = new HashSet<>();
 
         Classification classification = (Classification) Classification.as(classificationStr);

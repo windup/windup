@@ -77,13 +77,13 @@ public class GetEffortCountForProjectBySeverityMethod implements WindupFreeMarke
         boolean recursive = recursiveBooleanModel.getAsBoolean();
 
         Set<String> includeTags = Collections.emptySet();
-        if (arguments.size() >= 3)
+        if (arguments.size() >= 4)
         {
             includeTags = FreeMarkerUtil.simpleSequenceToSet((SimpleSequence) arguments.get(3));
         }
 
         Set<String> excludeTags = Collections.emptySet();
-        if (arguments.size() >= 4)
+        if (arguments.size() >= 5)
         {
             excludeTags = FreeMarkerUtil.simpleSequenceToSet((SimpleSequence) arguments.get(4));
         }
@@ -93,7 +93,7 @@ public class GetEffortCountForProjectBySeverityMethod implements WindupFreeMarke
         Map<IssueCategoryModel, Integer> hintEffortDetails = inlineHintService.getMigrationEffortBySeverity(event, traversal, includeTags, excludeTags,
                     recursive);
 
-        Map<String, Integer> results = new HashMap<>(classificationEffortDetails.size() + hintEffortDetails.size());
+        Map<IssueCategoryModel, Integer> results = new HashMap<>(classificationEffortDetails.size() + hintEffortDetails.size());
         addAllIncidents(results, classificationEffortDetails);
         addAllIncidents(results, hintEffortDetails);
 
@@ -101,14 +101,14 @@ public class GetEffortCountForProjectBySeverityMethod implements WindupFreeMarke
         return results;
     }
 
-    private void addAllIncidents(Map<String, Integer> results, Map<IssueCategoryModel, Integer> effortDetails)
+    private void addAllIncidents(Map<IssueCategoryModel, Integer> results, Map<IssueCategoryModel, Integer> effortDetails)
     {
         for (Map.Entry<IssueCategoryModel, Integer> entry : effortDetails.entrySet())
         {
-            if (!results.containsKey(entry.getKey().toString()))
-                results.put(entry.getKey().toString(), entry.getValue());
+            if (!results.containsKey(entry.getKey()))
+                results.put(entry.getKey(), entry.getValue());
             else
-                results.put(entry.getKey().toString(), results.get(entry.getKey().toString()) + entry.getValue());
+                results.put(entry.getKey(), results.get(entry.getKey()) + entry.getValue());
         }
     }
 }

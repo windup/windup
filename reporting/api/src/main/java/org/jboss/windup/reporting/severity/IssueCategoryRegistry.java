@@ -145,8 +145,8 @@ public class IssueCategoryRegistry
      */
     private void addDefaultsIfMissing()
     {
-        this.issueCategories.putIfAbsent(MANDATORY, new IssueCategory(MANDATORY, IssueCategoryRegistry.class.getCanonicalName(), MANDATORY, MANDATORY, 1000, true));
-        this.issueCategories.putIfAbsent(OPTIONAL, new IssueCategory(OPTIONAL, IssueCategoryRegistry.class.getCanonicalName(), OPTIONAL, OPTIONAL, 1000, true));
-        this.issueCategories.putIfAbsent(POTENTIAL, new IssueCategory(POTENTIAL, IssueCategoryRegistry.class.getCanonicalName(), POTENTIAL, POTENTIAL, 1000, true));
+        this.issueCategories.putIfAbsent(MANDATORY, new IssueCategory(MANDATORY, IssueCategoryRegistry.class.getCanonicalName(), "Mandatory", MANDATORY, 1000, true));
+        this.issueCategories.putIfAbsent(OPTIONAL, new IssueCategory(OPTIONAL, IssueCategoryRegistry.class.getCanonicalName(), "Optional", OPTIONAL, 1000, true));
+        this.issueCategories.putIfAbsent(POTENTIAL, new IssueCategory(POTENTIAL, IssueCategoryRegistry.class.getCanonicalName(), "Potential Issues", POTENTIAL, 1000, true));
     }
 }

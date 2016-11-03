@@ -19,7 +19,7 @@
     <#-- appReport : ApplicationReportModel -->
 
     <#assign allTraversal  = getProjectTraversal(appReport.projectModel, 'all')>
-    <#assign incidentCountBySeverity = getEffortCountForProjectBySeverity(allTraversal, true)>
+    <#assign incidentCountBySeverity = getEffortCountForProjectBySeverity(event, allTraversal, true)>
 
     <#include "include/effort_util.ftl">
     <#assign allTraversal  = getProjectTraversal(appReport.projectModel, 'all')>
@@ -61,11 +61,11 @@
                         <td colspan="2">Number of incidents</td>
                     </tr>
                     <#assign totalIncidents = 0 >
-                    <#list incidentCountBySeverity?keys as severity>
-                        <#assign totalIncidents = totalIncidents + incidentCountBySeverity?api.get(severity) >
+                    <#list incidentCountBySeverity?keys as issueCategory>
+                        <#assign totalIncidents = totalIncidents + incidentCountBySeverity?api.get(issueCategory) >
                         <tr>
-                            <td class="count">${incidentCountBySeverity?api.get(severity)}</td>
-                            <td class="label_">${severity}</td>
+                            <td class="count">${incidentCountBySeverity?api.get(issueCategory)}</td>
+                            <td class="label_">${issueCategory.name}</td>
                         </tr>
                     </#list>
                     <tr class="total">
