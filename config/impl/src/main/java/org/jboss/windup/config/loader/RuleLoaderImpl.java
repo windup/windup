@@ -162,7 +162,7 @@ public class RuleLoaderImpl implements RuleLoader
             if (provider.getMetadata().isOverrideProvider())
                 continue;
 
-            Configuration cfg = provider.getConfiguration(null);
+            Configuration cfg = provider.getConfiguration(ruleLoaderContext);
 
             // copy it to allow for the option of modification
             List<Rule> rules = new ArrayList<>(cfg.getRules());

@@ -24,7 +24,7 @@ public class IssueCategoryRegistry
 {
     public static final String MANDATORY = "mandatory";
     public static final String OPTIONAL = "optional";
-    public static final String POTENTIAL = "potential-issue";
+    public static final String POTENTIAL = "potential";
     public static final String DEFAULT = OPTIONAL;
 
     private Map<String, IssueCategory> issueCategories = new ConcurrentHashMap<>();
@@ -126,7 +126,14 @@ public class IssueCategoryRegistry
      */
     public IssueCategory getByID(String categoryID)
     {
-        return this.issueCategories.get(categoryID);
+        IssueCategory issueCategory = this.issueCategories.get(categoryID);
+        if (issueCategory == null)
+        {
+            // We do not have this one yet, so store it as a placeholder. It will presumably be loaded later on.
+            issueCategory = new IssueCategory(categoryID, "placeholder", categoryID, categoryID, 0, true);
+            this.issueCategories.put(categoryID, issueCategory);
+        }
+        return issueCategory;
     }
 
     /**
