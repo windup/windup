@@ -1,9 +1,14 @@
 package org.jboss.windup.rules.apps.javaee.model.stats;
 
+import com.tinkerpop.blueprints.Vertex;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
 
 import com.tinkerpop.frames.FramedGraphQuery;
+import com.tinkerpop.pipes.filter.BackFilterPipe;
+import com.tinkerpop.pipes.transform.OutPipe;
+import com.tinkerpop.pipes.util.Pipeline;
+import com.tinkerpop.pipes.util.StartPipe;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -52,15 +57,11 @@ public class TechnologiesStatsService extends GraphService<TechnologiesStatsMode
     {
         TechnologiesStatsModel stats = this.create();
         stats.setComputed(new Date());
-        /*
-        stats.setFilesStats(new HashMap<String, GeneralStatsItemModel>(){{
-            put("foo", item(123));
-            put("bar", item(234));
-        }});*/
 
         // Files type share
         Map<String, Integer> suffixToCount = countFilesBySuffix();
         Map<String, Integer> fileTypeShares = countFilesShareBySuffix(suffixToCount);
+        // This will need to filter out archives.
 
         stats.setStatsFilesByTypeJavaPercent(item(fileTypeShares.getOrDefault("class", 0) + fileTypeShares.getOrDefault("java", 0)));
         stats.setStatsFilesByTypeJsPercent(item(fileTypeShares.getOrDefault("js", 0)));
@@ -95,7 +96,7 @@ public class TechnologiesStatsService extends GraphService<TechnologiesStatsMode
         stats.setStatsServerResourcesJndiTotalEntries(item(countByType(JNDIResourceModel.class)));
 
         // Not sure how to get this number. Maybe JavaClassFileModel.getJavaClass() ?
-        stats.setStatsJavaClassesOriginal(item(countByType(JavaClassModel.class, JavaClassModel.DECOMPILED_SOURCE, null)));
+        stats.setStatsJavaClassesOriginal(item((int) countJavaClassesOriginal()));
         stats.setStatsJavaClassesTotal(item(countByType(JavaClassModel.class)));
         // We are not able to tell which of the jars are original. We can substract known opensource libs.
         stats.setStatsJavaJarsOriginal(item(countByType(JarArchiveModel.class) - countByType(IdentifiedArchiveModel.class)));
@@ -126,19 +127,19 @@ public class TechnologiesStatsService extends GraphService<TechnologiesStatsMode
         return (int) count;
     }
 
-
-    private <T extends WindupVertexFrame> String getTypeValueForModel(Class<T> clazz)
-    {
-        return TypeAwareFramedGraphQuery.getTypeValue(clazz);
-    }
-
     private Map<String, Integer> countFilesBySuffix()
     {
         Map<String, Integer> suffixToCount = new HashMap<>();
-        Iterable<FileModel> files = this.getGraphContext().getQuery().type(FileModel.class).vertices(FileModel.class);
-        /// TODO this just takes any file in the graph. Need to resctrict to project files.
+        Iterable<FileModel> files = this.getGraphContext().getQuery()
+                .type(FileModel.class)
+                .hasNot(FileModel.IS_DIRECTORY, true)
+                .vertices(FileModel.class);
+
+        // TODO this just takes any file in the graph. Need to resctrict to project files.
         files.forEach( (FileModel file) -> {
-            String suffix = StringUtils.substringAfterLast(file.getFileName(), "");
+            String suffix = StringUtils.substringAfterLast(file.getFileName(), ".");
+            if (suffix.isEmpty())
+                return;
             Integer val = suffixToCount.get(suffix);
             if (val == null)
                 suffixToCount.put(suffix, 1);
@@ -150,9 +151,10 @@ public class TechnologiesStatsService extends GraphService<TechnologiesStatsMode
 
     private static Map<String, Integer> countFilesShareBySuffix(Map<String, Integer> suffixToCount){
         int sum = suffixToCount.entrySet().stream().mapToInt(e -> e.getValue()).sum();
+        System.out.println("SUM: " + sum);
         Map<String, Integer> shares = suffixToCount.entrySet().stream().collect(Collectors.toMap(
                 e -> e.getKey(),
-                e -> e.getValue() / sum
+                e -> e.getValue() * 100 / sum
         ));
         return shares;
     }
@@ -195,4 +197,20 @@ public class TechnologiesStatsService extends GraphService<TechnologiesStatsMode
         return count;
     }
 
+
+
+    // Methods for individual statistic items
+
+    private long countJavaClassesOriginal()
+    {
+        //new Pipeline<Vertex, Vertex>().
+        Iterable<Vertex> startVertices = new TypeAwareFramedGraphQuery(this.getGraphContext().getFramed()).type(JavaClassModel.class).vertices();
+        Pipeline<Vertex, Vertex> pipeline = new Pipeline<Vertex, Vertex>();
+        pipeline.addPipe(new StartPipe(startVertices));
+        final OutPipe outPipe = new OutPipe(JavaClassModel.DECOMPILED_SOURCE);
+        // The BackFilterPipe needs to wrap all pipes which it "go back before".
+        // This means ...out(...).back(1);
+        pipeline.addPipe(new BackFilterPipe(outPipe));
+        return pipeline.count();
+    }
 }

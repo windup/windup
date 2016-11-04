@@ -120,7 +120,7 @@
                 <groupId>org.jboss.windup</groupId>
                 <artifactId>windup-test-harness</artifactId>
                 <scope>test</scope>
-        </dependency>  
+        </dependency>
 
     </dependencies>
 
