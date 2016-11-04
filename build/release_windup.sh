@@ -60,16 +60,18 @@ git clone git@github.com:windup/windup-rulesets.git
 git clone git@github.com:windup/windup-distribution.git
 
 cd windup-rulesets
-mvn versions:update-property -Dproperty=version.windup -DnewVersion=$REL
-#sed -i -e "s/<version.windup>.*<\/version.windup>/<version.windup>$REL<\/version.windup>/g" pom.xml
+# this doesn't work properly as we won't have staging repository closed and used for this update. The consequense is that version is not resolvable from remote repository and will beupdated to the latest released version - effectively to previous version.
+#mvn versions:update-property -DgenerateBackupPoms=false -Dproperty=version.windup -DnewVersion=$REL
+sed -i -e "s/<version.windup>.*<\/version.windup>/<version.windup>$REL<\/version.windup>/g" pom.xml
 git add -A
 git commit -a -m "Preparing for release"
 git push origin
 cd ../
 
 cd windup-distribution
-mvn versions:update-property -Dproperty=version.windup -DnewVersion=$REL
-#sed -i -e "s/<version.windup>.*<\/version.windup>/<version.windup>$REL<\/version.windup>/g" pom.xml
+# this doesn't work properly as we won't have staging repository closed and used for this update. The consequense is that version is not resolvable from remote repository and will beupdated to the latest released version - effectively to previous version.
+#mvn versions:update-property -DgenerateBackupPoms=false -Dproperty=version.windup -DnewVersion=$REL
+sed -i -e "s/<version.windup>.*<\/version.windup>/<version.windup>$REL<\/version.windup>/g" pom.xml
 git add -A
 git commit -a -m "Preparing for release"
 git push origin
@@ -80,16 +82,18 @@ release_windup git@github.com:windup/windup-rulesets.git windup-rulesets
 release_windup git@github.com:windup/windup-distribution.git windup-distribution
 
 cd windup-rulesets
-mvn versions:update-property -Dproperty=version.windup -DnewVersion=$DEV
-#sed -i -e "s/<version.windup>.*<\/version.windup>/<version.windup>$DEV<\/version.windup>/g" pom.xml
+# this doesn't work properly as we won't have staging repository closed and used for this update. The consequense is that version is not resolvable from remote repository and will beupdated to the latest released version - effectively to previous version.
+#mvn versions:update-property -DgenerateBackupPoms=false -Dproperty=version.windup -DnewVersion=$DEV
+sed -i -e "s/<version.windup>.*<\/version.windup>/<version.windup>$DEV<\/version.windup>/g" pom.xml
 git add -A
 git commit -a -m "Back to development"
 git push origin
 cd ../
 
 cd windup-distribution
-mvn versions:update-property -Dproperty=version.windup -DnewVersion=$DEV
-#sed -i -e "s/<version.windup>.*<\/version.windup>/<version.windup>$DEV<\/version.windup>/g" pom.xml
+# this doesn't work properly as we won't have staging repository closed and used for this update. The consequense is that version is not resolvable from remote repository and will beupdated to the latest released version - effectively to previous version.
+#mvn versions:update-property -DgenerateBackupPoms=false -Dproperty=version.windup -DnewVersion=$DEV
+sed -i -e "s/<version.windup>.*<\/version.windup>/<version.windup>$DEV<\/version.windup>/g" pom.xml
 git add -A
 git commit -a -m "Back to development"
 git push origin
