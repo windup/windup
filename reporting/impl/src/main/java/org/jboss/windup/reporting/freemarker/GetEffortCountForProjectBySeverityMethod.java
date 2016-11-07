@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.traversal.ProjectModelTraversal;
@@ -93,7 +94,7 @@ public class GetEffortCountForProjectBySeverityMethod implements WindupFreeMarke
         Map<IssueCategoryModel, Integer> hintEffortDetails = inlineHintService.getMigrationEffortBySeverity(event, traversal, includeTags, excludeTags,
                     recursive);
 
-        Map<IssueCategoryModel, Integer> results = new HashMap<>(classificationEffortDetails.size() + hintEffortDetails.size());
+        Map<IssueCategoryModel, Integer> results = new TreeMap<>(new IssueCategoryModel.IssueSummaryPriorityComparator());
         addAllIncidents(results, classificationEffortDetails);
         addAllIncidents(results, hintEffortDetails);
 
