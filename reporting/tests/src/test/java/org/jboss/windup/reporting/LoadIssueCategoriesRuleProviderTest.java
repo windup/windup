@@ -56,7 +56,7 @@ public class LoadIssueCategoriesRuleProviderTest
     }
 
     @Test
-    public void testApplicationReportFreemarker() throws Exception
+    public void testLoadIssueCategories() throws Exception
     {
         try (GraphContext context = factory.create())
         {
@@ -64,7 +64,8 @@ public class LoadIssueCategoriesRuleProviderTest
             DefaultEvaluationContext evaluationContext = ReportingTestUtil.createEvalContext(event);
 
             List<Path> ruleLoaderPaths = new ArrayList<>();
-            ruleLoaderPaths.add(Paths.get(ISSUE_CATEGORIES_PATH));
+            Path testPath = Paths.get(ISSUE_CATEGORIES_PATH);
+            ruleLoaderPaths.add(testPath);
             RuleLoaderContext ruleLoaderContext = new RuleLoaderContext(event.getRewriteContext(), ruleLoaderPaths, null);
             Configuration configuration = provider.getConfiguration(ruleLoaderContext);
 
@@ -74,6 +75,12 @@ public class LoadIssueCategoriesRuleProviderTest
             Assert.assertEquals(1000, (long)issueCategoryRegistry.getByID("mandatory").getPriority());
             Assert.assertEquals(2000, (long)issueCategoryRegistry.getByID("optional").getPriority());
             Assert.assertEquals(3000, (long)issueCategoryRegistry.getByID("potential").getPriority());
+            Assert.assertEquals(4000, (long)issueCategoryRegistry.getByID("extra").getPriority());
+            Assert.assertEquals("extra", issueCategoryRegistry.getByID("extra").getCategoryID());
+            Assert.assertEquals("Extra", issueCategoryRegistry.getByID("extra").getName());
+            Assert.assertEquals("Extra Category", issueCategoryRegistry.getByID("extra").getDescription());
+            Assert.assertNotNull(issueCategoryRegistry.getByID("extra").getOrigin());
+            Assert.assertTrue(issueCategoryRegistry.getByID("extra").getOrigin().endsWith("test.windup.categories.xml"));
         }
     }
 }

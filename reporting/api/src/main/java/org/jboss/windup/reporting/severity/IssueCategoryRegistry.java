@@ -118,7 +118,7 @@ public class IssueCategoryRegistry
         IssueCategory original = this.issueCategories.get(category.getCategoryID());
 
         // Just overwrite it if it was a placeholder
-        if (!original.isPlaceholder())
+        if (original != null && !original.isPlaceholder())
         {
             StringBuilder message = new StringBuilder("Issue category (ID: ").append(category.getCategoryID())
                         .append(") is defined at the following locations:");
