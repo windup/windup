@@ -9,6 +9,8 @@ import com.thinkaurelius.titan.core.TitanGraph;
 import com.tinkerpop.blueprints.util.wrappers.event.EventGraph;
 import com.tinkerpop.frames.FramedGraph;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
+import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.ocpsoft.rewrite.context.Context;
@@ -30,7 +32,11 @@ public class IssueCategoryRegistry
     private Map<String, IssueCategory> issueCategories = new ConcurrentHashMap<>();
 
     /**
-     * Gets an instance of the {@link IssueCategoryRegistry}.
+     * Gets an instance of the {@link IssueCategoryRegistry} from a {@link Context}. Note that the context variable
+     * used might vary depending upon how this class is being used.
+     *
+     * In some cases, the Context might be a part of the {@link RuleLoaderContext}, so that this registry can be used
+     * during rule initialization. In other cases, it may be the {@link GraphRewrite} event's context.
      */
     public static IssueCategoryRegistry instance(Context context)
     {
@@ -43,13 +49,18 @@ public class IssueCategoryRegistry
         return registry;
     }
 
+    /**
+     * Create a new {@link IssueCategoryRegistry}.
+     */
     public IssueCategoryRegistry()
     {
-        addDefaultsIfMissing();
+        // Add some default values as placeholders. These will generally be further defined by the rulesets themselves.
+        addDefaults();
     }
 
     /**
-     * Attaches all registered {@link IssueCategory}s to the graph.
+     * Attaches all registered {@link IssueCategory}s to the graph. This allows them to be more easily used
+     * from rules.
      */
     public void attachToGraph(GraphContext graphContext)
     {
@@ -150,7 +161,7 @@ public class IssueCategoryRegistry
      * Make sure that we have some reasonable defaults available. These would typically be provided by the rulesets
      * in the real world.
      */
-    private void addDefaultsIfMissing()
+    private void addDefaults()
     {
         this.issueCategories.putIfAbsent(MANDATORY, new IssueCategory(MANDATORY, IssueCategoryRegistry.class.getCanonicalName(), "Mandatory", MANDATORY, 1000, true));
         this.issueCategories.putIfAbsent(OPTIONAL, new IssueCategory(OPTIONAL, IssueCategoryRegistry.class.getCanonicalName(), "Optional", OPTIONAL, 1000, true));
