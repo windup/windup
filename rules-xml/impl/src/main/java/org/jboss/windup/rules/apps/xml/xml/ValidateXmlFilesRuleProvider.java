@@ -21,7 +21,7 @@ import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.InlineHintService;
 import org.jboss.windup.reporting.service.TagSetService;
-import org.jboss.windup.reporting.severity.IssueCategoryRegistry;
+import org.jboss.windup.reporting.category.IssueCategoryRegistry;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.files.condition.ProcessingIsOnlineGraphCondition;
 import org.ocpsoft.rewrite.config.Configuration;

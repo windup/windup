@@ -18,8 +18,8 @@ import org.jboss.windup.reporting.config.HintText;
 import org.jboss.windup.reporting.config.Link;
 import org.jboss.windup.reporting.config.Quickfix;
 import org.jboss.windup.reporting.config.classification.Classification;
-import org.jboss.windup.reporting.severity.IssueCategory;
-import org.jboss.windup.reporting.severity.IssueCategoryRegistry;
+import org.jboss.windup.reporting.category.IssueCategory;
+import org.jboss.windup.reporting.category.IssueCategoryRegistry;
 import org.jboss.windup.util.exception.WindupException;
 import org.w3c.dom.Element;
 
@@ -55,7 +55,7 @@ public class HintHandler implements ElementHandler<Hint>
     public Hint processElement(ParserContext handlerManager, Element element) throws ConfigurationException
     {
         String title = $(element).attr("title");
-        String categoryID = $(element).attr("categoryID");
+        String categoryID = $(element).attr("category-id");
 
         // Backwards compatibility with old rules
         if (StringUtils.isBlank(categoryID))

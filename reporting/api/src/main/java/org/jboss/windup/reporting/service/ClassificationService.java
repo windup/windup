@@ -17,7 +17,7 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.EffortReportModel;
-import org.jboss.windup.reporting.severity.IssueCategoryModel;
+import org.jboss.windup.reporting.category.IssueCategoryModel;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 

@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.config.Link;
-import org.jboss.windup.reporting.severity.IssueCategoryModel;
+import org.jboss.windup.reporting.category.IssueCategoryModel;
 
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>

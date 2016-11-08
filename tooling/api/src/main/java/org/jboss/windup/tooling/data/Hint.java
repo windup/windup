@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.List;
 
 import org.jboss.windup.reporting.model.InlineHintModel;
-import org.jboss.windup.reporting.severity.IssueCategory;
+import org.jboss.windup.reporting.category.IssueCategory;
 
 /**
  * This is equivalent to a {@link InlineHintModel}, however it contains no dependencies on having an open instance of the graph in order to operate.

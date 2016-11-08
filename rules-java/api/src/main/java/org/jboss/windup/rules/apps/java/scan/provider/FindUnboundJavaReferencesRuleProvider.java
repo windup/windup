@@ -14,7 +14,7 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.config.HasHint;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.service.InlineHintService;
-import org.jboss.windup.reporting.severity.IssueCategoryRegistry;
+import org.jboss.windup.reporting.category.IssueCategoryRegistry;
 import org.jboss.windup.rules.apps.java.model.WindupJavaConfigurationModel;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.ocpsoft.rewrite.config.Configuration;

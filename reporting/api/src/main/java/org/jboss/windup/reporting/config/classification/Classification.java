@@ -26,9 +26,9 @@ import org.jboss.windup.reporting.model.QuickfixModel;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.QuickfixService;
 import org.jboss.windup.reporting.service.TagSetService;
-import org.jboss.windup.reporting.severity.IssueCategory;
-import org.jboss.windup.reporting.severity.IssueCategoryModel;
-import org.jboss.windup.reporting.severity.IssueCategoryRegistry;
+import org.jboss.windup.reporting.category.IssueCategory;
+import org.jboss.windup.reporting.category.IssueCategoryModel;
+import org.jboss.windup.reporting.category.IssueCategoryRegistry;
 import org.jboss.windup.rules.files.model.FileReferenceModel;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.Logging;
@@ -44,7 +44,7 @@ import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
  * @author <a href="mailto:dynawest@gmail.com">Ondrej Zizka</a>
  */
 public class Classification extends ParameterizedIterationOperation<FileModel> implements ClassificationAs, ClassificationEffort,
-            ClassificationDescription, ClassificationLink, ClassificationTags, ClassificationSeverity, ClassificationQuickfix
+            ClassificationDescription, ClassificationLink, ClassificationTags, ClassificationWithIssueCategory, ClassificationQuickfix
 {
     private static final Logger LOG = Logging.get(Classification.class);
 
@@ -124,7 +124,7 @@ public class Classification extends ParameterizedIterationOperation<FileModel> i
      * Sets the {@link IssueCategory} to a non-default level.
      */
     @Override
-    public ClassificationSeverity withIssueCategory(IssueCategory issueCategory)
+    public ClassificationWithIssueCategory withIssueCategory(IssueCategory issueCategory)
     {
         this.issueCategory = issueCategory;
         return this;

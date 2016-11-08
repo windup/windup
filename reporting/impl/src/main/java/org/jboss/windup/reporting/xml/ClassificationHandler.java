@@ -15,8 +15,8 @@ import org.jboss.windup.config.parser.xml.RuleProviderHandler;
 import org.jboss.windup.reporting.config.Link;
 import org.jboss.windup.reporting.config.Quickfix;
 import org.jboss.windup.reporting.config.classification.Classification;
-import org.jboss.windup.reporting.severity.IssueCategory;
-import org.jboss.windup.reporting.severity.IssueCategoryRegistry;
+import org.jboss.windup.reporting.category.IssueCategory;
+import org.jboss.windup.reporting.category.IssueCategoryRegistry;
 import org.jboss.windup.util.exception.WindupException;
 import org.w3c.dom.Element;
 
@@ -49,7 +49,7 @@ public class ClassificationHandler implements ElementHandler<Classification>
         }
         String of = $(element).attr("of");
         String effortStr = $(element).attr("effort");
-        String issueCategoryID = $(element).attr("categoryID");
+        String issueCategoryID = $(element).attr("category-id");
 
         // Backwards compatibility with old rules
         if (StringUtils.isBlank(issueCategoryID))

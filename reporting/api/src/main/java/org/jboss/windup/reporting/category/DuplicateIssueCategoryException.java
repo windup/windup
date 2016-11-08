@@ -1,4 +1,4 @@
-package org.jboss.windup.reporting.severity;
+package org.jboss.windup.reporting.category;
 
 import org.jboss.windup.util.exception.WindupException;
 

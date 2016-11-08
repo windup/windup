@@ -1,7 +1,7 @@
 package org.jboss.windup.reporting.config.classification;
 
 import org.jboss.windup.reporting.config.Link;
-import org.jboss.windup.reporting.severity.IssueCategory;
+import org.jboss.windup.reporting.category.IssueCategory;
 import org.ocpsoft.rewrite.config.OperationBuilder;
 
 /**
@@ -22,7 +22,7 @@ public interface ClassificationDescription extends OperationBuilder
     /**
      * Specifies the {@link IssueCategory} level. This will default to {@link Classification#DEFAULT_CATEGORY} if not set here.
      */
-    ClassificationSeverity withIssueCategory(IssueCategory issueCategory);
+    ClassificationWithIssueCategory withIssueCategory(IssueCategory issueCategory);
 
     /**
      * Specify the effort that that represents the level of effort required to fix the object. Use this only if you don't want to specify any extra

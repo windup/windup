@@ -4,9 +4,7 @@ import java.io.File;
 
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.model.ClassificationModel;
-import org.jboss.windup.reporting.severity.IssueCategory;
-import org.jboss.windup.tooling.data.Classification;
-import org.jboss.windup.tooling.data.Link;
+import org.jboss.windup.reporting.category.IssueCategory;
 
 /**
  * This is a non-graph dependent analogue to {@link ClassificationModel} suitable for usage after the {@link GraphContext} itself has been closed.

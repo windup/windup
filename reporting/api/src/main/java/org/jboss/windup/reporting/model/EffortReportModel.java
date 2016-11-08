@@ -14,9 +14,9 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
-import org.jboss.windup.reporting.severity.IssueCategory;
-import org.jboss.windup.reporting.severity.IssueCategoryModel;
-import org.jboss.windup.reporting.severity.IssueCategoryRegistry;
+import org.jboss.windup.reporting.category.IssueCategory;
+import org.jboss.windup.reporting.category.IssueCategoryModel;
+import org.jboss.windup.reporting.category.IssueCategoryRegistry;
 
 /**
  * Aggregates the common properties of all the items generating effort for the Application.

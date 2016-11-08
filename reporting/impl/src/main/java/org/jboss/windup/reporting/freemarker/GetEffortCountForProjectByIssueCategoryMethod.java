@@ -1,7 +1,6 @@
 package org.jboss.windup.reporting.freemarker;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -11,7 +10,7 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.InlineHintService;
-import org.jboss.windup.reporting.severity.IssueCategoryModel;
+import org.jboss.windup.reporting.category.IssueCategoryModel;
 import org.jboss.windup.util.ExecutionStatistics;
 
 import freemarker.ext.beans.StringModel;
@@ -25,7 +24,7 @@ import freemarker.template.TemplateModelException;
  * Called from a freemarker template as follows:
  *
  * <pre>
- * getEffortCountForProjectBySeverity(projectModel, recursive) : int
+ * getEffortCountForProjectByIssueCategory(GraphRewrite, ProjectModelTraversal, recursive) : Map&lt;String, int&gt;
  * </pre>
  *
  * If recursive is true, the effort total includes child projects.
@@ -33,9 +32,9 @@ import freemarker.template.TemplateModelException;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
-public class GetEffortCountForProjectBySeverityMethod implements WindupFreeMarkerMethod
+public class GetEffortCountForProjectByIssueCategoryMethod implements WindupFreeMarkerMethod
 {
-    private static final String NAME = "getEffortCountForProjectBySeverity";
+    private static final String NAME = "getEffortCountForProjectByIssueCategory";
 
     private ClassificationService classificationService;
     private InlineHintService inlineHintService;

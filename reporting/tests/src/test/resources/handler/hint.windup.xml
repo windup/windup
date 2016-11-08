@@ -4,7 +4,7 @@
 		<link href="someUrl" title="someDescription"/>
 	</hint>
 
-	<hint message="test-message" categoryID="mandatory">
+	<hint message="test-message" category-id="mandatory">
 		<link href="url1" title="description1"/>
 		<link href="url2" title="description2"/>
 		<link href="url3" title="description3"/>

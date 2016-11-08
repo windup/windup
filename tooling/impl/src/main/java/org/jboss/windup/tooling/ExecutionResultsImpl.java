@@ -11,7 +11,7 @@ import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.InlineHintService;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.reporting.service.SourceReportService;
-import org.jboss.windup.reporting.severity.IssueCategory;
+import org.jboss.windup.reporting.category.IssueCategory;
 import org.jboss.windup.tooling.data.Classification;
 import org.jboss.windup.tooling.data.ClassificationImpl;
 import org.jboss.windup.tooling.data.Hint;

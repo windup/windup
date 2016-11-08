@@ -18,7 +18,7 @@ import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
 import freemarker.ext.beans.StringModel;
 import freemarker.template.SimpleSequence;
 import freemarker.template.TemplateModelException;
-import org.jboss.windup.reporting.severity.IssueCategoryModel;
+import org.jboss.windup.reporting.category.IssueCategoryModel;
 
 /**
  * Returns a summary of all classification and hints found during analysis in the form of a List&lt;ProblemSummary&gt;.

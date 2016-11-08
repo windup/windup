@@ -1,14 +1,15 @@
 package org.jboss.windup.reporting.config.classification;
 
+import org.jboss.windup.reporting.category.IssueCategory;
 import org.jboss.windup.reporting.config.Link;
 
 /**
- * Contains the methods that can be called after the {@link Severity} has been set.
+ * Contains the methods that can be called after the {@link IssueCategory} has been set.
  * 
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
-public interface ClassificationSeverity
+public interface ClassificationWithIssueCategory
 {
     /**
      * @see ClassificationAs#with(Link)

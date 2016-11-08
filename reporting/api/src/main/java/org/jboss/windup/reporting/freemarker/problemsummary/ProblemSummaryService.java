@@ -1,7 +1,6 @@
 package org.jboss.windup.reporting.freemarker.problemsummary;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,7 +17,7 @@ import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.InlineHintService;
-import org.jboss.windup.reporting.severity.IssueCategoryModel;
+import org.jboss.windup.reporting.category.IssueCategoryModel;
 
 /**
  * Gets information about incidents found during the analysis and provides methods for summarizing and analyzing

@@ -1,6 +1,6 @@
 package org.jboss.windup.reporting.config;
 
-import org.jboss.windup.reporting.severity.IssueCategory;
+import org.jboss.windup.reporting.category.IssueCategory;
 
 /**
  * This is {@link Hint} after the {@link IssueCategory} has been set.
