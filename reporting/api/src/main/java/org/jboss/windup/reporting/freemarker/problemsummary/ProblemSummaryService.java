@@ -1,7 +1,6 @@
 package org.jboss.windup.reporting.freemarker.problemsummary;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,16 +8,16 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
 
-import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.model.LinkModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.TagUtil;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
-import org.jboss.windup.reporting.model.Severity;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.InlineHintService;
+import org.jboss.windup.reporting.category.IssueCategoryModel;
 
 /**
  * Gets information about incidents found during the analysis and provides methods for summarizing and analyzing
@@ -30,23 +29,16 @@ import org.jboss.windup.reporting.service.InlineHintService;
 public class ProblemSummaryService
 {
     /**
-     * Gets lists of {@link ProblemSummary} objects organized by {@link Severity}.
+     * Gets lists of {@link ProblemSummary} objects organized by {@link IssueCategoryModel}.
      */
-    public static Map<Severity, List<ProblemSummary>> getProblemSummaries(GraphContext context, Set<ProjectModel> projectModels, Set<String> includeTags,
-                Set<String> excludeTags)
+    public static Map<IssueCategoryModel, List<ProblemSummary>> getProblemSummaries(GraphRewrite event, Set<ProjectModel> projectModels, Set<String> includeTags,
+                                                                               Set<String> excludeTags)
     {
         // The key is the severity as a String
-        Map<Severity, List<ProblemSummary>> results = new TreeMap<>(new Comparator<Severity>()
-        {
-            @Override
-            public int compare(Severity severity1, Severity severity2)
-            {
-                return severity1.ordinal() - severity2.ordinal();
-            }
-        });
+        Map<IssueCategoryModel, List<ProblemSummary>> results = new TreeMap<>(new IssueCategoryModel.IssueSummaryPriorityComparator());
         Map<RuleSummaryKey, ProblemSummary> ruleToSummary = new HashMap<>();
 
-        InlineHintService hintService = new InlineHintService(context);
+        InlineHintService hintService = new InlineHintService(event.getGraphContext());
         final Iterable<InlineHintModel> hints = projectModels == null ? hintService.findAll() : hintService.getHintsForProjects(projectModels);
         for (InlineHintModel hint : hints)
         {
@@ -59,7 +51,7 @@ public class ProblemSummaryService
             ProblemSummary summary = ruleToSummary.get(key);
             if (summary == null)
             {
-                summary = new ProblemSummary(UUID.randomUUID().toString(), hint.getSeverity(), hint.getRuleID(), hint.getTitle(), 1, hint.getEffort());
+                summary = new ProblemSummary(UUID.randomUUID().toString(), hint.getIssueCategory(), hint.getRuleID(), hint.getTitle(), 1, hint.getEffort());
                 for (LinkModel link : hint.getLinks())
                 {
                     summary.addLink(link.getDescription(), link.getLink());
@@ -74,7 +66,7 @@ public class ProblemSummaryService
             summary.addFile(hint.getHint(), hint.getFile());
         }
 
-        ClassificationService classificationService = new ClassificationService(context);
+        ClassificationService classificationService = new ClassificationService(event.getGraphContext());
         for (ClassificationModel classification : classificationService.findAll())
         {
             Set<String> tags = classification.getTags();
@@ -100,7 +92,7 @@ public class ProblemSummaryService
             ProblemSummary summary = ruleToSummary.get(key);
             if (summary == null)
             {
-                summary = new ProblemSummary(UUID.randomUUID().toString(), classification.getSeverity(), classification.getRuleID(),
+                summary = new ProblemSummary(UUID.randomUUID().toString(), classification.getIssueCategory(), classification.getRuleID(),
                             classification.getClassification(),
                             0, classification.getEffort());
                 for (LinkModel link : classification.getLinks())
@@ -120,13 +112,13 @@ public class ProblemSummaryService
         return results;
     }
 
-    private static void addToResults(Map<Severity, List<ProblemSummary>> results, ProblemSummary summary)
+    private static void addToResults(Map<IssueCategoryModel, List<ProblemSummary>> results, ProblemSummary summary)
     {
-        List<ProblemSummary> list = results.get(summary.getSeverity());
+        List<ProblemSummary> list = results.get(summary.getIssueCategoryModel());
         if (list == null)
         {
             list = new ArrayList<>();
-            results.put(summary.getSeverity(), list);
+            results.put(summary.getIssueCategoryModel(), list);
         }
         list.add(summary);
     }

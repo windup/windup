@@ -18,10 +18,10 @@ import org.jboss.windup.config.phase.MigrationRulesPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
-import org.jboss.windup.reporting.model.Severity;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.InlineHintService;
 import org.jboss.windup.reporting.service.TagSetService;
+import org.jboss.windup.reporting.category.IssueCategoryRegistry;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.files.condition.ProcessingIsOnlineGraphCondition;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -142,7 +142,9 @@ public class ValidateXmlFilesRuleProvider extends AbstractRuleProvider
             hintModel.setLength(1);
             hintModel.setFile(sourceFile);
             hintModel.setEffort(1);
-            hintModel.setSeverity(Severity.POTENTIAL);
+
+            IssueCategoryRegistry issueCategoryRegistry = IssueCategoryRegistry.instance(event.getRewriteContext());
+            hintModel.setIssueCategory(issueCategoryRegistry.loadFromGraph(event.getGraphContext(), IssueCategoryRegistry.POTENTIAL));
 
             if (e.getCause() instanceof InvalidXSDURLException)
             {
@@ -170,7 +172,9 @@ public class ValidateXmlFilesRuleProvider extends AbstractRuleProvider
         ClassificationModel model = classificationService.attachClassification(context, sourceFile, XmlFileModel.NOT_VALID_XML,
                     null);
         model.setEffort(0); // do not rely on default 0 value and set it that transparently
-        model.setSeverity(Severity.POTENTIAL);
+
+        IssueCategoryRegistry issueCategoryRegistry = IssueCategoryRegistry.instance(event.getRewriteContext());
+        model.setIssueCategory(issueCategoryRegistry.loadFromGraph(event.getGraphContext(), IssueCategoryRegistry.POTENTIAL));
         
         TagSetService tagSetService = new TagSetService(event.getGraphContext());
         model.setTagModel(tagSetService.getOrCreate(event, Collections.singleton(NOT_VALID_XML_TAG)));

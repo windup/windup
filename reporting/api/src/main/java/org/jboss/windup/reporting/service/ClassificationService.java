@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.LinkModel;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -16,7 +17,7 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.EffortReportModel;
-import org.jboss.windup.reporting.model.Severity;
+import org.jboss.windup.reporting.category.IssueCategoryModel;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
@@ -118,14 +119,14 @@ public class ClassificationService extends GraphService<ClassificationModel>
     /**
      * Returns the total incidents in all of the {@link ClassificationModel}s associated with the files in this project by severity.
      */
-    public Map<Severity, Integer> getMigrationEffortBySeverity(
+    public Map<IssueCategoryModel, Integer> getMigrationEffortBySeverity(GraphRewrite event,
         ProjectModelTraversal traversal, Set<String> includeTags, Set<String> excludeTags, boolean recursive)
     {
-        MapSumEffortAccumulatorFunction<Severity> accumulator = new MapSumEffortAccumulatorFunction()
+        MapSumEffortAccumulatorFunction<IssueCategoryModel> accumulator =  new MapSumEffortAccumulatorFunction<IssueCategoryModel>()
         {
-            public Severity vertexToKey(Vertex effortReportVertex)
+            public IssueCategoryModel vertexToKey(Vertex effortReportVertex)
             {
-                return frame(effortReportVertex).getSeverity();
+                return frame(effortReportVertex).getIssueCategory();
             }
         };
         this.getMigrationEffortDetails(traversal, includeTags, excludeTags, recursive, true, accumulator);

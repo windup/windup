@@ -11,6 +11,7 @@ import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.InlineHintService;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.reporting.service.SourceReportService;
+import org.jboss.windup.reporting.category.IssueCategory;
 import org.jboss.windup.tooling.data.Classification;
 import org.jboss.windup.tooling.data.ClassificationImpl;
 import org.jboss.windup.tooling.data.Hint;
@@ -89,7 +90,7 @@ public class ExecutionResultsImpl implements ExecutionResults
             hint.setFile(hintModel.getFile().asFile());
             hint.setTitle(hintModel.getTitle());
             hint.setHint(hintModel.getHint());
-            hint.setSeverity(hintModel.getSeverity());
+            hint.setIssueCategory(new IssueCategory(hintModel.getIssueCategory()));
             hint.setEffort(hintModel.getEffort());
             hint.setColumn(hintModel.getColumnNumber());
             hint.setLineNumber(hintModel.getLineNumber());
@@ -117,7 +118,7 @@ public class ExecutionResultsImpl implements ExecutionResults
                 classification.setDescription(classificationModel.getDescription());
                 classification.setEffort(classificationModel.getEffort());
                 classification.setRuleID(classificationModel.getRuleID());
-                classification.setSeverity(classificationModel.getSeverity());
+                classification.setIssueCategory(new IssueCategory(classificationModel.getIssueCategory()));
                 classification.setFile(fileModel.asFile());
 
                 classification.setLinks(asLinks(classificationModel.getLinks()));

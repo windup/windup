@@ -21,6 +21,7 @@ import org.jboss.forge.furnace.util.Annotations;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.builder.RuleProviderBuilder;
 import org.jboss.windup.config.exception.ConfigurationException;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.ConfigurationRuleBuilder;
 import org.ocpsoft.rewrite.config.ConfigurationRuleParameterWhere;
@@ -38,6 +39,7 @@ public class ParserContext
     private ConfigurationRuleBuilder rule;
     private ConfigurationRuleParameterWhere where;
     private final Map<HandlerId, ElementHandler<?>> handlers = new HashMap<>();
+    private final RuleLoaderContext ruleLoaderContext;
 
     /**
      * The addon containing the xml file currently being parsed. This is needed mainly because of the classloader that
@@ -57,8 +59,10 @@ public class ParserContext
     /**
      * Initialize tag handlers based upon the provided furnace instance.
      */
-    public ParserContext(Furnace furnace)
+    public ParserContext(Furnace furnace, RuleLoaderContext ruleLoaderContext)
     {
+        this.ruleLoaderContext = ruleLoaderContext;
+
         @SuppressWarnings("rawtypes")
         Imported<ElementHandler> loadedHandlers = furnace.getAddonRegistry().getServices(ElementHandler.class);
         for (ElementHandler<?> handler : loadedHandlers)
@@ -244,5 +248,13 @@ public class ParserContext
     public Path getXmlInputRootPath()
     {
         return xmlInputRootPath;
+    }
+
+    /**
+     * Get access to rule loader information (paths, context variables, etc).
+     */
+    public RuleLoaderContext getRuleLoaderContext()
+    {
+        return ruleLoaderContext;
     }
 }

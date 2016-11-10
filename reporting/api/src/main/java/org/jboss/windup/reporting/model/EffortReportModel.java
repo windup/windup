@@ -1,14 +1,22 @@
 package org.jboss.windup.reporting.model;
 
+import com.thinkaurelius.titan.core.TitanGraph;
+import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.blueprints.util.wrappers.event.EventGraph;
+import com.tinkerpop.frames.Adjacency;
+import com.tinkerpop.frames.FramedGraph;
+import com.tinkerpop.frames.modules.javahandler.JavaHandler;
+import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import org.jboss.windup.graph.IndexType;
 import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
-import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.modules.javahandler.JavaHandler;
-import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.reporting.category.IssueCategory;
+import org.jboss.windup.reporting.category.IssueCategoryModel;
+import org.jboss.windup.reporting.category.IssueCategoryRegistry;
 
 /**
  * Aggregates the common properties of all the items generating effort for the Application.
@@ -18,12 +26,10 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(EffortReportModel.TYPE)
 public interface EffortReportModel extends WindupVertexFrame
 {
-    Severity DEFAULT_SEVERITY = Severity.OPTIONAL;
-
     String TYPE = "EffortReportModel";
     String TYPE_PREFIX = TYPE + ":";
-    String EFFORT = "EffortReportModelEffort"; // don't use the prefix as we can't name the index with an "_"
-    String SEVERITY = TYPE_PREFIX + "severity";
+    String EFFORT = "EffortReportModelEffort"; // don't use the prefix as we can't name the index with special characters
+    String ISSUE_CATEGORY = TYPE_PREFIX + "issueCategory";
 
     /**
      * Set the effort weight (E.g. How difficult is it to fix the issue?)
@@ -39,26 +45,34 @@ public interface EffortReportModel extends WindupVertexFrame
     int getEffort();
 
     /**
-     * Contains a severity level that may be used to indicate to the user the severity level of a problem.
+     * Contains a the id of the {@link IssueCategory} (for example, mandatory or potential).
      */
-    @Property(SEVERITY)
-    void setSeverity(Severity severity);
+    @Adjacency(label = ISSUE_CATEGORY, direction = Direction.OUT)
+    void setIssueCategory(IssueCategoryModel issueCategory);
 
     /**
-     * Contains a severity level that may be used to indicate to the user the severity level of a problem.
+     * Contains a the id of the {@link IssueCategory} (for example, mandatory or potential).
      */
     @JavaHandler
-    Severity getSeverity();
+    IssueCategoryModel getIssueCategory();
 
     abstract class Impl implements EffortReportModel, JavaHandlerContext<Vertex>
     {
         @Override
-        public Severity getSeverity()
+        public IssueCategoryModel getIssueCategory()
         {
-            String severityString = it().getProperty(SEVERITY);
-            if (severityString == null)
-                return DEFAULT_SEVERITY;
-            return Severity.valueOf(severityString);
+            Iterable<Vertex> categoryVertices = it().getVertices(Direction.OUT, ISSUE_CATEGORY);
+
+            IssueCategoryModel result;
+            if (categoryVertices.iterator().hasNext())
+            {
+                result = frame(categoryVertices.iterator().next());
+            }
+            else
+            {
+                result = IssueCategoryRegistry.loadFromGraph((FramedGraph<EventGraph<TitanGraph>>)g(), IssueCategoryRegistry.DEFAULT);
+            }
+            return result;
         }
     }
 }

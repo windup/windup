@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.windup.config.AbstractRuleProvider;
@@ -20,9 +21,10 @@ import org.jboss.windup.graph.traversal.OnlyOnceTraversalStrategy;
 import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.reporting.freemarker.problemsummary.ProblemSummary;
 import org.jboss.windup.reporting.freemarker.problemsummary.ProblemSummaryService;
-import org.jboss.windup.reporting.model.Severity;
 import org.jboss.windup.reporting.service.EffortReportService;
 import org.jboss.windup.reporting.service.ReportService;
+import org.jboss.windup.reporting.category.IssueCategory;
+import org.jboss.windup.reporting.category.IssueCategoryRegistry;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -82,9 +84,10 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider
                     MappingJsonFactory jsonFactory = new MappingJsonFactory();
                     jsonFactory.disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
                     ObjectMapper objectMapper = new ObjectMapper(jsonFactory);
-                    Map<Severity, List<ProblemSummary>> summariesBySeverity =
+                    Map<String, List<ProblemSummary>> summariesBySeverity =
                         ProblemSummaryService.getProblemSummaries(
-                            event.getGraphContext(), projectModelTraversal.getAllProjects(true), Collections.<String>emptySet(), Collections.<String>emptySet());
+                            event, projectModelTraversal.getAllProjects(true), Collections.emptySet(), Collections.emptySet())
+                            .entrySet().stream().collect(Collectors.toMap((e) -> e.getKey().getName(), Map.Entry::getValue));
 
                     issueSummaryWriter.write("WINDUP_ISSUE_SUMMARIES['" + inputApplication.asVertex().getId() + "'] = ");
                     objectMapper.writeValue(issueSummaryWriter, summariesBySeverity);
@@ -112,9 +115,11 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider
                 issueSummaryWriter.write("];" + NEWLINE);
 
                 issueSummaryWriter.write("var severityOrder = [");
-                issueSummaryWriter.write("'" + Severity.MANDATORY + "', ");
-                issueSummaryWriter.write("'" + Severity.OPTIONAL + "', ");
-                issueSummaryWriter.write("'" + Severity.POTENTIAL + "'");
+                IssueCategoryRegistry issueCategoryRegistry = IssueCategoryRegistry.instance(event.getRewriteContext());
+                for (IssueCategory issueCategory : issueCategoryRegistry.getIssueCategories())
+                {
+                    issueSummaryWriter.write("'" + issueCategory.getName() + "', ");
+                }
                 issueSummaryWriter.write("];" + NEWLINE);
             }
         }

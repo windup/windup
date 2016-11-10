@@ -114,6 +114,8 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
                 vars.put(DEFAULT_ITERATION_PAYLOAD_NAME, payload);
             }
 
+            vars.put("event", event);
+
             // also, extension functions (these are kept separate from vars in order to prevent them
             // from being stored in the associated data with the reportmodel)
             final Map<String, Object> freeMarkerExtensions;

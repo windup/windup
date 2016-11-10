@@ -76,6 +76,8 @@ public class FreeMarkerOperation extends GraphOperation
             Map<String, Object> vars = FreeMarkerUtil.findFreeMarkerContextVariables(varStack,
                         variableNames.toArray(new String[variableNames.size()]));
 
+            vars.put("event", event);
+
             // also, extension functions
             Map<String, Object> freeMarkerExtensions = FreeMarkerUtil.findFreeMarkerExtensions(furnace, event);
 

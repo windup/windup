@@ -17,7 +17,6 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.DefaultEvaluationContext;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleSubset;
-import org.jboss.windup.config.Variables;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
@@ -27,8 +26,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ocpsoft.rewrite.config.Configuration;
-import org.ocpsoft.rewrite.param.DefaultParameterValueStore;
-import org.ocpsoft.rewrite.param.ParameterValueStore;
 
 @RunWith(Arquillian.class)
 public class FreeMarkerIterationOperationTest
@@ -43,11 +40,11 @@ public class FreeMarkerIterationOperationTest
     })
     public static AddonArchive getDeployment()
     {
-        AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
+        return ShrinkWrap.create(AddonArchive.class)
                     .addBeansXML()
+                    .addClass(ReportingTestUtil.class)
                     .addClass(TestFreeMarkerOperationRuleProvider.class)
                     .addAsResource(new File("src/test/resources/reports"));
-        return archive;
     }
 
     @Inject
@@ -64,7 +61,7 @@ public class FreeMarkerIterationOperationTest
         try (GraphContext context = factory.create())
         {
             GraphRewrite event = new GraphRewrite(context);
-            DefaultEvaluationContext evaluationContext = createEvalContext(event);
+            DefaultEvaluationContext evaluationContext = ReportingTestUtil.createEvalContext(event);
             fillData(context);
 
             Configuration configuration = provider.getConfiguration(null);
@@ -93,13 +90,4 @@ public class FreeMarkerIterationOperationTest
         appReportModel.setReportFilename("testapplicationreport.html");
     }
 
-    private DefaultEvaluationContext createEvalContext(GraphRewrite event)
-    {
-        final Variables varStack = Variables.instance(event);
-        final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
-        final DefaultParameterValueStore values = new DefaultParameterValueStore();
-        evaluationContext.put(ParameterValueStore.class, values);
-        event.getRewriteContext().put(Variables.class, varStack);
-        return evaluationContext;
-    }
 }

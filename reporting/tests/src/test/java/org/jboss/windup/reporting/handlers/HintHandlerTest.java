@@ -3,6 +3,7 @@ package org.jboss.windup.reporting.handlers;
 import static org.joox.JOOX.$;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -17,10 +18,11 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.reporting.config.Hint;
 import org.jboss.windup.reporting.config.Link;
-import org.jboss.windup.reporting.model.Severity;
+import org.jboss.windup.reporting.category.IssueCategoryRegistry;
 import org.jboss.windup.util.exception.WindupException;
 import org.junit.Assert;
 import org.junit.Test;
@@ -54,8 +56,9 @@ public class HintHandlerTest
     @Test
     public void testHintHandler() throws Exception
     {
-        ParserContext parser = new ParserContext(furnace);
         File fXmlFile = new File(HINT_XML_FILE);
+        RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
+        ParserContext parser = new ParserContext(furnace, loaderContext);
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         dbFactory.setNamespaceAware(true);
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -68,7 +71,7 @@ public class HintHandlerTest
         Hint hint = parser.processElement(firstHint);
         Assert.assertEquals("testVariable", hint.getVariableName());
         Assert.assertEquals(5, hint.getEffort());
-        Assert.assertEquals(Severity.OPTIONAL, hint.getSeverity());
+        Assert.assertNull(IssueCategoryRegistry.OPTIONAL, hint.getIssueCategory());
         Assert.assertEquals("test message", hint.getHintText().toString());
         Assert.assertEquals(1, hint.getLinks().size());
         List<Link> links = hint.getLinks();
@@ -80,7 +83,7 @@ public class HintHandlerTest
         hint = parser.processElement(secondHint);
         Assert.assertEquals(null, hint.getVariableName());
         Assert.assertEquals(0, hint.getEffort());
-        Assert.assertEquals(Severity.MANDATORY, hint.getSeverity());
+        Assert.assertEquals(IssueCategoryRegistry.MANDATORY, hint.getIssueCategory().getCategoryID());
         Assert.assertEquals("test-message", hint.getHintText().toString());
         Assert.assertEquals(3, hint.getLinks().size());
         links = hint.getLinks();
@@ -103,8 +106,9 @@ public class HintHandlerTest
     @Test(expected = WindupException.class)
     public void testXmlFileWithoutPublidIdAndXpath() throws Exception
     {
-        ParserContext parser = new ParserContext(furnace);
         File fXmlFile = new File(HINT_XML_FILE);
+        RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
+        ParserContext parser = new ParserContext(furnace, loaderContext);
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         dbFactory.setNamespaceAware(true);
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();

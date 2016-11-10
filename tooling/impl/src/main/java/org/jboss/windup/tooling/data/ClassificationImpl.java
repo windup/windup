@@ -4,9 +4,7 @@ import java.io.File;
 
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.model.ClassificationModel;
-import org.jboss.windup.reporting.model.Severity;
-import org.jboss.windup.tooling.data.Classification;
-import org.jboss.windup.tooling.data.Link;
+import org.jboss.windup.reporting.category.IssueCategory;
 
 /**
  * This is a non-graph dependent analogue to {@link ClassificationModel} suitable for usage after the {@link GraphContext} itself has been closed.
@@ -24,7 +22,7 @@ public class ClassificationImpl implements Classification
 
 
     private int effort;
-    private Severity severity;
+    private IssueCategory issueCategory;
     private String ruleID;
 
     /**
@@ -133,17 +131,17 @@ public class ClassificationImpl implements Classification
      * This is a hint as to the severity of the problem. This may be used for supplying an icon or glyph in the report to the user.
      */
     @Override
-    public Severity getSeverity()
+    public IssueCategory getIssueCategory()
     {
-        return severity;
+        return issueCategory;
     }
 
     /**
      * This is a hint as to the severity of the problem. This may be used for supplying an icon or glyph in the report to the user.
      */
-    public void setSeverity(Severity severity)
+    public void setIssueCategory(IssueCategory issueCategory)
     {
-        this.severity = severity;
+        this.issueCategory = issueCategory;
     }
 
     /**

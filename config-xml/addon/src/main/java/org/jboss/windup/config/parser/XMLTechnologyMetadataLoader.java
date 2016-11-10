@@ -2,11 +2,13 @@ package org.jboss.windup.config.parser;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.inject.Inject;
 
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.util.Visitor;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.TechnologyMetadata;
 import org.jboss.windup.config.metadata.TechnologyMetadataLoader;
 import org.jboss.windup.config.metadata.TechnologyReference;
@@ -50,7 +52,8 @@ public class XMLTechnologyMetadataLoader implements TechnologyMetadataLoader
 
     private void loadMetadata(File file)
     {
-        ParserContext parser = new ParserContext(furnace);
+        RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(file.toPath()), null);
+        ParserContext parser = new ParserContext(furnace, loaderContext);
 
         parser.setXmlInputPath(file.toPath());
         parser.setXmlInputRootPath(file.getParentFile().toPath());

@@ -17,10 +17,10 @@ import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.config.projecttraversal.ProjectTraversalCache;
 import org.jboss.windup.reporting.model.ClassificationModel;
-import org.jboss.windup.reporting.model.Severity;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.TechnologyTagService;
+import org.jboss.windup.reporting.category.IssueCategoryRegistry;
 import org.jboss.windup.rules.apps.javaee.model.EjbMessageDrivenModel;
 import org.jboss.windup.rules.apps.javaee.model.EjbSessionBeanModel;
 import org.jboss.windup.rules.apps.javaee.model.EnvironmentReferenceModel;
@@ -71,7 +71,8 @@ public class ResolveWebLogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
         ClassificationService classificationService = new ClassificationService(event.getGraphContext());
         ClassificationModel classif = classificationService.attachClassification(context, weblogicEjbXml, "WebLogic EJB XML", "WebLogic Enterprise Java Bean XML Descriptor.");
         classif.setEffort(3);
-        classif.setSeverity(Severity.MANDATORY);
+        IssueCategoryRegistry issueCategoryRegistry = IssueCategoryRegistry.instance(event.getRewriteContext());
+        classif.setIssueCategory(issueCategoryRegistry.loadFromGraph(event.getGraphContext(), IssueCategoryRegistry.MANDATORY));
 
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
         technologyTagService.addTagToFileModel(weblogicEjbXml, "WebLogic EJB XML", TechnologyTagLevel.IMPORTANT);

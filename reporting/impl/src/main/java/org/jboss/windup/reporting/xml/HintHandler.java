@@ -18,7 +18,8 @@ import org.jboss.windup.reporting.config.HintText;
 import org.jboss.windup.reporting.config.Link;
 import org.jboss.windup.reporting.config.Quickfix;
 import org.jboss.windup.reporting.config.classification.Classification;
-import org.jboss.windup.reporting.model.Severity;
+import org.jboss.windup.reporting.category.IssueCategory;
+import org.jboss.windup.reporting.category.IssueCategoryRegistry;
 import org.jboss.windup.util.exception.WindupException;
 import org.w3c.dom.Element;
 
@@ -54,7 +55,12 @@ public class HintHandler implements ElementHandler<Hint>
     public Hint processElement(ParserContext handlerManager, Element element) throws ConfigurationException
     {
         String title = $(element).attr("title");
-        String severityStr = $(element).attr("severity");
+        String categoryID = $(element).attr("category-id");
+
+        // Backwards compatibility with old rules
+        if (StringUtils.isBlank(categoryID))
+            categoryID = $(element).attr("severity");
+
         String message = $(element).attr("message");
         String in = $(element).attr("in");
         Set<String> tags = new HashSet<>();
@@ -92,10 +98,11 @@ public class HintHandler implements ElementHandler<Hint>
             hint = Hint.in(in).withText(message);
         }
 
-        if (StringUtils.isNotBlank(severityStr))
+        if (StringUtils.isNotBlank(categoryID))
         {
-            Severity severity = Severity.valueOf(severityStr.toUpperCase());
-            hint.withSeverity(severity);
+            IssueCategoryRegistry issueCategoryRegistry = IssueCategoryRegistry.instance(handlerManager.getRuleLoaderContext().getContext());
+            IssueCategory issueCategory = issueCategoryRegistry.getByID(categoryID);
+            hint.withIssueCategory(issueCategory);
         }
 
         if (!StringUtils.isBlank(effortStr))

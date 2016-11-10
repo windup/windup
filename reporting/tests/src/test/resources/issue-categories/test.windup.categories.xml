@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<categories>
+    <category id="mandatory" priority="1000">
+        <name>Mandatory</name>
+        <description>Items that will require changes in order for the migration to be successful.</description>
+    </category>
+
+    <category id="optional" priority="2000">
+        <name>Optional</name>
+        <description>Items that are recommended, but are not necessarily required for a successful migration.
+        </description>
+    </category>
+
+    <category id="potential" priority="3000">
+        <name>Potential Issues</name>
+        <description>Items in this category will need to be assessed manually to determine whether or not action is
+            required.
+        </description>
+    </category>
+
+    <category id="extra" priority="4000">
+        <name>Extra</name>
+        <description>Extra Category</description>
+    </category>
+</categories>

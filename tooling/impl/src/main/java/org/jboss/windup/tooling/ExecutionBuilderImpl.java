@@ -232,7 +232,6 @@ public class ExecutionBuilderImpl implements ExecutionBuilder, ExecutionBuilderS
             {
                 windupConfiguration.setOptionValue(option.getKey(), option.getValue());
             }
-
             
             windupConfiguration
                         .setProgressMonitor(progressMonitor)

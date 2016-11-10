@@ -1,6 +1,7 @@
 package org.jboss.windup.config.metadata;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -17,6 +18,7 @@ import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.AbstractRuleProvider;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.config.phase.PostMigrationRulesPhase;
 import org.jboss.windup.config.phase.RulePhase;
@@ -55,8 +57,9 @@ public class MetaDataHandlerTest
     @Test
     public void testXmlParsinfOfRulesetMetadata() throws Exception
     {
-        ParserContext parser = new ParserContext(furnace);
         File fXmlFile = new File(XML_FILE);
+        RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
+        ParserContext parser = new ParserContext(furnace, loaderContext);
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         dbFactory.setNamespaceAware(true);
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -90,19 +93,17 @@ public class MetaDataHandlerTest
         Assert.assertTrue(targetTechnologies.contains(new TechnologyReference("jsp")));
         Assert.assertFalse(metadata.isOverrideProvider());
 
-        try (GraphContext graphContext = graphContextFactory.create())
-        {
-            Configuration configuration = abstractRuleProvider.getConfiguration(null);
-            Assert.assertFalse(configuration.getRules().isEmpty());
-            Assert.assertTrue(configuration.getRules().get(0).toString().contains("test {foo} iteration perform"));
-        }
+        Configuration configuration = abstractRuleProvider.getConfiguration(null);
+        Assert.assertFalse(configuration.getRules().isEmpty());
+        Assert.assertTrue(configuration.getRules().get(0).toString().contains("test {foo} iteration perform"));
     }
 
     @Test
     public void testXmlRuleOverrideProviderMetadata() throws Exception
     {
-        ParserContext parser = new ParserContext(furnace);
         File fXmlFile = new File(XML_WITH_OVERRIDE_FILE);
+        RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
+        ParserContext parser = new ParserContext(furnace, loaderContext);
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         dbFactory.setNamespaceAware(true);
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();

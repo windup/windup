@@ -4,7 +4,7 @@ import java.io.File;
 
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.model.ClassificationModel;
-import org.jboss.windup.reporting.model.Severity;
+import org.jboss.windup.reporting.category.IssueCategory;
 
 /**
  * This is a non-graph dependent analogue to {@link ClassificationModel} suitable for usage after the {@link GraphContext} itself has been closed.
@@ -52,7 +52,7 @@ public interface Classification
     /**
      * This is a hint as to the severity of the problem. This may be used for supplying an icon or glyph in the report to the user.
      */
-    Severity getSeverity();
+    IssueCategory getIssueCategory();
 
     /**
      * This contains the id of the rule that produced this {@link Classification}.

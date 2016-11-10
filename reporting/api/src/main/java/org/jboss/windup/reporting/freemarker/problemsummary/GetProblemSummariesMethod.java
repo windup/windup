@@ -14,11 +14,11 @@ import org.jboss.windup.graph.traversal.OnlyOnceTraversalStrategy;
 import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.reporting.freemarker.FreeMarkerUtil;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
-import org.jboss.windup.reporting.model.Severity;
 
 import freemarker.ext.beans.StringModel;
 import freemarker.template.SimpleSequence;
 import freemarker.template.TemplateModelException;
+import org.jboss.windup.reporting.category.IssueCategoryModel;
 
 /**
  * Returns a summary of all classification and hints found during analysis in the form of a List&lt;ProblemSummary&gt;.
@@ -47,47 +47,37 @@ public class GetProblemSummariesMethod implements WindupFreeMarkerMethod
     @Override
     public Object exec(List arguments) throws TemplateModelException
     {
+        if (arguments.size() == 0)
+            throw new TemplateModelException("Method " + NAME + " requires the following parameters (GraphRewrite event, ProjectModel project, Set<String> includeTags, Set<String> excludeTags)");
+
+        // Gets the graph rewrite event
+        final GraphRewrite event = (GraphRewrite)((StringModel)arguments.get(0)).getWrappedObject();
+
         // Get the project if one was passed in
         final ProjectModel projectModel;
-        if (arguments.size() > 0)
-        {
-            StringModel projectModelArg = (StringModel) arguments.get(0);
-            if (projectModelArg == null)
-                projectModel = null;
-            else
-                projectModel = (ProjectModel) projectModelArg.getWrappedObject();
-        }
-        else
-        {
-            projectModel = null;
-        }
 
-        Set<String> includeTags = FreeMarkerUtil.simpleSequenceToSet((SimpleSequence) arguments.get(1));
-        Set<String> excludeTags = FreeMarkerUtil.simpleSequenceToSet((SimpleSequence) arguments.get(2));
+        StringModel projectModelArg = (StringModel) arguments.get(1);
+        if (projectModelArg == null)
+            projectModel = null;
+        else
+            projectModel = (ProjectModel) projectModelArg.getWrappedObject();
+
+        Set<String> includeTags = FreeMarkerUtil.simpleSequenceToSet((SimpleSequence) arguments.get(2));
+        Set<String> excludeTags = FreeMarkerUtil.simpleSequenceToSet((SimpleSequence) arguments.get(3));
 
         Set<ProjectModel> projectModels = getProjects(projectModel);
-        Map<Severity, List<ProblemSummary>> problemSummariesOriginal = ProblemSummaryService.getProblemSummaries(context, projectModels, includeTags,
+        Map<IssueCategoryModel, List<ProblemSummary>> problemSummariesOriginal = ProblemSummaryService.getProblemSummaries(event, projectModels, includeTags,
                     excludeTags);
 
         // Convert the keys to String to make Freemarker happy
-        Comparator<Severity> severityComparator = new Comparator<Severity>()
-        {
-            @Override
-            public int compare(Severity severity1, Severity severity2)
-            {
-                int ordinal1 = severity1 == null ? 0 : severity1.ordinal();
-                int ordinal2 = severity2 == null ? 0 : severity2.ordinal();
-
-                return ordinal1 - ordinal2;
-            }
-        };
-        Map<Severity, List<ProblemSummary>> problemSummaries = new TreeMap<>(severityComparator);
+        Comparator<IssueCategoryModel> severityComparator = new IssueCategoryModel.IssueSummaryPriorityComparator();
+        Map<IssueCategoryModel, List<ProblemSummary>> problemSummaries = new TreeMap<>(severityComparator);
         problemSummaries.putAll(problemSummariesOriginal);
 
         Map<String, List<ProblemSummary>> primarySummariesByString = new LinkedHashMap<>(problemSummariesOriginal.size());
-        for (Map.Entry<Severity, List<ProblemSummary>> entry : problemSummaries.entrySet())
+        for (Map.Entry<IssueCategoryModel, List<ProblemSummary>> entry : problemSummaries.entrySet())
         {
-            String severityString = entry.getKey() == null ? null : entry.getKey().toString();
+            String severityString = entry.getKey() == null ? null : entry.getKey().getName();
             primarySummariesByString.put(severityString, entry.getValue());
         }
 

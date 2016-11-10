@@ -4,6 +4,7 @@ import static org.joox.JOOX.$;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -17,13 +18,13 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.reporting.model.QuickfixType;
 import org.jboss.windup.reporting.config.Hint;
 import org.jboss.windup.reporting.config.Link;
 import org.jboss.windup.reporting.config.Quickfix;
 import org.jboss.windup.reporting.config.classification.Classification;
-import org.jboss.windup.reporting.model.Severity;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -53,8 +54,9 @@ public class QuickfixHandlerTest
     @Test
     public void testClassificationParsing() throws Exception
     {
-        ParserContext parser = new ParserContext(furnace);
         File fXmlFile = new File(QUICKFIX_XML_FILE);
+        RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
+        ParserContext parser = new ParserContext(furnace, loaderContext);
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         dbFactory.setNamespaceAware(true);
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -66,7 +68,6 @@ public class QuickfixHandlerTest
         Element firstClassification = classificationList.get(0);
         Classification classification = parser.<Classification> processElement(firstClassification);
 
-        Assert.assertEquals(Severity.OPTIONAL, classification.getSeverity());
         Assert.assertEquals(0, classification.getEffort());
         Assert.assertEquals("test-classification", classification.getClassificationPattern().toString());
         Assert.assertEquals(0, classification.getLinks().size());
@@ -79,7 +80,6 @@ public class QuickfixHandlerTest
         classification = parser.<Classification> processElement(secondClassification);
 
         Assert.assertEquals(null, classification.getVariableName());
-        Assert.assertEquals(Severity.OPTIONAL, classification.getSeverity());
         Assert.assertEquals(1, classification.getEffort());
         Assert.assertEquals("test-message", classification.getClassificationPattern().toString());
         Assert.assertEquals(null, classification.getDescriptionPattern());
@@ -101,8 +101,9 @@ public class QuickfixHandlerTest
     @Test
     public void testHintParsing() throws Exception
     {
-        ParserContext parser = new ParserContext(furnace);
         File fXmlFile = new File(QUICKFIX_XML_FILE);
+        RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
+        ParserContext parser = new ParserContext(furnace, loaderContext);
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         dbFactory.setNamespaceAware(true);
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
@@ -115,7 +116,6 @@ public class QuickfixHandlerTest
         Hint hint = parser.processElement(hintElement);
         Assert.assertEquals("testVariable", hint.getVariableName());
         Assert.assertEquals(2, hint.getEffort());
-        Assert.assertEquals(Severity.OPTIONAL, hint.getSeverity());
         Assert.assertEquals("test message", hint.getHintText().toString());
         Assert.assertEquals(2, hint.getLinks().size());
         List<Link> links = hint.getLinks();
