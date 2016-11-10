@@ -8,7 +8,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
 
-import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.LinkModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -31,14 +31,14 @@ public class ProblemSummaryService
     /**
      * Gets lists of {@link ProblemSummary} objects organized by {@link IssueCategoryModel}.
      */
-    public static Map<IssueCategoryModel, List<ProblemSummary>> getProblemSummaries(GraphRewrite event, Set<ProjectModel> projectModels, Set<String> includeTags,
-                                                                               Set<String> excludeTags)
+    public static Map<IssueCategoryModel, List<ProblemSummary>> getProblemSummaries(GraphContext graphContext, Set<ProjectModel> projectModels, Set<String> includeTags,
+                                                                                    Set<String> excludeTags)
     {
         // The key is the severity as a String
         Map<IssueCategoryModel, List<ProblemSummary>> results = new TreeMap<>(new IssueCategoryModel.IssueSummaryPriorityComparator());
         Map<RuleSummaryKey, ProblemSummary> ruleToSummary = new HashMap<>();
 
-        InlineHintService hintService = new InlineHintService(event.getGraphContext());
+        InlineHintService hintService = new InlineHintService(graphContext);
         final Iterable<InlineHintModel> hints = projectModels == null ? hintService.findAll() : hintService.getHintsForProjects(projectModels);
         for (InlineHintModel hint : hints)
         {
@@ -66,7 +66,7 @@ public class ProblemSummaryService
             summary.addFile(hint.getHint(), hint.getFile());
         }
 
-        ClassificationService classificationService = new ClassificationService(event.getGraphContext());
+        ClassificationService classificationService = new ClassificationService(graphContext);
         for (ClassificationModel classification : classificationService.findAll())
         {
             Set<String> tags = classification.getTags();

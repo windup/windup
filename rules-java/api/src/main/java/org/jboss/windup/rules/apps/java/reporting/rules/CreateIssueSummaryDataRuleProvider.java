@@ -86,7 +86,7 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider
                     ObjectMapper objectMapper = new ObjectMapper(jsonFactory);
                     Map<String, List<ProblemSummary>> summariesBySeverity =
                         ProblemSummaryService.getProblemSummaries(
-                            event, projectModelTraversal.getAllProjects(true), Collections.emptySet(), Collections.emptySet())
+                            event.getGraphContext(), projectModelTraversal.getAllProjects(true), Collections.emptySet(), Collections.emptySet())
                             .entrySet().stream().collect(Collectors.toMap((e) -> e.getKey().getName(), Map.Entry::getValue));
 
                     issueSummaryWriter.write("WINDUP_ISSUE_SUMMARIES['" + inputApplication.asVertex().getId() + "'] = ");

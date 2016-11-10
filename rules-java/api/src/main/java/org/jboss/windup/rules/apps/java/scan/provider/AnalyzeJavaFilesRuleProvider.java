@@ -79,8 +79,6 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 @RuleMetadata(phase = InitialAnalysisPhase.class, haltOnException = true)
 public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
 {
-    private static final Object LOCK_OBJECT = new Object();
-
     static final String UNPARSEABLE_JAVA_CLASSIFICATION = "Unparseable Java File";
     static final String UNPARSEABLE_JAVA_DESCRIPTION = "This Java file could not be parsed";
 

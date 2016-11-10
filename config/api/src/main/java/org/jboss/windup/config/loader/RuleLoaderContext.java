@@ -19,14 +19,14 @@ public class RuleLoaderContext
 
     public RuleLoaderContext()
     {
-        this.context = new ContextBase() {};
-        rulePaths = Collections.emptyList();
-        ruleProviderFilter = (provider) -> true;
+        this.context = new ContextBase() { };
+        this.rulePaths = Collections.emptyList();
+        this.ruleProviderFilter = (provider) -> true;
     }
 
     public RuleLoaderContext(Iterable<Path> rulePaths, Predicate<RuleProvider> ruleProviderFilter)
     {
-        this.context = new ContextBase() {};
+        this.context = new ContextBase() { };
         this.rulePaths = rulePaths;
         this.ruleProviderFilter = ruleProviderFilter;
     }
