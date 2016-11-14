@@ -42,11 +42,15 @@
     </ul>
 </#macro>
 
-<#macro renderNavbarJavaScript>
+<#macro renderNavbarJavaScript index_page=false>
     <script type="text/javascript">
         var script   = document.createElement("script");
         script.type  = "text/javascript";
-        script.src   = "resources/js/navbar.js";
+        <#if index_page>
+            script.src   = "reports/resources/js/navbar.js";
+        <#else>
+            script.src   = "resources/js/navbar.js";
+        </#if>
         document.body.appendChild(script);
     </script>
 </#macro>

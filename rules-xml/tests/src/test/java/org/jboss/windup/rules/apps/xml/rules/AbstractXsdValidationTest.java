@@ -33,12 +33,12 @@ public class AbstractXsdValidationTest
 
     protected void initOnlineWindupConfiguration(GraphContext context)
     {
-        initWindupConfiguration(context).setOfflineMode(false);
+        initWindupConfiguration(context).setOnlineMode(true);
     }
 
     protected void initOfflineWindupConfiguration(GraphContext context)
     {
-        initWindupConfiguration(context).setOfflineMode(true);
+        initWindupConfiguration(context).setOnlineMode(false);
     }
 
     private WindupConfigurationModel initWindupConfiguration(GraphContext context) {

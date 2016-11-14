@@ -159,8 +159,7 @@ public class ValidateXmlFilesRuleProviderWithInternetTest extends AbstractXsdVal
             GraphService<ClassificationModel> classificationService = new GraphService<>(context,
                         ClassificationModel.class);
             Iterable<ClassificationModel> classifications = classificationService.findAll();
-            Assert.assertEquals(0, Iterables.size(classifications));
-
+            Assert.assertEquals(1, Iterables.size(classifications));
         }
     }
 

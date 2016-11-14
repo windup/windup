@@ -24,14 +24,22 @@ public class EnhancedEntityResolver2 implements EntityResolver2
 {
     private static final Logger LOG = Logger.getLogger(EnhancedEntityResolver2.class.getSimpleName());
 
-    /* this is catalog resolver definition for resolving entities/schemas locally instead of remotely
+    /*
+     * This is catalog resolver definition for resolving entities/schemas locally instead of remotely
      * default catalogs settings are in CatalogManager.properties file available on classpath,
      * There is a default settings in windup/rules-xml-api module as rules-xml/api/src/main/resources/CatalogManager.properties
      * and there is also default catalog with HTML/XHTML/XML local definitions.
      * 
      */
     private final static CatalogResolver catalogResolver = new CatalogResolver();
-    
+
+    private boolean onlineMode;
+
+    public EnhancedEntityResolver2(boolean onlineMode)
+    {
+        this.onlineMode = onlineMode;
+    }
+
     @Override
     public InputSource getExternalSubset(String name, String baseURI) throws SAXException, IOException
     {
@@ -58,6 +66,9 @@ public class EnhancedEntityResolver2 implements EntityResolver2
         
         URL url = baseURI != null ? new URL(new URL(baseURI), systemId) : new URL(systemId);
         LOG.fine("Resolving entity -> " + url.toString());
+        if (!onlineMode && ValidateXmlHandler.isNetworkUrl(url.toExternalForm()))
+            return null;
+
         URLConnection connection = url.openConnection();
 
         // Not a HTTP connection... skip redirection logic

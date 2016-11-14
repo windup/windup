@@ -24,7 +24,7 @@ import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.exec.WindupProgressMonitor;
-import org.jboss.windup.exec.configuration.options.OfflineModeOption;
+import org.jboss.windup.exec.configuration.options.OnlineModeOption;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.config.Hint;
@@ -91,7 +91,7 @@ public class ExecutionBuilderTest
         checkQuickfixInHints(results.getHints());
         Assert.assertTrue(results.getClassifications().iterator().hasNext());
         Assert.assertTrue(testProvider.sourceMode);
-        Assert.assertTrue(testProvider.offlineMode);
+        Assert.assertFalse(testProvider.onlineMode);
     }
 
     @Test
@@ -111,7 +111,7 @@ public class ExecutionBuilderTest
         checkQuickfixInHints(results.getHints());
         Assert.assertTrue(results.getClassifications().iterator().hasNext());
         Assert.assertTrue(testProvider.sourceMode);
-        Assert.assertTrue(testProvider.offlineMode);
+        Assert.assertFalse(testProvider.onlineMode);
         Assert.assertTrue(progressWithLogging.logRecords.size() > 10);
     }
 
@@ -157,7 +157,7 @@ public class ExecutionBuilderTest
                     .includePackage("org.windup.examples.ejb.messagedriven")
                     .ignore("\\.class$")
                     .setOption(SourceModeOption.NAME, true)
-                    .setOption(OfflineModeOption.NAME, true)
+                    .setOption(OnlineModeOption.NAME, false)
                     .execute();
     }
 
@@ -170,7 +170,7 @@ public class ExecutionBuilderTest
     public static class TestProvider extends AbstractRuleProvider
     {
         private boolean sourceMode = false;
-        private boolean offlineMode = false;
+        private boolean onlineMode = false;
 
         public TestProvider()
         {
@@ -192,7 +192,7 @@ public class ExecutionBuilderTest
                             public void perform(GraphRewrite event, EvaluationContext context)
                             {
                                 WindupConfigurationModel configuration = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
-                                offlineMode = configuration.isOfflineMode();
+                                onlineMode = configuration.isOnlineMode();
 
                                 WindupJavaConfigurationModel javaConfiguration = WindupJavaConfigurationService.getJavaConfigurationModel(event
                                             .getGraphContext());

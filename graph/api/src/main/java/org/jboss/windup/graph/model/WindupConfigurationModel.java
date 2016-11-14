@@ -18,7 +18,7 @@ public interface WindupConfigurationModel extends WindupVertexFrame
     String INPUT_PATH = "inputPath";
     String USER_RULES_PATH = "userRulesPath";
     String USER_IGNORE_PATH = "userIgnorePath";
-    String OFFLINE_MODE = "fetchRemoteResources";
+    String ONLINE_MODE = "fetchRemoteResources";
     String OUTPUT_PATH = "outputPath";
     String SOURCE_TECHNOLOGY = "sourceTechnology";
     String TARGET_TECHNOLOGY = "targetTechnology";
@@ -81,16 +81,16 @@ public interface WindupConfigurationModel extends WindupVertexFrame
     void setOutputPath(FileModel outputPath);
 
     /**
-     * Indicates whether or not to function in offline mode (no network access)
+     * Indicates whether or not to function in online mode (network access allowed)
      */
-    @Property(OFFLINE_MODE)
-    boolean isOfflineMode();
+    @Property(ONLINE_MODE)
+    boolean isOnlineMode();
 
     /**
-     * Indicates whether or not to function in offline mode (no network access)
+     * Indicates whether or not to function in online mode (network access allowed)
      */
-    @Property(OFFLINE_MODE)
-    void setOfflineMode(boolean offline);
+    @Property(ONLINE_MODE)
+    void setOnlineMode(boolean onlineMode);
 
     /**
      * Contains the id of the source technology (the technology being migrated from).

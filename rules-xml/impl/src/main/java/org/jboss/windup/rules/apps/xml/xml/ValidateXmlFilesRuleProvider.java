@@ -16,6 +16,7 @@ import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
 import org.jboss.windup.config.query.Query;
+import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.service.ClassificationService;
@@ -23,7 +24,6 @@ import org.jboss.windup.reporting.service.InlineHintService;
 import org.jboss.windup.reporting.service.TagSetService;
 import org.jboss.windup.reporting.category.IssueCategoryRegistry;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
-import org.jboss.windup.rules.files.condition.ProcessingIsOnlineGraphCondition;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.config.Rule;
@@ -56,7 +56,7 @@ public class ValidateXmlFilesRuleProvider extends AbstractRuleProvider
     {
         return ConfigurationBuilder.begin()
                     .addRule()
-                    .when(new ProcessingIsOnlineGraphCondition().and(Query.fromType(XmlFileModel.class)))
+                    .when(Query.fromType(XmlFileModel.class))
                     .perform(new ValidateAndRegisterClassification());
     }
 
@@ -66,6 +66,7 @@ public class ValidateXmlFilesRuleProvider extends AbstractRuleProvider
         @Override
         public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel sourceFile)
         {
+            boolean onlineMode = WindupConfigurationService.getConfigurationModel(event.getGraphContext()).isOnlineMode();
             boolean validationFailed = false;
             try
             {
@@ -81,7 +82,7 @@ public class ValidateXmlFilesRuleProvider extends AbstractRuleProvider
                 final SAXParser parser = factory.newSAXParser();
                 parser.setProperty(JAXP_SCHEMA_LANGUAGE, XMLConstants.W3C_XML_SCHEMA_NS_URI);
 
-                ValidateXmlHandler handler = new ValidateXmlHandler();
+                ValidateXmlHandler handler = new ValidateXmlHandler(onlineMode);
 
                 parser.parse(sourceFile.asFile(), handler);
 
