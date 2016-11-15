@@ -128,7 +128,7 @@ public class MavenStructureRenderer
         objectWrapperBuilder.setUseAdaptersForContainers(true);
         freemarkerConfig.setObjectWrapper(objectWrapperBuilder.build());
         freemarkerConfig.setTemplateLoader(new FurnaceFreeMarkerTemplateLoader());
-        Template template = freemarkerConfig.getTemplate(templatePath.toString());
+        Template template = freemarkerConfig.getTemplate(templatePath.toString().replace('\\', '/'));
         try (FileWriter fw = new FileWriter(outputPath.toFile()))
         {
             template.process(vars, fw);
