@@ -79,7 +79,7 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
     @Override
     public void perform(final GraphRewrite event, final EvaluationContext context, final ReportModel payload)
     {
-        String templatePath = payload.getTemplatePath();
+        String templatePath = payload.getTemplatePath().replace('\\', '/');
         String outputFilename = payload.getReportFilename();
 
         ExecutionStatistics.get().begin("FreeMarkerIterationOperation.render(" + templatePath + ", " + outputFilename + ")");
