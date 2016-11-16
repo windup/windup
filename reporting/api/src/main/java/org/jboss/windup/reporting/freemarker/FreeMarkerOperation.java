@@ -39,7 +39,7 @@ public class FreeMarkerOperation extends GraphOperation
     protected FreeMarkerOperation(Furnace furnace, String templatePath, String outputFilename, String... varNames)
     {
         this.furnace = furnace;
-        this.templatePath = templatePath;
+        this.templatePath = templatePath.replace('\\', '/');
         this.outputFilename = outputFilename;
         this.variableNames = Arrays.asList(varNames);
     }
