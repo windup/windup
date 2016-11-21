@@ -1,11 +1,13 @@
 package org.jboss.windup.tooling;
 
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -50,12 +52,16 @@ import com.google.common.collect.Iterables;
 @RunWith(Arquillian.class)
 public class ExecutionBuilderTest
 {
+    private static Logger LOG = Logger.getLogger(ExecutionBuilderTest.class.getName());
+
     @Inject
     private ExecutionBuilder builder;
     @Inject
     private GraphLoader graphLoader;
     @Inject
     private TestProvider testProvider;
+    @Inject
+    private ToolingXMLService toolingXMLService;
 
     @Deployment
     @AddonDependencies({
@@ -76,7 +82,25 @@ public class ExecutionBuilderTest
     }
 
     @Test
-    public void testExecutionBuilder()
+    public void testSchemaGeneration() throws Exception
+    {
+        Path outputDirectory = getDefaultPath();
+        Files.createDirectories(outputDirectory);
+        Path output = outputDirectory.resolve("sample.xsd");
+        try
+        {
+            LOG.info("Generating test schema at: " + output);
+            toolingXMLService.generateSchema(output);
+            Assert.assertTrue(Files.isRegularFile(output));
+        }
+        finally
+        {
+            FileUtils.deleteDirectory(outputDirectory.toFile());
+        }
+    }
+
+    @Test
+    public void testExecutionBuilder() throws Exception
     {
         Assert.assertNotNull(builder);
         Assert.assertNotNull(testProvider);
@@ -92,6 +116,12 @@ public class ExecutionBuilderTest
         Assert.assertTrue(results.getClassifications().iterator().hasNext());
         Assert.assertTrue(testProvider.sourceMode);
         Assert.assertFalse(testProvider.onlineMode);
+
+        Path xmlResultsFile = output.resolve("sample_results.xml");
+        LOG.info("Serializing results to: " + xmlResultsFile);
+        results.serializeToXML(xmlResultsFile);
+        Assert.assertTrue(Files.isRegularFile(xmlResultsFile));
+        Assert.assertTrue(Files.size(xmlResultsFile) > 100);
     }
 
     @Test
@@ -262,11 +292,13 @@ public class ExecutionBuilderTest
         }
     }
 
-    private class TestProgressWithLogging extends TestProgressMonitor implements WindupToolingProgressMonitor {
+    private class TestProgressWithLogging extends TestProgressMonitor implements WindupToolingProgressMonitor
+    {
         private final List<LogRecord> logRecords = new ArrayList<>();
 
         @Override
-        public void logMessage(LogRecord logRecord) {
+        public void logMessage(LogRecord logRecord)
+        {
             logRecords.add(logRecord);
         }
     }

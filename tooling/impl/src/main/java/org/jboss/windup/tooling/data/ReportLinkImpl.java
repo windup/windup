@@ -4,6 +4,8 @@ import java.io.File;
 
 import org.jboss.windup.tooling.data.ReportLink;
 
+import javax.xml.bind.annotation.XmlElement;
+
 /**
  * Correlates files in the input application with the related source report file.
  *
@@ -18,6 +20,7 @@ public class ReportLinkImpl implements ReportLink
      * Contains the File path of the file in the input application.
      */
     @Override
+    @XmlElement(name = "input-file")
     public File getInputFile()
     {
         return inputFile;
@@ -35,6 +38,7 @@ public class ReportLinkImpl implements ReportLink
      * Contains the File path of the report.
      */
     @Override
+    @XmlElement(name = "report-file")
     public File getReportFile()
     {
         return reportFile;

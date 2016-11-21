@@ -22,9 +22,17 @@ import org.jboss.windup.tooling.data.Quickfix;
 import org.jboss.windup.tooling.data.QuickfixImpl;
 import org.jboss.windup.tooling.data.ReportLink;
 import org.jboss.windup.tooling.data.ReportLinkImpl;
+import org.jboss.windup.util.exception.WindupException;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -33,35 +41,65 @@ import java.util.List;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * @author <a href="mailto:hotmana76@gmail.com">Marek Novotny</a>
  */
+@XmlRootElement(name = "execution-results")
 public class ExecutionResultsImpl implements ExecutionResults
 {
+    private final ToolingXMLService toolingXMLService;
+
     private final List<Classification> classifications;
     private final List<Hint> hints;
     private final List<ReportLink> reportLinks;
 
-    public ExecutionResultsImpl(GraphContext graphContext)
+    public ExecutionResultsImpl()
     {
+        this.toolingXMLService = null;
+        this.classifications = Collections.emptyList();
+        this.hints = Collections.emptyList();
+        this.reportLinks = Collections.emptyList();
+    }
+
+    public ExecutionResultsImpl(GraphContext graphContext, ToolingXMLService toolingXMLService)
+    {
+        this.toolingXMLService = toolingXMLService;
         this.classifications = getClassifications(graphContext);
         this.hints = getHints(graphContext);
         this.reportLinks = getReportLinks(graphContext);
     }
 
     @Override
-    public Iterable<Classification> getClassifications()
+    @XmlElementWrapper(name = "classifications")
+    @XmlElement(name = "classification", type = ClassificationImpl.class)
+    public List<Classification> getClassifications()
     {
         return classifications;
     }
 
     @Override
-    public Iterable<Hint> getHints()
+    @XmlElementWrapper(name = "hints")
+    @XmlElement(name = "hint", type = HintImpl.class)
+    public List<Hint> getHints()
     {
         return hints;
     }
 
     @Override
-    public Iterable<ReportLink> getReportLinks()
+    @XmlElementWrapper(name = "report-links")
+    @XmlElement(name="report-link", type = ReportLinkImpl.class)
+    public List<ReportLink> getReportLinks()
     {
         return reportLinks;
+    }
+
+    @Override
+    public void serializeToXML(Path path)
+    {
+        try (OutputStream outputStream = new FileOutputStream(path.toFile()))
+        {
+            toolingXMLService.serializeResults(this, outputStream);
+        } catch (IOException e)
+        {
+            throw new WindupException("Failed to serialize results due to I/O Error: " + e.getMessage(), e);
+        }
     }
 
     private List<ReportLink> getReportLinks(GraphContext graphContext)

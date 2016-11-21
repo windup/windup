@@ -27,6 +27,10 @@
             <classifier>forge-addon</classifier>
         </dependency>
         <dependency>
+            <groupId>org.jboss.windup</groupId>
+            <artifactId>windup-tooling-impl</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.jboss.windup.reporting</groupId>
             <artifactId>windup-reporting</artifactId>
             <classifier>forge-addon</classifier>
