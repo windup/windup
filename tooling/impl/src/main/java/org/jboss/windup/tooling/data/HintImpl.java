@@ -6,6 +6,9 @@ import java.util.List;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.category.IssueCategory;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+
 /**
  * This is equivalent to a {@link InlineHintModel}, however it contains no dependencies on having an open instance of the graph in order to operate.
  *
@@ -27,7 +30,7 @@ public class HintImpl implements Hint
     private String sourceSnippit;
     private String ruleID;
 
-    private Iterable<Quickfix> quickfixes;
+    private List<Quickfix> quickfixes;
 
     /**
      * Constructs a {@link Hint} with the given id.
@@ -101,6 +104,7 @@ public class HintImpl implements Hint
      * This is a hint as to the severity of the problem. This may be used for supplying an icon or glyph in the report to the user.
      */
     @Override
+    @XmlElement(name = "issue-category")
     public IssueCategory getIssueCategory()
     {
         return this.issueCategory;
@@ -135,6 +139,8 @@ public class HintImpl implements Hint
      * This contains a list of {@link Link}s for further information about the problem and its solution.
      */
     @Override
+    @XmlElementWrapper(name = "links")
+    @XmlElement(name = "link", type = LinkImpl.class)
     public List<Link> getLinks()
     {
         return links;
@@ -152,6 +158,7 @@ public class HintImpl implements Hint
      * This contains the line number of the problem.
      */
     @Override
+    @XmlElement(name = "line-number")
     public int getLineNumber()
     {
         return lineNumber;
@@ -203,6 +210,7 @@ public class HintImpl implements Hint
      * This contains the original source code itself (for example, "proprietaryobject.doStuff()").
      */
     @Override
+    @XmlElement(name = "source-snippit")
     public String getSourceSnippit()
     {
         return sourceSnippit;
@@ -220,6 +228,7 @@ public class HintImpl implements Hint
      * This contains the id of the rule that produced this {@link Hint}.
      */
     @Override
+    @XmlElement(name = "rule-id")
     public String getRuleID()
     {
         return ruleID;
@@ -234,7 +243,9 @@ public class HintImpl implements Hint
     }
 
     @Override
-    public Iterable<Quickfix> getQuickfixes()
+    @XmlElementWrapper(name = "quickfixes")
+    @XmlElement(name = "quickfix", type = QuickfixImpl.class)
+    public List<Quickfix> getQuickfixes()
     {
         return quickfixes;
     }
@@ -242,7 +253,7 @@ public class HintImpl implements Hint
     /**
      * @param quickfixes the quickfixes to set
      */
-    public void setQuickfixes(Iterable<Quickfix> quickfixes)
+    public void setQuickfixes(List<Quickfix> quickfixes)
     {
         this.quickfixes = quickfixes;
     }

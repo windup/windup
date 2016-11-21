@@ -1,6 +1,7 @@
 package org.jboss.windup.tooling.data;
 
 import java.io.File;
+import java.util.List;
 
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.model.ClassificationModel;
@@ -36,13 +37,13 @@ public interface Classification
     /**
      * This contains a list of {@link Link}s for further information about the problem and its solution.
      */
-    Iterable<Link> getLinks();
+    List<Link> getLinks();
 
     /**
      * This contains a list of {@link Quickfix}s for follow up in tools
      * @return
      */
-    Iterable<Quickfix> getQuickfixes();
+    List<Quickfix> getQuickfixes();
 
     /**
      * This contains the effort level as an integer (Story Points). This is based on the Scrum "modified-Fibonacci" system of effort estimation.

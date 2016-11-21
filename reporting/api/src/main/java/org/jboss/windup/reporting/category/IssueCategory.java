@@ -1,5 +1,8 @@
 package org.jboss.windup.reporting.category;
 
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
  * <p>
  * Windup's {@link IssueCategory} class provides a way of organizing code issues into groups according to their relative importance.
@@ -21,11 +24,17 @@ package org.jboss.windup.reporting.category;
  */
 public class IssueCategory
 {
+    @XmlElement(name = "category-id")
     private String categoryID;
+    @XmlElement
     private String origin;
+    @XmlElement
     private String name;
+    @XmlElement
     private String description;
+    @XmlElement
     private Integer priority;
+
     boolean placeholder = false;
 
     /**

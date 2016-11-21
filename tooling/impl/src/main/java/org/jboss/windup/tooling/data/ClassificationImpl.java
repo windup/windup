@@ -1,10 +1,14 @@
 package org.jboss.windup.tooling.data;
 
 import java.io.File;
+import java.util.List;
 
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.category.IssueCategory;
+
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 
 /**
  * This is a non-graph dependent analogue to {@link ClassificationModel} suitable for usage after the {@link GraphContext} itself has been closed.
@@ -17,8 +21,8 @@ public class ClassificationImpl implements Classification
     private File file;
     private String classification;
     private String description;
-    private Iterable<Link> links;
-    private Iterable<Quickfix> quickfixes;
+    private List<Link> links;
+    private List<Quickfix> quickfixes;
 
 
     private int effort;
@@ -97,7 +101,9 @@ public class ClassificationImpl implements Classification
      * This contains a list of {@link Link}s for further information about the problem and its solution.
      */
     @Override
-    public Iterable<Link> getLinks()
+    @XmlElementWrapper(name = "links")
+    @XmlElement(name="link", type = LinkImpl.class)
+    public List<Link> getLinks()
     {
         return links;
     }
@@ -105,7 +111,7 @@ public class ClassificationImpl implements Classification
     /**
      * This contains a list of {@link Link}s for further information about the problem and its solution.
      */
-    public void setLinks(Iterable<Link> links)
+    public void setLinks(List<Link> links)
     {
         this.links = links;
     }
@@ -131,6 +137,7 @@ public class ClassificationImpl implements Classification
      * This is a hint as to the severity of the problem. This may be used for supplying an icon or glyph in the report to the user.
      */
     @Override
+    @XmlElement(name = "issue-category")
     public IssueCategory getIssueCategory()
     {
         return issueCategory;
@@ -148,6 +155,7 @@ public class ClassificationImpl implements Classification
      * This contains the id of the rule that produced this {@link Classification}.
      */
     @Override
+    @XmlElement(name = "rule-id")
     public String getRuleID()
     {
         return ruleID;
@@ -167,7 +175,9 @@ public class ClassificationImpl implements Classification
      * @return all quickfixes
      */
     @Override
-    public Iterable<Quickfix> getQuickfixes()
+    @XmlElementWrapper(name = "quickfixes")
+    @XmlElement(name = "quickfix", type = QuickfixImpl.class)
+    public List<Quickfix> getQuickfixes()
     {
         return quickfixes;
     }
@@ -177,7 +187,7 @@ public class ClassificationImpl implements Classification
      *
      * @param quickfixes the quickfixes to set
      */
-    public void setQuickfixes(Iterable<Quickfix> quickfixes)
+    public void setQuickfixes(List<Quickfix> quickfixes)
     {
         this.quickfixes = quickfixes;
     }

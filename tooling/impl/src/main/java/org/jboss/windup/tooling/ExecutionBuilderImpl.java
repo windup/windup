@@ -40,6 +40,9 @@ public class ExecutionBuilderImpl implements ExecutionBuilder, ExecutionBuilderS
     private GraphContextFactory graphContextFactory;
 
     @Inject
+    private ToolingXMLService toolingXMLService;
+
+    @Inject
     private WindupProcessor processor;
 
     private Path windupHome;
@@ -239,7 +242,7 @@ public class ExecutionBuilderImpl implements ExecutionBuilder, ExecutionBuilderS
             
             processor.execute(windupConfiguration);
 
-            return new ExecutionResultsImpl(graphContext);
+            return new ExecutionResultsImpl(graphContext, toolingXMLService);
         }
         catch (IOException e)
         {
