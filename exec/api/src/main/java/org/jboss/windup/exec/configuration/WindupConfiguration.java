@@ -27,7 +27,7 @@ import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.WindupProgressMonitor;
 import org.jboss.windup.exec.configuration.options.ExportCSVOption;
 import org.jboss.windup.exec.configuration.options.InputPathOption;
-import org.jboss.windup.exec.configuration.options.OfflineModeOption;
+import org.jboss.windup.exec.configuration.options.OnlineModeOption;
 import org.jboss.windup.exec.configuration.options.OutputPathOption;
 import org.jboss.windup.exec.configuration.options.UserIgnorePathOption;
 import org.jboss.windup.exec.configuration.options.UserRulesDirectoryOption;
@@ -45,6 +45,7 @@ public class WindupConfiguration
 {
     private static final String DEFAULT_USER_RULES_DIRECTORIES_OPTION = "defaultUserRulesDirectories";
     private static final String DEFAULT_USER_IGNORE_DIRECTORIES_OPTION = "defaultUserIgnorePaths";
+    public static final boolean DEFAULT_ONLINE = false;
 
     private Predicate<RuleProvider> ruleProviderFilter;
     private WindupProgressMonitor progressMonitor = new NullWindupProgressMonitor();
@@ -413,19 +414,19 @@ public class WindupConfiguration
     /**
      * Set Windup to run online or offline (with respect to an internet connection).
      */
-    public WindupConfiguration setOffline(boolean offline)
+    public WindupConfiguration setOnline(boolean online)
     {
-        setOptionValue(OfflineModeOption.NAME, offline);
+        setOptionValue(OnlineModeOption.NAME, online);
         return this;
     }
 
     /**
-     * Returns true if Windup is operating in {@link OfflineModeOption} == true. (with respect to an internet connection)
+     * Returns true if Windup is operating in {@link OnlineModeOption} == true. (with respect to an internet connection)
      */
-    public boolean isOffline()
+    public boolean isOnline()
     {
-        Boolean offline = getOptionValue(OfflineModeOption.NAME);
-        return offline == null ? false : offline;
+        Boolean online = getOptionValue(OnlineModeOption.NAME);
+        return online == null ? DEFAULT_ONLINE : online;
     }
 
     /**

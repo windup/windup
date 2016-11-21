@@ -29,9 +29,16 @@ class ValidateXmlHandler extends DefaultHandler2
 
     private final List<SAXParseException> parseExceptions = new ArrayList<>();
     private final List<String> xsdURLs = new ArrayList<>();
-    private final EnhancedEntityResolver2 entityResolver = new EnhancedEntityResolver2();
+    private final EnhancedEntityResolver2 entityResolver;
     private boolean firstElementFound = false;
     private Locator locator;
+    private boolean onlineMode;
+
+    public ValidateXmlHandler(boolean onlineMode)
+    {
+        this.onlineMode = onlineMode;
+        this.entityResolver = new EnhancedEntityResolver2(onlineMode);
+    }
 
     /**
      * Contains a list of XSD urls found in this document.
@@ -67,6 +74,11 @@ class ValidateXmlHandler extends DefaultHandler2
         this.locator = locator;
     }
 
+    static boolean isNetworkUrl(String url)
+    {
+        return url != null && !url.startsWith("file");
+    }
+
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException
     {
@@ -82,6 +94,11 @@ class ValidateXmlHandler extends DefaultHandler2
                 {
                     try
                     {
+                        if (!onlineMode && isNetworkUrl(xsdUrl))
+                        {
+                            continue;
+                        }
+
                         URLConnection urlConnection = new URL(xsdUrl).openConnection();
                         urlConnection.setConnectTimeout(10000);
                         urlConnection.setReadTimeout(10000);

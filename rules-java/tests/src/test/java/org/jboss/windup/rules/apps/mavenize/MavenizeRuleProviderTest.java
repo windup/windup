@@ -144,7 +144,6 @@ public class MavenizeRuleProviderTest
         processorConfig.setGraphContext(grCtx);
         processorConfig.addInputPath(Paths.get(inputDir));
         processorConfig.setOutputDirectory(outputPath);
-        processorConfig.setOffline(true);
         processorConfig.setOptionValue(ScanPackagesOption.NAME, Collections.singletonList(""));
         processorConfig.setOptionValue(SourceModeOption.NAME, false);
         processorConfig.setOptionValue(MavenizeOption.NAME, true);

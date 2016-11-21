@@ -11,10 +11,11 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  */
 public class ProcessingIsOnlineGraphCondition extends GraphCondition
 {
-    @Override public boolean evaluate(GraphRewrite event, EvaluationContext context)
+    @Override
+    public boolean evaluate(GraphRewrite event, EvaluationContext context)
     {
         GraphService<WindupConfigurationModel> service = new GraphService<>(event.getGraphContext(),WindupConfigurationModel.class);
         final WindupConfigurationModel windupConfiguration = service.findAll().iterator().next();
-        return !windupConfiguration.isOfflineMode();
+        return windupConfiguration.isOnlineMode();
     }
 }

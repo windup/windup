@@ -5,16 +5,18 @@ import org.jboss.windup.config.InputType;
 import org.jboss.windup.config.ValidationResult;
 
 /**
- * Indicates that all operations should function in "Offline" mode (without accessing the internet).
+ * Indicate that network related actions are allowed (they should be disabled by default).
  */
-public class OfflineModeOption extends AbstractConfigurationOption
+public class OnlineModeOption extends AbstractConfigurationOption
 {
-    public static final String NAME = "offline";
+    public static final String NAME = "online";
 
     @Override
     public String getDescription()
     {
-        return "Indicates whether to fetch information from the internet.";
+        return "Indicates that network access is allowed. By turning it on, XML " +
+                "schemas can be validated against external resources, however, this " +
+                "comes with a performance penalty.";
     }
 
     @Override
@@ -26,7 +28,7 @@ public class OfflineModeOption extends AbstractConfigurationOption
     @Override
     public String getLabel()
     {
-        return "Offline Mode";
+        return "Online Mode";
     }
 
     @Override
