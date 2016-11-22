@@ -52,7 +52,8 @@ public class DiscoverDuplicateArchiveProjectsRuleProvider extends AbstractRulePr
         DuplicateProjectModel duplicateProject = duplicateProjectService.create();
         duplicateProject.setCanonicalProject(canonicalProject);
         duplicateProject.setName(canonicalProject.getName());
-        duplicateProject.setParentProject(duplicateArchive.getParentArchive().getProjectModel());
+        if (duplicateArchive.getParentArchive() != null)
+            duplicateProject.setParentProject(duplicateArchive.getParentArchive().getProjectModel());
         duplicateProject.setRootFileModel(duplicateArchive);
 
         if (canonicalProject.getParentProject() == null)
