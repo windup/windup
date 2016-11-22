@@ -21,6 +21,16 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * This creates {@link DuplicateProjectModel}s, associates them with the {@link DuplicateArchiveModel}s
  * and attaches them to the canonical {@link ProjectModel}s.
  *
+ * The links between the duplicated projects and archives follow this schema:
+ *
+ *   ArchiveX.jar            <->  canonical archive  <-> ArchiveXDuplicate.jar
+ *         |                              |                      |
+ *    getProjectModel()
+ *         |                              |                      |
+ *   ArchiveX.jar's project  <->  canonical project  <-> ArchiveXDuplicate.jar's project
+ *
+ * Canonical (virtual) project and archive has 1:N relation to duplicated project and archives.
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @RuleMetadata(phase = DiscoverProjectStructurePhase.class, after = DiscoverMavenHierarchyRuleProvider.class)
