@@ -23,7 +23,6 @@ import org.jboss.windup.rules.apps.java.archives.model.IdentifiedArchiveModel;
 import org.jboss.windup.rules.apps.java.model.JarArchiveModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.javaee.model.EjbBeanBaseModel;
-import org.jboss.windup.rules.apps.javaee.model.EjbEntityBeanModel;
 import org.jboss.windup.rules.apps.javaee.model.EjbMessageDrivenModel;
 import org.jboss.windup.rules.apps.javaee.model.EjbSessionBeanModel;
 import org.jboss.windup.rules.apps.javaee.model.JNDIResourceModel;
@@ -34,6 +33,8 @@ import org.jboss.windup.rules.apps.javaee.model.JaxWSWebServiceModel;
 import org.jboss.windup.rules.apps.javaee.model.JmsConnectionFactoryModel;
 import org.jboss.windup.rules.apps.javaee.model.JmsDestinationModel;
 import org.jboss.windup.rules.apps.javaee.model.JmsDestinationType;
+import org.jboss.windup.rules.apps.javaee.model.PersistenceEntityModel;
+import org.jboss.windup.rules.apps.javaee.model.RMIServiceModel;
 import org.jboss.windup.util.Logging;
 
 /**
@@ -76,14 +77,17 @@ public class TechnologiesStatsService extends GraphService<TechnologiesStatsMode
         stats.setStatsServicesEjbStateless(item(countByType(EjbSessionBeanModel.class, EjbBeanBaseModel.SESSION_TYPE, "stateless")));
         stats.setStatsServicesEjbStateful(item(countByType(EjbSessionBeanModel.class,  EjbBeanBaseModel.SESSION_TYPE, "stateful")));
         stats.setStatsServicesEjbMessageDriven(item(countByType(EjbMessageDrivenModel.class)));
+        // TODO: stats.setStatsServicesEjb___(item(countByType(EjbDeploymentDescriptorModel.class)));
 
-        stats.setStatsServicesJpaEntitites(item(countByType(EjbEntityBeanModel.class)));
+        //int count = countByType(EjbEntityBeanModel.class) + countByType(JPAEntityModel.class);
+        int count = countByType(PersistenceEntityModel.class);
+        stats.setStatsServicesJpaEntitites(item(count));
         stats.setStatsServicesJpaNamedQueries(item(countByType(JPANamedQueryModel.class)));
         stats.setStatsServicesJpaPersistenceUnits(item(countByType(JPAPersistenceUnitModel.class)));
-        //stats.setStatsServicesRmiServices(item(countByType(.class)));
+        stats.setStatsServicesRmiServices(item(countByType(RMIServiceModel.class)));
 
-        //stats.setStatsServerResourcesDbJdbcDatasources(item(countByType(.class)));
-        //stats.setStatsServerResourcesDbXaJdbcDatasources(item(countByType(.class)));
+        // TODO: stats.setStatsServerResourcesDbJdbcDatasources(item(countByType(.class)));
+        // TODO: stats.setStatsServerResourcesDbXaJdbcDatasources(item(countByType(.class)));
 
         stats.setStatsServicesHttpJaxRs(item(countByType(JaxRSWebServiceModel.class)));
         stats.setStatsServicesHttpJaxWs(item(countByType(JaxWSWebServiceModel.class)));
@@ -151,7 +155,6 @@ public class TechnologiesStatsService extends GraphService<TechnologiesStatsMode
 
     private static Map<String, Integer> countFilesShareBySuffix(Map<String, Integer> suffixToCount){
         int sum = suffixToCount.entrySet().stream().mapToInt(e -> e.getValue()).sum();
-        System.out.println("SUM: " + sum);
         Map<String, Integer> shares = suffixToCount.entrySet().stream().collect(Collectors.toMap(
                 e -> e.getKey(),
                 e -> e.getValue() * 100 / sum

@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.NamedQuery;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
@@ -14,6 +15,7 @@ import org.hibernate.validator.NotNull;
 import org.jboss.seam.annotations.Name;
 
 @Entity
+@NamedQuery(name="hotelByName", query="SELECT h FROM Hotel h WHERE h.name LIKE :name")
 @Name("hotel")
 public class Hotel implements Serializable
 {
@@ -25,7 +27,7 @@ public class Hotel implements Serializable
    private String zip;
    private String country;
    private BigDecimal price;
-   
+
    @Id @GeneratedValue
    public Long getId()
    {
@@ -35,7 +37,7 @@ public class Hotel implements Serializable
    {
       this.id = id;
    }
-   
+
    @Length(max=50) @NotNull
    public String getName()
    {
@@ -45,7 +47,7 @@ public class Hotel implements Serializable
    {
       this.name = name;
    }
-   
+
    @Length(max=100) @NotNull
    public String getAddress()
    {
@@ -55,7 +57,7 @@ public class Hotel implements Serializable
    {
       this.address = address;
    }
-   
+
    @Length(max=40) @NotNull
    public String getCity()
    {
@@ -65,7 +67,7 @@ public class Hotel implements Serializable
    {
       this.city = city;
    }
-   
+
    @Length(min=4, max=6) @NotNull
    public String getZip()
    {
@@ -75,7 +77,7 @@ public class Hotel implements Serializable
    {
       this.zip = zip;
    }
-   
+
    @Length(min=2, max=10) @NotNull
    public String getState()
    {
@@ -85,7 +87,7 @@ public class Hotel implements Serializable
    {
       this.state = state;
    }
-   
+
    @Length(min=2, max=40) @NotNull
    public String getCountry()
    {
@@ -105,7 +107,7 @@ public class Hotel implements Serializable
    {
       this.price = price;
    }
-   
+
    @Override
    public String toString()
    {

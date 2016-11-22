@@ -9,20 +9,20 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
  * Contains EJB Entity information and related data.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
+ * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
  */
 @TypeValue(EjbEntityBeanModel.TYPE)
-public interface EjbEntityBeanModel extends EjbBeanBaseModel
+public interface EjbEntityBeanModel extends EjbBeanBaseModel, PersistenceEntityModel
 {
     public static final String TYPE = "EjbEntityBean";
 
-    public static final String EJB_HOME = "ejbHome";
-    public static final String EJB_LOCAL_HOME = "ejbLocalHome";
-    public static final String EJB_REMOTE = "ejbRemote";
-    public static final String EJB_LOCAL = "ejbLocal";
-    public static final String PERSISTENCE_TYPE = "persistenceType";
-    public static final String TABLE_NAME = "tableName";
+    public static final String EJB_HOME = TYPE + "-ejbHome";
+    public static final String EJB_LOCAL_HOME = TYPE + "-ejbLocalHome";
+    public static final String EJB_REMOTE = TYPE + "-ejbRemote";
+    public static final String EJB_LOCAL = TYPE + "-ejbLocal";
+    public static final String PERSISTENCE_TYPE = TYPE + "-persistenceType";
 
     /**
      * Contains the Entity Persistence Type
@@ -36,17 +36,6 @@ public interface EjbEntityBeanModel extends EjbBeanBaseModel
     @Property(PERSISTENCE_TYPE)
     public String getPersistenceType();
 
-    /**
-     * Contains the name of the Table used by this Entity
-     */
-    @Property(TABLE_NAME)
-    public void setTableName(String tableName);
-
-    /**
-     * Contains the name of the Table used by this Entity
-     */
-    @Property(TABLE_NAME)
-    public String getTableName();
 
     /**
      * Contains the Session bean's local interface
