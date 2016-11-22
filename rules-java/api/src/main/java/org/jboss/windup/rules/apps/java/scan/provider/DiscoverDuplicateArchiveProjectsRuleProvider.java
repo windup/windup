@@ -22,14 +22,16 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * and attaches them to the canonical {@link ProjectModel}s.
  *
  * The links between the duplicated projects and archives follow this schema:
- *
- *   ArchiveX.jar            <->  canonical archive  <-> ArchiveXDuplicate.jar
+ * <pre>
+ *    ArchiveX.jar          <->  canonical archive  <-> ArchiveXDuplicate.jar
  *         |                              |                      |
- *    getProjectModel()
+ *    getProjectModel()            getProjectModel()       getProjectModel()
  *         |                              |                      |
- *   ArchiveX.jar's project  <->  canonical project  <-> ArchiveXDuplicate.jar's project
- *
+ *         V                              V                      V
+ *   ArchiveX.jar's project <->  canonical project  <-> ArchiveXDuplicate.jar's project
+ * </pre>
  * Canonical (virtual) project and archive has 1:N relation to duplicated project and archives.
+ *
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
