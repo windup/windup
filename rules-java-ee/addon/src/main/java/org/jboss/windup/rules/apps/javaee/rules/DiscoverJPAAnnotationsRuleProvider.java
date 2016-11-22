@@ -1,5 +1,6 @@
 package org.jboss.windup.rules.apps.javaee.rules;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
@@ -51,26 +52,22 @@ public class DiscoverJPAAnnotationsRuleProvider extends AbstractRuleProvider
     public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
         String ruleIDPrefix = getClass().getSimpleName();
-        return ConfigurationBuilder
-                    .begin()
-                    .addRule()
-                    .when(JavaClass
-                                .references("javax.persistence.Entity")
-                                .at(TypeReferenceLocation.ANNOTATION)
-                                .as(ENTITY_ANNOTATIONS)
-                                .or(JavaClass.references("javax.persistence.Table").at(TypeReferenceLocation.ANNOTATION).as(TABLE_ANNOTATIONS_LIST))
-                                .or(JavaClass.references("javax.persistence.NamedQuery").at(TypeReferenceLocation.ANNOTATION).as(NAMED_QUERY_LIST))
-                                .or(JavaClass.references("javax.persistence.NamedQueries").at(TypeReferenceLocation.ANNOTATION)
-                                            .as(NAMED_QUERIES_LIST)))
-                    .perform(Iteration.over(ENTITY_ANNOTATIONS).perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
-                    {
-                        @Override
-                        public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
-                        {
-                            extractEntityBeanMetadata(event, payload);
-                        }
-                    }).endIteration())
-                    .withId(ruleIDPrefix + "_JPAEntityBeanRule");
+        return ConfigurationBuilder.begin().addRule()
+            .when(JavaClass
+                .references("javax.persistence.Entity").at(TypeReferenceLocation.ANNOTATION).as(ENTITY_ANNOTATIONS)
+                .or(JavaClass.references("javax.persistence.Table").at(TypeReferenceLocation.ANNOTATION).as(TABLE_ANNOTATIONS_LIST))
+                .or(JavaClass.references("javax.persistence.NamedQuery").at(TypeReferenceLocation.ANNOTATION).as(NAMED_QUERY_LIST))
+                .or(JavaClass.references("javax.persistence.NamedQueries").at(TypeReferenceLocation.ANNOTATION).as(NAMED_QUERIES_LIST))
+            )
+            .perform(Iteration.over(ENTITY_ANNOTATIONS).perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
+            {
+                @Override
+                public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
+                {
+                    extractEntityBeanMetadata(event, payload);
+                }
+            }).endIteration())
+            .withId(ruleIDPrefix + "_JPAEntityBeanRule");
     }
 
     private String getAnnotationLiteralValue(JavaAnnotationTypeReferenceModel model, String name)
@@ -90,10 +87,11 @@ public class DiscoverJPAAnnotationsRuleProvider extends AbstractRuleProvider
 
     private void extractEntityBeanMetadata(GraphRewrite event, JavaTypeReferenceModel entityTypeReference)
     {
+        LOG.log(Level.INFO, () -> "extractEntityBeanMetadata() with " + entityTypeReference.getDescription());
         entityTypeReference.getFile().setGenerateSourceReport(true);
         JavaAnnotationTypeReferenceModel entityAnnotationTypeReference = (JavaAnnotationTypeReferenceModel) entityTypeReference;
         JavaAnnotationTypeReferenceModel tableAnnotationTypeReference = null;
-        
+
         final Iterable<? extends WindupVertexFrame> annotations_list = Variables.instance(event).findVariable(TABLE_ANNOTATIONS_LIST);
         if (annotations_list != null)
         {
@@ -140,29 +138,25 @@ public class DiscoverJPAAnnotationsRuleProvider extends AbstractRuleProvider
             for (WindupVertexFrame annotationTypeReferenceBase : namedQueriesList)
             {
                 JavaAnnotationTypeReferenceModel annotationTypeReference = (JavaAnnotationTypeReferenceModel) annotationTypeReferenceBase;
+                if (!annotationTypeReference.getFile().equals(entityTypeReference.getFile()))
+                    continue;
 
-                if (annotationTypeReference.getFile().equals(entityTypeReference.getFile()))
+                JavaAnnotationTypeValueModel value = annotationTypeReference.getAnnotationValues().get("value");
+                if (value == null || ! (value instanceof JavaAnnotationListTypeValueModel))
+                    continue;
+
+                JavaAnnotationListTypeValueModel referenceList = (JavaAnnotationListTypeValueModel) value;
+                if (referenceList.getList() != null)
                 {
-                    JavaAnnotationTypeValueModel value = annotationTypeReference.getAnnotationValues().get("value");
-                    if (value != null && value instanceof JavaAnnotationListTypeValueModel)
+                    for (JavaAnnotationTypeValueModel ref : referenceList.getList())
                     {
-                        JavaAnnotationListTypeValueModel referenceList = (JavaAnnotationListTypeValueModel) value;
-
-                        if (referenceList.getList() != null)
+                        if (ref instanceof JavaAnnotationTypeReferenceModel)
                         {
-                            for (JavaAnnotationTypeValueModel ref : referenceList.getList())
-                            {
-                                if (ref instanceof JavaAnnotationTypeReferenceModel)
-                                {
-                                    JavaAnnotationTypeReferenceModel reference = (JavaAnnotationTypeReferenceModel) ref;
-                                    addNamedQuery(namedQueryService, jpaEntity, reference);
-                                }
-                                else
-                                {
-                                    LOG.warning("Unexpected Annotation");
-                                }
-                            }
+                            JavaAnnotationTypeReferenceModel reference = (JavaAnnotationTypeReferenceModel) ref;
+                            addNamedQuery(namedQueryService, jpaEntity, reference);
                         }
+                        else
+                            LOG.warning("Unexpected Annotation in " + ref.toPrettyString());
                     }
                 }
             }

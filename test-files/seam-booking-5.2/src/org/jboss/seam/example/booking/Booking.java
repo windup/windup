@@ -11,6 +11,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
@@ -21,6 +23,7 @@ import org.hibernate.validator.Pattern;
 import org.jboss.seam.annotations.Name;
 
 @Entity
+@NamedQueries(@NamedQuery(name = "byUserName", query = "SELECT b FROM Booking b WHERE b.user.name LIKE :userName"))
 @Name("booking")
 public class Booking implements Serializable
 {
@@ -35,15 +38,15 @@ public class Booking implements Serializable
    private int creditCardExpiryYear;
    private boolean smoking;
    private int beds;
-   
+
    public Booking() {}
-   
+
    public Booking(Hotel hotel, User user)
    {
       this.hotel = hotel;
       this.user = user;
    }
-   
+
    @Transient
    public BigDecimal getTotal()
    {
@@ -65,9 +68,9 @@ public class Booking implements Serializable
    {
       this.id = id;
    }
-   
+
    @NotNull
-   @Basic @Temporal(TemporalType.DATE) 
+   @Basic @Temporal(TemporalType.DATE)
    public Date getCheckinDate()
    {
       return checkinDate;
@@ -86,7 +89,7 @@ public class Booking implements Serializable
    {
       this.hotel = hotel;
    }
-   
+
    @ManyToOne @NotNull
    public User getUser()
    {
@@ -96,8 +99,8 @@ public class Booking implements Serializable
    {
       this.user = user;
    }
-   
-   @Basic @Temporal(TemporalType.DATE) 
+
+   @Basic @Temporal(TemporalType.DATE)
    @NotNull
    public Date getCheckoutDate()
    {
@@ -107,7 +110,7 @@ public class Booking implements Serializable
    {
       this.checkoutDate = checkoutDate;
    }
-   
+
    @NotNull(message="Credit card number is required")
    @Length(min=16, max=16, message="Credit card number must 16 digits long")
    @Pattern(regex="^\\d*$", message="Credit card number must be numeric")
@@ -120,13 +123,13 @@ public class Booking implements Serializable
    {
       this.creditCard = creditCard;
    }
-   
+
    @Transient
    public String getDescription()
    {
       DateFormat df = DateFormat.getDateInstance(DateFormat.MEDIUM);
-      return hotel==null ? null : hotel.getName() + 
-            ", " + df.format( getCheckinDate() ) + 
+      return hotel==null ? null : hotel.getName() +
+            ", " + df.format( getCheckinDate() ) +
             " to " + df.format( getCheckoutDate() );
    }
 
@@ -139,7 +142,7 @@ public class Booking implements Serializable
    {
       this.smoking = smoking;
    }
-   
+
    public int getBeds()
    {
       return beds;
@@ -180,7 +183,7 @@ public class Booking implements Serializable
    {
       this.creditCardExpiryYear = creditCardExpiryYear;
    }
-   
+
    @Override
    public String toString()
    {
