@@ -234,6 +234,70 @@ public interface TechnologiesStatsModel extends WindupVertexFrame
     @Adjacency(label = STATS_SERVICES_JPA_NAMEDQUERIES, direction = Direction.OUT)
     TechnologiesStatsModel setStatsServicesJpaNamedQueries(GeneralStatsItemModel item);
 
+
+
+    String STATS_SERVICES_HIBERNATE_CONFIGURATIONFILES = "stats.services.hibernate.configurationFiles";
+
+    /**
+     * How many Hibernate configuration files were found.
+     */
+    @Adjacency(label = STATS_SERVICES_HIBERNATE_CONFIGURATIONFILES, direction = Direction.OUT)
+    GeneralStatsItemModel getStatsServicesHibernateConfigurationFiles();
+
+    /**
+     * How many Hibernate configuration files were found.
+     */
+    @Adjacency(label = STATS_SERVICES_HIBERNATE_CONFIGURATIONFILES, direction = Direction.OUT)
+    TechnologiesStatsModel setStatsServicesHibernateConfigurationFiles(GeneralStatsItemModel item);
+
+    String STATS_SERVICES_HIBERNATE_ENTITIES = "stats.services.hibernate.entities";
+
+    /**
+     * How many Hibernate entities were found.
+     */
+    @Adjacency(label = STATS_SERVICES_HIBERNATE_ENTITIES, direction = Direction.OUT)
+    GeneralStatsItemModel getStatsServicesHibernateEntities();
+
+    /**
+     * How many Hibernate entities were found.
+     */
+    @Adjacency(label = STATS_SERVICES_HIBERNATE_ENTITIES, direction = Direction.OUT)
+    TechnologiesStatsModel setStatsServicesHibernateEntities(GeneralStatsItemModel item);
+
+    String STATS_SERVICES_HIBERNATE_MAPPINGFILES = "stats.services.hibernate.mappingFiles";
+
+    /**
+     * How many Hibernate mapping files were found.
+     */
+    @Adjacency(label = STATS_SERVICES_HIBERNATE_MAPPINGFILES, direction = Direction.OUT)
+    GeneralStatsItemModel getStatsServicesHibernateMappingFiles();
+
+    /**
+     * How many Hibernate mapping files were found.
+     */
+    @Adjacency(label = STATS_SERVICES_HIBERNATE_MAPPINGFILES, direction = Direction.OUT)
+    TechnologiesStatsModel setStatsServicesHibernateMappingFiles(GeneralStatsItemModel item);
+
+    String STATS_SERVICES_HIBERNATE_SESSIONFACTORIES = "stats.services.hibernate.sessionFactories";
+
+    /**
+     * How many Hibernate session factories were found.
+     */
+    @Adjacency(label = STATS_SERVICES_HIBERNATE_SESSIONFACTORIES, direction = Direction.OUT)
+    GeneralStatsItemModel getStatsServicesHibernateSessionFactories();
+
+    /**
+     * How many Hibernate session factories were found.
+     */
+    @Adjacency(label = STATS_SERVICES_HIBERNATE_SESSIONFACTORIES, direction = Direction.OUT)
+    TechnologiesStatsModel setStatsServicesHibernateSessionFactories(GeneralStatsItemModel item);
+
+
+
+
+
+
+
     String STATS_SERVICES_RMI_SERVICES = "stats.services.rmi.services";
 
     /**

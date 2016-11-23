@@ -23,6 +23,7 @@ import org.jboss.windup.rules.apps.java.archives.model.IdentifiedArchiveModel;
 import org.jboss.windup.rules.apps.java.model.JarArchiveModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.javaee.model.EjbBeanBaseModel;
+import org.jboss.windup.rules.apps.javaee.model.EjbEntityBeanModel;
 import org.jboss.windup.rules.apps.javaee.model.EjbMessageDrivenModel;
 import org.jboss.windup.rules.apps.javaee.model.EjbSessionBeanModel;
 import org.jboss.windup.rules.apps.javaee.model.JNDIResourceModel;
@@ -33,8 +34,11 @@ import org.jboss.windup.rules.apps.javaee.model.JaxWSWebServiceModel;
 import org.jboss.windup.rules.apps.javaee.model.JmsConnectionFactoryModel;
 import org.jboss.windup.rules.apps.javaee.model.JmsDestinationModel;
 import org.jboss.windup.rules.apps.javaee.model.JmsDestinationType;
-import org.jboss.windup.rules.apps.javaee.model.PersistenceEntityModel;
 import org.jboss.windup.rules.apps.javaee.model.RMIServiceModel;
+import org.jboss.windup.rules.apps.javaee.model.HibernateConfigurationFileModel;
+import org.jboss.windup.rules.apps.javaee.model.HibernateEntityModel;
+import org.jboss.windup.rules.apps.javaee.model.HibernateMappingFileModel;
+import org.jboss.windup.rules.apps.javaee.model.HibernateSessionFactoryModel;
 import org.jboss.windup.util.Logging;
 
 /**
@@ -79,12 +83,17 @@ public class TechnologiesStatsService extends GraphService<TechnologiesStatsMode
         stats.setStatsServicesEjbMessageDriven(item(countByType(EjbMessageDrivenModel.class)));
         // TODO: stats.setStatsServicesEjb___(item(countByType(EjbDeploymentDescriptorModel.class)));
 
-        //int count = countByType(EjbEntityBeanModel.class) + countByType(JPAEntityModel.class);
-        int count = countByType(PersistenceEntityModel.class);
+        int count = countByType(EjbEntityBeanModel.class) + countByType(JPAEntityModel.class);
+        // PersistenceEntityModel covers also HibernateEntityModel.
         stats.setStatsServicesJpaEntitites(item(count));
         stats.setStatsServicesJpaNamedQueries(item(countByType(JPANamedQueryModel.class)));
         stats.setStatsServicesJpaPersistenceUnits(item(countByType(JPAPersistenceUnitModel.class)));
         stats.setStatsServicesRmiServices(item(countByType(RMIServiceModel.class)));
+
+        stats.setStatsServicesHibernateConfigurationFiles(item(countByType(HibernateConfigurationFileModel.class)));
+        stats.setStatsServicesHibernateEntities(item(countByType(HibernateEntityModel.class)));
+        stats.setStatsServicesHibernateMappingFiles(item(countByType(HibernateMappingFileModel.class)));
+        stats.setStatsServicesHibernateSessionFactories(item(countByType(HibernateSessionFactoryModel.class)));
 
         // TODO: stats.setStatsServerResourcesDbJdbcDatasources(item(countByType(.class)));
         // TODO: stats.setStatsServerResourcesDbXaJdbcDatasources(item(countByType(.class)));

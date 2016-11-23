@@ -35,6 +35,11 @@ def items2 = [
     [key: "stats.services.jpa.namedQueries", label: "JPA named queries", clazz: "JPANamedQueryModel", props: [:]],
     [key: "stats.services.rmi.services", label: "RMI services", clazz: "", props: [:]],
 
+    [key: "stats.services.hibernate.configurationFiles", label: "Hibernate configuration files", clazz: "HibernateConfigurationFileModel", props: [:]],
+    [key: "stats.services.hibernate.entities",           label: "Hibernate entities", clazz: "HibernateEntityModel", props: [:]],
+    [key: "stats.services.hibernate.mappingFiles",       label: "Hibernate mapping files", clazz: "HibernateMappingFileModel", props: [:]],
+    [key: "stats.services.hibernate.sessionFactories",   label: "Hibernate session factories", clazz: "HibernateSessionFactoryModel", props: [:]],
+
     [key: "stats.serverResources.db.jdbcDatasources", label: "JDBC datasources", clazz: "", props: [:]],
     [key: "stats.serverResources.db.xaJdbcDatasources", label: "XA JDBC datasources", clazz: "", props: [:]],
     [key: "stats.serverResources.msg.jms.queues", label: "JMS queues", clazz: "JmsDestinationModel", props: ['JmsDestinationModel.DESTINATION_TYPE':'JmsDestinationType.QUEUE.name()']],
@@ -91,5 +96,5 @@ items2.each({item ->
     String keyConst  = key.replaceAll(/[-\.]/, "_").toUpperCase();
     String keyMethod = key.replaceAll(/([-\.]\w)/, {x -> x[0][1].toUpperCase()});
     //println "<tr> <td>${item["label"]}</td> <td>{{variousStatsMap.get('${key}').quantity}}</td> </tr>";
-    println "<tr> <td>${item["label"]}</td> <td>{{technologiesStats?.${keyMethod}?.quantity}}</td> </tr>";
+    println "<tr> <td>${item["label"]}</td> <td>{{(technologiesStats?.${keyMethod} | async)?.quantity}}</td> </tr>";
 });
