@@ -27,6 +27,7 @@ import org.jboss.windup.rules.apps.javaee.model.EjbEntityBeanModel;
 import org.jboss.windup.rules.apps.javaee.model.EjbMessageDrivenModel;
 import org.jboss.windup.rules.apps.javaee.model.EjbSessionBeanModel;
 import org.jboss.windup.rules.apps.javaee.model.JNDIResourceModel;
+import org.jboss.windup.rules.apps.javaee.model.JPAEntityModel;
 import org.jboss.windup.rules.apps.javaee.model.JPANamedQueryModel;
 import org.jboss.windup.rules.apps.javaee.model.JPAPersistenceUnitModel;
 import org.jboss.windup.rules.apps.javaee.model.JaxRSWebServiceModel;
