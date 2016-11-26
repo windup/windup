@@ -13,15 +13,17 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
  * Contains metadata related to JPA Persistence Units.
- * 
+ *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
- * 
+ *
  */
 @TypeValue(JPAPersistenceUnitModel.TYPE)
 public interface JPAPersistenceUnitModel extends WindupVertexFrame
 {
     String TYPE = "JPAPersistenceUnit";
-    String NAME = "persistenceUnitName";
+
+    String DATASOURCE = "datasource";
+    String NAME = TYPE + "-name";
     String APPLICATION = "application";
 
     /**
@@ -51,15 +53,15 @@ public interface JPAPersistenceUnitModel extends WindupVertexFrame
     /**
      * Contains a link back to the {@link DataSourceModel}
      */
-    @Adjacency(label = DataSourceModel.DATA_SOURCE, direction = Direction.OUT)
+    @Adjacency(label = DATASOURCE, direction = Direction.OUT)
     Iterable<DataSourceModel> getDataSources();
 
     /**
      * Contains a link back to the {@link DataSourceModel}
      */
-    @Adjacency(label = DataSourceModel.DATA_SOURCE, direction = Direction.OUT)
+    @Adjacency(label = DATASOURCE, direction = Direction.OUT)
     void addDataSource(DataSourceModel dataSource);
-    
+
     /**
      * Contains a link back to the {@link JPAConfigurationFileModel} containing these properties
      */
