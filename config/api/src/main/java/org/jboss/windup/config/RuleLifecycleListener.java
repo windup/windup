@@ -5,8 +5,9 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * Receives events from {@link RuleSubset} during execution.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
+ * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
  */
 public interface RuleLifecycleListener
 {
@@ -17,13 +18,17 @@ public interface RuleLifecycleListener
 
     /**
      * Called immediately before the given {@link Rule} is executed.
+     *
+     * @return true if the execution should be stopped, which is typically indicated by an underlying {@link WindupProgressMonitor}.
      */
-    void beforeRuleEvaluation(GraphRewrite event, Rule rule, EvaluationContext context);
+    boolean beforeRuleEvaluation(GraphRewrite event, Rule rule, EvaluationContext context);
 
     /**
      * This is optionally called by long-running rules to indicate their current progress and estimated time-remaining.
+     *
+     * @return true if the execution should be stopped, which is typically indicated by an underlying {@link WindupProgressMonitor}.
      */
-    void ruleEvaluationProgress(GraphRewrite event, String name, int currentPosition, int total, int timeRemainingInSeconds);
+    boolean ruleEvaluationProgress(GraphRewrite event, String name, int currentPosition, int total, int timeRemainingInSeconds);
 
     /**
      * Called immediately after execution of the each {@link Rule}.
@@ -33,8 +38,10 @@ public interface RuleLifecycleListener
     /**
      * Called immediately before {@link Rule} operations are performed (Only called if
      * {@link Rule#evaluate(org.ocpsoft.rewrite.event.Rewrite, EvaluationContext)} returned <code>true</code>).
+     *
+     * @return true if the execution should be stopped, which is typically indicated by an underlying {@link WindupProgressMonitor}.
      */
-    void beforeRuleOperationsPerformed(GraphRewrite event, EvaluationContext context, Rule rule);
+    boolean beforeRuleOperationsPerformed(GraphRewrite event, EvaluationContext context, Rule rule);
 
     /**
      * Called immediately after {@link Rule} operations are performed (Only called if

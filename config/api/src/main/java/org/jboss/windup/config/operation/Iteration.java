@@ -45,6 +45,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.event.Rewrite;
 
 import com.google.common.collect.Iterables;
+import org.jboss.windup.util.exception.WindupStopException;
 import org.ocpsoft.rewrite.config.CompositeCondition;
 
 /**
@@ -284,9 +285,13 @@ public class Iteration extends DefaultOperationBuilder
                     variables.pop();
                 }
             }
+            catch (WindupStopException ex)
+            {
+                throw new WindupStopException("Windup stop requested in " + this.toString(), ex);
+            }
             catch (Exception e)
             {
-                    throw new WindupException("Failed when iterating " + frame.toPrettyString() + ", due to: " + e.getMessage(), e);
+                throw new WindupException("Failed when iterating " + frame.toPrettyString() + ", due to: " + e.getMessage(), e);
             }
         }
         finally
@@ -495,6 +500,9 @@ public class Iteration extends DefaultOperationBuilder
 
     }
 
+    /**
+     * @return Description of this iteration, e.g. "Iteration.over(?).as(...).when(...).perform(...)".
+     */
     @Override
     public String toString()
     {

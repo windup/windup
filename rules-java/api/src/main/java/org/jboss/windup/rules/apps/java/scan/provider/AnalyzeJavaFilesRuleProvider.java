@@ -69,12 +69,16 @@ import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.ProgressEstimate;
 import org.jboss.windup.util.exception.WindupException;
+import org.jboss.windup.util.exception.WindupStopException;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * Scan the Java Source code files and store the used type information from them.
+ * 
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
+ * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
  */
 @RuleMetadata(phase = InitialAnalysisPhase.class, haltOnException = true)
 public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
@@ -306,16 +310,20 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
 
         private void printProgressEstimate(GraphRewrite event, ProgressEstimate estimate)
         {
-            if (estimate.getWorked() % LOG_INTERVAL == 0)
-            {
-                int timeRemainingInMillis = (int) estimate.getTimeRemainingInMillis();
-                if (timeRemainingInMillis > 0)
-                {
-                    event.ruleEvaluationProgress("Analyze Java", estimate.getWorked(), estimate.getTotal(), timeRemainingInMillis / 1000);
-                }
+            if (estimate.getWorked() % LOG_INTERVAL != 0)
+                return;
 
-                LOG.info("Analyzed Java File: " + estimate.getWorked() + " / " + estimate.getTotal());
+            int timeRemainingInMillis = (int) estimate.getTimeRemainingInMillis();
+            if (timeRemainingInMillis > 0)
+            {
+                boolean windupStopRequested = event.ruleEvaluationProgress("Analyze Java", estimate.getWorked(), estimate.getTotal(), timeRemainingInMillis / 1000);
+                if (windupStopRequested)
+                {
+                    throw new WindupStopException("Windup stop requested through ruleEvaluationProgress() during " + AnalyzeJavaFilesRuleProvider.class.getName());
+                }
             }
+
+            LOG.info("Analyzed Java File: " + estimate.getWorked() + " / " + estimate.getTotal());
         }
 
         private List<ClassReference> filterClassReferences(List<ClassReference> references, boolean classNotFoundAnalysisEnabled)

@@ -12,9 +12,15 @@ import java.util.List;
  * that were produced.
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
+ * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
  */
 public interface ExecutionResults
 {
+    /**
+     * A message about Windup stopping on request before finishing, if that happened; null otherwise.
+     */
+    String getWindupStopOnRequestMessage();
+
     /**
      * Contains all {@link Classification}s produced by this run of Windup.
      */

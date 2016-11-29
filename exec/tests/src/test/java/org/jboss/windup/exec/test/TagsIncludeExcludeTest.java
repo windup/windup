@@ -92,16 +92,18 @@ public class TagsIncludeExcludeTest
         }
 
         @Override
-        public void beforeRuleEvaluation(GraphRewrite event, Rule rule, EvaluationContext context)
+        public boolean beforeRuleEvaluation(GraphRewrite event, Rule rule, EvaluationContext context)
         {
             RuleProvider provider = (RuleProvider) ((Context) rule).get(RuleMetadataType.RULE_PROVIDER);
             String realName = Proxies.unwrapProxyClassName(provider.getClass());
             executedRules.put(realName, Boolean.FALSE);
+            return false;
         }
 
         @Override
-        public void ruleEvaluationProgress(GraphRewrite event, String name, int currentPosition, int total, int timeRemainingInSeconds)
+        public boolean ruleEvaluationProgress(GraphRewrite event, String name, int currentPosition, int total, int timeRemainingInSeconds)
         {
+            return false;
         }
 
         @Override

@@ -58,7 +58,7 @@ public class ExecutionBuilderImpl implements ExecutionBuilder, ExecutionBuilderS
 
     /**
      * Is the option to skip Report preparing and generation set?
-     * 
+     *
      * @return the skipReportsRendering
      */
     public boolean isSkipReportsRendering()
@@ -68,7 +68,7 @@ public class ExecutionBuilderImpl implements ExecutionBuilder, ExecutionBuilderS
 
     /**
      * Sets the option to skip Report preparing and generation
-     * 
+     *
      * @param skipReportsRendering the skipReportsRendering to set
      */
     public void setSkipReportsRendering(boolean skipReportsRendering)
@@ -235,11 +235,11 @@ public class ExecutionBuilderImpl implements ExecutionBuilder, ExecutionBuilderS
             {
                 windupConfiguration.setOptionValue(option.getKey(), option.getValue());
             }
-            
+
             windupConfiguration
                         .setProgressMonitor(progressMonitor)
                         .setGraphContext(graphContext);
-            
+
             processor.execute(windupConfiguration);
 
             return new ExecutionResultsImpl(graphContext, toolingXMLService);
@@ -247,13 +247,15 @@ public class ExecutionBuilderImpl implements ExecutionBuilder, ExecutionBuilderS
         catch (IOException e)
         {
             throw new WindupException("Failed to instantiate graph due to: " + e.getMessage(), e);
-        } finally
+        }
+        finally
         {
             if (loggingHandler != null)
                 globalLogger.removeHandler(loggingHandler);
         }
     }
 
+    
     private class WindupProgressLoggingHandler extends Handler
     {
         private final WindupToolingProgressMonitor monitor;

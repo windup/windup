@@ -9,18 +9,23 @@ package org.jboss.windup.config;
 import java.util.Collections;
 
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.util.exception.WindupException;
+import org.jboss.windup.util.exception.WindupStopException;
 import org.ocpsoft.rewrite.AbstractRewrite;
 import org.ocpsoft.rewrite.event.Flow;
 import org.ocpsoft.rewrite.event.Rewrite;
 
 /**
+ * Holds the context of the whole Windup Execution.
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * 
+ * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
  */
 public class GraphRewrite extends AbstractRewrite implements Rewrite
 {
     private final GraphContext graphContext;
     private final Iterable<RuleLifecycleListener> listeners;
+    private WindupStopException windupStopException;
 
     public GraphRewrite(GraphContext context)
     {
@@ -34,12 +39,34 @@ public class GraphRewrite extends AbstractRewrite implements Rewrite
         this.graphContext = context;
     }
 
+    /**
+     * @return The exception which holds information where Windup has stopped before finishing (typically on an external request),
+     *      or null if Windup finished normally.
+     */
+    public WindupStopException getWindupStopException()
+    {
+        return windupStopException;
+    }
+
+    /**
+     * Stores the exception which holds information if, and where, the Windup stopped (typically on an external request).
+     */
+    public void setWindupStopException(WindupStopException windupStopException)
+    {
+        if (this.windupStopException != null)
+            throw new WindupException("Trying to set the stop exception while it was already set."
+                    + " The cause contains the original one.", this.windupStopException);
+        this.windupStopException = windupStopException;
+    }
+
+
+
+    // TODO: This deserves a javadoc.
     @Override
     public Flow getFlow()
     {
         return new Flow()
         {
-
             @Override
             public boolean isHandled()
             {
@@ -62,9 +89,12 @@ public class GraphRewrite extends AbstractRewrite implements Rewrite
     /**
      * This is optionally called by long-running rules to indicate their current progress and estimated time-remaining.
      */
-    public void ruleEvaluationProgress(String name, int currentPosition, int total, int timeRemainingInSeconds)
+    public boolean ruleEvaluationProgress(String name, int currentPosition, int total, int timeRemainingInSeconds)
     {
+        boolean windupStopRequested = false;
         for (RuleLifecycleListener listener : listeners)
-            listener.ruleEvaluationProgress(this, name, currentPosition, total, timeRemainingInSeconds);
+            windupStopRequested = listener.ruleEvaluationProgress(this, name, currentPosition, total, timeRemainingInSeconds);
+
+        return windupStopRequested;
     }
 }
