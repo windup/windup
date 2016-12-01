@@ -372,10 +372,9 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
             }
         }
 
-        for (RuleLifecycleListener listener : listeners)
-        {
-            listener.afterExecution(event);
-        }
+        if (event.getWindupStopException() == null)
+            for (RuleLifecycleListener listener : listeners)
+                listener.afterExecution(event);
     }
 
     private boolean handleBindings(final Rewrite event, final EvaluationContextImpl context,

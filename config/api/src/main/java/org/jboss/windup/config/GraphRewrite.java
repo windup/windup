@@ -50,6 +50,7 @@ public class GraphRewrite extends AbstractRewrite implements Rewrite
 
     /**
      * Stores the exception which holds information if, and where, the Windup stopped (typically on an external request).
+     * If windup was stopped, this must be called.
      */
     public void setWindupStopException(WindupStopException windupStopException)
     {

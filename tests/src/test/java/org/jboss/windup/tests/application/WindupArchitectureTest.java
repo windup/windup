@@ -170,17 +170,36 @@ public abstract class WindupArchitectureTest
             windupConfiguration.setOptionValue(otherOption.getKey(), otherOption.getValue());
         }
 
-        RecordingWindupProgressMonitor progressMonitor = new RecordingWindupProgressMonitor();
-        windupConfiguration.setProgressMonitor(progressMonitor);
+        RecordingWindupProgressMonitor recordingMonitor = new RecordingWindupProgressMonitor();
+        WindupProgressMonitor testMonitor = overrideWindupProgressMonitor(recordingMonitor);
+        windupConfiguration.setProgressMonitor(testMonitor);
 
         processor.execute(windupConfiguration);
 
-        Assert.assertFalse(progressMonitor.isCancelled());
-        Assert.assertTrue(progressMonitor.isDone());
-        Assert.assertFalse(progressMonitor.getSubTaskNames().isEmpty());
-        Assert.assertTrue(progressMonitor.getTotalWork() > 0);
-        Assert.assertTrue(progressMonitor.getCompletedWork() > 0);
-        Assert.assertEquals(progressMonitor.getTotalWork(), progressMonitor.getCompletedWork());
+        assertRecordedData(recordingMonitor);
+    }
+
+    /**
+     * Override to customize what's expected.
+     */
+    protected void assertRecordedData(RecordingWindupProgressMonitor recordingMonitor)
+    {
+        Assert.assertFalse(recordingMonitor.isCancelled());
+        Assert.assertTrue(recordingMonitor.isDone());
+        Assert.assertFalse(recordingMonitor.getSubTaskNames().isEmpty());
+        Assert.assertTrue(recordingMonitor.getTotalWork() > 0);
+        Assert.assertTrue(recordingMonitor.getCompletedWork() > 0);
+        Assert.assertEquals(recordingMonitor.getTotalWork(), recordingMonitor.getCompletedWork());
+    }
+
+    /**
+     * Override this if you need to intercept the calls to WindupProgressMonitor.
+     * The overriding method must keep the functionality of passed monitor.
+     * See {@link CombinedWindupProgressMonitor}.
+     */
+    public WindupProgressMonitor overrideWindupProgressMonitor(final WindupProgressMonitor testMonitor)
+    {
+        return testMonitor;
     }
 
     JavaApplicationOverviewReportModel getMainApplicationReport(GraphContext context)
@@ -260,10 +279,11 @@ public abstract class WindupArchitectureTest
 
     }
 
-    /*
-     * Supporting types
+
+    /**
+     * Stores the info about incoming calls which the tests can review.
      */
-    private static class RecordingWindupProgressMonitor implements WindupProgressMonitor
+    protected static class RecordingWindupProgressMonitor implements WindupProgressMonitor
     {
         private int totalWork = -1;
         private boolean done;
