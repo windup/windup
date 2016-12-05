@@ -18,9 +18,9 @@ import com.tinkerpop.blueprints.util.wrappers.event.listener.GraphChangedListene
 
 /**
  * Manages recording the history of {@link Rule}s executed by Windup.
- * 
- * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
+ * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
  */
 public class RuleExecutionResultsListener implements RuleLifecycleListener
 {
@@ -37,7 +37,7 @@ public class RuleExecutionResultsListener implements RuleLifecycleListener
     }
 
     /**
-     * 
+     *
      */
     public List<RuleExecutionInformation> getRuleExecutionInformation(AbstractRuleProvider provider)
     {
@@ -62,15 +62,17 @@ public class RuleExecutionResultsListener implements RuleLifecycleListener
     }
 
     @Override
-    public void beforeRuleEvaluation(GraphRewrite event, Rule rule, EvaluationContext context)
+    public boolean beforeRuleEvaluation(GraphRewrite event, Rule rule, EvaluationContext context)
     {
         ruleExecutionInformation.put(rule, new RuleExecutionInformation(rule));
         RuleExecutionResultsListener.this.currentRule = rule;
+        return false; // Don't request a stop.
     }
 
     @Override
-    public void ruleEvaluationProgress(GraphRewrite event, String name, int currentPosition, int total, int timeRemainingInSeconds)
+    public boolean ruleEvaluationProgress(GraphRewrite event, String name, int currentPosition, int total, int timeRemainingInSeconds)
     {
+        return false; // Don't request a stop.
     }
 
     @Override
@@ -85,8 +87,9 @@ public class RuleExecutionResultsListener implements RuleLifecycleListener
     }
 
     @Override
-    public void beforeRuleOperationsPerformed(GraphRewrite event, EvaluationContext context, Rule rule)
+    public boolean beforeRuleOperationsPerformed(GraphRewrite event, EvaluationContext context, Rule rule)
     {
+        return false; // Don't request a stop.
     }
 
     @Override
@@ -109,9 +112,11 @@ public class RuleExecutionResultsListener implements RuleLifecycleListener
     {
     }
 
+    /**
+     * Stores or counts the information about graph changes, especially which rules created which elements.
+     */
     private class GraphChangeListener implements GraphChangedListener
     {
-
         @Override
         public synchronized void vertexAdded(Vertex vertex)
         {
@@ -167,6 +172,5 @@ public class RuleExecutionResultsListener implements RuleLifecycleListener
         public void edgePropertyChanged(Edge edge, String key, Object oldValue, Object setValue)
         {
         }
-
     }
 }

@@ -52,13 +52,14 @@ class DefaultRuleLifecycleListener implements RuleLifecycleListener
     }
 
     @Override
-    public void beforeRuleEvaluation(GraphRewrite event, Rule rule, EvaluationContext context)
+    public boolean beforeRuleEvaluation(GraphRewrite event, Rule rule, EvaluationContext context)
     {
         progressMonitor.subTask(RuleUtils.prettyPrintRule(rule));
+        return progressMonitor.isCancelled();
     }
 
     @Override
-    public void ruleEvaluationProgress(GraphRewrite event, String name, int currentPosition, int total, int timeRemainingInSeconds)
+    public boolean ruleEvaluationProgress(GraphRewrite event, String name, int currentPosition, int total, int timeRemainingInSeconds)
     {
         String timeRemaining = formatTimeRemaining(timeRemainingInSeconds);
         int percentage = (int) (100 * ((double) currentPosition / (double) total));
@@ -69,6 +70,7 @@ class DefaultRuleLifecycleListener implements RuleLifecycleListener
             lastRuleProgressMessage = newProgressMessage;
             progressMonitor.subTask(newProgressMessage);
         }
+        return progressMonitor.isCancelled();
     }
 
     private String formatTimeRemaining(int timeRemainingInSeconds)
@@ -96,8 +98,9 @@ class DefaultRuleLifecycleListener implements RuleLifecycleListener
     }
 
     @Override
-    public void beforeRuleOperationsPerformed(GraphRewrite event, EvaluationContext context, Rule rule)
+    public boolean beforeRuleOperationsPerformed(GraphRewrite event, EvaluationContext context, Rule rule)
     {
+        return progressMonitor.isCancelled();
     }
 
     @Override

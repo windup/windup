@@ -32,11 +32,13 @@ import org.jboss.forge.furnace.spi.ListenerRegistration;
 import org.jboss.windup.config.metadata.RuleMetadataType;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.WindupExecutionModel;
 import org.jboss.windup.graph.model.performance.RulePhaseExecutionStatisticsModel;
 import org.jboss.windup.graph.model.performance.RuleProviderExecutionStatisticsModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.RuleProviderExecutionStatisticsService;
 import org.jboss.windup.util.exception.WindupException;
+import org.jboss.windup.util.exception.WindupStopException;
 import org.ocpsoft.common.util.Assert;
 import org.ocpsoft.rewrite.bind.Binding;
 import org.ocpsoft.rewrite.bind.Evaluation;
@@ -201,6 +203,7 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
         }
 
         EvaluationContextImpl subContext = new EvaluationContextImpl();
+        rulesLoop:
         for (int i = 0; i < rules.size(); i++)
         {
             Rule rule = rules.get(i);
@@ -238,7 +241,14 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                 {
                     for (RuleLifecycleListener listener : listeners)
                     {
-                        listener.beforeRuleEvaluation(event, rule, subContext);
+                        boolean windupStopRequested = listener.beforeRuleEvaluation(event, rule, subContext);
+                        if (windupStopRequested)
+                        {
+                            String msg = "Windup was requested to stop before beforeRuleEvaluation() of " + rule.getId() + ", skipping further rules.";
+                            log.warning(msg);
+                            event.setWindupStopException(new WindupStopException(msg));
+                            break rulesLoop;
+                        }
                     }
 
                     if (rule.evaluate(event, subContext))
@@ -257,7 +267,14 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
 
                         for (RuleLifecycleListener listener : listeners)
                         {
-                            listener.beforeRuleOperationsPerformed(event, subContext, rule);
+                            boolean windupStopRequested = listener.beforeRuleOperationsPerformed(event, subContext, rule);
+                            if (windupStopRequested)
+                            {
+                                String msg = "Windup was requested to stop before beforeRuleOperationsPerformed() of " + rule.getId() + ", skipping further rules.";
+                                log.warning(msg);
+                                event.setWindupStopException(new WindupStopException(msg));
+                                break rulesLoop;
+                            }
                         }
 
                         List<Operation> preOperations = subContext.getPreOperations();
@@ -295,6 +312,14 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                             listener.afterRuleConditionEvaluation(event, subContext, rule, false);
                         }
                     }
+                }
+                catch (WindupStopException ex)
+                {
+                    final String msg = "Windup was requested to stop during execution of " + rule.getId() + ", skipping further rules.";
+                    log.warning(msg);
+                    event.setWindupStopException(new WindupStopException(msg, ex));
+                    event.getGraphContext().service(WindupExecutionModel.class).create().setStopMessage(msg);
+                    break rulesLoop;
                 }
                 finally
                 {
@@ -347,10 +372,9 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
             }
         }
 
-        for (RuleLifecycleListener listener : listeners)
-        {
-            listener.afterExecution(event);
-        }
+        if (event.getWindupStopException() == null)
+            for (RuleLifecycleListener listener : listeners)
+                listener.afterExecution(event);
     }
 
     private boolean handleBindings(final Rewrite event, final EvaluationContextImpl context,

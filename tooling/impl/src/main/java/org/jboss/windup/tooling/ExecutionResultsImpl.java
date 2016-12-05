@@ -34,12 +34,14 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import javax.xml.bind.annotation.XmlAttribute;
 
 /**
  * Contains an implementation of {@link ExecutionResults} that loads its results from a {@link GraphContext}.
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * @author <a href="mailto:hotmana76@gmail.com">Marek Novotny</a>
+ * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
  */
 @XmlRootElement(name = "execution-results")
 public class ExecutionResultsImpl implements ExecutionResults
@@ -49,10 +51,12 @@ public class ExecutionResultsImpl implements ExecutionResults
     private final List<Classification> classifications;
     private final List<Hint> hints;
     private final List<ReportLink> reportLinks;
+    private String windupStopOnRequestMessage;
 
     public ExecutionResultsImpl()
     {
         this.toolingXMLService = null;
+        this.windupStopOnRequestMessage = null;
         this.classifications = Collections.emptyList();
         this.hints = Collections.emptyList();
         this.reportLinks = Collections.emptyList();
@@ -64,6 +68,13 @@ public class ExecutionResultsImpl implements ExecutionResults
         this.classifications = getClassifications(graphContext);
         this.hints = getHints(graphContext);
         this.reportLinks = getReportLinks(graphContext);
+    }
+
+    @Override
+    @XmlAttribute(name = "stopMessage")
+    public String getWindupStopOnRequestMessage()
+    {
+        return this.windupStopOnRequestMessage;
     }
 
     @Override
@@ -102,7 +113,7 @@ public class ExecutionResultsImpl implements ExecutionResults
         }
     }
 
-    private List<ReportLink> getReportLinks(GraphContext graphContext)
+    private static List<ReportLink> getReportLinks(GraphContext graphContext)
     {
         final List<ReportLink> reportLinks = new ArrayList<>();
         SourceReportService sourceReportService = new SourceReportService(graphContext);
@@ -118,7 +129,7 @@ public class ExecutionResultsImpl implements ExecutionResults
         return reportLinks;
     }
 
-    private List<Hint> getHints(GraphContext graphContext)
+    private static List<Hint> getHints(GraphContext graphContext)
     {
         final List<Hint> hints = new ArrayList<>();
         InlineHintService hintService = new InlineHintService(graphContext);
@@ -143,7 +154,7 @@ public class ExecutionResultsImpl implements ExecutionResults
         return hints;
     }
 
-    private List<Classification> getClassifications(GraphContext graphContext)
+    private static List<Classification> getClassifications(GraphContext graphContext)
     {
         final List<Classification> classifications = new ArrayList<>();
         ClassificationService classificationService = new ClassificationService(graphContext);
@@ -161,14 +172,14 @@ public class ExecutionResultsImpl implements ExecutionResults
 
                 classification.setLinks(asLinks(classificationModel.getLinks()));
                 classifications.add(classification);
-                
+
                 classification.setQuickfixes(asQuickfixes(classificationModel.getQuickfixes()));
             }
         }
         return classifications;
     }
 
-    private List<Link> asLinks(Iterable<LinkModel> linkModels)
+    private static List<Link> asLinks(Iterable<LinkModel> linkModels)
     {
         List<Link> links = new ArrayList<>();
         for (LinkModel linkModel : linkModels)
@@ -180,8 +191,8 @@ public class ExecutionResultsImpl implements ExecutionResults
         }
         return links;
     }
-    
-    private List<Quickfix> asQuickfixes(Iterable<QuickfixModel> quickfixModels)
+
+    private static List<Quickfix> asQuickfixes(Iterable<QuickfixModel> quickfixModels)
     {
         List<Quickfix> fixes = new ArrayList<>();
         for (QuickfixModel quickfixModel : quickfixModels)

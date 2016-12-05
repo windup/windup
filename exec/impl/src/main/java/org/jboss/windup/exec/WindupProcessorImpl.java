@@ -67,7 +67,7 @@ import org.ocpsoft.rewrite.param.ParameterValueStore;
  * Loads and executes the Rules from RuleProviders according to given WindupConfiguration.
  *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
- * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>, ozizka@redhat.com
+ * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
  */
 public class WindupProcessorImpl implements WindupProcessor
 {
@@ -169,7 +169,11 @@ public class WindupProcessorImpl implements WindupProcessor
             });
 
             ruleSubset.perform(event, createEvaluationContext());
-        } finally
+
+            if (event.getWindupStopException() != null)
+                LOG.log(Level.WARNING, "Windup stopped on request before finishing, see the exception for where.", event.getWindupStopException());
+        }
+        finally
         {
             if (autoCloseGraph)
             {
@@ -245,24 +249,24 @@ public class WindupProcessorImpl implements WindupProcessor
             /*
              * Create a Map based upon the ID of the original to be transformed.
              */
-            Map<String, List<TechnologyReferenceTransformer>> transformerMap = transformers
-                        .stream()
-                        .collect(Collectors.toMap(
-                                    // This is the Map key
-                                    transformer -> transformer.getOriginal().getId(),
+            Map<String, List<TechnologyReferenceTransformer>> transformerMap = transformers.stream()
+                .collect(Collectors.toMap(
+                    // This is the Map key
+                    transformer -> transformer.getOriginal().getId(),
 
-                                    // Create a List for each entry
-                                    (transformer) -> {
-                                        List<TechnologyReferenceTransformer> list = new ArrayList<>();
-                                        list.add(transformer);
-                                        return list;
-                                    },
+                    // Create a List for each entry
+                    (transformer) -> {
+                        List<TechnologyReferenceTransformer> list = new ArrayList<>();
+                        list.add(transformer);
+                        return list;
+                    },
 
-                                    // Merge the list if there are multiple entries for the same id
-                                    (old, latest) -> {
-                                        old.addAll(latest);
-                                        return old;
-                                    }));
+                    // Merge the list if there are multiple entries for the same id
+                    (old, latest) -> {
+                        old.addAll(latest);
+                        return old;
+                    })
+                );
 
             // Use the tech transformers to transform the IDs
             Function<String, String> transformTechFunction = (technologyID) -> {
