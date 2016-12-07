@@ -11,15 +11,16 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
  * Contains metadata related to Hibernate Session Factories.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- * 
+ *
  */
 @TypeValue(HibernateSessionFactoryModel.TYPE)
 public interface HibernateSessionFactoryModel extends WindupVertexFrame
 {
+    String TYPE = "HibernateSessionFactory";
 
-    public static final String TYPE = "HibernateSessionFactory";
+    String DATASOURCE = "datasource";
 
     /**
      * Contains a link back to the {@link HibernateConfigurationFileModel} containing these properties
@@ -30,15 +31,15 @@ public interface HibernateSessionFactoryModel extends WindupVertexFrame
     /**
      * Contains a link back to the {@link DataSourceModel}
      */
-    @Adjacency(label = DataSourceModel.DATA_SOURCE, direction = Direction.OUT)
+    @Adjacency(label = DATASOURCE, direction = Direction.OUT)
     public Iterable<DataSourceModel> getDataSources();
 
     /**
      * Contains a link back to the {@link DataSourceModel}
      */
-    @Adjacency(label = DataSourceModel.DATA_SOURCE, direction = Direction.OUT)
-    void addDataSource(DataSourceModel dataSource);
-    
+    @Adjacency(label = DATASOURCE, direction = Direction.OUT)
+    void addDataSource(DataSourceModel datasource);
+
     /**
      * Contains the hibernate session factories properties
      */

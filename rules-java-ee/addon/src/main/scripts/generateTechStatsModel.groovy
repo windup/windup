@@ -24,28 +24,30 @@ def items2 = [
     [key: "stats.files.byType.js.percent",   label: "JavaScript files", clazz: "", props: [:]],
     [key: "stats.files.byType.css.percent",  label: "CSS files", clazz: "", props: [:]],
 
-    [key: "stats.services.ejb.stateless", label: "stateless beans", clazz: "EjbSessionBeanModel", props: ['EjbBeanBaseModel.SESSION_TYPE':'"stateless"']],
-    [key: "stats.services.ejb.stateful", label: "stateful beans", clazz: "EjbSessionBeanModel", props: ["EjbBeanBaseModel.SESSION_TYPE":'"stateful"']],
+    [key: "stats.services.ejb.stateless",     label: "stateless beans", clazz: "EjbSessionBeanModel", props: ['EjbBeanBaseModel.SESSION_TYPE':'"stateless"']],
+    [key: "stats.services.ejb.stateful",      label: "stateful beans",  clazz: "EjbSessionBeanModel", props: ["EjbBeanBaseModel.SESSION_TYPE":'"stateful"']],
     [key: "stats.services.ejb.messageDriven", label: "message driven beans", clazz: "EjbMessageDrivenModel", props: [:]],
+    [key: "stats.services.ejb.deploymentDescriptors", label: "EJB deployment descriptors", clazz: "EjbDeploymentDescriptorModel", props: [:]],
+
     [key: "stats.services.http.jax-rs", label: "JAX-RS services", clazz: "JaxRSWebServiceModel", props: [:]],
     [key: "stats.services.http.jax-ws", label: "JAX-WS services", clazz: "JaxWSWebServiceModel", props: [:]],
 
-    [key: "stats.services.jpa.entitites", label: "JPA entities", clazz: "EjbEntityBeanModel", props: [:]],
+    [key: "stats.services.jpa.entitites",    label: "JPA entities", clazz: "EjbEntityBeanModel", props: [:]],
     [key: "stats.services.jpa.persistenceUnits", label: "JPA persistence units", clazz: "JPAPersistenceUnitModel", props: [:]],
     [key: "stats.services.jpa.namedQueries", label: "JPA named queries", clazz: "JPANamedQueryModel", props: [:]],
-    [key: "stats.services.rmi.services", label: "RMI services", clazz: "", props: [:]],
+    [key: "stats.services.rmi.services",     label: "RMI services", clazz: "", props: [:]],
 
     [key: "stats.services.hibernate.configurationFiles", label: "Hibernate configuration files", clazz: "HibernateConfigurationFileModel", props: [:]],
     [key: "stats.services.hibernate.entities",           label: "Hibernate entities", clazz: "HibernateEntityModel", props: [:]],
     [key: "stats.services.hibernate.mappingFiles",       label: "Hibernate mapping files", clazz: "HibernateMappingFileModel", props: [:]],
     [key: "stats.services.hibernate.sessionFactories",   label: "Hibernate session factories", clazz: "HibernateSessionFactoryModel", props: [:]],
 
-    [key: "stats.serverResources.db.jdbcDatasources", label: "JDBC datasources", clazz: "", props: [:]],
-    [key: "stats.serverResources.db.xaJdbcDatasources", label: "XA JDBC datasources", clazz: "", props: [:]],
+    [key: "stats.serverResources.db.jdbcDatasources",   label: "JDBC datasources", clazz: "DataSourceModel", props: ['DataSourceModel.IS_XA':false]],
+    [key: "stats.serverResources.db.xaJdbcDatasources", label: "XA JDBC datasources", clazz: "DataSourceModel", props: ['DataSourceModel.IS_XA':true]],
     [key: "stats.serverResources.msg.jms.queues", label: "JMS queues", clazz: "JmsDestinationModel", props: ['JmsDestinationModel.DESTINATION_TYPE':'JmsDestinationType.QUEUE.name()']],
     [key: "stats.serverResources.msg.jms.topics", label: "JMS topics", clazz: "JmsDestinationModel", props: ['JmsDestinationModel.DESTINATION_TYPE':'JmsDestinationType.TOPIC.name()']],
     [key: "stats.serverResources.msg.jms.connectionFactories", label: "JMS connection factories", clazz: "", props: [:]],
-    [key: "stats.serverResources.security.realms", label: "security realms", clazz: "", props: [:]],
+    [key: "stats.serverResources.security.realms",   label: "security realms", clazz: "", props: [:]],
     [key: "stats.serverResources.jndi.totalEntries", label: "total JNDI entries", clazz: "", props: [:]],
 
     [key: "stats.java.classes.original", label: "own Java classes", clazz: "JavaClassModel", props: [:]],
@@ -56,19 +58,43 @@ def items2 = [
 
 def ADJ = true;
 
+// For creating a map.
+/*
 items2.each({item ->
     println ""
-    println "      put(\"${item.key}\", item(\"${item.label}\", \"${item.clazz}\", new HashMap<String, String>{{";
+    println "      put(\"${item.key}\", item(\"${item.label}\", \"${item.clazz}\", new HashMap<String, String>(){{";
     def Map<String, String> props = item["props"];
     props.each{k,v -> println "          put(${k}, ${v});"};
     println "      }}));";
+}); /**/
 
+// For creating a map. Result:
+// stats.setStatsServerResourcesDbJdbcDatasources(item(countByType(DataSourceModel.class)));
+// stats.setStatsServerResourcesDbJdbcDatasources(item(countByType(DataSourceModel.class, new HashMap<...>(){{
+//     put(key, value);
+// }})));
+items2.each({item ->
+    def key = item["key"];
+    String keyMethod = formatMethodName(key);
+    println ""
+    print "        stats.set${keyMethod}(item(countByType(${item.clazz}.class";
+    if (!item.props?.isEmpty()) {
+        print ", new HashMap<String, String>(){{";
+        def Map<String, String> props = item["props"];
+        props.each{k,v -> print "\n          put(${k}, ${v});"};
+        print "\n        }}";
+    }
+    println ")));";
 });
+println "\n\n";
 
+
+// Frames 2.0 model methods.
 items2.each({item ->
     def key = item["key"];
     String keyConst  = key.replaceAll(/[-\.]/, "_").toUpperCase();
-    String keyMethod = key.replaceAll(/([-\.]\w)/, {x -> x[0][1].toUpperCase()}).capitalize();
+    //String keyMethod = key.replaceAll(/([-\.]\w)/, {x -> x[0][1].toUpperCase()}).capitalize();
+    String keyMethod = formatMethodName(key);
     def javadoc = "    /**\n     * How many ${item["label"]} were found.\n     */";
     println "";
     println "    String ${keyConst} = \"${key}\";"
@@ -90,6 +116,10 @@ items2.each({item ->
 });
 
 println();
+
+String formatMethodName(String str) {
+    return str.replaceAll(/([-\.]\w)/, {x -> x[0][1].toUpperCase()}).capitalize();
+}
 
 items2.each({item ->
     def key = item["key"];

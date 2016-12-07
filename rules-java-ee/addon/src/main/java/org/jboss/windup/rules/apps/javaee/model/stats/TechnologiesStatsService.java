@@ -9,6 +9,7 @@ import com.tinkerpop.pipes.filter.BackFilterPipe;
 import com.tinkerpop.pipes.transform.OutPipe;
 import com.tinkerpop.pipes.util.Pipeline;
 import com.tinkerpop.pipes.util.StartPipe;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +23,7 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.rules.apps.java.archives.model.IdentifiedArchiveModel;
 import org.jboss.windup.rules.apps.java.model.JarArchiveModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
+import org.jboss.windup.rules.apps.javaee.model.DataSourceModel;
 import org.jboss.windup.rules.apps.javaee.model.EjbBeanBaseModel;
 import org.jboss.windup.rules.apps.javaee.model.EjbEntityBeanModel;
 import org.jboss.windup.rules.apps.javaee.model.EjbMessageDrivenModel;
@@ -96,8 +98,13 @@ public class TechnologiesStatsService extends GraphService<TechnologiesStatsMode
         stats.setStatsServicesHibernateMappingFiles(item(countByType(HibernateMappingFileModel.class)));
         stats.setStatsServicesHibernateSessionFactories(item(countByType(HibernateSessionFactoryModel.class)));
 
-        // TODO: stats.setStatsServerResourcesDbJdbcDatasources(item(countByType(.class)));
-        // TODO: stats.setStatsServerResourcesDbXaJdbcDatasources(item(countByType(.class)));
+        stats.setStatsServerResourcesDbJdbcDatasources(item(countByType(DataSourceModel.class, new HashMap<String, Serializable>(){{
+            put(DataSourceModel.IS_XA, false);
+        }})));
+
+        stats.setStatsServerResourcesDbXaJdbcDatasources(item(countByType(DataSourceModel.class, new HashMap<String, Serializable>(){{
+            put(DataSourceModel.IS_XA, true);
+        }})));
 
         stats.setStatsServicesHttpJaxRs(item(countByType(JaxRSWebServiceModel.class)));
         stats.setStatsServicesHttpJaxWs(item(countByType(JaxWSWebServiceModel.class)));
@@ -123,21 +130,31 @@ public class TechnologiesStatsService extends GraphService<TechnologiesStatsMode
 
     private <T extends WindupVertexFrame> int countByType(Class<T> clazz)
     {
-        return countByType(clazz, null, null);
+        return countByType(clazz, null);
     }
 
-    private <T extends WindupVertexFrame> int countByType(Class<T> clazz, String propName, String value)
+    private <T extends WindupVertexFrame> int countByType(Class<T> clazz, String propName, Serializable value)
     {
-        LOG.info("Counting: Frame class == " + clazz.getSimpleName() + " && " + propName + " == " + value);
+        ///LOG.info("Counting: Frame class == " + clazz.getSimpleName() + " && " + propName + " == " + value);
+        return countByType(clazz, propName == null ? null : new HashMap<String, Serializable>(){{put(propName, value);}});
+    }
+
+    private <T extends WindupVertexFrame> int countByType(Class<T> clazz, Map<String, Serializable> props)
+    {
         FramedGraphQuery query = this.getGraphContext().getQuery().type(clazz);
-        if (propName != null && !propName.isEmpty())
+        if (props != null)
+        for (Map.Entry<String, Serializable> prop : props.entrySet())
+        {
+            String propName = prop.getKey();
+            Serializable value = prop.getValue();
             if (value == null)
                 query = query.has(propName);
             else
                 query = query.has(propName, value);
+        }
 
         long count = this.count(query.vertices());
-        LOG.info(" ==> " + count);
+        LOG.info("Counted: Frame class == " + clazz.getSimpleName() + " && " + (props == null ? "no" : props.size()) + " props ==> " + count);
         return (int) count;
     }
 
