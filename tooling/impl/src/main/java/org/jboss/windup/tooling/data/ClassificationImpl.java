@@ -3,12 +3,11 @@ package org.jboss.windup.tooling.data;
 import java.io.File;
 import java.util.List;
 
-import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.reporting.model.ClassificationModel;
-import org.jboss.windup.reporting.category.IssueCategory;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+
+import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.reporting.model.ClassificationModel;
 
 /**
  * This is a non-graph dependent analogue to {@link ClassificationModel} suitable for usage after the {@link GraphContext} itself has been closed.
@@ -17,13 +16,14 @@ import javax.xml.bind.annotation.XmlElementWrapper;
  */
 public class ClassificationImpl implements Classification
 {
+    private static final long serialVersionUID = 1L;
+
     private final Object id;
     private File file;
     private String classification;
     private String description;
     private List<Link> links;
     private List<Quickfix> quickfixes;
-
 
     private int effort;
     private IssueCategory issueCategory;
@@ -102,7 +102,7 @@ public class ClassificationImpl implements Classification
      */
     @Override
     @XmlElementWrapper(name = "links")
-    @XmlElement(name="link", type = LinkImpl.class)
+    @XmlElement(name = "link", type = LinkImpl.class)
     public List<Link> getLinks()
     {
         return links;
@@ -137,7 +137,7 @@ public class ClassificationImpl implements Classification
      * This is a hint as to the severity of the problem. This may be used for supplying an icon or glyph in the report to the user.
      */
     @Override
-    @XmlElement(name = "issue-category")
+    @XmlElement(name = "issue-category", type = IssueCategoryImpl.class)
     public IssueCategory getIssueCategory()
     {
         return issueCategory;

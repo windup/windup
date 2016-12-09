@@ -1,17 +1,15 @@
 package org.jboss.windup.tooling.data;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.List;
-
-import org.jboss.windup.reporting.model.InlineHintModel;
-import org.jboss.windup.reporting.category.IssueCategory;
 
 /**
  * This is equivalent to a {@link InlineHintModel}, however it contains no dependencies on having an open instance of the graph in order to operate.
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public interface Hint
+public interface Hint extends Serializable
 {
     /**
      * Contains a unique identifier for this hint.

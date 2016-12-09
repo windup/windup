@@ -1,14 +1,12 @@
 package org.jboss.windup.tooling.data;
 
-import org.jboss.windup.reporting.model.QuickfixModel;
-import org.jboss.windup.reporting.model.QuickfixType;
+import java.io.Serializable;
 
 /**
  * Contains a representation of a {@link QuickfixModel} for use by tooling (eg, Eclipse).
  */
-public interface Quickfix
+public interface Quickfix extends Serializable
 {
-
     /**
      * Contains the type of the quickfix (eg, token substitution)..
      */

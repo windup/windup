@@ -1,18 +1,15 @@
 package org.jboss.windup.tooling.data;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.List;
-
-import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.reporting.model.ClassificationModel;
-import org.jboss.windup.reporting.category.IssueCategory;
 
 /**
  * This is a non-graph dependent analogue to {@link ClassificationModel} suitable for usage after the {@link GraphContext} itself has been closed.
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public interface Classification
+public interface Classification extends Serializable
 {
     /**
      * Gets the unique identifier of this classification.
