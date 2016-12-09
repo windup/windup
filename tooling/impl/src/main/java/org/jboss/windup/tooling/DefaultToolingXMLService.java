@@ -17,7 +17,9 @@ import org.jboss.windup.util.exception.WindupException;
  */
 public class DefaultToolingXMLService implements ToolingXMLService
 {
-    @Override
+	private static final long serialVersionUID = 1L;
+
+	@Override
     public void serializeResults(ExecutionResults results, OutputStream outputStream)
     {
         try
@@ -63,6 +65,7 @@ public class DefaultToolingXMLService implements ToolingXMLService
                     org.jboss.windup.tooling.data.HintImpl.class,
                     org.jboss.windup.tooling.data.LinkImpl.class,
                     org.jboss.windup.tooling.data.QuickfixImpl.class,
-                    org.jboss.windup.tooling.data.ReportLinkImpl.class);
+                    org.jboss.windup.tooling.data.ReportLinkImpl.class,
+                    org.jboss.windup.tooling.data.IssueCategoryImpl.class);
     }
 }

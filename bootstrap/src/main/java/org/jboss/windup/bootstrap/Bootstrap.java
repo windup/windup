@@ -50,6 +50,7 @@ import org.jboss.windup.bootstrap.commands.windup.ListSourceTechnologiesCommand;
 import org.jboss.windup.bootstrap.commands.windup.ListTagsCommand;
 import org.jboss.windup.bootstrap.commands.windup.ListTargetTechnologiesCommand;
 import org.jboss.windup.bootstrap.commands.windup.RunWindupCommand;
+import org.jboss.windup.bootstrap.commands.windup.ServerModeCommand;
 import org.jboss.windup.bootstrap.commands.windup.UpdateRulesetsCommand;
 import org.jboss.windup.bootstrap.listener.GreetingListener;
 
@@ -94,8 +95,22 @@ public class Bootstrap
         }
 
         Bootstrap bootstrap = new Bootstrap();
-        bootstrap.run(bootstrapArgs);
-        bootstrap.stop();
+        if (!bootstrap.serverMode(bootstrapArgs)) 
+        {
+        	bootstrap.run(bootstrapArgs);
+        	bootstrap.stop();
+        }
+    }
+    
+    private boolean serverMode(List<String> arguments) 
+    {
+    	if (ServerModeCommand.isServerMode(arguments)) 
+    	{
+    		ServerModeCommand serverCommand = new ServerModeCommand(arguments);
+    		serverCommand.execute();
+    		return true;
+    	}
+    	return false;
     }
 
     private static boolean handleAsSystemProperty(String argument)

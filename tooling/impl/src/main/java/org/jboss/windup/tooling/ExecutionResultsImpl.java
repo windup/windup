@@ -1,32 +1,5 @@
 package org.jboss.windup.tooling;
 
-import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.LinkModel;
-import org.jboss.windup.reporting.model.QuickfixModel;
-import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.reporting.model.ClassificationModel;
-import org.jboss.windup.reporting.model.InlineHintModel;
-import org.jboss.windup.reporting.model.source.SourceReportModel;
-import org.jboss.windup.reporting.service.ClassificationService;
-import org.jboss.windup.reporting.service.InlineHintService;
-import org.jboss.windup.reporting.service.ReportService;
-import org.jboss.windup.reporting.service.SourceReportService;
-import org.jboss.windup.reporting.category.IssueCategory;
-import org.jboss.windup.tooling.data.Classification;
-import org.jboss.windup.tooling.data.ClassificationImpl;
-import org.jboss.windup.tooling.data.Hint;
-import org.jboss.windup.tooling.data.HintImpl;
-import org.jboss.windup.tooling.data.Link;
-import org.jboss.windup.tooling.data.LinkImpl;
-import org.jboss.windup.tooling.data.Quickfix;
-import org.jboss.windup.tooling.data.QuickfixImpl;
-import org.jboss.windup.tooling.data.ReportLink;
-import org.jboss.windup.tooling.data.ReportLinkImpl;
-import org.jboss.windup.util.exception.WindupException;
-
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -34,6 +7,34 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+
+import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.LinkModel;
+import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.reporting.model.ClassificationModel;
+import org.jboss.windup.reporting.model.InlineHintModel;
+import org.jboss.windup.reporting.model.QuickfixModel;
+import org.jboss.windup.reporting.model.source.SourceReportModel;
+import org.jboss.windup.reporting.service.ClassificationService;
+import org.jboss.windup.reporting.service.InlineHintService;
+import org.jboss.windup.reporting.service.ReportService;
+import org.jboss.windup.reporting.service.SourceReportService;
+import org.jboss.windup.tooling.data.Classification;
+import org.jboss.windup.tooling.data.ClassificationImpl;
+import org.jboss.windup.tooling.data.Hint;
+import org.jboss.windup.tooling.data.HintImpl;
+import org.jboss.windup.tooling.data.IssueCategoryImpl;
+import org.jboss.windup.tooling.data.Link;
+import org.jboss.windup.tooling.data.LinkImpl;
+import org.jboss.windup.tooling.data.Quickfix;
+import org.jboss.windup.tooling.data.QuickfixImpl;
+import org.jboss.windup.tooling.data.ReportLink;
+import org.jboss.windup.tooling.data.ReportLinkImpl;
+import org.jboss.windup.util.exception.WindupException;
 import javax.xml.bind.annotation.XmlAttribute;
 
 /**
@@ -46,7 +47,9 @@ import javax.xml.bind.annotation.XmlAttribute;
 @XmlRootElement(name = "execution-results")
 public class ExecutionResultsImpl implements ExecutionResults
 {
-    private final ToolingXMLService toolingXMLService;
+	private static final long serialVersionUID = 1L;
+
+	private final ToolingXMLService toolingXMLService;
 
     private final List<Classification> classifications;
     private final List<Hint> hints;
@@ -139,7 +142,7 @@ public class ExecutionResultsImpl implements ExecutionResults
             hint.setFile(hintModel.getFile().asFile());
             hint.setTitle(hintModel.getTitle());
             hint.setHint(hintModel.getHint());
-            hint.setIssueCategory(new IssueCategory(hintModel.getIssueCategory()));
+            hint.setIssueCategory(new IssueCategoryImpl(hintModel.getIssueCategory()));
             hint.setEffort(hintModel.getEffort());
             hint.setColumn(hintModel.getColumnNumber());
             hint.setLineNumber(hintModel.getLineNumber());
@@ -167,7 +170,7 @@ public class ExecutionResultsImpl implements ExecutionResults
                 classification.setDescription(classificationModel.getDescription());
                 classification.setEffort(classificationModel.getEffort());
                 classification.setRuleID(classificationModel.getRuleID());
-                classification.setIssueCategory(new IssueCategory(classificationModel.getIssueCategory()));
+                classification.setIssueCategory(new IssueCategoryImpl(classificationModel.getIssueCategory()));
                 classification.setFile(fileModel.asFile());
 
                 classification.setLinks(asLinks(classificationModel.getLinks()));
@@ -198,7 +201,7 @@ public class ExecutionResultsImpl implements ExecutionResults
         for (QuickfixModel quickfixModel : quickfixModels)
         {
             QuickfixImpl quickfix = new QuickfixImpl();
-            quickfix.setType(quickfixModel.getQuickfixType());
+            quickfix.setType(org.jboss.windup.tooling.data.QuickfixType.valueOf(quickfixModel.getQuickfixType().name()));
             quickfix.setName(quickfixModel.getName());
             quickfix.setNewline(quickfixModel.getNewline());
             quickfix.setReplacement(quickfixModel.getReplacement());

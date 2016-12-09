@@ -11,7 +11,7 @@ public interface WindupProgressMonitor
     /**
      * Constant indicating an unknown amount of work.
      */
-    static int UNKNOWN = -1;
+    int UNKNOWN = -1;
 
     /**
      * Notifies that the main task is beginning. This must only be called once on a given progress monitor instance.

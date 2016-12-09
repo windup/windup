@@ -1,7 +1,5 @@
 package org.jboss.windup.tooling.data;
 
-import org.jboss.windup.reporting.model.QuickfixType;
-
 /**
  * QuickfixImpl object parsed from XML rule definition
  * 
@@ -10,7 +8,8 @@ import org.jboss.windup.reporting.model.QuickfixType;
  */
 public class QuickfixImpl implements Quickfix
 {
-
+	private static final long serialVersionUID = 1L;
+	
     private QuickfixType type;
 
     private String search;

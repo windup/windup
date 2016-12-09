@@ -13,6 +13,8 @@ import javax.xml.bind.annotation.XmlElement;
  */
 public class ReportLinkImpl implements ReportLink
 {
+	private static final long serialVersionUID = 1L;
+	
     private File inputFile;
     private File reportFile;
 

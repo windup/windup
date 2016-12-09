@@ -1,6 +1,7 @@
 package org.jboss.windup.tooling;
 
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.nio.file.Path;
 
 /**
@@ -9,7 +10,7 @@ import java.nio.file.Path;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public interface ToolingXMLService
+public interface ToolingXMLService extends Serializable
 {
     /**
      * Serialize the given results to the provided {@link OutputStream}.
