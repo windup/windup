@@ -8,8 +8,8 @@ package org.jboss.windup.tooling.data;
  */
 public class QuickfixImpl implements Quickfix
 {
-	private static final long serialVersionUID = 1L;
-	
+    private static final long serialVersionUID = 1L;
+
     private QuickfixType type;
 
     private String search;

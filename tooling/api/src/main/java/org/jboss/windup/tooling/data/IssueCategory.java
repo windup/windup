@@ -8,8 +8,12 @@ import java.io.Serializable;
 public interface IssueCategory extends Serializable
 {
     String getCategoryID();
+
     String getOrigin();
+
     String getName();
+
     String getDescription();
+
     Integer getPriority();
 }

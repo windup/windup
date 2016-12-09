@@ -44,7 +44,7 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
 
     @Inject
     private WindupProcessor processor;
-    
+
     private String windupHome;
     private WindupToolingProgressMonitor progressMonitor;
     private String input;
@@ -160,7 +160,8 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
         if (rulesPaths == null)
             return;
 
-        for (String rulesPath : rulesPaths) {
+        for (String rulesPath : rulesPaths)
+        {
             this.addUserRulesPath(rulesPath);
         }
     }
@@ -195,8 +196,9 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
 
         Logger globalLogger = Logger.getLogger("");
         WindupProgressLoggingHandler loggingHandler = null;
-        if (progressMonitor instanceof WindupToolingProgressMonitor) {
-            loggingHandler = new WindupProgressLoggingHandler((WindupToolingProgressMonitor)progressMonitor);
+        if (progressMonitor instanceof WindupToolingProgressMonitor)
+        {
+            loggingHandler = new WindupProgressLoggingHandler((WindupToolingProgressMonitor) progressMonitor);
             globalLogger.addHandler(loggingHandler);
         }
 
@@ -236,7 +238,6 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
         }
     }
 
-    
     private class WindupProgressLoggingHandler extends Handler
     {
         private final WindupToolingProgressMonitor monitor;
@@ -252,10 +253,13 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
             if (this.monitor == null)
                 return;
 
-            try {
-				this.monitor.logMessage(record);
-			} catch (RemoteException e) {
-			}
+            try
+            {
+                this.monitor.logMessage(record);
+            }
+            catch (RemoteException e)
+            {
+            }
         }
 
         @Override

@@ -2,8 +2,6 @@ package org.jboss.windup.tooling.data;
 
 import java.io.File;
 
-import org.jboss.windup.tooling.data.ReportLink;
-
 import javax.xml.bind.annotation.XmlElement;
 
 /**
@@ -13,8 +11,8 @@ import javax.xml.bind.annotation.XmlElement;
  */
 public class ReportLinkImpl implements ReportLink
 {
-	private static final long serialVersionUID = 1L;
-	
+    private static final long serialVersionUID = 1L;
+
     private File inputFile;
     private File reportFile;
 

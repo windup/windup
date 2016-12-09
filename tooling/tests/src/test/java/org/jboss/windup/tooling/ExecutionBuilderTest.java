@@ -61,8 +61,8 @@ import com.google.common.collect.Lists;
 @RunWith(Arquillian.class)
 public class ExecutionBuilderTest
 {
-	private static final int PORT = 9874;
-	
+    private static final int PORT = 9874;
+
     private static Logger LOG = Logger.getLogger(ExecutionBuilderTest.class.getName());
 
     @Inject
@@ -92,6 +92,27 @@ public class ExecutionBuilderTest
         return ShrinkWrap
                     .create(AddonArchive.class)
                     .addBeansXML();
+    }
+
+    public static Path getDefaultPath()
+    {
+        return FileUtils.getTempDirectory().toPath().resolve("Windup").resolve("execbuildertest_" + RandomStringUtils.randomAlphanumeric(6));
+    }
+
+    private static ExecutionBuilder getExecutionBuilderFromRMIRegistry()
+    {
+        try
+        {
+            Registry registry = LocateRegistry.getRegistry(PORT);
+            ExecutionBuilder executionBuilder = (ExecutionBuilder) registry.lookup(ExecutionBuilder.LOOKUP_NAME);
+            return executionBuilder;
+        }
+        catch (RemoteException | NotBoundException e)
+        {
+            LOG.log(Level.SEVERE, e.getMessage(), e);
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Test
@@ -185,52 +206,32 @@ public class ExecutionBuilderTest
         return builder.execute();
     }
 
-    public static Path getDefaultPath()
-    {
-        return FileUtils.getTempDirectory().toPath().resolve("Windup").resolve("execbuildertest_" + RandomStringUtils.randomAlphanumeric(6));
-    }
-    
     @Test
-    public void testExecutionBuilderRegistered() throws Exception 
+    public void testExecutionBuilderRegistered() throws Exception
     {
-    	rmiServer.startServer(PORT);
-    	
-    	Path input = Paths.get("../../test-files/src_example");
-		Path output = ExecutionBuilderTest.getDefaultPath();
-		
-		ExecutionBuilder builder = getExecutionBuilderFromRMIRegistry();
-		Assert.assertNotNull(builder);
-		
-		builder.setWindupHome(Paths.get(".").toString());		
-		builder.setInput(input.toString());
-		builder.setOutput(output.toString());
-		builder.setProgressMonitor(new TestProgressMonitor());
-		builder.setOption(SourceModeOption.NAME, true);
-		builder.setOption(TargetOption.NAME, Lists.newArrayList("eap"));
-		builder.setOption(SourceOption.NAME, Lists.newArrayList("eap"));
+        rmiServer.startServer(PORT);
+
+        Path input = Paths.get("../../test-files/src_example");
+        Path output = ExecutionBuilderTest.getDefaultPath();
+
+        ExecutionBuilder builder = getExecutionBuilderFromRMIRegistry();
+        Assert.assertNotNull(builder);
+
+        builder.setWindupHome(Paths.get(".").toString());
+        builder.setInput(input.toString());
+        builder.setOutput(output.toString());
+        builder.setProgressMonitor(new TestProgressMonitor());
+        builder.setOption(SourceModeOption.NAME, true);
+        builder.setOption(TargetOption.NAME, Lists.newArrayList("eap"));
+        builder.setOption(SourceOption.NAME, Lists.newArrayList("eap"));
         builder.setOption(OnlineModeOption.NAME, false);
         builder.includePackage("org.windup.examples.ejb.messagedriven");
         builder.ignore("\\.class$");
-        
-		ExecutionResults results = builder.execute();
-		
-		Assert.assertNotNull(results);
+
+        ExecutionResults results = builder.execute();
+
+        Assert.assertNotNull(results);
     }
-	
-	private static ExecutionBuilder getExecutionBuilderFromRMIRegistry() 
-	{
-		try 
-		{
-			Registry registry = LocateRegistry.getRegistry(PORT);
-	        ExecutionBuilder executionBuilder = (ExecutionBuilder) registry.lookup(ExecutionBuilder.LOOKUP_NAME);
-	        return executionBuilder;
-		} catch (RemoteException | NotBoundException e) 
-		{
-			LOG.log(Level.SEVERE, e.getMessage(), e);
-			e.printStackTrace();
-		}
-		return null;
-	}
 
     @Singleton
     public static class TestProvider extends AbstractRuleProvider
@@ -278,19 +279,19 @@ public class ExecutionBuilderTest
             return quickfix;
         }
     }
-    
+
     class TestProgressMonitor extends UnicastRemoteObject implements WindupToolingProgressMonitor, Remote
     {
-    	private static final long serialVersionUID = 1L;
-
-    	private int totalWork;
+        private static final long serialVersionUID = 1L;
+        final List<LogRecord> logRecords = new ArrayList<>();
+        private int totalWork;
         private int completed;
         private boolean done;
-        final List<LogRecord> logRecords = new ArrayList<>();
-        
-        protected TestProgressMonitor() throws RemoteException {
-			super();
-		}
+
+        protected TestProgressMonitor() throws RemoteException
+        {
+            super();
+        }
 
         @Override
         public void logMessage(LogRecord logRecord)

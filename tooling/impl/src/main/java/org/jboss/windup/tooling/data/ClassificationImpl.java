@@ -3,11 +3,11 @@ package org.jboss.windup.tooling.data;
 import java.io.File;
 import java.util.List;
 
-import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.reporting.model.ClassificationModel;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+
+import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.reporting.model.ClassificationModel;
 
 /**
  * This is a non-graph dependent analogue to {@link ClassificationModel} suitable for usage after the {@link GraphContext} itself has been closed.
@@ -16,15 +16,14 @@ import javax.xml.bind.annotation.XmlElementWrapper;
  */
 public class ClassificationImpl implements Classification
 {
-	private static final long serialVersionUID = 1L;
-	
-	private final Object id;
+    private static final long serialVersionUID = 1L;
+
+    private final Object id;
     private File file;
     private String classification;
     private String description;
     private List<Link> links;
     private List<Quickfix> quickfixes;
-
 
     private int effort;
     private IssueCategory issueCategory;
@@ -103,7 +102,7 @@ public class ClassificationImpl implements Classification
      */
     @Override
     @XmlElementWrapper(name = "links")
-    @XmlElement(name="link", type = LinkImpl.class)
+    @XmlElement(name = "link", type = LinkImpl.class)
     public List<Link> getLinks()
     {
         return links;

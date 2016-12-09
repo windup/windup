@@ -3,10 +3,10 @@ package org.jboss.windup.tooling.data;
 import java.io.File;
 import java.util.List;
 
-import org.jboss.windup.reporting.model.InlineHintModel;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
+
+import org.jboss.windup.reporting.model.InlineHintModel;
 
 /**
  * This is equivalent to a {@link InlineHintModel}, however it contains no dependencies on having an open instance of the graph in order to operate.
@@ -15,8 +15,8 @@ import javax.xml.bind.annotation.XmlElementWrapper;
  */
 public class HintImpl implements Hint
 {
-	private static final long serialVersionUID = 1L;
-	
+    private static final long serialVersionUID = 1L;
+
     private final Object id;
     private File file;
     private String title;

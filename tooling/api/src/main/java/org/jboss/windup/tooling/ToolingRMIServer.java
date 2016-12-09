@@ -5,6 +5,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Arrays;
+import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
@@ -13,13 +14,14 @@ import javax.inject.Inject;
  */
 public class ToolingRMIServer
 {
+    private static Logger LOG = Logger.getLogger(ToolingRMIServer.class.getName());
+
     @Inject
     private ExecutionBuilder executionBuilder;
 
     public void startServer(int port)
     {
-
-        System.out.println("Registering RMI Server...");
+        LOG.info("Registering RMI Server...");
         try
         {
             Registry registry = LocateRegistry.getRegistry(port);
@@ -35,23 +37,23 @@ public class ToolingRMIServer
                 }
                 catch (Throwable t)
                 {
-                    System.out.println("Could not unexport due to: " + t.getMessage());
+                    LOG.warning("Could not unexport due to: " + t.getMessage());
                 }
             }
             catch (Throwable t)
             {
                 t.printStackTrace();
-                System.out.println("Registry not already there, starting...");
+                LOG.warning("Registry not already there, starting...");
                 registry = LocateRegistry.createRegistry(port);
             }
 
             ExecutionBuilder proxy = (ExecutionBuilder) UnicastRemoteObject.exportObject(executionBuilder, 0);
             registry.rebind(ExecutionBuilder.LOOKUP_NAME, proxy);
-            System.out.println("Registered ExecutionBuilder at: " + registry);
+            LOG.info("Registered ExecutionBuilder at: " + registry);
         }
         catch (RemoteException e)
         {
-            System.out.println("Bootstrap error while registering ExecutionBuilder...");
+            LOG.severe("Bootstrap error while registering ExecutionBuilder...");
             e.printStackTrace();
         }
     }

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -35,7 +36,6 @@ import org.jboss.windup.tooling.data.QuickfixImpl;
 import org.jboss.windup.tooling.data.ReportLink;
 import org.jboss.windup.tooling.data.ReportLinkImpl;
 import org.jboss.windup.util.exception.WindupException;
-import javax.xml.bind.annotation.XmlAttribute;
 
 /**
  * Contains an implementation of {@link ExecutionResults} that loads its results from a {@link GraphContext}.
@@ -47,9 +47,9 @@ import javax.xml.bind.annotation.XmlAttribute;
 @XmlRootElement(name = "execution-results")
 public class ExecutionResultsImpl implements ExecutionResults
 {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private final ToolingXMLService toolingXMLService;
+    private final ToolingXMLService toolingXMLService;
 
     private final List<Classification> classifications;
     private final List<Hint> hints;
@@ -71,49 +71,6 @@ public class ExecutionResultsImpl implements ExecutionResults
         this.classifications = getClassifications(graphContext);
         this.hints = getHints(graphContext);
         this.reportLinks = getReportLinks(graphContext);
-    }
-
-    @Override
-    @XmlAttribute(name = "stopMessage")
-    public String getWindupStopOnRequestMessage()
-    {
-        return this.windupStopOnRequestMessage;
-    }
-
-    @Override
-    @XmlElementWrapper(name = "classifications")
-    @XmlElement(name = "classification", type = ClassificationImpl.class)
-    public List<Classification> getClassifications()
-    {
-        return classifications;
-    }
-
-    @Override
-    @XmlElementWrapper(name = "hints")
-    @XmlElement(name = "hint", type = HintImpl.class)
-    public List<Hint> getHints()
-    {
-        return hints;
-    }
-
-    @Override
-    @XmlElementWrapper(name = "report-links")
-    @XmlElement(name="report-link", type = ReportLinkImpl.class)
-    public List<ReportLink> getReportLinks()
-    {
-        return reportLinks;
-    }
-
-    @Override
-    public void serializeToXML(Path path)
-    {
-        try (OutputStream outputStream = new FileOutputStream(path.toFile()))
-        {
-            toolingXMLService.serializeResults(this, outputStream);
-        } catch (IOException e)
-        {
-            throw new WindupException("Failed to serialize results due to I/O Error: " + e.getMessage(), e);
-        }
     }
 
     private static List<ReportLink> getReportLinks(GraphContext graphContext)
@@ -210,5 +167,49 @@ public class ExecutionResultsImpl implements ExecutionResults
             fixes.add(quickfix);
         }
         return fixes;
+    }
+
+    @Override
+    @XmlAttribute(name = "stopMessage")
+    public String getWindupStopOnRequestMessage()
+    {
+        return this.windupStopOnRequestMessage;
+    }
+
+    @Override
+    @XmlElementWrapper(name = "classifications")
+    @XmlElement(name = "classification", type = ClassificationImpl.class)
+    public List<Classification> getClassifications()
+    {
+        return classifications;
+    }
+
+    @Override
+    @XmlElementWrapper(name = "hints")
+    @XmlElement(name = "hint", type = HintImpl.class)
+    public List<Hint> getHints()
+    {
+        return hints;
+    }
+
+    @Override
+    @XmlElementWrapper(name = "report-links")
+    @XmlElement(name = "report-link", type = ReportLinkImpl.class)
+    public List<ReportLink> getReportLinks()
+    {
+        return reportLinks;
+    }
+
+    @Override
+    public void serializeToXML(Path path)
+    {
+        try (OutputStream outputStream = new FileOutputStream(path.toFile()))
+        {
+            toolingXMLService.serializeResults(this, outputStream);
+        }
+        catch (IOException e)
+        {
+            throw new WindupException("Failed to serialize results due to I/O Error: " + e.getMessage(), e);
+        }
     }
 }

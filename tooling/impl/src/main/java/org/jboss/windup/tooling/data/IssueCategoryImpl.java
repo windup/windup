@@ -7,7 +7,7 @@ import org.jboss.windup.reporting.category.IssueCategoryModel;
  */
 public class IssueCategoryImpl implements IssueCategory
 {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     private String categoryID;
     private String origin;

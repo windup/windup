@@ -10,7 +10,7 @@ public enum QuickfixType
 {
 
     /**
-     * It searches for token and replaces it by another token 
+     * It searches for token and replaces it by another token
      */
     REPLACE("Quickfix REPLACE token"),
     /**
@@ -21,14 +21,14 @@ public enum QuickfixType
      * It searches for a token and inserts a new line after found line
      */
     INSERT_LINE("Quickfix INSERT_LINE");
-    
+
     private String description;
-    
+
     private QuickfixType(String description)
     {
         this.description = description;
     }
-    
+
     @Override
     public String toString()
     {

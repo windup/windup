@@ -17,9 +17,9 @@ import org.jboss.windup.util.exception.WindupException;
  */
 public class DefaultToolingXMLService implements ToolingXMLService
 {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Override
+    @Override
     public void serializeResults(ExecutionResults results, OutputStream outputStream)
     {
         try

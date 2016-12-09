@@ -1,7 +1,5 @@
 package org.jboss.windup.tooling.data;
 
-import org.jboss.windup.tooling.data.Link;
-
 /**
  * Contains information about a Link (href and name).
  *
@@ -9,8 +7,8 @@ import org.jboss.windup.tooling.data.Link;
  */
 public class LinkImpl implements Link
 {
-	private static final long serialVersionUID = 1L;
-	
+    private static final long serialVersionUID = 1L;
+
     private String description;
     private String url;
 
