@@ -29,9 +29,17 @@ public interface ProjectDependencyModel extends WindupVertexFrame
     @Property(PROPERTY_CLASSIFIER)
     String getClassifier();
 
+    /**
+     * Dependency &lt;type&gt; from the Maven POM - jar, war, etc.
+     * Might be redundant with getProjectModel().getType()
+     */
     @Property(PROPERTY_TYPE)
     void setType(String type);
 
+    /**
+     * Dependency &lt;type&gt; from the Maven POM - jar, war, etc.
+     * Might be redundant with getProjectModel().getType()
+     */
     @Property(PROPERTY_TYPE)
     void getType();
 
