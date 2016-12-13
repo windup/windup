@@ -24,6 +24,33 @@ public class TagUtil
     }
 
     /**
+     * Returns true if
+     *  - includeTags is not empty and tag is in includeTags
+     *  - includeTags is empty and tag is not in excludeTags
+     * @param tags Hint tags
+     * @param includeTags Include tags
+     * @param excludeTags Exclude tags
+     * @return has tag match
+     */
+    public static boolean strictCheckMatchingTags(Collection<String> tags, Set<String> includeTags, Set<String> excludeTags)
+    {
+        boolean includeTagsEnabled = !includeTags.isEmpty();
+
+        for (String tag : tags)
+        {
+            boolean isIncluded = includeTags.contains(tag);
+            boolean isExcluded = excludeTags.contains(tag);
+
+            if ((includeTagsEnabled && isIncluded) || (!includeTagsEnabled && !isExcluded))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * <p>
      * If any tag is in the exclude list and strictExclude is true, this will return false.
      *

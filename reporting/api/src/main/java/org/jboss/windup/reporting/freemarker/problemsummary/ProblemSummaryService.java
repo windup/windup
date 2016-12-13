@@ -31,8 +31,22 @@ public class ProblemSummaryService
     /**
      * Gets lists of {@link ProblemSummary} objects organized by {@link IssueCategoryModel}.
      */
+    public static Map<IssueCategoryModel, List<ProblemSummary>> getProblemSummaries(
+            GraphContext graphContext,
+            Set<ProjectModel> projectModels,
+            Set<String> includeTags,
+            Set<String> excludeTags)
+    {
+        return getProblemSummaries(graphContext, projectModels, includeTags, excludeTags, false, false);
+    }
+
+    /**
+     * Gets lists of {@link ProblemSummary} objects organized by {@link IssueCategoryModel}.
+     */
     public static Map<IssueCategoryModel, List<ProblemSummary>> getProblemSummaries(GraphContext graphContext, Set<ProjectModel> projectModels, Set<String> includeTags,
-                                                                                    Set<String> excludeTags)
+                                                                                    Set<String> excludeTags,
+                                                                                    boolean strictComparison,
+                                                                                    boolean strictExclude)
     {
         // The key is the severity as a String
         Map<IssueCategoryModel, List<ProblemSummary>> results = new TreeMap<>(new IssueCategoryModel.IssueSummaryPriorityComparator());
@@ -43,8 +57,22 @@ public class ProblemSummaryService
         for (InlineHintModel hint : hints)
         {
             Set<String> tags = hint.getTags();
-            if (!TagUtil.checkMatchingTags(tags, includeTags, excludeTags, false))
+
+            boolean hasTagMatch;
+
+            if (strictComparison)
+            {
+                hasTagMatch = TagUtil.strictCheckMatchingTags(tags, includeTags, excludeTags);
+            }
+            else
+            {
+                hasTagMatch = TagUtil.checkMatchingTags(tags, includeTags, excludeTags, strictExclude);
+            }
+
+            if (!hasTagMatch)
+            {
                 continue;
+            }
 
             RuleSummaryKey key = new RuleSummaryKey(hint.getEffort(), hint.getRuleID(), hint.getTitle());
 
