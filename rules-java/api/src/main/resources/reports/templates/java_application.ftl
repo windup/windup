@@ -394,6 +394,8 @@
                 <@traverseAndRenderProject getProjectTraversal(reportModel.projectModel, 'only_once') sha1ToPathsMapper/>
 
             </div> <!-- /container -->
+
+            <#include "include/timestamp.ftl">
         </div>
 
 

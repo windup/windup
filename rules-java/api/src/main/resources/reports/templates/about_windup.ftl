@@ -104,7 +104,8 @@
                 </div>
             </div>
         </div>
-
+        
+        <#include "include/timestamp.ftl">
     </div> <!-- /container -->
 
 

@@ -125,6 +125,8 @@
         </div><!-- /row-->
     </div><!-- /container main-->
 
+    <#include "include/timestamp.ftl">
+
     <script src="resources/js/jquery-1.10.1.min.js"></script>
     <script src="resources/js/jquery-migrate-1.4.1.min.js"></script>
     <script src="resources/js/bootstrap.min.js"></script>

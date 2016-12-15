@@ -239,6 +239,7 @@
                 |
             <a href="#" id="jiraFeedbackTriggerBottomLink">Send feedback</a>
         </div>
+        <#include "include/timestamp.ftl">
 
     </div> <!-- /.container-fluid -->
     <script src="reports/resources/js/jquery-1.10.1.min.js"></script>

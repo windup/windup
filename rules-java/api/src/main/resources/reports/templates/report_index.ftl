@@ -182,6 +182,7 @@
                     </tbody>
                 </table>
             </div>
+        <#include "include/timestamp.ftl">
         </div>
     </div>
 

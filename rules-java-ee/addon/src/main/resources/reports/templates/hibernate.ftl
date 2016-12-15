@@ -90,6 +90,7 @@
         </div> <!-- /container -->
     </div><!--/row-->
 
+    <#include "include/timestamp.ftl">
     </div><!-- /container main-->
 
     <script src="resources/js/jquery-1.10.1.min.js"></script>
