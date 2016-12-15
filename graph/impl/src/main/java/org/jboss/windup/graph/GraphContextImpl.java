@@ -53,7 +53,7 @@ import com.tinkerpop.frames.modules.javahandler.JavaHandlerModule;
 
 public class GraphContextImpl implements GraphContext
 {
-    private static final Logger log = Logger.getLogger(GraphContextImpl.class.getName());
+    private static final Logger LOG = Logger.getLogger(GraphContextImpl.class.getName());
 
     private final Furnace furnace;
     private final GraphTypeManager graphTypeManager;
@@ -227,9 +227,9 @@ public class GraphContextImpl implements GraphContext
          */
         listIndexKeys.put(WindupVertexFrame.TYPE_PROP, new IndexData(WindupVertexFrame.TYPE_PROP, "", String.class));
 
-        log.info("Detected and initialized [" + defaultIndexKeys.size() + "] default indexes: " + defaultIndexKeys);
-        log.info("Detected and initialized [" + searchIndexKeys.size() + "] search indexes: " + searchIndexKeys);
-        log.info("Detected and initialized [" + listIndexKeys.size() + "] list indexes: " + listIndexKeys);
+        LOG.info("Detected and initialized [" + defaultIndexKeys.size() + "] default indexes: " + defaultIndexKeys);
+        LOG.info("Detected and initialized [" + searchIndexKeys.size() + "] search indexes: " + searchIndexKeys);
+        LOG.info("Detected and initialized [" + listIndexKeys.size() + "] list indexes: " + listIndexKeys);
 
         TitanManagement titan = titanGraph.getManagementSystem();
         for (Map.Entry<String, IndexData> entry : defaultIndexKeys.entrySet())
@@ -286,7 +286,7 @@ public class GraphContextImpl implements GraphContext
 
     private TitanGraph initializeTitanGraph()
     {
-        log.fine("Initializing graph.");
+        LOG.fine("Initializing graph.");
 
         Path lucene = graphDir.resolve("graphsearch");
         Path berkeley = graphDir.resolve("titangraph");
@@ -348,19 +348,26 @@ public class GraphContextImpl implements GraphContext
     @Override
     public void close()
     {
-        Imported<BeforeGraphCloseListener> beforeCloseListeners = furnace.getAddonRegistry().getServices(BeforeGraphCloseListener.class);
-        for (BeforeGraphCloseListener listener : beforeCloseListeners)
+        try
         {
-            if (!beforeGraphCloseListenerBuffer.containsKey(listener.getClass().toString()))
+            Imported<BeforeGraphCloseListener> beforeCloseListeners = furnace.getAddonRegistry().getServices(BeforeGraphCloseListener.class);
+            for (BeforeGraphCloseListener listener : beforeCloseListeners)
             {
-                beforeGraphCloseListenerBuffer.put(listener.getClass().toString(), listener);
+                if (!beforeGraphCloseListenerBuffer.containsKey(listener.getClass().toString()))
+                {
+                    beforeGraphCloseListenerBuffer.put(listener.getClass().toString(), listener);
+                }
             }
+            for (BeforeGraphCloseListener listener : beforeGraphCloseListenerBuffer.values())
+            {
+                listener.beforeGraphClose();
+            }
+            beforeGraphCloseListenerBuffer.clear();
         }
-        for (BeforeGraphCloseListener listener : beforeGraphCloseListenerBuffer.values())
+        catch (Exception e)
         {
-            listener.beforeGraphClose();
+            LOG.warning("Could not call before shutdown listeners during close due to: " + e.getMessage());
         }
-        beforeGraphCloseListenerBuffer.clear();
         this.eventGraph.getBaseGraph().shutdown();
     }
 
@@ -510,10 +517,10 @@ public class GraphContextImpl implements GraphContext
         public String toString()
         {
             return "IndexData{" +
-                    "propertyName='" + propertyName + '\'' +
-                    ", indexName='" + indexName + '\'' +
-                    ", type=" + type +
-                    '}';
+                        "propertyName='" + propertyName + '\'' +
+                        ", indexName='" + indexName + '\'' +
+                        ", type=" + type +
+                        '}';
         }
     }
 
