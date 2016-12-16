@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
+import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.util.Lists;
 import org.jboss.windup.config.SkipReportsRenderingOption;
 import org.jboss.windup.exec.WindupProcessor;
@@ -44,6 +45,9 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
 
     @Inject
     private WindupProcessor processor;
+    
+    @Inject
+    private Furnace furnace;
 
     private String windupHome;
     private WindupToolingProgressMonitor progressMonitor;
@@ -69,6 +73,16 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
     	this.userRulesPathSet.clear();
     	this.options.clear();
     	this.skipReportsRendering = false;
+    }
+    
+    @Override
+    public void terminate() throws RemoteException {
+    	furnace.stop();
+    	try {
+			Thread.sleep(5000);
+		} catch (InterruptedException e) {
+		}
+    	Runtime.getRuntime().halt(1);
     }
     
     /**

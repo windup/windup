@@ -93,4 +93,9 @@ public interface ExecutionBuilder extends Remote
      * Clears the configuration information.
      */
     void clear() throws RemoteException;
+    
+    /**
+     * Terminates the runtime that registered this ExecutionBuilder.
+     */
+    void terminate() throws RemoteException;
 }
