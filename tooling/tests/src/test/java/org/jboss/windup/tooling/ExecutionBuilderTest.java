@@ -105,6 +105,7 @@ public class ExecutionBuilderTest
         {
             Registry registry = LocateRegistry.getRegistry(PORT);
             ExecutionBuilder executionBuilder = (ExecutionBuilder) registry.lookup(ExecutionBuilder.LOOKUP_NAME);
+            executionBuilder.clear();
             return executionBuilder;
         }
         catch (RemoteException | NotBoundException e)

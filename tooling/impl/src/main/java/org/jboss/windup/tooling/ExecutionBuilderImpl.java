@@ -56,6 +56,21 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
     private Map<String, Object> options = new HashMap<>();
     private boolean skipReportsRendering;
 
+    @Override
+    public void clear() throws RemoteException 
+    {
+    	this.windupHome = null;
+    	this.progressMonitor = null;
+    	this.input = null;
+    	this.output = null;
+    	this.ignorePathPatterns.clear();
+    	this.includePackagePrefixSet.clear();
+    	this.excludePackagePrefixSet.clear();
+    	this.userRulesPathSet.clear();
+    	this.options.clear();
+    	this.skipReportsRendering = false;
+    }
+    
     /**
      * Is the option to skip Report preparing and generation set?
      *
