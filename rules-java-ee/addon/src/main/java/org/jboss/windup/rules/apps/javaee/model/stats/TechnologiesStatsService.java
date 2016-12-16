@@ -1,7 +1,9 @@
 package org.jboss.windup.rules.apps.javaee.model.stats;
 
 import com.tinkerpop.blueprints.Vertex;
+import org.eclipse.core.internal.resources.Project;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.service.GraphService;
 
 import com.tinkerpop.frames.FramedGraphQuery;
@@ -10,11 +12,16 @@ import com.tinkerpop.pipes.transform.OutPipe;
 import com.tinkerpop.pipes.util.Pipeline;
 import com.tinkerpop.pipes.util.StartPipe;
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.graph.frames.TypeAwareFramedGraphQuery;
@@ -53,9 +60,17 @@ public class TechnologiesStatsService extends GraphService<TechnologiesStatsMode
 {
     private final static Logger LOG = Logging.get(TechnologiesStatsService.class);
 
+    private Set<ProjectModel> projects;
+
     public TechnologiesStatsService(GraphContext context)
     {
+        this(context, Collections.emptySet());
+    }
+
+    public TechnologiesStatsService(GraphContext context, Set<ProjectModel> projects)
+    {
         super(context, TechnologiesStatsModel.class);
+        this.projects = projects;
     }
 
     /**
@@ -142,15 +157,16 @@ public class TechnologiesStatsService extends GraphService<TechnologiesStatsMode
     private <T extends WindupVertexFrame> int countByType(Class<T> clazz, Map<String, Serializable> props)
     {
         FramedGraphQuery query = this.getGraphContext().getQuery().type(clazz);
-        if (props != null)
-        for (Map.Entry<String, Serializable> prop : props.entrySet())
-        {
-            String propName = prop.getKey();
-            Serializable value = prop.getValue();
-            if (value == null)
-                query = query.has(propName);
-            else
-                query = query.has(propName, value);
+
+        if (props != null) {
+            for (Map.Entry<String, Serializable> prop : props.entrySet()) {
+                String propName = prop.getKey();
+                Serializable value = prop.getValue();
+                if (value == null)
+                    query = query.has(propName);
+                else
+                    query = query.has(propName, value);
+            }
         }
 
         long count = this.count(query.vertices());
@@ -166,17 +182,28 @@ public class TechnologiesStatsService extends GraphService<TechnologiesStatsMode
                 .hasNot(FileModel.IS_DIRECTORY, true)
                 .vertices(FileModel.class);
 
-        // TODO this just takes any file in the graph. Need to resctrict to project files.
-        files.forEach( (FileModel file) -> {
-            String suffix = StringUtils.substringAfterLast(file.getFileName(), ".");
-            if (suffix.isEmpty())
-                return;
-            Integer val = suffixToCount.get(suffix);
-            if (val == null)
-                suffixToCount.put(suffix, 1);
-            else
-                suffixToCount.put(suffix, val +1);
-        });
+        StreamSupport.stream(files.spliterator(), false)
+                .filter(file -> this.projects.isEmpty() || this.projects.contains(file.getProjectModel()))
+                .forEach((FileModel file) -> {
+                    String suffix = StringUtils.substringAfterLast(file.getFileName(), ".");
+
+                    if (suffix.isEmpty())
+                    {
+                        return;
+                    }
+
+                    Integer val = suffixToCount.get(suffix);
+
+                    if (val == null)
+                    {
+                        suffixToCount.put(suffix, 1);
+                    }
+                    else
+                    {
+                        suffixToCount.put(suffix, val + 1);
+                    }
+            });
+
         return suffixToCount;
     }
 
