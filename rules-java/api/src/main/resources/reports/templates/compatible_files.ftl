@@ -127,6 +127,8 @@
                 <@projectModelRenderer allTraversal />
             </div> <!-- /container -->
         </div>
+
+        <#include "include/timestamp.ftl">
     </div>
 
     <script src="resources/js/jquery-1.10.1.min.js"></script>

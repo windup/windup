@@ -94,6 +94,8 @@
                 <h3>Everything OK - Windup didn't have problems parsing any file.</h3>
             </div>
         </#list>
+        
+        <#include "include/timestamp.ftl">
     </div> <!-- /container -->
 
 
