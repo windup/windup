@@ -88,12 +88,12 @@ public interface ExecutionBuilder extends Remote
      * Adds a set of custom uer rules paths.
      */
     void addUserRulesPaths(Iterable<String> rulesPath) throws RemoteException;
-    
+
     /**
      * Clears the configuration information.
      */
     void clear() throws RemoteException;
-    
+
     /**
      * Terminates the runtime that registered this ExecutionBuilder.
      */
