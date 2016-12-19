@@ -36,8 +36,9 @@ public class DisplayHelpCommand implements Command
         sb.append("--discoverPackages\n");
         sb.append("\t Lists all available packages in the input application (--input must also be specified).\n");
 
-        sb.append("--updateRulesets\n");
-        sb.append("\t Update the core rulesets to the latest version available.\n");
+// temporary disabled until we find out how to properly update rules 
+//        sb.append("--updateRulesets\n");
+//        sb.append("\t Update the core rulesets to the latest version available.\n");
 
         sb.append("\nForge Options:\n");
 

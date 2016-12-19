@@ -1,8 +1,8 @@
 package org.jboss.windup.tests.bootstrap;
 
-import org.junit.Test;
-
 import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
 
 public class DisplayHelpCommandTest extends AbstractBootstrapTest {
     @Test
@@ -24,7 +24,7 @@ public class DisplayHelpCommandTest extends AbstractBootstrapTest {
         bootstrap(args);
 
         assertTrue(capturedOutput().contains("Windup Options:"));
-        assertTrue(capturedOutput().contains("--updateRulesets"));
+        assertTrue(capturedOutput().contains("--target"));
         assertTrue(capturedOutput().contains("Forge Options:"));
         assertTrue(capturedOutput().contains("--version"));
     }

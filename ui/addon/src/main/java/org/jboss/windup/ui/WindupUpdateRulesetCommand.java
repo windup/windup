@@ -1,7 +1,6 @@
 package org.jboss.windup.ui;
 
 
-import org.jboss.windup.exec.updater.RulesetsUpdater;
 import javax.inject.Inject;
 
 import org.jboss.forge.addon.dependencies.DependencyResolver;
@@ -15,6 +14,7 @@ import org.jboss.forge.addon.ui.result.Result;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
+import org.jboss.windup.exec.updater.RulesetsUpdater;
 
 /**
  * Provides a basic UI command updating the rules/migration-core folder with the latest version.
@@ -43,19 +43,24 @@ public class WindupUpdateRulesetCommand implements UICommand
     @Override
     public Result execute(UIExecutionContext context) throws Exception
     {
+        return Results.fail("Update was disabled!");
+        /* temporary disabled update of rules due possible breakage on compatibility and proper
+         * function
         String updatedTo = updater.replaceRulesetsDirectoryWithLatestReleaseIfAny();
 
         if (updatedTo == null)
             return Results.fail("The ruleset is already in the most updated version.");
         else
             return Results.success("Sucessfully updated the rulesets to version " + updatedTo + " .");
+        */
     }
 
 
     @Override
     public boolean isEnabled(UIContext context)
     {
-        return true;
+        //temporary disabled
+        return false;
     }
 
     @Override

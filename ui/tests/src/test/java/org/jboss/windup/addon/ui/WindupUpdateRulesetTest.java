@@ -17,10 +17,12 @@ import org.jboss.windup.exec.updater.RulesetsUpdater;
 import org.jboss.windup.util.PathUtil;
 import org.jboss.windup.util.ZipUtil;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 @RunWith(Arquillian.class)
+@Ignore("Updating of rules is disabled temporary, so this test doesn't make sense to test")
 public class WindupUpdateRulesetTest
 {
     @Deployment

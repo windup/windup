@@ -1,11 +1,9 @@
 package org.jboss.windup.ui;
 
-import org.jboss.windup.exec.updater.RulesetsUpdater;
-import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
 import org.jboss.forge.furnace.Furnace;
-import org.jboss.forge.furnace.addons.AddonId;
 import org.jboss.forge.furnace.event.PostStartup;
 
 
@@ -21,8 +19,11 @@ public class RulesetUpdateChecker
     @Inject
     Furnace furnace;
 
-    public void perform(@Observes PostStartup event)
+    public void perform(/*@Observes*/ PostStartup event)
     {
+        return;
+        /* temporary disabled all impl
+ 
         if (!event.getAddon().getId().getName().contains("org.jboss.windup.ui:windup-ui"))
             return;
 
@@ -36,6 +37,7 @@ public class RulesetUpdateChecker
             System.out.println("\nThe rulesets are outdated: " + updater.getRulesetsDir()
                 + "\nConsider running Windup with --updateRulesets.\n");
         }
+        */
     }
 
 }
