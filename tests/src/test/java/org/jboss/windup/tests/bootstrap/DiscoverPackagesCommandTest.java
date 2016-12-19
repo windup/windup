@@ -1,20 +1,25 @@
 package org.jboss.windup.tests.bootstrap;
 
-import com.google.common.base.Charsets;
-import com.google.common.io.Files;
-import org.jboss.windup.bootstrap.Bootstrap;
-import org.jboss.windup.util.PathUtil;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.contains;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-import static org.junit.Assert.assertTrue;
+import org.jboss.windup.bootstrap.Bootstrap;
+import org.jboss.windup.bootstrap.commands.windup.DiscoverPackagesCommand;
+import org.jboss.windup.exec.configuration.options.InputPathOption;
+import org.jboss.windup.rules.apps.java.scan.operation.packagemapping.PackageNameMappingRegistry;
+import org.jboss.windup.util.PathUtil;
+import org.junit.*;
+import org.junit.rules.TemporaryFolder;
+
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
 
 public class DiscoverPackagesCommandTest extends AbstractBootstrapTest {
     private static final String TESTING_FILE_MAPPING_RULES = "<?xml version=\"1.0\"?>\n"
@@ -78,5 +83,77 @@ public class DiscoverPackagesCommandTest extends AbstractBootstrapTest {
         assertTrue(capturedOutput().contains("Unknown Packages:"));
         assertTrue(capturedOutput().contains("weblogic"));
         assertTrue(capturedOutput().contains("Classes"));
+    }
+
+    protected static class DiscoverPackagesCommandMock extends DiscoverPackagesCommand
+    {
+        protected PackageNameMappingRegistry packageNameMappingRegistry;
+
+        public DiscoverPackagesCommandMock(List<String> arguments)
+        {
+            super(arguments);
+        }
+
+        protected void setPackageNameMappingRegistry(PackageNameMappingRegistry registry)
+        {
+            this.packageNameMappingRegistry = registry;
+        }
+
+        @Override
+        protected PackageNameMappingRegistry getPackageNameMappingRegistry()
+        {
+            return this.packageNameMappingRegistry;
+        }
+    }
+
+    protected List<String> getArguments(String path)
+    {
+        List<String> arguments = new ArrayList<>();
+        arguments.add("--" + InputPathOption.NAME);
+        arguments.add(path);
+
+        return arguments;
+    }
+
+    protected void runTestWithResource(String resource)
+    {
+        String samplePath = this.getClass().getResource(resource).getPath();
+        DiscoverPackagesCommandMock command = new DiscoverPackagesCommandMock(this.getArguments(samplePath));
+
+        PackageNameMappingRegistry mockRegistry = mock(PackageNameMappingRegistry.class);
+        command.setPackageNameMappingRegistry(mockRegistry);
+        when(mockRegistry.getOrganizationForPackage(contains("apache")))
+                .thenReturn("Apache");
+
+        this.executeAnalysis(command);
+    }
+
+    @Test
+    public void testScanSourceCode()
+    {
+        this.runTestWithResource("/sample");
+    }
+
+    @Test
+    public void testScanPackage()
+    {
+        this.runTestWithResource("/sample.jar");
+    }
+
+    protected void executeAnalysis(DiscoverPackagesCommand command)
+    {
+        command.execute();
+
+        Assert.assertEquals(1, command.getKnownPackages().size());
+        Assert.assertEquals(2, command.getUnknownPackages().size());
+
+        Assert.assertTrue(command.getUnknownPackages().containsKey(""));
+        Assert.assertEquals(1, command.getUnknownPackages().get("").intValue());
+        Assert.assertTrue(command.getUnknownPackages().containsKey("org"));
+        Assert.assertEquals(2, command.getUnknownPackages().get("org").intValue());
+
+        Assert.assertTrue(command.getKnownPackages().containsKey("Apache"));
+        Assert.assertEquals(1, command.getKnownPackages().get("Apache").size());
+        Assert.assertTrue(command.getKnownPackages().get("Apache").contains("org.apache.tomcat.maven"));
     }
 }
