@@ -16,7 +16,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
 @TypeValue(RemoteServiceModel.TYPE)
-public interface RemoteServiceModel extends WindupVertexFrame
+public interface RemoteServiceModel extends WindupVertexFrame, HasApplications
 {
     String TYPE = "RemoteService";
 

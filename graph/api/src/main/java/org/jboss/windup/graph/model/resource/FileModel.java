@@ -11,6 +11,7 @@ import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.Indexes;
 import org.jboss.windup.graph.frames.FrameBooleanDefaultValue;
 import org.jboss.windup.graph.model.ArchiveModel;
+import org.jboss.windup.graph.model.BelongsToProject;
 import org.jboss.windup.graph.model.ProjectModel;
 
 import com.tinkerpop.blueprints.Direction;
@@ -26,7 +27,7 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
  * Represents a File on disk.
  */
 @TypeValue(FileModel.TYPE)
-public interface FileModel extends ResourceModel
+public interface FileModel extends ResourceModel, BelongsToProject
 {
     String TYPE = "FileResource";
 
@@ -217,7 +218,7 @@ public interface FileModel extends ResourceModel
     @Property(WINDUP_GENERATED)
     void setWindupGenerated(boolean generated);
 
-    abstract class Impl implements FileModel, JavaHandlerContext<Vertex>
+    abstract class Impl implements FileModel, JavaHandlerContext<Vertex>, BelongsToProject
     {
         public ProjectModel getApplication()
         {
@@ -321,6 +322,12 @@ public interface FileModel extends ResourceModel
                 return null;
 
             return new File(getFilePath());
+        }
+
+        @Override
+        public boolean belongsToProject(ProjectModel projectModel)
+        {
+            return this.getProjectModel().equals(projectModel);
         }
     }
 }

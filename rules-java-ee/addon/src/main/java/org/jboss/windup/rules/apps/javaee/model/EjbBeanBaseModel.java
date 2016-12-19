@@ -17,7 +17,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
  * 
  */
 @TypeValue(EjbBeanBaseModel.TYPE)
-public interface EjbBeanBaseModel extends WindupVertexFrame
+public interface EjbBeanBaseModel extends WindupVertexFrame, HasApplications
 {
     String TYPE = "EjbBeanBaseModel";
 

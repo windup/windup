@@ -3,6 +3,7 @@ package org.jboss.windup.rules.apps.javaee.model.stats;
 import com.tinkerpop.blueprints.Vertex;
 import org.eclipse.core.internal.resources.Project;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.BelongsToProject;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.service.GraphService;
 
@@ -16,6 +17,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
@@ -169,7 +171,24 @@ public class TechnologiesStatsService extends GraphService<TechnologiesStatsMode
             }
         }
 
-        long count = this.count(query.vertices());
+        List<Vertex> vertices = StreamSupport.stream(query.vertices().spliterator(), false)
+                .filter(vertex -> {
+                    if (vertex instanceof BelongsToProject) {
+
+                        for (ProjectModel project : this.projects)
+                        {
+                            if (((BelongsToProject) vertex).belongsToProject(project))
+                            {
+                                return true;
+                            }
+                        }
+                    }
+
+                    return false;
+                })
+                .collect(Collectors.toList());
+
+        long count = this.count(vertices);
         LOG.info("Counted: Frame class == " + clazz.getSimpleName() + " && " + (props == null ? "no" : props.size()) + " props ==> " + count);
         return (int) count;
     }
