@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.logging.Logger;
+
 import javax.inject.Inject;
+
 import org.apache.commons.io.FileUtils;
 import org.jboss.forge.addon.dependencies.Coordinate;
 import org.jboss.forge.addon.dependencies.Dependency;
@@ -52,6 +54,8 @@ public class RulesetsUpdater
     //       Then use the result to print and to compare, as needed.
     public boolean rulesetsNeedUpdate(boolean printVersions)
     {
+        return false;
+        /* Temporary disabled
         SingleVersion latest =  getLatestCoreRulesetVersion();
         if (latest == null)
         {
@@ -69,6 +73,7 @@ public class RulesetsUpdater
         if (printVersions)
             printRulesetsVersions(installed, latest);
         return 0 > installed.compareTo(latest);
+        */
     }
 
     private SingleVersion getCurrentCoreRulesetsVersion()
