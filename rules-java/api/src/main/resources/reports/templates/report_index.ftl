@@ -18,10 +18,11 @@
     <link rel="stylesheet" type="text/css" href="resources/libraries/flot/plot.css" />
     <link href="resources/img/favicon.png" rel="shortcut icon" type="image/x-icon"/>
     <style>
-.report-index-row {
-    margin: 10px -32px 0px 5px;
-    margin-bottom: 25px;
-}
+        .report-index-row {
+            margin: 10px -32px 0px 5px;
+            margin-bottom: 25px;
+        }
+        .dataTable { max-width: 500px; margin-top: 2ex; }
     </style>
 </head>
 <body role="document" class="java-report-index">
@@ -58,102 +59,90 @@
             </div>
         </div>
 
-        <div class="row container-fluid col-md-12 summaryInfo">
+        <div class="row container-fluid summaryInfo">
             <div class="panel panel-primary col-md-12">
-                <div class="row col-md-12 report-index-row">
-                    <div class="col-md-3">
-                        <table class="table table-condensed table-striped" id="incidentsByTypeTable">
-                            <thead>
-                                <tr>
-                                    <td>
-                                        <b>Incidents by Category</b>
-                                    </td>
-                                    <td class='numeric-column'>
-                                        <b>Incidents</b>
-                                    </td>
-                                    <td class='numeric-column'>
-                                        <b>Total Story Points</b>
-                                    </td>
-                                </tr>
-                            </thead>
-                            <tbody id="incidentsByTypeTBody">
-                            </tbody>
-                        </table>
-                    </div>
 
-                    <div class="col-md-8">
-                        <div class="col-md-6">
-                            <div style="text-align: center"><strong>Incidents by Category</strong></div>
-                            <div id="incidentsBySeverityChart" style="float: left;"></div>
-                        </div>
-                        <div class="col-md-6">
+                <div class="row report-index-row">
+                    <!-- Incidents and Story Points -->
+                    <div class="col-md-4" style="max-width: 560px;">
+                        <div class="chart">
                             <div style="text-align: center"><strong>Incidents and Story Points</strong></div>
-                            <div id="effortAndSeverityChart" style="float: right;"></div>
+                            <div id="effortAndSeverityChart"></div>
+                        </div>
+                        <div class="dataTable">
+                            <table class="table table-condensed table-striped" id="incidentsByTypeTable">
+                                <thead>
+                                    <tr>
+                                        <td>
+                                            <b>Incidents by Category</b>
+                                        </td>
+                                        <td class='numeric-column'>
+                                            <b>Incidents</b>
+                                        </td>
+                                        <td class='numeric-column'>
+                                            <b>Total Story Points</b>
+                                        </td>
+                                    </tr>
+                                </thead>
+                                <tbody id="incidentsByTypeTBody">
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-                </div>
-
-                <div class="row col-md-12 report-index-row">
-                    <div class="col-md-3">
-                        <table class="table table-condensed table-striped">
-                            <thead>
-                                <tr>
-                                    <td>
-                                        <b>Mandatory Incidents by Type</b>
-                                    </td>
-                                    <td class='numeric-column'>
-                                        <b>Incidents</b>
-                                    </td>
-                                    <td class='numeric-column'>
-                                        <b>Total Story Points</b>
-                                    </td>
-                                </tr>
-                            </thead>
-                            <tbody id="mandatoryIncidentsByEffortTBody">
-                            </tbody>
-                        </table>
-                    </div>
-                    <div class="col-md-8">
-                        <div class="col-md-6">
-                            <div style="text-align: center"><strong>Mandatory Incidents by category</strong></div>
-                            <div id="mandatoryIncidentsByEffort" style="float: left;"></div>
-                        </div>
-                        <div class="col-md-6">
+                    <!-- Mandatory Incidents and Story Points -->
+                    <div class="col-md-4" style="max-width: 560px;">
+                        <div class="chart">
                             <div style="text-align: center"><strong>Mandatory Incidents and Story Points</strong></div>
-                            <div id="mandatoryIncidentsByEffortAndStoryPoints" style="float: right;"></div>
+                            <div id="mandatoryIncidentsByEffortAndStoryPoints"></div>
+                        </div>
+                        <div class="dataTable">
+                            <table class="table table-condensed table-striped">
+                                <thead>
+                                    <tr>
+                                        <td>
+                                            <b>Mandatory Incidents by Type</b>
+                                        </td>
+                                        <td class='numeric-column'>
+                                            <b>Incidents</b>
+                                        </td>
+                                        <td class='numeric-column'>
+                                            <b>Total Story Points</b>
+                                        </td>
+                                    </tr>
+                                </thead>
+                                <tbody id="mandatoryIncidentsByEffortTBody">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!--  Java Incidents by Package -->
+                    <div class="col-md-4" style="max-width: 560px;">
+                        <div class="chart" style="height: 306px;">
+                            <div style="margin-bottom: 15px; margin-left: 48px;">
+                                <strong>Java Incidents by Package</strong>
+                            </div>
+                            <div id='application_pie' class='windupPieGraph'></div>
+                        </div>
+                        <div class="dataTable">
+                            <table class="table table-condensed table-striped">
+                                <thead>
+                                    <tr>
+                                        <td> <b>Java Incidents by Package</b> </td>
+                                        <td class='numeric-column'> <b>Incidents</b> </td>
+                                    </tr>
+                                </thead>
+                                <tbody id="javaIncidentsByPackageTBody">
+                                </tbody>
+                            </table>
+                            <span class="note">Note: this does not include XML files and "possible" issues.</span>
                         </div>
                     </div>
                 </div><#-- .row -->
 
-                <div class="row col-md-12 report-index-row" id="javaIncidentsByPackageRow">
-                    <div class="col-md-3">
-                        <table class="table table-condensed table-striped">
-                            <thead>
-                                <tr>
-                                    <td>
-                                        <b>Java Incidents by Package</b>
-                                    </td>
-                                    <td class='numeric-column'>
-                                        <b>Incidents</b>
-                                    </td>
-                                </tr>
-                            </thead>
-                            <tbody id="javaIncidentsByPackageTBody">
-                            </tbody>
-                        </table>
-                        <span class="note">Note: this does not include XML files and "possible" issues.</span>
-                    </div>
-                    <div class="panel col-md-6">
-                        <div style="margin-bottom: 10px; margin-left: 190px;">
-                            <b>Java Incidents by Package</b>
-                        </div>
-                        <div id='application_pie' class='windupPieGraph'></div>
-                    </div>
-                </div><#-- .row -->
             </div><#-- .panel -->
         </div><#-- .row.summaryInfo -->
 
-        <div class="row container-fluid col-md-12 additionalReports">
+        <div class="row container-fluid additionalReports">
             <div class="panel panel-primary">
                 <div class="panel-heading">
                     Additional Reports
