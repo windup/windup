@@ -19,12 +19,29 @@ import java.util.Collections;
 @TypeValue(FileLocationModel.TYPE)
 public interface FileLocationModel extends FileReferenceModel, ToFileModelTransformable
 {
-
     String TYPE = "fileLocationModel";
+
     String LINE_NUMBER = "lineNumber";
     String LENGTH = "length";
     String COLUMN_NUMBER = "startPosition";
     String SOURCE_SNIPPIT = "referenceSourceSnippit";
+    String SPANS_WHOLE_FILE = "spansWholeFile";
+
+    /**
+     * Indicates whether this {@link FileLocationModel} represents the whole file.
+     * In some cases, e.g. when matched by {@link File} condition, the match is not related to a particular position in the file.
+     * For such cases, this is true.
+     */
+    @Property(SPANS_WHOLE_FILE)
+    FileLocationModel setSpansWholeFile(boolean spansWholeFile);
+
+    /**
+     * Indicates whether this {@link FileLocationModel} represents the whole file.
+     * In some cases, e.g. when matched by {@link File} condition, the match is not related to a particular position in the file.
+     * For such cases, this is true.
+     */
+    @Property(SPANS_WHOLE_FILE)
+    Boolean isSpansWholeFile();
 
     /**
      * Set the line number at which this {@link FileLocationModel} should appear in the designated {@link FileModel}.

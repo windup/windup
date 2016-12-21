@@ -163,9 +163,10 @@ public class File extends ParameterizedGraphCondition
             evaluationStrategy.modelMatched();
             if (parsedFileNamePattern == null || parsedFileNamePattern.submit(event, context))
             {
-                // Use a file location model to make attaching hints possible
+                // Use a fake FileLocationModel to make attaching hints possible.
                 FileLocationModel fileLocationModel = fileLocationService.create();
                 fileLocationModel.setFile(fileModel);
+                fileLocationModel.setSpansWholeFile(true);
                 fileLocationModel.setColumnNumber(1);
                 fileLocationModel.setLineNumber(1);
                 fileLocationModel.setLength(1);

@@ -10,6 +10,7 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.service.InlineHintService;
+import org.jboss.windup.rules.files.model.FileLocationModel;
 import org.jboss.windup.rules.files.model.FileReferenceModel;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -21,7 +22,7 @@ import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
 /**
  * An implementation of {@link AbstractIterationFilter} to filter models based on the existence of a
  * {@link ClassificationModel} attached to the given payload.
- * 
+ *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
 public class HasHint extends AbstractIterationFilter<WindupVertexFrame> implements Parameterized
@@ -34,51 +35,31 @@ public class HasHint extends AbstractIterationFilter<WindupVertexFrame> implemen
         ExecutionStatistics.get().begin(HasHint.class.getCanonicalName());
         try
         {
-            boolean result = false;
             InlineHintService service = new InlineHintService(event.getGraphContext());
 
-            if (payload instanceof FileReferenceModel)
+            Iterable<InlineHintModel> hints = null;
+            // A fake FileLocationModel with [1,1] row and column, so we want hints for the whole file.
+            if (payload instanceof FileLocationModel && Boolean.TRUE.equals(((FileLocationModel) payload).isSpansWholeFile()))
+                hints = service.getHintsForFile(((FileLocationModel) payload).getFile());
+            // FileReferenceModel is a particular position in a file -> match only hints for that line.
+            else if (payload instanceof FileReferenceModel)
+                hints = service.getHintsForFileReference((FileReferenceModel) payload);
+            else if (payload instanceof FileModel)
+                hints = service.getHintsForFile((FileModel) payload);
+
+            if (hints == null)
+                return false;
+
+            if (messagePattern == null)
+                return hints.iterator().hasNext();
+            for (InlineHintModel c : hints)
             {
-                Iterable<InlineHintModel> hints = service.getHintsForFileReference((FileReferenceModel) payload);
-                if (messagePattern == null)
-                {
-                    result = hints.iterator().hasNext();
-                }
-                else
-                {
-                    for (InlineHintModel c : hints)
-                    {
-                        ParameterizedPatternResult parseResult = messagePattern.parse(c.getHint());
-                        if (parseResult.matches() && parseResult.isValid(event, context))
-                        {
-                            result = true;
-                            break;
-                        }
-                    }
-                }
+                ParameterizedPatternResult parseResult = messagePattern.parse(c.getHint());
+                if (parseResult.matches() && parseResult.isValid(event, context))
+                    return true;
             }
 
-            if (payload instanceof FileModel)
-            {
-                Iterable<InlineHintModel> hints = service.getHintsForFile((FileModel) payload);
-                if (messagePattern == null)
-                {
-                    result = hints.iterator().hasNext();
-                }
-                else
-                {
-                    for (InlineHintModel c : hints)
-                    {
-                        ParameterizedPatternResult parseResult = messagePattern.parse(c.getHint());
-                        if (parseResult.matches() && parseResult.isValid(event, context))
-                        {
-                            result = true;
-                            break;
-                        }
-                    }
-                }
-            }
-            return result;
+            return false;
         }
         finally
         {
