@@ -85,15 +85,14 @@ public class TechnologiesStatsService extends GraphService<TechnologiesStatsMode
 
         // Files type share
         Map<String, Integer> suffixToCount = countFilesBySuffix();
-        Map<String, Integer> fileTypeShares = countFilesShareBySuffix(suffixToCount);
         // This will need to filter out archives.
 
-        stats.setStatsFilesByTypeJavaPercent(item(fileTypeShares.getOrDefault("class", 0) + fileTypeShares.getOrDefault("java", 0)));
-        stats.setStatsFilesByTypeJsPercent(item(fileTypeShares.getOrDefault("js", 0)));
-        stats.setStatsFilesByTypeHtmlPercent(item(fileTypeShares.getOrDefault("html", 0)));
-        stats.setStatsFilesByTypeCssPercent(item(fileTypeShares.getOrDefault("css", 0)));
-        stats.setStatsFilesByTypeXmlPercent(item(fileTypeShares.getOrDefault("xml", 0)));
-        stats.setStatsFilesByTypeFmtPercent(item(fileTypeShares.getOrDefault("fmt", 0)));
+        stats.setStatsFilesByTypeJava(item(suffixToCount.getOrDefault("class", 0) + suffixToCount.getOrDefault("java", 0)));
+        stats.setStatsFilesByTypeJs(item(suffixToCount.getOrDefault("js", 0)));
+        stats.setStatsFilesByTypeHtml(item(suffixToCount.getOrDefault("html", 0)));
+        stats.setStatsFilesByTypeCss(item(suffixToCount.getOrDefault("css", 0)));
+        stats.setStatsFilesByTypeXml(item(suffixToCount.getOrDefault("xml", 0)));
+        stats.setStatsFilesByTypeFmt(item(suffixToCount.getOrDefault("fmt", 0)));
 
 
         // Amounts

@@ -5,8 +5,7 @@ import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import java.util.Date;
-import java.util.Map;
-import org.jboss.windup.graph.MapInAdjacentVertices;
+
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 /**
@@ -38,89 +37,89 @@ public interface TechnologiesStatsModel extends WindupVertexFrame
     void setFilesStats(Map<String, GeneralStatsItemModel> filesStats);
     */
 
-    String STATS_FILES_BYTYPE_JAVA_PERCENT = "stats.files.byType.java.percent";
+    String STATS_FILES_BYTYPE_JAVA = "stats.files.byType.java";
 
     /**
      * How many Java files were found.
      */
-    @Adjacency(label = STATS_FILES_BYTYPE_JAVA_PERCENT, direction = Direction.OUT)
-    GeneralStatsItemModel getStatsFilesByTypeJavaPercent();
+    @Adjacency(label = STATS_FILES_BYTYPE_JAVA, direction = Direction.OUT)
+    GeneralStatsItemModel getStatsFilesByTypeJava();
 
     /**
      * How many Java files were found.
      */
-    @Adjacency(label = STATS_FILES_BYTYPE_JAVA_PERCENT, direction = Direction.OUT)
-    TechnologiesStatsModel setStatsFilesByTypeJavaPercent(GeneralStatsItemModel item);
+    @Adjacency(label = STATS_FILES_BYTYPE_JAVA, direction = Direction.OUT)
+    TechnologiesStatsModel setStatsFilesByTypeJava(GeneralStatsItemModel item);
 
-    String STATS_FILES_BYTYPE_HTML_PERCENT = "stats.files.byType.html.percent";
-
-    /**
-     * How many HTML files were found.
-     */
-    @Adjacency(label = STATS_FILES_BYTYPE_HTML_PERCENT, direction = Direction.OUT)
-    GeneralStatsItemModel getStatsFilesByTypeHtmlPercent();
+    String STATS_FILES_BYTYPE_HTML = "stats.files.byType.html";
 
     /**
      * How many HTML files were found.
      */
-    @Adjacency(label = STATS_FILES_BYTYPE_HTML_PERCENT, direction = Direction.OUT)
-    TechnologiesStatsModel setStatsFilesByTypeHtmlPercent(GeneralStatsItemModel item);
+    @Adjacency(label = STATS_FILES_BYTYPE_HTML, direction = Direction.OUT)
+    GeneralStatsItemModel getStatsFilesByTypeHtml();
 
-    String STATS_FILES_BYTYPE_XML_PERCENT = "stats.files.byType.xml.percent";
+    /**
+     * How many HTML files were found.
+     */
+    @Adjacency(label = STATS_FILES_BYTYPE_HTML, direction = Direction.OUT)
+    TechnologiesStatsModel setStatsFilesByTypeHtml(GeneralStatsItemModel item);
+
+    String STATS_FILES_BYTYPE_XML = "stats.files.byType.xml";
 
     /**
      * How many XML files were found.
      */
-    @Adjacency(label = STATS_FILES_BYTYPE_XML_PERCENT, direction = Direction.OUT)
-    GeneralStatsItemModel getStatsFilesByTypeXmlPercent();
+    @Adjacency(label = STATS_FILES_BYTYPE_XML, direction = Direction.OUT)
+    GeneralStatsItemModel getStatsFilesByTypeXml();
 
     /**
      * How many XML files were found.
      */
-    @Adjacency(label = STATS_FILES_BYTYPE_XML_PERCENT, direction = Direction.OUT)
-    TechnologiesStatsModel setStatsFilesByTypeXmlPercent(GeneralStatsItemModel item);
+    @Adjacency(label = STATS_FILES_BYTYPE_XML, direction = Direction.OUT)
+    TechnologiesStatsModel setStatsFilesByTypeXml(GeneralStatsItemModel item);
 
-    String STATS_FILES_BYTYPE_FMT_PERCENT = "stats.files.byType.fmt.percent";
-
-    /**
-     * How many FreeMarker files were found.
-     */
-    @Adjacency(label = STATS_FILES_BYTYPE_FMT_PERCENT, direction = Direction.OUT)
-    GeneralStatsItemModel getStatsFilesByTypeFmtPercent();
+    String STATS_FILES_BYTYPE_FMT = "stats.files.byType.fmt";
 
     /**
      * How many FreeMarker files were found.
      */
-    @Adjacency(label = STATS_FILES_BYTYPE_FMT_PERCENT, direction = Direction.OUT)
-    TechnologiesStatsModel setStatsFilesByTypeFmtPercent(GeneralStatsItemModel item);
+    @Adjacency(label = STATS_FILES_BYTYPE_FMT, direction = Direction.OUT)
+    GeneralStatsItemModel getStatsFilesByTypeFmt();
 
-    String STATS_FILES_BYTYPE_JS_PERCENT = "stats.files.byType.js.percent";
+    /**
+     * How many FreeMarker files were found.
+     */
+    @Adjacency(label = STATS_FILES_BYTYPE_FMT, direction = Direction.OUT)
+    TechnologiesStatsModel setStatsFilesByTypeFmt(GeneralStatsItemModel item);
+
+    String STATS_FILES_BYTYPE_JS = "stats.files.byType.js";
 
     /**
      * How many JavaScript files were found.
      */
-    @Adjacency(label = STATS_FILES_BYTYPE_JS_PERCENT, direction = Direction.OUT)
-    GeneralStatsItemModel getStatsFilesByTypeJsPercent();
+    @Adjacency(label = STATS_FILES_BYTYPE_JS, direction = Direction.OUT)
+    GeneralStatsItemModel getStatsFilesByTypeJs();
 
     /**
      * How many JavaScript files were found.
      */
-    @Adjacency(label = STATS_FILES_BYTYPE_JS_PERCENT, direction = Direction.OUT)
-    TechnologiesStatsModel setStatsFilesByTypeJsPercent(GeneralStatsItemModel item);
+    @Adjacency(label = STATS_FILES_BYTYPE_JS, direction = Direction.OUT)
+    TechnologiesStatsModel setStatsFilesByTypeJs(GeneralStatsItemModel item);
 
-    String STATS_FILES_BYTYPE_CSS_PERCENT = "stats.files.byType.css.percent";
-
-    /**
-     * How many CSS files were found.
-     */
-    @Adjacency(label = STATS_FILES_BYTYPE_CSS_PERCENT, direction = Direction.OUT)
-    GeneralStatsItemModel getStatsFilesByTypeCssPercent();
+    String STATS_FILES_BYTYPE_CSS = "stats.files.byType.css";
 
     /**
      * How many CSS files were found.
      */
-    @Adjacency(label = STATS_FILES_BYTYPE_CSS_PERCENT, direction = Direction.OUT)
-    TechnologiesStatsModel setStatsFilesByTypeCssPercent(GeneralStatsItemModel item);
+    @Adjacency(label = STATS_FILES_BYTYPE_CSS, direction = Direction.OUT)
+    GeneralStatsItemModel getStatsFilesByTypeCss();
+
+    /**
+     * How many CSS files were found.
+     */
+    @Adjacency(label = STATS_FILES_BYTYPE_CSS, direction = Direction.OUT)
+    TechnologiesStatsModel setStatsFilesByTypeCss(GeneralStatsItemModel item);
 
     String STATS_SERVICES_EJB_STATELESS = "stats.services.ejb.stateless";
 

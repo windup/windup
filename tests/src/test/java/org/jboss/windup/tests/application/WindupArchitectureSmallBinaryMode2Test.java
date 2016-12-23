@@ -72,7 +72,7 @@ public class WindupArchitectureSmallBinaryMode2Test extends WindupArchitectureTe
         }*/
 
         //SUM: 106 txt = 1 java = 20 xml = 12 ear = 0 war = 0 MF = 5 jar = 5 class = 47 properties = 4
-        Assert.assertTrue(stats.getStatsFilesByTypeJavaPercent().getQuantity() >= 20);
+        Assert.assertTrue(stats.getStatsFilesByTypeJava().getQuantity() >= 20);
 
         Assert.assertTrue(stats.getStatsJavaClassesTotal().getQuantity() > 0);
         //Assert.assertTrue(stats.getStatsJavaJarsTotal().getQuantity() > 0);
