@@ -39,9 +39,10 @@ public interface ProjectDependencyModel extends WindupVertexFrame
     /**
      * Dependency &lt;type&gt; from the Maven POM - jar, war, etc.
      * Might be redundant with getProjectModel().getType()
+     * TODO: Remove, not used.
      */
     @Property(PROPERTY_TYPE)
-    void getType();
+    String getType();
 
     /**
      * A reference to the project represented by this dependency (whether that be a project representing a binary jar,
