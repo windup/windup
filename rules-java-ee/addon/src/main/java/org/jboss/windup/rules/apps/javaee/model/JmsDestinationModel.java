@@ -33,7 +33,7 @@ public interface JmsDestinationModel extends JNDIResourceModel
      */
     @Indexed
     @Property(NAME)
-    public void getDestinationName(String destinationName);
+    public String getDestinationName();
 
     /**
      * Contains the name of the destination.
