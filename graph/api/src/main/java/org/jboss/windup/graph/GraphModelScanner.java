@@ -10,21 +10,20 @@ import java.util.logging.Logger;
 
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.forge.furnace.util.Predicate;
-import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.graph.model.WindupFrame;
 import org.jboss.windup.util.PathUtil;
 import org.jboss.windup.util.furnace.FurnaceClasspathScanner;
 
 /**
- * This is used to provide a registry of {@link WindupVertexFrame} subclasses for integration with Tinkerpop Frames.
- *
+ * This is used to provide a registry of {@link WindupFrame} subclasses for integration with Tinkerpop Frames.
  */
 class GraphModelScanner
 {
     private static final Logger LOG = Logger.getLogger(GraphModelScanner.class.getName());
 
-    public static List<Class<? extends WindupVertexFrame>> loadFrames(FurnaceClasspathScanner scanner)
+    public static List<Class<? extends WindupFrame<?>>> loadFrames(FurnaceClasspathScanner scanner)
     {
-        List<Class<? extends WindupVertexFrame>> results = new ArrayList<>();
+        List<Class<? extends WindupFrame<?>>> results = new ArrayList<>();
 
         // Scan for all classes form *Model.class.
         Predicate<String> modelClassFilter = new Predicate<String>()
@@ -65,11 +64,11 @@ class GraphModelScanner
 
         for (Class<?> clazz : classes)
         {
-            if (WindupVertexFrame.class.isAssignableFrom(clazz))
+            if (WindupFrame.class.isAssignableFrom(clazz))
             {
                 LOG.fine("    Found: " + clazz);
                 @SuppressWarnings("unchecked")
-                Class<? extends WindupVertexFrame> windupVertexFrame = (Class<? extends WindupVertexFrame>) clazz;
+                Class<? extends WindupFrame<?>> windupVertexFrame = (Class<? extends WindupFrame<?>>) clazz;
                 results.add(windupVertexFrame);
             }
             else
@@ -82,13 +81,13 @@ class GraphModelScanner
         return results;
     }
 
-    private static void logLoadedModelTypes(List<Class<? extends WindupVertexFrame>> types)
+    private static void logLoadedModelTypes(List<Class<? extends WindupFrame<?>>> types)
     {
-        List<Class<? extends WindupVertexFrame>> list = new ArrayList<>(types);
-        Collections.sort(list, new Comparator<Class<? extends WindupVertexFrame>>()
+        List<Class<? extends WindupFrame<?>>> list = new ArrayList<>(types);
+        Collections.sort(list, new Comparator<Class<? extends WindupFrame<?>>>()
         {
             @Override
-            public int compare(Class<? extends WindupVertexFrame> left, Class<? extends WindupVertexFrame> right)
+            public int compare(Class<? extends WindupFrame<?>> left, Class<? extends WindupFrame<?>> right)
             {
                 if (left == right)
                     return 0;
@@ -100,12 +99,12 @@ class GraphModelScanner
             }
         });
         StringBuilder result = new StringBuilder();
-        for (Class<? extends WindupVertexFrame> frameType : list)
+        for (Class<? extends WindupFrame<?>> frameType : list)
         {
             result.append("\t").append(frameType.getName()).append(NEWLINE);
         }
 
-        LOG.info("Loaded [" + list.size() + "] WindupVertexFrame sub-types [" + NEWLINE + result.toString() + "]");
+        LOG.info("Loaded [" + list.size() + "] WindupFrame sub-types [" + NEWLINE + result.toString() + "]");
     }
 
     private static final String NEWLINE = OperatingSystemUtils.getLineSeparator();
