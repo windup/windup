@@ -30,7 +30,7 @@ public interface HasTypeModel extends WindupVertexFrame
      * The referenced type name.
      */
     @Property(JAVA_TYPE_NAME)
-    void getJavaTypeName(String clazz);
+    void setJavaTypeName(String clazz);
 
     /**
      * The referenced type, if available.
