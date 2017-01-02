@@ -31,6 +31,7 @@ import com.tinkerpop.frames.modules.TypeResolver;
 import com.tinkerpop.frames.modules.typedgraph.TypeField;
 import com.tinkerpop.frames.modules.typedgraph.TypeRegistry;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import java.util.logging.Logger;
 
 /**
  * Windup's implementation of extended type handling for TinkerPop Frames. This allows storing multiple types based on the @TypeValue.value(), also in
@@ -38,6 +39,8 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
  */
 public class GraphTypeManager implements TypeResolver, FrameInitializer
 {
+    private static final Logger LOG = Logger.getLogger(GraphTypeManager.class.getName());
+
     private Map<String, Class<? extends WindupFrame<?>>> registeredTypes;
     private TypeRegistry typeRegistry;
 
@@ -74,8 +77,10 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
         return typeRegistry;
     }
 
-    private void addTypeToRegistry(Class<? extends WindupVertexFrame> frameType)
+    private void addTypeToRegistry(Class<? extends WindupFrame<?>> frameType)
     {
+        LOG.info(" Adding type to registry: " + frameType.getName());
+
         TypeValue typeValueAnnotation = frameType.getAnnotation(TypeValue.class);
 
         // Do not attempt to add items where this is null... we use
@@ -97,7 +102,7 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
     /**
      * Remove the given type from the provided {@link Element}.
      */
-    public void removeTypeFromElement(Class<? extends WindupFrame> kind, Element element)
+    public void removeTypeFromElement(Class<? extends WindupFrame<?>> kind, Element element)
     {
         StandardVertex v = GraphTypeManager.asTitanVertex(element);
         Class<?> typeHoldingTypeField = getTypeRegistry().getTypeHoldingTypeField(kind);
@@ -154,7 +159,7 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
     /**
      * Adds the type value to the field denoting which type the element represents.
      */
-    public void addTypeToElement(Class<? extends WindupFrame> kind, Element element)
+    public void addTypeToElement(Class<? extends WindupFrame<?>> kind, Element element)
     {
         StandardVertex v = GraphTypeManager.asTitanVertex(element);
         Class<?> typeHoldingTypeField = getTypeRegistry().getTypeHoldingTypeField(kind);
@@ -182,13 +187,13 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
     }
 
     @SuppressWarnings("unchecked")
-    private void addSuperclassType(Class<? extends WindupFrame> kind, Element element)
+    private void addSuperclassType(Class<? extends WindupFrame<?>> kind, Element element)
     {
         for (Class<?> superInterface : kind.getInterfaces())
         {
-            if (WindupVertexFrame.class.isAssignableFrom(superInterface))
+            if (WindupFrame.class.isAssignableFrom(superInterface))
             {
-                addTypeToElement((Class<? extends WindupFrame>) superInterface, element);
+                addTypeToElement((Class<? extends WindupFrame<?>>) superInterface, element);
             }
         }
 
@@ -318,7 +323,7 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
     {
         if (VertexFrame.class.isAssignableFrom(kind))
         {
-            addTypeToElement((Class<? extends WindupFrame>) kind, element);
+            addTypeToElement((Class<? extends WindupFrame<?>>) kind, element);
         }
     }
 
