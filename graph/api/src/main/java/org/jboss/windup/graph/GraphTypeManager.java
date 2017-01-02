@@ -31,6 +31,7 @@ import com.tinkerpop.frames.modules.TypeResolver;
 import com.tinkerpop.frames.modules.typedgraph.TypeField;
 import com.tinkerpop.frames.modules.typedgraph.TypeRegistry;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import java.util.logging.Logger;
 
 /**
  * Windup's implementation of extended type handling for TinkerPop Frames. This allows storing multiple types based on the @TypeValue.value(), also in
@@ -38,6 +39,8 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
  */
 public class GraphTypeManager implements TypeResolver, FrameInitializer
 {
+    private static final Logger LOG = Logger.getLogger(GraphTypeManager.class.getName());
+
     private Map<String, Class<? extends WindupFrame<?>>> registeredTypes;
     private TypeRegistry typeRegistry;
 
@@ -78,20 +81,24 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
     {
         TypeValue typeValueAnnotation = frameType.getAnnotation(TypeValue.class);
 
-        // Do not attempt to add items where this is null... we use
-        // *Model types with no TypeValue to function as essentially
+        // Do not attempt to add types without @TypeValue. We use
+        // *Model types with no @TypeValue to function as essentially
         // "abstract" models that would never exist on their own (only as subclasses).
-        if (typeValueAnnotation != null)
+        if (typeValueAnnotation == null)
         {
-            if (getRegisteredTypeMap().containsKey(typeValueAnnotation.value()))
-            {
-                throw new IllegalArgumentException("Type value for model '" + frameType.getCanonicalName()
-                            + "' is already registered with model "
-                            + getRegisteredTypeMap().get(typeValueAnnotation.value()).getName());
-            }
-            getRegisteredTypeMap().put(typeValueAnnotation.value(), frameType);
-            getTypeRegistry().add(frameType);
+            String msg = String.format("@%s is missing on type %s", TypeValue.class.getSimpleName(), frameType.getName());
+            LOG.warning(msg);
+            return;
         }
+
+        if (getRegisteredTypeMap().containsKey(typeValueAnnotation.value()))
+        {
+            throw new IllegalArgumentException("Type value for model '" + frameType.getCanonicalName()
+                        + "' is already registered with model "
+                        + getRegisteredTypeMap().get(typeValueAnnotation.value()).getName());
+        }
+        getRegisteredTypeMap().put(typeValueAnnotation.value(), frameType);
+        getTypeRegistry().add(frameType);
     }
 
     /**
