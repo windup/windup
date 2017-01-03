@@ -1,4 +1,4 @@
-== Windup 2
+== Windup
 
 Windup is an automated application migration and assessment tool.
 If you want to contribute or participate in developer discussions,
