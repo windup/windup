@@ -1,6 +1,11 @@
 package org.jboss.windup.rules.apps.java.model;
 
+import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.frames.modules.javahandler.JavaHandler;
+import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import org.jboss.windup.graph.Indexed;
+import org.jboss.windup.graph.model.BelongsToProject;
+import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 
@@ -16,7 +21,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
  *
  */
 @TypeValue(JavaClassModel.TYPE)
-public interface JavaClassModel extends WindupVertexFrame
+public interface JavaClassModel extends WindupVertexFrame, BelongsToProject
 {
     String TYPE = "JavaClass";
 
@@ -185,4 +190,17 @@ public interface JavaClassModel extends WindupVertexFrame
      */
     @Adjacency(label = JAVA_METHOD, direction = Direction.OUT)
     Iterable<JavaMethodModel> getJavaMethods();
+
+    @JavaHandler
+    @Override
+    boolean belongsToProject(ProjectModel projectModel);
+
+    abstract class Impl implements JavaHandlerContext<Vertex>, JavaClassModel, BelongsToProject
+    {
+        @Override
+        public boolean belongsToProject(ProjectModel projectModel)
+        {
+            return this.getClassFile().belongsToProject(projectModel);
+        }
+    }
 }

@@ -218,6 +218,10 @@ public interface FileModel extends ResourceModel, BelongsToProject
     @Property(WINDUP_GENERATED)
     void setWindupGenerated(boolean generated);
 
+    @Override
+    @JavaHandler
+    boolean belongsToProject(ProjectModel projectModel);
+
     abstract class Impl implements FileModel, JavaHandlerContext<Vertex>, BelongsToProject
     {
         public ProjectModel getApplication()
