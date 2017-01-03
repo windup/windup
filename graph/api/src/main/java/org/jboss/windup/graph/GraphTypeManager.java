@@ -9,6 +9,9 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
+import com.thinkaurelius.titan.graphdb.internal.AbstractElement;
+import com.thinkaurelius.titan.graphdb.relations.StandardEdge;
+import com.tinkerpop.blueprints.util.wrappers.event.EventEdge;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.windup.graph.model.WindupFrame;
@@ -108,7 +111,6 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
      */
     public void removeTypeFromElement(Class<? extends WindupFrame<?>> kind, Element element)
     {
-        StandardVertex v = GraphTypeManager.asTitanVertex(element);
         Class<?> typeHoldingTypeField = getTypeRegistry().getTypeHoldingTypeField(kind);
         if (typeHoldingTypeField == null)
             return;
@@ -120,18 +122,41 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
             return;
         String typeValue = typeValueAnnotation.value();
 
-        v.removeProperty(typeFieldName);
+        AbstractElement abstractElement = GraphTypeManager.asTitanVertex(element);
 
-        for (TitanProperty existingType : v.getProperties(typeFieldName))
+        List<String> newTypes = new ArrayList<>();
+        for (TitanProperty existingType : (Iterable<TitanProperty>)abstractElement.getProperty(typeFieldName))
         {
             if (!existingType.getValue().toString().equals(typeValue))
             {
-                v.addProperty(typeFieldName, existingType.getValue());
+                newTypes.add(typeValue);
             }
         }
+        abstractElement.removeProperty(typeFieldName);
+        for (String newType : newTypes)
+            addProperty(abstractElement, typeFieldName, newType);
 
-        v.addProperty(typeFieldName, typeValue);
         addSuperclassType(kind, element);
+    }
+
+    private void addProperty(AbstractElement abstractElement, String propertyName, String propertyValue)
+    {
+        if (abstractElement instanceof StandardVertex)
+            ((StandardVertex) abstractElement).addProperty(propertyName, propertyValue);
+        else
+        {
+            List<String> existingList = abstractElement.getProperty(propertyName);
+            if (existingList == null)
+            {
+                abstractElement.setProperty(propertyName, Collections.singletonList(propertyValue));
+            }
+            else
+            {
+                List<String> newList = new ArrayList<>(existingList);
+                newList.add(propertyValue);
+                abstractElement.setProperty(propertyName, propertyValue);
+            }
+        }
     }
 
     /**
@@ -165,7 +190,6 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
      */
     public void addTypeToElement(Class<? extends WindupFrame<?>> kind, Element element)
     {
-        StandardVertex v = GraphTypeManager.asTitanVertex(element);
         Class<?> typeHoldingTypeField = getTypeRegistry().getTypeHoldingTypeField(kind);
         if (typeHoldingTypeField == null)
             return;
@@ -177,16 +201,17 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
         String typeFieldName = typeHoldingTypeField.getAnnotation(TypeField.class).value();
         String typeValue = typeValueAnnotation.value();
 
-        for (TitanProperty existingType : v.getProperties(typeFieldName))
+        AbstractElement abstractElement = GraphTypeManager.asTitanVertex(element);
+        for (String existingType : (Iterable<String>)abstractElement.getProperty(typeFieldName))
         {
-            if (existingType.getValue().toString().equals(typeValue))
+            if (existingType.equals(typeValue))
             {
                 // this is already in the list, so just exit now
                 return;
             }
         }
 
-        v.addProperty(typeFieldName, typeValue);
+        addProperty(abstractElement, typeFieldName, typeValue);
         addSuperclassType(kind, element);
     }
 
@@ -233,11 +258,10 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
         {
             throw new IllegalArgumentException("Class " + type.getCanonicalName() + " lacks a @TypeValue annotation");
         }
-        StandardVertex titanVertex = GraphTypeManager.asTitanVertex(v);
-        Iterable<TitanProperty> vertexTypes = titanVertex.getProperties(WindupVertexFrame.TYPE_PROP);
-        for (TitanProperty typeProp : vertexTypes)
+        AbstractElement abstractElement= GraphTypeManager.asTitanVertex(v);
+        Iterable<String> vertexTypes = abstractElement.getProperty(WindupVertexFrame.TYPE_PROP);
+        for (String typeValue : vertexTypes)
         {
-            String typeValue = typeProp.getValue().toString();
             if (typeValue.equals(typeValueAnnotation.value()))
             {
                 return true;
@@ -246,7 +270,7 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
         return false;
     }
 
-    public static StandardVertex asTitanVertex(Element e)
+    public static AbstractElement asTitanVertex(Element e)
     {
         if (e instanceof StandardVertex)
         {
@@ -255,12 +279,19 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
         else if (e instanceof EventVertex)
         {
             return (StandardVertex) ((EventVertex) e).getBaseVertex();
+        } else if (e instanceof StandardEdge)
+        {
+            return (StandardEdge)e;
+        } else if (e instanceof EventEdge)
+        {
+            return (StandardEdge) ((EventEdge) e).getBaseEdge();
         }
         else
         {
             throw new IllegalArgumentException("Unrecognized element type: " + e.getClass());
         }
     }
+
 
     /**
      * Returns the classes which this vertex/edge represents, typically subclasses. This will only return the lowest level subclasses (no superclasses
@@ -275,16 +306,16 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
         {
             // Name of the graph element property holding the type list.
             String propName = typeHoldingTypeField.getAnnotation(TypeField.class).value();
-            StandardVertex v = GraphTypeManager.asTitanVertex(e);
+            AbstractElement abstractElement = GraphTypeManager.asTitanVertex(e);
 
-            Iterable<TitanProperty> valuesAll = v.getProperties(propName);
+            Iterable<String> valuesAll = abstractElement.getProperty(propName);
             if (valuesAll != null)
             {
 
                 List<Class<?>> resultClasses = new ArrayList<>();
-                for (TitanProperty value : valuesAll)
+                for (String value : valuesAll)
                 {
-                    Class<?> type = getTypeRegistry().getType(typeHoldingTypeField, value.getValue().toString());
+                    Class<?> type = getTypeRegistry().getType(typeHoldingTypeField, value);
                     if (type != null)
                     {
                         // first check that no subclasses have already been added
