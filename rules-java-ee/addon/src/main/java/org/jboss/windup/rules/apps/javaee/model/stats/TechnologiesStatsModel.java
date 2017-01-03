@@ -1,10 +1,15 @@
 package org.jboss.windup.rules.apps.javaee.model.stats;
 
 import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
+import com.tinkerpop.frames.modules.javahandler.JavaHandler;
+import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
@@ -464,4 +469,35 @@ public interface TechnologiesStatsModel extends WindupVertexFrame
      */
     @Adjacency(label = STATS_JAVA_JARS_TOTAL, direction = Direction.OUT)
     TechnologiesStatsModel setStatsJavaJarsTotal(GeneralStatsItemModel item);
+
+    // TODO: This is not working, try to find different approach or stick to currently used one
+
+    @JavaHandler
+    Map<String, Integer> getStats();
+
+    @JavaHandler
+    Integer getStat(String name);
+
+    @JavaHandler
+    void setStat(String name, Integer value);
+
+    abstract class Impl implements JavaHandlerContext<Vertex>, TechnologiesStatsModel {
+        @Override
+        public Map<String, Integer> getStats() {
+            HashMap<String, Integer> properties = new HashMap<>();
+            this.it().getPropertyKeys().forEach(property -> properties.put(property, this.it().getProperty(property)));
+
+            return properties;
+        }
+
+        @Override
+        public Integer getStat(String name) {
+            return this.it().getProperty(name);
+        }
+
+        @Override
+        public void setStat(String name, Integer value) {
+            this.it().setProperty(name, value);
+        }
+    }
 }

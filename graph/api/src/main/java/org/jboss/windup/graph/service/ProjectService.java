@@ -13,8 +13,12 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * Provides useful methods for querying, creating, and updating {@link ProjectModel} instances.
@@ -121,5 +125,15 @@ public class ProjectService extends GraphService<ProjectModel>
         }
 
         return projectModels;
+    }
+
+    public Set<ProjectModel> getRootProjectModels()
+    {
+        Iterable<FileModel> fileModelIterable = WindupConfigurationService.getConfigurationModel(this.getGraphContext()).getInputPaths();
+
+        return StreamSupport.stream(fileModelIterable.spliterator(), false)
+                .map(FileModel::getProjectModel)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
     }
 }
