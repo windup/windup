@@ -1,10 +1,11 @@
 package org.jboss.windup.rules.apps.javaee.model.stats;
 
 import com.tinkerpop.blueprints.Vertex;
-import org.eclipse.core.internal.resources.Project;
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.BelongsToProject;
 import org.jboss.windup.graph.model.ProjectModel;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 
 import com.tinkerpop.frames.FramedGraphQuery;
@@ -13,22 +14,17 @@ import com.tinkerpop.pipes.transform.OutPipe;
 import com.tinkerpop.pipes.util.Pipeline;
 import com.tinkerpop.pipes.util.StartPipe;
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.graph.frames.TypeAwareFramedGraphQuery;
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.rules.apps.java.archives.model.IdentifiedArchiveModel;
 import org.jboss.windup.rules.apps.java.model.JarArchiveModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
@@ -63,6 +59,7 @@ public class TechnologiesStatsService extends GraphService<TechnologiesStatsMode
     private final static Logger LOG = Logging.get(TechnologiesStatsService.class);
 
     private Set<ProjectModel> projects;
+    private Map<ProjectModel, ProjectModel> projectModelToRootProjectModel;
 
     public TechnologiesStatsService(GraphContext context)
     {
@@ -75,87 +72,130 @@ public class TechnologiesStatsService extends GraphService<TechnologiesStatsMode
         this.projects = projects;
     }
 
-    /**
-     * Compute the stats for this execution.
-     */
-    public TechnologiesStatsModel computeStats()
+    public TechnologiesStatsService(GraphContext context, Set<ProjectModel> projects, Map<ProjectModel, ProjectModel> projectToRootProject)
     {
-        TechnologiesStatsModel stats = this.create();
-        stats.setComputed(new Date());
+        super(context, TechnologiesStatsModel.class);
+        this.projects = projects;
+        this.projectModelToRootProjectModel = projectToRootProject;
+    }
 
+    protected void countFilesByType(TechnologiesStatsModel stats)
+    {
         // Files type share
-        Map<String, Integer> suffixToCount = countFilesBySuffix();
-        // This will need to filter out archives.
+        Map<String, Integer> suffixToCount = new HashMap<>(); // = countFilesBySuffix();
 
+        // This will need to filter out archives.
         stats.setStatsFilesByTypeJava(item(suffixToCount.getOrDefault("class", 0) + suffixToCount.getOrDefault("java", 0)));
         stats.setStatsFilesByTypeJs(item(suffixToCount.getOrDefault("js", 0)));
         stats.setStatsFilesByTypeHtml(item(suffixToCount.getOrDefault("html", 0)));
         stats.setStatsFilesByTypeCss(item(suffixToCount.getOrDefault("css", 0)));
         stats.setStatsFilesByTypeXml(item(suffixToCount.getOrDefault("xml", 0)));
         stats.setStatsFilesByTypeFmt(item(suffixToCount.getOrDefault("fmt", 0)));
+    }
 
+    /**
+     * Compute the stats for this execution.
+     */
+    public TechnologiesStatsModel computeStats()
+    {
+        // TODO: This would deserve refactoring to key-value pair
+
+        TechnologiesStatsModel stats = this.create();
+        stats.setComputed(new Date());
+
+        this.countFilesByType(stats);
+
+        Map<String, Map<ProjectModel, Integer>> result = new HashMap<>();
+
+        result.put(TechnologiesStatsModel.STATS_SERVICES_EJB_STATELESS, this.countByType(EjbSessionBeanModel.class, EjbBeanBaseModel.SESSION_TYPE, "stateless"));
+        result.put(TechnologiesStatsModel.STATS_SERVICES_EJB_STATEFUL, this.countByType(EjbSessionBeanModel.class,  EjbBeanBaseModel.SESSION_TYPE, "stateful"));
+        result.put(TechnologiesStatsModel.STATS_SERVICES_EJB_MESSAGEDRIVEN, this.countByType(EjbMessageDrivenModel.class));
+        // TODO: stats.setStatsServicesEjb___(item(countByType(EjbDeploymentDescriptorModel.class)));
 
         // Amounts
         // For the commented, we don't have a graph representation.
-        stats.setStatsServicesEjbStateless(item(countByType(EjbSessionBeanModel.class, EjbBeanBaseModel.SESSION_TYPE, "stateless")));
-        stats.setStatsServicesEjbStateful(item(countByType(EjbSessionBeanModel.class,  EjbBeanBaseModel.SESSION_TYPE, "stateful")));
-        stats.setStatsServicesEjbMessageDriven(item(countByType(EjbMessageDrivenModel.class)));
-        // TODO: stats.setStatsServicesEjb___(item(countByType(EjbDeploymentDescriptorModel.class)));
+        Map<ProjectModel, Integer> count = this.sum(
+                this.countByType(EjbEntityBeanModel.class),
+                this.countByType(JPAEntityModel.class)
+        );
 
-        int count = countByType(EjbEntityBeanModel.class) + countByType(JPAEntityModel.class);
         // PersistenceEntityModel covers also HibernateEntityModel.
-        stats.setStatsServicesJpaEntitites(item(count));
-        stats.setStatsServicesJpaNamedQueries(item(countByType(JPANamedQueryModel.class)));
-        stats.setStatsServicesJpaPersistenceUnits(item(countByType(JPAPersistenceUnitModel.class)));
-        stats.setStatsServicesRmiServices(item(countByType(RMIServiceModel.class)));
+        result.put(TechnologiesStatsModel.STATS_SERVICES_JPA_ENTITITES, count);
+        result.put(TechnologiesStatsModel.STATS_SERVICES_JPA_NAMEDQUERIES, countByType(JPANamedQueryModel.class));
+        result.put(TechnologiesStatsModel.STATS_SERVICES_JPA_PERSISTENCEUNITS, countByType(JPAPersistenceUnitModel.class));
+        result.put(TechnologiesStatsModel.STATS_SERVICES_RMI_SERVICES, countByType(RMIServiceModel.class));
 
-        stats.setStatsServicesHibernateConfigurationFiles(item(countByType(HibernateConfigurationFileModel.class)));
-        stats.setStatsServicesHibernateEntities(item(countByType(HibernateEntityModel.class)));
-        stats.setStatsServicesHibernateMappingFiles(item(countByType(HibernateMappingFileModel.class)));
-        stats.setStatsServicesHibernateSessionFactories(item(countByType(HibernateSessionFactoryModel.class)));
+        result.put(TechnologiesStatsModel.STATS_SERVICES_HIBERNATE_CONFIGURATIONFILES, countByType(HibernateConfigurationFileModel.class));
+        result.put(TechnologiesStatsModel.STATS_SERVICES_HIBERNATE_ENTITIES, countByType(HibernateEntityModel.class));
+        result.put(TechnologiesStatsModel.STATS_SERVICES_HIBERNATE_MAPPINGFILES, countByType(HibernateMappingFileModel.class));
+        result.put(TechnologiesStatsModel.STATS_SERVICES_HIBERNATE_SESSIONFACTORIES, countByType(HibernateSessionFactoryModel.class));
 
-        stats.setStatsServerResourcesDbJdbcDatasources(item(countByType(DataSourceModel.class, new HashMap<String, Serializable>(){{
+        result.put(TechnologiesStatsModel.STATS_SERVERRESOURCES_DB_JDBCDATASOURCES, this.countByType(DataSourceModel.class, new HashMap<String, Serializable>(){{
             put(DataSourceModel.IS_XA, false);
-        }})));
+        }}));
 
-        stats.setStatsServerResourcesDbXaJdbcDatasources(item(countByType(DataSourceModel.class, new HashMap<String, Serializable>(){{
+        result.put(TechnologiesStatsModel.STATS_SERVERRESOURCES_DB_XAJDBCDATASOURCES, this.countByType(DataSourceModel.class, new HashMap<String, Serializable>(){{
             put(DataSourceModel.IS_XA, true);
-        }})));
+        }}));
 
-        stats.setStatsServicesHttpJaxRs(item(countByType(JaxRSWebServiceModel.class)));
-        stats.setStatsServicesHttpJaxWs(item(countByType(JaxWSWebServiceModel.class)));
+        result.put(TechnologiesStatsModel.STATS_SERVICES_HTTP_JAX_RS, this.countByType(JaxRSWebServiceModel.class));
+        result.put(TechnologiesStatsModel.STATS_SERVICES_HTTP_JAX_WS, this.countByType(JaxWSWebServiceModel.class));
 
-        stats.setStatsServerResourcesMsgJmsQueues(item(countByType(JmsDestinationModel.class, JmsDestinationModel.DESTINATION_TYPE, JmsDestinationType.QUEUE.name())));
-        stats.setStatsServerResourcesMsgJmsTopics(item(countByType(JmsDestinationModel.class, JmsDestinationModel.DESTINATION_TYPE, JmsDestinationType.TOPIC.name())));
-        stats.setStatsServerResourcesMsgJmsConnectionFactories(item(countByType(JmsConnectionFactoryModel.class)));
+        result.put(TechnologiesStatsModel.STATS_SERVERRESOURCES_MSG_JMS_QUEUES, this.countByType(JmsDestinationModel.class,
+                JmsDestinationModel.DESTINATION_TYPE, JmsDestinationType.QUEUE.name()));
+        result.put(TechnologiesStatsModel.STATS_SERVERRESOURCES_MSG_JMS_TOPICS, this.countByType(JmsDestinationModel.class,
+                JmsDestinationModel.DESTINATION_TYPE, JmsDestinationType.TOPIC.name()));
+        result.put(TechnologiesStatsModel.STATS_SERVERRESOURCES_MSG_JMS_CONNECTIONFACTORIES, this.countByType(JmsConnectionFactoryModel.class));
 
         //stats.setStatsServerResourcesSecurityRealms(item(countByType(.class)));
-        stats.setStatsServerResourcesJndiTotalEntries(item(countByType(JNDIResourceModel.class)));
+        result.put(TechnologiesStatsModel.STATS_SERVERRESOURCES_JNDI_TOTALENTRIES, this.countByType(JNDIResourceModel.class));
 
         // Not sure how to get this number. Maybe JavaClassFileModel.getJavaClass() ?
-        stats.setStatsJavaClassesOriginal(item((int) countJavaClassesOriginal()));
-        stats.setStatsJavaClassesTotal(item(countByType(JavaClassModel.class)));
+//        result.put(TechnologiesStatsModel.STATS_JAVA_CLASSES_ORIGINAL, (int) countJavaClassesOriginal()));
+        result.put(TechnologiesStatsModel.STATS_JAVA_CLASSES_TOTAL, this.countByType(JavaClassModel.class));
+
         // We are not able to tell which of the jars are original. We can substract known opensource libs.
-        stats.setStatsJavaJarsOriginal(item(countByType(JarArchiveModel.class) - countByType(IdentifiedArchiveModel.class)));
-        stats.setStatsJavaJarsTotal(item(countByType(JarArchiveModel.class)));
+        result.put(TechnologiesStatsModel.STATS_JAVA_JARS_ORIGINAL, this.diff(
+                this.countByType(JarArchiveModel.class),
+                this.countByType(IdentifiedArchiveModel.class))
+        );
+        result.put(TechnologiesStatsModel.STATS_JAVA_JARS_TOTAL, this.countByType(JarArchiveModel.class));
 
         this.commit();
+
         return stats;
     }
 
+    protected Map<ProjectModel, Integer> sum(Map<ProjectModel, Integer> a, Map<ProjectModel, Integer> b) {
+        Map<ProjectModel, Integer> result = new HashMap<>();
 
-    private <T extends WindupVertexFrame> int countByType(Class<T> clazz)
+        a.entrySet().forEach(keyValuePair -> result.put(keyValuePair.getKey(), keyValuePair.getValue()));
+        b.entrySet().forEach(keyValuePair -> result.put(keyValuePair.getKey(), result.getOrDefault(keyValuePair.getKey(), 0) + keyValuePair.getValue()));
+
+        return result;
+    }
+
+    protected Map<ProjectModel, Integer> diff(Map<ProjectModel, Integer> a, Map<ProjectModel, Integer> b) {
+        Map<ProjectModel, Integer> result = new HashMap<>();
+
+        a.entrySet().forEach(keyValuePair -> result.put(keyValuePair.getKey(), keyValuePair.getValue()));
+        b.entrySet().forEach(keyValuePair -> result.put(keyValuePair.getKey(), result.getOrDefault(keyValuePair.getKey(), keyValuePair.getValue()) - keyValuePair.getValue()));
+
+        return result;
+    }
+
+    private <T extends WindupVertexFrame> Map<ProjectModel, Integer> countByType(Class<T> clazz)
     {
         return countByType(clazz, null);
     }
 
-    private <T extends WindupVertexFrame> int countByType(Class<T> clazz, String propName, Serializable value)
+    private <T extends WindupVertexFrame> Map<ProjectModel, Integer> countByType(Class<T> clazz, String propName, Serializable value)
     {
         ///LOG.info("Counting: Frame class == " + clazz.getSimpleName() + " && " + propName + " == " + value);
         return countByType(clazz, propName == null ? null : new HashMap<String, Serializable>(){{put(propName, value);}});
     }
 
-    private <T extends WindupVertexFrame> int countByType(Class<T> clazz, Map<String, Serializable> props)
+    private <T extends WindupVertexFrame> Map<ProjectModel, Integer> countByType(Class<T> clazz, Map<String, Serializable> props)
     {
         FramedGraphQuery query = this.getGraphContext().getQuery().type(clazz);
 
@@ -170,44 +210,66 @@ public class TechnologiesStatsService extends GraphService<TechnologiesStatsMode
             }
         }
 
-        List<Vertex> vertices = StreamSupport.stream(query.vertices().spliterator(), false)
-                .filter(vertex -> {
-                    if (vertex instanceof BelongsToProject) {
+        Map<ProjectModel, Integer> projectCount = new HashMap<>();
+        Iterable<T> vertices = query.vertices(clazz);
 
-                        for (ProjectModel project : this.projects)
-                        {
-                            if (((BelongsToProject) vertex).belongsToProject(project))
-                            {
-                                return true;
-                            }
-                        }
+        for (T vertex : vertices) {
+            if (vertex instanceof BelongsToProject) {
+                for (ProjectModel projectModel : this.projects) {
+                    if (((BelongsToProject)vertex).belongsToProject(projectModel)) {
+                        projectCount.put(projectModel, projectCount.getOrDefault(projectModel, 0) + 1);
+                        break;
                     }
+                }
+            } else {
+                String errorMessage = "Not instance of " +
+                        BelongsToProject.class.getName() +
+                        "\n" +
+                        clazz.getName();
 
-                    return false;
-                })
-                .collect(Collectors.toList());
+                LOG.warning(errorMessage);
+            }
+        }
 
-        long count = this.count(vertices);
-        LOG.info("Counted: Frame class == " + clazz.getSimpleName() + " && " + (props == null ? "no" : props.size()) + " props ==> " + count);
-        return (int) count;
+        LOG.info("Counted: Frame class == " + clazz.getSimpleName() + " && " + (props == null ? "no" : props.size()));
+
+        return projectCount;
     }
 
-    private Map<String, Integer> countFilesBySuffix()
+    private Map<ProjectModel, Map<String, Integer>> countFilesBySuffix()
     {
-        Map<String, Integer> suffixToCount = new HashMap<>();
+        Map<ProjectModel, Map<String, Integer>> result = new HashMap<>();
+
         Iterable<FileModel> files = this.getGraphContext().getQuery()
                 .type(FileModel.class)
                 .hasNot(FileModel.IS_DIRECTORY, true)
                 .vertices(FileModel.class);
 
         StreamSupport.stream(files.spliterator(), false)
-                .filter(file -> this.projects.isEmpty() || this.projects.contains(file.getProjectModel()))
                 .forEach((FileModel file) -> {
                     String suffix = StringUtils.substringAfterLast(file.getFileName(), ".");
 
                     if (suffix.isEmpty())
                     {
                         return;
+                    }
+
+                    ProjectModel projectModel = file.getProjectModel();
+                    ProjectModel rootProjectModel = this.projectModelToRootProjectModel.get(projectModel);
+                    Map<String, Integer> suffixToCount;
+
+                    if (rootProjectModel == null)
+                    {
+                        throw new RuntimeException("RootProjectModel null");
+                    }
+                    else
+                    {
+                        if (!result.containsKey(rootProjectModel))
+                        {
+                            result.put(rootProjectModel, new HashMap<>());
+                        }
+
+                        suffixToCount = result.get(rootProjectModel);
                     }
 
                     Integer val = suffixToCount.get(suffix);
@@ -220,24 +282,14 @@ public class TechnologiesStatsService extends GraphService<TechnologiesStatsMode
                     {
                         suffixToCount.put(suffix, val + 1);
                     }
-            });
+                });
 
-        return suffixToCount;
-    }
-
-    private static Map<String, Integer> countFilesShareBySuffix(Map<String, Integer> suffixToCount){
-        int sum = suffixToCount.entrySet().stream().mapToInt(e -> e.getValue()).sum();
-        Map<String, Integer> shares = suffixToCount.entrySet().stream().collect(Collectors.toMap(
-                e -> e.getKey(),
-                e -> e.getValue() * 100 / sum
-        ));
-        return shares;
+        return result;
     }
 
     /*
      * Shortcut methods when only the qty is needed.
      */
-
     private GeneralStatsItemModel item(int i) {
         return this.getGraphContext().create(GeneralStatsItemModel.class).setQuantity(i);
     }
@@ -272,10 +324,7 @@ public class TechnologiesStatsService extends GraphService<TechnologiesStatsMode
         return count;
     }
 
-
-
     // Methods for individual statistic items
-
     private long countJavaClassesOriginal()
     {
         //new Pipeline<Vertex, Vertex>().
