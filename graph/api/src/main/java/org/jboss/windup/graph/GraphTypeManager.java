@@ -125,9 +125,9 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
         AbstractElement abstractElement = GraphTypeManager.asTitanElement(element);
 
         List<String> newTypes = new ArrayList<>();
-        for (TitanProperty existingType : (Iterable<TitanProperty>)abstractElement.getProperty(typeFieldName))
+        for (String existingType : (Iterable<String>)abstractElement.getProperty(typeFieldName))
         {
-            if (!existingType.getValue().toString().equals(typeValue))
+            if (!existingType.toString().equals(typeValue))
             {
                 newTypes.add(typeValue);
             }
