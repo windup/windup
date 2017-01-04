@@ -35,6 +35,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeField;
 import com.tinkerpop.frames.modules.typedgraph.TypeRegistry;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import java.util.logging.Logger;
+import org.jboss.windup.graph.model.WindupEdgeFrame;
 
 /**
  * Windup's implementation of extended type handling for TinkerPop Frames. This allows storing multiple types based on the @TypeValue.value(), also in
@@ -44,8 +45,22 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
 {
     private static final Logger LOG = Logger.getLogger(GraphTypeManager.class.getName());
 
+    /**
+     * We separate vertex and edge registries, because originally the implementation only worked with vertexes.
+     * All methods except getRegisteredEdgeTypes() only work with vertexTypeRegistry.
+     */
+    private TypeRegistry vertexTypeRegistry;
+    private TypeRegistry edgeTypeRegistry;
+
+    /**
+     * Helper map to keep track of what @TypeValue's were already seen.
+     */
     private Map<String, Class<? extends WindupFrame<?>>> registeredTypes;
-    private TypeRegistry typeRegistry;
+    private Map<String, Class<? extends WindupFrame<?>>> registeredEdgeTypes;
+
+    // TODO: Maybe GraphTypeManager should rather extend TypeRegistry? We are duplicating most of the functionality here
+    //       just to implement getRegisteredTypes().
+
 
     public GraphTypeManager()
     {
@@ -57,53 +72,87 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
         FurnaceClasspathScanner furnaceClasspathScanner = furnace.getAddonRegistry().getServices(FurnaceClasspathScanner.class).get();
 
         this.registeredTypes = new HashMap<>();
-        this.typeRegistry = new TypeRegistry();
+        this.vertexTypeRegistry = new TypeRegistry();
+        this.edgeTypeRegistry = new TypeRegistry();
         GraphModelScanner.loadFrames(furnaceClasspathScanner).forEach(this::addTypeToRegistry);
     }
 
     public Set<Class<? extends WindupFrame<?>>> getRegisteredTypes()
     {
-        return Collections.unmodifiableSet(new HashSet<>(getRegisteredTypeMap().values()));
+        return Collections.unmodifiableSet(new HashSet<>(getRegisteredTypesMap().values()));
     }
 
-    private synchronized Map<String, Class<? extends WindupFrame<?>>> getRegisteredTypeMap()
+    public Set<Class<? extends WindupFrame<?>>> getRegisteredEdgeTypes()
+    {
+        return Collections.unmodifiableSet(new HashSet<>(getRegisteredEdgeTypesMap().values()));
+    }
+
+    private synchronized Map<String, Class<? extends WindupFrame<?>>> getRegisteredTypesMap()
     {
         if (registeredTypes == null)
             initRegistry();
         return registeredTypes;
     }
 
+    private synchronized Map<String, Class<? extends WindupFrame<?>>> getRegisteredEdgeTypesMap()
+    {
+        if (registeredEdgeTypes == null)
+            initRegistry();
+        return registeredEdgeTypes;
+    }
+
     private synchronized TypeRegistry getTypeRegistry()
     {
-        if (typeRegistry == null)
+        if (vertexTypeRegistry == null)
             initRegistry();
-        return typeRegistry;
+        return vertexTypeRegistry;
+    }
+
+    private synchronized TypeRegistry getEdgeTypeRegistry()
+    {
+        if (edgeTypeRegistry == null)
+            initRegistry();
+        return edgeTypeRegistry;
     }
 
     private void addTypeToRegistry(Class<? extends WindupFrame<?>> frameType)
     {
-        LOG.info(" Adding type to registry: " + frameType.getName());
+        LOG.fine("    Examining type: " + frameType.getName());
 
-        TypeValue typeValueAnnotation = frameType.getAnnotation(TypeValue.class);
+        TypeValue annotation = frameType.getAnnotation(TypeValue.class);
 
         // Do not attempt to add types without @TypeValue. We use
         // *Model types with no @TypeValue to function as essentially
         // "abstract" models that would never exist on their own (only as subclasses).
-        if (typeValueAnnotation == null)
+        if (annotation == null)
         {
             String msg = String.format("@%s is missing on type %s", TypeValue.class.getSimpleName(), frameType.getName());
             LOG.warning(msg);
             return;
         }
 
-        if (getRegisteredTypeMap().containsKey(typeValueAnnotation.value()))
+        if (getRegisteredTypesMap().containsKey(annotation.value()))
         {
             throw new IllegalArgumentException("Type value for model '" + frameType.getCanonicalName()
                         + "' is already registered with model "
-                        + getRegisteredTypeMap().get(typeValueAnnotation.value()).getName());
+                        + getRegisteredTypesMap().get(annotation.value()).getName());
         }
-        getRegisteredTypeMap().put(typeValueAnnotation.value(), frameType);
-        getTypeRegistry().add(frameType);
+
+
+
+        if (WindupVertexFrame.class.isAssignableFrom(frameType))
+        {
+            LOG.info("    Adding vertex type to registry: " + frameType.getName());
+            getTypeRegistry().add(frameType);
+            getRegisteredTypesMap().put(annotation.value(), frameType);
+        }
+        else if (WindupEdgeFrame.class.isAssignableFrom(frameType))
+        {
+            LOG.info("    Adding edge type to registry: " + frameType.getName());
+            getEdgeTypeRegistry().add(frameType);
+            getRegisteredEdgeTypesMap().put(annotation.value(), frameType);
+        }
+
     }
 
     /**
@@ -178,7 +227,7 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
      */
     public void addTypeToElement(String typeString, Element element)
     {
-        Class<? extends WindupFrame<?>> kind = getRegisteredTypeMap().get(typeString);
+        Class<? extends WindupFrame<?>> kind = getRegisteredTypesMap().get(typeString);
         if (kind == null)
             throw new IllegalArgumentException("Unrecognized type: " + typeString);
 
@@ -279,10 +328,12 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
         else if (e instanceof EventVertex)
         {
             return (StandardVertex) ((EventVertex) e).getBaseVertex();
-        } else if (e instanceof StandardEdge)
+        }
+        else if (e instanceof StandardEdge)
         {
             return (StandardEdge)e;
-        } else if (e instanceof EventEdge)
+        }
+        else if (e instanceof EventEdge)
         {
             return (StandardEdge) ((EventEdge) e).getBaseEdge();
         }
