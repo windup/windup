@@ -80,18 +80,36 @@ public class TechnologiesStatsService extends GraphService<TechnologiesStatsMode
         stats.setStatsFilesByTypeCss(item(suffixToCount.getOrDefault("css", 0)));
         stats.setStatsFilesByTypeXml(item(suffixToCount.getOrDefault("xml", 0)));
         stats.setStatsFilesByTypeFmt(item(suffixToCount.getOrDefault("fmt", 0)));
+
+        // suffixToCount.put("java", suffixToCount.getOrDefault("class", 0) + suffixToCount.getOrDefault("java", 0));
+        // suffixToCount.remove("class");
+
+        // TODO: Should we ignore other file types?
+        suffixToCount.entrySet().forEach(entry -> {
+            TechnologyKeyValuePairModel suffixUsage = this.getGraphContext().create(TechnologyKeyValuePairModel.class)
+                    .setName(entry.getKey())
+                    .setValue(entry.getValue());
+
+            stats.addFileType(suffixUsage);
+        });
     }
 
     protected void setTechnologiesUsage(TechnologiesStatsModel stats, Map<String, Integer> technologyUsage)
     {
-        stats.setStatsServicesEjbStateless(item(stats.getStat(TechnologiesStatsModel.STATS_SERVICES_EJB_STATELESS)));
-        stats.setStatsServicesEjbStateful(item(stats.getStat(TechnologiesStatsModel.STATS_SERVICES_EJB_STATEFUL)));
-        stats.setStatsServicesEjbMessageDriven(item(stats.getStat(TechnologiesStatsModel.STATS_SERVICES_EJB_MESSAGEDRIVEN)));
+        stats.setStatsServicesEjbStateless(item(technologyUsage.getOrDefault(TechnologiesStatsModel.STATS_SERVICES_EJB_STATELESS, 0)));
+        stats.setStatsServicesEjbStateful(item(technologyUsage.getOrDefault(TechnologiesStatsModel.STATS_SERVICES_EJB_STATEFUL, 0)));
+        stats.setStatsServicesEjbMessageDriven(item(technologyUsage.getOrDefault(TechnologiesStatsModel.STATS_SERVICES_EJB_MESSAGEDRIVEN, 0)));
 
         // TODO: Finish this.
         // TODO: This would deserve refactoring to key-value pair
 
-        technologyUsage.entrySet().forEach(entry -> stats.setStat(entry.getKey(), entry.getValue()));
+        technologyUsage.entrySet().forEach(entry -> {
+            TechnologyKeyValuePairModel currentTechnology = this.getGraphContext().create(TechnologyKeyValuePairModel.class)
+                    .setName(entry.getKey())
+                    .setValue(entry.getValue());
+
+            stats.addProperty(currentTechnology);
+        });
     }
 
     /**

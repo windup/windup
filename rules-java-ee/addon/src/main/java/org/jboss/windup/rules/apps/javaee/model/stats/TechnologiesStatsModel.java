@@ -1,16 +1,11 @@
 package org.jboss.windup.rules.apps.javaee.model.stats;
 
 import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.modules.javahandler.JavaHandler;
-import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
+import java.util.Date;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 /**
@@ -470,34 +465,27 @@ public interface TechnologiesStatsModel extends WindupVertexFrame
     @Adjacency(label = STATS_JAVA_JARS_TOTAL, direction = Direction.OUT)
     TechnologiesStatsModel setStatsJavaJarsTotal(GeneralStatsItemModel item);
 
-    // TODO: This is not working, try to find different approach or stick to currently used one
 
-    @JavaHandler
-    Map<String, Integer> getStats();
+    String STATS_TECHNOLOGIES = "stats.technologies";
 
-    @JavaHandler
-    Integer getStat(String name);
+    @Adjacency(label = STATS_TECHNOLOGIES, direction = Direction.OUT)
+    Iterable<TechnologyKeyValuePairModel> getTechnologies();
 
-    @JavaHandler
-    void setStat(String name, Integer value);
+    @Adjacency(label = STATS_TECHNOLOGIES, direction = Direction.OUT)
+    TechnologiesStatsModel setTechnologies(Iterable<TechnologyKeyValuePairModel> properties);
 
-    abstract class Impl implements JavaHandlerContext<Vertex>, TechnologiesStatsModel {
-        @Override
-        public Map<String, Integer> getStats() {
-            HashMap<String, Integer> properties = new HashMap<>();
-            this.it().getPropertyKeys().forEach(property -> properties.put(property, this.it().getProperty(property)));
+    @Adjacency(label = STATS_TECHNOLOGIES, direction = Direction.OUT)
+    TechnologiesStatsModel addTechnology(TechnologyKeyValuePairModel property);
 
-            return properties;
-        }
 
-        @Override
-        public Integer getStat(String name) {
-            return this.it().getProperty(name);
-        }
+    String STATS_FILE_TYPES = "stats.fileTypes";
 
-        @Override
-        public void setStat(String name, Integer value) {
-            this.it().setProperty(name, value);
-        }
-    }
+    @Adjacency(label = STATS_FILE_TYPES, direction = Direction.OUT)
+    Iterable<TechnologyKeyValuePairModel> getFileTypes();
+
+    @Adjacency(label = STATS_FILE_TYPES, direction = Direction.OUT)
+    TechnologiesStatsModel setFileTypes(Iterable<TechnologyKeyValuePairModel> properties);
+
+    @Adjacency(label = STATS_FILE_TYPES, direction = Direction.OUT)
+    TechnologiesStatsModel addFileType(TechnologyKeyValuePairModel property);
 }
