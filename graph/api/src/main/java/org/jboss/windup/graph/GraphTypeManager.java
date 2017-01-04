@@ -122,7 +122,7 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
             return;
         String typeValue = typeValueAnnotation.value();
 
-        AbstractElement abstractElement = GraphTypeManager.asTitanVertex(element);
+        AbstractElement abstractElement = GraphTypeManager.asTitanElement(element);
 
         List<String> newTypes = new ArrayList<>();
         for (TitanProperty existingType : (Iterable<TitanProperty>)abstractElement.getProperty(typeFieldName))
@@ -201,7 +201,7 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
         String typeFieldName = typeHoldingTypeField.getAnnotation(TypeField.class).value();
         String typeValue = typeValueAnnotation.value();
 
-        AbstractElement abstractElement = GraphTypeManager.asTitanVertex(element);
+        AbstractElement abstractElement = GraphTypeManager.asTitanElement(element);
         for (String existingType : (Iterable<String>)abstractElement.getProperty(typeFieldName))
         {
             if (existingType.equals(typeValue))
@@ -258,7 +258,7 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
         {
             throw new IllegalArgumentException("Class " + type.getCanonicalName() + " lacks a @TypeValue annotation");
         }
-        AbstractElement abstractElement= GraphTypeManager.asTitanVertex(v);
+        AbstractElement abstractElement= GraphTypeManager.asTitanElement(v);
         Iterable<String> vertexTypes = abstractElement.getProperty(WindupVertexFrame.TYPE_PROP);
         for (String typeValue : vertexTypes)
         {
@@ -270,7 +270,7 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
         return false;
     }
 
-    public static AbstractElement asTitanVertex(Element e)
+    public static AbstractElement asTitanElement(Element e)
     {
         if (e instanceof StandardVertex)
         {
@@ -278,13 +278,13 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
         }
         else if (e instanceof EventVertex)
         {
-            return (StandardVertex) ((EventVertex) e).getBaseVertex();
+            return (AbstractElement) ((EventVertex) e).getBaseVertex();
         } else if (e instanceof StandardEdge)
         {
             return (StandardEdge)e;
         } else if (e instanceof EventEdge)
         {
-            return (StandardEdge) ((EventEdge) e).getBaseEdge();
+            return (AbstractElement) ((EventEdge) e).getBaseEdge();
         }
         else
         {
@@ -306,7 +306,7 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
         {
             // Name of the graph element property holding the type list.
             String propName = typeHoldingTypeField.getAnnotation(TypeField.class).value();
-            AbstractElement abstractElement = GraphTypeManager.asTitanVertex(e);
+            AbstractElement abstractElement = GraphTypeManager.asTitanElement(e);
 
             Iterable<String> valuesAll = abstractElement.getProperty(propName);
             if (valuesAll != null)
