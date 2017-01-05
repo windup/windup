@@ -104,11 +104,12 @@ public class TechnologiesStatsService extends GraphService<TechnologiesStatsMode
         // TODO: This would deserve refactoring to key-value pair
 
         technologyUsage.entrySet().forEach(entry -> {
+            // TODO: This is probably wrong!
             TechnologyKeyValuePairModel currentTechnology = this.getGraphContext().create(TechnologyKeyValuePairModel.class)
                     .setName(entry.getKey())
                     .setValue(entry.getValue());
 
-            stats.addProperty(currentTechnology);
+            stats.addTechnology(currentTechnology);
         });
     }
 
@@ -176,8 +177,7 @@ public class TechnologiesStatsService extends GraphService<TechnologiesStatsMode
         technologyUsage.put(TechnologiesStatsModel.STATS_SERVERRESOURCES_JNDI_TOTALENTRIES, this.countByType(JNDIResourceModel.class));
 
         // Not sure how to get this number. Maybe JavaClassFileModel.getJavaClass() ?
-        // TODO: Fix this
-        // result.put(TechnologiesStatsModel.STATS_JAVA_CLASSES_ORIGINAL, (int) countJavaClassesOriginal()));
+        technologyUsage.put(TechnologiesStatsModel.STATS_JAVA_CLASSES_ORIGINAL, this.countJavaClassesOriginal());
         technologyUsage.put(TechnologiesStatsModel.STATS_JAVA_CLASSES_TOTAL, this.countByType(JavaClassModel.class));
 
         // We are not able to tell which of the jars are original. We can substract known opensource libs.
@@ -378,16 +378,43 @@ public class TechnologiesStatsService extends GraphService<TechnologiesStatsMode
     }
 
     // Methods for individual statistic items
-    private long countJavaClassesOriginal()
+    private Map<ProjectModel, Integer> countJavaClassesOriginal()
     {
-        //new Pipeline<Vertex, Vertex>().
+        // TODO: Fix this
+        // new Pipeline<Vertex, Vertex>().
         Iterable<Vertex> startVertices = new TypeAwareFramedGraphQuery(this.getGraphContext().getFramed()).type(JavaClassModel.class).vertices();
-        Pipeline<Vertex, Vertex> pipeline = new Pipeline<Vertex, Vertex>();
+        Pipeline<Vertex, Vertex> pipeline = new Pipeline<>();
         pipeline.addPipe(new StartPipe(startVertices));
         final OutPipe outPipe = new OutPipe(JavaClassModel.DECOMPILED_SOURCE);
         // The BackFilterPipe needs to wrap all pipes which it "go back before".
         // This means ...out(...).back(1);
         pipeline.addPipe(new BackFilterPipe(outPipe));
-        return pipeline.count();
+
+        Map<ProjectModel, Integer> map = new HashMap<>();
+
+        Iterable<JavaClassModel> javaClassModels = this.getGraphContext().getFramed().frameVertices(pipeline, JavaClassModel.class);
+
+        javaClassModels.forEach(item -> {
+            FileModel fileModel = item.getDecompiledSource();
+
+            if (fileModel == null)
+            {
+                LOG.warning("Unexpected fileModel null");
+                return;
+            }
+
+            ProjectModel projectModel = fileModel.getProjectModel();
+
+            if (projectModel == null)
+            {
+                LOG.warning("Unexpected projectModel null");
+                return;
+            }
+
+            ProjectModel rootProjectModel = this.projectModelToRootProjectModel.get(projectModel);
+            map.put(rootProjectModel, map.getOrDefault(rootProjectModel, 0) + 1);
+        });
+
+        return map;
     }
 }
