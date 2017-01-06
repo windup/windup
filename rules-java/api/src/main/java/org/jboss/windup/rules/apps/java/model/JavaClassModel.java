@@ -145,14 +145,14 @@ public interface JavaClassModel extends WindupVertexFrame
      * via a decompilation).
      */
     @Adjacency(label = ORIGINAL_SOURCE, direction = Direction.OUT)
-    void setOriginalSource(JavaSourceFileModel source);
+    void setOriginalSource(AbstractJavaSourceModel source);
 
     /**
      * Contains the original source code of this file, assuming that it was originally provided in source form (and not
      * via a decompilation).
      */
     @Adjacency(label = ORIGINAL_SOURCE, direction = Direction.OUT)
-    JavaSourceFileModel getOriginalSource();
+    AbstractJavaSourceModel getOriginalSource();
 
     /**
      * Contains the original .class file, assuming that it was originally provided in binary form (as a java .class

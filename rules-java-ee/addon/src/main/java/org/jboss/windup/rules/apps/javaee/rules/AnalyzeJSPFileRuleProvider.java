@@ -70,6 +70,7 @@ public class AnalyzeJSPFileRuleProvider extends AbstractRuleProvider
                 classModel.setSimpleName(sourceFile.getFileName());
                 classModel.setQualifiedName(sourceFile.getFileName());
                 classModel.setExtends(javaClassService.getOrCreatePhantom("javax.servlet.http.HttpServlet"));
+                classModel.setOriginalSource(sourceFile);
                 sourceFile.addJavaClass(classModel);
 
                 Iterable<ClassReference> references = getClassReferences(typeReferenceService, sourceFile);

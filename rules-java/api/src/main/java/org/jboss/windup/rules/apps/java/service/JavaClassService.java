@@ -9,6 +9,7 @@ import org.jboss.forge.roaster.model.util.Types;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.exception.NonUniqueResultException;
+import org.jboss.windup.rules.apps.java.model.AbstractJavaSourceModel;
 import org.jboss.windup.rules.apps.java.model.AmbiguousJavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaMethodModel;
@@ -200,8 +201,8 @@ public class JavaClassService extends GraphService<JavaClassModel>
         return javaMethodModel;
     }
     
-    public Iterable<JavaSourceFileModel> getJavaSource(String clz) {
-        List<JavaSourceFileModel> sources = new LinkedList<>();
+    public Iterable<AbstractJavaSourceModel> getJavaSource(String clz) {
+        List<AbstractJavaSourceModel> sources = new LinkedList<>();
         
         JavaClassModel classModel = getByName(clz);
         if(classModel == null) {

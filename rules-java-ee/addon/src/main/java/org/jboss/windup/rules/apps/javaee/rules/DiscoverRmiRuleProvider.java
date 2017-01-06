@@ -82,7 +82,7 @@ public class DiscoverRmiRuleProvider extends AbstractRuleProvider
             JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
 
             if (rmiServiceModel != null && rmiServiceModel.getImplementationClass() != null) {
-                for (JavaSourceFileModel source : javaClassService.getJavaSource(rmiServiceModel.getImplementationClass().getQualifiedName()))
+                for (AbstractJavaSourceModel source : javaClassService.getJavaSource(rmiServiceModel.getImplementationClass().getQualifiedName()))
                 {
                     source.setGenerateSourceReport(true);
                 }
