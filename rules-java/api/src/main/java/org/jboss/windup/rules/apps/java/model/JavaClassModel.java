@@ -195,12 +195,22 @@ public interface JavaClassModel extends WindupVertexFrame, BelongsToProject
     @Override
     boolean belongsToProject(ProjectModel projectModel);
 
+    @JavaHandler
+    @Override
+    Iterable<ProjectModel> getRootProjectModels();
+
     abstract class Impl implements JavaHandlerContext<Vertex>, JavaClassModel, BelongsToProject
     {
         @Override
         public boolean belongsToProject(ProjectModel projectModel)
         {
             return this.getClassFile().belongsToProject(projectModel);
+        }
+
+        @Override
+        public Iterable<ProjectModel> getRootProjectModels()
+        {
+            return this.getClassFile().getRootProjectModels();
         }
     }
 }

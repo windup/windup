@@ -3,6 +3,9 @@ package org.jboss.windup.graph.model.resource;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.EnumUtils;
@@ -222,6 +225,10 @@ public interface FileModel extends ResourceModel, BelongsToProject
     @JavaHandler
     boolean belongsToProject(ProjectModel projectModel);
 
+    @Override
+    @JavaHandler
+    Iterable<ProjectModel> getRootProjectModels();
+
     abstract class Impl implements FileModel, JavaHandlerContext<Vertex>, BelongsToProject
     {
         public ProjectModel getApplication()
@@ -332,6 +339,17 @@ public interface FileModel extends ResourceModel, BelongsToProject
         public boolean belongsToProject(ProjectModel projectModel)
         {
             return this.getProjectModel().equals(projectModel);
+        }
+
+        @Override
+        public Iterable<ProjectModel> getRootProjectModels()
+        {
+            ProjectModel rootProjectModel = this.getProjectModel().getRootProjectModel();
+
+            List<ProjectModel> projectModelList = new ArrayList<>();
+            projectModelList.add(rootProjectModel);
+
+            return projectModelList;
         }
     }
 }

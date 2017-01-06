@@ -46,6 +46,7 @@ import org.jboss.windup.rules.apps.javaee.model.HibernateConfigurationFileModel;
 import org.jboss.windup.rules.apps.javaee.model.HibernateEntityModel;
 import org.jboss.windup.rules.apps.javaee.model.HibernateMappingFileModel;
 import org.jboss.windup.rules.apps.javaee.model.HibernateSessionFactoryModel;
+import org.jboss.windup.rules.apps.javaee.service.TechnologyKeyValuePairModelService;
 import org.jboss.windup.util.Logging;
 
 /**
@@ -58,19 +59,19 @@ public class TechnologiesStatsService extends GraphService<TechnologiesStatsMode
 {
     private final static Logger LOG = Logging.get(TechnologiesStatsService.class);
 
-    private Map<ProjectModel, ProjectModel> projectModelToRootProjectModel;
+    private TechnologyKeyValuePairModelService technologyKeyValuePairModelService;
 
     public TechnologiesStatsService(GraphContext context)
     {
         super(context, TechnologiesStatsModel.class);
 
-        ProjectService projectService = new ProjectService(context);
-        this.projectModelToRootProjectModel = projectService.getProjectToRootProjectMap();
+        this.technologyKeyValuePairModelService = new TechnologyKeyValuePairModelService(context);
     }
 
     protected void setCountFilesByType(TechnologiesStatsModel stats, Map<String, Integer> suffixToCount)
     {
-        // This will need to filter out archives.
+        // TODO: This will need to filter out archives.
+        // TODO: Should I remove old code and stick to key-value-pair or should I keep the old one and remove key value pair?
         stats.setStatsFilesByTypeJava(item(
                 suffixToCount.getOrDefault("class", 0)
                  + suffixToCount.getOrDefault("java", 0)
@@ -81,13 +82,8 @@ public class TechnologiesStatsService extends GraphService<TechnologiesStatsMode
         stats.setStatsFilesByTypeXml(item(suffixToCount.getOrDefault("xml", 0)));
         stats.setStatsFilesByTypeFmt(item(suffixToCount.getOrDefault("fmt", 0)));
 
-        // suffixToCount.put("java", suffixToCount.getOrDefault("class", 0) + suffixToCount.getOrDefault("java", 0));
-        // suffixToCount.remove("class");
-
-        // TODO: Should we ignore other file types?
         suffixToCount.entrySet().forEach(entry -> {
-            // TODO: This is probably wrong!
-            TechnologyKeyValuePairModel suffixUsage = this.getGraphContext().create(TechnologyKeyValuePairModel.class)
+            TechnologyKeyValuePairModel suffixUsage = this.technologyKeyValuePairModelService.create()
                     .setName(entry.getKey())
                     .setValue(entry.getValue());
 
@@ -101,12 +97,8 @@ public class TechnologiesStatsService extends GraphService<TechnologiesStatsMode
         stats.setStatsServicesEjbStateful(item(technologyUsage.getOrDefault(TechnologiesStatsModel.STATS_SERVICES_EJB_STATEFUL, 0)));
         stats.setStatsServicesEjbMessageDriven(item(technologyUsage.getOrDefault(TechnologiesStatsModel.STATS_SERVICES_EJB_MESSAGEDRIVEN, 0)));
 
-        // TODO: Finish this.
-        // TODO: This would deserve refactoring to key-value pair
-
         technologyUsage.entrySet().forEach(entry -> {
-            // TODO: This is probably wrong!
-            TechnologyKeyValuePairModel currentTechnology = this.getGraphContext().create(TechnologyKeyValuePairModel.class)
+            TechnologyKeyValuePairModel currentTechnology = this.technologyKeyValuePairModelService.create()
                     .setName(entry.getKey())
                     .setValue(entry.getValue());
 
@@ -200,8 +192,6 @@ public class TechnologiesStatsService extends GraphService<TechnologiesStatsMode
             technologyMap.getValue().entrySet().forEach(projectTechCount -> {
                 ProjectModel project = projectTechCount.getKey();
 
-                //project.getRootProjectModel();
-
                 if (!projectBasedResult.containsKey(project))
                 {
                     projectBasedResult.put(project, new HashMap<>());
@@ -253,10 +243,13 @@ public class TechnologiesStatsService extends GraphService<TechnologiesStatsMode
     {
         FramedGraphQuery query = this.getGraphContext().getQuery().type(clazz);
 
-        if (props != null) {
-            for (Map.Entry<String, Serializable> prop : props.entrySet()) {
+        if (props != null)
+        {
+            for (Map.Entry<String, Serializable> prop : props.entrySet())
+            {
                 String propName = prop.getKey();
                 Serializable value = prop.getValue();
+
                 if (value == null)
                     query = query.has(propName);
                 else
@@ -267,17 +260,17 @@ public class TechnologiesStatsService extends GraphService<TechnologiesStatsMode
         Map<ProjectModel, Integer> projectCount = new HashMap<>();
         Iterable<T> vertices = query.vertices(clazz);
 
-        for (T vertex : vertices) {
-            if (vertex instanceof BelongsToProject) {
-                for (ProjectModel projectModel : this.projectModelToRootProjectModel.keySet()) {
-                    if (((BelongsToProject)vertex).belongsToProject(projectModel)) {
-                        ProjectModel rootProjectModel = this.projectModelToRootProjectModel.get(projectModel);
-                        projectCount.put(rootProjectModel, projectCount.getOrDefault(rootProjectModel, 0) + 1);
-                        // TODO: Could file belong to multiple project models?
-                        // break;
-                    }
+        for (T vertex : vertices)
+        {
+            if (vertex instanceof BelongsToProject)
+            {
+                for (ProjectModel projectModel : ((BelongsToProject) vertex).getRootProjectModels())
+                {
+                    projectCount.put(projectModel, projectCount.getOrDefault(projectModel, 0) + 1);
                 }
-            } else {
+            }
+            else
+            {
                 String errorMessage = "Not instance of " +
                         BelongsToProject.class.getName() +
                         "\n" +
@@ -311,7 +304,7 @@ public class TechnologiesStatsService extends GraphService<TechnologiesStatsMode
                     }
 
                     ProjectModel projectModel = file.getProjectModel();
-                    ProjectModel rootProjectModel = this.projectModelToRootProjectModel.get(projectModel);
+                    ProjectModel rootProjectModel = projectModel.getRootProjectModel();
                     Map<String, Integer> suffixToCount;
 
                     if (rootProjectModel == null)
@@ -414,7 +407,7 @@ public class TechnologiesStatsService extends GraphService<TechnologiesStatsMode
                 return;
             }
 
-            ProjectModel rootProjectModel = this.projectModelToRootProjectModel.get(projectModel);
+            ProjectModel rootProjectModel = projectModel.getRootProjectModel();
             map.put(rootProjectModel, map.getOrDefault(rootProjectModel, 0) + 1);
         });
 

@@ -9,21 +9,23 @@ import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * @author <a href="mailto:dklingenberg@gmail.com">David Klingenberg</a>
  */
 public interface HasApplications extends BelongsToProject
 {
-    /**
-     * Contains the application in which this JPA entity was discovered.
-     */
-    @Adjacency(label = PersistenceEntityModel.APPLICATIONS, direction = Direction.OUT)
     Iterable<ProjectModel> getApplications();
-
 
     @Override
     @JavaHandler
     boolean belongsToProject(ProjectModel projectModel);
+
+    @Override
+    @JavaHandler
+    Iterable<ProjectModel> getRootProjectModels();
 
     abstract class Impl implements HasApplications, JavaHandlerContext<Vertex>, BelongsToProject
     {
@@ -39,6 +41,20 @@ public interface HasApplications extends BelongsToProject
             }
 
             return false;
+        }
+
+        @Override
+        public Iterable<ProjectModel> getRootProjectModels()
+        {
+            Set<ProjectModel> projectModelSet = new HashSet<>();
+
+            for (ProjectModel currentProjectModel : this.getApplications())
+            {
+                ProjectModel rootProjectModel = currentProjectModel.getRootProjectModel();
+                projectModelSet.add(rootProjectModel);
+            }
+
+            return projectModelSet;
         }
     }
 }
