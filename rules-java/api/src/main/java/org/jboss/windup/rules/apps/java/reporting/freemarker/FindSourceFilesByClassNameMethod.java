@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
+import org.jboss.windup.rules.apps.java.model.AbstractJavaSourceModel;
 import org.jboss.windup.rules.apps.java.model.AmbiguousJavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
@@ -33,7 +34,7 @@ public class FindSourceFilesByClassNameMethod implements WindupFreeMarkerMethod
         SimpleScalar arg = (SimpleScalar) arguments.get(0);
         String qualifedClassName = arg.getAsString();
         JavaClassModel classModel = javaClassService.getByName(qualifedClassName);
-        List<JavaSourceFileModel> results = new ArrayList<>();
+        List<AbstractJavaSourceModel> results = new ArrayList<>();
         if (classModel instanceof AmbiguousJavaClassModel)
         {
             AmbiguousJavaClassModel ambiguousJavaClassModel = (AmbiguousJavaClassModel) classModel;
@@ -49,10 +50,10 @@ public class FindSourceFilesByClassNameMethod implements WindupFreeMarkerMethod
         return results;
     }
 
-    private void addSourceFilesToResult(List<JavaSourceFileModel> results, JavaClassModel referencedClass)
+    private void addSourceFilesToResult(List<AbstractJavaSourceModel> results, JavaClassModel referencedClass)
     {
-        JavaSourceFileModel decompiledSource = referencedClass.getDecompiledSource();
-        JavaSourceFileModel originalSource = referencedClass.getOriginalSource();
+        AbstractJavaSourceModel decompiledSource = referencedClass.getDecompiledSource();
+        AbstractJavaSourceModel originalSource = referencedClass.getOriginalSource();
         if (decompiledSource != null)
         {
             results.add(decompiledSource);

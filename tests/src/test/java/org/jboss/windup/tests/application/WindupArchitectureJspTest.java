@@ -23,6 +23,9 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.ReportModel;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
+import org.jboss.windup.rules.apps.java.model.AbstractJavaSourceModel;
+import org.jboss.windup.rules.apps.java.model.JavaClassModel;
+import org.jboss.windup.rules.apps.java.model.PhantomJavaClassModel;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.jboss.windup.rules.apps.javaee.model.JspSourceFileModel;
 import org.jboss.windup.testutil.html.TestJavaApplicationOverviewUtil;
@@ -72,7 +75,50 @@ public class WindupArchitectureJspTest extends WindupArchitectureTest
             Assert.assertEquals(2, provider.enumerationRuleHitCount);
 
             validateReports(context);
+            validateClassModels(context);
         }
+    }
+
+    /**
+     * Validates JavaClassModel classes belonging to .jsp files
+     */
+    private void validateClassModels(GraphContext context)
+    {
+        Iterable<JspSourceFileModel> jspFiles = context.service(JspSourceFileModel.class).findAll();
+
+        int countJspFiles = 0;
+        
+        for (JspSourceFileModel jspFile : jspFiles)
+        {
+            countJspFiles++;
+            int countClasses = 0;
+            
+            for (JavaClassModel classModel : jspFile.getJavaClasses())
+            {
+                countClasses++;
+                
+                Assert.assertTrue(classModel.getClassName().endsWith(".jsp"));
+                Assert.assertEquals(jspFile.getFileName(), classModel.getClassName());
+                Assert.assertEquals(jspFile.getFileName(), classModel.getQualifiedName());
+                Assert.assertEquals("", classModel.getPackageName());
+                Assert.assertNull(classModel.getDecompiledSource());
+                Assert.assertNull(classModel.getClassFile());
+
+                JavaClassModel parentClass = classModel.getExtends();
+
+                Assert.assertEquals("javax.servlet.http.HttpServlet", parentClass.getQualifiedName());
+                Assert.assertTrue(parentClass instanceof PhantomJavaClassModel);
+
+                AbstractJavaSourceModel sourceModel = classModel.getOriginalSource();
+
+                Assert.assertNotNull(sourceModel);
+                Assert.assertTrue(sourceModel instanceof JspSourceFileModel);
+            }
+            
+            Assert.assertEquals(1, countClasses);
+        }
+        
+        Assert.assertEquals(4, countJspFiles);
     }
 
     /**

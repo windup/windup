@@ -19,6 +19,7 @@ import org.jboss.windup.reporting.freemarker.WindupFreeMarkerTemplateDirective;
 import org.jboss.windup.reporting.model.association.LinkableModel;
 import org.jboss.windup.reporting.model.source.SourceReportModel;
 import org.jboss.windup.reporting.service.SourceReportService;
+import org.jboss.windup.rules.apps.java.model.AbstractJavaSourceModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
@@ -177,7 +178,7 @@ public class RenderLinkDirective implements WindupFreeMarkerTemplateDirective
     private void processJavaClassModel(Writer writer, String cssClass, ProjectModel project, JavaClassModel clz, String defaultText)
                 throws IOException
     {
-        Iterator<JavaSourceFileModel> results = javaClassService.getJavaSource(clz.getQualifiedName()).iterator();
+        Iterator<AbstractJavaSourceModel> results = javaClassService.getJavaSource(clz.getQualifiedName()).iterator();
 
         if (!results.hasNext())
         {
@@ -189,7 +190,7 @@ public class RenderLinkDirective implements WindupFreeMarkerTemplateDirective
         int i = 2;
         while (results.hasNext())
         {
-            JavaSourceFileModel source = results.next();
+            AbstractJavaSourceModel source = results.next();
             SourceReportModel result = sourceReportService.getSourceReportForFileModel(source);
             if (result == null)
                 writer.write(linkText);

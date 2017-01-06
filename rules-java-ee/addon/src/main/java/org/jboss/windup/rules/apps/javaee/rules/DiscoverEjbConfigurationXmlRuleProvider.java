@@ -25,6 +25,7 @@ import org.jboss.windup.reporting.model.TechnologyTagModel;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.java.decompiler.FernflowerDecompilerOperation;
+import org.jboss.windup.rules.apps.java.model.AbstractJavaSourceModel;
 import org.jboss.windup.rules.apps.java.model.AmbiguousJavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
@@ -530,7 +531,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
 
     private void markAsReportReportable(GraphRewrite event, EvaluationContext context, JavaClassModel reference)
     {
-        JavaSourceFileModel originalSource = reference.getOriginalSource();
+        AbstractJavaSourceModel originalSource = reference.getOriginalSource();
         JavaSourceFileModel decompiledSource = reference.getDecompiledSource();
         if (originalSource == null && decompiledSource == null && reference.getClassFile() != null
                     && reference.getClassFile() instanceof JavaClassFileModel)

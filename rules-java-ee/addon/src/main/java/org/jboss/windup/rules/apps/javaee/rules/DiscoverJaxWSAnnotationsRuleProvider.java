@@ -83,7 +83,7 @@ public class DiscoverJaxWSAnnotationsRuleProvider extends AbstractRuleProvider
         JavaClassModel endpointInterface = javaClassService.getOrCreatePhantom(endpointInterfaceQualifiedName);
         if (StringUtils.isNotBlank(endpointInterfaceQualifiedName))
         {
-            for (JavaSourceFileModel source : javaClassService.getJavaSource(endpointInterface.getQualifiedName()))
+            for (AbstractJavaSourceModel source : javaClassService.getJavaSource(endpointInterface.getQualifiedName()))
                 source.setGenerateSourceReport(true);
         }
 
