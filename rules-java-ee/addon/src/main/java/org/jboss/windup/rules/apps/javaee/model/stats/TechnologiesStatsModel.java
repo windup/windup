@@ -1,11 +1,17 @@
 package org.jboss.windup.rules.apps.javaee.model.stats;
 
 import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
+import com.tinkerpop.frames.modules.javahandler.JavaHandler;
+import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 /**
@@ -488,4 +494,33 @@ public interface TechnologiesStatsModel extends WindupVertexFrame
 
     @Adjacency(label = STATS_FILE_TYPES, direction = Direction.OUT)
     TechnologiesStatsModel addFileType(TechnologyKeyValuePairModel property);
+
+    @JavaHandler
+    Map<String, Integer> getFileTypesMap();
+
+    @JavaHandler
+    Map<String, Integer> getTechnologiesMap();
+
+    abstract class Impl implements JavaHandlerContext<Vertex>, TechnologiesStatsModel
+    {
+        protected Map<String, Integer> convertKeyValuePairsToMap(Iterable<TechnologyKeyValuePairModel> keyValuePairs)
+        {
+            Map<String, Integer> map = new HashMap<>();
+            keyValuePairs.forEach(item-> map.put(item.getName(), item.getValue()));
+
+            return map;
+        }
+
+        @Override
+        public Map<String, Integer> getFileTypesMap()
+        {
+            return this.convertKeyValuePairsToMap(this.getFileTypes());
+        }
+
+        @Override
+        public Map<String, Integer> getTechnologiesMap()
+        {
+            return this.convertKeyValuePairsToMap(this.getTechnologies());
+        }
+    }
 }

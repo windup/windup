@@ -23,7 +23,6 @@ import java.util.stream.StreamSupport;
 import org.apache.commons.collections4.CollectionUtils;
 import org.jboss.windup.graph.frames.TypeAwareFramedGraphQuery;
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.graph.service.ProjectService;
 import org.jboss.windup.rules.apps.java.archives.model.IdentifiedArchiveModel;
 import org.jboss.windup.rules.apps.java.model.JarArchiveModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
@@ -285,7 +284,7 @@ public class TechnologiesStatsService extends GraphService<TechnologiesStatsMode
         return projectCount;
     }
 
-    protected Map<ProjectModel, Map<String, Integer>> countFilesBySuffix()
+    public Map<ProjectModel, Map<String, Integer>> countFilesBySuffix()
     {
         Map<ProjectModel, Map<String, Integer>> result = new HashMap<>();
 
@@ -298,7 +297,7 @@ public class TechnologiesStatsService extends GraphService<TechnologiesStatsMode
                 .forEach((FileModel file) -> {
                     String suffix = StringUtils.substringAfterLast(file.getFileName(), ".");
 
-                    if (suffix.isEmpty())
+                    if (suffix.isEmpty() || file.isWindupGenerated())
                     {
                         return;
                     }

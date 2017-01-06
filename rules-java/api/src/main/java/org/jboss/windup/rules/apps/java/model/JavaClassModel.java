@@ -15,6 +15,8 @@ import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.annotations.gremlin.GremlinGroovy;
 import com.tinkerpop.frames.annotations.gremlin.GremlinParam;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import java.util.Collections;
+import java.util.logging.Logger;
 
 /**
  * Represents a JavaClass, either from a .class file or a .java source file.
@@ -204,12 +206,35 @@ public interface JavaClassModel extends WindupVertexFrame, BelongsToProject
         @Override
         public boolean belongsToProject(ProjectModel projectModel)
         {
+            FileModel classFile = this.getClassFile();
+
+            if (classFile == null)
+            {
+                String name = this.getClassName();
+                String aPackage = this.getPackageName();
+                
+                Logger.getLogger(JavaClassModel.class.getName()).warning("classFile is null");
+                return false;
+            }
+            
             return this.getClassFile().belongsToProject(projectModel);
         }
 
         @Override
         public Iterable<ProjectModel> getRootProjectModels()
         {
+            FileModel classFile = this.getClassFile();
+
+            if (classFile == null)
+            {
+                String name = this.getClassName();
+                String aPackage = this.getPackageName();
+                JavaSourceFileModel originalSource = this.getOriginalSource();                
+                
+                Logger.getLogger(JavaClassModel.class.getName()).warning("classFile is null");
+                return Collections.emptyList();                
+            }
+            
             return this.getClassFile().getRootProjectModels();
         }
     }
