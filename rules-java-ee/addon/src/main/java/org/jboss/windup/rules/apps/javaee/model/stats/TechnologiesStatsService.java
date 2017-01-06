@@ -86,6 +86,7 @@ public class TechnologiesStatsService extends GraphService<TechnologiesStatsMode
 
         // TODO: Should we ignore other file types?
         suffixToCount.entrySet().forEach(entry -> {
+            // TODO: This is probably wrong!
             TechnologyKeyValuePairModel suffixUsage = this.getGraphContext().create(TechnologyKeyValuePairModel.class)
                     .setName(entry.getKey())
                     .setValue(entry.getValue());
@@ -198,6 +199,8 @@ public class TechnologiesStatsService extends GraphService<TechnologiesStatsMode
         groupedByTechnology.entrySet().forEach(technologyMap -> {
             technologyMap.getValue().entrySet().forEach(projectTechCount -> {
                 ProjectModel project = projectTechCount.getKey();
+
+                //project.getRootProjectModel();
 
                 if (!projectBasedResult.containsKey(project))
                 {
