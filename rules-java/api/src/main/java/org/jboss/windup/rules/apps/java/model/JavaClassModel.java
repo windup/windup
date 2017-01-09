@@ -16,6 +16,7 @@ import com.tinkerpop.frames.annotations.gremlin.GremlinGroovy;
 import com.tinkerpop.frames.annotations.gremlin.GremlinParam;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import java.util.Collections;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -206,36 +207,55 @@ public interface JavaClassModel extends WindupVertexFrame, BelongsToProject
         @Override
         public boolean belongsToProject(ProjectModel projectModel)
         {
-            FileModel classFile = this.getClassFile();
+            FileModel sourceModel = this.getSourceFile();
 
-            if (classFile == null)
+            if (sourceModel == null)
             {
-                String name = this.getClassName();
-                String aPackage = this.getPackageName();
-                
-                Logger.getLogger(JavaClassModel.class.getName()).warning("classFile is null");
                 return false;
             }
-            
-            return this.getClassFile().belongsToProject(projectModel);
+
+            return sourceModel.belongsToProject(projectModel);
         }
 
         @Override
         public Iterable<ProjectModel> getRootProjectModels()
         {
+            FileModel sourceModel = this.getSourceFile();
+
+            if (sourceModel == null)
+            {
+                return Collections.emptyList();
+            }
+            
+            return sourceModel.getRootProjectModels();
+        }
+
+        protected FileModel getSourceFile()
+        {
             FileModel classFile = this.getClassFile();
 
             if (classFile == null)
             {
-                String name = this.getClassName();
-                String aPackage = this.getPackageName();
-                JavaSourceFileModel originalSource = this.getOriginalSource();                
-                
-                Logger.getLogger(JavaClassModel.class.getName()).warning("classFile is null");
-                return Collections.emptyList();                
+                // .jsp class will have originalSource instead of classFile
+                AbstractJavaSourceModel originalSource = this.getOriginalSource();
+
+                if (originalSource == null)
+                {
+                    String name = this.getClassName();
+
+                    Logger.getLogger(JavaClassModel.class.getName()).log(
+                            Level.WARNING,
+                            "ClassFile and originalSource null for class: {0}",
+                            name
+                    );
+
+                    return null;
+                }
+
+                return originalSource;
             }
-            
-            return this.getClassFile().getRootProjectModels();
+
+            return classFile;
         }
     }
 }
