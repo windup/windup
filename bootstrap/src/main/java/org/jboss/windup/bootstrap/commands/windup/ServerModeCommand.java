@@ -5,6 +5,7 @@ import java.util.concurrent.Future;
 
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.se.FurnaceFactory;
+import org.jboss.windup.bootstrap.Bootstrap;
 import org.jboss.windup.bootstrap.commands.Command;
 import org.jboss.windup.bootstrap.commands.CommandPhase;
 import org.jboss.windup.bootstrap.commands.CommandResult;
@@ -89,7 +90,7 @@ public class ServerModeCommand implements Command
     private void startServer()
     {
         System.out.println("Calling ToolingRMIServer start...");
-        furnace.getAddonRegistry().getServices(ToolingRMIServer.class).get().startServer(port);
+        furnace.getAddonRegistry().getServices(ToolingRMIServer.class).get().startServer(port, Bootstrap.getVersion());
     }
 
     // TODO: Not sure if this is necessary, or if killing the processes is sufficient.

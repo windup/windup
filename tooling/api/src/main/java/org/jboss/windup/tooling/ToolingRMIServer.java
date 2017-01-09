@@ -19,11 +19,13 @@ public class ToolingRMIServer
     @Inject
     private ExecutionBuilder executionBuilder;
 
-    public void startServer(int port)
+    public void startServer(int port, String version)
     {
         LOG.info("Registering RMI Server...");
         try
         {
+        	executionBuilder.setVersion(version);
+        	executionBuilder.setPort(port);
             Registry registry = LocateRegistry.getRegistry(port);
             try
             {

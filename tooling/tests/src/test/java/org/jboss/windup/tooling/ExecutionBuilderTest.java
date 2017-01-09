@@ -210,7 +210,7 @@ public class ExecutionBuilderTest
     @Test
     public void testExecutionBuilderRegistered() throws Exception
     {
-        rmiServer.startServer(PORT);
+        rmiServer.startServer(PORT, "");
 
         Path input = Paths.get("../../test-files/src_example");
         Path output = ExecutionBuilderTest.getDefaultPath();
