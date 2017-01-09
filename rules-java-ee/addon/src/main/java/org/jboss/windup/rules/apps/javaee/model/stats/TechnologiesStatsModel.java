@@ -197,7 +197,7 @@ public interface TechnologiesStatsModel extends WindupVertexFrame
     @Adjacency(label = STATS_SERVICES_HTTP_JAX_WS, direction = Direction.OUT)
     TechnologiesStatsModel setStatsServicesHttpJaxWs(GeneralStatsItemModel item);
 
-    String STATS_SERVICES_JPA_ENTITITES = "stats.services.jpa.entitites";
+    String STATS_SERVICES_JPA_ENTITITES = "stats.services.jpa.entities";
 
     /**
      * How many JPA entities were found.
