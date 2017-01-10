@@ -47,7 +47,7 @@ public class GetRuleExecutionResults implements WindupFreeMarkerMethod
         StringModel stringModelArg = (StringModel) arguments.get(0);
         AbstractRuleProvider ruleProvider = (AbstractRuleProvider) stringModelArg.getWrappedObject();
         List<RuleExecutionInformation> result = RuleExecutionResultsListener.instance(this.event).getRuleExecutionInformation(ruleProvider);
-        ExecutionStatistics.get().begin(NAME);
+        ExecutionStatistics.get().end(NAME);
         return result;
     }
 
