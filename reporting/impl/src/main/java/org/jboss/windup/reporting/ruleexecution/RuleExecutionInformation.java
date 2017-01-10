@@ -15,7 +15,7 @@ import com.tinkerpop.blueprints.Vertex;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
-public class RuleExecutionInformation
+public class RuleExecutionInformation implements RuleExecutionInformationForReading
 {
     private final Rule rule;
     private boolean evaluationResult;
