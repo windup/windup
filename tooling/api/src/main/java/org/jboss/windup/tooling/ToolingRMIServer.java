@@ -25,7 +25,6 @@ public class ToolingRMIServer
         try
         {
         	executionBuilder.setVersion(version);
-        	executionBuilder.setPort(port);
             Registry registry = LocateRegistry.getRegistry(port);
             try
             {
