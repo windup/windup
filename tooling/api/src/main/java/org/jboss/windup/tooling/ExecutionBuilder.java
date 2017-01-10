@@ -108,14 +108,4 @@ public interface ExecutionBuilder extends Remote
      * Sets the version of Windup.
      */
     void setVersion(String version) throws RemoteException;
-    
-    /**
-     * Returns the port the Windup server is running on.
-     */
-    int getPort() throws RemoteException;
-    
-    /**
-     * Sets the port the Windup server is running on.
-     */
-    void setPort(int port) throws RemoteException;
 }

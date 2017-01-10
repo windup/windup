@@ -61,7 +61,6 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
     private boolean skipReportsRendering;
     
     private String version;
-    private int port;
 
     @Override
     public void clear() throws RemoteException
@@ -220,18 +219,6 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
     {
     	this.version = version;
     }
-    
-    @Override
-    public int getPort() throws RemoteException 
-    {
-    	return port;
-    }
-    
-    @Override
-    public void setPort(int port) throws RemoteException
-    {
-		this.port = port;
-	}
 
     @Override
     public ExecutionResults execute() throws RemoteException
