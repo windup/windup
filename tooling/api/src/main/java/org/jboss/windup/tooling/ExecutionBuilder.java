@@ -12,7 +12,7 @@ import java.util.Collection;
 public interface ExecutionBuilder extends Remote
 {
     String LOOKUP_NAME = "ExecutionBuilder";
-
+    
     /**
      * Start building a Windup execution with a windup that is installed at the specified path.
      */
@@ -98,4 +98,24 @@ public interface ExecutionBuilder extends Remote
      * Terminates the runtime that registered this ExecutionBuilder.
      */
     void terminate() throws RemoteException;
+    
+    /**
+     * Returns the Windup version.
+     */
+    String getVersion() throws RemoteException;
+    
+    /**
+     * Sets the version of Windup.
+     */
+    void setVersion(String version) throws RemoteException;
+    
+    /**
+     * Returns the port the Windup server is running on.
+     */
+    int getPort() throws RemoteException;
+    
+    /**
+     * Sets the port the Windup server is running on.
+     */
+    void setPort(int port) throws RemoteException;
 }

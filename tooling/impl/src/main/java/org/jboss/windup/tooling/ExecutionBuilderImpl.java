@@ -59,6 +59,9 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
     private Set<String> userRulesPathSet = new HashSet<>();
     private Map<String, Object> options = new HashMap<>();
     private boolean skipReportsRendering;
+    
+    private String version;
+    private int port;
 
     @Override
     public void clear() throws RemoteException
@@ -75,6 +78,7 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
         this.skipReportsRendering = false;
     }
 
+    // TODO: Should we also do UnicastRemoteObject.unexportObject(this, true)?
     @Override
     public void terminate() throws RemoteException
     {
@@ -204,6 +208,30 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
     {
         this.options.put(name, value);
     }
+    
+    @Override
+    public String getVersion() throws RemoteException 
+    {
+    	return version;
+    }
+    
+    @Override
+    public void setVersion(String version) throws RemoteException
+    {
+    	this.version = version;
+    }
+    
+    @Override
+    public int getPort() throws RemoteException 
+    {
+    	return port;
+    }
+    
+    @Override
+    public void setPort(int port) throws RemoteException
+    {
+		this.port = port;
+	}
 
     @Override
     public ExecutionResults execute() throws RemoteException
