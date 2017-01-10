@@ -5,9 +5,11 @@ import java.io.InputStream;
 import java.io.Writer;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.stream.Collectors;
 
 import javax.inject.Singleton;
 import javax.xml.parsers.ParserConfigurationException;
@@ -42,6 +44,15 @@ public class TagService
         {
             throw new RuntimeException("Failed parsing the tags definition: " + ex.getMessage(), ex);
         }
+    }
+
+    /**
+     * Gets all tags that are "root" tags.
+     */
+    public List<Tag> getRootTags() {
+        return this.definedTags.values().stream()
+                .filter(Tag::isRoot)
+                .collect(Collectors.toList());
     }
 
     /**
