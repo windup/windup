@@ -154,7 +154,7 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
             {
                 List<String> newList = new ArrayList<>(existingList);
                 newList.add(propertyValue);
-                abstractElement.setProperty(propertyName, propertyValue);
+                abstractElement.setProperty(propertyName, newList);
             }
         }
     }
