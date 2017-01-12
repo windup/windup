@@ -24,6 +24,7 @@ import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.util.wrappers.event.EventVertex;
+import com.tinkerpop.frames.EdgeFrame;
 import com.tinkerpop.frames.FrameInitializer;
 import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.frames.FramedGraphConfiguration;
@@ -356,7 +357,7 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
     @SuppressWarnings("unchecked")
     public void initElement(Class<?> kind, FramedGraph<?> framedGraph, Element element)
     {
-        if (VertexFrame.class.isAssignableFrom(kind))
+        if (VertexFrame.class.isAssignableFrom(kind) || EdgeFrame.class.isAssignableFrom(kind))
         {
             addTypeToElement((Class<? extends WindupFrame<?>>) kind, element);
         }
