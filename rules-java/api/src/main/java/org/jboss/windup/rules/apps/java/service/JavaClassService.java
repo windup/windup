@@ -14,7 +14,6 @@ import org.jboss.windup.rules.apps.java.model.AmbiguousJavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaMethodModel;
 import org.jboss.windup.rules.apps.java.model.JavaParameterModel;
-import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.model.PhantomJavaClassModel;
 import org.jboss.windup.util.ExecutionStatistics;
 
