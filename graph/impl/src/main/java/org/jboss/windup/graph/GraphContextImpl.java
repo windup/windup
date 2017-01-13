@@ -38,6 +38,7 @@ import com.thinkaurelius.titan.core.schema.Mapping;
 import com.thinkaurelius.titan.core.schema.TitanManagement;
 import com.thinkaurelius.titan.core.util.TitanCleanup;
 import com.thinkaurelius.titan.diskstorage.berkeleyje.BerkeleyJEStoreManager;
+import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.util.wrappers.batch.BatchGraph;
@@ -50,6 +51,7 @@ import com.tinkerpop.frames.modules.FrameClassLoaderResolver;
 import com.tinkerpop.frames.modules.Module;
 import com.tinkerpop.frames.modules.gremlingroovy.GremlinGroovyModule;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerModule;
+import org.jboss.windup.graph.model.WindupEdgeFrame;
 
 public class GraphContextImpl implements GraphContext
 {
@@ -270,6 +272,16 @@ public class GraphContextImpl implements GraphContext
             PropertyKey propKey = getOrCreatePropertyKey(titan, key, dataType, Cardinality.LIST);
             titan.buildIndex(indexData.getIndexName(), Vertex.class).addKey(propKey).buildCompositeIndex();
         }
+
+        // Also index TYPE_PROP on Edges.
+        /// Removed - Titan probably isn't capable of Cardinality.LIST for edges. There's no StandardEdge#addProperty().
+        {
+            String indexName = "edge-typevalue";
+            // Titan enforces items to be String, but there can be multiple items under one property name.
+            PropertyKey propKey = getOrCreatePropertyKey(titan, WindupEdgeFrame.TYPE_PROP, String.class, Cardinality.LIST);
+            //PropertyKey propKey = getOrCreatePropertyKey(titan, WindupEdgeFrame.TYPE_PROP, ArrayList.class, Cardinality.SINGLE);
+            titan.buildIndex(indexName, Edge.class).addKey(propKey).buildCompositeIndex();
+        }/**/
 
         titan.commit();
     }
@@ -516,11 +528,7 @@ public class GraphContextImpl implements GraphContext
         @Override
         public String toString()
         {
-            return "IndexData{" +
-                        "propertyName='" + propertyName + '\'' +
-                        ", indexName='" + indexName + '\'' +
-                        ", type=" + type +
-                        '}';
+            return String.format("IndexData{propertyName='%s', indexName='%s', type=%s}", propertyName, indexName, type);
         }
     }
 

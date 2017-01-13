@@ -1,5 +1,6 @@
 package org.jboss.windup.graph;
 
+import com.thinkaurelius.titan.core.TitanEdge;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -35,7 +36,9 @@ import com.tinkerpop.frames.modules.TypeResolver;
 import com.tinkerpop.frames.modules.typedgraph.TypeField;
 import com.tinkerpop.frames.modules.typedgraph.TypeRegistry;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import java.util.Arrays;
 import java.util.logging.Logger;
+import org.jboss.windup.util.exception.WindupException;
 
 /**
  * Windup's implementation of extended type handling for TinkerPop Frames. This allows storing multiple types based on the @TypeValue.value(), also in
@@ -142,8 +145,14 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
 
     private void addProperty(AbstractElement abstractElement, String propertyName, String propertyValue)
     {
+        // This uses the direct Titan API which is indexed. See GraphContextImpl.
         if (abstractElement instanceof StandardVertex)
             ((StandardVertex) abstractElement).addProperty(propertyName, propertyValue);
+        // StandardEdge doesn't have addProperty().
+        else if (abstractElement instanceof StandardEdge)
+            //((StandardEdge) abstractElement).setProperty(propertyName, propertyValue);
+            addTokenProperty(abstractElement, propertyName, propertyValue);
+        // For all others, we resort to storing a list
         else
         {
             List<String> existingList = abstractElement.getProperty(propertyName);
@@ -155,10 +164,20 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
             {
                 List<String> newList = new ArrayList<>(existingList);
                 newList.add(propertyValue);
-                abstractElement.setProperty(propertyName, propertyValue);
+                abstractElement.setProperty(propertyName, newList);
             }
         }
     }
+
+    private void addTokenProperty(AbstractElement el, String propertyName, String propertyValue)
+    {
+        Object val = el.getProperty(propertyName);
+        if (val == null)
+            el.setProperty(propertyName, propertyValue);
+        else
+            el.setProperty(propertyName, val + "|" + propertyValue);
+    }
+
 
     /**
      * Returns the type identifier for given type - the value in the property discriminating this type.
@@ -203,12 +222,19 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
         String typeValue = typeValueAnnotation.value();
 
         AbstractElement abstractElement = GraphTypeManager.asTitanElement(element);
-        for (String existingType : (Iterable<String>)abstractElement.getProperty(typeFieldName))
+        Object typeProp = abstractElement.getProperty(typeFieldName);
+        if (typeProp != null)
         {
-            if (existingType.equals(typeValue))
+            if (!(typeProp instanceof Iterable))
+                throw new RuntimeException("Discriminators property is not Iterable, but " + typeProp.getClass() + ": " + typeProp);
+
+            for (String existingType : (Iterable<String>)typeProp)
             {
-                // this is already in the list, so just exit now
-                return;
+                if (existingType.equals(typeValue))
+                {
+                    // this is already in the list, so just exit now
+                    return;
+                }
             }
         }
 
@@ -226,7 +252,6 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
                 addTypeToElement((Class<? extends WindupFrame<?>>) superInterface, element);
             }
         }
-
     }
 
     /**
@@ -303,52 +328,68 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
     {
         // The class field holding the name of the type holding property.
         Class<?> typeHoldingTypeField = getTypeRegistry().getTypeHoldingTypeField(defaultType);
-        if (typeHoldingTypeField != null)
+        if (typeHoldingTypeField == null)
+            return new Class[] { defaultType, VertexFrame.class };
+
+        // Name of the graph element property holding the type list.
+        String propName = typeHoldingTypeField.getAnnotation(TypeField.class).value();
+
+        AbstractElement abstractElement = GraphTypeManager.asTitanElement(e);
+
+        final Object typeValue = abstractElement.getProperty(propName);
+        if (typeValue == null)
+            return new Class[] { defaultType, VertexFrame.class };
+
+        Iterable<String> valuesAll = null;
+
+        if (abstractElement instanceof StandardVertex)
         {
-            // Name of the graph element property holding the type list.
-            String propName = typeHoldingTypeField.getAnnotation(TypeField.class).value();
-            AbstractElement abstractElement = GraphTypeManager.asTitanElement(e);
+            if (!Iterable.class.isAssignableFrom(typeValue.getClass()))
+                throw new WindupException(String.format("Expected Iterable stored in vertex's %s, was %s: %s", propName, typeValue.getClass().getName(), typeValue.toString()));
+            valuesAll = (Iterable<String>) typeValue;
+        }
+        else if (abstractElement instanceof TitanEdge)
+        {
+            if (!String.class.isAssignableFrom(typeValue.getClass()))
+                throw new WindupException(String.format("Expected String with tokens stored in edge's %s, was %s: %s", propName, typeValue.getClass().getName(), typeValue.toString()));
+            valuesAll = Arrays.asList(((String)typeValue).split("|"));
+        }
+        else
+            throw new WindupException(String.format("Unknown element type: %s", abstractElement.getClass().getName()));
 
-            Iterable<String> valuesAll = abstractElement.getProperty(propName);
-            if (valuesAll != null)
+
+        List<Class<?>> resultClasses = new ArrayList<>();
+        for (String value : valuesAll)
+        {
+            Class<?> type = getTypeRegistry().getType(typeHoldingTypeField, value);
+            if (type != null)
             {
-
-                List<Class<?>> resultClasses = new ArrayList<>();
-                for (String value : valuesAll)
+                // first check that no subclasses have already been added
+                ListIterator<Class<?>> previouslyAddedIterator = resultClasses.listIterator();
+                boolean shouldAdd = true;
+                while (previouslyAddedIterator.hasNext())
                 {
-                    Class<?> type = getTypeRegistry().getType(typeHoldingTypeField, value);
-                    if (type != null)
+                    Class<?> previouslyAdded = previouslyAddedIterator.next();
+                    if (previouslyAdded.isAssignableFrom(type))
                     {
-                        // first check that no subclasses have already been added
-                        ListIterator<Class<?>> previouslyAddedIterator = resultClasses.listIterator();
-                        boolean shouldAdd = true;
-                        while (previouslyAddedIterator.hasNext())
-                        {
-                            Class<?> previouslyAdded = previouslyAddedIterator.next();
-                            if (previouslyAdded.isAssignableFrom(type))
-                            {
-                                // Remove the previously added superclass
-                                previouslyAddedIterator.remove();
-                            }
-                            else if (type.isAssignableFrom(previouslyAdded))
-                            {
-                                // The current type is a superclass of a previously added type, don't add it
-                                shouldAdd = false;
-                            }
-                        }
-
-                        if (shouldAdd)
-                        {
-                            resultClasses.add(type);
-                        }
+                        // Remove the previously added superclass
+                        previouslyAddedIterator.remove();
+                    }
+                    else if (type.isAssignableFrom(previouslyAdded))
+                    {
+                        // The current type is a superclass of a previously added type, don't add it
+                        shouldAdd = false;
                     }
                 }
-                if (!resultClasses.isEmpty())
-                {
-                    resultClasses.add(VertexFrame.class);
-                    return resultClasses.toArray(new Class<?>[resultClasses.size()]);
-                }
+
+                if (shouldAdd)
+                    resultClasses.add(type);
             }
+        }
+        if (!resultClasses.isEmpty())
+        {
+            resultClasses.add(VertexFrame.class);
+            return resultClasses.toArray(new Class<?>[resultClasses.size()]);
         }
         return new Class[] { defaultType, VertexFrame.class };
     }

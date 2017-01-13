@@ -57,7 +57,7 @@ public class GraphServiceTest
     @Inject
     private GraphContextFactory factory;
 
-    @Test @Ignore
+    @Test
     public void testGraphTypeHandling() throws Exception
     {
         try (GraphContext context = factory.create())
@@ -89,7 +89,7 @@ public class GraphServiceTest
         }
     }
 
-    @Test @Ignore
+    @Test
     public void testGraphSearchWithoutCommit() throws Exception
     {
         try (GraphContext context = factory.create())
@@ -128,7 +128,7 @@ public class GraphServiceTest
         }
     }
 
-    @Test @Ignore
+    @Test
     public void testModelCreation() throws Exception
     {
         try (GraphContext context = factory.create())
@@ -223,7 +223,7 @@ public class GraphServiceTest
         }
     }
 
-    @Test @Ignore
+    @Test
     public void testServiceDeletagesInGraphContext() throws Exception
     {
         try (GraphContext context = factory.create())
