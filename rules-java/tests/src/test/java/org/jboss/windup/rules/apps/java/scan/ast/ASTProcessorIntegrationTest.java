@@ -95,6 +95,7 @@ public class ASTProcessorIntegrationTest
             Assert.assertTrue(typeReferences.iterator().hasNext());
             Assert.assertEquals(2, provider.getMyAclassTypeDeclaration());
             Assert.assertEquals(1, provider.getInterfaceCall());
+            Assert.assertEquals(1, provider.getMethodDefault());
         }
     }
 
@@ -109,6 +110,7 @@ public class ASTProcessorIntegrationTest
     {
         private int myAclassTypeDeclaration = 0;
         private int interfaceCall = 0;
+        private int methodDefault = 0;
 
         public JavaClassTestRuleProvider()
         {
@@ -145,7 +147,21 @@ public class ASTProcessorIntegrationTest
                         interfaceCall++;
                     }
                 }).endIteration()
-            );
+            )
+            
+            .addRule().when(
+                JavaClass.references("simple.SomeInterface.defaultMethod()")
+                ).perform(
+                            Iteration.over().perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
+                            {
+                                @Override
+                                public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
+                                {
+                                    methodDefault++;
+                                }
+                            }).endIteration()
+                        )
+            ;
         }
         // @formatter:on
 
@@ -157,6 +173,11 @@ public class ASTProcessorIntegrationTest
         public int getInterfaceCall()
         {
             return interfaceCall;
+        }
+
+        public int getMethodDefault()
+        {
+            return methodDefault;
         }
 
     }

@@ -72,7 +72,7 @@ public class DependencyVisitor extends ClassVisitor
 
     public DependencyVisitor()
     {
-        super(Opcodes.ASM4);
+        super(Opcodes.ASM5);
     }
 
     // ClassVisitor
@@ -165,7 +165,7 @@ public class DependencyVisitor extends ClassVisitor
 
         public AnnotationDependencyVisitor()
         {
-            super(Opcodes.ASM4);
+            super(Opcodes.ASM5);
         }
 
         @Override
@@ -207,7 +207,7 @@ public class DependencyVisitor extends ClassVisitor
 
         public FieldDependencyVisitor()
         {
-            super(Opcodes.ASM4);
+            super(Opcodes.ASM5);
         }
 
         @Override
@@ -223,7 +223,7 @@ public class DependencyVisitor extends ClassVisitor
 
         public MethodDependencyVisitor()
         {
-            super(Opcodes.ASM4);
+            super(Opcodes.ASM5);
         }
 
         @Override
@@ -273,7 +273,8 @@ public class DependencyVisitor extends ClassVisitor
                     final int opcode,
                     final String owner,
                     final String name,
-                    final String desc)
+                    final String desc,
+                    final boolean itf)
         {
             addInternalName(owner);
             addMethodDesc(desc);
@@ -339,7 +340,7 @@ public class DependencyVisitor extends ClassVisitor
 
         public SignatureDependencyVisitor()
         {
-            super(Opcodes.ASM4);
+            super(Opcodes.ASM5);
         }
 
         @Override
