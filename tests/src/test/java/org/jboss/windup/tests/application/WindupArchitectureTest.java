@@ -69,7 +69,7 @@ public abstract class WindupArchitectureTest
                     .resolve("windupgraph_" + RandomStringUtils.randomAlphanumeric(6));
     }
 
-    GraphContext createGraphContext()
+    protected GraphContext createGraphContext()
     {
         return createGraphContext(getDefaultPath());
     }
@@ -79,19 +79,19 @@ public abstract class WindupArchitectureTest
         return factory.create(path);
     }
 
-    void runTest(String inputPath, boolean sourceMode) throws Exception
+    protected void runTest(String inputPath, boolean sourceMode) throws Exception
     {
         runTest(Collections.singletonList(inputPath), sourceMode);
     }
 
-    void runTest(Iterable<String> inputPaths, boolean sourceMode) throws Exception
+    protected void runTest(Iterable<String> inputPaths, boolean sourceMode) throws Exception
     {
         List<String> includeList = Collections.emptyList();
         List<String> excludeList = Collections.emptyList();
         runTest(createGraphContext(), inputPaths, null, sourceMode, includeList, excludeList);
     }
 
-    void runTest(GraphContext graphContext, String inputPath, boolean sourceMode)
+    protected void runTest(GraphContext graphContext, String inputPath, boolean sourceMode)
                 throws Exception
     {
         runTest(graphContext, Collections.singletonList(inputPath), sourceMode);

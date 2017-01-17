@@ -1,9 +1,8 @@
 package org.jboss.windup.tests.application;
 
 import java.io.File;
-import java.io.OutputStreamWriter;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -16,10 +15,8 @@ import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.service.ArchiveService;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
+import org.jboss.windup.rules.apps.javaee.model.stats.ProjectTechnologiesStatsModel;
 import org.jboss.windup.rules.apps.javaee.model.stats.TechnologiesStatsModel;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -61,25 +58,31 @@ public class WindupArchitectureSmallBinaryMode2Test extends WindupArchitectureTe
 
     private void validateTechReportData(GraphContext context)
     {
-        TechnologiesStatsModel stats = context.service(TechnologiesStatsModel.class).getUnique();
-        /*try {
-            JSONWriter jsonWriter = new org.json.JSONWriter(new OutputStreamWriter(System.out));
-            JSONObject json = new JSONObject(stats);
-            jsonWriter.value(json);
-        }
-        catch (JSONException ex) {
-            throw new RuntimeException("Failed to JSONify: " + ex.getMessage(), ex);
-        }*/
+        Iterable<ProjectTechnologiesStatsModel> stats = context.service(ProjectTechnologiesStatsModel.class).findAll();
 
         //SUM: 106 txt = 1 java = 20 xml = 12 ear = 0 war = 0 MF = 5 jar = 5 class = 47 properties = 4
-        Assert.assertTrue(stats.getStatsFilesByTypeJavaPercent().getQuantity() >= 20);
+        HashMap<String, Integer> sumResultsFileTypes = new HashMap<>();
+        HashMap<String, Integer> sumResultsTechnologies = new HashMap<>();
 
-        Assert.assertTrue(stats.getStatsJavaClassesTotal().getQuantity() > 0);
-        //Assert.assertTrue(stats.getStatsJavaJarsTotal().getQuantity() > 0);
-        Assert.assertTrue(stats.getComputed() != null);
+        for (ProjectTechnologiesStatsModel projectStats : stats)
+        {
+            addDataToSumMap(projectStats.getTechnologiesStatsModel().getTechnologiesMap(), sumResultsTechnologies);
+            addDataToSumMap(projectStats.getTechnologiesStatsModel().getFileTypesMap(), sumResultsFileTypes);
+
+            Assert.assertTrue(projectStats.getComputed() != null);
+        }
+        
+        Assert.assertEquals(1, sumResultsFileTypes.getOrDefault("class", 0) + 0);
+        Assert.assertTrue(sumResultsTechnologies.getOrDefault(TechnologiesStatsModel.STATS_JAVA_CLASSES_TOTAL, 0) > 0);
     }
 
-
+    private void addDataToSumMap(Map<String, Integer> sourceMap, HashMap<String, Integer> resultMap)
+    {
+        sourceMap.entrySet().forEach(item -> {
+            String key = item.getKey();
+            resultMap.put(key, resultMap.getOrDefault(key, 0) + item.getValue());
+        });
+    }
 
     private void validateArchiveHashes(GraphContext context) throws Exception
     {

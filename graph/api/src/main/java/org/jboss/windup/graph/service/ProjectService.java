@@ -5,9 +5,20 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.traversal.OnlyOnceTraversalStrategy;
+import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.util.PathUtil;
 
 import java.nio.file.Path;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * Provides useful methods for querying, creating, and updating {@link ProjectModel} instances.
@@ -66,5 +77,63 @@ public class ProjectService extends GraphService<ProjectModel>
         }
 
         return sharedLibsProject;
+    }
+
+    public Map<ProjectModel, ProjectModel> getProjectToRootProjectMap()
+    {
+        Map<ProjectModel, ProjectModel> projectModels = new HashMap<>();
+
+        for (FileModel inputPath : WindupConfigurationService.getConfigurationModel(this.getGraphContext()).getInputPaths())
+        {
+            ProjectModel rootProjectModel = inputPath.getProjectModel();
+            if (rootProjectModel == null)
+            {
+                continue;
+            }
+
+            ProjectModelTraversal traversal = new ProjectModelTraversal(rootProjectModel, new OnlyOnceTraversalStrategy());
+            traversal.getAllProjects(true).forEach(subProject -> projectModels.put(subProject, rootProjectModel));
+        }
+
+        return projectModels;
+    }
+
+    public Set<ProjectModel> getFilteredProjectModels(Collection<String> selectedPaths)
+    {
+        Set<ProjectModel> projectModels = new HashSet<>();
+
+        if (selectedPaths.isEmpty())
+        {
+            return projectModels;
+        }
+
+        for (FileModel inputPath : WindupConfigurationService.getConfigurationModel(this.getGraphContext()).getInputPaths())
+        {
+            String filePath = inputPath.getFilePath();
+
+            if (selectedPaths.contains(filePath))
+            {
+                ProjectModel rootProjectModel = inputPath.getProjectModel();
+                if (rootProjectModel == null)
+                {
+                    continue;
+                }
+
+                ProjectModelTraversal traversal = new ProjectModelTraversal(rootProjectModel, new OnlyOnceTraversalStrategy());
+                projectModels.addAll(traversal.getAllProjects(true));
+            }
+        }
+
+        return projectModels;
+    }
+
+    public Set<ProjectModel> getRootProjectModels()
+    {
+        Iterable<FileModel> fileModelIterable = WindupConfigurationService.getConfigurationModel(this.getGraphContext()).getInputPaths();
+
+        return StreamSupport.stream(fileModelIterable.spliterator(), false)
+                .map(FileModel::getProjectModel)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
     }
 }

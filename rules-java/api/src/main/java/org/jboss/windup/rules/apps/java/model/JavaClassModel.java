@@ -1,6 +1,11 @@
 package org.jboss.windup.rules.apps.java.model;
 
+import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.frames.modules.javahandler.JavaHandler;
+import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import org.jboss.windup.graph.Indexed;
+import org.jboss.windup.graph.model.BelongsToProject;
+import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 
@@ -10,13 +15,16 @@ import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.annotations.gremlin.GremlinGroovy;
 import com.tinkerpop.frames.annotations.gremlin.GremlinParam;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import java.util.Collections;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Represents a JavaClass, either from a .class file or a .java source file.
  *
  */
 @TypeValue(JavaClassModel.TYPE)
-public interface JavaClassModel extends WindupVertexFrame
+public interface JavaClassModel extends WindupVertexFrame, BelongsToProject
 {
     String TYPE = "JavaClass";
 
@@ -185,4 +193,69 @@ public interface JavaClassModel extends WindupVertexFrame
      */
     @Adjacency(label = JAVA_METHOD, direction = Direction.OUT)
     Iterable<JavaMethodModel> getJavaMethods();
+
+    @JavaHandler
+    @Override
+    boolean belongsToProject(ProjectModel projectModel);
+
+    @JavaHandler
+    @Override
+    Iterable<ProjectModel> getRootProjectModels();
+
+    abstract class Impl implements JavaHandlerContext<Vertex>, JavaClassModel, BelongsToProject
+    {
+        @Override
+        public boolean belongsToProject(ProjectModel projectModel)
+        {
+            FileModel sourceModel = this.getSourceFile();
+
+            if (sourceModel == null)
+            {
+                return false;
+            }
+
+            return sourceModel.belongsToProject(projectModel);
+        }
+
+        @Override
+        public Iterable<ProjectModel> getRootProjectModels()
+        {
+            FileModel sourceModel = this.getSourceFile();
+
+            if (sourceModel == null)
+            {
+                return Collections.emptyList();
+            }
+            
+            return sourceModel.getRootProjectModels();
+        }
+
+        protected FileModel getSourceFile()
+        {
+            FileModel classFile = this.getClassFile();
+
+            if (classFile == null)
+            {
+                // .jsp class will have originalSource instead of classFile
+                AbstractJavaSourceModel originalSource = this.getOriginalSource();
+
+                if (originalSource == null)
+                {
+                    String name = this.getClassName();
+
+                    Logger.getLogger(JavaClassModel.class.getName()).log(
+                            Level.WARNING,
+                            "ClassFile and originalSource null for class: {0}",
+                            name
+                    );
+
+                    return null;
+                }
+
+                return originalSource;
+            }
+
+            return classFile;
+        }
+    }
 }

@@ -3,6 +3,9 @@ package org.jboss.windup.graph.model.resource;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.EnumUtils;
@@ -11,6 +14,8 @@ import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.Indexes;
 import org.jboss.windup.graph.frames.FrameBooleanDefaultValue;
 import org.jboss.windup.graph.model.ArchiveModel;
+import org.jboss.windup.graph.model.BelongsToProject;
+import org.jboss.windup.graph.model.DuplicateProjectModel;
 import org.jboss.windup.graph.model.ProjectModel;
 
 import com.tinkerpop.blueprints.Direction;
@@ -26,7 +31,7 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
  * Represents a File on disk.
  */
 @TypeValue(FileModel.TYPE)
-public interface FileModel extends ResourceModel
+public interface FileModel extends ResourceModel, BelongsToProject
 {
     String TYPE = "FileResource";
 
@@ -217,7 +222,15 @@ public interface FileModel extends ResourceModel
     @Property(WINDUP_GENERATED)
     void setWindupGenerated(boolean generated);
 
-    abstract class Impl implements FileModel, JavaHandlerContext<Vertex>
+    @Override
+    @JavaHandler
+    boolean belongsToProject(ProjectModel projectModel);
+
+    @Override
+    @JavaHandler
+    Iterable<ProjectModel> getRootProjectModels();
+
+    abstract class Impl implements FileModel, JavaHandlerContext<Vertex>, BelongsToProject
     {
         public ProjectModel getApplication()
         {
@@ -321,6 +334,23 @@ public interface FileModel extends ResourceModel
                 return null;
 
             return new File(getFilePath());
+        }
+
+        @Override
+        public boolean belongsToProject(ProjectModel projectModel)
+        {
+            return this.getProjectModel().equals(this.getCanonicalProjectModel(projectModel));
+        }
+
+        @Override
+        public Iterable<ProjectModel> getRootProjectModels()
+        {
+            ProjectModel rootProjectModel = this.getProjectModel().getRootProjectModel();
+
+            List<ProjectModel> projectModelList = new ArrayList<>();
+            projectModelList.add(rootProjectModel);
+
+            return projectModelList;
         }
     }
 }
