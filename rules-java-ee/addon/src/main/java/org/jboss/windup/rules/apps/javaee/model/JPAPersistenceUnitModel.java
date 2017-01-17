@@ -18,7 +18,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
  *
  */
 @TypeValue(JPAPersistenceUnitModel.TYPE)
-public interface JPAPersistenceUnitModel extends WindupVertexFrame
+public interface JPAPersistenceUnitModel extends WindupVertexFrame, HasApplications
 {
     String TYPE = "JPAPersistenceUnit";
 
