@@ -43,6 +43,12 @@
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.rules.apps</groupId>
+            <artifactId>windup-rules-java-project</artifactId>
+            <classifier>forge-addon</classifier>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.rules.apps</groupId>
             <artifactId>windup-rules-tattletale</artifactId>
             <classifier>forge-addon</classifier>
             <scope>provided</scope>

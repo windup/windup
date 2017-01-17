@@ -51,6 +51,7 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest
             @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
             @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
             @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-ee"),
+            @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-project"),
             @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-tattletale"),
             @AddonDependency(name = "org.jboss.windup.tests:test-util"),
             @AddonDependency(name = "org.jboss.windup.config:windup-config-groovy"),
