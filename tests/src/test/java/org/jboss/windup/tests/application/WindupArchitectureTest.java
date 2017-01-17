@@ -208,6 +208,11 @@ public abstract class WindupArchitectureTest
                     CreateJavaApplicationOverviewReportRuleProvider.DETAILS_REPORT);
     }
 
+    Iterable<ReportModel> getApplicationDetailsReports(GraphContext context)
+    {
+        return getReports(context, CreateJavaApplicationOverviewReportRuleProvider.TEMPLATE_APPLICATION_REPORT);
+    }
+
     MigrationIssuesReportModel getMigrationIssuesReport(GraphContext context, final ProjectModel projectModel)
     {
         Iterable<ReportModel> reportModels = Iterables.filter(getReports(context, REPORTS_TEMPLATES_MIGRATION_ISSUES_FTL),

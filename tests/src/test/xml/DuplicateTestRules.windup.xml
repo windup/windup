@@ -23,7 +23,7 @@
                 </project>
             </when>
             <perform>
-                <lineitem message="log4j reference found!"/>
+                <lineitem message="log4j reference found"/>
             </perform>
         </rule>
     </rules>

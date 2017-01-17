@@ -20,9 +20,12 @@ import org.jboss.windup.reporting.model.ReportModel;
 import org.jboss.windup.reporting.rules.CreateApplicationListReportRuleProvider;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.rules.apps.java.dependencyreport.CreateDependencyReportRuleProvider;
+import org.jboss.windup.rules.apps.java.model.JavaApplicationOverviewReportModel;
 import org.jboss.windup.rules.apps.java.reporting.rules.CreateReportIndexRuleProvider;
+import org.jboss.windup.testutil.html.CheckFailedException;
 import org.jboss.windup.testutil.html.TestApplicationListUtil;
 import org.jboss.windup.testutil.html.TestDependencyReportUtil;
+import org.jboss.windup.testutil.html.TestJavaApplicationOverviewUtil;
 import org.jboss.windup.testutil.html.TestMigrationIssuesReportUtil;
 import org.jboss.windup.testutil.html.TestReportIndexReportUtil;
 import org.junit.Assert;
@@ -83,10 +86,37 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest
             validateReportIndex(context);
             validateMigrationIssues(context);
             validateJarDependencyReport(context);
+            validateOverviewReport(context);
         } finally
         {
             //FileUtils.deleteDirectory(testTempPath.toFile());
         }
+    }
+
+    private void validateOverviewReport(GraphContext context) {
+        ReportService reportService = new ReportService(context);
+        Iterable<ReportModel> reportModels = getApplicationDetailsReports(context);
+
+        ReportModel report = null;
+        for (ReportModel reportModel : reportModels)
+        {
+            if (!(reportModel instanceof JavaApplicationOverviewReportModel))
+                continue;
+
+            JavaApplicationOverviewReportModel javaReport = (JavaApplicationOverviewReportModel)reportModel;
+            if ("duplicate-ear-test-1.ear".equals(javaReport.getProjectModel().getRootFileModel().getFileName()))
+            {
+                report = javaReport;
+                break;
+            }
+        }
+        if (report == null)
+            throw new CheckFailedException("Could not find expected overview report!");
+
+        Path appReportPath = reportService.getReportDirectory().resolve(report.getReportFilename());
+        TestJavaApplicationOverviewUtil util = new TestJavaApplicationOverviewUtil();
+        util.loadPage(appReportPath);
+        util.checkApplicationMessage("log4j reference found");
     }
 
     private void validateApplicationList(GraphContext graphContext)
