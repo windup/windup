@@ -80,9 +80,10 @@ public class DiscoverJaxWSAnnotationsRuleProvider extends AbstractRuleProvider
         JavaAnnotationTypeReferenceModel jaxWsAnnotationTypeReference = (JavaAnnotationTypeReferenceModel) typeReference;
 
         String endpointInterfaceQualifiedName = getAnnotationLiteralValue(jaxWsAnnotationTypeReference, "endpointInterface");
-        JavaClassModel endpointInterface = javaClassService.getOrCreatePhantom(endpointInterfaceQualifiedName);
+        JavaClassModel endpointInterface = null;
         if (StringUtils.isNotBlank(endpointInterfaceQualifiedName))
         {
+            endpointInterface = javaClassService.getOrCreatePhantom(endpointInterfaceQualifiedName);
             for (AbstractJavaSourceModel source : javaClassService.getJavaSource(endpointInterface.getQualifiedName()))
                 source.setGenerateSourceReport(true);
         }

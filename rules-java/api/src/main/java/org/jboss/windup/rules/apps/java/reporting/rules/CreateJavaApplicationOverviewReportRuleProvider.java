@@ -16,6 +16,7 @@ import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.reporting.model.OverviewReportLineMessageModel;
 import org.jboss.windup.reporting.model.TaggableModel;
 import org.jboss.windup.reporting.model.TemplateType;
@@ -51,12 +52,12 @@ public class CreateJavaApplicationOverviewReportRuleProvider extends AbstractRul
             {
                 for (FileModel inputPath : payload.getInputPaths())
                 {
-                    ProjectModel projectModel = inputPath.getProjectModel();
-                    if (projectModel == null)
+                    ProjectModel application = inputPath.getProjectModel();
+                    if (application == null)
                     {
                         throw new WindupException("Error, no project found in: " + inputPath.getFilePath());
                     }
-                    createReport(event.getGraphContext(), projectModel);
+                    createReport(event.getGraphContext(), application);
                 }
             }
 
@@ -75,7 +76,7 @@ public class CreateJavaApplicationOverviewReportRuleProvider extends AbstractRul
     }
     // @formatter:on
 
-    private void createReport(GraphContext context, ProjectModel projectModel)
+    private void createReport(GraphContext context, ProjectModel application)
     {
         GraphService<JavaApplicationOverviewReportModel> service = new GraphService<>(context, JavaApplicationOverviewReportModel.class);
         JavaApplicationOverviewReportModel applicationReportModel = service.create();
@@ -85,48 +86,31 @@ public class CreateJavaApplicationOverviewReportRuleProvider extends AbstractRul
         applicationReportModel.setDescription(DESCRIPTION);
         applicationReportModel.setReportIconClass("glyphicon glyphicon-th-list");
         applicationReportModel.setMainApplicationReport(false);
-        applicationReportModel.setProjectModel(projectModel);
+        applicationReportModel.setProjectModel(application);
         applicationReportModel.setTemplatePath(TEMPLATE_APPLICATION_REPORT);
         applicationReportModel.setTemplateType(TemplateType.FREEMARKER);
-        applicationReportModel.setIncludeTags(Collections.<String> emptySet());
+        applicationReportModel.setIncludeTags(Collections.emptySet());
         applicationReportModel.setExcludeTags(Collections.singleton(TaggableModel.CATCHALL_TAG));
         GraphService<OverviewReportLineMessageModel> lineNotesService = new GraphService<>(context, OverviewReportLineMessageModel.class);
         Iterable<OverviewReportLineMessageModel> allLines = lineNotesService.findAll();
         Set<String> dupeCheck = new HashSet<>();
+        ProjectModelTraversal projectModelTraversal = new ProjectModelTraversal(application);
+        Set<ProjectModel> allProjectsInApplication = projectModelTraversal.getAllProjects(true);
 
         for (OverviewReportLineMessageModel line : allLines)
         {
             if (dupeCheck.contains(line.getMessage()))
                 continue;
 
-            String projectPrettyPath = projectModel.getRootFileModel().getPrettyPath();
-            if (projectPrettyPath == null)
-            {
-                throw new WindupException("Path for project: " + projectModel + " evaluated to null!");
-            }
-
             ProjectModel project = line.getProject();
-            boolean found = false;
-            while (project != null && !found)
+            if (allProjectsInApplication.contains(project))
             {
-                if (project.getRootFileModel() == null)
-                {
-                    throw new WindupException("Root file for project: " + project + " evaluated to null!");
-                }
-                if (projectPrettyPath.equals(project.getRootFileModel().getPrettyPath()))
-                {
-                    dupeCheck.add(line.getMessage());
-                    applicationReportModel.addApplicationReportLine(line);
-                    found = true;
-                }
-                else
-                {
-                    project = project.getParentProject();
-                }
+                dupeCheck.add(line.getMessage());
+                applicationReportModel.addApplicationReportLine(line);
             }
         }
         // Set the filename for the report
         ReportService reportService = new ReportService(context);
-        reportService.setUniqueFilename(applicationReportModel, "ApplicationDetails_" + projectModel.getName(), "html");
+        reportService.setUniqueFilename(applicationReportModel, "ApplicationDetails_" + application.getName(), "html");
     }
 }

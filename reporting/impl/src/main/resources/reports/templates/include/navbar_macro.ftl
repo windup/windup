@@ -13,7 +13,7 @@
         </#if>
 
         <#list applicationReportIndexModel.applicationReportModelsSortedByPriority as navReportModel>
-            <#if navReportModel.displayInApplicationReportIndex>
+            <#if navReportModel.displayInApplicationReportIndex && navReportModel.reportFilename??>
                 <#assign liClass = "">
                 <#assign reportUrl = navReportModel.reportFilename>
                 <#if navUrlPrefix??>
