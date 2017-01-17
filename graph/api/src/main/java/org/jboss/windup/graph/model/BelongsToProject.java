@@ -20,4 +20,17 @@ public interface BelongsToProject
      * @return root project models
      */
     Iterable<ProjectModel> getRootProjectModels();
+
+
+    default ProjectModel getCanonicalProjectModel(ProjectModel projectModel)
+    {
+        ProjectModel canonicalProjectModel = projectModel;
+
+        if (projectModel instanceof DuplicateProjectModel)
+        {
+            canonicalProjectModel = ((DuplicateProjectModel) projectModel).getCanonicalProject();
+        }
+
+        return canonicalProjectModel;
+    }
 }

@@ -15,6 +15,7 @@ import org.jboss.windup.graph.Indexes;
 import org.jboss.windup.graph.frames.FrameBooleanDefaultValue;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.BelongsToProject;
+import org.jboss.windup.graph.model.DuplicateProjectModel;
 import org.jboss.windup.graph.model.ProjectModel;
 
 import com.tinkerpop.blueprints.Direction;
@@ -338,7 +339,7 @@ public interface FileModel extends ResourceModel, BelongsToProject
         @Override
         public boolean belongsToProject(ProjectModel projectModel)
         {
-            return this.getProjectModel().equals(projectModel);
+            return this.getProjectModel().equals(this.getCanonicalProjectModel(projectModel));
         }
 
         @Override

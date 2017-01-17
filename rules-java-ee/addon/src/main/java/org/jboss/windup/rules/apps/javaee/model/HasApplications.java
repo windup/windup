@@ -32,9 +32,11 @@ public interface HasApplications extends BelongsToProject
         @Override
         public boolean belongsToProject(ProjectModel project)
         {
+            ProjectModel canonicalProjectModel = this.getCanonicalProjectModel(project);
+
             for (ProjectModel currentProject : this.getApplications())
             {
-                if (currentProject.equals(project))
+                if (currentProject.equals(canonicalProjectModel))
                 {
                     return true;
                 }
