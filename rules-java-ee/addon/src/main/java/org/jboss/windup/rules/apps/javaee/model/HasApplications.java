@@ -4,9 +4,7 @@ import com.tinkerpop.frames.modules.javahandler.JavaHandler;
 import org.jboss.windup.graph.model.BelongsToProject;
 import org.jboss.windup.graph.model.ProjectModel;
 
-import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 
 import java.util.HashSet;

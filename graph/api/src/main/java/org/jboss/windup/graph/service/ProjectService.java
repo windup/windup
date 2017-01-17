@@ -91,7 +91,7 @@ public class ProjectService extends GraphService<ProjectModel>
                 continue;
             }
 
-            ProjectModelTraversal traversal = new ProjectModelTraversal(rootProjectModel, new OnlyOnceTraversalStrategy());
+            ProjectModelTraversal traversal = new ProjectModelTraversal(rootProjectModel);
             traversal.getAllProjects(true).forEach(subProject -> projectModels.put(subProject, rootProjectModel));
         }
 
@@ -119,7 +119,7 @@ public class ProjectService extends GraphService<ProjectModel>
                     continue;
                 }
 
-                ProjectModelTraversal traversal = new ProjectModelTraversal(rootProjectModel, new OnlyOnceTraversalStrategy());
+                ProjectModelTraversal traversal = new ProjectModelTraversal(rootProjectModel);
                 projectModels.addAll(traversal.getAllProjects(true));
             }
         }

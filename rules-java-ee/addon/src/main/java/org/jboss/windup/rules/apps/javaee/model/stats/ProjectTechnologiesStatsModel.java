@@ -39,14 +39,23 @@ public interface ProjectTechnologiesStatsModel extends WindupVertexFrame
     @Adjacency(label = PROJECT_MODEL, direction = Direction.OUT)
     ProjectModel getProjectModel();
 
+    /**
+     * ProjectModel for computed stats
+     */
     @Adjacency(label = PROJECT_MODEL, direction = Direction.OUT)
     ProjectTechnologiesStatsModel setProjectModel(ProjectModel projectModel);
 
     String TECHNOLOGIES_STATS_MODEL = "stats.technologiesStatsModel";
 
+    /**
+     * Contains the link to the stats data.
+     */
     @Adjacency(label = TECHNOLOGIES_STATS_MODEL, direction = Direction.OUT)
     TechnologiesStatsModel getTechnologiesStatsModel();
 
+    /**
+     * Contains the link to the stats data.
+     */
     @Adjacency(label = TECHNOLOGIES_STATS_MODEL, direction = Direction.OUT)
     ProjectTechnologiesStatsModel setTechnologiesStatsModel(TechnologiesStatsModel technologiesStatsModel);
 }

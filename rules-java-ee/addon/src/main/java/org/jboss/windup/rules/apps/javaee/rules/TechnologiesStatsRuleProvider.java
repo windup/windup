@@ -22,8 +22,6 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 @RuleMetadata(phase = PreReportGenerationPhase.class, perform = "Compute the statistics for the Technologies Report")
 public class TechnologiesStatsRuleProvider extends AbstractRuleProvider
 {
-    private static final Logger LOG = Logging.get(TechnologiesStatsRuleProvider.class);
-    
     @Override
     public Configuration getConfiguration(RuleLoaderContext context) {
         return ConfigurationBuilder.begin().addRule().perform(
