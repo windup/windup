@@ -46,18 +46,19 @@ public class AppWithMultipleTechnologiesTest extends WindupArchitectureTest
                     .addClass(WindupArchitectureTest.class)
                     .addAsResource(new File("src/test/groovy/GroovyExampleRule.windup.groovy"));
     }
-/*
-    TODO: Finish this more complex test.  FileTypes numbers might be difficult to get, focus on technologies.
 
     @Test
     public void testRunWindupTiny() throws Exception
     {
         try (GraphContext context = createGraphContext())
         {
-            super.runTest(context, "../test-files/Windup1x-javaee-example.war", false);
-            validateTechReportData(context);
+//            super.runTest(context, "../test-files/Windup1x-javaee-example.war", false);
+//            validateTechReportData(context);
         }
     }
+
+/*
+    TODO: Finish this more complex test.  FileTypes numbers might be difficult to get, focus on technologies.
 
     private void validateTechReportData(GraphContext context)
     {

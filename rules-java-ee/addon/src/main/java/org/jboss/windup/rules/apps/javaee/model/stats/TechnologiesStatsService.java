@@ -69,6 +69,12 @@ public class TechnologiesStatsService extends GraphService<TechnologiesStatsMode
 
     protected void setCountFilesByType(TechnologiesStatsModel stats, Map<String, Integer> suffixToCount)
     {
+        if (suffixToCount == null || suffixToCount.isEmpty())
+        {
+            return;
+        }
+
+
         // TODO: This will need to filter out archives.
         // TODO: Should I remove old code and stick to key-value-pair or should I keep the old one and remove key value pair?
         stats.setStatsFilesByTypeJava(item(
@@ -92,6 +98,11 @@ public class TechnologiesStatsService extends GraphService<TechnologiesStatsMode
 
     protected void setTechnologiesUsage(TechnologiesStatsModel stats, Map<String, Integer> technologyUsage)
     {
+        if (technologyUsage == null || technologyUsage.isEmpty())
+        {
+            return;
+        }
+
         stats.setStatsServicesEjbStateless(item(technologyUsage.getOrDefault(TechnologiesStatsModel.STATS_SERVICES_EJB_STATELESS, 0)));
         stats.setStatsServicesEjbStateful(item(technologyUsage.getOrDefault(TechnologiesStatsModel.STATS_SERVICES_EJB_STATEFUL, 0)));
         stats.setStatsServicesEjbMessageDriven(item(technologyUsage.getOrDefault(TechnologiesStatsModel.STATS_SERVICES_EJB_MESSAGEDRIVEN, 0)));
