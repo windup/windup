@@ -1,11 +1,8 @@
 package org.jboss.windup.tests.application;
 
 import java.io.File;
-import java.io.OutputStreamWriter;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -20,9 +17,6 @@ import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.jboss.windup.rules.apps.javaee.model.stats.ProjectTechnologiesStatsModel;
 import org.jboss.windup.rules.apps.javaee.model.stats.TechnologiesStatsModel;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONWriter;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -65,19 +59,10 @@ public class WindupArchitectureSmallBinaryMode2Test extends WindupArchitectureTe
     private void validateTechReportData(GraphContext context)
     {
         Iterable<ProjectTechnologiesStatsModel> stats = context.service(ProjectTechnologiesStatsModel.class).findAll();
-        /*try {
-            JSONWriter jsonWriter = new org.json.JSONWriter(new OutputStreamWriter(System.out));
-            JSONObject json = new JSONObject(stats);
-            jsonWriter.value(json);
-        }
-        catch (JSONException ex) {
-            throw new RuntimeException("Failed to JSONify: " + ex.getMessage(), ex);
-        }*/
 
         //SUM: 106 txt = 1 java = 20 xml = 12 ear = 0 war = 0 MF = 5 jar = 5 class = 47 properties = 4
         HashMap<String, Integer> sumResultsFileTypes = new HashMap<>();
         HashMap<String, Integer> sumResultsTechnologies = new HashMap<>();
-
 
         for (ProjectTechnologiesStatsModel projectStats : stats)
         {
