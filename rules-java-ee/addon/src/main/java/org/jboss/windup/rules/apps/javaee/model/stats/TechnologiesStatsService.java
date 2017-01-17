@@ -74,19 +74,7 @@ public class TechnologiesStatsService extends GraphService<TechnologiesStatsMode
             return;
         }
 
-
         // TODO: This will need to filter out archives.
-        // TODO: Should I remove old code and stick to key-value-pair or should I keep the old one and remove key value pair?
-        stats.setStatsFilesByTypeJava(item(
-                suffixToCount.getOrDefault("class", 0)
-                 + suffixToCount.getOrDefault("java", 0)
-        ));
-        stats.setStatsFilesByTypeJs(item(suffixToCount.getOrDefault("js", 0)));
-        stats.setStatsFilesByTypeHtml(item(suffixToCount.getOrDefault("html", 0)));
-        stats.setStatsFilesByTypeCss(item(suffixToCount.getOrDefault("css", 0)));
-        stats.setStatsFilesByTypeXml(item(suffixToCount.getOrDefault("xml", 0)));
-        stats.setStatsFilesByTypeFmt(item(suffixToCount.getOrDefault("fmt", 0)));
-
         suffixToCount.entrySet().forEach(entry -> {
             TechnologyKeyValuePairModel suffixUsage = this.technologyKeyValuePairModelService.create()
                     .setName(entry.getKey())
@@ -102,10 +90,6 @@ public class TechnologiesStatsService extends GraphService<TechnologiesStatsMode
         {
             return;
         }
-
-        stats.setStatsServicesEjbStateless(item(technologyUsage.getOrDefault(TechnologiesStatsModel.STATS_SERVICES_EJB_STATELESS, 0)));
-        stats.setStatsServicesEjbStateful(item(technologyUsage.getOrDefault(TechnologiesStatsModel.STATS_SERVICES_EJB_STATEFUL, 0)));
-        stats.setStatsServicesEjbMessageDriven(item(technologyUsage.getOrDefault(TechnologiesStatsModel.STATS_SERVICES_EJB_MESSAGEDRIVEN, 0)));
 
         technologyUsage.entrySet().forEach(entry -> {
             TechnologyKeyValuePairModel currentTechnology = this.technologyKeyValuePairModelService.create()
