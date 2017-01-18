@@ -58,7 +58,6 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
     private Set<String> excludePackagePrefixSet = new HashSet<>();
     private Set<String> userRulesPathSet = new HashSet<>();
     private Map<String, Object> options = new HashMap<>();
-    private boolean skipReportsRendering;
     
     private String version;
 
@@ -74,7 +73,6 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
         this.excludePackagePrefixSet.clear();
         this.userRulesPathSet.clear();
         this.options.clear();
-        this.skipReportsRendering = false;
     }
 
     // TODO: Should we also do UnicastRemoteObject.unexportObject(this, true)?
@@ -90,26 +88,6 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
         {
         }
         Runtime.getRuntime().halt(1);
-    }
-
-    /**
-     * Is the option to skip Report preparing and generation set?
-     *
-     * @return the skipReportsRendering
-     */
-    public boolean isSkipReportsRendering()
-    {
-        return skipReportsRendering;
-    }
-
-    /**
-     * Sets the option to skip Report preparing and generation
-     *
-     * @param skipReportsRendering the skipReportsRendering to set
-     */
-    public void setSkipReportsRendering(boolean skipReportsRendering)
-    {
-        this.skipReportsRendering = skipReportsRendering;
     }
 
     @Override
@@ -238,7 +216,6 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
         windupConfiguration.addInputPath(Paths.get(this.input));
         windupConfiguration.setOutputDirectory(Paths.get(this.output));
         windupConfiguration.setProgressMonitor(progressMonitorAdapter);
-        windupConfiguration.setOptionValue(SkipReportsRenderingOption.NAME, skipReportsRendering);
 
         Path graphPath = Paths.get(output).resolve(GraphContextFactory.DEFAULT_GRAPH_SUBDIRECTORY);
 
