@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jboss.windup.util.exception.WindupException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -35,11 +36,11 @@ public class TestJavaApplicationOverviewUtil extends TestReportUtil
             // remove some libraries that htmlunit has issues with... we don't really test these through htmlunit anyway
             contents = contents.replace("$.plot", "");
             contents = contents.replace("<script src=\"resources/libraries/flot/jquery.flot.min.js\"></script>",
-                    "<script>$.plot = function(){}</script>");
+                        "<script>$.plot = function(){}</script>");
             contents = contents.replace("<script src=\"resources/libraries/flot/jquery.flot.pie.min.js\"></script>", "");
             // RenderApplicationPieChartDirective
             contents = contents.replace("<script src=\"resources/js/jquery.color-2.1.2.min.js\"></script>",
-                    "<script>jQuery.Color = function(){ return { toHexString: function(){ return \"#aa0000\"; } } }</script>");
+                        "<script>jQuery.Color = function(){ return { toHexString: function(){ return \"#aa0000\"; } } }</script>");
 
             try (FileWriter writer = new FileWriter(modifiedPath.toFile()))
             {
@@ -52,6 +53,21 @@ public class TestJavaApplicationOverviewUtil extends TestReportUtil
         {
             throw new RuntimeException(e);
         }
+    }
+
+    public void checkApplicationMessage(String message)
+    {
+        // application-message
+        List<WebElement> applicationMessageElements = getDriver()
+                    .findElements(By.className("application-message"));
+
+        for (WebElement applicationMessageElement : applicationMessageElements)
+        {
+            if (message.equals(applicationMessageElement.getText()))
+                return;
+        }
+
+        throw new CheckFailedException("Could not find an application message with text: " + message);
     }
 
     public void checkMainEffort(int expectedEffort)
@@ -83,9 +99,10 @@ public class TestJavaApplicationOverviewUtil extends TestReportUtil
             throw new CheckFailedException("Unable to find app section with name: " + appSection);
         }
 
-        String xpath = getElementXPath(getDriver(),appSectionEl) + "/" + "../..//div[@class = \\'points\\']/div[text() = \\'Story Points\\']/../div[@class = \\'number\\']";
+        String xpath = getElementXPath(getDriver(), appSectionEl) + "/"
+                    + "../..//div[@class = \\'points\\']/div[text() = \\'Story Points\\']/../div[@class = \\'number\\']";
 
-        String effortString = getStringValueForXpathElement(getDriver(),xpath).trim();
+        String effortString = getStringValueForXpathElement(getDriver(), xpath).trim();
         effortString = effortString.replace(",", "");
 
         try
@@ -103,9 +120,8 @@ public class TestJavaApplicationOverviewUtil extends TestReportUtil
     /**
      * Checks if the given App section, filepath, and effort level can be seen in the report.
      * <p>
-     * For example checkFilePathEffort("src_example", "src/main/resources/test.properties", 13) will ensure that an
-     * application called "src_example" is in the report, with a line referencing "src/main/resources/test.properties"
-     * and that this line contains the effort level 13).
+     * For example checkFilePathEffort("src_example", "src/main/resources/test.properties", 13) will ensure that an application called "src_example"
+     * is in the report, with a line referencing "src/main/resources/test.properties" and that this line contains the effort level 13).
      */
     public void checkFilePathEffort(String appSection, String filePath, int effort)
     {
@@ -154,10 +170,9 @@ public class TestJavaApplicationOverviewUtil extends TestReportUtil
     /**
      * Checks if the given App section, filepath, and tag can be found in the report.
      * <p>
-     * For example calling checkFilePathAndIssues("src_example", "src/main/resources/test.properties",
-     * "Web Servlet again") will ensure that an application called "src_example" is in the report, with a line
-     * referencing "src/main/resources/test.properties" and that this line contains text in the issues section saying
-     * "Web Servlet again").
+     * For example calling checkFilePathAndIssues("src_example", "src/main/resources/test.properties", "Web Servlet again") will ensure that an
+     * application called "src_example" is in the report, with a line referencing "src/main/resources/test.properties" and that this line contains
+     * text in the issues section saying "Web Servlet again").
      */
     public void checkFilePathAndIssues(String appSection, String filePath, String text)
     {
@@ -190,9 +205,8 @@ public class TestJavaApplicationOverviewUtil extends TestReportUtil
     /**
      * Checks if the given App section, filepath, and tag can be found in the report.
      * <p>
-     * For example calling checkFilePathAndTag("src_example", "src/main/resources/test.properties", "Properties") will
-     * ensure that an application called "src_example" is in the report, with a line referencing
-     * "src/main/resources/test.properties" and that this file is tagged "Properties"
+     * For example calling checkFilePathAndTag("src_example", "src/main/resources/test.properties", "Properties") will ensure that an application
+     * called "src_example" is in the report, with a line referencing "src/main/resources/test.properties" and that this file is tagged "Properties"
      */
     public void checkFilePathAndTag(String appSection, String filePath, String tag)
     {
@@ -213,9 +227,9 @@ public class TestJavaApplicationOverviewUtil extends TestReportUtil
         {
             String spanValue = getTextForElement(element);
             if (spanValue.equals(tag))
-                {
-                    return;
-                }
+            {
+                return;
+            }
         }
 
         throw new CheckFailedException("Unable to find app: " + appSection + " file: " + filePath + " with tag: "
@@ -223,20 +237,22 @@ public class TestJavaApplicationOverviewUtil extends TestReportUtil
     }
 
     /**
-     * In case the element's css is display:none, selenium does not see it using getText().
-     * Therefore this methods uses javascript to query the value
+     * In case the element's css is display:none, selenium does not see it using getText(). Therefore this methods uses javascript to query the value
+     * 
      * @param element
      * @return
      */
-    private String getTextForElement(WebElement element) {
-        HtmlUnitDriver driver=(HtmlUnitDriver) getDriver();
-        String xpath = getElementXPath(driver,element);
-        String result = getStringValueForXpathElement(driver,xpath);
+    private String getTextForElement(WebElement element)
+    {
+        HtmlUnitDriver driver = (HtmlUnitDriver) getDriver();
+        String xpath = getElementXPath(driver, element);
+        String result = getStringValueForXpathElement(driver, xpath);
         return result.trim();
     }
 
     /**
      * Returns the xpath full path of the given element. E.g something like /html/body/div[2]/p
+     * 
      * @param driver
      * @param element
      * @return
@@ -260,8 +276,8 @@ public class TestJavaApplicationOverviewUtil extends TestReportUtil
     /**
      * Checks if the given App section, filepath, and tag can be found in the report.
      * <p>
-     * For example calling checkFilePathAndTag("src_example", "src/main/resources/test.properties") will ensure that an
-     * application called "src_example" is in the report, with a line referencing "src/main/resources/test.properties"
+     * For example calling checkFilePathAndTag("src_example", "src/main/resources/test.properties") will ensure that an application called
+     * "src_example" is in the report, with a line referencing "src/main/resources/test.properties"
      */
     public void checkFilePath(String appSection, String filePath)
     {
@@ -310,7 +326,7 @@ public class TestJavaApplicationOverviewUtil extends TestReportUtil
 
     private String parseOutAppTitle(String input)
     {
-        //remove story points information
+        // remove story points information
         return input.replaceAll("\\(.*\\)", "");
     }
 }

@@ -22,7 +22,7 @@
         <table class="table table-striped table-bordered">
             <#items as reportLine>
             <tr>
-                <td>
+                <td class="application-message">
                     ${reportLine.message}
                     <@render_rule_link renderType="glyph" ruleID=reportLine.ruleID class="rule-link"/>
                 </td>

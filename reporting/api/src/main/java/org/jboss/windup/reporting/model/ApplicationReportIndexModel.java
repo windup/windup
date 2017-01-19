@@ -25,26 +25,26 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue("ApplicationReportIndexModel")
 public interface ApplicationReportIndexModel extends WindupVertexFrame
 {
-    public static final String APPLICATION_REPORT_INDEX_TO_PROJECT_MODEL = "appReportIndexToProjectModel";
-    public static final String APPLICATION_REPORT_INDEX_TO_REPORT_MODEL = "appReportIndexToAppReportModel";
+    String APPLICATION_REPORT_INDEX_TO_PROJECT_MODEL = "appReportIndexToProjectModel";
+    String APPLICATION_REPORT_INDEX_TO_REPORT_MODEL = "appReportIndexToAppReportModel";
 
     /**
      * Get all ReportModels that should be displayed in the index in ascending order, according to priority
      */
     @JavaHandler
-    public List<ApplicationReportModel> getApplicationReportModelsSortedByPriority();
+    List<ApplicationReportModel> getApplicationReportModelsSortedByPriority();
 
     /**
      * Get all ReportModels that should be displayed in the index
      */
     @Adjacency(label = APPLICATION_REPORT_INDEX_TO_REPORT_MODEL, direction = Direction.OUT)
-    public Iterable<ApplicationReportModel> getApplicationReportModels();
+    Iterable<ApplicationReportModel> getApplicationReportModels();
 
     /**
      * Adds a ReportModel that should be displayed in the index
      */
     @Adjacency(label = APPLICATION_REPORT_INDEX_TO_REPORT_MODEL, direction = Direction.OUT)
-    public void addApplicationReportModel(ApplicationReportModel reportModel);
+    void addApplicationReportModel(ApplicationReportModel reportModel);
 
     /**
      * Associates a Set of ProjectModels with this index. This allows us to get from any Project Model to the associated
@@ -53,7 +53,7 @@ public interface ApplicationReportIndexModel extends WindupVertexFrame
      * NOTE: This should generally include the projectmodel and all child projects (flattened) to make searching easier.
      */
     @Adjacency(label = APPLICATION_REPORT_INDEX_TO_PROJECT_MODEL, direction = Direction.OUT)
-    public Iterable<ProjectModel> getProjectModels();
+    Iterable<ProjectModel> getProjectModels();
 
     /**
      * Associates a Set of ProjectModels with this index. This allows us to get from any Project Model to the associated
@@ -62,7 +62,7 @@ public interface ApplicationReportIndexModel extends WindupVertexFrame
      * NOTE: This should generally include the projectmodel and all child projects (flattened) to make searching easier.
      */
     @Adjacency(label = APPLICATION_REPORT_INDEX_TO_PROJECT_MODEL, direction = Direction.OUT)
-    public void addProjectModel(ProjectModel projectModel);
+    void addProjectModel(ProjectModel projectModel);
 
     abstract class Impl implements ApplicationReportIndexModel, JavaHandlerContext<Vertex>
     {
