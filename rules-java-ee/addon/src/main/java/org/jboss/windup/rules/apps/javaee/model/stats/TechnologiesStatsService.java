@@ -298,6 +298,11 @@ public class TechnologiesStatsService extends GraphService<TechnologiesStatsMode
                     }
 
                     ProjectModel projectModel = file.getProjectModel();
+                    if (projectModel == null)
+                    {
+                        return;
+                    }
+
                     ProjectModel rootProjectModel = projectModel.getRootProjectModel();
                     Map<String, Integer> suffixToCount;
 
