@@ -61,12 +61,16 @@ public class LoadIssueCategoriesRuleProvider extends AbstractRuleProvider
         ruleLoaderContext.getRulePaths().forEach((path) -> {
             try
             {
+                if (!Files.exists(path) || !Files.isReadable(path))
+                    return;
+
                 Files.walkFileTree(path, new SimpleFileVisitor<Path>()
                 {
                     @Override
                     public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException
                     {
-                        if (file.getFileName().toString().toLowerCase().endsWith(WINDUP_CATEGORIES_XML_SUFFIX))
+                        if (Files.isReadable(file) && Files.isRegularFile(file) &&
+                                file.getFileName().toString().toLowerCase().endsWith(WINDUP_CATEGORIES_XML_SUFFIX))
                             filePaths.add(file);
                         return FileVisitResult.CONTINUE;
                     }
