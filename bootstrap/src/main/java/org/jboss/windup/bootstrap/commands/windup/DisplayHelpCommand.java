@@ -43,10 +43,10 @@ public class DisplayHelpCommand implements Command
         sb.append("\nForge Options:\n");
 
         sb.append("-i, --install GROUP_ID:ARTIFACT_ID[:VERSION]\n");
-        sb.append("\t install the required addons and exit. ex: `windup -i core-addon-x` or `windup -i org.example.addon:example,1.0.0` \n");
+        sb.append("\t install the required addons and exit. ex: `windup -i core-addon-x` or `windup -i org.example.addon:example:1.0.0` \n");
 
         sb.append("-r, --remove GROUP_ID:ARTIFACT_ID[:VERSION]\n");
-        sb.append("\t remove the required addons and exit. ex: `windup -r core-addon-x` or `windup -r org.example.addon:example,1.0.0` \n");
+        sb.append("\t remove the required addons and exit. ex: `windup -r core-addon-x` or `windup -r org.example.addon:example:1.0.0` \n");
 
         sb.append("-l, --list\n");
         sb.append("\t list installed addons and exit \n");
