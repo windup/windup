@@ -1,5 +1,6 @@
 package org.jboss.windup.rules.apps.javaee.service;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.service.GraphService;
@@ -31,6 +32,16 @@ public class JmsDestinationService extends GraphService<JmsDestinationModel>
     /**
      * Creates a new instance with the given name, or converts an existing instance at this location if one already exists
      */
+    public JmsDestinationModel createUnique(Set<ProjectModel> applications, String jndiName, String destinationTypeClass)
+    {
+        JmsDestinationType destinationType = JmsDestinationService.getTypeFromClass(destinationTypeClass);
+
+        return this.createUnique(applications, jndiName, destinationType);
+    }
+
+    /**
+     * Creates a new instance with the given name, or converts an existing instance at this location if one already exists
+     */
     public JmsDestinationModel createUnique(Set<ProjectModel> applications, String jndiName, JmsDestinationType destinationType)
     {
         JmsDestinationModel model = createUnique(applications, jndiName);
@@ -54,5 +65,25 @@ public class JmsDestinationService extends GraphService<JmsDestinationModel>
         }
 
         return model;
+    }
+
+    /**
+     * Gets JmsDestinationType from java class name
+     * @throws RuntimeException When class is not recognized
+     */
+    public static JmsDestinationType getTypeFromClass(String aClass)
+    {
+        if (StringUtils.equals(aClass, "javax.jms.Queue") || StringUtils.equals(aClass, "javax.jms.QueueConnectionFactory"))
+        {
+            return JmsDestinationType.QUEUE;
+        }
+        else if (StringUtils.equals(aClass, "javax.jms.Topic")  || StringUtils.equals(aClass, "javax.jms.TopicConnectionFactory"))
+        {
+            return JmsDestinationType.TOPIC;
+        }
+        else
+        {
+            throw new RuntimeException("Unrecognized class");
+        }
     }
 }
