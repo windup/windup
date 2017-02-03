@@ -122,10 +122,11 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
             ejbName = ejbClass.getClassName();
         }
 
+        JavaAnnotationTypeValueModel activationConfigAnnotation = annotationTypeReference.getAnnotationValues().get("activationConfig");
+
         String destination = getAnnotationLiteralValue(annotationTypeReference, "mappedName");
         if (StringUtils.isBlank(destination))
         {
-            JavaAnnotationTypeValueModel activationConfigAnnotation = annotationTypeReference.getAnnotationValues().get("activationConfig");
             destination = getDestinationFromActivationConfig(activationConfigAnnotation);
         }
 
@@ -138,14 +139,24 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
 
         if (StringUtils.isNotBlank(destination))
         {
-            JmsDestinationService jmsDestinationService = new JmsDestinationService(event.getGraphContext());
-            messageDrivenBean.setDestination(jmsDestinationService.createUnique(applications, destination));
-        }
+            String destinationType = getPropertyFromActivationConfig(activationConfigAnnotation, "destinationType");
 
+            JmsDestinationService jmsDestinationService = new JmsDestinationService(event.getGraphContext());
+            messageDrivenBean.setDestination(jmsDestinationService.createUnique(applications, destination, destinationType));
+        }
     }
 
     private String getDestinationFromActivationConfig(JavaAnnotationTypeValueModel annotationTypeReferenceModel)
     {
+        return this.getPropertyFromActivationConfig(annotationTypeReferenceModel, "destination");
+    }
+
+    private String getPropertyFromActivationConfig(JavaAnnotationTypeValueModel annotationTypeReferenceModel, String property)
+    {
+        if (property == null)
+        {
+            throw new IllegalArgumentException("property cannot be null");
+        }
 
         if (annotationTypeReferenceModel == null)
         {
@@ -162,10 +173,10 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
                 }
 
                 JavaAnnotationTypeReferenceModel javaAnnotationTypeReferenceModel = (JavaAnnotationTypeReferenceModel) activationConfig;
-                String destination = getDestinationFromActivationConfig(javaAnnotationTypeReferenceModel);
-                if (destination != null)
+                String propertyValue = getPropertyFromActivationConfig(javaAnnotationTypeReferenceModel, property);
+                if (propertyValue != null)
                 {
-                    return destination;
+                    return propertyValue;
                 }
             }
             return null;
@@ -181,7 +192,7 @@ public class DiscoverEjbAnnotationsRuleProvider extends AbstractRuleProvider
             {
                 String propertyName = ((JavaAnnotationLiteralTypeValueModel) propertyNameModel).getLiteralValue();
                 String propertyValue = ((JavaAnnotationLiteralTypeValueModel) propertyValueModel).getLiteralValue();
-                if ("destination".equals(propertyName))
+                if (property.equals(propertyName))
                 {
                     return propertyValue;
                 }

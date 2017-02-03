@@ -26,11 +26,11 @@ public class JNDIResourceService extends GraphService<JNDIResourceModel>
     }
 
     /**
-     * Create unique; if existing convert an existing {@link DataSourceModel} if one exists.
+     * Create unique; if existing convert an existing {@link JNDIResourceModel} if one exists.
      */
     public synchronized JNDIResourceModel createUnique(Set<ProjectModel> applications, String jndiName)
     {
-        JNDIResourceModel jndiResourceModel = getUniqueByProperty(DataSourceModel.JNDI_LOCATION, jndiName);
+        JNDIResourceModel jndiResourceModel = getUniqueByProperty(JNDIResourceModel.JNDI_LOCATION, jndiName);
         if (jndiResourceModel == null)
         {
             jndiResourceModel = super.create();
