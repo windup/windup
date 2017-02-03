@@ -69,7 +69,8 @@ public class JmsDestinationService extends GraphService<JmsDestinationModel>
 
     /**
      * Gets JmsDestinationType from java class name
-     * @throws RuntimeException When class is not recognized
+     *
+     * Returns null for unrecognized class
      */
     public static JmsDestinationType getTypeFromClass(String aClass)
     {
@@ -83,7 +84,7 @@ public class JmsDestinationService extends GraphService<JmsDestinationModel>
         }
         else
         {
-            throw new RuntimeException("Unrecognized class");
+            return null;
         }
     }
 }
