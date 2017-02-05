@@ -4,6 +4,8 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Collection;
 
+import org.jboss.windup.tooling.rules.RuleProviderRegistry;
+
 /**
  * The initial call, specifying the installation path to Windup.
  *
@@ -108,4 +110,9 @@ public interface ExecutionBuilder extends Remote
      * Sets the version of Windup.
      */
     void setVersion(String version) throws RemoteException;
+    
+    /**
+     * Returns the registry containing the rule providers.
+     */
+    RuleProviderRegistry getRuleProviderRegistry() throws RemoteException;
 }

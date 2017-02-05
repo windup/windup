@@ -45,6 +45,7 @@ import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.rules.apps.java.model.WindupJavaConfigurationModel;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.jboss.windup.tooling.data.QuickfixType;
+import org.jboss.windup.tooling.rules.RuleProviderRegistry;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -114,6 +115,19 @@ public class ExecutionBuilderTest
             e.printStackTrace();
         }
         return null;
+    }
+    
+    @Test
+    public void testRuleProviderRegistry() throws RemoteException {
+    	  rmiServer.startServer(PORT, "");
+
+          ExecutionBuilder builder = getExecutionBuilderFromRMIRegistry();
+          Assert.assertNotNull(builder);
+          
+          RuleProviderRegistry registry = builder.getRuleProviderRegistry();
+          Assert.assertNotNull(registry);
+          
+          Assert.assertFalse(registry.getRuleProviders().isEmpty());
     }
 
     @Test
