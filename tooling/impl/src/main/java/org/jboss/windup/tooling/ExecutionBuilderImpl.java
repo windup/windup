@@ -7,18 +7,21 @@ import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.util.Lists;
 import org.jboss.windup.config.SkipReportsRenderingOption;
-import org.jboss.windup.config.metadata.RuleProviderRegistryCache;
+import org.jboss.windup.config.loader.RuleLoader;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.graph.GraphContext;
@@ -61,12 +64,12 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
     private Set<String> excludePackagePrefixSet = new HashSet<>();
     private Set<String> userRulesPathSet = new HashSet<>();
     private Map<String, Object> options = new HashMap<>();
-    
+
     private String version;
 
     @Inject
-    private RuleProviderRegistryCache ruleProviderCache;
-    
+    private RuleLoader ruleLoader;
+
     @Override
     public void clear() throws RemoteException
     {
@@ -191,17 +194,17 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
     {
         this.options.put(name, value);
     }
-    
+
     @Override
-    public String getVersion() throws RemoteException 
+    public String getVersion() throws RemoteException
     {
-    	return version;
+        return version;
     }
-    
+
     @Override
     public void setVersion(String version) throws RemoteException
     {
-    	this.version = version;
+        this.version = version;
     }
 
     @Override
@@ -269,6 +272,19 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
         }
     }
 
+    @Override
+    public RuleProviderRegistry getRuleProviderRegistry(List<String> pathStrings) throws RemoteException
+    {
+        RuleProviderRegistryImpl ruleProviderRegistry = new RuleProviderRegistryImpl();
+        List<Path> paths = pathStrings.stream().map(pathString -> Paths.get(pathString)).collect(Collectors.toList());
+
+        RuleLoaderContext ruleLoaderContext = new RuleLoaderContext(paths, null);
+        org.jboss.windup.config.metadata.RuleProviderRegistry registry = this.ruleLoader.loadConfiguration(ruleLoaderContext);
+
+        ruleProviderRegistry.buildRuleProviders(registry);
+        return ruleProviderRegistry;
+    }
+
     private class WindupProgressLoggingHandler extends Handler
     {
         private final WindupToolingProgressMonitor monitor;
@@ -304,12 +320,5 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
         {
 
         }
-    }
-    
-    @Override
-    public RuleProviderRegistry getRuleProviderRegistry() throws RemoteException {
-    	RuleProviderRegistryImpl ruleProviderRegistry = new RuleProviderRegistryImpl();
-    	ruleProviderRegistry.buildRuleProviders(ruleProviderCache);    	
-    	return ruleProviderRegistry;
     }
 }

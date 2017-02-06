@@ -3,6 +3,7 @@ package org.jboss.windup.tooling;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Collection;
+import java.util.List;
 
 import org.jboss.windup.tooling.rules.RuleProviderRegistry;
 
@@ -14,7 +15,7 @@ import org.jboss.windup.tooling.rules.RuleProviderRegistry;
 public interface ExecutionBuilder extends Remote
 {
     String LOOKUP_NAME = "ExecutionBuilder";
-    
+
     /**
      * Start building a Windup execution with a windup that is installed at the specified path.
      */
@@ -100,19 +101,19 @@ public interface ExecutionBuilder extends Remote
      * Terminates the runtime that registered this ExecutionBuilder.
      */
     void terminate() throws RemoteException;
-    
+
     /**
      * Returns the Windup version.
      */
     String getVersion() throws RemoteException;
-    
+
     /**
      * Sets the version of Windup.
      */
     void setVersion(String version) throws RemoteException;
-    
+
     /**
      * Returns the registry containing the rule providers.
      */
-    RuleProviderRegistry getRuleProviderRegistry() throws RemoteException;
+    RuleProviderRegistry getRuleProviderRegistry(List<String> paths) throws RemoteException;
 }

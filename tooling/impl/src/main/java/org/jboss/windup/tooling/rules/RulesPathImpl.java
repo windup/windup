@@ -1,8 +1,8 @@
 package org.jboss.windup.tooling.rules;
 
-public class RulesPathImpl implements RulesPath 
+public class RulesPathImpl implements RulesPath
 {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
     private int version;
 

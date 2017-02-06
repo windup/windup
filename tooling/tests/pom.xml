@@ -21,6 +21,16 @@
             <artifactId>windup-exec</artifactId>
             <classifier>forge-addon</classifier>
         </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.config</groupId>
+            <artifactId>windup-config</artifactId>
+            <classifier>forge-addon</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.config</groupId>
+            <artifactId>windup-config-xml</artifactId>
+            <classifier>forge-addon</classifier>
+        </dependency>
        <dependency>
             <groupId>org.jboss.windup</groupId>
             <artifactId>windup-tooling</artifactId>
@@ -48,6 +58,11 @@
         <dependency>
             <groupId>org.jboss.windup.rules.apps</groupId>
             <artifactId>windup-rules-java-ee</artifactId>
+            <classifier>forge-addon</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.rules.apps</groupId>
+            <artifactId>windup-rules-java-project</artifactId>
             <classifier>forge-addon</classifier>
         </dependency>
 

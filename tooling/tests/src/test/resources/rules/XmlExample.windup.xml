@@ -1,0 +1,49 @@
+<?xml version="1.0"?>
+<ruleset xmlns="http://windup.jboss.org/schema/jboss-ruleset" id="xmltestrules_1">
+    <rules>
+        <rule>
+            <when>
+                <javaclass references="javax.servlet.http.HttpServletRequest">
+                    <location>METHOD_PARAMETER</location>
+                </javaclass>
+            </when>
+            <perform>
+                <hint title="javax.servlet.http.HttpServletRequest usage">
+                    <message>"Message from XML Rule</message>
+                    <link href="http://example.com" title="Description from XML Hint Link"/>
+                    <tag>TestTag</tag>
+                </hint>
+            </perform>
+        </rule>
+
+        <rule>
+            <when>
+                <xmlfile matches="/w:web-app/w:resource-ref/w:res-auth[text() = 'Container']">
+                    <namespace prefix="w" uri="http://java.sun.com/xml/ns/javaee"/>
+                </xmlfile>
+            </when>
+            <perform>
+                <hint title="Title for Hint from XML">
+                    <message>Container Auth</message>
+                    <tag>TestTag2</tag>
+                </hint>
+                <xslt title="Example XSLT Conversion" extension="-converted-example.xml" template="/exampleconversion.xsl"/>
+            </perform>
+        </rule>
+
+        <!-- for jsp test -->
+        <rule>
+            <when>
+                <javaclass references="http://www.example.com/othertaglib">
+                    <location>TAGLIB_IMPORT</location>
+                </javaclass>
+            </when>
+            <perform>
+                <hint title="Other Taglib Import">
+                    <message>This is importing another taglib</message>
+                    <tag>taglib</tag>
+                </hint>
+            </perform>
+        </rule>
+    </rules>
+</ruleset>

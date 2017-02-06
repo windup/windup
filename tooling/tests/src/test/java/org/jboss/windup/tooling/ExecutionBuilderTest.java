@@ -11,9 +11,11 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -45,6 +47,7 @@ import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.rules.apps.java.model.WindupJavaConfigurationModel;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.jboss.windup.tooling.data.QuickfixType;
+import org.jboss.windup.tooling.rules.RuleProvider;
 import org.jboss.windup.tooling.rules.RuleProviderRegistry;
 import org.junit.Assert;
 import org.junit.Test;
@@ -81,10 +84,12 @@ public class ExecutionBuilderTest
     @AddonDependencies({
                 @AddonDependency(name = "org.jboss.windup:windup-tooling"),
                 @AddonDependency(name = "org.jboss.windup.config:windup-config"),
+                @AddonDependency(name = "org.jboss.windup.config:windup-config-xml"),
                 @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
                 @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
                 @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-ee"),
+                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-project"),
                 @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
     })
@@ -116,18 +121,25 @@ public class ExecutionBuilderTest
         }
         return null;
     }
-    
-    @Test
-    public void testRuleProviderRegistry() throws RemoteException {
-    	  rmiServer.startServer(PORT, "");
 
-          ExecutionBuilder builder = getExecutionBuilderFromRMIRegistry();
-          Assert.assertNotNull(builder);
-          
-          RuleProviderRegistry registry = builder.getRuleProviderRegistry();
-          Assert.assertNotNull(registry);
-          
-          Assert.assertFalse(registry.getRuleProviders().isEmpty());
+    @Test
+    public void testRuleProviderRegistry() throws RemoteException
+    {
+        rmiServer.startServer(PORT, "");
+
+        ExecutionBuilder builder = getExecutionBuilderFromRMIRegistry();
+        Assert.assertNotNull(builder);
+
+        List<String> paths = Collections.singletonList("src/test/resources/rules");
+        RuleProviderRegistry registry = builder.getRuleProviderRegistry(paths);
+        Assert.assertNotNull(registry);
+        Assert.assertFalse(registry.getRuleProviders().isEmpty());
+
+        List<RuleProvider> xmlProviders = registry.getRuleProviders().stream()
+                    .filter(provider -> provider.getOrigin() != null)
+                    .filter(provider -> provider.getRuleProviderType() == RuleProvider.RuleProviderType.XML)
+                    .collect(Collectors.toList());
+        Assert.assertTrue(xmlProviders.size() > 0);
     }
 
     @Test

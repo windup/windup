@@ -6,7 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class RuleProviderImpl implements RuleProvider 
+public class RuleProviderImpl implements RuleProvider
 {
     private static final long serialVersionUID = 1L;
 
@@ -166,11 +166,11 @@ public class RuleProviderImpl implements RuleProvider
         return rulesPath;
     }
 
-	@Override
-	public void setRulesPath(RulesPath rulesPath) 
-	{
-		this.rulesPath = rulesPath;
-	}
+    @Override
+    public void setRulesPath(RulesPath rulesPath)
+    {
+        this.rulesPath = rulesPath;
+    }
 
     @Override
     public RuleProviderType getRuleProviderType()

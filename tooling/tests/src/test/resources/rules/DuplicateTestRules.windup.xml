@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<ruleset xmlns="http://windup.jboss.org/schema/jboss-ruleset" id="duplicatetestrules_1">
+    <rules>
+        <rule id="duplicate-handling-rule-1">
+            <when>
+                <xmlfile matches="/wl:weblogic-jms/wl:queue[@name='LogEventQueue']">
+                    <namespace prefix="wl" uri="http://www.bea.com/ns/weblogic/90"/>
+                </xmlfile>
+            </when>
+            <perform>
+                <hint title="LogEvent Queue Found Hint" effort="23">
+                    <message>Log Event Queue Hint Message</message>
+                    <tag>TestTag</tag>
+                </hint>
+                <classification title="LogEvent Queue Found Classification" effort="29">
+                </classification>
+            </perform>
+        </rule>
+        <rule id="duplicate-handling-rule-2">
+            <when>
+                <project>
+                    <artifact groupId="log4j" artifactId="log4j" />
+                </project>
+            </when>
+            <perform>
+                <lineitem message="log4j reference found"/>
+            </perform>
+        </rule>
+    </rules>
+</ruleset>

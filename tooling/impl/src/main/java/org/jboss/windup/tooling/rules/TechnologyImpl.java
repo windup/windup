@@ -1,11 +1,9 @@
 package org.jboss.windup.tooling.rules;
 
-public class TechnologyImpl implements Technology 
+public class TechnologyImpl implements Technology
 {
-    private static final long serialVersionUID = 1L;
-
     public static final String TECHNOLOGY_ID = "technology_id";
-
+    private static final long serialVersionUID = 1L;
     private int version;
 
     private String name;
@@ -34,7 +32,7 @@ public class TechnologyImpl implements Technology
     {
         this.name = name;
     }
-    
+
     @Override
     public String getVersionRange()
     {
