@@ -18,6 +18,8 @@ import javax.inject.Inject;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.util.Lists;
 import org.jboss.windup.config.SkipReportsRenderingOption;
+import org.jboss.windup.config.loader.RuleLoader;
+import org.jboss.windup.config.metadata.RuleProviderRegistryCache;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.graph.GraphContext;
@@ -29,6 +31,8 @@ import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.rules.apps.java.model.WindupJavaConfigurationModel;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
+import org.jboss.windup.tooling.rules.RuleProviderRegistry;
+import org.jboss.windup.tooling.rules.RuleProviderRegistryImpl;
 import org.jboss.windup.util.PathUtil;
 import org.jboss.windup.util.exception.WindupException;
 
@@ -61,6 +65,11 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
     
     private String version;
 
+    private RuleProviderRegistry ruleProviderRegistry;
+    
+    @Inject
+    private RuleProviderRegistryCache ruleProviderCache;
+    
     @Override
     public void clear() throws RemoteException
     {
@@ -298,5 +307,16 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
         {
 
         }
+    }
+    
+    @Override
+    public RuleProviderRegistry getRuleProviderRegistry() throws RemoteException {
+    	buildRuleProviderRegistry();
+    	return ruleProviderRegistry;
+    }
+    
+    private void buildRuleProviderRegistry() {
+    	this.ruleProviderRegistry = new RuleProviderRegistryImpl();
+    	((RuleProviderRegistryImpl)ruleProviderRegistry).buildRuleProviders(ruleProviderCache);
     }
 }
