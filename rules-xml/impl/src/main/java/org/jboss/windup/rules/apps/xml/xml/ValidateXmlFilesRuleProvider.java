@@ -24,6 +24,7 @@ import org.jboss.windup.reporting.service.InlineHintService;
 import org.jboss.windup.reporting.service.TagSetService;
 import org.jboss.windup.reporting.category.IssueCategoryRegistry;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
+import org.jboss.windup.rules.files.condition.ProcessingIsOnlineGraphCondition;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.config.Rule;
@@ -56,7 +57,7 @@ public class ValidateXmlFilesRuleProvider extends AbstractRuleProvider
     {
         return ConfigurationBuilder.begin()
                     .addRule()
-                    .when(Query.fromType(XmlFileModel.class))
+                    .when(new ProcessingIsOnlineGraphCondition().and(Query.fromType(XmlFileModel.class)))
                     .perform(new ValidateAndRegisterClassification());
     }
 

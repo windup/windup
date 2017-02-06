@@ -21,6 +21,7 @@ import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.apps.xml.xml.ValidateXmlFilesRuleProvider;
 import org.jboss.windup.testutil.basics.WindupTestUtilMethods;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -146,6 +147,7 @@ public class ValidateXmlFilesRuleProviderWithInternetTest extends AbstractXsdVal
     }
 
     @Test
+    @Ignore // Ignoring for now as we are not currently running validation in offline mode
     public void testNotValidXmlInOfflineMode() throws Exception
     {
         try (GraphContext context = factory.create())
