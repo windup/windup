@@ -33,7 +33,7 @@ public class ResolveWebSphereWsClientBindingXmlRuleProvider extends IteratingRul
     public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
     {
         ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-        classificationService.attachClassification(context, payload, "WebSphere WS Client", "WebSphere Webservice Binding XML Descriptor.");
+        classificationService.attachClassification(event, context, payload, "WebSphere WS Client", "WebSphere Webservice Binding XML Descriptor.");
 
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
         technologyTagService.addTagToFileModel(payload, "WebSphere WS Client", TechnologyTagLevel.IMPORTANT);

@@ -87,7 +87,7 @@ public class AnalyzeJSPFileRuleProvider extends AbstractRuleProvider
             catch (Exception e)
             {
                 ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-                classificationService.attachClassification(context, sourceFile, UNPARSEABLE_JSP_CLASSIFICATION, UNPARSEABLE_JSP_DESCRIPTION);
+                classificationService.attachClassification(event, context, sourceFile, UNPARSEABLE_JSP_CLASSIFICATION, UNPARSEABLE_JSP_DESCRIPTION);
                 sourceFile.setParseError("JSP file could not be parsed: " + e.getMessage());
             }
         }

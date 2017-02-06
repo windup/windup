@@ -116,7 +116,7 @@ public class DiscoverHibernateConfigurationRuleProvider extends IteratingRulePro
         }
 
         Set<ProjectModel> applications = ProjectTraversalCache.getApplicationsForProject(event.getGraphContext(), xmlFileModel.getProjectModel());
-        Document doc = new XmlFileService(graphContext).loadDocumentQuiet(context, xmlFileModel);
+        Document doc = new XmlFileService(graphContext).loadDocumentQuiet(event, context, xmlFileModel);
         for (Element element : $(doc).find("session-factory").get())
         {
             HibernateSessionFactoryModel sessionFactoryModel = hibernateSessionFactoryService.create();

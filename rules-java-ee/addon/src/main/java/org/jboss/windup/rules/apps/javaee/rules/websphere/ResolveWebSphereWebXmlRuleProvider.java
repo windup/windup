@@ -56,7 +56,7 @@ public class ResolveWebSphereWebXmlRuleProvider extends IteratingRuleProvider<Xm
 
         // Classification done by websphere-xml-06000 - see WINDUPRULE-164
 
-        Document doc = xmlFileService.loadDocumentQuiet(context, payload);
+        Document doc = xmlFileService.loadDocumentQuiet(event, context, payload);
 
         VendorSpecificationExtensionService vendorSpecificationService = new VendorSpecificationExtensionService(event.getGraphContext());
         // mark as vendor extension; create reference to web.xml

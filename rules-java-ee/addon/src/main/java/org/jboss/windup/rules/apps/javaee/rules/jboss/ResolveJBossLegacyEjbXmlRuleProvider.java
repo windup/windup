@@ -57,7 +57,7 @@ public class ResolveJBossLegacyEjbXmlRuleProvider extends IteratingRuleProvider<
     public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
     {
         XmlFileService xmlFileService = new XmlFileService(event.getGraphContext());
-        Document doc = xmlFileService.loadDocumentQuiet(context, payload);
+        Document doc = xmlFileService.loadDocumentQuiet(event, context, payload);
 
         if ($(doc).find("enterprise-beans").isEmpty())
         {
@@ -73,7 +73,7 @@ public class ResolveJBossLegacyEjbXmlRuleProvider extends IteratingRuleProvider<
         GraphService<EjbMessageDrivenModel> mdbService = new GraphService<>(event.getGraphContext(), EjbMessageDrivenModel.class);
 
         ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-        classificationService.attachClassification(context, payload, "JBoss Legacy EJB XML",
+        classificationService.attachClassification(event, context, payload, "JBoss Legacy EJB XML",
                     "JBoss Enterprise Java Bean XML Descriptor prior to EAP 6.");
 
         VendorSpecificationExtensionService vendorSpecificationService = new VendorSpecificationExtensionService(event.getGraphContext());

@@ -139,7 +139,7 @@ public class DiscoverXmlFilesRuleProvider extends AbstractRuleProvider
                 file.setParseError(message);
             }
             new ClassificationService(event.getGraphContext())
-                .attachClassification(context, file, XmlFileService.UNPARSEABLE_XML_CLASSIFICATION, XmlFileService.UNPARSEABLE_XML_DESCRIPTION);
+                .attachClassification(event, context, file, XmlFileService.UNPARSEABLE_XML_CLASSIFICATION, XmlFileService.UNPARSEABLE_XML_DESCRIPTION);
         }
     }
 }

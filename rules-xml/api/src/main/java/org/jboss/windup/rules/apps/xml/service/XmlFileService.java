@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.ClassificationModel;
@@ -43,11 +44,11 @@ public class XmlFileService extends GraphService<XmlFileModel>
      *
      * @return Returns either the parsed {@link Document} or null if the {@link Document} could not be parsed
      */
-    public Document loadDocumentQuiet(EvaluationContext context, XmlFileModel model)
+    public Document loadDocumentQuiet(GraphRewrite event, EvaluationContext context, XmlFileModel model)
     {
         try
         {
-            return loadDocument(context, model);
+            return loadDocument(event, context, model);
         }
         catch(Exception ex)
         {
@@ -62,7 +63,7 @@ public class XmlFileService extends GraphService<XmlFileModel>
      *
      * @return Returns either the parsed {@link Document} or null if the {@link Document} could not be parsed
      */
-    public Document loadDocument(EvaluationContext context, XmlFileModel model) throws WindupException
+    public Document loadDocument(GraphRewrite event, EvaluationContext context, XmlFileModel model) throws WindupException
     {
         if (model.asFile().length() == 0)
         {
@@ -99,7 +100,7 @@ public class XmlFileService extends GraphService<XmlFileModel>
             document = null;
             final String message = "Failed to parse XML file: " + model.getFilePath() + ", due to: " + e.getMessage();
             LOG.log(Level.WARNING, message);
-            classificationService.attachClassification(context, model, UNPARSEABLE_XML_CLASSIFICATION, UNPARSEABLE_XML_DESCRIPTION);
+            classificationService.attachClassification(event, context, model, UNPARSEABLE_XML_CLASSIFICATION, UNPARSEABLE_XML_DESCRIPTION);
             model.setParseError(message);
             throw new WindupException(message, e);
         }

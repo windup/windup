@@ -187,7 +187,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
      * Attach a {@link ClassificationModel} with the given classificationText and description to the provided {@link FileModel}. If an existing Model
      * exists with the provided classificationText, that one will be used instead.
      */
-    public ClassificationModel attachClassification(Rule rule, FileModel fileModel, String classificationText, String description)
+    public ClassificationModel attachClassification(GraphRewrite event, Rule rule, FileModel fileModel, String classificationText, String description)
     {
         ClassificationModel model = getUnique(getTypedQuery().has(ClassificationModel.CLASSIFICATION, classificationText));
         if (model == null)
@@ -201,40 +201,41 @@ public class ClassificationService extends GraphService<ClassificationModel>
             if (fileModel instanceof SourceFileModel)
                 ((SourceFileModel) fileModel).setGenerateSourceReport(true);
 
+            ClassificationServiceCache.cacheClassificationFileModel(event, model, fileModel, true);
             return model;
         }
 
-        return attachClassification(model, fileModel);
+        return attachClassification(event, model, fileModel);
     }
 
     /**
      * Attach a {@link ClassificationModel} with the given classificationText and description to the provided {@link FileModel}. If an existing Model
      * exists with the provided classificationText, that one will be used instead.
      */
-    public ClassificationModel attachClassification(EvaluationContext context, FileModel fileModel, String classificationText, String description)
+    public ClassificationModel attachClassification(GraphRewrite event, EvaluationContext context, FileModel fileModel, String classificationText, String description)
     {
         Rule rule = (Rule) context.get(Rule.class);
-        return attachClassification(rule, fileModel, classificationText, description);
+        return attachClassification(event, rule, fileModel, classificationText, description);
     }
 
-    private boolean isClassificationLinkedToFileModel(ClassificationModel classificationModel, FileModel fileModel)
+    private boolean isClassificationLinkedToFileModel(GraphRewrite event, ClassificationModel classificationModel, FileModel fileModel)
     {
-        return ClassificationServiceCache.isClassificationLinkedToFileModel(classificationModel, fileModel);
+        return ClassificationServiceCache.isClassificationLinkedToFileModel(event, classificationModel, fileModel);
     }
 
     /**
      * This method just attaches the {@link ClassificationModel} to the {@link FileModel}.
      * It will only do so if this link is not already present.
      */
-    public ClassificationModel attachClassification(ClassificationModel classificationModel, FileModel fileModel)
+    public ClassificationModel attachClassification(GraphRewrite event, ClassificationModel classificationModel, FileModel fileModel)
     {
-        if (!isClassificationLinkedToFileModel(classificationModel, fileModel))
+        if (!isClassificationLinkedToFileModel(event, classificationModel, fileModel))
         {
             classificationModel.addFileModel(fileModel);
             if (fileModel instanceof SourceFileModel)
                 ((SourceFileModel) fileModel).setGenerateSourceReport(true);
         }
-        ClassificationServiceCache.cacheClassificationFileModel(classificationModel, fileModel, true);
+        ClassificationServiceCache.cacheClassificationFileModel(event, classificationModel, fileModel, true);
 
         return classificationModel;
     }

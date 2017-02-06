@@ -7,6 +7,7 @@ import org.apache.commons.collections.map.LRUMap;
 import org.jboss.windup.config.AbstractRuleLifecycleListener;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleLifecycleListener;
+import org.jboss.windup.config.Variables;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.ClassificationModel;
 
@@ -21,7 +22,17 @@ class ClassificationServiceCache extends AbstractRuleLifecycleListener implement
     /**
      * Keep a cache of items files associated with classification in order to improve performance.
      */
-    private static final Map<String, Boolean> classificationFileModelCache = Collections.synchronizedMap(new LRUMap(30000));
+    @SuppressWarnings("unchecked")
+    private static synchronized Map<String, Boolean> getCache(GraphRewrite event)
+    {
+        Map<String, Boolean> result = (Map<String, Boolean>)event.getRewriteContext().get(ClassificationServiceCache.class);
+        if (result == null)
+        {
+            result = Collections.synchronizedMap(new LRUMap(30000));
+            event.getRewriteContext().put(ClassificationServiceCache.class, result);
+        }
+        return result;
+    }
 
     /**
      * Indicates whether or not the given {@link FileModel} is already attached to the {@link ClassificationModel}.
@@ -30,19 +41,19 @@ class ClassificationServiceCache extends AbstractRuleLifecycleListener implement
      *
      * Outside of tests, this should be a safe assumption to make.
      */
-    static boolean isClassificationLinkedToFileModel(ClassificationModel classificationModel, FileModel fileModel)
+    static boolean isClassificationLinkedToFileModel(GraphRewrite event, ClassificationModel classificationModel, FileModel fileModel)
     {
         String key = getClassificationFileModelCacheKey(classificationModel, fileModel);
-        Boolean linked = classificationFileModelCache.get(key);
+        Boolean linked = getCache(event).get(key);
 
         if (linked == null)
         {
             GremlinPipeline<Vertex, Vertex> existenceCheck = new GremlinPipeline<>(classificationModel.asVertex());
             existenceCheck.out(ClassificationModel.FILE_MODEL);
-            existenceCheck.retain(Collections.singleton(classificationModel.asVertex()));
+            existenceCheck.retain(Collections.singleton(fileModel.asVertex()));
 
             linked = existenceCheck.iterator().hasNext();
-            cacheClassificationFileModel(classificationModel, fileModel, linked);
+            cacheClassificationFileModel(event, classificationModel, fileModel, linked);
         }
         return linked;
     }
@@ -50,10 +61,10 @@ class ClassificationServiceCache extends AbstractRuleLifecycleListener implement
     /**
      * Cache the status of the link between the provided {@link ClassificationModel} and the given {@link FileModel}.
      */
-    static void cacheClassificationFileModel(ClassificationModel classificationModel, FileModel fileModel, boolean linked)
+    static void cacheClassificationFileModel(GraphRewrite event, ClassificationModel classificationModel, FileModel fileModel, boolean linked)
     {
         String key = getClassificationFileModelCacheKey(classificationModel, fileModel);
-        classificationFileModelCache.put(key, linked);
+        getCache(event).put(key, linked);
     }
 
     private static String getClassificationFileModelCacheKey(ClassificationModel classificationModel, FileModel fileModel)
@@ -70,12 +81,12 @@ class ClassificationServiceCache extends AbstractRuleLifecycleListener implement
     @Override
     public void beforeExecution(GraphRewrite event)
     {
-        classificationFileModelCache.clear();
+        getCache(event).clear();
     }
 
     @Override
     public void afterExecution(GraphRewrite event)
     {
-        classificationFileModelCache.clear();
+        getCache(event).clear();
     }
 }

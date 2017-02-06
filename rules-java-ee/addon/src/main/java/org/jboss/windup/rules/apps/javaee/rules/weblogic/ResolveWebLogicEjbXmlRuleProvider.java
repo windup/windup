@@ -69,7 +69,7 @@ public class ResolveWebLogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
         GraphService<EjbMessageDrivenModel> mdbService = new GraphService<>(event.getGraphContext(), EjbMessageDrivenModel.class);
 
         ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-        ClassificationModel classif = classificationService.attachClassification(context, weblogicEjbXml, "WebLogic EJB XML", "WebLogic Enterprise Java Bean XML Descriptor.");
+        ClassificationModel classif = classificationService.attachClassification(event, context, weblogicEjbXml, "WebLogic EJB XML", "WebLogic Enterprise Java Bean XML Descriptor.");
         // TODO -- this classification duplicates a hint/clsf in the
         // weblogic-xml-descriptor-04000 XML rule. This should probably get a
         // better fix, but for now the important thing is to avoid duplicating
@@ -81,7 +81,7 @@ public class ResolveWebLogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
         technologyTagService.addTagToFileModel(weblogicEjbXml, "WebLogic EJB XML", TechnologyTagLevel.IMPORTANT);
 
-        Document doc = xmlFileService.loadDocumentQuiet(context, weblogicEjbXml);
+        Document doc = xmlFileService.loadDocumentQuiet(event, context, weblogicEjbXml);
 
         // mark as vendor extension; create reference to ejb-jar.xml
         vendorSpecificationService.associateAsVendorExtension(weblogicEjbXml, "ejb-jar.xml");
