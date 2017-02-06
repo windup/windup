@@ -58,10 +58,10 @@ public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileMod
     public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
     {
         XmlFileService xmlFileService = new XmlFileService(event.getGraphContext());
-        Document doc = xmlFileService.loadDocumentQuiet(context, payload);
+        Document doc = xmlFileService.loadDocumentQuiet(event, context, payload);
         if (doc != null && isWebXml(payload, doc))
         {
-            addWebXmlMetadata(context, event.getGraphContext(), payload, doc);
+            addWebXmlMetadata(event, context, event.getGraphContext(), payload, doc);
         }
     }
 
@@ -113,12 +113,12 @@ public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileMod
         return version;
     }
 
-    private void addWebXmlMetadata(EvaluationContext evaluationContext, GraphContext context, XmlFileModel xml, Document doc)
+    private void addWebXmlMetadata(GraphRewrite event, EvaluationContext evaluationContext, GraphContext context, XmlFileModel xml, Document doc)
     {
         ClassificationService classificationService = new ClassificationService(context);
         TechnologyTagService technologyTagService = new TechnologyTagService(context);
 
-        classificationService.attachClassification(evaluationContext, xml, "Web XML", " Web Application Deployment Descriptors");
+        classificationService.attachClassification(event, evaluationContext, xml, "Web XML", " Web Application Deployment Descriptors");
         TechnologyTagModel technologyTag = technologyTagService.addTagToFileModel(xml, TECH_TAG, TECH_TAG_LEVEL);
         WebXmlService webXmlService = new WebXmlService(context);
 

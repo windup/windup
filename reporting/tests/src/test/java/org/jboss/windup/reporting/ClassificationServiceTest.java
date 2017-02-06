@@ -12,7 +12,9 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
+import org.jboss.forge.furnace.util.Lists;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -107,6 +109,35 @@ public class ClassificationServiceTest
                 totalEffort += effortEntry.getKey() * effortEntry.getValue();
 
             Assert.assertEquals(3, totalEffort);
+        }
+    }
+
+    @Test
+    public void testClassificationAlreadyAttached() throws Exception
+    {
+        try (GraphContext context = factory.create())
+        {
+            GraphRewrite event = new GraphRewrite(context);
+            ClassificationService classificationService = new ClassificationService(context);
+            FileService fileService = new FileService(context);
+            FileModel file1 = fileService.createByFilePath("/fakepath1");
+            FileModel file2 = fileService.createByFilePath("/fakepath2");
+
+            ClassificationModel classificationModel = classificationService.create();
+            classificationModel.setClassification("Sample Classification");
+            classificationModel.setDescription("Desc");
+            classificationModel.setEffort(0);
+
+            classificationModel.addFileModel(file1);
+
+            Assert.assertNotNull(classificationModel.getFileModels());
+            Assert.assertEquals(1, Lists.toList(classificationModel.getFileModels()).size());
+
+            classificationService.attachClassification(event, classificationModel, file2);
+            Assert.assertEquals(2, Lists.toList(classificationModel.getFileModels()).size());
+
+            classificationService.attachClassification(event, classificationModel, file1);
+            Assert.assertEquals(2, Lists.toList(classificationModel.getFileModels()).size());
         }
     }
 

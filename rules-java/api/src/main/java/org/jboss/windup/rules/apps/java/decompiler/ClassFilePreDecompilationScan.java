@@ -90,7 +90,7 @@ public class ClassFilePreDecompilationScan extends AbstractIterationOperation<Ja
             final String message = "BCEL was unable to parse class file '" + javaClassFileModel.getFilePath() + "':\n\t" + e.getMessage();
             LOG.log(Level.WARNING, message);
             ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-            classificationService.attachClassification(context, javaClassFileModel, UNPARSEABLE_CLASS_CLASSIFICATION, UNPARSEABLE_CLASS_DESCRIPTION);
+            classificationService.attachClassification(event, context, javaClassFileModel, UNPARSEABLE_CLASS_CLASSIFICATION, UNPARSEABLE_CLASS_DESCRIPTION);
             javaClassFileModel.setParseError(message);
             javaClassFileModel.setSkipDecompilation(true);
         }
@@ -141,7 +141,7 @@ public class ClassFilePreDecompilationScan extends AbstractIterationOperation<Ja
             final String message = "ASM was unable to parse class file '" + fileModel.getFilePath() + "':\n\t" + e.getMessage();
             LOG.log(Level.WARNING, message, e);
             ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-            classificationService.attachClassification(context, fileModel, UNPARSEABLE_CLASS_CLASSIFICATION, UNPARSEABLE_CLASS_DESCRIPTION);
+            classificationService.attachClassification(event, context, fileModel, UNPARSEABLE_CLASS_CLASSIFICATION, UNPARSEABLE_CLASS_DESCRIPTION);
             fileModel.setParseError(message);
         }
     }

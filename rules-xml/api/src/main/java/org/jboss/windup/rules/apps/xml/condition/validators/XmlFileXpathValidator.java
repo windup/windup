@@ -92,7 +92,7 @@ public class XmlFileXpathValidator implements XmlFileValidator
         LOG.fine("XmlFile compiled: " + this.xpathString + " to " + xpathStringWithParameterFunctions);
 
         XmlFileService xmlFileService = new XmlFileService(event.getGraphContext());
-        Document document = xmlFileService.loadDocumentQuiet(context, model);
+        Document document = xmlFileService.loadDocumentQuiet(event, context, model);
         if (document != null)
         {
             final ParameterStore store = DefaultParameterStore.getInstance(context);

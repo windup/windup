@@ -78,7 +78,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
     public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
     {
         try {
-            Document doc = new XmlFileService(event.getGraphContext()).loadDocument(context, payload);
+            Document doc = new XmlFileService(event.getGraphContext()).loadDocument(event, context, payload);
             extractMetadata(event, context, payload, doc);
         }
         catch (Exception ex)
@@ -92,7 +92,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
         ClassificationService classificationService = new ClassificationService(event.getGraphContext());
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
         TechnologyTagModel technologyTag = technologyTagService.addTagToFileModel(xmlModel, TECH_TAG, TECH_TAG_LEVEL);
-        classificationService.attachClassification(context, xmlModel, "EJB XML", "Enterprise Java Bean XML Descriptor.");
+        classificationService.attachClassification(event, context, xmlModel, "EJB XML", "Enterprise Java Bean XML Descriptor.");
 
         // otherwise, it is a EJB-JAR XML.
         if (xmlModel.getDoctype() != null)

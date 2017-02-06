@@ -63,7 +63,7 @@ public class GenerateJBossEjbDescriptorRuleProvider extends AbstractRuleProvider
                 for (FileModel inputPath : configurationModel.getInputPaths())
                 {
                     ProjectModel application = inputPath.getProjectModel();
-                    createReport(context, event.getGraphContext(), application);
+                    createReport(event, context, event.getGraphContext(), application);
                 }
             }
 
@@ -75,7 +75,7 @@ public class GenerateJBossEjbDescriptorRuleProvider extends AbstractRuleProvider
         });
     }
 
-    private void createReport(EvaluationContext evaluationContext, GraphContext context, ProjectModel projectModel)
+    private void createReport(GraphRewrite event, EvaluationContext evaluationContext, GraphContext context, ProjectModel projectModel)
     {
         ClassificationService classificationService = new ClassificationService(context);
         VendorSpecificationExtensionService vendorSpecificService = new VendorSpecificationExtensionService(context);
@@ -123,7 +123,7 @@ public class GenerateJBossEjbDescriptorRuleProvider extends AbstractRuleProvider
             for (VendorSpecificationExtensionModel vendorSpecificExtension : vendorSpecificService.getVendorSpecificationExtensions(ejbDescriptor))
             {
                 LOG.info("Vendor specific: " + vendorSpecificExtension.getFileName());
-                classificationService.attachClassification(evaluationContext, vendorSpecificExtension, "EJB Specification Extension",
+                classificationService.attachClassification(event, evaluationContext, vendorSpecificExtension, "EJB Specification Extension",
                             "Vendor Specific EJB Specification Extension");
                 vendorSpecificExtension.addLinkToTransformedFile(newDescriptorLink);
             }

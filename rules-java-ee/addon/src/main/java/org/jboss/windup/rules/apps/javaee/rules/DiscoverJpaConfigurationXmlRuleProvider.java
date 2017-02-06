@@ -62,7 +62,7 @@ public class DiscoverJpaConfigurationXmlRuleProvider extends IteratingRuleProvid
                 continue;
 
             try {
-                Document doc = new XmlFileService(event.getGraphContext()).loadDocument(context, xml);
+                Document doc = new XmlFileService(event.getGraphContext()).loadDocument(event, context, xml);
                 extractMetadata(event.getGraphContext(), xml, doc);
             }
             catch (Exception ex) {

@@ -171,7 +171,7 @@ public class ValidateXmlFilesRuleProvider extends AbstractRuleProvider
         sourceFile.setGenerateSourceReport(true);
 
         ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-        ClassificationModel model = classificationService.attachClassification(context, sourceFile, XmlFileModel.NOT_VALID_XML,
+        ClassificationModel model = classificationService.attachClassification(event, context, sourceFile, XmlFileModel.NOT_VALID_XML,
                     null);
         model.setEffort(0); // do not rely on default 0 value and set it that transparently
 

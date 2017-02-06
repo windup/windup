@@ -55,7 +55,7 @@ public class ResolveJBossWebXmlRuleProvider extends IteratingRuleProvider<XmlFil
 
         // Classification done by jboss-eap5-xml-09000 - see WINDUPRULE-164
 
-        Document doc = xmlFileService.loadDocumentQuiet(context, payload);
+        Document doc = xmlFileService.loadDocumentQuiet(event, context, payload);
 
         VendorSpecificationExtensionService vendorSpecificationService = new VendorSpecificationExtensionService(event.getGraphContext());
         //mark as vendor extension; create reference to web.xml

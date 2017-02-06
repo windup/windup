@@ -157,7 +157,7 @@ public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
                 {
                     LOG.log(Level.WARNING, "Could not parse java file: " + payload.getFilePath() + " due to: " + e.getMessage(), e);
                     ClassificationService classificationService = new ClassificationService(graphContext);
-                    classificationService.attachClassification(context, payload, UNPARSEABLE_JAVA_CLASSIFICATION, UNPARSEABLE_JAVA_DESCRIPTION);
+                    classificationService.attachClassification(event, context, payload, UNPARSEABLE_JAVA_CLASSIFICATION, UNPARSEABLE_JAVA_DESCRIPTION);
                     payload.setParseError(UNPARSEABLE_JAVA_CLASSIFICATION + ": " + e.getMessage());
                     return;
                 }
@@ -178,7 +178,7 @@ public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
             catch (ParserException e)
             {
                 ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-                classificationService.attachClassification(context, sourceFileModel, UNPARSEABLE_JAVA_CLASSIFICATION, UNPARSEABLE_JAVA_DESCRIPTION);
+                classificationService.attachClassification(event, context, sourceFileModel, UNPARSEABLE_JAVA_CLASSIFICATION, UNPARSEABLE_JAVA_DESCRIPTION);
                 sourceFileModel.setParseError(UNPARSEABLE_JAVA_CLASSIFICATION + ": " + e.getMessage());
                 return;
             }

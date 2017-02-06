@@ -66,14 +66,14 @@ public class ResolveWebSphereEjbBindingXmlRuleProvider extends IteratingRuleProv
         GraphService<EjbMessageDrivenModel> mdbService = new GraphService<>(event.getGraphContext(), EjbMessageDrivenModel.class);
 
         ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-        ClassificationModel classification = classificationService.attachClassification(context, payload, "WebSphere EJB Binding",
+        ClassificationModel classification = classificationService.attachClassification(event, context, payload, "WebSphere EJB Binding",
                     "WebSphere Enterprise Java Bean Binding XML Descriptor");
         classification.setEffort(1);
 
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
         technologyTagService.addTagToFileModel(payload, "WebSphere EJB", TechnologyTagLevel.IMPORTANT);
 
-        Document doc = xmlFileService.loadDocumentQuiet(context, payload);
+        Document doc = xmlFileService.loadDocumentQuiet(event, context, payload);
 
         if (doc == null)
         {

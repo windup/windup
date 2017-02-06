@@ -258,7 +258,7 @@ public class Classification extends ParameterizedIterationOperation<FileModel> i
                 }
             }
 
-            classificationService.attachClassification(classification, payload);
+            classificationService.attachClassification(event, classification, payload);
             if (payload instanceof SourceFileModel)
                 ((SourceFileModel) payload).setGenerateSourceReport(true);
             LOG.info("Classification added to " + payload.getPrettyPathWithinProject() + " [" + this + "] ");

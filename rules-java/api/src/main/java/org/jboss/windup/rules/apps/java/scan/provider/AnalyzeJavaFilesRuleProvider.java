@@ -236,7 +236,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                     {
                         ClassificationService classificationService = new ClassificationService(event.getGraphContext());
                         JavaSourceFileModel sourceFileModel = getJavaSourceFileModel(event.getGraphContext(), failure.getKey());
-                        classificationService.attachClassification(context, sourceFileModel, UNPARSEABLE_JAVA_CLASSIFICATION, UNPARSEABLE_JAVA_DESCRIPTION);
+                        classificationService.attachClassification(event, context, sourceFileModel, UNPARSEABLE_JAVA_CLASSIFICATION, UNPARSEABLE_JAVA_DESCRIPTION);
                         sourceFileModel.setParseError(failure.getValue());
                     }
 
@@ -260,7 +260,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                                 LOG.log(Level.WARNING, message, e);
                                 ClassificationService classificationService = new ClassificationService(event.getGraphContext());
                                 JavaSourceFileModel sourceFileModel = getJavaSourceFileModel(event.getGraphContext(), unprocessed);
-                                classificationService.attachClassification(context, sourceFileModel, UNPARSEABLE_JAVA_CLASSIFICATION, UNPARSEABLE_JAVA_DESCRIPTION);
+                                classificationService.attachClassification(event, context, sourceFileModel, UNPARSEABLE_JAVA_CLASSIFICATION, UNPARSEABLE_JAVA_DESCRIPTION);
                                 sourceFileModel.setParseError(message);
                             }
                             estimate.addWork(1);
@@ -278,7 +278,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                         {
                             JavaSourceFileModel sourceFileModel = getJavaSourceFileModel(event.getGraphContext(), unprocessed);
                             message.append("\tFailed to process: " + unprocessed + "\n");
-                            classificationService.attachClassification(context, sourceFileModel, UNPARSEABLE_JAVA_CLASSIFICATION, UNPARSEABLE_JAVA_DESCRIPTION);
+                            classificationService.attachClassification(event, context, sourceFileModel, UNPARSEABLE_JAVA_CLASSIFICATION, UNPARSEABLE_JAVA_DESCRIPTION);
                             // Is the classification attached 2nd time here?
                         }
                         LOG.warning(message.toString());
