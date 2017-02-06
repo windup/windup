@@ -131,19 +131,19 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest
         TestApplicationListUtil util = new TestApplicationListUtil();
         util.loadPage(reportPath);
 
-        Assert.assertEquals(642, util.getTotalStoryPoints(MAIN_APP_FILENAME));
-        Assert.assertEquals(590, util.getSharedStoryPoints(MAIN_APP_FILENAME));
+        Assert.assertEquals(636, util.getTotalStoryPoints(MAIN_APP_FILENAME));
+        Assert.assertEquals(584, util.getSharedStoryPoints(MAIN_APP_FILENAME));
         Assert.assertEquals(52, util.getUniqueStoryPoints(MAIN_APP_FILENAME));
 
-        Assert.assertEquals(642, util.getTotalStoryPoints(SECOND_APP_FILENAME));
-        Assert.assertEquals(590, util.getSharedStoryPoints(SECOND_APP_FILENAME));
+        Assert.assertEquals(636, util.getTotalStoryPoints(SECOND_APP_FILENAME));
+        Assert.assertEquals(584, util.getSharedStoryPoints(SECOND_APP_FILENAME));
         Assert.assertEquals(52, util.getUniqueStoryPoints(SECOND_APP_FILENAME));
 
-        Assert.assertEquals(582, util.getTotalStoryPoints(THIRD_APP_FILENAME));
-        Assert.assertEquals(582, util.getSharedStoryPoints(THIRD_APP_FILENAME));
+        Assert.assertEquals(576, util.getTotalStoryPoints(THIRD_APP_FILENAME));
+        Assert.assertEquals(576, util.getSharedStoryPoints(THIRD_APP_FILENAME));
         Assert.assertEquals(0, util.getUniqueStoryPoints(THIRD_APP_FILENAME));
 
-        Assert.assertEquals(590, util.getTotalStoryPoints(ProjectService.SHARED_LIBS_APP_NAME));
+        Assert.assertEquals(584, util.getTotalStoryPoints(ProjectService.SHARED_LIBS_APP_NAME));
     }
 
     private void validateReportIndex(GraphContext graphContext)
@@ -160,17 +160,17 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest
         TestReportIndexReportUtil reportIndex = new TestReportIndexReportUtil();
 
         reportIndex.loadPage(mainReportPath);
-        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Mandatory", 2, 6));
+        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Mandatory", 2, 0));
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Optional", 92, 636));
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Potential Issues", 0, 0));
 
         reportIndex.loadPage(secondAppPath);
-        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Mandatory", 2, 6));
+        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Mandatory", 2, 0));
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Optional", 92, 636));
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Potential Issues", 0, 0));
 
         reportIndex.loadPage(sharedLibsPath);
-        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Mandatory", 2, 6));
+        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Mandatory", 2, 0));
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Optional", 88, 584));
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("Potential Issues", 0, 0));
     }
