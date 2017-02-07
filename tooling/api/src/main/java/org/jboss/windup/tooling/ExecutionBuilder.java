@@ -116,4 +116,9 @@ public interface ExecutionBuilder extends Remote
      * Returns the registry containing the rule providers.
      */
     RuleProviderRegistry getRuleProviderRegistry(List<String> paths) throws RemoteException;
+    
+    /**
+     * Returns the registry containing the system rule providers.
+     */
+    RuleProviderRegistry getSystemRuleProviderRegistry() throws RemoteException;
 }

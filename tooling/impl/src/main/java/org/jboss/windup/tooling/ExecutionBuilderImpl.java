@@ -22,6 +22,7 @@ import org.jboss.forge.furnace.util.Lists;
 import org.jboss.windup.config.SkipReportsRenderingOption;
 import org.jboss.windup.config.loader.RuleLoader;
 import org.jboss.windup.config.loader.RuleLoaderContext;
+import org.jboss.windup.config.metadata.RuleProviderRegistryCache;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.graph.GraphContext;
@@ -54,6 +55,9 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
 
     @Inject
     private Furnace furnace;
+    
+    @Inject
+    private RuleProviderRegistryCache ruleProviderCache;
 
     private String windupHome;
     private WindupToolingProgressMonitor progressMonitor;
@@ -284,6 +288,15 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
         ruleProviderRegistry.buildRuleProviders(registry);
         return ruleProviderRegistry;
     }
+    
+    @Override
+    public RuleProviderRegistry getSystemRuleProviderRegistry() throws RemoteException
+    {
+        RuleProviderRegistryImpl ruleProviderRegistry = new RuleProviderRegistryImpl();
+        ruleProviderRegistry.buildRuleProviders(ruleProviderCache.getRuleProviderRegistry());
+        return ruleProviderRegistry;
+    }
+
 
     private class WindupProgressLoggingHandler extends Handler
     {

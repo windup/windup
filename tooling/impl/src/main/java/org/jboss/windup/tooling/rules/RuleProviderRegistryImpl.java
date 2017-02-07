@@ -14,6 +14,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.config.RuleUtils;
 import org.jboss.windup.config.metadata.RuleProviderMetadata;
+import org.jboss.windup.config.metadata.RuleProviderRegistryCache;
 import org.jboss.windup.config.metadata.TechnologyReference;
 import org.jboss.windup.config.phase.MigrationRulesPhase;
 
@@ -28,7 +29,7 @@ public class RuleProviderRegistryImpl implements RuleProviderRegistry
     {
         return ruleProviders;
     }
-
+    
     public void buildRuleProviders(org.jboss.windup.config.metadata.RuleProviderRegistry registry)
     {
         for (org.jboss.windup.config.RuleProvider provider : registry.getProviders())

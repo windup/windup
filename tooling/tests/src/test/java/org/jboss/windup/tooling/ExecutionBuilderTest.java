@@ -141,6 +141,19 @@ public class ExecutionBuilderTest
                     .collect(Collectors.toList());
         Assert.assertTrue(xmlProviders.size() > 0);
     }
+    
+    @Test
+    public void testSystemRuleProviderRegistry() throws RemoteException
+    {
+        rmiServer.startServer(PORT, "");
+
+        ExecutionBuilder builder = getExecutionBuilderFromRMIRegistry();
+        Assert.assertNotNull(builder);
+
+        RuleProviderRegistry registry = builder.getSystemRuleProviderRegistry();
+        Assert.assertNotNull(registry);
+        Assert.assertFalse(registry.getRuleProviders().isEmpty());
+    }
 
     @Test
     public void testSchemaGeneration() throws Exception
