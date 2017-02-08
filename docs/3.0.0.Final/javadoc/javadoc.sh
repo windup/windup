@@ -1,0 +1,1 @@
+/home/mnovotny/apps/jdk1.8.0_112/jre/../bin/javadoc -J-Xmx2400m @options @packages
