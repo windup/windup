@@ -2,25 +2,37 @@ package org.jboss.windup.tests.bootstrap;
 
 import static org.junit.Assert.assertTrue;
 
+import org.junit.Before;
 import org.junit.Test;
 
-public class DisplayHelpCommandTest extends AbstractBootstrapTest {
+public class DisplayHelpCommandTest extends AbstractBootstrapTest
+{
+    @Before
+    public void insureHelpCacheIsAvailable()
+    {
+        bootstrap("--generateCaches");
+    }
+
     @Test
-    public void noArgument() {
+    public void noArgument()
+    {
         test();
     }
 
     @Test
-    public void longArgument() {
+    public void longArgument()
+    {
         test("--help");
     }
 
     @Test
-    public void shortArgument() {
+    public void shortArgument()
+    {
         test("-h");
     }
 
-    private void test(String... args) {
+    private void test(String... args)
+    {
         bootstrap(args);
 
         assertTrue(capturedOutput().contains("Windup Options:"));
