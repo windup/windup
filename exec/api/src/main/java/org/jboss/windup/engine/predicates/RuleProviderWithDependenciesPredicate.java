@@ -38,45 +38,45 @@ public class RuleProviderWithDependenciesPredicate implements Predicate<RuleProv
     @Override
     public boolean accept(RuleProvider provider)
     {
-        if (provider instanceof AbstractRuleProvider)
+        if (!(provider instanceof AbstractRuleProvider))
+            return false;
+
+        // FIXME This execution index API needs to be exposed publicly or handled via another pattern.
+        int examinedProviderExecutionIndex = ((AbstractRuleProvider) provider).getExecutionIndex();
+
+        for (RuleProvider currentRuleProvider : this.ruleProviders)
         {
-            // FIXME This execution index API needs to be exposed publicly or handled via another pattern.
-            int typeExecutionIndex = ((AbstractRuleProvider) provider).getExecutionIndex();
-            for (RuleProvider ruleProvider : this.ruleProviders)
+            // Is it before the examined one?
+            int otherExecutionIndex = ((AbstractRuleProvider) currentRuleProvider).getExecutionIndex();
+            if (otherExecutionIndex <= examinedProviderExecutionIndex)
             {
-                int otherExecutionIndex = ((AbstractRuleProvider) ruleProvider).getExecutionIndex();
-                if (otherExecutionIndex <= typeExecutionIndex)
+                LOG.fine("Accepting provider '" + provider.getMetadata().getID() + "' because it's before: " + currentRuleProvider.getMetadata().getID());
+                return true;
+            }
+
+            List<Class<? extends RuleProvider>> executeAfter = currentRuleProvider.getMetadata().getExecuteAfter();
+            List<String> executeAfterIDs = currentRuleProvider.getMetadata().getExecuteAfterIDs();
+            if ((executeAfter.contains(provider.getClass())) || executeAfterIDs.contains(provider.getMetadata().getID()))
+            {
+                LOG.fine("Accepting provider: " + provider.getMetadata().getID());
+                return true;
+            }
+            for (Class<? extends RuleProvider> afterType : executeAfter)
+            {
+                if (afterType.isAssignableFrom(provider.getClass()))
                 {
                     LOG.fine("Accepting provider: " + provider.getMetadata().getID());
                     return true;
                 }
-                else
-                {
-                    List<Class<? extends RuleProvider>> executeAfter = ruleProvider.getMetadata().getExecuteAfter();
-                    List<String> executeAfterIDs = ruleProvider.getMetadata().getExecuteAfterIDs();
-                    if ((executeAfter.contains(provider.getClass())) || executeAfterIDs.contains(provider.getMetadata().getID()))
-                    {
-                        LOG.fine("Accepting provider: " + provider.getMetadata().getID());
-                        return true;
-                    }
-                    for (Class<? extends RuleProvider> afterType : executeAfter)
-                    {
-                        if (afterType.isAssignableFrom(provider.getClass()))
-                        {
-                            LOG.fine("Accepting provider: " + provider.getMetadata().getID());
-                            return true;
-                        }
-                    }
-                    if (ruleProvider.getClass().isAssignableFrom(provider.getClass()))
-                    {
-                        LOG.fine("Accepting provider: " + provider.getMetadata().getID());
-                        return true;
-                    }
-                }
             }
-
-            LOG.fine("Skipping provider: " + provider.getMetadata().getID());
+            if (currentRuleProvider.getClass().isAssignableFrom(provider.getClass()))
+            {
+                LOG.fine("Accepting provider: " + provider.getMetadata().getID());
+                return true;
+            }
         }
+
+        LOG.fine("Skipping provider: " + provider.getMetadata().getID());
         return false;
     }
 
