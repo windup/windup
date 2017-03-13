@@ -14,14 +14,14 @@ import org.jboss.forge.furnace.util.Assert;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.parameters.ParameterizedIterationOperation;
 import org.jboss.windup.graph.model.LinkModel;
-import org.jboss.windup.reporting.model.QuickfixModel;
 import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.graph.service.GraphService;
-import org.jboss.windup.reporting.model.InlineHintModel;
-import org.jboss.windup.reporting.service.TagSetService;
 import org.jboss.windup.reporting.category.IssueCategory;
 import org.jboss.windup.reporting.category.IssueCategoryModel;
 import org.jboss.windup.reporting.category.IssueCategoryRegistry;
+import org.jboss.windup.reporting.model.InlineHintModel;
+import org.jboss.windup.reporting.model.QuickfixModel;
+import org.jboss.windup.reporting.service.TagSetService;
 import org.jboss.windup.rules.files.model.FileLocationModel;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.Logging;
@@ -45,6 +45,7 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
     private List<Link> links = new ArrayList<>();
     private Set<String> tags = Collections.emptySet();
     private List<Quickfix> quickfixes = new ArrayList<>();
+    private boolean skipTooling = false;
 
     protected Hint(String variable)
     {
@@ -164,15 +165,10 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
             }
 
             GraphService<QuickfixModel> quickfixService = new GraphService<>(event.getGraphContext(), QuickfixModel.class);
+
             for (Quickfix quickfix : quickfixes)
             {
-                QuickfixModel quickfixModel = quickfixService.create();
-                quickfixModel.setQuickfixType(quickfix.getType());
-                quickfixModel.setName(StringUtils.trim(quickfix.getName()));
-                quickfixModel.setReplacement(StringUtils.trim(quickfix.getReplacementStr()));
-                quickfixModel.setSearch(StringUtils.trim(quickfix.getSearchStr()));
-                quickfixModel.setNewline(StringUtils.trim(quickfix.getNewline()));
-
+            	QuickfixModel quickfixModel = buildQuickfixModel(quickfixService, quickfix, locationModel);
                 hintModel.addQuickfix(quickfixModel);
             }
 
@@ -191,7 +187,18 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
             ExecutionStatistics.get().end("Hint.performParameterized");
         }
     }
-
+    
+    private QuickfixModel buildQuickfixModel(GraphService<QuickfixModel> quickfixService, Quickfix quickfix, FileLocationModel locationModel)
+    {
+    	QuickfixModel quickfixModel = quickfixService.create();
+    	quickfixModel.setQuickfixType(quickfix.getType());
+        quickfixModel.setName(StringUtils.trim(quickfix.getName()));
+        quickfixModel.setReplacement(StringUtils.trim(quickfix.getReplacementStr()));
+        quickfixModel.setSearch(StringUtils.trim(quickfix.getSearchStr()));
+        quickfixModel.setNewline(StringUtils.trim(quickfix.getNewline()));
+        return quickfixModel;
+    }
+    
     @Override
     public HintEffort withEffort(int effort)
     {
@@ -305,5 +312,11 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
     {
         this.quickfixes.add(quickfix);
         return this;
+    }
+    
+    @Override
+    public HintText skipTooling() {
+    	this.skipTooling = true;
+    	return this;
     }
 }

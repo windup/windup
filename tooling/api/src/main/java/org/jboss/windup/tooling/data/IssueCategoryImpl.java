@@ -1,7 +1,5 @@
 package org.jboss.windup.tooling.data;
 
-import org.jboss.windup.reporting.category.IssueCategoryModel;
-
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
@@ -15,13 +13,13 @@ public class IssueCategoryImpl implements IssueCategory
     private String description;
     private Integer priority;
 
-    public IssueCategoryImpl(IssueCategoryModel issueCategoryModel)
+    public IssueCategoryImpl(String categoryId, String origin, String name, String description, Integer priority)
     {
-        this.categoryID = issueCategoryModel.getCategoryID();
-        this.origin = issueCategoryModel.getOrigin();
-        this.name = issueCategoryModel.getName();
-        this.description = issueCategoryModel.getDescription();
-        this.priority = issueCategoryModel.getPriority();
+        this.categoryID = categoryId;
+        this.origin = origin;
+        this.name = name;
+        this.description = description;
+        this.priority = priority;
     }
 
     @Override

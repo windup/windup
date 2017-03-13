@@ -16,6 +16,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.LinkModel;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.reporting.category.IssueCategoryModel;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.model.QuickfixModel;
@@ -65,11 +66,11 @@ public class ExecutionResultsImpl implements ExecutionResults
         this.reportLinks = Collections.emptyList();
     }
 
-    public ExecutionResultsImpl(GraphContext graphContext, ToolingXMLService toolingXMLService)
+    public ExecutionResultsImpl(GraphContext graphContext, ToolingXMLService toolingXMLService, TransformationHintService transformationHintService)
     {
         this.toolingXMLService = toolingXMLService;
         this.classifications = getClassifications(graphContext);
-        this.hints = getHints(graphContext);
+        this.hints = getHints(graphContext, transformationHintService);
         this.reportLinks = getReportLinks(graphContext);
     }
 
@@ -89,17 +90,24 @@ public class ExecutionResultsImpl implements ExecutionResults
         return reportLinks;
     }
 
-    private static List<Hint> getHints(GraphContext graphContext)
+    private static List<Hint> getHints(GraphContext graphContext, TransformationHintService transformationHintService)
     {
         final List<Hint> hints = new ArrayList<>();
         InlineHintService hintService = new InlineHintService(graphContext);
+        
         for (InlineHintModel hintModel : hintService.findAll())
         {
+        	if (hintModel.isTransformation()) { 
+        		continue;
+        	}
             HintImpl hint = new HintImpl(hintModel.asVertex().getId());
             hint.setFile(hintModel.getFile().asFile());
             hint.setTitle(hintModel.getTitle());
             hint.setHint(hintModel.getHint());
-            hint.setIssueCategory(new IssueCategoryImpl(hintModel.getIssueCategory()));
+            hintModel.getIssueCategory();
+            IssueCategoryModel categoryModel = hintModel.getIssueCategory();
+            hint.setIssueCategory(new IssueCategoryImpl(categoryModel.getCategoryID(), categoryModel.getOrigin(),
+            		categoryModel.getName(), categoryModel.getDescription(), categoryModel.getPriority()));
             hint.setEffort(hintModel.getEffort());
             hint.setColumn(hintModel.getColumnNumber());
             hint.setLineNumber(hintModel.getLineNumber());
@@ -107,7 +115,6 @@ public class ExecutionResultsImpl implements ExecutionResults
             hint.setSourceSnippit(hintModel.getSourceSnippit());
             hint.setRuleID(hintModel.getRuleID());
             hint.setQuickfixes(asQuickfixes(hintModel.getQuickfixes()));
-
             hint.setLinks(asLinks(hintModel.getLinks()));
             hints.add(hint);
         }
@@ -127,7 +134,9 @@ public class ExecutionResultsImpl implements ExecutionResults
                 classification.setDescription(classificationModel.getDescription());
                 classification.setEffort(classificationModel.getEffort());
                 classification.setRuleID(classificationModel.getRuleID());
-                classification.setIssueCategory(new IssueCategoryImpl(classificationModel.getIssueCategory()));
+                IssueCategoryModel categoryModel = classificationModel.getIssueCategory();
+                classification.setIssueCategory(new IssueCategoryImpl(categoryModel.getCategoryID(), categoryModel.getOrigin(),
+                		categoryModel.getName(), categoryModel.getDescription(), categoryModel.getPriority()));
                 classification.setFile(fileModel.asFile());
 
                 classification.setLinks(asLinks(classificationModel.getLinks()));
@@ -157,16 +166,21 @@ public class ExecutionResultsImpl implements ExecutionResults
         List<Quickfix> fixes = new ArrayList<>();
         for (QuickfixModel quickfixModel : quickfixModels)
         {
-            QuickfixImpl quickfix = new QuickfixImpl();
-            quickfix.setType(org.jboss.windup.tooling.data.QuickfixType.valueOf(quickfixModel.getQuickfixType().name()));
-            quickfix.setName(quickfixModel.getName());
-            quickfix.setNewline(quickfixModel.getNewline());
-            quickfix.setReplacement(quickfixModel.getReplacement());
-            quickfix.setSearch(quickfixModel.getSearch());
-
+        	Quickfix quickfix = buildQuickfix(quickfixModel);
             fixes.add(quickfix);
         }
         return fixes;
+    }
+    
+    private static Quickfix buildQuickfix(QuickfixModel quickfixModel) 
+    {
+    	Quickfix quickfix = new QuickfixImpl();
+		quickfix.setType(org.jboss.windup.tooling.data.QuickfixType.valueOf(quickfixModel.getQuickfixType().name()));
+		quickfix.setName(quickfixModel.getName());
+		quickfix.setNewline(quickfixModel.getNewline());
+		quickfix.setReplacement(quickfixModel.getReplacement());
+		quickfix.setSearch(quickfixModel.getSearch());
+    	return quickfix;
     }
 
     @Override

@@ -49,7 +49,10 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
 
     @Inject
     private ToolingXMLService toolingXMLService;
-
+    
+    @Inject
+    private TransformationHintService transformationHintService;
+    
     @Inject
     private WindupProcessor processor;
 
@@ -263,7 +266,7 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
             windupConfiguration.setGraphContext(graphContext);
             processor.execute(windupConfiguration);
 
-            return new ExecutionResultsImpl(graphContext, toolingXMLService);
+            return new ExecutionResultsImpl(graphContext, toolingXMLService, transformationHintService);
         }
         catch (IOException e)
         {

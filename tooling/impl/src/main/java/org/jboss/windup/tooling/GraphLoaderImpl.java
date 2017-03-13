@@ -18,6 +18,8 @@ public class GraphLoaderImpl implements GraphLoader
     private GraphContextFactory graphContextFactory;
     @Inject
     private ToolingXMLService toolingXMLService;
+    @Inject
+    private TransformationHintService transformationHintService;
 
     @Override
     public ExecutionResults loadResults(Path reportDirectory) throws IOException
@@ -25,7 +27,7 @@ public class GraphLoaderImpl implements GraphLoader
         Path graphDirectory = reportDirectory.resolve(GraphContextFactory.DEFAULT_GRAPH_SUBDIRECTORY);
         try (GraphContext graphContext = graphContextFactory.load(graphDirectory))
         {
-            return new ExecutionResultsImpl(graphContext, toolingXMLService);
+            return new ExecutionResultsImpl(graphContext, toolingXMLService, transformationHintService);
         }
     }
 }
