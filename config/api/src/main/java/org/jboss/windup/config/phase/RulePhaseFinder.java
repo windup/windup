@@ -28,6 +28,8 @@ public class RulePhaseFinder {
      */
     public Class<? extends RulePhase> findPhase(String phaseStr)
     {
+        if (phaseStr == null)
+            return null;
         if (this.cachedPhases == null)
             this.cachedPhases = this.loadPhases();
 
