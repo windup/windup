@@ -6,6 +6,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.annotation.Nullable;
@@ -148,6 +149,8 @@ public abstract class WindupArchitectureTest
                 final Map<String, Object> otherOptions) throws Exception
     {
 
+    	Locale previousLocale = Locale.getDefault();
+    	Locale.setDefault(Locale.US);
         WindupConfiguration windupConfiguration = new WindupConfiguration().setGraphContext(graphContext);
         windupConfiguration.setAlwaysHaltOnException(true);
         for (String inputPath : inputPaths)
@@ -177,6 +180,8 @@ public abstract class WindupArchitectureTest
         processor.execute(windupConfiguration);
 
         assertRecordedData(recordingMonitor);
+        
+        Locale.setDefault(previousLocale);
     }
 
     /**
