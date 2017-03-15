@@ -20,7 +20,11 @@ public enum QuickfixType
     /**
      * It searches for a token and inserts a new line after found line
      */
-    INSERT_LINE("Quickfix INSERT_LINE");
+    INSERT_LINE("Quickfix INSERT_LINE"),
+    /**
+     * It arbitrarily transforms source code.
+     */
+    TRANSFORMATION("Quickfix TRANSFORMATION");
 
     private String description;
 
