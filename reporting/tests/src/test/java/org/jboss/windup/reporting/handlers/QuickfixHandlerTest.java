@@ -23,7 +23,7 @@ import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.reporting.model.QuickfixType;
 import org.jboss.windup.reporting.config.Hint;
 import org.jboss.windup.reporting.config.Link;
-import org.jboss.windup.reporting.config.Quickfix;
+import org.jboss.windup.reporting.quickfix.Quickfix;
 import org.jboss.windup.reporting.config.classification.Classification;
 import org.junit.Assert;
 import org.junit.Test;
