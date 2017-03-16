@@ -20,6 +20,8 @@ public class QuickfixImpl implements Quickfix
 
     private String name;
 
+    private String transformationID;
+
     /**
      * @return the name
      */
@@ -98,5 +100,15 @@ public class QuickfixImpl implements Quickfix
     public void setNewline(String newline)
     {
         this.newline = newline;
+    }
+
+    public String getTransformationID()
+    {
+        return transformationID;
+    }
+
+    public void setTransformationID(String transformationID)
+    {
+        this.transformationID = transformationID;
     }
 }

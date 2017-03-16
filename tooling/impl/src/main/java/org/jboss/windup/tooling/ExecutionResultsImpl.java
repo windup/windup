@@ -19,6 +19,8 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.model.QuickfixModel;
+import org.jboss.windup.reporting.model.ReplacementQuickfixModel;
+import org.jboss.windup.reporting.model.TransformationQuickfixModel;
 import org.jboss.windup.reporting.model.source.SourceReportModel;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.InlineHintService;
@@ -160,9 +162,17 @@ public class ExecutionResultsImpl implements ExecutionResults
             QuickfixImpl quickfix = new QuickfixImpl();
             quickfix.setType(org.jboss.windup.tooling.data.QuickfixType.valueOf(quickfixModel.getQuickfixType().name()));
             quickfix.setName(quickfixModel.getName());
-            quickfix.setNewline(quickfixModel.getNewline());
-            quickfix.setReplacement(quickfixModel.getReplacement());
-            quickfix.setSearch(quickfixModel.getSearch());
+
+            if (quickfixModel instanceof ReplacementQuickfixModel)
+            {
+                ReplacementQuickfixModel replacementQuickfixModel = (ReplacementQuickfixModel)quickfixModel;
+                quickfix.setNewline(replacementQuickfixModel.getNewline());
+                quickfix.setReplacement(replacementQuickfixModel.getReplacement());
+                quickfix.setSearch(replacementQuickfixModel.getSearch());
+            }
+
+            if (quickfixModel instanceof TransformationQuickfixModel)
+                quickfix.setTransformationID(((TransformationQuickfixModel)quickfixModel).getTransformationID());
 
             fixes.add(quickfix);
         }

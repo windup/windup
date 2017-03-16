@@ -20,11 +20,9 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.graph.service.LinkService;
 import org.jboss.windup.reporting.config.Link;
-import org.jboss.windup.reporting.config.Quickfix;
+import org.jboss.windup.reporting.quickfix.Quickfix;
 import org.jboss.windup.reporting.model.ClassificationModel;
-import org.jboss.windup.reporting.model.QuickfixModel;
 import org.jboss.windup.reporting.service.ClassificationService;
-import org.jboss.windup.reporting.service.QuickfixService;
 import org.jboss.windup.reporting.service.TagSetService;
 import org.jboss.windup.reporting.category.IssueCategory;
 import org.jboss.windup.reporting.category.IssueCategoryModel;
@@ -244,17 +242,9 @@ public class Classification extends ParameterizedIterationOperation<FileModel> i
                     classification.addLink(linkModel);
                 }
 
-                QuickfixService quickfixService = new QuickfixService(graphContext);
                 for (Quickfix quickfix : quickfixes)
                 {
-                    QuickfixModel quickfixModel = quickfixService.create();
-                    quickfixModel.setQuickfixType(quickfix.getType());
-                    quickfixModel.setName(StringUtils.trim(quickfix.getName()));
-                    quickfixModel.setReplacement(StringUtils.trim(quickfix.getReplacementStr()));
-                    quickfixModel.setSearch(StringUtils.trim(quickfix.getSearchStr()));
-                    quickfixModel.setNewline(StringUtils.trim(quickfix.getNewline()));
-
-                    classification.addQuickfix(quickfixModel);
+                    classification.addQuickfix(quickfix.createQuickfix(graphContext));
                 }
             }
 
