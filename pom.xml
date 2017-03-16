@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.jboss</groupId>
         <artifactId>jboss-parent</artifactId>
-        <version>22</version>
+        <version>20</version>
         <relativePath />
     </parent>
 
@@ -18,12 +18,12 @@
     <description>Migration Tools</description>
 
     <properties>
-        <version.forge>3.5.1.Final</version.forge>
-        <version.furnace>2.25.2.Final</version.furnace>
+        <version.forge>3.6.0.Final</version.forge>
+        <version.furnace>2.25.3.Final</version.furnace>
         <version.titangraph>0.5.4</version.titangraph>
         <version.tinkerpop.blueprints>2.5.0</version.tinkerpop.blueprints>
         <version.freemarker>2.3.23</version.freemarker>
-        <version.jacoco>0.7.5.201505241946</version.jacoco>
+        <version.jacoco>0.7.9</version.jacoco>
 
         <windup.scm.connection>scm:git:https://github.com/windup/windup.git</windup.scm.connection>
         <windup.developer.connection>scm:git:git@github.com:windup/windup.git</windup.developer.connection>
