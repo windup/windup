@@ -1,10 +1,16 @@
 package org.jboss.windup.tooling.quickfix;
 
+import java.io.File;
+import java.io.Serializable;
+
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public class QuickfixLocationDTO
+public class QuickfixLocationDTO implements Serializable
 {
+	private static final long serialVersionUID = 1L;
+	
+	private File file;
     private int line;
     private int column;
     private int length;
@@ -13,13 +19,19 @@ public class QuickfixLocationDTO
     {
     }
 
-    public QuickfixLocationDTO(int line, int column, int length)
+    public QuickfixLocationDTO(File file, int line, int column, int length)
     {
+    	this.file = file;
         this.line = line;
         this.column = column;
         this.length = length;
     }
 
+    public File getFile()
+    {
+    	return file;
+    }
+    
     public int getLine()
     {
         return line;

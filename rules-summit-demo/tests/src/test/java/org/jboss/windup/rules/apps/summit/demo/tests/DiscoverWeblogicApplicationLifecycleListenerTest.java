@@ -30,9 +30,9 @@ import org.jboss.windup.tooling.ToolingRMIServer;
 import org.jboss.windup.tooling.WindupToolingProgressMonitor;
 import org.jboss.windup.tooling.data.Hint;
 import org.jboss.windup.tooling.data.Quickfix;
-import org.jboss.windup.tooling.data.TransformationQuickfixChange;
-import org.jboss.windup.tooling.data.QuickfixTransformation;
-import org.jboss.windup.tooling.data.TransformationQuickfixDTOImpl;
+import org.jboss.windup.tooling.data.QuickfixType;
+import org.jboss.windup.tooling.quickfix.QuickfixLocationDTO;
+import org.jboss.windup.tooling.quickfix.QuickfixService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,9 +43,6 @@ import com.google.common.collect.Lists;
 public class DiscoverWeblogicApplicationLifecycleListenerTest
 {
     private static final int PORT = 9874;
-	
-	//@Inject
-    //private ExecutionBuilder builder;
 
     @Inject
     private ToolingRMIServer rmiServer;
@@ -88,16 +85,23 @@ public class DiscoverWeblogicApplicationLifecycleListenerTest
         ExecutionResults results = executeWindup(input, output, progressWithLogging);
         List<Hint> hints = Lists.newArrayList(results.getHints());
         Assert.assertTrue(hints.size() == 1);
-        List<Quickfix> quickfixes = Lists.newArrayList(hints.get(0).getQuickfixes());
+        Hint hint = hints.get(0);
+        List<Quickfix> quickfixes = Lists.newArrayList(hint.getQuickfixes());
         Assert.assertTrue(quickfixes.size() == 1);
         Quickfix quickfix = quickfixes.get(0);
-        Assert.assertTrue(quickfix instanceof TransformationQuickfixDTOImpl);
-        TransformationQuickfixDTOImpl transformationFix = (TransformationQuickfixDTOImpl)quickfix;
-        List<TransformationQuickfixChange> changes = transformationFix.getChanges();
-        Assert.assertTrue(changes.size() == 1);
-        TransformationQuickfixChange change = changes.get(0);
-        String preview = change.preview();
-        Assert.assertTrue(preview.equals("Preview..."));
+        Assert.assertTrue(quickfix.getType() == QuickfixType.TRANSFORMATION);
+        
+        QuickfixService quickfixService = getQuickfixServiceFromRMIRegistry();
+        Assert.assertNotNull(quickfixService);
+        		
+        QuickfixLocationDTO locationDTO = new QuickfixLocationDTO(
+        		hint.getFile(),
+        		hint.getLineNumber(), 
+        		hint.getColumn(), 
+        		hint.getLength());
+        String preview = quickfixService.transform(quickfix.getTransformationID(), locationDTO);
+        preview = preview.replaceAll(" ", "");
+        Assert.assertTrue(preview.equals("<!--<listener-class>org.apache.geronimo.daytrader.javaee7.AppListener</listener-class>-->"));
     }
 
      private ExecutionResults executeWindup(Path input, Path output, WindupToolingProgressMonitor progressMonitor) throws RemoteException
@@ -127,7 +131,21 @@ public class DiscoverWeblogicApplicationLifecycleListenerTest
          }
          return null;
      }
-
+     
+     private static QuickfixService getQuickfixServiceFromRMIRegistry()
+     {
+         try
+         {
+             Registry registry = LocateRegistry.getRegistry(PORT);
+             QuickfixService quickfixService = (QuickfixService) registry.lookup(QuickfixService.LOOKUP_NAME);
+             return quickfixService;
+         }
+         catch (RemoteException | NotBoundException e)
+         {
+             e.printStackTrace();
+         }
+         return null;
+     }
 
     class TestProgressMonitor extends UnicastRemoteObject implements WindupToolingProgressMonitor, Remote
     {
