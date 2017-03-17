@@ -25,7 +25,7 @@ public class QuickfixServiceImpl implements QuickfixService
         reportingLocationDTO.setLine(locationDTO.getLine());
         reportingLocationDTO.setColumn(locationDTO.getColumn());
         reportingLocationDTO.setLength(locationDTO.getLength());
-
+        reportingLocationDTO.setFile(locationDTO.getFile());
         return transformation.transform(reportingLocationDTO);
     }
 }

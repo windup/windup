@@ -1,10 +1,13 @@
 package org.jboss.windup.reporting.quickfix;
 
+import java.io.File;
+
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public class QuickfixLocationDTO
 {
+	private File file;
     private int line;
     private int column;
     private int length;
@@ -13,11 +16,22 @@ public class QuickfixLocationDTO
     {
     }
 
-    public QuickfixLocationDTO(int line, int column, int length)
+    public QuickfixLocationDTO(File file, int line, int column, int length)
     {
+    	this.file = file;
         this.line = line;
         this.column = column;
         this.length = length;
+    }
+    
+    public File getFile()
+    {
+    	return file;
+    }
+    
+    public void setFile(File file)
+    {
+    	this.file = file;
     }
 
     public int getLine()

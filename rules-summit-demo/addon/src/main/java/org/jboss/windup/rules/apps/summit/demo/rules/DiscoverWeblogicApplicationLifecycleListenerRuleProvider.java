@@ -81,7 +81,7 @@ public class DiscoverWeblogicApplicationLifecycleListenerRuleProvider extends Ab
 			hintModel.setLineNumber(lineNumber);
 			String contents = FileUtils.readFileToString(fileModel.asFile(), Charset.defaultCharset());
 			org.eclipse.jface.text.Document textDoc = new org.eclipse.jface.text.Document(contents);
-			IRegion info = textDoc.getLineInformation(lineNumber);
+			IRegion info = textDoc.getLineInformation(lineNumber-1);
 			hintModel.setColumnNumber(info.getOffset());
 			hintModel.setLength(info.getLength());
 		}
