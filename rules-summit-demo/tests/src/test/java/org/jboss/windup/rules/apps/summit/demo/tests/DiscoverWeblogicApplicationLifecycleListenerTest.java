@@ -1,5 +1,6 @@
 package org.jboss.windup.rules.apps.summit.demo.tests;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.rmi.NotBoundException;
@@ -74,7 +75,7 @@ public class DiscoverWeblogicApplicationLifecycleListenerTest
     }
 
     @Test
-    public void testWeblogicApplicationLifecycleListener() throws Exception
+    public void testXmlWeblogicApplicationLifecycleListener() throws Exception
     {
         rmiServer.startServer(PORT, "");
     	
@@ -87,7 +88,7 @@ public class DiscoverWeblogicApplicationLifecycleListenerTest
         Assert.assertTrue(hints.size() == 1);
         Hint hint = hints.get(0);
         List<Quickfix> quickfixes = Lists.newArrayList(hint.getQuickfixes());
-        Assert.assertTrue(quickfixes.size() == 1);
+        Assert.assertTrue(quickfixes.size() == 2);
         Quickfix quickfix = quickfixes.get(0);
         Assert.assertTrue(quickfix.getType() == QuickfixType.TRANSFORMATION);
         
@@ -95,7 +96,40 @@ public class DiscoverWeblogicApplicationLifecycleListenerTest
         Assert.assertNotNull(quickfixService);
         		
         QuickfixLocationDTO locationDTO = new QuickfixLocationDTO(
+        		output.toFile(),
         		hint.getFile(),
+        		hint.getLineNumber(), 
+        		hint.getColumn(), 
+        		hint.getLength());
+        String preview = quickfixService.transform(quickfix.getTransformationID(), locationDTO);
+        preview = preview.replaceAll(" ", "");
+        Assert.assertTrue(preview.equals("<!--<listener-class>org.apache.geronimo.daytrader.javaee7.AppListener</listener-class>-->"));
+    }
+    
+    @Test
+    public void testJavaWeblogicApplicationLifecycleListener() throws Exception
+    {
+        rmiServer.startServer(PORT, "");
+    	
+        Path input = Paths.get("../../test-files/summit-demo-test");
+        Path output = getDefaultPath();
+
+        TestProgressMonitor progressWithLogging = new TestProgressMonitor();
+        ExecutionResults results = executeWindup(input, output, progressWithLogging);
+        List<Hint> hints = Lists.newArrayList(results.getHints());
+        Assert.assertTrue(hints.size() == 1);
+        Hint hint = hints.get(0);
+        List<Quickfix> quickfixes = Lists.newArrayList(hint.getQuickfixes());
+        Assert.assertTrue(quickfixes.size() == 2);
+        Quickfix quickfix = quickfixes.get(1);
+        Assert.assertTrue(quickfix.getType() == QuickfixType.TRANSFORMATION);
+        
+        QuickfixService quickfixService = getQuickfixServiceFromRMIRegistry();
+        Assert.assertNotNull(quickfixService);
+        		
+        QuickfixLocationDTO locationDTO = new QuickfixLocationDTO(
+        		output.toFile(),
+        		quickfix.getFile(),
         		hint.getLineNumber(), 
         		hint.getColumn(), 
         		hint.getLength());

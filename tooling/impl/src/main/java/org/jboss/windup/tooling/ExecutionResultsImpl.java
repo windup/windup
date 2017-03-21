@@ -172,7 +172,15 @@ public class ExecutionResultsImpl implements ExecutionResults
             }
 
             if (quickfixModel instanceof TransformationQuickfixModel)
-                quickfix.setTransformationID(((TransformationQuickfixModel)quickfixModel).getTransformationID());
+            {
+            	TransformationQuickfixModel transformationQuickfixModel = (TransformationQuickfixModel)quickfixModel;
+                quickfix.setTransformationID(transformationQuickfixModel.getTransformationID());
+                FileModel fileModel = transformationQuickfixModel.getFile();
+                if (fileModel != null)
+                {
+                	quickfix.setFile(fileModel.asFile());
+                }
+            }
 
             fixes.add(quickfix);
         }

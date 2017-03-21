@@ -1,5 +1,9 @@
 package org.jboss.windup.reporting.model;
 
+import org.jboss.windup.graph.model.resource.FileModel;
+
+import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
@@ -13,6 +17,7 @@ public interface TransformationQuickfixModel extends QuickfixModel {
     String TYPE_VALUE = "TransformationQuickfixModel";
 
     String TRANSFORMATION_ID = TYPE_VALUE + "-transformationID";
+    String FILE = TYPE_VALUE + "-file";
 
     /**
      * Contains the ID of the class that will implement this translation.
@@ -25,4 +30,10 @@ public interface TransformationQuickfixModel extends QuickfixModel {
      */
     @Property(TRANSFORMATION_ID)
     String getTransformationID();
+    
+    @Adjacency(label = FILE, direction = Direction.OUT)
+    FileModel getFile();
+    
+    @Adjacency(label = FILE, direction = Direction.OUT)
+    FileModel setFileModel(FileModel fileModel);
 }

@@ -5,6 +5,7 @@ package org.jboss.windup.reporting.quickfix;
 
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.QuickfixModel;
 import org.jboss.windup.reporting.model.QuickfixType;
@@ -32,6 +33,8 @@ public class Quickfix
     private String searchStr;
 
     private String transformationID;
+    
+    private FileModel fileModel;
 
     /**
      * @return the type
@@ -112,6 +115,16 @@ public class Quickfix
     {
         this.searchStr = searchStr;
     }
+    
+    public FileModel getFileModel()
+    {
+    	return fileModel;
+    }
+    
+    public void setFileModel(FileModel fileModel)
+    {
+    	this.fileModel = fileModel;
+    }
 
     public String getTransformationID()
     {
@@ -143,6 +156,7 @@ public class Quickfix
             case TRANSFORMATION:
                 TransformationQuickfixModel transformationQuickfixModel = GraphService.addTypeToModel(graphContext, quickfixModel, TransformationQuickfixModel.class);
                 transformationQuickfixModel.setTransformationID(getTransformationID());
+                transformationQuickfixModel.setFileModel(getFileModel());
                 break;
             default:
                 throw new WindupException("Unrecognized quickfix type: " + getType());

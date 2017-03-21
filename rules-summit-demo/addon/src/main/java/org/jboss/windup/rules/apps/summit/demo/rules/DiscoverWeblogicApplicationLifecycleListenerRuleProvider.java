@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jface.text.IRegion;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
@@ -17,14 +18,16 @@ import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.category.IssueCategoryModel;
 import org.jboss.windup.reporting.category.IssueCategoryRegistry;
-import org.jboss.windup.reporting.config.Hint;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.model.QuickfixModel;
 import org.jboss.windup.reporting.model.QuickfixType;
 import org.jboss.windup.reporting.quickfix.Quickfix;
+import org.jboss.windup.rules.apps.java.model.JavaClassModel;
+import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.util.xml.LocationAwareContentHandler;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -32,6 +35,8 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
+import com.google.common.collect.Iterables;
 
 /**
  * Discovers WebLogic application lifecycle listeners registered within the weblogic-application.xml file.
@@ -44,7 +49,8 @@ public class DiscoverWeblogicApplicationLifecycleListenerRuleProvider extends Ab
     private static final String XML_LISTENER_RULE_ID = "weblogic-application-lifecycle-rule-id";
     private static final String XML_TITLE = "Weblogic application lifecycle listener.";
     private static final String XML_HINT = "Application lifecycle listeners registered within weblogic-appplication.xml need to be refactored.";
-    private static final String XML_QUICKFIX_NAME = "Remove the <listener>...</listener> tag";
+    private static final String XML_QUICKFIX_NAME = "Remove the <listener>...</listener> tag.";
+    private static final String JAVA_QUICKFIX_NAME = "Refactor ApplicationLifecycleListener to use @ApplicationScoped.";
 	
 	@Override
 	public Configuration getConfiguration(RuleLoaderContext context) 
@@ -75,22 +81,30 @@ public class DiscoverWeblogicApplicationLifecycleListenerRuleProvider extends Ab
 		List<Element> listeners = $(document).find("listener-class").get();
 		for (Element listener : listeners) 
 		{
-			InlineHintModel hintModel = createHint(event, hintService, fileModel);
-			hintModel.addQuickfix(createXmlQuickfix(event.getGraphContext()));
-			int lineNumber = (int)listener.getUserData(LocationAwareContentHandler.LINE_NUMBER_KEY_NAME);
-			hintModel.setLineNumber(lineNumber);
-			String contents = FileUtils.readFileToString(fileModel.asFile(), Charset.defaultCharset());
-			org.eclipse.jface.text.Document textDoc = new org.eclipse.jface.text.Document(contents);
-			IRegion info = textDoc.getLineInformation(lineNumber-1);
-			hintModel.setColumnNumber(info.getOffset());
-			hintModel.setLength(info.getLength());
+			String listenerClassName = listener.getTextContent();
+			if(StringUtils.isNotBlank(listenerClassName))
+			{
+				InlineHintModel hintModel = createHint(event, hintService, fileModel);
+				hintModel.addQuickfix(createXmlQuickfix(event.getGraphContext()));
+				int lineNumber = (int)listener.getUserData(LocationAwareContentHandler.LINE_NUMBER_KEY_NAME);
+				hintModel.setLineNumber(lineNumber);
+				String contents = FileUtils.readFileToString(fileModel.asFile(), Charset.defaultCharset());
+				org.eclipse.jface.text.Document textDoc = new org.eclipse.jface.text.Document(contents);
+				IRegion info = textDoc.getLineInformation(lineNumber-1);
+				hintModel.setColumnNumber(info.getOffset());
+				hintModel.setLength(info.getLength());
+				QuickfixModel javaQuickfixModel = createJavaQuickfix(event.getGraphContext(), listenerClassName);
+				if (javaQuickfixModel != null) 
+				{
+					hintModel.addQuickfix(javaQuickfixModel);
+				}
+			}
 		}
 	}
 	
 	private InlineHintModel createHint(GraphRewrite event, GraphService<InlineHintModel> hintService, XmlFileModel fileModel) {
 		InlineHintModel hintModel = hintService.create();
         hintModel.setRuleID(XML_LISTENER_RULE_ID);
-        //hintModel.setFileLocationReference(fileModel);
         hintModel.setTitle(XML_TITLE);
         hintModel.setHint(XML_HINT);
         hintModel.setFile(fileModel);
@@ -100,11 +114,31 @@ public class DiscoverWeblogicApplicationLifecycleListenerRuleProvider extends Ab
         return hintModel;
 	}
 	
-	public static QuickfixModel createXmlQuickfix(GraphContext context) {
+	private static QuickfixModel createXmlQuickfix(GraphContext context) {
 		Quickfix quickfix = new Quickfix();
 		quickfix.setTransformationID(WeblogicApplicationLifecycleListenerQuickfixTransformation.ID);
 		quickfix.setType(QuickfixType.TRANSFORMATION);
 		quickfix.setName(XML_QUICKFIX_NAME);
 		return quickfix.createQuickfix(context);
+	}
+	
+	private static QuickfixModel createJavaQuickfix(GraphContext context, String clazzName) {
+		// TODO: This needs to be done correctly using the JavaClassService, can't seem to get it right.
+		clazzName = clazzName.replace(".java", "");
+		clazzName = clazzName.substring(clazzName.lastIndexOf(".")+1, clazzName.length());
+		String regEx = clazzName+".java";
+		FileService fileService = new FileService(context);
+		Iterable<FileModel> models = fileService.findByFilenameRegex(regEx);
+		if (!Iterables.isEmpty(models))
+		{
+			Quickfix quickfix = new Quickfix();
+			quickfix.setTransformationID(WeblogicJavaLifecycleQuickfixTransformation.ID);
+			quickfix.setType(QuickfixType.TRANSFORMATION);
+			quickfix.setName(JAVA_QUICKFIX_NAME);
+			FileModel fileModel = models.iterator().next();
+			quickfix.setFileModel(fileModel);
+			return quickfix.createQuickfix(context);
+		}
+		return null;
 	}
 }
