@@ -10,6 +10,7 @@ public class QuickfixLocationDTO implements Serializable
 {
 	private static final long serialVersionUID = 1L;
 	
+	private File reportDirectory;
 	private File file;
     private int line;
     private int column;
@@ -19,12 +20,18 @@ public class QuickfixLocationDTO implements Serializable
     {
     }
 
-    public QuickfixLocationDTO(File file, int line, int column, int length)
+    public QuickfixLocationDTO(File reportDirectory, File file, int line, int column, int length)
     {
+    	this.reportDirectory = reportDirectory;
     	this.file = file;
         this.line = line;
         this.column = column;
         this.length = length;
+    }
+    
+    public File getReportDirectory()
+    {
+    	return reportDirectory;
     }
 
     public File getFile()
