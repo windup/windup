@@ -14,11 +14,10 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
-import org.jboss.windup.config.phase.InitialAnalysisPhase;
+import org.jboss.windup.config.phase.MigrationRulesPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.category.IssueCategoryModel;
 import org.jboss.windup.reporting.category.IssueCategoryRegistry;
@@ -36,12 +35,10 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.google.common.collect.Iterables;
-
 /**
  * Discovers WebLogic application lifecycle listeners registered within the weblogic-application.xml file.
  */
-@RuleMetadata(phase = InitialAnalysisPhase.class)
+@RuleMetadata(after = MigrationRulesPhase.class)
 public class DiscoverWeblogicApplicationLifecycleListenerRuleProvider extends AbstractRuleProvider
 {
     private static Logger LOG = Logger.getLogger(DiscoverWeblogicApplicationLifecycleListenerRuleProvider.class.getName());
@@ -123,20 +120,15 @@ public class DiscoverWeblogicApplicationLifecycleListenerRuleProvider extends Ab
 	}
 	
 	private static QuickfixModel createJavaQuickfix(GraphContext context, String clazzName) {
-		// TODO: This needs to be done correctly using the JavaClassService, can't seem to get it right.
-		clazzName = clazzName.replace(".java", "");
-		clazzName = clazzName.substring(clazzName.lastIndexOf(".")+1, clazzName.length());
-		String regEx = clazzName+".java";
-		FileService fileService = new FileService(context);
-		Iterable<FileModel> models = fileService.findByFilenameRegex(regEx);
-		if (!Iterables.isEmpty(models))
+		JavaClassService classService = new JavaClassService(context);
+		JavaClassModel classModel =	classService.getByName(clazzName);
+		if (classModel != null)
 		{
 			Quickfix quickfix = new Quickfix();
 			quickfix.setTransformationID(WeblogicJavaLifecycleQuickfixTransformation.ID);
 			quickfix.setType(QuickfixType.TRANSFORMATION);
 			quickfix.setName(JAVA_QUICKFIX_NAME);
-			FileModel fileModel = models.iterator().next();
-			quickfix.setFileModel(fileModel);
+			quickfix.setFileModel(classModel.getClassFile());
 			return quickfix.createQuickfix(context);
 		}
 		return null;
