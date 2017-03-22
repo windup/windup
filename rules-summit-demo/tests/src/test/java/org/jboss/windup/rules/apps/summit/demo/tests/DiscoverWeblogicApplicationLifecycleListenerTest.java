@@ -111,7 +111,7 @@ public class DiscoverWeblogicApplicationLifecycleListenerTest
     {
         rmiServer.startServer(PORT, "");
     	
-        Path input = Paths.get("../../test-files/summit-demo-test");
+        Path input = Paths.get("../../test-files/summit-demo-test/test");
         Path output = getDefaultPath();
 
         TestProgressMonitor progressWithLogging = new TestProgressMonitor();
@@ -134,8 +134,10 @@ public class DiscoverWeblogicApplicationLifecycleListenerTest
         		hint.getColumn(), 
         		hint.getLength());
         String preview = quickfixService.transform(quickfix.getTransformationID(), locationDTO);
-        preview = preview.replaceAll(" ", "");
-        Assert.assertTrue(preview.equals("<!--<listener-class>org.apache.geronimo.daytrader.javaee7.AppListener</listener-class>-->"));
+        
+        File solutionFile = new File("../../test-files/summit-demo-test/solution/AppListenerFixed.java");
+        String solution = FileUtils.readFileToString(solutionFile);
+        Assert.assertTrue(preview.equals(solution));
     }
 
      private ExecutionResults executeWindup(Path input, Path output, WindupToolingProgressMonitor progressMonitor) throws RemoteException
@@ -147,6 +149,8 @@ public class DiscoverWeblogicApplicationLifecycleListenerTest
         builder.setProgressMonitor(progressMonitor);
         builder.setOption(SourceModeOption.NAME, true);
         builder.setOption(OnlineModeOption.NAME, false);
+        builder.includePackage("org.windup.examples.ejb.messagedriven");
+        builder.ignore("\\.class$");
         return builder.execute();
     }
      
