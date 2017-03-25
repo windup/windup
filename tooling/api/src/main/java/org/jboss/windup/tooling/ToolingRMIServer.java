@@ -1,7 +1,5 @@
 package org.jboss.windup.tooling;
 
-import org.jboss.windup.tooling.quickfix.QuickfixService;
-
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -20,9 +18,6 @@ public class ToolingRMIServer
 
     @Inject
     private ExecutionBuilder executionBuilder;
-
-    @Inject
-    QuickfixService quickfixService;
 
     public void startServer(int port, String version)
     {
@@ -56,9 +51,7 @@ public class ToolingRMIServer
             ExecutionBuilder proxy = (ExecutionBuilder) UnicastRemoteObject.exportObject(executionBuilder, 0);
             registry.rebind(ExecutionBuilder.LOOKUP_NAME, proxy);
 
-            QuickfixService quickfixServiceProxy = (QuickfixService) UnicastRemoteObject.exportObject(quickfixService, 0);
-            registry.rebind(QuickfixService.LOOKUP_NAME, quickfixServiceProxy);
-            LOG.info("Registered ExecutionBuilder and QuickfixService at: " + registry);
+            LOG.info("Registered ExecutionBuilder at: " + registry);
         }
         catch (RemoteException e)
         {

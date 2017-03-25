@@ -4,6 +4,7 @@ import java.nio.charset.Charset;
 import java.util.logging.Logger;
 
 import org.apache.commons.io.FileUtils;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IRegion;
 import org.jboss.windup.reporting.quickfix.QuickfixLocationDTO;
@@ -24,11 +25,21 @@ public class WeblogicApplicationLifecycleListenerQuickfixTransformation implemen
 	public String transform(QuickfixLocationDTO locationDTO) {
 		try 
 		{
+			String contents = FileUtils.readFileToString(locationDTO.getFile(), Charset.defaultCharset());
+	 		Document doc = new Document(contents);
+	 		
+	 		String original = getLine(doc, locationDTO);
+	 		
 			StringBuilder builder = new StringBuilder();
 			builder.append("<!--");
-			builder.append(getLine(locationDTO));
+			builder.append(original);
 			builder.append("-->");
-			return builder.toString();
+			
+			String replacement = builder.toString();
+			
+			WeblogicApplicationLifecycleListenerQuickfixTransformation.replace(doc, locationDTO.getLine()-1, replacement);
+			
+			return doc.get();
 		}	
 		catch (Exception e)
 		{
@@ -37,11 +48,22 @@ public class WeblogicApplicationLifecycleListenerQuickfixTransformation implemen
 		return null;
 	}
 	
-	private String getLine(QuickfixLocationDTO locationDTO) throws Exception
+	private String getLine(Document doc, QuickfixLocationDTO locationDTO) throws Exception
 	{
-		String contents = FileUtils.readFileToString(locationDTO.getFile(), Charset.defaultCharset());
- 		Document doc = new Document(contents);
 		IRegion info = doc.getLineInformation(locationDTO.getLine()-1);
 		return doc.get(info.getOffset(), locationDTO.getLength());
+	}
+	
+	/**
+	 * Replaces the chunk of text represented as <code>searchString</code> with the specified <code>replacement</code>
+	 * text at the given line number in the specified resource. 
+	 */
+	private static void replace(Document document, int lineNumber, String replacement) {
+		try {
+			IRegion info = document.getLineInformation(lineNumber);
+			document.replace(info.getOffset(), info.getLength(), replacement);
+		} catch (BadLocationException e) {
+			LOG.severe(e.getMessage());
+		}
 	}
 }

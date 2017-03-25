@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<weblogic-application xmlns="http://xmlns.oracle.com/weblogic/weblogic-application"
+                      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                      xsi:schemaLocation="http://xmlns.oracle.com/weblogic/weblogic-application http://xmlns.oracle.com/weblogic/weblogic-application/1.3/weblogic-application.xsd">
+
+    <listener>
+<!--            <listener-class>org.apache.geronimo.daytrader.javaee7.AppListener</listener-class>-->
+    </listener>
+   
+</weblogic-application>
