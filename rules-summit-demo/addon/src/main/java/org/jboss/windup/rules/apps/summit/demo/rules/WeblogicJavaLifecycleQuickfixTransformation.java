@@ -138,6 +138,7 @@ public class WeblogicJavaLifecycleQuickfixTransformation implements QuickfixTran
 				method.setName(ast.newSimpleName("startup"));
 				for (Iterator<Object> iter = method.parameters().iterator(); iter.hasNext();)
 				{
+					iter.next();
 					iter.remove();
 				}
 			}
@@ -149,6 +150,7 @@ public class WeblogicJavaLifecycleQuickfixTransformation implements QuickfixTran
 				method.setName(ast.newSimpleName("shutdown"));
 				for (Iterator<Object> iter = method.parameters().iterator(); iter.hasNext();)
 				{
+					iter.next();
 					iter.remove();
 				}
 			}

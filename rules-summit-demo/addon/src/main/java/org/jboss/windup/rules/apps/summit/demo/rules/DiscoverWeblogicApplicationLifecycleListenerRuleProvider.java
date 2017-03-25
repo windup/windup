@@ -82,7 +82,7 @@ public class DiscoverWeblogicApplicationLifecycleListenerRuleProvider extends Ab
 			if(StringUtils.isNotBlank(listenerClassName))
 			{
 				InlineHintModel hintModel = createHint(event, hintService, fileModel);
-				hintModel.addQuickfix(createXmlQuickfix(event.getGraphContext()));
+				hintModel.addQuickfix(createXmlQuickfix(event.getGraphContext(), fileModel));
 				int lineNumber = (int)listener.getUserData(LocationAwareContentHandler.LINE_NUMBER_KEY_NAME);
 				hintModel.setLineNumber(lineNumber);
 				String contents = FileUtils.readFileToString(fileModel.asFile(), Charset.defaultCharset());
@@ -111,11 +111,12 @@ public class DiscoverWeblogicApplicationLifecycleListenerRuleProvider extends Ab
         return hintModel;
 	}
 	
-	private static QuickfixModel createXmlQuickfix(GraphContext context) {
+	private static QuickfixModel createXmlQuickfix(GraphContext context, XmlFileModel fileModel) {
 		Quickfix quickfix = new Quickfix();
 		quickfix.setTransformationID(WeblogicApplicationLifecycleListenerQuickfixTransformation.ID);
 		quickfix.setType(QuickfixType.TRANSFORMATION);
 		quickfix.setName(XML_QUICKFIX_NAME);
+		quickfix.setFileModel(fileModel);
 		return quickfix.createQuickfix(context);
 	}
 	

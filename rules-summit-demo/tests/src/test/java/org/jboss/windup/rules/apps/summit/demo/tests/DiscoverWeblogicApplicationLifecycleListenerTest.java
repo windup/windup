@@ -33,7 +33,6 @@ import org.jboss.windup.tooling.data.Hint;
 import org.jboss.windup.tooling.data.Quickfix;
 import org.jboss.windup.tooling.data.QuickfixType;
 import org.jboss.windup.tooling.quickfix.QuickfixLocationDTO;
-import org.jboss.windup.tooling.quickfix.QuickfixService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -78,7 +77,10 @@ public class DiscoverWeblogicApplicationLifecycleListenerTest
     public void testXmlWeblogicApplicationLifecycleListener() throws Exception
     {
         rmiServer.startServer(PORT, "");
-    	
+        
+        ExecutionBuilder builder = getExecutionBuilderFromRMIRegistry();
+        Assert.assertNotNull(builder);
+        
         Path input = Paths.get("../../test-files/summit-demo-test");
         Path output = getDefaultPath();
 
@@ -91,25 +93,28 @@ public class DiscoverWeblogicApplicationLifecycleListenerTest
         Assert.assertTrue(quickfixes.size() == 2);
         Quickfix quickfix = quickfixes.get(0);
         Assert.assertTrue(quickfix.getType() == QuickfixType.TRANSFORMATION);
-        
-        QuickfixService quickfixService = getQuickfixServiceFromRMIRegistry();
-        Assert.assertNotNull(quickfixService);
-        		
+                		
         QuickfixLocationDTO locationDTO = new QuickfixLocationDTO(
         		output.toFile(),
         		hint.getFile(),
         		hint.getLineNumber(), 
         		hint.getColumn(), 
         		hint.getLength());
-        String preview = quickfixService.transform(quickfix.getTransformationID(), locationDTO);
-        preview = preview.replaceAll(" ", "");
-        Assert.assertTrue(preview.equals("<!--<listener-class>org.apache.geronimo.daytrader.javaee7.AppListener</listener-class>-->"));
+        String preview = builder.transform(quickfix.getTransformationID(), locationDTO);
+        
+        File solutionFile = new File("../../test-files/summit-demo-test/solution/weblogic-application.xml");
+        String solution = FileUtils.readFileToString(solutionFile);
+        
+        Assert.assertTrue(preview.equals(solution));
     }
     
     @Test
     public void testJavaWeblogicApplicationLifecycleListener() throws Exception
     {
         rmiServer.startServer(PORT, "");
+        
+        ExecutionBuilder builder = getExecutionBuilderFromRMIRegistry();
+        Assert.assertNotNull(builder);
     	
         Path input = Paths.get("../../test-files/summit-demo-test/test");
         Path output = getDefaultPath();
@@ -123,9 +128,6 @@ public class DiscoverWeblogicApplicationLifecycleListenerTest
         Assert.assertTrue(quickfixes.size() == 2);
         Quickfix quickfix = quickfixes.get(1);
         Assert.assertTrue(quickfix.getType() == QuickfixType.TRANSFORMATION);
-        
-        QuickfixService quickfixService = getQuickfixServiceFromRMIRegistry();
-        Assert.assertNotNull(quickfixService);
         		
         QuickfixLocationDTO locationDTO = new QuickfixLocationDTO(
         		output.toFile(),
@@ -133,7 +135,7 @@ public class DiscoverWeblogicApplicationLifecycleListenerTest
         		hint.getLineNumber(), 
         		hint.getColumn(), 
         		hint.getLength());
-        String preview = quickfixService.transform(quickfix.getTransformationID(), locationDTO);
+        String preview = builder.transform(quickfix.getTransformationID(), locationDTO);
         
         File solutionFile = new File("../../test-files/summit-demo-test/solution/AppListenerFixed.java");
         String solution = FileUtils.readFileToString(solutionFile);
@@ -170,21 +172,6 @@ public class DiscoverWeblogicApplicationLifecycleListenerTest
          return null;
      }
      
-     private static QuickfixService getQuickfixServiceFromRMIRegistry()
-     {
-         try
-         {
-             Registry registry = LocateRegistry.getRegistry(PORT);
-             QuickfixService quickfixService = (QuickfixService) registry.lookup(QuickfixService.LOOKUP_NAME);
-             return quickfixService;
-         }
-         catch (RemoteException | NotBoundException e)
-         {
-             e.printStackTrace();
-         }
-         return null;
-     }
-
     class TestProgressMonitor extends UnicastRemoteObject implements WindupToolingProgressMonitor, Remote
     {
         private static final long serialVersionUID = 1L;
