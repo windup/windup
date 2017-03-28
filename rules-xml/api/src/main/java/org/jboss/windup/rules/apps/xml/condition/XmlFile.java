@@ -8,6 +8,7 @@ import org.jboss.windup.config.parameters.FrameContext;
 import org.jboss.windup.config.parameters.FrameCreationContext;
 import org.jboss.windup.config.parameters.ParameterizedGraphCondition;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.FileReferenceModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.xml.condition.validators.XmlCacheValidator;
@@ -16,7 +17,6 @@ import org.jboss.windup.rules.apps.xml.condition.validators.XmlFileNameValidator
 import org.jboss.windup.rules.apps.xml.condition.validators.XmlFileXpathValidator;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.apps.xml.model.XmlTypeReferenceModel;
-import org.jboss.windup.rules.files.model.FileReferenceModel;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Condition;

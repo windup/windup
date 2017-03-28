@@ -1,12 +1,18 @@
 package org.jboss.windup.project.condition;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+
+import org.ocpsoft.rewrite.param.ParameterStore;
+import org.ocpsoft.rewrite.param.Parameterized;
 
 /**
  * Class used to specify the artifact in the {@link Project} condition
  * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  *
  */
-public class Artifact{
+public class Artifact implements Parameterized {
 	
 	private String groupId;
 	private String artifactId;
@@ -76,4 +82,14 @@ public class Artifact{
 		return version;
 	}
 
+    @Override
+    public Set<String> getRequiredParameterNames()
+    {
+       return new HashSet<>(Arrays.asList("groupId", "artifactId"));
+    }
+
+    @Override
+    public void setParameterStore(ParameterStore store)
+    {
+    }
 }

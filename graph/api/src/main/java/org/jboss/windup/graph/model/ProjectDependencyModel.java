@@ -16,6 +16,7 @@ public interface ProjectDependencyModel extends WindupVertexFrame
     public static final String PROPERTY_SCOPE = "dependencyScope";
     public static final String PROPERTY_CLASSIFIER = "dependencyClassifier";
     public static final String PROPERTY_TYPE = "dependencyType";
+    public static final String FILE_LOCATION_REFERENCE = "fileLocationReference";
 
     @Property(PROPERTY_SCOPE)
     void setScope(String scope);
@@ -53,4 +54,16 @@ public interface ProjectDependencyModel extends WindupVertexFrame
 
     @Adjacency(label = TYPE + ".representedProject", direction = Direction.OUT)
     ProjectModel getProjectModel();
+    
+    /**
+     * Sets the original {@link FileLocationModel} associated with this {@link ProjectDependencyModel}
+     */
+    @Adjacency(label = FILE_LOCATION_REFERENCE, direction = Direction.OUT)
+    void setFileLocationReference(Iterable<FileLocationModel> m);
+
+    /**
+     * Gets the original{@link FileLocationModel} associated with this {@link ProjectDependencyModel}
+     */
+    @Adjacency(label = FILE_LOCATION_REFERENCE, direction = Direction.OUT)
+    Iterable<FileLocationModel> getFileLocationReference();
 }

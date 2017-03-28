@@ -1,6 +1,8 @@
 package org.jboss.windup.rules.apps.java.scan.provider;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -14,6 +16,7 @@ import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.DiscoverProjectStructurePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.model.ArchiveModel;
+import org.jboss.windup.graph.model.FileLocationModel;
 import org.jboss.windup.graph.model.ProjectDependencyModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.FileService;
@@ -28,6 +31,7 @@ import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.apps.xml.service.XmlFileService;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.MarshallingException;
+import org.jboss.windup.util.xml.LocationAwareContentHandler;
 import org.jboss.windup.util.xml.XmlUtil;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -326,6 +330,18 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
                 projectDep.setScope(dependencyScope);
                 projectDep.setType(dependencyType);
                 projectDep.setProject(dependency);
+                int lineNumber = (int) node.getUserData(LocationAwareContentHandler.LINE_NUMBER_KEY_NAME);
+                int columnNumber = (int) node.getUserData(LocationAwareContentHandler.COLUMN_NUMBER_KEY_NAME);
+                FileLocationModel fileLocation = new GraphService<>(event.getGraphContext(), FileLocationModel.class).create();
+                String sourceSnippet = XmlUtil.nodeToString(node);
+                fileLocation.setSourceSnippit(sourceSnippet);
+                fileLocation.setLineNumber(lineNumber);
+                fileLocation.setColumnNumber(columnNumber);
+                fileLocation.setLength(node.toString().length());
+                fileLocation.setFile(xmlFileModel);
+                Collection<FileLocationModel> fileLocationList = new ArrayList<FileLocationModel>(1);
+                fileLocationList.add(fileLocation);
+                projectDep.setFileLocationReference(fileLocationList);
                 mavenProjectModel.addDependency(projectDep);
             }
         }
