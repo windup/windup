@@ -34,6 +34,8 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * Discovers WebLogic application lifecycle listeners registered within the weblogic-application.xml file.
@@ -75,25 +77,36 @@ public class DiscoverWeblogicApplicationLifecycleListenerRuleProvider extends Ab
 		GraphService<InlineHintModel> hintService = new GraphService<>(event.getGraphContext(), InlineHintModel.class);
 		
 		Document document = fileModel.asDocument();
-		List<Element> listeners = $(document).find("listener-class").get();
-		for (Element listener : listeners) 
-		{
-			String listenerClassName = listener.getTextContent();
-			if(StringUtils.isNotBlank(listenerClassName))
+		NodeList nodeList = document.getElementsByTagName("listener");
+		Node node = nodeList.item(0);
+		System.out.println(node.getNextSibling());
+		
+		
+		List<Element> listeners = $(document).find("listener").get();
+		for (Element listener : listeners) {
+			int lineNumber = (int)listener.getUserData(LocationAwareContentHandler.LINE_NUMBER_KEY_NAME);
+			List<Element> listenerClasses = $(listener).children("listener-class").get();
+			for (Element listenerClass : listenerClasses) 
 			{
-				InlineHintModel hintModel = createHint(event, hintService, fileModel);
-				hintModel.addQuickfix(createXmlQuickfix(event.getGraphContext(), fileModel));
-				int lineNumber = (int)listener.getUserData(LocationAwareContentHandler.LINE_NUMBER_KEY_NAME);
-				hintModel.setLineNumber(lineNumber);
-				String contents = FileUtils.readFileToString(fileModel.asFile(), Charset.defaultCharset());
-				org.eclipse.jface.text.Document textDoc = new org.eclipse.jface.text.Document(contents);
-				IRegion info = textDoc.getLineInformation(lineNumber-1);
-				hintModel.setColumnNumber(info.getOffset());
-				hintModel.setLength(info.getLength());
-				QuickfixModel javaQuickfixModel = createJavaQuickfix(event.getGraphContext(), listenerClassName);
-				if (javaQuickfixModel != null) 
+				String listenerClassName = listenerClass.getTextContent();
+				if(StringUtils.isNotBlank(listenerClassName))
 				{
-					hintModel.addQuickfix(javaQuickfixModel);
+					InlineHintModel hintModel = createHint(event, hintService, fileModel);
+					hintModel.addQuickfix(createXmlQuickfix(event.getGraphContext(), fileModel));
+					hintModel.setLineNumber(lineNumber);
+					
+					String contents = FileUtils.readFileToString(fileModel.asFile(), Charset.defaultCharset());
+					org.eclipse.jface.text.Document textDoc = new org.eclipse.jface.text.Document(contents);
+					
+					IRegion info = textDoc.getLineInformation(lineNumber-1);
+					hintModel.setColumnNumber(info.getOffset());
+					hintModel.setLength(info.getLength());
+					
+					QuickfixModel javaQuickfixModel = createJavaQuickfix(event.getGraphContext(), listenerClassName);
+					if (javaQuickfixModel != null) 
+					{
+						hintModel.addQuickfix(javaQuickfixModel);
+					}
 				}
 			}
 		}
