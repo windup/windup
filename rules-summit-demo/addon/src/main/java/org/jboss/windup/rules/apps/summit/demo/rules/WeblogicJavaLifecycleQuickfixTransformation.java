@@ -136,11 +136,7 @@ public class WeblogicJavaLifecycleQuickfixTransformation implements QuickfixTran
 				postStartAnnotation.setTypeName(ast.newName("PostConstruct"));
 				method.modifiers().add(0, postStartAnnotation);
 				method.setName(ast.newSimpleName("startup"));
-				for (Iterator<Object> iter = method.parameters().iterator(); iter.hasNext();)
-				{
-					iter.next();
-					iter.remove();
-				}
+				method.parameters().clear();
 			}
 			else if (method.getName().toString().equals("preStop"))
 			{
@@ -148,11 +144,7 @@ public class WeblogicJavaLifecycleQuickfixTransformation implements QuickfixTran
 				preStopAnnotation.setTypeName(ast.newName("PreDestroy"));
 				method.modifiers().add(0, preStopAnnotation);
 				method.setName(ast.newSimpleName("shutdown"));
-				for (Iterator<Object> iter = method.parameters().iterator(); iter.hasNext();)
-				{
-					iter.next();
-					iter.remove();
-				}
+				method.parameters().clear();
 			}
 		}
 	}

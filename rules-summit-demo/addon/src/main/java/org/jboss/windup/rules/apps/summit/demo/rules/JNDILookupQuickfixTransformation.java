@@ -75,12 +75,8 @@ public class JNDILookupQuickfixTransformation implements QuickfixTransformation
 		{
 			if (method.getName().toString().equals("lookupService"))
 			{
-				for (Iterator<Object> iter = method.getBody().statements().iterator(); iter.hasNext();)
-				{
-					iter.next();
-					iter.remove();
-				}
-				
+				method.getBody().statements().clear();
+
 				// Context context = new InitialContext();
 				ClassInstanceCreation creation = ast.newClassInstanceCreation();
 				creation.setType(ast.newSimpleType(ast.newSimpleName("InitialContext")));
