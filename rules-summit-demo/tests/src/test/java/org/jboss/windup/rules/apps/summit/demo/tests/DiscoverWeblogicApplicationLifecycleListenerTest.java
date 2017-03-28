@@ -81,7 +81,7 @@ public class DiscoverWeblogicApplicationLifecycleListenerTest
         ExecutionBuilder builder = getExecutionBuilderFromRMIRegistry();
         Assert.assertNotNull(builder);
         
-        Path input = Paths.get("../../test-files/summit-demo-test");
+        Path input = Paths.get("../../test-files/summit-demo-test/weblogic");
         Path output = getDefaultPath();
 
         TestProgressMonitor progressWithLogging = new TestProgressMonitor();
@@ -116,7 +116,7 @@ public class DiscoverWeblogicApplicationLifecycleListenerTest
         ExecutionBuilder builder = getExecutionBuilderFromRMIRegistry();
         Assert.assertNotNull(builder);
     	
-        Path input = Paths.get("../../test-files/summit-demo-test/test");
+        Path input = Paths.get("../../test-files/summit-demo-test/test/weblogic");
         Path output = getDefaultPath();
 
         TestProgressMonitor progressWithLogging = new TestProgressMonitor();
@@ -138,6 +138,40 @@ public class DiscoverWeblogicApplicationLifecycleListenerTest
         String preview = builder.transform(quickfix.getTransformationID(), locationDTO);
         
         File solutionFile = new File("../../test-files/summit-demo-test/solution/AppListenerFixed.java");
+        String solution = FileUtils.readFileToString(solutionFile);
+        Assert.assertTrue(preview.equals(solution));
+    }
+    
+    @Test
+    public void testNonPortableJNDIRefernce() throws Exception
+    {
+        rmiServer.startServer(PORT, "");
+        
+        ExecutionBuilder builder = getExecutionBuilderFromRMIRegistry();
+        Assert.assertNotNull(builder);
+    	
+        Path input = Paths.get("../../test-files/summit-demo-test/test/NonPortableJNDIReference.java");
+        Path output = getDefaultPath();
+
+        TestProgressMonitor progressWithLogging = new TestProgressMonitor();
+        ExecutionResults results = executeWindup(input, output, progressWithLogging);
+        List<Hint> hints = Lists.newArrayList(results.getHints());
+        Assert.assertTrue(hints.size() == 1);
+        Hint hint = hints.get(0);
+        List<Quickfix> quickfixes = Lists.newArrayList(hint.getQuickfixes());
+        Assert.assertTrue(quickfixes.size() == 1);
+        Quickfix quickfix = quickfixes.get(0);
+        Assert.assertTrue(quickfix.getType() == QuickfixType.TRANSFORMATION);
+        		
+        QuickfixLocationDTO locationDTO = new QuickfixLocationDTO(
+        		output.toFile(),
+        		quickfix.getFile(),
+        		hint.getLineNumber(), 
+        		hint.getColumn(), 
+        		hint.getLength());
+        String preview = builder.transform(quickfix.getTransformationID(), locationDTO);
+        
+        File solutionFile = new File("../../test-files/summit-demo-test/solution/NonPortableJNDIReference.java");
         String solution = FileUtils.readFileToString(solutionFile);
         Assert.assertTrue(preview.equals(solution));
     }

@@ -14,7 +14,7 @@ public class WeblogicApplicationLifecycleListenerQuickfixTransformation implemen
 {
 	public static final String ID = WeblogicApplicationLifecycleListenerQuickfixTransformation.class.getSimpleName();
 	
-    private static Logger LOG = Logger.getLogger(DiscoverWeblogicApplicationLifecycleListenerRuleProvider.class.getName());
+    private static Logger LOG = Logger.getLogger(WeblogicApplicationLifecycleListenerQuickfixTransformation.class.getName());
 	
 	@Override
 	public String getTransformationID() {
