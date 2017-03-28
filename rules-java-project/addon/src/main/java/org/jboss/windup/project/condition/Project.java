@@ -9,7 +9,6 @@ import java.util.Set;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.condition.EvaluationStrategy;
-import org.jboss.windup.config.condition.GraphCondition;
 import org.jboss.windup.config.condition.NoopEvaluationStrategy;
 import org.jboss.windup.config.parameters.FrameContext;
 import org.jboss.windup.config.parameters.FrameCreationContext;
@@ -74,21 +73,20 @@ public class Project extends ParameterizedGraphCondition
         {
             Iterable<ProjectDependencyModel> dependencies = payload.getDependencies();
 
-            boolean passed = false;
             for (ProjectDependencyModel dependency : dependencies)
             {
                 ProjectModel projectModel = dependency.getProjectModel();
                 if (projectModel instanceof MavenProjectModel)
                 {
-                    passed = true;
+                    boolean passed = true;
                     MavenProjectModel maven = (MavenProjectModel) projectModel;
                     if (artifact.getGroupId() != null)
                     {
-                        passed = passed && artifact.getGroupId().equals(maven.getGroupId());
+                        passed = passed && artifact.getGroupId().parse(maven.getGroupId()).matches();
                     }
                     if (artifact.getArtifactId() != null)
                     {
-                        passed = passed && artifact.getArtifactId().equals(maven.getArtifactId());
+                        passed = passed && artifact.getArtifactId().parse(maven.getArtifactId()).matches();
                     }
 
                     if (passed && artifact.getVersion() != null)
@@ -96,13 +94,14 @@ public class Project extends ParameterizedGraphCondition
                         passed = passed && artifact.getVersion().validate(maven.getVersion());
                     }
                     if (passed)
-                        break;
+                    {
+                        dependency.getFileLocationReference().forEach(location -> {
+                            result.add(location);
+                            evaluationStrategy.modelMatched();
+                            evaluationStrategy.modelSubmitted(location);
+                        });
+                    }
                 }
-            }
-            if (passed)
-            {
-                result.add(payload);
-
             }
         }
         if (result.isEmpty())
@@ -163,7 +162,7 @@ public class Project extends ParameterizedGraphCondition
     {
         boolean result = evaluate(event, context, new NoopEvaluationStrategy());
 
-        if (result == false)
+        if (!result)
             frameContext.reject();
 
         return result;

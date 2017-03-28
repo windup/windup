@@ -8,7 +8,6 @@ package org.jboss.windup.project.condition;
  */
 public class Version
 {
-
     private String from;
     private String to;
 

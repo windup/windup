@@ -6,90 +6,106 @@ import java.util.Set;
 
 import org.ocpsoft.rewrite.param.ParameterStore;
 import org.ocpsoft.rewrite.param.Parameterized;
+import org.ocpsoft.rewrite.param.ParameterizedPatternParser;
+import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
 
 /**
  * Class used to specify the artifact in the {@link Project} condition
+ * 
  * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  *
  */
-public class Artifact implements Parameterized {
-	
-	private String groupId;
-	private String artifactId;
-	private Version version;
+public class Artifact implements Parameterized
+{
 
-	/**
-	 * Start with specifying the artifact version
-	 */
-	public static Artifact withVersion(Version v) {
-		Artifact artifact = new Artifact();
-		 artifact.version=v;
-		 return artifact;
-	}
+    private RegexParameterizedPatternParser groupId;
+    private RegexParameterizedPatternParser artifactId;
+    private Version version;
 
-	/**
+    /**
+     * Start with specifying the artifact version
+     */
+    public static Artifact withVersion(Version v)
+    {
+        Artifact artifact = new Artifact();
+        artifact.version = v;
+        return artifact;
+    }
+
+    /**
      * Start with specifying the groupId
      */
-	public static Artifact withGroupId(String groupId) {
-		
-		Artifact artifact = new Artifact();
-		 artifact.groupId=groupId;
-		 return artifact;
-	}
+    public static Artifact withGroupId(String groupId)
+    {
 
-	/**
+        Artifact artifact = new Artifact();
+        artifact.groupId = new RegexParameterizedPatternParser(groupId);
+        return artifact;
+    }
+
+    /**
      * Start with specifying the artifactId
      */
-	public static Artifact withArtifactId(String artifactId) {
-		Artifact artifact = new Artifact();
-		 artifact.artifactId=artifactId;
-		 return artifact;
-	}
+    public static Artifact withArtifactId(String artifactId)
+    {
+        Artifact artifact = new Artifact();
+        artifact.artifactId = new RegexParameterizedPatternParser(artifactId);
+        return artifact;
+    }
 
-	/**
-	 * Specify artifact version
-	 * @param version specify the version
-	 * @return
-	 */
-	public Artifact andVersion(Version version) {
-		this.version=version;
-		return this;
-	}
+    /**
+     * Specify artifact version
+     * 
+     * @param version specify the version
+     * @return
+     */
+    public Artifact andVersion(Version version)
+    {
+        this.version = version;
+        return this;
+    }
 
-	/**
-	 *  Specify artifactId
-	 * @param artifactId artifact ID to be set
-	 * @return
-	 */
-	public Artifact andArtifactId(String artifactId) {
-		this.artifactId=artifactId;
-		return this;
+    /**
+     * Specify artifactId
+     * 
+     * @param artifactId artifact ID to be set
+     * @return
+     */
+    public Artifact andArtifactId(String artifactId)
+    {
+        this.artifactId = new RegexParameterizedPatternParser(artifactId);
+        return this;
 
-	}
-	
-	public String getGroupId() {
-		return groupId;
-	}
+    }
 
-	
+    public ParameterizedPatternParser getGroupId()
+    {
+        return groupId;
+    }
 
-	public String getArtifactId() {
-		return artifactId;
-	}
+    public ParameterizedPatternParser getArtifactId()
+    {
+        return artifactId;
+    }
 
-	
-	public Version getVersion() {
-		return version;
-	}
+    public Version getVersion()
+    {
+        return version;
+    }
 
     @Override
     public Set<String> getRequiredParameterNames()
     {
-       return new HashSet<>(Arrays.asList("groupId", "artifactId"));
+        return new HashSet<>(Arrays.asList("groupId", "artifactId"));
     }
 
     @Override
     public void setParameterStore(ParameterStore store)
     {
+		if (groupId != null)
+			groupId.setParameterStore(store);
+
+		if (artifactId != null)
+			artifactId.setParameterStore(store);
     }
 }

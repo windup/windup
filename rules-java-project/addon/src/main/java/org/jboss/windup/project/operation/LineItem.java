@@ -3,6 +3,7 @@ package org.jboss.windup.project.operation;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.FileLocationModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.OverviewReportLineMessageModel;
@@ -15,7 +16,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  *
  */
-public class LineItem extends AbstractIterationOperation<ProjectModel>
+public class LineItem extends AbstractIterationOperation<FileLocationModel>
 {
 
     private String message;
@@ -38,13 +39,15 @@ public class LineItem extends AbstractIterationOperation<ProjectModel>
     }
 
     @Override
-    public void perform(GraphRewrite event, EvaluationContext context, ProjectModel payload)
+    public void perform(GraphRewrite event, EvaluationContext context, FileLocationModel payload)
     {
         GraphContext graphContext = event.getGraphContext();
         GraphService<OverviewReportLineMessageModel> overviewLineService = new GraphService<>(graphContext, OverviewReportLineMessageModel.class);
         OverviewReportLineMessageModel overviewLine = overviewLineService.create();
         overviewLine.setMessage(message);
-        overviewLine.setProject(payload);
+
+        ProjectModel projectModel = payload.getFile().getProjectModel();
+        overviewLine.setProject(projectModel);
         overviewLine.setRuleID(((Rule) context.get(Rule.class)).getId());
     }
 

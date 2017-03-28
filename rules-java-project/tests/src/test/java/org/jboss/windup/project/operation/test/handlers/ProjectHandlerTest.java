@@ -64,8 +64,8 @@ public class ProjectHandlerTest
         Element projectElement = projectList.get(0);
         Project project = parser.<Project> processElement(projectElement);
         Artifact artifact = project.getArtifact();
-        String artifactId = artifact.getArtifactId();
-        String groupId = artifact.getGroupId();
+        String artifactId = artifact.getArtifactId().toString();
+        String groupId = artifact.getGroupId().toString();
         Version version = artifact.getVersion();
         String from = version.getFrom();
         String to = version.getTo();
