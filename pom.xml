@@ -19,7 +19,7 @@
 
     <properties>
         <version.forge>3.6.0.Final</version.forge>
-        <version.furnace>2.25.3.Final</version.furnace>
+        <version.furnace>2.25.4.Final</version.furnace>
         <version.titangraph>0.5.4</version.titangraph>
         <version.tinkerpop.blueprints>2.5.0</version.tinkerpop.blueprints>
         <version.freemarker>2.3.23</version.freemarker>
