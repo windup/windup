@@ -81,7 +81,7 @@ public class DiscoverWeblogicApplicationLifecycleListenerTest
         ExecutionBuilder builder = getExecutionBuilderFromRMIRegistry();
         Assert.assertNotNull(builder);
         
-        Path input = Paths.get("../../test-files/summit-demo-test/weblogic");
+        Path input = Paths.get("../../test-files/summit-demo-test/weblogic/listener");
         Path output = getDefaultPath();
 
         TestProgressMonitor progressWithLogging = new TestProgressMonitor();
@@ -116,7 +116,7 @@ public class DiscoverWeblogicApplicationLifecycleListenerTest
         ExecutionBuilder builder = getExecutionBuilderFromRMIRegistry();
         Assert.assertNotNull(builder);
     	
-        Path input = Paths.get("../../test-files/summit-demo-test/test/weblogic");
+        Path input = Paths.get("../../test-files/summit-demo-test/test/weblogic/listener");
         Path output = getDefaultPath();
 
         TestProgressMonitor progressWithLogging = new TestProgressMonitor();
@@ -172,6 +172,74 @@ public class DiscoverWeblogicApplicationLifecycleListenerTest
         String preview = builder.transform(quickfix.getTransformationID(), locationDTO);
         
         File solutionFile = new File("../../test-files/summit-demo-test/solution/NonPortableJNDIReference.java");
+        String solution = FileUtils.readFileToString(solutionFile);
+        Assert.assertTrue(preview.equals(solution));
+    }
+    
+    @Test
+    public void testWeblogicEjbTransaction() throws Exception
+    {
+        rmiServer.startServer(PORT, "");
+        
+        ExecutionBuilder builder = getExecutionBuilderFromRMIRegistry();
+        Assert.assertNotNull(builder);
+    	
+        Path input = Paths.get("../../test-files/summit-demo-test/test/weblogic/transaction");
+        Path output = getDefaultPath();
+
+        TestProgressMonitor progressWithLogging = new TestProgressMonitor();
+        ExecutionResults results = executeWindup(input, output, progressWithLogging);
+        List<Hint> hints = Lists.newArrayList(results.getHints());
+        Assert.assertTrue(hints.size() == 1);
+        Hint hint = hints.get(0);
+        List<Quickfix> quickfixes = Lists.newArrayList(hint.getQuickfixes());
+        Assert.assertTrue(quickfixes.size() == 2);
+        Quickfix quickfix = quickfixes.get(0);
+        Assert.assertTrue(quickfix.getType() == QuickfixType.TRANSFORMATION);
+        		
+        QuickfixLocationDTO locationDTO = new QuickfixLocationDTO(
+        		output.toFile(),
+        		quickfix.getFile(),
+        		hint.getLineNumber(), 
+        		hint.getColumn(), 
+        		hint.getLength());
+        String preview = builder.transform(quickfix.getTransformationID(), locationDTO);
+        
+        File solutionFile = new File("../../test-files/summit-demo-test/solution/weblogic-ejb-jar.xml");
+        String solution = FileUtils.readFileToString(solutionFile);
+        Assert.assertTrue(preview.equals(solution));
+    }
+    
+    @Test
+    public void testWeblogicEjbToJBossTransaction() throws Exception
+    {
+        rmiServer.startServer(PORT, "");
+        
+        ExecutionBuilder builder = getExecutionBuilderFromRMIRegistry();
+        Assert.assertNotNull(builder);
+    	
+        Path input = Paths.get("../../test-files/summit-demo-test/test/weblogic/transaction");
+        Path output = getDefaultPath();
+
+        TestProgressMonitor progressWithLogging = new TestProgressMonitor();
+        ExecutionResults results = executeWindup(input, output, progressWithLogging);
+        List<Hint> hints = Lists.newArrayList(results.getHints());
+        Assert.assertTrue(hints.size() == 1);
+        Hint hint = hints.get(0);
+        List<Quickfix> quickfixes = Lists.newArrayList(hint.getQuickfixes());
+        Assert.assertTrue(quickfixes.size() == 2);
+        Quickfix quickfix = quickfixes.get(1);
+        Assert.assertTrue(quickfix.getType() == QuickfixType.TRANSFORMATION);
+        		
+        QuickfixLocationDTO locationDTO = new QuickfixLocationDTO(
+        		output.toFile(),
+        		quickfix.getFile(),
+        		hint.getLineNumber(), 
+        		hint.getColumn(), 
+        		hint.getLength());
+        String preview = builder.transform(quickfix.getTransformationID(), locationDTO);
+        
+        File solutionFile = new File("../../test-files/summit-demo-test/solution/jbosscmp-jdbc.xml");
         String solution = FileUtils.readFileToString(solutionFile);
         Assert.assertTrue(preview.equals(solution));
     }

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><jbosscmp-jdbc>
+
+    <defaults>
+        <datasource>java:IS346DS</datasource>
+        <datasource-mapping>mySQL</datasource-mapping>
+    </defaults>
+
+    <enterprise-beans>
+        <entity>
+            <ejb-name>Track</ejb-name>
+            <cmp-field>
+                <field-name>id</field-name>
+                <auto-increment/>
+            </cmp-field>
+            <entity-command class="org.jboss.ejb.plugins.cmp.jdbc.keygen.JDBC30GeneratedKeysCreateCommand" name="get-generated-keys"/>
+        <sync-on-commit-only>false</sync-on-commit-only></entity>
+    </enterprise-beans>
+</jbosscmp-jdbc>

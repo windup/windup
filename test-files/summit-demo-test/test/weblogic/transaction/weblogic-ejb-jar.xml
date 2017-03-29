@@ -13,7 +13,7 @@
         <jndi-name>ejb/Track</jndi-name>
         <entity-descriptor>
             <persistence>
-<!--                <delay-updates-until-end-of-tx>false</delay-updates-until-end-of-tx>-->
+                <delay-updates-until-end-of-tx>false</delay-updates-until-end-of-tx>
             </persistence>
         </entity-descriptor>
     </weblogic-enterprise-bean>
