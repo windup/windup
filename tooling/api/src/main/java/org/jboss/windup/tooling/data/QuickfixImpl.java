@@ -19,10 +19,11 @@ public class QuickfixImpl implements Quickfix
     private String newline;
 
     private String name;
-
+    
     /**
      * @return the name
      */
+    @Override
     public String getName()
     {
         return name;
@@ -31,6 +32,7 @@ public class QuickfixImpl implements Quickfix
     /**
      * @param name the name to set
      */
+    @Override
     public void setName(String name)
     {
         this.name = name;
@@ -39,6 +41,7 @@ public class QuickfixImpl implements Quickfix
     /**
      * @return the type
      */
+    @Override
     public QuickfixType getType()
     {
         return type;
@@ -47,6 +50,7 @@ public class QuickfixImpl implements Quickfix
     /**
      * @param type the type to set
      */
+    @Override
     public void setType(QuickfixType type)
     {
         this.type = type;
@@ -55,6 +59,7 @@ public class QuickfixImpl implements Quickfix
     /**
      * @return the search
      */
+    @Override
     public String getSearch()
     {
         return search;
@@ -63,6 +68,7 @@ public class QuickfixImpl implements Quickfix
     /**
      * @param search the search to set
      */
+    @Override
     public void setSearch(String search)
     {
         this.search = search;
@@ -71,6 +77,7 @@ public class QuickfixImpl implements Quickfix
     /**
      * @return the replacement
      */
+    @Override
     public String getReplacement()
     {
         return replacement;
@@ -79,6 +86,7 @@ public class QuickfixImpl implements Quickfix
     /**
      * @param replacement the replacement to set
      */
+    @Override
     public void setReplacement(String replacement)
     {
         this.replacement = replacement;
@@ -87,6 +95,7 @@ public class QuickfixImpl implements Quickfix
     /**
      * @return the newline
      */
+    @Override
     public String getNewline()
     {
         return newline;
@@ -95,6 +104,7 @@ public class QuickfixImpl implements Quickfix
     /**
      * @param newline the newline to set
      */
+    @Override
     public void setNewline(String newline)
     {
         this.newline = newline;

@@ -43,4 +43,5 @@ public interface HintText
     HintWithIssueCategory withIssueCategory(IssueCategory issueCategory);
 
     OperationBuilder withTags(Set<String> tags);
+    HintText skipTooling();
 }

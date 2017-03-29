@@ -83,6 +83,7 @@
         <module>rules-java-archives</module>
         <module>rules-tattletale</module>
         <module>rules-xml</module>
+        <module>rules-summit-demo</module>
 
         <module>exec</module>
         <module>tooling</module>

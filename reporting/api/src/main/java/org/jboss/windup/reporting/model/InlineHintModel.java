@@ -25,6 +25,7 @@ public interface InlineHintModel extends EffortReportModel, FileLocationModel, T
     String LINKS = TYPE_PREFIX + "links";
     String FILE_LOCATION_REFERENCE = TYPE_PREFIX + "fileLocationReference";
     String QUICKFIXES = TYPE_PREFIX + "quickfixes";
+    String SKIP_TOOLING = TYPE_PREFIX + "skipTooling";
 
     /**
      * A short descriptive text describing the problem covered by this hint
@@ -91,4 +92,16 @@ public interface InlineHintModel extends EffortReportModel, FileLocationModel, T
      */
     @Property(RULE_ID)
     String getRuleID();
+    
+    /**
+     * Used by the tooling API to indicate the rule provider will be providing the corresponding tooling Hint.
+     */
+    @Property(SKIP_TOOLING)
+    void setSkipTooling();
+
+    /**
+     * Used by the tooling API to indicate the rule provider will be providing the corresponding tooling Hint.
+     */
+    @Property(SKIP_TOOLING)
+    boolean isSkipTooling();
 }
