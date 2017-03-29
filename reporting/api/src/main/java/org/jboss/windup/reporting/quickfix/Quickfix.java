@@ -35,7 +35,7 @@ public class Quickfix
     private String transformationID;
     
     private FileModel fileModel;
-
+    
     /**
      * @return the type
      */
