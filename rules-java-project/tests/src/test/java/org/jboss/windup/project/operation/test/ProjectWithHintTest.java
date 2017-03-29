@@ -106,7 +106,7 @@ public class ProjectWithHintTest
             FileModel subinputPath = context.getFramed().addVertex(null, FileModel.class);
             subinputPath.setFilePath("src/test/resources/org");
             FileModel subsubinputPath = context.getFramed().addVertex(null, FileModel.class);
-            subinputPath.setFilePath("src/test/resources/org/jboss");
+            subsubinputPath.setFilePath("src/test/resources/org/jboss");
 
             Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windup_"
                         + UUID.randomUUID().toString());
