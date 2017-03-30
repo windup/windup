@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -28,15 +30,12 @@ import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.FileLocationModel;
-import org.jboss.windup.graph.model.FileReferenceModel;
 import org.jboss.windup.graph.model.ProjectDependencyModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.project.condition.Artifact;
 import org.jboss.windup.project.condition.Project;
-import org.jboss.windup.project.operation.LineItem;
-import org.jboss.windup.reporting.model.OverviewReportLineMessageModel;
+import org.jboss.windup.reporting.config.Hint;
 import org.jboss.windup.rules.apps.java.model.project.MavenProjectModel;
 import org.junit.Assert;
 import org.junit.Test;
@@ -45,9 +44,19 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+/**
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
+ */
 @RunWith(Arquillian.class)
-public class OverviewReportLineTest
+public class ProjectWithHintTest
 {
+    @Inject
+    private ProjectWithHintTest.TestProjectProvider provider;
+    @Inject
+    private WindupProcessor processor;
+    @Inject
+    private GraphContextFactory factory;
+
     @Deployment
     @AddonDependencies({
                 @AddonDependency(name = "org.jboss.windup.config:windup-config"),
@@ -61,20 +70,11 @@ public class OverviewReportLineTest
     {
         return ShrinkWrap.create(AddonArchive.class)
                     .addBeansXML()
-                    .addClass(TestProjectProvider.class);
+                    .addClass(ProjectWithHintTest.TestProjectProvider.class);
     }
 
-    @Inject
-    private TestProjectProvider provider;
-
-    @Inject
-    private WindupProcessor processor;
-
-    @Inject
-    private GraphContextFactory factory;
-
     @Test
-    public void testOverviewReportLine() throws IOException
+    public void testProjectWithHint() throws IOException
     {
         try (GraphContext context = factory.create())
         {
@@ -90,7 +90,6 @@ public class OverviewReportLineTest
             FileModel dependencyFile = context.getFramed().addVertex(null, FileModel.class);
             dependencyFile.setFilePath("src/test/resources/xml/project.xml");
             subsubProject.addFileModel(dependencyFile);
-
             FileLocationModel locationReference = context.getFramed().addVertex(null, FileLocationModel.class);
             locationReference.setLineNumber(3);
             locationReference.setColumnNumber(4);
@@ -101,6 +100,7 @@ public class OverviewReportLineTest
 
             subProject.addDependency(dependency);
             pm.addChildProject(subProject);
+
             FileModel inputPath = context.getFramed().addVertex(null, FileModel.class);
             inputPath.setFilePath("src/test/resources/");
             FileModel subinputPath = context.getFramed().addVertex(null, FileModel.class);
@@ -126,15 +126,10 @@ public class OverviewReportLineTest
             windupConfiguration.setOutputDirectory(outputPath);
             processor.execute(windupConfiguration);
 
-            GraphService<OverviewReportLineMessageModel> overviewLineService = new GraphService<>(context, OverviewReportLineMessageModel.class);
-            Iterable<OverviewReportLineMessageModel> allOverviewLines = overviewLineService.findAll();
-            long count = overviewLineService.count(allOverviewLines);
-            Assert.assertEquals(1, count);
-            for (OverviewReportLineMessageModel line : allOverviewLines)
-            {
-                Assert.assertEquals("Just some test message", line.getMessage());
-            }
-            Assert.assertEquals(1, provider.getMatchCount());
+            Assert.assertEquals(1, provider.getMatches().size());
+            Assert.assertEquals(3, provider.getMatches().get(0).getLineNumber());
+            Assert.assertEquals(4, provider.getMatches().get(0).getColumnNumber());
+            Assert.assertEquals(5, provider.getMatches().get(0).getLength());
         }
     }
 
@@ -142,42 +137,42 @@ public class OverviewReportLineTest
     public static class TestProjectProvider extends AbstractRuleProvider
     {
 
-        private int matchCount;
+        private List<FileLocationModel> matches = new ArrayList<>();
 
         public TestProjectProvider()
         {
-            super(MetadataBuilder.forProvider(TestProjectProvider.class)
+            super(MetadataBuilder.forProvider(ProjectWithHintTest.TestProjectProvider.class)
                         .setPhase(PostMigrationRulesPhase.class));
         }
 
-        public void addMatchCount()
+        public void addMatch(FileLocationModel match)
         {
-            matchCount++;
+            this.matches.add(match);
         }
 
-        public int getMatchCount()
+        public List<FileLocationModel> getMatches()
         {
-            return matchCount;
+            return this.matches;
         }
 
         // @formatter:off
         @Override
         public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
         {
-            AbstractIterationOperation<FileReferenceModel> addMatch = new AbstractIterationOperation<FileReferenceModel>()
+            AbstractIterationOperation<FileLocationModel> addMatch = new AbstractIterationOperation<FileLocationModel>()
             {
                 @Override
-                public void perform(GraphRewrite event, EvaluationContext context, FileReferenceModel payload)
+                public void perform(GraphRewrite event, EvaluationContext context, FileLocationModel payload)
                 {
-                    addMatchCount();
+                    addMatch(payload);
                 }
             };
 
             return ConfigurationBuilder
-                        .begin()
-                        .addRule()
-                        .when(Project.dependsOnArtifact(Artifact.withArtifactId("abc")))
-                        .perform(LineItem.withMessage("Just some test message").and(addMatch));
+                    .begin()
+                    .addRule()
+                    .when(Project.dependsOnArtifact(Artifact.withArtifactId("abc")))
+                    .perform(Hint.titled("Test Hint").withText("Test Hint Body").withEffort(42).and(addMatch));
         }
         // @formatter:on
     }

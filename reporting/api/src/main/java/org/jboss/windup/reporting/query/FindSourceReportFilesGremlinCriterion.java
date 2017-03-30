@@ -3,6 +3,7 @@ package org.jboss.windup.reporting.query;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.query.QueryGremlinCriterion;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.FileLocationModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.SourceFileModel;
@@ -10,7 +11,6 @@ import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.model.TechnologyTagModel;
-import org.jboss.windup.rules.files.model.FileLocationModel;
 
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Vertex;

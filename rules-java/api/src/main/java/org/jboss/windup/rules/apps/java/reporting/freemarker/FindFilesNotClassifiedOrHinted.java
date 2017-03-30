@@ -7,6 +7,8 @@ import java.util.List;
 import com.tinkerpop.blueprints.Direction;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.FileLocationModel;
+import org.jboss.windup.graph.model.FileReferenceModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
 import org.jboss.windup.reporting.model.ClassificationModel;
@@ -15,8 +17,6 @@ import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.query.FindFilesNotClassifiedOrHintedGremlinCriterion;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
-import org.jboss.windup.rules.files.model.FileLocationModel;
-import org.jboss.windup.rules.files.model.FileReferenceModel;
 import org.jboss.windup.util.ExecutionStatistics;
 
 import com.tinkerpop.blueprints.Vertex;

@@ -6,11 +6,11 @@ import java.util.Set;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.FileLocationModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
-import org.jboss.windup.rules.files.model.FileLocationModel;
 import org.jboss.windup.util.ExecutionStatistics;
 
 import com.thinkaurelius.titan.core.attribute.Text;

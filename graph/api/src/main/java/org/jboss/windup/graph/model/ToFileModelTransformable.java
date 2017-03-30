@@ -1,4 +1,4 @@
-package org.jboss.windup.rules.files.condition;
+package org.jboss.windup.graph.model;
 
 import org.jboss.windup.graph.model.resource.FileModel;
 

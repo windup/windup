@@ -1,4 +1,4 @@
-package org.jboss.windup.rules.files.model;
+package org.jboss.windup.graph.model;
 
 import org.jboss.windup.graph.model.resource.FileModel;
 
@@ -9,7 +9,6 @@ import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jboss.windup.rules.files.condition.ToFileModelTransformable;
 
 import java.util.Collections;
 
