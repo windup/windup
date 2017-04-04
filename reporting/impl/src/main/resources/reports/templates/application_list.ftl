@@ -213,7 +213,7 @@
                     <div class="main">Cross-application Reports</div>
                 </h1>
                 <div class="desc">
-                    These reports contain information about all issues found in archives which were included in 
+                    These reports contain information about all issues found in archives which were included in
                     multiple applications.
                 </div>
             </div>
@@ -235,7 +235,7 @@
         <div style="width: 100%; text-align: center">
             <a href="reports/windup_ruleproviders.html">Executed rules overview</a>
                 |
-            <a href="reports/windup_freemarkerfunctions.html">Windup FreeMarker methods</a>
+            <a href="reports/windup_freemarkerfunctions.html">${getWindupBrandName()} FreeMarker methods</a>
                 |
             <a href="#" id="jiraFeedbackTriggerBottomLink">Send feedback</a>
         </div>
