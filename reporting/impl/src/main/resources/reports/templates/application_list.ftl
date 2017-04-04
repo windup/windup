@@ -7,12 +7,12 @@
 </#if>
 
 <#macro tagRenderer tag>
-	<#if tag.level?? && tag.level == "IMPORTANT">
-		<span class="label label-danger" title="${tag.level}">
-	<#else>
-		<span class="label label-info" title="${tag.level}">
-	</#if>
-		<#nested/></span>
+    <#if tag.level?? && tag.level == "IMPORTANT">
+        <span class="label label-danger" title="${tag.level}">
+    <#else>
+        <span class="label label-info" title="${tag.level}">
+    </#if>
+        <#nested/></span>
 </#macro>
 
 <#macro applicationReportRenderer appReport>
@@ -141,7 +141,6 @@
 
         /* Specifics for virtual apps. */
         body.viewAppList .apps .virtual .appInfo .traits .fileName { color: #477280; }
-
     </style>
 </head>
 <body role="document" class="viewAppList" style="max-width: 1480px; margin: auto;">
@@ -167,9 +166,9 @@
 
     <div class="container-fluid" role="main">
         <div class="row">
-            <div class="windup-bar" role="navigation">
-                <div class="container theme-showcase" role="main">
-                    <img src="reports/resources/img/windup-logo.png" class="logo"/>
+            <div class="windup-bar" role="navigation" style="text-align: left;">
+                <div class="container theme-showcase" style="margin-left: 0px;" role="main">
+                    <img src="reports/resources/img/rhamt-logo-gray.svg" class="logo" height="100" width="420"/>
                 </div>
             </div>
         </div>
