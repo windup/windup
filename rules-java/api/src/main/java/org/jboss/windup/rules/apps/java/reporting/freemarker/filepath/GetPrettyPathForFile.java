@@ -17,9 +17,6 @@ import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
  */
 public class GetPrettyPathForFile extends AbstractGetPrettyPathForFile
 {
-
-    private static final String NAME = "getPrettyPathForFile";
-
     public String getPath(JavaClassFileModel jcfm)
     {
         return jcfm.getJavaClass().getQualifiedName();
@@ -46,9 +43,5 @@ public class GetPrettyPathForFile extends AbstractGetPrettyPathForFile
         }
 
         return packageName == null || packageName.equals("") ? filename : packageName + "." + filename;
-    }
-
-    public String getMethodName() {
-        return NAME;
     }
 }

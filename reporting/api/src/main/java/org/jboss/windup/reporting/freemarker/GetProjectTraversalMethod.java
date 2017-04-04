@@ -39,7 +39,6 @@ public class GetProjectTraversalMethod implements WindupFreeMarkerMethod
     public static final String ALL = "all";
     public static final String SHARED = "shared";
 
-    @Override
     public String getMethodName()
     {
         return NAME;
@@ -82,11 +81,5 @@ public class GetProjectTraversalMethod implements WindupFreeMarkerMethod
         ProjectModelTraversal traversal = new ProjectModelTraversal(projectModel, traversalStrategy);
         ExecutionStatistics.get().end(NAME);
         return traversal;
-    }
-
-    @Override
-    public void setContext(GraphRewrite event)
-    {
-
     }
 }

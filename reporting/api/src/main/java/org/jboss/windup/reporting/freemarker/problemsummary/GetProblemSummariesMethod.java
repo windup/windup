@@ -27,15 +27,7 @@ import org.jboss.windup.reporting.category.IssueCategoryModel;
  */
 public class GetProblemSummariesMethod implements WindupFreeMarkerMethod
 {
-    public static final String NAME = "getProblemSummaries";
-
     private GraphContext context;
-
-    @Override
-    public String getMethodName()
-    {
-        return NAME;
-    }
 
     @Override
     public String getDescription()
@@ -47,8 +39,8 @@ public class GetProblemSummariesMethod implements WindupFreeMarkerMethod
     @Override
     public Object exec(List arguments) throws TemplateModelException
     {
-        if (arguments.size() == 0)
-            throw new TemplateModelException("Method " + NAME + " requires the following parameters (GraphRewrite event, ProjectModel project, Set<String> includeTags, Set<String> excludeTags)");
+        if (arguments.isEmpty())
+            throw new TemplateModelException("Method " + getMethodName() + " requires the following parameters (GraphRewrite event, ProjectModel project, Set<String> includeTags, Set<String> excludeTags)");
 
         // Gets the graph rewrite event
         final GraphRewrite event = (GraphRewrite)((StringModel)arguments.get(0)).getWrappedObject();

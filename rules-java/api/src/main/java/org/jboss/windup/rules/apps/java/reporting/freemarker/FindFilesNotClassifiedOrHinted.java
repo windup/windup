@@ -98,12 +98,6 @@ public class FindFilesNotClassifiedOrHinted implements WindupFreeMarkerMethod
     }
 
     @Override
-    public String getMethodName()
-    {
-        return NAME;
-    }
-
-    @Override
     public String getDescription()
     {
         return "Takes an Iterable<" + FileModel.class.getSimpleName()

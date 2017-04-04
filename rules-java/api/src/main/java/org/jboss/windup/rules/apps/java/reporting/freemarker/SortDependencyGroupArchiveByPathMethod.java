@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
 import org.jboss.windup.rules.apps.java.dependencyreport.DependencyReportDependencyGroupModel;
 import org.jboss.windup.rules.apps.java.model.comparator.DependencyReportGroupModelComparator;
@@ -15,23 +14,23 @@ import freemarker.template.TemplateModelException;
 
 /**
  * Takes a list of  and orders them according to their path.
- * 
+ *
  * For example, DependencyReportDependencyGroupModel with this structure:
- * 
+ *
  * <ul>
  * <li>/CProject</li>
  * <li>/BProject</li>
  * <li>/AProject</li>
  * </ul>
- * 
+ *
  * Will be returned as:
- * 
+ *
  * <ul>
  * <li>/AProject</li>
  * <li>/BProject</li>
  * <li>/CProject</li>
  * </ul>
- * 
+ *
  */
 public class SortDependencyGroupArchiveByPathMethod implements WindupFreeMarkerMethod
 {
@@ -68,10 +67,5 @@ public class SortDependencyGroupArchiveByPathMethod implements WindupFreeMarkerM
         Collections.sort(list, new DependencyReportGroupModelComparator());
         ExecutionStatistics.get().end(NAME);
         return list;
-    }
-
-    @Override
-    public void setContext(GraphRewrite event)
-    {
     }
 }

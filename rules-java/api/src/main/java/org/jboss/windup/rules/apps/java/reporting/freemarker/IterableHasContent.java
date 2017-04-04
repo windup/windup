@@ -2,7 +2,6 @@ package org.jboss.windup.rules.apps.java.reporting.freemarker;
 
 import java.util.List;
 
-import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.exception.WindupException;
@@ -15,13 +14,13 @@ import freemarker.template.TemplateModelException;
 
 /**
  * Returns whether an Iterable has values within it.
- * 
+ *
  * Called as follows:
- * 
+ *
  * getPrettyPathForFile(Iterable)
- * 
+ *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
- * 
+ *
  */
 public class IterableHasContent implements WindupFreeMarkerMethod
 {
@@ -84,11 +83,4 @@ public class IterableHasContent implements WindupFreeMarkerMethod
     {
         return "Takes an Iterable as a parameter and checks to see whether items exist in the Iterable.";
     }
-
-    @Override
-    public void setContext(GraphRewrite event)
-    {
-        // no-op
-    }
-
 }

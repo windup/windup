@@ -19,8 +19,6 @@ import java.io.File;
  */
 public class GetPrettyPathForFileWithExtensions extends AbstractGetPrettyPathForFile
 {
-    private static final String NAME = "getPrettyPathForFileWithExtensions";
-
     public String getPath( JavaClassFileModel jcfm) {
         String filename = jcfm.getFileName();
         String packageName = jcfm.getPackageName().replaceAll("\\.", File.separator);
@@ -45,12 +43,5 @@ public class GetPrettyPathForFileWithExtensions extends AbstractGetPrettyPathFor
     public String getPath(FileModel model)
     {
         return model.getPrettyPathWithinProject();
-    }
-
-
-    @Override
-    public String getMethodName()
-    {
-        return NAME;
     }
 }
