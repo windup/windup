@@ -14,13 +14,13 @@ import org.jboss.windup.config.GraphRewrite;
 import freemarker.template.TemplateModelException;
 
 /**
- * 
+ *
  * Returns a list of all FreeMarker methods that have been added by Windup and the currently loaded addons.
- * 
+ *
  * Called as follows:
- * 
+ *
  * getAllFreeMarkerMethods()
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
