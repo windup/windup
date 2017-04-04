@@ -9,7 +9,6 @@ import javax.inject.Inject;
 
 import org.jboss.forge.furnace.proxy.Proxies;
 import org.jboss.forge.furnace.services.Imported;
-import org.jboss.windup.config.GraphRewrite;
 
 import freemarker.template.TemplateModelException;
 
@@ -28,12 +27,6 @@ public class GetAllFreeMarkerMethodsMethod implements WindupFreeMarkerMethod
 {
     @Inject
     private Imported<WindupFreeMarkerMethod> methods;
-
-    @Override
-    public String getMethodName()
-    {
-        return "getAllFreeMarkerMethods";
-    }
 
     @Override
     public String getDescription()
@@ -56,8 +49,4 @@ public class GetAllFreeMarkerMethodsMethod implements WindupFreeMarkerMethod
         return results;
     }
 
-    @Override
-    public void setContext(GraphRewrite event)
-    {
-    }
 }

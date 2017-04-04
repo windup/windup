@@ -8,12 +8,6 @@ import java.util.List;
  */
 public class GetWindupBrandNameMethod implements WindupFreeMarkerMethod {
     @Override
-    public String getMethodName()
-    {
-        return "getWindupBrandName";
-    }
-
-    @Override
     public String getDescription()
     {
         return "Returns the name to use in place of the project name.";

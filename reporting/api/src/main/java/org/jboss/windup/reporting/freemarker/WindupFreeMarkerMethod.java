@@ -18,7 +18,7 @@ public interface WindupFreeMarkerMethod extends TemplateMethodModelEx
     /**
      * Returns the name to be used for the function inside of Freemarker.
      */
-    default String getMethodName(){ return StringUtils.uncapitalize(this.getClass().getSimpleName().replaceFirst("Method$", "")); }
+    default String getMethodName(){ return StringUtils.uncapitalize(StringUtils.removeEnd(this.getClass().getSimpleName(), "Method")); }
 
     /**
      * This should return a description of what this method does, along with any required parameters.
