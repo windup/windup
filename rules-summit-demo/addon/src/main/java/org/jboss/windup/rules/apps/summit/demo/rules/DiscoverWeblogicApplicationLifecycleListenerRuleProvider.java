@@ -34,8 +34,6 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 /**
  * Discovers WebLogic application lifecycle listeners registered within the weblogic-application.xml file.
@@ -77,20 +75,17 @@ public class DiscoverWeblogicApplicationLifecycleListenerRuleProvider extends Ab
 		GraphService<InlineHintModel> hintService = new GraphService<>(event.getGraphContext(), InlineHintModel.class);
 		
 		Document document = fileModel.asDocument();
-		NodeList nodeList = document.getElementsByTagName("listener");
-		Node node = nodeList.item(0);
-		System.out.println(node.getNextSibling());
-		
 		
 		List<Element> listeners = $(document).find("listener").get();
 		for (Element listener : listeners) {
-			int lineNumber = (int)listener.getUserData(LocationAwareContentHandler.LINE_NUMBER_KEY_NAME);
 			List<Element> listenerClasses = $(listener).children("listener-class").get();
 			for (Element listenerClass : listenerClasses) 
 			{
 				String listenerClassName = listenerClass.getTextContent();
 				if(StringUtils.isNotBlank(listenerClassName))
 				{
+					int lineNumber = (int)listenerClass.getUserData(LocationAwareContentHandler.LINE_NUMBER_KEY_NAME);
+
 					InlineHintModel hintModel = createHint(event, hintService, fileModel);
 					hintModel.addQuickfix(createXmlQuickfix(event.getGraphContext(), fileModel));
 					hintModel.setLineNumber(lineNumber);

@@ -27,8 +27,6 @@ import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.model.QuickfixModel;
 import org.jboss.windup.reporting.model.QuickfixType;
 import org.jboss.windup.reporting.quickfix.Quickfix;
-import org.jboss.windup.rules.apps.java.model.JavaClassModel;
-import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.util.xml.LocationAwareContentHandler;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -36,8 +34,6 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
-import com.google.common.collect.Lists;
 
 /**
  * Discovers usage of weblogic lazy DB transactions configured within weblogic-ejb-jar.xml.
@@ -48,7 +44,7 @@ public class DiscoverWeblogicEjbTransactionRuleProvider extends AbstractRuleProv
 	private static Logger LOG = Logger.getLogger(DiscoverWeblogicEjbTransactionRuleProvider.class.getName());
 
 	private static final String XML_LISTENER_RULE_ID = "weblogic-lazy-DB-transaction-rule-id";
-	private static final String XML_TITLE = "Weblogic lazy DB transaction.";
+	private static final String XML_TITLE = "Weblogic EJB lazy DB transaction.";
 	private static final String XML_HINT = "The same behavior can be achieved by specifying the <sync-on-commit-only> in the jbosscmp-jdbc.xml file.";
 	private static final String XML_QUICKFIX_NAME = "Remove the <delay-updates-until-end-of-tx> tag.";
 	private static final String JBOSS_JDBC_QUICKFIX_NAME = "Add <sync-on-commit-only>false</sync-on-commit-only> to the corresponding entity within jbosscmp-jdbc.";

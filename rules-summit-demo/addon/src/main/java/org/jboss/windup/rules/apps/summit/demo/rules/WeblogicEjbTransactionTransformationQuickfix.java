@@ -11,7 +11,7 @@ import org.jboss.windup.reporting.quickfix.QuickfixLocationDTO;
 import org.jboss.windup.reporting.quickfix.QuickfixTransformation;
 
 /**
- * Quickfix for adding removing <delay-updates-until-end-of-tx> from weblogic-ejb-jar.xml.
+ * Quickfix for removing <delay-updates-until-end-of-tx> from weblogic-ejb-jar.xml.
  */
 public class WeblogicEjbTransactionTransformationQuickfix implements QuickfixTransformation
 {
