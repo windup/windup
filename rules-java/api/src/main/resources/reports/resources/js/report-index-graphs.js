@@ -34,7 +34,7 @@ function createTagCharts() {
 }
 
 function mandatoryIncidentsByTypeChartData() {
-    var mandatoryData = getWindupIssueSummaries()["Mandatory"];
+    var mandatoryData = getWindupIssueSummaries()["mandatory"];
     if (mandatoryData == null)
         mandatoryData = [];
 
@@ -78,7 +78,7 @@ function mandatoryIncidentsByTypeChartData() {
 }
 
 function mandatoryEffortByTypeChartData() {
-    var mandatoryData = getWindupIssueSummaries()["Mandatory"];
+    var mandatoryData = getWindupIssueSummaries()["mandatory"];
     if (mandatoryData == null)
         mandatoryData = [];
 
@@ -130,13 +130,18 @@ function effortBySeverityChartData() {
         var issueSummaries = getWindupIssueSummaries()[severity];
         if (issueSummaries == null)
             issueSummaries = [];
-        ticks[index] = [index, severity];
 
         var totalEffort = 0;
+        var numberFound = 0;
         issueSummaries.forEach(function(problemSummary) {
             totalEffort += (problemSummary.numberFound * problemSummary.effortPerIncident);
+            numberFound += problemSummary.numberFound;
         });
 
+        if (numberFound == 0)
+            continue;
+
+        ticks[index] = [index, severity];
         values[index] = [index, totalEffort];
         maxValue = Math.max(maxValue, totalEffort);
 
@@ -157,12 +162,17 @@ function issuesBySeverityChartData() {
         var issueSummaries = getWindupIssueSummaries()[severity];
         if (issueSummaries == null)
             issueSummaries = [];
-        ticks[index] = [index, severity];
+
 
         var numberFound = 0;
         issueSummaries.forEach(function(problemSummary) {
             numberFound += problemSummary.numberFound;
         });
+
+        if (numberFound == 0)
+            continue;
+
+        ticks[index] = [index, severity];
 
         values[index] = [numberFound, index];
         maxValue = Math.max(maxValue, numberFound);
@@ -217,7 +227,7 @@ function createLineAndBarChart(divSelectorOrElement, lineChartData, barChartData
             ticks: lineChartData.ticks
         },
         yaxes: {
-                axisLabelPadding: 3
+            axisLabelPadding: 3
         },
         legend: {
             noColumns: 0,
@@ -330,7 +340,7 @@ function createIncidentsByEffortTable() {
     var maxEffort = 13;
     var byEffortCount = [];
 
-    var mandatoryIncidents = getWindupIssueSummaries()["Mandatory"];
+    var mandatoryIncidents = getWindupIssueSummaries()["mandatory"];
     if (mandatoryIncidents == null)
         mandatoryIncidents = [];
 

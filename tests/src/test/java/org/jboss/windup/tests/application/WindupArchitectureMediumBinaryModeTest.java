@@ -178,7 +178,7 @@ public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTe
         TestReportIndexReportUtil util = new TestReportIndexReportUtil();
         util.loadPage(appReportPath);
 
-        Assert.assertTrue(util.checkIncidentByCategoryRow("Optional", 292, 2210));
+        Assert.assertTrue(util.checkIncidentByCategoryRow("optional", 292, 2210));
     }
 
     /**

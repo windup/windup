@@ -87,7 +87,7 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider
                     Map<String, List<ProblemSummary>> summariesBySeverity =
                         ProblemSummaryService.getProblemSummaries(
                             event.getGraphContext(), projectModelTraversal.getAllProjects(true), Collections.emptySet(), Collections.emptySet())
-                            .entrySet().stream().collect(Collectors.toMap((e) -> e.getKey().getName(), Map.Entry::getValue));
+                            .entrySet().stream().collect(Collectors.toMap((e) -> e.getKey().getCategoryID(), Map.Entry::getValue));
 
                     issueSummaryWriter.write("WINDUP_ISSUE_SUMMARIES['" + inputApplication.asVertex().getId() + "'] = ");
                     objectMapper.writeValue(issueSummaryWriter, summariesBySeverity);
@@ -118,7 +118,7 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider
                 IssueCategoryRegistry issueCategoryRegistry = IssueCategoryRegistry.instance(event.getRewriteContext());
                 for (IssueCategory issueCategory : issueCategoryRegistry.getIssueCategories())
                 {
-                    issueSummaryWriter.write("'" + issueCategory.getName() + "', ");
+                    issueSummaryWriter.write("'" + issueCategory.getCategoryID() + "', ");
                 }
                 issueSummaryWriter.write("];" + NEWLINE);
             }
