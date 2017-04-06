@@ -68,8 +68,6 @@
                             <dd><a href="https://access.redhat.com/documentation/en/red-hat-jboss-migration-toolkit/">https://access.redhat.com/documentation/en/red-hat-jboss-migration-toolkit/</a></dd>
                         </dl>
 
-                        <p>Red Hat Application Migration Toolkit originated from the Windup project. Therefore, the the community pages use the name Windup.
-
                         <dl class="dl-horizontal">
                             <dt>GitHub Source</dt>
                             <dd><a href="https://github.com/windup/windup">https://github.com/windup/windup</a></dd>
