@@ -9,6 +9,7 @@ import org.jboss.windup.util.ExecutionStatistics;
 
 import freemarker.ext.beans.StringModel;
 import freemarker.template.TemplateModelException;
+import org.jboss.windup.util.Util;
 
 /**
  * Returns information about which {@link Rule}s have been evaluated by windup as well as their execution results.
@@ -33,7 +34,7 @@ public class GetRuleExecutionResults implements WindupFreeMarkerMethod
     public String getDescription()
     {
         return "Takes a parameter of type " + AbstractRuleProvider.class.getSimpleName() + " and returns a List<"
-            + RuleExecutionInformation.class.getSimpleName() + "> containing metadata related to the current Windup execution.";
+            + RuleExecutionInformation.class.getSimpleName() + "> containing metadata related to the current " + Util.WINDUP_BRAND_NAME_LONG + " execution.";
     }
 
     @Override

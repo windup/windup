@@ -2,9 +2,6 @@ package org.jboss.windup.reporting.freemarker;
 
 import java.util.List;
 import java.util.UUID;
-
-import org.jboss.windup.config.GraphRewrite;
-
 import freemarker.template.TemplateModelException;
 
 /**
@@ -14,14 +11,6 @@ import freemarker.template.TemplateModelException;
  */
 public class GenerateGUIDMethod implements WindupFreeMarkerMethod
 {
-    private static final String NAME = "generateGUID";
-
-    @Override
-    public String getMethodName()
-    {
-        return NAME;
-    }
-
     @Override
     public String getDescription()
     {
@@ -32,11 +21,5 @@ public class GenerateGUIDMethod implements WindupFreeMarkerMethod
     public Object exec(List arguments) throws TemplateModelException
     {
         return UUID.randomUUID().toString();
-    }
-
-    @Override
-    public void setContext(GraphRewrite event)
-    {
-
     }
 }

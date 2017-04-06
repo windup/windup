@@ -14,13 +14,13 @@ import org.jboss.windup.config.GraphRewrite;
 import freemarker.template.TemplateModelException;
 
 /**
- * 
+ *
  * Returns a list of all FreeMarker Template Directives that have been added by Windup and the currently loaded addons.
- * 
+ *
  * Called as follows:
- * 
+ *
  * getAllFreeMarkerDirectives()
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
@@ -28,12 +28,6 @@ public class GetAllFreeMarkerDirectivesMethod implements WindupFreeMarkerMethod
 {
     @Inject
     private Imported<WindupFreeMarkerTemplateDirective> directives;
-
-    @Override
-    public String getMethodName()
-    {
-        return "getAllFreeMarkerDirectives";
-    }
 
     @Override
     public String getDescription()

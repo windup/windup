@@ -76,7 +76,7 @@
     <link href="resources/css/bootstrap.min.css" rel="stylesheet">
     <link href="resources/css/windup.css" rel="stylesheet" media="screen">
     <link href="resources/css/windup.java.css" rel="stylesheet" media="screen">
-    <link href="resources/img/favicon.png" rel="shortcut icon" type="image/x-icon"/>
+    <link href="resources/img/rhamt-icon-128.png" rel="shortcut icon" type="image/x-icon"/>
 </head>
 <body role="document">
 
@@ -106,7 +106,7 @@
                 <div class="desc">
                     Files in this report are believed to be compatible with the selected target platform;
                     however, it is possible that this report contains incompatible files that were not identified
-                    by any Windup rules. It is recommended that these files be reviewed manually for any issues.
+                    by any ${getWindupBrandName()} rules. It is recommended that these files be reviewed manually for any issues.
                 </div>
             </div>
         </div>

@@ -21,12 +21,6 @@ public class GetEffortDescriptionForPoints implements WindupFreeMarkerMethod
     private static final String NAME = "getEffortDescriptionForPoints";
 
     @Override
-    public String getMethodName()
-    {
-        return NAME;
-    }
-
-    @Override
     public String getDescription()
     {
         return "Given a number of points, return a short textual description (eg, Trivial or Complex).";
@@ -55,10 +49,5 @@ public class GetEffortDescriptionForPoints implements WindupFreeMarkerMethod
 
         ExecutionStatistics.get().end(NAME);
         return result;
-    }
-
-    @Override
-    public void setContext(GraphRewrite event)
-    {
     }
 }

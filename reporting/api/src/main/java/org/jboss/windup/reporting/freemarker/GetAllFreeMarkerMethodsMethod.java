@@ -9,18 +9,17 @@ import javax.inject.Inject;
 
 import org.jboss.forge.furnace.proxy.Proxies;
 import org.jboss.forge.furnace.services.Imported;
-import org.jboss.windup.config.GraphRewrite;
 
 import freemarker.template.TemplateModelException;
 
 /**
- * 
+ *
  * Returns a list of all FreeMarker methods that have been added by Windup and the currently loaded addons.
- * 
+ *
  * Called as follows:
- * 
+ *
  * getAllFreeMarkerMethods()
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
  */
@@ -28,12 +27,6 @@ public class GetAllFreeMarkerMethodsMethod implements WindupFreeMarkerMethod
 {
     @Inject
     private Imported<WindupFreeMarkerMethod> methods;
-
-    @Override
-    public String getMethodName()
-    {
-        return "getAllFreeMarkerMethods";
-    }
 
     @Override
     public String getDescription()
@@ -56,8 +49,4 @@ public class GetAllFreeMarkerMethodsMethod implements WindupFreeMarkerMethod
         return results;
     }
 
-    @Override
-    public void setContext(GraphRewrite event)
-    {
-    }
 }

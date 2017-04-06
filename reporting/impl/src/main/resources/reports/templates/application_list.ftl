@@ -7,12 +7,12 @@
 </#if>
 
 <#macro tagRenderer tag>
-	<#if tag.level?? && tag.level == "IMPORTANT">
-		<span class="label label-danger" title="${tag.level}">
-	<#else>
-		<span class="label label-info" title="${tag.level}">
-	</#if>
-		<#nested/></span>
+    <#if tag.level?? && tag.level == "IMPORTANT">
+        <span class="label label-danger" title="${tag.level}">
+    <#else>
+        <span class="label label-info" title="${tag.level}">
+    </#if>
+        <#nested/></span>
 </#macro>
 
 <#macro applicationReportRenderer appReport>
@@ -107,7 +107,7 @@
     <!-- Bootstrap -->
     <link href="reports/resources/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="reports/resources/css/windup.css" rel="stylesheet" media="screen"/>
-    <link href="reports/resources/img/favicon.png" rel="shortcut icon" type="image/x-icon"/>
+    <link href="reports/resources/img/rhamt-icon-128.png" rel="shortcut icon" type="image/x-icon"/>
     <style>
         body.viewAppList .apps  { margin: 0 2ex; }
         body.viewAppList .apps .appInfo {
@@ -141,7 +141,6 @@
 
         /* Specifics for virtual apps. */
         body.viewAppList .apps .virtual .appInfo .traits .fileName { color: #477280; }
-
     </style>
 </head>
 <body role="document" class="viewAppList" style="max-width: 1480px; margin: auto;">
@@ -167,9 +166,9 @@
 
     <div class="container-fluid" role="main">
         <div class="row">
-            <div class="windup-bar" role="navigation">
-                <div class="container theme-showcase" role="main">
-                    <img src="reports/resources/img/windup-logo.png" class="logo"/>
+            <div class="windup-bar" role="navigation" style="text-align: left;">
+                <div class="container theme-showcase" style="margin-left: 0px;" role="main">
+                    <img src="reports/resources/img/rhamt-logo-gray.svg" class="logo" height="100" width="420"/>
                 </div>
             </div>
         </div>
@@ -213,7 +212,7 @@
                     <div class="main">Cross-application Reports</div>
                 </h1>
                 <div class="desc">
-                    These reports contain information about all issues found in archives which were included in 
+                    These reports contain information about all issues found in archives which were included in
                     multiple applications.
                 </div>
             </div>
@@ -235,7 +234,7 @@
         <div style="width: 100%; text-align: center">
             <a href="reports/windup_ruleproviders.html">Executed rules overview</a>
                 |
-            <a href="reports/windup_freemarkerfunctions.html">Windup FreeMarker methods</a>
+            <a href="reports/windup_freemarkerfunctions.html">${getWindupBrandName()} FreeMarker methods</a>
                 |
             <a href="#" id="jiraFeedbackTriggerBottomLink">Send feedback</a>
         </div>
