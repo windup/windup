@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <title>Windup Rule Providers</title>
+    <title>${getWindupBrandName()} Rule Providers</title>
     <link href="resources/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="resources/css/windup.css" rel="stylesheet" media="screen"/>
     <link href="resources/css/windup.java.css" rel="stylesheet" media="screen"/>
@@ -37,7 +37,7 @@
                     <div class="main">Rule Provider Executions</div>
                 </h1>
                 <div class="desc">
-                    This report lists "rule providers", or sets of Windup rules.
+                    This report lists "rule providers", or sets of ${getWindupBrandName()} rules.
                     They may originate from a <code>.windup.xml</code> file
                     or a Java class implementing <code>RuleProvider</code>.
                 </div>
