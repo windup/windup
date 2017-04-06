@@ -16,7 +16,7 @@
     <link href="resources/css/bootstrap.min.css" rel="stylesheet">
     <link href="resources/css/windup.css" rel="stylesheet" media="screen">
     <link href="resources/css/windup.java.css" rel="stylesheet" media="screen">
-    <link href="resources/img/favicon.png" rel="shortcut icon" type="image/x-icon"/>
+    <link href="resources/img/rhamt-icon-128.png" rel="shortcut icon" type="image/x-icon"/>
 </head>
 <body role="document">
 
@@ -70,7 +70,7 @@
 
                         <p>Red Hat Application Migration Toolkit originated from the Windup project. Therefore, the the community pages use the name Windup.
 
-                        <dl>
+                        <dl class="dl-horizontal">
                             <dt>GitHub Source</dt>
                             <dd><a href="https://github.com/windup/windup">https://github.com/windup/windup</a></dd>
 
