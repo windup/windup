@@ -49,7 +49,7 @@
                     </#list>
                 </h1>
                 <div class="desc">
-                    This report displays what Windup found in individual files.
+                    This report displays what Red Hat Application Migration Toolkit found in individual files.
                     Each item is shown below the line it was found on,
                     and next to it, you may find a link to the rule which it was found by.
                 </div>
