@@ -106,7 +106,7 @@
                 <div class="desc">
                     Files in this report are believed to be compatible with the selected target platform;
                     however, it is possible that this report contains incompatible files that were not identified
-                    by any Windup rules. It is recommended that these files be reviewed manually for any issues.
+                    by any ${getWindupBrandName()} rules. It is recommended that these files be reviewed manually for any issues.
                 </div>
             </div>
         </div>
