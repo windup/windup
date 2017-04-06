@@ -1,7 +1,6 @@
 package org.jboss.windup.rules.apps.java.reporting.freemarker;
 
 import freemarker.template.TemplateModelException;
-import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.rules.apps.java.reporting.freemarker.dto.HintWithOccurence;
@@ -68,11 +67,4 @@ public class GroupHintsByFile implements WindupFreeMarkerMethod
     {
         return "Takes an Iterable of Hints and returns map that groups hint messages to number of occurences";
     }
-
-    @Override
-    public void setContext(GraphRewrite event)
-    {
-        // no-op
-    }
-
 }

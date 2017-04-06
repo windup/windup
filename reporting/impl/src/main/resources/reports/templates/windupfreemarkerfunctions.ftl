@@ -4,11 +4,11 @@
 <head>
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <title>Windup FreeMarker Functions and Directives</title>
+    <title>Red Hat Application Migration Toolkit FreeMarker Functions and Directives</title>
     <link href="resources/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="resources/css/windup.css" rel="stylesheet" media="screen"/>
     <link href="resources/css/windup.java.css" rel="stylesheet" media="screen"/>
-    <link href="resources/img/favicon.png" rel="shortcut icon" type="image/x-icon"/>
+    <link href="resources/img/rhamt-icon-128.png" rel="shortcut icon" type="image/x-icon"/>
 </head>
 <body role="document">
 
@@ -34,10 +34,10 @@
         <div class="row">
             <div class="page-header page-header-no-border">
                 <h1>
-                    <div class="main">Windup FreeMarker Functions and Directives</div>
+                    <div class="main">Red Hat Application Migration Toolkit FreeMarker Functions and Directives</div>
                 </h1>
                 <div class="desc">
-                    This report shows the custom Freemarker extensions created for and used by Windup.
+                    This report shows the custom Freemarker extensions created for and used by Red Hat Application Migration Toolkit.
                 </div>
             </div>
         </div>

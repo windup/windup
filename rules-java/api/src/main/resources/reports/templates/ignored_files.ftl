@@ -61,7 +61,7 @@
     <link href="resources/css/bootstrap.min.css" rel="stylesheet">
     <link href="resources/css/windup.css" rel="stylesheet" media="screen">
     <link href="resources/css/windup.java.css" rel="stylesheet" media="screen">
-    <link href="resources/img/favicon.png" rel="shortcut icon" type="image/x-icon"/>
+    <link href="resources/img/rhamt-icon-128.png" rel="shortcut icon" type="image/x-icon"/>
 </head>
 <body role="document">
 

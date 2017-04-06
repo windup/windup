@@ -55,7 +55,7 @@
         <link href="resources/css/windup.css" rel="stylesheet" media="screen">
         <link href="resources/css/windup.java.css" rel="stylesheet" media="screen">
         <link href="resources/css/jquery-ui.min.css" rel="stylesheet" media="screen">
-        <link href="resources/img/favicon.png" rel="shortcut icon" type="image/x-icon"/>
+        <link href="resources/img/rhamt-icon-128.png" rel="shortcut icon" type="image/x-icon"/>
         <style>
             /* Only horizontal lines. */
             .migration-issues-table.table-bordered > thead > tr > th,

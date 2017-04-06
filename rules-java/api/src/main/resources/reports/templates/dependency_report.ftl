@@ -13,7 +13,7 @@
     </title>
     <link href="resources/css/bootstrap.min.css" rel="stylesheet">
     <link href="resources/css/windup.css" rel="stylesheet" media="screen">
-    <link href="resources/img/favicon.png" rel="shortcut icon" type="image/x-icon"/>
+    <link href="resources/img/rhamt-icon-128.png" rel="shortcut icon" type="image/x-icon"/>
     <style>
         body.reportJar .dependency { padding: 1ex 1em 1ex; margin: 0ex 1em; border-bottom: 1px solid gray; }
         body.reportJar .dependency h4 { font-size: 14pt !important; color: #286ba4; background-color: #f2f2f2 }

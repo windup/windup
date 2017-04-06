@@ -23,6 +23,7 @@ import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.jboss.windup.reporting.model.TemplateType;
 import org.jboss.windup.reporting.service.ApplicationReportService;
 import org.jboss.windup.reporting.service.ReportService;
+import org.jboss.windup.util.Util;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.config.Configuration;
@@ -35,9 +36,10 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 @RuleMetadata(phase = ReportGenerationPhase.class)
 public class CreateAboutWindupReportRuleProvider extends AbstractRuleProvider
 {
-    public static final String REPORT_DESCRIPTION = "This describes the current version of Windup and provides helpful links for further assistance.";
+    public static final String REPORT_DESCRIPTION = "This describes the version of " + Util.WINDUP_BRAND_NAME_LONG + " used to generate this report and provides helpful links for further assistance.";
     public static final String REPORT_NAME = "About";
     public static final String TEMPLATE_APPLICATION_REPORT = "/reports/templates/about_windup.ftl";
+
     @Inject
     Addon addon;
 

@@ -20,8 +20,6 @@ import freemarker.template.TemplateModelException;
  */
 public class FindSourceFilesByClassNameMethod implements WindupFreeMarkerMethod
 {
-    private static final String NAME = "findSourceFilesByClassName";
-
     private JavaClassService javaClassService;
 
     @Override
@@ -65,12 +63,6 @@ public class FindSourceFilesByClassNameMethod implements WindupFreeMarkerMethod
     }
 
     @Override
-    public String getMethodName()
-    {
-        return NAME;
-    }
-
-    @Override
     public String getDescription()
     {
         return "Finds all " + JavaSourceFileModel.class.getSimpleName() + "s for the given fully qualified class name";
@@ -81,5 +73,4 @@ public class FindSourceFilesByClassNameMethod implements WindupFreeMarkerMethod
     {
         this.javaClassService = new JavaClassService(event.getGraphContext());
     }
-
 }

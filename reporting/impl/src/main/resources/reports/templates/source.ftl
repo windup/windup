@@ -10,7 +10,7 @@
     <link rel="stylesheet" type="text/css" href="resources/libraries/snippet/jquery.snippet.min.css" />
     <link rel="stylesheet" type="text/css" href="resources/css/windup-source.css" />
     <link rel="stylesheet" type="text/css" href="resources/libraries/sausage/sausage.css" />
-    <link rel="shortcut icon" href="resources/img/favicon.png" type="image/x-icon"/>
+    <link rel="shortcut icon" href="resources/img/rhamt-icon-128.png" type="image/x-icon"/>
 </head>
 <body role="document" class="source-report">
 
@@ -49,7 +49,7 @@
                     </#list>
                 </h1>
                 <div class="desc">
-                    This report displays what Windup found in individual files.
+                    This report displays what Red Hat Application Migration Toolkit found in individual files.
                     Each item is shown below the line it was found on,
                     and next to it, you may find a link to the rule which it was found by.
                 </div>

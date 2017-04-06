@@ -19,11 +19,12 @@ import freemarker.template.TemplateModelException;
  */
 public abstract class AbstractGetPrettyPathForFile implements WindupFreeMarkerMethod
 {
+    private static final String  NAME = "abstractGetPrettyPathForFile";
 
     @Override
     public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
     {
-        ExecutionStatistics.get().begin(getMethodName());
+        ExecutionStatistics.get().begin(NAME);
         try
         {
             if (arguments.size() != 1)
@@ -51,7 +52,7 @@ public abstract class AbstractGetPrettyPathForFile implements WindupFreeMarkerMe
         }
         finally
         {
-            ExecutionStatistics.get().end(getMethodName());
+            ExecutionStatistics.get().end(NAME);
         }
     }
 
@@ -59,7 +60,6 @@ public abstract class AbstractGetPrettyPathForFile implements WindupFreeMarkerMe
     public abstract String getPath(ReportResourceFileModel model);
     public abstract String getPath(FileModel model);
     public abstract String getPath(JavaSourceFileModel javaSourceModel);
-    public abstract String getMethodName();
 
     @Override
     public String getDescription()
@@ -67,11 +67,4 @@ public abstract class AbstractGetPrettyPathForFile implements WindupFreeMarkerMe
         return "Takes a " + FileModel.class.getSimpleName()
                     + " as a parameter and either the qualified name (if it is a Java file) or the path within the file's project.";
     }
-
-    @Override
-    public void setContext(GraphRewrite event)
-    {
-        // no-op
-    }
-
 }
