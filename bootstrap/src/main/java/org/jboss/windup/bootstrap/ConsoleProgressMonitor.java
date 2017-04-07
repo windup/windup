@@ -56,7 +56,14 @@ public class ConsoleProgressMonitor implements WindupProgressMonitor
     public void subTask(String subTask)
     {
         String message = String.format("[%d/%d] %s", currentWork, totalWork, subTask);
-        System.out.println(message);
+        if (subTask.endsWith("\r"))
+        {
+            System.out.print(message);
+        } 
+        else 
+        {
+            System.out.println("\r" + message);
+        }
         LOG.info(message);
     }
 
