@@ -49,6 +49,7 @@ class DefaultRuleLifecycleListener implements RuleLifecycleListener
             count.decrement();
         }
         progressMonitor.beginTask("Executing Windup", count.intValue());
+        progressMonitor.worked(1);
     }
 
     @Override
