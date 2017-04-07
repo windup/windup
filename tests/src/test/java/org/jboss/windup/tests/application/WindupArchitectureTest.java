@@ -194,7 +194,7 @@ public abstract class WindupArchitectureTest
         Assert.assertFalse(recordingMonitor.getSubTaskNames().isEmpty());
         Assert.assertTrue(recordingMonitor.getTotalWork() > 0);
         Assert.assertTrue(recordingMonitor.getCompletedWork() > 0);
-        Assert.assertEquals(recordingMonitor.getTotalWork(), recordingMonitor.getCompletedWork());
+        Assert.assertEquals(recordingMonitor.getTotalWork() + 1, recordingMonitor.getCompletedWork());
     }
 
     /**
