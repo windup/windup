@@ -67,8 +67,12 @@ class DefaultRuleLifecycleListener implements RuleLifecycleListener
         // don't redisplay it if nothing has changed
         if (!newProgressMessage.equals(lastRuleProgressMessage))
         {
+            if (lastRuleProgressMessage != null && lastRuleProgressMessage.length() > newProgressMessage.length())
+            {
+                newProgressMessage = String.format("%1$-" + lastRuleProgressMessage.length() + "s", newProgressMessage);
+            }
             lastRuleProgressMessage = newProgressMessage;
-            progressMonitor.subTask(newProgressMessage);
+            progressMonitor.subTask(newProgressMessage + "\r");
         }
         return progressMonitor.isCancelled();
     }
