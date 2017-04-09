@@ -13,7 +13,7 @@ import org.ocpsoft.rewrite.config.Condition;
 import org.ocpsoft.rewrite.config.Or;
 import org.w3c.dom.Element;
 
-@NamespaceElementHandler(elementName = "or", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
+@NamespaceElementHandler(elementName = "any", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
 public class OrHandler implements ElementHandler<Or>
 {
    @Override

@@ -431,8 +431,8 @@
         <xs:complexContent>
             <xs:extension base="when-base">
                 <xs:choice maxOccurs="unbounded">
-                    <xs:element name="or" type="when" minOccurs="0" maxOccurs="unbounded" />
-                    <xs:element name="and" type="when" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="any" type="when" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="all" type="when" minOccurs="0" maxOccurs="unbounded" />
                     <xs:element name="not" type="when" minOccurs="0" maxOccurs="unbounded" />
                 </xs:choice>
             </xs:extension>
@@ -445,8 +445,8 @@
                 <xs:choice maxOccurs="unbounded">
                     <xs:element ref="has-classification" />
                     <xs:element ref="has-hint" />
-                    <xs:element name="or" type="iteration-when" minOccurs="0" maxOccurs="unbounded" />
-                    <xs:element name="and" type="iteration-when" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="any" type="iteration-when" minOccurs="0" maxOccurs="unbounded" />
+                    <xs:element name="all" type="iteration-when" minOccurs="0" maxOccurs="unbounded" />
                     <xs:element name="not" type="iteration-when" minOccurs="0" maxOccurs="unbounded" />
                 </xs:choice>
             </xs:extension>

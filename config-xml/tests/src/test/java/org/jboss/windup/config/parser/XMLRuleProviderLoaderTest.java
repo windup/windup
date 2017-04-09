@@ -19,14 +19,7 @@ import org.jboss.windup.graph.GraphContextFactory;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ocpsoft.rewrite.config.And;
-import org.ocpsoft.rewrite.config.Condition;
-import org.ocpsoft.rewrite.config.DefaultOperationBuilder;
-import org.ocpsoft.rewrite.config.Not;
-import org.ocpsoft.rewrite.config.Operation;
-import org.ocpsoft.rewrite.config.Rule;
-import org.ocpsoft.rewrite.config.RuleBuilder;
-import org.ocpsoft.rewrite.config.True;
+import org.ocpsoft.rewrite.config.*;
 import org.ocpsoft.rewrite.param.Parameter;
 import org.ocpsoft.rewrite.param.RegexConstraint;
 
@@ -91,10 +84,10 @@ public class XMLRuleProviderLoaderTest
         List<Condition> conditions = rule.getConditions();
         Assert.assertEquals(1, conditions.size());
         Condition condition = conditions.get(0);
-        Assert.assertTrue(condition instanceof And);
-        And and = (And) condition;
-        Assert.assertEquals(1, and.getConditions().size());
-        Assert.assertTrue(and.getConditions().get(0) instanceof True);
+        Assert.assertTrue(condition instanceof Or);
+        Or or = (Or) condition;
+        Assert.assertEquals(1, or.getConditions().size());
+        Assert.assertTrue(or.getConditions().get(0) instanceof True);
 
         // check the operations
         List<Operation> operations = rule.getOperations();
@@ -110,10 +103,10 @@ public class XMLRuleProviderLoaderTest
         List<Condition> conditions = rule.getConditions();
         Assert.assertEquals(1, conditions.size());
         Condition condition = conditions.get(0);
-        Assert.assertTrue(condition instanceof And);
-        And and = (And) condition;
-        Assert.assertEquals(1, and.getConditions().size());
-        Assert.assertTrue(and.getConditions().get(0) instanceof True);
+        Assert.assertTrue(condition instanceof Or);
+        Or or = (Or) condition;
+        Assert.assertEquals(1, or.getConditions().size());
+        Assert.assertTrue(or.getConditions().get(0) instanceof True);
 
         // check the operations
         List<Operation> operations = rule.getOperations();
@@ -142,8 +135,8 @@ public class XMLRuleProviderLoaderTest
         Condition condition = conditions.get(0);
         Assert.assertTrue(condition instanceof Not);
         Condition andCondition = ((RuleBuilder) ((Not) condition).getConditions().get(0)).getConditions().get(0);
-        Assert.assertTrue(andCondition instanceof And);
-        And and = (And) andCondition;
+        Assert.assertTrue(andCondition instanceof Or);
+        Or and = (Or) andCondition;
         Assert.assertEquals(1, and.getConditions().size());
         Assert.assertTrue(and.getConditions().get(0) instanceof True);
 
@@ -164,8 +157,8 @@ public class XMLRuleProviderLoaderTest
         List<Condition> conditions = rule.getConditions();
         Assert.assertEquals(1, conditions.size());
         Condition condition = conditions.get(0);
-        Assert.assertTrue(condition instanceof And);
-        And and = (And) condition;
+        Assert.assertTrue(condition instanceof Or);
+        Or and = (Or) condition;
         Assert.assertEquals(1, and.getConditions().size());
         Assert.assertTrue(and.getConditions().get(0) instanceof True);
 

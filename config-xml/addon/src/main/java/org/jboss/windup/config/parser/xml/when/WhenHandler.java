@@ -11,16 +11,17 @@ import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.config.parser.xml.RuleProviderHandler;
 import org.ocpsoft.rewrite.config.And;
 import org.ocpsoft.rewrite.config.Condition;
+import org.ocpsoft.rewrite.config.Or;
 import org.w3c.dom.Element;
 
 /**
  * Parses the "when" element, which will contain {@link Condition} that will be combined together via {@link And}.
  */
 @NamespaceElementHandler(elementName = "when", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
-public class WhenHandler implements ElementHandler<And>
+public class WhenHandler implements ElementHandler<Or>
 {
     @Override
-    public And processElement(ParserContext handlerManager, Element element)
+    public Or processElement(ParserContext handlerManager, Element element)
     {
         List<Condition> conditions = new ArrayList<>();
         List<Element> children = $(element).children().get();
@@ -29,6 +30,6 @@ public class WhenHandler implements ElementHandler<And>
             Condition condition = handlerManager.processElement(child);
             conditions.add(condition);
         }
-        return And.all(conditions.toArray(new Condition[conditions.size()]));
+        return Or.any(conditions.toArray(new Condition[conditions.size()]));
     }
 }
