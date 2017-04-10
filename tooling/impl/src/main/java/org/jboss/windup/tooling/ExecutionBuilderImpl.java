@@ -34,6 +34,8 @@ import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.rules.apps.java.model.WindupJavaConfigurationModel;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
+import org.jboss.windup.tooling.quickfix.QuickfixLocationDTO;
+import org.jboss.windup.tooling.quickfix.QuickfixService;
 import org.jboss.windup.tooling.rules.RuleProviderRegistry;
 import org.jboss.windup.tooling.rules.RuleProviderRegistryImpl;
 import org.jboss.windup.util.PathUtil;
@@ -73,6 +75,9 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
 
     @Inject
     private RuleLoader ruleLoader;
+    
+    @Inject
+    private QuickfixService quickfixService;
 
     @Override
     public void clear() throws RemoteException
@@ -210,7 +215,13 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
     {
         this.version = version;
     }
+    
+    public String transform(String transformationID, QuickfixLocationDTO locationDTO) throws RemoteException
+    {
+    	return quickfixService.transform(transformationID, locationDTO);
+    }
 
+    
     @Override
     public ExecutionResults execute() throws RemoteException
     {

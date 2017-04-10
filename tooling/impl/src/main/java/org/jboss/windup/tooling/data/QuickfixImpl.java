@@ -1,5 +1,7 @@
 package org.jboss.windup.tooling.data;
 
+import java.io.File;
+
 /**
  * QuickfixImpl object parsed from XML rule definition
  * 
@@ -19,6 +21,10 @@ public class QuickfixImpl implements Quickfix
     private String newline;
 
     private String name;
+
+    private String transformationID;
+    
+    private File file;
 
     /**
      * @return the name
@@ -98,5 +104,26 @@ public class QuickfixImpl implements Quickfix
     public void setNewline(String newline)
     {
         this.newline = newline;
+    }
+
+    public String getTransformationID()
+    {
+        return transformationID;
+    }
+
+    public void setTransformationID(String transformationID)
+    {
+        this.transformationID = transformationID;
+    }
+    
+    @Override
+    public File getFile()
+    {
+    	return file;
+    }
+    
+    public void setFile(File file)
+    {
+    	this.file = file;
     }
 }
