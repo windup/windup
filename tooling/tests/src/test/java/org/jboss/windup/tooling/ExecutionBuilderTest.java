@@ -40,7 +40,7 @@ import org.jboss.windup.exec.configuration.options.TargetOption;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.config.Hint;
-import org.jboss.windup.reporting.config.Quickfix;
+import org.jboss.windup.reporting.quickfix.Quickfix;
 import org.jboss.windup.reporting.config.classification.Classification;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;

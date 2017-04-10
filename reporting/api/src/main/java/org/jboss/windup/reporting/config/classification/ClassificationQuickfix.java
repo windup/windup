@@ -1,6 +1,6 @@
 package org.jboss.windup.reporting.config.classification;
 
-import org.jboss.windup.reporting.config.Quickfix;
+import org.jboss.windup.reporting.quickfix.Quickfix;
 import org.ocpsoft.rewrite.config.OperationBuilder;
 
 /**

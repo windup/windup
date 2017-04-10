@@ -2,6 +2,7 @@ package org.jboss.windup.reporting.config;
 
 import java.util.Set;
 import org.jboss.windup.reporting.category.IssueCategory;
+import org.jboss.windup.reporting.quickfix.Quickfix;
 import org.ocpsoft.rewrite.config.OperationBuilder;
 
 /**
