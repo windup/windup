@@ -1,5 +1,6 @@
 package org.jboss.windup.tooling.data;
 
+import java.io.File;
 import java.io.Serializable;
 
 /**
@@ -32,4 +33,10 @@ public interface Quickfix extends Serializable
      */
     String getNewline();
 
+    /**
+     * Contains the implementation ID for transformation fixes.
+     */
+    String getTransformationID();
+    
+    File getFile();
 }

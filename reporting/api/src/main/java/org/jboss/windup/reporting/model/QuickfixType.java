@@ -20,11 +20,21 @@ public enum QuickfixType
     /**
      * It searches for a token and inserts a new line after found line
      */
-    INSERT_LINE("Quickfix INSERT_LINE");
+    INSERT_LINE("Quickfix INSERT_LINE"),
+
+    /**
+     * Transforms via a regular expression.
+     */
+    REGULAR_EXPRESSION("Regular Expression"),
+
+    /**
+     * Transforms based upon a custom Java implementation of a transformer.
+     */
+    TRANSFORMATION("Transformation");
 
     private String description;
 
-    private QuickfixType(String description)
+    QuickfixType(String description)
     {
         this.description = description;
     }

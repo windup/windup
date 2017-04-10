@@ -50,6 +50,7 @@ public class ToolingRMIServer
 
             ExecutionBuilder proxy = (ExecutionBuilder) UnicastRemoteObject.exportObject(executionBuilder, 0);
             registry.rebind(ExecutionBuilder.LOOKUP_NAME, proxy);
+
             LOG.info("Registered ExecutionBuilder at: " + registry);
         }
         catch (RemoteException e)

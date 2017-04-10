@@ -5,6 +5,8 @@ import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.List;
 
+import org.jboss.windup.tooling.quickfix.QuickfixLocationDTO;
+import org.jboss.windup.tooling.quickfix.QuickfixService;
 import org.jboss.windup.tooling.rules.RuleProviderRegistry;
 
 /**
@@ -121,4 +123,9 @@ public interface ExecutionBuilder extends Remote
      * Returns the registry containing the system rule providers.
      */
     RuleProviderRegistry getSystemRuleProviderRegistry() throws RemoteException;
+    
+    /**
+     * Executes the quickfix transformation.
+     */
+    String transform(String transformationID, QuickfixLocationDTO locationDTO) throws RemoteException;
 }
