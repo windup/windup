@@ -210,6 +210,12 @@
 
 
             <!-- ===== Bundled rules ===== -->
+             <dependency>
+                <groupId>org.jboss.windup.rules.apps</groupId>
+                <artifactId>windup-rules-summit-demo</artifactId>
+                <classifier>forge-addon</classifier>
+                <version>${project.version}</version>
+            </dependency>
 
             <!-- Windup Rules - Java EE - Basic -->
             <dependency>
