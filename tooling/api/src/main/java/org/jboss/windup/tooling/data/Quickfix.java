@@ -32,4 +32,8 @@ public interface Quickfix extends Serializable
      */
     String getNewline();
 
+    /**
+     * Contains the implementation ID for transformation fixes.
+     */
+    String getTransformationID();
 }

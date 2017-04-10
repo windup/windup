@@ -13,7 +13,7 @@ import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.config.parser.xml.RuleProviderHandler;
 import org.jboss.windup.reporting.config.Link;
-import org.jboss.windup.reporting.config.Quickfix;
+import org.jboss.windup.reporting.quickfix.Quickfix;
 import org.jboss.windup.reporting.config.classification.Classification;
 import org.jboss.windup.reporting.category.IssueCategory;
 import org.jboss.windup.reporting.category.IssueCategoryRegistry;

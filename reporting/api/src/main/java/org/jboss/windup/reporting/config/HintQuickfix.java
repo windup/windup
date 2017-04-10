@@ -1,5 +1,7 @@
 package org.jboss.windup.reporting.config;
 
+import org.jboss.windup.reporting.quickfix.Quickfix;
+
 /**
  * One of the builder interfaces of Hint operation.
  * 

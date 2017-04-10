@@ -1,9 +1,17 @@
 /**
  *
  */
-package org.jboss.windup.reporting.config;
+package org.jboss.windup.reporting.quickfix;
 
+import org.apache.commons.lang.StringUtils;
+import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.reporting.model.QuickfixModel;
 import org.jboss.windup.reporting.model.QuickfixType;
+import org.jboss.windup.reporting.model.ReplacementQuickfixModel;
+import org.jboss.windup.reporting.model.TransformationQuickfixModel;
+import org.jboss.windup.reporting.service.QuickfixService;
+import org.jboss.windup.util.exception.WindupException;
 
 /**
  * This is a pojo for setting and getting Quickfix
@@ -22,6 +30,8 @@ public class Quickfix
     private String replacementStr;
 
     private String searchStr;
+
+    private String transformationID;
 
     /**
      * @return the type
@@ -101,6 +111,43 @@ public class Quickfix
     public void setSearchStr(String searchStr)
     {
         this.searchStr = searchStr;
+    }
+
+    public String getTransformationID()
+    {
+        return transformationID;
+    }
+
+    public void setTransformationID(String transformationID)
+    {
+        this.transformationID = transformationID;
+    }
+
+    public QuickfixModel createQuickfix(GraphContext graphContext)
+    {
+        QuickfixService quickfixService = new QuickfixService(graphContext);
+        QuickfixModel quickfixModel = quickfixService.create();
+        quickfixModel.setQuickfixType(getType());
+        quickfixModel.setName(StringUtils.trim(getName()));
+
+        switch (getType()) {
+            case INSERT_LINE:
+            case DELETE_LINE:
+            case REPLACE:
+            case REGULAR_EXPRESSION:
+                ReplacementQuickfixModel replacementQuickfixModel = GraphService.addTypeToModel(graphContext, quickfixModel, ReplacementQuickfixModel.class);
+                replacementQuickfixModel.setReplacement(StringUtils.trim(getReplacementStr()));
+                replacementQuickfixModel.setSearch(StringUtils.trim(getSearchStr()));
+                replacementQuickfixModel.setNewline(StringUtils.trim(getNewline()));
+                break;
+            case TRANSFORMATION:
+                TransformationQuickfixModel transformationQuickfixModel = GraphService.addTypeToModel(graphContext, quickfixModel, TransformationQuickfixModel.class);
+                transformationQuickfixModel.setTransformationID(getTransformationID());
+                break;
+            default:
+                throw new WindupException("Unrecognized quickfix type: " + getType());
+        }
+        return quickfixModel;
     }
 
     @Override
