@@ -81,6 +81,7 @@
         <module>rules-java</module>
         <module>rules-java-ee</module>
         <module>rules-java-archives</module>
+        <module>rules-summit-demo</module>
         <module>rules-tattletale</module>
         <module>rules-xml</module>
 

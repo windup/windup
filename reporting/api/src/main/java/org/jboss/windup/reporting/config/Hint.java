@@ -19,6 +19,7 @@ import org.jboss.windup.reporting.model.QuickfixModel;
 import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.InlineHintModel;
+import org.jboss.windup.reporting.quickfix.Quickfix;
 import org.jboss.windup.reporting.service.TagSetService;
 import org.jboss.windup.reporting.category.IssueCategory;
 import org.jboss.windup.reporting.category.IssueCategoryModel;
@@ -166,14 +167,7 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
             GraphService<QuickfixModel> quickfixService = new GraphService<>(event.getGraphContext(), QuickfixModel.class);
             for (Quickfix quickfix : quickfixes)
             {
-                QuickfixModel quickfixModel = quickfixService.create();
-                quickfixModel.setQuickfixType(quickfix.getType());
-                quickfixModel.setName(StringUtils.trim(quickfix.getName()));
-                quickfixModel.setReplacement(StringUtils.trim(quickfix.getReplacementStr()));
-                quickfixModel.setSearch(StringUtils.trim(quickfix.getSearchStr()));
-                quickfixModel.setNewline(StringUtils.trim(quickfix.getNewline()));
-
-                hintModel.addQuickfix(quickfixModel);
+                hintModel.addQuickfix(quickfix.createQuickfix(event.getGraphContext()));
             }
 
             Set<String> tags = new HashSet<>(this.getTags());
