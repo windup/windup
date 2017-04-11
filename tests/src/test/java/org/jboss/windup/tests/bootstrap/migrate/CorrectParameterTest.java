@@ -36,7 +36,7 @@ public class CorrectParameterTest extends AbstractBootstrapTestWithRules {
     {
         assertTrue(capturedOutput().contains("WARNING: No packages were set in --packages."));
         assertTrue(capturedOutput().contains("Executing Windup"));
-        assertTrue(capturedOutput().contains("Windup report created"));
+        assertTrue(capturedOutput().contains("Report created"));
 
         String indexHtml = new String(Files.readAllBytes(tmp.getRoot().toPath().resolve("index.html")), "UTF-8");
         assertTrue(indexHtml.contains("Windup1x-javaee-example-tiny.war"));
