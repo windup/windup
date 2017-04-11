@@ -263,18 +263,18 @@ public class RunWindupCommand implements Command, FurnaceDependent
             if (!skipReports)
             {
                 Path indexHtmlPath = windupConfiguration.getOutputDirectory().resolve("index.html").normalize().toAbsolutePath();
-                System.out.println("Windup report created: " + indexHtmlPath + System.getProperty("line.separator")
+                System.out.println("Report created: " + indexHtmlPath + System.getProperty("line.separator")
                             + "              Access it at this URL: " + indexHtmlPath.toUri());
             }
             else
             {
                 System.out.println("Generating reports were disabled by option --skipReports");
-                System.out.println("If using that option was unintentional, please run Windup again to generate reports.");
+                System.out.println("If using that option was unintentional, please run RHAMT again to generate reports.");
             }
         }
         catch (Exception e)
         {
-            System.err.println("Windup Execution failed due to: " + e.getMessage());
+            System.err.println("Execution failed due to: " + e.getMessage());
             e.printStackTrace();
         }
 
