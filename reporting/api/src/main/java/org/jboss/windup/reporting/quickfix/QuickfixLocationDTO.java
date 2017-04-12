@@ -7,8 +7,8 @@ import java.io.File;
  */
 public class QuickfixLocationDTO
 {
-	private File reportDirectory;
-	private File file;
+    private File reportDirectory;
+    private File file;
     private int line;
     private int column;
     private int length;
@@ -19,31 +19,31 @@ public class QuickfixLocationDTO
 
     public QuickfixLocationDTO(File reportDirectory, File file, int line, int column, int length)
     {
-    	this.reportDirectory = reportDirectory;
-    	this.file = file;
+        this.reportDirectory = reportDirectory;
+        this.file = file;
         this.line = line;
         this.column = column;
         this.length = length;
     }
-    
+
     public File getReportDirectory()
     {
-    	return reportDirectory;
+        return reportDirectory;
     }
-    
+
     public void setReportDirectory(File reportDirectory)
     {
-    	this.reportDirectory = reportDirectory;
+        this.reportDirectory = reportDirectory;
     }
-    
+
     public File getFile()
     {
-    	return file;
+        return file;
     }
-    
+
     public void setFile(File file)
     {
-    	this.file = file;
+        this.file = file;
     }
 
     public int getLine()

@@ -8,10 +8,10 @@ import java.io.Serializable;
  */
 public class QuickfixLocationDTO implements Serializable
 {
-	private static final long serialVersionUID = 1L;
-	
-	private File reportDirectory;
-	private File file;
+    private static final long serialVersionUID = 1L;
+
+    private File reportDirectory;
+    private File file;
     private int line;
     private int column;
     private int length;
@@ -22,23 +22,23 @@ public class QuickfixLocationDTO implements Serializable
 
     public QuickfixLocationDTO(File reportDirectory, File file, int line, int column, int length)
     {
-    	this.reportDirectory = reportDirectory;
-    	this.file = file;
+        this.reportDirectory = reportDirectory;
+        this.file = file;
         this.line = line;
         this.column = column;
         this.length = length;
     }
-    
+
     public File getReportDirectory()
     {
-    	return reportDirectory;
+        return reportDirectory;
     }
 
     public File getFile()
     {
-    	return file;
+        return file;
     }
-    
+
     public int getLine()
     {
         return line;

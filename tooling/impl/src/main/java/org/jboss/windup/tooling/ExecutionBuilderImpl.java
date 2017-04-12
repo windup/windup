@@ -57,7 +57,7 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
 
     @Inject
     private Furnace furnace;
-    
+
     @Inject
     private RuleProviderRegistryCache ruleProviderCache;
 
@@ -75,7 +75,7 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
 
     @Inject
     private RuleLoader ruleLoader;
-    
+
     @Inject
     private QuickfixService quickfixService;
 
@@ -215,13 +215,12 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
     {
         this.version = version;
     }
-    
+
     public String transform(String transformationID, QuickfixLocationDTO locationDTO) throws RemoteException
     {
-    	return quickfixService.transform(transformationID, locationDTO);
+        return quickfixService.transform(transformationID, locationDTO);
     }
 
-    
     @Override
     public ExecutionResults execute() throws RemoteException
     {
@@ -299,7 +298,7 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
         ruleProviderRegistry.buildRuleProviders(registry);
         return ruleProviderRegistry;
     }
-    
+
     @Override
     public RuleProviderRegistry getSystemRuleProviderRegistry() throws RemoteException
     {
@@ -307,7 +306,6 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
         ruleProviderRegistry.buildRuleProviders(ruleProviderCache.getRuleProviderRegistry());
         return ruleProviderRegistry;
     }
-
 
     private class WindupProgressLoggingHandler extends Handler
     {

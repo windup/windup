@@ -13,7 +13,8 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(TransformationQuickfixModel.TYPE_VALUE)
-public interface TransformationQuickfixModel extends QuickfixModel {
+public interface TransformationQuickfixModel extends QuickfixModel
+{
     String TYPE_VALUE = "TransformationQuickfixModel";
 
     String TRANSFORMATION_ID = TYPE_VALUE + "-transformationID";
@@ -23,17 +24,23 @@ public interface TransformationQuickfixModel extends QuickfixModel {
      * Contains the ID of the class that will implement this translation.
      */
     @Property(TRANSFORMATION_ID)
-    void setTransformationID(String transformationID);
+    String getTransformationID();
 
     /**
      * Contains the ID of the class that will implement this translation.
      */
     @Property(TRANSFORMATION_ID)
-    String getTransformationID();
-    
+    void setTransformationID(String transformationID);
+
+    /**
+     * Contains the file associated with this quickfix.
+     */
     @Adjacency(label = FILE, direction = Direction.OUT)
     FileModel getFile();
-    
+
+    /**
+     * Contains the file associated with this quickfix.
+     */
     @Adjacency(label = FILE, direction = Direction.OUT)
     FileModel setFileModel(FileModel fileModel);
 }
