@@ -19,7 +19,7 @@
             <artifactId>freemarker</artifactId>
             <version>${version.freemarker}</version>
         </dependency>
-
+        
         <!-- Addon Dependencies -->
         <dependency>
             <groupId>org.jboss.windup.config</groupId>
