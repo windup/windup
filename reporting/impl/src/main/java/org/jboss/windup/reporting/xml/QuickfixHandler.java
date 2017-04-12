@@ -14,7 +14,7 @@ import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.config.parser.xml.RuleProviderHandler;
 import org.jboss.windup.reporting.model.QuickfixType;
-import org.jboss.windup.reporting.config.Quickfix;
+import org.jboss.windup.reporting.quickfix.Quickfix;
 import org.w3c.dom.Element;
 
 /**
@@ -49,8 +49,9 @@ public class QuickfixHandler implements ElementHandler<Object>
             case "search":
                 quickfix.setSearchStr(StringUtils.trim(child.getFirstChild().getNodeValue()));
                 break;
+            case "implementationID":
+                quickfix.setTransformationID(StringUtils.trim(child.getFirstChild().getNodeValue()));
             }
-
         }
 
         return quickfix;
