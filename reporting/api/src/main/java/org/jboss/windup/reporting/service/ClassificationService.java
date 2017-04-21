@@ -28,6 +28,7 @@ import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.structures.FramedVertexIterable;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 import java.util.logging.Level;
+import org.jboss.windup.reporting.category.IssueCategoryRegistry;
 
 /**
  * Adds methods for loading and querying ClassificationModel related data.
@@ -184,38 +185,56 @@ public class ClassificationService extends GraphService<ClassificationModel>
     }
 
     /**
-     * Attach a {@link ClassificationModel} with the given classificationText and description to the provided {@link FileModel}. If an existing Model
-     * exists with the provided classificationText, that one will be used instead.
+     * Attach a {@link ClassificationModel} with the given classificationText and description to the provided {@link FileModel}.
+     * If an existing Model exists with the provided classificationText, that one will be used instead.
      */
     public ClassificationModel attachClassification(GraphRewrite event, Rule rule, FileModel fileModel, String classificationText, String description)
     {
-        ClassificationModel model = getUnique(getTypedQuery().has(ClassificationModel.CLASSIFICATION, classificationText));
-        if (model == null)
-        {
-            model = create();
-            model.setClassification(classificationText);
-            model.setDescription(description);
-            model.setEffort(0);
-            model.setRuleID(rule.getId());
-            model.addFileModel(fileModel);
-            if (fileModel instanceof SourceFileModel)
-                ((SourceFileModel) fileModel).setGenerateSourceReport(true);
-
-            ClassificationServiceCache.cacheClassificationFileModel(event, model, fileModel, true);
-            return model;
-        }
-
-        return attachClassification(event, model, fileModel);
+        return attachClassification(event, rule, fileModel, IssueCategoryRegistry.DEFAULT, classificationText, description);
     }
 
     /**
-     * Attach a {@link ClassificationModel} with the given classificationText and description to the provided {@link FileModel}. If an existing Model
-     * exists with the provided classificationText, that one will be used instead.
+     * Attach a {@link ClassificationModel} with the given classificationText and description to the provided {@link FileModel}.
+     * If an existing Model exists with the provided classificationText, that one will be used instead.
+     */
+    public ClassificationModel attachClassification(GraphRewrite event, Rule rule, FileModel fileModel, String categoryId, String classificationText, String description)
+    {
+        ClassificationModel classification = getUnique(getTypedQuery().has(ClassificationModel.CLASSIFICATION, classificationText));
+        if (classification == null)
+        {
+            classification = create();
+            classification.setClassification(classificationText);
+            classification.setDescription(description);
+            classification.setEffort(0);
+
+            IssueCategoryModel cat = IssueCategoryRegistry.loadFromGraph(event.getGraphContext(), categoryId);
+            classification.setIssueCategory(cat);
+
+            classification.setRuleID(rule.getId());
+            classification.addFileModel(fileModel);
+            if (fileModel instanceof SourceFileModel)
+                ((SourceFileModel) fileModel).setGenerateSourceReport(true);
+
+            ClassificationServiceCache.cacheClassificationFileModel(event, classification, fileModel, true);
+            return classification;
+        }
+
+        return attachClassification(event, classification, fileModel);
+    }
+
+    /**
+     * Attach a {@link ClassificationModel} with the given classificationText and description to the provided {@link FileModel}.
+     * If an existing Model exists with the provided classificationText, that one will be used instead.
      */
     public ClassificationModel attachClassification(GraphRewrite event, EvaluationContext context, FileModel fileModel, String classificationText, String description)
     {
+        return attachClassification(event, context, fileModel, IssueCategoryRegistry.DEFAULT, classificationText, description);
+    }
+
+    public ClassificationModel attachClassification(GraphRewrite event, EvaluationContext context, FileModel fileModel, String categoryId, String classificationText, String description)
+    {
         Rule rule = (Rule) context.get(Rule.class);
-        return attachClassification(event, rule, fileModel, classificationText, description);
+        return attachClassification(event, rule, fileModel, categoryId, classificationText, description);
     }
 
     private boolean isClassificationLinkedToFileModel(GraphRewrite event, ClassificationModel classificationModel, FileModel fileModel)
