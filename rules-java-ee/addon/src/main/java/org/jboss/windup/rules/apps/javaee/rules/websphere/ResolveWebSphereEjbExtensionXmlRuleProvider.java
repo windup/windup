@@ -7,6 +7,7 @@ import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.reporting.category.IssueCategoryRegistry;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.TechnologyTagService;
@@ -35,7 +36,7 @@ public class ResolveWebSphereEjbExtensionXmlRuleProvider extends IteratingRulePr
     public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
     {
         ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-        classificationService.attachClassification(event, context, payload, "WebSphere EJB Ext", "WebSphere Enterprise Java Bean Extension XML Descriptor.");
+        classificationService.attachClassification(event, context, payload, IssueCategoryRegistry.MANDATORY, "WebSphere EJB Ext", "WebSphere Enterprise Java Bean Extension XML Descriptor.");
 
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
         technologyTagService.addTagToFileModel(payload, "WebSphere EJB Ext", TechnologyTagLevel.IMPORTANT);
