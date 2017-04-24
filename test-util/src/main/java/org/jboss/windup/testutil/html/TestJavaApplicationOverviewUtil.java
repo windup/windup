@@ -77,6 +77,7 @@ public class TestJavaApplicationOverviewUtil extends TestReportUtil
                                 ".//div[contains(@class, 'container') and contains(@class, 'mainGraphContainer')]//div[@class = 'points']/div[@class = 'number']"));
         String effortString = effortElement.getText().trim();
         effortString = effortString.replace(",", "");
+        effortString = effortString.replace(".", "");
 
         int effort;
         try
