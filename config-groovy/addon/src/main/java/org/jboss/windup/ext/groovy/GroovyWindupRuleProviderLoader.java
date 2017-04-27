@@ -64,6 +64,12 @@ public class GroovyWindupRuleProviderLoader implements RuleProviderLoader
     private Imported<GroovyConfigMethod> methods;
 
     @Override
+    public boolean isFileBased()
+    {
+        return true;
+    }
+
+    @Override
     @SuppressWarnings("unchecked")
     public List<RuleProvider> getProviders(final RuleLoaderContext ruleLoaderContext)
     {

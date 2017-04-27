@@ -16,17 +16,22 @@ public class RuleLoaderContext
     private final Context context;
     private final Iterable<Path> rulePaths;
     private final Predicate<RuleProvider> ruleProviderFilter;
+    private boolean fileBasedRulesOnly;
 
     public RuleLoaderContext()
     {
-        this.context = new ContextBase() { };
+        this.context = new ContextBase()
+        {
+        };
         this.rulePaths = Collections.emptyList();
         this.ruleProviderFilter = (provider) -> true;
     }
 
     public RuleLoaderContext(Iterable<Path> rulePaths, Predicate<RuleProvider> ruleProviderFilter)
     {
-        this.context = new ContextBase() { };
+        this.context = new ContextBase()
+        {
+        };
         this.rulePaths = rulePaths;
         this.ruleProviderFilter = ruleProviderFilter;
     }
@@ -36,6 +41,17 @@ public class RuleLoaderContext
         this.context = context;
         this.rulePaths = rulePaths;
         this.ruleProviderFilter = ruleProviderFilter;
+    }
+
+    public RuleLoaderContext setFileBasedRulesOnly()
+    {
+        this.fileBasedRulesOnly = true;
+        return this;
+    }
+
+    public boolean isFileBasedRulesOnly()
+    {
+        return fileBasedRulesOnly;
     }
 
     public Context getContext()

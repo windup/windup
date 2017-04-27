@@ -15,6 +15,13 @@ import org.jboss.windup.config.RuleProvider;
 public interface RuleProviderLoader
 {
     /**
+     * Indicates that these are not classloader based Java rules. Instead these are rules loaded from the filesystem.
+     *
+     * This can be used to display only XML rules to the user, in cases where they are not interested in other rules.
+     */
+    boolean isFileBased();
+
+    /**
      * Return all {@link AbstractRuleProvider} instances that are relevant for this loader.
      */
     List<RuleProvider> getProviders(RuleLoaderContext ruleLoaderContext);
