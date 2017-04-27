@@ -112,11 +112,16 @@ public class RuleLoaderImpl implements RuleLoader
 
     private List<RuleProvider> getProviders(RuleLoaderContext ruleLoaderContext)
     {
+        LOG.info("Starting provider load...");
         List<RuleProvider> unsortedProviders = new ArrayList<>();
         for (RuleProviderLoader loader : loaders)
         {
+            if (ruleLoaderContext.isFileBasedRulesOnly() && !loader.isFileBased())
+                continue;
+
             unsortedProviders.addAll(loader.getProviders(ruleLoaderContext));
         }
+        LOG.info("Loaded, now sorting, etc");
 
         checkForDuplicateProviders(unsortedProviders);
 
@@ -125,6 +130,7 @@ public class RuleLoaderImpl implements RuleLoader
         List<RuleProvider> sortedProviders = RuleProviderSorter.sort(unsortedProviders);
         ServiceLogger.logLoadedServices(LOG, RuleProvider.class, sortedProviders);
 
+        LOG.info("Finished provider load");
         return Collections.unmodifiableList(sortedProviders);
     }
 

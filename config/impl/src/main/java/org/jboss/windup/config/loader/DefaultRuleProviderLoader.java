@@ -29,6 +29,12 @@ public class DefaultRuleProviderLoader implements RuleProviderLoader
     private Furnace furnace;
 
     @Override
+    public boolean isFileBased()
+    {
+        return false;
+    }
+
+    @Override
     public List<RuleProvider> getProviders(RuleLoaderContext ruleLoaderContext)
     {
         return furnace.getLockManager().performLocked(LockMode.READ, new Callable<List<RuleProvider>>()

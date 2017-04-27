@@ -57,6 +57,12 @@ public class XMLRuleProviderLoader implements RuleProviderLoader
     private FurnaceClasspathScanner scanner;
 
     @Override
+    public boolean isFileBased()
+    {
+        return true;
+    }
+
+    @Override
     public List<RuleProvider> getProviders(RuleLoaderContext ruleLoaderContext)
     {
         List<RuleProvider> providers = new ArrayList<>();
