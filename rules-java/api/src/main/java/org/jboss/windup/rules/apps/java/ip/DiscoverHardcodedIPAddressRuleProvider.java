@@ -20,6 +20,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.FileLocationModel;
 import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.reporting.category.IssueCategoryRegistry;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.rules.apps.java.model.PropertiesModel;
@@ -38,7 +39,7 @@ import org.w3c.dom.Element;
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  * @author <a href="mailto:hotmana76@gmail.com">Marek Novotny</a>
  */
-@RuleMetadata(phase = MigrationRulesPhase.class)
+@RuleMetadata(phase = MigrationRulesPhase.class, tags = {"cloud-readiness"})
 public class DiscoverHardcodedIPAddressRuleProvider extends AbstractRuleProvider
 {
     private static final String IP_PATTERN = "(?<![\\w.])\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}(?![\\w.])";
@@ -61,12 +62,10 @@ public class DiscoverHardcodedIPAddressRuleProvider extends AbstractRuleProvider
             public void perform(GraphRewrite event, EvaluationContext context, FileLocationModel payload)
             {
                 // for all file location models that match the regular expression in the where clause, add
-                // the IP Location Model to the
-                // graph
+                // the IP Location Model to the graph
                 if (InetAddressValidator.getInstance().isValid(payload.getSourceSnippit()))
                 {
                     // if the file is a property file, make sure the line isn't commented out.
-
                     if (ignoreLine(event.getGraphContext(), payload))
                     {
                         return;
@@ -87,8 +86,9 @@ public class DiscoverHardcodedIPAddressRuleProvider extends AbstractRuleProvider
                     hintBody.append("\n\n");
                     hintBody.append("When migrating environments, hard-coded IP addresses may need to be modified or eliminated.");
                     location.setHint(hintBody.toString());
-
-                    location.setEffort(0);
+                    //location.setIssueCategory(IssueCategoryRegistry.loadFromGraph(event.getGraphContext(), IssueCategoryRegistry.MANDATORY));
+                    location.setIssueCategory(IssueCategoryRegistry.loadFromGraph(event.getGraphContext(), IssueCategoryRegistry.CLOUD_MANDATORY));
+                    location.setEffort(1);
                 }
             }
         })

@@ -101,8 +101,6 @@ public class CreateHardcodedIPAddressReportRuleProvider extends AbstractRuleProv
         applicationReport.setProjectModel(rootProjectModel);
 
 
-
-
         Map<String, WindupVertexFrame> relatedData = new HashMap<>(1);
 
         @SuppressWarnings("unchecked")

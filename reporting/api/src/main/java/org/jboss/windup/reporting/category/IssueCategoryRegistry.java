@@ -27,6 +27,7 @@ public class IssueCategoryRegistry
     public static final String MANDATORY = "mandatory";
     public static final String OPTIONAL = "optional";
     public static final String POTENTIAL = "potential";
+    public static final String CLOUD_MANDATORY = "cloud-mandatory";
     public static final String DEFAULT = OPTIONAL;
 
     private Map<String, IssueCategory> issueCategories = new ConcurrentHashMap<>();
