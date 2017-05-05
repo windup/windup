@@ -29,13 +29,12 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  * @author <a href="mailto:hotmana76@gmail.com">Marek Novotny</a>
+ * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
  */
 @RuleMetadata(phase = ArchiveMetadataExtractionPhase.class, perform = "DiscoverArchiveLicenseFiles")
 public class DiscoverArchiveLicenseFilesRuleProvider extends IteratingRuleProvider<ArchiveModel>
 {
     private static final Logger LOG = Logging.get(DiscoverArchiveLicenseFilesRuleProvider.class);
-
-    private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.INFORMATIONAL;
 
     @Override
     public ConditionBuilder when()
@@ -203,7 +202,7 @@ public class DiscoverArchiveLicenseFilesRuleProvider extends IteratingRuleProvid
         model.setGenerateSourceReport(true);
 
         // also add it as a tag for reporting on main screen.
-        technologyTagService.addTagToFileModel(license, name, TECH_TAG_LEVEL);
+        technologyTagService.addTagToFileModel(license, name, TechnologyTagLevel.LICENSE);
     }
 
     private Set<FileModel> findLicense(ArchiveModel archive)
