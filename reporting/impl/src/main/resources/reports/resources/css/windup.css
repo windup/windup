@@ -339,3 +339,14 @@ strong {
 div.indent{
     padding-left: 20px;
 }
+
+@font-face {
+    font-family: FontAwesome;
+    src: url('../fonts/fontawesome-webfont.woff');
+}
+
+a[target="_blank"]:after {
+    content: "\f08e";
+    font-family: FontAwesome;
+    padding-left: 5px;
+}

@@ -180,7 +180,7 @@
                                         <ul><#t>
                                             <#list hintLine.links.iterator() as link>
                                                 <li><#t>
-                                                    <a href='${link.link}'>${link.description}</a><#t>
+                                                    <a href='${link.link}' target='_blank'>${link.description}</a><#t>
                                                 </li><#t>
                                             </#list>
                                         </ul><#t>

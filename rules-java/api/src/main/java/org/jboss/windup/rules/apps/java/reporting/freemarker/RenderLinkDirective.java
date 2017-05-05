@@ -300,7 +300,7 @@ public class RenderLinkDirective implements WindupFreeMarkerTemplateDirective
     {
         writer.append("<a href='").append(link.getLink());
         appendProject(writer, project);
-        writer.append("'>");
+        writer.append("' target='_blank'>");
         writer.append(link.getDescription());
         writer.append("</a>");
     }
