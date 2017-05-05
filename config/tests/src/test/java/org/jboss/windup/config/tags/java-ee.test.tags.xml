@@ -1,4 +1,31 @@
 <?xml version="1.0"?>
+<!--
+    <tag name="foo">
+       <tag name="bar" root="true">
+       <tag name="baz">
+       ...
+    <tag name="bar:" pseudo="true">
+       <tag name="boo"  parents="bar baz">
+       ...
+
+    Attribute root="true|false"
+        The tag is a root tag which is somehow significant in the hierarchy.
+        This will be reflected in the UI - for instance, these will be offered to the user for filtering and grouping.
+        For example: "java-ee" is a root tag, while some minor technologies and APIs are not.
+
+    Attribute pseudo:
+        The tag is not supposed to appear in the UI, but can still serve as grouping for other tags and for referencing it by the parents="..." atribute.
+
+    Attribute parents:
+        A coma or white-space separated list of tag names.
+        The tag belongs, besides it's XML structure parent tag, also under the referenced parent tags.
+
+    Attribute color:
+        Suggestion for the UI on which color to use for a label.
+
+    Attribute url:
+        An URL to a relevant documentation or definition. For example, the license homepage for license-* tags.
+-->
 <tags setName="java">
     <tag name="java-ee" root="true" color="#00CC00">
         <tag name="servlet"/>
