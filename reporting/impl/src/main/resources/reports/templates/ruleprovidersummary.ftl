@@ -13,12 +13,8 @@
 <body role="document">
 
     <div id="main-navbar" class="navbar navbar-default navbar-fixed-top">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
+        <div class="wu-navbar-header navbar-header">
+            <#include "include/navheader.ftl">
         </div>
         <div class="navbar-collapse collapse navbar-responsive-collapse">
             <ul class="nav navbar-nav">
@@ -119,5 +115,6 @@
     <script src="resources/libraries/flot/jquery.flot.pie.min.js"></script>
 
     <script src="resources/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="resources/js/navbar.js"></script>
 </body>
 </html>

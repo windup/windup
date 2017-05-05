@@ -147,12 +147,8 @@
 
     <!-- Navbar -->
     <div id="main-navbar" class="navbar navbar-default navbar-fixed-top">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
+        <div class="wu-navbar-header navbar-header">
+            <#include "include/navheader.ftl">
         </div>
 
         <#if applicationReportIndexModel??>
@@ -165,13 +161,6 @@
 
 
     <div class="container-fluid" role="main">
-        <div class="row">
-            <div class="windup-bar" role="navigation" style="text-align: left;">
-                <div class="container theme-showcase" style="margin-left: 0px;" role="main">
-                    <img src="reports/resources/img/rhamt-logo-gray.svg" class="logo" height="100" width="420"/>
-                </div>
-            </div>
-        </div>
 
         <div class="row">
             <div class="page-header">

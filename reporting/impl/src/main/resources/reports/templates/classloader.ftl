@@ -27,12 +27,8 @@
                 </div>
 
                 <div class="navbar navbar-default">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
+                <div class="wu-navbar-header navbar-header">
+                    <#include "include/navheader.ftl">
                 </div>
                 <div class="navbar-collapse collapse navbar-responsive-collapse">
                     <ul class="nav navbar-nav">
@@ -75,7 +71,7 @@
                         <tr>${reference.referenceType}<td></td><td>${reference.clzName}</td></tr>
                     </#items>
                 </table>
-                </#if>
+                </#list>
               </td>
             </tr>
             </#items>
