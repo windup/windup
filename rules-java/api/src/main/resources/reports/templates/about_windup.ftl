@@ -40,7 +40,7 @@
         <div class="row">
             <div class="page-header page-header-no-border">
                 <h1>
-                    <div class="main">About ${getWindupBrandName()}</div>
+                    <div class="main">About</div>
                 </h1>
             </div>
         </div>
@@ -62,10 +62,10 @@
                             <dd><a href="http://twitter.com/jbosswindup">@jbossWindup</a></dd>
 
                             <dt>Website</dt>
-                            <dd><a href="http://windup.jboss.org">http://windup.jboss.org</a></dd>
+                            <dd><a href="https://developers.redhat.com/products/rhamt/overview/">https://developers.redhat.com/products/rhamt/overview/</a></dd>
 
                             <dt>Documentation</dt>
-                            <dd><a href="https://access.redhat.com/documentation/en/red-hat-jboss-migration-toolkit/">https://access.redhat.com/documentation/en/red-hat-jboss-migration-toolkit/</a></dd>
+                            <dd><a href="https://access.redhat.com/documentation/en/red-hat-application-migration-toolkit/">https://access.redhat.com/documentation/en/red-hat-application-migration-toolkit/</a></dd>
                         </dl>
 
                         <dl class="dl-horizontal">
