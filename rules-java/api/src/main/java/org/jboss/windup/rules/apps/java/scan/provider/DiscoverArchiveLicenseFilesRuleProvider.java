@@ -25,7 +25,7 @@ import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
- * Discovers Licenses files within archives.
+ * Discovers Licenses files within archives and adds the {@link LicenseModel} type to the {@link FileModel}.
  *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  * @author <a href="mailto:hotmana76@gmail.com">Marek Novotny</a>
@@ -55,10 +55,8 @@ public class DiscoverArchiveLicenseFilesRuleProvider extends IteratingRuleProvid
             return;
         }
 
-        TechnologyTagService technologyTagService = new TechnologyTagService(
-                    event.getGraphContext());
-        GraphService<LicenseModel> licenseService = new GraphService<>(
-                    event.getGraphContext(), LicenseModel.class);
+        TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
+        GraphService<LicenseModel> licenseService = new GraphService<>(event.getGraphContext(), LicenseModel.class);
 
         for (FileModel license : licenseFiles)
         {
@@ -112,7 +110,7 @@ public class DiscoverArchiveLicenseFilesRuleProvider extends IteratingRuleProvid
                                 technologyTagService,
                                 license,
                                 "MIT License",
-                                "GNU General Public License File",
+                                "MIT License File",
                                 "http://opensource.org/licenses/MIT");
                 }
                 else if (StringUtils.containsIgnoreCase(content, "Mozilla Public License, version 2.0"))
