@@ -64,7 +64,7 @@ public class MarkdownToHtmlMethod implements WindupFreeMarkerMethod
             // Our plugin is also a serializer, so build a plugins list for serialization as well
             List<ToHtmlSerializerPlugin> serializerPlugins = new ArrayList<>(1);
 
-            ToHtmlSerializer serializer = new ToHtmlSerializer(new LinkRenderer(), Collections.<String, VerbatimSerializer> emptyMap(),
+            ToHtmlSerializer serializer = new ToHtmlSerializerExtended(new LinkRenderer(), Collections.<String, VerbatimSerializer> emptyMap(),
                         serializerPlugins);
             String result = serializer.toHtml(outputNode);
             cache.put(markdownSource, new SoftReference<>(result));

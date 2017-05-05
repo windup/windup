@@ -328,7 +328,7 @@
                                         <div class="panel-body">
                                             <ul>
                                                 {{#each ../resourceLinks}}
-                                                    <li><a href="{{h}}">{{t}}</a></li>
+                                                    <li><a href="{{h}}" target="_blank">{{t}}</a></li>
                                                 {{/each}}
                                             </ul>
                                         </div>
