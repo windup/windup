@@ -40,7 +40,7 @@ import org.w3c.dom.Document;
 
 /**
  * This {@link RuleProviderLoader} searches for and loads {@link AbstractRuleProvider}s from XML files that within all
- * addons, with filenames that end in ".windup.xml".
+ * addons, with filenames that end in ".windup.xml" or ".rhamt.xml".
  *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  *
@@ -49,7 +49,8 @@ public class XMLRuleProviderLoader implements RuleProviderLoader
 {
     private static final Logger LOG = Logging.get(XMLRuleProviderLoader.class);
 
-    private static final String XML_RULES_EXTENSION = "windup.xml";
+    private static final String XML_RULES_WINDUP_EXTENSION = "windup.xml";
+    private static final String XML_RULES_RHAMT_EXTENSION = "rhamt.xml";
 
     @Inject
     private Furnace furnace;
@@ -154,7 +155,9 @@ public class XMLRuleProviderLoader implements RuleProviderLoader
 
     private Map<Addon, List<URL>> getAddonWindupXmlFiles()
     {
-        return scanner.scanForAddonMap(new FileExtensionFilter(XML_RULES_EXTENSION));
+        Map<Addon, List<URL>> addon = scanner.scanForAddonMap(new FileExtensionFilter(XML_RULES_WINDUP_EXTENSION));
+        addon.putAll(scanner.scanForAddonMap(new FileExtensionFilter(XML_RULES_RHAMT_EXTENSION)));
+        return addon;
     }
 
     private Collection<URL> getWindupUserDirectoryXmlFiles(Path userRulesPath)
@@ -201,6 +204,6 @@ public class XMLRuleProviderLoader implements RuleProviderLoader
     }
 
     private boolean pathMatchesNamePattern(Path file) {
-        return file.getFileName().toString().toLowerCase().endsWith("." + XML_RULES_EXTENSION);
+        return file.getFileName().toString().toLowerCase().endsWith("." + XML_RULES_WINDUP_EXTENSION) || file.getFileName().toString().toLowerCase().endsWith("." + XML_RULES_RHAMT_EXTENSION);
     }
 }

@@ -33,7 +33,8 @@ import org.w3c.dom.Element;
 public class JavaClassHandlerTest
 {
 
-    private static final String JAVA_CLASS_XML_FILE = "src/test/resources/handler/javaclass.windup.xml";
+    private static final String JAVA_CLASS_XML_WINDUP_FILE = "src/test/resources/handler/javaclass.windup.xml";
+    private static final String JAVA_CLASS_XML_RHAMT_FILE = "src/test/resources/handler/javaclass.rhamt.xml";
 
     @Deployment
     @AddonDependencies({
@@ -56,9 +57,21 @@ public class JavaClassHandlerTest
     private Furnace furnace;
 
     @Test
-    public void testJavaClassCondition() throws Exception
+    public void testWindupJavaClassCondition() throws Exception
     {
-        File fXmlFile = new File(JAVA_CLASS_XML_FILE);
+        File fXmlFile = new File(JAVA_CLASS_XML_WINDUP_FILE);
+        testJavaClassCondition(fXmlFile);
+    }
+
+    @Test
+    public void testRhamtJavaClassCondition() throws Exception
+    {
+        File fXmlFile = new File(JAVA_CLASS_XML_RHAMT_FILE);
+        testJavaClassCondition(fXmlFile);
+    }
+
+    public void testJavaClassCondition(File fXmlFile) throws Exception
+    {
         RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
         ParserContext parser = new ParserContext(furnace, loaderContext);
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -93,9 +106,21 @@ public class JavaClassHandlerTest
     }
 
     @Test(expected = WindupException.class)
-    public void testXmlFileWithoutPublidIdAndXpath() throws Exception
+    public void testWindupXmlFileWithoutPublidIdAndXpath() throws Exception
     {
-        File fXmlFile = new File(JAVA_CLASS_XML_FILE);
+        File fXmlFile = new File(JAVA_CLASS_XML_WINDUP_FILE);
+        testXmlFileWithoutPublidIdAndXpath(fXmlFile);
+    }
+
+    @Test(expected = WindupException.class)
+    public void testRhamtXmlFileWithoutPublidIdAndXpath() throws Exception
+    {
+        File fXmlFile = new File(JAVA_CLASS_XML_RHAMT_FILE);
+        testXmlFileWithoutPublidIdAndXpath(fXmlFile);
+    }
+
+    public void testXmlFileWithoutPublidIdAndXpath(File fXmlFile) throws Exception
+    {
         RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
         ParserContext parser = new ParserContext(furnace, loaderContext);
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();

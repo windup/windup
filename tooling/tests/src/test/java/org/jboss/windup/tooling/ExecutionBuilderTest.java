@@ -139,7 +139,7 @@ public class ExecutionBuilderTest
                     .filter(provider -> provider.getOrigin() != null)
                     .filter(provider -> provider.getRuleProviderType() == RuleProvider.RuleProviderType.XML)
                     .collect(Collectors.toList());
-        Assert.assertTrue(xmlProviders.size() > 0);
+        Assert.assertTrue(xmlProviders.size() == 4);
     }
     
     @Test

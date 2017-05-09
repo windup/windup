@@ -47,7 +47,8 @@ import org.w3c.dom.Element;
 public class XSLTTransformationHandlerTest
 {
 
-    private static final String XSLT_FILE = "src/test/resources/unit/xslt.windup.xml";
+    private static final String XSLT_WINDUP_FILE = "src/test/resources/unit/xslt.windup.xml";
+    private static final String XSLT_RHAMT_FILE = "src/test/resources/unit/xslt.rhamt.xml";
 
     @Deployment
     @AddonDependencies({
@@ -77,9 +78,21 @@ public class XSLTTransformationHandlerTest
     private Addon addon;
 
     @Test
-    public void testXSLTOperation() throws Exception
+    public void testWindupXSLTOperation() throws Exception
     {
-        File fXmlFile = new File(XSLT_FILE);
+        File fXmlFile = new File(XSLT_WINDUP_FILE);
+        testXSLTOperation(fXmlFile);
+    }
+
+    @Test
+    public void testRhamtXSLTOperation() throws Exception
+    {
+        File fXmlFile = new File(XSLT_RHAMT_FILE);
+        testXSLTOperation(fXmlFile);
+    }
+
+    public void testXSLTOperation(File fXmlFile) throws Exception
+    {
         RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
         ParserContext parser = new ParserContext(furnace, loaderContext);
         parser.setAddonContainingInputXML(addon);
@@ -143,9 +156,21 @@ public class XSLTTransformationHandlerTest
     }
 
     @Test(expected = WindupException.class)
-    public void testXSLTWithoutExtension() throws Exception
+    public void testWindupXSLTWithoutExtension() throws Exception
     {
-        File fXmlFile = new File(XSLT_FILE);
+        File fXmlFile = new File(XSLT_WINDUP_FILE);
+        testXSLTWithoutExtension(fXmlFile);
+    }
+
+    @Test(expected = WindupException.class)
+    public void testRhamtXSLTWithoutExtension() throws Exception
+    {
+        File fXmlFile = new File(XSLT_RHAMT_FILE);
+        testXSLTWithoutExtension(fXmlFile);
+    }
+
+    public void testXSLTWithoutExtension(File fXmlFile) throws Exception
+    {
         RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
         ParserContext parser = new ParserContext(furnace, loaderContext);
         parser.setAddonContainingInputXML(addon);
@@ -160,9 +185,21 @@ public class XSLTTransformationHandlerTest
     }
 
     @Test(expected = WindupException.class)
-    public void testXSLTWithoutTemplate() throws Exception
+    public void testWindupXSLTWithoutTemplate() throws Exception
     {
-        File fXmlFile = new File(XSLT_FILE);
+        File fXmlFile = new File(XSLT_WINDUP_FILE);
+        testXSLTWithoutTemplate(fXmlFile);
+    }
+
+    @Test(expected = WindupException.class)
+    public void testRhamtXSLTWithoutTemplate() throws Exception
+    {
+        File fXmlFile = new File(XSLT_RHAMT_FILE);
+        testXSLTWithoutTemplate(fXmlFile);
+    }
+
+    public void testXSLTWithoutTemplate(File fXmlFile) throws Exception
+    {
         RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
         ParserContext parser = new ParserContext(furnace, loaderContext);
         parser.setAddonContainingInputXML(addon);

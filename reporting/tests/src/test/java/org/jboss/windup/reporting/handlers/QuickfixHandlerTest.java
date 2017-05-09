@@ -34,7 +34,8 @@ import org.w3c.dom.Element;
 @RunWith(Arquillian.class)
 public class QuickfixHandlerTest
 {
-    private static final String QUICKFIX_XML_FILE = "src/test/resources/handler/quickfix.windup.xml";
+    private static final String QUICKFIX_XML_WINDUP_FILE = "src/test/resources/handler/quickfix.windup.xml";
+    private static final String QUICKFIX_XML_RHAMT_FILE = "src/test/resources/handler/quickfix.rhamt.xml";
 
     @Deployment
     @AddonDependencies({
@@ -52,9 +53,21 @@ public class QuickfixHandlerTest
     private Furnace furnace;
 
     @Test
-    public void testClassificationParsing() throws Exception
+    public void testWindupClassificationParsing() throws Exception
     {
-        File fXmlFile = new File(QUICKFIX_XML_FILE);
+        File fXmlFile = new File(QUICKFIX_XML_WINDUP_FILE);
+        testClassificationParsing(fXmlFile);
+    }
+
+    @Test
+    public void testRhamtClassificationParsing() throws Exception
+    {
+        File fXmlFile = new File(QUICKFIX_XML_RHAMT_FILE);
+        testClassificationParsing(fXmlFile);
+    }
+
+    public void testClassificationParsing(File fXmlFile) throws Exception
+    {
         RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
         ParserContext parser = new ParserContext(furnace, loaderContext);
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -99,9 +112,21 @@ public class QuickfixHandlerTest
     }
 
     @Test
-    public void testHintParsing() throws Exception
+    public void testWindupHintParsing() throws Exception
     {
-        File fXmlFile = new File(QUICKFIX_XML_FILE);
+        File fXmlFile = new File(QUICKFIX_XML_WINDUP_FILE);
+        testHintParsing(fXmlFile);
+    }
+
+    @Test
+    public void testRhamtHintParsing() throws Exception
+    {
+        File fXmlFile = new File(QUICKFIX_XML_RHAMT_FILE);
+        testHintParsing(fXmlFile);
+    }
+
+    public void testHintParsing(File fXmlFile) throws Exception
+    {
         RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
         ParserContext parser = new ParserContext(furnace, loaderContext);
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();

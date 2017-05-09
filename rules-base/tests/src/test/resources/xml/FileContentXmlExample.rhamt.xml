@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<ruleset xmlns="http://windup.jboss.org/schema/jboss-ruleset" id="xmltestrules_2" phase="PostMigrationRulesPhase">
+  <rules>
+    <rule>
+      <when>
+        <filecontent pattern="for the {xml} rule" filename="{filename}.txt"/>
+      </when>
+      <perform>
+        <hint>
+        	<message>File Content {xml}</message>
+        </hint>
+      </perform>
+    </rule>
+  </rules>
+</ruleset>

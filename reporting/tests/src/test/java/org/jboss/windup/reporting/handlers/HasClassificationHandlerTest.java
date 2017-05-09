@@ -34,7 +34,8 @@ import org.w3c.dom.Element;
 public class HasClassificationHandlerTest
 {
 
-    private static final String HINT_XML_FILE = "src/test/resources/handler/hasclassification.windup.xml";
+    private static final String HINT_XML_WINDUP_FILE = "src/test/resources/handler/hasclassification.windup.xml";
+    private static final String HINT_XML_RHAMT_FILE = "src/test/resources/handler/hasclassification.rhamt.xml";
 
     @Deployment
     @AddonDependencies({
@@ -54,9 +55,21 @@ public class HasClassificationHandlerTest
     private Furnace furnace;
 
     @Test
-    public void testHintHandler() throws Exception
+    public void testWindupHintHandler() throws Exception
     {
-        File fXmlFile = new File(HINT_XML_FILE);
+        File fXmlFile = new File(HINT_XML_WINDUP_FILE);
+        testHintHandler(fXmlFile);
+    }
+
+    @Test
+    public void testRhamtHintHandler() throws Exception
+    {
+        File fXmlFile = new File(HINT_XML_RHAMT_FILE);
+        testHintHandler(fXmlFile);
+    }
+
+    public void testHintHandler(File fXmlFile) throws Exception
+    {
         RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
         ParserContext parser = new ParserContext(furnace, loaderContext);
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();

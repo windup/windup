@@ -213,7 +213,7 @@ public class ParserContext
     }
 
     /**
-     * The path to the rule xml file itself (eg, /path/to/rule.windup.xml).
+     * The path to the rule xml file itself (eg, /path/to/rule.windup.xml or /path/to/rule.rhamt.xml).
      */
     public void setXmlInputPath(Path xmlInputPath)
     {
@@ -221,7 +221,7 @@ public class ParserContext
     }
 
     /**
-     * The path to the rule xml file itself (eg, /path/to/rule.windup.xml).
+     * The path to the rule xml file itself (eg, /path/to/rule.windup.xml or /path/to/rule.rhamt.xml).
      */
     public Path getXmlInputPath()
     {

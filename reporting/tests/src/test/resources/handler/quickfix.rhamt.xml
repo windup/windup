@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<test xmlns="http://windup.jboss.org/schema/jboss-ruleset">
+
+    <classification in="testVariable" title="test-classification">
+        <quickfix name="test1 qf" type="INSERT_LINE">
+            <newline>something new</newline>
+        </quickfix>
+        <quickfix name="test2 qf" type="REPLACE">
+            <search>test1</search>
+            <replacement>test2</replacement>
+        </quickfix>
+    </classification>
+
+    <classification effort="1" title="test-message">
+        <link href="url1" title="description1" />
+        <link href="url2" title="description2" />
+        <link href="url3" title="description3" />
+        <quickfix name="test delete" type="DELETE_LINE"/>
+    </classification>
+    
+    <hint effort="2" message="test message" in="testVariable">
+        <link href="url1" title="description1"/>
+        <link href="url2" title="description2"/>
+        <quickfix name="test1 quickfix" type="DELETE_LINE"/>
+        <quickfix name="test2 quickfix" type="INSERT_LINE">
+            <newline>something new</newline>
+        </quickfix>
+        <quickfix name="test3 quickfix" type="REPLACE">
+            <search>what</search>
+            <replacement>when</replacement>
+        </quickfix>
+    </hint>
+
+</test>

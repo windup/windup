@@ -34,8 +34,10 @@ import org.w3c.dom.Document;
 public class MetaDataHandlerTest
 {
 
-    private static final String XML_FILE = "src/test/resources/testxml/metadata.windup.xml";
-    private static final String XML_WITH_OVERRIDE_FILE = "src/test/resources/testxml/metadata.override.windup.xml";
+    private static final String XML_WINDUP_FILE = "src/test/resources/testxml/metadata.windup.xml";
+    private static final String XML_WINDUP_WITH_OVERRIDE_FILE = "src/test/resources/testxml/metadata.override.windup.xml";
+    private static final String XML_RHAMT_FILE = "src/test/resources/testxml/metadata.rhamt.xml";
+    private static final String XML_RHAMT_WITH_OVERRIDE_FILE = "src/test/resources/testxml/metadata.override.rhamt.xml";
 
     @Deployment
     @AddonDependencies({
@@ -55,9 +57,21 @@ public class MetaDataHandlerTest
     private GraphContextFactory graphContextFactory;
 
     @Test
-    public void testXmlParsinfOfRulesetMetadata() throws Exception
+    public void testWindupXmlParsinfOfRulesetMetadata() throws Exception
     {
-        File fXmlFile = new File(XML_FILE);
+        File fXmlFile = new File(XML_WINDUP_FILE);
+        testXmlParsinfOfRulesetMetadata(fXmlFile);
+    }
+
+    @Test
+    public void testRhamtXmlParsinfOfRulesetMetadata() throws Exception
+    {
+        File fXmlFile = new File(XML_RHAMT_FILE);
+        testXmlParsinfOfRulesetMetadata(fXmlFile);
+    }
+
+    private void testXmlParsinfOfRulesetMetadata(File fXmlFile) throws Exception
+    {
         RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
         ParserContext parser = new ParserContext(furnace, loaderContext);
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -99,9 +113,21 @@ public class MetaDataHandlerTest
     }
 
     @Test
-    public void testXmlRuleOverrideProviderMetadata() throws Exception
+    public void testWindupXmlRuleOverrideProviderMetadata() throws Exception
     {
-        File fXmlFile = new File(XML_WITH_OVERRIDE_FILE);
+        File fXmlFile = new File(XML_WINDUP_WITH_OVERRIDE_FILE);
+        testXmlRuleOverrideProviderMetadata(fXmlFile);
+    }
+
+    @Test
+    public void testRhamtXmlRuleOverrideProviderMetadata() throws Exception
+    {
+        File fXmlFile = new File(XML_RHAMT_WITH_OVERRIDE_FILE);
+        testXmlRuleOverrideProviderMetadata(fXmlFile);
+    }
+
+    public void testXmlRuleOverrideProviderMetadata(File fXmlFile) throws Exception
+    {
         RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
         ParserContext parser = new ParserContext(furnace, loaderContext);
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
