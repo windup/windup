@@ -28,12 +28,8 @@
 
     <!-- Navbar -->
     <div id="main-navbar" class="navbar navbar-default navbar-fixed-top">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-responsive-collapse">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
+        <div class="wu-navbar-header navbar-header">
+            <#include "include/navheader.ftl">
         </div>
 
         <div class="navbar-collapse collapse navbar-responsive-collapse">
