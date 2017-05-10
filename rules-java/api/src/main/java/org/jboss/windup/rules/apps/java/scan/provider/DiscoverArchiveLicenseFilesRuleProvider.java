@@ -24,12 +24,15 @@ import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+import javax.enterprise.inject.Vetoed;
+
 /**
  * Discovers Licenses files within archives and adds the {@link LicenseModel} type to the {@link FileModel}.
  *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  * @author <a href="mailto:hotmana76@gmail.com">Marek Novotny</a>
  */
+@Vetoed
 @RuleMetadata(phase = ArchiveMetadataExtractionPhase.class, perform = "DiscoverArchiveLicenseFiles")
 public class DiscoverArchiveLicenseFilesRuleProvider extends IteratingRuleProvider<ArchiveModel>
 {
