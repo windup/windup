@@ -5,5 +5,4 @@
             </button>
             <span class="wu-navbar-header">
               <strong class="wu-navbar-header">Red Hat Application Migration Toolkit</strong>
-               - Web Console 
             </span>
