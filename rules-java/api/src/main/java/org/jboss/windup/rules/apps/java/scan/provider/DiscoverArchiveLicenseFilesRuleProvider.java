@@ -25,17 +25,16 @@ import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
- * Discovers Licenses files within archives.
+ * Discovers Licenses files within archives and adds the {@link LicenseModel} type to the {@link FileModel}.
  *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  * @author <a href="mailto:hotmana76@gmail.com">Marek Novotny</a>
+ * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
  */
 @RuleMetadata(phase = ArchiveMetadataExtractionPhase.class, perform = "DiscoverArchiveLicenseFiles")
 public class DiscoverArchiveLicenseFilesRuleProvider extends IteratingRuleProvider<ArchiveModel>
 {
     private static final Logger LOG = Logging.get(DiscoverArchiveLicenseFilesRuleProvider.class);
-
-    private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.INFORMATIONAL;
 
     @Override
     public ConditionBuilder when()
@@ -55,15 +54,12 @@ public class DiscoverArchiveLicenseFilesRuleProvider extends IteratingRuleProvid
             return;
         }
 
-        TechnologyTagService technologyTagService = new TechnologyTagService(
-                    event.getGraphContext());
-        GraphService<LicenseModel> licenseService = new GraphService<>(
-                    event.getGraphContext(), LicenseModel.class);
+        TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
+        GraphService<LicenseModel> licenseService = new GraphService<>(event.getGraphContext(), LicenseModel.class);
 
         for (FileModel license : licenseFiles)
         {
-            LOG.info("Classifying: " + license.getFileName()
-                        + " as License within archive: " + payload.getArchiveName());
+            LOG.info("Classifying: " + license.getFileName() + " as License within archive: " + payload.getArchiveName());
 
             // http://opensource.org/licenses/
             try (InputStream stream = license.asInputStream())
@@ -72,112 +68,87 @@ public class DiscoverArchiveLicenseFilesRuleProvider extends IteratingRuleProvid
 
                 if (StringUtils.containsIgnoreCase(content, "Apache License, Version 2.0"))
                 {
-                    tagLicenseByTechnologyTag(rule, licenseService,
-                                technologyTagService,
-                                license,
-                                "Apache License 2.0",
-                                "Apache License 2.0 File",
-                                "http://www.apache.org/licenses/LICENSE-2.0");
+                    tagLicenseByTechnologyTag(rule, licenseService, technologyTagService, license,
+                            "license-apache-2.0",
+                            "Apache License 2.0",
+                            "http://www.apache.org/licenses/LICENSE-2.0");
                 }
                 else if (StringUtils.containsIgnoreCase(content, "Apache Software License, Version 1.1"))
                 {
-                    tagLicenseByTechnologyTag(rule, licenseService,
-                                technologyTagService,
-                                license,
-                                "Apache License 1.1",
-                                "Apache License 1.1 File",
-                                "http://www.apache.org/licenses/LICENSE-1.1");
+                    tagLicenseByTechnologyTag(rule, licenseService, technologyTagService, license,
+                            "license-apache-1.1",
+                            "Apache License 1.1",
+                            "http://www.apache.org/licenses/LICENSE-1.1");
                 }
                 else if (StringUtils.containsIgnoreCase(content, "Copyright (c) 1995-1999 The Apache Group.  All rights reserved."))
                 {
-                    tagLicenseByTechnologyTag(rule, licenseService,
-                                technologyTagService,
-                                license,
-                                "Apache License 1.0",
-                                "Apache License 1.0 File",
-                                "http://www.apache.org/licenses/LICENSE-1.0");
+                    tagLicenseByTechnologyTag(rule, licenseService, technologyTagService, license,
+                            "license-apache-1.0",
+                            "Apache License 1.0",
+                            "http://www.apache.org/licenses/LICENSE-1.0");
                 }
                 else if (StringUtils.containsIgnoreCase(content, "GNU General Public License"))
                 {
-                    tagLicenseByTechnologyTag(rule, licenseService,
-                                technologyTagService,
-                                license,
-                                "GNU GPL",
-                                "GNU General Public License File",
-                                "http://opensource.org/licenses/gpl-license");
+                    tagLicenseByTechnologyTag(rule, licenseService, technologyTagService, license,
+                            "license-gpl",
+                            "GNU GPL",
+                            "http://opensource.org/licenses/gpl-license");
                 }
                 else if (StringUtils.containsIgnoreCase(content, "The MIT License (MIT)"))
                 {
-                    tagLicenseByTechnologyTag(rule, licenseService,
-                                technologyTagService,
-                                license,
-                                "MIT License",
-                                "GNU General Public License File",
-                                "http://opensource.org/licenses/MIT");
+                    tagLicenseByTechnologyTag(rule, licenseService, technologyTagService, license,
+                            "license-mit",
+                            "MIT License",
+                            "http://opensource.org/licenses/MIT");
                 }
                 else if (StringUtils.containsIgnoreCase(content, "Mozilla Public License, version 2.0"))
                 {
-                    tagLicenseByTechnologyTag(rule, licenseService,
-                                technologyTagService,
-                                license,
-                                "Mozilla Public License 2.0",
-                                "Mozilla Public License 2.0 File",
-                                "http://opensource.org/licenses/MPL-2.0");
+                    tagLicenseByTechnologyTag(rule, licenseService, technologyTagService, license,
+                            "license-mpl",
+                            "Mozilla Public License 2.0",
+                            "http://opensource.org/licenses/MPL-2.0");
                 }
                 else if (StringUtils.containsIgnoreCase(content, "GNU Lesser General Public License"))
                 {
-                    tagLicenseByTechnologyTag(rule, licenseService,
-                                technologyTagService,
-                                license,
-                                "GNU LGPL",
-                                "GNU LGPL File",
-                                "http://opensource.org/licenses/lgpl-license");
+                    tagLicenseByTechnologyTag(rule, licenseService, technologyTagService, license,
+                            "license-lgpl",
+                            "GNU LGPL",
+                            "http://opensource.org/licenses/lgpl-license");
                 }
                 else if (StringUtils.contains(content, "COMMON DEVELOPMENT AND DISTRIBUTION LICENSE"))
                 {
-                    tagLicenseByTechnologyTag(rule, licenseService,
-                                technologyTagService,
-                                license,
-                                "CDDL",
-                                "CDDL License File",
-                                "http://opensource.org/licenses/CDDL-1.0");
+                    tagLicenseByTechnologyTag(rule, licenseService, technologyTagService, license,
+                            "license-cddl",
+                            "CDDL License",
+                            "http://opensource.org/licenses/CDDL-1.0");
                 }
                 else if (StringUtils.containsIgnoreCase(content, "Eclipse Public License"))
                 {
-                    tagLicenseByTechnologyTag(rule, licenseService,
-                                technologyTagService,
-                                license,
-                                "Eclipse Public License 1.0",
-                                "Eclipse Public License 1.0 File",
-                                "http://opensource.org/licenses/EPL-1.0");
+                    tagLicenseByTechnologyTag(rule, licenseService, technologyTagService, license,
+                            "license-epl-1.0",
+                            "Eclipse Public License 1.0",
+                            "http://opensource.org/licenses/EPL-1.0");
                 }
                 else if (StringUtils.containsIgnoreCase(content, "Redistribution and use in source and binary forms"))
                 {
-                    tagLicenseByTechnologyTag(rule, licenseService,
-                                technologyTagService,
-                                license,
-                                "BSD License",
-                                "BSD License File",
-                                "http://opensource.org/licenses/");
+                    tagLicenseByTechnologyTag(rule, licenseService, technologyTagService, license,
+                            "license-bsd",
+                            "BSD License",
+                            "http://opensource.org/licenses/");
                 }
                 else if (StringUtils.containsIgnoreCase(content, "the work of authorship identified is in the public domain of the country"))
                 {
-                    tagLicenseByTechnologyTag(rule, licenseService,
-                                technologyTagService,
-                                license,
-                                "Public Domain License",
-                                "Creative Commons Public Domain License File",
-                                "http://creativecommons.org/licenses/publicdomain/");
+                    tagLicenseByTechnologyTag(rule, licenseService, technologyTagService, license,
+                            "license-cc",
+                            "Creative Commons Public Domain License",
+                            "http://creativecommons.org/licenses/publicdomain/");
                 }
 
                 else
                 {
                     LOG.warning("Must be unknown license type: " + license.getFileName());
-
-                    tagLicenseByTechnologyTag(rule, licenseService,
-                                technologyTagService,
-                                license,
-                                "Unknown License", "Unknown License File", "Unknown License File");
+                    tagLicenseByTechnologyTag(rule, licenseService, technologyTagService, license,
+                            "license-unknown", "Unknown License", "");
                 }
             }
             catch (IOException e)
@@ -189,9 +160,11 @@ public class DiscoverArchiveLicenseFilesRuleProvider extends IteratingRuleProvid
 
     }
 
-    private void tagLicenseByTechnologyTag(Rule rule, GraphService<LicenseModel> licenseService,
-                TechnologyTagService technologyTagService, FileModel license,
-                String name, String description, String url)
+    private void tagLicenseByTechnologyTag(
+            Rule rule, GraphService<LicenseModel> licenseService, TechnologyTagService technologyTagService, FileModel license,
+            String tagName,
+            String name,
+            String url)
     {
         LOG.info("Identified: " + license.getFileName() + " as: " + name);
 
@@ -203,7 +176,7 @@ public class DiscoverArchiveLicenseFilesRuleProvider extends IteratingRuleProvid
         model.setGenerateSourceReport(true);
 
         // also add it as a tag for reporting on main screen.
-        technologyTagService.addTagToFileModel(license, name, TECH_TAG_LEVEL);
+        technologyTagService.addTagToFileModel(license, name, TechnologyTagLevel.LICENSE);
     }
 
     private Set<FileModel> findLicense(ArchiveModel archive)

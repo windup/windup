@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<tags setName="licenses">
+    <tag name="license" root="true" title="License" color="#FAE663">
+        <tag name="license-apache-2.0" title="Apache License 2.0" url="http://www.apache.org/licenses/LICENSE-2.0"/>
+        <tag name="license-apache-1.1" title="Apache License 1.1" url="http://www.apache.org/licenses/LICENSE-1.1"/>
+        <tag name="license-apache-1.0" title="Apache License 1.0" url="http://www.apache.org/licenses/LICENSE-1.0"/>
+        <tag name="license-gpl" title="GNU General Public License File" url="http://opensource.org/licenses/gpl-license"/>
+        <tag name="license-mit" title="MIT License" url="http://opensource.org/licenses/MIT"/>
+        <tag name="license-mpl" title="Mozilla Public License 2.0" url="http://opensource.org/licenses/MPL-2.0"/>
+        <tag name="license-lgpl" title="GNU LGPL" url="http://opensource.org/licenses/lgpl-license"/>
+        <tag name="license-cddl" title="CDDL" url="http://opensource.org/licenses/CDDL-1.0"/>
+        <tag name="license-epl-1.0" title="Eclipse Public License 1.0" url="http://opensource.org/licenses/EPL-1.0"/>
+        <tag name="license-bsd" title="BSD License" url="http://opensource.org/licenses/"/>
+        <tag name="license-cc" title="Creative Commons Public Domain License" url="http://creativecommons.org/licenses/publicdomain/"/>
+        <tag name="license-unknown" title="Unknown License"/>
+    </tag>
+</tags>

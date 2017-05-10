@@ -10,7 +10,6 @@ import org.jboss.windup.graph.model.InMemoryVertexFrame;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.exception.NonUniqueResultException;
 import org.jboss.windup.util.ExecutionStatistics;
-import org.jboss.windup.util.Task;
 
 import com.thinkaurelius.titan.core.TitanTransaction;
 import com.thinkaurelius.titan.core.attribute.Text;
@@ -42,29 +41,21 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     @Override
     public void commit()
     {
-        ExecutionStatistics.performBenchmarked("GraphService.commit", new Task<Void>()
+        ExecutionStatistics.performBenchmarked("GraphService.commit", () ->
         {
-            @Override
-            public Void execute()
-            {
-                getGraphContext().getGraph().getBaseGraph().commit();
-                return null;
-            }
+            getGraphContext().getGraph().getBaseGraph().commit();
+            return null;
         });
     }
 
     @Override
     public long count(final Iterable<?> obj)
     {
-        return ExecutionStatistics.performBenchmarked("GraphService.count", new Task<Long>()
+        return ExecutionStatistics.performBenchmarked("GraphService.count", () ->
         {
-            @Override
-            public Long execute()
-            {
-                GremlinPipeline<Iterable<?>, Object> pipe = new GremlinPipeline<>();
-                long result = pipe.start(obj).count();
-                return result;
-            }
+            GremlinPipeline<Iterable<?>, Object> pipe = new GremlinPipeline<>();
+            long result = pipe.start(obj).count();
+            return result;
         });
     }
 
@@ -83,27 +74,13 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     @Override
     public T create()
     {
-        return ExecutionStatistics.performBenchmarked("GraphService.create", new Task<T>()
-        {
-            @Override
-            public T execute()
-            {
-                return context.getFramed().addVertex(null, type);
-            }
-        });
+        return ExecutionStatistics.performBenchmarked("GraphService.create", () -> context.getFramed().addVertex(null, type));
     }
 
     @Override
     public T addTypeToModel(final WindupVertexFrame model)
     {
-        return ExecutionStatistics.performBenchmarked("GraphService.addTypeToModel", new Task<T>()
-        {
-            @Override
-            public T execute()
-            {
-                return GraphService.addTypeToModel(getGraphContext(), model, type);
-            }
-        });
+        return ExecutionStatistics.performBenchmarked("GraphService.addTypeToModel", () -> GraphService.addTypeToModel(getGraphContext(), model, type));
     }
 
     protected FramedGraphQuery findAllQuery()
@@ -120,98 +97,69 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     @Override
     public Iterable<T> findAllByProperties(final String[] keys, final String[] vals)
     {
-        return ExecutionStatistics.performBenchmarked("GraphService.findAllByProperties(" + Arrays.asList(keys) + ")", new Task<Iterable<T>>()
+        return ExecutionStatistics.performBenchmarked("GraphService.findAllByProperties(" + Arrays.asList(keys) + ")", () ->
         {
-            @Override
-            public Iterable<T> execute()
+            FramedGraphQuery query = findAllQuery();
+
+            for (int i = 0, j = keys.length; i < j; i++)
             {
-                FramedGraphQuery query = findAllQuery();
+                String key = keys[i];
+                String val = vals[i];
 
-                for (int i = 0, j = keys.length; i < j; i++)
-                {
-                    String key = keys[i];
-                    String val = vals[i];
-
-                    query = query.has(key, val);
-                }
-
-                return query.vertices(type);
+                query = query.has(key, val);
             }
+
+            return query.vertices(type);
         });
     }
 
     @Override
     public Iterable<T> findAllByProperty(final String key, final Object value)
     {
-        return ExecutionStatistics.performBenchmarked("GraphService.findAllByProperty(" + key + ")", new Task<Iterable<T>>()
-        {
-            @Override
-            public Iterable<T> execute()
-            {
-                return context.getFramed().getVertices(key, value, type);
-            }
-        });
+        return ExecutionStatistics.performBenchmarked("GraphService.findAllByProperty(" + key + ")", () -> context.getFramed().getVertices(key, value, type));
     }
 
     @Override
     public Iterable<T> findAllWithoutProperty(final String key, final Object value)
     {
-        return ExecutionStatistics.performBenchmarked("GraphService.findAllWithoutProperty(" + key + ")", new Task<Iterable<T>>()
-        {
-            @Override
-            public Iterable<T> execute()
-            {
-                return findAllQuery().hasNot(key, value).vertices(type);
-            }
-        });
+        return ExecutionStatistics.performBenchmarked("GraphService.findAllWithoutProperty(" + key + ")", () -> findAllQuery().hasNot(key, value).vertices(type));
     }
 
     @Override
     public Iterable<T> findAllWithoutProperty(final String key)
     {
-        return ExecutionStatistics.performBenchmarked("GraphService.findAllWithoutProperty(" + key + ")", new Task<Iterable<T>>()
-        {
-            @Override
-            public Iterable<T> execute()
-            {
-                return findAllQuery().hasNot(key).vertices(type);
-            }
-        });
+        return ExecutionStatistics.performBenchmarked("GraphService.findAllWithoutProperty(" + key + ")", () -> findAllQuery().hasNot(key).vertices(type));
     }
 
     @Override
     public Iterable<T> findAllByPropertyMatchingRegex(final String key, final String... regex)
     {
-        return ExecutionStatistics.performBenchmarked("GraphService.findAllByPropertyMatchingRegex(" + key + ")", new Task<Iterable<T>>()
+        return ExecutionStatistics.performBenchmarked("GraphService.findAllByPropertyMatchingRegex(" + key + ")", () ->
         {
-            @Override
-            public Iterable<T> execute()
-            {
-                if (regex.length == 0)
-                    return IterablesUtil.emptyIterable();
+            if (regex.length == 0)
+                return IterablesUtil.emptyIterable();
 
-                final String regexFinal;
-                if (regex.length == 1)
-                {
-                    regexFinal = regex[0];
-                }
-                else
-                {
-                    StringBuilder builder = new StringBuilder();
-                    builder.append("\\b(");
-                    int i = 0;
-                    for (String value : regex)
-                    {
-                        if (i > 0)
-                            builder.append("|");
-                        builder.append(value);
-                        i++;
-                    }
-                    builder.append(")\\b");
-                    regexFinal = builder.toString();
-                }
-                return findAllQuery().has(key, Text.REGEX, regexFinal).vertices(type);
+            final String regexFinal;
+            if (regex.length == 1)
+            {
+                regexFinal = regex[0];
             }
+            else
+            {
+                StringBuilder builder = new StringBuilder();
+                builder.append("\\b(");
+                int i = 0;
+                for (String value : regex)
+                {
+                    if (i > 0)
+                        builder.append("|");
+                    builder.append(value);
+                    i++;
+                }
+                builder.append(")\\b");
+                regexFinal = builder.toString();
+            }
+            return findAllQuery().has(key, Text.REGEX, regexFinal).vertices(type);
         });
     }
 
@@ -350,14 +298,10 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     @Override
     public void remove(final T model)
     {
-        ExecutionStatistics.performBenchmarked("GraphService.commit", new Task<Void>()
+        ExecutionStatistics.performBenchmarked("GraphService.commit", () ->
         {
-            @Override
-            public Void execute()
-            {
-                model.asVertex().remove();
-                return null;
-            }
+            model.asVertex().remove();
+            return null;
         });
     }
 }
