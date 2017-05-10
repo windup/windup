@@ -203,7 +203,9 @@ public class XMLRuleProviderLoader implements RuleProviderLoader
         }
     }
 
-    private boolean pathMatchesNamePattern(Path file) {
-        return file.getFileName().toString().toLowerCase().endsWith("." + XML_RULES_WINDUP_EXTENSION) || file.getFileName().toString().toLowerCase().endsWith("." + XML_RULES_RHAMT_EXTENSION);
+    private boolean pathMatchesNamePattern(Path file)
+    {
+        return file.getFileName().toString().toLowerCase().endsWith("." + XML_RULES_WINDUP_EXTENSION)
+                    || file.getFileName().toString().toLowerCase().endsWith("." + XML_RULES_RHAMT_EXTENSION);
     }
 }

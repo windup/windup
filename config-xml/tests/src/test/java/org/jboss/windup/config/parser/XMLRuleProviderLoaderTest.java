@@ -46,7 +46,7 @@ public class XMLRuleProviderLoaderTest
     })
     public static AddonArchive getDeployment()
     {
-        return  ShrinkWrap.create(AddonArchive.class)
+        return ShrinkWrap.create(AddonArchive.class)
                     .addBeansXML()
                     .addAsResource(new File("src/test/resources/testxml/Test1.windup.xml"));
     }
@@ -54,7 +54,7 @@ public class XMLRuleProviderLoaderTest
     @Deployment(name = "rhamt,1")
     public static AddonArchive getRhamtDeployment()
     {
-        return  ShrinkWrap.create(AddonArchive.class)
+        return ShrinkWrap.create(AddonArchive.class)
                     .addBeansXML()
                     .addAsResource(new File("src/test/resources/testxml/Test2.rhamt.xml"));
     }
