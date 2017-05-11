@@ -38,11 +38,11 @@ public abstract class AbstractDecompiler implements Decompiler
         this.executorService.shutdown();
         try
         {
-            executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+            executorService.awaitTermination(10, TimeUnit.MINUTES);
         }
         catch (InterruptedException e)
         {
-            throw new IllegalStateException("Was not able to decompile in the given time limit.");
+            throw new IllegalStateException("Was not able to shutdown the compilation ExecutorService in ten minutes.");
         }
         this.numberOfThreads = numberOfThreads;
         this.executorService = service;
