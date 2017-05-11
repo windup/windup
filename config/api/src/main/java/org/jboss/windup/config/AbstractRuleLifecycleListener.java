@@ -57,4 +57,9 @@ public abstract class AbstractRuleLifecycleListener implements RuleLifecycleList
     public void afterExecution(GraphRewrite event)
     {
     }
+
+    @Override
+    public boolean shouldWindupStop(){
+        return false;
+    }
 }
