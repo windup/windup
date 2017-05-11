@@ -33,6 +33,7 @@ import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.PathUtil;
 import org.jboss.windup.util.ProgressEstimate;
 import org.jboss.windup.util.exception.WindupException;
+import org.jboss.windup.util.exception.WindupStopException;
 import org.jboss.windup.util.threading.WindupExecutors;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
@@ -139,6 +140,11 @@ public class ProcyonDecompilerOperation extends AbstractDecompilerOperation
         @Override
         public synchronized void fileDecompiled(final List<String> inputPath, final String decompiledOutputFile)
         {
+            if (event.shouldWindupStop()){
+                LOG.warning("Request to stop received.");
+                throw new WindupStopException("Request to stop received.");
+            }
+
             Runnable saveDecompiledRunnable = new Runnable()
             {
                 @Override
@@ -150,11 +156,10 @@ public class ProcyonDecompilerOperation extends AbstractDecompilerOperation
                     {
                         long remainingTimeMillis = progressEstimate.getTimeRemainingInMillis();
                         if (remainingTimeMillis > 1000) {
-                            boolean ruleEvaluationProgress = event.ruleEvaluationProgress("Decompilation",
+                            event.ruleEvaluationProgress("Decompilation",
                                     progressEstimate.getWorked(),
                                     progressEstimate.getTotal(),
                                     (int) remainingTimeMillis / 1000);
-                            ///if (ruleEvaluationProgress)
                         }
                     }
 
@@ -272,6 +277,7 @@ public class ProcyonDecompilerOperation extends AbstractDecompilerOperation
             {
                 try
                 {
+                    LOG.warning("Decompiler queue size got over 1000, waiting for 250 ms.");
                     Thread.sleep(250L);
                 }
                 catch (InterruptedException e)
