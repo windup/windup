@@ -31,8 +31,8 @@ import org.jetbrains.java.decompiler.util.InterpreterUtil;
 
 /**
  * Decompiles Java classes with the Fernflower decompiler (https://github.com/JetBrains/intellij-community/tree/master/plugins/java-decompiler/engine)
- * 
- * 
+ *
+ *
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
