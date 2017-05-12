@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.jar.Manifest;
 
 import org.jboss.windup.decompiler.api.DecompilationListener;
+import org.jboss.windup.util.exception.WindupStopException;
 import org.jetbrains.java.decompiler.main.extern.IResultSaver;
 
 /**
@@ -63,6 +64,11 @@ public class FernFlowerResultSaver implements IResultSaver
         {
             if (listener != null)
                 listener.decompilationFailed(sourceClassFiles, t.getMessage());
+        }
+        catch (WindupStopException ex)
+        {
+            // Rethrowing to explicitely show where WindupStopException bubbles through.
+            throw ex;
         }
     }
 
