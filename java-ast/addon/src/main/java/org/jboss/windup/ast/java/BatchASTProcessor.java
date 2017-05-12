@@ -16,6 +16,7 @@ import org.eclipse.jdt.core.dom.AST;
 import org.eclipse.jdt.core.dom.ASTParser;
 import org.eclipse.jdt.core.dom.CompilationUnit;
 import org.eclipse.jdt.core.dom.FileASTRequestor;
+import org.jboss.windup.util.exception.WindupStopException;
 import org.jboss.windup.util.threading.WindupExecutors;
 
 /**
@@ -52,6 +53,10 @@ public class BatchASTProcessor
                     ReferenceResolvingVisitor visitor = new ReferenceResolvingVisitor(importResolver, ast, sourcePath);
                     ast.accept(visitor);
                     listener.processed(Paths.get(sourcePath), visitor.getJavaClassReferences());
+                }
+                catch (WindupStopException ex)
+                {
+                    throw ex;
                 }
                 catch (Throwable t)
                 {
