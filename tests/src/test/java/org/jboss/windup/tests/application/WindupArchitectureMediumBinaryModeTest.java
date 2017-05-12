@@ -160,7 +160,7 @@ public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTe
         util.checkFilePathEffort("Windup1x-javaee-example.war", "META-INF/maven/javaee/javaee/pom.properties", 0);
         util.checkFilePathEffort("Windup1x-javaee-example.war/WEB-INF/lib/joda-time-2.0.jar",
                     "org.joda.time.tz.DateTimeZoneBuilder", 32);
-        util.checkMainEffort(2210);
+        util.checkMainEffort(2213);
         util.checkAppSectionEffort("Windup1x-javaee-example.war", 2);
         util.checkAppSectionEffort("Windup1x-javaee-example.war/WEB-INF/lib/joda-time-2.0.jar", 64);
         util.checkAppSectionEffort("Windup1x-javaee-example.war/WEB-INF/lib/slf4j-api-1.6.1.jar", 16);
@@ -178,7 +178,7 @@ public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTe
         TestReportIndexReportUtil util = new TestReportIndexReportUtil();
         util.loadPage(appReportPath);
 
-        Assert.assertTrue(util.checkIncidentByCategoryRow("optional", 292, 2210));
+        Assert.assertTrue(util.checkIncidentByCategoryRow("optional", 292, 2213));
     }
 
     /**
