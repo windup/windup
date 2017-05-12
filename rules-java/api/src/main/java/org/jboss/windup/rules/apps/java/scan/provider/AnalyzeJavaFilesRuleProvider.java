@@ -374,7 +374,8 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                     if (originalReference == null)
                     {
                         LOG.warning("No original reference set for annotation: " + annotationClassReference);
-                    } else
+                    }
+                    else
                     {
                         JavaTypeReferenceModel originalReferenceModel = added.get(originalReference);
                         if (originalReferenceModel == null)
