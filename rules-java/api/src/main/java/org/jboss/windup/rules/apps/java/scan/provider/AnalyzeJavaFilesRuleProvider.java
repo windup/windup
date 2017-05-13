@@ -214,12 +214,11 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                         filesToProcess.remove(pair.getKey());
                     }
 
+                    // Store failures to the graph
+                    final ClassificationService classificationService = new ClassificationService(graphContext);
                     for (Map.Entry<Path, String> failure : failures.entrySet())
                     {
-                        ClassificationService classificationService = new ClassificationService(graphContext);
-                        JavaSourceFileModel sourceFileModel = getJavaSourceFileModel(graphContext, failure.getKey());
-                        classificationService.attachClassification(event, context, sourceFileModel, UNPARSEABLE_JAVA_CLASSIFICATION, UNPARSEABLE_JAVA_DESCRIPTION);
-                        sourceFileModel.setParseError(failure.getValue());
+                        markJavaFileModelAsUnprocessed(graphContext, failure.getKey(), classificationService, event, context, failure.getValue());
                     }
 
                     if (!filesToProcess.isEmpty())
@@ -238,12 +237,9 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                             }
                             catch (Exception e)
                             {
-                                final String message = "Failed to process: " + unprocessed + " due to: " + e.getMessage();
-                                LOG.log(Level.WARNING, message, e);
-                                ClassificationService classificationService = new ClassificationService(graphContext);
-                                JavaSourceFileModel sourceFileModel = getJavaSourceFileModel(graphContext, unprocessed);
-                                classificationService.attachClassification(event, context, sourceFileModel, UNPARSEABLE_JAVA_CLASSIFICATION, UNPARSEABLE_JAVA_DESCRIPTION);
-                                sourceFileModel.setParseError(message);
+                                final String msg = "Failed to process: " + unprocessed + " due to: " + e.getMessage();
+                                LOG.log(Level.WARNING, msg, e);
+                                markJavaFileModelAsUnprocessed(graphContext, unprocessed, classificationService, event, context, msg);
                             }
                             estimate.addWork(1);
                             printProgressEstimate(event, estimate);
@@ -252,15 +248,13 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
 
                     if (!filesToProcess.isEmpty())
                     {
-                        ClassificationService classificationService = new ClassificationService(graphContext);
-
                         StringBuilder message = new StringBuilder();
                         message.append("Failed to process " + filesToProcess.size() + " files:\n");
                         for (Path unprocessed : filesToProcess)
                         {
-                            JavaSourceFileModel sourceFileModel = getJavaSourceFileModel(graphContext, unprocessed);
                             message.append("\tFailed to process: " + unprocessed + "\n");
-                            classificationService.attachClassification(event, context, sourceFileModel, UNPARSEABLE_JAVA_CLASSIFICATION, UNPARSEABLE_JAVA_DESCRIPTION);
+                            String msg = "Could not process neither in batch or individually.";
+                            markJavaFileModelAsUnprocessed(graphContext, unprocessed, classificationService, event, context, msg);
                             // Is the classification attached 2nd time here?
                         }
                         LOG.warning(message.toString());
@@ -282,6 +276,13 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                 sourcePathToFileModel.clear();
                 ExecutionStatistics.get().end("AnalyzeJavaFilesRuleProvider.analyzeFile");
             }
+        }
+
+        private void markJavaFileModelAsUnprocessed(GraphContext graphContext, Path unprocessed, ClassificationService classificationService, GraphRewrite event, EvaluationContext context, String msg)
+        {
+            JavaSourceFileModel sourceFileModel = getJavaSourceFileModel(graphContext, unprocessed);
+            classificationService.attachClassification(event, context, sourceFileModel, UNPARSEABLE_JAVA_CLASSIFICATION, UNPARSEABLE_JAVA_DESCRIPTION);
+            sourceFileModel.setParseError(msg);
         }
 
         private Set<String> collectLibraryPaths(final GraphContext graphContext, WindupJavaConfigurationModel javaConfiguration)
