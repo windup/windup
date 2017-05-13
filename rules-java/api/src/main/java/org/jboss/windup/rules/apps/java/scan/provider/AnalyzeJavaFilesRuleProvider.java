@@ -145,35 +145,9 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
 
                 LOG.log(Level.INFO, "Analyzing {0} Java source files.", allSourceFiles.size());
 
-                Set<String> libraryPaths = new HashSet<>();
+                WindupJavaConfigurationModel javaConfiguration = WindupJavaConfigurationService.getJavaConfigurationModel(graphContext);
 
-                WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(graphContext);
-                for (TechnologyReferenceModel target : configurationModel.getTargetTechnologies())
-                {
-                    TechnologyMetadata technologyMetadata = technologyMetadataProvider.getMetadata(graphContext, new TechnologyReference(target));
-                    if (technologyMetadata != null && technologyMetadata instanceof JavaTechnologyMetadata)
-                    {
-                        JavaTechnologyMetadata javaMetadata = (JavaTechnologyMetadata) technologyMetadata;
-                        libraryPaths.addAll(
-                                javaMetadata
-                                        .getAdditionalClasspaths()
-                                        .stream()
-                                        .map(Path::toString)
-                                        .collect(Collectors.toList()));
-                    }
-                }
-
-                final WindupJavaConfigurationModel javaConfiguration = WindupJavaConfigurationService.getJavaConfigurationModel(graphContext);
-                for (FileModel additionalClasspath : javaConfiguration.getAdditionalClasspaths())
-                {
-                    libraryPaths.add(additionalClasspath.getFilePath());
-                }
-
-                Iterable<JarArchiveModel> libraries = graphContext.service(JarArchiveModel.class).findAll();
-                for (JarArchiveModel library : libraries)
-                {
-                    libraryPaths.add(library.getFilePath());
-                }
+                Set<String> libraryPaths = collectLibraryPaths(graphContext, javaConfiguration);
 
                 ExecutionStatistics.get().begin("AnalyzeJavaFilesRuleProvider.parseFiles");
                 final boolean classNotFoundAnalysisEnabled = javaConfiguration.isClassNotFoundAnalysisEnabled();
@@ -308,6 +282,37 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                 sourcePathToFileModel.clear();
                 ExecutionStatistics.get().end("AnalyzeJavaFilesRuleProvider.analyzeFile");
             }
+        }
+
+        private Set<String> collectLibraryPaths(final GraphContext graphContext, WindupJavaConfigurationModel javaConfiguration)
+        {
+            Set<String> libraryPaths;
+            libraryPaths = new HashSet<>();
+            WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(graphContext);
+            for (TechnologyReferenceModel target : configurationModel.getTargetTechnologies())
+            {
+                TechnologyMetadata technologyMetadata = technologyMetadataProvider.getMetadata(graphContext, new TechnologyReference(target));
+                if (technologyMetadata != null && technologyMetadata instanceof JavaTechnologyMetadata)
+                {
+                    JavaTechnologyMetadata javaMetadata = (JavaTechnologyMetadata) technologyMetadata;
+                    libraryPaths.addAll(
+                            javaMetadata
+                                    .getAdditionalClasspaths()
+                                    .stream()
+                                    .map(Path::toString)
+                                    .collect(Collectors.toList()));
+                }
+            }
+            for (FileModel additionalClasspath : javaConfiguration.getAdditionalClasspaths())
+            {
+                libraryPaths.add(additionalClasspath.getFilePath());
+            }
+            Iterable<JarArchiveModel> libraries = graphContext.service(JarArchiveModel.class).findAll();
+            for (JarArchiveModel library : libraries)
+            {
+                libraryPaths.add(library.getFilePath());
+            }
+            return libraryPaths;
         }
 
         private void commitIfNeeded(GraphContext context, int numberAddedToGraph)
