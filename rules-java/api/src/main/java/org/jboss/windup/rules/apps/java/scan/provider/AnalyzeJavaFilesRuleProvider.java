@@ -114,7 +114,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
 
         final Map<Path, JavaSourceFileModel> sourcePathToFileModel = new TreeMap<>();
 
-        public void perform(final GraphRewrite event, EvaluationContext context)
+        public void perform(final GraphRewrite event, EvaluationContext evalCtx)
         {
 
             ExecutionStatistics.get().begin("AnalyzeJavaFilesRuleProvider.analyzeFile");
@@ -155,108 +155,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                 try
                 {
                     WindupWildcardImportResolver.setContext(graphContext);
-
-                    final BlockingQueue<Pair<Path, List<ClassReference>>> processedPaths = new ArrayBlockingQueue<>(ANALYSIS_QUEUE_SIZE);
-                    final ConcurrentMap<Path, String> failures = new ConcurrentHashMap<>();
-                    BatchASTListener listener = new BatchASTListener()
-                    {
-                        @Override
-                        public void processed(Path filePath, List<ClassReference> references)
-                        {
-                            checkExecutionStopRequest(event);
-                            try
-                            {
-                                processedPaths.put(new ImmutablePair<>(filePath, filterClassReferences(references, classNotFoundAnalysisEnabled)));
-                            }
-                            catch (InterruptedException e)
-                            {
-                                throw new WindupException(e.getMessage(), e);
-                            }
-                        }
-
-                        @Override
-                        public void failed(Path filePath, Throwable cause)
-                        {
-                            checkExecutionStopRequest(event);
-                            final String message = "Failed to process: " + filePath + " due to: " + cause.getMessage();
-                            LOG.log(Level.WARNING, message, cause);
-                            failures.put(filePath, message);
-                        }
-                    };
-
-                    Set<Path> filesToProcess = new TreeSet<>(allSourceFiles);
-
-                    BatchASTFuture future = BatchASTProcessor.analyze(listener, importResolver, libraryPaths, sourcePaths, filesToProcess);
-                    ProgressEstimate estimate = new ProgressEstimate(filesToProcess.size());
-
-                    // This tracks the number of items added to the graph
-                    AtomicInteger referenceCount = new AtomicInteger(0);
-
-                    while (!future.isDone() || !processedPaths.isEmpty())
-                    {
-                        checkExecutionStopRequest(event);
-
-                        if (processedPaths.size() > (ANALYSIS_QUEUE_SIZE / 2))
-                            LOG.info("Queue size: " + processedPaths.size() + " / " + ANALYSIS_QUEUE_SIZE);
-                        Pair<Path, List<ClassReference>> pair = processedPaths.poll(250, TimeUnit.MILLISECONDS);
-                        if (pair == null)
-                            continue;
-
-                        processReferences(graphContext, referenceCount, pair.getKey(), pair.getValue());
-
-                        estimate.addWork(1);
-                        printProgressEstimate(event, estimate);
-
-                        filesToProcess.remove(pair.getKey());
-                    }
-
-                    // Store failures to the graph
-                    final ClassificationService classificationService = new ClassificationService(graphContext);
-                    for (Map.Entry<Path, String> failure : failures.entrySet())
-                    {
-                        markJavaFileModelAsUnprocessed(graphContext, failure.getKey(), classificationService, event, context, failure.getValue());
-                    }
-
-                    if (!filesToProcess.isEmpty())
-                    {
-                        /*
-                         * These were rejected by the batch, so try them one file at a time because the one-at-a-time ASTParser usually succeeds where
-                         * the batch failed.
-                         */
-                        for (Path unprocessed : new ArrayList<>(filesToProcess))
-                        {
-                            checkExecutionStopRequest(event);
-
-                            try
-                            {
-                                List<ClassReference> references = ASTProcessor.analyze(importResolver, libraryPaths, sourcePaths, unprocessed);
-                                processReferences(graphContext, referenceCount, unprocessed, filterClassReferences(references, classNotFoundAnalysisEnabled));
-                                filesToProcess.remove(unprocessed);
-                            }
-                            catch (Exception e)
-                            {
-                                final String msg = "Failed to process: " + unprocessed + " due to: " + e.getMessage();
-                                LOG.log(Level.WARNING, msg, e);
-                                markJavaFileModelAsUnprocessed(graphContext, unprocessed, classificationService, event, context, msg);
-                            }
-                            estimate.addWork(1);
-                            printProgressEstimate(event, estimate);
-                        }
-                    }
-
-                    if (!filesToProcess.isEmpty())
-                    {
-                        StringBuilder message = new StringBuilder();
-                        message.append("Failed to process " + filesToProcess.size() + " files:\n");
-                        for (Path unprocessed : filesToProcess)
-                        {
-                            message.append("\tFailed to process: " + unprocessed + "\n");
-                            String msg = "Could not process neither in batch or individually.";
-                            markJavaFileModelAsUnprocessed(graphContext, unprocessed, classificationService, event, context, msg);
-                            // Is the classification attached 2nd time here?
-                        }
-                        LOG.warning(message.toString());
-                    }
+                    parseJavaFiles(event, classNotFoundAnalysisEnabled, allSourceFiles, libraryPaths, sourcePaths, graphContext, evalCtx);
                 }
                 catch (WindupStopException ex)
                 {
@@ -276,6 +175,111 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
             {
                 sourcePathToFileModel.clear();
                 ExecutionStatistics.get().end("AnalyzeJavaFilesRuleProvider.analyzeFile");
+            }
+        }
+
+        private void parseJavaFiles(final GraphRewrite event, final boolean classNotFoundAnalysisEnabled, final Set<Path> allSourceFiles, Set<String> libraryPaths, Set<String> sourcePaths, final GraphContext graphContext, EvaluationContext context) throws InterruptedException
+        {
+            final BlockingQueue<Pair<Path, List<ClassReference>>> processedPaths = new ArrayBlockingQueue<>(ANALYSIS_QUEUE_SIZE);
+            final ConcurrentMap<Path, String> failures = new ConcurrentHashMap<>();
+            BatchASTListener listener = new BatchASTListener()
+            {
+                @Override
+                public void processed(Path filePath, List<ClassReference> references)
+                {
+                    checkExecutionStopRequest(event);
+                    try
+                    {
+                        processedPaths.put(new ImmutablePair<>(filePath, filterClassReferences(references, classNotFoundAnalysisEnabled)));
+                    }
+                    catch (InterruptedException e)
+                    {
+                        throw new WindupException(e.getMessage(), e);
+                    }
+                }
+
+                @Override
+                public void failed(Path filePath, Throwable cause)
+                {
+                    checkExecutionStopRequest(event);
+                    final String message = "Failed to process: " + filePath + " due to: " + cause.getMessage();
+                    LOG.log(Level.WARNING, message, cause);
+                    failures.put(filePath, message);
+                }
+            };
+
+            Set<Path> filesToProcess = new TreeSet<>(allSourceFiles);
+
+            BatchASTFuture future = BatchASTProcessor.analyze(listener, importResolver, libraryPaths, sourcePaths, filesToProcess);
+            ProgressEstimate estimate = new ProgressEstimate(filesToProcess.size());
+
+            // This tracks the number of items added to the graph
+            AtomicInteger referenceCount = new AtomicInteger(0);
+
+            while (!future.isDone() || !processedPaths.isEmpty())
+            {
+                checkExecutionStopRequest(event);
+
+                if (processedPaths.size() > (ANALYSIS_QUEUE_SIZE / 2))
+                    LOG.info("Queue size: " + processedPaths.size() + " / " + ANALYSIS_QUEUE_SIZE);
+                Pair<Path, List<ClassReference>> pair = processedPaths.poll(250, TimeUnit.MILLISECONDS);
+                if (pair == null)
+                    continue;
+
+                processReferences(graphContext, referenceCount, pair.getKey(), pair.getValue());
+
+                estimate.addWork(1);
+                printProgressEstimate(event, estimate);
+
+                filesToProcess.remove(pair.getKey());
+            }
+
+            // Store failures to the graph
+            final ClassificationService classificationService = new ClassificationService(graphContext);
+            for (Map.Entry<Path, String> failure : failures.entrySet())
+            {
+                markJavaFileModelAsUnprocessed(graphContext, failure.getKey(), classificationService, event, context, failure.getValue());
+            }
+
+            if (!filesToProcess.isEmpty())
+            {
+                /*
+                * These were rejected by the batch, so try them one file at a time because the one-at-a-time ASTParser usually succeeds where
+                * the batch failed.
+                */
+                for (Path unprocessed : new ArrayList<>(filesToProcess))
+                {
+                    checkExecutionStopRequest(event);
+
+                    try
+                    {
+                        List<ClassReference> references = ASTProcessor.analyze(importResolver, libraryPaths, sourcePaths, unprocessed);
+                        processReferences(graphContext, referenceCount, unprocessed, filterClassReferences(references, classNotFoundAnalysisEnabled));
+                        filesToProcess.remove(unprocessed);
+                    }
+                    catch (Exception e)
+                    {
+                        final String msg = "Failed to process: " + unprocessed + " due to: " + e.getMessage();
+                        LOG.log(Level.WARNING, msg, e);
+                        markJavaFileModelAsUnprocessed(graphContext, unprocessed, classificationService, event, context, msg);
+                    }
+                    estimate.addWork(1);
+                    printProgressEstimate(event, estimate);
+                }
+            }
+
+            if (!filesToProcess.isEmpty())
+            {
+                StringBuilder message = new StringBuilder();
+                message.append("Failed to process " + filesToProcess.size() + " files:\n");
+                for (Path unprocessed : filesToProcess)
+                {
+                    message.append("\tFailed to process: " + unprocessed + "\n");
+                    String msg = "Could not process neither in batch or individually.";
+                    markJavaFileModelAsUnprocessed(graphContext, unprocessed, classificationService, event, context, msg);
+                    // Is the classification attached 2nd time here?
+                }
+                LOG.warning(message.toString());
             }
         }
 
