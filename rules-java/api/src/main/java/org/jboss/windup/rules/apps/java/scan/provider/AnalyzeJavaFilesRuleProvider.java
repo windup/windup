@@ -106,6 +106,8 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
     }
     // @formatter:on
 
+    final AtomicInteger ticks = new AtomicInteger();
+
     private final class ParseSourceOperation extends GraphOperation
     {
         private static final int ANALYSIS_QUEUE_SIZE = 5000;
@@ -114,7 +116,6 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
 
         public void perform(final GraphRewrite event, EvaluationContext context)
         {
-            final AtomicInteger ticks = new AtomicInteger();
 
             ExecutionStatistics.get().begin("AnalyzeJavaFilesRuleProvider.analyzeFile");
             try
@@ -162,7 +163,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                         @Override
                         public void processed(Path filePath, List<ClassReference> references)
                         {
-                            checkExecutionStopRequest();
+                            checkExecutionStopRequest(event);
                             try
                             {
                                 processedPaths.put(new ImmutablePair<>(filePath, filterClassReferences(references, classNotFoundAnalysisEnabled)));
@@ -176,17 +177,10 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                         @Override
                         public void failed(Path filePath, Throwable cause)
                         {
-                            checkExecutionStopRequest();
+                            checkExecutionStopRequest(event);
                             final String message = "Failed to process: " + filePath + " due to: " + cause.getMessage();
                             LOG.log(Level.WARNING, message, cause);
                             failures.put(filePath, message);
-                        }
-
-                        private void checkExecutionStopRequest()
-                        {
-                            if (ticks.incrementAndGet() % 20 == 0)
-                                if (event.shouldWindupStop())
-                                    throw new WindupStopException("Stop requested while analyzing Java files.");
                         }
                     };
 
@@ -200,6 +194,8 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
 
                     while (!future.isDone() || !processedPaths.isEmpty())
                     {
+                        checkExecutionStopRequest(event);
+
                         if (processedPaths.size() > (ANALYSIS_QUEUE_SIZE / 2))
                             LOG.info("Queue size: " + processedPaths.size() + " / " + ANALYSIS_QUEUE_SIZE);
                         Pair<Path, List<ClassReference>> pair = processedPaths.poll(250, TimeUnit.MILLISECONDS);
@@ -229,6 +225,8 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                          */
                         for (Path unprocessed : new ArrayList<>(filesToProcess))
                         {
+                            checkExecutionStopRequest(event);
+                            
                             try
                             {
                                 List<ClassReference> references = ASTProcessor.analyze(importResolver, libraryPaths, sourcePaths, unprocessed);
@@ -262,6 +260,10 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
 
                     ExecutionStatistics.get().end("AnalyzeJavaFilesRuleProvider.parseFiles");
                 }
+                catch (WindupStopException ex)
+                {
+                    throw new WindupStopException(ex); // To get a sane stack trace
+                }
                 catch (Exception e)
                 {
                     LOG.log(Level.SEVERE, "Could not analyze java files: " + e.getMessage(), e);
@@ -276,6 +278,13 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                 sourcePathToFileModel.clear();
                 ExecutionStatistics.get().end("AnalyzeJavaFilesRuleProvider.analyzeFile");
             }
+        }
+
+        private void checkExecutionStopRequest(GraphRewrite event)
+        {
+            if (ticks.incrementAndGet() % 20 == 0)
+                if (event.shouldWindupStop())
+                    throw new WindupStopException("Stop requested while analyzing Java files.");
         }
 
         private void markJavaFileModelAsUnprocessed(GraphContext graphContext, Path unprocessed, ClassificationService classificationService, GraphRewrite event, EvaluationContext context, String msg)
