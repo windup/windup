@@ -114,6 +114,8 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
 
         public void perform(final GraphRewrite event, EvaluationContext context)
         {
+            final AtomicInteger ticks = new AtomicInteger();
+
             ExecutionStatistics.get().begin("AnalyzeJavaFilesRuleProvider.analyzeFile");
             try
             {
@@ -141,7 +143,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                     }
                 }
 
-                LOG.log(Level.INFO, "Analyzing {0} Java source files.", sourcePaths.size());
+                LOG.log(Level.INFO, "Analyzing {0} Java source files.", allSourceFiles.size());
 
                 Set<String> libraryPaths = new HashSet<>();
 
@@ -186,6 +188,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                         @Override
                         public void processed(Path filePath, List<ClassReference> references)
                         {
+                            checkExecutionStopRequest();
                             try
                             {
                                 processedPaths.put(new ImmutablePair<>(filePath, filterClassReferences(references, classNotFoundAnalysisEnabled)));
@@ -199,9 +202,17 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                         @Override
                         public void failed(Path filePath, Throwable cause)
                         {
+                            checkExecutionStopRequest();
                             final String message = "Failed to process: " + filePath + " due to: " + cause.getMessage();
                             LOG.log(Level.WARNING, message, cause);
                             failures.put(filePath, message);
+                        }
+
+                        private void checkExecutionStopRequest()
+                        {
+                            if (ticks.incrementAndGet() % 20 == 0)
+                                if (event.shouldWindupStop())
+                                    throw new WindupStopException("Stop requested while analyzing Java files.");
                         }
                     };
 
