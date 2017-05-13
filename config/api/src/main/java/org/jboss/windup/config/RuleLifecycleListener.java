@@ -64,5 +64,8 @@ public interface RuleLifecycleListener
      * Not all listeners need to return true - just one returning true is a reason to stop execution.
      * Queried by various rule implementations so we can stop as soon as possible.
      */
-    public boolean shouldWindupStop();
+    public default boolean shouldWindupStop()
+    {
+        return false;
+    }
 }
