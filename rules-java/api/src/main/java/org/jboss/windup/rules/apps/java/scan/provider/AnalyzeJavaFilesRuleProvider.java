@@ -226,7 +226,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                         for (Path unprocessed : new ArrayList<>(filesToProcess))
                         {
                             checkExecutionStopRequest(event);
-                            
+
                             try
                             {
                                 List<ClassReference> references = ASTProcessor.analyze(importResolver, libraryPaths, sourcePaths, unprocessed);
@@ -257,8 +257,6 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                         }
                         LOG.warning(message.toString());
                     }
-
-                    ExecutionStatistics.get().end("AnalyzeJavaFilesRuleProvider.parseFiles");
                 }
                 catch (WindupStopException ex)
                 {
@@ -271,6 +269,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                 finally
                 {
                     WindupWildcardImportResolver.setContext(null);
+                    ExecutionStatistics.get().end("AnalyzeJavaFilesRuleProvider.parseFiles");
                 }
             }
             finally
