@@ -15,8 +15,15 @@ public final class WindupStopException extends WindupException
     /**
      * Intended for wrapping another exception meant to stop the execution.
      */
+    public WindupStopException(String message, Exception cause)
+    {
+        super(message, cause);
+    }
+    /**
+     * Intended for wrapping another exception meant to stop the execution.
+     */
     public WindupStopException(Exception cause)
     {
-        super("", cause);
+        super(cause);
     }
 }
