@@ -105,7 +105,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
                 canonicalArchive = ((DuplicateArchiveModel)canonicalArchive).getCanonicalArchive();
 
             ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-            classificationService.attachClassification(event, context, canonicalArchive, MALFORMED_ARCHIVE, "Cannot unzip the file");
+            classificationService.attachClassification(event, context, canonicalArchive, MALFORMED_ARCHIVE, "Cannot unzip the file:  \n`" + inputZipFile.getPath() + "`");
             archiveModel.setParseError("Cannot unzip the file: " + e.getMessage());
             LOG.warning("Cannot unzip the file " + inputZipFile.getPath() + " to " + appArchiveFolder.toString()
                         + ". The ArchiveModel was classified as malformed.");
