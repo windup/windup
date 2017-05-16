@@ -52,6 +52,10 @@ public interface ProjectModel extends WindupVertexFrame
     @Adjacency(label = ROOT_FILE_MODEL, direction = Direction.OUT)
     void setRootFileModel(FileModel fileModel);
 
+    /**
+     * This represents the root directory (in the case of a source-based analysis) or root archive (for binary analysis) containing this particular
+     * project.
+     */
     @Adjacency(label = ROOT_FILE_MODEL, direction = Direction.OUT)
     FileModel getRootFileModel();
 
