@@ -51,10 +51,11 @@ import com.strobel.decompiler.languages.LineNumberPosition;
 import com.strobel.decompiler.languages.TypeDecompilationResults;
 import com.strobel.decompiler.languages.java.JavaFormattingOptions;
 import com.strobel.io.PathHelper;
+import org.jboss.windup.util.exception.WindupStopException;
 
 /**
  * Decompiles Java classes with Procyon Decompiler. See https://bitbucket.org/mstrobel/procyon
- * 
+ *
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -83,6 +84,7 @@ public class ProcyonDecompiler extends AbstractDecompiler
     }
 
 
+    @Override
     public Collection<Callable<File>> getDecompileTasks(final Map<String, List<ClassDecompileRequest>> requestMap, final DecompilationListener listener)
     {
         final AtomicInteger current = new AtomicInteger(0);
@@ -212,7 +214,7 @@ public class ProcyonDecompiler extends AbstractDecompiler
 
     /**
      * Decompiles the given .class file and creates the specified output source file.
-     * 
+     *
      * @param classFilePath the .class file to be decompiled.
      * @param outputDir The directory where decompiled .java files will be placed.
      */
@@ -336,11 +338,11 @@ public class ProcyonDecompiler extends AbstractDecompiler
      * <code>foo.ear/bar.jar/src/com/foo/bar/Baz.java</code>.
      * <p>
      * Required directories will be created as needed.
-     * 
+     *
      * @param archive The archive containing source files and archives.
      * @param outputDir The directory where decompiled .java files will be placed.
      * @param filter Decides which classes will be decompiled.
-     * 
+     *
      * @returns Result with all decompilation failures. Never throws.
      */
     @Override
@@ -451,6 +453,13 @@ public class ProcyonDecompiler extends AbstractDecompiler
                             }
                             return outputFile;
                         }
+                        catch (WindupStopException ex)
+                        {
+                            String msg = "Detected a request to stop during decompilation of " + archive.toString() + "!" + name + ":\n    "
+                                    + ex.getMessage();
+                            log.log(Level.WARNING, msg + "\n    (Rethrowing)");
+                            throw new WindupStopException(msg, ex);
+                        }
                         catch (Throwable th)
                         {
                             String msg = "Error during decompilation of " + archive.toString() + "!" + name + ":\n    "
@@ -477,6 +486,7 @@ public class ProcyonDecompiler extends AbstractDecompiler
             }
             try
             {
+                // Wait until all finish.
                 getExecutorService().invokeAll(tasks);
             }
             catch (InterruptedException e)
@@ -575,7 +585,7 @@ public class ProcyonDecompiler extends AbstractDecompiler
 
     /**
      * Decompiles a single type.
-     * 
+     *
      * @param metadataSystem
      * @param typeName
      * @return

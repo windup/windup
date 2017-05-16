@@ -8,13 +8,13 @@ import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.ProgressEstimate;
+import org.jboss.windup.util.exception.WindupStopException;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * Provides a simplistic way of printing a message to the log every {@link IterationProgress#interval} iterations.
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- *
  */
 public class IterationProgress extends AbstractIterationOperation<WindupVertexFrame>
 {
@@ -46,6 +46,11 @@ public class IterationProgress extends AbstractIterationOperation<WindupVertexFr
     @Override
     public void perform(GraphRewrite event, EvaluationContext context)
     {
+        if (event.shouldWindupStop())
+        {
+            throw new WindupStopException("Request to stop detected during iteration related to: " + messagePrefix);
+        }
+
         if (totalIterations == -1)
         {
             @SuppressWarnings("unchecked")

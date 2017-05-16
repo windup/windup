@@ -17,10 +17,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
+import org.jboss.windup.util.exception.WindupStopException;
 
 /**
  *  An abstract class encapsulating the common logic from the {@link org.jboss.windup.decompiler.api.Decompiler} implementations.
@@ -38,11 +42,11 @@ public abstract class AbstractDecompiler implements Decompiler
         this.executorService.shutdown();
         try
         {
-            executorService.awaitTermination(Long.MAX_VALUE, TimeUnit.NANOSECONDS);
+            executorService.awaitTermination(10, TimeUnit.MINUTES);
         }
         catch (InterruptedException e)
         {
-            throw new IllegalStateException("Was not able to decompile in the given time limit.");
+            throw new IllegalStateException("Was not able to shutdown the compilation ExecutorService in ten minutes.");
         }
         this.numberOfThreads = numberOfThreads;
         this.executorService = service;
@@ -92,7 +96,19 @@ public abstract class AbstractDecompiler implements Decompiler
         Collection<Callable<File>> tasks = getDecompileTasks(requestMap,listener);
         try
         {
-            executorService.invokeAll(tasks);
+            List<Future<File>> futures = executorService.invokeAll(tasks);
+            futures.forEach(f -> {
+                try {
+                    f.get();
+                }
+                catch (WindupStopException ex) {
+                    // The execution has stopped on request.
+                }
+                catch (InterruptedException | ExecutionException ex)
+                {
+                    // Ignore, this was already handled by the listener.
+                }
+            });
         }
         catch (InterruptedException e)
         {

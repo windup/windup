@@ -58,4 +58,14 @@ public interface RuleLifecycleListener
      * Called immediately after any {@link Rule} instances are executed.
      */
     void afterExecution(GraphRewrite event);
+
+    /**
+     * Returns directly the information whether Windup execution should stop.
+     * Not all listeners need to return true - just one returning true is a reason to stop execution.
+     * Queried by various rule implementations so we can stop as soon as possible.
+     */
+    public default boolean shouldWindupStop()
+    {
+        return false;
+    }
 }
