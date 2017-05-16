@@ -76,7 +76,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
  * Scan the Java Source code files and store the used type information from them.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
  */
@@ -106,25 +106,24 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
     }
     // @formatter:on
 
+    final AtomicInteger ticks = new AtomicInteger();
+
     private final class ParseSourceOperation extends GraphOperation
     {
         private static final int ANALYSIS_QUEUE_SIZE = 5000;
 
         final Map<Path, JavaSourceFileModel> sourcePathToFileModel = new TreeMap<>();
 
-        public void perform(final GraphRewrite event, EvaluationContext context)
+        public void perform(final GraphRewrite event, EvaluationContext evalCtx)
         {
+
             ExecutionStatistics.get().begin("AnalyzeJavaFilesRuleProvider.analyzeFile");
             try
             {
-                WindupJavaConfigurationService windupJavaConfigurationService = new WindupJavaConfigurationService(
-                            event.getGraphContext());
-                final WindupJavaConfigurationModel javaConfiguration = WindupJavaConfigurationService
-                            .getJavaConfigurationModel(event.getGraphContext());
-                final boolean classNotFoundAnalysisEnabled = javaConfiguration.isClassNotFoundAnalysisEnabled();
+                final GraphContext graphContext = event.getGraphContext();
+                WindupJavaConfigurationService windupJavaConfigurationService = new WindupJavaConfigurationService(graphContext);
 
-                GraphService<JavaSourceFileModel> service = new GraphService<>(event.getGraphContext(), JavaSourceFileModel.class);
-                Iterable<JavaSourceFileModel> allJavaSourceModels = service.findAll();
+                Iterable<JavaSourceFileModel> allJavaSourceModels = graphContext.service(JavaSourceFileModel.class).findAll();
 
                 final Set<Path> allSourceFiles = new TreeSet<>();
 
@@ -145,146 +144,22 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                     }
                 }
 
-                GraphService<JarArchiveModel> libraryService = new GraphService<>(event.getGraphContext(), JarArchiveModel.class);
+                LOG.log(Level.INFO, "Analyzing {0} Java source files.", allSourceFiles.size());
 
-                Iterable<JarArchiveModel> libraries = libraryService.findAll();
-                Set<String> libraryPaths = new HashSet<>();
+                WindupJavaConfigurationModel javaConfiguration = WindupJavaConfigurationService.getJavaConfigurationModel(graphContext);
 
-                WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
-                for (TechnologyReferenceModel target : configurationModel.getTargetTechnologies())
-                {
-                    TechnologyMetadata technologyMetadata = technologyMetadataProvider.getMetadata(event.getGraphContext(),
-                                new TechnologyReference(target));
-                    if (technologyMetadata != null && technologyMetadata instanceof JavaTechnologyMetadata)
-                    {
-                        JavaTechnologyMetadata javaMetadata = (JavaTechnologyMetadata) technologyMetadata;
-                        libraryPaths.addAll(
-                                javaMetadata
-                                        .getAdditionalClasspaths()
-                                        .stream()
-                                        .map(Path::toString)
-                                        .collect(Collectors.toList()));
-                    }
-                }
-
-                for (FileModel additionalClasspath : javaConfiguration.getAdditionalClasspaths())
-                {
-                    libraryPaths.add(additionalClasspath.getFilePath());
-                }
-
-                for (JarArchiveModel library : libraries)
-                {
-                    libraryPaths.add(library.getFilePath());
-                }
+                Set<String> libraryPaths = collectLibraryPaths(graphContext, javaConfiguration);
 
                 ExecutionStatistics.get().begin("AnalyzeJavaFilesRuleProvider.parseFiles");
+                final boolean classNotFoundAnalysisEnabled = javaConfiguration.isClassNotFoundAnalysisEnabled();
                 try
                 {
-                    WindupWildcardImportResolver.setContext(event.getGraphContext());
-
-                    final BlockingQueue<Pair<Path, List<ClassReference>>> processedPaths = new ArrayBlockingQueue<>(ANALYSIS_QUEUE_SIZE);
-                    final ConcurrentMap<Path, String> failures = new ConcurrentHashMap<>();
-                    BatchASTListener listener = new BatchASTListener()
-                    {
-                        @Override
-                        public void processed(Path filePath, List<ClassReference> references)
-                        {
-                            try
-                            {
-                                processedPaths.put(new ImmutablePair<>(filePath, filterClassReferences(references, classNotFoundAnalysisEnabled)));
-                            }
-                            catch (InterruptedException e)
-                            {
-                                throw new WindupException(e.getMessage(), e);
-                            }
-                        }
-
-                        @Override
-                        public void failed(Path filePath, Throwable cause)
-                        {
-                            final String message = "Failed to process: " + filePath + " due to: " + cause.getMessage();
-                            LOG.log(Level.WARNING, message, cause);
-                            failures.put(filePath, message);
-                        }
-                    };
-
-                    Set<Path> filesToProcess = new TreeSet<>(allSourceFiles);
-
-                    BatchASTFuture future = BatchASTProcessor.analyze(listener, importResolver, libraryPaths, sourcePaths, filesToProcess);
-                    ProgressEstimate estimate = new ProgressEstimate(filesToProcess.size());
-
-                    // This tracks the number of items added to the graph
-                    AtomicInteger referenceCount = new AtomicInteger(0);
-
-                    while (!future.isDone() || !processedPaths.isEmpty())
-                    {
-                        if (processedPaths.size() > (ANALYSIS_QUEUE_SIZE / 2))
-                            LOG.info("Queue size: " + processedPaths.size() + " / " + ANALYSIS_QUEUE_SIZE);
-                        Pair<Path, List<ClassReference>> pair = processedPaths.poll(250, TimeUnit.MILLISECONDS);
-                        if (pair == null)
-                            continue;
-
-                        processReferences(event.getGraphContext(), referenceCount, pair.getKey(), pair.getValue());
-
-                        estimate.addWork(1);
-                        printProgressEstimate(event, estimate);
-
-                        filesToProcess.remove(pair.getKey());
-                    }
-
-                    for (Map.Entry<Path, String> failure : failures.entrySet())
-                    {
-                        ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-                        JavaSourceFileModel sourceFileModel = getJavaSourceFileModel(event.getGraphContext(), failure.getKey());
-                        classificationService.attachClassification(event, context, sourceFileModel, UNPARSEABLE_JAVA_CLASSIFICATION, UNPARSEABLE_JAVA_DESCRIPTION);
-                        sourceFileModel.setParseError(failure.getValue());
-                    }
-
-                    if (!filesToProcess.isEmpty())
-                    {
-                        /*
-                         * These were rejected by the batch, so try them one file at a time because the one-at-a-time ASTParser usually succeeds where
-                         * the batch failed.
-                         */
-                        for (Path unprocessed : new ArrayList<>(filesToProcess))
-                        {
-                            try
-                            {
-                                List<ClassReference> references = ASTProcessor.analyze(importResolver, libraryPaths, sourcePaths, unprocessed);
-                                processReferences(event.getGraphContext(), referenceCount, unprocessed, filterClassReferences(references, classNotFoundAnalysisEnabled));
-                                filesToProcess.remove(unprocessed);
-                            }
-                            catch (Exception e)
-                            {
-                                final String message = "Failed to process: " + unprocessed + " due to: " + e.getMessage();
-                                LOG.log(Level.WARNING, message, e);
-                                ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-                                JavaSourceFileModel sourceFileModel = getJavaSourceFileModel(event.getGraphContext(), unprocessed);
-                                classificationService.attachClassification(event, context, sourceFileModel, UNPARSEABLE_JAVA_CLASSIFICATION, UNPARSEABLE_JAVA_DESCRIPTION);
-                                sourceFileModel.setParseError(message);
-                            }
-                            estimate.addWork(1);
-                            printProgressEstimate(event, estimate);
-                        }
-                    }
-
-                    if (!filesToProcess.isEmpty())
-                    {
-                        ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-
-                        StringBuilder message = new StringBuilder();
-                        message.append("Failed to process " + filesToProcess.size() + " files:\n");
-                        for (Path unprocessed : filesToProcess)
-                        {
-                            JavaSourceFileModel sourceFileModel = getJavaSourceFileModel(event.getGraphContext(), unprocessed);
-                            message.append("\tFailed to process: " + unprocessed + "\n");
-                            classificationService.attachClassification(event, context, sourceFileModel, UNPARSEABLE_JAVA_CLASSIFICATION, UNPARSEABLE_JAVA_DESCRIPTION);
-                            // Is the classification attached 2nd time here?
-                        }
-                        LOG.warning(message.toString());
-                    }
-
-                    ExecutionStatistics.get().end("AnalyzeJavaFilesRuleProvider.parseFiles");
+                    WindupWildcardImportResolver.setContext(graphContext);
+                    parseJavaFiles(event, classNotFoundAnalysisEnabled, allSourceFiles, libraryPaths, sourcePaths, graphContext, evalCtx);
+                }
+                catch (WindupStopException ex)
+                {
+                    throw new WindupStopException(ex); // To get a sane stack trace
                 }
                 catch (Exception e)
                 {
@@ -293,6 +168,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                 finally
                 {
                     WindupWildcardImportResolver.setContext(null);
+                    ExecutionStatistics.get().end("AnalyzeJavaFilesRuleProvider.parseFiles");
                 }
             }
             finally
@@ -300,6 +176,156 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                 sourcePathToFileModel.clear();
                 ExecutionStatistics.get().end("AnalyzeJavaFilesRuleProvider.analyzeFile");
             }
+        }
+
+        private void parseJavaFiles(final GraphRewrite event, final boolean classNotFoundAnalysisEnabled, final Set<Path> allSourceFiles, Set<String> libraryPaths, Set<String> sourcePaths, final GraphContext graphContext, EvaluationContext context) throws InterruptedException
+        {
+            final BlockingQueue<Pair<Path, List<ClassReference>>> processedPaths = new ArrayBlockingQueue<>(ANALYSIS_QUEUE_SIZE);
+            final ConcurrentMap<Path, String> failures = new ConcurrentHashMap<>();
+            BatchASTListener listener = new BatchASTListener()
+            {
+                @Override
+                public void processed(Path filePath, List<ClassReference> references)
+                {
+                    checkExecutionStopRequest(event);
+                    try
+                    {
+                        processedPaths.put(new ImmutablePair<>(filePath, filterClassReferences(references, classNotFoundAnalysisEnabled)));
+                    }
+                    catch (InterruptedException e)
+                    {
+                        throw new WindupException(e.getMessage(), e);
+                    }
+                }
+
+                @Override
+                public void failed(Path filePath, Throwable cause)
+                {
+                    checkExecutionStopRequest(event);
+                    final String message = "Failed to process: " + filePath + " due to: " + cause.getMessage();
+                    LOG.log(Level.WARNING, message, cause);
+                    failures.put(filePath, message);
+                }
+            };
+
+            Set<Path> filesToProcess = new TreeSet<>(allSourceFiles);
+
+            BatchASTFuture future = BatchASTProcessor.analyze(listener, importResolver, libraryPaths, sourcePaths, filesToProcess);
+            ProgressEstimate estimate = new ProgressEstimate(filesToProcess.size());
+
+            // This tracks the number of items added to the graph
+            AtomicInteger referenceCount = new AtomicInteger(0);
+
+            while (!future.isDone() || !processedPaths.isEmpty())
+            {
+                checkExecutionStopRequest(event);
+
+                if (processedPaths.size() > (ANALYSIS_QUEUE_SIZE / 2))
+                    LOG.info("Queue size: " + processedPaths.size() + " / " + ANALYSIS_QUEUE_SIZE);
+                Pair<Path, List<ClassReference>> pair = processedPaths.poll(250, TimeUnit.MILLISECONDS);
+                if (pair == null)
+                    continue;
+
+                processReferences(graphContext, referenceCount, pair.getKey(), pair.getValue());
+
+                estimate.addWork(1);
+                printProgressEstimate(event, estimate);
+
+                filesToProcess.remove(pair.getKey());
+            }
+
+            // Store failures to the graph
+            final ClassificationService classificationService = new ClassificationService(graphContext);
+            for (Map.Entry<Path, String> failure : failures.entrySet())
+            {
+                markJavaFileModelAsUnprocessed(graphContext, failure.getKey(), classificationService, event, context, failure.getValue());
+            }
+
+            if (!filesToProcess.isEmpty())
+            {
+                /*
+                * These were rejected by the batch, so try them one file at a time because the one-at-a-time ASTParser usually succeeds where
+                * the batch failed.
+                */
+                for (Path unprocessed : new ArrayList<>(filesToProcess))
+                {
+                    checkExecutionStopRequest(event);
+
+                    try
+                    {
+                        List<ClassReference> references = ASTProcessor.analyze(importResolver, libraryPaths, sourcePaths, unprocessed);
+                        processReferences(graphContext, referenceCount, unprocessed, filterClassReferences(references, classNotFoundAnalysisEnabled));
+                        filesToProcess.remove(unprocessed);
+                    }
+                    catch (Exception e)
+                    {
+                        final String msg = "Failed to process: " + unprocessed + " due to: " + e.getMessage();
+                        LOG.log(Level.WARNING, msg, e);
+                        markJavaFileModelAsUnprocessed(graphContext, unprocessed, classificationService, event, context, msg);
+                    }
+                    estimate.addWork(1);
+                    printProgressEstimate(event, estimate);
+                }
+            }
+
+            if (!filesToProcess.isEmpty())
+            {
+                StringBuilder message = new StringBuilder();
+                message.append("Failed to process " + filesToProcess.size() + " files:\n");
+                for (Path unprocessed : filesToProcess)
+                {
+                    message.append("\tFailed to process: " + unprocessed + "\n");
+                    String msg = "Could not process neither in batch or individually.";
+                    markJavaFileModelAsUnprocessed(graphContext, unprocessed, classificationService, event, context, msg);
+                    // Is the classification attached 2nd time here?
+                }
+                LOG.warning(message.toString());
+            }
+        }
+
+        private void checkExecutionStopRequest(GraphRewrite event)
+        {
+            if (ticks.incrementAndGet() % 20 == 0)
+                if (event.shouldWindupStop())
+                    throw new WindupStopException("Stop requested while analyzing Java files.");
+        }
+
+        private void markJavaFileModelAsUnprocessed(GraphContext graphContext, Path unprocessed, ClassificationService classificationService, GraphRewrite event, EvaluationContext context, String msg)
+        {
+            JavaSourceFileModel sourceFileModel = getJavaSourceFileModel(graphContext, unprocessed);
+            classificationService.attachClassification(event, context, sourceFileModel, UNPARSEABLE_JAVA_CLASSIFICATION, UNPARSEABLE_JAVA_DESCRIPTION);
+            sourceFileModel.setParseError(msg);
+        }
+
+        private Set<String> collectLibraryPaths(final GraphContext graphContext, WindupJavaConfigurationModel javaConfiguration)
+        {
+            Set<String> libraryPaths;
+            libraryPaths = new HashSet<>();
+            WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(graphContext);
+            for (TechnologyReferenceModel target : configurationModel.getTargetTechnologies())
+            {
+                TechnologyMetadata technologyMetadata = technologyMetadataProvider.getMetadata(graphContext, new TechnologyReference(target));
+                if (technologyMetadata != null && technologyMetadata instanceof JavaTechnologyMetadata)
+                {
+                    JavaTechnologyMetadata javaMetadata = (JavaTechnologyMetadata) technologyMetadata;
+                    libraryPaths.addAll(
+                            javaMetadata
+                                    .getAdditionalClasspaths()
+                                    .stream()
+                                    .map(Path::toString)
+                                    .collect(Collectors.toList()));
+                }
+            }
+            for (FileModel additionalClasspath : javaConfiguration.getAdditionalClasspaths())
+            {
+                libraryPaths.add(additionalClasspath.getFilePath());
+            }
+            Iterable<JarArchiveModel> libraries = graphContext.service(JarArchiveModel.class).findAll();
+            for (JarArchiveModel library : libraries)
+            {
+                libraryPaths.add(library.getFilePath());
+            }
+            return libraryPaths;
         }
 
         private void commitIfNeeded(GraphContext context, int numberAddedToGraph)

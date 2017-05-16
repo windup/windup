@@ -98,4 +98,11 @@ public class GraphRewrite extends AbstractRewrite implements Rewrite
 
         return windupStopRequested;
     }
+
+    public boolean shouldWindupStop() {
+        for (RuleLifecycleListener listener : listeners)
+            if (listener.shouldWindupStop())
+                return true;
+        return false;
+    }
 }
