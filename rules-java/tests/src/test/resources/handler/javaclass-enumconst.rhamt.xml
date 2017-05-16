@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<test xmlns="http://windup.jboss.org/schema/jboss-ruleset">
+    <javaclass as="testVariable" references="java.nio.file.AccessMode.{*}" in="{*}File3">
+               <location>ENUM_CONSTANT</location>
+    </javaclass>
+    <javaclass references="java.nio.file.AccessMode"/>
+</test>

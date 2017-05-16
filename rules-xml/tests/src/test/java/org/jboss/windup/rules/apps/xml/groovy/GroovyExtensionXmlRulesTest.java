@@ -53,15 +53,17 @@ public class GroovyExtensionXmlRulesTest
         final AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
                     .addBeansXML()
                     .addAsResource(new File("src/test/resources/groovy/GroovyXmlFileClassificationsAndHints.windup.groovy"),
-                                GROOVY_FILE);
-
+                                GROOVY_WINDUP_FILE)
+                    .addAsResource(new File("src/test/resources/groovy/GroovyXmlFileClassificationsAndHints.rhamt.groovy"),
+                                GROOVY_RHAMT_FILE);
         return archive;
     }
 
     @Inject
     private WindupProcessor processor;
 
-    public static String GROOVY_FILE = "/org/jboss/windup/addon/groovy/GroovyXmlFileClassificationsAndHints.windup.groovy";
+    public static String GROOVY_WINDUP_FILE = "/org/jboss/windup/addon/groovy/GroovyXmlFileClassificationsAndHints.windup.groovy";
+    public static String GROOVY_RHAMT_FILE = "/org/jboss/windup/addon/groovy/GroovyXmlFileClassificationsAndHints.rhamt.groovy";
 
     @Inject
     private GraphContextFactory factory;
@@ -98,7 +100,7 @@ public class GroovyExtensionXmlRulesTest
                         ClassificationModel.class);
 
             List<InlineHintModel> hints = Iterators.asList(hintService.findAll());
-            Assert.assertEquals(2, hints.size());
+            Assert.assertEquals(4, hints.size());
             List<ClassificationModel> classifications = Iterators.asList(classificationService.findAll());
             for (ClassificationModel model : classifications)
             {

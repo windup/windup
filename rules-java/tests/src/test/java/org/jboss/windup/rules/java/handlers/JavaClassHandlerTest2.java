@@ -31,7 +31,8 @@ import org.w3c.dom.Element;
 public class JavaClassHandlerTest2
 {
 
-    private static final String JAVA_CLASS_XML_FILE = "src/test/resources/handler/javaclass-enumconst.windup.xml";
+    private static final String JAVA_CLASS_XML_WINDUP_FILE = "src/test/resources/handler/javaclass-enumconst.windup.xml";
+    private static final String JAVA_CLASS_XML_RHAMT_FILE = "src/test/resources/handler/javaclass-enumconst.rhamt.xml";
 
     @Deployment
     @AddonDependencies({
@@ -53,9 +54,21 @@ public class JavaClassHandlerTest2
     private Furnace furnace;
 
     @Test
-    public void testJavaClassEnumLocationCondition() throws Exception
+    public void testWindupJavaClassEnumLocationCondition() throws Exception
     {
-        File fXmlFile = new File(JAVA_CLASS_XML_FILE);
+        File fXmlFile = new File(JAVA_CLASS_XML_WINDUP_FILE);
+        testJavaClassEnumLocationCondition(fXmlFile);
+    }
+
+    @Test
+    public void testRhamtJavaClassEnumLocationCondition() throws Exception
+    {
+        File fXmlFile = new File(JAVA_CLASS_XML_RHAMT_FILE);
+        testJavaClassEnumLocationCondition(fXmlFile);
+    }
+
+    public void testJavaClassEnumLocationCondition(File fXmlFile) throws Exception
+    {
         RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
         ParserContext parser = new ParserContext(furnace, loaderContext);
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();

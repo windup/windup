@@ -34,7 +34,8 @@ import org.w3c.dom.Element;
 public class HintHandlerTest
 {
 
-    private static final String HINT_XML_FILE = "src/test/resources/handler/hint.windup.xml";
+    private static final String HINT_XML_WINDUP_FILE = "src/test/resources/handler/hint.windup.xml";
+    private static final String HINT_XML_RHAMT_FILE = "src/test/resources/handler/hint.rhamt.xml";
 
     @Deployment
     @AddonDependencies({
@@ -54,9 +55,21 @@ public class HintHandlerTest
     private Furnace furnace;
 
     @Test
-    public void testHintHandler() throws Exception
+    public void testWindupHintHandler() throws Exception
     {
-        File fXmlFile = new File(HINT_XML_FILE);
+        File fXmlFile = new File(HINT_XML_WINDUP_FILE);
+        testHintHandler(fXmlFile);
+    }
+
+    @Test
+    public void testRhamtHintHandler() throws Exception
+    {
+        File fXmlFile = new File(HINT_XML_RHAMT_FILE);
+        testHintHandler(fXmlFile);
+    }
+
+    public void testHintHandler(File fXmlFile) throws Exception
+    {
         RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
         ParserContext parser = new ParserContext(furnace, loaderContext);
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -104,9 +117,21 @@ public class HintHandlerTest
     }
 
     @Test(expected = WindupException.class)
-    public void testXmlFileWithoutPublidIdAndXpath() throws Exception
+    public void testWindupXmlFileWithoutPublidIdAndXpath() throws Exception
     {
-        File fXmlFile = new File(HINT_XML_FILE);
+        File fXmlFile = new File(HINT_XML_WINDUP_FILE);
+        testXmlFileWithoutPublidIdAndXpath(fXmlFile);
+    }
+
+    @Test(expected = WindupException.class)
+    public void testRhamtXmlFileWithoutPublidIdAndXpath() throws Exception
+    {
+        File fXmlFile = new File(HINT_XML_RHAMT_FILE);
+        testXmlFileWithoutPublidIdAndXpath(fXmlFile);
+    }
+
+    public void testXmlFileWithoutPublidIdAndXpath(File fXmlFile) throws Exception
+    {
         RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
         ParserContext parser = new ParserContext(furnace, loaderContext);
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();

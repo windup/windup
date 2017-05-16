@@ -1,0 +1,51 @@
+<ruleset xmlns="http://windup.jboss.org/schema/jboss-ruleset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="
+        http://windup.jboss.org/schema/jboss-ruleset http://windup.jboss.org/schema/jboss-ruleset/windup-jboss-ruleset.xsd"
+         id="WLS_10_12_TO_EAP_6" phase="testPhase">
+
+    <metadata>
+        <dependencies>
+            <addon id="org.jboss.windup.rules,windup-rules-javaee,2.0.1.Final" />
+            <addon id="org.jboss.windup.rules,windup-rules-java,2.0.0.Final" />
+        </dependencies>
+        <sourceTechnology id="weblogic" versionRange="(10,12]" />
+        <sourceTechnology id="ejb" versionRange="(2,3]" />
+        <sourceTechnology id="servlet"/>
+        <targetTechnology id="eap" versionRange="(5,6]" />
+        <targetTechnology id="ejb" versionRange="(2,3]" />
+        <targetTechnology id="jsp"/>
+        <phase>PostMigrationRulesPhase</phase>
+        <executeAfter>AfterId</executeAfter>
+        <executeBefore>BeforeId</executeBefore>
+        <overrideRules>true</overrideRules>
+        <tag>require-stateless</tag>
+        <tag>require-nofilesystem-io</tag>
+    </metadata>
+
+    <rules>
+        <rule>
+            <when>
+                <true />
+            </when>
+            <perform>
+                <iteration>
+                    <when>
+                        <true />
+                    </when>
+                    <perform>
+                        <log message="test {foo} iteration perform" />
+                    </perform>
+                    <otherwise>
+                        <log message="test {foo} iteration otherwise" />
+                    </otherwise>
+                </iteration>
+            </perform>
+            <otherwise>
+                <log message="test rule {foo} otherwise" />
+            </otherwise>
+            <where param="foo">
+                <matches pattern="\d+" />
+            </where>
+        </rule>
+    </rules>
+</ruleset>

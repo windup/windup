@@ -30,7 +30,8 @@ import org.w3c.dom.Element;
 public class AnnotationConditionHandlerTest
 {
 
-    private static final String ANNOTATION_HANDLER_XML_FILE = "src/test/resources/handler/annotationcondition.windup.xml";
+    private static final String ANNOTATION_HANDLER_XML_WINDUP_FILE = "src/test/resources/handler/annotationcondition.windup.xml";
+    private static final String ANNOTATION_HANDLER_XML_RHAMT_FILE = "src/test/resources/handler/annotationcondition.rhamt.xml";
 
     @Deployment
     @AddonDependencies({
@@ -53,9 +54,21 @@ public class AnnotationConditionHandlerTest
     private Furnace furnace;
 
     @Test
-    public void testCondition() throws Exception
+    public void testWindupCondition() throws Exception
     {
-        File fXmlFile = new File(ANNOTATION_HANDLER_XML_FILE);
+        File fXmlFile = new File(ANNOTATION_HANDLER_XML_WINDUP_FILE);
+        testCondition(fXmlFile);
+    }
+
+    @Test
+    public void testRhamtCondition() throws Exception
+    {
+        File fXmlFile = new File(ANNOTATION_HANDLER_XML_RHAMT_FILE);
+        testCondition(fXmlFile);
+    }
+
+    public void testCondition(File fXmlFile) throws Exception
+    {
         RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
         ParserContext parser = new ParserContext(furnace, loaderContext);
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();

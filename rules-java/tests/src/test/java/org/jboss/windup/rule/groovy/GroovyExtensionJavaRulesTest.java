@@ -64,13 +64,16 @@ public class GroovyExtensionJavaRulesTest
                     .addBeansXML()
                     .addClass(TestHintsClassificationsTestRuleProvider.class)
                     .addAsResource(new File("src/test/resources/groovy/GroovyClassificationsAndHints.windup.groovy"),
-                                GROOVY_CLASSIFICATION_AND_HINT_FILE);
+                                GROOVY_CLASSIFICATION_AND_HINT_WINDUP_FILE)
+                    .addAsResource(new File("src/test/resources/groovy/GroovyClassificationsAndHints.rhamt.groovy"),
+                                GROOVY_CLASSIFICATION_AND_HINT_RHAMT_FILE);
     }
 
     @Inject
     private WindupProcessor processor;
 
-    public static String GROOVY_CLASSIFICATION_AND_HINT_FILE = "/org/jboss/windup/addon/groovy/GroovyClassificationsAndHints.windup.groovy";
+    public static String GROOVY_CLASSIFICATION_AND_HINT_WINDUP_FILE = "/org/jboss/windup/addon/groovy/GroovyClassificationsAndHints.windup.groovy";
+    public static String GROOVY_CLASSIFICATION_AND_HINT_RHAMT_FILE = "/org/jboss/windup/addon/groovy/GroovyClassificationsAndHints.rhamt.groovy";
 
     @Inject
     private GraphContextFactory factory;
@@ -129,7 +132,7 @@ public class GroovyExtensionJavaRulesTest
                 Iterable<JavaTypeReferenceModel> typeReferences = typeRefService.findAll();
                 Assert.assertTrue(typeReferences.iterator().hasNext());
                 List<InlineHintModel> hints = Iterators.asList(hintService.findAll());
-                Assert.assertEquals(4, hints.size());
+                Assert.assertEquals(8, hints.size());
                 List<ClassificationModel> classifications = Iterators.asList(classificationService.findAll());
                 Assert.assertEquals(1, classifications.size());
 

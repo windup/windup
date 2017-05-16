@@ -41,8 +41,9 @@ import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.util.furnace.FurnaceClasspathScanner;
 
 /**
- * Loads files with the specified extension (specified in {@link GroovyWindupRuleProviderLoader#GROOVY_RULES_EXTENSION}
- * ), interprets them as Groovy scripts, and returns the resulting {@link AbstractRuleProvider}s.
+ * Loads files with the specified extension (specified in {@link GroovyWindupRuleProviderLoader#GROOVY_RULES_WINDUP_EXTENSION} and in
+ * {@link GroovyWindupRuleProviderLoader#GROOVY_RULES_RHAMT_EXTENSION}), interprets them as Groovy scripts, and returns the resulting
+ * {@link AbstractRuleProvider}s.
  * 
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
@@ -53,7 +54,8 @@ public class GroovyWindupRuleProviderLoader implements RuleProviderLoader
 
     public static final String CURRENT_WINDUP_SCRIPT = "CURRENT_WINDUP_SCRIPT";
 
-    private static final String GROOVY_RULES_EXTENSION = "windup.groovy";
+    private static final String GROOVY_RULES_WINDUP_EXTENSION = "windup.groovy";
+    private static final String GROOVY_RULES_RHAMT_EXTENSION = "rhamt.groovy";
 
     @Inject
     private FurnaceClasspathScanner scanner;
@@ -175,8 +177,10 @@ public class GroovyWindupRuleProviderLoader implements RuleProviderLoader
     private Iterable<URL> getScripts(RuleLoaderContext ruleLoaderContext)
     {
         List<URL> results = new ArrayList<>();
-        List<URL> scripts = scanner.scan(GROOVY_RULES_EXTENSION);
-        results.addAll(scripts);
+        List<URL> windupScripts = scanner.scan(GROOVY_RULES_WINDUP_EXTENSION);
+        results.addAll(windupScripts);
+        List<URL> rhamtScripts = scanner.scan(GROOVY_RULES_RHAMT_EXTENSION);
+        results.addAll(rhamtScripts);
 
         for (Path userRulesPath : ruleLoaderContext.getRulePaths())
         {
@@ -221,7 +225,9 @@ public class GroovyWindupRuleProviderLoader implements RuleProviderLoader
         }
     }
 
-    private boolean pathMatchesNamePattern(Path file) {
-        return file.getFileName().toString().toLowerCase().endsWith("." + GROOVY_RULES_EXTENSION);
+    private boolean pathMatchesNamePattern(Path file)
+    {
+        return file.getFileName().toString().toLowerCase().endsWith("." + GROOVY_RULES_WINDUP_EXTENSION)
+                    || file.getFileName().toString().toLowerCase().endsWith("." + GROOVY_RULES_RHAMT_EXTENSION);
     }
 }

@@ -33,7 +33,8 @@ import org.w3c.dom.Element;
 public class ClassificationHandlerTest
 {
 
-    private static final String CLASSIFICATION_XML_FILE = "src/test/resources/handler/classification.windup.xml";
+    private static final String CLASSIFICATION_XML_WINDUP_FILE = "src/test/resources/handler/classification.windup.xml";
+    private static final String CLASSIFICATION_XML_RHAMT_FILE = "src/test/resources/handler/classification.rhamt.xml";
 
     @Deployment
     @AddonDependencies({
@@ -51,9 +52,21 @@ public class ClassificationHandlerTest
     private Furnace furnace;
 
     @Test
-    public void testClassificationParsing() throws Exception
+    public void testWindupClassificationParsing() throws Exception
     {
-        File fXmlFile = new File(CLASSIFICATION_XML_FILE);
+        File fXmlFile = new File(CLASSIFICATION_XML_WINDUP_FILE);
+        testClassificationParsing(fXmlFile);
+    }
+
+    @Test
+    public void testRhamtClassificationParsing() throws Exception
+    {
+        File fXmlFile = new File(CLASSIFICATION_XML_RHAMT_FILE);
+        testClassificationParsing(fXmlFile);
+    }
+
+    public void testClassificationParsing(File fXmlFile) throws Exception
+    {
         RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
         ParserContext parser = new ParserContext(furnace, loaderContext);
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -93,9 +106,21 @@ public class ClassificationHandlerTest
     }
 
     @Test(expected = WindupException.class)
-    public void testClassificationWithoutMessage() throws Exception
+    public void testWindupClassificationWithoutMessage() throws Exception
     {
-        File fXmlFile = new File(CLASSIFICATION_XML_FILE);
+        File fXmlFile = new File(CLASSIFICATION_XML_WINDUP_FILE);
+        testClassificationWithoutMessage(fXmlFile);
+    }
+
+    @Test(expected = WindupException.class)
+    public void testRhamtClassificationWithoutMessage() throws Exception
+    {
+        File fXmlFile = new File(CLASSIFICATION_XML_RHAMT_FILE);
+        testClassificationWithoutMessage(fXmlFile);
+    }
+
+    public void testClassificationWithoutMessage(File fXmlFile) throws Exception
+    {
         RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
         ParserContext parser = new ParserContext(furnace, loaderContext);
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -108,9 +133,21 @@ public class ClassificationHandlerTest
     }
 
     @Test(expected = WindupException.class)
-    public void testClassificationWithWrongEffort() throws Exception
+    public void testWindupClassificationWithWrongEffort() throws Exception
     {
-        File fXmlFile = new File(CLASSIFICATION_XML_FILE);
+        File fXmlFile = new File(CLASSIFICATION_XML_WINDUP_FILE);
+        testClassificationWithWrongEffort(fXmlFile);
+    }
+
+    @Test(expected = WindupException.class)
+    public void testRhamtClassificationWithWrongEffort() throws Exception
+    {
+        File fXmlFile = new File(CLASSIFICATION_XML_RHAMT_FILE);
+        testClassificationWithWrongEffort(fXmlFile);
+    }
+
+    public void testClassificationWithWrongEffort(File fXmlFile) throws Exception
+    {
         RuleLoaderContext loaderContext = new RuleLoaderContext(Collections.singleton(fXmlFile.toPath()), null);
         ParserContext parser = new ParserContext(furnace, loaderContext);
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();

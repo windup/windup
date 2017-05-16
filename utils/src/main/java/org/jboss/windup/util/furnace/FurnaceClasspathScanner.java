@@ -64,7 +64,8 @@ public class FurnaceClasspathScanner
                 if (ruleFile != null)
                     discoveredURLs.add(ruleFile);
             }
-            result.put(addon, discoveredURLs);
+            if (!discoveredURLs.isEmpty())
+                result.put(addon, discoveredURLs);
         }
         return result;
     }

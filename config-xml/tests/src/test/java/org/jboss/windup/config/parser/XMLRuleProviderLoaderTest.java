@@ -13,8 +13,10 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.RuleProvider;
+import org.jboss.windup.config.builder.RuleProviderBuilder;
 import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.phase.DiscoveryPhase;
+import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.junit.Assert;
 import org.junit.Test;
@@ -49,6 +51,14 @@ public class XMLRuleProviderLoaderTest
                     .addAsResource(new File("src/test/resources/testxml/Test1.windup.xml"));
     }
 
+    @Deployment(name = "rhamt,1")
+    public static AddonArchive getRhamtDeployment()
+    {
+        return ShrinkWrap.create(AddonArchive.class)
+                    .addBeansXML()
+                    .addAsResource(new File("src/test/resources/testxml/Test2.rhamt.xml"));
+    }
+
     @Inject
     private XMLRuleProviderLoader loader;
     @Inject
@@ -62,13 +72,10 @@ public class XMLRuleProviderLoaderTest
         RuleLoaderContext ruleLoaderContext = new RuleLoaderContext();
         List<RuleProvider> providers = loader.getProviders(ruleLoaderContext);
         Assert.assertNotNull(providers);
-        Assert.assertTrue(providers.size() == 1);
+        Assert.assertTrue(providers.size() == 2);
 
-        RuleProvider provider = providers.get(0);
-        String id = provider.getMetadata().getID();
-        Assert.assertEquals("testruleprovider", id);
-        Assert.assertEquals(DiscoveryPhase.class, provider.getMetadata().getPhase());
-        Assert.assertTrue(provider.getMetadata().getOrigin().matches("jar:file:.*/DEFAULT.*/Test1.windup.xml"));
+        RuleProvider provider = providers.get(providers.indexOf(RuleProviderBuilder.begin("testruleprovider")));
+        checkWindupMetadata(provider);
         List<Rule> rules = provider.getConfiguration(null).getRules();
         Assert.assertEquals(4, rules.size());
 
@@ -83,7 +90,40 @@ public class XMLRuleProviderLoaderTest
 
         RuleBuilder rule3 = (RuleBuilder) rules.get(3);
         checkRule3(rule3);
+
+        provider = providers.get(providers.indexOf(RuleProviderBuilder.begin("testruleprovider2")));
+        checkRhamtMetadata(provider);
+        rules = provider.getConfiguration(null).getRules();
+        Assert.assertEquals(4, rules.size());
+
+        RuleBuilder rule = (RuleBuilder) rules.get(0);
+        checkRule1(rule);
+
+        rule = (RuleBuilder) rules.get(1);
+        checkRule2(rule);
+
+        rule = (RuleBuilder) rules.get(2);
+        checkRule2_Otherwise(rule);
+
+        rule = (RuleBuilder) rules.get(3);
+        checkRule3(rule);
     }
+
+    private void checkWindupMetadata(RuleProvider provider)
+    {
+        String id = provider.getMetadata().getID();
+        Assert.assertEquals("testruleprovider", id);
+        Assert.assertEquals(DiscoveryPhase.class, provider.getMetadata().getPhase());
+        Assert.assertTrue(provider.getMetadata().getOrigin().matches("jar:file:.*/DEFAULT.*/Test1.windup.xml"));
+     }
+
+    private void checkRhamtMetadata(RuleProvider provider)
+    {
+        String id = provider.getMetadata().getID();
+        Assert.assertEquals("testruleprovider2", id);
+        Assert.assertEquals(ReportGenerationPhase.class, provider.getMetadata().getPhase());
+        Assert.assertTrue(provider.getMetadata().getOrigin().matches("jar:file:.*/rhamt-1.*/Test2.rhamt.xml"));
+     }
 
     private void checkRule1(RuleBuilder rule)
     {
