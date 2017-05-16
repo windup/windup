@@ -33,6 +33,7 @@ import freemarker.template.SimpleScalar;
 import freemarker.template.TemplateDirectiveBody;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateModel;
+import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.util.IterableConverter;
 
 /**
@@ -325,6 +326,11 @@ public class RenderLinkDirective implements WindupFreeMarkerTemplateDirective
             String filename = StringUtils.removeEndIgnoreCase(fileModel.getFileName(), ".java");
             String packageName = javaSourceModel.getPackageName();
             return packageName == null || packageName.isEmpty() ? filename : packageName + "." + filename;
+        }
+        // This is used for instance when showing unparsable files in the Issues Report.
+        else if (fileModel instanceof ArchiveModel)
+        {
+            return fileModel.getPrettyPath();
         }
         else
         {

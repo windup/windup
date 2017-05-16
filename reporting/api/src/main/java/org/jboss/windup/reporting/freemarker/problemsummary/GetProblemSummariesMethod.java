@@ -58,8 +58,8 @@ public class GetProblemSummariesMethod implements WindupFreeMarkerMethod
         Set<String> excludeTags = FreeMarkerUtil.simpleSequenceToSet((SimpleSequence) arguments.get(3));
 
         Set<ProjectModel> projectModels = getProjects(projectModel);
-        Map<IssueCategoryModel, List<ProblemSummary>> problemSummariesOriginal = ProblemSummaryService.getProblemSummaries(event.getGraphContext(), projectModels, includeTags,
-                    excludeTags);
+        Map<IssueCategoryModel, List<ProblemSummary>> problemSummariesOriginal
+                = ProblemSummaryService.getProblemSummaries(event.getGraphContext(), projectModels, includeTags, excludeTags);
 
         // Convert the keys to String to make Freemarker happy
         Comparator<IssueCategoryModel> severityComparator = new IssueCategoryModel.IssueSummaryPriorityComparator();
