@@ -252,6 +252,8 @@ public interface FileModel extends ResourceModel, BelongsToProject
             }
             else if (projectModel.getRootFileModel().getFilePath().equals(getFilePath()))
             {
+                // FIXME: Not quite sure if this is the right thing to return here.
+                // Maybe it should rather be the file name? Depends on where it ends up being used.
                 result = "";
             }
             else

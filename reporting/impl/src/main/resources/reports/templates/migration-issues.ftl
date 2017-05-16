@@ -18,7 +18,6 @@
         <td class="text-right"><strong>Incidents Found</strong></td>
         <td colspan="3"><strong>Hint</strong></td>
     </tr>
-
 </#macro>
 
 <#function getIncidentsFound problemSummaries>
@@ -294,6 +293,16 @@
 
         </script>
 
+        <!#-- We are using short variable names because they repeat a lot in the generated HTML
+              and using short reduces the file sizes significantly.
+              
+              {l} - label
+              {oc} - occurences
+              {h} - href
+              {t} - link title
+
+              The actual data are generated lower into MIGRATION_ISSUES_DETAILS[] .
+        -->
         <#noparse>
         <script id="detail-row-template" type="text/x-handlebars-template">
             {{#each problemSummaries}}
