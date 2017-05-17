@@ -127,6 +127,9 @@ public class ProcyonDecompiler extends AbstractDecompiler
                 @Override
                 public File call() throws Exception
                 {
+                    if (listener.isCancelled())
+                        return null;
+
                     List<String> classFilePaths = pathsFromDecompilationRequests(entry.getValue());
                     final DecompilerSettings settings = settingsByOutputDirectory.get(mainRequest.getOutputDirectory());
                     Queue<MetadataSystem> metadataSystemCache = metadataSystemCaches.get(mainRequest.getOutputDirectory());

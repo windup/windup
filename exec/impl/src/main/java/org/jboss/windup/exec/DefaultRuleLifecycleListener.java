@@ -125,4 +125,9 @@ class DefaultRuleLifecycleListener implements RuleLifecycleListener
         progressMonitor.done();
     }
 
+    @Override
+    public boolean shouldWindupStop()
+    {
+        return progressMonitor.isCancelled();
+    }
 }

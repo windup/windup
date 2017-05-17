@@ -114,7 +114,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
 
         final Map<Path, JavaSourceFileModel> sourcePathToFileModel = new TreeMap<>();
 
-        public void perform(final GraphRewrite event, EvaluationContext evalCtx)
+        public void perform(final GraphRewrite event, EvaluationContext context)
         {
 
             ExecutionStatistics.get().begin("AnalyzeJavaFilesRuleProvider.analyzeFile");

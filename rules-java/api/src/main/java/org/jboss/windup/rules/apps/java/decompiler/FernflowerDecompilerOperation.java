@@ -169,9 +169,16 @@ public class FernflowerDecompilerOperation extends AbstractDecompilerOperation
         }
 
         @Override
+        public boolean isCancelled()
+        {
+            return this.event.shouldWindupStop();
+        }
+
+        @Override
         public synchronized void fileDecompiled(final List<String> inputPath, final String decompiledOutputFile)
         {
-            if (event.shouldWindupStop()){
+            if (event.shouldWindupStop())
+            {
                 LOG.warning("Request to stop received.");
                 throw new WindupStopException("Request to stop received.");
             }

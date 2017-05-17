@@ -245,7 +245,7 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                         if (windupStopRequested)
                         {
                             String msg = "Windup was requested to stop before beforeRuleEvaluation() of " + rule.getId() + ", skipping further rules.";
-                            log.warning(msg);
+                            log.fine(msg);
                             event.setWindupStopException(new WindupStopException(msg));
                             break rulesLoop;
                         }
@@ -316,7 +316,7 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                 catch (WindupStopException ex)
                 {
                     final String msg = "Windup was requested to stop during execution of " + rule.getId() + ", skipping further rules.";
-                    log.warning(msg);
+                    log.fine(msg);
                     event.setWindupStopException(new WindupStopException(msg, ex));
                     event.getGraphContext().service(WindupExecutionModel.class).create().setStopMessage(msg);
                     break rulesLoop;

@@ -27,6 +27,7 @@ import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.ZipUtil;
 import org.jboss.windup.util.exception.WindupException;
+import org.jboss.windup.util.exception.WindupStopException;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 
@@ -61,6 +62,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
             throw new WindupException("Input path doesn't point to a file: " + (zipFile == null ? "null" : zipFile.getAbsolutePath()));
         }
         final GraphContext graphContext = event.getGraphContext();
+        checkCancelled(event);
 
         // Create a folder for all archive contents.
         Path unzippedArchiveDir = getArchivesDirLocation(graphContext);
@@ -68,6 +70,13 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
         unzipToTempDirectory(event, context, unzippedArchiveDir, zipFile, payload, false);
     }
 
+    private void checkCancelled(GraphRewrite event)
+    {
+        if (event.shouldWindupStop())
+        {
+            throw new WindupStopException("Request to stop detected during unzipping of archives");
+        }
+    }
 
     public static Path getArchivesDirLocation(final GraphContext graphContext)
     {
@@ -81,6 +90,8 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
                 final Path tempFolder, final File inputZipFile,
                 final ArchiveModel archiveModel, boolean subArchivesOnly)
     {
+        checkCancelled(event);
+
         final FileService fileService = new FileService(event.getGraphContext());
 
         // Setup a temp folder for the archive
@@ -130,6 +141,8 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
                 FileService fileService, ArchiveModel archiveModel,
                 FileModel parentFileModel, boolean subArchivesOnly)
     {
+        checkCancelled(event);
+
         int numberAdded = 0;
 
         FileFilter filter = TrueFileFilter.TRUE;

@@ -171,7 +171,12 @@ public class WindupProcessorImpl implements WindupProcessor
             ruleSubset.perform(event, createEvaluationContext());
 
             if (event.getWindupStopException() != null)
-                LOG.log(Level.WARNING, "Windup stopped on request before finishing, see the exception for where.", event.getWindupStopException());
+            {
+                String message = "Windup was cancelled on request before finishing";
+                if (event.getWindupStopException().getMessage() != null)
+                    message += ", cause: " + event.getWindupStopException().getMessage();
+                LOG.log(Level.INFO, message);
+            }
         }
         finally
         {

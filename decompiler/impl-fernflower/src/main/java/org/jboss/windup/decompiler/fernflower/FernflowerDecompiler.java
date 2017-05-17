@@ -24,6 +24,7 @@ import org.jboss.windup.decompiler.api.DecompilationListener;
 import org.jboss.windup.decompiler.api.DecompilationResult;
 import org.jboss.windup.decompiler.decompiler.AbstractDecompiler;
 import org.jboss.windup.decompiler.util.Filter;
+import org.jboss.windup.util.exception.WindupStopException;
 import org.jetbrains.java.decompiler.main.Fernflower;
 import org.jetbrains.java.decompiler.main.extern.IBytecodeProvider;
 import org.jetbrains.java.decompiler.main.extern.IFernflowerPreferences;
@@ -43,7 +44,6 @@ public class FernflowerDecompiler extends AbstractDecompiler
     public FernflowerDecompiler()
     {
     }
-
 
     private Map<String, Object> getOptions()
     {
@@ -66,7 +66,7 @@ public class FernflowerDecompiler extends AbstractDecompiler
 
     private FernFlowerResultSaver getResultSaver(final List<String> requests, File directory, final DecompilationListener listener)
     {
-        return new FernFlowerResultSaver(requests,directory, listener);
+        return new FernFlowerResultSaver(requests, directory, listener);
     }
 
     @Override
@@ -75,7 +75,8 @@ public class FernflowerDecompiler extends AbstractDecompiler
         return LOG;
     }
 
-    public Collection<Callable<File>> getDecompileTasks(final Map<String, List<ClassDecompileRequest>> requestMap, final DecompilationListener listener)
+    public Collection<Callable<File>> getDecompileTasks(final Map<String, List<ClassDecompileRequest>> requestMap,
+                final DecompilationListener listener)
     {
         Collection<Callable<File>> tasks = new ArrayList<>(requestMap.size());
         for (Map.Entry<String, List<ClassDecompileRequest>> entry : requestMap.entrySet())
@@ -88,14 +89,19 @@ public class FernflowerDecompiler extends AbstractDecompiler
                 @Override
                 public File call() throws Exception
                 {
+                    if (listener.isCancelled())
+                        return null;
+
                     ClassDecompileRequest firstRequest = requests.get(0);
                     List<String> classFiles = pathsFromDecompilationRequests(requests);
                     FernFlowerResultSaver resultSaver = getResultSaver(
-                                pathsFromDecompilationRequests(requests),firstRequest.getOutputDirectory().toFile(),
+                                pathsFromDecompilationRequests(requests), firstRequest.getOutputDirectory().toFile(),
                                 listener);
                     Fernflower fernflower = new Fernflower(getByteCodeProvider(), resultSaver, getOptions(), new FernflowerJDKLogger());
                     for (ClassDecompileRequest request : requests)
                     {
+                        if (listener.isCancelled())
+                            return null;
                         fernflower.getStructContext().addSpace(request.getClassFile().toFile(), true);
                     }
                     try
@@ -104,11 +110,14 @@ public class FernflowerDecompiler extends AbstractDecompiler
                         if (!resultSaver.isFileSaved())
                             listener.decompilationFailed(classFiles, "File was not decompiled!");
                     }
+                    catch (WindupStopException stop)
+                    {
+                        throw new WindupStopException(stop);
+                    }
                     catch (Throwable t)
                     {
                         listener.decompilationFailed(classFiles, "Decompilation failed due to: " + t.getMessage());
                         LOG.warning("Decompilation of " + key + " failed due to: " + t.getMessage());
-
                     }
 
                     return null;
@@ -117,7 +126,7 @@ public class FernflowerDecompiler extends AbstractDecompiler
             tasks.add(task);
         }
 
-       return tasks;
+        return tasks;
     }
 
     @Override
@@ -126,10 +135,20 @@ public class FernflowerDecompiler extends AbstractDecompiler
         final DecompilationResult result = new DecompilationResult();
         DecompilationListener listener = new DecompilationListener()
         {
+            private boolean cancelled;
+
             @Override
             public void fileDecompiled(List<String> inputPath, String outputPath)
             {
-                result.addDecompiled(inputPath, outputPath);
+                try
+                {
+                    result.addDecompiled(inputPath, outputPath);
+                }
+                catch (WindupStopException stop)
+                {
+                    this.cancelled = true;
+                    throw new WindupStopException(stop);
+                }
             }
 
             @Override
@@ -142,6 +161,12 @@ public class FernflowerDecompiler extends AbstractDecompiler
             public void decompilationProcessComplete()
             {
 
+            }
+
+            @Override
+            public boolean isCancelled()
+            {
+                return this.cancelled;
             }
         };
 
@@ -156,12 +181,11 @@ public class FernflowerDecompiler extends AbstractDecompiler
         return result;
     }
 
-
-
     private List<String> pathsFromDecompilationRequests(List<ClassDecompileRequest> requests)
     {
         List<String> result = new ArrayList<>();
-        for(ClassDecompileRequest request : requests) {
+        for (ClassDecompileRequest request : requests)
+        {
             result.add(request.getClassFile().toString());
         }
         return result;
@@ -175,11 +199,21 @@ public class FernflowerDecompiler extends AbstractDecompiler
         final DecompilationResult result = new DecompilationResult();
         DecompilationListener listener = new DecompilationListener()
         {
+            private boolean cancelled;
+
             @Override
             public void fileDecompiled(List<String> inputPaths, String outputPath)
             {
-                result.addDecompiled(inputPaths, outputPath);
-                delegate.fileDecompiled(inputPaths, outputPath);
+                try
+                {
+                    result.addDecompiled(inputPaths, outputPath);
+                    delegate.fileDecompiled(inputPaths, outputPath);
+                }
+                catch (WindupStopException stop)
+                {
+                    this.cancelled = true;
+                    throw new WindupStopException(stop);
+                }
             }
 
             @Override
@@ -193,6 +227,12 @@ public class FernflowerDecompiler extends AbstractDecompiler
             public void decompilationProcessComplete()
             {
                 delegate.decompilationProcessComplete();
+            }
+
+            @Override
+            public boolean isCancelled()
+            {
+                return this.cancelled;
             }
         };
 
@@ -217,7 +257,6 @@ public class FernflowerDecompiler extends AbstractDecompiler
                 jarEntryCount.incrementAndGet();
             }
 
-            final AtomicInteger current = new AtomicInteger(0);
             final Enumeration<JarEntry> entries = jar.entries();
 
             while (entries.hasMoreElements())

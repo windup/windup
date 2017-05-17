@@ -23,4 +23,9 @@ public interface DecompilationListener
      * This allows for cleanup, such as committing all results to disk.
      */
     void decompilationProcessComplete();
+
+    /**
+     * Indicates that the process has been cancelled and we should immediately halt processing.
+     */
+    boolean isCancelled();
 }

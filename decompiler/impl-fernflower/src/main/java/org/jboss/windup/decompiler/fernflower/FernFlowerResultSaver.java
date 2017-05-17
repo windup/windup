@@ -67,7 +67,7 @@ public class FernFlowerResultSaver implements IResultSaver
         }
         catch (WindupStopException ex)
         {
-            // Rethrowing to explicitely show where WindupStopException bubbles through.
+            // Rethrowing to explicitly show where WindupStopException bubbles through.
             throw ex;
         }
     }

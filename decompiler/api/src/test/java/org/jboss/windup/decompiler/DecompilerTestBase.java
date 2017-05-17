@@ -132,6 +132,12 @@ public abstract class DecompilerTestBase
             {
                 // noop
             }
+
+            @Override
+            public boolean isCancelled()
+            {
+                return false;
+            }
         });
 
         Assert.assertNotNull("Results object returned", res);

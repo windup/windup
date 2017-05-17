@@ -76,6 +76,12 @@ public class ProcyonDecompilerTest extends DecompilerTestBase
             {
 
             }
+
+            @Override
+            public boolean isCancelled()
+            {
+                return false;
+            }
         };
         dec.decompileClassFiles(requests, listener);
         dec.close();
