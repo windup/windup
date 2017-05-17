@@ -155,7 +155,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                 try
                 {
                     WindupWildcardImportResolver.setContext(graphContext);
-                    parseJavaFiles(event, classNotFoundAnalysisEnabled, allSourceFiles, libraryPaths, sourcePaths, graphContext, evalCtx);
+                    parseJavaFiles(event, classNotFoundAnalysisEnabled, allSourceFiles, libraryPaths, sourcePaths, graphContext, context);
                 }
                 catch (WindupStopException ex)
                 {
