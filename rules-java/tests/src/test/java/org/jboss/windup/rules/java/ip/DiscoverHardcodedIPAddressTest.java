@@ -100,7 +100,7 @@ public class DiscoverHardcodedIPAddressTest
             int numberFound = 0;
             for (InlineHintModel hint : service.findAll())
             {
-                if (StringUtils.equals("Hard-coded IP Address", hint.getTitle()))
+                if (StringUtils.equals("Hard-coded IP address", hint.getTitle()))
                 {
                     Matcher matcher = ipExtractor.matcher(hint.getHint());
                     if (matcher.find())

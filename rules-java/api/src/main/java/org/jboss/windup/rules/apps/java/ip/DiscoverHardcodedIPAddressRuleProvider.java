@@ -77,7 +77,7 @@ public class DiscoverHardcodedIPAddressRuleProvider extends AbstractRuleProvider
                     HardcodedIPLocationModel location = GraphService.addTypeToModel(event.getGraphContext(), payload,
                         HardcodedIPLocationModel.class);
                     location.setRuleID(((Rule) context.get(Rule.class)).getId());
-                    location.setTitle("Hard-coded IP Address");
+                    location.setTitle("Hard-coded IP address");
 
                     StringBuilder hintBody = new StringBuilder("**Hard-coded IP: ");
                     hintBody.append(payload.getSourceSnippit());
