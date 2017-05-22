@@ -85,6 +85,7 @@ public class ClassificationHandler implements ElementHandler<Classification>
         String description = $(element).child("description").text();
         if (StringUtils.isNotBlank(description))
         {
+            description = HintHandler.trimLeadingAndTrailingSpaces(description);
             classification.withDescription(description);
         }
 
