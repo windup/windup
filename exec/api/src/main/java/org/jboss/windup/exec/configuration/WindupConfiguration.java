@@ -225,7 +225,7 @@ public class WindupConfiguration
         Collection<Path> inputPaths = getOptionValue(InputPathOption.NAME);
         return inputPaths;
     }
-
+    
     /**
      * Contains the directory to put the output to (migration report, temporary files, exported graph data...).
      */
@@ -252,10 +252,13 @@ public class WindupConfiguration
     {
         Set<Path> results = new HashSet<>();
         results.addAll(getDefaultUserRulesDirectories());
-        File userSpecifiedFile = getOptionValue(UserRulesDirectoryOption.NAME);
-        if (userSpecifiedFile != null)
+        
+        Collection<File> userSpecifiedFiles = getOptionValue(UserRulesDirectoryOption.NAME);
+        if (userSpecifiedFiles != null && !userSpecifiedFiles.isEmpty())
         {
-            results.add(userSpecifiedFile.toPath());
+            userSpecifiedFiles.stream().forEach(file -> {
+                results.add(file.toPath());
+            });
         }
         return results;
     }
@@ -318,17 +321,24 @@ public class WindupConfiguration
             setOptionValue(DEFAULT_USER_RULES_DIRECTORIES_OPTION, paths);
         }
 
-        File userSpecifiedRulePath = getOptionValue(UserRulesDirectoryOption.NAME);
-        if (userSpecifiedRulePath != null && userSpecifiedRulePath.toPath().equals(path))
+        Iterable<File>  userRulesDirs= getOptionValue(UserRulesDirectoryOption.NAME);
+        if (userRulesDirs != null) 
         {
-            return this;
-        }
-
-        for (Path existingPath : paths)
-        {
-            if (existingPath.equals(path))
+            for (File userSpecifiedRuleFile : userRulesDirs)
             {
-                return this;
+                
+                if (userSpecifiedRuleFile != null && userSpecifiedRuleFile.toPath().equals(path))
+                {
+                    return this;
+                }
+        
+                for (Path existingPath : paths)
+                {
+                    if (existingPath.equals(path))
+                    {
+                        return this;
+                    }
+                }
             }
         }
         paths.add(path);

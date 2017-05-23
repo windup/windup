@@ -161,10 +161,13 @@ public class RunWindupCommand implements Command, FurnaceDependent
         setDefaultOptionsValues(options, optionValues);
 
         RuleProviderRegistryCache ruleProviderRegistryCache = furnace.getAddonRegistry().getServices(RuleProviderRegistryCache.class).get();
-        File userProvidedPath = (File) optionValues.get(UserRulesDirectoryOption.NAME);
-        if (userProvidedPath != null)
+        Iterable<File> userProvidedPaths = (Iterable<File>) optionValues.get(UserRulesDirectoryOption.NAME);
+        if (userProvidedPaths != null)
         {
-            ruleProviderRegistryCache.addUserRulesPath(userProvidedPath.toPath());
+            for (File userProvidedPath : userProvidedPaths)
+            {
+                ruleProviderRegistryCache.addUserRulesPath(userProvidedPath.toPath());
+            }
         }
 
         // Target - interactive

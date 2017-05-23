@@ -294,7 +294,7 @@ public class WindupCommandTest
                 File userRulesDir = FileUtils.getTempDirectory().toPath().resolve("Windup")
                             .resolve("windupcommanduserrules_" + RandomStringUtils.randomAlphanumeric(6)).toFile();
                 userRulesDir.mkdirs();
-                controller.setValueFor("userRulesDirectory", userRulesDir);
+                controller.setValueFor(UserRulesDirectoryOption.NAME, Collections.singletonList(userRulesDir));
 
                 Result result = controller.execute();
                 final String msg = "controller.execute() 'Failed': " + result.getMessage();
@@ -303,8 +303,8 @@ public class WindupCommandTest
                 WindupConfiguration windupConfiguration = (WindupConfiguration) controller.getContext()
                             .getAttributeMap()
                             .get(WindupConfiguration.class);
-                File resultUserSpecifiedRulesDir = windupConfiguration.getOptionValue(UserRulesDirectoryOption.NAME);
-                Assert.assertEquals(userRulesDir, resultUserSpecifiedRulesDir);
+                List<File> resultUserSpecifiedRulesDirs = windupConfiguration.getOptionValue(UserRulesDirectoryOption.NAME);
+                Assert.assertEquals(1, resultUserSpecifiedRulesDirs.size());
 
                 Iterable<Path> allRulesPaths = windupConfiguration.getAllUserRulesDirectories();
 
@@ -369,7 +369,7 @@ public class WindupCommandTest
 
                 Path expectedUserHomeRulesDir = PathUtil.getUserRulesDir();
                 expectedUserHomeRulesDir.toFile().mkdirs();
-                controller.setValueFor("userRulesDirectory", expectedUserHomeRulesDir.toFile());
+                controller.setValueFor(UserRulesDirectoryOption.NAME, Collections.singletonList(expectedUserHomeRulesDir.toFile()));
 
                 Result result = controller.execute();
                 final String msg = "controller.execute() 'Failed': " + result.getMessage();
@@ -378,8 +378,9 @@ public class WindupCommandTest
                 WindupConfiguration windupConfiguration = (WindupConfiguration) controller.getContext()
                             .getAttributeMap()
                             .get(WindupConfiguration.class);
-                File resultUserSpecifiedRulesDir = windupConfiguration.getOptionValue(UserRulesDirectoryOption.NAME);
-                Assert.assertEquals(expectedUserHomeRulesDir.toFile(), resultUserSpecifiedRulesDir);
+                Collection<File> resultUserSpecifiedRulesDirs = windupConfiguration.getOptionValue(UserRulesDirectoryOption.NAME);
+                
+                Assert.assertEquals(expectedUserHomeRulesDir.toFile(), resultUserSpecifiedRulesDirs.iterator().next());
 
                 Iterable<Path> allRulesPaths = windupConfiguration.getAllUserRulesDirectories();
 
