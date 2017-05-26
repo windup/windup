@@ -1,5 +1,7 @@
 package org.jboss.windup.rules.apps.javaee.rules.websphere;
 
+import javax.enterprise.inject.Vetoed;
+
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
@@ -20,6 +22,8 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
+// Disabled as a duplication of XML rule and with less information than what is on XML hint 
+@Vetoed
 @RuleMetadata(phase = InitialAnalysisPhase.class, after = DiscoverXmlFilesRuleProvider.class, perform = "Discover WebSphere Web Service Extension XML Files")
 public class ResolveWebSphereWsExtBindingXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
 {
