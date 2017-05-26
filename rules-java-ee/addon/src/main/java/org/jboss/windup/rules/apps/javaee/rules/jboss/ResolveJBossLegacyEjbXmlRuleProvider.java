@@ -72,9 +72,9 @@ public class ResolveJBossLegacyEjbXmlRuleProvider extends IteratingRuleProvider<
         GraphService<EjbSessionBeanModel> ejbSessionBeanService = new GraphService<>(event.getGraphContext(), EjbSessionBeanModel.class);
         GraphService<EjbMessageDrivenModel> mdbService = new GraphService<>(event.getGraphContext(), EjbMessageDrivenModel.class);
 
-        ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-        classificationService.attachClassification(event, context, payload, "JBoss Legacy EJB XML",
-                    "JBoss Enterprise Java Bean XML Descriptor prior to EAP 6.");
+        //ClassificationService classificationService = new ClassificationService(event.getGraphContext());
+        //classificationService.attachClassification(event, context, payload, "JBoss Legacy EJB XML",
+        //            "JBoss Enterprise Java Bean XML Descriptor prior to EAP 6.");
 
         VendorSpecificationExtensionService vendorSpecificationService = new VendorSpecificationExtensionService(event.getGraphContext());
         //mark as vendor extension; create reference to ejb-jar.xml
