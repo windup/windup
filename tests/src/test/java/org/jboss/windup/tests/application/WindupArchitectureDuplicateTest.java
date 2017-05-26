@@ -160,17 +160,20 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest
         TestReportIndexReportUtil reportIndex = new TestReportIndexReportUtil();
 
         reportIndex.loadPage(mainReportPath);
-        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("mandatory", 2, 0));
+        // After removed duplicated classifications with XML rules, this goes away
+        //Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("mandatory", 2, 0));
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("optional", 91, 636));
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("potential", 0, 0));
 
         reportIndex.loadPage(secondAppPath);
-        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("mandatory", 2, 0));
+        // After removed duplicated classifications with XML rules, this goes away
+        //Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("mandatory", 2, 0));
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("optional", 91, 636));
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("potential", 0, 0));
 
         reportIndex.loadPage(sharedLibsPath);
-        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("mandatory", 2, 0));
+        // After removed duplicated classifications with XML rules, this goes away
+        //Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("mandatory", 2, 0));
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("optional", 87, 584));
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("potential", 0, 0));
     }
