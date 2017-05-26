@@ -69,14 +69,16 @@ public class ResolveWebLogicEjbXmlRuleProvider extends IteratingRuleProvider<Xml
         GraphService<EjbMessageDrivenModel> mdbService = new GraphService<>(event.getGraphContext(), EjbMessageDrivenModel.class);
 
         ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-        ClassificationModel classif = classificationService.attachClassification(event, context, weblogicEjbXml, "WebLogic EJB XML", "WebLogic Enterprise Java Bean XML Descriptor.");
+        //ClassificationModel classif = classificationService.attachClassification(event, context, weblogicEjbXml, "WebLogic EJB XML", "WebLogic Enterprise Java Bean XML Descriptor.");
+        
         // TODO -- this classification duplicates a hint/clsf in the
         // weblogic-xml-descriptor-04000 XML rule. This should probably get a
         // better fix, but for now the important thing is to avoid duplicating
         // the effort added by that hint.
-        classif.setEffort(0);
-        IssueCategoryRegistry issueCategoryRegistry = IssueCategoryRegistry.instance(event.getRewriteContext());
-        classif.setIssueCategory(issueCategoryRegistry.loadFromGraph(event.getGraphContext(), IssueCategoryRegistry.MANDATORY));
+        // TODO: additionally from feedback we turn off the classification completely
+        //classif.setEffort(0);
+        //IssueCategoryRegistry issueCategoryRegistry = IssueCategoryRegistry.instance(event.getRewriteContext());
+        //classif.setIssueCategory(issueCategoryRegistry.loadFromGraph(event.getGraphContext(), IssueCategoryRegistry.MANDATORY));
 
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
         technologyTagService.addTagToFileModel(weblogicEjbXml, "WebLogic EJB XML", TechnologyTagLevel.IMPORTANT);
