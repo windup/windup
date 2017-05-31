@@ -121,28 +121,28 @@ public abstract class WindupArchitectureTest
 
     void runTest(final GraphContext graphContext,
                 final String inputPath,
-                final File userRulesDir,
+                final Iterable<File> userRulesDirs,
                 final boolean sourceMode,
                 final List<String> includePackages,
                 final List<String> excludePackages) throws Exception
     {
-        runTest(graphContext, Collections.singletonList(inputPath), userRulesDir, sourceMode, includePackages, excludePackages);
+        runTest(graphContext, Collections.singletonList(inputPath), userRulesDirs, sourceMode, includePackages, excludePackages);
     }
 
     void runTest(final GraphContext graphContext,
                 final Iterable<String> inputPaths,
-                final File userRulesDir,
+                final Iterable<File> userRulesDirs,
                 final boolean sourceMode,
                 final List<String> includePackages,
                 final List<String> excludePackages) throws Exception
     {
         Map<String, Object> otherOptions = Collections.emptyMap();
-        runTest(graphContext, inputPaths, userRulesDir, sourceMode, includePackages, excludePackages, otherOptions);
+        runTest(graphContext, inputPaths, userRulesDirs, sourceMode, includePackages, excludePackages, otherOptions);
     }
 
     void runTest(final GraphContext graphContext,
                 final Iterable<String> inputPaths,
-                final File userRulesDir,
+                final Iterable<File> userRulesDirs,
                 final boolean sourceMode,
                 final List<String> includePackages,
                 final List<String> excludePackages,
@@ -158,9 +158,10 @@ public abstract class WindupArchitectureTest
             windupConfiguration.addInputPath(Paths.get(inputPath));
         }
         windupConfiguration.setOutputDirectory(graphContext.getGraphDirectory());
-        if (userRulesDir != null)
-        {
-            windupConfiguration.setOptionValue(UserRulesDirectoryOption.NAME, userRulesDir);
+        if (userRulesDirs != null)        {
+            for (File uRulesDir : userRulesDirs)            {
+                windupConfiguration.addDefaultUserRulesDirectory(uRulesDir.toPath());
+            }
         }
         windupConfiguration.setOptionValue(SourceModeOption.NAME, sourceMode);
         windupConfiguration.setOptionValue(ScanPackagesOption.NAME, includePackages);
