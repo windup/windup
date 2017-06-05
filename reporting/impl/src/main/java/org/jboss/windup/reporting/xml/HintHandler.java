@@ -16,6 +16,7 @@ import org.jboss.windup.config.parser.xml.RuleProviderHandler;
 import org.jboss.windup.reporting.config.Hint;
 import org.jboss.windup.reporting.config.HintText;
 import org.jboss.windup.reporting.config.Link;
+import org.jboss.windup.reporting.model.IssueDisplayMode;
 import org.jboss.windup.reporting.quickfix.Quickfix;
 import org.jboss.windup.reporting.config.classification.Classification;
 import org.jboss.windup.reporting.category.IssueCategory;
@@ -96,6 +97,13 @@ public class HintHandler implements ElementHandler<Hint>
         else
         {
             hint = Hint.in(in).withText(message);
+        }
+
+        String issueDisplayModeString = $(element).attr("issue-display-mode");
+        if (StringUtils.isNotBlank(issueDisplayModeString))
+        {
+            IssueDisplayMode issueDisplayMode = IssueDisplayMode.parse(issueDisplayModeString);
+            hint.withDisplayMode(issueDisplayMode);
         }
 
         if (StringUtils.isNotBlank(categoryID))

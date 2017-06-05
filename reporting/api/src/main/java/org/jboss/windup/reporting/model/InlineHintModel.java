@@ -25,6 +25,7 @@ public interface InlineHintModel extends EffortReportModel, FileLocationModel, T
     String LINKS = TYPE_PREFIX + "links";
     String FILE_LOCATION_REFERENCE = TYPE_PREFIX + "fileLocationReference";
     String QUICKFIXES = TYPE_PREFIX + "quickfixes";
+    String ISSUE_DISPLAY_MODE = "issueDisplayMode";
 
     /**
      * A short descriptive text describing the problem covered by this hint
@@ -37,6 +38,18 @@ public interface InlineHintModel extends EffortReportModel, FileLocationModel, T
      */
     @Property(TITLE)
     String getTitle();
+
+    /**
+     * Contains an indicator as to which reports should display this issue. See also {@link IssueDisplayMode}.
+     */
+    @Property(ISSUE_DISPLAY_MODE)
+    void setIssueDisplayMode(IssueDisplayMode issueDisplayMode);
+
+    /**
+     * Contains an indicator as to which reports should display this issue. See also {@link IssueDisplayMode}.
+     */
+    @Property(ISSUE_DISPLAY_MODE)
+    IssueDisplayMode getIssueDisplayMode();
 
     /**
      * Set the text to be displayed within this {@link InlineHintModel} in the designated {@link FileModel}.

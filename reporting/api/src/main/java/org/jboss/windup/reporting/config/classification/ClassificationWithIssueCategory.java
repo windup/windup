@@ -2,6 +2,7 @@ package org.jboss.windup.reporting.config.classification;
 
 import org.jboss.windup.reporting.category.IssueCategory;
 import org.jboss.windup.reporting.config.Link;
+import org.jboss.windup.reporting.model.IssueDisplayMode;
 
 /**
  * Contains the methods that can be called after the {@link IssueCategory} has been set.
@@ -11,6 +12,11 @@ import org.jboss.windup.reporting.config.Link;
  */
 public interface ClassificationWithIssueCategory
 {
+    /**
+     * Sets the {@link IssueDisplayMode}.
+     */
+    ClassificationWithIssueDisplayMode withIssueDisplayMode(IssueDisplayMode issueDisplayMode);
+
     /**
      * @see ClassificationAs#with(Link)
      */

@@ -13,6 +13,7 @@ import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.config.parser.xml.RuleProviderHandler;
 import org.jboss.windup.reporting.config.Link;
+import org.jboss.windup.reporting.model.IssueDisplayMode;
 import org.jboss.windup.reporting.quickfix.Quickfix;
 import org.jboss.windup.reporting.config.classification.Classification;
 import org.jboss.windup.reporting.category.IssueCategory;
@@ -80,6 +81,13 @@ public class ClassificationHandler implements ElementHandler<Classification>
             IssueCategoryRegistry issueCategoryRegistry = IssueCategoryRegistry.instance(handlerManager.getRuleLoaderContext().getContext());
             IssueCategory issueCategory = issueCategoryRegistry.getByID(issueCategoryID);
             classification.withIssueCategory(issueCategory);
+        }
+
+        String issueDisplayModeString = $(element).attr("issue-display-mode");
+        if (StringUtils.isNotBlank(issueDisplayModeString))
+        {
+            IssueDisplayMode issueDisplayMode = IssueDisplayMode.parse(issueDisplayModeString);
+            classification.withIssueDisplayMode(issueDisplayMode);
         }
 
         String description = $(element).child("description").text();

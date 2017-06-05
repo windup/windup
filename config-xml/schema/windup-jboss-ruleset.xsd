@@ -283,6 +283,7 @@
             </xs:sequence>
             <xs:attribute name="title" type="xs:string" use="required"/>
             <xs:attribute name="category-id" type="category-id-type" use="optional" />
+            <xs:attribute name="issue-display-mode" type="issue-display-mode-type" use="optional" />
             <xs:attribute name="in" type="xs:string" use="optional" />
             <xs:attribute name="effort" type="xs:byte" use="optional" />
             <!-- <xs:attribute type="xs:string" name="message" use="optional"/> -->
@@ -291,6 +292,19 @@
 
     <xs:simpleType name="category-id-type">
         <xs:restriction base="xs:string" />
+    </xs:simpleType>
+    
+    <xs:simpleType name="issue-display-mode-type">
+        <xs:annotation>
+            <xs:documentation><![CDATA[
+               This defines whether or not this particular issue will appear in summary reports
+               (eg, migration issues).
+            ]]></xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="detail-only"/>
+            <xs:enumeration value="all"/>
+        </xs:restriction>
     </xs:simpleType>
     
     <xs:simpleType name="quickfix-type">
@@ -320,6 +334,7 @@
             <xs:attribute name="title" type="xs:string" use="required"/>
             <xs:attribute name="effort" type="xs:byte" use="optional" />
             <xs:attribute name="category-id" type="category-id-type" use="optional" />
+            <xs:attribute name="issue-display-mode" type="issue-display-mode-type" use="optional" />
             <xs:attribute name="of" type="xs:string" use="optional" />
         </xs:complexType>
     </xs:element>

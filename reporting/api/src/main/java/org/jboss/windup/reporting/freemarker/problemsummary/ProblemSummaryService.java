@@ -15,6 +15,7 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.TagUtil;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
+import org.jboss.windup.reporting.model.IssueDisplayMode;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.InlineHintService;
 import org.jboss.windup.reporting.category.IssueCategoryModel;
@@ -56,6 +57,9 @@ public class ProblemSummaryService
         final Iterable<InlineHintModel> hints = projectModels == null ? hintService.findAll() : hintService.getHintsForProjects(projectModels);
         for (InlineHintModel hint : hints)
         {
+            if (hint.getIssueDisplayMode() == IssueDisplayMode.DETAIL_ONLY)
+                continue;
+
             Set<String> tags = hint.getTags();
 
             boolean hasTagMatch;
@@ -97,6 +101,9 @@ public class ProblemSummaryService
         ClassificationService classificationService = new ClassificationService(graphContext);
         for (ClassificationModel classification : classificationService.findAll())
         {
+            if (classification.getIssueDisplayMode() == IssueDisplayMode.DETAIL_ONLY)
+                continue;
+
             Set<String> tags = classification.getTags();
             if (!TagUtil.checkMatchingTags(tags, includeTags, excludeTags, false))
                 continue;

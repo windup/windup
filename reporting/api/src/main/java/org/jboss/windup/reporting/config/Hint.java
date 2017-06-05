@@ -15,6 +15,7 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.parameters.ParameterizedIterationOperation;
 import org.jboss.windup.graph.model.FileLocationModel;
 import org.jboss.windup.graph.model.LinkModel;
+import org.jboss.windup.reporting.model.IssueDisplayMode;
 import org.jboss.windup.reporting.model.QuickfixModel;
 import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.graph.service.GraphService;
@@ -35,7 +36,7 @@ import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
 /**
  * Used as an intermediate to support the addition of {@link InlineHintModel} objects to the graph via an Operation.
  */
-public class Hint extends ParameterizedIterationOperation<FileLocationModel> implements HintText, HintLink, HintWithIssueCategory, HintEffort, HintQuickfix
+public class Hint extends ParameterizedIterationOperation<FileLocationModel> implements HintText, HintLink, HintWithIssueCategory, HintEffort, HintQuickfix, HintDisplayMode
 {
     private static final Logger LOG = Logging.get(Hint.class);
 
@@ -46,6 +47,7 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
     private List<Link> links = new ArrayList<>();
     private Set<String> tags = Collections.emptySet();
     private List<Quickfix> quickfixes = new ArrayList<>();
+    private IssueDisplayMode issueDisplayMode = IssueDisplayMode.Defaults.DEFAULT_DISPLAY_MODE;
 
     protected Hint(String variable)
     {
@@ -91,6 +93,13 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
         return this;
     }
 
+    @Override
+    public HintText withDisplayMode(IssueDisplayMode displayMode)
+    {
+        this.issueDisplayMode = displayMode;
+        return this;
+    }
+
     /**
      * Returns the currently set {@link IssueCategory}.
      */
@@ -115,6 +124,7 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
             hintModel.setFileLocationReference(locationModel);
             hintModel.setFile(locationModel.getFile());
             hintModel.setEffort(effort);
+            hintModel.setIssueDisplayMode(this.issueDisplayMode);
 
             IssueCategoryRegistry issueCategoryRegistry = IssueCategoryRegistry.instance(event.getRewriteContext());
             IssueCategoryModel issueCategoryModel;
