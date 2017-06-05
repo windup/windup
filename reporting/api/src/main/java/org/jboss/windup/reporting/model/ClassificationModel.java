@@ -13,6 +13,8 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.association.LinkableModel;
 import org.ocpsoft.rewrite.config.Rule;
 
+import static org.jboss.windup.reporting.model.InlineHintModel.ISSUE_DISPLAY_MODE;
+
 /**
  * This classifies files and provides general background information about a specific {@link FileModel}. (For instance,
  * an XML file may be classified as a "XYZ Configuration File".) A {@link ClassificationModel} may also contain links to
@@ -54,6 +56,18 @@ public interface ClassificationModel extends EffortReportModel, LinkableModel, T
      */
     @Property(CLASSIFICATION)
     String getClassification();
+
+    /**
+     * Contains an indicator as to which reports should display this issue. See also {@link IssueDisplayMode}.
+     */
+    @Property(ISSUE_DISPLAY_MODE)
+    void setIssueDisplayMode(IssueDisplayMode issueDisplayMode);
+
+    /**
+     * Contains an indicator as to which reports should display this issue. See also {@link IssueDisplayMode}.
+     */
+    @Property(ISSUE_DISPLAY_MODE)
+    IssueDisplayMode getIssueDisplayMode();
 
     /**
      * Set the description text of this {@link ClassificationModel}.

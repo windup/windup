@@ -21,6 +21,7 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.graph.service.LinkService;
 import org.jboss.windup.reporting.config.Link;
+import org.jboss.windup.reporting.model.IssueDisplayMode;
 import org.jboss.windup.reporting.quickfix.Quickfix;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.service.ClassificationService;
@@ -42,7 +43,8 @@ import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
  * @author <a href="mailto:dynawest@gmail.com">Ondrej Zizka</a>
  */
 public class Classification extends ParameterizedIterationOperation<FileModel> implements ClassificationAs, ClassificationEffort,
-            ClassificationDescription, ClassificationLink, ClassificationTags, ClassificationWithIssueCategory, ClassificationQuickfix
+            ClassificationDescription, ClassificationLink, ClassificationTags, ClassificationWithIssueCategory, ClassificationQuickfix,
+            ClassificationWithIssueDisplayMode
 {
     private static final Logger LOG = Logging.get(Classification.class);
 
@@ -53,6 +55,8 @@ public class Classification extends ParameterizedIterationOperation<FileModel> i
     private RegexParameterizedPatternParser descriptionPattern;
     private int effort;
     private IssueCategory issueCategory = null;
+    private IssueDisplayMode issueDisplayMode = IssueDisplayMode.Defaults.DEFAULT_DISPLAY_MODE;
+
     Classification(String variable)
     {
         super(variable);
@@ -125,6 +129,13 @@ public class Classification extends ParameterizedIterationOperation<FileModel> i
     public ClassificationWithIssueCategory withIssueCategory(IssueCategory issueCategory)
     {
         this.issueCategory = issueCategory;
+        return this;
+    }
+
+    @Override
+    public ClassificationWithIssueDisplayMode withIssueDisplayMode(IssueDisplayMode issueDisplayMode)
+    {
+        this.issueDisplayMode = issueDisplayMode;
         return this;
     }
 
@@ -216,6 +227,7 @@ public class Classification extends ParameterizedIterationOperation<FileModel> i
             {
                 classification = classificationService.create();
                 classification.setEffort(effort);
+                classification.setIssueDisplayMode(this.issueDisplayMode);
 
                 IssueCategoryModel issueCategoryModel;
                 if (this.issueCategory == null)

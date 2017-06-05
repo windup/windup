@@ -2,6 +2,7 @@ package org.jboss.windup.reporting.config;
 
 import java.util.Set;
 import org.jboss.windup.reporting.category.IssueCategory;
+import org.jboss.windup.reporting.model.IssueDisplayMode;
 import org.jboss.windup.reporting.quickfix.Quickfix;
 import org.ocpsoft.rewrite.config.OperationBuilder;
 
@@ -37,6 +38,11 @@ public interface HintText
      * @return the final stage of hint building
      */
     HintEffort withEffort(int effort);
+
+    /**
+     * Sets the {@link IssueDisplayMode} for this issue.
+     */
+    HintText withDisplayMode(IssueDisplayMode displayMode);
 
     /**
      * Specifies the {@link IssueCategory}.
