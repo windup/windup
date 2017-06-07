@@ -139,8 +139,8 @@
         <tag name="Manifest"/>
         <tag name="Maven XML"/>
         <tag name="Properties"/>
-        <tag name="Weblogic EJB XML"/>
-        <tag name="Weblogic Web XML"/>
+        <tag name="WebLogic EJB XML"/>
+        <tag name="WebLogic Web XML"/>
         <tag name="Web XML 2.4"/>
     </tag>
 </tags>
