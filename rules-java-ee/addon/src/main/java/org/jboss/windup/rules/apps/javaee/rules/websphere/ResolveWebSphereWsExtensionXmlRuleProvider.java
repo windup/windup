@@ -41,7 +41,7 @@ public class ResolveWebSphereWsExtensionXmlRuleProvider extends IteratingRulePro
         ClassificationModel classificationModel = classificationService.attachClassification(event, context, payload, IssueCategoryRegistry.MANDATORY,
                     "WebSphere WS Extension",
                     "WebSphere Webservice Extension XML Deployment Descriptor.  \n"
-                                + "This deployment descriptor extension is IBM-specific and it needs to be migrated to JBossWS.  \n"
+                                + "This deployment descriptor extension is IBM specific and it needs to be migrated to JBossWS.  \n"
                                 + "JBossWS implements the latest JAX-WS specification, which users can reference for any vendor-agnostic web service usage need.  \n"
                                 + "You can migrate deployment descriptors following the links below.  \n");
         classificationModel.setEffort(3);
