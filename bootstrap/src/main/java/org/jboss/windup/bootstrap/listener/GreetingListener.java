@@ -33,16 +33,10 @@ public class GreetingListener implements ContainerLifecycleListener
         StringWriter sw = new StringWriter();
         PrintWriter out = new PrintWriter(sw, true);
         out.println();
-        out.println(" _       ___           __          ");
-        out.println("| |     / (_)___  ____/ /_  ______ ");
-        out.println("| | /| / / / __ \\/ __  / / / / __ \\");
-        out.println("| |/ |/ / / / / / /_/ / /_/ / /_/ /");
-        out.println("|__/|__/_/_/ /_/\\__,_/\\__,_/ .___/ ");
-        out.println("                          /_/      ");
         out.println("");
-        out.print("JBoss Windup, version [ ");
+        out.print("Red Hat Application Migration Toolkit (RHAMT) CLI, version [ ");
         out.print(Bootstrap.getVersion());
-        out.print(" ] - JBoss, by Red Hat, Inc. [ http://windup.jboss.org ]");
+        out.print(" ] - by Red Hat, Inc. [ https://developers.redhat.com/products/rhamt/overview/ ]");
         out.println();
         logger.info(sw.toString());
         System.out.println(sw.toString());

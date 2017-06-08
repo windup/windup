@@ -222,8 +222,7 @@ public class Bootstrap
 
     public static String getVersionString()
     {
-        return "> JBoss Windup, version " + getRuntimeAPIVersion() + ". JBoss Forge, version "
-                    + AddonRepositoryImpl.getRuntimeAPIVersion();
+        return "> Red Hat Application Migration Toolkit (RHAMT) CLI, version " + getRuntimeAPIVersion() + ".";
     }
 
     public static Version getRuntimeAPIVersion()
