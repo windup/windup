@@ -20,18 +20,18 @@ import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
- * Discovers WebSphere Web Service Binding XML files and parses the related metadata
+ * Discovers WebSphere Web Service Extension XML files and parses the related metadata
  *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
-@RuleMetadata(phase = InitialAnalysisPhase.class, after = DiscoverXmlFilesRuleProvider.class, perform = "Discover WebSphere Web Service Binding XML Files")
-public class ResolveWebSphereWsBindingXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
+@RuleMetadata(phase = InitialAnalysisPhase.class, after = DiscoverXmlFilesRuleProvider.class, perform = "Discover WebSphere Web Service Extension XML Files")
+public class ResolveWebSphereWsExtensionXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
 {
     @Override
     public ConditionBuilder when()
     {
-        return Query.fromType(XmlFileModel.class).withProperty(FileModel.FILE_NAME, "ibm-webservices-bnd.xmi")
-                    .withProperty(XmlFileModel.ROOT_TAG_NAME, "WSBinding");
+        return Query.fromType(XmlFileModel.class).withProperty(FileModel.FILE_NAME, "ibm-webservices-ext.xmi")
+                    .withProperty(XmlFileModel.ROOT_TAG_NAME, "WsExtension");
     }
 
     @Override
@@ -39,8 +39,8 @@ public class ResolveWebSphereWsBindingXmlRuleProvider extends IteratingRuleProvi
     {
         ClassificationService classificationService = new ClassificationService(event.getGraphContext());
         ClassificationModel classificationModel = classificationService.attachClassification(event, context, payload, IssueCategoryRegistry.MANDATORY,
-                    "WebSphere WS Binding",
-                    "WebSphere Webservice Binding XML Deployment Descriptor.  \n"
+                    "WebSphere WS Extension",
+                    "WebSphere Webservice Extension XML Deployment Descriptor.  \n"
                                 + "This deployment descriptor extension is IBM-specific and it needs to be migrated to JBossWS.  \n"
                                 + "JBossWS implements the latest JAX-WS specification, which users can reference for any vendor-agnostic web service usage need.  \n"
                                 + "You can migrate deployment descriptors following the links below.  \n");
@@ -63,7 +63,7 @@ public class ResolveWebSphereWsBindingXmlRuleProvider extends IteratingRuleProvi
         classificationService.attachLink(classificationModel, documentationCommunityLink);
 
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
-        technologyTagService.addTagToFileModel(payload, "WebSphere WS Binding", TechnologyTagLevel.IMPORTANT);
+        technologyTagService.addTagToFileModel(payload, "WebSphere WS Extension", TechnologyTagLevel.IMPORTANT);
 
     }
 
