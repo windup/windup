@@ -124,9 +124,10 @@ public class GenerateJBossEjbDescriptorRuleProvider extends AbstractRuleProvider
             for (VendorSpecificationExtensionModel vendorSpecificExtension : vendorSpecificService.getVendorSpecificationExtensions(ejbDescriptor))
             {
                 LOG.info("Vendor specific: " + vendorSpecificExtension.getFileName());
-                classificationService.attachClassification(event, evaluationContext, vendorSpecificExtension, "EJB Specification Extension",
-                            "Vendor Specific EJB Specification Extension");
+                //classificationService.attachClassification(event, evaluationContext, vendorSpecificExtension, "EJB Specification Extension",
+                //            "Vendor Specific EJB Specification Extension");
                 vendorSpecificExtension.addLinkToTransformedFile(newDescriptorLink);
+                vendorSpecificExtension.setGenerateSourceReport(true);
             }
 
             // Link up with the generated XML.
