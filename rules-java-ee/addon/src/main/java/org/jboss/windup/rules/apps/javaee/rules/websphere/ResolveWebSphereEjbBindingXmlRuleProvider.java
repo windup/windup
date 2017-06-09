@@ -67,11 +67,11 @@ public class ResolveWebSphereEjbBindingXmlRuleProvider extends IteratingRuleProv
         GraphService<EjbSessionBeanModel> ejbSessionBeanService = new GraphService<>(event.getGraphContext(), EjbSessionBeanModel.class);
         GraphService<EjbMessageDrivenModel> mdbService = new GraphService<>(event.getGraphContext(), EjbMessageDrivenModel.class);
 
+        // Not Removed as per WINDUPRULE-214 - it duplicated GenerateJBossEjbDescriptorRuleProvider which reacts to associateAsVendorExtension() below.
         ClassificationService classificationService = new ClassificationService(event.getGraphContext());
         ClassificationModel classification = classificationService.attachClassification(event, context, payload, IssueCategoryRegistry.MANDATORY, "WebSphere EJB Binding",
                     "WebSphere Enterprise Java Bean Binding XML Descriptor");
         classification.setEffort(1);
-
         IssueCategoryModel cat = IssueCategoryRegistry.loadFromGraph(event.getGraphContext(), IssueCategoryRegistry.MANDATORY);
         classification.setIssueCategory(cat);
 
@@ -79,11 +79,8 @@ public class ResolveWebSphereEjbBindingXmlRuleProvider extends IteratingRuleProv
         technologyTagService.addTagToFileModel(payload, "WebSphere EJB", TechnologyTagLevel.IMPORTANT);
 
         Document doc = xmlFileService.loadDocumentQuiet(event, context, payload);
-
         if (doc == null)
-        {
             return;
-        }
 
         VendorSpecificationExtensionService vendorSpecificationService = new VendorSpecificationExtensionService(event.getGraphContext());
         // mark as vendor extension; create reference to ejb-jar.xml
@@ -100,8 +97,7 @@ public class ResolveWebSphereEjbBindingXmlRuleProvider extends IteratingRuleProv
 
             // determine type:
             String type = $(resourceRef).child("enterpriseBean").attr("type");
-
-            LOG.info("Type: " + type);
+            LOG.info("enterpriseBean type: " + type);
 
             if (StringUtils.isNotBlank(jndiLocation) && StringUtils.isNotBlank(resourceId))
             {
