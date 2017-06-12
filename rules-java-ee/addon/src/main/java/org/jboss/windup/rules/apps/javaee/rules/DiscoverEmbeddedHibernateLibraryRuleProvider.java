@@ -34,7 +34,7 @@ public class DiscoverEmbeddedHibernateLibraryRuleProvider extends AbstractRulePr
         return ConfigurationBuilder.begin()
                     .addRule()
                     .when(Query.fromType(JarArchiveModel.class)
-                                .withProperty(FileModel.FILE_PATH, QueryPropertyComparisonType.REGEX, ".*WEB-INF/lib/.*hibernate.*\\.jar$"))
+                                .withProperty(FileModel.FILE_NAME, QueryPropertyComparisonType.REGEX, ".*hibernate.*\\.jar$"))
                     .perform(
                                 new AbstractIterationOperation<JarArchiveModel>()
                                 {

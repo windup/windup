@@ -34,7 +34,7 @@ public class DiscoverEmbeddedJSFLibraryRuleProvider extends AbstractRuleProvider
         return ConfigurationBuilder.begin()
                     .addRule()
                     .when(Query.fromType(JarArchiveModel.class)
-                                .withProperty(FileModel.FILE_PATH, QueryPropertyComparisonType.REGEX, ".*WEB-INF/lib/.*jsf.*\\.jar$"))
+                                .withProperty(FileModel.FILE_NAME, QueryPropertyComparisonType.REGEX, ".*jsf.*\\.jar$"))
                     .perform(
                                 new AbstractIterationOperation<JarArchiveModel>()
                                 {
