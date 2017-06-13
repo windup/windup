@@ -17,7 +17,7 @@ public class EnableTattletaleReportOption extends AbstractConfigurationOption
     @Override
     public String getDescription()
     {
-        return "If set, Windup will generate a report a Tattletale report for each application.";
+        return "If set, a Tattletale report will be generated for each application.";
     }
 
     @Override
