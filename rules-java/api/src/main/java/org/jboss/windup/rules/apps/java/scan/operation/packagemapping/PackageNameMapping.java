@@ -25,7 +25,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  */
 public class PackageNameMapping extends GraphRule implements PackageNameMappingWithPackagePattern, PackageNameMappingWithOrganization, PreRulesetEvaluation
 {
-    private static final Logger LOG = Logger.getLogger(PackageNameMapping.class.getSimpleName());
+    private static final Logger LOG = Logger.getLogger(PackageNameMapping.class.getName());
 
     private String id = this.getClass().getName() + "_" + UUID.randomUUID().toString();
 

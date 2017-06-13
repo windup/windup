@@ -38,7 +38,7 @@ import org.w3c.dom.Element;
 @RuleMetadata(phase = InitialAnalysisPhase.class, after = DiscoverWebXmlRuleProvider.class, perform = "Discover IBM WebSphere Web Binding Files")
 public class ResolveWebSphereWebXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
 {
-    private static final Logger LOG = Logger.getLogger(ResolveWebSphereWebXmlRuleProvider.class.getSimpleName());
+    private static final Logger LOG = Logger.getLogger(ResolveWebSphereWebXmlRuleProvider.class.getName());
 
     @Override
     public ConditionBuilder when()

@@ -7,7 +7,7 @@ import org.jboss.windup.config.GraphRewrite;
 
 public class FileMappingLifecycleListener extends AbstractRuleLifecycleListener
 {
-    private static final Logger LOG = Logger.getLogger(FileMappingLifecycleListener.class.getSimpleName());
+    private static final Logger LOG = Logger.getLogger(FileMappingLifecycleListener.class.getName());
 
     @Override
     public void beforeExecution(GraphRewrite event)

@@ -37,7 +37,7 @@ import org.w3c.dom.Element;
 @RuleMetadata(phase = InitialAnalysisPhase.class, after = DiscoverXmlFilesRuleProvider.class, perform = "Discover JBoss EJB XML Files")
 public class DiscoverJBossJbpmProcessFilesRuleProvider extends IteratingRuleProvider<XmlFileModel>
 {
-    private static final Logger LOG = Logger.getLogger(DiscoverJBossJbpmProcessFilesRuleProvider.class.getSimpleName());
+    private static final Logger LOG = Logger.getLogger(DiscoverJBossJbpmProcessFilesRuleProvider.class.getName());
 
     @Override
     public ConditionBuilder when()

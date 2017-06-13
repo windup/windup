@@ -47,7 +47,7 @@ import org.w3c.dom.Element;
 @RuleMetadata(phase = InitialAnalysisPhase.class, after = DiscoverEjbConfigurationXmlRuleProvider.class, perform = "Discover WebLogic EJB XML Files")
 public class ResolveWebLogicEjbXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
 {
-    private static final Logger LOG = Logger.getLogger(ResolveWebLogicEjbXmlRuleProvider.class.getSimpleName());
+    private static final Logger LOG = Logger.getLogger(ResolveWebLogicEjbXmlRuleProvider.class.getName());
 
     @Override
     public ConditionBuilder when()

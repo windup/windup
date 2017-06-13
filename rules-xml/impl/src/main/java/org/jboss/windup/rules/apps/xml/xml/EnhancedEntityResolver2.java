@@ -22,7 +22,7 @@ import org.xml.sax.ext.EntityResolver2;
  */
 public class EnhancedEntityResolver2 implements EntityResolver2
 {
-    private static final Logger LOG = Logger.getLogger(EnhancedEntityResolver2.class.getSimpleName());
+    private static final Logger LOG = Logger.getLogger(EnhancedEntityResolver2.class.getName());
 
     /*
      * This is catalog resolver definition for resolving entities/schemas locally instead of remotely

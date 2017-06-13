@@ -44,7 +44,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 @RuleMetadata(phase = MigrationRulesPhase.class, id = "Generate jboss-ejb3.xml")
 public class GenerateJBossEjbDescriptorRuleProvider extends AbstractRuleProvider
 {
-    private static final Logger LOG = Logger.getLogger(GenerateJBossEjbDescriptorRuleProvider.class.getSimpleName());
+    private static final Logger LOG = Logger.getLogger(GenerateJBossEjbDescriptorRuleProvider.class.getName());
     public static final String TEMPLATE_EJB_REPORT = "/reports/templates/jboss/jboss-ejb3.ftl";
 
     @Override

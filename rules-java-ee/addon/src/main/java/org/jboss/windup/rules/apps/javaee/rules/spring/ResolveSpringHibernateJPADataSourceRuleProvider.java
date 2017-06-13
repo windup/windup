@@ -40,7 +40,7 @@ import org.w3c.dom.Element;
 @RuleMetadata(phase = InitialAnalysisPhase.class, after = DiscoverSpringConfigurationFilesRuleProvider.class, perform = "Resolve Spring JNDI to DataSource")
 public class ResolveSpringHibernateJPADataSourceRuleProvider extends IteratingRuleProvider<SpringBeanModel>
 {
-    private static final Logger LOG = Logger.getLogger(ResolveSpringHibernateJPADataSourceRuleProvider.class.getSimpleName());
+    private static final Logger LOG = Logger.getLogger(ResolveSpringHibernateJPADataSourceRuleProvider.class.getName());
 
     @Override
     public ConditionBuilder when()

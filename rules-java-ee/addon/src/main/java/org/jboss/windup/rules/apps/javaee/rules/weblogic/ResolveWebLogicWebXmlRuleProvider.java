@@ -36,7 +36,7 @@ import org.w3c.dom.Element;
 @RuleMetadata(phase = InitialAnalysisPhase.class, after = DiscoverWebXmlRuleProvider.class, perform = "Discover WebLogic Web Files")
 public class ResolveWebLogicWebXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
 {
-    private static final Logger LOG = Logger.getLogger(ResolveWebLogicWebXmlRuleProvider.class.getSimpleName());
+    private static final Logger LOG = Logger.getLogger(ResolveWebLogicWebXmlRuleProvider.class.getName());
 
     @Override
     public ConditionBuilder when()

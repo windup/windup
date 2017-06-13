@@ -42,7 +42,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 @RuleMetadata(phase = MigrationRulesPhase.class, id = "Generate jboss-web.xml")
 public class GenerateJBossWebDescriptorRuleProvider extends AbstractRuleProvider
 {
-    private static final Logger LOG = Logger.getLogger(GenerateJBossWebDescriptorRuleProvider.class.getSimpleName());
+    private static final Logger LOG = Logger.getLogger(GenerateJBossWebDescriptorRuleProvider.class.getName());
     public static final String JBOSS_WEB_TEMPLATE = "/reports/templates/jboss/jboss-web.ftl";
 
     @Override

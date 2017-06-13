@@ -29,7 +29,7 @@ import org.ocpsoft.rewrite.config.RuleVisit;
  */
 public class PackageNameMappingRegistry
 {
-    private static final Logger LOG = Logger.getLogger(PackageNameMappingRegistry.class.getSimpleName());
+    private static final Logger LOG = Logger.getLogger(PackageNameMappingRegistry.class.getName());
 
     @Inject
     private GraphContextFactory graphContextFactory;

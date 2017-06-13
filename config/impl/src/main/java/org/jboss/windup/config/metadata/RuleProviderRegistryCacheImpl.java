@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @Singleton
 public class RuleProviderRegistryCacheImpl implements RuleProviderRegistryCache
 {
-    private static final Logger LOG = Logger.getLogger(RuleProviderRegistryCache.class.getSimpleName());
+    private static final Logger LOG = Logger.getLogger(RuleProviderRegistryCache.class.getName());
     private static final long MAX_CACHE_AGE = 1000L * 60L * 1L;
 
     /**

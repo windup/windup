@@ -36,7 +36,7 @@ import org.w3c.dom.Document;
  */
 public class DiscoverXmlFilesRuleProvider extends AbstractRuleProvider
 {
-    private static final Logger LOG = Logger.getLogger(DiscoverXmlFilesRuleProvider.class.getSimpleName());
+    private static final Logger LOG = Logger.getLogger(DiscoverXmlFilesRuleProvider.class.getName());
 
     public DiscoverXmlFilesRuleProvider()
     {

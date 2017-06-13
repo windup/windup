@@ -26,7 +26,7 @@ import org.xml.sax.SAXException;
  */
 public class XmlFileService extends GraphService<XmlFileModel>
 {
-    private static final Logger LOG = Logger.getLogger(XmlFileService.class.getSimpleName());
+    private static final Logger LOG = Logger.getLogger(XmlFileService.class.getName());
 
     public final static String UNPARSEABLE_XML_CLASSIFICATION = "Unparsable XML File";
     public final static String UNPARSEABLE_XML_DESCRIPTION = "This file could not be parsed";

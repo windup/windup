@@ -16,7 +16,7 @@ import org.jboss.windup.rules.apps.java.archives.identify.CompositeArchiveIdenti
  */
 public class ArchiveIdentificationLifecycleListener extends AbstractRuleLifecycleListener
 {
-    private static final Logger LOG = Logger.getLogger(ArchiveIdentificationLifecycleListener.class.getSimpleName());
+    private static final Logger LOG = Logger.getLogger(ArchiveIdentificationLifecycleListener.class.getName());
 
     @Inject
     private CompositeArchiveIdentificationService identifier;

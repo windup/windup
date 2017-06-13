@@ -12,7 +12,7 @@ import java.util.logging.Logger;
  */
 public class ArchivePackageNameIdentificationLifecycleListener extends AbstractRuleLifecycleListener
 {
-    private static final Logger LOG = Logger.getLogger(ArchivePackageNameIdentificationLifecycleListener.class.getSimpleName());
+    private static final Logger LOG = Logger.getLogger(ArchivePackageNameIdentificationLifecycleListener.class.getName());
 
     @Override
     public void beforeExecution(GraphRewrite event)

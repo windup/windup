@@ -42,7 +42,7 @@ import org.w3c.dom.Element;
 @RuleMetadata(phase = InitialAnalysisPhase.class, after = DiscoverEjbConfigurationXmlRuleProvider.class, perform = "Discover JBoss EJB XML Files")
 public class ResolveJBossEjbXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
 {
-    private static final Logger LOG = Logger.getLogger(ResolveJBossEjbXmlRuleProvider.class.getSimpleName());
+    private static final Logger LOG = Logger.getLogger(ResolveJBossEjbXmlRuleProvider.class.getName());
 
     @Override
     public ConditionBuilder when()

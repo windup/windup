@@ -42,7 +42,7 @@ import org.w3c.dom.Element;
 @RuleMetadata(phase = InitialAnalysisPhase.class, perform = "Discover web.xml files")
 public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
 {
-    private static final Logger LOG = Logger.getLogger(DiscoverWebXmlRuleProvider.class.getSimpleName());
+    private static final Logger LOG = Logger.getLogger(DiscoverWebXmlRuleProvider.class.getName());
 
     private static final String TECH_TAG = "Web XML";
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.INFORMATIONAL;

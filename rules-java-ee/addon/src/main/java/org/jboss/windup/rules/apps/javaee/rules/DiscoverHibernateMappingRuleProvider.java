@@ -43,7 +43,7 @@ import org.jboss.windup.config.metadata.RuleMetadata;
 @RuleMetadata(phase = InitialAnalysisPhase.class, perform = "Discover hibernate.hbm.xml files")
 public class DiscoverHibernateMappingRuleProvider extends IteratingRuleProvider<DoctypeMetaModel>
 {
-    private static final Logger LOG = Logger.getLogger(DiscoverHibernateMappingRuleProvider.class.getSimpleName());
+    private static final Logger LOG = Logger.getLogger(DiscoverHibernateMappingRuleProvider.class.getName());
 
     private static final String TECH_TAG = "Hibernate Mapping";
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.IMPORTANT;

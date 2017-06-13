@@ -34,7 +34,7 @@ import com.strobel.core.VerifyArgument;
 
 public class WindupJarTypeLoader implements ITypeLoader
 {
-    private final static Logger LOG = Logger.getLogger(JarTypeLoader.class.getSimpleName());
+    private final static Logger LOG = Logger.getLogger(JarTypeLoader.class.getName());
 
     private final JarFile _jarFile;
     private final Map<String, String> _knownMappings = new ConcurrentHashMap<>(1000);

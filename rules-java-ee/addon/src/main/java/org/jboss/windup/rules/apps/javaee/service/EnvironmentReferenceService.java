@@ -18,7 +18,7 @@ import com.tinkerpop.blueprints.GraphQuery;
  */
 public class EnvironmentReferenceService extends GraphService<EnvironmentReferenceModel>
 {
-    private static final Logger LOG = Logger.getLogger(EnvironmentReferenceService.class.getSimpleName());
+    private static final Logger LOG = Logger.getLogger(EnvironmentReferenceService.class.getName());
 
     protected JNDIResourceService jndiResourceService;
 
