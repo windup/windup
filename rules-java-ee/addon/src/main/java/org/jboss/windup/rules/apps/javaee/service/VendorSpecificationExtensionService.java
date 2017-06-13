@@ -23,7 +23,7 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
  */
 public class VendorSpecificationExtensionService extends GraphService<VendorSpecificationExtensionModel>
 {
-    private static final Logger LOG = Logger.getLogger(VendorSpecificationExtensionService.class.getSimpleName());
+    private static final Logger LOG = Logger.getLogger(VendorSpecificationExtensionService.class.getName());
     final protected FileService fileService;
 
     public VendorSpecificationExtensionService(GraphContext context)

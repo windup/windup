@@ -43,7 +43,7 @@ import org.w3c.dom.Element;
 public class DiscoverHardcodedIPAddressRuleProvider extends AbstractRuleProvider
 {
     private static final String IP_PATTERN = "(?<![\\w.])\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}(?![\\w.])";
-    private static final Logger LOG = Logger.getLogger(DiscoverHardcodedIPAddressRuleProvider.class.getSimpleName());
+    private static final Logger LOG = Logger.getLogger(DiscoverHardcodedIPAddressRuleProvider.class.getName());
 
     @Override
     public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)

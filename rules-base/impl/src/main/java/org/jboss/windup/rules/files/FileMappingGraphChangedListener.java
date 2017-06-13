@@ -24,7 +24,7 @@ import com.tinkerpop.blueprints.util.wrappers.event.listener.GraphChangedListene
  */
 public class FileMappingGraphChangedListener implements GraphChangedListener
 {
-    private static final Logger LOG = Logger.getLogger(FileMappingGraphChangedListener.class.getSimpleName());
+    private static final Logger LOG = Logger.getLogger(FileMappingGraphChangedListener.class.getName());
 
     private final GraphRewrite event;
 
