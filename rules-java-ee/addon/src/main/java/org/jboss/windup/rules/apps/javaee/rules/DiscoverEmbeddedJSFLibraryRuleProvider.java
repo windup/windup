@@ -45,14 +45,14 @@ public class DiscoverEmbeddedJSFLibraryRuleProvider extends AbstractRuleProvider
                                                     fileResourceModel,
                                                     IssueCategoryRegistry.MANDATORY,
                                                     "JSF embedded library",
-                                                    "The application has a JSF library embedded.  \n"
-                                                                + "Red Hat JBoss EAP brings JSF library as a module with a version that has been tested and supported by Red Hat.  (ref. link \"Red Hat JBoss EAP: Component Details\").  \n"
+                                                    "The application has a JSF library embedded. "
+                                                                + "Red Hat JBoss EAP includes JSF as a module with a version that has been tested and is supported by Red Hat.\n"
                                                                 + "There are two options for using the JSF library:  \n"
                                                                 + "\n"
-                                                                + "1. to keep it embedded as it is now: this approach is low effort but the application does not use a tested and supported library.  \n"
-                                                                + "2. to switch to use the JSF library in the EAP module: there's the effort to remove the embedded library and configure the application to use the module's library but then the application will rely on a tested and supported version of the JSF library.  \n"
+                                                                + "1. Keep it embedded as it is now. This approach is low effort but the application will not use a tested and supported library.  \n"
+                                                                + "2. Switch to use the JSF library in the EAP module. This will require effort to remove the embedded library and configure the application to use the module's library, but then the application will rely on a tested and supported version of the JSF library.  \n"
                                                                 + "\n"
-                                                                + "In the links below there are the informations needed for both EAP 6 and 7.");
+                                                                + "In the links below there are instructions to enable alternative versions for both EAP 6 and 7.");
                                         classificationModel.setEffort(3);
                                         GraphContext graphContext = event.getGraphContext();
                                         LinkService linkService = new LinkService(graphContext);

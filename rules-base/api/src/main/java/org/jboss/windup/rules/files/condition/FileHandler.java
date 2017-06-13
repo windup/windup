@@ -51,7 +51,8 @@ public class FileHandler implements ElementHandler<File>
         //At least filename should have matched (otherwise exception would be thrown),
         // so FileContent instance should have been created
         File f = (File) obj;
-        if(as!=null) {
+        if(as!=null)
+        {
             f.as(as);
         }
         return f;
@@ -72,7 +73,7 @@ public class FileHandler implements ElementHandler<File>
         {
             if (fileContentBuilder == null)
             {
-                fileContentBuilder=File.inFileNamed(fileName);
+                fileContentBuilder = File.inFileNamed(fileName);
             }
             else
             {
