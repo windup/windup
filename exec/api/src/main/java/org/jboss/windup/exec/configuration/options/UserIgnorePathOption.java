@@ -5,7 +5,7 @@ import org.jboss.windup.config.InputType;
 
 /**
  * An option to specify file/directory that contain the regexes of file names to be ignored.
- * 
+ *
  * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  *
  */
@@ -34,7 +34,7 @@ public class UserIgnorePathOption extends AbstractPathConfigurationOption
     @Override
     public String getDescription()
     {
-        return "User Ignore Path. In case of directory it rakes all the files inside matching the pattern. (Search pattern: *windup-ignore.txt).";
+        return "A path to the list of path patterns to skip during execution. If it points to a directory, all contained files named '*windup-ignore.txt' will be considered as such list.";
     }
 
     @Override
