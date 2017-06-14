@@ -41,7 +41,8 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 @RuleMetadata(phase = InitializationPhase.class, after = CopyJavaConfigToGraphRuleProvider.class)
 public class GatherIgnoredFileNamesRuleProvider extends IteratingRuleProvider<WindupConfigurationModel>
 {
-    private final String IGNORE_FILE_EXTENSION = "windup-ignore.txt";
+
+    private final static String[] IGNORE_FILE_EXTENSIONS = {"windup-ignore.txt", "rhamt-ignore.txt" };
     private static final Logger LOG = Logger.getLogger(GatherIgnoredFileNamesRuleProvider.class.getName());
 
     @Override
@@ -62,9 +63,10 @@ public class GatherIgnoredFileNamesRuleProvider extends IteratingRuleProvider<Wi
                         @Override
                         public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException
                         {
-                            if (file.getFileName().toString().toLowerCase().endsWith(IGNORE_FILE_EXTENSION))
+                            for (String fileExtension : IGNORE_FILE_EXTENSIONS)
                             {
-                                filesUrl.add(file);
+                                if (file.getFileName().toString().toLowerCase().endsWith(fileExtension))
+                                    filesUrl.add(file);
                             }
                             return FileVisitResult.CONTINUE;
                         }
