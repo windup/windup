@@ -157,6 +157,7 @@
 
 	<#assign panelStoryPoints = getMigrationEffortPointsForProject(traversal, false, reportModel.includeTags, reportModel.excludeTags)>
     <#assign projectID = "project_${canonicalProject.asVertex().id?c}">
+    <#assign classificationList = getClassificationForFile(projectModel.rootFileModel)>
     <div class="panel panel-primary projectBox" id="${projectID}" data-windup-projectguid="${generateGUID()}" data-windup-project-storypoints="${panelStoryPoints}">
         <div class="panel-heading panel-collapsed clickable">
             <span class="pull-left"><i class="glyphicon glyphicon-expand arrowIcon"></i></span>
@@ -266,6 +267,34 @@
             </table>
 
         </div>
+        <#if iterableHasContent(classificationList)>
+        <div>
+            <#list classificationList.iterator() as classification>
+                <div class="panel panel-default hint-detail-panel">
+                    <div class="panel-heading">
+                        <h4 class="panel-title pull-left">Issue Detail: ${classification.classification}</h4>
+                            <div class="pull-right">
+                                <a class="sh_url" title="${classification.ruleID}" href="windup_ruleproviders.html#${classification.ruleID}">Show Rule</a>
+                            </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <div class="panel-body">
+                        ${markdownToHtml(classification.description)}
+                    </div>
+                    <#assign classificationLinkList = classification.links>
+                    <#if iterableHasContent(classificationLinkList)>
+                    <div class="panel-body">
+                        <ul>
+                        <#list classificationLinkList.iterator() as link>
+                            <li><a href="${link.link}" target="_blank">${link.description}</a></li>
+                        </#list>
+                        </ul>
+                    </div>
+                    </#if>
+                </div>
+            </#list>
+        </div>
+        </#if>
         <#if iterableHasContent(canonicalProject.fileModelsNoDirectories)>
         <table class="subprojects table table-striped table-bordered">
             <tr>
@@ -296,6 +325,18 @@
     <script src="resources/js/windup-overview-head.js"></script>
     <style>
         .desc { z-index: 5000; }
+        
+        /* Light yellow bg for the issue info box. */
+        .hint-detail-panel > .panel-heading {
+            border-color: #c2c2c2;
+            background-color: #fbf4b1;
+        }
+        .hint-detail-panel {
+            border-color: #a8d0e3;
+            background-color: #fffcdc;
+        }
+        /* Reduce the padding, default is too big. */
+        .hint-detail-panel > .panel-body { padding-bottom: 0; }
     </style>
 </head>
 <body role="document" class="java-application report-${reportModel.reportName}">
