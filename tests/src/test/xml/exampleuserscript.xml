@@ -4,17 +4,17 @@
 >
   <rules>
     <rule>
-      <when>
-        <xmlfile matches="/w:web-app/w:resource-ref/w:res-auth[text() = 'Container']">
-        	<namespace prefix="w" uri="http://java.sun.com/xml/ns/javaee"/>
-        </xmlfile>
-      </when>
-      <perform>
-        <hint title="title from user script">
-        	<message>User script Container Auth</message>
-        </hint>
-        <xslt title="User script XSLT Conversion" extension="userscript-converted-example.xml" template="exampleconversion_userdir.xslt"/>
-      </perform>
+        <when>
+            <xmlfile matches="/w:web-app/w:resource-ref/w:res-auth[text() = 'Container']">
+                <namespace prefix="w" uri="http://java.sun.com/xml/ns/javaee"/>
+            </xmlfile>
+        </when>
+        <perform>
+            <hint issue-display-mode="all" title="title from user script">
+                <message>User script Container Auth</message>
+            </hint>
+            <xslt title="User script XSLT Conversion" extension="userscript-converted-example.xml" template="exampleconversion_userdir.xslt"/>
+        </perform>
     </rule>
   </rules>
 </ruleset>

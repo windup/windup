@@ -34,6 +34,6 @@ public enum IssueDisplayMode
     }
 
     public static class Defaults {
-        public static final IssueDisplayMode DEFAULT_DISPLAY_MODE = IssueDisplayMode.ALL;
+        public static final IssueDisplayMode DEFAULT_DISPLAY_MODE = IssueDisplayMode.DETAIL_ONLY;
     }
 }
