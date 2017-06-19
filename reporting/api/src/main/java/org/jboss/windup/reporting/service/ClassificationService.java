@@ -224,10 +224,11 @@ public class ClassificationService extends GraphService<ClassificationModel>
         else
         {
             if (!StringUtils.equals(description, classification.getDescription()))
-                LOG.warning("The description of the newly attached classification differs from the same-titled existing one, so the old description will be used."
+                LOG.warning("The description of the newly attached classification differs from the same-titled existing one, so the old description is being changed."
                         + "\n  Clsf title: " + classification.getClassification()
                         + "\n  Old desc: " + classification.getDescription()
                         + "\n  New desc: " + description);
+            classification.setDescription(description);
         }
 
         return attachClassification(event, classification, fileModel);
