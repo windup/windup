@@ -6,8 +6,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.jboss.windup.config.GraphRewrite;
@@ -39,6 +41,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
 {
     private static final String MALFORMED_ARCHIVE = "Malformed archive";
     private static final String ARCHIVES = "archives";
+    private static final String KEY_BAD_ARCHIVES = "unparsableArchives";
     private static final Logger LOG = Logging.get(UnzipArchiveToOutputFolder.class);
 
     public UnzipArchiveToOutputFolder()
@@ -67,6 +70,12 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
         // Create a folder for all archive contents.
         Path unzippedArchiveDir = getArchivesDirLocation(graphContext);
         ensureDirIsCreated(unzippedArchiveDir);
+
+        // Collect the malformed archives here.
+        Object badArchives = event.getRewriteContext().get(KEY_BAD_ARCHIVES);
+        if (null == badArchives)
+            event.getRewriteContext().put(KEY_BAD_ARCHIVES, new ArrayList<String>());
+
         unzipToTempDirectory(event, context, unzippedArchiveDir, zipFile, payload, false);
     }
 
@@ -116,7 +125,14 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
                 canonicalArchive = ((DuplicateArchiveModel)canonicalArchive).getCanonicalArchive();
 
             ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-            classificationService.attachClassification(event, context, canonicalArchive, MALFORMED_ARCHIVE, "Cannot unzip the file:  \n`" + inputZipFile.getPath() + "`");
+
+            // Collect the path so we can create an aggregated Markdown description. This will get regenerated each time, that's fine.
+            List<String> badArchives = (List<String>) event.getRewriteContext().get(KEY_BAD_ARCHIVES);
+            badArchives.add(inputZipFile.getPath());
+            String badArchivesString = badArchives.stream().map(s -> " * `" + s + "`\n").collect(Collectors.joining());
+
+            classificationService.attachClassification(event, context, canonicalArchive,
+                    MALFORMED_ARCHIVE, "Cannot unzip these file(s): \n\n" + badArchivesString);
             archiveModel.setParseError("Cannot unzip the file: " + e.getMessage());
             LOG.warning("Cannot unzip the file " + inputZipFile.getPath() + " to " + appArchiveFolder.toString()
                         + ". The ArchiveModel was classified as malformed.");
