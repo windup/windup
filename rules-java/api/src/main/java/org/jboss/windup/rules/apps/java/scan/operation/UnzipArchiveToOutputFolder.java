@@ -55,7 +55,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
     }
 
     @Override
-    public void perform(GraphRewrite event, EvaluationContext evalCtx, ArchiveModel payload)
+    public void perform(GraphRewrite event, EvaluationContext context, ArchiveModel payload)
     {
         LOG.info("Unzipping archive: " + payload.toPrettyString());
         File zipFile = payload.asFile();
@@ -76,7 +76,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
         if (null == badArchives)
             event.getRewriteContext().put(KEY_BAD_ARCHIVES, new ArrayList<String>());
 
-        unzipToTempDirectory(event, evalCtx, unzippedArchiveDir, zipFile, payload, false);
+        unzipToTempDirectory(event, context, unzippedArchiveDir, zipFile, payload, false);
     }
 
     private void checkCancelled(GraphRewrite event)
@@ -95,7 +95,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
     }
 
 
-    private void unzipToTempDirectory(final GraphRewrite event, EvaluationContext evalCtx,
+    private void unzipToTempDirectory(final GraphRewrite event, EvaluationContext context,
                 final Path tempFolder, final File inputZipFile,
                 final ArchiveModel archiveModel, boolean subArchivesOnly)
     {
@@ -127,12 +127,12 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
             ClassificationService classificationService = new ClassificationService(event.getGraphContext());
 
             // Collect the path so we can create an aggregated Markdown description. This will get regenerated each time, that's fine.
-            List<String> badHombres = (List<String>) event.getRewriteContext().get(KEY_BAD_ARCHIVES);
-            badHombres.add(inputZipFile.getPath());
-            String badHombresString = badHombres.stream().map(s -> " * `" + s + "`\n").collect(Collectors.joining());
+            List<String> badArchives = (List<String>) event.getRewriteContext().get(KEY_BAD_ARCHIVES);
+            badArchives.add(inputZipFile.getPath());
+            String badArchivesString = badArchives.stream().map(s -> " * `" + s + "`\n").collect(Collectors.joining());
 
-            classificationService.attachClassification(event, evalCtx, canonicalArchive,
-                    MALFORMED_ARCHIVE, "Cannot unzip these file(s): \n\n" + badHombresString);
+            classificationService.attachClassification(event, context, canonicalArchive,
+                    MALFORMED_ARCHIVE, "Cannot unzip these file(s): \n\n" + badArchivesString);
             archiveModel.setParseError("Cannot unzip the file: " + e.getMessage());
             LOG.warning("Cannot unzip the file " + inputZipFile.getPath() + " to " + appArchiveFolder.toString()
                         + ". The ArchiveModel was classified as malformed.");
@@ -143,7 +143,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
         archiveModel.setUnzippedDirectory(appArchiveFolder.toString());
 
         // add all unzipped files, and make sure their parent archive is set
-        recurseAndAddFiles(event, evalCtx, tempFolder, fileService, archiveModel, archiveModel, subArchivesOnly);
+        recurseAndAddFiles(event, context, tempFolder, fileService, archiveModel, archiveModel, subArchivesOnly);
     }
 
     /**
