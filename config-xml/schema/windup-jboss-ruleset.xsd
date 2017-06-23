@@ -283,7 +283,7 @@
             </xs:sequence>
             <xs:attribute name="title" type="xs:string" use="required"/>
             <xs:attribute name="category-id" type="category-id-type" use="optional" />
-            <xs:attribute name="issue-display-mode" type="issue-display-mode-type" use="optional" />
+            <xs:attribute name="show-in" type="show-in-type" use="optional" />
             <xs:attribute name="in" type="xs:string" use="optional" />
             <xs:attribute name="effort" type="xs:byte" use="optional" />
             <!-- <xs:attribute type="xs:string" name="message" use="optional"/> -->
@@ -293,8 +293,8 @@
     <xs:simpleType name="category-id-type">
         <xs:restriction base="xs:string" />
     </xs:simpleType>
-    
-    <xs:simpleType name="issue-display-mode-type">
+
+    <xs:simpleType name="show-in-type">
         <xs:annotation>
             <xs:documentation><![CDATA[
                This defines whether or not this particular issue will appear in summary reports
@@ -306,12 +306,12 @@
             <xs:enumeration value="all"/>
         </xs:restriction>
     </xs:simpleType>
-    
+
     <xs:simpleType name="quickfix-type">
         <xs:annotation>
             <xs:documentation><![CDATA[
             This describes type of quick fix in type attribute.
-            There are currently 3 types supported 
+            There are currently 3 types supported
             for replacement -> REPLACE, addition -> INSERT_LINE and deleting -> DELETE_LINE.]]>
             </xs:documentation>
         </xs:annotation>
@@ -334,7 +334,7 @@
             <xs:attribute name="title" type="xs:string" use="required"/>
             <xs:attribute name="effort" type="xs:byte" use="optional" />
             <xs:attribute name="category-id" type="category-id-type" use="optional" />
-            <xs:attribute name="issue-display-mode" type="issue-display-mode-type" use="optional" />
+            <xs:attribute name="show-in" type="show-in-type" use="optional" />
             <xs:attribute name="of" type="xs:string" use="optional" />
         </xs:complexType>
     </xs:element>
@@ -349,7 +349,7 @@
             </xs:simpleContent>
         </xs:complexType>
     </xs:element>
-    
+
     <xs:element name="quickfix">
         <xs:annotation>
             <xs:documentation>
@@ -365,7 +365,7 @@
             <xs:attribute type="quickfix-type" name="type" use="required" />
             <xs:attribute type="xs:string" name="name" use="required" />
         </xs:complexType>
-    </xs:element>    
+    </xs:element>
 
     <xs:element name="log">
         <xs:complexType>
