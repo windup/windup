@@ -18,6 +18,7 @@ import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.EffortReportModel;
 import org.jboss.windup.reporting.category.IssueCategoryModel;
+import org.jboss.windup.reporting.model.IssueDisplayMode;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
@@ -128,6 +129,18 @@ public class ClassificationService extends GraphService<ClassificationModel>
             public IssueCategoryModel vertexToKey(Vertex effortReportVertex)
             {
                 return frame(effortReportVertex).getIssueCategory();
+            }
+
+            @Override
+            public void accumulate(Vertex effortReportVertex)
+            {
+                /*
+                 * If it is a detail only issue, then summaries should not include it in the count.
+                 */
+                if (frame(effortReportVertex).getIssueDisplayMode() == IssueDisplayMode.DETAIL_ONLY)
+                    return;
+
+                super.accumulate(effortReportVertex);
             }
         };
         this.getMigrationEffortDetails(traversal, includeTags, excludeTags, recursive, true, accumulator);
