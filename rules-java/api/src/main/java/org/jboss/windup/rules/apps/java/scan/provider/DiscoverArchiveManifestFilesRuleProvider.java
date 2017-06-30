@@ -49,6 +49,11 @@ public class DiscoverArchiveManifestFilesRuleProvider extends IteratingRuleProvi
         FileModel manifestFile = archiveService.getChildFile(payload, "META-INF/MANIFEST.MF");
         if (manifestFile == null)
         {
+            manifestFile = archiveService.getChildFile(payload, "WEB-INF/classes/META-INF/MANIFEST.MF");
+        }
+
+        if (manifestFile == null)
+        {
             // no manifest found, skip this one
             return;
         }
