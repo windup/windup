@@ -34,6 +34,7 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.ClassificationModel;
+import org.jboss.windup.reporting.model.IssueDisplayMode;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.apps.xml.model.XsltTransformationModel;
@@ -290,6 +291,7 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
             classificationModel.setEffort(effort);
             classificationModel.addFileModel(payload);
             classificationModel.setRuleID(((Rule) context.get(Rule.class)).getId());
+            classificationModel.setIssueDisplayMode(IssueDisplayMode.DETAIL_ONLY);
 
             GraphService<LinkModel> linkService = new GraphService<>(graphContext, LinkModel.class);
             LinkModel linkModel = linkService.create();
