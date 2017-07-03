@@ -39,7 +39,7 @@ public class ResolveWebSphereWsExtensionXmlRuleProvider extends IteratingRulePro
     {
         ClassificationService classificationService = new ClassificationService(event.getGraphContext());
         ClassificationModel classificationModel = classificationService.attachClassification(event, context, payload, IssueCategoryRegistry.MANDATORY,
-                    "WebSphere WS Extension",
+                    "WebSphere web service extension descriptor (ibm-webservices-ext)",
                     "WebSphere Webservice Extension XML Deployment Descriptor.  \n"
                                 + "This deployment descriptor extension is IBM specific and it needs to be migrated to JBossWS.  \n"
                                 + "JBossWS implements the latest JAX-WS specification, which users can reference for any vendor-agnostic web service usage need.  \n"
