@@ -127,7 +127,7 @@ public class HintHandler implements ElementHandler<Hint>
         {
             IssueDisplayMode issueDisplayMode = IssueDisplayMode.parse(issueDisplayModeString);
             if (issueDisplayMode == IssueDisplayMode.DETAIL_ONLY && effort != 0)
-                LOG.warning("WARNING: classification: " + title + " with effort " + effort + " is marked as detail only. This is generally a mistake.");
+                LOG.warning("WARNING: hint: " + title + " with effort " + effort + " is marked as detail only. This is generally a mistake.");
             hint.withDisplayMode(issueDisplayMode);
         }
 
