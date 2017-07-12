@@ -8,8 +8,8 @@
                 </javaclass>
             </when>
             <perform>
-                <classification title="Not In Summary" issue-display-mode="detail-only"></classification>
-                <classification title="In Summary" issue-display-mode="all"></classification>
+                <classification title="Not In Summary" show-in="detail-only"></classification>
+                <classification title="In Summary" show-in="all"></classification>
                 <hint title="javax.servlet.http.HttpServletRequest usage">
                     <message>"Message from XML Rule</message>
                     <link href="http://example.com" title="Description from XML Hint Link"/>

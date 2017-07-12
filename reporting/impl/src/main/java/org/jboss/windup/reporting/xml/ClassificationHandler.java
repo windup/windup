@@ -83,7 +83,7 @@ public class ClassificationHandler implements ElementHandler<Classification>
             classification.withIssueCategory(issueCategory);
         }
 
-        String issueDisplayModeString = $(element).attr("issue-display-mode");
+        String issueDisplayModeString = $(element).attr("show-in");
         if (StringUtils.isNotBlank(issueDisplayModeString))
         {
             IssueDisplayMode issueDisplayMode = IssueDisplayMode.parse(issueDisplayModeString);
@@ -110,8 +110,8 @@ public class ClassificationHandler implements ElementHandler<Classification>
             tags.add(child.getTextContent());
         }
         classification.withTags(tags);
-        
-        // Quickfix parsing 
+
+        // Quickfix parsing
         children = $(element).children("quickfix").get();
         for (Element child : children)
         {

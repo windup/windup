@@ -99,7 +99,7 @@ public class HintHandler implements ElementHandler<Hint>
             hint = Hint.in(in).withText(message);
         }
 
-        String issueDisplayModeString = $(element).attr("issue-display-mode");
+        String issueDisplayModeString = $(element).attr("show-in");
         if (StringUtils.isNotBlank(issueDisplayModeString))
         {
             IssueDisplayMode issueDisplayMode = IssueDisplayMode.parse(issueDisplayModeString);
