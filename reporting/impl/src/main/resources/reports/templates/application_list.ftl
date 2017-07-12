@@ -241,7 +241,7 @@
         });
 
         $("body.viewAppList .apps .real .appInfo").sortElements(function(a, b){
-            return $(a).find(".traits .fileName").first().text().trim() > $(b).find(".traits .fileName").first().text().trim() ? 1 : -1;
+            return $(a).find(".traits .fileName").first().text().trim().toLowerCase() > $(b).find(".traits .fileName").first().text().trim().toLowerCase() ? 1 : -1;
         });
     </script>
     <script src="reports/resources/js/bootstrap.min.js"></script>
