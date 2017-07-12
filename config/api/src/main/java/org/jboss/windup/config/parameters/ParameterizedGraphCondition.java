@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.jboss.forge.furnace.util.Iterators;
@@ -29,6 +30,8 @@ public abstract class ParameterizedGraphCondition extends GraphCondition impleme
                 + "_parameterValueStoreMap";
     static final String RESULT_VALUE_STORE_MAP_KEY = ParameterizedGraphCondition.class.getName()
                 + "_resultParameterValueStoreMap";
+
+    private static boolean paramValueStoreOverwritten = false;
 
     protected abstract String getVarname();
 
@@ -110,8 +113,15 @@ public abstract class ParameterizedGraphCondition extends GraphCondition impleme
                                 ParameterValueStore last = resultSetStores.put(frame, valueStore);
                                 if (last != null)
                                 {
-                                    // WHY DOES THIS HAPPEN?
-                                    LOG.warning("DOES THIS STILL HAPPEN?");
+                                    // FIXME: WHY DOES THIS HAPPEN?
+                                    LOG.log(paramValueStoreOverwritten ?  Level.FINER : Level.WARNING,
+                                            String.format("resultSetStores already had a ParameterValueStore for frame:"
+                                            + "\n    %s"
+                                            + "\n    Old: %s"
+                                            + "\n    New: %s"
+                                            + "%s", frame.toPrettyString(), last, frame,
+                                            paramValueStoreOverwritten ? "" : "\nFurther incidents will be logged at FINER level as it may occur millions of times."));
+                                    paramValueStoreOverwritten = true;
                                 }
                             }
                         }
