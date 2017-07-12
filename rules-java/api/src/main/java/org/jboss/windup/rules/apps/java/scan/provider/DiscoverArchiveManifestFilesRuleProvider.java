@@ -16,8 +16,10 @@ import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.ArchiveService;
+import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.TechnologyTagService;
+import org.jboss.windup.rules.apps.java.model.HasManifestFilesModel;
 import org.jboss.windup.rules.apps.java.model.JarManifestModel;
 import org.jboss.windup.rules.apps.java.service.JarManifestService;
 import org.jboss.windup.util.Logging;
@@ -70,7 +72,9 @@ public class DiscoverArchiveManifestFilesRuleProvider extends IteratingRuleProvi
         technologyTagService.addTagToFileModel(manifestFile, TECH_TAG, TECH_TAG_LEVEL);
 
         JarManifestModel jarManifest = jarManifestService.addTypeToModel(manifestFile);
-        jarManifest.setArchive(archive);
+        GraphService<HasManifestFilesModel> hasManifestFilesModelService = new GraphService<>(event.getGraphContext(), HasManifestFilesModel.class);
+        hasManifestFilesModelService.addTypeToModel(archive).addManifestModel(jarManifest);
+
         jarManifest.setGenerateSourceReport(true);
 
         try (InputStream is = manifestFile.asInputStream())

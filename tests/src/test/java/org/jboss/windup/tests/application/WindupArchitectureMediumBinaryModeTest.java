@@ -88,7 +88,7 @@ public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTe
         boolean warManifestFound = false;
         for (JarManifestModel manifest : manifests)
         {
-            if (manifest.getArchive().getFileName().equals("Windup1x-javaee-example.war"))
+            if (manifest.getArchive().getFileName().equals("Windup1x-javaee-example.war") && !manifest.getFilePath().contains("/WEB-INF/"))
             {
                 Assert.assertEquals("1.0", manifest.asVertex().getProperty("Manifest-Version"));
                 Assert.assertEquals("Plexus Archiver", manifest.asVertex().getProperty("Archiver-Version"));
@@ -98,7 +98,7 @@ public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTe
 
             numberFound++;
         }
-        Assert.assertEquals(9, numberFound);
+        Assert.assertEquals(10, numberFound);
         Assert.assertTrue(warManifestFound);
     }
 
