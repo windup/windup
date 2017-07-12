@@ -46,6 +46,8 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 )
 public class CreateApplicationListReportRuleProvider extends AbstractRuleProvider
 {
+    private static final Logger LOG = Logger.getLogger(CreateApplicationListReportRuleProvider.class);
+
     public static final String APPLICATION_LIST_REPORT = "Application List";
     private static final String OUTPUT_FILENAME = "../index.html";
     public static final String TEMPLATE_PATH = "/reports/templates/application_list.ftl";
@@ -98,8 +100,8 @@ public class CreateApplicationListReportRuleProvider extends AbstractRuleProvide
         }
 
         // Our current model doesn't keep the list order, but once I wrote, I'm leaving the sorting here for when it does.
-        Collections.sort(appsList, new AppRootFileNameComparator());
-        Logger.getLogger(CreateApplicationListReportRuleProvider.class).info("AppList sorted:\n    " + StringUtils.join(appsList, "\n    "));///
+        //Collections.sort(appsList, new AppRootFileNameComparator());
+        LOG.info("AppList sorted:\n    " + StringUtils.join(appsList, "\n    "));///
         WindupVertexListModel<ApplicationReportModel> appsListVertex = listService.create();
         relatedData.put("applications", appsListVertex);
         for (ApplicationReportModel applicationReportModel : appsList)
@@ -109,20 +111,24 @@ public class CreateApplicationListReportRuleProvider extends AbstractRuleProvide
         List<ApplicationReportModel> appsSorted = new ArrayList<>();
         appsListVertex.getList().iterator().forEachRemaining(appsSorted::add);
         String names = appsSorted.stream().map(arm -> arm.getProjectModel().getRootFileModel().getFileName()).collect(Collectors.joining("\n    "));
-        Logger.getLogger(CreateApplicationListReportRuleProvider.class).info("AppList queried:\n    " + String.join("\n    ",  names));
+        LOG.info("AppList queried:\n    " + String.join("\n    ",  names));
 
         report.setRelatedResource(relatedData);
     }
 
 
 
-    private static class AppRootFileNameComparator implements Comparator<ApplicationReportModel>
+    public static class AppRootFileNameComparator implements Comparator<ApplicationReportModel>
     {
+        public AppRootFileNameComparator()
+        {
+        }
+
         public int compare(ApplicationReportModel o1, ApplicationReportModel o2)
         {
-            Logger.getLogger(CreateApplicationListReportRuleProvider.class).info(
-                    "Comparing " + o1.getProjectModel().getRootFileModel().getFileName() +
-                    " and      " + o2.getProjectModel().getRootFileModel().getFileName());///
+            LOG.info("\n\n"
+                    + "Comparing " + o1.getProjectModel().getRootFileModel().getFileName()
+                    + " and      " + o2.getProjectModel().getRootFileModel().getFileName());///
 
             // If the info is missing, put that to the end. This may be the case of virtual apps.
             if (null == o1.getProjectModel() || null == o1.getProjectModel().getRootFileModel() || null == o1.getProjectModel().getRootFileModel().getFileName() )
@@ -130,12 +136,16 @@ public class CreateApplicationListReportRuleProvider extends AbstractRuleProvide
             if (null == o2.getProjectModel() || null == o2.getProjectModel().getRootFileModel() || null == o2.getProjectModel().getRootFileModel().getFileName() )
                 return -1;
 
+            LOG.info("Wasn't null...");
             try {
-                return o1.getProjectModel().getRootFileModel().getFileName().compareToIgnoreCase(o2.getProjectModel().getRootFileModel().getFileName());
+                int res = o1.getProjectModel().getRootFileModel().getFileName().compareToIgnoreCase(o2.getProjectModel().getRootFileModel().getFileName());
+                LOG.info("Result: " + res);
+                return res;
                 //return Comparator.comparing((ApplicationReportModel o) -> o.getProjectModel().getRootFileModel().getFileName(), String::compareToIgnoreCase).compare(o1, o2);
             }
             catch (Throwable ex)
             {
+                LOG.info("Was null afterall? Just leave it as is.");
                 return 0;
             }
         }

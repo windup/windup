@@ -184,7 +184,10 @@
             <#assign virtualAppExists = false>
             <div class="real">
                 <#-- See CreateApplicationListReportRuleProvider -->
-                <#list reportModel.relatedResources.applications.list.iterator() as applicationReport>
+                <#--
+                <#list iterableToList(reportModel.relatedResources.applications.list)?sort_by(["projectModel","rootFileModel","fileName"]) as applicationReport>
+                -->
+                <#list sortApplicationsList(iterableToList(reportModel.relatedResources.applications.list)) as applicationReport>
                     <#if applicationReport.projectModel.projectType! != "VIRTUAL" >
                         <@applicationReportRenderer applicationReport/>
                     <#else>
@@ -208,7 +211,7 @@
         </div>
         <section class="apps">
             <div class="virtual">
-                <#list reportModel.relatedResources.applications.list.iterator() as applicationReport>
+                <#list iterableToList(reportModel.relatedResources.applications.list)?sort_by(["projectModel","name"]) as applicationReport>
                     <#if applicationReport.projectModel.projectType! = "VIRTUAL" >
                         <@applicationReportRenderer applicationReport/>
                     </#if>
