@@ -2,6 +2,7 @@ package org.jboss.windup.rules.apps.java.scan.provider;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.jar.Manifest;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -45,12 +46,19 @@ public class DiscoverArchiveManifestFilesRuleProvider extends IteratingRuleProvi
     @Override
     public void perform(GraphRewrite event, EvaluationContext context, ArchiveModel payload)
     {
+        String[] filenames = {
+                    "META-INF/MANIFEST.MF",
+                    "WEB-INF/classes/META-INF/MANIFEST.MF"
+        };
+        Arrays.stream(filenames).forEach(filename -> {
+            importManifest(event, payload, filename);
+        });
+    }
+
+    private void importManifest(GraphRewrite event, ArchiveModel archive, String manifestFilePath)
+    {
         ArchiveService archiveService = new ArchiveService(event.getGraphContext());
-        FileModel manifestFile = archiveService.getChildFile(payload, "META-INF/MANIFEST.MF");
-        if (manifestFile == null)
-        {
-            manifestFile = archiveService.getChildFile(payload, "WEB-INF/classes/META-INF/MANIFEST.MF");
-        }
+        FileModel manifestFile = archiveService.getChildFile(archive, manifestFilePath);
 
         if (manifestFile == null)
         {
@@ -62,7 +70,7 @@ public class DiscoverArchiveManifestFilesRuleProvider extends IteratingRuleProvi
         technologyTagService.addTagToFileModel(manifestFile, TECH_TAG, TECH_TAG_LEVEL);
 
         JarManifestModel jarManifest = jarManifestService.addTypeToModel(manifestFile);
-        jarManifest.setArchive(payload);
+        jarManifest.setArchive(archive);
         jarManifest.setGenerateSourceReport(true);
 
         try (InputStream is = manifestFile.asInputStream())
@@ -81,15 +89,17 @@ public class DiscoverArchiveManifestFilesRuleProvider extends IteratingRuleProvi
                 jarManifest.asVertex().setProperty(property, propertyValue);
             }
 
-            if (StringUtils.isBlank(jarManifest.getName())) {
+            if (StringUtils.isBlank(jarManifest.getName()))
+            {
                 // if the name is still blank, try to get it from the first entry in the file list.
                 // A few apache projects do it this way
-                for (String entry : manifest.getEntries().keySet()) {
+                for (String entry : manifest.getEntries().keySet())
+                {
                     for (Object key : manifest.getAttributes(entry).keySet())
                     {
                         String property = StringUtils.trim(key.toString());
                         String propertyValue = StringUtils.trim(manifest.getAttributes(entry).get(key).toString());
-                        if (StringUtils.isBlank((String)jarManifest.asVertex().getProperty(property)))
+                        if (StringUtils.isBlank((String) jarManifest.asVertex().getProperty(property)))
                             jarManifest.asVertex().setProperty(property, propertyValue);
                     }
                     if (!StringUtils.isBlank(jarManifest.getName()))
@@ -102,5 +112,4 @@ public class DiscoverArchiveManifestFilesRuleProvider extends IteratingRuleProvi
             LOG.log(Level.WARNING, "Exception reading manifest from file: " + manifestFile.getFilePath(), e);
         }
     }
-
 }
