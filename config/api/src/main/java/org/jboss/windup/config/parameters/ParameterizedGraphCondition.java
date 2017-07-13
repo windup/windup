@@ -31,7 +31,7 @@ public abstract class ParameterizedGraphCondition extends GraphCondition impleme
     static final String RESULT_VALUE_STORE_MAP_KEY = ParameterizedGraphCondition.class.getName()
                 + "_resultParameterValueStoreMap";
 
-    private static boolean paramValueStoreOverwritten = false;
+    private static boolean isParamValueStoreLoggable = true;
 
     protected abstract String getVarname();
 
@@ -111,17 +111,17 @@ public abstract class ParameterizedGraphCondition extends GraphCondition impleme
                             for (WindupVertexFrame frame : variable)
                             {
                                 ParameterValueStore last = resultSetStores.put(frame, valueStore);
-                                if (last != null)
+                                if (last != null && isParamValueStoreLoggable)
                                 {
                                     // FIXME: WHY DOES THIS HAPPEN?
-                                    LOG.log(paramValueStoreOverwritten ?  Level.FINER : Level.WARNING,
+                                    LOG.log(isParamValueStoreLoggable ? Level.WARNING : Level.FINER,
                                             String.format("resultSetStores already had a ParameterValueStore for frame:"
                                             + "\n    %s"
                                             + "\n    Old: %s"
                                             + "\n    New: %s"
                                             + "%s", frame.toPrettyString(), last, frame,
-                                            paramValueStoreOverwritten ? "" : "\nFurther incidents will be logged at FINER level as it may occur millions of times."));
-                                    paramValueStoreOverwritten = true;
+                                            isParamValueStoreLoggable ? "" : "\nFurther incidents will be logged at FINER level as it may occur millions of times."));
+                                    isParamValueStoreLoggable = LOG.isLoggable(Level.FINER);
                                 }
                             }
                         }
