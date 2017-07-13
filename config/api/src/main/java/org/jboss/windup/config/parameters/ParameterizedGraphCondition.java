@@ -111,7 +111,7 @@ public abstract class ParameterizedGraphCondition extends GraphCondition impleme
                             for (WindupVertexFrame frame : variable)
                             {
                                 ParameterValueStore last = resultSetStores.put(frame, valueStore);
-                                if (last != null && isParamValueStoreLoggable)
+                                if (last != null && (isParamValueStoreLoggable || LOG.isLoggable(Level.FINER)))
                                 {
                                     // FIXME: WHY DOES THIS HAPPEN?
                                     LOG.log(isParamValueStoreLoggable ? Level.WARNING : Level.FINER,
@@ -121,7 +121,7 @@ public abstract class ParameterizedGraphCondition extends GraphCondition impleme
                                             + "\n    New: %s"
                                             + "%s", frame.toPrettyString(), last, frame,
                                             isParamValueStoreLoggable ? "\nFurther incidents will be logged at FINER level as it may occur millions of times." : ""));
-                                    isParamValueStoreLoggable = LOG.isLoggable(Level.FINER);
+                                    isParamValueStoreLoggable = false;
                                 }
                             }
                         }
