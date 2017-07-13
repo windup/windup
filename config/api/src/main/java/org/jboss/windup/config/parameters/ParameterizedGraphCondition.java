@@ -113,9 +113,9 @@ public abstract class ParameterizedGraphCondition extends GraphCondition impleme
                                 ParameterValueStore last = resultSetStores.put(frame, valueStore);
                                 if (last != null)
                                 {
-                                    // FIXME: WHY DOES THIS HAPPEN?
+                                    // FIXME: WHY DOES THIS HAPPEN? WINDUP-1549
                                     LOG.log(paramValueStoreOverwritten ?  Level.FINER : Level.WARNING,
-                                            String.format("resultSetStores already had a ParameterValueStore for frame:"
+                                            () -> String.format("resultSetStores already had a ParameterValueStore for frame:"
                                             + "\n    %s"
                                             + "\n    Old: %s"
                                             + "\n    New: %s"
