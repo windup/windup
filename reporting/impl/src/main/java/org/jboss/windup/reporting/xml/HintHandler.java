@@ -5,6 +5,7 @@ import static org.joox.JOOX.$;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -51,6 +52,7 @@ import org.w3c.dom.Element;
 @NamespaceElementHandler(elementName = "hint", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
 public class HintHandler implements ElementHandler<Hint>
 {
+    private static final Logger LOG = Logger.getLogger(HintHandler.class.getName());
 
     @Override
     public Hint processElement(ParserContext handlerManager, Element element) throws ConfigurationException
@@ -99,13 +101,6 @@ public class HintHandler implements ElementHandler<Hint>
             hint = Hint.in(in).withText(message);
         }
 
-        String issueDisplayModeString = $(element).attr("issue-display-mode");
-        if (StringUtils.isNotBlank(issueDisplayModeString))
-        {
-            IssueDisplayMode issueDisplayMode = IssueDisplayMode.parse(issueDisplayModeString);
-            hint.withDisplayMode(issueDisplayMode);
-        }
-
         if (StringUtils.isNotBlank(categoryID))
         {
             IssueCategoryRegistry issueCategoryRegistry = IssueCategoryRegistry.instance(handlerManager.getRuleLoaderContext().getContext());
@@ -113,17 +108,27 @@ public class HintHandler implements ElementHandler<Hint>
             hint.withIssueCategory(issueCategory);
         }
 
+        int effort = 0;
         if (!StringUtils.isBlank(effortStr))
         {
             try
             {
-                int effort = Integer.parseInt(effortStr);
+                effort = Integer.parseInt(effortStr);
                 hint.withEffort(effort);
             }
             catch (NumberFormatException e)
             {
                 throw new WindupException("Could not parse effort level: " + effortStr + " as an integer!");
             }
+        }
+
+        String issueDisplayModeString = $(element).attr("issue-display-mode");
+        if (StringUtils.isNotBlank(issueDisplayModeString))
+        {
+            IssueDisplayMode issueDisplayMode = IssueDisplayMode.parse(issueDisplayModeString);
+            if (issueDisplayMode == IssueDisplayMode.DETAIL_ONLY && effort != 0)
+                LOG.warning("WARNING: hint: " + title + " with effort " + effort + " is marked as detail only. This is generally a mistake.");
+            hint.withDisplayMode(issueDisplayMode);
         }
 
         List<Element> children = $(element).children().get();

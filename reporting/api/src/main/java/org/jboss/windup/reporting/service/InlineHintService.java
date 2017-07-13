@@ -26,6 +26,8 @@ import com.tinkerpop.blueprints.Compare;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.structures.FramedVertexIterable;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.jboss.windup.reporting.model.IssueDisplayMode;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -176,6 +178,18 @@ public class InlineHintService extends GraphService<InlineHintModel>
             public IssueCategoryModel vertexToKey(Vertex effortReportVertex)
             {
                 return frame(effortReportVertex).getIssueCategory();
+            }
+
+            @Override
+            public void accumulate(Vertex effortReportVertex)
+            {
+                /*
+                 * If it is a detail only issue, then summaries should not include it in the count.
+                 */
+                if (frame(effortReportVertex).getIssueDisplayMode() == IssueDisplayMode.DETAIL_ONLY)
+                    return;
+
+                super.accumulate(effortReportVertex);
             }
         };
         this.getMigrationEffortDetails(traversal, includeTags, excludeTags, recursive, true, accumulator);
