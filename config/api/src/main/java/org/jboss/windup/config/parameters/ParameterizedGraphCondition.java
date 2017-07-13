@@ -120,7 +120,7 @@ public abstract class ParameterizedGraphCondition extends GraphCondition impleme
                                             + "\n    Old: %s"
                                             + "\n    New: %s"
                                             + "%s", frame.toPrettyString(), last, frame,
-                                            isParamValueStoreLoggable ? "" : "\nFurther incidents will be logged at FINER level as it may occur millions of times."));
+                                            isParamValueStoreLoggable ? "\nFurther incidents will be logged at FINER level as it may occur millions of times." : ""));
                                     isParamValueStoreLoggable = LOG.isLoggable(Level.FINER);
                                 }
                             }
