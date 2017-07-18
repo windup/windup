@@ -1,5 +1,8 @@
 package org.jboss.windup.bootstrap;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.logging.Logger;
 
 import org.jboss.windup.exec.WindupProgressMonitor;
@@ -22,7 +25,7 @@ public class ConsoleProgressMonitor implements WindupProgressMonitor
     {
         this.totalWork = totalWork;
 
-        String message = String.format("[%d/%d] %s", currentWork, totalWork, name);
+        String message = String.format("%s [%d/%d] %s", getCachedTime(), currentWork, totalWork, name);
         System.out.println(message);
         LOG.info(message);
     }
@@ -47,7 +50,7 @@ public class ConsoleProgressMonitor implements WindupProgressMonitor
     @Override
     public void setTaskName(String name)
     {
-        String message = String.format("[%d/%d] \t", currentWork, totalWork, name);
+        String message = String.format("%s [%d/%d] \t", getCachedTime(), currentWork, totalWork, name);
         System.out.println(message);
         LOG.info(message);
     }
@@ -55,7 +58,7 @@ public class ConsoleProgressMonitor implements WindupProgressMonitor
     @Override
     public void subTask(String subTask)
     {
-        String message = String.format("[%d/%d] %s", currentWork, totalWork, subTask);
+        String message = String.format("%s [%d/%d] %s", getCachedTime(), currentWork, totalWork, subTask);
         if (subTask.endsWith("\r"))
         {
             System.out.print(message);
@@ -71,5 +74,24 @@ public class ConsoleProgressMonitor implements WindupProgressMonitor
     public void worked(int work)
     {
         this.currentWork += work;
+    }
+    
+    private static final DateFormat DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd HH:mm"); 
+    private static long lastFormatted = 0;
+    private static String lastFormattedString = "";
+    
+    private static String getCachedTime() {
+        long now = System.currentTimeMillis();
+        if (now > lastFormatted + 60_000) {
+            Date date = new Date(now);
+            String format;
+            // SimpleDateFormat is not thread safe.
+            synchronized (DATE_FORMATTER) {
+                format = DATE_FORMATTER.format(date);
+                lastFormatted = now;
+                lastFormattedString = format;
+            }
+        }
+        return lastFormattedString;
     }
 }
