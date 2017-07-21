@@ -184,7 +184,10 @@
             <#assign virtualAppExists = false>
             <div class="real">
                 <#-- See CreateApplicationListReportRuleProvider -->
-                <#list reportModel.relatedResources.applications.list.iterator() as applicationReport>
+                <#--
+                <#list iterableToList(reportModel.relatedResources.applications.list)?sort_by(["projectModel","rootFileModel","fileName"]) as applicationReport>
+                -->
+                <#list sortApplicationsList(iterableToList(reportModel.relatedResources.applications.list)) as applicationReport>
                     <#if applicationReport.projectModel.projectType! != "VIRTUAL" >
                         <@applicationReportRenderer applicationReport/>
                     <#else>
@@ -208,7 +211,7 @@
         </div>
         <section class="apps">
             <div class="virtual">
-                <#list reportModel.relatedResources.applications.list.iterator() as applicationReport>
+                <#list iterableToList(reportModel.relatedResources.applications.list)?sort_by(["projectModel","name"]) as applicationReport>
                     <#if applicationReport.projectModel.projectType! = "VIRTUAL" >
                         <@applicationReportRenderer applicationReport/>
                     </#if>
@@ -238,7 +241,7 @@
         });
 
         $("body.viewAppList .apps .real .appInfo").sortElements(function(a, b){
-            return $(a).find(".traits .fileName").first().text().trim() > $(b).find(".traits .fileName").first().text().trim() ? 1 : -1;
+            return $(a).find(".traits .fileName").first().text().trim().toLowerCase() > $(b).find(".traits .fileName").first().text().trim().toLowerCase() ? 1 : -1;
         });
     </script>
     <script src="reports/resources/js/bootstrap.min.js"></script>

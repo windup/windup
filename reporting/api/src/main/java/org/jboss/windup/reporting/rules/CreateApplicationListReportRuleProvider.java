@@ -1,6 +1,7 @@
 package org.jboss.windup.reporting.rules;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -8,7 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
-import org.apache.commons.lang3.ObjectUtils;
 
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.windup.config.AbstractRuleProvider;
@@ -25,6 +25,7 @@ import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.jboss.windup.reporting.model.TemplateType;
 import org.jboss.windup.reporting.model.WindupVertexListModel;
 import org.jboss.windup.reporting.service.ApplicationReportService;
+import org.ocpsoft.logging.Logger;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -33,6 +34,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * This renders an application index page listing all applications analyzed by the current execution of windup.
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
+ * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
  */
 @RuleMetadata(
         phase = PostReportGenerationPhase.class,
@@ -41,6 +43,8 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 )
 public class CreateApplicationListReportRuleProvider extends AbstractRuleProvider
 {
+    private static final Logger LOG = Logger.getLogger(CreateApplicationListReportRuleProvider.class);
+
     public static final String APPLICATION_LIST_REPORT = "Application List";
     private static final String OUTPUT_FILENAME = "../index.html";
     public static final String TEMPLATE_PATH = "/reports/templates/application_list.ftl";
@@ -79,7 +83,6 @@ public class CreateApplicationListReportRuleProvider extends AbstractRuleProvide
         report.setReportFilename(OUTPUT_FILENAME);
 
         GraphService<WindupVertexListModel> listService = new GraphService<>(context, WindupVertexListModel.class);
-        WindupVertexListModel<ApplicationReportModel> appsListVertex = listService.create();
         Map<String, WindupVertexFrame> relatedData = new HashMap<>();
         final Iterable<ApplicationReportModel> apps = applicationReportService.findAll();
         List<ApplicationReportModel> appsList = new ArrayList();
@@ -92,11 +95,11 @@ public class CreateApplicationListReportRuleProvider extends AbstractRuleProvide
                     relatedData.put("sharedLibsApplicationReport", applicationReportModel); // Used as kind of boolean in the template.
             }
         }
-        relatedData.put("applications", appsListVertex);
 
         // Our current model doesn't keep the list order, but once I wrote, I'm leaving the sorting here for when it does.
         Collections.sort(appsList, new AppRootFileNameComparator());
-
+        WindupVertexListModel<ApplicationReportModel> appsListVertex = listService.create();
+        relatedData.put("applications", appsListVertex);
         for (ApplicationReportModel applicationReportModel : appsList)
             appsListVertex.addItem(applicationReportModel);
 
@@ -105,8 +108,12 @@ public class CreateApplicationListReportRuleProvider extends AbstractRuleProvide
 
 
 
-    private static class AppRootFileNameComparator implements Comparator<ApplicationReportModel>
+    public static class AppRootFileNameComparator implements Comparator<ApplicationReportModel>
     {
+        public AppRootFileNameComparator()
+        {
+        }
+
         public int compare(ApplicationReportModel o1, ApplicationReportModel o2)
         {
             // If the info is missing, put that to the end. This may be the case of virtual apps.
@@ -115,16 +122,23 @@ public class CreateApplicationListReportRuleProvider extends AbstractRuleProvide
             if (null == o2.getProjectModel() || null == o2.getProjectModel().getRootFileModel() || null == o2.getProjectModel().getRootFileModel().getFileName() )
                 return -1;
 
-            // On error resume next.
             try {
-                return ObjectUtils.compare(
-                    o1.getProjectModel().getRootFileModel().getFileName(),
-                    o2.getProjectModel().getRootFileModel().getFileName());
+                return o1.getProjectModel().getRootFileModel().getFileName().compareToIgnoreCase(o2.getProjectModel().getRootFileModel().getFileName());
+                //return Comparator.comparing((ApplicationReportModel o) -> o.getProjectModel().getRootFileModel().getFileName(), String::compareToIgnoreCase).compare(o1, o2);
             }
             catch (Throwable ex)
             {
                 return 0;
             }
         }
+    }
+
+    ///
+    public static void main(String[] args)
+    {
+        List<String> list = Arrays.asList(new String[]{"C", "b", "ab", "A", "D"});
+        //Collections.sort(list, Comparator.comparing((String str) -> str, String::compareToIgnoreCase));
+        Collections.sort(list, Comparator.comparing((String o) -> o, String::compareToIgnoreCase));
+        System.out.println("AppList sorted:\n    " + String.join("\n    ", list));
     }
 }
