@@ -11,9 +11,12 @@ import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
+import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.LinkModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.graph.service.LinkService;
 import org.jboss.windup.config.projecttraversal.ProjectTraversalCache;
 import org.jboss.windup.reporting.category.IssueCategoryModel;
 import org.jboss.windup.reporting.category.IssueCategoryRegistry;
@@ -42,6 +45,8 @@ import org.w3c.dom.Element;
  * Discovers WebSphere EJB XML files and parses the related metadata
  *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
+ * @author <a href="mailto:mnovotny@redhat.com">Marek Novotny</a>
+ * 
  */
 @RuleMetadata(phase = InitialAnalysisPhase.class, after = DiscoverEjbConfigurationXmlRuleProvider.class, perform = "Discover WebSphere EJB XML Files")
 public class ResolveWebSphereEjbBindingXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
@@ -59,34 +64,48 @@ public class ResolveWebSphereEjbBindingXmlRuleProvider extends IteratingRuleProv
     @Override
     public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
     {
-        EnvironmentReferenceService envRefService = new EnvironmentReferenceService(event.getGraphContext());
+        GraphContext graphContext = event.getGraphContext();
+        
+        EnvironmentReferenceService envRefService = new EnvironmentReferenceService(graphContext);
 
-        XmlFileService xmlFileService = new XmlFileService(event.getGraphContext());
-        JNDIResourceService jndiResourceService = new JNDIResourceService(event.getGraphContext());
-        JmsDestinationService jmsDestinationService = new JmsDestinationService(event.getGraphContext());
-        GraphService<EjbSessionBeanModel> ejbSessionBeanService = new GraphService<>(event.getGraphContext(), EjbSessionBeanModel.class);
-        GraphService<EjbMessageDrivenModel> mdbService = new GraphService<>(event.getGraphContext(), EjbMessageDrivenModel.class);
+        XmlFileService xmlFileService = new XmlFileService(graphContext);
+        JNDIResourceService jndiResourceService = new JNDIResourceService(graphContext);
+        JmsDestinationService jmsDestinationService = new JmsDestinationService(graphContext);
+        GraphService<EjbSessionBeanModel> ejbSessionBeanService = new GraphService<>(graphContext, EjbSessionBeanModel.class);
+        GraphService<EjbMessageDrivenModel> mdbService = new GraphService<>(graphContext, EjbMessageDrivenModel.class);
 
         // Not Removed as per WINDUPRULE-214 - it duplicated GenerateJBossEjbDescriptorRuleProvider which reacts to associateAsVendorExtension() below.
-        ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-        ClassificationModel classification = classificationService.attachClassification(event, context, payload, IssueCategoryRegistry.MANDATORY, "WebSphere EJB Binding",
-                    "WebSphere Enterprise Java Bean Binding XML Descriptor");
-        classification.setEffort(1);
-        IssueCategoryModel cat = IssueCategoryRegistry.loadFromGraph(event.getGraphContext(), IssueCategoryRegistry.MANDATORY);
+        ClassificationService classificationService = new ClassificationService(graphContext);
+        ClassificationModel classification = classificationService.attachClassification(event, context, payload, IssueCategoryRegistry.MANDATORY, "WebSphere EJB binding descriptor (ibm-ejb-jar-bnd)",
+                    "WebSphere Enterprise Java Bean Binding XML Descriptor describes how to bind enterprise beans or its resources. For instance EJB JNDI or data sources for entity beans."
+                    + " \n Red Hat JBoss EAP uses standard Java EE annotations or deployment descriptors like `ejb-jar.xml` or `jboss-ejb3.xml`. Please read JBoss EAP 7 documentation.");
+        classification.setEffort(3);
+        IssueCategoryModel cat = IssueCategoryRegistry.loadFromGraph(graphContext, IssueCategoryRegistry.MANDATORY);
         classification.setIssueCategory(cat);
 
-        TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
+        LinkService linkService = new LinkService(graphContext);
+        LinkModel link = linkService.create();
+        link.setDescription("Websphere AS - Application bindings");
+        link.setLink("https://www.ibm.com/support/knowledgecenter/en/SSAW57_8.0.0/com.ibm.websphere.nd.doc/info/ae/ae/crun_app_bindings.html#crun_app_bindings__timbindings");
+        classificationService.attachLink(classification, link);
+
+        LinkModel eap7Link = linkService.create();
+        eap7Link.setDescription("EAP 7 - Developing EJB Applications");
+        eap7Link.setLink("https://access.redhat.com/documentation/en-us/red_hat_jboss_enterprise_application_platform/7.0/html-single/developing_ejb_applications/");
+        classificationService.attachLink(classification, eap7Link);
+        
+        TechnologyTagService technologyTagService = new TechnologyTagService(graphContext);
         technologyTagService.addTagToFileModel(payload, "WebSphere EJB", TechnologyTagLevel.IMPORTANT);
 
         Document doc = xmlFileService.loadDocumentQuiet(event, context, payload);
         if (doc == null)
             return;
 
-        VendorSpecificationExtensionService vendorSpecificationService = new VendorSpecificationExtensionService(event.getGraphContext());
+        VendorSpecificationExtensionService vendorSpecificationService = new VendorSpecificationExtensionService(graphContext);
         // mark as vendor extension; create reference to ejb-jar.xml
         vendorSpecificationService.associateAsVendorExtension(payload, "ejb-jar.xml");
 
-        Set<ProjectModel> applications = ProjectTraversalCache.getApplicationsForProject(event.getGraphContext(), payload.getProjectModel());
+        Set<ProjectModel> applications = ProjectTraversalCache.getApplicationsForProject(graphContext, payload.getProjectModel());
 
         // register beans to JNDI
         for (Element resourceRef : $(doc).find("ejbBindings").get())
