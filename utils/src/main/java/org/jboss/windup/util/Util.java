@@ -11,6 +11,7 @@ public class Util
 {
     public static final String WINDUP_BRAND_NAME_LONG = "Red Hat Application Migration Toolkit";
     public static final String WINDUP_BRAND_NAME_ACRONYM = "RHAMT";
+    public static final String WINDUP_CLI_NAME = "rhamt-cli";
 
     /**
      * Returns a single item from the Iterator.

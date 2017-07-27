@@ -6,6 +6,7 @@ import java.util.List;
 import org.jboss.windup.config.AbstractConfigurationOption;
 import org.jboss.windup.config.InputType;
 import org.jboss.windup.config.ValidationResult;
+import org.jboss.windup.util.Util;
 
 /**
  * Indicates the Java packages for Windup to scan.
@@ -60,7 +61,7 @@ public class ScanPackagesOption extends AbstractConfigurationOption
         {
             String message = "No packages were set in --" + ScanPackagesOption.NAME
                         + ". This will cause all .jar files to be decompiled and can possibly take a long time. "
-                        + "Check the Windup User Guide for performance tips.";
+                        + "Check the " + Util.WINDUP_BRAND_NAME_ACRONYM + " User Guide for performance tips.";
 
             return new ValidationResult(ValidationResult.Level.WARNING, message);
         }
@@ -68,7 +69,7 @@ public class ScanPackagesOption extends AbstractConfigurationOption
         {
             String message = "The packages specified to scan are very broad. This may cause many .jar files to be "
                         + "decompiled and can possibly take a long time. "
-                        + "Check the Windup User Guide for performance tips.";
+                        + "Check the " + Util.WINDUP_BRAND_NAME_ACRONYM + " User Guide for performance tips.";
 
             return new ValidationResult(ValidationResult.Level.WARNING, message);
         }

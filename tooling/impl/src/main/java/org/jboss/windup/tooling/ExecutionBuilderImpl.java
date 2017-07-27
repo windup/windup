@@ -39,6 +39,7 @@ import org.jboss.windup.tooling.quickfix.QuickfixService;
 import org.jboss.windup.tooling.rules.RuleProviderRegistry;
 import org.jboss.windup.tooling.rules.RuleProviderRegistryImpl;
 import org.jboss.windup.util.PathUtil;
+import org.jboss.windup.util.Util;
 import org.jboss.windup.util.exception.WindupException;
 
 /**
@@ -232,7 +233,7 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
         }
         catch (IOException e)
         {
-            throw new WindupException("Failed to configure windup due to: " + e.getMessage(), e);
+            throw new WindupException("Failed to configure " + Util.WINDUP_BRAND_NAME_ACRONYM + " due to: " + e.getMessage(), e);
         }
         ToolingProgressMonitorAdapter progressMonitorAdapter = new ToolingProgressMonitorAdapter(this.progressMonitor);
 

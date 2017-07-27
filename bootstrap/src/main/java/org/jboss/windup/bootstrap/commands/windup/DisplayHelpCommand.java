@@ -5,6 +5,7 @@ import org.jboss.windup.bootstrap.commands.CommandPhase;
 import org.jboss.windup.bootstrap.commands.CommandResult;
 import org.jboss.windup.bootstrap.help.Help;
 import org.jboss.windup.bootstrap.help.OptionDescription;
+import org.jboss.windup.util.Util;
 
 public class DisplayHelpCommand implements Command
 {
@@ -12,11 +13,11 @@ public class DisplayHelpCommand implements Command
     public CommandResult execute()
     {
         StringBuilder sb = new StringBuilder();
-        sb.append("Usage: windup [OPTION]... PARAMETER ... \n");
+        sb.append("Usage: "+Util.WINDUP_CLI_NAME+" [OPTION]... PARAMETER ... \n");
         sb.append("Extendable migration analysis, at your fingertips. \n");
         sb.append("\n");
 
-        sb.append("\nWindup Options:\n");
+        sb.append("\n"+Util.WINDUP_BRAND_NAME_ACRONYM +" CLI Options:\n");
 
         for (OptionDescription option : Help.load().getOptions())
         {
@@ -43,10 +44,10 @@ public class DisplayHelpCommand implements Command
         sb.append("\nForge Options:\n");
 
         sb.append("-i, --install GROUP_ID:ARTIFACT_ID[:VERSION]\n");
-        sb.append("\t install the required addons and exit. ex: `windup -i core-addon-x` or `windup -i org.example.addon:example:1.0.0` \n");
+        sb.append("\t install the required addons and exit. ex: `"+Util.WINDUP_CLI_NAME+" -i core-addon-x` or `"+Util.WINDUP_CLI_NAME+" -i org.example.addon:example:1.0.0` \n");
 
         sb.append("-r, --remove GROUP_ID:ARTIFACT_ID[:VERSION]\n");
-        sb.append("\t remove the required addons and exit. ex: `windup -r core-addon-x` or `windup -r org.example.addon:example:1.0.0` \n");
+        sb.append("\t remove the required addons and exit. ex: `"+Util.WINDUP_CLI_NAME+" -r core-addon-x` or `"+Util.WINDUP_CLI_NAME+" -r org.example.addon:example:1.0.0` \n");
 
         sb.append("-l, --list\n");
         sb.append("\t list installed addons and exit \n");

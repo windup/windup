@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.config.AbstractPathConfigurationOption;
 import org.jboss.windup.config.InputType;
 import org.jboss.windup.config.ValidationResult;
+import org.jboss.windup.util.Util;
 
 /**
  * Specifies the Input path for Windup.
@@ -93,7 +94,7 @@ public class InputPathOption extends AbstractPathConfigurationOption
                         "These input applications or directories are large:"
                                     + "\n\t" + StringUtils.join(largeApps, "\n\t") + "\n"
                                     + " Processing may take a very long time."
-                                    + " Please consult the Windup User Guide for performance tips."
+                                    + " Please consult the "+Util.WINDUP_BRAND_NAME_ACRONYM+" User Guide for performance tips."
                                     + " Would you like to continue?",
                         true);
 

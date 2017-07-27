@@ -4,6 +4,7 @@ import java.util.concurrent.Callable;
 
 import org.jboss.forge.addon.ui.input.UIInput;
 import org.jboss.windup.config.ConfigurationOption;
+import org.jboss.windup.util.Util;
 
 /**
  * An adapter between {@link ConfigurationOption#getDefaultValue()} default values, and
@@ -34,7 +35,7 @@ public class DefaultValueAdapter<T> implements Callable<T>
         Object val = this.option.getDefaultValue();
         if (val != null && this.expectedType != null && !this.expectedType.isAssignableFrom(val.getClass()))
         {
-            throw new IllegalStateException("Windup option " + option.getName() +
+            throw new IllegalStateException(Util.WINDUP_BRAND_NAME_ACRONYM + " option " + option.getName() +
                         " was expected to return " + expectedType.getName() + " but returned " + val.getClass());
         }
         return (T) val;
