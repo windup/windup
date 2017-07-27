@@ -1,6 +1,7 @@
 package org.jboss.windup.config;
 
 import org.jboss.windup.graph.model.WindupConfigurationModel;
+import org.jboss.windup.util.Util;
 
 /**
  * Indicates whether Windup processing should render reports at all.
@@ -14,7 +15,7 @@ public class SkipReportsRenderingOption extends AbstractConfigurationOption
     @Override
     public String getDescription()
     {
-        return "If set, Windup will not generate reports.";
+        return "If set, "+Util.WINDUP_BRAND_NAME_ACRONYM+" will not generate reports.";
     }
 
     @Override
@@ -26,7 +27,7 @@ public class SkipReportsRenderingOption extends AbstractConfigurationOption
     @Override
     public String getLabel()
     {
-        return "Should Windup generate HTML reports?";
+        return "Should "+Util.WINDUP_BRAND_NAME_ACRONYM+" generate HTML reports?";
     }
 
     @Override

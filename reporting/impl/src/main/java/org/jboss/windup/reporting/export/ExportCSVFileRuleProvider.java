@@ -23,6 +23,7 @@ import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.InlineHintService;
 import org.jboss.windup.util.PathUtil;
+import org.jboss.windup.util.Util;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -181,7 +182,7 @@ public class ExportCSVFileRuleProvider extends AbstractRuleProvider
             }
             catch (IOException e)
             {
-                System.err.println("Windup was not able to create a CSV file " + path + ". CSV Export will not be generated.");
+                System.err.println(Util.WINDUP_BRAND_NAME_ACRONYM+" was not able to create a CSV file " + path + ". CSV Export will not be generated.");
                 throw new WindupException("Unable to create file " + path, e);
             }
         }

@@ -15,6 +15,7 @@ import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.addon.ui.util.Categories;
 import org.jboss.forge.addon.ui.util.Metadata;
 import org.jboss.windup.exec.updater.RulesetsUpdater;
+import org.jboss.windup.util.Util;
 
 /**
  * Provides a basic UI command updating the rules/migration-core folder with the latest version.
@@ -35,7 +36,7 @@ public class WindupUpdateRulesetCommand implements UICommand
     @Override
     public UICommandMetadata getMetadata(UIContext ctx)
     {
-        return Metadata.forCommand(getClass()).name("Windup Update Ruleset")
+        return Metadata.forCommand(getClass()).name(Util.WINDUP_BRAND_NAME_ACRONYM+" Update Ruleset")
                     .description("Update the ruleset containing the migration rules")
                     .category(Categories.create("Platform", "Migration"));
     }

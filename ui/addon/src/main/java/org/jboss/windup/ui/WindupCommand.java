@@ -50,6 +50,7 @@ import org.jboss.windup.exec.configuration.options.OutputPathOption;
 import org.jboss.windup.exec.configuration.options.OverwriteOption;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
+import org.jboss.windup.util.Util;
 
 /**
  * Provides a basic Forge UI implementation for running Windup from within a {@link UIProvider}.
@@ -82,7 +83,7 @@ public class WindupCommand implements UICommand
     @Override
     public UICommandMetadata getMetadata(UIContext ctx)
     {
-        return Metadata.forCommand(getClass()).name("Windup Migrate App").description("Run Windup Migration Analyzer")
+        return Metadata.forCommand(getClass()).name(Util.WINDUP_BRAND_NAME_LONG).description("Run "+ Util.WINDUP_BRAND_NAME_LONG)
                     .category(Categories.create("Platform", "Migration"));
     }
 

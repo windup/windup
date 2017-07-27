@@ -5,6 +5,7 @@ import javax.inject.Singleton;
 
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.event.PostStartup;
+import org.jboss.windup.util.Util;
 
 
 /**
@@ -35,7 +36,7 @@ public class RulesetUpdateChecker
         if (updater.rulesetsNeedUpdate(true))
         {
             System.out.println("\nThe rulesets are outdated: " + updater.getRulesetsDir()
-                + "\nConsider running Windup with --updateRulesets.\n");
+                + "\nConsider running "+ Util.WINDUP_BRAND_NAME_ACRONYM +" with --updateRulesets.\n");
         }
         */
     }
