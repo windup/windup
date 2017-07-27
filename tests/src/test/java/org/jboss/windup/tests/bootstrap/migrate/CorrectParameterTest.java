@@ -1,6 +1,7 @@
 package org.jboss.windup.tests.bootstrap.migrate;
 
 import org.jboss.windup.tests.bootstrap.AbstractBootstrapTestWithRules;
+import org.jboss.windup.util.Util;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -35,7 +36,7 @@ public class CorrectParameterTest extends AbstractBootstrapTestWithRules {
     void checkResult() throws IOException
     {
         assertTrue(capturedOutput().contains("WARNING: No packages were set in --packages."));
-        assertTrue(capturedOutput().contains("Executing Windup"));
+        assertTrue(capturedOutput().contains("Executing "+Util.WINDUP_BRAND_NAME_ACRONYM));
         assertTrue(capturedOutput().contains("Report created"));
 
         String indexHtml = new String(Files.readAllBytes(tmp.getRoot().toPath().resolve("index.html")), "UTF-8");
