@@ -14,6 +14,7 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.Variables;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.util.Util;
 import org.jboss.windup.util.exception.WindupException;
 
 import freemarker.template.SimpleScalar;
@@ -87,7 +88,7 @@ public class FreeMarkerUtil
             freeMarkerMethod.setContext(event);
             if (results.containsKey(freeMarkerMethod.getMethodName()))
             {
-                throw new WindupException("Windup contains two freemarker extension providing the same name: "
+                throw new WindupException(Util.WINDUP_BRAND_NAME_ACRONYM+" contains two freemarker extension providing the same name: "
                             + freeMarkerMethod.getMethodName());
             }
             results.put(freeMarkerMethod.getMethodName(), freeMarkerMethod);
@@ -100,7 +101,7 @@ public class FreeMarkerUtil
             freeMarkerDirective.setContext(event);
             if (results.containsKey(freeMarkerDirective.getDirectiveName()))
             {
-                throw new WindupException("Windup contains two freemarker extension providing the same name: "
+                throw new WindupException(Util.WINDUP_BRAND_NAME_ACRONYM+" contains two freemarker extension providing the same name: "
                             + freeMarkerDirective.getDirectiveName());
             }
             results.put(freeMarkerDirective.getDirectiveName(), freeMarkerDirective);

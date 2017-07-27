@@ -11,6 +11,7 @@ import org.jboss.windup.bootstrap.commands.CommandPhase;
 import org.jboss.windup.bootstrap.commands.CommandResult;
 import org.jboss.windup.bootstrap.commands.addons.AddImmutableAddonDirectoryCommand;
 import org.jboss.windup.tooling.ToolingRMIServer;
+import org.jboss.windup.util.Util;
 
 public class ServerModeCommand implements Command
 {
@@ -62,7 +63,7 @@ public class ServerModeCommand implements Command
             }
             catch (Exception e)
             {
-                System.out.println("Failed to start Windup!");
+                System.out.println("Failed to start "+Util.WINDUP_BRAND_NAME_ACRONYM+"!");
                 if (e.getMessage() != null)
                     System.out.println("Failure reason: " + e.getMessage());
                 e.printStackTrace();
@@ -72,7 +73,7 @@ public class ServerModeCommand implements Command
         }
         catch (Throwable t)
         {
-            System.err.println("Windup execution failed due to: " + t.getMessage());
+            System.err.println(Util.WINDUP_BRAND_NAME_ACRONYM+" execution failed due to: " + t.getMessage());
             t.printStackTrace();
         }
 

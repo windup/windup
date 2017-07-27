@@ -18,6 +18,7 @@ import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.versions.SingleVersion;
 import org.jboss.forge.furnace.versions.Version;
 import org.jboss.windup.exec.updater.RulesetsUpdater;
+import org.jboss.windup.util.Util;
 
 
 /**
@@ -46,8 +47,8 @@ public class WindupUpdateDistributionCommand implements UICommand
     @Override
     public UICommandMetadata getMetadata(UIContext ctx)
     {
-        return Metadata.forCommand(getClass()).name("Windup Update Distribution")
-                .description("Update the whole windup installation")
+        return Metadata.forCommand(getClass()).name(Util.WINDUP_BRAND_NAME_LONG +" CLI Update Distribution")
+                .description("Update the whole "+ Util.WINDUP_BRAND_NAME_LONG +" CLI installation")
                 .category(Categories.create("Platform", "Migration"));
     }
 
@@ -66,12 +67,12 @@ public class WindupUpdateDistributionCommand implements UICommand
         Version installedVersion = currentAddon.getId().getVersion();
         if (latestVersion.compareTo(installedVersion) <= 0)
         {
-            return Results.fail("Windup is already in the most updated version.");
+            return Results.fail(Util.WINDUP_BRAND_NAME_ACRONYM+" CLI is already in the most updated version.");
         }
 
         distUpdater.replaceWindupDirectoryWithDistribution(latestDist);
 
-        return Results.success("Sucessfully updated Windup to version " + latestDist.getVersion() + ". Please restart Windup.");
+        return Results.success("Sucessfully updated "+Util.WINDUP_BRAND_NAME_ACRONYM+" CLI to version " + latestDist.getVersion() + ". Please restart RHAMT CLI.");
     }
 
 

@@ -17,6 +17,7 @@ import org.jboss.forge.addon.dependencies.builder.CoordinateBuilder;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.windup.exec.updater.RulesetsUpdater;
 import org.jboss.windup.util.PathUtil;
+import org.jboss.windup.util.Util;
 import org.jboss.windup.util.exception.WindupException;
 
 /**
@@ -36,9 +37,9 @@ public class DistributionUpdater
     {
         Coordinate coord = updater.queryLatestWindupRelease();
         if(coord == null)
-            throw new WindupException("No Windup release found.");
-        log.info("Latest Windup version available: " + coord.getVersion());
-        log.fine("Latest Windup version available: " + coord);
+            throw new WindupException("No "+ Util.WINDUP_BRAND_NAME_ACRONYM +" release found.");
+        log.info("Latest "+ Util.WINDUP_BRAND_NAME_ACRONYM +" version available: " + coord.getVersion());
+        log.fine("Latest "+ Util.WINDUP_BRAND_NAME_ACRONYM +" version available: " + coord);
 
         replaceWindupDirectoryWithDistribution(coord);
     }

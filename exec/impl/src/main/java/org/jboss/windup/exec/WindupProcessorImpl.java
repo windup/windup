@@ -56,6 +56,7 @@ import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.util.Checks;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.Logging;
+import org.jboss.windup.util.Util;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.RuleVisit;
@@ -172,7 +173,7 @@ public class WindupProcessorImpl implements WindupProcessor
 
             if (event.getWindupStopException() != null)
             {
-                String message = "Windup was cancelled on request before finishing";
+                String message = Util.WINDUP_BRAND_NAME_ACRONYM+" was cancelled on request before finishing";
                 if (event.getWindupStopException().getMessage() != null)
                     message += ", cause: " + event.getWindupStopException().getMessage();
                 LOG.log(Level.INFO, message);
@@ -193,7 +194,7 @@ public class WindupProcessorImpl implements WindupProcessor
 
             long endTime = System.currentTimeMillis();
             long seconds = (endTime - startTime) / 1000L;
-            LOG.info("Windup execution took " + seconds + " seconds to execute on input: " + configuration.getInputPaths() + "!");
+            LOG.info(Util.WINDUP_BRAND_NAME_ACRONYM+" execution took " + seconds + " seconds to execute on input: " + configuration.getInputPaths() + "!");
 
             ExecutionStatistics.get().reset();
         }
@@ -338,7 +339,7 @@ public class WindupProcessorImpl implements WindupProcessor
     private void validateConfig(WindupConfiguration windupConfiguration)
     {
         Assert.notNull(windupConfiguration,
-                    "Windup configuration must not be null. (Call default execution if no configuration is required.)");
+                    Util.WINDUP_BRAND_NAME_ACRONYM+" configuration must not be null. (Call default execution if no configuration is required.)");
 
         Collection<Path> inputPaths = windupConfiguration.getInputPaths();
         Assert.notNull(inputPaths, "Path to the application must not be null!");

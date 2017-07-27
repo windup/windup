@@ -3,6 +3,7 @@ package org.jboss.windup.rules.apps.java.reporting.rules;
 import org.jboss.windup.config.AbstractConfigurationOption;
 import org.jboss.windup.config.InputType;
 import org.jboss.windup.config.ValidationResult;
+import org.jboss.windup.util.Util;
 
 /**
  * Indicates that the compatible files report should be generated.
@@ -16,7 +17,7 @@ public class EnableCompatibleFilesReportOption extends AbstractConfigurationOpti
     @Override
     public String getDescription()
     {
-        return "If set, Windup will generate a report of 'Compatible Files'. Keep in mind " +
+        return "If set, " + Util.WINDUP_BRAND_NAME_ACRONYM + " will generate a report of 'Compatible Files'. Keep in mind " +
                     "that generating this report may take a long time for large applications.";
     }
 
@@ -29,7 +30,7 @@ public class EnableCompatibleFilesReportOption extends AbstractConfigurationOpti
     @Override
     public String getLabel()
     {
-        return "Should Windup generate the 'Compatible Files Report'?";
+        return "Should " + Util.WINDUP_BRAND_NAME_ACRONYM + " generate the 'Compatible Files Report'?";
     }
 
     @Override
