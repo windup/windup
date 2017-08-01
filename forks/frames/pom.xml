@@ -74,7 +74,6 @@
         <dependency>
             <groupId>org.javassist</groupId>
             <artifactId>javassist</artifactId>
-            <version>3.18.0-GA</version>
         </dependency>
         <dependency>
             <groupId>com.google.guava</groupId>
