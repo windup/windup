@@ -200,7 +200,7 @@
                     <div class="main">Shared Libraries</div>
                 </h1>
                 <div class="desc">
-                    This section consolidates issues found in libraries included in multiple applications.
+                    This section groups all issues found in libraries included in multiple applications.
                 </div>
             </div>
         </div>
