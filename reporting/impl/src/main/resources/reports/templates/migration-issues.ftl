@@ -106,7 +106,7 @@
                     <h1>
                         <div class="main">${reportModel.reportName} Report</div>
                         <#if reportModel.projectModel??>
-                            <div class="path">${reportModel.projectModel.name?html}</div>
+                            <div class="path">${reportModel.projectModel.rootFileModel.fileName}</div>
                         </#if>
                     </h1>
                     <div class="desc">
