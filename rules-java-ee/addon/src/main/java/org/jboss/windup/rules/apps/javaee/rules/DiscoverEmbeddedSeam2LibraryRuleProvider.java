@@ -65,20 +65,20 @@ public class DiscoverEmbeddedSeam2LibraryRuleProvider extends AbstractRuleProvid
                                         seam23migrEAP6Link.setLink(
                                                     "https://access.redhat.com/documentation/en-US/Red_Hat_JBoss_Web_Framework_Kit/2.7/html-single/Seam_Guide/index.html#migration23");
                                         classificationService.attachLink(classificationModel, seam23migrEAP6Link);
-                                        
+
                                         LinkModel documentationWFKLink = linkService.create();
                                         documentationWFKLink.setDescription("Red Hat JBoss EAP: Migration from Seam 2 to Java EE and alternatives");
                                         documentationWFKLink.setLink(
                                                     "https://access.redhat.com/documentation/en-US/Red_Hat_JBoss_Web_Framework_Kit/2.7/html-single/Seam_Guide/index.html#idm54350960");
                                         classificationService.attachLink(classificationModel, documentationWFKLink);
-                                        
+
                                         LinkModel jsf12WithEAP7Link = linkService.create();
                                         jsf12WithEAP7Link.setDescription("How to use JSF 1.2 with EAP 7?");
                                         jsf12WithEAP7Link.setLink("https://access.redhat.com/solutions/2773121");
                                         classificationService.attachLink(classificationModel, jsf12WithEAP7Link);
 
                                         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
-                                        technologyTagService.addTagToFileModel(fileResourceModel, "Seam embedded JAR library",
+                                        technologyTagService.addTagToFileModel(fileResourceModel, "Seam (embedded)",
                                                     TechnologyTagLevel.INFORMATIONAL);
 
                                     }
