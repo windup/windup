@@ -93,7 +93,7 @@ public class DiscoverHardcodedIPAddressRuleProvider extends AbstractRuleProvider
             }
         })
         .where("ip").matches(IP_PATTERN)
-        .where("type").matches("java|properties|xml")
+        .where("type").matches("java|properties|[^pom]\\.xml")
         .withId(getClass().getSimpleName());
     }
 
