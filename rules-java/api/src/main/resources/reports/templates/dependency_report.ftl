@@ -52,12 +52,9 @@
 
         <div class="row">
             <div class="container-fluid theme-showcase" role="main">
-                
+
             <#list sortDependencyGroupArchivesByPathAscending(reportModel.archiveGroups)>
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Dependencies</h3>
-                </div>
+            <div class="panel">
                 <div class="dependencies">
                 <#items as dependency>
                     <#assign dependencyProject = dependency.canonicalProject>
