@@ -159,7 +159,7 @@ public class DiscoverHardcodedIPAddressRuleProvider extends AbstractRuleProvider
         }
 
         ClassificationService cs = new ClassificationService(context);
-        for (ClassificationModel cm : cs.getClassificationByName(model.getFile(), "Maven POM"))
+        for (ClassificationModel cm : cs.getClassificationByName(model.getFile(), "Maven POM (pom.xml)"))
         {
             return true;
         }
