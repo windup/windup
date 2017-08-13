@@ -73,9 +73,8 @@ public class DiscoverEmbeddedHibernateLibraryRuleProvider extends AbstractRulePr
                                         classificationService.attachLink(classificationModel, documentationEAP7Link);
 
                                         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
-                                        technologyTagService.addTagToFileModel(fileResourceModel, "Hibernate embedded JAR library",
-                                                    TechnologyTagLevel.INFORMATIONAL);
-
+                                        technologyTagService.addTagToFileModel(fileResourceModel, "Hibernate (embedded)",
+                                                    TechnologyTagLevel.IMPORTANT);
                                     }
                                 })
                     .withId(ruleIDPrefix + "_" + ruleIDSuffix++);

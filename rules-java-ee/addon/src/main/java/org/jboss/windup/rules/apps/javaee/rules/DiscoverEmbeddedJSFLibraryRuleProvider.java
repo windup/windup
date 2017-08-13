@@ -80,7 +80,7 @@ public class DiscoverEmbeddedJSFLibraryRuleProvider extends AbstractRuleProvider
                                         classificationService.attachLink(classificationModel, jsf12WithEAP7Link);
 
                                         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
-                                        technologyTagService.addTagToFileModel(fileResourceModel, "Embedded JAR library",
+                                        technologyTagService.addTagToFileModel(fileResourceModel, "JSF (embedded)",
                                                     TechnologyTagLevel.INFORMATIONAL);
 
                                     }
