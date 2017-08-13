@@ -149,35 +149,7 @@
             </div><#-- .panel -->
         </div><#-- .row.summaryInfo -->
 
-        <div class="row container-fluid col-md-12 additionalReports">
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    Additional Reports
-                </div>
-                <table class="table table-condensed table-striped">
-                    <tbody>
-                        <#list applicationReportIndexModel.applicationReportModelsSortedByPriority as navReportModel>
-                            <#if navReportModel.displayInApplicationReportIndex>
-                                <#assign reportUrl = navReportModel.reportFilename>
-                                <#if navUrlPrefix??>
-                                    <#assign reportUrl = "${navUrlPrefix}${reportUrl}">
-                                </#if>
-
-                                <#if !reportModel.equals(navReportModel)>
-                                    <tr>
-                                        <td class="col-md-2">
-                                            <a href="${reportUrl}">${navReportModel.reportName}</a>
-                                        </td>
-                                        <td class="col-md-10">
-                                            ${navReportModel.description!""}
-                                        </td>
-                                    </tr>
-                                </#if>
-                            </#if>
-                        </#list>
-                    </tbody>
-                </table>
-            </div>
+        <div class="row container-fluid col-md-12">
         <#include "include/timestamp.ftl">
         </div>
     </div>
