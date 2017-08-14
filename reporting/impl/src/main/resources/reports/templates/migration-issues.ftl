@@ -68,7 +68,7 @@
                 background-color: #fbf4b1;
             }
             .hint-detail-panel {
-                border-color: #a8d0e3;
+                border-color: #c2c2c2;
                 background-color: #fffcdc;
             }
             /* Reduce the padding, default is too big. */
