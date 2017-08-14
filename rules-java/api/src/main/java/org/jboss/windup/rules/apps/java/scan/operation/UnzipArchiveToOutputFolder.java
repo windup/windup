@@ -237,8 +237,6 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
             {
                 recurseAndAddFiles(event, context, tempFolder, fileService, archiveModel, subFileModel, false);
             }
-
-            GetPrettyPathForFile.addPrettyPathToModel(subFileModel);
         }
     }
 

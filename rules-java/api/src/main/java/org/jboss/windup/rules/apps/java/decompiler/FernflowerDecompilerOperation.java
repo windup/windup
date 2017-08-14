@@ -280,8 +280,6 @@ public class FernflowerDecompilerOperation extends AbstractDecompilerOperation
                         if (decompiledFileModel.getProjectModel() == null || !decompiledFileModel.getProjectModel().equals(projectModel))
                         {
                             projectModel.addFileModel(decompiledFileModel);
-                            // TODO: Fix this
-                            GetPrettyPathForFile.addPrettyPathToModel(decompiledFileModel);
                         }
 
                         JavaClassFileModel classModel = (JavaClassFileModel) classFileModel;
