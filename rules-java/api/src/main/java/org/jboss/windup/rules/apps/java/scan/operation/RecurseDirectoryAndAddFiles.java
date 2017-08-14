@@ -5,6 +5,7 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.FileService;
+import org.jboss.windup.rules.apps.java.reporting.freemarker.filepath.GetPrettyPathForFile;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
     /**
@@ -61,7 +62,8 @@ public class RecurseDirectoryAndAddFiles extends AbstractIterationOperation<File
                 {
                     FileModel subFile = fileService.createByFilePath(file, reference.getAbsolutePath());
                     recurseAndAddFiles(event, context, fileService, subFile);
-                    subFile.setCachedPrettyPath(subFile.getPrettyPathWithinProject(true));
+                    GetPrettyPathForFile.addPrettyPathToModel(subFile);
+//                    subFile.setCachedPrettyPath(subFile.getPrettyPathWithinProject(true));
                 }
             }
         }

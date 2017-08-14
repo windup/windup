@@ -39,9 +39,6 @@ public class FileService extends GraphService<FileModel>
         }
 
         ExecutionStatistics.get().end("FileService.createByFilePath(parentFile, filePath)");
-        // TODO: Fix this
-        // TODO: This one probably doesn't work
-        entry.setCachedPrettyPath(entry.getPrettyPathWithinProject(true));
         return entry;
     }
 

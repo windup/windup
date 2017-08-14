@@ -1,7 +1,10 @@
 package org.jboss.windup.rules.apps.java.reporting.freemarker.filepath;
 
+import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.forge.addon.resource.FileResource;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.ReportResourceFileModel;
+import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 
@@ -43,5 +46,21 @@ public class GetPrettyPathForFile extends AbstractGetPrettyPathForFile
         }
 
         return packageName == null || packageName.equals("") ? filename : packageName + "." + filename;
+    }
+
+    public static void addPrettyPathToModel(FileModel fileModel) {
+        if (fileModel == null) {
+            return;
+        }
+
+        if (fileModel instanceof JavaClassFileModel) {
+            JavaClassFileModel jcfm = ((JavaClassFileModel)fileModel);
+            jcfm.setCachedPrettyPath(jcfm.getPrettyPathWithinProject(true));
+        } else if (fileModel instanceof ReportResourceFileModel) {
+            ReportResourceFileModel rrfm = (ReportResourceFileModel)fileModel;
+            rrfm.setCachedPrettyPath(rrfm.getPrettyPathWithinProject(false));
+        } else {
+            fileModel.setCachedPrettyPath(fileModel.getPrettyPathWithinProject(false));
+        }
     }
 }
