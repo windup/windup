@@ -40,6 +40,7 @@ public interface FileModel extends ResourceModel, BelongsToProject
     String MD5_HASH = "md5Hash";
     String FILE_NAME = "fileName";
     String FILE_PATH = "filePath";
+    String PRETTY_PATH = "prettyPath";
     String IS_DIRECTORY = "isDirectory";
     String WINDUP_GENERATED = "windupGenerated";
     String PARSE_ERROR = "parseError";
@@ -81,6 +82,17 @@ public interface FileModel extends ResourceModel, BelongsToProject
     // implemented via a handler that makes sure the isDirectory property is set as well
     @JavaHandler
     void setFilePath(String filePath);
+
+
+    /**
+     * TODO: Rename
+     */
+    @Property(PRETTY_PATH)
+    String getCachedPrettyPath();
+
+
+    @Property(PRETTY_PATH)
+    void setCachedPrettyPath(String path);
 
     /**
      * Indicates whether the file is a directory or not
@@ -201,6 +213,13 @@ public interface FileModel extends ResourceModel, BelongsToProject
 
 
     /**
+     * Returns the path of this file within the parent project (format suitable for reporting)
+     * Uses fully qualified class name notation for classes
+     */
+    @JavaHandler
+    String getPrettyPathWithinProject(boolean useFQNForClasses);
+
+    /**
      * Returns the application that this file is a part of. This is especially useful in the case of analyzing multiple application's, as we often
      * need to know which application a particular file is associated with.
      *
@@ -271,6 +290,12 @@ public interface FileModel extends ResourceModel, BelongsToProject
             }
             return result;
         }
+
+        public String getPrettyPathWithinProject(boolean useFQNForClasses)
+        {
+            return this.getPrettyPathWithinProject();
+        }
+
 
         public String getPrettyPath()
         {

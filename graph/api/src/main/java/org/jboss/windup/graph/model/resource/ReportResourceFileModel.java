@@ -1,5 +1,7 @@
 package org.jboss.windup.graph.model.resource;
 
+import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
@@ -12,4 +14,13 @@ public interface ReportResourceFileModel extends FileModel
 {
     public static final String TYPE = "RawFileModel";
 
+    abstract class Impl implements ReportResourceFileModel, JavaHandlerContext<Vertex>
+    {
+        @Override
+        public String getPrettyPathWithinProject(boolean useFQNForClasses)
+        {
+            // TODO: Fix this
+            return "resources/" + this.getPrettyPath();
+        }
+    }
 }
