@@ -12,11 +12,8 @@ import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.FinalizePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.reporting.freemarker.filepath.GetPrettyPathForFile;
-import org.jboss.windup.rules.apps.java.scan.ast.WindupWildcardImportResolver;
 import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -51,21 +48,22 @@ public class GetFileModelPrettyPathRuleProvider extends AbstractRuleProvider
         @Override
         public void perform(GraphRewrite event, EvaluationContext context, FileModel payload)
         {
-            WindupWildcardImportResolver.setContext(event.getGraphContext());
             try
             {
-                GraphContext graphContext = event.getGraphContext();
-
-                WindupConfigurationModel configuration = new GraphService<>(graphContext,
-                            WindupConfigurationModel.class)
-                                        .getUnique();
-
                 payload.setCachedPrettyPath(payload.getPrettyPathWithinProject(true));
-                GetPrettyPathForFile.addPrettyPathToModel(payload);
+
+                String prettyPath = payload.getCachedPrettyPath();
+                LOG.info(prettyPath);
+                GraphContext graphContext = event.getGraphContext();
+                GetPrettyPathForFile.addPrettyPathToModel(payload, graphContext);
+                LOG.info(prettyPath);
+
+                Object id = payload.asVertex().getId();
+                LOG.info(id.toString());
             }
-            finally
+            catch (Exception e)
             {
-                WindupWildcardImportResolver.setContext(null);
+                LOG.warning(e.getMessage());
             }
         }
 

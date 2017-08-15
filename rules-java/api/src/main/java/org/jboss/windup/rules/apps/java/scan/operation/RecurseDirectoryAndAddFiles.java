@@ -62,8 +62,6 @@ public class RecurseDirectoryAndAddFiles extends AbstractIterationOperation<File
                 {
                     FileModel subFile = fileService.createByFilePath(file, reference.getAbsolutePath());
                     recurseAndAddFiles(event, context, fileService, subFile);
-                    GetPrettyPathForFile.addPrettyPathToModel(subFile);
-//                    subFile.setCachedPrettyPath(subFile.getPrettyPathWithinProject(true));
                 }
             }
         }

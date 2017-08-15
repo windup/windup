@@ -49,8 +49,6 @@ public class DiscoverNonMavenSourceProjectsRuleProvider extends AbstractRuleProv
 
                     mainProjectModel.setRootFileModel(mainFileModel);
                     mainProjectModel.addFileModel(mainFileModel);
-
-                    mainFileModel.setCachedPrettyPath(mainFileModel.getPrettyPathWithinProject(true));
                 }
 
                 addProjectToChildFiles(mainFileModel, mainProjectModel);
@@ -64,8 +62,6 @@ public class DiscoverNonMavenSourceProjectsRuleProvider extends AbstractRuleProv
                 if (childFile.getProjectModel() == null)
                 {
                     projectModel.addFileModel(childFile);
-                    // TODO: Fix this
-                    childFile.setCachedPrettyPath(childFile.getPrettyPathWithinProject(true));
                 }
                 else if (childFile.getProjectModel().getParentProject() == null && !childFile.getProjectModel().equals(projectModel))
                 {

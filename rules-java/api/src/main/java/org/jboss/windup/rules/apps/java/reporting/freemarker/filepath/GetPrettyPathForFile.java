@@ -1,11 +1,9 @@
 package org.jboss.windup.rules.apps.java.reporting.freemarker.filepath;
 
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
-import org.jboss.forge.addon.resource.FileResource;
+import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.ReportResourceFileModel;
-import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 
@@ -51,7 +49,7 @@ public class GetPrettyPathForFile extends AbstractGetPrettyPathForFile
         return packageName == null || packageName.equals("") ? filename : packageName + "." + filename;
     }
 
-    public static void addPrettyPathToModel(FileModel fileModel) {
+    public static void addPrettyPathToModel(FileModel fileModel, GraphContext context) {
         if (fileModel == null) {
             return;
         }
@@ -64,7 +62,9 @@ public class GetPrettyPathForFile extends AbstractGetPrettyPathForFile
             jcfm.setCachedPrettyPath(jcfm.getPrettyPathWithinProject(true));
             //} else if (fileModel instanceof ReportResourceFileModel) {
         } else if (types.contains(JavaSourceFileModel.TYPE)) {
-            JavaSourceFileModel jsfm = ((JavaSourceFileModel)fileModel);
+            JavaSourceFileModel jsfm = context.getFramed().frame(fileModel.asVertex(), JavaSourceFileModel.class);
+            // ((JavaSourceFileModel)fileModel);
+
             jsfm.setCachedPrettyPath(jsfm.getPrettyPathWithinProject(true));
         } else if (types.contains(ReportResourceFileModel.TYPE)) {
             ReportResourceFileModel rrfm = (ReportResourceFileModel)fileModel;

@@ -111,11 +111,15 @@ public interface JavaClassFileModel extends FileModel
 
             JavaClassModel javaClass = getJavaClass();
 
+            String result;
+
             if (javaClass == null) {
-                return getPrettyPathWithinProject();
+                result = getPrettyPathWithinProject();
             } else {
-                return javaClass.getQualifiedName();
+                result = javaClass.getQualifiedName();
             }
+
+            return result;
         }
     }
 

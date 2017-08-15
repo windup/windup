@@ -40,7 +40,7 @@ public interface FileModel extends ResourceModel, BelongsToProject
     String MD5_HASH = "md5Hash";
     String FILE_NAME = "fileName";
     String FILE_PATH = "filePath";
-    String PRETTY_PATH = "prettyPath";
+    String PRETTY_PATH = "cachedPrettyPath";
     String IS_DIRECTORY = "isDirectory";
     String WINDUP_GENERATED = "windupGenerated";
     String PARSE_ERROR = "parseError";
@@ -293,7 +293,7 @@ public interface FileModel extends ResourceModel, BelongsToProject
 
         public String getPrettyPathWithinProject(boolean useFQNForClasses)
         {
-            return this.getPrettyPathWithinProject();
+             return this.getPrettyPathWithinProject();
         }
 
 
