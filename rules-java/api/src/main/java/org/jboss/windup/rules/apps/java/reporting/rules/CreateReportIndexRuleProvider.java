@@ -62,7 +62,7 @@ public class CreateReportIndexRuleProvider extends AbstractRuleProvider
         applicationReportModel.setTemplateType(TemplateType.FREEMARKER);
         applicationReportModel.setProjectModel(projectModel);
         applicationReportModel.setDescription(
-                    "This report provides summary information about findings from the migration analysis, as well as links to additional reports with detailed information.");
+                    "Dashboard report aggregating findings from the analysis.");
 
         // Set the filename for the report
         ReportService reportService = new ReportService(context);
