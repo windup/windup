@@ -168,7 +168,7 @@
                     <div class="main">Application List</div>
                 </h1>
                 <div class="desc">
-                    This report lists all analyzed applications. Click on an individual application to show more details.
+                    This report lists all analyzed applications. Select an individual application to show more details.
                 </div>
             </div>
         </div>
