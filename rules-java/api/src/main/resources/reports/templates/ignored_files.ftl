@@ -15,6 +15,9 @@
 
 <#macro ignoredFileRenderer reportModel>
     <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title">Ignored files</h3>
+        </div>
         <table class="table table-striped table-bordered">
             <tr>
                 <th>File</th>
