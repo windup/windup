@@ -57,17 +57,16 @@ public class GetPrettyPathForFile extends AbstractGetPrettyPathForFile
         ArrayList<String> types = fileModel.asVertex().getProperty(WindupVertexFrame.TYPE_PROP);
 
         if (types.contains(JavaClassFileModel.TYPE)) {
-            //if (fileModel instanceof JavaClassFileModel) {
             JavaClassFileModel jcfm = ((JavaClassFileModel) fileModel);
+//            JavaClassFileModel jcfm = context.getFramed().frame(fileModel.asVertex(), JavaClassFileModel.class);
             jcfm.setCachedPrettyPath(jcfm.getPrettyPathWithinProject(true));
-            //} else if (fileModel instanceof ReportResourceFileModel) {
         } else if (types.contains(JavaSourceFileModel.TYPE)) {
-            JavaSourceFileModel jsfm = context.getFramed().frame(fileModel.asVertex(), JavaSourceFileModel.class);
-            // ((JavaSourceFileModel)fileModel);
-
+            JavaSourceFileModel jsfm = ((JavaSourceFileModel)fileModel);
+//            JavaSourceFileModel jsfm = context.getFramed().frame(fileModel.asVertex(), JavaSourceFileModel.class);
             jsfm.setCachedPrettyPath(jsfm.getPrettyPathWithinProject(true));
         } else if (types.contains(ReportResourceFileModel.TYPE)) {
             ReportResourceFileModel rrfm = (ReportResourceFileModel)fileModel;
+//            ReportResourceFileModel rrfm = context.getFramed().frame(fileModel.asVertex(), ReportResourceFileModel.class);
             rrfm.setCachedPrettyPath(rrfm.getPrettyPathWithinProject(false));
         } else {
             fileModel.setCachedPrettyPath(fileModel.getPrettyPathWithinProject(false));
