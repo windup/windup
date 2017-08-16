@@ -100,7 +100,7 @@ public interface JavaClassFileModel extends FileModel
     @JavaHandler
     String getPrettyPathWithinProject(boolean useFQNForClasses);
 
-    abstract class Impl implements JavaClassFileModel, JavaHandlerContext<Vertex>
+    abstract class Impl extends FileModel.Impl implements JavaClassFileModel, JavaHandlerContext<Vertex>
     {
         @Override
         public String getPrettyPathWithinProject(boolean useFQNForClasses)
