@@ -1,4 +1,4 @@
-package org.jboss.windup.rules.apps.javaee.rules;
+package org.jboss.windup.rules.apps.javaee.rules.cache;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
@@ -23,7 +23,7 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 @RuleMetadata(phase = InitialAnalysisPhase.class, perform = "Discover Java libraries embedded")
-public class DiscoverEmbeddedCacheCoherenceLibraryRuleProvider extends AbstractRuleProvider
+public class DiscoverEmbeddedCacheJBossCacheLibraryRuleProvider extends AbstractRuleProvider
 {
 
     @Override
@@ -34,7 +34,7 @@ public class DiscoverEmbeddedCacheCoherenceLibraryRuleProvider extends AbstractR
         return ConfigurationBuilder.begin()
                     .addRule()
                     .when(Query.fromType(JarArchiveModel.class)
-                                .withProperty(FileModel.FILE_NAME, QueryPropertyComparisonType.REGEX, ".*coherence.*\\.jar$"))
+                                .withProperty(FileModel.FILE_NAME, QueryPropertyComparisonType.REGEX, ".*jbosscache.*\\.jar$"))
                     .perform(
                                 new AbstractIterationOperation<JarArchiveModel>()
                                 {
@@ -44,15 +44,15 @@ public class DiscoverEmbeddedCacheCoherenceLibraryRuleProvider extends AbstractR
                                         ClassificationModel classificationModel = classificationService.attachClassification(event, context,
                                                     fileResourceModel,
                                                     IssueCategoryRegistry.CLOUD_MANDATORY,
-                                                    "Caching - Coherence embedded library",
-                                                    "The application embedds a Coherence library.  \n"
+                                                    "Caching - JBoss cache embedded library",
+                                                    "The application embedds a JBoss cache library.  \n"
                                                     + "\n"
                                                     + "Cloud readiness issue as potential state information that is not persisted to a backing service.");
                                         classificationModel.setEffort(5);
                                         GraphContext graphContext = event.getGraphContext();
 
                                         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
-                                        technologyTagService.addTagToFileModel(fileResourceModel, "Coherence (embedded)",
+                                        technologyTagService.addTagToFileModel(fileResourceModel, "JBoss cache (embedded)",
                                                     TechnologyTagLevel.INFORMATIONAL);
 
                                     }
