@@ -1,4 +1,4 @@
-package org.jboss.windup.rules.apps.javaee.rules;
+package org.jboss.windup.rules.apps.javaee.rules.cache;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
@@ -23,9 +23,8 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 @RuleMetadata(phase = InitialAnalysisPhase.class, perform = "Discover Java libraries embedded")
-public class DiscoverEmbeddedCacheIgniteLibraryRuleProvider extends AbstractRuleProvider
+public class DiscoverEmbeddedCacheShiftOneLibraryRuleProvider extends AbstractRuleProvider
 {
-
     @Override
     public Configuration getConfiguration(RuleLoaderContext context)
     {
@@ -34,7 +33,7 @@ public class DiscoverEmbeddedCacheIgniteLibraryRuleProvider extends AbstractRule
         return ConfigurationBuilder.begin()
                     .addRule()
                     .when(Query.fromType(JarArchiveModel.class)
-                                .withProperty(FileModel.FILE_NAME, QueryPropertyComparisonType.REGEX, ".*ignite.*\\.jar$"))
+                                .withProperty(FileModel.FILE_NAME, QueryPropertyComparisonType.REGEX, ".*shiftone.*\\.jar$"))
                     .perform(
                                 new AbstractIterationOperation<JarArchiveModel>()
                                 {
@@ -44,15 +43,15 @@ public class DiscoverEmbeddedCacheIgniteLibraryRuleProvider extends AbstractRule
                                         ClassificationModel classificationModel = classificationService.attachClassification(event, context,
                                                     fileResourceModel,
                                                     IssueCategoryRegistry.CLOUD_MANDATORY,
-                                                    "Caching - Apache Ignite embedded library",
-                                                    "The application embedds an Apache Ignite library.  \n"
+                                                    "Caching - ShiftOne (Java Object Cache) embedded library",
+                                                    "The application embedds a ShiftOne library (Java Object Cache aka. JOCache).  \n"
                                                     + "\n"
                                                     + "Cloud readiness issue as potential state information that is not persisted to a backing service.");
                                         classificationModel.setEffort(5);
                                         GraphContext graphContext = event.getGraphContext();
 
                                         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
-                                        technologyTagService.addTagToFileModel(fileResourceModel, "Apache Ignite (embedded)",
+                                        technologyTagService.addTagToFileModel(fileResourceModel, "ShiftOne (embedded)",
                                                     TechnologyTagLevel.INFORMATIONAL);
 
                                     }

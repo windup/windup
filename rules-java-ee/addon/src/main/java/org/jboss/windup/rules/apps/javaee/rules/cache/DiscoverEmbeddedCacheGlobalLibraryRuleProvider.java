@@ -1,4 +1,4 @@
-package org.jboss.windup.rules.apps.javaee.rules;
+package org.jboss.windup.rules.apps.javaee.rules.cache;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
@@ -23,7 +23,7 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 @RuleMetadata(phase = InitialAnalysisPhase.class, perform = "Discover Java libraries embedded")
-public class DiscoverEmbeddedCacheEhcacheLibraryRuleProvider extends AbstractRuleProvider
+public class DiscoverEmbeddedCacheGlobalLibraryRuleProvider extends AbstractRuleProvider
 {
 
     @Override
@@ -34,7 +34,7 @@ public class DiscoverEmbeddedCacheEhcacheLibraryRuleProvider extends AbstractRul
         return ConfigurationBuilder.begin()
                     .addRule()
                     .when(Query.fromType(JarArchiveModel.class)
-                                .withProperty(FileModel.FILE_NAME, QueryPropertyComparisonType.REGEX, ".*ehcache.*\\.jar$"))
+                                .withProperty(FileModel.FILE_NAME, QueryPropertyComparisonType.REGEX, ".*cache-api.*\\.jar$"))
                     .perform(
                                 new AbstractIterationOperation<JarArchiveModel>()
                                 {
@@ -44,15 +44,15 @@ public class DiscoverEmbeddedCacheEhcacheLibraryRuleProvider extends AbstractRul
                                         ClassificationModel classificationModel = classificationService.attachClassification(event, context,
                                                     fileResourceModel,
                                                     IssueCategoryRegistry.CLOUD_MANDATORY,
-                                                    "Caching - Ehcache embedded library",
-                                                    "The application embedds an Ehcache library.  \n"
+                                                    "Caching - Embedded library",
+                                                    "The application embedds a library providing caching capabilities.  \n"
                                                     + "\n"
                                                     + "Cloud readiness issue as potential state information that is not persisted to a backing service.");
                                         classificationModel.setEffort(5);
                                         GraphContext graphContext = event.getGraphContext();
 
                                         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
-                                        technologyTagService.addTagToFileModel(fileResourceModel, "Ehcache (embedded)",
+                                        technologyTagService.addTagToFileModel(fileResourceModel, "Cache API (embedded)",
                                                     TechnologyTagLevel.INFORMATIONAL);
 
                                     }

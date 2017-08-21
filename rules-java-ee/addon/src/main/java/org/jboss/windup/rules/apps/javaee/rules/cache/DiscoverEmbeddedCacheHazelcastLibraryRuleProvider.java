@@ -1,4 +1,4 @@
-package org.jboss.windup.rules.apps.javaee.rules;
+package org.jboss.windup.rules.apps.javaee.rules.cache;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
@@ -23,7 +23,7 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 @RuleMetadata(phase = InitialAnalysisPhase.class, perform = "Discover Java libraries embedded")
-public class DiscoverEmbeddedCacheSwarmCacheLibraryRuleProvider extends AbstractRuleProvider
+public class DiscoverEmbeddedCacheHazelcastLibraryRuleProvider extends AbstractRuleProvider
 {
 
     @Override
@@ -34,7 +34,7 @@ public class DiscoverEmbeddedCacheSwarmCacheLibraryRuleProvider extends Abstract
         return ConfigurationBuilder.begin()
                     .addRule()
                     .when(Query.fromType(JarArchiveModel.class)
-                                .withProperty(FileModel.FILE_NAME, QueryPropertyComparisonType.REGEX, ".*swarmcache.*\\.jar$"))
+                                .withProperty(FileModel.FILE_NAME, QueryPropertyComparisonType.REGEX, ".*hazelcast.*\\.jar$"))
                     .perform(
                                 new AbstractIterationOperation<JarArchiveModel>()
                                 {
@@ -44,15 +44,15 @@ public class DiscoverEmbeddedCacheSwarmCacheLibraryRuleProvider extends Abstract
                                         ClassificationModel classificationModel = classificationService.attachClassification(event, context,
                                                     fileResourceModel,
                                                     IssueCategoryRegistry.CLOUD_MANDATORY,
-                                                    "Caching - SwarmCache embedded library",
-                                                    "The application embedds a SwarmCache library.  \n"
+                                                    "Caching - Hazelcast embedded library",
+                                                    "The application embedds an Hazelcast library.  \n"
                                                     + "\n"
                                                     + "Cloud readiness issue as potential state information that is not persisted to a backing service.");
                                         classificationModel.setEffort(5);
                                         GraphContext graphContext = event.getGraphContext();
 
                                         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
-                                        technologyTagService.addTagToFileModel(fileResourceModel, "SwarmCache (embedded)",
+                                        technologyTagService.addTagToFileModel(fileResourceModel, "Hazelcast (embedded)",
                                                     TechnologyTagLevel.INFORMATIONAL);
 
                                     }
