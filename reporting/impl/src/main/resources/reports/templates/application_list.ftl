@@ -219,13 +219,10 @@
             <script>$("body").addClass("noVirtualApp");</script>
         </#if>
 
-
         <div style="width: 100%; text-align: center">
             <a href="reports/windup_ruleproviders.html">Executed rules overview</a>
                 |
             <a href="reports/windup_freemarkerfunctions.html">${getWindupBrandName()} FreeMarker methods</a>
-                |
-            <a href="#" id="jiraFeedbackTriggerBottomLink">Send feedback</a>
         </div>
         <#include "include/timestamp.ftl">
 
@@ -233,10 +230,6 @@
     <script src="reports/resources/js/jquery-1.10.1.min.js"></script>
     <script src="reports/resources/js/windup-utils.js"></script>
     <script type="text/javascript">
-        jQuery("#jiraFeedbackTriggerBottomLink").click(function(e) {
-            displayFeedbackForm();
-        });
-
         $("body.viewAppList .apps .real .appInfo").sortElements(function(a, b){
             return $(a).find(".traits .fileName").first().text().trim() > $(b).find(".traits .fileName").first().text().trim() ? 1 : -1;
         });
