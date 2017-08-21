@@ -22,12 +22,13 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class ProjectTraversalCache extends AbstractRuleLifecycleListener
 {
-    private static final Map<ProjectModel, SoftReference<Set<ProjectModel>>> projectToApplicationCache = new ConcurrentHashMap<>();
+    private static final Map<ProjectModel, SoftReference<Set<ProjectModel>>> moduleToApplicationCache = new ConcurrentHashMap<>();
+    private static final Map<ProjectModel, SoftReference<Set<ProjectModel>>> applicationToProjectCache = new ConcurrentHashMap<>();
 
     @Override
     public void beforeExecution(GraphRewrite event)
     {
-        projectToApplicationCache.clear();
+        moduleToApplicationCache.clear();
     }
 
     public static Set<ProjectModel> getApplicationsForProject(GraphContext context, ProjectModel project)
@@ -42,10 +43,24 @@ public class ProjectTraversalCache extends AbstractRuleLifecycleListener
         for (FileModel inputFile : configurationModel.getInputPaths())
         {
             ProjectModel application = inputFile.getProjectModel();
-            ProjectModelTraversal traversal = new ProjectModelTraversal(application);
-            Set<ProjectModel> projectsInApplication = traversal.getAllProjects(true);
-            if (projectsInApplication.contains(project))
-                results.add(application);
+            synchronized (applicationToProjectCache)
+            {
+                SoftReference<Set<ProjectModel>> projectsInApplicationReference = applicationToProjectCache.get(application);
+
+                Set<ProjectModel> projectsInApplication = null;
+                if (projectsInApplicationReference != null)
+                    projectsInApplication = projectsInApplicationReference.get();
+
+                if (projectsInApplication == null)
+                {
+                    ProjectModelTraversal traversal = new ProjectModelTraversal(application);
+                    projectsInApplication = traversal.getAllProjects(true);
+                    applicationToProjectCache.put(application, new SoftReference<>(projectsInApplication));
+                }
+
+                if (projectsInApplication.contains(project))
+                    results.add(application);
+            }
         }
 
         /*
@@ -67,9 +82,9 @@ public class ProjectTraversalCache extends AbstractRuleLifecycleListener
         if (project == null)
             return null;
 
-        synchronized (projectToApplicationCache)
+        synchronized (moduleToApplicationCache)
         {
-            SoftReference<Set<ProjectModel>> referenceProjectsSet = projectToApplicationCache.get(project);
+            SoftReference<Set<ProjectModel>> referenceProjectsSet = moduleToApplicationCache.get(project);
             return referenceProjectsSet == null ? null : referenceProjectsSet.get();
         }
     }
@@ -79,10 +94,10 @@ public class ProjectTraversalCache extends AbstractRuleLifecycleListener
         if (project == null)
             return;
 
-        synchronized (projectToApplicationCache)
+        synchronized (moduleToApplicationCache)
         {
             SoftReference<Set<ProjectModel>> referenceProjectsSet = new SoftReference<>(projects);
-            projectToApplicationCache.put(project, referenceProjectsSet);
+            moduleToApplicationCache.put(project, referenceProjectsSet);
         }
     }
 }
