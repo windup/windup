@@ -1,4 +1,4 @@
-package org.jboss.windup.rules.apps.javaee.rules;
+package org.jboss.windup.rules.apps.javaee.rules.cache;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
@@ -23,7 +23,7 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 @RuleMetadata(phase = InitialAnalysisPhase.class, perform = "Discover Java libraries embedded")
-public class DiscoverEmbeddedCacheInfinispanLibraryRuleProvider extends AbstractRuleProvider
+public class DiscoverEmbeddedCacheEhcacheLibraryRuleProvider extends AbstractRuleProvider
 {
 
     @Override
@@ -34,7 +34,7 @@ public class DiscoverEmbeddedCacheInfinispanLibraryRuleProvider extends Abstract
         return ConfigurationBuilder.begin()
                     .addRule()
                     .when(Query.fromType(JarArchiveModel.class)
-                                .withProperty(FileModel.FILE_NAME, QueryPropertyComparisonType.REGEX, ".*infinispan.*\\.jar$"))
+                                .withProperty(FileModel.FILE_NAME, QueryPropertyComparisonType.REGEX, ".*ehcache.*\\.jar$"))
                     .perform(
                                 new AbstractIterationOperation<JarArchiveModel>()
                                 {
@@ -44,15 +44,15 @@ public class DiscoverEmbeddedCacheInfinispanLibraryRuleProvider extends Abstract
                                         ClassificationModel classificationModel = classificationService.attachClassification(event, context,
                                                     fileResourceModel,
                                                     IssueCategoryRegistry.CLOUD_MANDATORY,
-                                                    "Caching - Infinispan embedded library",
-                                                    "The application embedds an Infinispan library.  \n"
+                                                    "Caching - Ehcache embedded library",
+                                                    "The application embedds an Ehcache library.  \n"
                                                     + "\n"
                                                     + "Cloud readiness issue as potential state information that is not persisted to a backing service.");
                                         classificationModel.setEffort(5);
                                         GraphContext graphContext = event.getGraphContext();
 
                                         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
-                                        technologyTagService.addTagToFileModel(fileResourceModel, "Infinispan (embedded)",
+                                        technologyTagService.addTagToFileModel(fileResourceModel, "Ehcache (embedded)",
                                                     TechnologyTagLevel.INFORMATIONAL);
 
                                     }

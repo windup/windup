@@ -1,4 +1,4 @@
-package org.jboss.windup.rules.apps.javaee.rules;
+package org.jboss.windup.rules.apps.javaee.rules.cache;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
@@ -23,7 +23,7 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 @RuleMetadata(phase = InitialAnalysisPhase.class, perform = "Discover Java libraries embedded")
-public class DiscoverEmbeddedCacheJcacheLibraryRuleProvider extends AbstractRuleProvider
+public class DiscoverEmbeddedCacheCommonsJcsLibraryRuleProvider extends AbstractRuleProvider
 {
 
     @Override
@@ -34,7 +34,7 @@ public class DiscoverEmbeddedCacheJcacheLibraryRuleProvider extends AbstractRule
         return ConfigurationBuilder.begin()
                     .addRule()
                     .when(Query.fromType(JarArchiveModel.class)
-                                .withProperty(FileModel.FILE_NAME, QueryPropertyComparisonType.REGEX, ".*[(cache-api)|(jcache)].*\\.jar$"))
+                                .withProperty(FileModel.FILE_NAME, QueryPropertyComparisonType.REGEX, ".*commons-jcs.*\\.jar$"))
                     .perform(
                                 new AbstractIterationOperation<JarArchiveModel>()
                                 {
@@ -44,15 +44,15 @@ public class DiscoverEmbeddedCacheJcacheLibraryRuleProvider extends AbstractRule
                                         ClassificationModel classificationModel = classificationService.attachClassification(event, context,
                                                     fileResourceModel,
                                                     IssueCategoryRegistry.CLOUD_MANDATORY,
-                                                    "Caching - JCache embedded library",
-                                                    "The application embedds a JCache library.  \n"
+                                                    "Caching - Apache Commons JCS embedded library",
+                                                    "The application embedds an Apache Commons JCS library.  \n"
                                                     + "\n"
                                                     + "Cloud readiness issue as potential state information that is not persisted to a backing service.");
                                         classificationModel.setEffort(5);
                                         GraphContext graphContext = event.getGraphContext();
 
                                         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
-                                        technologyTagService.addTagToFileModel(fileResourceModel, "JCache (embedded)",
+                                        technologyTagService.addTagToFileModel(fileResourceModel, "Apache Commons JCS (embedded)",
                                                     TechnologyTagLevel.INFORMATIONAL);
 
                                     }

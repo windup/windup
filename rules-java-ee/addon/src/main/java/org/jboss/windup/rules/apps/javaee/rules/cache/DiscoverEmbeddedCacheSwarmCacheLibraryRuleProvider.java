@@ -1,4 +1,4 @@
-package org.jboss.windup.rules.apps.javaee.rules;
+package org.jboss.windup.rules.apps.javaee.rules.cache;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
@@ -23,8 +23,9 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 @RuleMetadata(phase = InitialAnalysisPhase.class, perform = "Discover Java libraries embedded")
-public class DiscoverEmbeddedCacheShiftOneLibraryRuleProvider extends AbstractRuleProvider
+public class DiscoverEmbeddedCacheSwarmCacheLibraryRuleProvider extends AbstractRuleProvider
 {
+
     @Override
     public Configuration getConfiguration(RuleLoaderContext context)
     {
@@ -33,7 +34,7 @@ public class DiscoverEmbeddedCacheShiftOneLibraryRuleProvider extends AbstractRu
         return ConfigurationBuilder.begin()
                     .addRule()
                     .when(Query.fromType(JarArchiveModel.class)
-                                .withProperty(FileModel.FILE_NAME, QueryPropertyComparisonType.REGEX, ".*shiftone.*\\.jar$"))
+                                .withProperty(FileModel.FILE_NAME, QueryPropertyComparisonType.REGEX, ".*swarmcache.*\\.jar$"))
                     .perform(
                                 new AbstractIterationOperation<JarArchiveModel>()
                                 {
@@ -43,15 +44,15 @@ public class DiscoverEmbeddedCacheShiftOneLibraryRuleProvider extends AbstractRu
                                         ClassificationModel classificationModel = classificationService.attachClassification(event, context,
                                                     fileResourceModel,
                                                     IssueCategoryRegistry.CLOUD_MANDATORY,
-                                                    "Caching - ShiftOne (Java Object Cache) embedded library",
-                                                    "The application embedds a ShiftOne library (Java Object Cache aka. JOCache).  \n"
+                                                    "Caching - SwarmCache embedded library",
+                                                    "The application embedds a SwarmCache library.  \n"
                                                     + "\n"
                                                     + "Cloud readiness issue as potential state information that is not persisted to a backing service.");
                                         classificationModel.setEffort(5);
                                         GraphContext graphContext = event.getGraphContext();
 
                                         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
-                                        technologyTagService.addTagToFileModel(fileResourceModel, "ShiftOne (embedded)",
+                                        technologyTagService.addTagToFileModel(fileResourceModel, "SwarmCache (embedded)",
                                                     TechnologyTagLevel.INFORMATIONAL);
 
                                     }
