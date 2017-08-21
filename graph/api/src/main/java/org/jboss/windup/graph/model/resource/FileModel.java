@@ -243,10 +243,6 @@ public interface FileModel extends ResourceModel, BelongsToProject
 
     @Override
     @JavaHandler
-    boolean belongsToProject(ProjectModel projectModel);
-
-    @Override
-    @JavaHandler
     Iterable<ProjectModel> getRootProjectModels();
 
     abstract class Impl implements FileModel, JavaHandlerContext<Vertex>, BelongsToProject
@@ -361,12 +357,6 @@ public interface FileModel extends ResourceModel, BelongsToProject
                 return null;
 
             return new File(getFilePath());
-        }
-
-        @Override
-        public boolean belongsToProject(ProjectModel projectModel)
-        {
-            return this.getProjectModel().equals(this.getCanonicalProjectModel(projectModel));
         }
 
         @Override
