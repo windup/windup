@@ -3,7 +3,7 @@ package org.jboss.windup.reporting.freemarker.problemsummary;
 import org.jboss.windup.graph.model.resource.FileModel;
 
 /**
- * An immutable class that groups the fileModel with the occurrences for a single hint. This is useful for Migration Issues report.
+ * An immutable class that groups the fileModel with the occurrences for a single hint. This is useful for Issues report.
  */
 public class ProblemFileSummary
 {

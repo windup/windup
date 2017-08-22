@@ -218,9 +218,9 @@
         </#if>
 
         <div style="width: 100%; text-align: center">
-            <a href="reports/windup_ruleproviders.html">Executed rules overview</a>
+            <a href="reports/windup_ruleproviders.html">Rule providers execution overview</a>
                 |
-            <a href="reports/windup_freemarkerfunctions.html">${getWindupBrandName()} FreeMarker methods</a>
+            <a href="reports/windup_freemarkerfunctions.html">FreeMarker methods</a>
         </div>
         <#include "include/timestamp.ftl">
 

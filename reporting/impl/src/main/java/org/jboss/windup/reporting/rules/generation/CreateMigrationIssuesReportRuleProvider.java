@@ -41,8 +41,8 @@ public class CreateMigrationIssuesReportRuleProvider extends AbstractRuleProvide
 
     private class CreateMigrationIssueReportOperation extends GraphOperation
     {
-        private static final String ALL_MIGRATION_ISSUES_REPORT_NAME = "All Migration Issues";
-        private static final String MIGRATION_ISSUES_REPORT_NAME = "Migration Issues";
+        private static final String ALL_MIGRATION_ISSUES_REPORT_NAME = "All Issues";
+        private static final String MIGRATION_ISSUES_REPORT_NAME = "Issues";
 
         @Override
         public void perform(GraphRewrite event, EvaluationContext context)
