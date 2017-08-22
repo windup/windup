@@ -1,9 +1,6 @@
 package org.jboss.windup.rules.apps.javaee.rules;
 
-import java.util.logging.Logger;
-
 import org.jboss.windup.rules.apps.javaee.model.stats.ProjectTechnologiesStatsService;
-import org.jboss.windup.util.Logging;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.loader.RuleLoaderContext;

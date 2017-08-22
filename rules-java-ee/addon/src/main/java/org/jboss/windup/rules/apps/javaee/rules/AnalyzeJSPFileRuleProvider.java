@@ -20,7 +20,6 @@ import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
-import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.jboss.windup.rules.apps.java.scan.ast.TypeInterestFactory;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.jboss.windup.rules.apps.java.service.TypeReferenceService;
@@ -76,7 +75,7 @@ public class AnalyzeJSPFileRuleProvider extends AbstractRuleProvider
                 Iterable<ClassReference> references = getClassReferences(typeReferenceService, sourceFile);
                 for (ClassReference reference : references)
                 {
-                    JavaTypeReferenceModel typeReference = typeReferenceService.createTypeReference(sourceFile,
+                    typeReferenceService.createTypeReference(sourceFile,
                                 reference.getLocation(),
                                 reference.getResolutionStatus(),
                                 reference.getLineNumber(), reference.getColumn(), reference.getLength(),

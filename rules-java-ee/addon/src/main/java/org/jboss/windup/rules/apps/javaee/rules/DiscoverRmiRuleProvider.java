@@ -14,7 +14,6 @@ import org.jboss.windup.config.phase.MigrationRulesPhase;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
 import org.jboss.windup.rules.apps.java.model.AbstractJavaSourceModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
-import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.jboss.windup.rules.apps.javaee.model.RMIServiceModel;

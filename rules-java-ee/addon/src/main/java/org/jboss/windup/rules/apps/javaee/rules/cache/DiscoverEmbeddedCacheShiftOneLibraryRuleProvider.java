@@ -8,10 +8,7 @@ import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryPropertyComparisonType;
-import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.LinkModel;
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.service.LinkService;
 import org.jboss.windup.reporting.category.IssueCategoryRegistry;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
@@ -22,7 +19,7 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-@RuleMetadata(phase = InitialAnalysisPhase.class, perform = "Discover Java libraries embedded")
+@RuleMetadata(phase = InitialAnalysisPhase.class, perform = "Discover ShiftOne (Java Object Cache) libraries embedded")
 public class DiscoverEmbeddedCacheShiftOneLibraryRuleProvider extends AbstractRuleProvider
 {
     @Override
@@ -48,7 +45,6 @@ public class DiscoverEmbeddedCacheShiftOneLibraryRuleProvider extends AbstractRu
                                                     + "\n"
                                                     + "Cloud readiness issue as potential state information that is not persisted to a backing service.");
                                         classificationModel.setEffort(5);
-                                        GraphContext graphContext = event.getGraphContext();
 
                                         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
                                         technologyTagService.addTagToFileModel(fileResourceModel, "ShiftOne (embedded)",

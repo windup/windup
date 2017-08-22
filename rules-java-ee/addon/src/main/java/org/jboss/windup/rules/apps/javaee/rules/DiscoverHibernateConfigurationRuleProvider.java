@@ -5,7 +5,7 @@ import static org.joox.JOOX.$;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
+//import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,7 +31,6 @@ import org.jboss.windup.rules.apps.javaee.util.HibernateDialectDataSourceTypeRes
 import org.jboss.windup.rules.apps.xml.model.DoctypeMetaModel;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.apps.xml.service.XmlFileService;
-import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.w3c.dom.Document;
@@ -51,7 +50,7 @@ import com.tinkerpop.gremlin.java.GremlinPipeline;
 @RuleMetadata(phase = InitialAnalysisPhase.class, perform = "Discover hibernate.cfg.xml files")
 public class DiscoverHibernateConfigurationRuleProvider extends IteratingRuleProvider<DoctypeMetaModel>
 {
-    private static final Logger LOG = Logging.get(DiscoverHibernateConfigurationRuleProvider.class);
+    //private static final Logger LOG = Logging.get(DiscoverHibernateConfigurationRuleProvider.class);
 
     private static final String TECH_TAG = "Hibernate Cfg";
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.IMPORTANT;

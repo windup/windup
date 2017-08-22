@@ -8,10 +8,7 @@ import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryPropertyComparisonType;
-import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.LinkModel;
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.service.LinkService;
 import org.jboss.windup.reporting.category.IssueCategoryRegistry;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
@@ -22,7 +19,7 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-@RuleMetadata(phase = InitialAnalysisPhase.class, perform = "Discover Java libraries embedded")
+@RuleMetadata(phase = InitialAnalysisPhase.class, perform = "Discover JBoss Cache libraries embedded")
 public class DiscoverEmbeddedCacheJBossCacheLibraryRuleProvider extends AbstractRuleProvider
 {
 
@@ -44,15 +41,14 @@ public class DiscoverEmbeddedCacheJBossCacheLibraryRuleProvider extends Abstract
                                         ClassificationModel classificationModel = classificationService.attachClassification(event, context,
                                                     fileResourceModel,
                                                     IssueCategoryRegistry.CLOUD_MANDATORY,
-                                                    "Caching - JBoss cache embedded library",
-                                                    "The application embedds a JBoss cache library.  \n"
+                                                    "Caching - JBoss Cache embedded library",
+                                                    "The application embedds a JBoss Cache library.  \n"
                                                     + "\n"
                                                     + "Cloud readiness issue as potential state information that is not persisted to a backing service.");
                                         classificationModel.setEffort(5);
-                                        GraphContext graphContext = event.getGraphContext();
 
                                         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
-                                        technologyTagService.addTagToFileModel(fileResourceModel, "JBoss cache (embedded)",
+                                        technologyTagService.addTagToFileModel(fileResourceModel, "JBoss Cache (embedded)",
                                                     TechnologyTagLevel.INFORMATIONAL);
 
                                     }
