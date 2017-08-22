@@ -149,7 +149,7 @@
             </div><#-- .panel -->
         </div><#-- .row.summaryInfo -->
 
-        <div class="row container-fluid col-md-12">
+        <div class="row col-md-12">
         <#include "include/timestamp.ftl">
         </div>
     </div>
