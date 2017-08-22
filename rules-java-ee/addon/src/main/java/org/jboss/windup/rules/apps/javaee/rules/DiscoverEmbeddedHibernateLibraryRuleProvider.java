@@ -22,7 +22,7 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-@RuleMetadata(phase = InitialAnalysisPhase.class, perform = "Discover Java libraries embedded")
+@RuleMetadata(phase = InitialAnalysisPhase.class, perform = "Discover Hibernate libraries embedded")
 public class DiscoverEmbeddedHibernateLibraryRuleProvider extends AbstractRuleProvider
 {
 

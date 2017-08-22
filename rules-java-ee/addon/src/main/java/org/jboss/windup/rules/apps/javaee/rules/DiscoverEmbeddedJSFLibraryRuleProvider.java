@@ -22,7 +22,7 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-@RuleMetadata(phase = InitialAnalysisPhase.class, perform = "Discover Java libraries embedded")
+@RuleMetadata(phase = InitialAnalysisPhase.class, perform = "Discover Java Server Faces libraries embedded")
 public class DiscoverEmbeddedJSFLibraryRuleProvider extends AbstractRuleProvider
 {
 
