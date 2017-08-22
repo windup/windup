@@ -201,11 +201,10 @@
         <div class="row">
             <div class="page-header">
                 <h1>
-                    <div class="main">Cross-application Reports</div>
+                    <div class="main">Shared Libraries</div>
                 </h1>
                 <div class="desc">
-                    These reports contain information about all issues found in archives which were included in
-                    multiple applications.
+                    This section consolidates issues found in archives included in multiple applications.
                 </div>
             </div>
         </div>

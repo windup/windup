@@ -29,7 +29,7 @@ import org.jboss.windup.config.metadata.RuleMetadata;
 public class CreateMigrationIssuesReportRuleProvider extends AbstractRuleProvider
 {
     public static final String TEMPLATE_PATH = "/reports/templates/migration-issues.ftl";
-    public static final String REPORT_DESCRIPTION = "The Migration Issues report provides a concise summary of all issues that require attention.";
+    public static final String REPORT_DESCRIPTION = "This report provides a concise summary of all issues sorted by severity.";
 
     @Override
     public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
