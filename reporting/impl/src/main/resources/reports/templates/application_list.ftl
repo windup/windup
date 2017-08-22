@@ -168,16 +168,12 @@
                     <div class="main">Application List</div>
                 </h1>
                 <div class="desc">
-                    The Application List report shows all applications which were analyzed.
-                    Click on an individual application to see individual reports or you can follow
-                    the global Migration Issues report.
+                    This report lists all analyzed applications. Click on an individual application to show more details.
                 </div>
             </div>
         </div>
 
-
         <!-- Apps -->
-
         <#assign sharedLibsExists = reportModel.relatedResources["sharedLibsApplicationReport"]!?has_content >
 
         <section class="apps">
