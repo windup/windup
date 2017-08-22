@@ -80,8 +80,8 @@
         <div class="row">
             <div class="page-header page-header-no-border">
                 <h1>
-                    <div class="main">Ignored Files Report</div>
-                    <div class="path">${reportModel.projectModel.name?html}</div>
+                    <div class="main">Ignored Files</div>
+                    <div class="path">${reportModel.projectModel.rootFileModel.fileName}</div>
                 </h1>
                 <div class="desc">
                     ${reportModel.description}

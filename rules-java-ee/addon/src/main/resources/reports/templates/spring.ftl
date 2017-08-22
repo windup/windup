@@ -29,7 +29,7 @@
             <div class="page-header page-header-no-border">
                 <h1>
                     <div class="main">Spring Bean Report</div>
-                    <div class="path">${reportModel.projectModel.name?html}</div>
+                    <div class="path">${reportModel.projectModel.rootFileModel.fileName}</div>
                 </h1>
                 <div class="desc">
                     The Spring bean report lists the SpringBeans found in the application

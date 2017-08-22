@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <#assign applicationReportIndexModel = reportModel.applicationReportIndexModel>
-                            
+
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -41,7 +41,7 @@
                 <h1>
                     <div class="main">${reportModel.reportName}</div>
                     <#if reportModel.projectModel??>
-                        <div class="path">${reportModel.projectModel.name?html}</div>
+                        <div class="path">${reportModel.projectModel.rootFileModel.fileName}</div>
                     </#if>
                 </h1>
                 <div class="desc">

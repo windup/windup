@@ -63,7 +63,7 @@
             <div class="page-header page-header-no-border">
                 <h1>
                     <div class="main">Hard-coded IP Report</div>
-                    <div class="path">${reportModel.projectModel.name?html}</div>
+                    <div class="path">${reportModel.projectModel.rootFileModel.fileName}</div>
                 </h1>
                 <div class="desc">
                     The hard-coded IP report lists the places where an IP address is found in the application.

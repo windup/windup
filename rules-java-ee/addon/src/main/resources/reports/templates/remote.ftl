@@ -29,7 +29,7 @@
             <div class="page-header page-header-no-border">
                 <h1>
                     <div class="main">Remote Service Report</div>
-                    <div class="path">${reportModel.projectModel.name?html}</div>
+                    <div class="path">${reportModel.projectModel.rootFileModel.fileName}</div>
                 </h1>
                 <div class="desc">
                     This report lists Java EE EJB services - their interfaces and implementations.
