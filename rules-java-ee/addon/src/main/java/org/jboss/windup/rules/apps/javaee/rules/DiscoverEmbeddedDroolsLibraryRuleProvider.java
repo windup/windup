@@ -8,10 +8,7 @@ import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryPropertyComparisonType;
-import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.LinkModel;
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.service.LinkService;
 import org.jboss.windup.reporting.category.IssueCategoryRegistry;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
@@ -22,7 +19,7 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-@RuleMetadata(phase = InitialAnalysisPhase.class, perform = "Discover Java libraries embedded")
+@RuleMetadata(phase = InitialAnalysisPhase.class, perform = "Discover Drools libraries embedded")
 public class DiscoverEmbeddedDroolsLibraryRuleProvider extends AbstractRuleProvider
 {
 
@@ -47,7 +44,6 @@ public class DiscoverEmbeddedDroolsLibraryRuleProvider extends AbstractRuleProvi
                                                     "Embedded library - Drools",
                                                     "The application embedds a Drools library.");
                                         classificationModel.setEffort(0);
-                                        GraphContext graphContext = event.getGraphContext();
 
                                         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
                                         technologyTagService.addTagToFileModel(fileResourceModel, "Drools (embedded)",
