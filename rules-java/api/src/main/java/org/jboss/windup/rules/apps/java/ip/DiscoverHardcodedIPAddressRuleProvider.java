@@ -53,7 +53,7 @@ public class DiscoverHardcodedIPAddressRuleProvider extends AbstractRuleProvider
         .addRule()
         // for all files ending in java, properties, and xml,
         // query for the regular expression {ip}
-        .when(FileContent.matches("{ip}").inFileNamed("{*}.{type}"))
+        .when(FileContent.matches("{ip}").inFileNamed("{*}{type}"))
         .perform(new AbstractIterationOperation<FileLocationModel>()
         {
             // when a result is found, create an inline hint.
@@ -93,7 +93,7 @@ public class DiscoverHardcodedIPAddressRuleProvider extends AbstractRuleProvider
             }
         })
         .where("ip").matches(IP_PATTERN)
-        .where("type").matches("java|properties|[^pom]\\.xml")
+        .where("type").matches("\\.java|\\.properties|[^pom]\\.xml")
         .withId(getClass().getSimpleName());
     }
 
