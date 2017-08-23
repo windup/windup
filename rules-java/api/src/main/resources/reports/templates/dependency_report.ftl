@@ -14,12 +14,14 @@
     <link href="resources/css/bootstrap.min.css" rel="stylesheet">
     <link href="resources/css/windup.css" rel="stylesheet" media="screen">
     <link href="resources/img/rhamt-icon-128.png" rel="shortcut icon" type="image/x-icon"/>
+
     <style>
-        body.reportJar .dependency { padding: 1ex 1em 1ex; margin: 0ex 1em; border-bottom: 1px solid gray; }
-        body.reportJar .dependency h4 { font-size: 14pt !important; color: #286ba4; background-color: #f2f2f2 }
+        body.reportJar .dependency { margin: 0ex 0em; margin-bottom: 10px }
+        body.reportJar .dependency h4 { font-size: 14pt !important; font-weight: bold; color: #ffffff; background-color: rgb(0, 140, 186); padding: 10px 15px; -webkit-margin-before: 0em; -webkit-margin-after: 0em }
         body.reportJar .dependency * { font-size: 12pt !important; }
         body.reportJar .dependency dl.traits dt.trait { display: block; }
-        <!-- body.reportJar .dependency .traits .trait { font-size: 11pt !important; }-->
+        .panel-default { border-color: #00445C }
+        dl.dl-horizontal { margin-bottom: 0; padding: 15px 15px 5px 15px }
     </style>
 </head>
 <body role="document" class="reportJar">
@@ -97,7 +99,7 @@
                             </#if>
                             <dt class="trait">Found at path:</dt>
                             <dd>
-                                <ul id="${archiveName}-paths" class="list-unstyled">                                    
+                                <ul id="${archiveName}-paths" class="list-unstyled">
                                     <#list sortDependencyArchivesByPathAscending(dependency.archives) as edge>
                                         <li>${edge.fullPath}</li>
                                     </#list>
