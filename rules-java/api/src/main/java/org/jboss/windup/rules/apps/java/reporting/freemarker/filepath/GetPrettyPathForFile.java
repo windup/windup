@@ -17,6 +17,7 @@ import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
  */
 public class GetPrettyPathForFile extends AbstractGetPrettyPathForFile
 {
+
     public String getPath(JavaClassFileModel jcfm)
     {
         return jcfm.getJavaClass().getQualifiedName();

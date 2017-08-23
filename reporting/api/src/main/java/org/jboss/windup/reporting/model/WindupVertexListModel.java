@@ -13,9 +13,10 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
  * Contains a list of {@link WindupVertexFrame} objects and (for convenience) implements the {@link Iterable} interface as well.
- * 
- * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  *
+ * NOTE that this currently doesn't keep the order of the elements. So it's more of a 
+ *
+ * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(WindupVertexListModel.TYPE)
 public interface WindupVertexListModel<T extends WindupVertexFrame> extends WindupVertexFrame, Iterable<T>

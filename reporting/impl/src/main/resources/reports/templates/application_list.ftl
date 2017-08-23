@@ -110,11 +110,11 @@
     <link href="reports/resources/img/rhamt-icon-128.png" rel="shortcut icon" type="image/x-icon"/>
     <style>
         body.viewAppList .apps  { margin: 0 2ex; }
+
         body.viewAppList .apps .appInfo {
             border-bottom: 1px solid gray;
             overflow: auto; width: 100%; /* clearing */
-            margin: 1ex 0;
-            padding: 1ex 0 2ex;
+            padding: 1ex 0 1ex;
         }
         body.viewAppList .apps .appInfo .stats { float: right; width: 610px; padding: 0.4ex 0; }
         body.viewAppList .apps .appInfo .stats .effortPoints { float: left; width: 160px; padding: 0.3ex 0.2em 0; font-size: 33pt; }
@@ -143,7 +143,7 @@
         body.viewAppList .apps .virtual .appInfo .traits .fileName { color: #477280; }
     </style>
 </head>
-<body role="document" class="viewAppList" style="max-width: 1480px; margin: auto;">
+<body role="document" class="viewAppList" style="margin: auto;">
 
     <!-- Navbar -->
     <div id="main-navbar" class="navbar navbar-default navbar-fixed-top">
@@ -163,7 +163,7 @@
     <div class="container-fluid" role="main">
 
         <div class="row">
-            <div class="page-header">
+            <div class="page-header page-header-no-border">
                 <h1>
                     <div class="main">Application List</div>
                 </h1>
@@ -184,7 +184,10 @@
             <#assign virtualAppExists = false>
             <div class="real">
                 <#-- See CreateApplicationListReportRuleProvider -->
-                <#list reportModel.relatedResources.applications.list.iterator() as applicationReport>
+                <#--
+                <#list iterableToList(reportModel.relatedResources.applications.list)?sort_by(["projectModel","rootFileModel","fileName"]) as applicationReport>
+                -->
+                <#list sortApplicationsList(iterableToList(reportModel.relatedResources.applications.list)) as applicationReport>
                     <#if applicationReport.projectModel.projectType! != "VIRTUAL" >
                         <@applicationReportRenderer applicationReport/>
                     <#else>
@@ -196,7 +199,7 @@
 
         <#if virtualAppExists>
         <div class="row">
-            <div class="page-header">
+            <div class="page-header page-header-no-border">
                 <h1>
                     <div class="main">Cross-application Reports</div>
                 </h1>
@@ -208,7 +211,7 @@
         </div>
         <section class="apps">
             <div class="virtual">
-                <#list reportModel.relatedResources.applications.list.iterator() as applicationReport>
+                <#list iterableToList(reportModel.relatedResources.applications.list)?sort_by(["projectModel","name"]) as applicationReport>
                     <#if applicationReport.projectModel.projectType! = "VIRTUAL" >
                         <@applicationReportRenderer applicationReport/>
                     </#if>
@@ -231,7 +234,7 @@
     <script src="reports/resources/js/windup-utils.js"></script>
     <script type="text/javascript">
         $("body.viewAppList .apps .real .appInfo").sortElements(function(a, b){
-            return $(a).find(".traits .fileName").first().text().trim() > $(b).find(".traits .fileName").first().text().trim() ? 1 : -1;
+            return $(a).find(".traits .fileName").first().text().trim().toLowerCase() > $(b).find(".traits .fileName").first().text().trim().toLowerCase() ? 1 : -1;
         });
     </script>
     <script src="reports/resources/js/bootstrap.min.js"></script>

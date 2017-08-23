@@ -5,6 +5,7 @@ import static org.joox.JOOX.$;
 
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.config.exception.ConfigurationException;
@@ -38,6 +39,7 @@ import org.w3c.dom.Element;
 @NamespaceElementHandler(elementName = "classification", namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)
 public class ClassificationHandler implements ElementHandler<Classification>
 {
+    private static final Logger LOG = Logger.getLogger(ClassificationHandler.class.getName());
 
     @Override
     public Classification processElement(ParserContext handlerManager, Element element) throws ConfigurationException
@@ -87,6 +89,8 @@ public class ClassificationHandler implements ElementHandler<Classification>
         if (StringUtils.isNotBlank(issueDisplayModeString))
         {
             IssueDisplayMode issueDisplayMode = IssueDisplayMode.parse(issueDisplayModeString);
+            if (issueDisplayMode == IssueDisplayMode.DETAIL_ONLY && classification.getEffort() != 0)
+                LOG.warning("WARNING: classification: " + classificationStr + " with effort " + effortStr + " is marked as detail only. This is generally a mistake.");
             classification.withIssueDisplayMode(issueDisplayMode);
         }
 

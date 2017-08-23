@@ -13,6 +13,8 @@ import static org.joox.JOOX.$;
  * <javaclass-ignore> is used to mark the packages/classes/methods that once are referenced, the class should be ignored.
  * This is especially useful for cases in which just by some reference we may for sure tell that the class is generated.
  *
+ * Note: Inner classes are still kept in the analysis.
+ *
  * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  */
 @NamespaceElementHandler(elementName = JavaClassIgnoreHandler.ELEMENT_NAME, namespace = RuleProviderHandler.WINDUP_RULE_NAMESPACE)

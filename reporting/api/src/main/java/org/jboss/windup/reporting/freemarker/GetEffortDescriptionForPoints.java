@@ -2,7 +2,6 @@ package org.jboss.windup.reporting.freemarker;
 
 import java.util.List;
 
-import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.reporting.service.EffortReportService;
 import org.jboss.windup.reporting.service.EffortReportService.Verbosity;
 import org.jboss.windup.util.ExecutionStatistics;
