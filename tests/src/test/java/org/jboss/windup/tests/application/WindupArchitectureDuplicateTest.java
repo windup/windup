@@ -215,11 +215,11 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest
 
         TestMigrationIssuesReportUtil migrationIssuesReportUtil = new TestMigrationIssuesReportUtil();
         migrationIssuesReportUtil.loadPage(getPathForReport(graphContext, mainIssuesReportModel));
-        Assert.assertTrue(migrationIssuesReportUtil.checkIssue("Maven POM", 6, 0, "Info", 0));
+        Assert.assertTrue(migrationIssuesReportUtil.checkIssue("Maven POM (pom.xml)", 6, 0, "Info", 0));
         Assert.assertTrue(migrationIssuesReportUtil.checkIssue("Unparsable XML File", 2, 0, "Info", 0));
 
         migrationIssuesReportUtil.loadPage(getPathForReport(graphContext, copyIssuesReportModel));
-        Assert.assertTrue(migrationIssuesReportUtil.checkIssue("Maven POM", 6, 0, "Info", 0));
+        Assert.assertTrue(migrationIssuesReportUtil.checkIssue("Maven POM (pom.xml)", 6, 0, "Info", 0));
         Assert.assertTrue(migrationIssuesReportUtil.checkIssue("Unparsable XML File", 2, 0, "Info", 0));
     }
 

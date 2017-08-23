@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <#assign applicationReportIndexModel = reportModel.applicationReportIndexModel>
-                            
+
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -43,7 +43,7 @@
                 <h1>
                     <div class="main">${reportModel.reportName}</div>
                     <#if reportModel.projectModel??>
-                        <div class="path">${reportModel.projectModel.name?html}</div>
+                        <div class="path">${reportModel.projectModel.rootFileModel.fileName}</div>
                     </#if>
                 </h1>
                 <div class="desc">
@@ -54,12 +54,9 @@
 
         <div class="row">
             <div class="container-fluid theme-showcase" role="main">
-                
+
             <#list sortDependencyGroupArchivesByPathAscending(reportModel.archiveGroups)>
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Dependencies</h3>
-                </div>
+            <div class="panel">
                 <div class="dependencies">
                 <#items as dependency>
                     <#assign dependencyProject = dependency.canonicalProject>

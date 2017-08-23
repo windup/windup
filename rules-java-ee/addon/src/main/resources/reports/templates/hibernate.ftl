@@ -29,7 +29,7 @@
             <div class="page-header page-header-no-border">
                 <h1>
                     <div class="main">Hibernate Report</div>
-                    <div class="path">${reportModel.projectModel.name?html}</div>
+                    <div class="path">${reportModel.projectModel.rootFileModel.fileName}</div>
                 </h1>
                 <div class="desc">
                     The Hibernate report lists the Hibernate entities and the Hibernate configuration found in the application.

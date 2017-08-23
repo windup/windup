@@ -27,7 +27,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 @RuleMetadata(phase = ReportGenerationPhase.class)
 public class CreateReportIndexRuleProvider extends AbstractRuleProvider
 {
-    public static final String REPORT_INDEX = "Report Index";
+    public static final String REPORT_INDEX = "Dashboard";
     public static final String TEMPLATE = "/reports/templates/report_index.ftl";
 
     // @formatter:off
@@ -56,13 +56,13 @@ public class CreateReportIndexRuleProvider extends AbstractRuleProvider
         applicationReportModel.setReportPriority(100);
         applicationReportModel.setDisplayInApplicationReportIndex(true);
         applicationReportModel.setReportName(REPORT_INDEX);
-        applicationReportModel.setReportIconClass("glyphicon glyphicon-th-list");
+        applicationReportModel.setReportIconClass("glyphicon glyphicon-dashboard");
         applicationReportModel.setMainApplicationReport(true);
         applicationReportModel.setTemplatePath(TEMPLATE);
         applicationReportModel.setTemplateType(TemplateType.FREEMARKER);
         applicationReportModel.setProjectModel(projectModel);
         applicationReportModel.setDescription(
-                    "This report provides summary information about findings from the migration analysis, as well as links to additional reports with detailed information.");
+                    "Dashboard report aggregating findings from the analysis.");
 
         // Set the filename for the report
         ReportService reportService = new ReportService(context);
@@ -70,3 +70,4 @@ public class CreateReportIndexRuleProvider extends AbstractRuleProvider
     }
 
 }
+

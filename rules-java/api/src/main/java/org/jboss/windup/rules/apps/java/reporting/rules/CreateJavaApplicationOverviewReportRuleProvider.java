@@ -36,7 +36,7 @@ public class CreateJavaApplicationOverviewReportRuleProvider extends AbstractRul
 {
     public static final String DETAILS_REPORT = "Application Details";
     public static final String TEMPLATE_APPLICATION_REPORT = "/reports/templates/java_application.ftl";
-    public static final String DESCRIPTION = "This provides a detailed overview of all resources found within the application that may need attention during the migration.";
+    public static final String DESCRIPTION = "An exhaustive list of all of the information and issues found within the application.";
 
     // @formatter:off
     @Override

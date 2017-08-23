@@ -84,7 +84,7 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
                 if (mavenProjectModel != null)
                 {
                     // add classification information to file.
-                    classificationService.attachClassification(event, context, payload, "Maven POM", "Maven Project Object Model (POM) File");
+                    classificationService.attachClassification(event, context, payload, "Maven POM (pom.xml)", "Maven Project Object Model (POM) File");
                     technologyTagService.addTagToFileModel(payload, "Maven XML", TechnologyTagLevel.INFORMATIONAL);
 
                     ArchiveModel archiveModel = payload.getArchive();

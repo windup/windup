@@ -317,7 +317,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>${reportModel.projectModel.rootFileModel.fileName?html} - Application Details Report</title>
+    <title>${reportModel.projectModel.rootFileModel.fileName?html} - Application Details</title>
     <link href="resources/css/bootstrap.min.css" rel="stylesheet">
     <link href="resources/css/windup.css" rel="stylesheet" media="screen">
     <link href="resources/css/windup.java.css" rel="stylesheet" media="screen">
@@ -358,7 +358,7 @@
         <div class="row">
             <div class="page-header page-header-no-border">
                 <h1>
-                    <div class="main">Application Details Report</div>
+                    <div class="main">Application Details</div>
                     <div class="path">${reportModel.projectModel.rootFileModel.fileName}</div>
                 </h1>
                 <div class="desc">
@@ -398,7 +398,7 @@
                         </td>
                         <td>
                             <div class="chartBoundary">
-                                <h4>Technologies found - occurrence count</h4>
+                                <h4>Technologies Found - Occurrence Count</h4>
                                 <div id="tagsChartContainer-sum" style="height: 300px; width: 500px;">
                                     <div class="hideWhenComputed" style="position: relative; top: 4ex; left: 4em;">Computing...</div>
                                 </div>

@@ -168,16 +168,12 @@
                     <div class="main">Application List</div>
                 </h1>
                 <div class="desc">
-                    The Application List report shows all applications which were analyzed.
-                    Click on an individual application to see individual reports or you can follow
-                    the global Migration Issues report.
+                    This report lists all analyzed applications. Select an individual application to show more details.
                 </div>
             </div>
         </div>
 
-
         <!-- Apps -->
-
         <#assign sharedLibsExists = reportModel.relatedResources["sharedLibsApplicationReport"]!?has_content >
 
         <section class="apps">
@@ -201,11 +197,10 @@
         <div class="row">
             <div class="page-header page-header-no-border">
                 <h1>
-                    <div class="main">Cross-application Reports</div>
+                    <div class="main">Shared Libraries</div>
                 </h1>
                 <div class="desc">
-                    These reports contain information about all issues found in archives which were included in
-                    multiple applications.
+                    This section groups all issues found in libraries included in multiple applications.
                 </div>
             </div>
         </div>
@@ -223,9 +218,9 @@
         </#if>
 
         <div style="width: 100%; text-align: center">
-            <a href="reports/windup_ruleproviders.html">Executed rules overview</a>
+            <a href="reports/windup_ruleproviders.html">Rule providers execution overview</a>
                 |
-            <a href="reports/windup_freemarkerfunctions.html">${getWindupBrandName()} FreeMarker methods</a>
+            <a href="reports/windup_freemarkerfunctions.html">FreeMarker methods</a>
         </div>
         <#include "include/timestamp.ftl">
 

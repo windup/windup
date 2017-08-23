@@ -97,7 +97,7 @@
             <div class="page-header page-header-no-border">
                 <h1>
                     <div class="main">Compatible Files Report</div>
-                    <div class="path">${reportModel.projectModel.name?html}</div>
+                    <div class="path">${reportModel.projectModel.rootFileModel.fileName}</div>
                 </h1>
                 <div class="desc">
                     Files in this report are believed to be compatible with the selected target platform;

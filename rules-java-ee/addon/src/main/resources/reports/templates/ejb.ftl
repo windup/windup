@@ -79,7 +79,7 @@
             <div class="page-header page-header-no-border">
                 <h1>
                     <div class="main">EJB Report</div>
-                    <div class="path">${reportModel.projectModel.name?html}</div>
+                    <div class="path">${reportModel.projectModel.rootFileModel.fileName}</div>
                 </h1>
                 <div class="desc">This report lists the Java EE EJB beans with their JNDI address - stateless and statefull beans, message driven beans, and entity beans.</div>
             </div>

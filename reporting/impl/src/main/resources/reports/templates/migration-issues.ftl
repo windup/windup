@@ -48,7 +48,7 @@
             <#if reportModel.projectModel??>
                 ${reportModel.projectModel.name} -
             </#if>
-            ${reportModel.reportName} Report
+            ${reportModel.reportName}
         </title>
         <link href="resources/css/bootstrap.min.css" rel="stylesheet">
         <link href="resources/css/windup.css" rel="stylesheet" media="screen">
@@ -76,7 +76,7 @@
                 background-color: #fbf4b1;
             }
             .hint-detail-panel {
-                border-color: #a8d0e3;
+                border-color: #c2c2c2;
                 background-color: #fffcdc;
             }
             /* Reduce the padding, default is too big. */
@@ -112,9 +112,9 @@
             <div class="row">
                 <div class="page-header page-header-no-border">
                     <h1>
-                        <div class="main">${reportModel.reportName} Report</div>
+                        <div class="main">${reportModel.reportName}</div>
                         <#if reportModel.projectModel??>
-                            <div class="path">${reportModel.projectModel.name?html}</div>
+                            <div class="path">${reportModel.projectModel.rootFileModel.fileName}</div>
                         </#if>
                     </h1>
                     <div class="desc">

@@ -18,11 +18,11 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 ruleSet("ExampleRhamtJavaGroovy").setPhase(PostMigrationRulesPhase.class)
 
         .addRule()
-        
+
         .when(XmlFile.matchesXpath("/abc:ejb-jar")
               .namespace("abc", "http://java.sun.com/xml/ns/javaee"))
-        
-        .perform(Classification.as("Maven POM File")
+
+        .perform(Classification.as("Maven POM (pom.xml)")
             .with(Link.to("Apache Maven POM Reference", "http://maven.apache.org/pom.html"))
             .withEffort(0)
           .and(Hint.withText("simple text").withEffort(2))
