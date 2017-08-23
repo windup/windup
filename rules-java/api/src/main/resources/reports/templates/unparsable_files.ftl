@@ -48,10 +48,6 @@
     <link href="resources/css/windup.css" rel="stylesheet" media="screen">
     <link href="resources/css/windup.java.css" rel="stylesheet" media="screen">
     <link href="resources/img/rhamt-icon-128.png" rel="shortcut icon" type="image/x-icon"/>
-    <style>
-        body.report-Unparsable .panel,
-        body.report-Unparsable .panel-heading { border-radius: 4px 4px 0 0; }
-    </style>
 </head>
 <body role="document" class="report report-Unparsable">
 

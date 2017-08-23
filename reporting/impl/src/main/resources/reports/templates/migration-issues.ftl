@@ -56,12 +56,20 @@
         <link href="resources/css/jquery-ui.min.css" rel="stylesheet" media="screen">
         <link href="resources/img/rhamt-icon-128.png" rel="shortcut icon" type="image/x-icon"/>
         <style>
+            .table-bordered { border: 1px solid #222222;  border-collapse: collapse;}
+            .table-bordered>tfoot>tr>th, .table-bordered>tfoot>tr>td .table-bordered>tbody>tr>th,  .table-bordered>thead>tr>th, .table-bordered>thead>tr>td, .table-bordered>tbody>tr>td {
+              border: 1px inset #dddddd
+            }
+            .fileSummary {
+                background-color: #f5f5f5;
+            }
             /* Only horizontal lines. */
             .migration-issues-table.table-bordered > thead > tr > th,
             .migration-issues-table.table-bordered > tbody > tr > td {
                 border-left-style: none;
                 border-right-style: none;
             }
+
             /* Light yellow bg for the issue info box. */
             .hint-detail-panel > .panel-heading {
                 border-color: #c2c2c2;
@@ -117,6 +125,54 @@
 
         <div class="row">
         	<div class="container-fluid theme-showcase" role="main">
+                <!-- HEAD -->
+<!--            <div class="panel panel-default panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Analysis Detail</h3>
+                    </div>
+
+                    <#assign problemsBySeverity = getProblemSummaries(event, reportModel.projectModel, reportModel.includeTags, reportModel.excludeTags)>
+                    <#if !problemsBySeverity?has_content>
+                        <div class="panel-body">
+                            <div>
+                                No issues were found by the existing rules. If you would like to add custom rules,
+                                see the <a href="https://github.com/windup/windup/wiki/Rules-Development-Guide">
+                                Rule Development Guide</a>.
+                            </div>
+                        </div>
+                    </#if>
+
+                    <div class="panel-body">
+                    <#list problemsBySeverity?keys as severity>
+                        <table class="table table-bordered table-condensed tablesorter migration-issues-table">
+                            <thead>
+                                <tr>
+                                    <th class="sortable">Issue by Category</th>
+                                    <th class="sortable-right text-right">Incidents Found</th>
+                                    <th class="sortable-right text-right">Story Points per Incident</th>
+                                    <th>Level of Effort</th>
+                                    <th class="sortable-right text-right">Total Story Points</th>
+                                </tr>
+                                <tr class="tablesorter-ignoreRow" style="background: rgb(212, 230, 233);">
+                                    <td>
+                                        <b>${severity}</b>
+                                    </td>
+                                    <td class="text-right">${getIncidentsFound(problemsBySeverity[severity])}</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td class="text-right">${getTotalPoints(problemsBySeverity[severity])}</td>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <#list problemsBySeverity[severity] as problemSummary>
+                                    <@migrationIssuesRenderer problemSummary />
+                                </#list>
+                            </tbody>
+                        </table>
+                    </#list>
+                    </div>
+                </div>
+                ======= -->
               <#assign problemsBySeverity = getProblemSummaries(event, reportModel.projectModel, reportModel.includeTags, reportModel.excludeTags)>
               <#if !problemsBySeverity?has_content>
                   <div>
@@ -128,14 +184,12 @@
               <#list problemsBySeverity?keys as severity>
                   <table class="table table-bordered table-condensed tablesorter migration-issues-table">
                       <thead>
-                          <tr class="tablesorter-ignoreRow" style="background: rgb(0, 140, 186);color: #FFFFFF;">
-                              <td>
-                                  <b>${severity}</b>
-                              </td>
-                              <td class="text-right">${getIncidentsFound(problemsBySeverity[severity])}</td>
-                              <td></td>
-                              <td></td>
-                              <td class="text-right">${getTotalPoints(problemsBySeverity[severity])}</td>
+                          <tr class="tablesorter-ignoreRow" style="background: rgb(0, 140, 186);color: #FFFFFF; font-size: 14pt;">
+                              <td style="border: 0px; padding: 10px 15px"><b>${severity}</b></td>
+                              <td style="border: 0px"></td>
+                              <td style="border: 0px"></td>
+                              <td style="border: 0px"></td>
+                              <td style="border: 0px"></td>
                           </tr>
                           <tr style="background: rgb(212, 230, 233);">
                               <th class="sortable">Issue by Category</th>
@@ -145,6 +199,15 @@
                               <th class="sortable-right text-right">Total Story Points</th>
                           </tr>
                       </thead>
+                      <tfoot>
+                          <tr class="tablesorter-ignoreRow" style="background: rgb(212, 230, 233);">
+                              <td style="border: 0px"></td>
+                              <td style="border: 0px" class="text-right">${getIncidentsFound(problemsBySeverity[severity])}</td>
+                              <td style="border: 0px"></td>
+                              <td style="border: 0px"></td>
+                              <td style="border: 0px" class="text-right">${getTotalPoints(problemsBySeverity[severity])}</td>
+                          </tr>
+                      </tfoot>
                       <tbody>
                           <#list problemsBySeverity[severity] as problemSummary>
                               <@migrationIssuesRenderer problemSummary />
@@ -152,6 +215,7 @@
                       </tbody>
                   </table>
               </#list>
+              <!-- 4c47fc7cb... Several style fixes to make the reports more consistent -->
 	    	</div>
         </div>
         <#include "include/timestamp.ftl">
