@@ -29,7 +29,7 @@
             <div class="page-header page-header-no-border">
                 <h1>
                     <div class="main">JPA Report</div>
-                    <div class="path">${reportModel.projectModel.name?html}</div>
+                    <div class="path">${reportModel.projectModel.rootFileModel.fileName}</div>
                 </h1>
                 <div class="desc">
                     The JPA report lists the JPA entities, named JPA queries, and the JPA configuration found in the application.

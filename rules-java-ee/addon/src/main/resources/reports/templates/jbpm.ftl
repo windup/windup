@@ -31,7 +31,7 @@
             <div class="page-header page-header-no-border">
                 <h1>
                     <div class="main">JBPM Process Report</div>
-                    <div class="path">${reportModel.projectModel.name?html}</div>
+                    <div class="path">${reportModel.projectModel.rootFileModel.fileName}</div>
                 </h1>
                 <div class="desc">
                     The JBPM process report shows the basic characteristics of JBPM processes found in the application,

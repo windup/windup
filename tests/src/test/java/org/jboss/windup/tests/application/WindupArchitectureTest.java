@@ -181,7 +181,7 @@ public abstract class WindupArchitectureTest
         processor.execute(windupConfiguration);
 
         assertRecordedData(recordingMonitor);
-        
+
         Locale.setDefault(previousLocale);
     }
 
@@ -246,7 +246,7 @@ public abstract class WindupArchitectureTest
 
     MigrationIssuesReportModel getMigrationIssuesReport(GraphContext context)
     {
-        return (MigrationIssuesReportModel) getReport(context, REPORTS_TEMPLATES_MIGRATION_ISSUES_FTL, "Migration Issues");
+        return (MigrationIssuesReportModel) getReport(context, REPORTS_TEMPLATES_MIGRATION_ISSUES_FTL, "Issues");
     }
 
     ApplicationReportModel getJarDependencyReport(GraphContext context)

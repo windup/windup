@@ -29,7 +29,7 @@
             <div class="page-header page-header-no-border">
                 <h1>
                     <div class="main">Server Resource Report</div>
-                    <div class="path">${reportModel.projectModel.name?html}</div>
+                    <div class="path">${reportModel.projectModel.rootFileModel.fileName}</div>
                 </h1>
                 <div class="desc">
                     This reports lists the resources of the application that are supposed to be used by the server,

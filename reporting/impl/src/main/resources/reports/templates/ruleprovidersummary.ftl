@@ -30,7 +30,7 @@
         <div class="row">
             <div class="page-header page-header-no-border">
                 <h1>
-                    <div class="main">Rule Provider Executions</div>
+                    <div class="main">Rule Providers Execution Overview</div>
                 </h1>
                 <div class="desc">
                     This report lists "rule providers", or sets of ${getWindupBrandName()} rules.

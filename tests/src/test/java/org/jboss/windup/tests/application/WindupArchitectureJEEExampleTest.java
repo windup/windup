@@ -174,7 +174,7 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
         {
             List<ReportModel> parents = sourceReportModel.getAllParentsInReversedOrder();
             Assert.assertTrue(parents.size() == 2);
-            Assert.assertTrue(parents.get(0).getReportName().equals("Report Index"));
+            Assert.assertTrue(parents.get(0).getReportName().equals("Dashboard"));
             Assert.assertTrue(parents.get(0).getReportFilename().contains("report_index"));
         }
     }

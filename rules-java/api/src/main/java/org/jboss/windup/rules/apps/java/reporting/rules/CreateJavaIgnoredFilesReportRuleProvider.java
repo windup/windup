@@ -39,10 +39,9 @@ public class CreateJavaIgnoredFilesReportRuleProvider extends AbstractRuleProvid
 {
     public static final String TITLE = "Ignored Files";
     public static final String TEMPLATE_REPORT = "/reports/templates/ignored_files.ftl";
-    public static final String DESCRIPTION = "This report lists the files which were found in the application,\n" +
-            "                    but based on certain rules and the " + Util.WINDUP_BRAND_NAME_LONG + " configuration, both built-in and local,\n" +
-            "                    they were not processed.\n" +
-            "                    See the <code>--userIgnorePath</code> option in the <a href=\"https://access.redhat.com/documentation/en/red-hat-jboss-migration-toolkit/\">User Guide</a>.";
+    public static final String DESCRIPTION = "This report lists the files in the application that have not been processed based on certain rules and the " +
+        Util.WINDUP_BRAND_NAME_LONG + 
+        " configuration. See the <code>--userIgnorePath</code> option in the <a href=\"https://access.redhat.com/documentation/en/red-hat-jboss-migration-toolkit/\">User Guide</a>.";
 
     // @formatter:off
     @Override

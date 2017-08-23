@@ -36,7 +36,7 @@ public class CreateDependencyReportRuleProvider extends AbstractRuleProvider
 {
     public static final String REPORT_NAME = "Dependencies";
     public static final String TEMPLATE = "/reports/templates/dependency_report.ftl";
-    public static final String REPORT_DESCRIPTION = "This report displays all Java packaged dependencies found within the application.";
+    public static final String REPORT_DESCRIPTION = "This report lists all found Java libraries embedded within the analyzed application.";
 
     @Override
     public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
