@@ -23,7 +23,7 @@ import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationListT
 import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationLiteralTypeValueModel;
 import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationTypeReferenceModel;
 import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationTypeValueModel;
-import org.jboss.windup.rules.apps.java.scan.provider.AnalyzeJavaFilesRuleProvider;
+import org.jboss.windup.rules.apps.java.scan.ast.AnalyzeJavaFilesRuleProvider;
 import org.jboss.windup.rules.apps.javaee.model.JPAEntityModel;
 import org.jboss.windup.rules.apps.javaee.model.JPANamedQueryModel;
 import org.jboss.windup.rules.apps.javaee.service.JPAEntityService;

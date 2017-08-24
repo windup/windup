@@ -1,4 +1,4 @@
-package org.jboss.windup.rules.apps.java.scan.provider;
+package org.jboss.windup.rules.apps.java.scan.ast;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -46,6 +46,7 @@ import org.jboss.windup.config.metadata.TechnologyReference;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.TechnologyReferenceModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -56,9 +57,6 @@ import org.jboss.windup.rules.apps.java.JavaTechnologyMetadata;
 import org.jboss.windup.rules.apps.java.model.JarArchiveModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.model.WindupJavaConfigurationModel;
-import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
-import org.jboss.windup.rules.apps.java.scan.ast.TypeInterestFactory;
-import org.jboss.windup.rules.apps.java.scan.ast.WindupWildcardImportResolver;
 import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationListTypeValueModel;
 import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationLiteralTypeValueModel;
 import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationTypeReferenceModel;
@@ -84,8 +82,8 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 @RuleMetadata(phase = InitialAnalysisPhase.class, haltOnException = true)
 public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
 {
-    static final String UNPARSEABLE_JAVA_CLASSIFICATION = "Unparseable Java File";
-    static final String UNPARSEABLE_JAVA_DESCRIPTION = "This Java file could not be parsed";
+    public static final String UNPARSEABLE_JAVA_CLASSIFICATION = "Unparseable Java File";
+    public static final String UNPARSEABLE_JAVA_DESCRIPTION = "This Java file could not be parsed";
 
     public static final int COMMIT_INTERVAL = 500;
     public static final int LOG_INTERVAL = 250;
@@ -126,37 +124,52 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
 
                 Iterable<JavaSourceFileModel> allJavaSourceModels = graphContext.service(JavaSourceFileModel.class).findAll();
 
-                final Set<Path> allSourceFiles = new TreeSet<>();
 
-                Set<String> sourcePaths = new HashSet<>();
+                final Map<ProjectModel, JavaAnalysisBatch> batchMap = new HashMap<>();
+
+                Set<String> sourceRoots = new HashSet<>();
+                int sourceFileCount = 0;
                 for (JavaSourceFileModel javaFile : allJavaSourceModels)
                 {
                     FileModel rootSourceFolder = javaFile.getRootSourceFolder();
                     if (rootSourceFolder != null)
                     {
-                        sourcePaths.add(rootSourceFolder.getFilePath());
+                        sourceRoots.add(rootSourceFolder.getFilePath());
                     }
 
                     if (windupJavaConfigurationService.shouldScanPackage(javaFile.getPackageName()))
                     {
+                        ProjectModel application = javaFile.getApplication();
+                        JavaAnalysisBatch batch = batchMap.get(application);
+                        if (batch == null)
+                        {
+                            batch = new JavaAnalysisBatch(application);
+                            batchMap.put(application, batch);
+                        }
+
                         Path path = Paths.get(javaFile.getFilePath());
-                        allSourceFiles.add(path);
+                        batch.getSourceFiles().add(path);
+                        sourceFileCount++;
                         sourcePathToFileModel.put(path, javaFile);
                     }
                 }
 
-                LOG.log(Level.INFO, "Analyzing {0} Java source files.", allSourceFiles.size());
+                LOG.log(Level.INFO, "Analyzing {0} Java source files.", sourceFileCount);
 
                 WindupJavaConfigurationModel javaConfiguration = WindupJavaConfigurationService.getJavaConfigurationModel(graphContext);
 
-                Set<String> libraryPaths = collectLibraryPaths(graphContext, javaConfiguration);
+                collectLibraryPaths(graphContext, javaConfiguration, batchMap);
 
                 ExecutionStatistics.get().begin("AnalyzeJavaFilesRuleProvider.parseFiles");
                 final boolean classNotFoundAnalysisEnabled = javaConfiguration.isClassNotFoundAnalysisEnabled();
                 try
                 {
                     WindupWildcardImportResolver.setContext(graphContext);
-                    parseJavaFiles(event, classNotFoundAnalysisEnabled, allSourceFiles, libraryPaths, sourcePaths, graphContext, context);
+                    ProgressEstimate estimate = new ProgressEstimate(sourceFileCount);
+                    for (JavaAnalysisBatch batch : batchMap.values())
+                    {
+                        parseJavaFiles(event, estimate, classNotFoundAnalysisEnabled, batch, sourceRoots, graphContext, context);
+                    }
                 }
                 catch (WindupStopException ex)
                 {
@@ -179,8 +192,9 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
             }
         }
 
-        private void parseJavaFiles(final GraphRewrite event, final boolean classNotFoundAnalysisEnabled, final Set<Path> allSourceFiles, Set<String> libraryPaths, Set<String> sourcePaths, final GraphContext graphContext, EvaluationContext context) throws InterruptedException
+        private void parseJavaFiles(GraphRewrite event, ProgressEstimate estimate, boolean classNotFoundAnalysisEnabled, JavaAnalysisBatch batch, Set<String> sourceRoots, GraphContext graphContext, EvaluationContext context) throws InterruptedException
         {
+            //final Set<Path> allSourceFiles, Set<String> libraryPaths,
             final BlockingQueue<Pair<Path, List<ClassReference>>> processedPaths = new ArrayBlockingQueue<>(ANALYSIS_QUEUE_SIZE);
             final ConcurrentMap<Path, String> failures = new ConcurrentHashMap<>();
             BatchASTListener listener = new BatchASTListener()
@@ -209,10 +223,9 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                 }
             };
 
-            Set<Path> filesToProcess = new TreeSet<>(allSourceFiles);
+            Set<Path> filesToProcess = new TreeSet<>(batch.getSourceFiles());
 
-            BatchASTFuture future = BatchASTProcessor.analyze(listener, importResolver, libraryPaths, sourcePaths, filesToProcess);
-            ProgressEstimate estimate = new ProgressEstimate(filesToProcess.size());
+            BatchASTFuture future = BatchASTProcessor.analyze(listener, importResolver, batch.getClasspath(), sourceRoots, filesToProcess);
 
             // This tracks the number of items added to the graph
             AtomicInteger referenceCount = new AtomicInteger(0);
@@ -254,7 +267,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
 
                     try
                     {
-                        List<ClassReference> references = ASTProcessor.analyze(importResolver, libraryPaths, sourcePaths, unprocessed);
+                        List<ClassReference> references = ASTProcessor.analyze(importResolver, batch.getClasspath(), sourceRoots, unprocessed);
                         processReferences(graphContext, referenceCount, unprocessed, filterClassReferences(references, classNotFoundAnalysisEnabled));
                         filesToProcess.remove(unprocessed);
                     }
@@ -298,10 +311,9 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
             sourceFileModel.setParseError(msg);
         }
 
-        private Set<String> collectLibraryPaths(final GraphContext graphContext, WindupJavaConfigurationModel javaConfiguration)
+        private void collectLibraryPaths(final GraphContext graphContext, WindupJavaConfigurationModel javaConfiguration, Map<ProjectModel, JavaAnalysisBatch> batchMap)
         {
-            Set<String> libraryPaths;
-            libraryPaths = new HashSet<>();
+            Set<String> libraryPaths = new HashSet<>();
             WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(graphContext);
             for (TechnologyReferenceModel target : configurationModel.getTargetTechnologies())
             {
@@ -321,12 +333,19 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
             {
                 libraryPaths.add(additionalClasspath.getFilePath());
             }
+
+            batchMap.values().forEach(batch -> batch.getClasspath().addAll(libraryPaths));
+
             Iterable<JarArchiveModel> libraries = graphContext.service(JarArchiveModel.class).findAll();
             for (JarArchiveModel library : libraries)
             {
-                libraryPaths.add(library.getFilePath());
+                ProjectModel application = library.getApplication();
+                JavaAnalysisBatch batch = batchMap.get(application);
+                if (batch != null)
+                {
+                    batch.getClasspath().add(library.getFilePath());
+                }
             }
-            return libraryPaths;
         }
 
         private void commitIfNeeded(GraphContext context, int numberAddedToGraph)
