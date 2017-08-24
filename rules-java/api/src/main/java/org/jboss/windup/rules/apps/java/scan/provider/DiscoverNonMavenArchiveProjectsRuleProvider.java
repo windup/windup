@@ -90,7 +90,7 @@ public class DiscoverNonMavenArchiveProjectsRuleProvider extends AbstractRulePro
                                     projectModel = projectModelService.create();
                                     projectModel.setName(archiveModel.getArchiveName());
                                     projectModel.setRootFileModel(archiveModel);
-                                    projectModel.setDescription("Unidentified Archive");
+                                    projectModel.setDescription("Not available");
 
                                     if(ZipUtil.endsWithZipExtension(archiveModel.getArchiveName()))
                                     {
