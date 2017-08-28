@@ -53,7 +53,7 @@
                     <#assign dependencyProject = dependency.canonicalProject>
                     <#assign archiveName = dependencyProject.rootFileModel.fileName>
                     <#if dependencyProject??>
-                    <div class="panel panel-default panel-primary">
+                    <div class="panel panel-default panel-primary dependency">
                         <div id="${archiveName}" class="panel-heading">
                             <h3 class="panel-title">${archiveName}</h3>
                         </div>
