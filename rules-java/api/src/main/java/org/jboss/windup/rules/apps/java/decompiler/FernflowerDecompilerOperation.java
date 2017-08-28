@@ -314,7 +314,7 @@ public class FernflowerDecompilerOperation extends AbstractDecompilerOperation
             queueSize.incrementAndGet();
             executorService.submit(saveDecompiledRunnable);
 
-            while (queueSize.get() > 1000)
+            while (queueSize.get() > 100000)
             {
                 try
                 {
