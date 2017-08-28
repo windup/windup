@@ -326,9 +326,6 @@ public class FernflowerDecompilerOperation extends AbstractDecompilerOperation
                     // noop
                 }
             }
-
-            if (queueSize.get() > 1000)
-                LOG.warning("Decompiler queue size is: " + queueSize.get());
         }
 
         @Override
