@@ -29,10 +29,11 @@ public class TestDependencyReportUtil extends TestReportUtil
         if (elements.size() == 1)
         {
             WebElement dependency = elements.get(0);
-            WebElement h4 = dependency.findElement(By.tagName("h4"));
-            if ( h4 != null && h4.getText().equals(fileName)) 
+            WebElement h3 = dependency.findElement(By.tagName("h3"));
+            if ( h3 != null && h3.getText().equals(fileName))
             {
-                return checkDependency(dependency, name, fileName, gav, dependencyHash, version, org, paths);
+                WebElement dependencyParent = dependency.findElement(By.xpath(".."));
+                return checkDependency(dependencyParent, name, fileName, gav, dependencyHash, version, org, paths);
             }
         }
         else
