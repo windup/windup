@@ -8,14 +8,6 @@ import org.jboss.forge.arquillian.AddonDependencies;
 import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
-import org.jboss.windup.ast.java.data.TypeReferenceLocation;
-import org.jboss.windup.config.AbstractRuleProvider;
-import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.RuleSubset;
-import org.jboss.windup.config.loader.RuleLoaderContext;
-import org.jboss.windup.config.metadata.MetadataBuilder;
-import org.jboss.windup.config.operation.Iteration;
-import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.engine.predicates.RuleProviderWithDependenciesPredicate;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
@@ -24,28 +16,20 @@ import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
-import org.jboss.windup.rules.apps.java.condition.JavaClass;
 import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
-import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
-import org.jboss.windup.rules.apps.java.scan.provider.AnalyzeJavaFilesRuleProvider;
 import org.jboss.windup.rules.apps.java.scan.provider.CacheFileModelPrettyPathRuleProvider;
 import org.jboss.windup.testutil.basics.WindupTestUtilMethods;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ocpsoft.rewrite.config.Configuration;
-import org.ocpsoft.rewrite.config.ConfigurationBuilder;
-import org.ocpsoft.rewrite.context.EvaluationContext;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
-import java.util.logging.Logger;
 
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>

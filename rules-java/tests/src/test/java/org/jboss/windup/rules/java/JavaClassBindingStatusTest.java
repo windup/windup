@@ -41,7 +41,7 @@ import org.jboss.windup.rules.apps.java.config.EnableClassNotFoundAnalysisOption
 import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
-import org.jboss.windup.rules.apps.java.scan.provider.AnalyzeJavaFilesRuleProvider;
+import org.jboss.windup.rules.apps.java.scan.ast.AnalyzeJavaFilesRuleProvider;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

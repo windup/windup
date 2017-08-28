@@ -21,7 +21,10 @@ public class FernflowerJDKLogger extends IFernflowerLogger
     @Override
     public void writeMessage(String s, Throwable throwable)
     {
-        LOG.log(Level.SEVERE, "Error decompiling due to: " + throwable.getMessage(), throwable);
+        if (s == null)
+            LOG.log(Level.SEVERE, "Error decompiling due to: " + throwable.getMessage(), throwable);
+        else
+            LOG.log(Level.SEVERE, s, throwable);
     }
 
     private Level getLevel(Severity severity)

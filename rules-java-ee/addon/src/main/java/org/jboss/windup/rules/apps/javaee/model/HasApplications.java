@@ -19,29 +19,10 @@ public interface HasApplications extends BelongsToProject
 
     @Override
     @JavaHandler
-    boolean belongsToProject(ProjectModel projectModel);
-
-    @Override
-    @JavaHandler
     Iterable<ProjectModel> getRootProjectModels();
 
     abstract class Impl implements HasApplications, JavaHandlerContext<Vertex>, BelongsToProject
     {
-        @Override
-        public boolean belongsToProject(ProjectModel project)
-        {
-            ProjectModel canonicalProjectModel = this.getCanonicalProjectModel(project);
-
-            for (ProjectModel currentProject : this.getApplications())
-            {
-                if (currentProject.equals(canonicalProjectModel))
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
 
         @Override
         public Iterable<ProjectModel> getRootProjectModels()
