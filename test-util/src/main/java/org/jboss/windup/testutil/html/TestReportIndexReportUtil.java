@@ -6,15 +6,19 @@ import java.nio.file.Path;
 
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
+
 
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public class TestReportIndexReportUtil extends TestReportUtil
 {
+
     public boolean checkIncidentByCategoryRow(String category, int incidents, int totalStoryPoints)
     {
+        ((JavascriptExecutor) getDriver()).executeScript("document.getElementById('show').click();");
         WebElement element = getDriver().findElement(By.id("incidentsByTypeTable"));
         if (element == null)
         {
@@ -46,7 +50,7 @@ public class TestReportIndexReportUtil extends TestReportUtil
 
             contents = contents.replaceAll("jQuery.Color\\((.|[\n])*?\\);", "");
 
-            contents = contents.replace("createTagCharts();", "");
+            contents = contents.replace("createCharts();", "");
 
             try (FileWriter writer = new FileWriter(modifiedPath.toFile()))
             {

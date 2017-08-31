@@ -1,34 +1,21 @@
-function createTagCharts() {
+var CHART_HEIGHT = "280px";
+var CHART_WIDTH = "100%";
+var CHART_DISPLAY = "inline-block";
 
-    var count = 0;
-    for (var severity in getWindupIssueSummaries()) {
-        if (!getWindupIssueSummaries().hasOwnProperty(severity))
-            continue;
-        count++;
-    }
+function createCharts() {
 
-    var incidentsBySeverityChart = $("#incidentsBySeverityChart");
-    incidentsBySeverityChart.css("display", "inline-block")
-    incidentsBySeverityChart.css("height", "250px");
-    incidentsBySeverityChart.css("width", "100%");
-    createBarChart(incidentsBySeverityChart, issuesBySeverityChartData());
+    // Category and Effort data chart
+    var effortAndCategoryChart = $("#effortAndCategoryChart");
+    effortAndCategoryChart.css("display", CHART_DISPLAY);
+    effortAndCategoryChart.css("height", CHART_HEIGHT);
+    effortAndCategoryChart.css("width", CHART_WIDTH);
+    createLineAndBarChart(effortAndCategoryChart, effortByCategoryChartData(), issuesByCategoryChartData());
 
-    var effortAndSeverityChart = $("#effortAndSeverityChart");
-    effortAndSeverityChart.css("display", "inline-block");
-    effortAndSeverityChart.css("height", "250px");
-    effortAndSeverityChart.css("width", "100%");
-    createLineAndBarChart(effortAndSeverityChart, effortBySeverityChartData(), issuesBySeverityChartData());
-
-    var mandatoryIncidentsByEffortChart = $("#mandatoryIncidentsByEffort");
-    mandatoryIncidentsByEffortChart.css("display", "inline-block")
-    mandatoryIncidentsByEffortChart.css("height", "250px");
-    mandatoryIncidentsByEffortChart.css("width", "100%");
-    createBarChart(mandatoryIncidentsByEffortChart, mandatoryIncidentsByTypeChartData());
-
-    var mandatoryIncidentsByEffortAndPointsChart = $("#mandatoryIncidentsByEffortAndStoryPoints");
-    mandatoryIncidentsByEffortAndPointsChart.css("display", "inline-block");
-    mandatoryIncidentsByEffortAndPointsChart.css("height", "250px");
-    mandatoryIncidentsByEffortAndPointsChart.css("width", "100%");
+    // Effort  and incidents for Mandatory category data chart
+    var mandatoryIncidentsByEffortAndPointsChart = $("#mandatoryIncidentsByEffortChart");
+    mandatoryIncidentsByEffortAndPointsChart.css("display", CHART_DISPLAY);
+    mandatoryIncidentsByEffortAndPointsChart.css("height", CHART_HEIGHT);
+    mandatoryIncidentsByEffortAndPointsChart.css("width", CHART_WIDTH);
     createLineAndBarChart(mandatoryIncidentsByEffortAndPointsChart, mandatoryEffortByTypeChartData(), mandatoryIncidentsByTypeChartData());
 
 }
@@ -119,21 +106,23 @@ function mandatoryEffortByTypeChartData() {
     return { ticks: ticks, values: values, maxValue: maxValue };
 }
 
-function effortBySeverityChartData() {
+function effortByCategoryChartData() {
     var ticks = [];
     var values = [];
     var maxValue = 1;
 
     var index = 0;
-    for (var idx in severityOrder) {
-        var severity = severityOrder[idx];
-        var issueSummaries = getWindupIssueSummaries()[severity];
+    for (var idx in categoryOrder) {
+        var category = categoryOrder[idx];
+        var issueSummaries = getWindupIssueSummaries()[category];
         if (issueSummaries == null)
             issueSummaries = [];
 
         var totalEffort = 0;
+        var incidents = 0; 
         var numberFound = 0;
         issueSummaries.forEach(function(problemSummary) {
+            incidents += problemSummary.numberFound;
             totalEffort += (problemSummary.numberFound * problemSummary.effortPerIncident);
             numberFound += problemSummary.numberFound;
         });
@@ -141,7 +130,7 @@ function effortBySeverityChartData() {
         if (numberFound == 0)
             continue;
 
-        ticks[index] = [index, severity];
+        ticks[index] = [index, category];
         values[index] = [index, totalEffort];
         maxValue = Math.max(maxValue, totalEffort);
 
@@ -151,15 +140,15 @@ function effortBySeverityChartData() {
     return { ticks: ticks, values: values, maxValue: maxValue };
 }
 
-function issuesBySeverityChartData() {
+function issuesByCategoryChartData() {
     var ticks = [];
     var values = [];
     var maxValue = 1;
 
     var index = 0;
-    for (var idx in severityOrder) {
-        var severity = severityOrder[idx];
-        var issueSummaries = getWindupIssueSummaries()[severity];
+    for (var idx in categoryOrder) {
+        var category = categoryOrder[idx];
+        var issueSummaries = getWindupIssueSummaries()[category];
         if (issueSummaries == null)
             issueSummaries = [];
 
@@ -172,7 +161,7 @@ function issuesBySeverityChartData() {
         if (numberFound == 0)
             continue;
 
-        ticks[index] = [index, severity];
+        ticks[index] = [index, category];
 
         values[index] = [numberFound, index];
         maxValue = Math.max(maxValue, numberFound);
@@ -246,62 +235,14 @@ function createLineAndBarChart(divSelectorOrElement, lineChartData, barChartData
     var plot = $.plot($(divSelectorOrElement), dataset, options);
 }
 
-function createBarChart(divSelectorOrElement, flotData) {
-    if (flotData == null)
-        return null;
-
-    var dataset = [{
-        data: flotData.values,
-        color: "#5482FF",
-        valueLabels: {
-            show: true,
-            showAsHtml: true,
-            xoffset: 3,
-            plotAxis: 'x'
-        },
-    }];
-
-    var options = {
-        series: { bars: { horizontal: true, show: true } },
-        bars: {
-            align: "center",
-            barWidth: .6,
-            lineWidth: 1,
-        },
-        grid: {
-            hoverable: false,
-            borderWidth: 1,
-            borderColor: "#B0B0B0",
-            backgroundColor: { colors: ["#FFFFFF", "#EDF5FF"] },
-        },
-        xaxis: {
-            axisLabel: "Number of incidents",
-            axisLabelPadding: 1,
-            axisLabelUseCanvas: false,
-            axisLabelFontFamily: 'Verdana, Arial',
-            max: flotData.maxValue * 1.1,
-            tickDecimals: 0,
-        },
-        yaxis: {
-            ticks: flotData.ticks,
-
-            // reverse the order (needed since we want top to bottom, but flot horizontal charts are bottom to top)
-            transform: function(v) { return -v; },
-            inverseTransform: function(v) { return -v; }
-        },
-    };
-
-    return $.plot( $(divSelectorOrElement), dataset, options );
-    //return $.plot( $("#incidentsBySeverityChart"), dataset, options );
-}
 
 function createIncidentsByCategoryTable() {
     var tbodyElement = $("#incidentsByTypeTBody");
 
     var rows = "";
-    for (var idx in severityOrder) {
-        var severity = severityOrder[idx];
-        var issueSummaries = getWindupIssueSummaries()[severity];
+    for (var idx in categoryOrder) {
+        var category = categoryOrder[idx];
+        var issueSummaries = getWindupIssueSummaries()[category];
         if (issueSummaries == null)
             issueSummaries = [];
 
@@ -314,7 +255,7 @@ function createIncidentsByCategoryTable() {
         });
 
         row += "<tr>"
-        row += "<td>" + severity + "</td>";
+        row += "<td>" + category + "</td>";
         row += "<td class='numeric-column'>" + incidentCount + "</td>";
         row += "<td class='numeric-column'>" + totalEffort + "</td>";
         row += "</tr>";
@@ -394,6 +335,6 @@ function createDataTables() {
 }
 
 $(document).ready(function() {
-    createTagCharts();
+    createCharts();
     createDataTables();
 });
