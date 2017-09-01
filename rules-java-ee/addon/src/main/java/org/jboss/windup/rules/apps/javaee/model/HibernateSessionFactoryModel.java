@@ -2,7 +2,12 @@ package org.jboss.windup.rules.apps.javaee.model;
 
 import java.util.Map;
 
+import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.frames.modules.javahandler.JavaHandler;
+import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import org.jboss.windup.graph.MapInAdjacentProperties;
+import org.jboss.windup.graph.model.BelongsToProject;
+import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import com.tinkerpop.blueprints.Direction;
@@ -16,7 +21,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
  *
  */
 @TypeValue(HibernateSessionFactoryModel.TYPE)
-public interface HibernateSessionFactoryModel extends WindupVertexFrame
+public interface HibernateSessionFactoryModel extends WindupVertexFrame, BelongsToProject
 {
     String TYPE = "HibernateSessionFactory";
 
@@ -51,4 +56,27 @@ public interface HibernateSessionFactoryModel extends WindupVertexFrame
      */
     @MapInAdjacentProperties(label = "sessionFactoryProperties")
     void setSessionFactoryProperties(Map<String, String> map);
+
+    @Override
+    @JavaHandler
+    boolean belongsToProject(ProjectModel projectModel);
+
+    @Override
+    @JavaHandler
+    Iterable<ProjectModel> getRootProjectModels();
+
+    abstract class Impl implements HibernateSessionFactoryModel, BelongsToProject, JavaHandlerContext<Vertex>
+    {
+        @Override
+        public boolean belongsToProject(ProjectModel projectModel)
+        {
+            return this.getHibernateConfigurationFileModel().belongsToProject(projectModel);
+        }
+
+        @Override
+        public Iterable<ProjectModel> getRootProjectModels()
+        {
+            return this.getHibernateConfigurationFileModel().getRootProjectModels();
+        }
+    }
 }
