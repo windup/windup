@@ -366,7 +366,10 @@ public interface FileModel extends ResourceModel, BelongsToProject
         @Override
         public boolean belongsToProject(ProjectModel projectModel)
         {
-            return this.getProjectModel().equals(this.getCanonicalProjectModel(projectModel));
+            ProjectModel thisProjectModel = this.getProjectModel();
+            ProjectModel canonicalProjectModel = this.getCanonicalProjectModel(projectModel);
+
+            return thisProjectModel.equals(canonicalProjectModel);
         }
 
         @Override
