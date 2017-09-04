@@ -5,18 +5,17 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.EnumUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.graph.IndexType;
 import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.Indexes;
 import org.jboss.windup.graph.frames.FrameBooleanDefaultValue;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.BelongsToProject;
-import org.jboss.windup.graph.model.DuplicateProjectModel;
 import org.jboss.windup.graph.model.ProjectModel;
+import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Vertex;
@@ -25,7 +24,6 @@ import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.javahandler.JavaHandler;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
-import org.jboss.windup.graph.model.WindupVertexFrame;
 
 /**
  * Represents a File on disk.
@@ -366,10 +364,17 @@ public interface FileModel extends ResourceModel, BelongsToProject
         @Override
         public boolean belongsToProject(ProjectModel projectModel)
         {
-            ProjectModel thisProjectModel = this.getProjectModel();
-            ProjectModel canonicalProjectModel = this.getCanonicalProjectModel(projectModel);
+            ProjectModel argCanonicalProjectModel = this.getCanonicalProjectModel(projectModel);
 
-            return thisProjectModel.equals(canonicalProjectModel);
+            for (ProjectModel rootProjectModel : this.getRootProjectModels())
+            {
+                if (rootProjectModel.equals(argCanonicalProjectModel))
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         @Override
