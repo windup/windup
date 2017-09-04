@@ -18,7 +18,7 @@
 
     <groupId>org.jboss.windup</groupId>
     <artifactId>windup-bom</artifactId>
-    <version>4.0.0-SNAPSHOT</version>
+    <version>4.0.0.Beta4</version>
     <packaging>pom</packaging>
 
     <name>Windup BOM</name>
@@ -316,4 +316,8 @@
 
         </dependencies>
     </dependencyManagement>
+
+  <scm>
+    <tag>4.0.0.Beta4</tag>
+  </scm>
 </project>
