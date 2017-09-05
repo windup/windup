@@ -55,8 +55,8 @@ echo "Cleaning any previous contents from $WORK_DIR"
 rm -rf $WORK_DIR
 mkdir $WORK_DIR
 cd $WORK_DIR
-git clone git@github.com:windup/windup.git
-git clone git@github.com:windup/windup-rulesets.git
+git clone git@github.com:windup/windup.git --branch 4.0.x
+git clone git@github.com:windup/windup-rulesets.git --branch 4.0.x
 git clone git@github.com:windup/windup-distribution.git
 
 cd windup-rulesets
