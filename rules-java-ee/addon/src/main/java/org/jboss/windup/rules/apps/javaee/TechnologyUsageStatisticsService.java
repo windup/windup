@@ -45,7 +45,7 @@ public class TechnologyUsageStatisticsService extends GraphService<TechnologyUsa
         super(context, TechnologyUsageStatisticsModel.class);
     }
 
-    public TechnologyUsageStatisticsModel get(ProjectModel projectModel, String technologyName)
+    public TechnologyUsageStatisticsModel getOrCreate(ProjectModel projectModel, String technologyName)
     {
         Iterable<TechnologyUsageStatisticsModel> byName = findAllByProperty(TechnologyUsageStatisticsModel.NAME, technologyName);
         TechnologyUsageStatisticsModel result = null;

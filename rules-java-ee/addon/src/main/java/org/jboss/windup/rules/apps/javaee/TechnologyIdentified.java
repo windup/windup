@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.graph.model.FileLocationModel;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -44,6 +45,9 @@ public class TechnologyIdentified extends AbstractIterationOperation<WindupVerte
 
     /**
      * Creates the operation with the given input variable and technology name.
+     *
+     * This version also specifies the name of the iteration variable for cases in which there are multiple iteration
+     * variables being used. See also {@link Iteration} and {@link AbstractIterationOperation}.
      */
     public TechnologyIdentified(String variableName, String technologyName)
     {
@@ -124,7 +128,7 @@ public class TechnologyIdentified extends AbstractIterationOperation<WindupVerte
         }
 
         TechnologyUsageStatisticsService service = new TechnologyUsageStatisticsService(event.getGraphContext());
-        TechnologyUsageStatisticsModel model = service.get(project, this.technologyName);
+        TechnologyUsageStatisticsModel model = service.getOrCreate(project, this.technologyName);
         model.setOccurrenceCount(model.getOccurrenceCount() + this.count);
 
         // Update tags
