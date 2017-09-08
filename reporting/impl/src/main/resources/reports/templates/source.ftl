@@ -197,6 +197,13 @@
                  }
             });
             $(window).sausage({ page: 'li.box' });
+            $(window).resize(function () {
+                $('div.sausage-set').css('top', parseInt($('#main-navbar').css("height")));
+            });
+
+            $(window).load(function () {
+                $('div.sausage-set').css('top', parseInt($('#main-navbar').css("height")));
+            });
         });
 
         function qs(key) {
