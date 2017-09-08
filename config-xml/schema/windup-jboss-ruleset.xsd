@@ -407,6 +407,23 @@
         </xs:complexType>
     </xs:element>
 
+    <!-- technology-identified - TechnologyIdentifiedHandler -->
+    <xs:element name="technology-identified">
+        <xs:complexType mixed="true">
+            <xs:sequence>
+                <xs:element ref="tag" minOccurs="0" maxOccurs="unbounded" />
+            </xs:sequence>
+            <xs:attribute name="name" type="xs:string" use="required"/>
+            <xs:attribute name="number-found" type="xs:byte" use="optional" />
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="tag">
+        <xs:complexType>
+            <xs:attribute name="name" type="xs:string" use="required"/>
+        </xs:complexType>
+    </xs:element>
+
     <!-- MAIN BUILDING BLOCKS -->
     <xs:complexType name="where">
         <xs:sequence>
