@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<test xmlns="http://windup.jboss.org/schema/jboss-ruleset" id="query-handler-test-1">
+
+    <graph-query discriminator="FileResource" from="test-from" as="test-as">
+
+    </graph-query>
+</test>
+
