@@ -8,28 +8,18 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.SystemUtils;
 import org.jboss.windup.config.exception.ConfigurationException;
 import org.jboss.windup.config.parser.ElementHandler;
 import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.config.parser.xml.RuleProviderHandler;
-import org.jboss.windup.reporting.category.IssueCategory;
-import org.jboss.windup.reporting.category.IssueCategoryRegistry;
 import org.jboss.windup.util.exception.WindupException;
 import org.w3c.dom.Element;
 
 /**
- * Adds the provided {@link Classification} operation to the currently selected items.
+ * Indicates that the specified technology has been identified in the application.
  *
  * Expected format:
- *
- * <pre>
- * &lt;hint message="hint" effort="8" severity="INFO"&gt;
- * &lt;/hint&gt;
- * </pre>
- *
- * Alternatively, the hint message can be in its own element. This is primary useful for longer hint content:
  *
  * <pre>
  *   &lt;technology-identified number-found=”1”&gt;
@@ -37,8 +27,6 @@ import org.w3c.dom.Element;
  *       &lt;tag name=”Web” /&gt;
  *   &lt;/technology-identified&gt;
  * </pre>
- *
- * Also note that markdown formatting is fully supported via the <a href="http://www.pegdown.org/">Pegdown</a> library.
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
