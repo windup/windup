@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<test xmlns="http://windup.jboss.org/schema/jboss-ruleset">
+
+    <technology-statistics-exists name="test-1" number-found="1">
+        <tag name="tag-1"/>
+        <tag name="tag-2"/>
+    </technology-statistics-exists>
+
+</test>
+
