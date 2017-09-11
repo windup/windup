@@ -17,6 +17,8 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.util.exception.WindupException;
 import org.w3c.dom.Element;
 
+import java.util.List;
+
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
@@ -27,6 +29,8 @@ public class QueryHandler implements ElementHandler<Query>
     public static final String DISCRIMINATOR = "discriminator";
     public static final String FROM = "from";
     public static final String AS = "as";
+    public static final String PROPERTY = "property";
+    public static final String PROPERTY_NAME = "name";
 
     @Inject
     private GraphTypeManager graphTypeManager;
@@ -60,6 +64,20 @@ public class QueryHandler implements ElementHandler<Query>
         else
         {
             query = (Query)query.includingType(type);
+        }
+
+        List<Element> children = $(element).children().get();
+        for (Element child : children)
+        {
+            if (child.getNodeName().equals(PROPERTY))
+            {
+                String propertyName = $(child).attr(PROPERTY_NAME);
+                if (StringUtils.isBlank(propertyName))
+                    continue;
+
+                String value = $(child).text();
+                query.withProperty(propertyName, value);
+            }
         }
 
         if (StringUtils.isNotBlank(as))
