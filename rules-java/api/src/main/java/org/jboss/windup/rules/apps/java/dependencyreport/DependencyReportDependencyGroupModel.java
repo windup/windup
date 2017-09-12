@@ -17,7 +17,7 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 @TypeValue(DependencyReportDependencyGroupModel.TYPE)
 public interface DependencyReportDependencyGroupModel extends WindupVertexFrame
 {
-    String TYPE = "depReportGroup";
+    String TYPE = "DependencyReportDependencyGroupModel";
     String DEPENDENCY_SHA1 = "depSHA1";
     String DEPENDENCY_GROUP_TO_ARCHIVE = "dependencyGroupToArchive";
     String CANONICAL_PROJECT = "canonicalProject";

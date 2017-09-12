@@ -12,7 +12,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(ProjectDependencyModel.TYPE)
 public interface ProjectDependencyModel extends WindupVertexFrame
 {
-    public static final String TYPE = "ProjectDependency";
+    public static final String TYPE = "ProjectDependencyModel";
     public static final String PROPERTY_SCOPE = "dependencyScope";
     public static final String PROPERTY_CLASSIFIER = "dependencyClassifier";
     public static final String PROPERTY_TYPE = "dependencyType";

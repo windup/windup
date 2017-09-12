@@ -18,7 +18,7 @@ import org.jboss.windup.rules.apps.java.model.project.MavenProjectModel;
 @TypeValue(PomXmlModel.TYPE)
 public interface PomXmlModel extends WindupVertexFrame
 {
-    String TYPE = "PomXml";
+    String TYPE = "PomXmlModel";
     String DEPENDS = TYPE + "-dependensOn";
     String PARENT = TYPE + "-parent";
     String BOM = TYPE + "-bom";

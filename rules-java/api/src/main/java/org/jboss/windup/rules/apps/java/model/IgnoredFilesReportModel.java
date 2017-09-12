@@ -16,7 +16,7 @@ import org.jboss.windup.reporting.model.ApplicationReportModel;
 @TypeValue(IgnoredFilesReportModel.TYPE)
 public interface IgnoredFilesReportModel extends ApplicationReportModel
 {
-    String TYPE = "IgnoredFilesReport";
+    String TYPE = "IgnoredFilesReportModel";
     String FILE_REGEXES = "fileRegexes";
     String IGNORED_FILES = "ignoredFiles";
 

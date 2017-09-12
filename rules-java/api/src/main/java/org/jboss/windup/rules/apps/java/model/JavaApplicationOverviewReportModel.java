@@ -13,7 +13,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(JavaApplicationOverviewReportModel.TYPE)
 public interface JavaApplicationOverviewReportModel extends ApplicationReportModel, IncludeAndExcludeTagsModel
 {
-    String TYPE = "JavaApplicationOverviewReport";
+    String TYPE = "JavaApplicationOverviewReportModel";
 
 
 }

@@ -13,7 +13,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(PackageModel.TYPE)
 public interface PackageModel extends WindupVertexFrame
 {
-    public static final String TYPE = "WindupServiceConfigurationPackageModel";
+    public static final String TYPE = "PackageModel";
     public static final String PACKAGE_NAME = "packageName";
 
     @Indexed

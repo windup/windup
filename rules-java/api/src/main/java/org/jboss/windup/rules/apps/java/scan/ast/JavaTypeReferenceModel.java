@@ -24,7 +24,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 public interface JavaTypeReferenceModel extends FileLocationModel
 {
 
-    String TYPE = "JavaTypeReference";
+    String TYPE = "JavaTypeReferenceModel";
     String REFERENCE_TYPE = "referenceType";
     String RESOLVED_SOURCE_SNIPPIT = "resolvedSourceSnippit";
     String RESOLUTION_STATUS = "resolutionStatus";

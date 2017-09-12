@@ -14,7 +14,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(RMIServiceModel.TYPE)
 public interface RMIServiceModel extends RemoteServiceModel
 {
-    String TYPE = "RMIService";
+    String TYPE = "RMIServiceModel";
     String RMI_IMPLEMENTATION_CLASS = "rmiImplementationClass";
     String RMI_INTERFACE = "rmiInterface";
     

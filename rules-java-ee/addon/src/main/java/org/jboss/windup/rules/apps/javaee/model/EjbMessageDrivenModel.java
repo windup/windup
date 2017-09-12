@@ -17,7 +17,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 public interface EjbMessageDrivenModel extends EjbBeanBaseModel
 {
 
-    String TYPE = "EjbMessageDriven";
+    String TYPE = "EjbMessageDrivenModel";
     String DESTINATION = "destination";
     String THREAD_POOL = "threadPool";
     String TX_TIMEOUTS = "txTimeouts";

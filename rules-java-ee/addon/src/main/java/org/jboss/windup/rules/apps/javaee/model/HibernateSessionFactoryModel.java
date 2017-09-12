@@ -23,7 +23,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(HibernateSessionFactoryModel.TYPE)
 public interface HibernateSessionFactoryModel extends WindupVertexFrame, BelongsToProject
 {
-    String TYPE = "HibernateSessionFactory";
+    String TYPE = "HibernateSessionFactoryModel";
 
     String DATASOURCE = "datasource";
 

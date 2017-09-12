@@ -10,5 +10,5 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(WebServiceModel.TYPE)
 public interface WebServiceModel extends RemoteServiceModel
 {
-    String TYPE = "WebService";
+    String TYPE = "WebServiceModel";
 }

@@ -14,5 +14,5 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(IgnoredArchiveModel.TYPE)
 public interface IgnoredArchiveModel extends ArchiveModel, IgnoredFileModel
 {
-    String TYPE = "ignoredArchive:";
+    String TYPE = "IgnoredArchiveModel";
 }

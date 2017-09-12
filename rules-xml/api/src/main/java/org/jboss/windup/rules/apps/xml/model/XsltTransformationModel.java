@@ -15,7 +15,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(XsltTransformationModel.TYPE)
 public interface XsltTransformationModel extends WindupVertexFrame
 {
-    public static final String TYPE = "XsltTransformation";
+    public static final String TYPE = "XsltTransformationModel";
     public static final String LOCATION = TYPE + "location";
     public static final String EXTENSION = TYPE + "extension";
     public static final String EFFORT = TYPE + "effort";

@@ -12,5 +12,5 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(JspSourceFileModel.TYPE)
 public interface JspSourceFileModel extends AbstractJavaSourceModel
 {
-    String TYPE = "JspSourceFile";
+    String TYPE = "JspSourceFileModel";
 }

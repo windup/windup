@@ -14,7 +14,7 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 @TypeValue(ExecutionPhaseModel.TYPE)
 public interface ExecutionPhaseModel extends WindupVertexFrame
 {
-    String TYPE = "ExecutionPhase";
+    String TYPE = "ExecutionPhaseModel";
 
     String NAME = "name";
     String RULE_PROVIDERS = "ruleProviders";

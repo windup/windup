@@ -20,7 +20,7 @@ public interface MavenProjectModel extends ProjectModel
 {
     String MAVEN_POM = "mavenPom";
     String PARENT_MAVEN_POM = "parentMavenPOM";
-    String TYPE = "MavenFacet";
+    String TYPE = "MavenProjectModel";
     String ARTIFACT_ID = "artifactId";
     String GROUP_ID = "groupId";
     String SPECIFICATION_VERSION = "specificationVersion";

@@ -8,5 +8,5 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(MigrationIssuesReportModel.TYPE)
 public interface MigrationIssuesReportModel extends ApplicationReportModel, IncludeAndExcludeTagsModel
 {
-    String TYPE = "MigrationIssuesReport";
+    String TYPE = "MigrationIssuesReportModel";
 }

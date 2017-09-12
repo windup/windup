@@ -25,7 +25,7 @@ public interface ApplicationReportModel extends ReportModel
 {
     String DISPLAY_IN_APPLICATION_REPORT_INDEX = "displayInApplicationReportIndex";
     String DISPLAY_IN_GLOBAL_APPLICATION_INDEX = "displayInGlobalApplicationIndex";
-    String TYPE = "ApplicationReport";
+    String TYPE = "ApplicationReportModel";
     String REPORT_LINES = "reportLines";
     String REPORT_TO_PROJECT_MODEL = "reportToProjectModel";
     String REPORT_PRIORITY = "reportPriority";

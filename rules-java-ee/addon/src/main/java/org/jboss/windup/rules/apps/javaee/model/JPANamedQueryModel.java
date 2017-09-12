@@ -18,7 +18,7 @@ public interface JPANamedQueryModel extends WindupVertexFrame
 {
     String QUERY_NAME = "queryName";
     String QUERY = "query";
-    String TYPE = "JPANamedQuery";
+    String TYPE = "JPANamedQueryModel";
 
 
     /**

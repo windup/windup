@@ -13,7 +13,7 @@ public interface NamespaceMetaModel extends WindupVertexFrame
 {
     public static final String SCHEMA_LOCATION = "schemaLocation";
     public static final String NAMESPACE_URI = "namespaceURI";
-    public static final String TYPE = "NamespaceMeta";
+    public static final String TYPE = "NamespaceMetaModel";
 
     @Adjacency(label = XmlFileModel.NAMESPACE, direction = Direction.IN)
     public void addXmlResource(XmlFileModel facet);

@@ -14,7 +14,7 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 @TypeValue(HasManifestFilesModel.TYPE)
 public interface HasManifestFilesModel extends WindupVertexFrame
 {
-    String TYPE = "HasManifestFiles";
+    String TYPE = "HasManifestFilesModel";
 
     /**
      * Contains links to the manifest models associated with this vertex.

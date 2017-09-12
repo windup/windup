@@ -31,7 +31,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(FileModel.TYPE)
 public interface FileModel extends ResourceModel, BelongsToProject
 {
-    String TYPE = "FileResource";
+    String TYPE = "FileModel";
 
     String PARENT_FILE = "parentFile";
     String SHA1_HASH = "sha1Hash";

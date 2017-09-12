@@ -9,11 +9,12 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 /**
  * The result of the XmlFile condition
  */
-@TypeValue("XmlTypeReference")
+@TypeValue(XmlTypeReferenceModel.TYPE)
 public interface XmlTypeReferenceModel extends FileLocationModel
 {
     public static final String XPATH = "xpath";
     public static final String NAMESPACES = "namespaces";
+    public static final String TYPE = "XmlTypeReference";
 
     @Property(XPATH)
     String getXpath();

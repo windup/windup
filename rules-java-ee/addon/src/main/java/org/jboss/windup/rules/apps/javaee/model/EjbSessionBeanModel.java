@@ -19,7 +19,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 public interface EjbSessionBeanModel extends EjbBeanBaseModel
 {
 
-    String TYPE = "EjbSessionBean";
+    String TYPE = "EjbSessionBeanModel";
 
     String EJB_HOME = "ejbHome";
     String EJB_LOCAL_HOME = "ejbLocalHome";

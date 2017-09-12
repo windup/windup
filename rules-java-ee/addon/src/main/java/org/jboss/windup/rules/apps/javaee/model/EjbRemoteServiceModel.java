@@ -14,7 +14,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(EjbRemoteServiceModel.TYPE)
 public interface EjbRemoteServiceModel extends RemoteServiceModel
 {
-    String TYPE = "EjbRemoteService";
+    String TYPE = "EjbRemoteServiceModel";
     String EJB_IMPLEMENTATION_CLASS = "ejbImplementationClass";
     String EJB_INTERFACE = "ejbRemoteInterface";
     

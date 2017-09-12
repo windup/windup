@@ -15,7 +15,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(DependencyReportToArchiveEdgeModel.TYPE)
 public interface DependencyReportToArchiveEdgeModel extends WindupEdgeFrame
 {
-    String TYPE = "jarDependencyReportToArchiveEdge";
+    String TYPE = "DependencyReportToArchiveEdgeModel";
 
     String FULL_PATH = "fullPath";
 

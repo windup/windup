@@ -15,7 +15,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(IdentifiedArchiveModel.TYPE)
 public interface IdentifiedArchiveModel extends ArchiveModel
 {
-    String TYPE = "identifiedArchive:";
+    String TYPE = "IdentifiedArchiveModel";
     String COORDINATE = TYPE + "coordinate";
 
     /**

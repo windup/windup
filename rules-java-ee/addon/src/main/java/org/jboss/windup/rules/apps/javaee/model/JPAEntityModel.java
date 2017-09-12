@@ -15,7 +15,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(JPAEntityModel.TYPE)
 public interface JPAEntityModel extends PersistenceEntityModel
 {
-    String TYPE = "JPAEntity";
+    String TYPE = "JPAEntityModel";
     String CATALOG_NAME = TYPE + "-catalogName";
     String SCHEMA_NAME = TYPE + "-schemaName";
     String NAMED_QUERY = TYPE + "-namedQuery";

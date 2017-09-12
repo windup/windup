@@ -11,7 +11,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(DataSourceModel.TYPE)
 public interface DataSourceModel extends JNDIResourceModel
 {
-    public static final String TYPE = "DataSource";
+    public static final String TYPE = "DataSourceModel";
 
     public static final String NAME = TYPE + "-name";
     public static final String DATABASE_TYPE_NAME = "databaseTypeName";

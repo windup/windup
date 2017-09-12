@@ -12,7 +12,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 public interface IgnoredFileRegexModel extends WindupVertexFrame
 {
 
-    public static final String TYPE = "IgnoredFileRegex";
+    public static final String TYPE = "IgnoredFileRegexModel";
 
     /**
      * Contains the regex pattern to filter out

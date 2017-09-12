@@ -35,7 +35,7 @@ import org.jboss.windup.rules.apps.java.model.mixin.HasTypeModel;
 @TypeValue(WebXmlResourceReferenceModel.TYPE)
 public interface WebXmlResourceReferenceModel extends WindupVertexFrame, HasTypeModel
 {
-    public static final String TYPE = "WebXmlResourceReference";
+    public static final String TYPE = "WebXmlResourceReferenceModel";
 
     public static final String RESOURCE_NAME = "resourceName";
     public static final String RESOURCE_AUTH = "resourceAuth";

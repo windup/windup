@@ -18,7 +18,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(JNDIResourceModel.TYPE)
 public interface JNDIResourceModel extends WindupVertexFrame, HasApplications
 {
-    String TYPE = "JNDIResource";
+    String TYPE = "JNDIResourceModel";
     String JNDI_LOCATION = "JNDI_LOCATION";
     String APPLICATIONS = TYPE + "-application";
 

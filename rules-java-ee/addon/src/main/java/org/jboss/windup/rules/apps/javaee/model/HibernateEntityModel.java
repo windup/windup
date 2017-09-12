@@ -12,7 +12,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(HibernateEntityModel.TYPE)
 public interface HibernateEntityModel extends PersistenceEntityModel
 {
-    String TYPE = "HibernateEntity";
+    String TYPE = "HibernateEntityModel";
     String CATALOG_NAME = "catalogName";
     String SCHEMA_NAME = "schemaName";
     String SPECIFICATION_VERSION = "specificationVersion";
