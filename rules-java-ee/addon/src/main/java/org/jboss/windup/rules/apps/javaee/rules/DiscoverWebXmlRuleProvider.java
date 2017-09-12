@@ -12,6 +12,7 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.query.Query;
+import org.jboss.windup.config.query.QueryPropertyComparisonType;
 import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
@@ -52,7 +53,7 @@ public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileMod
     @Override
     public ConditionBuilder when()
     {
-        return Query.fromType(XmlFileModel.class).withProperty(XmlFileModel.ROOT_TAG_NAME, "web-app");
+        return Query.fromType(XmlFileModel.class).withProperty(XmlFileModel.ROOT_TAG_NAME, "web-app").withProperty(XmlFileModel.FILE_NAME, QueryPropertyComparisonType.NOT_EQUALS,  "geronimo-web.xml");
     }
 
     public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
