@@ -16,12 +16,12 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 public interface XsltTransformationModel extends WindupVertexFrame
 {
     public static final String TYPE = "XsltTransformationModel";
-    public static final String LOCATION = TYPE + "location";
-    public static final String EXTENSION = TYPE + "extension";
-    public static final String EFFORT = TYPE + "effort";
-    public static final String DESCRIPTION = TYPE + "description";
-    public static final String FILE_SOURCE = TYPE + "file_source";
-    public static final String FILE_RESULT = TYPE + "file_result";
+    public static final String LOCATION = TYPE + "-location";
+    public static final String EXTENSION = TYPE + "-extension";
+    public static final String EFFORT = TYPE + "-effort";
+    public static final String DESCRIPTION = TYPE + "-description";
+    public static final String FILE_SOURCE = TYPE + "-file_source";
+    public static final String FILE_RESULT = TYPE + "-file_result";
 
     /**
      * Contains the location of the XSLT file

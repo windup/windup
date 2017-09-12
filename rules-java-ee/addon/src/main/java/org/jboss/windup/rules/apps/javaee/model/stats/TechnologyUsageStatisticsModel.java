@@ -22,7 +22,7 @@ public interface TechnologyUsageStatisticsModel extends TaggableModel
 {
     String TYPE = "TechnologyUsageStatisticsModel";
 
-    String COMPUTED = TYPE + "_computed";
+    String COMPUTED = TYPE + "-computed";
     String PROJECT_MODEL = "stats.projectModel";
 
     String NAME = "stats.name";

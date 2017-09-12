@@ -19,10 +19,10 @@ public interface DoctypeMetaModel extends WindupVertexFrame
     public static final String PROPERTY_PUBLIC_ID = TYPE_PREFIX + "publicId";
     public static final String PROPERTY_NAME = TYPE_PREFIX + "name";
 
-    @Adjacency(label = "doctype", direction = Direction.IN)
+    @Adjacency(label = XmlFileModel.DOCTYPE, direction = Direction.IN)
     public void addXmlResource(XmlFileModel facet);
 
-    @Adjacency(label = "doctype", direction = Direction.IN)
+    @Adjacency(label = XmlFileModel.DOCTYPE, direction = Direction.IN)
     public Iterable<XmlFileModel> getXmlResources();
 
     @Indexed

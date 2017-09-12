@@ -13,26 +13,28 @@ public interface IgnoredFileRegexModel extends WindupVertexFrame
 {
 
     public static final String TYPE = "IgnoredFileRegexModel";
+    String NAME_REGEX = "nameRegex";
+    String COMPILATION_ERROR = "compilationError";
 
     /**
      * Contains the regex pattern to filter out
      */
-    @Property("name_regex")
+    @Property(NAME_REGEX)
     public String getRegex();
 
     /**
      * Contains the regex pattern to filter out
      */
-    @Property("name_regex")
+    @Property(NAME_REGEX)
     public void setRegex(String regex);
     
     /**
      * Checks if the regex is compilable
      */
-    @Property("compilationError")
+    @Property(COMPILATION_ERROR)
     public String getCompilationError();
     
-    @Property("compilationError")
+    @Property(COMPILATION_ERROR)
     public void setCompilationError(String errorMessage);
 
 }

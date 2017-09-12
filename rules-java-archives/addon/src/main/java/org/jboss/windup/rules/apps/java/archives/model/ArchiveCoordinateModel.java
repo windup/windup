@@ -20,11 +20,11 @@ import org.apache.commons.lang.StringUtils;
 public interface ArchiveCoordinateModel extends WindupVertexFrame
 {
     public static final String TYPE = "ArchiveCoordinateModel";
-    public static final String GROUP_ID    = TYPE + "groupId";
-    public static final String ARTIFACT_ID = TYPE + "artifactId";
-    public static final String PACKAGING   = TYPE + "packaging";
-    public static final String CLASSIFIER  = TYPE + "classifier";
-    public static final String VERSION     = TYPE + "version";
+    public static final String GROUP_ID    = TYPE + "-groupId";
+    public static final String ARTIFACT_ID = TYPE + "-artifactId";
+    public static final String PACKAGING   = TYPE + "-packaging";
+    public static final String CLASSIFIER  = TYPE + "-classifier";
+    public static final String VERSION     = TYPE + "-version";
 
 
     @Property(GROUP_ID)

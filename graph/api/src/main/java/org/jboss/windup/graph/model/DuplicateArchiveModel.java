@@ -18,7 +18,7 @@ public interface DuplicateArchiveModel extends ArchiveModel
 {
     String TYPE = "DuplicateArchiveModel";
 
-    String CANONICAL_ARCHIVE = TYPE + ":canonicalArchive";
+    String CANONICAL_ARCHIVE = TYPE + "-canonicalArchive";
 
     /**
      * Contains a link to the canonical archive from this duplicate instance.

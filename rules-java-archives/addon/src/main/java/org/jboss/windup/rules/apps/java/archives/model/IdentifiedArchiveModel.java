@@ -16,7 +16,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 public interface IdentifiedArchiveModel extends ArchiveModel
 {
     String TYPE = "IdentifiedArchiveModel";
-    String COORDINATE = TYPE + "coordinate";
+    String COORDINATE = TYPE + "-coordinate";
 
     /**
      * Contains the Maven GAV, if it was possible to determine this.

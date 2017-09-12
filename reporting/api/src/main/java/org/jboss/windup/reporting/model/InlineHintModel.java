@@ -18,7 +18,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 public interface InlineHintModel extends EffortReportModel, FileLocationModel, TaggableModel
 {
     String TYPE = "InlineHintModel";
-    String TYPE_PREFIX = TYPE + ":";
+    String TYPE_PREFIX = TYPE + "-";
     String TITLE = TYPE_PREFIX + "title";
     String HINT = TYPE_PREFIX + "hint";
     String RULE_ID = TYPE_PREFIX + "ruleID";
