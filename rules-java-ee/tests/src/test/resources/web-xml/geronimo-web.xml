@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <web-app xmlns="http://geronimo.apache.org/xml/ns/web"
+        xmlns:naming="http://geronimo.apache.org/xml/ns/naming"
+        configId="TradeWeb" parentId="Trade">
+    
+    <context-priority-classloader>false</context-priority-classloader>
+
+    <naming:resource-ref>
+        <naming:ref-name>jdbc/TestDataSource</naming:ref-name>
+        <naming:resource-link>
+            TestDataSource
+        </naming:resource-link>
+    </naming:resource-ref>
+</web-app>
+
+
