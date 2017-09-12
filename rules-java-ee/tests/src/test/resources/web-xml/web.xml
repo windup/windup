@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.4"
+	xmlns="http://java.sun.com/xml/ns/j2ee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
+
+      <display-name>TestWeb</display-name>
+      <session-config id="SessionConfig_1">
+         <session-timeout>30</session-timeout>
+      </session-config>
+      <welcome-file-list id="WelcomeFileList_1">
+         <welcome-file>index.html</welcome-file>
+      </welcome-file-list>
+      <resource-ref>
+         <res-ref-name>jdbc/TradeDataSource</res-ref-name>
+         <res-type>javax.sql.DataSource</res-type>
+         <res-auth>Container</res-auth>
+         <res-sharing-scope>Shareable</res-sharing-scope>
+      </resource-ref>
+      <resource-ref>
+         <res-ref-name>jms/QueueConnectionFactory</res-ref-name>
+         <res-type>javax.jms.QueueConnectionFactory</res-type>
+         <res-auth>Application</res-auth>
+         <res-sharing-scope>Shareable</res-sharing-scope>
+      </resource-ref>
+      <resource-ref>
+         <res-ref-name>jms/TopicConnectionFactory</res-ref-name>
+         <res-type>javax.jms.TopicConnectionFactory</res-type>
+         <res-auth>Application</res-auth>
+         <res-sharing-scope>Shareable</res-sharing-scope>
+      </resource-ref>
+      <ejb-ref>
+         <ejb-ref-name>ejb/Trade</ejb-ref-name>
+         <ejb-ref-type>Session</ejb-ref-type>
+         <home>org.apache.geronimo.samples.daytrader.ejb.TradeHome</home>
+         <remote>org.apache.geronimo.samples.daytrader.ejb.Trade</remote>
+         <ejb-link>TradeEJB</ejb-link>
+      </ejb-ref>
+      <ejb-ref>
+         <ejb-ref-name>ejb/Quote</ejb-ref-name>
+         <ejb-ref-type>Entity</ejb-ref-type>
+         <home>org.apache.geronimo.samples.daytrader.ejb.QuoteHome</home>
+         <remote>org.apache.geronimo.samples.daytrader.ejb.Quote</remote>
+         <ejb-link>QuoteEJB</ejb-link>
+      </ejb-ref>      
+      <ejb-local-ref>
+         <ejb-ref-name>ejb/LocalQuote</ejb-ref-name>
+         <ejb-ref-type>Entity</ejb-ref-type>
+         <local-home>org.apache.geronimo.samples.daytrader.ejb.LocalQuoteHome</local-home>
+         <local>org.apache.geronimo.samples.daytrader.ejb.LocalQuote</local>
+         <ejb-link>QuoteEJB</ejb-link>
+      </ejb-local-ref>
+      <ejb-local-ref>
+         <ejb-ref-name>ejb/LocalAccountHome</ejb-ref-name>
+         <ejb-ref-type>Entity</ejb-ref-type>
+         <local-home>org.apache.geronimo.samples.daytrader.ejb.LocalAccountHome</local-home>
+         <local>org.apache.geronimo.samples.daytrader.ejb.LocalAccount</local>
+         <ejb-link>AccountEJB</ejb-link>
+      </ejb-local-ref>
+      <message-destination-ref id="MessageDestinationRef_1">
+         <message-destination-ref-name>jms/TradeBrokerQueue</message-destination-ref-name>
+         <message-destination-type>javax.jms.Queue</message-destination-type>
+         <message-destination-usage>Produces</message-destination-usage>
+         <message-destination-link>daytrader-ejb-1.0.jar#TradeBrokerQueue</message-destination-link>
+      </message-destination-ref>
+      <message-destination-ref id="MessageDestinationRef_2">
+         <message-destination-ref-name>jms/TradeStreamerTopic</message-destination-ref-name>
+         <message-destination-type>javax.jms.Topic</message-destination-type>
+         <message-destination-usage>Produces</message-destination-usage>
+         <message-destination-link>daytrader-ejb-1.0.jar#TradeStreamerTopic</message-destination-link>
+      </message-destination-ref>
+      <service-ref>
+        <description>WSDL Service Trade</description>
+        <service-ref-name>service/Trade</service-ref-name>
+        <service-interface>org.apache.geronimo.samples.daytrader.client.ws.Trade</service-interface>
+        <wsdl-file>WEB-INF/wsdl/TradeServices.wsdl</wsdl-file>
+        <jaxrpc-mapping-file>WEB-INF/TradeServicesClient_mapping.xml</jaxrpc-mapping-file>
+        <service-qname xmlns:pfx="http://daytrader.samples.geronimo.apache.org">pfx:Trade</service-qname>
+        <port-component-ref>
+            <service-endpoint-interface>org.apache.geronimo.samples.daytrader.client.ws.TradeWSServices</service-endpoint-interface>
+        </port-component-ref>
+    </service-ref>
+</web-app>
