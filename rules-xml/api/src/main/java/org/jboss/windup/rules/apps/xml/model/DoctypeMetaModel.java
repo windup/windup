@@ -12,7 +12,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 public interface DoctypeMetaModel extends WindupVertexFrame
 {
     public static final String TYPE_ID = "DoctypeMetaModel";
-    public static final String TYPE_PREFIX = TYPE_ID + ":";
+    public static final String TYPE_PREFIX = TYPE_ID + "-";
 
     public static final String PROPERTY_BASE_URI = TYPE_PREFIX + "baseURI";
     public static final String PROPERTY_SYSTEM_ID = TYPE_PREFIX + "systemId";
