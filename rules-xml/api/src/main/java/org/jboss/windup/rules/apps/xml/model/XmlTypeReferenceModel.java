@@ -14,7 +14,7 @@ public interface XmlTypeReferenceModel extends FileLocationModel
 {
     public static final String XPATH = "xpath";
     public static final String NAMESPACES = "namespaces";
-    public static final String TYPE = "XmlTypeReference";
+    public static final String TYPE = "XmlTypeReferenceModel";
 
     @Property(XPATH)
     String getXpath();
