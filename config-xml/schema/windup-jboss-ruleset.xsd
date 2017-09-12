@@ -233,6 +233,20 @@
         </xs:complexContent>
     </xs:complexType>
 
+    <!-- GRAPH QUERY -->
+    <xs:complexType name="graph-query">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+            <xs:element name="property">
+                <xs:complexType mixed="true">
+                    <xs:attribute type="xs:string" name="name" use="required" />
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute type="xs:string" name="discriminator" use="required" />
+        <xs:attribute type="xs:string" name="from" use="optional" />
+        <xs:attribute type="xs:string" name="as" use="optional" />
+    </xs:complexType>
+
     <!-- TEST CONDITION DEFINITIONS -->
 
    <xs:element name="classification-exists">
@@ -455,6 +469,7 @@
             <xs:element name="technology-statistics-exists" type="technology-identified" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="iterable-filter" type="iterable-filter" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="to-file-model" type="when-base" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="graph-query" type="graph-query" minOccurs="0" maxOccurs="unbounded" />
         </xs:choice>
     </xs:complexType>
 
@@ -500,7 +515,7 @@
             <xs:element ref="file-exists" minOccurs="0" maxOccurs="unbounded" />
             <xs:element ref="hint-exists" minOccurs="0" maxOccurs="unbounded" />
             <xs:element ref="lineitem-exists" minOccurs="0" maxOccurs="unbounded" />
-            <xs:element name="technology-statistics-exists" type="technology-identified" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element name="technology-identified" type="technology-identified" minOccurs="0" maxOccurs="unbounded" />
         </xs:choice>
         <xs:attribute type="xs:string" name="over" />
         <!-- <xs:attribute type="xs:string" name="as" /> not supported in handler yet -->
