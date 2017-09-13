@@ -34,8 +34,8 @@ public class TechnologyUsageStatisticsModelExists extends GraphCondition
     public boolean evaluate(GraphRewrite event, EvaluationContext context)
     {
         TechnologyUsageStatisticsService service = new TechnologyUsageStatisticsService(event.getGraphContext());
-        //Iterable<TechnologyUsageStatisticsModel> models = service.findAllByProperty(TechnologyUsageStatisticsModel.NAME, this.technologyName);
-        Iterable<TechnologyUsageStatisticsModel> models = service.findAll();
+        Iterable<TechnologyUsageStatisticsModel> models = service.findAllByProperty(TechnologyUsageStatisticsModel.NAME, this.technologyName);
+//        Iterable<TechnologyUsageStatisticsModel> models = service.findAll();
 
         boolean result = false;
         for (TechnologyUsageStatisticsModel model : models)
