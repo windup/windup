@@ -13,7 +13,6 @@ import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.Variables;
 import org.jboss.windup.config.condition.GraphCondition;
-import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.selectors.FramesSelector;
 import org.jboss.windup.graph.GraphTypeManager;
 import org.jboss.windup.graph.frames.VertexFromFramedIterable;
@@ -32,8 +31,6 @@ import com.tinkerpop.pipes.PipeFunction;
 public class Query extends GraphCondition implements QueryBuilderFind, QueryBuilderFrom, QueryBuilderWith,
             QueryBuilderPiped
 {
-    private String outputVar = Iteration.DEFAULT_VARIABLE_LIST_STRING;
-
     private final List<QueryGremlinCriterion> pipelineCriteria = new ArrayList<>();
 
     private Class<? extends WindupVertexFrame> searchType;
@@ -125,9 +122,9 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
     }
 
     @Override
-    public ConditionBuilder as(String outputVarName)
+    public ConditionBuilder as(String name)
     {
-        outputVar = outputVarName;
+        setOutputVariablesName(name);
         return this;
     }
 
@@ -156,7 +153,7 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
                     result = Iterables.filter(result, guavaPred);
                 }
 
-                setResults(event, outputVar, result);
+                setResults(event, getOutputVariablesName(), result);
                 return result.iterator().hasNext();
             }
         });
@@ -310,7 +307,7 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
                 builder.append(criterion);
             }
         }
-        builder.append(".as(" + outputVar + ")");
+        builder.append(".as(" + getOutputVariablesName() + ")");
         return builder.toString();
     }
 

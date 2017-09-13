@@ -9,8 +9,8 @@ import org.jboss.forge.furnace.Furnace;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.parser.ParserContext;
-import org.jboss.windup.rules.apps.javaee.TechnologyIdentified;
-import org.jboss.windup.rules.apps.javaee.TechnologyIdentifiedHandler;
+import org.jboss.windup.rules.apps.javaee.TechnologyUsageStatisticsModelExists;
+import org.jboss.windup.rules.apps.javaee.TechnologyUsageStatisticsModelExistsHandler;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,10 +27,10 @@ import java.util.List;
 import static org.joox.JOOX.$;
 
 @RunWith(Arquillian.class)
-public class TechnologyIdentifiedHandlerTest
+public class TechnologyUsageStatisticsModelExistsHandlerTest
 {
 
-    private static final String TECHNOLOGY_IDENTIFIED_XML_WINDUP_FILE = "src/test/resources/technology-identified/technology-identified.windup.xml";
+    private static final String TECHNOLOGY_IDENTIFIED_XML_WINDUP_FILE = "src/test/resources/technology-identified/technology-usage-exists.windup.xml";
 
     @Deployment
     @AddonDependencies({
@@ -60,16 +60,15 @@ public class TechnologyIdentifiedHandlerTest
         dbFactory.setNamespaceAware(true);
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
         Document doc = dBuilder.parse(fXmlFile);
-        List<Element> technologyIdentifiedList = $(doc).children(TechnologyIdentifiedHandler.TAG_NAME).get();
-        Assert.assertEquals(1, technologyIdentifiedList.size());
-        Element firstTechnologyIdentified = technologyIdentifiedList.get(0);
-        TechnologyIdentified technologyIdentified = parser.processElement(firstTechnologyIdentified);
+        List<Element> technologyExistsElements = $(doc).children(TechnologyUsageStatisticsModelExistsHandler.ELEMENT_NAME).get();
+        Assert.assertEquals(1, technologyExistsElements.size());
+        Element firstTechnologyExists = technologyExistsElements.get(0);
+        TechnologyUsageStatisticsModelExists technologyExists = parser.processElement(firstTechnologyExists);
 
-        Assert.assertEquals("test-1", technologyIdentified.getTechnologyName());
-        Assert.assertEquals(1, technologyIdentified.getCount());
-        Assert.assertEquals(2, technologyIdentified.getTags().size());
-        Assert.assertTrue(technologyIdentified.getTags().contains("tag-1"));
-        Assert.assertTrue(technologyIdentified.getTags().contains("tag-2"));
-
+        Assert.assertEquals("test-1", technologyExists.getTechnologyName());
+        Assert.assertEquals(1, technologyExists.getExpectedCount());
+        Assert.assertEquals(2, technologyExists.getExpectedTags().size());
+        Assert.assertTrue(technologyExists.getExpectedTags().contains("tag-1"));
+        Assert.assertTrue(technologyExists.getExpectedTags().contains("tag-2"));
     }
 }

@@ -13,6 +13,7 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.TagSetModel;
 import org.jboss.windup.reporting.service.TagSetService;
+import org.jboss.windup.rules.apps.javaee.model.JNDIResourceModel;
 import org.jboss.windup.rules.apps.javaee.model.stats.TechnologyUsageStatisticsModel;
 import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -110,41 +111,48 @@ public class TechnologyIdentified extends AbstractIterationOperation<WindupVerte
     @Override
     public void perform(GraphRewrite event, EvaluationContext context, WindupVertexFrame payload)
     {
-        ProjectModel project;
+        Set<ProjectModel> projects = new HashSet<>();
         if (payload instanceof ProjectModel)
         {
-            project = (ProjectModel) payload;
+            projects.add((ProjectModel) payload);
         }
         else if (payload instanceof FileModel)
         {
-            project = ((FileModel) payload).getProjectModel();
+            projects.add(((FileModel) payload).getProjectModel());
         } else if (payload instanceof FileLocationModel)
         {
-            project = ((FileLocationModel)payload).getFile().getProjectModel();
+            projects.add(((FileLocationModel)payload).getFile().getProjectModel());
+        } else if (payload instanceof JNDIResourceModel)
+        {
+            JNDIResourceModel jndiResourceModel = (JNDIResourceModel)payload;
+            jndiResourceModel.getApplications().forEach(projects::add);
         }
         else
         {
             return;
         }
 
-        TechnologyUsageStatisticsService service = new TechnologyUsageStatisticsService(event.getGraphContext());
-        TechnologyUsageStatisticsModel model = service.getOrCreate(project, this.technologyName);
-        model.setOccurrenceCount(model.getOccurrenceCount() + this.count);
+        for (ProjectModel project : projects)
+        {
+            TechnologyUsageStatisticsService service = new TechnologyUsageStatisticsService(event.getGraphContext());
+            TechnologyUsageStatisticsModel model = service.getOrCreate(project, this.technologyName);
+            model.setOccurrenceCount(model.getOccurrenceCount() + this.count);
 
-        // Update tags
-        TagSetModel tagModel = model.getTagModel();
-        if (tagModel == null)
-        {
-            tagModel = new TagSetService(event.getGraphContext()).getOrCreate(event, this.tags);
-            model.setTagModel(tagModel);
-        }
-        if (!tagModel.getTags().equals(this.tags))
-        {
-            // Make sure to add any additionally specified tags
-            Set<String> newSet = new HashSet<>(tagModel.getTags());
-            newSet.addAll(this.tags);
-            tagModel = new TagSetService(event.getGraphContext()).getOrCreate(event, this.tags);
-            model.setTagModel(tagModel);
+            // Update tags
+            TagSetModel tagModel = model.getTagModel();
+            if (tagModel == null)
+            {
+                tagModel = new TagSetService(event.getGraphContext()).getOrCreate(event, this.tags);
+                model.setTagModel(tagModel);
+            }
+            if (!tagModel.getTags().equals(this.tags))
+            {
+                // Make sure to add any additionally specified tags
+                Set<String> newSet = new HashSet<>(tagModel.getTags());
+                newSet.addAll(this.tags);
+                tagModel = new TagSetService(event.getGraphContext()).getOrCreate(event, this.tags);
+                model.setTagModel(tagModel);
+            }
         }
     }
 }

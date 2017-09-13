@@ -19,7 +19,6 @@ import org.jboss.windup.graph.model.WindupFrame;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.util.furnace.FurnaceClasspathScanner;
 
-import com.thinkaurelius.titan.core.TitanProperty;
 import com.thinkaurelius.titan.graphdb.vertices.StandardVertex;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Element;
@@ -63,6 +62,11 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
         this.registeredTypes = new HashMap<>();
         this.typeRegistry = new TypeRegistry();
         GraphModelScanner.loadFrames(furnaceClasspathScanner).forEach(this::addTypeToRegistry);
+    }
+
+    public Class<? extends WindupFrame> getTypeForDiscriminator(String discriminator)
+    {
+        return this.getRegisteredTypeMap().get(discriminator);
     }
 
     public Set<Class<? extends WindupFrame<?>>> getRegisteredTypes()
