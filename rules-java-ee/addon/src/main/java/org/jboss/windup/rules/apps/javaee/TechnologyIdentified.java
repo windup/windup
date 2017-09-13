@@ -13,6 +13,7 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.TagSetModel;
 import org.jboss.windup.reporting.service.TagSetService;
+import org.jboss.windup.rules.apps.javaee.model.EjbBeanBaseModel;
 import org.jboss.windup.rules.apps.javaee.model.JNDIResourceModel;
 import org.jboss.windup.rules.apps.javaee.model.stats.TechnologyUsageStatisticsModel;
 import org.jboss.windup.util.Logging;
@@ -126,6 +127,10 @@ public class TechnologyIdentified extends AbstractIterationOperation<WindupVerte
         {
             JNDIResourceModel jndiResourceModel = (JNDIResourceModel)payload;
             jndiResourceModel.getApplications().forEach(projects::add);
+        } else if (payload instanceof EjbBeanBaseModel)
+        {
+            EjbBeanBaseModel ejbBeanBaseModel = (EjbBeanBaseModel) payload;
+            ejbBeanBaseModel.getApplications().forEach(projects::add);
         }
         else
         {
