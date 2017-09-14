@@ -1,6 +1,7 @@
 package org.jboss.windup.rules.apps.javaee.model;
 
 import org.jboss.windup.graph.Indexed;
+import org.jboss.windup.graph.model.HasApplications;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;

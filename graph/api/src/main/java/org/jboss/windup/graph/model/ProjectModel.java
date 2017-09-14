@@ -24,7 +24,7 @@ import org.jboss.windup.graph.Indexed;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(ProjectModel.TYPE)
-public interface ProjectModel extends WindupVertexFrame
+public interface ProjectModel extends WindupVertexFrame, HasApplications
 {
     String TYPE = "ProjectModel";
     String DEPENDENCY = "dependency";
@@ -225,10 +225,20 @@ public interface ProjectModel extends WindupVertexFrame
     /**
      * Returns the project model that represents the whole application. If this projectModel is the root projectModel, it will return it.
      *
+     * Note: This may be the synthetic shared-libs project in some cases.
+     *
      * @return ProjectModel representing the whole application
      */
     @JavaHandler
     ProjectModel getRootProjectModel();
+
+    /**
+     * Returns all applications that this project is a part of. This could be multiple applications if this project
+     * is included multiple times.
+     */
+    @JavaHandler
+    @Override
+    Iterable<ProjectModel> getApplications();
 
     /**
      * Returns this project model as well as all of its children, recursively.
@@ -239,7 +249,7 @@ public interface ProjectModel extends WindupVertexFrame
     @Adjacency(label = DuplicateProjectModel.CANONICAL_PROJECT, direction = Direction.IN)
     Iterable<DuplicateProjectModel> getDuplicateProjects();
 
-    abstract class Impl implements ProjectModel, JavaHandlerContext<Vertex>
+    abstract class Impl implements ProjectModel, HasApplications, JavaHandlerContext<Vertex>
     {
         @Override
         public ProjectModel getRootProjectModel()
@@ -253,6 +263,33 @@ public interface ProjectModel extends WindupVertexFrame
             // reframe it to make sure that we return a proxy
             // (otherwise, it may return this method handler implementation, which will have some unexpected side effects)
             return frame(projectModel.asVertex());
+        }
+
+        @Override
+        public Iterable<ProjectModel> getApplications()
+        {
+            // The reframing is just to make sure we pass in the proxy and not the "$Impl" class instance
+            Vertex vertex = it();
+            ProjectModel reframed = frame(vertex, ProjectModel.class);
+            return this.getApplications(reframed);
+        }
+
+        private Set<ProjectModel> getApplications(ProjectModel project)
+        {
+            Set<ProjectModel> applications = new HashSet<>();
+            for (ProjectModel duplicate : project.getDuplicateProjects())
+            {
+                duplicate.getApplications().forEach(applications::add);
+            }
+
+            ProjectModel parent = project.getParentProject();
+            if (parent != null)
+                parent.getApplications().forEach(applications::add);
+
+            if (parent == null)
+                applications.add(project);
+
+            return applications;
         }
 
         @Override

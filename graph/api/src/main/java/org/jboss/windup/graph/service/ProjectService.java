@@ -5,7 +5,6 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.graph.traversal.OnlyOnceTraversalStrategy;
 import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.util.PathUtil;
 
@@ -13,7 +12,6 @@ import java.nio.file.Path;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;

@@ -1,29 +1,26 @@
-package org.jboss.windup.rules.apps.javaee.model;
+package org.jboss.windup.graph.model;
 
 import com.tinkerpop.frames.modules.javahandler.JavaHandler;
-import org.jboss.windup.graph.model.BelongsToProject;
-import org.jboss.windup.graph.model.ProjectModel;
 
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * @author <a href="mailto:dklingenberg@gmail.com">David Klingenberg</a>
  */
 public interface HasApplications extends BelongsToProject
 {
+    /**
+     * Gets all root project models for current model (This will be mostly 1, but there are few exceptions which have multiple project models, so it
+     * returns Iterable to keep interface consistent)
+     *
+     * @return root project models
+     */
     Iterable<ProjectModel> getApplications();
 
     @Override
     @JavaHandler
     boolean belongsToProject(ProjectModel projectModel);
-
-    @Override
-    @JavaHandler
-    Iterable<ProjectModel> getRootProjectModels();
 
     abstract class Impl implements HasApplications, JavaHandlerContext<Vertex>, BelongsToProject
     {
@@ -41,20 +38,6 @@ public interface HasApplications extends BelongsToProject
             }
 
             return false;
-        }
-
-        @Override
-        public Iterable<ProjectModel> getRootProjectModels()
-        {
-            Set<ProjectModel> projectModelSet = new HashSet<>();
-
-            for (ProjectModel currentProjectModel : this.getApplications())
-            {
-                ProjectModel rootProjectModel = currentProjectModel.getRootProjectModel();
-                projectModelSet.add(rootProjectModel);
-            }
-
-            return projectModelSet;
         }
     }
 }

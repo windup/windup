@@ -3,17 +3,13 @@ package org.jboss.windup.rules.apps.java.model;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.modules.javahandler.JavaHandler;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
-import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.graph.Indexed;
-import org.jboss.windup.graph.model.ArchiveModel;
-import org.jboss.windup.graph.model.BelongsToProject;
 import org.jboss.windup.graph.model.resource.FileModel;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
-import org.jboss.windup.graph.model.resource.ReportResourceFileModel;
 
 /**
  * This Model represents Java class files on disk (eg, /path/to/Foo.class). This does not represent Java source files (.java files). The class itself
