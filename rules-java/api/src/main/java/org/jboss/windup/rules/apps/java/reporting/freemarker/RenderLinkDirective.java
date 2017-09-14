@@ -153,7 +153,7 @@ public class RenderLinkDirective implements WindupFreeMarkerTemplateDirective
         if (result == null)
             writer.write(linkText);
         else
-            renderLink(writer, cssClass, project, result.getReportFilename() + "#" + anchor, linkText);
+            renderLink(writer, cssClass, project, result.getReportFilename(), anchor, linkText);
     }
 
     private void processLinkableModel(Writer writer, LayoutType layoutType, String cssClass, ProjectModel project, LinkableModel obj, String defaultText) throws IOException
@@ -173,7 +173,7 @@ public class RenderLinkDirective implements WindupFreeMarkerTemplateDirective
         if (result == null)
             writer.write(linkText);
         else
-            renderLink(writer, cssClass, project, result.getReportFilename(), linkText);
+            renderLink(writer, cssClass, project, result.getReportFilename(), null, linkText);
     }
 
     private void processJavaClassModel(Writer writer, String cssClass, ProjectModel project, JavaClassModel clz, String defaultText)
@@ -196,7 +196,7 @@ public class RenderLinkDirective implements WindupFreeMarkerTemplateDirective
             if (result == null)
                 writer.write(linkText);
             else
-                renderLink(writer, cssClass, project, result.getReportFilename(), linkText);
+                renderLink(writer, cssClass, project, result.getReportFilename(), null, linkText);
             linkText = " (" + i++ + ")";
         }
     }
@@ -226,13 +226,17 @@ public class RenderLinkDirective implements WindupFreeMarkerTemplateDirective
         }
     }
 
-    private void renderLink(Writer writer, String cssClass, ProjectModel project, String href, String linkText) throws IOException
+    private void renderLink(Writer writer, String cssClass, ProjectModel project, String href, String anchorId, String linkText) throws IOException
     {
         writer.append("<a");
         if (cssClass != null)
             writer.append(" class='" + cssClass + "'");
         writer.append(" href='").append(href);
         appendProject(writer, project);
+        if (anchorId != null)
+        {
+            writer.append("#"+anchorId);
+        }
         writer.append("'>").append(linkText).append("</a>");
     }
 
