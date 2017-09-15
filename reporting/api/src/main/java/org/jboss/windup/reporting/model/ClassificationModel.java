@@ -24,7 +24,7 @@ import static org.jboss.windup.reporting.model.InlineHintModel.ISSUE_DISPLAY_MOD
 public interface ClassificationModel extends EffortReportModel, LinkableModel, ToFileModelTransformable, TaggableModel
 {
     String TYPE = "ClassificationModel";
-    String TYPE_PREFIX = TYPE + ":";
+    String TYPE_PREFIX = TYPE + "-";
     String RULE_ID = TYPE_PREFIX + "ruleID";
     String CLASSIFICATION = TYPE_PREFIX + "classification";
     String DESCRIPTION = TYPE_PREFIX + "description";

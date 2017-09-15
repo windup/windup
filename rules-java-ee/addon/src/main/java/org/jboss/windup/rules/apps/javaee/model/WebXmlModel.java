@@ -15,7 +15,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(WebXmlModel.TYPE)
 public interface WebXmlModel extends XmlFileModel
 {
-    public static final String TYPE = "WebXml";
+    public static final String TYPE = "WebXmlModel";
     public static final String DISPLAY_NAME = "displayName";
     public static final String SPECIFICATION_VERSION = "specificationVersion";
     public static final String WEB_XML_TO_ENVIRONMENT_REFERENCE = "webXmlToEnvironmentReference";

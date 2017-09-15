@@ -14,7 +14,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(FreeMarkerSourceReportModel.TYPE)
 public interface FreeMarkerSourceReportModel extends SourceReportModel
 {
-    public static final String TYPE = "FreeMarkerSourceReport";
+    public static final String TYPE = "FreeMarkerSourceReportModel";
 
     /**
      * This is used by the Javascript in the source rendering template to provide code assist blocks in the rendered

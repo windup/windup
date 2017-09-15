@@ -16,7 +16,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(EjbEntityBeanModel.TYPE)
 public interface EjbEntityBeanModel extends EjbBeanBaseModel, PersistenceEntityModel
 {
-    public static final String TYPE = "EjbEntityBean";
+    public static final String TYPE = "EjbEntityBeanModel";
 
     public static final String EJB_HOME = TYPE + "-ejbHome";
     public static final String EJB_LOCAL_HOME = TYPE + "-ejbLocalHome";

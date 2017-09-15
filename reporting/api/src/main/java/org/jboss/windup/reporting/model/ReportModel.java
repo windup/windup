@@ -22,9 +22,10 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
  * 
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-@TypeValue("Report")
+@TypeValue(ReportModel.TYPE)
 public interface ReportModel extends WindupVertexFrame
 {
+    String TYPE = "ReportModel";
     String CHILD_REPORT = "childReport";
     String RELATED_RESOURCES = "relatedResources";
     String PARENT_REPORT = "parentReport";

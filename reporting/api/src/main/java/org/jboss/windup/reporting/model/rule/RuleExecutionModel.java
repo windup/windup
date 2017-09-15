@@ -19,7 +19,7 @@ import org.ocpsoft.rewrite.config.Rule;
 @TypeValue(RuleExecutionModel.TYPE)
 public interface RuleExecutionModel extends WindupVertexFrame
 {
-    String TYPE = "RuleExecution";
+    String TYPE = "RuleExecutionModel";
 
     String RULE_ID = "ruleId";
     String RULE_CONTENTS = "ruleContents";

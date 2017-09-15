@@ -10,7 +10,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(JNDIReferenceModel.TYPE)
 public interface JNDIReferenceModel extends WindupVertexFrame
 {
-    String TYPE = "JndiReferenceModel";
+    String TYPE = "JNDIReferenceModel";
     String REF = "jndi";
     
     /**

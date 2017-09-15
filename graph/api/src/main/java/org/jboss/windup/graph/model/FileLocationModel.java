@@ -19,7 +19,7 @@ import java.util.Collections;
 public interface FileLocationModel extends FileReferenceModel, ToFileModelTransformable
 {
 
-    String TYPE = "fileLocationModel";
+    String TYPE = "FileLocationModel";
     String LINE_NUMBER = "lineNumber";
     String LENGTH = "length";
     String COLUMN_NUMBER = "startPosition";

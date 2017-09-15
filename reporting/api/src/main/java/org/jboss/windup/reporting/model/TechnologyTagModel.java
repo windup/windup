@@ -19,7 +19,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(TechnologyTagModel.TYPE)
 public interface TechnologyTagModel extends WindupVertexFrame
 {
-    String TYPE = "TechnologyTag";
+    String TYPE = "TechnologyTagModel";
 
     String TECH_TAG_TO_FILE_MODEL = "techTagToFileModel";
     String NAME = "name";

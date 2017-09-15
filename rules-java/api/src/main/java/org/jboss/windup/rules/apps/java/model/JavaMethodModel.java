@@ -20,7 +20,7 @@ public interface JavaMethodModel extends WindupVertexFrame
     public static final String METHOD_PARAMETER = "methodParameter";
     public static final String METHOD_NAME = "methodName";
     public static final String JAVA_METHOD = "javaMethod";
-    public static final String TYPE = "JavaMethod";
+    public static final String TYPE = "JavaMethodModel";
 
     /**
      * The {@link JavaClassModel} that contains this method

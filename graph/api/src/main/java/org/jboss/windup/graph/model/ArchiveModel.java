@@ -19,8 +19,8 @@ import java.util.Set;
 @TypeValue(ArchiveModel.TYPE)
 public interface ArchiveModel extends FileModel
 {
-    String TYPE = "ArchiveModel:";
-    String ARCHIVE_NAME = TYPE + "archiveName";
+    String TYPE = "ArchiveModel";
+    String ARCHIVE_NAME = "archiveName";
     String UNZIPPED_DIRECTORY = "unzippedDirectory";
     String PARENT_ARCHIVE = "parentArchive";
 

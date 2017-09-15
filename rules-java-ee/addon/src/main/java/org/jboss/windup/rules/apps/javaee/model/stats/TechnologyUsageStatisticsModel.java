@@ -20,9 +20,9 @@ import org.jboss.windup.reporting.model.TaggableModel;
 @TypeValue(TechnologyUsageStatisticsModel.TYPE)
 public interface TechnologyUsageStatisticsModel extends TaggableModel
 {
-    String TYPE = "TechnologiesStats";
+    String TYPE = "TechnologyUsageStatisticsModel";
 
-    String COMPUTED = TYPE + "_computed";
+    String COMPUTED = TYPE + "-computed";
     String PROJECT_MODEL = "stats.projectModel";
 
     String NAME = "stats.name";

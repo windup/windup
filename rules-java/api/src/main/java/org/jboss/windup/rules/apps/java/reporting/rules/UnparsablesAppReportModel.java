@@ -15,7 +15,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(UnparsablesAppReportModel.TYPE)
 public interface UnparsablesAppReportModel extends ApplicationReportModel
 {
-    String TYPE = "UnparsablesAppReport";
+    String TYPE = "UnparsablesAppReportModel";
     String ALL_SUB_PROJECTS = "allSubProjects";
 
     /**

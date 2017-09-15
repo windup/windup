@@ -15,7 +15,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(DependenciesReportModel.TYPE)
 public interface DependenciesReportModel extends ApplicationReportModel
 {
-    String TYPE = "jarDependenciesReport";
+    String TYPE = "DependenciesReportModel";
 
     String DEPENDENCY_REPORT_GROUP = "dependencyReportGroup";
 

@@ -14,7 +14,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 public interface OrganizationModel extends WindupVertexFrame
 {
     String TYPE = "OrganizationModel";
-    String TYPE_PREFIX = TYPE + ":";
+    String TYPE_PREFIX = TYPE + "-";
     String NAME = TYPE_PREFIX + "name";
     String LINKS = TYPE_PREFIX + "links";
     String ARCHIVE_MODEL = TYPE_PREFIX + "organizationModelToArchiveModel";

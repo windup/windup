@@ -13,7 +13,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(WindupConfigurationModel.TYPE)
 public interface WindupConfigurationModel extends WindupVertexFrame
 {
-    String TYPE = "BaseWindupConfiguration";
+    String TYPE = "WindupConfigurationModel";
 
     String INPUT_PATH = "inputPath";
     String USER_RULES_PATH = "userRulesPath";

@@ -6,14 +6,14 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-@TypeValue(ReplacementQuickfixModel.TYPE_VALUE)
+@TypeValue(ReplacementQuickfixModel.TYPE)
 public interface ReplacementQuickfixModel extends QuickfixModel
 {
-    String TYPE_VALUE = "ReplacementQuickfixModel";
+    String TYPE = "ReplacementQuickfixModel";
 
-    String PROPERTY_SEARCH_STRING = TYPE_VALUE + "-search";
-    String PROPERTY_REPLACEMENT_STRING = TYPE_VALUE + "-replacement";
-    String PROPERTY_INSERTED_LINE = TYPE_VALUE + "-insertedLine";
+    String PROPERTY_SEARCH_STRING = TYPE + "-search";
+    String PROPERTY_REPLACEMENT_STRING = TYPE + "-replacement";
+    String PROPERTY_INSERTED_LINE = TYPE + "-insertedLine";
 
     /**
      * Contains the property to search for (if this is a token replacement).

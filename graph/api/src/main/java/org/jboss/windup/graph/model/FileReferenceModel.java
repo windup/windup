@@ -15,7 +15,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(FileReferenceModel.TYPE)
 public interface FileReferenceModel extends WindupVertexFrame
 {
-    String TYPE = "fileReferenceModel";
+    String TYPE = "FileReferenceModel";
     String FILE_MODEL = "file";
 
     /**

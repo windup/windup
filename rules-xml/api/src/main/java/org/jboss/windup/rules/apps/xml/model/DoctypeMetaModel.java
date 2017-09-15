@@ -11,18 +11,18 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(DoctypeMetaModel.TYPE_ID)
 public interface DoctypeMetaModel extends WindupVertexFrame
 {
-    public static final String TYPE_ID = "DoctypeMeta";
-    public static final String TYPE_PREFIX = TYPE_ID + ":";
+    public static final String TYPE_ID = "DoctypeMetaModel";
+    public static final String TYPE_PREFIX = TYPE_ID + "-";
 
     public static final String PROPERTY_BASE_URI = TYPE_PREFIX + "baseURI";
     public static final String PROPERTY_SYSTEM_ID = TYPE_PREFIX + "systemId";
     public static final String PROPERTY_PUBLIC_ID = TYPE_PREFIX + "publicId";
     public static final String PROPERTY_NAME = TYPE_PREFIX + "name";
 
-    @Adjacency(label = "doctype", direction = Direction.IN)
+    @Adjacency(label = XmlFileModel.DOCTYPE, direction = Direction.IN)
     public void addXmlResource(XmlFileModel facet);
 
-    @Adjacency(label = "doctype", direction = Direction.IN)
+    @Adjacency(label = XmlFileModel.DOCTYPE, direction = Direction.IN)
     public Iterable<XmlFileModel> getXmlResources();
 
     @Indexed

@@ -12,13 +12,13 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-@TypeValue(TransformationQuickfixModel.TYPE_VALUE)
+@TypeValue(TransformationQuickfixModel.TYPE)
 public interface TransformationQuickfixModel extends QuickfixModel
 {
-    String TYPE_VALUE = "TransformationQuickfixModel";
+    String TYPE = "TransformationQuickfixModel";
 
-    String TRANSFORMATION_ID = TYPE_VALUE + "-transformationID";
-    String FILE = TYPE_VALUE + "-file";
+    String TRANSFORMATION_ID = TYPE + "-transformationID";
+    String FILE = TYPE + "-file";
 
     /**
      * Contains the ID of the class that will implement this translation.

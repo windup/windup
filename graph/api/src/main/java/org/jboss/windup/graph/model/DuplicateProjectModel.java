@@ -15,8 +15,8 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(DuplicateProjectModel.TYPE)
 public interface DuplicateProjectModel extends ProjectModel
 {
-    String TYPE = "DuplicateProject";
-    String CANONICAL_PROJECT = TYPE + ":canonicalProject";
+    String TYPE = "DuplicateProjectModel";
+    String CANONICAL_PROJECT = TYPE + "-canonicalProject";
 
     /**
      * Contains a reference to the canonical (non-duplicated) project.

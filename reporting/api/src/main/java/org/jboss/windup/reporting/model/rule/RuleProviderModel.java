@@ -14,7 +14,7 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 @TypeValue(RuleProviderModel.TYPE)
 public interface RuleProviderModel extends WindupVertexFrame
 {
-    String TYPE = "RuleProvider";
+    String TYPE = "RuleProviderModel";
 
     String RULE_PROVIDER_ID = "ruleProviderID";
     String EXECUTED_RULES = "rules";

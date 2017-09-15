@@ -15,9 +15,9 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 @TypeValue(GeneralStatsModel.TYPE)
 public interface GeneralStatsModel extends WindupVertexFrame
 {
-    String TYPE = "GeneralStats";
-    String COMPUTED = TYPE + "_computed";
-    String ITEMS = TYPE + "_items";
+    String TYPE = "GeneralStatsModel";
+    String COMPUTED = TYPE + "-computed";
+    String ITEMS = TYPE + "-items";
 
     @Property(COMPUTED)
     Date getComputed();

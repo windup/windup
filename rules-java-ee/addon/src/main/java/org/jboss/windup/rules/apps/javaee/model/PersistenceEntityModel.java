@@ -16,7 +16,7 @@ import org.jboss.windup.rules.apps.java.model.JavaClassModel;
  */
 @TypeValue(PersistenceEntityModel.TYPE)
 public interface PersistenceEntityModel extends WindupVertexFrame, HasApplications {
-    String TYPE = "PersistenceEntity";
+    String TYPE = "PersistenceEntityModel";
 
     String APPLICATIONS = TYPE + "-applications";
     String ENTITY_NAME = TYPE + "-entityName";

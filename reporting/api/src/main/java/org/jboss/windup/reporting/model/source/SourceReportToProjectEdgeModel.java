@@ -13,7 +13,7 @@ import org.jboss.windup.graph.model.WindupEdgeFrame;
 @TypeValue(SourceReportToProjectEdgeModel.TYPE)
 public interface SourceReportToProjectEdgeModel extends WindupEdgeFrame
 {
-    String TYPE = "sourceReportToProjectEdge";
+    String TYPE = "SourceReportToProjectEdgeModel";
 
     String FULL_PATH = "fullPath";
 

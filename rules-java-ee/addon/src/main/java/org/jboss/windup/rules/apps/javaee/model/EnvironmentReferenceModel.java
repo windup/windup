@@ -16,7 +16,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(EnvironmentReferenceModel.TYPE)
 public interface EnvironmentReferenceModel extends WindupVertexFrame
 {
-    public static final String TYPE = "EnvironmentReference";
+    public static final String TYPE = "EnvironmentReferenceModel";
 
     public static final String REFERENCE_TYPE = "referenceType";
     public static final String NAME = "name"; // Keeping this without prefix to spare an extra index.

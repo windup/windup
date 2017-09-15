@@ -11,8 +11,9 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
  */
-@TypeValue("JarArchiveResource")
+@TypeValue(JarArchiveModel.TYPE)
 @ArchiveType(".jar")
 public interface JarArchiveModel extends ArchiveModel
 {
+    String TYPE = "JarArchiveModel";
 }

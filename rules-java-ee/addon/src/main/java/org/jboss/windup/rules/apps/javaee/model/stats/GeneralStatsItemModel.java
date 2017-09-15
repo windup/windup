@@ -10,10 +10,10 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 @TypeValue(GeneralStatsItemModel.TYPE)
 public interface GeneralStatsItemModel extends WindupVertexFrame
 {
-    String TYPE = "GeneralStatsItem";
-    String KEY      = TYPE + "_key";
-    String LABEL    = TYPE + "_label";
-    String QUANTITY = TYPE + "_qty";
+    String TYPE = "GeneralStatsItemModel";
+    String KEY      = TYPE + "-key";
+    String LABEL    = TYPE + "-label";
+    String QUANTITY = TYPE + "-qty";
 
     /**
      * A key of the statistics item, under which it is accessible independently of the particular report model.

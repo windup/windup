@@ -10,7 +10,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(VendorSpecificationExtensionModel.TYPE)
 public interface VendorSpecificationExtensionModel extends FileModel, SourceFileModel
 {
-    String TYPE = "VendorSpecificationReferenceModel";
+    String TYPE = "VendorSpecificationExtensionModel";
     String REF = "vendorSpecification";
 
     /**

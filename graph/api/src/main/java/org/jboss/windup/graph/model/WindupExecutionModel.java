@@ -10,7 +10,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(WindupExecutionModel.TYPE)
 public interface WindupExecutionModel extends WindupVertexFrame
 {
-    String TYPE = "WindupExecution";
+    String TYPE = "WindupExecutionModel";
 
     String STOP_MESSAGE   = "stopMessage";
 

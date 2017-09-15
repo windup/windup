@@ -26,7 +26,7 @@ import java.util.logging.Logger;
 @TypeValue(JavaClassModel.TYPE)
 public interface JavaClassModel extends WindupVertexFrame, BelongsToProject
 {
-    String TYPE = "JavaClass";
+    String TYPE = "JavaClassModel";
 
     String JAVA_METHOD = "javaMethod";
     String CLASS_FILE = "classFile";

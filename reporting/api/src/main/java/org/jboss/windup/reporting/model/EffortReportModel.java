@@ -27,7 +27,7 @@ import org.jboss.windup.reporting.category.IssueCategoryRegistry;
 public interface EffortReportModel extends WindupVertexFrame
 {
     String TYPE = "EffortReportModel";
-    String TYPE_PREFIX = TYPE + ":";
+    String TYPE_PREFIX = TYPE + "-";
     String EFFORT = "EffortReportModelEffort"; // don't use the prefix as we can't name the index with special characters
     String ISSUE_CATEGORY = TYPE_PREFIX + "issueCategory";
 

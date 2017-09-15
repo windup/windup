@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.jboss.windup.graph.model.ApplicationArchiveModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
@@ -22,9 +23,10 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  * 
  */
-@TypeValue("ApplicationReportIndexModel")
+@TypeValue(ApplicationReportIndexModel.TYPE)
 public interface ApplicationReportIndexModel extends WindupVertexFrame
 {
+    String TYPE = "ApplicationReportIndexModel";
     String APPLICATION_REPORT_INDEX_TO_PROJECT_MODEL = "appReportIndexToProjectModel";
     String APPLICATION_REPORT_INDEX_TO_REPORT_MODEL = "appReportIndexToAppReportModel";
 

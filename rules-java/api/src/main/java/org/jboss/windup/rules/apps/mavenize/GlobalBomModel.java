@@ -21,8 +21,8 @@ import org.jboss.windup.util.Logging;
 @TypeValue(GlobalBomModel.TYPE)
 public interface GlobalBomModel extends PomXmlModel
 {
-    String TYPE = "GlobalBom-";
-    String DEFINES = TYPE + "defines";
+    String TYPE = "GlobalBomModel";
+    String DEFINES = TYPE + "-defines";
 
     /**
      * Adds a dependency to BOM. If the BOM already contains that G:A:C:P, sets the dependency version to the newer one.

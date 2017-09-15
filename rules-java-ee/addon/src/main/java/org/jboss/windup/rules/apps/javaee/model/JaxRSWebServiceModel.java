@@ -16,7 +16,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(JaxRSWebServiceModel.TYPE)
 public interface JaxRSWebServiceModel extends WebServiceModel
 {
-    String TYPE = "JaxRSWebService";
+    String TYPE = "JaxRSWebServiceModel";
     String JAXRS_IMPLEMENTATION_CLASS = "jaxrsImplementationClass";
     String JAXRS_INTERFACE = "jaxrsInterface";
     

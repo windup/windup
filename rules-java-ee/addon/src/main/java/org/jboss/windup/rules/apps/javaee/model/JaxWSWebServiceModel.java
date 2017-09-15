@@ -14,7 +14,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(JaxWSWebServiceModel.TYPE)
 public interface JaxWSWebServiceModel extends WebServiceModel
 {
-    String TYPE = "JaxWSService";
+    String TYPE = "JaxWSWebServiceModel";
     String JAXWS_IMPLEMENTATION_CLASS = "jaxwsImplementationClass";
     String JAXWS_INTERFACE = "jaxwsInterface";
      
