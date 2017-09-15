@@ -56,6 +56,7 @@ public class DiscoverHibernateConfigurationRuleProvider extends IteratingRulePro
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.IMPORTANT;
 
     private static final String REGEX_HIBERNATE = "(?i).*hibernate.configuration.*";
+    private static final String JTA_HIBERNATE_PLATFORM = "hibernate.transaction.jta.platform";
 
 
     @Override
@@ -148,6 +149,11 @@ public class DiscoverHibernateConfigurationRuleProvider extends IteratingRulePro
                     if(StringUtils.isNotBlank(resolvedType)) {
                         dataSource.setDatabaseTypeName(resolvedType);
                     }
+                }
+
+                if (sessionFactoryProperties.containsKey(JTA_HIBERNATE_PLATFORM))
+                {
+                    dataSource.setXa(true);
                 }
             }
 
