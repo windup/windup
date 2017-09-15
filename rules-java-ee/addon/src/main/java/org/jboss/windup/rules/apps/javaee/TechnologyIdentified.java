@@ -11,6 +11,7 @@ import org.jboss.windup.graph.model.FileReferenceModel;
 import org.jboss.windup.graph.model.HasProject;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.TagSetModel;
 import org.jboss.windup.reporting.service.TagSetService;
 import org.jboss.windup.graph.model.HasApplications;
@@ -115,7 +116,12 @@ public class TechnologyIdentified extends AbstractIterationOperation<WindupVerte
         if (payload instanceof FileReferenceModel)
             payload = ((FileReferenceModel) payload).getFile();
 
-        if (payload instanceof HasProject)
+        if (payload instanceof ClassificationModel)
+        {
+            ((ClassificationModel) payload).getFileModels().forEach(fileModel -> {
+                projects.add(fileModel.getProjectModel());
+            });
+        } else if (payload instanceof HasProject)
         {
             projects.add(((HasProject) payload).getProjectModel());
         } else if (payload instanceof HasApplications)
