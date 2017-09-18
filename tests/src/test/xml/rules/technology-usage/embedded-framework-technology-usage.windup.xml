@@ -1,0 +1,340 @@
+<?xml version="1.0"?>
+<ruleset id="technology-usage-embedded-framework" xmlns="http://windup.jboss.org/schema/jboss-ruleset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://windup.jboss.org/schema/jboss-ruleset http://windup.jboss.org/schema/jboss-ruleset/windup-jboss-ruleset.xsd">
+    <metadata>
+        <description>
+            This ruleset provides statistical summaries of the MVC (Spring MVC,Struts, Wicket, GWT) items that were found during the analysis.
+        </description>
+        <dependencies>
+            <addon id="org.jboss.windup.rules,windup-rules-javaee,3.0.0.Final" />
+            <addon id="org.jboss.windup.rules,windup-rules-java,3.0.0.Final" />
+        </dependencies>
+        <phase>PostMigrationRulesPhase</phase>
+    </metadata>
+    <rules>
+        <rule id="technology-usage-embedded-framework-01000">
+            <when>
+                <graph-query discriminator="TechnologyTagModel">
+                    <property name="name">Apache Axis (embedded)</property>
+                </graph-query>
+            </when>
+            <perform>
+                <technology-identified name="Axis">
+                    <tag name="Connect"/>
+                    <tag name="Embedded"/>
+                    <tag name="Web Service"/>
+                </technology-identified>
+            </perform>
+        </rule>
+        <rule id="technology-usage-embedded-framework-01010">
+            <when>
+                <graph-query discriminator="TechnologyTagModel">
+                    <property name="name">Apache Axis2 (embedded)</property>
+                </graph-query>
+            </when>
+            <perform>
+                <technology-identified name="Axis2">
+                    <tag name="Connect"/>
+                    <tag name="Embedded"/>
+                    <tag name="Web Service"/>
+                </technology-identified>
+            </perform>
+        </rule>
+        <rule id="technology-usage-embedded-framework-01100">
+            <when>
+                <graph-query discriminator="TechnologyTagModel">
+                    <property name="name">Apache CXF (embedded)</property>
+                </graph-query>
+            </when>
+            <perform>
+                <technology-identified name="CXF">
+                    <tag name="Connect"/>
+                    <tag name="Embedded"/>
+                    <tag name="Web Service"/>
+                </technology-identified>
+            </perform>
+        </rule>
+        <rule id="technology-usage-embedded-framework-01200">
+            <when>
+                <graph-query discriminator="TechnologyTagModel">
+                    <property name="name">XFire (embedded)</property>
+                </graph-query>
+            </when>
+            <perform>
+                <technology-identified name="XFire">
+                    <tag name="Connect"/>
+                    <tag name="Embedded"/>
+                    <tag name="Web Service"/>
+                </technology-identified>
+            </perform>
+        </rule>
+        <rule id="technology-usage-embedded-framework-01300">
+            <when>
+                <graph-query discriminator="TechnologyTagModel">
+                    <property name="name">Jersey (embedded)</property>
+                </graph-query>
+            </when>
+            <perform>
+                <technology-identified name="Jersey">
+                    <tag name="Connect"/>
+                    <tag name="Embedded"/>
+                    <tag name="REST"/>
+                </technology-identified>
+            </perform>
+        </rule>
+        <rule id="technology-usage-embedded-framework-01400">
+            <when>
+                <graph-query discriminator="TechnologyTagModel">
+                    <property name="name">Unirest (embedded)</property>
+                </graph-query>
+            </when>
+            <perform>
+                <technology-identified name="Unirest">
+                    <tag name="Connect"/>
+                    <tag name="Embedded"/>
+                    <tag name="REST"/>
+                </technology-identified>
+            </perform>
+        </rule>
+        <rule id="technology-usage-embedded-framework-01500">
+            <when>
+                <graph-query discriminator="TechnologyTagModel">
+                    <property name="name">Hibernate (embedded)</property>
+                </graph-query>
+            </when>
+            <perform>
+                <technology-identified name="Hibernate">
+                    <tag name="Store"/>
+                    <tag name="Embedded"/>
+                    <tag name="Object Mapping"/>
+                </technology-identified>
+            </perform>
+        </rule>
+        <rule id="technology-usage-embedded-framework-01600">
+            <when>
+                <graph-query discriminator="TechnologyTagModel">
+                    <property name="name">Hibernate OGM (embedded)</property>
+                </graph-query>
+            </when>
+            <perform>
+                <technology-identified name="Hibernate OGM">
+                    <tag name="Store"/>
+                    <tag name="Embedded"/>
+                    <tag name="Object Mapping"/>
+                </technology-identified>
+            </perform>
+        </rule>
+        <rule id="technology-usage-embedded-framework-01700">
+            <when>
+                <graph-query discriminator="TechnologyTagModel">
+                    <property name="name">EclipseLink (embedded)</property>
+                </graph-query>
+            </when>
+            <perform>
+                <technology-identified name="EclipseLink">
+                    <tag name="Store"/>
+                    <tag name="Embedded"/>
+                    <tag name="Object Mapping"/>
+                </technology-identified>
+            </perform>
+        </rule>
+        <rule id="technology-usage-embedded-framework-01800">
+            <when>
+                <graph-query discriminator="TechnologyTagModel">
+                    <property name="name">ESAPI (embedded)</property>
+                </graph-query>
+            </when>
+            <perform>
+                <technology-identified name="ESAPI">
+                    <tag name="Sustain"/>
+                    <tag name="Embedded"/>
+                    <tag name="Security"/>
+                </technology-identified>
+            </perform>
+        </rule>
+        <rule id="technology-usage-embedded-framework-01900">
+            <when>
+                <graph-query discriminator="TechnologyTagModel">
+                    <property name="name">JUnit (embedded)</property>
+                </graph-query>
+            </when>
+            <perform>
+                <technology-identified name="JUnit">
+                    <tag name="Sustain"/>
+                    <tag name="Embedded"/>
+                    <tag name="Test"/>
+                </technology-identified>
+            </perform>
+        </rule>
+        <rule id="technology-usage-embedded-framework-02000">
+            <when>
+                <graph-query discriminator="TechnologyTagModel">
+                    <property name="name">Spring Batch (embedded)</property>
+                </graph-query>
+            </when>
+            <perform>
+                <technology-identified name="Spring Batch">
+                    <tag name="Execute"/>
+                    <tag name="Embedded"/>
+                    <tag name="Processing"/>
+                </technology-identified>
+            </perform>
+        </rule>
+        <rule id="technology-usage-embedded-framework-02100">
+            <when>
+                <graph-query discriminator="TechnologyTagModel">
+                    <property name="name">Spring (embedded)</property>
+                </graph-query>
+            </when>
+            <perform>
+                <technology-identified name="Spring">
+                    <tag name="Execute"/>
+                    <tag name="Embedded"/>
+                    <tag name="Inversion of Control"/>
+                </technology-identified>
+            </perform>
+        </rule>
+        <rule id="technology-usage-embedded-framework-02200">
+            <when>
+                <graph-query discriminator="TechnologyTagModel">
+                    <property name="name">AspectJ (embedded)</property>
+                </graph-query>
+            </when>
+            <perform>
+                <technology-identified name="AspectJ">
+                    <tag name="Execute"/>
+                    <tag name="Embedded"/>
+                    <tag name="Inversion of Control"/>
+                </technology-identified>
+            </perform>
+        </rule>
+        <rule id="technology-usage-embedded-framework-02300">
+            <when>
+                <graph-query discriminator="TechnologyTagModel">
+                    <property name="name">JBPM (embedded)</property>
+                </graph-query>
+            </when>
+            <perform>
+                <technology-identified name="JBPM">
+                    <tag name="Execute"/>
+                    <tag name="Embedded"/>
+                    <tag name="Rules and Processes"/>
+                </technology-identified>
+            </perform>
+        </rule>
+        <rule id="technology-usage-embedded-framework-02400">
+            <when>
+                <graph-query discriminator="TechnologyTagModel">
+                    <property name="name">iLog (embedded)</property>
+                </graph-query>
+            </when>
+            <perform>
+                <technology-identified name="iLog">
+                    <tag name="Execute"/>
+                    <tag name="Embedded"/>
+                    <tag name="Rules and Processes"/>
+                </technology-identified>
+            </perform>
+        </rule>
+        <rule id="technology-usage-embedded-framework-02500">
+            <when>
+                <graph-query discriminator="TechnologyTagModel">
+                    <property name="name">Liferay (embedded)</property>
+                </graph-query>
+            </when>
+            <perform>
+                <technology-identified name="Liferay">
+                    <tag name="Execute"/>
+                    <tag name="Embedded"/>
+                    <tag name="3rd party"/>
+                </technology-identified>
+            </perform>
+        </rule>
+        <rule id="technology-usage-embedded-framework-02600">
+            <when>
+                <graph-query discriminator="TechnologyTagModel">
+                    <property name="name">Oracle Forms (embedded)</property>
+                </graph-query>
+            </when>
+            <perform>
+                <technology-identified name="Oracle Forms">
+                    <tag name="Execute"/>
+                    <tag name="Embedded"/>
+                    <tag name="3rd party"/>
+                </technology-identified>
+            </perform>
+        </rule>
+
+        <!-- From Java Discover rules-->
+        <rule id="embedded-framework-embedded-framework-02700">
+            <when>
+                <graph-query discriminator="TechnologyTagModel">
+                    <property name="name">Ehcache (embedded)</property>
+                </graph-query>
+            </when>
+            <perform>
+                <technology-identified name="ehcache">
+                    <tag name="Store"/>
+                    <tag name="Embedded"/>
+                    <tag name="Caching"/>
+                </technology-identified>
+            </perform>
+        </rule>
+        <rule id="embedded-framework-embedded-framework-02800">
+            <when>
+                <graph-query discriminator="TechnologyTagModel">
+                    <property name="name">Infinispan (embedded)</property>
+                </graph-query>
+            </when>
+            <perform>
+                <technology-identified name="infinispan">
+                    <tag name="Store"/>
+                    <tag name="Embedded"/>
+                    <tag name="Caching"/>
+                </technology-identified>
+            </perform>
+        </rule>
+        <rule id="embedded-framework-embedded-framework-02900">
+            <when>
+                <graph-query discriminator="TechnologyTagModel">
+                    <property name="name">Drools (embedded)</property>
+                </graph-query>
+            </when>
+            <perform>
+                <technology-identified name="Drools">
+                    <tag name="Execute"/>
+                    <tag name="Embedded"/>
+                    <tag name="Rules and Processes"/>
+                </technology-identified>
+            </perform>
+        </rule>
+        <rule id="embedded-framework-embedded-framework-03000">
+            <when>
+                <graph-query discriminator="TechnologyTagModel">
+                    <property name="name">Apache Camel (embedded)</property>
+                </graph-query>
+            </when>
+            <perform>
+                <technology-identified name="Camel">
+                    <tag name="Execute"/>
+                    <tag name="Embedded"/>
+                    <tag name="Integration"/>
+                </technology-identified>
+            </perform>
+        </rule>
+        <rule id="embedded-framework-embedded-framework-03100">
+            <when>
+                <graph-query discriminator="TechnologyTagModel">
+                    <property name="name">Teiid (embedded)</property>
+                </graph-query>
+            </when>
+            <perform>
+                <technology-identified name="Teiid">
+                    <tag name="Execute"/>
+                    <tag name="Embedded"/>
+                    <tag name="Integration"/>
+                </technology-identified>
+            </perform>
+        </rule>
+    </rules>
+</ruleset>

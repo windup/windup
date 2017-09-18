@@ -15,13 +15,15 @@ import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.TagSetModel;
 import org.jboss.windup.reporting.model.TechnologyTagModel;
 import org.jboss.windup.reporting.service.TagSetService;
+import org.jboss.windup.rules.apps.javaee.model.EjbBeanBaseModel;
+import org.jboss.windup.rules.apps.javaee.model.JNDIResourceModel;
+import org.jboss.windup.reporting.model.TechnologyUsageStatisticsModel;
 import org.jboss.windup.graph.model.HasApplications;
-import org.jboss.windup.rules.apps.javaee.model.stats.TechnologyUsageStatisticsModel;
 import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
- * Adds the specified statistics and tag information regarding an technology that has been located in the analyzed application.
+ * Adds the specified statistics and tag information regarding a technology that has been located in the analyzed application.
  *
  * If no count is specified, then a default of "1" is assumed.
  *
@@ -122,10 +124,12 @@ public class TechnologyIdentified extends AbstractIterationOperation<WindupVerte
             ((ClassificationModel) payload).getFileModels().forEach(fileModel -> {
                 projects.add(fileModel.getProjectModel());
             });
-        } else if (payload instanceof HasProject)
+        }
+        else if (payload instanceof HasProject)
         {
             projects.add(((HasProject) payload).getProjectModel());
-        } else if (payload instanceof HasApplications)
+        }
+        else if (payload instanceof HasApplications)
         {
             Iterable<ProjectModel> rootProjectModels = ((HasApplications) payload).getApplications();
 
@@ -133,7 +137,8 @@ public class TechnologyIdentified extends AbstractIterationOperation<WindupVerte
             {
                 projects.add(projectModel);
             }
-        } else if (payload instanceof TechnologyTagModel)
+        }
+        else if (payload instanceof TechnologyTagModel)
         {
             ((TechnologyTagModel) payload).getFileModels().forEach(fileModel -> projects.add(fileModel.getProjectModel()));
         }
@@ -147,15 +152,16 @@ public class TechnologyIdentified extends AbstractIterationOperation<WindupVerte
         for (ProjectModel project : projects)
         {
             TechnologyUsageStatisticsService service = new TechnologyUsageStatisticsService(event.getGraphContext());
-            TechnologyUsageStatisticsModel model = service.getOrCreate(project, this.technologyName);
-            model.setOccurrenceCount(model.getOccurrenceCount() + this.count);
+            TechnologyUsageStatisticsModel stats = service.getOrCreate(project, this.technologyName);
+            stats.setOccurrenceCount(stats.getOccurrenceCount() + this.count);
+            LOG.info("Created TechnologyUsageStatisticsModel: " + this.technologyName + " used " + count + "x in " + project.getRootFileModel().getFilePath());
 
             // Update tags
-            TagSetModel tagModel = model.getTagModel();
+            TagSetModel tagModel = stats.getTagModel();
             if (tagModel == null)
             {
                 tagModel = new TagSetService(event.getGraphContext()).getOrCreate(event, this.tags);
-                model.setTagModel(tagModel);
+                stats.setTagModel(tagModel);
             }
             if (!tagModel.getTags().equals(this.tags))
             {
@@ -163,7 +169,7 @@ public class TechnologyIdentified extends AbstractIterationOperation<WindupVerte
                 Set<String> newSet = new HashSet<>(tagModel.getTags());
                 newSet.addAll(this.tags);
                 tagModel = new TagSetService(event.getGraphContext()).getOrCreate(event, this.tags);
-                model.setTagModel(tagModel);
+                stats.setTagModel(tagModel);
             }
         }
     }

@@ -1,0 +1,42 @@
+<?xml version="1.0"?>
+<ruleset id="clustering"
+    xmlns="http://windup.jboss.org/schema/jboss-ruleset"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://windup.jboss.org/schema/jboss-ruleset http://windup.jboss.org/schema/jboss-ruleset/windup-jboss-ruleset.xsd">
+    <metadata>
+        <description>
+            This is a simple ruleset for detecting usage of clustering technologies.
+        </description>
+        <dependencies>
+          <addon id="org.jboss.windup.rules,windup-rules-javaee,3.0.0.Final"/>
+          <addon id="org.jboss.windup.rules,windup-rules-java,3.0.0.Final"/>
+        </dependencies>
+    </metadata>
+    <rules>
+        <rule id="clustering-00000">
+            <when>
+              <xmlfile matches="/w:web-app/w:distributable">
+                  <namespace prefix="w" uri="http://java.sun.com/xml/ns/javaee"/>
+              </xmlfile>
+            </when>
+            <perform>
+                <technology-tag level="INFORMATIONAL">Clustering Web Session</technology-tag>
+            </perform>
+        </rule>
+        <rule id="clustering-00001">
+            <when>
+                <or>
+                    <javaclass references="org.jboss.ejb3.annotation.Clustered">
+                        <location>ANNOTATION</location>
+                        <location>IMPORT</location>
+                    </javaclass>
+                    <xmlfile matches="/*[local-name()='ejb-jar']/*[local-name()='assembly-descriptor']/*[local-name()='clustering']/*[local-name()='clustered']" />
+                    <xmlfile matches="/*[local-name()='jboss']/*[local-name()='enterprise-beans']/*[local-name()='session']/*[local-name()='clustered']" />
+                </or>
+            </when>
+            <perform>
+                <technology-tag level="INFORMATIONAL">Clustering EJB</technology-tag>
+            </perform>
+        </rule>
+    </rules>
+</ruleset>

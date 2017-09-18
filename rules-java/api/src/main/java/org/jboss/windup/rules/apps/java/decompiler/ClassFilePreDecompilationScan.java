@@ -20,6 +20,7 @@ import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.Logging;
+import org.jboss.windup.util.Util;
 import org.objectweb.asm.ClassReader;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
@@ -85,9 +86,10 @@ public class ClassFilePreDecompilationScan extends AbstractIterationOperation<Ja
 
             javaClassFileModel.setJavaClass(javaClassModel);
         }
-        catch (Exception e)
+        catch (Exception ex)
         {
-            final String message = "BCEL was unable to parse class file '" + javaClassFileModel.getFilePath() + "':\n\t" + e.getMessage();
+            String nl = ex.getMessage() != null ? Util.NL + "\t" : " ";
+            final String message = "BCEL was unable to parse class file '" + javaClassFileModel.getFilePath() + "':" + nl + ex.toString();
             LOG.log(Level.WARNING, message);
             ClassificationService classificationService = new ClassificationService(event.getGraphContext());
             classificationService.attachClassification(event, context, javaClassFileModel, UNPARSEABLE_CLASS_CLASSIFICATION, UNPARSEABLE_CLASS_DESCRIPTION);

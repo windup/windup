@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<ruleset id="technology-usage-http" xmlns="http://windup.jboss.org/schema/jboss-ruleset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://windup.jboss.org/schema/jboss-ruleset http://windup.jboss.org/schema/jboss-ruleset/windup-jboss-ruleset.xsd">
+    <metadata>
+        <description>
+            This ruleset provides statistical summaries of the http items that were found during the analysis.
+        </description>
+        <dependencies>
+            <addon id="org.jboss.windup.rules,windup-rules-javaee,2.7.0.Final" />
+            <addon id="org.jboss.windup.rules,windup-rules-java,2.7.0.Final" />
+        </dependencies>
+        <phase>PostMigrationRulesPhase</phase>
+    </metadata>
+    <rules>
+        <rule id="technology-usage-http-01000">
+            <when>
+                <graph-query discriminator="JaxRSWebServiceModel"></graph-query>
+            </when>
+            <perform>
+                <technology-identified name="JAX-RS">
+                    <tag name="Connect"/>
+                    <tag name="HTTP"/>
+                    <tag name="Java EE"/>
+                </technology-identified>
+            </perform>
+        </rule>
+        <rule id="technology-usage-http-01100">
+            <when>
+                <graph-query discriminator="JaxWSWebServiceModel"></graph-query>
+            </when>
+            <perform>
+                <technology-identified name="JAX-WS">
+                    <tag name="Connect"/>
+                    <tag name="HTTP"/>
+                    <tag name="Java EE"/>
+                </technology-identified>
+            </perform>
+        </rule>
+    </rules>
+</ruleset>

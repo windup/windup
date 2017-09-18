@@ -19,7 +19,7 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.graph.model.HasApplications;
 import org.jboss.windup.rules.apps.javaee.model.stats.GeneralStatsItemModel;
-import org.jboss.windup.rules.apps.javaee.model.stats.TechnologyUsageStatisticsModel;
+import org.jboss.windup.reporting.model.TechnologyUsageStatisticsModel;
 
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.FramedGraphQuery;

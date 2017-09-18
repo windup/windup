@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<ruleset xmlns="http://windup.jboss.org/schema/jboss-ruleset" id="mvc"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://windup.jboss.org/schema/jboss-ruleset http://windup.jboss.org/schema/jboss-ruleset/windup-jboss-ruleset.xsd">
+    <metadata>
+        <description>
+            This ruleset provides analysis of JSF libraries.
+        </description>
+        <dependencies>
+            <addon id="org.jboss.windup.rules,windup-rules-javaee,3.0.0.Final" />
+            <addon id="org.jboss.windup.rules,windup-rules-java,3.0.0.Final" />
+        </dependencies>
+    </metadata>
+    <rules>
+        <rule id="mvc-01000">
+            <when>
+                <file filename="{*}wicket{*}.jar"/>
+            </when>
+            <perform>
+                <classification title="Embedded library - Apache Wicket" category-id="optional" effort="0">
+                    <description>The application embeds an Apache Wicket library.</description>
+                </classification>
+                <technology-tag level="INFORMATIONAL">Apache Wicket (embedded)</technology-tag>
+            </perform>
+        </rule>
+        <rule id="mvc-01100">
+            <when>
+                <file filename="{*}struts{*}.jar"/>
+            </when>
+            <perform>
+                <classification title="Embedded library - Apache Struts" category-id="optional" effort="0">
+                    <description>The application embeds an Apache Struts library.</description>
+                </classification>
+                <technology-tag level="INFORMATIONAL">Apache Struts (embedded)</technology-tag>
+            </perform>
+        </rule>
+        <rule id="mvc-01200">
+            <when>
+                <file filename="{*}spring-webmvc{*}.jar"/>
+            </when>
+            <perform>
+                <classification title="Embedded library - Spring MVC" category-id="optional" effort="0">
+                    <description>The application embeds a Spring MVC library.</description>
+                </classification>
+                <technology-tag level="INFORMATIONAL">Spring MVC (embedded)</technology-tag>
+            </perform>
+        </rule>
+        <rule id="mvc-01300">
+            <when>
+                <file filename="{*}gwt{*}.jar"/>
+            </when>
+            <perform>
+                <classification title="Embedded library - GWT" category-id="optional" effort="0">
+                    <description>The application embeds a GWT library.</description>
+                </classification>
+                <technology-tag level="INFORMATIONAL">GWT (embedded)</technology-tag>
+            </perform>
+        </rule>
+    </rules>
+</ruleset>

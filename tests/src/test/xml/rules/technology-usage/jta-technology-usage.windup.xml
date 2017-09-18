@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<ruleset id="technology-usage-jta" xmlns="http://windup.jboss.org/schema/jboss-ruleset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://windup.jboss.org/schema/jboss-ruleset http://windup.jboss.org/schema/jboss-ruleset/windup-jboss-ruleset.xsd">
+    <metadata>
+        <description>
+            This ruleset provides statistical summaries of the JTA items that were found during the analysis.
+        </description>
+        <dependencies>
+            <addon id="org.jboss.windup.rules,windup-rules-javaee,2.7.0.Final" />
+            <addon id="org.jboss.windup.rules,windup-rules-java,2.7.0.Final" />
+        </dependencies>
+        <targetTechnology id="eap"/>
+        <phase>PostMigrationRulesPhase</phase>
+    </metadata>
+    <rules>
+        <rule id="technology-usage-jta-00010">
+            <when>
+                <or>
+                    <graph-query discriminator="DataSourceModel">
+                        <property name="isXA" type="BOOLEAN">true</property>
+                    </graph-query>
+                    <!-- any usage of JMS expects using JTA -->
+                    <graph-query discriminator="JmsDestinationModel"/>
+                    <graph-query discriminator="JmsConnectionFactoryModel"/>
+                    <graph-query discriminator="EjbMessageDrivenModel"/>
+                </or>
+            </when>
+            <perform>
+                <technology-identified name="JTA">
+                    <tag name="Connect"/>
+                    <tag name="Transaction"/>
+                    <tag name="Java EE"/>
+                </technology-identified>
+            </perform>
+        </rule>
+    </rules>
+</ruleset>

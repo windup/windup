@@ -52,10 +52,17 @@ public class TagServiceHolderTest
     {
         tagServiceHolder.loadTagDefinitions();
         final TagService tagService = tagServiceHolder.getTagService();
-        Assert.assertNotNull(tagService.getTag("a-root"));
+        Assert.assertNotNull(tagService.getTag("a-prime"));
+        Assert.assertNotNull(tagService.findTag("a-prime"));
         Assert.assertNotNull(tagService.getTag("a1"));
-        Assert.assertNull(tagService.getTag("non-existent"));
-        Assert.assertNotNull(tagService.getOrCreateTag("to-be-created"));
+        Assert.assertNull(tagService.findTag("non-existent"));
+        try {
+            tagService.getTag("non-existent");
+            Assert.fail("Should fail: tagService.getTag(\"non-existent\")");
+        }
+        catch (Exception ex) { }
+        Assert.assertNotNull(tagService.getOrCreateTag("to-be-created", false));
+        Assert.assertNotNull(tagService.getTag("to-be-created"));
     }
 
 

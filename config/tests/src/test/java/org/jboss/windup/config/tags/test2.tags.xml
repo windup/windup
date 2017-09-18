@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <tags>
-    <tag name="a-root" root="true">
+    <tag name="a-prime" prime="true">
         <tag name="a1">
             <tag name="a1a"/>
         </tag>
@@ -9,8 +9,8 @@
         <tag name="a4"/>
     </tag>
     <tag name="b">
-        <tag name="b1-root" root="true">
-            <tag name="b1a-root" root="true">
+        <tag name="b1-prime" prime="true">
+            <tag name="b1a-prime" prime="true">
                 <tag name="b1a1"/>
                 <tag name="b1a2"/>
             </tag>
@@ -27,4 +27,9 @@
     <!-- Keep commented out - not defined - ->
     <tag name="d"/>
     -->
+    <tag name="colorCafe" color="#cafeba"/>
+    <tag name="colorBeer" color="czechbeergolden"/>
+    <tag name="Not A good TAG name"/>
+    <tag name="some:name"/>
+    <tag name="mars" someCustomAttribute="Go Elon! :)"/>
 </tags>
