@@ -58,7 +58,7 @@ public class DiscoverJpaConfigurationXmlRuleProvider extends IteratingRuleProvid
     {
         for (XmlFileModel xml : payload.getXmlResources())
         {
-            if (StringUtils.equals(xml.getRootTagName(), "persistence"))
+            if (!StringUtils.equals(xml.getRootTagName(), "persistence"))
                 continue;
 
             try {
