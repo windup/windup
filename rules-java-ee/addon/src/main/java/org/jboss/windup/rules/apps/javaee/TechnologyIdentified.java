@@ -7,14 +7,14 @@ import java.util.logging.Logger;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
-import org.jboss.windup.graph.model.FileLocationModel;
+import org.jboss.windup.graph.model.FileReferenceModel;
+import org.jboss.windup.graph.model.HasProject;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.TagSetModel;
 import org.jboss.windup.reporting.service.TagSetService;
-import org.jboss.windup.rules.apps.javaee.model.EjbBeanBaseModel;
-import org.jboss.windup.rules.apps.javaee.model.JNDIResourceModel;
+import org.jboss.windup.graph.model.HasApplications;
 import org.jboss.windup.rules.apps.javaee.model.stats.TechnologyUsageStatisticsModel;
 import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -113,27 +113,30 @@ public class TechnologyIdentified extends AbstractIterationOperation<WindupVerte
     public void perform(GraphRewrite event, EvaluationContext context, WindupVertexFrame payload)
     {
         Set<ProjectModel> projects = new HashSet<>();
-        if (payload instanceof ProjectModel)
+        if (payload instanceof FileReferenceModel)
+            payload = ((FileReferenceModel) payload).getFile();
+
+        if (payload instanceof ClassificationModel)
         {
-            projects.add((ProjectModel) payload);
-        }
-        else if (payload instanceof FileModel)
+            ((ClassificationModel) payload).getFileModels().forEach(fileModel -> {
+                projects.add(fileModel.getProjectModel());
+            });
+        } else if (payload instanceof HasProject)
         {
-            projects.add(((FileModel) payload).getProjectModel());
-        } else if (payload instanceof FileLocationModel)
+            projects.add(((HasProject) payload).getProjectModel());
+        } else if (payload instanceof HasApplications)
         {
-            projects.add(((FileLocationModel)payload).getFile().getProjectModel());
-        } else if (payload instanceof JNDIResourceModel)
-        {
-            JNDIResourceModel jndiResourceModel = (JNDIResourceModel)payload;
-            jndiResourceModel.getApplications().forEach(projects::add);
-        } else if (payload instanceof EjbBeanBaseModel)
-        {
-            EjbBeanBaseModel ejbBeanBaseModel = (EjbBeanBaseModel) payload;
-            ejbBeanBaseModel.getApplications().forEach(projects::add);
+            Iterable<ProjectModel> rootProjectModels = ((HasApplications) payload).getApplications();
+
+            for (ProjectModel projectModel : rootProjectModels)
+            {
+                projects.add(projectModel);
+            }
         }
         else
         {
+            LOG.warning("Unrecognized payload for TechnologyIdentified. Payload must be instance of BelongsToProject.");
+            LOG.warning(payload.toPrettyString());
             return;
         }
 

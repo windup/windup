@@ -17,6 +17,7 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
+import org.jboss.windup.graph.model.HasApplications;
 import org.jboss.windup.rules.apps.javaee.model.stats.GeneralStatsItemModel;
 import org.jboss.windup.rules.apps.javaee.model.stats.TechnologyUsageStatisticsModel;
 
@@ -221,9 +222,9 @@ public class TechnologyUsageStatisticsService extends GraphService<TechnologyUsa
 
         for (T vertex : vertices)
         {
-            if (vertex instanceof BelongsToProject)
+            if (vertex instanceof HasApplications)
             {
-                for (ProjectModel projectModel : ((BelongsToProject) vertex).getRootProjectModels())
+                for (ProjectModel projectModel : ((HasApplications) vertex).getApplications())
                 {
                     projectCount.put(projectModel, projectCount.getOrDefault(projectModel, 0) + 1);
                 }

@@ -20,37 +20,36 @@ import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.config.AbstractRuleProvider;
-import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.RuleSubset;
+import org.jboss.windup.config.KeepWorkDirsOption;
 import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.MetadataBuilder;
-import org.jboss.windup.config.operation.Iteration;
-import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.engine.predicates.RuleProviderWithDependenciesPredicate;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
-import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
 import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
-import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.jboss.windup.rules.apps.java.scan.ast.AnalyzeJavaFilesRuleProvider;
 import org.jboss.windup.rules.apps.javaee.TechnologyIdentified;
 import org.jboss.windup.rules.apps.javaee.TechnologyUsageStatisticsService;
 import org.jboss.windup.rules.apps.javaee.model.stats.TechnologyUsageStatisticsModel;
+import org.jboss.windup.rules.files.condition.FileContent;
 import org.jboss.windup.testutil.basics.WindupTestUtilMethods;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
-import org.ocpsoft.rewrite.context.EvaluationContext;
 
 @RunWith(Arquillian.class)
 public class TechnologyIdentifiedTest
 {
+
+    public static final String SHARED_LIBS_TECH = "shared-libs-tech";
+
     @Deployment
     @AddonDependencies({
             @AddonDependency(name = "org.jboss.windup.config:windup-config"),
@@ -58,6 +57,7 @@ public class TechnologyIdentifiedTest
             @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
             @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
             @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-ee"),
+            @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
             @AddonDependency(name = "org.jboss.windup.tests:test-util"),
             @AddonDependency(name = "org.jboss.forge.furnace.container:cdi")
     })
@@ -66,8 +66,10 @@ public class TechnologyIdentifiedTest
         return ShrinkWrap.create(AddonArchive.class).addBeansXML();
     }
 
+    private static Logger LOG = Logger.getLogger(TechnologyIdentifiedTest.class.getName());
+
     @Inject
-    JavaClassTestRuleProvider provider;
+    TechnologyIdentifiedRuleProvider provider;
 
     @Inject
     private WindupProcessor processor;
@@ -89,7 +91,7 @@ public class TechnologyIdentifiedTest
 
             final WindupConfiguration processorConfig = new WindupConfiguration();
             processorConfig.setRuleProviderFilter(new RuleProviderWithDependenciesPredicate(
-                    JavaClassTestRuleProvider.class));
+                    TechnologyIdentifiedRuleProvider.class));
             processorConfig.setGraphContext(context);
             processorConfig.addInputPath(Paths.get(inputDir));
             processorConfig.setOutputDirectory(outputPath);
@@ -118,12 +120,64 @@ public class TechnologyIdentifiedTest
         }
     }
 
-    @Singleton
-    public static class JavaClassTestRuleProvider extends AbstractRuleProvider
+    @Test
+    public void testDuplicateArchiveHandling() throws Exception
     {
-        public JavaClassTestRuleProvider()
+        Path baseOutputPath = WindupTestUtilMethods.getTempDirectoryForGraph();
+        Path graphPath = baseOutputPath.resolve("graph");
+        Path reportPath = baseOutputPath.resolve("reports");
+
+        try (GraphContext context = factory.create(graphPath))
         {
-            super(MetadataBuilder.forProvider(JavaClassTestRuleProvider.class)
+            final String basePath = "../../test-files/duplicate/duplicate-ear-test-";
+            final String[] inputPaths = new String[]{
+                    basePath + "1.ear",
+                    basePath + "2.ear",
+                    basePath + "3.ear",
+            };
+
+            FileUtils.deleteDirectory(reportPath.toFile());
+            Files.createDirectories(reportPath);
+
+            final WindupConfiguration processorConfig = new WindupConfiguration();
+//            processorConfig.setRuleProviderFilter(new RuleProviderWithDependenciesPredicate(
+//                    TechnologyIdentifiedRuleProvider.class));
+            processorConfig.setGraphContext(context);
+            for (String inputPath : inputPaths)
+            {
+                processorConfig.addInputPath(Paths.get(inputPath));
+            }
+            processorConfig.setOutputDirectory(reportPath);
+            processorConfig.setOptionValue(ScanPackagesOption.NAME, Collections.singletonList(""));
+            processorConfig.setOptionValue(SourceModeOption.NAME, true);
+            processorConfig.setOptionValue(KeepWorkDirsOption.NAME, true);
+
+            processor.execute(processorConfig);
+
+            TechnologyUsageStatisticsService service = new TechnologyUsageStatisticsService(context);
+            int numberFound = 0;
+            boolean foundMigrationSupportModule = false;
+            for (TechnologyUsageStatisticsModel model : service.findAllByProperty(TechnologyUsageStatisticsModel.NAME, SHARED_LIBS_TECH))
+            {
+                LOG.info("Technology Usage Statistics Model: " + model);
+                ProjectModel project = model.getProjectModel();
+                if (project.getRootFileModel() != null && project.getRootFileModel().getFileName().equals("migration-support-1.0.0.jar"))
+                    foundMigrationSupportModule = true;
+                LOG.info("Project: " + project.getRootFileModel().getFileName());
+                numberFound++;
+            }
+
+            Assert.assertEquals(1, numberFound);
+            Assert.assertTrue(foundMigrationSupportModule);
+        }
+    }
+
+    @Singleton
+    public static class TechnologyIdentifiedRuleProvider extends AbstractRuleProvider
+    {
+        public TechnologyIdentifiedRuleProvider()
+        {
+            super(MetadataBuilder.forProvider(TechnologyIdentifiedRuleProvider.class)
                     .addExecuteAfter(AnalyzeJavaFilesRuleProvider.class));
         }
 
@@ -136,7 +190,12 @@ public class TechnologyIdentifiedTest
                         JavaClass.references("org.jboss.forge.furnace.{*}").inType("{*}").at(TypeReferenceLocation.IMPORT)
                     ).perform(
                             TechnologyIdentified.named("test-tech").withTag("test-tag")
-                    );
+                    )
+                    .addRule().when(
+                            FileContent.matches("{content}").inFileNamed("pom.properties")
+                    ).perform(
+                            TechnologyIdentified.named(SHARED_LIBS_TECH).withTag("shared-libs-tech-tag")
+                    ).where("content").matches(".*migration-support.*");
         }
         // @formatter:on
 

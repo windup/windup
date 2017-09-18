@@ -3,6 +3,7 @@ package org.jboss.windup.rules.apps.javaee.model;
 import java.util.Map;
 
 import org.jboss.windup.graph.MapInAdjacentProperties;
+import org.jboss.windup.graph.model.HasApplications;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 

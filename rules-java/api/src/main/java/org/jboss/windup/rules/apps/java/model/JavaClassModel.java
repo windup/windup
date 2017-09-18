@@ -5,6 +5,8 @@ import com.tinkerpop.frames.modules.javahandler.JavaHandler;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.model.BelongsToProject;
+import org.jboss.windup.graph.model.HasApplications;
+import org.jboss.windup.graph.model.HasProject;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -24,7 +26,7 @@ import java.util.logging.Logger;
  *
  */
 @TypeValue(JavaClassModel.TYPE)
-public interface JavaClassModel extends WindupVertexFrame, BelongsToProject
+public interface JavaClassModel extends WindupVertexFrame, BelongsToProject, HasApplications, HasProject
 {
     String TYPE = "JavaClassModel";
 
@@ -200,9 +202,13 @@ public interface JavaClassModel extends WindupVertexFrame, BelongsToProject
 
     @JavaHandler
     @Override
-    Iterable<ProjectModel> getRootProjectModels();
+    Iterable<ProjectModel> getApplications();
 
-    abstract class Impl implements JavaHandlerContext<Vertex>, JavaClassModel, BelongsToProject
+    @JavaHandler
+    @Override
+    ProjectModel getProjectModel();
+
+    abstract class Impl implements JavaHandlerContext<Vertex>, JavaClassModel, HasApplications
     {
         @Override
         public boolean belongsToProject(ProjectModel projectModel)
@@ -218,7 +224,20 @@ public interface JavaClassModel extends WindupVertexFrame, BelongsToProject
         }
 
         @Override
-        public Iterable<ProjectModel> getRootProjectModels()
+        public ProjectModel getProjectModel()
+        {
+            FileModel sourceModel = this.getSourceFile();
+
+            if (sourceModel == null)
+            {
+                return null;
+            }
+
+            return sourceModel.getProjectModel();
+        }
+
+        @Override
+        public Iterable<ProjectModel> getApplications()
         {
             FileModel sourceModel = this.getSourceFile();
 
@@ -227,7 +246,7 @@ public interface JavaClassModel extends WindupVertexFrame, BelongsToProject
                 return Collections.emptyList();
             }
             
-            return sourceModel.getRootProjectModels();
+            return sourceModel.getApplications();
         }
 
         protected FileModel getSourceFile()

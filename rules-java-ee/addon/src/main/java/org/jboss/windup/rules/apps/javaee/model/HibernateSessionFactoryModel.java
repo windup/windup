@@ -6,7 +6,7 @@ import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.modules.javahandler.JavaHandler;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import org.jboss.windup.graph.MapInAdjacentProperties;
-import org.jboss.windup.graph.model.BelongsToProject;
+import org.jboss.windup.graph.model.HasApplications;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
@@ -21,7 +21,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
  *
  */
 @TypeValue(HibernateSessionFactoryModel.TYPE)
-public interface HibernateSessionFactoryModel extends WindupVertexFrame, BelongsToProject
+public interface HibernateSessionFactoryModel extends WindupVertexFrame, HasApplications
 {
     String TYPE = "HibernateSessionFactoryModel";
 
@@ -61,11 +61,7 @@ public interface HibernateSessionFactoryModel extends WindupVertexFrame, Belongs
     @JavaHandler
     boolean belongsToProject(ProjectModel projectModel);
 
-    @Override
-    @JavaHandler
-    Iterable<ProjectModel> getRootProjectModels();
-
-    abstract class Impl implements HibernateSessionFactoryModel, BelongsToProject, JavaHandlerContext<Vertex>
+    abstract class Impl implements HibernateSessionFactoryModel, HasApplications, JavaHandlerContext<Vertex>
     {
         @Override
         public boolean belongsToProject(ProjectModel projectModel)
@@ -74,9 +70,9 @@ public interface HibernateSessionFactoryModel extends WindupVertexFrame, Belongs
         }
 
         @Override
-        public Iterable<ProjectModel> getRootProjectModels()
+        public Iterable<ProjectModel> getApplications()
         {
-            return this.getHibernateConfigurationFileModel().getRootProjectModels();
+            return this.getHibernateConfigurationFileModel().getApplications();
         }
     }
 }
