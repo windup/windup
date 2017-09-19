@@ -56,7 +56,7 @@ public class DiscoverHibernateConfigurationRuleProvider extends IteratingRulePro
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.IMPORTANT;
 
     private static final String REGEX_HIBERNATE = "(?i).*hibernate.configuration.*";
-    private static final String JTA_HIBERNATE_PLATFORM = "hibernate.transaction.jta.platform";
+    private static final String JTA_HIBERNATE_PLATFORM = "transaction.jta.platform";
 
 
     @Override
@@ -131,9 +131,9 @@ public class DiscoverHibernateConfigurationRuleProvider extends IteratingRulePro
             sessionFactoryModel.setSessionFactoryProperties(sessionFactoryProperties);
 
             // create the datasource references.
-            if (sessionFactoryProperties.containsKey("hibernate.connection.datasource"))
+            if (sessionFactoryProperties.containsKey("connection.datasource"))
             {
-                final String dataSourceJndiName = sessionFactoryProperties.get("hibernate.connection.datasource");
+                final String dataSourceJndiName = sessionFactoryProperties.get("connection.datasource");
                 String dataSourceName = dataSourceJndiName;
                 if (StringUtils.contains(dataSourceName, "/"))
                 {
@@ -142,9 +142,9 @@ public class DiscoverHibernateConfigurationRuleProvider extends IteratingRulePro
 
                 DataSourceModel dataSource = dataSourceService.createUnique(applications, dataSourceName, dataSourceJndiName);
 
-                if (sessionFactoryProperties.containsKey("hibernate.dialect"))
+                if (sessionFactoryProperties.containsKey("dialect"))
                 {
-                    String dialect = sessionFactoryProperties.get("hibernate.dialect");
+                    String dialect = sessionFactoryProperties.get("dialect");
                     String resolvedType = HibernateDialectDataSourceTypeResolver.resolveDataSourceTypeFromDialect(dialect);
                     if(StringUtils.isNotBlank(resolvedType)) {
                         dataSource.setDatabaseTypeName(resolvedType);
