@@ -15,8 +15,10 @@ import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.TagSetModel;
 import org.jboss.windup.reporting.model.TechnologyTagModel;
 import org.jboss.windup.reporting.service.TagSetService;
+import org.jboss.windup.rules.apps.javaee.model.EjbBeanBaseModel;
+import org.jboss.windup.rules.apps.javaee.model.JNDIResourceModel;
+import org.jboss.windup.reporting.model.TechnologyUsageStatisticsModel;
 import org.jboss.windup.graph.model.HasApplications;
-import org.jboss.windup.rules.apps.javaee.model.stats.TechnologyUsageStatisticsModel;
 import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
