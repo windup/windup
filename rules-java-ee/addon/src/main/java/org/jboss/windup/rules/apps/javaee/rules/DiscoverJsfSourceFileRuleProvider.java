@@ -36,9 +36,9 @@ public class DiscoverJsfSourceFileRuleProvider extends AbstractRuleProvider
                     }
                 })
                 .where("taglib1")
-                    .matches("(java\\.sun\\.com/jsf/core)|(java\\.sun\\.com/jsf/html)|(http://java\\.sun\\.com/jsf/facelets)")
+                    .matches("(java\\.sun\\.com/jsf/)|(java\\.sun\\.com/jsf/)|(xmlns\\.jcp\\.org/jsf)")
                 .where("extension")
-                    .matches("(jsp)|(xhtml)")
+                    .matches("(jsp)|(xhtml)|(jspx)")
                 ;
     }
 }
