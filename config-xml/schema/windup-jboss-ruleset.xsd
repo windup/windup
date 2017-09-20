@@ -12,7 +12,7 @@
             <xs:sequence>
                 <xs:element name="testDataPath" minOccurs="1" type="xs:string" />
                 <xs:element name="sourceMode" minOccurs="0" maxOccurs="1" type="xs:boolean" />
-                <xs:element name="rulePath" minOccurs="0" type="xs:string" />
+                <xs:element name="rulePath" minOccurs="0" maxOccurs="unbounded" type="xs:string" />
                 <xs:element name="source" minOccurs="0" maxOccurs="1" type="xs:string" />
                 <xs:element name="target" minOccurs="0" maxOccurs="1" type="xs:string" />
                 <xs:element ref="ruleset" minOccurs="0" maxOccurs="unbounded" />
@@ -272,9 +272,15 @@
    <xs:element name="lineitem-exists">
       <xs:complexType>
          <xs:attribute type="xs:string" name="message" use="required"/>
-         <xs:attribute type="xs:string" name="in"/>
       </xs:complexType>
    </xs:element>
+
+    <xs:element name="technology-tag-exists">
+        <xs:complexType>
+            <xs:attribute type="xs:string" name="technology-tag" use="required"/>
+            <xs:attribute type="xs:string" name="in"/>
+        </xs:complexType>
+    </xs:element>
 
    <!-- OPERATION DEFINITIONS -->
 
@@ -436,6 +442,28 @@
         </xs:complexType>
     </xs:element>
 
+    <xs:element name="technology-tag">
+        <xs:complexType>
+            <xs:simpleContent>
+                <xs:extension base="xs:string">
+                    <xs:attribute name="level" type="technology-tag-level" />
+                </xs:extension>
+            </xs:simpleContent>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:simpleType name="technology-tag-level">
+        <xs:annotation>
+            <xs:documentation><![CDATA[
+               This defines the level of a technology tag.
+            ]]></xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="INFORMATIONAL"/>
+            <xs:enumeration value="IMPORTANT"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <!-- MAIN BUILDING BLOCKS -->
     <xs:complexType name="where">
         <xs:sequence>
@@ -470,6 +498,7 @@
             <xs:element name="iterable-filter" type="iterable-filter" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="to-file-model" type="when-base" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="graph-query" type="graph-query" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element ref="technology-tag-exists" minOccurs="0" maxOccurs="unbounded" />
         </xs:choice>
     </xs:complexType>
 
@@ -516,6 +545,7 @@
             <xs:element ref="hint-exists" minOccurs="0" maxOccurs="unbounded" />
             <xs:element ref="lineitem-exists" minOccurs="0" maxOccurs="unbounded" />
             <xs:element name="technology-identified" type="technology-identified" minOccurs="0" maxOccurs="unbounded" />
+            <xs:element ref="technology-tag" minOccurs="0" maxOccurs="unbounded" />
         </xs:choice>
         <xs:attribute type="xs:string" name="over" />
         <!-- <xs:attribute type="xs:string" name="as" /> not supported in handler yet -->

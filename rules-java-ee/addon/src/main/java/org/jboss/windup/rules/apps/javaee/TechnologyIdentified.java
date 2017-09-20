@@ -13,6 +13,7 @@ import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.TagSetModel;
+import org.jboss.windup.reporting.model.TechnologyTagModel;
 import org.jboss.windup.reporting.service.TagSetService;
 import org.jboss.windup.graph.model.HasApplications;
 import org.jboss.windup.rules.apps.javaee.model.stats.TechnologyUsageStatisticsModel;
@@ -132,6 +133,9 @@ public class TechnologyIdentified extends AbstractIterationOperation<WindupVerte
             {
                 projects.add(projectModel);
             }
+        } else if (payload instanceof TechnologyTagModel)
+        {
+            ((TechnologyTagModel) payload).getFileModels().forEach(fileModel -> projects.add(fileModel.getProjectModel()));
         }
         else
         {
