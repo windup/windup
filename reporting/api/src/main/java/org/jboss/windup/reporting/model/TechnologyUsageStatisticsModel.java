@@ -1,4 +1,4 @@
-package org.jboss.windup.rules.apps.javaee.model.stats;
+package org.jboss.windup.reporting.model;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
@@ -8,6 +8,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import java.util.Date;
 
 import org.jboss.windup.graph.Indexed;
+import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.reporting.model.TaggableModel;
 
