@@ -136,6 +136,7 @@ public class ZipUtil
             extensions.add("jar");
             extensions.add("sar");
             extensions.add("rar");
+            extensions.add("zip");
             supportedExtensions = extensions;
         }
 
