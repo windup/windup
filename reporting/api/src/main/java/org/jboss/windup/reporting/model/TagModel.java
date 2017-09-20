@@ -1,0 +1,91 @@
+package org.jboss.windup.reporting.model;
+
+import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.frames.Adjacency;
+import org.jboss.windup.graph.model.WindupVertexFrame;
+
+import com.tinkerpop.frames.Property;
+import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+
+/**
+ * Holds information about a tag, as per the definition from tags.xml files.
+ * The TagSetModel and TaggableModel work directly with strings for the sake of simplicity.
+ * This is different from {@link TechnologyTagModel}.
+ * 
+ * Check the current implementation to see whether or not the whole tag structure is within the graph.
+ *
+ * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
+ * @see TagSetModel
+ * @see TaggableModel
+ */
+@TypeValue(TagModel.TYPE)
+public interface TagModel extends WindupVertexFrame
+{
+    String TYPE = "TagModel";
+    static final String PROP_NAME = "name";
+    static final String EDGE_DESIGNATES = "designates";
+
+    /**
+     * Tag name (ID), preferably kebab-style, e.g "java-ee-6".
+     */
+    @Property(PROP_NAME)
+    String getName();
+    @Property(PROP_NAME)
+    TagModel setName(String name);
+    
+    /**
+     * Human readable title of technology this tag represents, e.g "Java EE 6".
+     */
+    @Property("title")
+    String getTitle();
+    @Property("title")
+    TagModel setTitle(String title);
+    
+    /**
+     * A "root" tag is one which is an important group of subtags, suitable for showing in aggregated reports.
+     * For instance, "Java EE" is a good root tag, as it may contain other technologies.
+     * Whereas "frameworks" is probably not a good root tag as it's too general.
+     */
+    @Property("root")
+    boolean isRoot();
+    @Property("root")
+    TagModel setRoot(boolean isRoot);
+    
+    /**
+     * Pseudo tags serve as grouping for contained tags, but are not suitable to be a root tag.
+     * They are also suitable for tagging related tags. In the XML files definition, such pseudo tags are often referred to by the parents="..." attribute.
+     * For instance, "framework:" or "application-server:" is a suitable pseudo tag, which can demarcate tags like "wicket" or "jboss-eap".
+     * 
+     * By convention, the names are lower case, singular, and end with a colon.
+     */
+    @Property("pseudo")
+    boolean isPseudo();
+    @Property("pseudo")
+    TagModel setPseudo(boolean isPseudo);
+    
+    /**
+     * A color by which this tag should typically be represented in the UI elements like tags, boxes, chart lines, graph nodes, etc.
+     */
+    @Property("color")
+    String getColor();
+    @Property("color")
+    TagModel setColor(String color);
+    
+    /**
+     * Which tags are designated by this tag; for instance, "java-ee" designates "ejb" and "jms".
+     */
+    @Adjacency(label = EDGE_DESIGNATES, direction = Direction.OUT)
+    Iterable<TagModel> getDesignatedTags();
+    @Adjacency(label = EDGE_DESIGNATES, direction = Direction.OUT)
+    TagModel setDesignatedTags(Iterable<TagModel> tags);
+    @Adjacency(label = EDGE_DESIGNATES, direction = Direction.OUT)
+    TagModel addDesignatedTag(TagModel tag);
+
+    /**
+     * Which tags are designated by this tag; for instance, "seam" is designated by "web" and "framework:".
+     */
+    @Adjacency(label = EDGE_DESIGNATES, direction = Direction.IN)
+    Iterable<TagModel> getDesignatedByTags();
+    @Adjacency(label = EDGE_DESIGNATES, direction = Direction.IN)
+    TagModel setDesignatedByTags(Iterable<TagModel> tags);
+}
