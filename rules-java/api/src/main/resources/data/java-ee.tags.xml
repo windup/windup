@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <tags setName="java">
-    <tag name="java-ee" root="true" title="Java EE" color="#00CC00">
+    <tag name="java-ee" prime="true" title="Java EE" color="#00CC00">
         <tag name="servlet"/>
         <tag name="datasource"/>
         <tag name="application-server:" pseudo="true">
@@ -25,7 +25,7 @@
         <tag name="remoting">
            <tag name="jax-rpc"/>
         </tag>
-        <tag name="messaging" root="true" title="Messaging" color="#AACC00">
+        <tag name="messaging" prime="true" title="Messaging" color="#AACC00">
             <tag name="jms"/>
             <tag name="apache-cxf">
                <tag name="xfire"/>
@@ -36,17 +36,17 @@
         </tag>
         <tag name="framework:" pseudo="true">
         </tag>
-        <tag name="web-service" root="true" title="Webservice" color="#00BBBB">
+        <tag name="web-service" prime="true" title="Webservice" color="#00BBBB">
            <tag name="webservice"/>
            <tag name="wsdl" parents="descriptor"/>
            <tag name="axis"/>
            <tag name="jboss-ws"/>
         </tag>
-        <tag name="esb" root="true" title="Enterprise Service Bus" color="#0000BB">
+        <tag name="esb" prime="true" title="Enterprise Service Bus" color="#0000BB">
            <tag name="jboss-esb"/>
            <tag name="sonic-esb"/>
            <tag name="camel"/>
-           <tag name="mule-esb (mule)"/>
+           <tag name="mule-esb"/>
         </tag>
         <tag name="soa" title="SOA">
            <tag name="soa-p" title="SOA-P"/>
@@ -54,7 +54,7 @@
         </tag>
         <tag name="soap"/>
     </tag>
-    <tag name="java-se" root="true" title="Java SE" color="#BB0000">
+    <tag name="java-se" prime="true" title="Java SE" color="#BB0000">
         <tag name="classloader"/>
         <tag name="classloading"/>
     </tag>
@@ -72,30 +72,35 @@
         <tag name="client"/>
         <tag name="cluster"/>
         <tag name="performance"/>
-        <tag name="configuration" root="true">
+        <tag name="configuration" prime="true">
             <tag name="descriptor"/>
             <tag name="port"/>
         </tag>
-        <tag name="protocol">
+        <tag name="protocol" pseudo="true">
             <tag name="http"/>
         </tag>
-        <tag name="persistence" root="true">
+        <tag name="persistence" prime="true">
             <tag name="database"/>
             <tag name="hibernate"/>
             <tag name="postgresql"/>
             <tag name="jdbc"/>
         </tag>
-        <tag name="logging" root="true">
+        <tag name="logging" prime="true">
             <tag name="slf4j"/>
             <tag name="log4j"/>
         </tag>
         <tag name="context"/>
-        <tag name="web" root="true">
-           <tag name="seam" parents="framework:" title="Seam Framework"/>
-           <tag name="seam-ui-control" parents="framework:"/>
-           <tag name="spring" parents="framework:"/>
-           <tag name="jsf" parents="framework:"/>
-           <tag name="jsp" parents="framework:"/>
+        <tag name="web" prime="true">
+            <tag name="seam" parents="framework:" title="Seam Framework"/>
+            <tag name="seam-ui-control" parents="framework:"/>
+            <tag name="spring-mvc" parents="framework:"/>
+            <tag name="jsf" parents="framework:"/>
+            <tag name="jsp" parents="framework:"/>
+            <tag name="richfaces" parents="framework:"/>
+            <tag name="wicket" parents="framework:"/>
+            <tag name="struts" parents="framework:"/>
+            <tag name="play" parents="framework:"/>
+            <tag name="thymeleaf" parents="framework:"/>
         </tag>
         <tag name="web-app"/>
         <tag name="transactions"/>
