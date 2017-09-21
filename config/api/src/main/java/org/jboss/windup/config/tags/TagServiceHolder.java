@@ -67,6 +67,4 @@ public class TagServiceHolder
     {
         return tagService;
     }
-
-
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <tags setName="licenses">
-    <tag name="license" root="true" title="License" color="#FAE663">
+    <tag name="license" prime="true" title="License" color="#FAE663">
         <tag name="license-apache-2.0" title="Apache License 2.0" url="http://www.apache.org/licenses/LICENSE-2.0"/>
         <tag name="license-apache-1.1" title="Apache License 1.1" url="http://www.apache.org/licenses/LICENSE-1.1"/>
         <tag name="license-apache-1.0" title="Apache License 1.0" url="http://www.apache.org/licenses/LICENSE-1.0"/>

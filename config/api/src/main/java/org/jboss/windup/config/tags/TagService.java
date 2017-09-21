@@ -17,6 +17,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.jboss.windup.util.exception.WindupException;
 import org.xml.sax.SAXException;
 
 /**
@@ -47,7 +48,17 @@ public class TagService
     }
 
     /**
-     * Gets all tags that are "root" tags.
+     * Gets all tags that are "prime" tags.
+     */
+    public List<Tag> getPrimeTags() {
+        return this.definedTags.values().stream()
+                .filter(Tag::isPrime)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Returns the tags that were root in the definition files. These serve as entry point shortcuts when browsing the graph.
+     * We could reduce this to just fewer as the root tags may be connected through parents="...".
      */
     public List<Tag> getRootTags() {
         return this.definedTags.values().stream()
@@ -60,14 +71,21 @@ public class TagService
      */
     public Tag getTag(String tagName)
     {
-        return definedTags.get(tagName);
+        if (null == tagName)
+            throw new IllegalArgumentException("Looking for null tag name.");
+        return definedTags.get(Tag.normalizeName(tagName));
     }
 
     /**
      * Gets the {@link Tag} with the given name or creates a new {@link Tag} if one does not already exist.
+     * @param isRef True if the given tag name is a reference, in which case it should already exist.
      */
-    public Tag getOrCreateTag(String tagName)
+    public Tag getOrCreateTag(String tagName, boolean isRef)
     {
+        if (null == tagName)
+            throw new IllegalArgumentException("Looking for a null tag name.");
+        tagName = Tag.normalizeName(tagName);
+
         synchronized (this.definedTags)
         {
             if (definedTags.containsKey(tagName))
@@ -87,7 +105,10 @@ public class TagService
     public boolean isUnderTag(String superTagName, String subTagName)
     {
         if (superTagName == null || subTagName == null)
-            return false;
+            throw new IllegalArgumentException("Looking for a null tag name.");
+
+        superTagName = Tag.normalizeName(superTagName);
+        subTagName = Tag.normalizeName(subTagName);
 
         if (superTagName.equals(subTagName))
             return false;
@@ -103,7 +124,7 @@ public class TagService
     public boolean isUnderTag(Tag superTag, Tag subTag)
     {
         if (superTag == null || subTag == null)
-            return false;
+            throw new IllegalArgumentException("Looking for a null tag name.");
 
         if (superTag.getName().equals(subTag.getName()))
             return false;
@@ -148,14 +169,14 @@ public class TagService
     public void writeTagsToJavaScript(Writer writer) throws IOException
     {
         writer.append("function fillTagService(tagService) {\n");
-        writer.append("\t// (name, isRoot, isPseudo, color), [parent tags]\n");
+        writer.append("\t// (name, isPrime, isPseudo, color), [parent tags]\n");
         for (Tag tag : definedTags.values())
         {
             writer.append("\ttagService.registerTag(new Tag(");
             escapeOrNull(tag.getName(), writer);
             writer.append(", ");
             escapeOrNull(tag.getTitle(), writer);
-            writer.append(", ").append("" + tag.isRoot())
+            writer.append(", ").append("" + tag.isPrime())
                         .append(", ").append("" + tag.isPseudo())
                         .append(", ");
             escapeOrNull(tag.getColor(), writer);
