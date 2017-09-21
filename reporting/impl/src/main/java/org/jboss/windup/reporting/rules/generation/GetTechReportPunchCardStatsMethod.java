@@ -84,6 +84,11 @@ public class GetTechReportPunchCardStatsMethod implements WindupFreeMarkerMethod
         // What sectors (column groups) and tech-groups (columns) should be on the report. View, Connect, Store, Sustain, ...
         GraphService<TagModel> service = new GraphService<>(grCtx, TagModel.class);
         TagModel sectorsHolderTag = service.getUniqueByProperty(TagModel.PROP_NAME, TechReportPunchCardModel.TAG_NAME_SECTORS);
+        if (null == sectorsHolderTag)
+        {
+            LOG.warning("Tech Report hierarchy definition TagModel not found, looked for tag name " + TechReportPunchCardModel.TAG_NAME_SECTORS);
+            return null;
+        }
 
 
         for (TagModel sectorTag : sectorsHolderTag.getDesignatedTags())
@@ -94,11 +99,9 @@ public class GetTechReportPunchCardStatsMethod implements WindupFreeMarkerMethod
 
                 Map<ProjectModel, Integer> tagCountForAllApps = CreateTechReportPunchCardRuleProvider.getTagCountForAllApps(grCtx, tagName);
 
-                // This transposes the results from getTagCountForAllApps, so that 1st level keys are the apps.
+                // Transposes the results from getTagCountForAllApps, so that 1st level keys are the apps.
                 tagCountForAllApps.forEach((project, count) -> {
-                    Map<String, Integer> appTagCounts = countsOfTagsInApps.get(project);
-                    if (null == appTagCounts)
-                        countsOfTagsInApps.put(project, appTagCounts = new HashMap<>());
+                    Map<String, Integer> appTagCounts = countsOfTagsInApps.computeIfAbsent(project, k -> new HashMap<>());
                     appTagCounts.put(tagName, count);
                 });
             }

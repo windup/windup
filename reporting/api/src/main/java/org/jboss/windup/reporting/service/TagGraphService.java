@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.config.tags.Tag;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
@@ -35,7 +36,7 @@ public class TagGraphService extends GraphService<TagModel>
 
         Set<Tag> visited = new HashSet<>();
 
-        for (Tag tag : tagLoaderService.getRootTags())
+        for (Tag tag : tagLoaderService.getPrimeTags())
         {
             // Sanity check
             TagModel existing = this.getUniqueByProperty(TagModel.PROP_NAME, tag.getName());
@@ -45,7 +46,8 @@ public class TagGraphService extends GraphService<TagModel>
                 return;
             }
 
-            feedTagStructureToGraph(tag, visited);
+            int level = 0;
+            feedTagStructureToGraph(tag, visited, level);
         }
     }
 
@@ -56,16 +58,17 @@ public class TagGraphService extends GraphService<TagModel>
      * If the Tag was already processed exists, returns the corresponding TagModel.
      * Doesn't check if the TagModel for given tag name already exists, assuming this method is only called once.
      */
-    private TagModel feedTagStructureToGraph(Tag tag, Set<Tag> visited)
+    private TagModel feedTagStructureToGraph(Tag tag, Set<Tag> visited, int level)
     {
         if (visited.contains(tag))
             return this.getUniqueByProperty(TagModel.PROP_NAME, tag.getName());
         visited.add(tag);
 
-        TagModel tagModel = this.create().setName(tag.getName()).setTitle(tag.getTitle()).setColor(tag.getColor()).setRoot(tag.isRoot()).setPseudo(tag.isPseudo());
+        LOG.info("Creating TagModel for Tag: " + StringUtils.repeat(' ', level*2) + tag.getName());
+        TagModel tagModel = this.create().setName(tag.getName()).setTitle(tag.getTitle()).setColor(tag.getColor()).setRoot(tag.isPrime()).setPseudo(tag.isPseudo());
 
         tag.getContainedTags().forEach(tag2 -> {
-            TagModel tag2model = feedTagStructureToGraph(tag2, visited);
+            TagModel tag2model = feedTagStructureToGraph(tag2, visited, level+1);
             tagModel.addDesignatedTag(tag2model);
         });
 
