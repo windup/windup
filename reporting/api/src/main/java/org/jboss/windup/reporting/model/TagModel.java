@@ -42,15 +42,23 @@ public interface TagModel extends WindupVertexFrame
     TagModel setTitle(String title);
     
     /**
-     * A "root" tag is one which is an important group of subtags, suitable for showing in aggregated reports.
-     * For instance, "Java EE" is a good root tag, as it may contain other technologies.
-     * Whereas "frameworks" is probably not a good root tag as it's too general.
+     * A "prime" tag is one which is an important group of subtags, suitable for showing in aggregated reports.
+     * For instance, "Java EE" is a good prime tag, as it may contain other technologies.
+     * Whereas "frameworks" is probably not a good prime tag as it's too general.
+     */
+    @Property("prime")
+    boolean isPrime();
+    @Property("prime")
+    TagModel setPrime(boolean isPrime);
+
+    /**
+     * A root tag is that which was a root in the XML definition files. These serve as entry point shortcuts when browsing the graph.
      */
     @Property("root")
     boolean isRoot();
     @Property("root")
     TagModel setRoot(boolean isRoot);
-    
+
     /**
      * Pseudo tags serve as grouping for contained tags, but are not suitable to be a root tag.
      * They are also suitable for tagging related tags. In the XML files definition, such pseudo tags are often referred to by the parents="..." attribute.
@@ -72,7 +80,7 @@ public interface TagModel extends WindupVertexFrame
     TagModel setColor(String color);
     
     /**
-     * Which tags are designated by this tag; for instance, "java-ee" designates "ejb" and "jms".
+     * Which tags this designates; for instance, "java-ee" designates "ejb" and "jms".
      */
     @Adjacency(label = EDGE_DESIGNATES, direction = Direction.OUT)
     Iterable<TagModel> getDesignatedTags();
@@ -82,7 +90,7 @@ public interface TagModel extends WindupVertexFrame
     TagModel addDesignatedTag(TagModel tag);
 
     /**
-     * Which tags are designated by this tag; for instance, "seam" is designated by "web" and "framework:".
+     * Which tags is this tag designated by; for instance, "seam" is designated by "web" and "framework:".
      */
     @Adjacency(label = EDGE_DESIGNATES, direction = Direction.IN)
     Iterable<TagModel> getDesignatedByTags();

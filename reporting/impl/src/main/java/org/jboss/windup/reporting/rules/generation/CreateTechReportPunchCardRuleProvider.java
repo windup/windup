@@ -84,7 +84,8 @@ public class CreateTechReportPunchCardRuleProvider extends AbstractRuleProvider
             GraphService<TagModel> service = new GraphService<>(grCtx, TagModel.class);
             TagModel sectorsTag = service.getUniqueByProperty(TagModel.PROP_NAME, TechReportPunchCardModel.TAG_NAME_SECTORS);
             if (null == sectorsTag)
-                throw new WindupException("Tech sectors tag not found. It defines the structure of the punchcard report. " + TechReportPunchCardModel.TAG_NAME_SECTORS);
+                throw new WindupException("Tech sectors tag, '" + TechReportPunchCardModel.TAG_NAME_SECTORS
+                        + "', not found. It defines the structure of the punchcard report.");
             report.setSectorsHolderTag(sectorsTag);
             
             // Now let's fill it with data.
@@ -133,11 +134,9 @@ public class CreateTechReportPunchCardRuleProvider extends AbstractRuleProvider
 
         sectorsTag.getContainedTags().forEach(tag1 -> tag1.getContainedTags().stream().map(tag2ndLevel -> tag2ndLevel.getName()).forEach(tagName -> {
             Map<ProjectModel, Integer> tagCountForAllApps = getTagCountForAllApps(grCtx, tagName);
-            // This transposes the results from getTagCountForAllApps, so that 1st level keys are the apps.
+            // Transpose the results from getTagCountForAllApps, so that 1st level keys are the apps.
             tagCountForAllApps.forEach((project, count) -> {
-                Map<String, Integer> appTagCounts = countsOfTagsInApps.get(project);
-                if (null == appTagCounts)
-                    countsOfTagsInApps.put(project, appTagCounts = new HashMap<>());
+                Map<String, Integer> appTagCounts = countsOfTagsInApps.computeIfAbsent(project, k -> new HashMap<>());
                 appTagCounts.put(tagName, count);
             });
         }));

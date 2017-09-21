@@ -19,6 +19,47 @@
     <link href="resources/css/jquery-ui.min.css" rel="stylesheet" media="screen">
     <link href="resources/img/rhamt-icon-128.png" rel="shortcut icon" type="image/x-icon"/>
     <style>
+        /* Colors */
+        .sectorView    { color: #1155CC; }
+        .sectorConnect { color: #38761D; }
+        .sectorStore   { color: #F4B400; }
+        .sectorSustain { color: #DB4437; }
+        .sectorExecute { color: #674EA7; }
+        .sectorStats   { color: black; }
+
+        table.technologiesPunchCard { border-collapse: collapse; }
+        table.technologiesPunchCard td,
+        table.technologiesPunchCard th {
+            border: 1px solid silver;
+        }
+        tr.headersSector { font-size: 22pt; font-weight: bold; }
+        tr.headersSector td { text-align: center; }
+
+        tr.headersGroup  { font-size: 18pt; }
+        tr.headersGroup td {
+        }
+        tr.headersGroup td div {
+            height: 200px; /* Without this, the text is centered vertically. */
+            width:   40px;
+            padding: 0.5em 0;
+            text-align: left;
+            xvertical-align: bottom; /* No effect. */
+            writing-mode: vertical-lr; /* bt-lr doesn't work? So I turn it 180 with rotate() later */
+            transform: rotate(180deg);
+            white-space: nowrap;
+        }
+
+        tr.app { font-size: 18pt; }
+        tr.app td.name,
+        tr.app td.sectorStats { padding: 0 0.5em; }
+        tr.app td.sectorStats { text-align: right; vertical-align: middle; }
+        tr.app td.circle { text-align: center; vertical-align: middle; padding: 0; line-height: 1; }
+        tr.app td.circle { font-size: 26pt; }
+        tr.app td.circle.size0:after { content: "🞄"; }
+        tr.app td.circle.size1:after { content: "⚫"; }
+        tr.app td.circle.size2:after { content: "●"; }
+        tr.app td.circle.size3:after { content: "⬤"; }
+
     </style>
 </head>
 <body role="document">
@@ -54,7 +95,99 @@
         <div class="row">
             <div class="container-fluid theme-showcase" role="main">
 
-                MAIN CONTENT HERE
+                MAIN CONTENT HERE 1
+                <table class="technologiesPunchCard">
+                    <tr class="headersSector">
+                        <td></td>
+                        <#list reportModel.sectorsHolderTag!.designatedTags as sector>
+                            <td colspan="${sector.designatedTags?size}" class="sector${sector.name}">${sector.name}</td>
+                        </#list>
+                    </tr>
+                    <tr class="headersGroup">
+                        <td class="sector"></td>
+                        <#list reportModel.sectorsHolderTag!.designatedTags as sector>
+                            <#list sector.designatedTags as tech>
+                                <td class="sector${sector.name}"><div>${tech.name}</div></td>
+                            </#list>
+                        </#list>
+                    </tr>
+
+                    <#-- FileModel, probably ApplicationArchiveModel. -->
+                    <#list inputPaths as app>
+                    <tr class="app">
+                        <td class="name">${app.fileName}</td>
+                        <#list reportModel.sectorsHolderTag!.designatedTags as sector>
+                            <#list sector.designatedTags as tech>
+                                <#--
+                                <td class="circle size${getCircleSize(app, tech)} sector${sector.name}"><!-- The circle is put here by CSS :after - -></td>
+                                -->
+                            </#list>
+                        </#list>
+                    </tr>
+                    </#list>
+                </table>
+
+                <#-- Map<ProjectModel, Map<String, Integer>> -->
+                <#assign matrix = getTechReportPunchCardStats()>
+                MAIN CONTENT HERE 2
+
+
+                <!-- /// Mock -->
+                <table class="technologiesPunchCard">
+                    <tr class="headersSector">
+                        <td></td>
+                        <td colspan="2" class="sectorView">View</td>
+                        <td colspan="4" class="sectorConnect">Connect</td>
+                        <td colspan="3" class="sectorStore">Store</td>
+                        <td colspan="5" class="sectorSustain">Sustain</td>
+                        <td colspan="2" class="sectorExecute">Execute</td>
+                        <td colspan="3" class="sectorStats">Stats</td>
+                    </tr>
+                    <tr class="headersGroup">
+                        <td class="sector"></td>
+                        <td class="sectorView"><div>Web</div></td>
+                        <td class="sectorView"><div>Rich</div></td>
+                        <td class="sectorConnect"><div>EJB</div></td>
+                        <td class="sectorConnect"><div>WS / REST</div></td>
+                        <td class="sectorConnect"><div>JMS / MDB</div></td>
+                        <td class="sectorConnect"><div>JNI</div></td>
+                        <td class="sectorStore"><div>ORM</div></td>
+                        <td class="sectorStore"><div>JDBC</div></td>
+                        <td class="sectorStore"><div>Cache</div></td>
+                        <td class="sectorSustain"><div>Transactions</div></td>
+                        <td class="sectorSustain"><div>Clustering</div></td>
+                        <td class="sectorSustain"><div>Security</div></td>
+                        <td class="sectorSustain"><div>Logging</div></td>
+                        <td class="sectorSustain"><div>Test</div></td>
+                        <td class="sectorExecute"><div>IoC</div></td>
+                        <td class="sectorExecute"><div>3rd party</div></td>
+                        <td class="sectorStats"><div>Size (MB)</div></td>
+                        <td class="sectorStats"><div>Libraries</div></td>
+                        <td class="sectorStats"><div>Mandatory (SP)</div></td>
+                    </tr>
+                    <tr class="app">
+                        <td class="name">App1.ear</td>
+                        <td class="circle size3 sectorView"></td>
+                        <td class="circle size0 sectorView"></td>
+                        <td class="circle size0 sectorConnect"></td>
+                        <td class="circle size0 sectorConnect"></td>
+                        <td class="circle size0 sectorConnect"></td>
+                        <td class="circle size0 sectorConnect"></td>
+                        <td class="circle size2 sectorStore"></td>
+                        <td class="circle size2 sectorStore"></td>
+                        <td class="circle size2 sectorStore"></td>
+                        <td class="circle size0 sectorSustain"></td>
+                        <td class="circle size0 sectorSustain"></td>
+                        <td class="circle size0 sectorSustain"></td>
+                        <td class="circle size0 sectorSustain"></td>
+                        <td class="circle size0 sectorSustain"></td>
+                        <td class="circle size0 sectorExecute"></td>
+                        <td class="circle size2 sectorExecute"></td>
+                        <td class="sectorStats">10.3</td>
+                        <td class="sectorStats">23</td>
+                        <td class="sectorStats">313</td>
+                    </tr>
+                </table>
 
             </div>
         </div>
