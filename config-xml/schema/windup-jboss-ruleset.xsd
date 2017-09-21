@@ -239,6 +239,7 @@
             <xs:element name="property">
                 <xs:complexType mixed="true">
                     <xs:attribute type="xs:string" name="name" use="required" />
+                    <xs:attribute type="property-type" name="type" use="optional" />
                 </xs:complexType>
             </xs:element>
         </xs:sequence>
@@ -333,6 +334,19 @@
             <xs:enumeration value="REPLACE"/>
             <xs:enumeration value="DELETE_LINE"/>
             <xs:enumeration value="INSERT_LINE"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="property-type">
+        <xs:annotation>
+            <xs:documentation><![CDATA[
+            This defines the type of the value of the property.
+            It's optional and default is 'string'.]]>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="STRING"/>
+            <xs:enumeration value="BOOLEAN"/>
         </xs:restriction>
     </xs:simpleType>
 

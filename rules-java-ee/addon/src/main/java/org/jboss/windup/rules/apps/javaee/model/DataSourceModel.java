@@ -42,7 +42,7 @@ public interface DataSourceModel extends JNDIResourceModel
      * Defines whether it is an XA datasource.
      */
     @Property(IS_XA)
-    public Boolean setXa(Boolean isXa);
+    public void setXa(Boolean isXa);
 
 
     /**
