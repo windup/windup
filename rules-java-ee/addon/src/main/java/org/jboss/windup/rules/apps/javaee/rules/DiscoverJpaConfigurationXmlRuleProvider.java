@@ -58,7 +58,7 @@ public class DiscoverJpaConfigurationXmlRuleProvider extends IteratingRuleProvid
     {
         for (XmlFileModel xml : payload.getXmlResources())
         {
-            if (StringUtils.equals(xml.getRootTagName(), "persistence"))
+            if (!StringUtils.equals(xml.getRootTagName(), "persistence"))
                 continue;
 
             try {
@@ -115,6 +115,7 @@ public class DiscoverJpaConfigurationXmlRuleProvider extends IteratingRuleProvid
                 }
 
                 DataSourceModel dataSource = dataSourceService.createUnique(applications, dataSourceName, dataSourceJndiName);
+                dataSource.setXa(true);
                 persistenceUnitModel.addDataSource(dataSource);
             }
 

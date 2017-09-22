@@ -74,12 +74,15 @@
                         <#if iterableHasContent(persistenceUnit.dataSources)>
                             <table class="table table-striped table-bordered">
                                 <tr>
-                                    <th class="col-md-6">Data Source</th><th class="col-md-6">Type</th>
+                                    <th class="col-md-4">Data Source</th>
+                                    <th class="col-md-4">Type</th>
+                                    <th class="col-md-4">JTA</th>
                                 </tr>
                             <#list persistenceUnit.dataSources.iterator() as dataSource>
                                 <tr>
-                                    <td class="col-md-6">${dataSource.jndiLocation!""}</td>
-                                    <td class="col-md-6">${dataSource.databaseTypeName!""}</td>
+                                    <td class="col-md-4">${dataSource.jndiLocation!""}</td>
+                                    <td class="col-md-4">${dataSource.databaseTypeName!""}</td>
+                                    <td class="col-md-4">${dataSource.isXA!""}</td>
                                 </tr>
                             </#list>
                             </table>

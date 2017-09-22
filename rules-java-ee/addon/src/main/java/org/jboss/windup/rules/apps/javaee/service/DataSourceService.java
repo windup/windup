@@ -27,17 +27,16 @@ public class DataSourceService extends GraphService<DataSourceModel>
     public synchronized DataSourceModel createUnique(Set<ProjectModel> applications, String dataSourceName, String jndiName)
     {
         JNDIResourceModel jndiResourceModel = new JNDIResourceService(getGraphContext()).createUnique(applications, jndiName);
-        final DataSourceModel dataSource;
+        final DataSourceModel dataSourceModel;
         if (jndiResourceModel instanceof DataSourceModel)
         {
-            dataSource = (DataSourceModel) jndiResourceModel;
-            dataSource.setName(dataSourceName);
+            dataSourceModel = (DataSourceModel) jndiResourceModel;
         }
         else
         {
-            dataSource = addTypeToModel(jndiResourceModel);
-            dataSource.setName(dataSourceName);
+            dataSourceModel = addTypeToModel(jndiResourceModel);
         }
-        return dataSource;
+        dataSourceModel.setName(dataSourceName);
+        return dataSourceModel;
     }
 }

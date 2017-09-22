@@ -31,6 +31,7 @@ public class QueryHandler implements ElementHandler<Query>
     public static final String AS = "as";
     public static final String PROPERTY = "property";
     public static final String PROPERTY_NAME = "name";
+    public static final String PROPERTY_TYPE = "type";
 
     @Inject
     private GraphTypeManager graphTypeManager;
@@ -76,7 +77,21 @@ public class QueryHandler implements ElementHandler<Query>
                     continue;
 
                 String value = $(child).text();
-                query.withProperty(propertyName, value);
+                String propertyType = $(child).attr(PROPERTY_TYPE);
+                if (StringUtils.isBlank(propertyType))
+                {
+                    query.withProperty(propertyName, value);
+                } else
+                {
+                    switch (propertyType)
+                    {
+                        case "BOOLEAN":
+                            query.withProperty(propertyName, Boolean.valueOf(value));
+                            break;
+                        case "STRING":
+                            query.withProperty(propertyName, value);
+                    }
+                }
             }
         }
 
