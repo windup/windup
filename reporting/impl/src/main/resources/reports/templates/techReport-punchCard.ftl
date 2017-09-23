@@ -95,42 +95,53 @@
         <div class="row">
             <div class="container-fluid theme-showcase" role="main">
 
-                MAIN CONTENT HERE 1
+                <#assign techsOrder = [] />
+
+                <#assign sectorTagsIterable = reportModel.sectorsHolderTag.designatedTags>
+                <#assign sectorTags = iterableToList(sectorTagsIterable) />
+                <#assign sectorTags = sectorTags?sort_by("name") />
+
                 <table class="technologiesPunchCard">
                     <tr class="headersSector">
                         <td></td>
-                        <#list reportModel.sectorsHolderTag!.designatedTags as sector>
-                            <td colspan="${sector.designatedTags?size}" class="sector${sector.name}">${sector.name}</td>
+                        <#list sectorTags as sector>
+                            <td colspan="${iterableToList(sector.designatedTags)?size?c}" class="sector${sector.title}">${sector.title}</td>
+                        <#else>
+                            <td>No technology sectors defined.</td>
                         </#list>
                     </tr>
                     <tr class="headersGroup">
                         <td class="sector"></td>
-                        <#list reportModel.sectorsHolderTag!.designatedTags as sector>
-                            <#list sector.designatedTags as tech>
-                                <td class="sector${sector.name}"><div>${tech.name}</div></td>
+                        <#list sectorTags as sector>
+                            <#list sector.designatedTags.iterator() as tech>
+                                <#assign techsOrder = techsOrder + [tech] />
+                                <td class="sector${sector.title}"><div>${tech.title!}</div></td>
                             </#list>
                         </#list>
                     </tr>
 
                     <#-- FileModel, probably ApplicationArchiveModel. -->
-                    <#list inputPaths as app>
+                    <#list inputPaths.iterator() as app>
                     <tr class="app">
                         <td class="name">${app.fileName}</td>
-                        <#list reportModel.sectorsHolderTag!.designatedTags as sector>
-                            <#list sector.designatedTags as tech>
+                        <#list sectorTags as sector>
+                            <#list sector.designatedTags.iterator() as tech>
                                 <#--
                                 <td class="circle size${getCircleSize(app, tech)} sector${sector.name}"><!-- The circle is put here by CSS :after - -></td>
                                 -->
+                                <td class="circle size3 sector${sector.title}"><!-- The circle is put here by CSS :after --></td>
+                            <#else>
+                                <td>No technology sectors defined.</td>
                             </#list>
                         </#list>
                     </tr>
                     </#list>
                 </table>
 
-                <#-- Map<ProjectModel, Map<String, Integer>> -->
+                <#-- Map<ProjectModel, Map<String, Integer>>
                 <#assign matrix = getTechReportPunchCardStats()>
                 MAIN CONTENT HERE 2
-
+                 -->
 
                 <!-- /// Mock -->
                 <table class="technologiesPunchCard">
