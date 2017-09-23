@@ -1,5 +1,7 @@
 <?xml version="1.0"?>
 <tags setName="java">
+    <tag name="framework:" pseudo="true">
+    </tag>
     <tag name="java-ee" prime="true" title="Java EE" color="#00CC00">
         <tag name="servlet"/>
         <tag name="datasource"/>
@@ -26,15 +28,17 @@
            <tag name="jax-rpc"/>
         </tag>
         <tag name="messaging" prime="true" title="Messaging" color="#AACC00">
-            <tag name="jms"/>
+            <tag name="jms">
+                <tag name="jms-topic" title="JMS topic"/>
+                <tag name="jms-queue" title="JMS queue"/>
+                <tag name="jms-mdb" title="JMS message-driven bean"/>
+            </tag>
             <tag name="apache-cxf">
                <tag name="xfire"/>
             </tag>
             <tag name="mq"/>
             <tag name="mqe"/>
             <tag name="smooks"/>
-        </tag>
-        <tag name="framework:" pseudo="true">
         </tag>
         <tag name="web-service" prime="true" title="Webservice" color="#00BBBB">
            <tag name="webservice"/>
@@ -57,6 +61,7 @@
     <tag name="java-se" prime="true" title="Java SE" color="#BB0000">
         <tag name="classloader"/>
         <tag name="classloading"/>
+        <tag name="jni" title="JNI"/>
     </tag>
     <tag name="concepts">
         <tag name="asynchronous">
@@ -68,7 +73,7 @@
            <tag name="startup"/>
         </tag>
         <tag name="pool"/>
-        <tag name="cache"/>
+        <tag name="cache" title="Cache"/>
         <tag name="client"/>
         <tag name="cluster"/>
         <tag name="performance"/>
@@ -109,7 +114,7 @@
             <tag name="spring-cdi" parents="spring"/>
         </tag>
         <tag name="context"/>
-        <tag name="web" prime="true">
+        <tag name="web" title="Web" prime="true">
             <tag name="seam" parents="framework:" title="Seam Framework"/>
             <tag name="seam-ui-control" parents="framework:"/>
             <tag name="spring-mvc" parents="framework:, spring:"/>

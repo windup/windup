@@ -4,6 +4,9 @@ import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import org.jboss.windup.config.tags.Tag;
+import org.jboss.windup.graph.MapInAdjacentProperties;
+
+import java.util.Map;
 
 /**
  * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
@@ -24,4 +27,9 @@ public interface TechReportPunchCardModel extends ApplicationReportModel, Includ
 
     @Adjacency(label = TAG_NAME_SECTORS, direction = Direction.OUT)
     void setSectorsHolderTag(TagModel tag);
+
+    @MapInAdjacentProperties(label = "maxCounts")
+    Map<String, Integer> getMaximumCounts();
+    @MapInAdjacentProperties(label = "maxCounts")
+    TagModel setMaximumCounts(Map<String, Integer> maxCounts);
 }

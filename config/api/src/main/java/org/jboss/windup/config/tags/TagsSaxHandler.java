@@ -21,7 +21,7 @@ import org.xml.sax.helpers.DefaultHandler;
  */
 public class TagsSaxHandler extends DefaultHandler
 {
-    private static final Logger log = Logger.getLogger(TagsSaxHandler.class.getName() );
+    private static final Logger LOG = Logger.getLogger(TagsSaxHandler.class.getName() );
 
     private final TagService tagService;
     private final Stack<Tag> stack = new Stack<>();
@@ -42,26 +42,39 @@ public class TagsSaxHandler extends DefaultHandler
         {
             String tagName = attributes.getValue("name");
             String tagRef  = attributes.getValue("ref");
-            if (null != tagRef && !"".equals(tagRef))
+            boolean isRef = tagRef != null && !"".equals(tagRef);
+            if (isRef)
                 tagName = tagRef;
 
             Tag tag = tagService.getOrCreateTag(tagName, tagRef != null);
 
-            if ("true".equals(attributes.getValue("prime")))
-                tag.setIsPrime(true);
+            // If it is not a reference, it may be defining a tag that was already referenced;
+            // so we need to set the values of the placeholder.
+            // On the other hand, some users may use <tag name="..."/> instead of <tag ref="..."/>, so let's not unset them.
+            if (!isRef) {
+                if ("true".equals(attributes.getValue("prime")))
+                    tag.setIsPrime(true);
 
-            if ("true".equals(attributes.getValue("pseudo")))
-                tag.setPseudo(true);
+                if ("true".equals(attributes.getValue("pseudo")))
+                    tag.setPseudo(true);
 
-            tag.setTitle(attributes.getValue("title"));
+                String title = attributes.getValue("title");
+                if (title != null) {
+                    if (tag.getTitle() != null)
+                        LOG.warning("Redefining tag title to '"+title+"', was: " + tag.toString());
+                    tag.setTitle(title);
+                }
 
-            final String color = attributes.getValue("color");
-            if (color != null)
-            {
-                if (color.matches("#\\p{XDigit}{6}"))
-                    tag.setColor(color);
-                else
-                    log.fine("Invalid color, not matching #\\p{XDigit}{6}: " + color);
+                final String color = attributes.getValue("color");
+                if (color != null)
+                {
+                    if (tag.getColor()!= null)
+                        LOG.warning("Redefining tag color to '"+title+"', was: " + tag.getColor());
+                    if (color.matches("#\\p{XDigit}{6}"))
+                        tag.setColor(color);
+                    else
+                        LOG.fine("Invalid color, not matching #\\p{XDigit}{6}: " + color);
+                }
             }
 
             // Add this <tag> to its parent.

@@ -1,6 +1,7 @@
 package org.jboss.windup.reporting.rules.generation;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 import javax.inject.Inject;
@@ -60,7 +61,7 @@ public class CreateTechReportPunchCardRuleProvider extends AbstractRuleProvider
             .perform(new GraphOperation() {
                 @Override
                 public void perform(GraphRewrite event, EvaluationContext context) {
-                    new TagGraphService(event.getGraphContext()).feedTheWholeTagStructureToGraph(tagServiceHolder.getTagService());
+                new TagGraphService(event.getGraphContext()).feedTheWholeTagStructureToGraph(tagServiceHolder.getTagService());
                 }
             })
             .addRule()
@@ -92,13 +93,23 @@ public class CreateTechReportPunchCardRuleProvider extends AbstractRuleProvider
             
             // Now let's fill it with data.
             Map<ProjectModel, Map<String, Integer>> countsOfTagsInApps = computeProjectAndTagsMatrix(grCtx);
+            Map<String, Integer> maximumsPerTech = new HashMap<>();
+            countsOfTagsInApps.values().stream().forEach(countsOfTechs -> {
+                countsOfTechs.forEach((techName, count) -> {
+                    int current = maximumsPerTech.getOrDefault(techName, 0);
+                    maximumsPerTech.put(techName, Math.max(count, current));
+                });
+            });
+
+            report.setMaximumCounts(maximumsPerTech);
 
 
             // TODO: Maybe it would be better to query like this?
             // For each application,
             for (FileModel inputPath : WindupConfigurationService.getConfigurationModel(event.getGraphContext()).getInputPaths())
             {
-                LOG.info((String)inputPath.asVertex().getProperty(WindupVertexFrame.TYPE_PROP));
+                List types = (List)inputPath.asVertex().getProperty(WindupVertexFrame.TYPE_PROP);
+                LOG.info("InputPath type:" + types.toString());
             }
         }
 
