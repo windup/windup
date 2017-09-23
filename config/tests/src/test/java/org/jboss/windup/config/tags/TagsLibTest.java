@@ -27,7 +27,8 @@ public class TagsLibTest
         Assert.assertNotNull(tagService.getTag("a-root"));
         Assert.assertNotNull(tagService.getTag("a1"));
         Assert.assertNull(tagService.getTag("non-existent"));
-        Assert.assertNotNull(tagService.getOrCreateTag("to-be-created"));
+        Assert.assertNotNull(tagService.getOrCreateTag("a1", true));
+        Assert.assertNotNull(tagService.getOrCreateTag("to-be-created", false));
 
         Assert.assertTrue("a-root contains a1", tagService.isUnderTag("a-root", "a1"));
         Assert.assertFalse("a1 not contains a-root", tagService.isUnderTag("a1", "a-root"));

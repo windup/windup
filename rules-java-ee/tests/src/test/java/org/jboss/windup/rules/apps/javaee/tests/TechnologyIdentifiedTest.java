@@ -26,7 +26,6 @@ import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.rules.apps.java.scan.ast.AnalyzeJavaFilesRuleProvider;
 import org.jboss.windup.rules.apps.javaee.TechnologyIdentified;
 import org.jboss.windup.rules.apps.javaee.TechnologyUsageStatisticsService;
-import org.jboss.windup.rules.apps.javaee.model.stats.TechnologyUsageStatisticsModel;
 import org.jboss.windup.rules.files.condition.FileContent;
 import org.jboss.windup.testutil.basics.WindupTestUtilMethods;
 import org.junit.Assert;
@@ -42,6 +41,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.logging.Logger;
 
 @RunWith(Arquillian.class)
 public class TechnologyIdentifiedTest
