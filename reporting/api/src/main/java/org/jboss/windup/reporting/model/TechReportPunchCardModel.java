@@ -12,7 +12,7 @@ import org.jboss.windup.config.tags.Tag;
 public interface TechReportPunchCardModel extends ApplicationReportModel, IncludeAndExcludeTagsModel
 {
     String TYPE = "TechReportPunchCardModel";
-    String TAG_NAME_SECTORS = "techReport-sectors:";
+    String TAG_NAME_SECTORS = "techreport-sectors:";
 
 
     /**

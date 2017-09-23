@@ -82,7 +82,9 @@ public class CreateTechReportPunchCardRuleProvider extends AbstractRuleProvider
 
             // Add sectors to it.
             GraphService<TagModel> service = new GraphService<>(grCtx, TagModel.class);
-            TagModel sectorsTag = service.getUniqueByProperty(TagModel.PROP_NAME, TechReportPunchCardModel.TAG_NAME_SECTORS);
+            //TagModel sectorsTag = service.getUniqueByProperty(TagModel.PROP_NAME, TechReportPunchCardModel.TAG_NAME_SECTORS.toLowerCase());
+            TagModel sectorsTag = new TagGraphService(event.getGraphContext()).getTagByName(TechReportPunchCardModel.TAG_NAME_SECTORS);
+
             if (null == sectorsTag)
                 throw new WindupException("Tech sectors tag, '" + TechReportPunchCardModel.TAG_NAME_SECTORS
                         + "', not found. It defines the structure of the punchcard report.");
@@ -131,15 +133,22 @@ public class CreateTechReportPunchCardRuleProvider extends AbstractRuleProvider
 
         // What sectors (column groups) and tech-groups (columns) should be on the report. View, Connect, Store, Sustain, ...
         Tag sectorsTag = tagServiceHolder.getTagService().getTag(TechReportPunchCardModel.TAG_NAME_SECTORS);
+        if (null == sectorsTag)
+            throw new WindupException("Tech report hierarchy definition tag, '"+TechReportPunchCardModel.TAG_NAME_SECTORS+"', not found.");
 
-        sectorsTag.getContainedTags().forEach(tag1 -> tag1.getContainedTags().stream().map(tag2ndLevel -> tag2ndLevel.getName()).forEach(tagName -> {
-            Map<ProjectModel, Integer> tagCountForAllApps = getTagCountForAllApps(grCtx, tagName);
-            // Transpose the results from getTagCountForAllApps, so that 1st level keys are the apps.
-            tagCountForAllApps.forEach((project, count) -> {
-                Map<String, Integer> appTagCounts = countsOfTagsInApps.computeIfAbsent(project, k -> new HashMap<>());
-                appTagCounts.put(tagName, count);
-            });
-        }));
+        for (Tag tag1 : sectorsTag.getContainedTags())
+        {
+            for (Tag tag2 : tag1.getContainedTags())
+            {
+                String tagName = tag2.getName();
+                Map<ProjectModel, Integer> tagCountForAllApps = getTagCountForAllApps(grCtx, tagName);
+                // Transpose the results from getTagCountForAllApps, so that 1st level keys are the apps.
+                tagCountForAllApps.forEach((project, count) -> {
+                    Map<String, Integer> appTagCounts = countsOfTagsInApps.computeIfAbsent(project, k -> new HashMap<>());
+                    appTagCounts.put(tagName, count);
+                });
+            }
+        }
 
         return countsOfTagsInApps;
     }
