@@ -47,11 +47,13 @@
                     <tr>
                         <th>Function Name</th>
                         <th>Description</th>
+                        <th>Implemented by</th>
                     </tr>
                     <#list getAllFreeMarkerMethods() as freeMarkerMethod>
                         <tr>
                             <td>${freeMarkerMethod.name}</td>
-                            <td>${freeMarkerMethod.description} (Implemented by: ${freeMarkerMethod.class})</td>
+                            <td>${freeMarkerMethod.description}</td>
+                            <td>${freeMarkerMethod.class}</td>
                         </tr>
                     </#list>
                 </table>
@@ -64,16 +66,21 @@
                 <table class="table table-striped table-bordered">
                     <tr>
                         <th>Directive Name</th>
+                        <th>Directive Class</th>
                         <th>Description</th>
                     </tr>
                     <#list getAllFreeMarkerDirectives() as freeMarkerDirective>
                         <tr>
-                            <td>${freeMarkerDirective.class}</td>
                             <td>${freeMarkerDirective.name}</td>
+                            <td>${freeMarkerDirective.class}</td>
                             <td>${freeMarkerDirective.description} (Implemented by: ${freeMarkerDirective.class})</td>
                         </tr>
                     </#list>
                 </table>
+            </div>
+
+            <div>
+                FreeMarker version used: ${.version}
             </div>
         </div> <!-- /row -->
 
