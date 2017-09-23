@@ -10,6 +10,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
 
 import org.jboss.windup.reporting.model.TagModel;
+import org.jboss.windup.reporting.model.TechReportPunchCardModel;
 
 /**
  * Contains methods for finding, creating, and deleting {@link TagModel} instances.
@@ -24,6 +25,12 @@ public class TagGraphService extends GraphService<TagModel>
     public TagGraphService(GraphContext context)
     {
         super(context, TagModel.class);
+    }
+
+    public TagModel getTagByName(String name) {
+        if (null == name)
+            throw new IllegalArgumentException("Looking for a null tag name.");
+        return getUniqueByProperty(TagModel.PROP_NAME, name.toLowerCase());
     }
 
     /**
