@@ -89,7 +89,7 @@ public class TaggedRuleProviderPredicate implements Predicate<RuleProvider>
     @Override
     public String toString()
     {
-        return "TaggedRuleProviderPredicate{incl " + includeTags.size() + ", excl" + excludeTags.size() + ", requireAllIncl=" + requireAllIncludeTags + ", requireAllExcl=" + requireAllExcludeTags + '}';
+        return TaggedRuleProviderPredicate.class.getSimpleName() + "{incl " + includeTags.size() + ", excl " + excludeTags.size() + ", requireAllIncl=" + requireAllIncludeTags + ", requireAllExcl=" + requireAllExcludeTags + '}';
     }
 
 }
