@@ -71,7 +71,7 @@ public class TagGraphService extends GraphService<TagModel>
             return this.getUniqueByProperty(TagModel.PROP_NAME, tag.getName());
         visited.add(tag);
 
-        LOG.info("Creating TagModel for Tag: " + StringUtils.repeat(' ', level*2) + tag.getName() + "("+tag.getContainedTags().size()+") " + tag.getTitle());
+        LOG.info("Creating TagModel for Tag: " + StringUtils.repeat(' ', level*2) + tag.getName() + "("+tag.getContainedTags().size()+")    " + tag.getTitle());
         TagModel tagModel = this.create().setName(tag.getName()).setTitle(tag.getTitle()).setColor(tag.getColor()).setRoot(tag.isPrime()).setPseudo(tag.isPseudo());
 
         tag.getContainedTags().forEach(tag2 -> {
@@ -81,4 +81,25 @@ public class TagGraphService extends GraphService<TagModel>
 
         return tagModel;
     }
+
+    /**
+     * Returns all tags that are designated by this tag. E.g., for "vehicle", this would return "ship", "car", "tesla-model3", "bike", etc.
+     */
+    public Set<TagModel> getDescendantTags(TagModel tag)
+    {
+        Set<TagModel> ancestors = new HashSet<>();
+        getDescendantTags(tag, ancestors);
+        return ancestors;
+    }
+
+    private void getDescendantTags(TagModel tag, Set<TagModel> putResultsHere)
+    {
+        for (TagModel childTag : tag.getDesignatedTags())
+        {
+            if (!putResultsHere.add(childTag))
+                continue; // Already visited.
+            getDescendantTags(childTag, putResultsHere);
+        }
+    }
+
 }

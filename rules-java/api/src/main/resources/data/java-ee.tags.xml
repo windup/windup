@@ -10,16 +10,17 @@
             <tag name="resin"/>
             <tag name="jonas"/>
             <tag name="jrun"/>
-            <tag name="websphere"/>
-            <tag name="weblogic"/>
+            <tag name="websphere" parents="ibm"/>
+            <tag name="weblogic" parents="oracle"/>
             <tag name="orion"/>
-            <tag name="jboss-eap5"/>
+            <tag name="jboss-eap5" parents="jboss"/>
         </tag>
         <tag name="web-server:" pseudo="true">
-            <tag name="jboss-web"/>
-            <tag name="tomcat"/>
+            <tag name="jboss-ews" title="JBoss Enterprise Web Server" parents="jboss"/>
+            <tag name="jboss-web" title="JBoss Web" parents="jboss"/>
+            <tag name="tomcat" title="Tomcat" parents="apache"/>
         </tag>
-        <tag name="ejb">
+        <tag name="ejb" title="EJB">
            <tag name="ejb2" title="EJB 2.0"/>
         </tag>
         <tag name="jndi" title="JNDI"/>
@@ -28,7 +29,7 @@
            <tag name="jax-rpc"/>
         </tag>
         <tag name="messaging" prime="true" title="Messaging" color="#AACC00">
-            <tag name="jms">
+            <tag name="jms" title="JMS">
                 <tag name="jms-topic" title="JMS topic"/>
                 <tag name="jms-queue" title="JMS queue"/>
                 <tag name="jms-mdb" title="JMS message-driven bean"/>
@@ -56,7 +57,6 @@
            <tag name="soa-p" title="SOA-P"/>
            <tag name="apache-tuscany"/>
         </tag>
-        <tag name="soap"/>
     </tag>
     <tag name="java-se" prime="true" title="Java SE" color="#BB0000">
         <tag name="classloader"/>
@@ -86,6 +86,7 @@
             <tag name="https" title="HTTPS"/>
             <tag name="spdy" title="SPDY"/>
             <tag name="rest" title="REST"/>
+            <tag name="soap" title="SOAP"/>
         </tag>
         <tag name="persistence" prime="true">
             <tag name="database"/>
@@ -137,7 +138,7 @@
         <tag name="security"/>
         <tag name="rules">
             <tag name="wbi">
-                <tag name="ibm-wbi"/>
+                <tag name="ibm-wbi" parents="ibm"/>
             </tag>
         </tag>
         <tag name="file-system"/>
@@ -156,11 +157,11 @@
             <tag name="jboss" title="JBoss"/>
         </tag>
         <tag name="ibm" title="IBM"/>
-        <tag name="oracle"/>
-        <tag name="apache"/>
-        <tag name="iona"/>
-        <tag name="sonic"/>
-        <tag name="tibco"/>
+        <tag name="oracle" title="Oracle"/>
+        <tag name="apache" title="Apache"/>
+        <tag name="iona" title="Iona"/>
+        <tag name="sonic" title="Sonic"/>
+        <tag name="tibco" title="Tibco"/>
     </tag>
     <!-- Only to prevent "Undefined Windup tag name passed to getNearestRoots(tagName)" -->
     <tag name="classifications:" pseudo="true">

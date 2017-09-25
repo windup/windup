@@ -8,7 +8,12 @@ import org.apache.commons.collections4.set.UnmodifiableSet;
 
 /**
  * Represents a tag. Determined by it's lowercased name.
- * The structure is not a tree - a tag may have multiple parents.
+ * The structure is not a tree - a tag may have multiple "parents".
+ * 
+ * Note that the "parent" and "contained tags" is misleading.
+ * The tags structure is in fact an oriented acyclic graph.
+ * (It could even be cyclic if we allowed for synonyms.)
+ * Better names would be "designated tags" and "designated by tags" or such.
  *
  * @author Ondrej Zizka
  */
