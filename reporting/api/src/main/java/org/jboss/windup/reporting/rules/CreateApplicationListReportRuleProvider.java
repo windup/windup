@@ -132,13 +132,4 @@ public class CreateApplicationListReportRuleProvider extends AbstractRuleProvide
             }
         }
     }
-
-    ///
-    public static void main(String[] args)
-    {
-        List<String> list = Arrays.asList(new String[]{"C", "b", "ab", "A", "D"});
-        //Collections.sort(list, Comparator.comparing((String str) -> str, String::compareToIgnoreCase));
-        Collections.sort(list, Comparator.comparing((String o) -> o, String::compareToIgnoreCase));
-        System.out.println("AppList sorted:\n    " + String.join("\n    ", list));
-    }
 }
