@@ -102,7 +102,7 @@
                 <#assign sectorTags = sectorTags?sort_by("name") />
 
                 <pre>
-                    ${mapToJsonMethod(reportModel.maximumCounts)}
+                    reportModel.maximumCounts: ${mapToJsonMethod(reportModel.maximumCounts)}
                 </pre>
 
                 <table class="technologiesPunchCard">

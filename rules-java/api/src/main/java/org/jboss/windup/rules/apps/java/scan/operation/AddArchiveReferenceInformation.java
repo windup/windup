@@ -36,7 +36,7 @@ public class AddArchiveReferenceInformation extends AbstractIterationOperation<F
         archiveModel.setArchiveName(file.getName());
 
         ApplicationArchiveModel appArchiveModel = GraphService.addTypeToModel(event.getGraphContext(), fileModel, ApplicationArchiveModel.class);
-        appArchiveModel.setApplicationName(file.getName());
+        ///appArchiveModel.setApplicationName(file.getName()); // Removed because not used.
     }
 
     @Override
