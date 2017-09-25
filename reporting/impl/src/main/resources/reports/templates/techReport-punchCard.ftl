@@ -101,6 +101,10 @@
                 <#assign sectorTags = iterableToList(sectorTagsIterable) />
                 <#assign sectorTags = sectorTags?sort_by("name") />
 
+                <pre>
+                    ${mapToJsonMethod(reportModel.maximumCounts)}
+                </pre>
+
                 <table class="technologiesPunchCard">
                     <tr class="headersSector">
                         <td></td>

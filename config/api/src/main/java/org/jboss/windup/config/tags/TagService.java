@@ -3,10 +3,7 @@ package org.jboss.windup.config.tags;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Writer;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
@@ -17,6 +14,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.jboss.windup.util.exception.WindupException;
 import org.xml.sax.SAXException;
 
 /**
@@ -68,11 +66,19 @@ public class TagService
     /**
      * Returns the {@link Tag} with the provided name.
      */
-    public Tag getTag(String tagName)
+    public Tag findTag(String tagName)
     {
         if (null == tagName)
             throw new IllegalArgumentException("Looking for null tag name.");
         return definedTags.get(Tag.normalizeName(tagName));
+    }
+
+    public Tag getTag(String tagName)
+    {
+        Tag tag = findTag(tagName);
+        if (null == tag)
+            throw new WindupException("Tag does not exist: " + tagName);
+        return tag;
     }
 
     /**
@@ -95,6 +101,46 @@ public class TagService
                 definedTags.put(tagName, tag);
                 return tag;
             }
+        }
+    }
+
+    /**
+     * Returns all tags that designate this tag. E.g., for "tesla-model3", this would return "car", "vehicle", "vendor-tesla" etc.
+     */
+    public Set<Tag> getAncestorTags(Tag tag)
+    {
+        Set<Tag> ancestors = new HashSet<>();
+        getAncestorTags(tag, ancestors);
+        return ancestors;
+    }
+
+    private void getAncestorTags(Tag tag, Set<Tag> putResultsHere)
+    {
+        for (Tag parentTag : tag.getParentTags())
+        {
+            if (!putResultsHere.add(parentTag))
+                continue; // Already visited.
+            getAncestorTags(parentTag, putResultsHere);
+        }
+    }
+
+    /**
+     * Returns all tags that are designated by this tag. E.g., for "vehicle", this would return "ship", "car", "tesla-model3", "bike", etc.
+     */
+    public Set<Tag> getDescendantTags(Tag tag)
+    {
+        Set<Tag> ancestors = new HashSet<>();
+        getDescendantTags(tag, ancestors);
+        return ancestors;
+    }
+
+    private void getDescendantTags(Tag tag, Set<Tag> putResultsHere)
+    {
+        for (Tag childTag : tag.getContainedTags())
+        {
+            if (!putResultsHere.add(childTag))
+                continue; // Already visited.
+            getDescendantTags(childTag, putResultsHere);
         }
     }
 
