@@ -8,7 +8,8 @@ import org.jboss.windup.config.phase.DiscoveryPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryGremlinCriterion;
 import org.jboss.windup.config.query.QueryPropertyComparisonType;
-import org.jboss.windup.graph.model.ApplicationModel;
+import org.jboss.windup.graph.model.ApplicationInputPathModel;
+import org.jboss.windup.graph.model.ApplicationProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.rules.apps.java.scan.operation.AddArchiveReferenceInformation;
@@ -35,7 +36,7 @@ public class DiscoverFilesAndTypesRuleProvider extends AbstractRuleProvider
     {
         return ConfigurationBuilder.begin()
 
-        // Mark all input paths as ApplicationModel.
+        // Mark all input paths as ApplicationProjectModel.
         .addRule()
         .perform(new GraphOperation()
         {
@@ -44,7 +45,7 @@ public class DiscoverFilesAndTypesRuleProvider extends AbstractRuleProvider
             {
                 final WindupConfigurationModel windupConf = event.getGraphContext().service(WindupConfigurationModel.class).getUnique();
                 for (FileModel input : windupConf.getInputPaths())
-                    event.getGraphContext().service(ApplicationModel.class).addTypeToModel(input);
+                    event.getGraphContext().service(ApplicationInputPathModel.class).addTypeToModel(input);
             }
         }).withId("markInputsAsAppModels")
 

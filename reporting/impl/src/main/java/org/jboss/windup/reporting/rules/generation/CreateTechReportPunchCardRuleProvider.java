@@ -14,10 +14,12 @@ import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.config.tags.TagService;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.ApplicationModel;
+import org.jboss.windup.graph.model.ApplicationInputPathModel;
+import org.jboss.windup.graph.model.ApplicationProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.graph.service.ProjectService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.model.*;
 import org.jboss.windup.reporting.service.ApplicationReportService;
@@ -61,7 +63,7 @@ public class CreateTechReportPunchCardRuleProvider extends AbstractRuleProvider
     public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
         return ConfigurationBuilder.begin()
-            /// TODO: Move this to a special rule provider.
+            /// TODO: Move this to a FeedTagStructureToGraphRuleProvider.
             .addRule()
             .perform(new GraphOperation() {
                 @Override
@@ -71,6 +73,18 @@ public class CreateTechReportPunchCardRuleProvider extends AbstractRuleProvider
                     CreateTechReportPunchCardRuleProvider.this.put(TagServiceHolder.class, tagServiceHolder);
                 }
             })
+
+            /// TODO: Move this to a MarkApplicationProjectModels.
+            .addRule()
+            .perform(new GraphOperation() {
+                @Override
+                public void perform(GraphRewrite event, EvaluationContext context) {
+                    event.getGraphContext().service(ApplicationInputPathModel.class).findAll()
+                        .forEach(path -> GraphService.addTypeToModel(event.getGraphContext(), path.getProjectModel(), ApplicationProjectModel.class));
+                }
+            })
+
+
             .addRule()
             .perform(new CreateTechReportPunchCardOperation());
     }
@@ -213,7 +227,7 @@ public class CreateTechReportPunchCardRuleProvider extends AbstractRuleProvider
         Set<String> subTagsNames = getSubTagNames_graph(grCtx, subSectorTagName);
 
         // Get all apps.
-        Set<ProjectModel> apps = getAllApplications(grCtx);
+        Set<ApplicationProjectModel> apps = getAllApplications(grCtx);
 
         Map<ProjectModel, Integer> appToTechSectorCoveredTagsOccurrenceCount = new HashMap<>();
 
@@ -252,22 +266,32 @@ public class CreateTechReportPunchCardRuleProvider extends AbstractRuleProvider
         return subTags.stream().map(t->t.getName()).collect(Collectors.toSet());
     }
 
-    private static Set<ProjectModel> getAllApplications(GraphContext grCtx)
+    /**
+     * Trying to figure out here which projects are apps.
+     */
+    private static Set<ProjectModel> getAllApplications_(GraphContext grCtx)
     {
+        new ProjectService(grCtx).getRootProjectModels();
+
         Set<ProjectModel> apps = new HashSet<>();
-        /*Iterable<ProjectModel> projects = grCtx.findAll(ProjectModel.class);
+        Iterable<ProjectModel> projects = grCtx.findAll(ProjectModel.class);
         for (ProjectModel proj : projects)
         {
             for (ProjectModel app: proj.getApplications() )
                 apps.add(app.getRootProjectModel());
-        }*/
-
-        Iterable<ApplicationModel> appMs = grCtx.findAll(ApplicationModel.class);
-        for (ApplicationModel appM :    appMs)
-        {
-            for (ProjectModel app: appM.get() )
-                apps.add(app.getRootProjectModel());
         }
+        return apps;
+    }
+
+    /**
+     * Returns all ApplicationProjectModels.
+     */
+    private static Set<ApplicationProjectModel> getAllApplications(GraphContext grCtx)
+    {
+        Set<ApplicationProjectModel> apps = new HashSet<>();
+        Iterable<ApplicationProjectModel> appProjects = grCtx.findAll(ApplicationProjectModel.class);
+        for (ApplicationProjectModel appProject : appProjects)
+            apps.add(appProject);
         return apps;
     }
 
@@ -314,8 +338,8 @@ public class CreateTechReportPunchCardRuleProvider extends AbstractRuleProvider
         for (ProjectModel app : getAllApplications(grCtx))
             LOG.info("App from getAllApplications(): " + app);
 
-        final Iterable<ApplicationModel> apps = grCtx.findAll(ApplicationModel.class);
-        for (ApplicationModel appM : apps)
-            LOG.info("AppModel: " + appM);
+        final Iterable<ApplicationProjectModel> apps = grCtx.findAll(ApplicationProjectModel.class);
+        for (ApplicationProjectModel appM : apps)
+            LOG.info("AppProjModel: " + appM);
     }
 }
