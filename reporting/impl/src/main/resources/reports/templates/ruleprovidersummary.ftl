@@ -43,7 +43,7 @@
         <div class="row container-fluid">
 
             <!-- All Rule Providers -->
-            <#list getAllRuleProviders as ruleProvider>
+            <#list getAllRuleProviders() as ruleProvider>
                 <#if isRulePhase(ruleProvider)>
                     <div class="alert alert-info">
                         <h3 class="panel-title">Phase: ${ruleProvider.metadata.ID}</h3>
