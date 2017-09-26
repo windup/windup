@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import freemarker.template.DefaultIterableAdapter;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.model.comparator.FilePathComparator;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -18,25 +19,25 @@ import freemarker.template.TemplateModelException;
 
 /**
  * Sorts file paths according to their alphabetical order.
- * 
+ *
  * For example:
  * <ul>
  * <li>/foo/bar/baz.class</li>
  * <li>/foo/car/caz.class</li>
  * <li>/foo/hat.class</li>
  * </ul>
- * 
+ *
  * Would become:
  * <ul>
  * <li>/foo/hat.class</li>
  * <li>/foo/bar/baz.class</li>
  * <li>/foo/car/caz.class</li>
  * </ul>
- * 
+ *
  * Can be called as follows: sortFilesByPathAscending(Iterable<FileModel>) or sortFilesByPathAscending(Iterable<String>)
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
- * 
+ *
  */
 public class SortFilesByPathMethod implements WindupFreeMarkerMethod
 {
@@ -109,6 +110,11 @@ public class SortFilesByPathMethod implements WindupFreeMarkerMethod
         {
             SimpleSequence simpleSequence = (SimpleSequence) arg;
             return (Iterable<Object>) simpleSequence.toList();
+        }
+        else if (arg instanceof DefaultIterableAdapter)
+        {
+            DefaultIterableAdapter adapter = (DefaultIterableAdapter) arg;
+            return (Iterable<Object>) adapter.getAdaptedObject(Iterable.class);
         }
         else if (arg instanceof DefaultListAdapter)
         {
