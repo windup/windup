@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import freemarker.template.DefaultIterableAdapter;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.graph.model.comparator.ProjectTraversalRootFileComparator;
@@ -56,9 +57,11 @@ public class SortProjectTraversalsByPathMethod implements WindupFreeMarkerMethod
         {
             throw new TemplateModelException("Error, method expects one argument (Iterable<ProjectModelTraversal>)");
         }
-        StringModel stringModelArg = (StringModel) arguments.get(0);
+
+        DefaultIterableAdapter argModel = (DefaultIterableAdapter) arguments.get(0);
         @SuppressWarnings("unchecked")
-        Iterable<ProjectModelTraversal> projectTraversalIterable = (Iterable<ProjectModelTraversal>) stringModelArg.getWrappedObject();
+        ///Iterable<ProjectModelTraversal> projectTraversalIterable = (Iterable<ProjectModelTraversal>) argModel.getWrappedObject();
+        Iterable<ProjectModelTraversal> projectTraversalIterable = (Iterable<ProjectModelTraversal>) argModel.getAdaptedObject(ProjectModelTraversal.class);
         List<ProjectModelTraversal> projectTraversalList = new ArrayList<>();
         for (ProjectModelTraversal traversal : projectTraversalIterable)
         {

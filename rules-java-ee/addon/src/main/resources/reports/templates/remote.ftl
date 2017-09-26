@@ -40,7 +40,7 @@
         <div class="row">
             <div class="container-fluid theme-showcase" role="main">
 
-            <#list reportModel.relatedResources.jaxRsServices.list.iterator()>
+            <#list reportModel.relatedResources.jaxRsServices>
                 <div class="panel panel-primary">
                     <div class="panel-heading">
                         <h3 class="panel-title">JAX-RS Services (REST)</h3>
@@ -61,7 +61,7 @@
                 </div>
             </#list>
 
-            <#list reportModel.relatedResources.jaxWsServices.list.iterator()>
+            <#list reportModel.relatedResources.jaxWsServices>
                 <div class="panel panel-primary">
                     <div class="panel-heading">
                         <h3 class="panel-title">JAX-WS Services (SOAP)</h3>
@@ -84,7 +84,7 @@
                 </div>
             </#list>
 
-            <#list reportModel.relatedResources.ejbRemoteServices.list.iterator()>
+            <#list reportModel.relatedResources.ejbRemoteServices>
                 <div class="panel panel-primary">
                     <div class="panel-heading">
                         <h3 class="panel-title">Remote EJB Services</h3>
@@ -107,7 +107,7 @@
                 </div>
             </#list>
 
-            <#list reportModel.relatedResources.rmiServices.list.iterator()>
+            <#list reportModel.relatedResources.rmiServices>
                 <div class="panel panel-primary">
                     <div class="panel-heading">
                         <h3 class="panel-title">RMI Services</h3>

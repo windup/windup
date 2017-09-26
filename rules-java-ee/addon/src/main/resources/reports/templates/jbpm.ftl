@@ -42,7 +42,7 @@
         </div>
 
         <#if iterableHasContent(reportModel.relatedResources.processes)>
-            <#list reportModel.relatedResources.processes.list.iterator() as process>
+            <#list reportModel.relatedResources.processes as process>
 
             <div class="row">
                 <div class="container-fluid theme-showcase" role="main">
@@ -93,7 +93,7 @@
                                 </div>
                                 </#if>
 
-                                <#list process.actionHandlers.iterator()>
+                                <#list process.actionHandlers()>
                                     <table class="table table-striped table-bordered">
                                         <tr>
                                           <th>Action Handler</th>
@@ -106,7 +106,7 @@
                                     </table>
                                 </#list>
 
-                                <#list process.decisionHandlers.iterator()>
+                                <#list process.decisionHandlers()>
                                     <table class="table table-striped table-bordered">
                                         <tr>
                                           <th>Decision Handler</th>

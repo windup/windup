@@ -14,7 +14,7 @@
 </#macro>
 
 <#macro reportLineRenderer reportLinesIterable>
-<#list reportLinesIterable.iterator()>
+<#list reportLinesIterable>
     <div class="panel panel-primary">
         <div class="panel-heading">
             <h3 class="panel-title">Application Messages</h3>
@@ -50,7 +50,7 @@
         </td>
         <#-- Technology -->
         <td class="tech">
-            <#list getTechnologyTagsForFile(fileModel).iterator() as tag>
+            <#list getTechnologyTagsForFile(fileModel) as tag>
                 <@tagRenderer tag>
                     ${tag.name} ${tag.version!}
                 </@tagRenderer>
@@ -66,21 +66,21 @@
         <#-- The ~Count are, in fact, Gremlin queries. Don't call more than once. -->
         <td class="warnCount${warnings}">
             <#if warnings == 1>
-                <#list sourceReportModel.sourceFileModel.classificationModels.iterator() as classification>
+                <#list sourceReportModel.sourceFileModel.classificationModels as classification>
                     ${classification.classification}
                 </#list>
-                <#list sourceReportModel.sourceFileModel.inlineHints.iterator() as hintLine>
+                <#list sourceReportModel.sourceFileModel.inlineHints as hintLine>
                     ${hintLine.title}
                 </#list>
             <#elseif warnings &gt; 1 >
                 <div class="warns">Warnings: ${warnings} items</div>
                 <ul class="notifications">
                     <#assign map = {}>
-                    <#list sourceReportModel.sourceFileModel.classificationModels.iterator() as classification>
+                    <#list sourceReportModel.sourceFileModel.classificationModels as classification>
                         <#assign count = (map[classification.classification]!0) + 1>
                         <#assign map += {classification.classification : count}>
                     </#list>
-                    <#list sourceReportModel.sourceFileModel.inlineHints.iterator() as hintLine>
+                    <#list sourceReportModel.sourceFileModel.inlineHints as hintLine>
                         <#assign count = (map[hintLine.title]!0) + 1>
                         <#assign map += {hintLine.title : count}>
                     </#list>
@@ -199,7 +199,7 @@
                                     <td>
                                         <#assign organizations = projectModelToOrganizations(canonicalProject)>
                                         <#if iterableHasContent(organizations)>
-                                            <#list organizations.iterator() as organization>
+                                            <#list organizations as organization>
                                                 ${organization.name?html}
                                             </#list>
                                         </#if>
@@ -269,7 +269,7 @@
         </div>
         <#if iterableHasContent(classificationList)>
         <div>
-            <#list classificationList.iterator() as classification>
+            <#list classificationList as classification>
                 <div class="panel panel-default hint-detail-panel">
                     <div class="panel-heading">
                         <h4 class="panel-title pull-left">Issue Detail: ${classification.classification}</h4>
@@ -285,7 +285,7 @@
                     <#if iterableHasContent(classificationLinkList)>
                     <div class="panel-body">
                         <ul>
-                        <#list classificationLinkList.iterator() as link>
+                        <#list classificationLinkList as link>
                             <li><a href="${link.link}" target="_blank">${link.description}</a></li>
                         </#list>
                         </ul>
@@ -325,7 +325,7 @@
     <script src="resources/js/windup-overview-head.js"></script>
     <style>
         .desc { z-index: 5000; }
-        
+
         /* Light yellow bg for the issue info box. */
         .hint-detail-panel > .panel-heading {
             border-color: #c2c2c2;
