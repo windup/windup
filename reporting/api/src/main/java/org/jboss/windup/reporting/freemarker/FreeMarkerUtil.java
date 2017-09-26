@@ -31,9 +31,10 @@ public class FreeMarkerUtil
      */
     public static Configuration getDefaultFreemarkerConfiguration()
     {
-        freemarker.template.Configuration configuration = new freemarker.template.Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
-        DefaultObjectWrapperBuilder objectWrapperBuilder = new DefaultObjectWrapperBuilder(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
+        freemarker.template.Configuration configuration = new freemarker.template.Configuration(Configuration.VERSION_2_3_26);
+        DefaultObjectWrapperBuilder objectWrapperBuilder = new DefaultObjectWrapperBuilder(Configuration.VERSION_2_3_26);
         objectWrapperBuilder.setUseAdaptersForContainers(true);
+        objectWrapperBuilder.setIterableSupport(true);
         configuration.setObjectWrapper(objectWrapperBuilder.build());
         configuration.setAPIBuiltinEnabled(true);
 
