@@ -1,31 +1,21 @@
 package org.jboss.windup.reporting.rules.generation;
 
-import org.jboss.windup.config.tags.Tag;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.freemarker.*;
-import java.util.Collections;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.model.ProjectModel;
-import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.reporting.model.TagModel;
 import org.jboss.windup.reporting.model.TechReportPunchCardModel;
-import org.jboss.windup.reporting.service.ClassificationService;
-import org.jboss.windup.reporting.service.InlineHintService;
 import org.jboss.windup.util.ExecutionStatistics;
 
-import freemarker.ext.beans.StringModel;
-import freemarker.template.SimpleSequence;
-import freemarker.template.TemplateBooleanModel;
 import freemarker.template.TemplateModelException;
 import java.util.logging.Logger;
-import org.jboss.windup.config.tags.TagService;
-import org.jboss.windup.config.tags.TagServiceHolder;
 
 /**
  * Gets the number of effort points involved in migrating this application.
@@ -36,7 +26,7 @@ import org.jboss.windup.config.tags.TagServiceHolder;
  *      getTechReportPunchCardStats(): Map{app ProjectModel, Map{String tag, Integer count}}
  * </pre>
  *
- * <p> Returns 
+ * <p> Returns
  *
  * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
  */
@@ -44,7 +34,7 @@ public class GetTechReportPunchCardStatsMethod implements WindupFreeMarkerMethod
 {
     public static final Logger LOG = Logger.getLogger(GetTechReportPunchCardStatsMethod.class.getName());
     private static final String NAME = "getTechReportPunchCardStats";
-    
+
     private GraphContext graphContext;
 
     @Override
@@ -71,15 +61,19 @@ public class GetTechReportPunchCardStatsMethod implements WindupFreeMarkerMethod
     {
         ExecutionStatistics.get().begin(NAME);
 
-        Map<ProjectModel, Map<String, Integer>> matrix = computeProjectAndTagsMatrix(this.graphContext);
+        MatrixAndMaximums result = computeProjectAndTagsMatrix(this.graphContext);
 
         ExecutionStatistics.get().end(NAME);
-        return matrix;
+        return result;
     }
 
-    private Map<ProjectModel, Map<String, Integer>> computeProjectAndTagsMatrix(GraphContext grCtx) {
+    private MatrixAndMaximums computeProjectAndTagsMatrix(GraphContext grCtx) {
+
+        final MatrixAndMaximums result = new MatrixAndMaximums();
+
         // App -> tag name -> occurences.
-        Map<ProjectModel, Map<String, Integer>> countsOfTagsInApps = new HashMap<>();
+        Map<ProjectModel, Map<String, Integer>> matrix = result.getCountsOfTagsInApps();
+        final Map<String, Integer> maximums = result.getMaximumsPerTag();
 
         // What sectors (column groups) and tech-groups (columns) should be on the report. View, Connect, Store, Sustain, ...
         GraphService<TagModel> service = new GraphService<>(grCtx, TagModel.class);
@@ -101,13 +95,25 @@ public class GetTechReportPunchCardStatsMethod implements WindupFreeMarkerMethod
 
                 // Transposes the results from getTagCountForAllApps, so that 1st level keys are the apps.
                 tagCountForAllApps.forEach((project, count) -> {
-                    Map<String, Integer> appTagCounts = countsOfTagsInApps.computeIfAbsent(project, k -> new HashMap<>());
+                    Map<String, Integer> appTagCounts = matrix.computeIfAbsent(project, k -> new HashMap<>());
                     appTagCounts.put(tagName, count);
+
+                    // Update tag's maximum.
+                    maximums.put(tagName, count + maximums.getOrDefault(tagName, 0));
                 });
             }
         }
 
-        return countsOfTagsInApps;
+        return result;
     }
 
+
+    public static class MatrixAndMaximums
+    {
+        private Map<ProjectModel, Map<String, Integer>> countsOfTagsInApps = new HashMap<>();
+        private Map<String, Integer> maximumsPerTag = new HashMap<>();
+
+        public Map<ProjectModel, Map<String, Integer>> getCountsOfTagsInApps() { return countsOfTagsInApps; }
+        public Map<String, Integer> getMaximumsPerTag() { return maximumsPerTag; }
+    }
 }
