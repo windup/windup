@@ -57,7 +57,7 @@
            <tag name="soa-p"/>
            <tag name="apache-tuscany"/>
         </tag>
-        <tag name="soap"/>
+        <tag name="jta" title="Java Transaction API"/>
     </tag>
     <tag name="java-se" prime="true" color="#BB0000">
         <tag name="classloader"/>
@@ -83,6 +83,7 @@
         </tag>
         <tag name="protocol">
             <tag name="http"/>
+            <tag name="soap"/>
         </tag>
         <tag name="persistence">
             <tag name="database"/>
