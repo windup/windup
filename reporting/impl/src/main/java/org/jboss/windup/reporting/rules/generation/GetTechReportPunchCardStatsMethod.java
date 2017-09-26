@@ -53,7 +53,7 @@ public class GetTechReportPunchCardStatsMethod implements WindupFreeMarkerMethod
     public String getDescription()
     {
         return "Takes a " + ProjectModel.class.getSimpleName()
-                    + " as a parameter and returns Map<Integer, Integer> where the key is the effort level and the value is the number of incidents at that particular level of effort.";
+                    + " as a parameter and returns Map<Long, Integer> where the key is the effort level and the value is the number of incidents at that particular level of effort.";
     }
 
     @Override
@@ -69,12 +69,6 @@ public class GetTechReportPunchCardStatsMethod implements WindupFreeMarkerMethod
 
     private MatrixAndMaximums computeProjectAndTagsMatrix(GraphContext grCtx) {
 
-        final MatrixAndMaximums result = new MatrixAndMaximums();
-
-        // App -> tag name -> occurences.
-        Map<ProjectModel, Map<String, Integer>> matrix = result.getCountsOfTagsInApps();
-        final Map<String, Integer> maximums = result.getMaximumsPerTag();
-
         // What sectors (column groups) and tech-groups (columns) should be on the report. View, Connect, Store, Sustain, ...
         GraphService<TagModel> service = new GraphService<>(grCtx, TagModel.class);
         TagModel sectorsHolderTag = service.getUniqueByProperty(TagModel.PROP_NAME, TechReportPunchCardModel.TAG_NAME_SECTORS);
@@ -84,6 +78,9 @@ public class GetTechReportPunchCardStatsMethod implements WindupFreeMarkerMethod
             return null;
         }
 
+        // App -> tag name -> occurences.
+        Map<Long, Map<String, Integer>> matrix = new HashMap<>();
+        final Map<String, Integer> maximums = new HashMap<>();
 
         for (TagModel sectorTag : sectorsHolderTag.getDesignatedTags())
         {
@@ -91,7 +88,7 @@ public class GetTechReportPunchCardStatsMethod implements WindupFreeMarkerMethod
             {
                 String tagName = techTag.getName();
 
-                Map<ProjectModel, Integer> tagCountForAllApps = CreateTechReportPunchCardRuleProvider.getTagCountForAllApps(grCtx, tagName);
+                Map<Long, Integer> tagCountForAllApps = CreateTechReportPunchCardRuleProvider.getTagCountForAllApps(grCtx, tagName);
 
                 // Transposes the results from getTagCountForAllApps, so that 1st level keys are the apps.
                 tagCountForAllApps.forEach((project, count) -> {
@@ -104,16 +101,26 @@ public class GetTechReportPunchCardStatsMethod implements WindupFreeMarkerMethod
             }
         }
 
+        final MatrixAndMaximums result = new MatrixAndMaximums(matrix, maximums);
         return result;
     }
 
 
+    /**
+     * Just a structure to hold the method result.
+     */
     public static class MatrixAndMaximums
     {
-        private Map<ProjectModel, Map<String, Integer>> countsOfTagsInApps = new HashMap<>();
-        private Map<String, Integer> maximumsPerTag = new HashMap<>();
+        private Map<Long, Map<String, Integer>> countsOfTagsInApps;
+        private Map<String, Integer> maximumsPerTag;
 
-        public Map<ProjectModel, Map<String, Integer>> getCountsOfTagsInApps() { return countsOfTagsInApps; }
+        public MatrixAndMaximums(Map<Long, Map<String, Integer>> countsOfTagsInApps, Map<String, Integer> maximumsPerTag)
+        {
+            this.countsOfTagsInApps = countsOfTagsInApps;
+            this.maximumsPerTag = maximumsPerTag;
+        }
+
+        public Map<Long, Map<String, Integer>> getCountsOfTagsInApps() { return countsOfTagsInApps; }
         public Map<String, Integer> getMaximumsPerTag() { return maximumsPerTag; }
     }
 }

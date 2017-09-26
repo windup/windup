@@ -115,7 +115,7 @@ public class CreateTechReportPunchCardRuleProvider extends AbstractRuleProvider
             report.setSectorsHolderTag(sectorsTag);
 
             // Now let's fill it with data.
-            Map<ProjectModel, Map<String, Integer>> countsOfTagsInApps = computeProjectAndTagsMatrix(grCtx);
+            Map<Long, Map<String, Integer>> countsOfTagsInApps = computeProjectAndTagsMatrix(grCtx);
 
             // Find maximum number of occurences within the apps. Used for cirle size.
             Map<String, Integer> maximumsPerTech = computeMaxCountPerTag(countsOfTagsInApps);
@@ -131,7 +131,7 @@ public class CreateTechReportPunchCardRuleProvider extends AbstractRuleProvider
             }
         }
 
-        private Map<String,Integer> computeMaxCountPerTag(Map<ProjectModel, Map<String, Integer>> countsOfTagsInApps)
+        private Map<String,Integer> computeMaxCountPerTag(Map<Long, Map<String, Integer>> countsOfTagsInApps)
         {
             final HashMap<String, Integer> maxCountPerTag = new HashMap<>();
             for (Map<String, Integer> countsOfTechs : countsOfTagsInApps.values())
@@ -170,9 +170,9 @@ public class CreateTechReportPunchCardRuleProvider extends AbstractRuleProvider
         Needs TagService, which I don't know how to get from a Freemarker method.
         TODO: Maybe kick this and use only GetTechReportPunchCardStatsMethod#computeProjectAndTagsMatrix()?
      */
-    private Map<ProjectModel, Map<String, Integer>> computeProjectAndTagsMatrix(GraphContext grCtx) {
+    private Map<Long, Map<String, Integer>> computeProjectAndTagsMatrix(GraphContext grCtx) {
         // App -> tag name -> occurences.
-        Map<ProjectModel, Map<String, Integer>> countsOfTagsInApps = new HashMap<>();
+        Map<Long, Map<String, Integer>> countsOfTagsInApps = new HashMap<>();
         Map<String, Integer> maxCountPerTag = new HashMap<>();
 
         // What sectors (column groups) and sub-sectors (columns) should be on the report. View, Connect, Store, Sustain, ...
@@ -186,12 +186,12 @@ public class CreateTechReportPunchCardRuleProvider extends AbstractRuleProvider
             for (Tag tag2 : tag1.getContainedTags())
             {
                 String tagName = tag2.getName();
-                Map<ProjectModel, Integer> tagCountForAllApps = getTagCountForAllApps(grCtx, tagName);
+                Map<Long, Integer> tagCountForAllApps = getTagCountForAllApps(grCtx, tagName);
                 LOG.info("Computed tag " + tagName + ":\n" + printMap(tagCountForAllApps, true));///
 
                 // Transpose the results from getTagCountForAllApps, so that 1st level keys are the apps.
-                tagCountForAllApps.forEach((project, count) -> {
-                    Map<String, Integer> appTagCounts = countsOfTagsInApps.computeIfAbsent(project, k -> new HashMap<>());
+                tagCountForAllApps.forEach((projectVertexId, count) -> {
+                    Map<String, Integer> appTagCounts = countsOfTagsInApps.computeIfAbsent(projectVertexId, k -> new HashMap<>());
                     appTagCounts.put(tagName, count);
                 });
             }
@@ -203,10 +203,10 @@ public class CreateTechReportPunchCardRuleProvider extends AbstractRuleProvider
     /**
      * Formats a Map to a String, each entry as one line, using toString() of keys and values.
      */
-    private static String printMap(Map<ProjectModel, Integer> tagCountForAllApps, boolean valueFirst)
+    private static String printMap(Map<? extends Object, ? extends Object> tagCountForAllApps, boolean valueFirst)
     {
         StringBuilder sb = new StringBuilder();
-        for (Map.Entry<ProjectModel, Integer> e : tagCountForAllApps.entrySet())
+        for (Map.Entry<? extends Object, ? extends Object> e : tagCountForAllApps.entrySet())
         {
             sb.append("  ");
             sb.append(valueFirst ? e.getValue() : e.getKey());
@@ -220,8 +220,9 @@ public class CreateTechReportPunchCardRuleProvider extends AbstractRuleProvider
     /**
      * @return Map of counts of given tag and subtags occurrences in all input applications.
      *         I.e. how many items tagged with any tag under subSectorTag are there in each input application.
+     *         The key is the vertex ID.
      */
-    public static Map<ProjectModel, Integer> getTagCountForAllApps(GraphContext grCtx, String subSectorTagName)
+    public static Map<Long, Integer> getTagCountForAllApps(GraphContext grCtx, String subSectorTagName)
     {
         // Get all "subtags" of this tag.
         //Set<String> subTagsNames = getSubTagNames_tagService(subSectorTagName);
@@ -230,7 +231,7 @@ public class CreateTechReportPunchCardRuleProvider extends AbstractRuleProvider
         // Get all apps.
         Set<ApplicationProjectModel> apps = getAllApplications(grCtx);
 
-        Map<ProjectModel, Integer> appToTechSectorCoveredTagsOccurrenceCount = new HashMap<>();
+        Map<Long, Integer> appToTechSectorCoveredTagsOccurrenceCount = new HashMap<>();
 
         for (ProjectModel app : apps)
         {
@@ -248,7 +249,7 @@ public class CreateTechReportPunchCardRuleProvider extends AbstractRuleProvider
                 if (!techStatTagsCoveredByGivenTag.isEmpty())
                     countSoFar += stat.getOccurrenceCount();
             }
-            appToTechSectorCoveredTagsOccurrenceCount.put(app, countSoFar);
+            appToTechSectorCoveredTagsOccurrenceCount.put((Long)app.asVertex().getId(), countSoFar);
         }
         return appToTechSectorCoveredTagsOccurrenceCount;
     }

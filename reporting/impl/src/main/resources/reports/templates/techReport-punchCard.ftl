@@ -60,6 +60,7 @@
         tr.app td.circle.size2:after { content: "●"; }
         tr.app td.circle.size3:after { content: "⬤"; }
         tr.app td.circle.size4:after { content: "⬤"; } /* Should be 0-3, but just in case. */
+        tr.app td.circle.sizeX:after { content: "𐄂"; }
 
     </style>
 
@@ -152,12 +153,13 @@
 
                     <#list inputApplications as app> <#-- ProjectModel -->
                     <tr class="app">
-                        <td class="name">${app.fileName}</td>
+                        <td class="name">${app.rootFileModel.fileName}</td>
                         <#list sectorTags as sector>
                             <#list sector.designatedTags as tech>
-                                <#assign count = stats.countsOfTagsInApps[app][tech.name] />
+                                <#assign count = (stats.countsOfTagsInApps?api.get(app.asVertex().id)[tech.name])! />
+
                                 <#assign max = stats.maximumsPerTag[tech.name] />
-                                <td class="circle size${getLogaritmicDistribution(count, max) * 4} sector${sector.title}"><!-- The circle is put here by CSS :after --></td>
+                                <td class="circle size${ (count??)?then(getLogaritmicDistribution(count, max) * 4, "X")} sector${sector.title}"><!-- The circle is put here by CSS :after --></td>
                             <#else>
                                 <td>No technology sectors defined.</td>
                             </#list>
