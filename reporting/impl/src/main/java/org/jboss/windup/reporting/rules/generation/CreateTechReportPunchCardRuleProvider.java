@@ -168,6 +168,7 @@ public class CreateTechReportPunchCardRuleProvider extends AbstractRuleProvider
 
     /*
         Needs TagService, which I don't know how to get from a Freemarker method.
+        TODO: Maybe kick this and use only GetTechReportPunchCardStatsMethod#computeProjectAndTagsMatrix()?
      */
     private Map<ProjectModel, Map<String, Integer>> computeProjectAndTagsMatrix(GraphContext grCtx) {
         // App -> tag name -> occurences.
@@ -264,23 +265,6 @@ public class CreateTechReportPunchCardRuleProvider extends AbstractRuleProvider
         TagService tagService = this.tagServiceHolder.getTagService();
         Set<Tag> subTags = tagService.getDescendantTags(tagService.getTag(subSectorTagName));
         return subTags.stream().map(t->t.getName()).collect(Collectors.toSet());
-    }
-
-    /**
-     * Trying to figure out here which projects are apps.
-     */
-    private static Set<ProjectModel> getAllApplications_(GraphContext grCtx)
-    {
-        new ProjectService(grCtx).getRootProjectModels();
-
-        Set<ProjectModel> apps = new HashSet<>();
-        Iterable<ProjectModel> projects = grCtx.findAll(ProjectModel.class);
-        for (ProjectModel proj : projects)
-        {
-            for (ProjectModel app: proj.getApplications() )
-                apps.add(app.getRootProjectModel());
-        }
-        return apps;
     }
 
     /**

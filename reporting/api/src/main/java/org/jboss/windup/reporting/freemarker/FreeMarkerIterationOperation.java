@@ -20,6 +20,7 @@ import org.jboss.windup.config.Variables;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
+import org.jboss.windup.graph.service.ProjectService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.model.ReportModel;
 import org.jboss.windup.reporting.service.ReportService;
@@ -42,7 +43,8 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
     private static final String DEFAULT_ITERATION_PAYLOAD_NAME = "reportModel";
     private static final String FM_VAR_EVENT = "event";
     private static final String FM_VAR_WINDUP_CONFIG = "windupConfig";
-    private static final String FM_VAR_APPS = "inputPaths";
+    private static final String FM_VAR_INPUT_PATHS = "inputPaths";
+    private static final String FM_VAR_APPS = "inputApplications";
 
     private final Furnace furnace;
     private final Set<String> variableNames = new HashSet<>();
@@ -81,7 +83,7 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
     }
 
     @Override
-    public void perform(final GraphRewrite event, final EvaluationContext context, final ReportModel payload)
+    public void perform(final GraphRewrite event, final EvaluationContext evalCtx, final ReportModel payload)
     {
         String templatePath = payload.getTemplatePath().replace('\\', '/');
         String outputFilename = payload.getReportFilename();
@@ -121,7 +123,8 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
             freeMarkerTemplateVariables.put(FM_VAR_EVENT, event);
             WindupConfigurationModel windupConfigModel = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
             freeMarkerTemplateVariables.put(FM_VAR_WINDUP_CONFIG, windupConfigModel);
-            freeMarkerTemplateVariables.put(FM_VAR_APPS, windupConfigModel.getInputPaths());
+            freeMarkerTemplateVariables.put(FM_VAR_INPUT_PATHS, windupConfigModel.getInputPaths());
+            freeMarkerTemplateVariables.put(FM_VAR_APPS, new ProjectService(event.getGraphContext()).getRootProjectModels());
 
             // Also, extension functions (these are kept separate from freeMarkerTemplateVariables in order to prevent them
             // from being stored in the associated data with the reportmodel)

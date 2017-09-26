@@ -59,8 +59,26 @@
         tr.app td.circle.size1:after { content: "⚫"; }
         tr.app td.circle.size2:after { content: "●"; }
         tr.app td.circle.size3:after { content: "⬤"; }
+        tr.app td.circle.size4:after { content: "⬤"; } /* Should be 0-3, but just in case. */
 
     </style>
+
+    <script>
+        /**
+         * @param count    Count of occurences
+         * @param maximum  The maximal count of occurences across apps.
+         * @returns {number} the number usable for circle size CSS style, currently 0-3.
+         *          0 for 0, 1 under roughly 20 %, 2 under roughly 65%, 3 for the rest.
+         */
+        function getCircleSize(count, maximum) {
+            if (count < 1) return 0;
+            var ratio = count / maximum;
+            // Map it to scale 0..200. This "spreads" the curve so we get 3 a bit later than at 10%.
+            var ratio2 = 1 + ratio * 199;
+            var log10 = Math.log10(ratio2);
+            return Math.min(3, Math.ceil(log10)); // Top it at 3
+        }
+    </script>
 </head>
 <body role="document">
     <!-- Navbar -->
@@ -97,9 +115,16 @@
 
                 <#assign techsOrder = [] />
 
-                <#assign sectorTagsIterable = reportModel.sectorsHolderTag.designatedTags>
+                <#assign sectorTagsIterable = reportModel.sectorsHolderTag.designatedTags />
                 <#assign sectorTags = iterableToList(sectorTagsIterable) />
                 <#assign sectorTags = sectorTags?sort_by("name") />
+
+                <#-- MatrixAndMaximums {
+                       countsOfTagsInApps,  // Map<ProjectModel, Map<String, Integer>>
+                       maximumsPerTag       // Map<String, Integer>
+                    }
+                -->
+                <#assign stats = getTechReportPunchCardStats() />
 
                 <pre>
                     reportModel.maximumCounts: ${mapToJsonMethod(reportModel.maximumCounts)}
@@ -124,16 +149,15 @@
                         </#list>
                     </tr>
 
-                    <#-- FileModel, probably ApplicationArchiveModel. -->
-                    <#list inputPaths.iterator() as app>
+
+                    <#list inputApplications.iterator() as app> <#-- ProjectModel -->
                     <tr class="app">
                         <td class="name">${app.fileName}</td>
                         <#list sectorTags as sector>
                             <#list sector.designatedTags.iterator() as tech>
-                                <#--
-                                <td class="circle size${getCircleSize(app, tech)} sector${sector.name}"><!-- The circle is put here by CSS :after - -></td>
-                                -->
-                                <td class="circle size3 sector${sector.title}"><!-- The circle is put here by CSS :after --></td>
+                                <#assign count = stats.countsOfTagsInApps[app][tech.name] />
+                                <#assign max = stats.maximumsPerTag[tech.name] />
+                                <td class="circle size${getLogaritmicDistribution(count, max) * 4} sector${sector.title}"><!-- The circle is put here by CSS :after --></td>
                             <#else>
                                 <td>No technology sectors defined.</td>
                             </#list>
