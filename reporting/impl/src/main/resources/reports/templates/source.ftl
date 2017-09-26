@@ -21,7 +21,7 @@
 
         <#include "include/navbar_macro.ftl">
 
-        <#list reportModel.projectEdges.iterator() as toProjectEdge>
+        <#list reportModel.projectEdges as toProjectEdge>
             <#assign applicationIndex = projectModelToApplicationIndex(toProjectEdge.projectModel)/>
             <#if applicationIndex??>
                 <div class="navbar-collapse collapse navbar-responsive-collapse project-specific" data-project-id="${toProjectEdge.projectModel.asVertex().id?c}">
@@ -38,7 +38,7 @@
                 <h1>
                     <div class="main">Source Report</div>
 
-                    <#list reportModel.projectEdges.iterator() as toProjectEdge>
+                    <#list reportModel.projectEdges as toProjectEdge>
                         <div class="path project-specific" data-project-id="${toProjectEdge.projectModel.asVertex().id?c}">
                             ${toProjectEdge.fullPath?html}
                         </div>
@@ -55,7 +55,7 @@
         <div class="row">
             <div class="container-fluid theme-showcase" role="main">
 
-                <#if reportModel.sourceFileModel.classificationModels.iterator()?has_content || getTechnologyTagsForFile(reportModel.sourceFileModel).iterator()?has_content>
+                <#if reportModel.sourceFileModel.classificationModels?has_content || getTechnologyTagsForFile(reportModel.sourceFileModel)?has_content>
                 <div class="panel panel-primary">
                     <div class="panel-heading">
                         <h3 class="panel-title">Information</h3>
@@ -70,7 +70,7 @@
 
                         <div class="info" style="margin-left: 95pt;">
 
-                            <#list getTechnologyTagsForFile(reportModel.sourceFileModel).iterator()>
+                            <#list getTechnologyTagsForFile(reportModel.sourceFileModel)>
                             <h4>Technologies</h4>
                             <div class="technologies" style="overflow: auto"><!-- "auto" to contain all the tags. -->
                                 <#items as techTag>
@@ -79,7 +79,7 @@
                             </div>
                             </#list>
 
-                            <#list reportModel.sourceFileModel.classificationModels.iterator()>
+                            <#list reportModel.sourceFileModel.classificationModels>
                                 <ul class="classifications">
                                     <#items as item>
                                         <#if item.classification??>
@@ -96,7 +96,7 @@
                                 </ul>
                             </#list>
 
-                            <#list reportModel.sourceFileModel.linksToTransformedFiles.iterator() >
+                            <#list reportModel.sourceFileModel.linksToTransformedFiles >
                             <h4>Automatically Translated Files</h4>
                             <ul>
                                 <#items as link>
@@ -150,12 +150,12 @@
         $(document).ready(function(){
             $("pre").snippet("${reportModel.sourceType}",{style:"ide-eclipse", showNum:true,boxFill:"#ffeeb9", box: "${reportModel.sourceBlock}" });
 
-        <#list reportModel.sourceFileModel.inlineHints.iterator() as hintLine>
+        <#list reportModel.sourceFileModel.inlineHints as hintLine>
             <#assign lineNumber = hintLine.lineNumber>
             $("<div id='${lineNumber?c}-inlines' class='inline-source-hint-group'/>").appendTo('ol.snippet-num li:nth-child(${lineNumber?c})');
         </#list>
 
-        <#list reportModel.sourceFileModel.inlineHints.iterator() as hintLine >
+        <#list reportModel.sourceFileModel.inlineHints as hintLine >
             <#assign lineNumber = hintLine.lineNumber>
             <#assign hintClasses = hintLine.tags?join(" tag-","none")>
 
@@ -172,9 +172,9 @@
                             </div><#t>
                             <div class='inline-comment-body'><#t>
                                 ${markdownToHtml(hintLine.hint)?js_string}<#t>
-                                <#if hintLine.links?? && hintLine.links.iterator()?has_content>
+                                <#if hintLine.links?? && hintLine.links?has_content>
                                         <ul><#t>
-                                            <#list hintLine.links.iterator() as link>
+                                            <#list hintLine.links as link>
                                                 <li><#t>
                                                     <a href='${link.link}' target='_blank'>${link.description}</a><#t>
                                                 </li><#t>

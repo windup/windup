@@ -41,7 +41,7 @@
         <div class="row">
             <div class="container-fluid theme-showcase" role="main">
 
-            <#list reportModel.relatedResources.datasources.list.iterator()>
+            <#list reportModel.relatedResources.datasources>
                 <div class="panel panel-primary">
                     <div class="panel-heading">
                         <h3 class="panel-title">DataSources</h3>
@@ -69,7 +69,7 @@
             </#list>
 
 
-            <#list reportModel.relatedResources.jmsDestinations.list.iterator()>
+            <#list reportModel.relatedResources.jmsDestinations>
                 <div class="panel panel-primary">
                     <div class="panel-heading">
                         <h3 class="panel-title">JMS Destinations</h3>
@@ -91,7 +91,7 @@
                 </div>
             </#list>
 
-            <#list reportModel.relatedResources.jmsConnectionFactories.list.iterator()>
+            <#list reportModel.relatedResources.jmsConnectionFactories>
                 <div class="panel panel-primary">
                     <div class="panel-heading">
                         <h3 class="panel-title">JMS Connection Factories</h3>
@@ -113,7 +113,7 @@
                 </div>
             </#list>
 
-            <#list reportModel.relatedResources.threadPools.list.iterator()>
+            <#list reportModel.relatedResources.threadPools>
                 <div class="panel panel-primary">
                     <div class="panel-heading">
                         <h3 class="panel-title">Thread Pools</h3>
@@ -140,7 +140,7 @@
 
 
 
-            <#list reportModel.relatedResources.otherResources.list.iterator()>
+            <#list reportModel.relatedResources.otherResources>
                 <div class="panel panel-primary">
                     <div class="panel-heading">
                         <h3 class="panel-title">Other JNDI Entries</h3>
