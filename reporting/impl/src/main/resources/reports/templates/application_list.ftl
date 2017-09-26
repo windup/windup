@@ -181,9 +181,9 @@
             <div class="real">
                 <#-- See CreateApplicationListReportRuleProvider -->
                 <#--
-                <#list iterableToList(reportModel.relatedResources.applications.list)?sort_by(["projectModel","rootFileModel","fileName"]) as applicationReport>
+                <#list iterableToList(reportModel.relatedResources.applications)?sort_by(["projectModel","rootFileModel","fileName"]) as applicationReport>
                 -->
-                <#list sortApplicationsList(iterableToList(reportModel.relatedResources.applications.list)) as applicationReport>
+                <#list sortApplicationsList(iterableToList(reportModel.relatedResources.applications)) as applicationReport>
                     <#if applicationReport.projectModel.projectType! != "VIRTUAL" >
                         <@applicationReportRenderer applicationReport/>
                     <#else>
@@ -206,7 +206,7 @@
         </div>
         <section class="apps">
             <div class="virtual">
-                <#list iterableToList(reportModel.relatedResources.applications.list)?sort_by(["projectModel","name"]) as applicationReport>
+                <#list iterableToList(reportModel.relatedResources.applications)?sort_by(["projectModel","name"]) as applicationReport>
                     <#if applicationReport.projectModel.projectType! = "VIRTUAL" >
                         <@applicationReportRenderer applicationReport/>
                     </#if>
