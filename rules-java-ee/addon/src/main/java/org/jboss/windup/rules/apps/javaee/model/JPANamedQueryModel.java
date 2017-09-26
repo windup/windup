@@ -1,5 +1,10 @@
 package org.jboss.windup.rules.apps.javaee.model;
 
+import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.frames.modules.javahandler.JavaHandler;
+import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
+import org.jboss.windup.graph.model.HasApplications;
+import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import com.tinkerpop.blueprints.Direction;
@@ -14,7 +19,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
  * 
  */
 @TypeValue(JPANamedQueryModel.TYPE)
-public interface JPANamedQueryModel extends WindupVertexFrame
+public interface JPANamedQueryModel extends WindupVertexFrame, HasApplications
 {
     String QUERY_NAME = "queryName";
     String QUERY = "query";
@@ -57,4 +62,26 @@ public interface JPANamedQueryModel extends WindupVertexFrame
      */
     @Adjacency(label = JPAEntityModel.NAMED_QUERY, direction = Direction.IN)
     JPAEntityModel getJpaEntity();
+
+    @JavaHandler
+    @Override
+    Iterable<ProjectModel> getApplications();
+
+    @JavaHandler
+    @Override
+    boolean belongsToProject(ProjectModel projectModel);
+
+
+    abstract class Impl implements JPANamedQueryModel, JavaHandlerContext<Vertex>
+    {
+        public Iterable<ProjectModel> getApplications()
+        {
+            return this.getJpaEntity().getApplications();
+        }
+
+        public boolean belongsToProject(ProjectModel projectModel)
+        {
+            return this.getJpaEntity().belongsToProject(projectModel);
+        }
+    }
 }
