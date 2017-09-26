@@ -24,9 +24,9 @@
            <tag name="ejb2" title="EJB 2.0"/>
         </tag>
         <tag name="jndi" title="JNDI"/>
-        <tag name="jaas"/>
+        <tag name="jaas" title="JAAS"/>
         <tag name="remoting">
-           <tag name="jax-rpc"/>
+           <tag name="jax-rpc" title="JAX-RPC"/>
         </tag>
         <tag name="messaging" prime="true" title="Messaging" color="#AACC00">
             <tag name="jms" title="JMS">
@@ -34,8 +34,8 @@
                 <tag name="jms-queue" title="JMS queue"/>
                 <tag name="jms-mdb" title="JMS message-driven bean"/>
             </tag>
-            <tag name="apache-cxf">
-               <tag name="xfire"/>
+            <tag name="apache-cxf" title="Apache CXF">
+               <tag name="xfire" title="XFire"/>
             </tag>
             <tag name="mq"/>
             <tag name="mqe"/>
@@ -44,8 +44,8 @@
         <tag name="web-service" prime="true" title="Webservice" color="#00BBBB">
            <tag name="webservice"/>
            <tag name="wsdl" parents="descriptor"/>
-           <tag name="axis"/>
-           <tag name="jboss-ws"/>
+           <tag name="axis" title="Apache Axis"/>
+           <tag name="jboss-ws" title="JBoss Web Services"/>
         </tag>
         <tag name="esb" prime="true" title="Enterprise Service Bus" color="#0000BB">
            <tag name="jboss-esb"/>
@@ -57,11 +57,19 @@
            <tag name="soa-p" title="SOA-P"/>
            <tag name="apache-tuscany"/>
         </tag>
-    </tag>
+        <tag name="jta" title="Java Transaction API"/>
+    </tag><!-- java-ee -->
+
+
     <tag name="java-se" prime="true" title="Java SE" color="#BB0000">
         <tag name="classloader"/>
         <tag name="classloading"/>
         <tag name="jni" title="JNI"/>
+    </tag>
+    <tag name="formats:" pseudo="true">
+        <tag name="html" title="HTML"/>
+        <tag name="css" title="CSS"/>
+        <tag name="javascript" title="JavaScript"/>
     </tag>
     <tag name="concepts">
         <tag name="asynchronous">
