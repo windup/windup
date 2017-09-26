@@ -43,13 +43,13 @@
             width:   40px;
             padding: 0.5em 0;
             text-align: left;
-            xvertical-align: bottom; /* No effect. */
-            writing-mode: vertical-lr; /* bt-lr doesn't work? So I turn it 180 with rotate() later */
+            /*vertical-align: bottom; /* No effect. */
+            writing-mode: vertical-lr; /* bt-lr doesn't work? So I turn it 180 with rotate() below */
             transform: rotate(180deg);
             white-space: nowrap;
         }
 
-        tr.app { font-size: 18pt; }
+        tr.app { font-size: 12pt; }
         tr.app td.name,
         tr.app td.sectorStats { padding: 0 0.5em; }
         tr.app td.sectorStats { text-align: right; vertical-align: middle; }
@@ -139,6 +139,7 @@
                         <#else>
                             <td>No technology sectors defined.</td>
                         </#list>
+                        <td colspan="3" class="sectorStats">Stats</td>
                     </tr>
                     <tr class="headersGroup">
                         <td class="sector"></td>
@@ -163,67 +164,12 @@
                             <#else>
                                 <td>No technology sectors defined.</td>
                             </#list>
+                            <td class="sectorStats sizeMB"></td>
+                            <td class="sectorStats libsCount"></td>
+                            <td class="sectorStats storyPoints"></td>
                         </#list>
                     </tr>
                     </#list>
-                </table>
-
-
-                <!-- /// Mock -->
-                <table class="technologiesPunchCard">
-                    <tr class="headersSector">
-                        <td></td>
-                        <td colspan="2" class="sectorView">View</td>
-                        <td colspan="4" class="sectorConnect">Connect</td>
-                        <td colspan="3" class="sectorStore">Store</td>
-                        <td colspan="5" class="sectorSustain">Sustain</td>
-                        <td colspan="2" class="sectorExecute">Execute</td>
-                        <td colspan="3" class="sectorStats">Stats</td>
-                    </tr>
-                    <tr class="headersGroup">
-                        <td class="sector"></td>
-                        <td class="sectorView"><div>Web</div></td>
-                        <td class="sectorView"><div>Rich</div></td>
-                        <td class="sectorConnect"><div>EJB</div></td>
-                        <td class="sectorConnect"><div>WS / REST</div></td>
-                        <td class="sectorConnect"><div>JMS / MDB</div></td>
-                        <td class="sectorConnect"><div>JNI</div></td>
-                        <td class="sectorStore"><div>ORM</div></td>
-                        <td class="sectorStore"><div>JDBC</div></td>
-                        <td class="sectorStore"><div>Cache</div></td>
-                        <td class="sectorSustain"><div>Transactions</div></td>
-                        <td class="sectorSustain"><div>Clustering</div></td>
-                        <td class="sectorSustain"><div>Security</div></td>
-                        <td class="sectorSustain"><div>Logging</div></td>
-                        <td class="sectorSustain"><div>Test</div></td>
-                        <td class="sectorExecute"><div>IoC</div></td>
-                        <td class="sectorExecute"><div>3rd party</div></td>
-                        <td class="sectorStats"><div>Size (MB)</div></td>
-                        <td class="sectorStats"><div>Libraries</div></td>
-                        <td class="sectorStats"><div>Mandatory (SP)</div></td>
-                    </tr>
-                    <tr class="app">
-                        <td class="name">App1.ear</td>
-                        <td class="circle size3 sectorView"></td>
-                        <td class="circle size0 sectorView"></td>
-                        <td class="circle size0 sectorConnect"></td>
-                        <td class="circle size0 sectorConnect"></td>
-                        <td class="circle size0 sectorConnect"></td>
-                        <td class="circle size0 sectorConnect"></td>
-                        <td class="circle size2 sectorStore"></td>
-                        <td class="circle size2 sectorStore"></td>
-                        <td class="circle size2 sectorStore"></td>
-                        <td class="circle size0 sectorSustain"></td>
-                        <td class="circle size0 sectorSustain"></td>
-                        <td class="circle size0 sectorSustain"></td>
-                        <td class="circle size0 sectorSustain"></td>
-                        <td class="circle size0 sectorSustain"></td>
-                        <td class="circle size0 sectorExecute"></td>
-                        <td class="circle size2 sectorExecute"></td>
-                        <td class="sectorStats">10.3</td>
-                        <td class="sectorStats">23</td>
-                        <td class="sectorStats">313</td>
-                    </tr>
                 </table>
 
             </div>
