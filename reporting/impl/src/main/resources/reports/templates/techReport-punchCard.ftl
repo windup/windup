@@ -142,7 +142,7 @@
                     <tr class="headersGroup">
                         <td class="sector"></td>
                         <#list sectorTags as sector>
-                            <#list sector.designatedTags.iterator() as tech>
+                            <#list sector.designatedTags as tech>
                                 <#assign techsOrder = techsOrder + [tech] />
                                 <td class="sector${sector.title}"><div>${tech.title!}</div></td>
                             </#list>
@@ -150,11 +150,11 @@
                     </tr>
 
 
-                    <#list inputApplications.iterator() as app> <#-- ProjectModel -->
+                    <#list inputApplications as app> <#-- ProjectModel -->
                     <tr class="app">
                         <td class="name">${app.fileName}</td>
                         <#list sectorTags as sector>
-                            <#list sector.designatedTags.iterator() as tech>
+                            <#list sector.designatedTags as tech>
                                 <#assign count = stats.countsOfTagsInApps[app][tech.name] />
                                 <#assign max = stats.maximumsPerTag[tech.name] />
                                 <td class="circle size${getLogaritmicDistribution(count, max) * 4} sector${sector.title}"><!-- The circle is put here by CSS :after --></td>
@@ -166,10 +166,6 @@
                     </#list>
                 </table>
 
-                <#-- Map<ProjectModel, Map<String, Integer>>
-                <#assign matrix = getTechReportPunchCardStats()>
-                MAIN CONTENT HERE 2
-                 -->
 
                 <!-- /// Mock -->
                 <table class="technologiesPunchCard">
