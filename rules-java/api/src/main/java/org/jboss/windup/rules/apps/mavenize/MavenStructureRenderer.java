@@ -123,9 +123,10 @@ public class MavenStructureRenderer
         if(templatePath == null)
             throw new WindupException("templatePath is null");
 
-        freemarker.template.Configuration freemarkerConfig = new freemarker.template.Configuration(freemarker.template.Configuration.VERSION_2_3_23);
+        freemarker.template.Configuration freemarkerConfig = new freemarker.template.Configuration(freemarker.template.Configuration.VERSION_2_3_26);
         DefaultObjectWrapperBuilder objectWrapperBuilder = new DefaultObjectWrapperBuilder(freemarker.template.Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
         objectWrapperBuilder.setUseAdaptersForContainers(true);
+        objectWrapperBuilder.setIterableSupport(true);
         freemarkerConfig.setObjectWrapper(objectWrapperBuilder.build());
         freemarkerConfig.setTemplateLoader(new FurnaceFreeMarkerTemplateLoader());
         Template template = freemarkerConfig.getTemplate(templatePath.toString().replace('\\', '/'));
