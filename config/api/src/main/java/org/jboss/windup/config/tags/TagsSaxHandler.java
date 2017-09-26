@@ -11,12 +11,21 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * Expects the following XML structure:
  *
- * {tag name="foo"}
- *    {tag name="bar" prime="true"}
- *    {tag name="baz"}
+ * {tag name="vehicle"}
+ *    {tag name="plane"}
+ *    {tag name="ship"}
+ *    {tag name="car"}
+ *        {tag name="tractor"}
+ *    {tag name="bike" parents="aninal"}
+ *
  *    ...
- * {tag name="bar"}
- *    {tag name="boo"  parents="bar baz"}
+ * {tag name="power-source:" pseudo=""}
+ *    {tag name="fuel"}
+ *        {tag name="gasoline"}
+ *        {tag name="oil"}
+ *    {tag name="battery"}
+ *    {tag name="cng"}
+ *    {tag name="animal"}
  *    ...
  */
 public class TagsSaxHandler extends DefaultHandler
@@ -85,7 +94,7 @@ public class TagsSaxHandler extends DefaultHandler
 
             stack.push(tag);
 
-            // Add the tags named in containedBy="...".
+            // Add the tags named in parents="...".
             String[] containedBy = StringUtils.split( StringUtils.defaultString(attributes.getValue("parents")), " ,");
             for (String containingTagName : containedBy)
             {
