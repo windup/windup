@@ -30,7 +30,7 @@
         table.technologiesPunchCard { border-collapse: collapse; }
         table.technologiesPunchCard td,
         table.technologiesPunchCard th {
-            border: 1px solid silver;
+            /*border: 1px solid silver;  /* debug */
         }
         tr.headersSector { font-size: 22pt; font-weight: bold; }
         tr.headersSector td { text-align: center; }
@@ -55,31 +55,16 @@
         tr.app td.sectorStats { text-align: right; vertical-align: middle; }
         tr.app td.circle { text-align: center; vertical-align: middle; padding: 0; line-height: 1; }
         tr.app td.circle { font-size: 26pt; }
-        tr.app td.circle.size0:after { content: "🞄"; }
-        tr.app td.circle.size1:after { content: "⚫"; }
-        tr.app td.circle.size2:after { content: "●"; }
-        tr.app td.circle.size3:after { content: "⬤"; }
-        tr.app td.circle.size4:after { content: "⬤"; } /* Should be 0-3, but just in case. */
-        tr.app td.circle.sizeX:after { content: "𐄂"; }
+        tr.app td.circle.sizeX:after { content: "𐄂"; color: whitesmoke; font-size: 18pt; } /* No data */
+        tr.app td.circle.size0:after { content: "⊘"; color: whitesmoke; font-size: 18pt; }
+        tr.app td.circle.size1:after { content: "🞄"; }
+        tr.app td.circle.size2:after { content: "⚫"; }
+        tr.app td.circle.size3:after { content: "●"; }
+        tr.app td.circle.size4:after { content: "⬤"; }
+        tr.app td.circle.size5:after { content: "⬤"; } /* Should be 0-4, but just in case. */
 
     </style>
 
-    <script>
-        /**
-         * @param count    Count of occurences
-         * @param maximum  The maximal count of occurences across apps.
-         * @returns {number} the number usable for circle size CSS style, currently 0-3.
-         *          0 for 0, 1 under roughly 20 %, 2 under roughly 65%, 3 for the rest.
-         */
-        function getCircleSize(count, maximum) {
-            if (count < 1) return 0;
-            var ratio = count / maximum;
-            // Map it to scale 0..200. This "spreads" the curve so we get 3 a bit later than at 10%.
-            var ratio2 = 1 + ratio * 199;
-            var log10 = Math.log10(ratio2);
-            return Math.min(3, Math.ceil(log10)); // Top it at 3
-        }
-    </script>
 </head>
 <body role="document">
     <!-- Navbar -->
@@ -127,10 +112,6 @@
                 -->
                 <#assign stats = getTechReportPunchCardStats() />
 
-                <pre>
-                    reportModel.maximumCounts: ${mapToJsonMethod(reportModel.maximumCounts)}
-                </pre>
-
                 <table class="technologiesPunchCard">
                     <tr class="headersSector">
                         <td></td>
@@ -160,10 +141,13 @@
                         <td class="name">${app.rootFileModel.fileName}</td>
                         <#list sectorTags as sector>
                             <#list sector.designatedTags as tech>
-                                <#assign count = (stats.countsOfTagsInApps?api.get(app.asVertex().id)[tech.name])! />
-
+                                <#assign count = (stats.countsOfTagsInApps?api.get(app.asVertex().id)[tech.name])!false />
                                 <#assign max = stats.maximumsPerTag[tech.name] />
-                                <td class="circle size${ (count??)?then(getLogaritmicDistribution(count, max) * 4, "X")} sector${sector.title}"><!-- The circle is put here by CSS :after --></td>
+                                <#assign log = count?is_number?then(getLogaritmicDistribution(count, max), false) />
+                                <#if count?is_number >
+                                    <!-- count: ${count}   max: ${max}   getLogaritmicDistribution(): ${ log } x 5 = ${ log * 5.0 } --><#-- Keep this here for debugging. -->
+                                </#if>
+                                <td class="circle size${ log?is_number?then((log * 5.0)?ceiling, "X")} sector${sector.title}"><!-- The circle is put here by CSS :after --></td>
                             <#else>
                                 <td>No technology sectors defined.</td>
                             </#list>
@@ -178,6 +162,18 @@
             </div>
         </div>
     </div>
+
+    <pre>
+        reportModel.maximumCounts: ${mapToJsonMethod(reportModel.maximumCounts)}
+
+        <#list 0..7 as count>
+        ${count?string(000)} / 7  =>   ${getLogaritmicDistribution(count, 7)}
+        </#list>
+        <#list 0..9 as i>
+            <#assign count = i * 50 + 1 />
+        ${count?string(000)} / 500 =>  ${getLogaritmicDistribution(count, 500)}
+        </#list>
+    </pre>
 
     <script src="resources/js/jquery-1.10.1.min.js"></script>
     <script src="resources/js/jquery-ui.min.js"></script>
