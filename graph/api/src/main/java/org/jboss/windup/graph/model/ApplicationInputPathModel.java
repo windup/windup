@@ -8,4 +8,11 @@ import org.jboss.windup.graph.model.resource.FileModel;
 public interface ApplicationInputPathModel extends FileModel
 {
     String TYPE = "ApplicationInputPathModel";
+
+    @Property("size")
+    long getFileSize();
+
+    @Property("size")
+    ApplicationInputPathModel setFileSize(long size);
+
 }
