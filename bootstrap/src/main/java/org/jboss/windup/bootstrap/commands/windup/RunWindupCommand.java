@@ -151,7 +151,8 @@ public class RunWindupCommand implements Command, FurnaceDependent
             }
             else
             {
-                String valueString = arguments.get(++i);
+                String valueString = arguments.size() > (i+1) ? arguments.get(++i) : null;
+
                 Object value = convertType(option.getType(), valueString);
                 optionValues.put(option.getName(), value);
             }
@@ -355,6 +356,9 @@ public class RunWindupCommand implements Command, FurnaceDependent
 
     private Object convertType(Class<?> type, String input)
     {
+        if (input == null)
+            return null;
+
         if (Path.class.isAssignableFrom(type))
         {
             return Paths.get(input);
