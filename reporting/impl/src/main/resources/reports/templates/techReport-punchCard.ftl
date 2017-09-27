@@ -149,6 +149,9 @@
                                 <td class="sector${sector.title}"><div>${tech.title!}</div></td>
                             </#list>
                         </#list>
+                        <td class="sectorStats sizeMB"><div>Size (MB)</div></td>
+                        <td class="sectorStats libsCount"><div>Libraries</div></td>
+                        <td class="sectorStats storyPoints"><div>Mandatory (SP)</div></td>
                     </tr>
 
 
@@ -164,10 +167,10 @@
                             <#else>
                                 <td>No technology sectors defined.</td>
                             </#list>
-                            <td class="sectorStats sizeMB"></td>
-                            <td class="sectorStats libsCount"></td>
-                            <td class="sectorStats storyPoints"></td>
                         </#list>
+                        <td class="sectorStats sizeMB"></td>
+                        <td class="sectorStats libsCount"></td>
+                        <td class="sectorStats storyPoints"></td>
                     </tr>
                     </#list>
                 </table>
