@@ -45,7 +45,11 @@ public class DiscoverFilesAndTypesRuleProvider extends AbstractRuleProvider
             {
                 final WindupConfigurationModel windupConf = event.getGraphContext().service(WindupConfigurationModel.class).getUnique();
                 for (FileModel input : windupConf.getInputPaths())
-                    event.getGraphContext().service(ApplicationInputPathModel.class).addTypeToModel(input);
+                {
+                    final ApplicationInputPathModel appPath = event.getGraphContext().service(ApplicationInputPathModel.class).addTypeToModel(input);
+                    if (!input.isDirectory())
+                        appPath.setFileSize(input.asFile().length());
+                }
             }
         }).withId("markInputsAsAppModels")
 
