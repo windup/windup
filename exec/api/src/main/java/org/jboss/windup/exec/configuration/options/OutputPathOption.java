@@ -79,12 +79,26 @@ public class OutputPathOption extends AbstractPathConfigurationOption
 
     public static ValidationResult validateInputsAndOutputPaths(Collection inputPaths, Path outputPath)
     {
+        if (outputPath == null)
+        {
+            return new ValidationResult(ValidationResult.Level.ERROR, "Output path must be specified.");
+        }
+
+        if (inputPaths == null || inputPaths.isEmpty())
+        {
+            return new ValidationResult(ValidationResult.Level.ERROR, "Input path must be specified.");
+        }
 
         File outputFile = outputPath.toFile();
 
+        boolean nonNullInputFound = false;
         for (Object inputPath : inputPaths)
         {
             File inputFile = (inputPath instanceof Path) ? ((Path)inputPath).toFile() : (File) inputPath;
+            if (inputFile == null)
+            {
+                continue;
+            }
 
             if (inputFile.equals(outputFile))
             {
@@ -110,7 +124,14 @@ public class OutputPathOption extends AbstractPathConfigurationOption
                 }
                 outputParent = outputParent.getParentFile();
             }
+            nonNullInputFound = true;
         }
+
+        if (!nonNullInputFound)
+        {
+            return new ValidationResult(ValidationResult.Level.ERROR, "Input path must be specified.");
+        }
+
 
         return ValidationResult.SUCCESS;
     }
