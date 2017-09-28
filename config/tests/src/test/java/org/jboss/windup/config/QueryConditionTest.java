@@ -102,7 +102,7 @@ public class QueryConditionTest
 
             WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
             FileService fileModelService = new FileService(context);
-            windupCfg.addInputPath(fileModelService.createByFilePath(folder.toAbsolutePath().toString()));
+            windupCfg.addInputPath(fileModelService.createInputPath(folder.toAbsolutePath().toString()));
 
             JavaClassModel classModel1 = context.getFramed().addVertex(null, JavaClassModel.class);
             classModel1.setQualifiedName("com.example.Class1NoToString");
@@ -141,7 +141,7 @@ public class QueryConditionTest
 
             WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
             FileService fileModelService = new FileService(context);
-            windupCfg.addInputPath(fileModelService.createByFilePath(folder.toAbsolutePath().toString()));
+            windupCfg.addInputPath(fileModelService.createInputPath(folder.toAbsolutePath().toString()));
 
             JavaClassModel classModel1 = context.getFramed().addVertex(null, JavaClassModel.class);
             classModel1.setQualifiedName("com.example.Class1NoToString");

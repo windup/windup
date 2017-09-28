@@ -5,6 +5,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
+import org.jboss.windup.graph.model.ApplicationInputPathModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -45,11 +46,11 @@ public class GenerateJbossWebDescriptorTest extends AbstractTest
     public void initData(GraphContext context)
     {
         ProjectModel parentProject1 = context.getFramed().addVertex(null, ProjectModel.class);
-        FileModel parentFileModel1 = context.getFramed().addVertex(null, FileModel.class);
+        ApplicationInputPathModel parentFileModel1 = context.getFramed().addVertex(null, ApplicationInputPathModel.class);
         parentProject1.addFileModel(parentFileModel1);
 
         ProjectModel parentProject2 = context.getFramed().addVertex(null, ProjectModel.class);
-        FileModel parentFileModel2 = context.getFramed().addVertex(null, FileModel.class);
+        ApplicationInputPathModel parentFileModel2 = context.getFramed().addVertex(null, ApplicationInputPathModel.class);
         parentProject2.addFileModel(parentFileModel2);
 
         ProjectModel pm1 =context.getFramed().addVertex(null, ProjectModel.class);

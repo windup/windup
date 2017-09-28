@@ -83,7 +83,7 @@ public class RuleIterationOverAllSpecifiedTest
 
             WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
             FileService fileModelService = new FileService(context);
-            windupCfg.addInputPath(fileModelService.createByFilePath(OperatingSystemUtils.createTempDir()
+            windupCfg.addInputPath(fileModelService.createInputPath(OperatingSystemUtils.createTempDir()
                         .getAbsolutePath()));
 
             TestRuleIterationOverAllSpecifiedProvider provider = new TestRuleIterationOverAllSpecifiedProvider();
@@ -117,8 +117,7 @@ public class RuleIterationOverAllSpecifiedTest
 
             WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
             FileService fileModelService = new FileService(context);
-            windupCfg.addInputPath(fileModelService
-                        .createByFilePath(OperatingSystemUtils.createTempDir().getAbsolutePath()));
+            windupCfg.addInputPath(fileModelService.createInputPath(OperatingSystemUtils.createTempDir().getAbsolutePath()));
 
             TestRuleIterationOverAllSpecifiedWithExceptionProvider provider = new TestRuleIterationOverAllSpecifiedWithExceptionProvider();
             Configuration configuration = provider.getConfiguration(null);
