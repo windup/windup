@@ -12,7 +12,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * Expects the following XML structure:
  *
  * {tag name="foo"}
- *    {tag name="bar" root="true"}
+ *    {tag name="bar" prime="true"}
  *    {tag name="baz"}
  *    ...
  * {tag name="bar"}
@@ -34,16 +34,21 @@ public class TagsSaxHandler extends DefaultHandler
 
 
 
+
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException
     {
         if("tag".equals(qName))
         {
             String tagName = attributes.getValue("name");
-            Tag tag = tagService.getOrCreateTag(tagName);
+            String tagRef  = attributes.getValue("ref");
+            if (null != tagRef && !"".equals(tagRef))
+                tagName = tagRef;
 
-            if ("true".equals(attributes.getValue("root")))
-                tag.setIsRoot(true);
+            Tag tag = tagService.getOrCreateTag(tagName, tagRef != null);
+
+            if ("true".equals(attributes.getValue("prime")))
+                tag.setIsPrime(true);
 
             if ("true".equals(attributes.getValue("pseudo")))
                 tag.setPseudo(true);
@@ -62,6 +67,8 @@ public class TagsSaxHandler extends DefaultHandler
             // Add this <tag> to its parent.
             if(!stack.empty())
                 stack.peek().addContainedTag(tag);
+            else
+                tag.setIsRoot(true);
 
             stack.push(tag);
 
@@ -69,7 +76,7 @@ public class TagsSaxHandler extends DefaultHandler
             String[] containedBy = StringUtils.split( StringUtils.defaultString(attributes.getValue("parents")), " ,");
             for (String containingTagName : containedBy)
             {
-                Tag containingTag = tagService.getOrCreateTag(containingTagName);
+                Tag containingTag = tagService.getOrCreateTag(containingTagName, true);
                 tag.addContainingTag(containingTag);
             }
         }
