@@ -19,6 +19,7 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.Variables;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
+import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.service.ProjectService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
@@ -91,14 +92,11 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
         ExecutionStatistics.get().begin("FreeMarkerIterationOperation.render(" + templatePath + ", " + outputFilename + ")");
         try
         {
-            ReportService reportService = new ReportService(event.getGraphContext());
+            final GraphContext grCtx = event.getGraphContext();
+            ReportService reportService = new ReportService(grCtx);
 
             Path outputDir = reportService.getReportDirectory();
-
-            if (!Files.isDirectory(outputDir))
-            {
-                Files.createDirectories(outputDir);
-            }
+            Files.createDirectories(outputDir);
 
             Path outputPath = outputDir.resolve(outputFilename);
 
@@ -121,10 +119,10 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
 
             // Additional objects to be available to the template.
             freeMarkerTemplateVariables.put(FM_VAR_EVENT, event);
-            WindupConfigurationModel windupConfigModel = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
+            WindupConfigurationModel windupConfigModel = WindupConfigurationService.getConfigurationModel(grCtx);
             freeMarkerTemplateVariables.put(FM_VAR_WINDUP_CONFIG, windupConfigModel);
             freeMarkerTemplateVariables.put(FM_VAR_INPUT_PATHS, windupConfigModel.getInputPaths());
-            freeMarkerTemplateVariables.put(FM_VAR_APPS, new ProjectService(event.getGraphContext()).getRootProjectModels());
+            freeMarkerTemplateVariables.put(FM_VAR_APPS, new ProjectService(grCtx).getRootProjectModels());
 
             // Also, extension functions (these are kept separate from freeMarkerTemplateVariables in order to prevent them
             // from being stored in the associated data with the reportmodel)
