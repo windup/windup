@@ -1,7 +1,6 @@
 package org.jboss.windup.config.tags;
 
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
@@ -12,6 +11,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.Addon;
+import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.util.furnace.FileExtensionFilter;
 import org.jboss.windup.util.furnace.FurnaceClasspathScanner;
 
@@ -54,9 +54,9 @@ public class TagServiceHolder
                 {
                     tagService.readTags(is);
                 }
-                catch( IOException ex )
+                catch( Exception ex )
                 {
-                    log.warning("Couldn't read tags definition: " + resource.toString() + " from addon " + entry.getKey().getId());
+                    throw new WindupException("Failed reading tags definition: " + resource.toString() + " from addon " + entry.getKey().getId() + ":\n" + ex.getMessage(), ex);
                 }
             }
         }
