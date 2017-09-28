@@ -3,14 +3,12 @@ package org.jboss.windup.reporting.service;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
-
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.config.tags.Tag;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
-
 import org.jboss.windup.reporting.model.TagModel;
-import org.jboss.windup.reporting.model.TechReportPunchCardModel;
+
 
 /**
  * Contains methods for finding, creating, and deleting {@link TagModel} instances.

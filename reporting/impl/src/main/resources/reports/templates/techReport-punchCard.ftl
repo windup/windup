@@ -1,3 +1,7 @@
+<#ftl output_format="HTML">
+
+<#include "include/effort_util.ftl">
+
 <#if reportModel.applicationReportIndexModel??>
     <#assign applicationReportIndexModel = reportModel.applicationReportIndexModel>
 </#if>
@@ -136,12 +140,12 @@
                     </tr>
 
 
-                    <#list inputApplications as app> <#-- ProjectModel -->
+                    <#list inputApplications as appProject> <#-- ProjectModel -->
                     <tr class="app">
-                        <td class="name">${app.rootFileModel.fileName}</td>
+                        <td class="name">${appProject.rootFileModel.fileName}</td>
                         <#list sectorTags as sector>
                             <#list sector.designatedTags as tech>
-                                <#assign count = (stats.countsOfTagsInApps?api.get(app.asVertex().id)[tech.name])!false />
+                                <#assign count = (stats.countsOfTagsInApps?api.get(appProject.asVertex().id)[tech.name])!false />
                                 <#assign max = stats.maximumsPerTag[tech.name] />
                                 <#assign log = count?is_number?then(getLogaritmicDistribution(count, max), false) />
                                 <#if count?is_number >
@@ -152,9 +156,18 @@
                                 <td>No technology sectors defined.</td>
                             </#list>
                         </#list>
-                        <td class="sectorStats sizeMB"></td>
-                        <td class="sectorStats libsCount"></td>
-                        <td class="sectorStats storyPoints"></td>
+                        <td class="sectorStats sizeMB">
+                            <#-- ${ (app.rootFileModel.retrieveSize() / 1024 / 1024)! } -->
+                            ${ ( (appProject.rootFileModel.fileSize / 1024 / 1024)?string["0.##"] )! }
+                        </td>
+                        <td class="sectorStats libsCount">
+                            ${ (appProject.getApplications()?size)! }
+                        </td>
+                        <td class="sectorStats storyPoints">
+                            <#assign traversal = getProjectTraversal(appProject, 'only_once') />
+                            <#assign panelStoryPoints = getMigrationEffortPointsForProject(traversal, false)! />
+                            ${ panelStoryPoints! }
+                        </td>
                     </tr>
                     </#list>
                 </table>
@@ -163,9 +176,8 @@
         </div>
     </div>
 
+    <#-- Keep this here for debugging.
     <pre>
-        reportModel.maximumCounts: ${mapToJsonMethod(reportModel.maximumCounts)}
-
         <#list 0..7 as count>
         ${count?string(000)} / 7  =>   ${getLogaritmicDistribution(count, 7)}
         </#list>
@@ -174,6 +186,7 @@
         ${count?string(000)} / 500 =>  ${getLogaritmicDistribution(count, 500)}
         </#list>
     </pre>
+    -->
 
     <script src="resources/js/jquery-1.10.1.min.js"></script>
     <script src="resources/js/jquery-ui.min.js"></script>
