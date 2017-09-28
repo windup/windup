@@ -5,6 +5,7 @@ import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.structures.FramedVertexIterable;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.TitanUtil;
+import org.jboss.windup.graph.model.ApplicationInputPathModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.util.ExecutionStatistics;
@@ -22,6 +23,11 @@ public class FileService extends GraphService<FileModel>
     public FileModel createByFilePath(String filePath)
     {
         return createByFilePath(null, filePath);
+    }
+
+    public ApplicationInputPathModel createInputPath(String filePath)
+    {
+        return getGraphContext().service(ApplicationInputPathModel.class).addTypeToModel(createByFilePath(null, filePath));
     }
 
     public FileModel createByFilePath(FileModel parentFile, String filePath)

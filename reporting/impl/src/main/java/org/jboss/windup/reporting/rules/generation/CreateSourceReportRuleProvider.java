@@ -11,6 +11,7 @@ import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.PostReportGenerationPhase;
+import org.jboss.windup.graph.model.ApplicationInputPathModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -60,7 +61,7 @@ public class CreateSourceReportRuleProvider extends AbstractRuleProvider
             public void perform(GraphRewrite event, EvaluationContext context)
             {
                 WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
-                Iterable<FileModel> inputApplications = configurationModel.getInputPaths();
+                Iterable<ApplicationInputPathModel> inputApplications = configurationModel.getInputPaths();
                 for (FileModel inputApplication : inputApplications)
                 {
                     ProjectModelTraversal projectModelTraversal = new ProjectModelTraversal(inputApplication.getProjectModel());

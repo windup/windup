@@ -110,8 +110,7 @@ public class IterationAutomicCommitTest
 
             WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
             FileService fileModelService = new FileService(context);
-            windupCfg.addInputPath(fileModelService.createByFilePath(OperatingSystemUtils.createTempDir()
-                        .getAbsolutePath()));
+            windupCfg.addInputPath(fileModelService.createInputPath(OperatingSystemUtils.createTempDir().getAbsolutePath()));
 
             TestRuleProvider provider = new TestRuleProvider();
             Configuration configuration = provider.getConfiguration(null);

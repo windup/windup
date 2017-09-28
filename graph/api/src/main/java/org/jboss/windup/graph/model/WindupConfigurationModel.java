@@ -1,11 +1,10 @@
 package org.jboss.windup.graph.model;
 
-import org.jboss.windup.graph.model.resource.FileModel;
-
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.model.resource.FileModel;
 
 /**
  * Contains the global configuration for the current Windup execution.
@@ -30,19 +29,19 @@ public interface WindupConfigurationModel extends WindupVertexFrame
      * The input path to scan
      */
     @Adjacency(label = INPUT_PATH, direction = Direction.OUT)
-    Iterable<FileModel> getInputPaths();
+    Iterable<ApplicationInputPathModel> getInputPaths();
 
     /**
      * The input path to scan
      */
     @Adjacency(label = INPUT_PATH, direction = Direction.OUT)
-    void setInputPaths(Iterable<FileModel> inputPaths);
+    void setInputPaths(Iterable<ApplicationInputPathModel> inputPaths);
 
     /**
      * The input path to scan
      */
     @Adjacency(label = INPUT_PATH, direction = Direction.OUT)
-    void addInputPath(FileModel inputPath);
+    void addInputPath(ApplicationInputPathModel inputPath);
 
     /**
      * The location for user provided rules directories (typically Groovy or XML Rules)
@@ -142,15 +141,12 @@ public interface WindupConfigurationModel extends WindupVertexFrame
 
     /**
      * Indicate whether skip all reports rendering
-     * 
-     * @return
      */
     @Property(SKIP_REPORTS_RENDERING)
     Boolean isSkipReportsRendering();
 
     /**
      * Indicate whether skip all reports rendering
-     * 
      */
     @Property(SKIP_REPORTS_RENDERING)
     void setSkipReportsRendering(Boolean skip);
