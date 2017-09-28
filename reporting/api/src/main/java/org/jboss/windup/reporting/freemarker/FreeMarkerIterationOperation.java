@@ -19,6 +19,10 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.Variables;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
+import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.WindupConfigurationModel;
+import org.jboss.windup.graph.service.ProjectService;
+import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.model.ReportModel;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.util.ExecutionStatistics;
@@ -36,9 +40,12 @@ import freemarker.template.TemplateException;
  */
 public class FreeMarkerIterationOperation extends AbstractIterationOperation<ReportModel>
 {
-    private static final String DEFAULT_ITERATION_PAYLOAD_NAME = "reportModel";
-
     private static final Logger LOG = Logger.getLogger(FreeMarkerIterationOperation.class.getName());
+    private static final String DEFAULT_ITERATION_PAYLOAD_NAME = "reportModel";
+    private static final String FM_VAR_EVENT = "event";
+    private static final String FM_VAR_WINDUP_CONFIG = "windupConfig";
+    private static final String FM_VAR_INPUT_PATHS = "inputPaths";
+    private static final String FM_VAR_APPS = "inputApplications";
 
     private final Furnace furnace;
     private final Set<String> variableNames = new HashSet<>();
@@ -77,7 +84,7 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
     }
 
     @Override
-    public void perform(final GraphRewrite event, final EvaluationContext context, final ReportModel payload)
+    public void perform(final GraphRewrite event, final EvaluationContext evalCtx, final ReportModel payload)
     {
         String templatePath = payload.getTemplatePath().replace('\\', '/');
         String outputFilename = payload.getReportFilename();
@@ -85,14 +92,11 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
         ExecutionStatistics.get().begin("FreeMarkerIterationOperation.render(" + templatePath + ", " + outputFilename + ")");
         try
         {
-            ReportService reportService = new ReportService(event.getGraphContext());
+            final GraphContext grCtx = event.getGraphContext();
+            ReportService reportService = new ReportService(grCtx);
 
             Path outputDir = reportService.getReportDirectory();
-
-            if (!Files.isDirectory(outputDir))
-            {
-                Files.createDirectories(outputDir);
-            }
+            Files.createDirectories(outputDir);
 
             Path outputPath = outputDir.resolve(outputFilename);
 
@@ -102,21 +106,25 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
 
             Template template = freemarkerConfig.getTemplate(templatePath);
 
-            Variables variables = Variables.instance(event);
+            Variables windupVarStack = Variables.instance(event);
 
             // just the variables
-            Map<String, Object> vars = FreeMarkerUtil.findFreeMarkerContextVariables(variables,
-                        variableNames.toArray(new String[variableNames
-                                    .size()]));
+            Map<String, Object> freeMarkerTemplateVariables = FreeMarkerUtil.findFreeMarkerContextVariables(
+                    windupVarStack, variableNames.toArray(new String[variableNames.size()]));
 
             if (useDefaultPayloadVariableName)
             {
-                vars.put(DEFAULT_ITERATION_PAYLOAD_NAME, payload);
+                freeMarkerTemplateVariables.put(DEFAULT_ITERATION_PAYLOAD_NAME, payload);
             }
 
-            vars.put("event", event);
+            // Additional objects to be available to the template.
+            freeMarkerTemplateVariables.put(FM_VAR_EVENT, event);
+            WindupConfigurationModel windupConfigModel = WindupConfigurationService.getConfigurationModel(grCtx);
+            freeMarkerTemplateVariables.put(FM_VAR_WINDUP_CONFIG, windupConfigModel);
+            freeMarkerTemplateVariables.put(FM_VAR_INPUT_PATHS, windupConfigModel.getInputPaths());
+            freeMarkerTemplateVariables.put(FM_VAR_APPS, new ProjectService(grCtx).getRootProjectModels());
 
-            // also, extension functions (these are kept separate from vars in order to prevent them
+            // Also, extension functions (these are kept separate from freeMarkerTemplateVariables in order to prevent them
             // from being stored in the associated data with the reportmodel)
             final Map<String, Object> freeMarkerExtensions;
             freeMarkerExtensions = furnace.getLockManager().performLocked(LockMode.WRITE, new Callable<Map<String, Object>>()
@@ -128,7 +136,7 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
                 }
             });
 
-            Map<String, Object> objects = new HashMap<>(vars);
+            Map<String, Object> objects = new HashMap<>(freeMarkerTemplateVariables);
             objects.putAll(freeMarkerExtensions);
 
             try (FileWriter fw = new FileWriter(outputPath.toFile()))
