@@ -18,15 +18,25 @@ import freemarker.template.TemplateModelException;
 import java.util.logging.Logger;
 
 /**
- * Gets the number of effort points involved in migrating this application.
+ * Gets the statistics of technology occurences per input application.
  *
  * <p> Called from a freemarker template as follows:
  *
  * <pre>
- *      getTechReportPunchCardStats(): Map{app ProjectModel, Map{String tag, Integer count}}
+ *      getTechReportPunchCardStats(): MatrixAndMaximums
  * </pre>
  *
- * <p> Returns
+ * <p> Returns a MatrixAndMaximums object, which holds:
+ *      * A Map
+ *         * key:   ApplicationProject vertex ID
+ *         * value: Map
+ *           * key:     tag name
+ *           * value:   count of occurences of technologies bearing that tag and it's subtags.
+ *      * A Map
+ *         * key: ApplicationProject vertex ID
+ *         * value: Map
+ *           * key:   tag name
+ *           * value: maximum count found in any input application. The largest number of values in the other map.
  *
  * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
  */

@@ -3,17 +3,17 @@
 <tags setName="techReport-hierarchy">
 
     <!-- These define the vertical groups? -->
-    <tag name="techReport-frameworkTypes:" pseudo="true">
+    <tag name="techReport-rows:" pseudo="true">
         <tag name="techSector:java-ee" title="Java EE"  pseudo="true">
             <tag ref="techSector:web"/>
-        </tag>
-        <tag name="techSector:java-se" title="Java SE"  pseudo="true">
         </tag>
         <tag name="techSector:embedded" title="Embedded"  pseudo="true">
             <tag ref="techBox:mvc"/>
             <tag ref="techBox:markup"/>
+
             <tag ref="techBox:web-service"/>
             <tag ref="techBox:object-mapping"/>
+
             <tag ref="techBox:logging"/>
             <tag ref="techBox:ioc"/>
             <tag ref="techBox:3rd-party"/>
