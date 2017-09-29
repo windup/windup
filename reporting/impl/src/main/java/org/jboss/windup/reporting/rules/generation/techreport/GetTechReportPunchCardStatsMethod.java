@@ -1,5 +1,7 @@
 package org.jboss.windup.reporting.rules.generation.techreport;
 
+import freemarker.ext.beans.StringModel;
+import java.util.function.IntBinaryOperator;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.freemarker.*;
@@ -23,10 +25,10 @@ import java.util.logging.Logger;
  * <p> Called from a freemarker template as follows:
  *
  * <pre>
- *      getTechReportPunchCardStats(): MatrixAndMaximums
+ *      getTechReportPunchCardStats( projectToCount: ProjectModel ): MatrixAndAggregated
  * </pre>
  *
- * <p> Returns a MatrixAndMaximums object, which holds:
+ * <p> Returns a MatrixAndAggregated object, which holds:
  *      * A Map
  *         * key:   ApplicationProject vertex ID
  *         * value: Map
@@ -37,6 +39,12 @@ import java.util.logging.Logger;
  *         * value: Map
  *           * key:   tag name
  *           * value: maximum count found in any input application. The largest number of values in the other map.
+ *
+ *      * A Map
+ *         * key: ApplicationProject vertex ID
+ *         * value: Map
+ *           * key:   tag name
+ *           * value: total count found in any input application. A sum of values in the other map.
  *
  * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
  */
@@ -71,14 +79,24 @@ public class GetTechReportPunchCardStatsMethod implements WindupFreeMarkerMethod
     {
         ExecutionStatistics.get().begin(NAME);
 
-        MatrixAndMaximums result = computeProjectAndTagsMatrix(this.graphContext);
+        // Function arguments
+        ProjectModel projectModel = null;
+
+        // The project. May be null -> all input applications.
+        if (arguments.size() >= 1) {
+            StringModel projectArg = (StringModel) arguments.get(0);
+            projectModel = (ProjectModel) projectArg.getWrappedObject();
+            throw new TemplateModelException("Project");
+        }
+
+        MatrixAndAggregated result = computeProjectAndTagsMatrix(this.graphContext, projectModel);
 
         ExecutionStatistics.get().end(NAME);
         return result;
     }
 
-    private MatrixAndMaximums computeProjectAndTagsMatrix(GraphContext grCtx) {
-
+    private MatrixAndAggregated computeProjectAndTagsMatrix(GraphContext grCtx, ProjectModel projectToCount)
+    {
         // What sectors (column groups) and tech-groups (columns) should be on the report. View, Connect, Store, Sustain, ...
         GraphService<TagModel> service = new GraphService<>(grCtx, TagModel.class);
         TagModel sectorsHolderTag = service.getUniqueByProperty(TagModel.PROP_NAME, TechReportPunchCardModel.TAG_NAME_SECTORS);
@@ -91,6 +109,7 @@ public class GetTechReportPunchCardStatsMethod implements WindupFreeMarkerMethod
         // App -> tag name -> occurences.
         Map<Long, Map<String, Integer>> matrix = new HashMap<>();
         final Map<String, Integer> maximums = new HashMap<>();
+        final Map<String, Integer> totals   = new HashMap<>();
 
         for (TagModel sectorTag : sectorsHolderTag.getDesignatedTags())
         {
@@ -106,12 +125,13 @@ public class GetTechReportPunchCardStatsMethod implements WindupFreeMarkerMethod
                     appTagCounts.put(tagName, count);
 
                     // Update tag's maximum.
-                    maximums.put(tagName, count + maximums.getOrDefault(tagName, 0));
+                    maximums.put(tagName, Math.max(count, maximums.getOrDefault(tagName, 0)));
+                    totals.put(tagName, count + totals.getOrDefault(tagName, 0));
                 });
             }
         }
 
-        final MatrixAndMaximums result = new MatrixAndMaximums(matrix, maximums);
+        final MatrixAndAggregated result = new MatrixAndAggregated(matrix, maximums, totals);
         return result;
     }
 
@@ -119,18 +139,21 @@ public class GetTechReportPunchCardStatsMethod implements WindupFreeMarkerMethod
     /**
      * Just a structure to hold the method result.
      */
-    public static class MatrixAndMaximums
+    public static class MatrixAndAggregated
     {
         private Map<Long, Map<String, Integer>> countsOfTagsInApps;
         private Map<String, Integer> maximumsPerTag;
+        private Map<String, Integer> totalsPerTag;
 
-        public MatrixAndMaximums(Map<Long, Map<String, Integer>> countsOfTagsInApps, Map<String, Integer> maximumsPerTag)
+        public MatrixAndAggregated(Map<Long, Map<String, Integer>> countsOfTagsInApps, Map<String, Integer> maximumsPerTag, Map<String, Integer> totalsPerTag)
         {
             this.countsOfTagsInApps = countsOfTagsInApps;
             this.maximumsPerTag = maximumsPerTag;
+            this.totalsPerTag = totalsPerTag;
         }
 
         public Map<Long, Map<String, Integer>> getCountsOfTagsInApps() { return countsOfTagsInApps; }
         public Map<String, Integer> getMaximumsPerTag() { return maximumsPerTag; }
+        public Map<String, Integer> getTotalsPerTag() { return totalsPerTag; }
     }
 }

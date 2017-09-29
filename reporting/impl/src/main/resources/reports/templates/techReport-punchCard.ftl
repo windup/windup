@@ -109,7 +109,7 @@
                 <#assign sectorTags = iterableToList(sectorTagsIterable) />
                 <#assign sectorTags = sectorTags?sort_by("name") />
 
-                <#-- MatrixAndMaximums {
+                <#-- MatrixAndAggregated {
                        countsOfTagsInApps,  // Map<ProjectModel, Map<String, Integer>>
                        maximumsPerTag       // Map<String, Integer>
                     }
