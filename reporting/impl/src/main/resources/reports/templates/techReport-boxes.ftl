@@ -95,9 +95,10 @@
                 <#assign sectorTags = iterableToList(sectorTagsIterable) /> <#-- Later: FM 2.3.27 introduces ?sequence -->
                 <#assign sectorTags = sectorTags?sort_by("name") />
 
-                <#-- MatrixAndMaximums {
+                <#-- MatrixAndAggregated {
                        countsOfTagsInApps,  // Map<ProjectModel, Map<String, Integer>>
                        maximumsPerTag       // Map<String, Integer>
+                       totalsPerTag         // Map<String, Integer>
                     }
                 -->
                 <#assign stats = getTechReportPunchCardStats() />
@@ -121,16 +122,17 @@
                             <#list sectorTags as sectorTag>
                                 <td class="sector${sectorTag.title}">
                                     <#list sectorTag.designatedTags as boxTag>
-                                        <div class="box">
+                                        <div class="box box-${boxTag.name}">
                                             <div class="icon">[icon]</div>
                                             <h4>${boxTag.title}</h4>
                                             <ul>
-                                                <#list boxTag.designatedTags as itemTag>
-                                                <li>${itemTag.title} <b>${item}</b></li>
-                                                <li>JSP</li>
-                                                <li>Servlet</li>
-                                                <li>web.xml</li>
-                                                <li>WebSocket</li>
+                                                <#-- JSF, JSP, Servlet, ... -->
+                                                <#list boxTag.designatedTags as techTag>
+                                                    <#assign count = (stats.totalsPerTag[techTag.name])!0 />
+                                                    <li class="stats tag-${techTag.name} count${count?switch(0, '0', 1, '1', 'Many')}">
+                                                        ${techTag.title} <b>${count}</b>
+                                                    </li>
+                                                </#list>
                                             </ul>
                                         </div>
                                     </#list>
