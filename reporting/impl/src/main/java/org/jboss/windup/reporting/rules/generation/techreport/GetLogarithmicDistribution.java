@@ -1,22 +1,13 @@
-package org.jboss.windup.reporting.rules.generation;
+package org.jboss.windup.reporting.rules.generation.techreport;
 
 import freemarker.ext.beans.NumberModel;
 import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.SimpleNumber;
 import freemarker.template.TemplateModelException;
 import freemarker.template.TemplateNumberModel;
-import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.ProjectModel;
-import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
-import org.jboss.windup.reporting.model.TagModel;
-import org.jboss.windup.reporting.model.TechReportPunchCardModel;
-import org.jboss.windup.util.ExecutionStatistics;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 
 /**

@@ -1,4 +1,4 @@
-package org.jboss.windup.reporting.rules.generation;
+package org.jboss.windup.reporting.rules.generation.techreport;
 
 import java.util.*;
 import java.util.logging.Logger;
@@ -19,7 +19,6 @@ import org.jboss.windup.graph.model.ApplicationProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
-import org.jboss.windup.graph.service.ProjectService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.model.*;
 import org.jboss.windup.reporting.service.ApplicationReportService;

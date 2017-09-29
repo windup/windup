@@ -1,21 +1,13 @@
-package org.jboss.windup.reporting.rules.generation;
+package org.jboss.windup.reporting.freemarker;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import freemarker.ext.beans.StringModel;
 import freemarker.template.DefaultMapAdapter;
 import freemarker.template.TemplateModelException;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.ProjectModel;
-import org.jboss.windup.graph.service.GraphService;
-import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
-import org.jboss.windup.reporting.model.TagModel;
-import org.jboss.windup.reporting.model.TechReportPunchCardModel;
 import org.jboss.windup.util.ExecutionStatistics;
-import org.json.JSONObject;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -37,7 +29,7 @@ public class MapToJsonMethod implements WindupFreeMarkerMethod
 {
     public static final Logger LOG = Logger.getLogger(MapToJsonMethod.class.getName());
     private static final String NAME = "mapToJsonMethod";
-    
+
     private GraphContext graphContext;
 
     @Override

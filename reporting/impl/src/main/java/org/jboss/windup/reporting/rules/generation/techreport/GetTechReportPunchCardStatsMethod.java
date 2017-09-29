@@ -1,4 +1,4 @@
-package org.jboss.windup.reporting.rules.generation;
+package org.jboss.windup.reporting.rules.generation.techreport;
 
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
