@@ -24,6 +24,7 @@ import org.jboss.windup.reporting.model.*;
 import org.jboss.windup.reporting.service.ApplicationReportService;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.reporting.service.TagGraphService;
+import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -186,7 +187,7 @@ public class CreateTechReportPunchCardRuleProvider extends AbstractRuleProvider
             {
                 String tagName = tag2.getName();
                 Map<Long, Integer> tagCountForAllApps = getTagCountForAllApps(grCtx, tagName);
-                LOG.info("Computed tag " + tagName + ":\n" + printMap(tagCountForAllApps, true));///
+                LOG.info("Computed tag " + tagName + ":\n" + Logging.printMap(tagCountForAllApps, true));///
 
                 // Transpose the results from getTagCountForAllApps, so that 1st level keys are the apps.
                 tagCountForAllApps.forEach((projectVertexId, count) -> {
@@ -199,22 +200,6 @@ public class CreateTechReportPunchCardRuleProvider extends AbstractRuleProvider
         return countsOfTagsInApps;
     }
 
-    /**
-     * Formats a Map to a String, each entry as one line, using toString() of keys and values.
-     */
-    private static String printMap(Map<? extends Object, ? extends Object> tagCountForAllApps, boolean valueFirst)
-    {
-        StringBuilder sb = new StringBuilder();
-        for (Map.Entry<? extends Object, ? extends Object> e : tagCountForAllApps.entrySet())
-        {
-            sb.append("  ");
-            sb.append(valueFirst ? e.getValue() : e.getKey());
-            sb.append(": ");
-            sb.append(valueFirst ? e.getKey() : e.getValue());
-            sb.append("\n");
-        }
-        return sb.toString();
-    }
 
     /**
      * @return Map of counts of given tag and subtags occurrences in all input applications.
@@ -260,12 +245,6 @@ public class CreateTechReportPunchCardRuleProvider extends AbstractRuleProvider
         return subTags.stream().map(t->t.getName()).collect(Collectors.toSet());
     }
 
-    private Set<String> getSubTagNames_tagService(String subSectorTagName)
-    {
-        TagService tagService = this.tagServiceHolder.getTagService();
-        Set<Tag> subTags = tagService.getDescendantTags(tagService.getTag(subSectorTagName));
-        return subTags.stream().map(t->t.getName()).collect(Collectors.toSet());
-    }
 
     /**
      * Returns all ApplicationProjectModels.
