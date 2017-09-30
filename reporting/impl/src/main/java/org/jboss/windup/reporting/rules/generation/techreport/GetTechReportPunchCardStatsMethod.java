@@ -1,7 +1,6 @@
 package org.jboss.windup.reporting.rules.generation.techreport;
 
 import freemarker.ext.beans.StringModel;
-import java.util.function.IntBinaryOperator;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.freemarker.*;
@@ -99,10 +98,10 @@ public class GetTechReportPunchCardStatsMethod implements WindupFreeMarkerMethod
     {
         // What sectors (column groups) and tech-groups (columns) should be on the report. View, Connect, Store, Sustain, ...
         GraphService<TagModel> service = new GraphService<>(grCtx, TagModel.class);
-        TagModel sectorsHolderTag = service.getUniqueByProperty(TagModel.PROP_NAME, TechReportPunchCardModel.TAG_NAME_SECTORS);
+        TagModel sectorsHolderTag = service.getUniqueByProperty(TagModel.PROP_NAME, TechReportPunchCardModel.EDGE_TAG_SECTORS);
         if (null == sectorsHolderTag)
         {
-            LOG.warning("Tech Report hierarchy definition TagModel not found, looked for tag name " + TechReportPunchCardModel.TAG_NAME_SECTORS);
+            LOG.warning("Tech Report hierarchy definition TagModel not found, looked for tag name " + TechReportPunchCardModel.EDGE_TAG_SECTORS);
             return null;
         }
 

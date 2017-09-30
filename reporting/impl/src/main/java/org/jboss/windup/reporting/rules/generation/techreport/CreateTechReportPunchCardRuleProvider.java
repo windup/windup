@@ -105,11 +105,11 @@ public class CreateTechReportPunchCardRuleProvider extends AbstractRuleProvider
 
             // Add sectors to it.
             GraphService<TagModel> service = new GraphService<>(grCtx, TagModel.class);
-            //TagModel sectorsTag = service.getUniqueByProperty(TagModel.PROP_NAME, TechReportPunchCardModel.TAG_NAME_SECTORS.toLowerCase());
-            TagModel sectorsTag = new TagGraphService(event.getGraphContext()).getTagByName(TechReportPunchCardModel.TAG_NAME_SECTORS);
+            //TagModel sectorsTag = service.getUniqueByProperty(TagModel.PROP_NAME, TechReportPunchCardModel.EDGE_TAG_SECTORS.toLowerCase());
+            TagModel sectorsTag = new TagGraphService(event.getGraphContext()).getTagByName(TechReportPunchCardModel.EDGE_TAG_SECTORS);
 
             if (null == sectorsTag)
-                throw new WindupException("Tech sectors tag, '" + TechReportPunchCardModel.TAG_NAME_SECTORS
+                throw new WindupException("Tech sectors tag, '" + TechReportPunchCardModel.EDGE_TAG_SECTORS
                         + "', not found. It defines the structure of the punchcard report.");
             report.setSectorsHolderTag(sectorsTag);
 
@@ -175,9 +175,9 @@ public class CreateTechReportPunchCardRuleProvider extends AbstractRuleProvider
         Map<String, Integer> maxCountPerTag = new HashMap<>();
 
         // What sectors (column groups) and sub-sectors (columns) should be on the report. View, Connect, Store, Sustain, ...
-        Tag sectorsTag = tagServiceHolder.getTagService().getTag(TechReportPunchCardModel.TAG_NAME_SECTORS);
+        Tag sectorsTag = tagServiceHolder.getTagService().getTag(TechReportPunchCardModel.EDGE_TAG_SECTORS);
         if (null == sectorsTag)
-            throw new WindupException("Tech report hierarchy definition tag, '"+TechReportPunchCardModel.TAG_NAME_SECTORS+"', not found.");
+            throw new WindupException("Tech report hierarchy definition tag, '"+TechReportPunchCardModel.EDGE_TAG_SECTORS +"', not found.");
 
         // For each sector / subsector
         for (Tag tag1 : sectorsTag.getContainedTags())
