@@ -1,8 +1,12 @@
 package org.jboss.windup.reporting.service;
 
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.logging.Logger;
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.config.tags.Tag;
 import org.jboss.windup.graph.GraphContext;
@@ -98,6 +102,54 @@ public class TagGraphService extends GraphService<TagModel>
                 continue; // Already visited.
             getDescendantTags(childTag, putResultsHere);
         }
+    }
+
+    /**
+     * @return true if the subTag is contained directly or indirectly in the superTag.
+     */
+    public boolean isTagUnderTagOrSame(TagModel subTag, TagModel superTag)
+    {
+        if (superTag == null)
+            throw new IllegalArgumentException("Super tag param was null. Sub tag: " + subTag);
+
+        if (subTag == null)
+            throw new IllegalArgumentException("Sub tag param was null. Super tag: " + superTag);
+
+        if (superTag.getName().equals(subTag.getName()))
+            return true;
+
+        Set<TagModel> walkedSet = new HashSet<>();
+
+        Set<TagModel> currentSet = new HashSet<>();
+        currentSet.add(subTag);
+
+        do
+        {
+            walkedSet.addAll(currentSet);
+
+            Set<TagModel> nextSet = new LinkedHashSet<>();
+            for (TagModel currentTag : currentSet)
+            {
+                for (TagModel parent : currentTag.getDesignatedByTags()) {
+                    if (superTag.equals(parent))
+                        return true;
+                    nextSet.add(parent);
+                }
+            }
+
+            // Prevent infinite loops - detect graph cycles.
+            Iterator<TagModel> it = walkedSet.iterator();
+            while (it.hasNext())
+            {
+                TagModel walkedTag = it.next();
+                if (nextSet.contains(walkedTag))
+                    nextSet.remove(walkedTag);
+            }
+
+            currentSet = nextSet;
+        }
+        while (!currentSet.isEmpty());
+        return false;
     }
 
 }

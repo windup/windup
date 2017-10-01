@@ -126,13 +126,23 @@
                                             <div class="icon">[icon]</div>
                                             <h4>${boxTag.titleOrName}</h4>
                                             <ul>
-                                                <#-- Get the individual techs under this sector and row. JSF, JSP, Servlet, ... etc.
-                                                <#assign techIdentAndCount = GetTechnologiesIdentifiedForSubSectorAndRow(boxTag, rowTag, reportModel.project) />
-                                                -->
+                                                <#--
                                                 <#list boxTag.designatedTags as techTag>
                                                     <#assign count = (stats.totalsPerTag[techTag.name])!0 />
                                                     <li class="stats tag-${techTag.name} count${count?switch(0, '0', 1, '1', 'Many')}">
                                                         ${techTag.titleOrName} <b>${count}</b>
+                                                    </li>
+                                                </#list>
+                                                -->
+                                                <#-- Get the individual techs under this sector and row. JSF, JSP, Servlet, ... etc.
+                                                -->
+                                                <#-- Set<TechnologyUsageStatisticsModel> -->
+                                                <#assign techUsageStats = getTechnologiesIdentifiedForSubSectorAndRow(boxTag, rowTag, reportModel.project) />
+                                                <#-- TODO: Get a map of box buckets with TechUsageStats and take data from there, rather than pulling through a function. -->
+                                                <#list techUsageStats as techUsageStat>
+                                                    <li class="stats count${techUsageStat.occurrenceCount?switch(0, '0', 1, '1', 'Many')}">
+                                                        ${techUsageStat.name}
+                                                        <b>${techUsageStat.occurrenceCount}</b>
                                                     </li>
                                                 </#list>
                                             </ul>
