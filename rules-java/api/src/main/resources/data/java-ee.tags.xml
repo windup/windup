@@ -58,6 +58,8 @@
            <tag name="apache-tuscany"/>
         </tag>
         <tag name="jta" title="Java Transaction API"/>
+        <tag name="jnlp" title="JNLP"/>
+        <tag name="applet" title="Applet"/>
     </tag><!-- java-ee -->
 
 
@@ -126,15 +128,15 @@
         <tag name="web" title="Web" prime="true">
             <tag name="seam" parents="framework:" title="Seam Framework"/>
             <tag name="seam-ui-control" parents="framework:"/>
-            <tag name="spring-mvc" parents="framework:, spring:"/>
-            <tag name="jsf" parents="framework:"/>
-            <tag name="jsp" parents="framework:"/>
-            <tag name="richfaces" parents="framework:"/>
-            <tag name="wicket" parents="framework:"/>
-            <tag name="struts" parents="framework:"/>
-            <tag name="play" parents="framework:"/>
-            <tag name="thymeleaf" parents="framework:"/>
-            <tag name="websocket" title="WebSocket"/>
+            <tag name="spring-mvc" parents="framework:, spring" title="Spring MVC"/>
+            <tag name="jsf"        parents="framework:" title="JSF"/>
+            <tag name="jsp"        parents="framework:" title="JSP"/>
+            <tag name="richfaces"  parents="framework:" title="RichFaces"/>
+            <tag name="wicket"     parents="framework:" title="Wicket"/>
+            <tag name="struts"     parents="framework:" title="Struts"/>
+            <tag name="play"       parents="framework:" title="Play"/>
+            <tag name="thymeleaf"  parents="framework:" title="Thymeleaf"/>
+            <tag name="websocket"  title="WebSocket"/>
         </tag>
         <tag name="web-app"/>
         <tag name="transactions"/>

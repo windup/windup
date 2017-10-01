@@ -12,7 +12,6 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
-import org.jboss.windup.config.tags.TagService;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ApplicationInputPathModel;
 import org.jboss.windup.graph.model.ApplicationProjectModel;
@@ -46,10 +45,19 @@ public class CreateTechReportPunchCardRuleProvider extends AbstractRuleProvider
     public static final Logger LOG = Logger.getLogger(CreateTechReportPunchCardRuleProvider.class.getName());
 
 
-    public static final String TEMPLATE_PATH = "/reports/templates/techReport-punchCard.ftl";
-    public static final String REPORT_DESCRIPTION =
+    public static final String TEMPLATE_PATH_PUNCH = "/reports/templates/techReport-punchCard.ftl";
+    public static final String REPORT_NAME_PUNCH = "Technologies";
+    public static final String REPORT_DESCRIPTION_PUNCH =
             "This report is a statistic of technologies occurences in the input applications."
             + " It shows how the technologies are distributed and is mostly useful when analysing many applications.";
+
+    public static final String TEMPLATE_PATH_BOXES = "/reports/templates/techReport-boxes.ftl";
+    private static final String REPORT_NAME_BOXES = "Technologies boxes";
+    public static final String REPORT_DESCRIPTION_BOXES =
+            "This report is a statistic of technologies occurences in the input applications."
+                    + " It is an overview of what techogies are found in given project or a set of projects.";
+
+
 
     @Inject private TagServiceHolder tagServiceHolder;
 
@@ -91,8 +99,6 @@ public class CreateTechReportPunchCardRuleProvider extends AbstractRuleProvider
 
     private class CreateTechReportPunchCardOperation extends GraphOperation
     {
-        private static final String REPORT_NAME = "Technologies";
-
         @Override
         public void perform(GraphRewrite event, EvaluationContext evCtx)
         {
@@ -102,29 +108,33 @@ public class CreateTechReportPunchCardRuleProvider extends AbstractRuleProvider
             listAllApplicationModels(grCtx);
 
             // Create the report model.
-            TechReportPunchCardModel report = createGlobalReport(grCtx);
+            TechReportPunchCardModel reportPunch = createTechReportPunchCard(grCtx);
+            TechReportPunchCardModel reportBoxes = createTechReportBoxes(grCtx);
 
-            // Add sectors to it.
-            GraphService<TagModel> service = new GraphService<>(grCtx, TagModel.class);
-            //TagModel sectorsTag = service.getUniqueByProperty(TagModel.PROP_NAME, TechReportPunchCardModel.EDGE_TAG_SECTORS.toLowerCase());
-            TagModel sectorsTag = new TagGraphService(event.getGraphContext()).getTagByName(TechReportPunchCardModel.EDGE_TAG_SECTORS);
-
+            // Add sectors and rows to them.
+            TagGraphService tagGraphService = new TagGraphService(grCtx);
+            TagModel sectorsTag = tagGraphService.getTagByName(TechReportPunchCardModel.EDGE_TAG_SECTORS);
+            TagModel rowsTag = tagGraphService.getTagByName(TechReportPunchCardModel.EDGE_TAG_ROWS);
             if (null == sectorsTag)
-                throw new WindupException("Tech sectors tag, '" + TechReportPunchCardModel.EDGE_TAG_SECTORS
-                        + "', not found. It defines the structure of the punchcard report.");
-            report.setSectorsHolderTag(sectorsTag);
+                throw new WindupException("Tech report sectors tag, '" + TechReportPunchCardModel.EDGE_TAG_SECTORS + "', not found.");
+            if (null == rowsTag)
+                throw new WindupException("Tech report rows tag, '" + TechReportPunchCardModel.EDGE_TAG_ROWS + "', not found.");
+            reportPunch.setSectorsHolderTag(sectorsTag);
+            reportBoxes.setSectorsHolderTag(sectorsTag);
+            reportBoxes.setRowsHolderTag(rowsTag);
 
             // Now let's fill it with data.
+            /* This is not used, it's computed by GetTechReportPunchCardStatsMethod.
             Map<Long, Map<String, Integer>> countsOfTagsInApps = computeProjectAndTagsMatrix(grCtx);
 
             // Find maximum number of occurences within the apps. Used for cirle size.
             Map<String, Integer> maximumsPerTech = computeMaxCountPerTag(countsOfTagsInApps);
-            report.setMaximumCounts(maximumsPerTech);
-
+            reportPunch.setMaximumCounts(maximumsPerTech);
+            */
 
             // TODO: Maybe it would be better to query like this?
             // For each application,
-            for (FileModel inputPath : WindupConfigurationService.getConfigurationModel(event.getGraphContext()).getInputPaths())
+            for (FileModel inputPath : WindupConfigurationService.getConfigurationModel(grCtx).getInputPaths())
             {
                 List types = (List)inputPath.asVertex().getProperty(WindupVertexFrame.TYPE_PROP);
                 LOG.info("InputPath type:" + types.toString());
@@ -144,27 +154,41 @@ public class CreateTechReportPunchCardRuleProvider extends AbstractRuleProvider
             return maxCountPerTag;
         }
 
-        private TechReportPunchCardModel createGlobalReport(GraphContext context)
+        private TechReportPunchCardModel createTechReportPunchCard(GraphContext grCtx){
+            TechReportPunchCardModel report = createTechReportBase(grCtx, "punch");
+            report.setReportName(REPORT_NAME_PUNCH);
+            report.setTemplatePath(TEMPLATE_PATH_PUNCH);
+            report.setDescription(REPORT_DESCRIPTION_PUNCH);
+            report.setReportIconClass("glyphicon glyphicon-tags");
+
+            return report;
+        }
+        private TechReportPunchCardModel createTechReportBoxes(GraphContext grCtx){
+            TechReportPunchCardModel report = createTechReportBase(grCtx, "boxes");
+            report.setReportName(REPORT_NAME_BOXES);
+            report.setTemplatePath(TEMPLATE_PATH_BOXES);
+            report.setDescription(REPORT_DESCRIPTION_BOXES);
+            report.setReportIconClass("glyphicon glyphicon-tags");
+
+            return report;
+        }
+        private TechReportPunchCardModel createTechReportBase(GraphContext grCtx, String reportIdentifier)
         {
-            ReportService reportService = new ReportService(context);
-            ApplicationReportService applicationReportService = new ApplicationReportService(context);
+            ApplicationReportService applicationReportService = new ApplicationReportService(grCtx);
             ApplicationReportModel report = applicationReportService.create();
-            report.setReportName(REPORT_NAME);
-            report.setTemplatePath(TEMPLATE_PATH);
             report.setTemplateType(TemplateType.FREEMARKER);
-            reportService.setUniqueFilename(report, "techReport-punchCard", "html");
             report.setDisplayInApplicationReportIndex(true);
             report.setDisplayInGlobalApplicationIndex(true);
             report.setReportPriority(101);
-            report.setReportIconClass("glyphicon glyphicon-tags");
-            report.setDescription(REPORT_DESCRIPTION);
 
-            TechReportPunchCardModel punchcard = new GraphService<>(context, TechReportPunchCardModel.class).addTypeToModel(report);
-            return punchcard;
+            ReportService reportService = new ReportService(grCtx);
+            reportService.setUniqueFilename(report, "techReport-" + reportIdentifier, "html");
+
+            TechReportPunchCardModel techReport = new GraphService<>(grCtx, TechReportPunchCardModel.class).addTypeToModel(report);
+            return techReport;
         }
-
-
     }
+
 
     /*
         Needs TagService, which I don't know how to get from a Freemarker method.
@@ -266,7 +290,7 @@ public class CreateTechReportPunchCardRuleProvider extends AbstractRuleProvider
      * TODO This is inconvenient as the template needs things grouped by app, not by technology...
      * FIXME Due to the mismatch between how the TechUsageStats was expected to work and how it works, this approach is not possible - doesn't cover the subtags.
      */
-    public static Map<ProjectModel, Integer> getTagCountForAllApps_nonDeep(GraphContext grCtx, String subSectorTagName) {
+    private static Map<ProjectModel, Integer> getTagCountForAllApps_nonDeep(GraphContext grCtx, String subSectorTagName) {
         final GraphService<TechnologyUsageStatisticsModel> techUsageService = new GraphService<>(grCtx, TechnologyUsageStatisticsModel.class);
         Iterable<TechnologyUsageStatisticsModel> usageStats = techUsageService.findAllByProperty(TechnologyUsageStatisticsModel.NAME, subSectorTagName);
 
@@ -282,10 +306,16 @@ public class CreateTechReportPunchCardRuleProvider extends AbstractRuleProvider
         return tagsInProject;
     }
 
+
+
+
+
+
+
     /**
      * Debug purposes.
      */
-    public static void listAllTechUsageStats(GraphContext grCtx) {
+    private static void listAllTechUsageStats(GraphContext grCtx) {
         Iterable<TechnologyUsageStatisticsModel> usageStats = grCtx.findAll(TechnologyUsageStatisticsModel.class);
         for (TechnologyUsageStatisticsModel stat : usageStats)
         {
@@ -296,7 +326,7 @@ public class CreateTechReportPunchCardRuleProvider extends AbstractRuleProvider
         }
     }
 
-    private void listAllApplicationModels(GraphContext grCtx)
+    private static void listAllApplicationModels(GraphContext grCtx)
     {
         for (ProjectModel app : getAllApplications(grCtx))
             LOG.info("App from getAllApplications(): " + app);

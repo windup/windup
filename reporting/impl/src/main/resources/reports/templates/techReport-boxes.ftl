@@ -105,18 +105,18 @@
 
                 <table class="technologiesBoxCard">
                     <tr class="sectorsHeaders">
-                        <#list sectorTags as sector>
-                            <td class="sector${sector.title}"><div>${sector.title}</div></td>
+                        <#list sectorTags as sectorTag>
+                            <td class="sector${sectorTag.title}"><div>${sectorTag.title}</div></td>
                         <#else>
                             <td>No technology sectors defined.</td>
                         </#list>
                     </tr>
 
                     <!-- For each gray row group... -->
-                    <#assign rowGroupTags = reportModel.rowGroupsHolderTag.designatedTags />
-                    <#list rowGroupTags as rowGroupTag> <#-- currently Java EE / Embedded -->
-                        <tr class="partitionHeader partition${rowGroupTag.title}">
-                            <td class="heading" colspan="${sectorTags?size}"><div>${rowGroupTag.title}</div></td>
+                    <#assign rowTags = reportModel.rowsHolderTag.designatedTags />
+                    <#list rowTags as rowTag> <#-- currently Java EE / Embedded -->
+                        <tr class="partitionHeader partition${rowTag.title}">
+                            <td class="heading" colspan="${sectorTags?size}"><div>${rowTag.title}</div></td>
                         </tr>
                         <tr class="partitionSectors">
                             <#list sectorTags as sectorTag>
@@ -124,13 +124,15 @@
                                     <#list sectorTag.designatedTags as boxTag>
                                         <div class="box box-${boxTag.name}">
                                             <div class="icon">[icon]</div>
-                                            <h4>${boxTag.title}</h4>
+                                            <h4>${boxTag.titleOrName}</h4>
                                             <ul>
-                                                <#-- JSF, JSP, Servlet, ... -->
+                                                <#-- Get the individual techs under this sector and row. JSF, JSP, Servlet, ... etc.
+                                                <#assign techIdentAndCount = GetTechnologiesIdentifiedForSubSectorAndRow(boxTag, rowTag, reportModel.project) />
+                                                -->
                                                 <#list boxTag.designatedTags as techTag>
                                                     <#assign count = (stats.totalsPerTag[techTag.name])!0 />
                                                     <li class="stats tag-${techTag.name} count${count?switch(0, '0', 1, '1', 'Many')}">
-                                                        ${techTag.title} <b>${count}</b>
+                                                        ${techTag.titleOrName} <b>${count}</b>
                                                     </li>
                                                 </#list>
                                             </ul>

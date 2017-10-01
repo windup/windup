@@ -4,10 +4,10 @@
 
     <!-- These define the vertical groups? -->
     <tag name="techReport-rows:" pseudo="true">
-        <tag name="techSector:java-ee" title="Java EE"  pseudo="true">
+        <tag name="techRow:java-ee" title="Java EE"  pseudo="true">
             <tag ref="techSector:web"/>
         </tag>
-        <tag name="techSector:embedded" title="Embedded"  pseudo="true">
+        <tag name="techRow:embedded" title="Embedded"  pseudo="true">
             <tag ref="techBox:mvc"/>
             <tag ref="techBox:markup"/>
 
@@ -27,12 +27,26 @@
         <tag name="techSector01:View" title="View" color="#1155CC" pseudo="true">
             <!-- If the tech span exactly matches an existing tag (title, contained tags, ...), then use that.
                  If not, define a techSector:... tag, and include whichever tags it should contain. -->
-            <tag name="techSector:Web" title="Web" pseudo="true">
+            <tag name="techSector:web" title="Web" pseudo="true" parents="techRow:java-ee">
                 <tag ref="web"/>
             </tag>
-            <tag name="techSector:Rich" title="Rich" pseudo="true">
-                <tag ref="rich-clients"/>
+            <tag name="techSector:rich" title="Rich" pseudo="true" parents="techRow:java-ee">
+                <tag ref="applet"/>
+                <tag ref="jnlp"/>
             </tag>
+            <tag name="techSector:mvc" title="MVC" pseudo="true" parents="techRow:embedded">
+                <tag ref="applet"/>
+                <tag ref="spring-mvc"/>
+                <tag ref="struts"/>
+                <tag ref="wicket"/>
+                <tag ref="gwt"/>
+            </tag>
+            <tag name="techSector:mvc" title="Markup" pseudo="true" parents="techRow:embedded">
+                <tag ref="html"/>
+                <tag ref="css"/>
+                <tag ref="javascript"/>
+            </tag>
+
         </tag>
         <tag name="techSector02:Connect" title="Connect" color="#38761D" pseudo="true">
             <tag name="techSector:Messaging" title="Messaging" pseudo="true">

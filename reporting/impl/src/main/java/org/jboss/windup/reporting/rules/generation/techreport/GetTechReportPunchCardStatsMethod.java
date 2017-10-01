@@ -85,7 +85,6 @@ public class GetTechReportPunchCardStatsMethod implements WindupFreeMarkerMethod
         if (arguments.size() >= 1) {
             StringModel projectArg = (StringModel) arguments.get(0);
             projectModel = (ProjectModel) projectArg.getWrappedObject();
-            throw new TemplateModelException("Project");
         }
 
         MatrixAndAggregated result = computeProjectAndTagsMatrix(this.graphContext, projectModel);

@@ -32,7 +32,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  *
  * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
  */
-@RuleMetadata(phase = ReportGenerationPhase.class, after = CreateTechReportPunchCardRuleProvider.class)
+@RuleMetadata(phase = ReportGenerationPhase.class, after = CreateTechReportPunchCardRuleProvider.class, disabled = true)
 public class CreateTechReportBoxesRuleProvider extends AbstractRuleProvider
 {
     public static final Logger LOG = Logger.getLogger(CreateTechReportBoxesRuleProvider.class.getName());
