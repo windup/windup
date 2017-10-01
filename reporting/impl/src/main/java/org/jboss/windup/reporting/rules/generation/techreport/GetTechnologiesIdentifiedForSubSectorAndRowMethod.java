@@ -97,7 +97,7 @@ public class GetTechnologiesIdentifiedForSubSectorAndRowMethod implements Windup
                 // Only given project.
                 .filter(stat -> project == null || stat.getProjectModel() != null && stat.getProjectModel() == project)
                 // Only those under both row and box tags.
-                .filter(stat -> anyTagsUnderAllTags(tagService, stat.getTags(), Arrays.asList(new TagModel[]{boxTag, rowTag})))
+                .filter(stat -> anyTagsUnderAllTags(tagService, stat.getTags(), Arrays.asList(boxTag, rowTag)))
                 .collect(Collectors.toSet());
         return forGivenBoxAndRow;
     }
@@ -110,9 +110,18 @@ public class GetTechnologiesIdentifiedForSubSectorAndRowMethod implements Windup
         nextChild:
         for (String childTagName : childTagNames) {
             final TagModel childTag = tagService.getTagByName(childTagName);
+            if (null == childTag)
+            {
+                LOG.warning("Undefined tag used in indentified technology tags, will not fit into any tech report box: " + childTagName);
+                continue;
+            }
+
             for (TagModel maybeParentTag : maybeParentTags)
+            {
+                LOG.info(String.format("Trying, subTag: name %s -> %s, maybeParent: %s", childTagName, childTag, maybeParentTag) );
                 if (!tagService.isTagUnderTagOrSame(childTag, maybeParentTag))
                     continue nextChild;
+            }
             return true;
         }
         return false;
