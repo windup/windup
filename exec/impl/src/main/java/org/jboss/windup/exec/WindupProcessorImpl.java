@@ -1,56 +1,33 @@
 package org.jboss.windup.exec;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
-
 import javax.inject.Inject;
-
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.forge.furnace.util.Predicate;
-import org.jboss.windup.exec.rulefilters.NotPredicate;
-import org.jboss.windup.config.DefaultEvaluationContext;
-import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.KeepWorkDirsOption;
-import org.jboss.windup.config.PreRulesetEvaluation;
-import org.jboss.windup.config.RuleLifecycleListener;
-import org.jboss.windup.config.RuleProvider;
-import org.jboss.windup.config.RuleSubset;
-import org.jboss.windup.config.SkipReportsRenderingOption;
+import org.jboss.windup.config.*;
 import org.jboss.windup.config.loader.RuleLoader;
 import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleProviderRegistry;
 import org.jboss.windup.config.metadata.TechnologyReference;
 import org.jboss.windup.config.metadata.TechnologyReferenceTransformer;
-import org.jboss.windup.config.phase.PostReportGenerationPhase;
-import org.jboss.windup.config.phase.PostReportRenderingPhase;
-import org.jboss.windup.config.phase.PreReportGenerationPhase;
-import org.jboss.windup.config.phase.ReportGenerationPhase;
-import org.jboss.windup.config.phase.ReportRenderingPhase;
+import org.jboss.windup.config.phase.*;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.exec.configuration.options.ExcludeTagsOption;
 import org.jboss.windup.exec.configuration.options.IncludeTagsOption;
 import org.jboss.windup.exec.configuration.options.SourceOption;
 import org.jboss.windup.exec.configuration.options.TargetOption;
-import org.jboss.windup.exec.rulefilters.AndPredicate;
-import org.jboss.windup.exec.rulefilters.RuleProviderPhasePredicate;
-import org.jboss.windup.exec.rulefilters.SourceAndTargetPredicate;
-import org.jboss.windup.exec.rulefilters.TaggedRuleProviderPredicate;
+import org.jboss.windup.exec.rulefilters.*;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ApplicationInputPathModel;
 import org.jboss.windup.graph.model.TechnologyReferenceModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
-import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
@@ -195,7 +172,7 @@ public class WindupProcessorImpl implements WindupProcessor
 
             long endTime = System.currentTimeMillis();
             long seconds = (endTime - startTime) / 1000L;
-            LOG.info(Util.WINDUP_BRAND_NAME_ACRONYM+" execution took " + seconds + " seconds to execute on input: " + configuration.getInputPaths() + "!");
+            LOG.info(Util.WINDUP_BRAND_NAME_ACRONYM+" execution took " + seconds + " seconds to execute on input: " + Util.NL + formatItemPerLine(configuration.getInputPaths()));
 
             ExecutionStatistics.get().reset();
         }
@@ -376,8 +353,29 @@ public class WindupProcessorImpl implements WindupProcessor
 
         for (Map.Entry<String, Object> entrySet : windupConfiguration.getOptionMap().entrySet())
         {
-            LOG.info("\t" + entrySet.getKey() + ": " + entrySet.getValue());
+            String valueString = formatOptionValue(entrySet.getValue());
+            LOG.info("\t" + entrySet.getKey() + ": " + valueString);
         }
+    }
+
+
+
+    private String formatOptionValue(Object value)
+    {
+        String valueString;
+        if (value instanceof Iterable)
+            valueString = Util.NL + formatItemPerLine((Iterable) value);
+        else
+            valueString = "" + value;
+        return valueString;
+    }
+
+    private String formatItemPerLine(Iterable items)
+    {
+        StringBuilder sb = new StringBuilder();
+        for (Object item : items)
+            sb.append("\t" + item + Util.NL);
+        return sb.toString();
     }
 
 }
