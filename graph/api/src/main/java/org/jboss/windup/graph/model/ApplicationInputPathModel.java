@@ -10,7 +10,7 @@ public interface ApplicationInputPathModel extends FileModel
     String TYPE = "ApplicationInputPathModel";
 
     @Property("size")
-    long getFileSize();
+    Long getFileSize();
 
     @Property("size")
     ApplicationInputPathModel setFileSize(long size);
