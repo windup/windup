@@ -18,6 +18,7 @@ import org.jboss.windup.graph.model.ApplicationProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.graph.service.ProjectService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.model.*;
 import org.jboss.windup.reporting.service.ApplicationReportService;
@@ -87,8 +88,10 @@ public class CreateTechReportPunchCardRuleProvider extends AbstractRuleProvider
             .perform(new GraphOperation() {
                 @Override
                 public void perform(GraphRewrite event, EvaluationContext context) {
-                    event.getGraphContext().service(ApplicationInputPathModel.class).findAll()
-                        .forEach(path -> GraphService.addTypeToModel(event.getGraphContext(), path.getProjectModel(), ApplicationProjectModel.class));
+                    //event.getGraphContext().service(ApplicationInputPathModel.class).findAll()
+                        //.forEach(path -> GraphService.addTypeToModel(event.getGraphContext(), path.getProjectModel(), ApplicationProjectModel.class));
+                    new ProjectService(event.getGraphContext()).getRootProjectModels()
+                            .forEach(path -> GraphService.addTypeToModel(event.getGraphContext(), path, ApplicationProjectModel.class));
                 }
             })
 
