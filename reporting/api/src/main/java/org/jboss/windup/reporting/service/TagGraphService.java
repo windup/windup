@@ -109,6 +109,11 @@ public class TagGraphService extends GraphService<TagModel>
      */
     public boolean isTagUnderTagOrSame(TagModel subTag, TagModel superTag)
     {
+        return isTagUnderTag(subTag, superTag, true);
+    }
+
+    public boolean isTagUnderTag(TagModel subTag, TagModel superTag, boolean countIfSame)
+    {
         if (superTag == null)
             throw new IllegalArgumentException("Super tag param was null. Sub tag: " + subTag);
 
@@ -151,5 +156,4 @@ public class TagGraphService extends GraphService<TagModel>
         while (!currentSet.isEmpty());
         return false;
     }
-
 }
