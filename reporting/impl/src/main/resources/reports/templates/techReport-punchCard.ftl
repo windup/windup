@@ -159,7 +159,7 @@
                         </#list>
                         <td class="sectorStats sizeMB">
                             <#-- ${ (app.rootFileModel.retrieveSize() / 1024 / 1024)! } -->
-                            ${ ( (appProject.rootFileModel.fileSize / 1024 / 1024)?string["0.##"] )! }
+                            ${ ( (appProject.rootFileModel.retrieveSize() / 1024 / 1024)?string["0.##"] )! }
                         </td>
                         <td class="sectorStats libsCount">
                             ${ (appProject.getApplications()?size)! }
