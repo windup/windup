@@ -164,6 +164,19 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <excludes>
+                        <exclude>${testExcludeString}</exclude>
+                    </excludes>
+                    <!-- http://maven.apache.org/surefire/maven-surefire-plugin/faq.html#late-property-evaluation -->
+                    <argLine>-Xms512m -Xmx2048m -XX:MaxMetaspaceSize=768m -XX:ReservedCodeCacheSize=128m</argLine>
+                    <reuseForks>false</reuseForks>
+                    <forkCount>1</forkCount>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
