@@ -4,8 +4,8 @@
 
     <!-- These define the vertical groups? -->
     <tag name="techReport-rows:" pseudo="true">
-        <tag name="techRow:java-ee" title="Java EE"  pseudo="true">
-            <tag ref="techSector:web"/>
+        <tag name="techRow:java-ee" title="Java EE"  pseudo="true" icon="">
+            <tag ref="techBox:web"/>
         </tag>
         <tag name="techRow:embedded" title="Embedded"  pseudo="true">
             <tag ref="techBox:mvc"/>
@@ -26,67 +26,81 @@
     <tag name="techReport-sectors:" pseudo="true">
         <tag name="techSector01:View" title="View" color="#1155CC" pseudo="true">
             <!-- If the tech span exactly matches an existing tag (title, contained tags, ...), then use that.
-                 If not, define a techSector:... tag, and include whichever tags it should contain. -->
-            <tag name="techSector:web" title="Web" pseudo="true" parents="techRow:java-ee">
+                 If not, define a techBox:... tag, and include whichever tags it should contain. -->
+            <tag name="techBox:web" title="Web" pseudo="true" parents="techRow:java-ee">
                 <tag ref="web"/>
             </tag>
-            <tag name="techSector:rich" title="Rich" pseudo="true" parents="techRow:java-ee">
+            <tag name="techBox:rich" title="Rich" pseudo="true" parents="techRow:java-ee">
                 <tag ref="applet"/>
                 <tag ref="jnlp"/>
             </tag>
-            <tag name="techSector:mvc" title="MVC" pseudo="true" parents="techRow:embedded">
+            <tag name="techBox:mvc" title="MVC" pseudo="true" parents="techRow:embedded">
                 <tag ref="applet"/>
                 <tag ref="spring-mvc"/>
                 <tag ref="struts"/>
                 <tag ref="wicket"/>
                 <tag ref="gwt"/>
             </tag>
-            <tag name="techSector:mvc" title="Markup" pseudo="true" parents="techRow:embedded">
+            <tag name="techBox:mvc" title="Markup" pseudo="true" parents="techRow:embedded">
                 <tag ref="html"/>
                 <tag ref="css"/>
                 <tag ref="javascript"/>
             </tag>
-
         </tag>
         <tag name="techSector02:Connect" title="Connect" color="#38761D" pseudo="true">
-            <tag name="techSector:Messaging" title="Messaging" pseudo="true">
+            <tag name="techBox:messaging" title="Messaging" pseudo="true" parents="techRow:java-ee">
                 <tag ref="jms"/>
             </tag>
-            <tag name="techSector:ejb" title="EJB" pseudo="true">
+            <tag name="techBox:ejb" title="EJB" pseudo="true" parents="techRow:java-ee">
                 <tag ref="ejb"/>
             </tag>
-            <tag name="techSector:ws-rest" title="WS / REST" pseudo="true">
+            <tag name="techBox:ws-rest" title="WS / REST" pseudo="true" parents="techRow:java-ee">
                 <tag ref="webservices"/>
                 <tag ref="rest"/>
             </tag>
-            <tag name="techSector:jms-mdb" title="JMS / MDB" pseudo="true">
-                <tag ref="jms"/>
+            <tag name="techBox:java-ee-other" title="Other" pseudo="true" parents="techRow:java-ee">
+                <tag ref="jca"/>
+                <tag ref="jni"/>
+                <tag ref="mail"/>
+                <tag ref="rmi"/>
             </tag>
-            <tag ref="jni"/>
         </tag>
         <tag name="techSector03:Store" title="Store" color="#F4B400" pseudo="true">
             <!-- These can be used directly, as it matches an existing tag and the title is okay too. -->
-            <tag ref="orm"/>
-            <tag ref="ogm"/>
-            <tag ref="jdbc"/>
-            <tag ref="cache"/>
-            <!--
-            <tag name="techSector:ORM" title="ORM" pseudo="true"/>
-            <tag name="techSector:OGM" title="OGM" pseudo="true"/>
-            <tag name="techSector:JDBC" title="JDBC" pseudo="true"/>
-            <tag name="techSector:Cache" title="Cache" pseudo="true"/>
-            -->
+            <tag name="techBox:orm" title="ORM" pseudo="true">
+                <tag ref="orm"/>
+            </tag>
+            <tag name="techBox:ogm" title="OGM" pseudo="true">
+                <tag ref="ogm"/>
+            </tag>
+            <tag name="techBox:jdbc" title="JDBC" pseudo="true">
+                <tag ref="jdbc"/>
+            </tag>
+            <tag name="techBox:cache" title="Cache" pseudo="true">
+                <tag ref="cache"/>
+            </tag>
         </tag>
         <tag name="techSector04:Sustain" title="Sustain" color="#DB4437" pseudo="true">
-            <tag name="techSector:Transactions" title="Transactions" pseudo="true"/>
-            <tag name="techSector:Clustering" title="Clustering" pseudo="true"/>
-            <tag name="techSector:Security" title="Security" pseudo="true"/>
-            <tag name="techSector:Logging" title="Logging" pseudo="true"/>
-            <tag name="techSector:Test" title="Test" pseudo="true"/>
+            <tag name="techBox:Transactions" title="Transactions" pseudo="true" parents="techRow:java-ee">
+
+            </tag>
+            <tag name="techBox:Clustering" title="Clustering" pseudo="true" parents="techRow:java-ee">
+
+            </tag>
+            <tag name="techBox:Security" title="Security" pseudo="true" parents="techRow:java-ee, techRow:embedded">
+
+            </tag>
+            <tag name="techBox:Logging" title="Logging" pseudo="true" parents="techRow:embedded">
+
+            </tag>
+            <tag name="techBox:Test" title="Test" pseudo="true" parents="techRow:techRow:embedded">
+
+            </tag>
         </tag>
         <tag name="techSector05:Execute" title="Execute" color="#674EA7" pseudo="true">
-            <tag name="techSector:ioc" title="IoC" pseudo="true"/>
-            <tag name="techSector:3rd-party" title="3rd party" pseudo="true"/>
+            <tag name="techBox:processing" title="Processing" pseudo="true"/>
+            <tag name="techBox:ioc" title="IoC" pseudo="true"/>
+            <tag name="techBox:3rd-party" title="3rd party" pseudo="true"/>
         </tag>
     </tag>
 </tags>
