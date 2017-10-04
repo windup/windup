@@ -27,15 +27,15 @@ import org.jboss.windup.util.exception.WindupException;
  *          subsector: TagModel,
  *          row: TagModel,
  *          projectToCount: ProjectModel
- *      ): List<{@link org.jboss.windup.reporting.model.TechnologyUsageStatisticsModel}
+ *      ): List<{@link TechnologyUsageStatisticsModel}
  * </pre>
  *
  * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
  */
-public class GetTechnologiesIdentifiedForSubSectorAndRowMethod implements WindupFreeMarkerMethod
+public class SortTechUsageStatsMethod implements WindupFreeMarkerMethod
 {
-    public static final Logger LOG = Logger.getLogger(GetTechnologiesIdentifiedForSubSectorAndRowMethod.class.getName());
-    private static final String NAME = "getTechnologiesIdentifiedForSubSectorAndRow";
+    public static final Logger LOG = Logger.getLogger(SortTechUsageStatsMethod.class.getName());
+    private static final String NAME = "sortTechUsageStats";
 
     private GraphContext graphContext;
     private TagGraphService tagService;
@@ -56,7 +56,7 @@ public class GetTechnologiesIdentifiedForSubSectorAndRowMethod implements Windup
     @Override
     public String getDescription()
     {
-        return "";
+        return "Sorts out the TechnologyUsageStatisticsModel-s into columns/boxes and rows defined by techReport-hierarchy.xml as per the tags and labels in the <technology-identified> operations.";
     }
 
     @Override
@@ -65,26 +65,20 @@ public class GetTechnologiesIdentifiedForSubSectorAndRowMethod implements Windup
         ExecutionStatistics.get().begin(NAME);
 
         // Function arguments
-        if (arguments.size() < 2) {
-            throw new TemplateModelException("Expected 2 or 3 arguments - a subsector tag, a row tag and optionally, a project.");
+        if (arguments.size() > 1) {
+            throw new TemplateModelException("Expected 0 or 1 argument - project.");
         }
-
-        StringModel boxArg = (StringModel) arguments.get(0);
-        TagModel boxTag = (TagModel) boxArg.getWrappedObject();
-
-        StringModel rowArg = (StringModel) arguments.get(1);
-        TagModel rowTag = (TagModel) rowArg.getWrappedObject();
 
         // The project. May be null -> count from all applications.
         ProjectModel projectModel = null;
-        if (arguments.size() >= 3)
+        if (arguments.size() > 0)
         {
             StringModel projectArg = (StringModel) arguments.get(2);
             if (null != projectArg)
                 projectModel = (ProjectModel) projectArg.getWrappedObject();
         }
 
-        Map<String, TechUsageStatSum> techStats = getTechStats(boxTag, rowTag, projectModel);
+        Map<String, TechUsageStatSum> techStats = null;
 
         ExecutionStatistics.get().end(NAME);
         return techStats;

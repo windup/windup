@@ -40,19 +40,19 @@
         /* Sector headers */
         tr.sectorsHeaders { font-size: 22pt; font-weight: bold; }
         tr.sectorsHeaders > td { text-align: center; padding: 2ex 20pt; } /* Around the box */
-        tr.partitionSectors > td { padding: 2ex 2em; }
+        tr.rowSectors > td { padding: 2ex 2em; }
         tr.sectorsHeaders > td div { text-align: center; padding: 1ex 2em; }
 
         /* Partitions = gray areas */
-        tr.partitionHeader { font-size: 22pt; font-weight: bold; }
-        tr.partitionHeader > td > div { background-color: #D9D9D9; padding: 1ex 20pt 0; margin-top: 18pt; }
-        /*tr.partitionHeader td,*/
-        tr.partitionSectors > td { background-color: #D9D9D9; padding: 1ex 2em; vertical-align: top; }
-        tr.partitionSectors > td  > div { padding: 1ex 20pt; margin-bottom: 10pt; }
-        tr.partitionSectors > td  > div > h4 { font-size: 14pt; font-weight: bold; }
+        tr.rowHeader { font-size: 22pt; font-weight: bold; }
+        tr.rowHeader > td > div { background-color: #D9D9D9; padding: 1ex 20pt 0; margin-top: 18pt; }
+        /*tr.rowHeader td,*/
+        tr.rowSectors > td { background-color: #D9D9D9; padding: 1ex 2em; vertical-align: top; }
+        tr.rowSectors > td  > div { padding: 1ex 20pt; margin-bottom: 10pt; }
+        tr.rowSectors > td  > div > h4 { font-size: 14pt; font-weight: bold; }
 
-        tr.partitionSectors h4  { font-size: 18pt; font-weight: bold; }
-        tr.partitionSectors ul li  { font-size: 12pt; }
+        tr.rowSectors h4  { font-size: 18pt; font-weight: bold; }
+        tr.rowSectors ul li  { font-size: 12pt; }
     </style>
 </head>
 
@@ -115,14 +115,15 @@
                     <!-- For each gray row group... -->
                     <#assign rowTags = reportModel.rowsHolderTag.designatedTags />
                     <#list rowTags as rowTag> <#-- currently Java EE / Embedded -->
-                        <tr class="partitionHeader partition${rowTag.title}">
+                        <tr class="rowHeader row-${rowTag.name}">
                             <td class="heading" colspan="${sectorTags?size}"><div>${rowTag.title}</div></td>
                         </tr>
-                        <tr class="partitionSectors">
+                        <tr class="rowSectors">
                             <#list sectorTags as sectorTag>
                                 <td class="sector${sectorTag.title}">
                                     <#list sectorTag.designatedTags as boxTag>
-                                        <div class="box box-${boxTag.name}">
+                                        <#if isTagUnderTag(boxTag, rowTag)>
+                                        <div class="box box-${boxTag.name} #box${boxTag.asVertex().id}">
                                             <div class="icon">[icon]</div>
                                             <h4>${boxTag.titleOrName}</h4>
                                             <ul>
@@ -137,16 +138,19 @@
                                                 <#-- Get the individual techs under this sector and row. JSF, JSP, Servlet, ... etc.
                                                 -->
                                                 <#-- Set<TechnologyUsageStatisticsModel> -->
+                                                <#-- Map<String, TechUsageStatSum> -->
                                                 <#assign techUsageStats = getTechnologiesIdentifiedForSubSectorAndRow(boxTag, rowTag, reportModel.project) />
                                                 <#-- TODO: Get a map of box buckets with TechUsageStats and take data from there, rather than pulling through a function. -->
-                                                <#list techUsageStats as techUsageStat>
-                                                    <li class="stats count${techUsageStat.occurrenceCount?switch(0, '0', 1, '1', 'Many')}">
-                                                        ${techUsageStat.name}
-                                                        <b>${techUsageStat.occurrenceCount}</b>
+                                                <#list techUsageStats as name, techUsageStatSum>
+                                                    <li class="stats count${techUsageStatSum.occurrenceCount!0?switch(0, '0', 1, '1', 'Many')}">
+                                                        ${techUsageStatSum.name}
+                                                        <b>${techUsageStatSum.occurrenceCount!}</b>
                                                     </li>
                                                 </#list>
                                             </ul>
+                                            <script></script>
                                         </div>
+                                        </#if>
                                     </#list>
                                 </td>
                             </#list>
@@ -158,288 +162,6 @@
             </div>
         </div>
     </div>
-
-
-
-    <!-- ================= Mockup ==================== -->
-
-    <table class="technologiesBoxCard">
-        <tr class="sectorsHeaders">
-            <td class="sectorView"><div>View</div></td>
-            <td class="sectorConnect"><div>Connect</div></td>
-            <td class="sectorStore"><div>Store</div></td>
-            <td class="sectorSustain"><div>Sustain</div></td>
-            <td class="sectorExecute"><div>Execute</div></td>
-        </tr>
-
-        <!-- Gray area -->
-        <tr class="partitionHeader partitionJavaEE">
-            <td class="heading" colspan="5"><div>Java EE</div></td>
-        </tr>
-        <tr class="partitionSectors">
-            <td class="sectorView">
-                <div>
-                    <div class="icon"></div>
-                    <h4>Web</h4>
-                    <ul>
-                        <li>JSF</li>
-                        <li>JSP</li>
-                        <li>Servlet</li>
-                        <li>web.xml</li>
-                        <li>WebSocket</li>
-                    </ul>
-                </div>
-                <div>
-                    <div class="icon"></div>
-                    <h4>Rich</h4>
-                    <ul>
-                        <li>applet</li>
-                        <li>JNLP</li>
-                    </ul>
-                </div>
-            </td>
-            <td class="sectorConnect">
-                <div>
-                    <div class="icon"></div>
-                    <h4>Messaging</h4>
-                    <ul>
-                        <li>JMS queue <b>6</b></li>
-                        <li>JMS topic <b>0</b></li>
-                        <li>JMS con. factory <b>2</b></li>
-                    </ul>
-                </div>
-                <div>
-                    <div class="icon"></div>
-                    <h4>Bean</h4>
-                    <ul>
-                        <li>Stateless (SLSB) <b>23</b></li>
-                        <li>Stateful (SFSB)  <b>2</b></li>
-                        <li>Message (MDB)    <b>0</b></li>
-                        <li>Managed Bean     <b>0</b></li>
-                    </ul>
-                </div>
-                <div>
-                    <div class="icon"></div>
-                    <h4>HTTP</h4>
-                    <ul>
-                        <li></li>
-                    </ul>
-                </div>
-                <div>
-                    <div class="icon"></div>
-                    <h4>Other</h4>
-                    <div>
-                        <ul>
-                            <li></li>
-                        </ul>
-                    </div>
-                </div>
-            </td>
-            <td class="sectorStore">
-                <div>
-                    <div class="icon"></div>
-                    <h4> Database</h4>
-                    <ul>
-                        <li>JDBC datasource   5</li>
-                        <li>JDBC XA datasource   0</li>
-                    </ul>
-                </div>
-                <div>
-                    <div class="icon"></div>
-                    <h4>Persistence</h4>
-                    <ul>
-                        <li>Persistence units      3</li>
-                        <li>JPA entities   54</li>
-                        <li>JPA named queries      9</li>
-                    </ul>
-                </div>
-            </td>
-            <td class="sectorSustain">
-                <div>
-                    <div class="icon"></div>
-                    <h4>Transactions</h4>
-                    <div>
-                        <ul>
-                            <li></li>
-                        </ul>
-                    </div>
-                </div>
-                <div>
-                    <div class="icon"></div>
-                    <h4>Clustering</h4>
-                    <ul>
-                        <li></li>
-                    </ul>
-                </div>
-                <div>
-                    <div class="icon"></div>
-                    <h4>Security</h4>
-                    <ul>
-                        <li></li>
-                    </ul>
-                </div>
-                <div>
-                    <div class="icon"></div>
-                    <h4>Logging</h4>
-                    <ul>
-                        <li></li>
-                    </ul>
-                </div>
-                <div>
-                    <div class="icon"></div>
-                    <h4>Test</h4>
-                    <ul>
-                        <li></li>
-                    </ul>
-                </div>
-            </td>
-            <td class="sectorExecute">
-                <div>
-                    <div class="icon"></div>
-                    <h4>IoC</h4>
-                    <ul>
-                        <li></li>
-                    </ul>
-                </div>
-                <div>
-                    <div class="icon"></div>
-                    <h4>3rd party</h4>
-                    <ul>
-                        <li></li>
-                    </ul>
-                </div>
-            </td>
-        </tr>
-
-        <!-- ================== -->
-        <tr class="partitionHeader partitionEmbedded">
-            <td class="heading" colspan="5"><div>Embedded</div></td>
-        </tr>
-
-        <tr class="partitionSectors">
-            <td class="sectorView">
-                <div>
-                    <div class="icon"></div>
-                    <h4>MVC</h4>
-                    <ul>
-                        <li>Spring-MVC</li>
-                        <li>Struts</li>
-                        <li>Wicket</li>
-                        <li>GWT</li>
-                    </ul>
-                </div>
-                <div>
-                    <div class="icon"></div>
-                    <h4>Markup</h4>
-                    <ul>
-                        <li>CSS</li>
-                        <li>JS</li>
-                    </ul>
-                </div>
-            </td>
-            <td class="sectorConnect">
-                <div>
-                    <div class="icon"></div>
-                    <h4>Web Service</h4>
-                    <ul>
-                        <li>Axis</li>
-                        <li>CXF</li>
-                        <li>XFire</li>
-                    </ul>
-                </div>
-                <div>
-                    <div class="icon"></div>
-                    <h4>REST</h4>
-                    <ul>
-                        <li>Jersey</li>
-                        <li>Unirest</li>
-                        <li>...</li>
-                    </ul>
-                </div>
-            </td>
-            <td class="sectorStore">
-                <div>
-                    <div class="icon"></div>
-                    <h4>ORM</h4>
-                    <ul>
-                        <li></li>
-                    </ul>
-                </div>
-                <div>
-                    <div class="icon"></div>
-                    <h4>JDBC</h4>
-                    <ul>
-                        <li></li>
-                    </ul>
-                </div>
-                <div>
-                    <div class="icon"></div>
-                    <h4>Cache</h4>
-                    <ul>
-                        <li></li>
-                    </ul>
-                </div>
-            </td>
-            <td class="sectorSustain">
-                <div>
-                    <div class="icon"></div>
-                    <h4>Transactions</h4>
-                    <div>
-                        <ul>
-                            <li></li>
-                        </ul>
-                    </div>
-                </div>
-                <div>
-                    <div class="icon"></div>
-                    <h4>Clustering</h4>
-                    <ul>
-                        <li></li>
-                    </ul>
-                </div>
-                <div>
-                    <div class="icon"></div>
-                    <h4>Security</h4>
-                    <ul>
-                        <li></li>
-                    </ul>
-                </div>
-                <div>
-                    <div class="icon"></div>
-                    <h4>Logging</h4>
-                    <ul>
-                        <li></li>
-                    </ul>
-                </div>
-                <div>
-                    <div class="icon"></div>
-                    <h4>Test</h4>
-                    <ul>
-                        <li></li>
-                    </ul>
-                </div>
-            </td>
-            <td class="sectorExecute">
-                <div>
-                    <div class="icon"></div>
-                    <h4>IoC</h4>
-                    <ul>
-                        <li></li>
-                    </ul>
-                </div>
-                <div>
-                    <div class="icon"></div>
-                    <h4>3rd party</h4>
-                    <ul>
-                        <li></li>
-                    </ul>
-                </div>
-            </td>
-        </tr>
-    </table>
-
-
-
 
     <script src="resources/js/jquery-1.10.1.min.js"></script>
     <script src="resources/js/jquery-ui.min.js"></script>

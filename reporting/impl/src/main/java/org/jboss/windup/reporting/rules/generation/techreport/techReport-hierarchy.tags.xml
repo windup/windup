@@ -54,8 +54,10 @@
             <tag name="techBox:ejb" title="EJB" pseudo="true" parents="techRow:java-ee">
                 <tag ref="ejb"/>
             </tag>
-            <tag name="techBox:ws-rest" title="WS / REST" pseudo="true" parents="techRow:java-ee">
+            <tag name="techBox:webservice" title="WebServiceREST" pseudo="true" parents="techRow:java-ee">
                 <tag ref="webservices"/>
+            </tag>
+            <tag name="techBox:rest" title="REST" pseudo="true" parents="techRow:java-ee">
                 <tag ref="rest"/>
             </tag>
             <tag name="techBox:java-ee-other" title="Other" pseudo="true" parents="techRow:java-ee">
@@ -67,16 +69,16 @@
         </tag>
         <tag name="techSector03:Store" title="Store" color="#F4B400" pseudo="true">
             <!-- These can be used directly, as it matches an existing tag and the title is okay too. -->
-            <tag name="techBox:orm" title="ORM" pseudo="true">
+            <tag name="techBox:orm" title="ORM" pseudo="true" parents="techRow:java-ee">
                 <tag ref="orm"/>
             </tag>
-            <tag name="techBox:ogm" title="OGM" pseudo="true">
+            <tag name="techBox:ogm" title="OGM" pseudo="true" parents="techRow:java-ee">
                 <tag ref="ogm"/>
             </tag>
-            <tag name="techBox:jdbc" title="JDBC" pseudo="true">
+            <tag name="techBox:jdbc" title="JDBC" pseudo="true" parents="techRow:java-ee">
                 <tag ref="jdbc"/>
             </tag>
-            <tag name="techBox:cache" title="Cache" pseudo="true">
+            <tag name="techBox:cache" title="Caching" pseudo="true" parents="techRow:embedded">
                 <tag ref="cache"/>
             </tag>
         </tag>
@@ -93,14 +95,56 @@
             <tag name="techBox:Logging" title="Logging" pseudo="true" parents="techRow:embedded">
 
             </tag>
-            <tag name="techBox:Test" title="Test" pseudo="true" parents="techRow:techRow:embedded">
+            <tag name="techBox:Test" title="Test" pseudo="true" parents="techRow:embedded">
 
             </tag>
         </tag>
         <tag name="techSector05:Execute" title="Execute" color="#674EA7" pseudo="true">
-            <tag name="techBox:processing" title="Processing" pseudo="true"/>
-            <tag name="techBox:ioc" title="IoC" pseudo="true"/>
-            <tag name="techBox:3rd-party" title="3rd party" pseudo="true"/>
+            <tag name="techBox:processing" title="Processing" pseudo="true" parents="techRow:java-ee"/>
+            <tag name="techBox:ioc" title="IoC" pseudo="true" parents="techRow:java-ee"/>
+            <tag name="techBox:rules" title="Rules &amp; Processes" pseudo="true" parents="techRow:embedded"/>
+            <tag name="techBox:3rd-party" title="3rd party" pseudo="true" parents="techRow:embedded"/>
+        </tag>
+    </tag>
+
+    <!-- WINDUP-1697 -->
+    <tag name="techReport:mappingOfSillyTagNames">
+        <tag name="techReport:sillyRows">
+            <tag pseudo="true" name="silly:Java EE" title="Java EE" parents="techRow:java-ee"/>
+            <tag pseudo="true" name="silly:Embedded" title="Embedded" parents="techRow:embedded"/>
+        </tag>
+        <tag name="techReport:sillySectors">
+            <tag pseudo="true" name="silly:View" title="View" parents="techSector01:View"/>
+            <tag pseudo="true" name="silly:Connect" title="Connect" parents="techSector02:Connect"/>
+            <tag pseudo="true" name="silly:Store" title="Store" parents="techSector03:Store"/>
+            <tag pseudo="true" name="silly:Sustain" title="Sustain" parents="techSector04:Sustain"/>
+            <tag pseudo="true" name="silly:Execute" title="Execute" parents="techSector05:Execute"/>
+        </tag>
+        <tag name="techReport:sillyBoxes">
+            <tag pseudo="true" name="silly:3rd party" title="3rd party"/>
+            <tag pseudo="true" name="silly:Batch" title="Batch"/>
+            <tag pseudo="true" name="silly:Bean" title="Bean"/>
+            <tag pseudo="true" name="silly:Caching" title="Caching"/>
+            <tag pseudo="true" name="silly:CDI" title="CDI"/>
+            <tag pseudo="true" name="silly:Clustering" title="Clustering"/>
+            <tag pseudo="true" name="silly:HTTP" title="HTTP"/>
+            <tag pseudo="true" name="silly:Integration" title="Integration"/>
+            <tag pseudo="true" name="silly:Inversion of Control" title="Inversion of Control"/>
+            <tag pseudo="true" name="silly:JSON-P" title="JSON-P"/>
+            <tag pseudo="true" name="silly:Markup" title="Markup"/>
+            <tag pseudo="true" name="silly:Messaging" title="Messaging"/>
+            <tag pseudo="true" name="silly:MVC" title="MVC"/>
+            <tag pseudo="true" name="silly:Object Mapping" title="Object Mapping"/>
+            <tag pseudo="true" name="silly:Other" title="Other"/>
+            <tag pseudo="true" name="silly:Processing" title="Processing"/>
+            <tag pseudo="true" name="silly:REST" title="REST"/>
+            <tag pseudo="true" name="silly:Rich" title="Rich"/>
+            <tag pseudo="true" name="silly:Rules and Processes" title="Rules and Processes"/>
+            <tag pseudo="true" name="silly:Security" title="Security"/>
+            <tag pseudo="true" name="silly:Test" title="Test"/>
+            <tag pseudo="true" name="silly:Transaction" title="Transaction"/>
+            <tag pseudo="true" name="silly:Web" title="Web"/>
+            <tag pseudo="true" name="silly:Web Service" title="Web Service"/>
         </tag>
     </tag>
 </tags>
