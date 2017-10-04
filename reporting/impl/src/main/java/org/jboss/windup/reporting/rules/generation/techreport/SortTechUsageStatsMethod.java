@@ -13,6 +13,7 @@ import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
 import org.jboss.windup.reporting.model.TagModel;
 import org.jboss.windup.reporting.model.TechnologyUsageStatisticsModel;
+import static org.jboss.windup.reporting.rules.generation.techreport.GetTechnologiesIdentifiedForSubSectorAndRowMethod.*;
 import org.jboss.windup.reporting.service.TagGraphService;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.exception.WindupException;
@@ -78,203 +79,36 @@ public class SortTechUsageStatsMethod implements WindupFreeMarkerMethod
                 projectModel = (ProjectModel) projectArg.getWrappedObject();
         }
 
-        Map<String, TechUsageStatSum> techStats = null;
+        Map<String, Map<String, Map<Long, Map<String, TechUsageStatSum>>>> techStatsMap = getTechStatsMap();
 
         ExecutionStatistics.get().end(NAME);
-        return techStats;
+        return getTechStatsMap();
     }
 
-    // TODO: This should be optimized by a precomputed matrix - map of maps of maps, boxTag -> rowTag -> project -> TechUsageStat.
-
-    /**
-     * This scans all {@link TechnologyUsageStatisticsModel}s and filters those belonging under given box/column and row, and project.
-     */
-    private Map<String, TechUsageStatSum> getTechStats(TagModel boxTag, TagModel rowTag, ProjectModel project)
+    // Prepare a precomputed matrix - map of maps of maps: rowTag -> boxTag -> project -> silly label -> TechUsageStatSum.
+    private Map<String, Map<String, Map<Long, Map<String, TechUsageStatSum>>>> getTechStatsMap()
     {
-        LOG.info(String.format("boxTag %s, rowTag %s, project %s", boxTag, rowTag, project));
-        final TagGraphService tagService = new TagGraphService(graphContext);
-
-        Map<String, TechUsageStatSum> sums = new HashMap<>();
+        Map<String, Map<String, Map<Long, Map<String, TechUsageStatSum>>>> map = new HashMap<>();
 
         final Iterable<TechnologyUsageStatisticsModel> statModels = graphContext.service(TechnologyUsageStatisticsModel.class).findAll();
-        final Set<TechnologyUsageStatisticsModel> forGivenBoxAndRow = StreamSupport.stream(statModels.spliterator(), false)
-                // Only the given project.
-                .filter(stat -> project == null || stat.getProjectModel() != null && stat.getProjectModel().asVertex().getId() == project.asVertex().getId()) /// Can models use equals?
-                .peek(stat -> LOG.info(String.format("    Checking '%s', so far %sx, tags: %s", stat.getName(), sums.getOrDefault(stat.getName(), new TechUsageStatSum("")).getOccurrenceCount(), stat.getTags())))
-                // Only those under both row and box tags.
-                .filter(stat -> {
-                    final Set<String>[] normalAndSilly = splitSillyTagNames(stat.getTags());
-                    // Normal: any of the tags must fit into the given row and box/column,
-                    return anyTagsUnderAllTags(normalAndSilly[0], Arrays.asList(boxTag, rowTag))
-                    // Silly: there must be two silly labels representing row or box/column, or one label fitting the box name.
-                    || null != processSillyLabels(normalAndSilly[1], boxTag, rowTag);
-                })
-                .peek(stat -> {
-                    LOG.info(String.format("    Summing '%s', so far %sx, tags: %s", stat.getName(), sums.getOrDefault(stat.getName(), new TechUsageStatSum("")).getOccurrenceCount(), stat.getTags()) );
-                    //sums.merge(stat.getName(), new TechUsageStatSum(stat), (sumFromMap, sumNext) -> sumFromMap.add(sumNext))///
-                    sums.put(stat.getName(),
-                            sums.getOrDefault(stat.getName(), new TechUsageStatSum(stat.getName())).add(stat) );
-                })
-                .collect(Collectors.toSet());
-
-        //return forGivenBoxAndRow;
-        return sums;
-    }
-
-    /**
-     * Translates the silly tags (labels) to their normalized real tag counterparts.
-     * Returns a 2-item array; index 0 has the normal names, index 1 the silly names.
-     *
-     * Due to bad design, the rules contain column and row titles for the graph, rather than technology tags.
-     * To make them fit into the tag system, this translation is needed. See also the "silly:..." tags in the report hierarchy definition.
-     */
-    private Set<String>[] splitSillyTagNames(Set<String> potentialSillyTags)
-    {
-        Set<String> normalNames = new HashSet<>();
-        Set<String> sillyNames = new HashSet<>();
-
-        potentialSillyTags.stream().forEach(name -> {
-            final TagModel sillyTag = tagService.getTagByName("silly:" + Tag.normalizeName(name));
-            if (null != sillyTag)
-                sillyNames.add(sillyTag.getName());
-            else
-                // Some may be undefined. This will happen when someone attempts to add a new sector, row or column/box.
-                normalNames.add(sillyTag.getName());
-        });
-        return new Set[]{normalNames, sillyNames};
-    }
-
-    /**
-     * Returns whether the tags of given names are under all of the given tags (or same).
-     */
-    private boolean anyTagsUnderAllTags(Set<String> childTagNames, List<TagModel> maybeParentTags)
-    {
-        nextChild:
-        for (String childTagName : childTagNames) {
-            final TagModel childTag = tagService.getTagByName(childTagName);
-            if (null == childTag)
-            {
-                LOG.warning("        Undefined tag used in identified technology tags, will not fit into any tech report box: " + childTagName);
-                continue;
-            }
-
-            for (TagModel maybeParentTag : maybeParentTags)
-            {
-                LOG.info(String.format("        Trying, subTag: name %s -> %s, maybeParent: %s", childTagName, childTag, maybeParentTag) );///
-                if (!tagService.isTagUnderTagOrSame(childTag, maybeParentTag))
-                    continue nextChild;
-                LOG.info("          --> YEP :)");
-            }
-            return true;
-        }
-        return false;
-    }
-
-    /**
-     * From three tagNames, if one is under sectorTag and one under rowTag, returns the remaining one, which is supposedly the a box label.
-     * Otherwise, returns null.
-     */
-    private String processSillyLabels(Set<String> tagNames, TagModel boxTag, TagModel rowTag)
-    {
-        if (tagNames.size() < 3)
-            throw new WindupException("There should always be exactly 3 silly labels - row, sector, column/box. Found: " + tagNames);
-        if (tagNames.size() > 3)
-            LOG.severe("There should always be exactly 3 silly labels - row, sector, column/box. Found: " + tagNames);
-
-        final TagModel sillySectorsTag = tagService.getTagByName("techReport:sillySectors");
-        final TagModel sillyBoxesTag = tagService.getTagByName("techReport:sillyBoxes");
-        final TagModel sillyRowsTag = tagService.getTagByName("techReport:sillyRows");
-
-        String sectorLabel = null;
-        String boxLabel = null;
-        String rowLabel = null;
-
-        for (Iterator<String> iterator = tagNames.iterator(); iterator.hasNext(); )
+        for (TechnologyUsageStatisticsModel statModel : statModels)
         {
-            String name = iterator.next();
-            final TagModel tag = tagService.getTagByName(name);
-            if (tagService.isTagUnderTagOrSame(tag, sillySectorsTag))
-            {
-                sectorLabel = name;
-                iterator.remove();
-            }
-            if (tagService.isTagUnderTagOrSame(tag, boxTag))
-            {
-                boxLabel = name;
-                iterator.remove();
-            }
-            if (tagService.isTagUnderTagOrSame(tag, rowTag))
-            {
-                rowLabel = name;
-                iterator.remove();
-            }
+            final Set<String>[] normalAndSilly = splitSillyTagNames(graphContext, statModel.getTags());
+            final TechReportPlacement placement = processSillyLabels(graphContext, normalAndSilly[1]);
+
+            // Sort them out to the map.
+            final Map<String, Map<Long, Map<String, TechUsageStatSum>>> row = map.computeIfAbsent(placement.row.getName(), k -> new HashMap());
+            final Map<Long, Map<String, TechUsageStatSum>> box = row.computeIfAbsent(placement.box.getName(), k -> new HashMap<>());
+
+            final String statsModelLabel = statModel.getName();
+            // All Projects
+            final Map<String, TechUsageStatSum> statSumAll = box.computeIfAbsent(Long.valueOf(0), k -> new HashMap<>());
+            statSumAll.put(statsModelLabel, new TechUsageStatSum(statsModelLabel));
+            // Respective project
+            final Long projectKey = (Long) statModel.getProjectModel().asVertex().getId();
+            final Map<String, TechUsageStatSum> statSum = box.computeIfAbsent(projectKey, k -> new HashMap<>());
+            statSum.put(statsModelLabel, new TechUsageStatSum(statsModelLabel));
         }
-
-        LOG.info(String.format("Labels %s identified as: sector: %s, box: %s, row: %s", sectorLabel, boxLabel, rowLabel));
-        if (boxLabel == null || rowLabel == null)
-        {
-            LOG.severe(String.format("There should always be exactly 3 silly labels - row, sector, column/box. Found: %s, of which box: %s, row: %s", tagNames, boxLabel, rowLabel));
-            return null;
-        }
-        else
-            return boxLabel != null ? boxLabel : tagNames.iterator().next();
-    }
-
-
-
-
-
-    /**
-     * Keeps the aggregated data from multiple {@link TechnologyUsageStatisticsModel}s.
-     */
-    public static class TechUsageStatSum {
-        String name;
-        int count = 0;
-        Set<String> tags = new HashSet<>();
-
-        public TechUsageStatSum(String name)
-        {
-            this.name = name;
-        }
-
-        public TechUsageStatSum(TechnologyUsageStatisticsModel stat)
-        {
-            this.name = stat.getName();
-            this.count = stat.getOccurrenceCount();
-            this.tags.addAll(stat.getTags());
-        }
-
-        public TechUsageStatSum add(TechnologyUsageStatisticsModel stat)
-        {
-            if (!this.name.equals(stat.getName()))
-                throw new IllegalArgumentException("Can't add stats, " + this.name + " != " + stat.getName());
-            this.count += stat.getOccurrenceCount();
-            this.tags.addAll(stat.getTags());
-            return this;
-        }
-
-        public TechUsageStatSum add(TechUsageStatSum stat)
-        {
-            if (!this.name.equals(stat.getName()))
-                throw new IllegalArgumentException("Can't add stats, " + this.name + " != " + stat.getName());
-            this.count += stat.getOccurrenceCount();
-            this.tags.addAll(stat.getTags());
-            return this;
-        }
-
-        public String getName()
-        {
-            return name;
-        }
-
-        public int getOccurrenceCount()
-        {
-            return count;
-        }
-
-        public Set<String> getTags()
-        {
-            return tags;
-        }
+        return map;
     }
 }

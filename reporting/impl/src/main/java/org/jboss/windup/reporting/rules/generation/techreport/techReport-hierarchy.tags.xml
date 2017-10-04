@@ -121,30 +121,30 @@
             <tag pseudo="true" name="silly:Execute" title="Execute" parents="techSector05:Execute"/>
         </tag>
         <tag name="techReport:sillyBoxes">
-            <tag pseudo="true" name="silly:3rd party" title="3rd party"/>
-            <tag pseudo="true" name="silly:Batch" title="Batch"/>
-            <tag pseudo="true" name="silly:Bean" title="Bean"/>
-            <tag pseudo="true" name="silly:Caching" title="Caching"/>
-            <tag pseudo="true" name="silly:CDI" title="CDI"/>
-            <tag pseudo="true" name="silly:Clustering" title="Clustering"/>
-            <tag pseudo="true" name="silly:HTTP" title="HTTP"/>
-            <tag pseudo="true" name="silly:Integration" title="Integration"/>
-            <tag pseudo="true" name="silly:Inversion of Control" title="Inversion of Control"/>
-            <tag pseudo="true" name="silly:JSON-P" title="JSON-P"/>
-            <tag pseudo="true" name="silly:Markup" title="Markup"/>
-            <tag pseudo="true" name="silly:Messaging" title="Messaging"/>
-            <tag pseudo="true" name="silly:MVC" title="MVC"/>
-            <tag pseudo="true" name="silly:Object Mapping" title="Object Mapping"/>
-            <tag pseudo="true" name="silly:Other" title="Other"/>
-            <tag pseudo="true" name="silly:Processing" title="Processing"/>
-            <tag pseudo="true" name="silly:REST" title="REST"/>
-            <tag pseudo="true" name="silly:Rich" title="Rich"/>
-            <tag pseudo="true" name="silly:Rules and Processes" title="Rules and Processes"/>
-            <tag pseudo="true" name="silly:Security" title="Security"/>
-            <tag pseudo="true" name="silly:Test" title="Test"/>
-            <tag pseudo="true" name="silly:Transaction" title="Transaction"/>
-            <tag pseudo="true" name="silly:Web" title="Web"/>
-            <tag pseudo="true" name="silly:Web Service" title="Web Service"/>
+            <tag pseudo="true" name="silly:3rd party" title="3rd party" parents="techBox:3rd"/>
+            <tag pseudo="true" name="silly:Batch" title="Batch" parents="techBox:Batch"/> <!-- Not a box? -->
+            <tag pseudo="true" name="silly:Bean" title="Bean" parents="techBox:EJB"/>
+            <tag pseudo="true" name="silly:Caching" title="Caching" parents="techBox:Caching"/>
+            <tag pseudo="true" name="silly:CDI" title="CDI" parents="techBox:CDI"/> <!-- Not a box? -->
+            <tag pseudo="true" name="silly:Clustering" title="Clustering" parents="techBox:Clustering"/>
+            <tag pseudo="true" name="silly:HTTP" title="HTTP" parents="techBox:HTTP"/>
+            <tag pseudo="true" name="silly:Integration" title="Integration" parents="techBox:Integration"/>
+            <tag pseudo="true" name="silly:Inversion of Control" title="Inversion of Control" parents="techBox:Inversion"/>
+            <tag pseudo="true" name="silly:JSON-P" title="JSON-P" parents="techBox:Processing"/> <!-- Not a box? -->
+            <tag pseudo="true" name="silly:Markup" title="Markup" parents="techBox:Markup"/>
+            <tag pseudo="true" name="silly:Messaging" title="Messaging" parents="techBox:Messaging"/>
+            <tag pseudo="true" name="silly:MVC" title="MVC" parents="techBox:mvc"/>
+            <tag pseudo="true" name="silly:Object Mapping" title="Object Mapping" parents="techBox:object-mapping"/>
+            <tag pseudo="true" name="silly:Other" title="Other" parents="techBox:Other"/>
+            <tag pseudo="true" name="silly:Processing" title="Processing" parents="techBox:Processing"/>
+            <tag pseudo="true" name="silly:REST" title="REST" parents="techBox:rest"/>
+            <tag pseudo="true" name="silly:Rich" title="Rich" parents="techBox:rich"/>
+            <tag pseudo="true" name="silly:Rules and Processes" title="Rules and Processes" parents="techBox:rules"/>
+            <tag pseudo="true" name="silly:Security" title="Security" parents="techBox:Security"/>
+            <tag pseudo="true" name="silly:Test" title="Test" parents="techBox:Test"/>
+            <tag pseudo="true" name="silly:Transaction" title="Transaction" parents="techBox:Transactions"/>
+            <tag pseudo="true" name="silly:Web" title="Web" parents="techBox:web"/>
+            <tag pseudo="true" name="silly:Web Service" title="Web Service" parents="techBox:webservice"/>
         </tag>
     </tag>
 </tags>

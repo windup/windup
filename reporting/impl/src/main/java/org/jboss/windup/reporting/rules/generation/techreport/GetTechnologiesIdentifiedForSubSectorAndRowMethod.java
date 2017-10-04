@@ -1,5 +1,6 @@
 package org.jboss.windup.reporting.rules.generation.techreport;
 
+import com.tinkerpop.blueprints.Graph;
 import freemarker.ext.beans.StringModel;
 import freemarker.template.TemplateModelException;
 import java.util.*;
@@ -98,6 +99,7 @@ public class GetTechnologiesIdentifiedForSubSectorAndRowMethod implements Windup
     private Map<String, TechUsageStatSum> getTechStats(TagModel boxTag, TagModel rowTag, ProjectModel project)
     {
         LOG.info(String.format("boxTag %s, rowTag %s, project %s", boxTag, rowTag, project));
+
         final TagGraphService tagService = new TagGraphService(graphContext);
 
         Map<String, TechUsageStatSum> sums = new HashMap<>();
@@ -109,11 +111,16 @@ public class GetTechnologiesIdentifiedForSubSectorAndRowMethod implements Windup
                 .peek(stat -> LOG.info(String.format("    Checking '%s', so far %sx, tags: %s", stat.getName(), sums.getOrDefault(stat.getName(), new TechUsageStatSum("")).getOccurrenceCount(), stat.getTags())))
                 // Only those under both row and box tags.
                 .filter(stat -> {
-                    final Set<String>[] normalAndSilly = splitSillyTagNames(stat.getTags());
+                    final Set<String>[] normalAndSilly = splitSillyTagNames(graphContext, stat.getTags());
+
                     // Normal: any of the tags must fit into the given row and box/column,
-                    return anyTagsUnderAllTags(normalAndSilly[0], Arrays.asList(boxTag, rowTag))
+                    if (anyTagsUnderAllTags(normalAndSilly[0], Arrays.asList(boxTag, rowTag)))
+                        return true;
+
                     // Silly: there must be two silly labels representing row or box/column, or one label fitting the box name.
-                    || null != processSillyLabels(normalAndSilly[1], boxTag, rowTag);
+                    TechReportPlacement placement = processSillyLabels(graphContext, normalAndSilly[1]);
+                    //return placement.box != null || (placement.sector != null && placement.box != null);
+                    return placementBelongToThisBoxAndRow(placement, boxTag, rowTag);
                 })
                 .peek(stat -> {
                     LOG.info(String.format("    Summing '%s', so far %sx, tags: %s", stat.getName(), sums.getOrDefault(stat.getName(), new TechUsageStatSum("")).getOccurrenceCount(), stat.getTags()) );
@@ -134,8 +141,10 @@ public class GetTechnologiesIdentifiedForSubSectorAndRowMethod implements Windup
      * Due to bad design, the rules contain column and row titles for the graph, rather than technology tags.
      * To make them fit into the tag system, this translation is needed. See also the "silly:..." tags in the report hierarchy definition.
      */
-    private Set<String>[] splitSillyTagNames(Set<String> potentialSillyTags)
+    static Set<String>[] splitSillyTagNames(GraphContext graphContext, Set<String> potentialSillyTags)
     {
+        final TagGraphService tagService = new TagGraphService(graphContext);
+
         Set<String> normalNames = new HashSet<>();
         Set<String> sillyNames = new HashSet<>();
 
@@ -180,53 +189,67 @@ public class GetTechnologiesIdentifiedForSubSectorAndRowMethod implements Windup
      * From three tagNames, if one is under sectorTag and one under rowTag, returns the remaining one, which is supposedly the a box label.
      * Otherwise, returns null.
      */
-    private String processSillyLabels(Set<String> tagNames, TagModel boxTag, TagModel rowTag)
+    boolean placementBelongToThisBoxAndRow(TechReportPlacement placement, TagModel boxTag, TagModel rowTag)
     {
+        return tagService.isTagUnderTagOrSame(placement.box, boxTag) && tagService.isTagUnderTagOrSame(placement.row, rowTag);
+    }
+
+    static TechReportPlacement processSillyLabels(GraphContext grCtx, Set<String> tagNames)
+    {
+        TagGraphService tagService = new TagGraphService(grCtx);
+
         if (tagNames.size() < 3)
-            throw new WindupException("There should always be exactly 3 silly labels - row, sector, column/box. Found: " + tagNames);
+            throw new WindupException("There should always be exactly 3 silly labels - row, sector, column/box. It was: " + tagNames);
         if (tagNames.size() > 3)
-            LOG.severe("There should always be exactly 3 silly labels - row, sector, column/box. Found: " + tagNames);
+            LOG.severe("There should always be exactly 3 silly labels - row, sector, column/box. It was: " + tagNames);
+
+        TechReportPlacement placement = new TechReportPlacement();
 
         final TagModel sillySectorsTag = tagService.getTagByName("techReport:sillySectors");
         final TagModel sillyBoxesTag = tagService.getTagByName("techReport:sillyBoxes");
         final TagModel sillyRowsTag = tagService.getTagByName("techReport:sillyRows");
 
-        String sectorLabel = null;
-        String boxLabel = null;
-        String rowLabel = null;
 
-        for (Iterator<String> iterator = tagNames.iterator(); iterator.hasNext(); )
+        tagNames = new HashSet(tagNames);
+        for (Iterator<String> tagNamesIt = tagNames.iterator(); tagNamesIt.hasNext(); )
         {
-            String name = iterator.next();
+            String name = tagNamesIt.next();
             final TagModel tag = tagService.getTagByName(name);
+            if (null == tag)
+                continue;
+
             if (tagService.isTagUnderTagOrSame(tag, sillySectorsTag))
             {
-                sectorLabel = name;
-                iterator.remove();
+                placement.sector = tag;
+                tagNamesIt.remove();
             }
-            if (tagService.isTagUnderTagOrSame(tag, boxTag))
+            else if (tagService.isTagUnderTagOrSame(tag, sillyBoxesTag))
             {
-                boxLabel = name;
-                iterator.remove();
+                placement.box = tag;
+                tagNamesIt.remove();
             }
-            if (tagService.isTagUnderTagOrSame(tag, rowTag))
+            else if (tagService.isTagUnderTagOrSame(tag, sillyRowsTag))
             {
-                rowLabel = name;
-                iterator.remove();
+                placement.row = tag;
+                tagNamesIt.remove();
             }
         }
+        placement.unknown = tagNames;
 
-        LOG.info(String.format("Labels %s identified as: sector: %s, box: %s, row: %s", sectorLabel, boxLabel, rowLabel));
-        if (boxLabel == null || rowLabel == null)
+        LOG.info(String.format("Labels %s identified as: sector: %s, box: %s, row: %s", tagNames, placement.sector, placement.box, placement.row));
+        if (placement.box == null || placement.row == null)
         {
-            LOG.severe(String.format("There should always be exactly 3 silly labels - row, sector, column/box. Found: %s, of which box: %s, row: %s", tagNames, boxLabel, rowLabel));
-            return null;
+            LOG.severe(String.format("There should always be exactly 3 silly labels - row, sector, column/box. Found: %s, of which box: %s, row: %s", tagNames, placement.box, placement.row));
         }
-        else
-            return boxLabel != null ? boxLabel : tagNames.iterator().next();
+        return placement;
     }
 
-
+    public static class TechReportPlacement {
+        public TagModel sector;
+        public TagModel box;
+        public TagModel row;
+        public Set<String> unknown;
+    }
 
 
 

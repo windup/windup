@@ -103,6 +103,8 @@
                 -->
                 <#assign stats = getTechReportPunchCardStats() />
 
+                <#assign sortedStatsMap = sortTechUsageStats() />
+
                 <table class="technologiesBoxCard">
                     <tr class="sectorsHeaders">
                         <#list sectorTags as sectorTag>
@@ -148,7 +150,14 @@
                                                     </li>
                                                 </#list>
                                             </ul>
-                                            <script></script>
+
+                                            <#--
+                                            <hr />
+                                            <#assign statsForThisBox = (sortedStatsMap[rowTag.name][boxTag.name][0])! />
+                                            <#list statsForThisBox as name, stat>
+                                                ${stat.name} <b>${stat.occurrenceCount}</b>
+                                            </#list>
+                                            -->
                                         </div>
                                         </#if>
                                     </#list>
