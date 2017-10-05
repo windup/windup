@@ -108,6 +108,7 @@
                 <#assign sectorTagsIterable = reportModel.sectorsHolderTag.designatedTags />
                 <#assign sectorTags = iterableToList(sectorTagsIterable) />
                 <#assign sectorTags = sectorTags?sort_by("name") />
+                <#assign sillyTagsParent = getTagModelByName("techReport:mappingOfSillyTagNames") />
 
                 <#-- MatrixAndAggregated {
                        countsOfTagsInApps,  // Map<ProjectModel, Map<String, Integer>>
@@ -120,7 +121,7 @@
                     <tr class="headersSector">
                         <td></td>
                         <#list sectorTags as sector>
-                            <td colspan="${iterableToList(sector.designatedTags)?size?c}" class="sector${sector.title}">${sector.title}</td>
+                            <td colspan="${ (iterableToList(sector.designatedTags)?size-1)?c}" class="sector${sector.title}">${sector.title}</td>
                         <#else>
                             <td>No technology sectors defined.</td>
                         </#list>
@@ -128,10 +129,12 @@
                     </tr>
                     <tr class="headersGroup">
                         <td class="sector"></td>
-                        <#list sectorTags as sector>
-                            <#list sector.designatedTags as tech>
-                                <#assign techsOrder = techsOrder + [tech] />
-                                <td class="sector${sector.title}"><div>${tech.title!}</div></td>
+                        <#list sectorTags as sector >
+                            <#list sector.designatedTags as tech >
+                                <#if !isTagUnderTag(tech, sillyTagsParent) >
+                                    <#assign techsOrder = techsOrder + [tech] />
+                                    <td class="sector${sector.title}"><div>${tech.title!}</div></td>
+                                </#if>
                             </#list>
                         </#list>
                         <td class="sectorStats sizeMB"><div>Size (MB)</div></td>

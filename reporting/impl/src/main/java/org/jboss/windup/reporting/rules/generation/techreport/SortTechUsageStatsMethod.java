@@ -1,6 +1,8 @@
 package org.jboss.windup.reporting.rules.generation.techreport;
 
 import freemarker.ext.beans.StringModel;
+import freemarker.template.SimpleNumber;
+import freemarker.template.SimpleScalar;
 import freemarker.template.TemplateModelException;
 import java.util.*;
 import java.util.logging.Logger;
@@ -63,18 +65,21 @@ public class SortTechUsageStatsMethod implements WindupFreeMarkerMethod
     @Override
     public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
     {
+        if (arguments.size() == 4)
+            return queryMap(arguments);
+
         ExecutionStatistics.get().begin(NAME);
 
         // Function arguments
-        if (arguments.size() > 1) {
+        if (arguments.size() > 1)
             throw new TemplateModelException("Expected 0 or 1 argument - project.");
-        }
 
         // The project. May be null -> count from all applications.
+        // TODO Not used yet.
         ProjectModel projectModel = null;
-        if (arguments.size() > 0)
+        if (arguments.size() == 1)
         {
-            StringModel projectArg = (StringModel) arguments.get(2);
+            StringModel projectArg = (StringModel) arguments.get(0);
             if (null != projectArg)
                 projectModel = (ProjectModel) projectArg.getWrappedObject();
         }
@@ -82,33 +87,59 @@ public class SortTechUsageStatsMethod implements WindupFreeMarkerMethod
         Map<String, Map<String, Map<Long, Map<String, TechUsageStatSum>>>> techStatsMap = getTechStatsMap();
 
         ExecutionStatistics.get().end(NAME);
-        return getTechStatsMap();
+        return techStatsMap;
     }
 
-    // Prepare a precomputed matrix - map of maps of maps: rowTag -> boxTag -> project -> silly label -> TechUsageStatSum.
+    /**
+     * Prepares a precomputed matrix - map of maps of maps: rowTag -> boxTag -> project -> silly label -> TechUsageStatSum.
+     */
     private Map<String, Map<String, Map<Long, Map<String, TechUsageStatSum>>>> getTechStatsMap()
     {
         Map<String, Map<String, Map<Long, Map<String, TechUsageStatSum>>>> map = new HashMap<>();
 
         final Iterable<TechnologyUsageStatisticsModel> statModels = graphContext.service(TechnologyUsageStatisticsModel.class).findAll();
-        for (TechnologyUsageStatisticsModel statModel : statModels)
+        for (TechnologyUsageStatisticsModel stat : statModels)
         {
-            final Set<String>[] normalAndSilly = splitSillyTagNames(graphContext, statModel.getTags());
-            final TechReportPlacement placement = processSillyLabels(graphContext, normalAndSilly[1]);
+            LOG.info(String.format("    Rolling up '%s', count: %sx, tags: %s", stat.getName(), stat.getOccurrenceCount(), stat.getTags()) );
+
+            final Set<String>[] normalAndSilly = splitSillyTagNames(graphContext, stat.getTags());
+            TechReportPlacement placement = processSillyLabels(graphContext, normalAndSilly[1]);
+            placement = normalizeSillyPlacement(graphContext, placement);
 
             // Sort them out to the map.
             final Map<String, Map<Long, Map<String, TechUsageStatSum>>> row = map.computeIfAbsent(placement.row.getName(), k -> new HashMap());
             final Map<Long, Map<String, TechUsageStatSum>> box = row.computeIfAbsent(placement.box.getName(), k -> new HashMap<>());
 
-            final String statsModelLabel = statModel.getName();
+            final String statsModelLabel = stat.getName();
             // All Projects
             final Map<String, TechUsageStatSum> statSumAll = box.computeIfAbsent(Long.valueOf(0), k -> new HashMap<>());
-            statSumAll.put(statsModelLabel, new TechUsageStatSum(statsModelLabel));
+            statSumAll.put(statsModelLabel, new TechUsageStatSum(stat));
             // Respective project
-            final Long projectKey = (Long) statModel.getProjectModel().asVertex().getId();
+            final Long projectKey = (Long) stat.getProjectModel().asVertex().getId();
             final Map<String, TechUsageStatSum> statSum = box.computeIfAbsent(projectKey, k -> new HashMap<>());
-            statSum.put(statsModelLabel, new TechUsageStatSum(statsModelLabel));
+            statSum.put(statsModelLabel, new TechUsageStatSum(stat));
         }
         return map;
     }
+
+    /**
+     * A helper method to query the structure created above, since Freemarker can't query maps with numerical keys.
+     */
+    private Map<String, TechUsageStatSum> queryMap(List arguments)
+    {
+        Map<String, Map<String, Map<Long, Map<String, TechUsageStatSum>>>> map = (Map<String, Map<String, Map<Long, Map<String, TechUsageStatSum>>>>) ((StringModel)arguments.get(0)).getWrappedObject();
+        String rowTagName = ((SimpleScalar) arguments.get(1)).getAsString();
+        String boxTagName = ((SimpleScalar) arguments.get(2)).getAsString();
+        Long projectId = ((SimpleNumber) arguments.get(3)).getAsNumber().longValue();
+
+        final Map<String, Map<Long, Map<String, TechUsageStatSum>>> rowMap = map.get(rowTagName);
+        if (null == rowMap)
+            return null;
+        final Map<Long, Map<String, TechUsageStatSum>> boxMap = rowMap.get(boxTagName);
+        if (null == boxMap)
+            return null;
+        final Map<String, TechUsageStatSum> projectMap = boxMap.get(projectId);
+        return projectMap;
+    }
+
 }

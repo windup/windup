@@ -98,7 +98,7 @@ public class GetTechnologiesIdentifiedForSubSectorAndRowMethod implements Windup
      */
     private Map<String, TechUsageStatSum> getTechStats(TagModel boxTag, TagModel rowTag, ProjectModel project)
     {
-        LOG.info(String.format("boxTag %s, rowTag %s, project %s", boxTag, rowTag, project));
+        LOG.info(String.format("#### boxTag %s, rowTag %s, project %s", boxTag, rowTag, project));
 
         final TagGraphService tagService = new TagGraphService(graphContext);
 
@@ -186,14 +186,18 @@ public class GetTechnologiesIdentifiedForSubSectorAndRowMethod implements Windup
     }
 
     /**
-     * From three tagNames, if one is under sectorTag and one under rowTag, returns the remaining one, which is supposedly the a box label.
-     * Otherwise, returns null.
+     * Returns whether out of three tags, one is under sectorTag and one under rowTag. The remaining one is supposedly the a box label.
      */
     boolean placementBelongToThisBoxAndRow(TechReportPlacement placement, TagModel boxTag, TagModel rowTag)
     {
         return tagService.isTagUnderTagOrSame(placement.box, boxTag) && tagService.isTagUnderTagOrSame(placement.row, rowTag);
     }
 
+
+    /**
+     * From three tagNames, if one is under sectorTag and one under rowTag, returns the remaining one, which is supposedly the a box label.
+     * Otherwise, returns null.
+     */
     static TechReportPlacement processSillyLabels(GraphContext grCtx, Set<String> tagNames)
     {
         TagGraphService tagService = new TagGraphService(grCtx);
@@ -210,8 +214,8 @@ public class GetTechnologiesIdentifiedForSubSectorAndRowMethod implements Windup
         final TagModel sillyRowsTag = tagService.getTagByName("techReport:sillyRows");
 
 
-        tagNames = new HashSet(tagNames);
-        for (Iterator<String> tagNamesIt = tagNames.iterator(); tagNamesIt.hasNext(); )
+        Set<String> tagNames2 = new HashSet(tagNames);
+        for (Iterator<String> tagNamesIt = tagNames2.iterator(); tagNamesIt.hasNext(); )
         {
             String name = tagNamesIt.next();
             final TagModel tag = tagService.getTagByName(name);
@@ -234,9 +238,9 @@ public class GetTechnologiesIdentifiedForSubSectorAndRowMethod implements Windup
                 tagNamesIt.remove();
             }
         }
-        placement.unknown = tagNames;
+        placement.unknown = tagNames2;
 
-        LOG.info(String.format("Labels %s identified as: sector: %s, box: %s, row: %s", tagNames, placement.sector, placement.box, placement.row));
+        LOG.info(String.format("\t\tLabels %s identified as: sector: %s, box: %s, row: %s", tagNames, placement.sector, placement.box, placement.row));
         if (placement.box == null || placement.row == null)
         {
             LOG.severe(String.format("There should always be exactly 3 silly labels - row, sector, column/box. Found: %s, of which box: %s, row: %s", tagNames, placement.box, placement.row));
@@ -244,11 +248,54 @@ public class GetTechnologiesIdentifiedForSubSectorAndRowMethod implements Windup
         return placement;
     }
 
+    /**
+     * This relies on the tag structure in the XML when the silly mapping tags have exactly one parent outside the silly group, which is the tag they are mapped to.
+     */
+    static TechReportPlacement normalizeSillyPlacement(GraphContext grCtx, TechReportPlacement sillyPlacement)
+    {
+        TagGraphService tagService = new TagGraphService(grCtx);
+
+        final TechReportPlacement normalPlacement = new TechReportPlacement();
+        normalPlacement.sector = getNonSillyParent(tagService, sillyPlacement.sector);
+        normalPlacement.box = getNonSillyParent(tagService, sillyPlacement.box);
+        normalPlacement.row = getNonSillyParent(tagService, sillyPlacement.row);
+        return normalPlacement;
+    }
+
+    private static TagModel getNonSillyParent(TagGraphService tagService, TagModel tag)
+    {
+        final TagModel sillyRoot = tagService.getTagByName("techReport:mappingOfSillyTagNames");
+
+        final Iterator<TagModel> parents = tag.getDesignatedByTags().iterator();
+        if (!parents.hasNext())
+            throw new WindupException("Tag is not designated by any tags: " + tag);
+
+        TagModel nonSillyParent = null;
+        do {
+            TagModel parentTag = parents.next();
+            if (tagService.isTagUnderTagOrSame(parentTag, sillyRoot))
+                continue;
+            if (nonSillyParent != null)
+                throw new WindupException(String.format("Tag %s has more than one non-silly parent: %s, %s", nonSillyParent, parentTag));
+            nonSillyParent = parentTag;
+        }
+        while (parents.hasNext());
+
+        return nonSillyParent;
+    }
+
+
     public static class TechReportPlacement {
         public TagModel sector;
         public TagModel box;
         public TagModel row;
         public Set<String> unknown;
+
+        @Override
+        public String toString()
+        {
+            return "TechReportPlacement{sector=" + sector + ", box=" + box + ", row=" + row + ", unknown=" + unknown + '}';
+        }
     }
 
 
@@ -276,7 +323,7 @@ public class GetTechnologiesIdentifiedForSubSectorAndRowMethod implements Windup
         public TechUsageStatSum add(TechnologyUsageStatisticsModel stat)
         {
             if (!this.name.equals(stat.getName()))
-                throw new IllegalArgumentException("Can't add stats, " + this.name + " != " + stat.getName());
+                throw new IllegalArgumentException("Can't add up stats, " + this.name + " != " + stat.getName());
             this.count += stat.getOccurrenceCount();
             this.tags.addAll(stat.getTags());
             return this;
@@ -285,7 +332,7 @@ public class GetTechnologiesIdentifiedForSubSectorAndRowMethod implements Windup
         public TechUsageStatSum add(TechUsageStatSum stat)
         {
             if (!this.name.equals(stat.getName()))
-                throw new IllegalArgumentException("Can't add stats, " + this.name + " != " + stat.getName());
+                throw new IllegalArgumentException("Can't add up stats, " + this.name + " != " + stat.getName());
             this.count += stat.getOccurrenceCount();
             this.tags.addAll(stat.getTags());
             return this;

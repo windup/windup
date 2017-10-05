@@ -1,9 +1,6 @@
 package org.jboss.windup.reporting.service;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections4.IterableUtils;
@@ -12,6 +9,7 @@ import org.jboss.windup.config.tags.Tag;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.TagModel;
+import org.jboss.windup.util.exception.WindupException;
 
 
 /**
@@ -155,5 +153,22 @@ public class TagGraphService extends GraphService<TagModel>
         }
         while (!currentSet.isEmpty());
         return false;
+    }
+
+    public TagModel getSingleParent(TagModel tag)
+    {
+        final Iterator<TagModel> parents = tag.getDesignatedByTags().iterator();
+        if (!parents.hasNext())
+            throw new WindupException("Tag is not designated by any tags: " + tag);
+
+        final TagModel maybeOnlyParent = parents.next();
+
+        if (parents.hasNext()) {
+            StringBuilder sb = new StringBuilder();
+            tag.getDesignatedByTags().iterator().forEachRemaining(x -> sb.append(x).append(", "));
+            throw new WindupException(String.format("Tag %s is designated by multiple tags: %s", tag, sb.toString()));
+        }
+
+        return maybeOnlyParent;
     }
 }

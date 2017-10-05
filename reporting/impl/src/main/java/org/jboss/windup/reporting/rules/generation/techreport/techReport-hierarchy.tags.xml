@@ -54,7 +54,7 @@
             <tag name="techBox:ejb" title="EJB" pseudo="true" parents="techRow:java-ee">
                 <tag ref="ejb"/>
             </tag>
-            <tag name="techBox:webservice" title="WebServiceREST" pseudo="true" parents="techRow:java-ee">
+            <tag name="techBox:webservice" title="WebService / REST" pseudo="true" parents="techRow:java-ee">
                 <tag ref="webservices"/>
             </tag>
             <tag name="techBox:rest" title="REST" pseudo="true" parents="techRow:java-ee">
@@ -107,7 +107,7 @@
         </tag>
     </tag>
 
-    <!-- WINDUP-1697 -->
+    <!-- WINDUP-1697/ This is mapping the silly names to normal tags. -->
     <tag name="techReport:mappingOfSillyTagNames">
         <tag name="techReport:sillyRows">
             <tag pseudo="true" name="silly:Java EE" title="Java EE" parents="techRow:java-ee"/>
@@ -130,7 +130,7 @@
             <tag pseudo="true" name="silly:HTTP" title="HTTP" parents="techBox:HTTP"/>
             <tag pseudo="true" name="silly:Integration" title="Integration" parents="techBox:Integration"/>
             <tag pseudo="true" name="silly:Inversion of Control" title="Inversion of Control" parents="techBox:Inversion"/>
-            <tag pseudo="true" name="silly:JSON-P" title="JSON-P" parents="techBox:Processing"/> <!-- Not a box? -->
+            <tag pseudo="true" name="silly:JSON-P" title="JSON-P" parents="techBox:Processing"/> <!-- Not a box? WINDUPRULE-296 -->
             <tag pseudo="true" name="silly:Markup" title="Markup" parents="techBox:Markup"/>
             <tag pseudo="true" name="silly:Messaging" title="Messaging" parents="techBox:Messaging"/>
             <tag pseudo="true" name="silly:MVC" title="MVC" parents="techBox:mvc"/>

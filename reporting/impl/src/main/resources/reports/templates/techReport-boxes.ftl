@@ -34,7 +34,7 @@
         table.technologiesBoxCard { border-collapse: collapse; width: 90%; margin: 10pt auto; }
         table.technologiesBoxCard td,
         table.technologiesBoxCard th {
-            border: 1px solid silver;
+            border: 0px solid silver; /* Debug */
         }
 
         /* Sector headers */
@@ -128,21 +128,13 @@
                                         <div class="box box-${boxTag.name} #box${boxTag.asVertex().id}">
                                             <div class="icon">[icon]</div>
                                             <h4>${boxTag.titleOrName}</h4>
+
+                                            <#if false >
                                             <ul>
-                                                <#--
-                                                <#list boxTag.designatedTags as techTag>
-                                                    <#assign count = (stats.totalsPerTag[techTag.name])!0 />
-                                                    <li class="stats tag-${techTag.name} count${count?switch(0, '0', 1, '1', 'Many')}">
-                                                        ${techTag.titleOrName} <b>${count}</b>
-                                                    </li>
-                                                </#list>
-                                                -->
-                                                <#-- Get the individual techs under this sector and row. JSF, JSP, Servlet, ... etc.
-                                                -->
-                                                <#-- Set<TechnologyUsageStatisticsModel> -->
-                                                <#-- Map<String, TechUsageStatSum> -->
+                                                <#-- Get the individual techs under this sector and row. JSF, JSP, Servlet, ... etc. -->
+                                                    <#-- Map<String, TechUsageStatSum> -->
                                                 <#assign techUsageStats = getTechnologiesIdentifiedForSubSectorAndRow(boxTag, rowTag, reportModel.project) />
-                                                <#-- TODO: Get a map of box buckets with TechUsageStats and take data from there, rather than pulling through a function. -->
+
                                                 <#list techUsageStats as name, techUsageStatSum>
                                                     <li class="stats count${techUsageStatSum.occurrenceCount!0?switch(0, '0', 1, '1', 'Many')}">
                                                         ${techUsageStatSum.name}
@@ -150,14 +142,23 @@
                                                     </li>
                                                 </#list>
                                             </ul>
+                                            </#if>
 
-                                            <#--
-                                            <hr />
-                                            <#assign statsForThisBox = (sortedStatsMap[rowTag.name][boxTag.name][0])! />
-                                            <#list statsForThisBox as name, stat>
-                                                ${stat.name} <b>${stat.occurrenceCount}</b>
+                                            <hr /> <!-- 2nd approach, optimized -->
+                                            <#-- Get a map of box buckets with TechUsageStats and take data from there, rather than pulling through a function. -->
+                                            <#assign statsForThisBox = (sortedStatsMap[rowTag.name]?api.get(boxTag.name)?api.get(0?long))! />
+                                            <#list statsForThisBox>
+                                                <ul>
+                                                    <#items as name, stat>
+                                                        <li>
+                                                        ${stat.name}
+                                                        <#if (stat.occurrenceCount > 0) >
+                                                            <b>${stat.occurrenceCount}</b>
+                                                        </#if>
+                                                        </li>
+                                                    </#items>
+                                                </ul>
                                             </#list>
-                                            -->
                                         </div>
                                         </#if>
                                     </#list>
