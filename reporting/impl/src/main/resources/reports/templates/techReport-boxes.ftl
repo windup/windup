@@ -142,9 +142,9 @@
                                                     </li>
                                                 </#list>
                                             </ul>
+                                            <hr /> <!-- 2nd approach, optimized -->
                                             </#if>
 
-                                            <hr /> <!-- 2nd approach, optimized -->
                                             <#-- Get a map of box buckets with TechUsageStats and take data from there, rather than pulling through a function. -->
                                             <#assign statsForThisBox = (sortedStatsMap[rowTag.name]?api.get(boxTag.name)?api.get(0?long))! />
                                             <#list statsForThisBox>

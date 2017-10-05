@@ -59,8 +59,8 @@
         tr.app td.sectorStats { text-align: right; vertical-align: middle; }
         tr.app td.circle { text-align: center; vertical-align: middle; padding: 0; line-height: 1; }
         tr.app td.circle { font-size: 26pt; }
-        tr.app td.circle.sizeX:after { content: "𐄂"; color: whitesmoke; font-size: 18pt; } /* No data */
-        tr.app td.circle.size0:after { content: "⊘"; color: whitesmoke; font-size: 18pt; }
+        tr.app td.circle.sizeX:after { content: "𐄂"; color: lightgrey; font-size: 18pt; } /* No data */
+        tr.app td.circle.size0:after { content: "⊘"; color: lightgrey; font-size: 18pt; }
         tr.app td.circle.size1:after { content: "🞄"; }
         tr.app td.circle.size2:after { content: "⚫"; }
         tr.app td.circle.size3:after { content: "●"; }
