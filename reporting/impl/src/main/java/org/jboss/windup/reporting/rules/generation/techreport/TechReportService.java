@@ -1,11 +1,12 @@
 package org.jboss.windup.reporting.rules.generation.techreport;
 
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import freemarker.ext.beans.StringModel;
+import freemarker.template.SimpleNumber;
+import freemarker.template.SimpleScalar;
+import java.util.*;
+import java.util.logging.Logger;
 import org.jboss.windup.config.tags.Tag;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.TagModel;
 import org.jboss.windup.reporting.model.TechnologyUsageStatisticsModel;
 import org.jboss.windup.reporting.service.TagGraphService;
@@ -13,14 +14,72 @@ import org.jboss.windup.util.exception.WindupException;
 
 public class TechReportService
 {
+    public static final Logger LOG = Logger.getLogger(TechReportService.class.getName());
+
     private final TagGraphService tagService;
-    private GraphContext graphContext;
+    private final GraphContext graphContext;
 
     public TechReportService(GraphContext graphContext)
     {
         this.graphContext = graphContext;
         this.tagService = new TagGraphService(graphContext);
     }
+
+
+
+    /**
+     * Prepares a precomputed matrix - map of maps of maps: rowTag -> boxTag -> project -> silly label -> TechUsageStatSum.
+     */
+    Map<String, Map<String, Map<Long, Map<String, TechUsageStatSum>>>> getTechStatsMap()
+    {
+        Map<String, Map<String, Map<Long, Map<String, TechReportService.TechUsageStatSum>>>> map = new HashMap<>();
+
+        final Iterable<TechnologyUsageStatisticsModel> statModels = graphContext.service(TechnologyUsageStatisticsModel.class).findAll();
+        for (TechnologyUsageStatisticsModel stat : statModels)
+        {
+            LOG.info(String.format("    Rolling up '%s', count: %sx, tags: %s", stat.getName(), stat.getOccurrenceCount(), stat.getTags()) );
+
+            final Set<String>[] normalAndSilly = TechReportService.splitSillyTagNames(graphContext, stat.getTags());
+            TechReportService.TechReportPlacement placement = TechReportService.processSillyLabels(graphContext, normalAndSilly[1]);
+            placement = TechReportService.normalizeSillyPlacement(graphContext, placement);
+
+            // Sort them out to the map.
+            final Map<String, Map<Long, Map<String, TechReportService.TechUsageStatSum>>> row = map.computeIfAbsent(placement.row.getName(), k -> new HashMap());
+            final Map<Long, Map<String, TechReportService.TechUsageStatSum>> box = row.computeIfAbsent(placement.box.getName(), k -> new HashMap<>());
+
+            final String statsModelLabel = stat.getName();
+            // All Projects
+            final Map<String, TechReportService.TechUsageStatSum> statSumAll = box.computeIfAbsent(Long.valueOf(0), k -> new HashMap<>());
+            statSumAll.put(statsModelLabel, new TechReportService.TechUsageStatSum(stat));
+            // Respective project
+            final Long projectKey = (Long) stat.getProjectModel().asVertex().getId();
+            final Map<String, TechReportService.TechUsageStatSum> statSum = box.computeIfAbsent(projectKey, k -> new HashMap<>());
+            statSum.put(statsModelLabel, new TechReportService.TechUsageStatSum(stat));
+        }
+        return map;
+    }
+
+    /**
+     * A helper method to query the structure created above, since Freemarker can't query maps with numerical keys.
+     */
+    static Map<String, TechReportService.TechUsageStatSum> queryMap(List arguments)
+    {
+        Map<String, Map<String, Map<Long, Map<String, TechReportService.TechUsageStatSum>>>> map =
+                (Map<String, Map<String, Map<Long, Map<String, TechReportService.TechUsageStatSum>>>>) ((StringModel)arguments.get(0)).getWrappedObject();
+        String rowTagName = ((SimpleScalar) arguments.get(1)).getAsString();
+        String boxTagName = ((SimpleScalar) arguments.get(2)).getAsString();
+        Long projectId = ((SimpleNumber) arguments.get(3)).getAsNumber().longValue();
+
+        final Map<String, Map<Long, Map<String, TechReportService.TechUsageStatSum>>> rowMap = map.get(rowTagName);
+        if (null == rowMap)
+            return null;
+        final Map<Long, Map<String, TechReportService.TechUsageStatSum>> boxMap = rowMap.get(boxTagName);
+        if (null == boxMap)
+            return null;
+        final Map<String, TechReportService.TechUsageStatSum> projectMap = boxMap.get(projectId);
+        return projectMap;
+    }
+
 
 
     /**
@@ -94,7 +153,7 @@ public class TechReportService
         }
         placement.unknown = tagNames2;
 
-        GetTechnologiesIdentifiedForSubSectorAndRowMethod.LOG.info(String.format("\t\tLabels %s identified as: sector: %s, box: %s, row: %s", tagNames, placement.sector, placement.box, placement.row));
+        LOG.info(String.format("\t\tLabels %s identified as: sector: %s, box: %s, row: %s", tagNames, placement.sector, placement.box, placement.row));
         if (placement.box == null || placement.row == null)
         {
             GetTechnologiesIdentifiedForSubSectorAndRowMethod.LOG.severe(String.format("There should always be exactly 3 silly labels - row, sector, column/box. Found: %s, of which box: %s, row: %s", tagNames, placement.box, placement.row));
@@ -103,7 +162,8 @@ public class TechReportService
     }
 
     /**
-     * This relies on the tag structure in the XML when the silly mapping tags have exactly one parent outside the silly group, which is the tag they are mapped to.
+     * This relies on the tag structure in the XML when the silly mapping tags have exactly one parent
+     * outside the silly group, which is the tag they are mapped to.
      */
     static TechReportPlacement normalizeSillyPlacement(GraphContext grCtx, TechReportPlacement sillyPlacement)
     {

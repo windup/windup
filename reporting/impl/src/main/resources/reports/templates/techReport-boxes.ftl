@@ -95,14 +95,8 @@
                 <#assign sectorTags = iterableToList(sectorTagsIterable) /> <#-- Later: FM 2.3.27 introduces ?sequence -->
                 <#assign sectorTags = sectorTags?sort_by("name") />
 
-                <#-- MatrixAndAggregated {
-                       countsOfTagsInApps,  // Map<ProjectModel, Map<String, Integer>>
-                       maximumsPerTag       // Map<String, Integer>
-                       totalsPerTag         // Map<String, Integer>
-                    }
-                -->
-                <#assign stats = getTechReportPunchCardStats() />
-
+                <#-- A precomputed matrix - map of maps of maps, boxTag -> rowTag -> project -> techName -> TechUsageStat.
+                     Map<String, Map<String, Map<Long, Map<String, TechReportService.TechUsageStatSum>>>> -->
                 <#assign sortedStatsMap = sortTechUsageStats() />
 
                 <table class="technologiesBoxCard">

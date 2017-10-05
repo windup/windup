@@ -88,11 +88,11 @@ public class GetTechnologiesIdentifiedForSubSectorAndRowMethod implements Windup
         return techStats;
     }
 
-    // TODO: This should be optimized by a precomputed matrix - map of maps of maps, boxTag -> rowTag -> project -> TechUsageStat.
-
     /**
      * This scans all {@link TechnologyUsageStatisticsModel}s and filters those belonging under given box/column and row, and project.
-     * @deprecated Remove.
+     *
+     * @deprecated This is now optimized by a precomputed matrix - map of maps of maps, boxTag -> rowTag -> project -> techName -> TechUsageStat.
+     *       See {@link SortTechUsageStatsMethod}.
      */
     private Map<String, TechReportService.TechUsageStatSum> getTechStats(TagModel boxTag, TagModel rowTag, ProjectModel project)
     {
@@ -158,7 +158,7 @@ public class GetTechnologiesIdentifiedForSubSectorAndRowMethod implements Windup
     /**
      * Returns whether out of three tags, one is under sectorTag and one under rowTag. The remaining one is supposedly the a box label.
      */
-    boolean placementBelongToThisBoxAndRow(TechReportService.TechReportPlacement placement, TagModel boxTag, TagModel rowTag)
+    private boolean placementBelongToThisBoxAndRow(TechReportService.TechReportPlacement placement, TagModel boxTag, TagModel rowTag)
     {
         return tagService.isTagUnderTagOrSame(placement.box, boxTag) && tagService.isTagUnderTagOrSame(placement.row, rowTag);
     }
