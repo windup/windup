@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.Variables;
@@ -48,6 +49,8 @@ import org.ocpsoft.rewrite.event.Rewrite;
 import com.google.common.collect.Iterables;
 import org.jboss.windup.util.exception.WindupStopException;
 import org.ocpsoft.rewrite.config.CompositeCondition;
+import org.ocpsoft.rewrite.param.ParameterStore;
+import org.ocpsoft.rewrite.param.Parameterized;
 
 /**
  * Used to iterate over an implicit or explicit variable defined within the corresponding {@link ConfigurationRuleBuilder#when(Condition)} clause in
@@ -59,7 +62,7 @@ import org.ocpsoft.rewrite.config.CompositeCondition;
 public class Iteration extends DefaultOperationBuilder
             implements IterationBuilderVar, IterationBuilderOver,
             IterationBuilderWhen, IterationBuilderPerform, IterationBuilderOtherwise,
-            IterationBuilderComplete, CompositeOperation
+            IterationBuilderComplete, CompositeOperation, Parameterized
 {
     private static final String VAR_INSTANCE_STRING = "_instance";
     public static final String DEFAULT_VARIABLE_LIST_STRING = "default";
@@ -132,6 +135,47 @@ public class Iteration extends DefaultOperationBuilder
         Iteration iterationImpl = new Iteration(new TopLayerSingletonFramesSelector());
         iterationImpl.setPayloadManager(new NamedIterationPayloadManager(DEFAULT_SINGLE_VARIABLE_STRING));
         return iterationImpl;
+    }
+
+    /**
+     * These are really just needed to pass through to the condition, since the visitor system
+     * doesn't expect operations to have conditions and wouldn't otherwise find them.
+     */
+    @Override
+    public Set<String> getRequiredParameterNames()
+    {
+        return getRequiredParameterNames(this.condition);
+    }
+
+    /**
+     * These are really just needed to pass through to the condition, since the visitor system
+     * doesn't expect operations to have conditions and wouldn't otherwise find them.
+     */
+    @Override
+    public void setParameterStore(ParameterStore store)
+    {
+        setParameterStore(store, this.condition);
+    }
+
+    private Set<String> getRequiredParameterNames(Condition condition)
+    {
+        Set<String> result = new HashSet<>();
+        if (condition instanceof Parameterized)
+            result.addAll(((Parameterized) condition).getRequiredParameterNames());
+
+        if (condition instanceof CompositeCondition)
+            ((CompositeCondition) condition).getConditions().forEach(innerCondition -> result.addAll(getRequiredParameterNames(innerCondition)));
+
+        return result;
+    }
+
+    private void setParameterStore(ParameterStore store, Condition condition)
+    {
+        if (condition instanceof Parameterized)
+            ((Parameterized) condition).setParameterStore(store);
+
+        if (condition instanceof CompositeCondition)
+            ((CompositeCondition)condition).getConditions().forEach(innerCondition -> setParameterStore(store, innerCondition));
     }
 
     /**
