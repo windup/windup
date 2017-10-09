@@ -42,7 +42,7 @@ public class DiscoverEmbeddedCacheShiftOneLibraryRuleProvider extends AbstractRu
                                                     IssueCategoryRegistry.CLOUD_MANDATORY,
                                                     "Caching - ShiftOne (Java Object Cache) embedded library",
                                                     "The application embedds a ShiftOne library (Java Object Cache aka. JOCache).  \n"
-                                                    + "\n"
+                                                    + System.lineSeparator()
                                                     + "Cloud readiness issue as potential state information that is not persisted to a backing service.");
                                         classificationModel.setEffort(5);
 

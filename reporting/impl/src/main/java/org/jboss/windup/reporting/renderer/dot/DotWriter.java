@@ -49,7 +49,7 @@ public class DotWriter implements GraphDataSerializer
     private void writeGraphTag(OutputStream os) throws IOException
     {
         String name = this.getDotSafeName(graphName);
-        IOUtils.write(graphType.getName() + " " + name + "{" + DotConstants.NL, os);
+        IOUtils.write(graphType.getName() + " " + name + "{" + System.lineSeparator(), os);
 
         writeGraphNodes(os);
         writeGraphEdges(os);

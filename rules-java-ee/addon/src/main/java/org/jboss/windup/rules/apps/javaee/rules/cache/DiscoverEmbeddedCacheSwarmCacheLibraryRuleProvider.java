@@ -43,7 +43,7 @@ public class DiscoverEmbeddedCacheSwarmCacheLibraryRuleProvider extends Abstract
                                                     IssueCategoryRegistry.CLOUD_MANDATORY,
                                                     "Caching - SwarmCache embedded library",
                                                     "The application embedds a SwarmCache library.  \n"
-                                                    + "\n"
+                                                    + System.lineSeparator()
                                                     + "Cloud readiness issue as potential state information that is not persisted to a backing service.");
                                         classificationModel.setEffort(5);
 

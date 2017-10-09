@@ -35,8 +35,8 @@ public class RulesetUpdateChecker
         RulesetsUpdater updater = furnace.getAddonRegistry().getServices(RulesetsUpdater.class).get();
         if (updater.rulesetsNeedUpdate(true))
         {
-            System.out.println("\nThe rulesets are outdated: " + updater.getRulesetsDir()
-                + "\nConsider running "+ Util.WINDUP_BRAND_NAME_ACRONYM +" with --updateRulesets.\n");
+            System.out.println(System.lineSeparator() The rulesets are outdated: " + updater.getRulesetsDir()
+                + System.lineSeparator() Consider running "+ Util.WINDUP_BRAND_NAME_ACRONYM +" with --updateRulesets.\n");
         }
         */
     }

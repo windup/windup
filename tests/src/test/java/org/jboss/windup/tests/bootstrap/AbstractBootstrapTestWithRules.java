@@ -27,7 +27,7 @@ public abstract class AbstractBootstrapTestWithRules extends AbstractBootstrapTe
             + "        <targetTechnology id=\"eap7\" versionRange=\"[7,)\" />\n"
             + "        <tag>test-tag-eap</tag>\n"
             + "    </metadata>\n"
-            + "\n"
+            + System.lineSeparator()
             + "    <rules>\n"
             + "        <rule id=\"testing-rule\">\n"
             + "            <when>\n"
@@ -55,7 +55,7 @@ public abstract class AbstractBootstrapTestWithRules extends AbstractBootstrapTe
             + "        <targetTechnology id=\"eap7\" versionRange=\"[7,)\" />\n"
             + "        <tag>another-test-tag-eap</tag>\n"
             + "    </metadata>\n"
-            + "\n"
+            + System.lineSeparator()
             + "    <rules>\n"
             + "        <rule id=\"another-testing-rule\">\n"
             + "            <when>\n"

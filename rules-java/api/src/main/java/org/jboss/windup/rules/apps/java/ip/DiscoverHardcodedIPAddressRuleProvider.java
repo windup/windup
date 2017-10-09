@@ -83,7 +83,7 @@ public class DiscoverHardcodedIPAddressRuleProvider extends AbstractRuleProvider
                     hintBody.append(payload.getSourceSnippit());
                     hintBody.append("**");
 
-                    hintBody.append("\n\n");
+                    hintBody.append(System.lineSeparator()+System.lineSeparator());
                     hintBody.append("When migrating environments, hard-coded IP addresses may need to be modified or eliminated.");
                     location.setHint(hintBody.toString());
                     //location.setIssueCategory(IssueCategoryRegistry.loadFromGraph(event.getGraphContext(), IssueCategoryRegistry.MANDATORY));

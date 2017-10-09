@@ -288,7 +288,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                 message.append("Failed to process " + filesToProcess.size() + " files:\n");
                 for (Path unprocessed : filesToProcess)
                 {
-                    message.append("\tFailed to process: " + unprocessed + "\n");
+                    message.append("\tFailed to process: " + unprocessed + System.lineSeparator());
                     String msg = "Could not process neither in batch or individually.";
                     markJavaFileModelAsUnprocessed(graphContext, unprocessed, classificationService, event, context, msg);
                     // Is the classification attached 2nd time here?

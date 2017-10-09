@@ -43,7 +43,7 @@ public class DiscoverEmbeddedCacheCommonsJcsLibraryRuleProvider extends Abstract
                                                     IssueCategoryRegistry.CLOUD_MANDATORY,
                                                     "Caching - Apache Commons JCS embedded library",
                                                     "The application embedds an Apache Commons JCS library.  \n"
-                                                    + "\n"
+                                                    + System.lineSeparator()
                                                     + "Cloud readiness issue as potential state information that is not persisted to a backing service.");
                                         classificationModel.setEffort(5);
 

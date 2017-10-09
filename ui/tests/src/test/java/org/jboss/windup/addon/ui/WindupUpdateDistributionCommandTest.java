@@ -139,7 +139,7 @@ public class WindupUpdateDistributionCommandTest
 
         // Check the new version.
         String newUiVersion = getInstalledAddonVersion(windupDir.toPath().resolve("addons").toString(), WINDUP_UI_ADDON_NAME);
-        Assert.assertTrue(new SingleVersion(newUiVersion).compareTo(new SingleVersion("2.2.0.Final")) > 0);
+        Assert.assertTrue(SingleVersion.valueOf(newUiVersion).compareTo(SingleVersion.valueOf("2.2.0.Final")) > 0);
 
         // Try to run Windup from there.
         // TODO: I need to set the harness addons directory to the freshly created dir.
@@ -260,7 +260,7 @@ public class WindupUpdateDistributionCommandTest
                     "org-jboss-windup-ui-windup-ui-" + WINDUP_OLD_VERSION.replaceAll("\\.", "-"));
         olderVersionAddonDir.mkdirs();
 
-        log.warning("Replacing the addon: \n  " + currentAddonDir + "\n  " + olderVersionAddonDir);
+        log.warning("Replacing the addon: \n  " + currentAddonDir + System.lineSeparator() + olderVersionAddonDir);
         try
         {
             FileUtils.copyDirectory(currentAddonDir, olderVersionAddonDir);

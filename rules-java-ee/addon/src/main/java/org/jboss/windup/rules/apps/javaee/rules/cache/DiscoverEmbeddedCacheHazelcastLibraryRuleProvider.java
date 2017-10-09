@@ -43,7 +43,7 @@ public class DiscoverEmbeddedCacheHazelcastLibraryRuleProvider extends AbstractR
                                                     IssueCategoryRegistry.CLOUD_MANDATORY,
                                                     "Caching - Hazelcast embedded library",
                                                     "The application embedds an Hazelcast library.  \n"
-                                                    + "\n"
+                                                    + System.lineSeparator()
                                                     + "Cloud readiness issue as potential state information that is not persisted to a backing service.");
                                         classificationModel.setEffort(5);
 

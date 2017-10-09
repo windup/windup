@@ -399,10 +399,12 @@ public class RunWindupCommand implements Command, FurnaceDependent
         return furnace.getAddonRegistry().getServices(WindupProcessor.class).get();
     }
 
-    private GraphContextFactory getGraphContextFactory()
-    {
-        return furnace.getAddonRegistry().getServices(GraphContextFactory.class).get();
-    }
+// TODO: Not Used anymore, candidate to remove
+//
+//    private GraphContextFactory getGraphContextFactory()
+//    {
+//        return furnace.getAddonRegistry().getServices(GraphContextFactory.class).get();
+//    }
 
     private String getOptionName(String argument)
     {
@@ -427,7 +429,7 @@ public class RunWindupCommand implements Command, FurnaceDependent
             catch (IOException ex)
             {
                 log.log(Level.WARNING, "Failed deleting graph directory: " + graphPath.toFile().getPath()
-                            + "\n\tDue to: " + ex.getMessage(), ex);
+                            + System.lineSeparator()+"\tDue to: " + ex.getMessage(), ex);
             }
         }
     }

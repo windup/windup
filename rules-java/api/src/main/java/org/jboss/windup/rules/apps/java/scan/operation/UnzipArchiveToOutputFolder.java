@@ -20,14 +20,11 @@ import org.jboss.windup.graph.model.DuplicateArchiveModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.IgnoredFileModel;
-import org.jboss.windup.graph.model.resource.ResourceModel;
 import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.rules.apps.java.archives.model.IdentifiedArchiveModel;
-import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
-import org.jboss.windup.rules.apps.java.reporting.freemarker.filepath.GetPrettyPathForFile;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.ZipUtil;
@@ -291,7 +288,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
             catch (IOException e)
             {
                 throw new WindupException("Failed to create temporary folder for archives: " + windupTempUnzippedArchiveFolder
-                        + "\n\tdue to: " + e.getMessage(), e);
+                        + System.lineSeparator()+"\tdue to: " + e.getMessage(), e);
             }
         }
     }

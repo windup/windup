@@ -159,7 +159,7 @@ public class ValidateXmlFilesRuleProvider extends AbstractRuleProvider
                 hintModel.setTitle(XmlFileModel.NOT_VALID_XML);
                 String message = "XSD Validation failed due to:\n\n";
                 message += "\t" + e.getMessage();
-                message += "\n\n";
+                message += System.lineSeparator()+System.lineSeparator();
                 hintModel.setHint(message);
             }
 

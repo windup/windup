@@ -233,7 +233,7 @@ public class TechnologyUsageStatisticsService extends GraphService<TechnologyUsa
             {
                 String errorMessage = "Not instance of " +
                             BelongsToProject.class.getName() +
-                            "\n" +
+                            System.lineSeparator() +
                             clazz.getName();
 
                 LOG.warning(errorMessage);
