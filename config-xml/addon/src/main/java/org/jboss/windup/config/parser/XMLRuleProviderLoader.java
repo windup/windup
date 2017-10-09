@@ -111,9 +111,9 @@ public class XMLRuleProviderLoader implements RuleProviderLoader
         {
             // Log the files found
             final Collection<URL> userXmlRulesetFiles = getWindupUserDirectoryXmlFiles(userRulesPath);
-            StringBuilder sb = new StringBuilder("\nFound " + userXmlRulesetFiles.size() + " user XML rules in: " + userRulesPath);
+            StringBuilder sb = new StringBuilder(System.lineSeparator()+"Found " + userXmlRulesetFiles.size() + " user XML rules in: " + userRulesPath);
             for (URL resource : userXmlRulesetFiles)
-                sb.append("\n\t" + resource.toString());
+                sb.append(System.lineSeparator()).append("\t").append(resource.toString());
             LOG.info(sb.toString());
 
             // Parse each file

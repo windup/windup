@@ -460,7 +460,7 @@ public class ProcyonDecompiler extends AbstractDecompiler
                         {
                             String msg = "Detected a request to stop during decompilation of " + archive.toString() + "!" + name + ":\n    "
                                     + ex.getMessage();
-                            log.log(Level.WARNING, msg + "\n    (Rethrowing)");
+                            log.log(Level.WARNING, msg + System.lineSeparator()+"     (Rethrowing)");
                             throw new WindupStopException(msg, ex);
                         }
                         catch (Throwable th)

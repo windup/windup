@@ -29,7 +29,7 @@ public class PhaseHandler implements ElementHandler<Void>
         Class<? extends RulePhase> phase = phaseFinder.findPhase(phaseStr);
         if (phase == null)
         {
-            String phasesListing = phaseFinder.getAvailablePhases().stream().map(clazz -> clazz.getSimpleName()).collect(Collectors.joining("\n    "));
+            String phasesListing = phaseFinder.getAvailablePhases().stream().map(clazz -> clazz.getSimpleName()).collect(Collectors.joining(System.lineSeparator()+"    "));
             throw new IllegalArgumentException("Unrecognized phase \"" + phaseStr + "\". Available phases: \n    " + phasesListing);
         }
         context.getBuilder().setPhase(phase);

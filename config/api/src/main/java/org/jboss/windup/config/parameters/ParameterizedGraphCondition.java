@@ -116,11 +116,11 @@ public abstract class ParameterizedGraphCondition extends GraphCondition impleme
                                     // FIXME: WHY DOES THIS HAPPEN? WINDUP-1549
                                     LOG.log(paramValueStoreOverwritten ?  Level.FINER : Level.WARNING,
                                             () -> String.format("resultSetStores already had a ParameterValueStore for frame:"
-                                            + "\n    %s"
-                                            + "\n    Old: %s"
-                                            + "\n    New: %s"
+                                            + System.lineSeparator()+"    %s"
+                                            + System.lineSeparator()+"    Old: %s"
+                                            + System.lineSeparator()+"    New: %s"
                                             + "%s", frame.toPrettyString(), last, frame,
-                                            paramValueStoreOverwritten ? "" : "\nFurther incidents will be logged at FINER level as it may occur millions of times."));
+                                            paramValueStoreOverwritten ? "" : System.lineSeparator()+"Further incidents will be logged at FINER level as it may occur millions of times."));
                                     paramValueStoreOverwritten = true;
                                 }
                             }

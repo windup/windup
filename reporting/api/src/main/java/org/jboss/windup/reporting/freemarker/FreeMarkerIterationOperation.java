@@ -147,9 +147,9 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
         catch (IOException | TemplateException e)
         {
             LOG.log(Level.WARNING,
-                  "\n  Failed to write template: " + templatePath
-                + "\n  To: " + outputFilename
-                + "\n  Due to: " + e.getMessage(), e);
+                  System.lineSeparator()+"   Failed to write template: " + templatePath
+                + System.lineSeparator()+"   To: " + outputFilename
+                + System.lineSeparator()+"   Due to: " + e.getMessage(), e);
         }
         finally
         {

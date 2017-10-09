@@ -18,10 +18,10 @@ public class WindupMultiStringException extends WindupException
 
     private static String formatMessage(String msg, List<String> errors)
     {
-        StringBuilder sb = new StringBuilder(msg).append("\n");
+        StringBuilder sb = new StringBuilder(msg).append(System.lineSeparator());
         for (String error : errors)
         {
-            sb.append("\t").append(error).append("\n");
+            sb.append("\t").append(error).append(System.lineSeparator());
         }
         return sb.toString();
     }

@@ -47,7 +47,7 @@ public class AndPredicate implements Predicate<RuleProvider>
         StringBuilder sb = new StringBuilder("AndPredicate{");
         for (Predicate<RuleProvider> predicate : predicates)
         {
-            sb.append("\t").append(predicate).append("\n");
+            sb.append("\t").append(predicate).append(System.lineSeparator());
         }
         return sb.append("}").toString();
     }

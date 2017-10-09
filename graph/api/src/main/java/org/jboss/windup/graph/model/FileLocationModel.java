@@ -93,7 +93,7 @@ public interface FileLocationModel extends FileReferenceModel, ToFileModelTransf
             if (null == getSourceSnippit())
                 return "";
             return StringEscapeUtils.escapeHtml4(
-                    StringUtils.substringBefore(StringUtils.abbreviate(getSourceSnippit().trim(), MAX_DESC_WIDTH), "\n"));
+                    StringUtils.substringBefore(StringUtils.abbreviate(getSourceSnippit().trim(), MAX_DESC_WIDTH), System.lineSeparator()));
         }
 
         @Override
