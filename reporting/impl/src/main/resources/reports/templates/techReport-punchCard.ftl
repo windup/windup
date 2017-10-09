@@ -117,13 +117,12 @@
                 -->
                 <#assign stats = getTechReportPunchCardStats() />
 
-
                 <#-- A precomputed matrix - map of maps of maps, boxTag -> rowTag -> project -> techName -> TechUsageStat.
-                     Map<String, Map<String, Map<Long, Map<String, TechReportService.TechUsageStatSum>>>>
+                     Map<String, Map<String, Map<Long, Map<String, TechReportService.TechUsageStatSum>>>> -->
                 <#assign sortedStatsMap = sortTechUsageStats() />
-                        I could create rollups for both all rows.
-                        <#assign statsForThisBox = (sortedStatsMap[""]?api.get(boxTag.name)?api.get(appProject.asVertex().getId()?long))! />
-                -->
+                <code>
+                    map: ${mapToJson(sortedStatsMap)!}
+                </code>
 
 
                 <table class="technologiesPunchCard">
@@ -159,11 +158,17 @@
                             <#list sectorTag.designatedTags as boxTag>
                                 <#if !isTagUnderTag(boxTag, sillyTagsParent) >
                                     <#assign count = (stats.countsOfTagsInApps?api.get(appProject.asVertex().id)[boxTag.name])!false />
-                                    <#assign max = stats.maximumsPerTag[boxTag.name] />
-                                    <#assign log = count?is_number?then(getLogaritmicDistribution(count, max), false) />
+                                    <#assign maxForThisBox = stats.maximumsPerTag[boxTag.name] />
+
+                                    <#-- 2nd way - using the 4 layer map -->
+                                    <#assign statsForThisBox = (sortedStatsMap[""]?api.get(boxTag.name)?api.get(appProject.asVertex().id?long))! />
+                                    <#assign count = (statsForThisBox[""].occurrenceCount)!0 />
+                                    <#assign maxForThisBox   = (sortedStatsMap[""]?api.get(boxTag.name)?api.get(0?long)?api.get("").occurrenceCount)!0 />
+
+                                    <#assign log = count?is_number?then(getLogaritmicDistribution(count, maxForThisBox), false) />
 
                                     <#if count?is_number >
-                                        <!-- count: ${count}   max: ${max}   getLogaritmicDistribution(): ${ log } x 5 = ${ log * 5.0 } -->
+                                        <!-- count: ${count}   max: ${maxForThisBox}   getLogaritmicDistribution(): ${ log } x 5 = ${ log * 5.0 } -->
                                     </#if>
 
                                     <td class="circle size${ log?is_number?then((log * 5.0)?ceiling, "X")} sector${sectorTag.title}"><!-- The circle is put here by CSS :after --></td>

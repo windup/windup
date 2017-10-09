@@ -58,6 +58,8 @@ public class SortTechUsageStatsMethod implements WindupFreeMarkerMethod
     @Override
     public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
     {
+        LOG.info(NAME + "() called.");///
+
         if (arguments.size() == 4)
             return TechReportService.queryMap(arguments);
 

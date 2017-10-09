@@ -38,16 +38,25 @@ public class TechReportService
         final Iterable<TechnologyUsageStatisticsModel> statModels = graphContext.service(TechnologyUsageStatisticsModel.class).findAll();
         for (TechnologyUsageStatisticsModel stat : statModels)
         {
-            LOG.info(String.format("    Rolling up '%s', count: %sx, tags: %s", stat.getName(), stat.getOccurrenceCount(), stat.getTags()) );
+            LOG.info(String.format("--- Counting up '%s', count: %sx, tags: %s", stat.getName(), stat.getOccurrenceCount(), stat.getTags()) );
 
             final Set<String>[] normalAndSilly = TechReportService.splitSillyTagNames(graphContext, stat.getTags());
             TechReportService.TechReportPlacement placement = TechReportService.processSillyLabels(graphContext, normalAndSilly[1]);
             placement = TechReportService.normalizeSillyPlacement(graphContext, placement);
 
-            final String statsModelLabel = stat.getName();
             final Long projectKey = (Long) stat.getProjectModel().getRootProjectModel().asVertex().getId();
 
+            LOG.info(String.format("\tplacement: %s, projectKey: %d", placement, projectKey)); ///
+            if (placement.box == null || placement.row == null)
+            {
+                LOG.severe(String.format("\tPlacement labels not recognized, placement incomplete: %s; stat: %s", placement, stat));
+                continue;
+            }
+                
+
             /*
+            final String statsModelLabel = stat.getName();
+
             // Sort them out to the map.
             {
                 final Map<String, Map<Long, Map<String, TechUsageStatSum>>> row = map.computeIfAbsent(placement.row.getName(), k -> new HashMap());
