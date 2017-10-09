@@ -46,28 +46,7 @@ public class DiscoverDataSourceAnnotationRuleProvider extends AbstractRuleProvid
 
         return ConfigurationBuilder.begin()
                 .addRule()
-                .when(JavaClass.references("javax.annotation.sql.{annotationType}").at(TypeReferenceLocation.ANNOTATION))
-                .perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
-                {
-                    @Override
-                    public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
-                    {
-                        /*
-                         * This needs to be here to analyze nested annotation
-                         *
-                         * @DataSourceDefinitions({
-                         *  @DataSourceDefinition({})...
-                         * })
-                         *
-                         * Even though it doesn't really do anything, without it, it doesn't work properly.
-                         * (I'm not sure why, it would be worth to find out)
-                         */
-                    }
-                })
-                .where("annotationType").matches("DataSourceDefinitions")
-                .withId(ruleIDPrefix + "_MultipleDataSourceDefinitions")
-                .addRule()
-                .when(JavaClass.references("javax.annotation.sql.{annotationType}").at(TypeReferenceLocation.ANNOTATION))
+                .when(JavaClass.references("javax.annotation.sql.DataSourceDefinition").at(TypeReferenceLocation.ANNOTATION))
                 .perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
                 {
                     @Override
@@ -76,7 +55,6 @@ public class DiscoverDataSourceAnnotationRuleProvider extends AbstractRuleProvid
                         extractDataSourceMetadata(event, payload);
                     }
                 })
-                .where("annotationType").matches("DataSourceDefinition")
                 .withId(ruleIDPrefix + "_DataSourceDefinition");
     }
 
