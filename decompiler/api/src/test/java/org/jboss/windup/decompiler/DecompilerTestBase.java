@@ -81,7 +81,7 @@ public abstract class DecompilerTestBase
             sb.append("Failed decompilation of " + res.getFailures().size() + " classes: ");
             for (final DecompilationFailure e : res.getFailures())
             {
-                sb.append("\n    ").append(e.getMessage());
+                sb.append(System.lineSeparator()+"    ").append(e.getMessage());
                 final Throwable cause = e.getCause();
                 cause.printStackTrace();
                 if (cause instanceof NullPointerException)
@@ -148,7 +148,7 @@ public abstract class DecompilerTestBase
             sb.append("Failed decompilation of " + res.getFailures().size() + " classes: ");
             for (final DecompilationFailure dex : res.getFailures())
             {
-                sb.append("\n    ").append(dex.getMessage());
+                sb.append(System.lineSeparator()+"    ").append(dex.getMessage());
             }
 
             if (!this.isResultValid(res))

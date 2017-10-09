@@ -43,7 +43,7 @@ public class DiscoverEmbeddedCacheDynacacheLibraryRuleProvider extends AbstractR
                                                     IssueCategoryRegistry.CLOUD_MANDATORY,
                                                     "Caching - Dynacache embedded library",
                                                     "The application embedds a Dynacache library.  \n"
-                                                    + "\n"
+                                                    + System.lineSeparator()
                                                     + "Cloud readiness issue as potential state information that is not persisted to a backing service.");
                                         classificationModel.setEffort(5);
 

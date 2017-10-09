@@ -150,7 +150,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
     private void getMigrationEffortDetails(ProjectModelTraversal traversal, Set<String> includeTags, Set<String> excludeTags, boolean recursive,
                 boolean includeZero, EffortAccumulatorFunction accumulatorFunction)
     {
-        LOG.log(Level.INFO, String.format("\n\t\t\tEFFORT C: getMigrationEffortDetails() with: %s, %srecur, %sincludeZero, %s, tags: %s, excl: %s",
+        LOG.log(Level.INFO, String.format(System.lineSeparator()+"\t\t\tEFFORT C: getMigrationEffortDetails() with: %s, %srecur, %sincludeZero, %s, tags: %s, excl: %s",
                 traversal, recursive ? "" : "!", includeZero ? "" : "!", accumulatorFunction, includeTags, excludeTags));
 
         final Set<Vertex> initialVertices = traversal.getAllProjectsAsVertices(recursive);
@@ -238,9 +238,9 @@ public class ClassificationService extends GraphService<ClassificationModel>
         {
             if (!StringUtils.equals(description, classification.getDescription()))
                 LOG.warning("The description of the newly attached classification differs from the same-titled existing one, so the old description is being changed."
-                        + "\n  Clsf title: " + classification.getClassification()
-                        + "\n  Old desc: " + classification.getDescription()
-                        + "\n  New desc: " + description);
+                        + System.lineSeparator()+"   Clsf title: " + classification.getClassification()
+                        + System.lineSeparator()+"   Old desc: " + classification.getDescription()
+                        + System.lineSeparator()+"   New desc: " + description);
             classification.setDescription(description);
         }
 

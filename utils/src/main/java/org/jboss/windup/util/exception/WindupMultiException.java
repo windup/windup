@@ -18,13 +18,13 @@ public class WindupMultiException extends WindupException
 
     private static String formatMessage(String msg, List<Exception> exs, boolean prependClassSimpleName)
     {
-        StringBuilder sb = new StringBuilder(msg).append("\n");
+        StringBuilder sb = new StringBuilder(msg).append(System.lineSeparator());
         for (Exception ex : exs)
         {
             sb.append("\t");
             if (prependClassSimpleName)
                 sb.append(ex.getClass().getSimpleName()).append(": ");
-            sb.append(ex.getMessage()).append("\n");
+            sb.append(ex.getMessage()).append(System.lineSeparator());
         }
         return sb.toString();
     }

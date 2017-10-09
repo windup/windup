@@ -275,11 +275,11 @@ public class RuleProviderSorter
             StringBuilder errorSB = new StringBuilder();
             for (RuleProvider cycle : cycles)
             {
-                errorSB.append("Found dependency cycle involving: " + cycle.getMetadata().getID() + "\n");
+                errorSB.append("Found dependency cycle involving: " + cycle.getMetadata().getID()).append(System.lineSeparator());
                 Set<RuleProvider> subCycleSet = cycleDetector.findCyclesContainingVertex(cycle);
                 for (RuleProvider subCycle : subCycleSet)
                 {
-                    errorSB.append("\tSubcycle: " + subCycle.getMetadata().getID() + "\n");
+                    errorSB.append("\tSubcycle: " + subCycle.getMetadata().getID()).append(System.lineSeparator());
                 }
             }
             throw new RuntimeException("Dependency cycles detected: " + errorSB.toString());

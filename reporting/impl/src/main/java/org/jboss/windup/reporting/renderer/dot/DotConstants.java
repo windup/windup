@@ -7,8 +7,7 @@ public class DotConstants
 {
 
     public static final String INDENT = " \t";
-    public static final String NL = "\n";
-    public static final String END_LINE = ";\n";
+    public static final String END_LINE = ";"+System.lineSeparator();
 
     public enum DotGraphType
     {

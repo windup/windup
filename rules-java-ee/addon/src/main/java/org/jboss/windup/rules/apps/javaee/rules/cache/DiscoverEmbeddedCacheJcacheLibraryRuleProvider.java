@@ -43,7 +43,7 @@ public class DiscoverEmbeddedCacheJcacheLibraryRuleProvider extends AbstractRule
                                                     IssueCategoryRegistry.CLOUD_MANDATORY,
                                                     "Caching - JCache embedded library",
                                                     "The application embedds a JCache library.  \n"
-                                                    + "\n"
+                                                    + System.lineSeparator()
                                                     + "Cloud readiness issue as potential state information that is not persisted to a backing service.");
                                         classificationModel.setEffort(5);
 

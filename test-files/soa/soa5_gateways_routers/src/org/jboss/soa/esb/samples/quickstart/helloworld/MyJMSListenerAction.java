@@ -50,7 +50,7 @@ public class MyJMSListenerAction extends AbstractActionLifecycle
     }
 
     private void logHeader() {
-        System.out.println("\n&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
+        System.out.println(System.lineSeparator() &&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
     }
 
     private void logFooter() {

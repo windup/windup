@@ -186,7 +186,7 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
         {
             xmlFileModel.setParseError("Could not parse POM XML: " + ex.getMessage());
             LOG.warning("Could not parse POM XML for '" + xmlFileModel.getFilePath()
-                    + "':\n\t" + ex.getMessage() + "\n\tSkipping Maven project discovery.");
+                    + "':"+System.lineSeparator()+"\t" + ex.getMessage() + System.lineSeparator()+" \tSkipping Maven project discovery.");
             return null;
         }
 

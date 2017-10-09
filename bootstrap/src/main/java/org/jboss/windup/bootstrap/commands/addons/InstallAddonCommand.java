@@ -78,7 +78,7 @@ public class InstallAddonCommand extends AbstractAddonCommand implements Command
                     {
                         String apiVersion = resolver.resolveAPIVersion(versions[i]).get();
                         if (apiVersion != null
-                                    && Versions.isApiCompatible(runtimeAPIVersion, new SingleVersion(apiVersion)))
+                                    && Versions.isApiCompatible(runtimeAPIVersion, SingleVersion.valueOf(apiVersion)))
                         {
                             selected = versions[i];
                         }

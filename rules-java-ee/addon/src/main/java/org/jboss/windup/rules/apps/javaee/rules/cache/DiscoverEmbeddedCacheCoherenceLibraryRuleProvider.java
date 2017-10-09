@@ -43,7 +43,7 @@ public class DiscoverEmbeddedCacheCoherenceLibraryRuleProvider extends AbstractR
                                                     IssueCategoryRegistry.CLOUD_MANDATORY,
                                                     "Caching - Coherence embedded library",
                                                     "The application embedds a Coherence library.  \n"
-                                                    + "\n"
+                                                    + System.lineSeparator()
                                                     + "Cloud readiness issue as potential state information that is not persisted to a backing service.");
                                         classificationModel.setEffort(5);
 

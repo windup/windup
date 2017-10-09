@@ -88,7 +88,7 @@ public class FileMappingHandler implements ElementHandler<Void>
                 throw new WindupException("A '" + ELEM_NAME + "' element specifies a file mapping type ["
                             + name + "] that matched multiple file types. Please select one of matches and "
                             + "update the configuration to use the fully qualified name: ["
-                            + matchingTypes.toString().replaceAll(",", "\n") + "]");
+                            + matchingTypes.toString().replaceAll(",", System.lineSeparator()) + "]");
             }
             types.addAll(matchingTypes);
         }

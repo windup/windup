@@ -28,7 +28,7 @@ public class DiscoverPackagesCommandTest extends AbstractBootstrapTest {
             + "            <addon id=\"org.jboss.windup.rules,windup-rules-java," + Bootstrap.getRuntimeAPIVersion() + "\" />\n"
             + "        </dependencies>\n"
             + "    </metadata>\n"
-            + "\n"
+            + System.lineSeparator()
             + "    <rules>\n"
             + "        <package-mapping from=\"org.apache\" to=\"Apache\" />\n"
             + "    </rules>\n"

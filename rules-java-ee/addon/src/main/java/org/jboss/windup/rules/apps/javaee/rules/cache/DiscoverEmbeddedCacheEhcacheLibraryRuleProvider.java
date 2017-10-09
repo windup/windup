@@ -43,7 +43,7 @@ public class DiscoverEmbeddedCacheEhcacheLibraryRuleProvider extends AbstractRul
                                                     IssueCategoryRegistry.CLOUD_MANDATORY,
                                                     "Caching - Ehcache embedded library",
                                                     "The application embedds an Ehcache library.  \n"
-                                                    + "\n"
+                                                    + System.lineSeparator()
                                                     + "Cloud readiness issue as potential state information that is not persisted to a backing service.");
                                         classificationModel.setEffort(5);
 

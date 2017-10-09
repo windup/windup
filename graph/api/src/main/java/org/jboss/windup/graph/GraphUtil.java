@@ -29,49 +29,49 @@ public class GraphUtil
         String indent = StringUtils.repeat("    ", atLevel);
         if (vertex == null)
         {
-            sb.append("\n").append(indent).append("(vertex == null)");
+            sb.append(System.lineSeparator()).append(indent).append("(vertex == null)");
             return;
         }
         if (visitedIDs.contains(vertex.getId()))
         {
-            sb.append("\n").append(indent).append("" + vertex.getId());
+            sb.append(System.lineSeparator()).append(indent).append("" + vertex.getId());
             return;
         }
 
         visitedIDs.add(vertex.getId());
 
-        sb.append("\n").append(indent).append("v #").append("" + vertex.getId()).append(" {");
+        sb.append(System.lineSeparator()).append(indent).append("v #").append("" + vertex.getId()).append(" {");
         boolean hasProps = !vertex.getPropertyKeys().isEmpty();
         boolean hasEdges = vertex.getEdges(Direction.IN).iterator().hasNext()
                     || vertex.getEdges(Direction.OUT).iterator().hasNext();
 
         for (String propKey : vertex.getPropertyKeys())
         {
-            sb.append("\n    ").append(indent).append(propKey).append(": ").append("" + vertex.getProperty(propKey));
+            sb.append(System.lineSeparator()).append(indent).append(propKey).append(": ").append("" + vertex.getProperty(propKey));
         }
 
         if (withEdgesOfLabel == null || depth == 0)
         {
             if (hasProps)
-                sb.append("\n    ").append(indent);
+                sb.append(System.lineSeparator()).append(indent);
             if (hasEdges)
                 sb.append("... + some edges...");
         }
         else
         {
             boolean allEdges = "*".equals(withEdgesOfLabel);
-            sb.append("\n    ").append(indent).append(withEdgesOfLabel).append(" OUT -> ");
+            sb.append(System.lineSeparator()).append(indent).append(withEdgesOfLabel).append(" OUT -> ");
             for (Edge edge : allEdges ? vertex.getEdges(Direction.OUT) : vertex.getEdges(Direction.OUT, withEdgesOfLabel))
             {
                 if (allEdges)
-                    sb.append("\n    ").append(indent).append(edge.getLabel()).append(" --> ");
+                    sb.append(System.lineSeparator()).append(indent).append(edge.getLabel()).append(" --> ");
                 vertexAsString(edge.getVertex(Direction.IN), depth - 1, withEdgesOfLabel, sb, atLevel + 1, visitedIDs);
             }
-            sb.append("\n    ").append(indent).append(withEdgesOfLabel).append(" <- IN");
+            sb.append(System.lineSeparator()).append(indent).append(withEdgesOfLabel).append(" <- IN");
             for (Edge edge : allEdges ? vertex.getEdges(Direction.IN) : vertex.getEdges(Direction.IN, withEdgesOfLabel))
             {
                 if (allEdges)
-                    sb.append("\n    ").append(indent).append(" <-- ").append(edge.getLabel()).append(" --> ");
+                    sb.append(System.lineSeparator()).append(indent).append(" <-- ").append(edge.getLabel()).append(" --> ");
                 vertexAsString(edge.getVertex(Direction.OUT), depth - 1, withEdgesOfLabel, sb, atLevel + 1, visitedIDs);
             }
         }

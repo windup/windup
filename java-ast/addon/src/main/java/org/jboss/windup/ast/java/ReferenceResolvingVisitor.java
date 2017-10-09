@@ -182,7 +182,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
     private String extractDefinitionLine(String typeDeclaration)
     {
         String typeLine = "";
-        String[] lines = typeDeclaration.split("\n");
+        String[] lines = typeDeclaration.split(System.lineSeparator());
         for (String line : lines)
         {
             typeLine = line;
@@ -745,7 +745,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
         return reference;
     }
 
-    private void processModifiers(ClassReference originalReference, List modifiers)
+    private void processModifiers(ClassReference originalReference, List<?> modifiers)
     {
         for (Object modifier : modifiers)
         {

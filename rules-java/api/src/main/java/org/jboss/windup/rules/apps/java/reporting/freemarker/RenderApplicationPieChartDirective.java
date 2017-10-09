@@ -103,31 +103,31 @@ public class RenderApplicationPieChartDirective implements WindupFreeMarkerTempl
 
         String dataVarName = "data_" + elementID;
         writer.append("<script type='text/javascript'>");
-        writer.append("\nWINDUP_PACKAGE_PIE_DATA = typeof(WINDUP_PACKAGE_PIE_DATA) == 'undefined' ? {} : WINDUP_PACKAGE_PIE_DATA;");
-        writer.append("\nWINDUP_PACKAGE_PIE_DATA['").append(elementID).append("'] = [];");
+        writer.append(System.lineSeparator()+" WINDUP_PACKAGE_PIE_DATA = typeof(WINDUP_PACKAGE_PIE_DATA) == 'undefined' ? {} : WINDUP_PACKAGE_PIE_DATA;");
+        writer.append(System.lineSeparator()+" WINDUP_PACKAGE_PIE_DATA['").append(elementID).append("'] = [];");
         for (PieSort p : pieList)
         {
-            writer.append("\nWINDUP_PACKAGE_PIE_DATA['").append(elementID).append("'].push({label: '" + p.label + "', data: ")
+            writer.append(System.lineSeparator()+" WINDUP_PACKAGE_PIE_DATA['").append(elementID).append("'].push({label: '" + p.label + "', data: ")
                         .append(p.value.toString()).append("});");
         }
 
-        writer.append("\n$(function () {");
-        writer.append("\n  var " + dataVarName + " = [];");
+        writer.append(System.lineSeparator()+" $(function () {");
+        writer.append(System.lineSeparator()+"   var " + dataVarName + " = [];");
         for (PieSort p : pieList)
-            writer.append("\n").append(dataVarName).append(".push({ label: '").append(p.key).append("', data: ").append(p.value.toString()).append(" });");
+            writer.append(System.lineSeparator()+" ").append(dataVarName).append(".push({ label: '").append(p.key).append("', data: ").append(p.value.toString()).append(" });");
 
-        writer.append("\n  $.plot($('#" + elementID + "'), " + dataVarName + ", {");
-        writer.append("\n      series: { pie: { show: true,  innerRadius: 0.55, offset: { top: 0, left: -120 } } },");
-        writer.append("\n      colors: $.map( " + dataVarName + ", function(item, index) {" +
-                      "\n          var len = " + dataVarName + ".length;" +
-                      "\n          return jQuery.Color({" +
-                      "\n              hue: ((index*0.95*360/len) + 90/len) % 360," +
-                      "\n              saturation: 0.95," +
-                      "\n              lightness: ((index%4 == 3 ? 1:0)/-4)+0.55, alpha: 1" +
-                      "\n          }).toHexString();" +
-                      "\n      })");
-        writer.append("\n  });");
-        writer.append("\n});");
+        writer.append(System.lineSeparator()+"   $.plot($('#" + elementID + "'), " + dataVarName + ", {");
+        writer.append(System.lineSeparator()+"       series: { pie: { show: true,  innerRadius: 0.55, offset: { top: 0, left: -120 } } },");
+        writer.append(System.lineSeparator()+"       colors: $.map( " + dataVarName + ", function(item, index) {" +
+                      System.lineSeparator()+"           var len = " + dataVarName + ".length;" +
+                      System.lineSeparator()+"           return jQuery.Color({" +
+                      System.lineSeparator()+"               hue: ((index*0.95*360/len) + 90/len) % 360," +
+                      System.lineSeparator()+"               saturation: 0.95," +
+                      System.lineSeparator()+"               lightness: ((index%4 == 3 ? 1:0)/-4)+0.55, alpha: 1" +
+                      System.lineSeparator()+"           }).toHexString();" +
+                      System.lineSeparator()+"       })");
+        writer.append(System.lineSeparator()+"   });");
+        writer.append(System.lineSeparator()+" });");
         writer.append("</script>");
     }
 

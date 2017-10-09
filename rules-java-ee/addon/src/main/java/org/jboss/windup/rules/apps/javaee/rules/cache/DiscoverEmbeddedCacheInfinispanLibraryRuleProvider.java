@@ -43,7 +43,7 @@ public class DiscoverEmbeddedCacheInfinispanLibraryRuleProvider extends Abstract
                                                     IssueCategoryRegistry.CLOUD_MANDATORY,
                                                     "Caching - Infinispan embedded library",
                                                     "The application embedds an Infinispan library.  \n"
-                                                    + "\n"
+                                                    + System.lineSeparator()
                                                     + "Cloud readiness issue as potential state information that is not persisted to a backing service.");
                                         classificationModel.setEffort(5);
 

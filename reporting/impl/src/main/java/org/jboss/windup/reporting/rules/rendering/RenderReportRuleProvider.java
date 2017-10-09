@@ -137,7 +137,7 @@ public class RenderReportRuleProvider extends AbstractRuleProvider
                             }
                             catch (Throwable t)
                             {
-                                LOG.log(Level.WARNING, "Failed to render freemarker report:\n    " + reportModel + "\n    " + t.getMessage(), t);
+                                LOG.log(Level.WARNING, "Failed to render freemarker report:\n    " + reportModel + System.lineSeparator() + t.getMessage(), t);
                             }
                         }
                     }
