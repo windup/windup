@@ -28,7 +28,7 @@ import java.util.logging.Logger;
 public class MapToJsonMethod implements WindupFreeMarkerMethod
 {
     public static final Logger LOG = Logger.getLogger(MapToJsonMethod.class.getName());
-    private static final String NAME = "mapToJsonMethod";
+    private static final String NAME = "mapToJson";
 
     private GraphContext graphContext;
 
@@ -58,7 +58,18 @@ public class MapToJsonMethod implements WindupFreeMarkerMethod
         if (arguments.size() == 0)
             throw new TemplateModelException("Freemarker function "+NAME+"expects a Map<String, String> as a parameter.");
 
-        DefaultMapAdapter mapModel = (DefaultMapAdapter) arguments.get(0);
+        final Object arg0 = arguments.get(0);
+        if (null == arg0)
+        {
+            return null;
+        }
+        if (!(arg0 instanceof DefaultMapAdapter))
+        {
+            LOG.warning("Expected a Freemarker's DefaultMapAdapter, was: " + arg0.getClass());
+            return null;
+        }
+
+        DefaultMapAdapter mapModel = (DefaultMapAdapter) arg0;
         Map<String, String> map = (Map<String, String>) mapModel.getWrappedObject();
 
         ObjectMapper mapper = new ObjectMapper();

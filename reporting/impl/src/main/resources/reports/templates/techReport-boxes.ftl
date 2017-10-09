@@ -1,4 +1,4 @@
-<#ftl output_format="HTML">
+<#--ftl output_format="HTML"-->
 
 <#if reportModel.applicationReportIndexModel??>
     <#assign applicationReportIndexModel = reportModel.applicationReportIndexModel>
@@ -99,6 +99,10 @@
                      Map<String, Map<String, Map<Long, Map<String, TechReportService.TechUsageStatSum>>>> -->
                 <#assign sortedStatsMap = sortTechUsageStats() />
 
+                <code>
+                map: ${mapToJson(sortedStatsMap)!}
+                </code>
+
                 <table class="technologiesBoxCard">
                     <tr class="sectorsHeaders">
                         <#list sectorTags as sectorTag>
@@ -119,7 +123,7 @@
                                 <td class="sector${sectorTag.title}">
                                     <#list sectorTag.designatedTags as boxTag>
                                         <#if isTagUnderTag(boxTag, rowTag)>
-                                        <div class="box box-${boxTag.name} #box${boxTag.asVertex().id}">
+                                        <div class="box box-${boxTag.name} #box${boxTag.asVertex().id?c}">
                                             <div class="icon">[icon]</div>
                                             <h4>${boxTag.titleOrName}</h4>
 
@@ -141,6 +145,15 @@
 
                                             <#-- Get a map of box buckets with TechUsageStats and take data from there, rather than pulling through a function. -->
                                             <#assign statsForThisBox = (sortedStatsMap[rowTag.name]?api.get(boxTag.name)?api.get(0?long))! />
+                                            <!--
+                                            rowTag = "${rowTag.name}"
+                                            boxTag = "${boxTag.name}"
+                                            row = map[${rowTag.name}]: ${mapToJson(sortedStatsMap[rowTag.name])!}
+                                            <#if sortedStatsMap[rowTag.name]?? && sortedStatsMap[rowTag.name]?is_hash>
+                                            box = row[${boxTag.name}]: ${mapToJson(sortedStatsMap[rowTag.name]?api.get(boxTag.name))!}
+                                            </#if>
+                                            all projects = box[proj 0]: ${(statsForThisBox???then("statsForThisBox", "-"))!}
+                                            -->
                                             <#list statsForThisBox>
                                                 <ul>
                                                     <#items as name, stat>

@@ -117,6 +117,15 @@
                 -->
                 <#assign stats = getTechReportPunchCardStats() />
 
+
+                <#-- A precomputed matrix - map of maps of maps, boxTag -> rowTag -> project -> techName -> TechUsageStat.
+                     Map<String, Map<String, Map<Long, Map<String, TechReportService.TechUsageStatSum>>>>
+                <#assign sortedStatsMap = sortTechUsageStats() />
+                        I could create rollups for both all rows.
+                        <#assign statsForThisBox = (sortedStatsMap[""]?api.get(boxTag.name)?api.get(appProject.asVertex().getId()?long))! />
+                -->
+
+
                 <table class="technologiesPunchCard">
                     <tr class="headersSector">
                         <td></td>
@@ -129,11 +138,11 @@
                     </tr>
                     <tr class="headersGroup">
                         <td class="sector"></td>
-                        <#list sectorTags as sector >
-                            <#list sector.designatedTags as tech >
-                                <#if !isTagUnderTag(tech, sillyTagsParent) >
-                                    <#assign techsOrder = techsOrder + [tech] />
-                                    <td class="sector${sector.title}"><div>${tech.title!}</div></td>
+                        <#list sectorTags as sectorTag >
+                            <#list sectorTag.designatedTags as boxTag >
+                                <#if !isTagUnderTag(boxTag, sillyTagsParent) >
+                                    <#assign techsOrder = techsOrder + [boxTag] />
+                                    <td class="sector${sectorTag.title}"><div>${boxTag.title!}</div></td>
                                 </#if>
                             </#list>
                         </#list>
@@ -146,16 +155,19 @@
                     <#list inputApplications as appProject> <#-- ProjectModel -->
                     <tr class="app">
                         <td class="name">${appProject.rootFileModel.fileName}</td>
-                        <#list sectorTags as sector>
-                            <#list sector.designatedTags as tech>
-                                <#-- Double map access not supported in Freemarker for now... -->
-                                <#assign count = (stats.countsOfTagsInApps?api.get(appProject.asVertex().id)[tech.name])!false />
-                                <#assign max = stats.maximumsPerTag[tech.name] />
-                                <#assign log = count?is_number?then(getLogaritmicDistribution(count, max), false) />
-                                <#if count?is_number >
-                                    <!-- count: ${count}   max: ${max}   getLogaritmicDistribution(): ${ log } x 5 = ${ log * 5.0 } --><#-- Keep this here for debugging. -->
+                        <#list sectorTags as sectorTag>
+                            <#list sectorTag.designatedTags as boxTag>
+                                <#if !isTagUnderTag(boxTag, sillyTagsParent) >
+                                    <#assign count = (stats.countsOfTagsInApps?api.get(appProject.asVertex().id)[boxTag.name])!false />
+                                    <#assign max = stats.maximumsPerTag[boxTag.name] />
+                                    <#assign log = count?is_number?then(getLogaritmicDistribution(count, max), false) />
+
+                                    <#if count?is_number >
+                                        <!-- count: ${count}   max: ${max}   getLogaritmicDistribution(): ${ log } x 5 = ${ log * 5.0 } -->
+                                    </#if>
+
+                                    <td class="circle size${ log?is_number?then((log * 5.0)?ceiling, "X")} sector${sectorTag.title}"><!-- The circle is put here by CSS :after --></td>
                                 </#if>
-                                <td class="circle size${ log?is_number?then((log * 5.0)?ceiling, "X")} sector${sector.title}"><!-- The circle is put here by CSS :after --></td>
                             <#else>
                                 <td>No technology sectors defined.</td>
                             </#list>

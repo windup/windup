@@ -1,8 +1,6 @@
 package org.jboss.windup.reporting.rules.generation.techreport;
 
 import freemarker.ext.beans.StringModel;
-import freemarker.template.SimpleNumber;
-import freemarker.template.SimpleScalar;
 import freemarker.template.TemplateModelException;
 import java.util.*;
 import java.util.logging.Logger;
@@ -10,7 +8,6 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
-import org.jboss.windup.reporting.model.TechnologyUsageStatisticsModel;
 import org.jboss.windup.reporting.service.TagGraphService;
 import org.jboss.windup.util.ExecutionStatistics;
 
@@ -25,7 +22,6 @@ import org.jboss.windup.util.ExecutionStatistics;
  *          row: TagModel,
  *          projectToCount: ProjectModel
  *      ):
- *
  * </pre>
  *
  * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
@@ -86,6 +82,5 @@ public class SortTechUsageStatsMethod implements WindupFreeMarkerMethod
         ExecutionStatistics.get().end(NAME);
         return techStatsMap;
     }
-
 
 }

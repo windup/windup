@@ -4,6 +4,7 @@ import freemarker.ext.beans.StringModel;
 import freemarker.template.SimpleNumber;
 import freemarker.template.SimpleScalar;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 import org.jboss.windup.config.tags.Tag;
 import org.jboss.windup.graph.GraphContext;
@@ -32,7 +33,7 @@ public class TechReportService
      */
     Map<String, Map<String, Map<Long, Map<String, TechUsageStatSum>>>> getTechStatsMap()
     {
-        Map<String, Map<String, Map<Long, Map<String, TechReportService.TechUsageStatSum>>>> map = new HashMap<>();
+        Map<String, Map<String, Map<Long, Map<String, TechUsageStatSum>>>> map = new HashMap<>();
 
         final Iterable<TechnologyUsageStatisticsModel> statModels = graphContext.service(TechnologyUsageStatisticsModel.class).findAll();
         for (TechnologyUsageStatisticsModel stat : statModels)
@@ -43,40 +44,103 @@ public class TechReportService
             TechReportService.TechReportPlacement placement = TechReportService.processSillyLabels(graphContext, normalAndSilly[1]);
             placement = TechReportService.normalizeSillyPlacement(graphContext, placement);
 
-            // Sort them out to the map.
-            final Map<String, Map<Long, Map<String, TechReportService.TechUsageStatSum>>> row = map.computeIfAbsent(placement.row.getName(), k -> new HashMap());
-            final Map<Long, Map<String, TechReportService.TechUsageStatSum>> box = row.computeIfAbsent(placement.box.getName(), k -> new HashMap<>());
-
             final String statsModelLabel = stat.getName();
-            // All Projects
-            final Map<String, TechReportService.TechUsageStatSum> statSumAll = box.computeIfAbsent(Long.valueOf(0), k -> new HashMap<>());
-            statSumAll.put(statsModelLabel, new TechReportService.TechUsageStatSum(stat));
-            // Respective project
-            final Long projectKey = (Long) stat.getProjectModel().asVertex().getId();
-            final Map<String, TechReportService.TechUsageStatSum> statSum = box.computeIfAbsent(projectKey, k -> new HashMap<>());
-            statSum.put(statsModelLabel, new TechReportService.TechUsageStatSum(stat));
+            final Long projectKey = (Long) stat.getProjectModel().getRootProjectModel().asVertex().getId();
+
+            /*
+            // Sort them out to the map.
+            {
+                final Map<String, Map<Long, Map<String, TechUsageStatSum>>> row = map.computeIfAbsent(placement.row.getName(), k -> new HashMap());
+                final Map<Long, Map<String, TechUsageStatSum>> box = row.computeIfAbsent(placement.box.getName(), k -> new HashMap<>());
+
+                // All Projects
+                final Map<String, TechUsageStatSum> statSumAll = box.computeIfAbsent(Long.valueOf(0), k -> new HashMap<>());
+                statSumAll.put(statsModelLabel, new TechUsageStatSum(stat));
+                // Respective project
+                final Map<String, TechUsageStatSum> statSum = box.computeIfAbsent(projectKey, k -> new HashMap<>());
+                statSum.put(statsModelLabel, new TechUsageStatSum(stat));
+            }
+
+
+            // Roll-up for all rows.
+            {
+                final Map<String, Map<Long, Map<String, TechUsageStatSum>>> rowAll = map.computeIfAbsent("", k -> new HashMap());
+                final Map<Long, Map<String, TechUsageStatSum>> boxAll = rowAll.computeIfAbsent(placement.box.getName(), k -> new HashMap<>());
+
+                // All Projects
+                final Map<String, TechUsageStatSum> statSumAll = boxAll.computeIfAbsent(Long.valueOf(0), k -> new HashMap<>());
+                statSumAll.put(statsModelLabel, new TechUsageStatSum(stat));
+                // Respective project
+                final Long projectKey = (Long) stat.getProjectModel().asVertex().getId();
+                final Map<String, TechUsageStatSum> statSum = boxAll.computeIfAbsent(projectKey, k -> new HashMap<>());
+                statSum.put(statsModelLabel, new TechUsageStatSum(stat));
+            }*/
+
+
+            // For boxes report - show each tech in sector, row, box. For individual projects and sum for all projects.
+            mergeToTheRightCell(map, placement.row.getName(), placement.box.getName(), projectKey, stat.getName(), stat, false);
+            mergeToTheRightCell(map, placement.row.getName(), placement.box.getName(), 0L, stat.getName(), stat, false);
+
+            // For the punch card report - roll up rows and individual techs.
+            mergeToTheRightCell(map, "", placement.box.getName(), projectKey, "", stat, false);
+
+            // For the punch card report - maximum count for each box.
+            mergeToTheRightCell(map, "", placement.box.getName(), (Long) 0L, "", stat, true);
+
+            /*
+            map.get("").values().forEach(box -> {
+                AtomicInteger max = new AtomicInteger(0);
+
+                // Get the maximum count of all projects.
+                box.values().forEach(project -> {
+                    TechUsageStatSum maxPseudoTech = project.computeIfAbsent("", k -> new TechUsageStatSum(""));
+                    maxPseudoTech.count += stat.getOccurrenceCount();
+                    max.set(Math.max( max.get(), maxPseudoTech.count ));
+                });
+                // Add an entry for pseudoProject #0, set it's count to the maximum.
+                box.computeIfAbsent(0L, k -> new HashMap<>()).computeIfAbsent("", k -> new TechUsageStatSum("")).count = max.get();
+            });
+            /**/
         }
         return map;
+    }
+
+    static void mergeToTheRightCell(
+            Map<String, Map<String, Map<Long, Map<String, TechUsageStatSum>>>> matrix,
+            String rowName,
+            String boxName,
+            Long projectKey,
+            String techLabel,
+            TechnologyUsageStatisticsModel stat, boolean maxInsteadOfAdd)
+    {
+        final Map<String, Map<Long, Map<String, TechUsageStatSum>>> rowAll = matrix.computeIfAbsent(rowName, k -> new HashMap());
+        final Map<Long, Map<String, TechUsageStatSum>> boxAll = rowAll.computeIfAbsent(boxName, k -> new HashMap<>());
+        final Map<String, TechUsageStatSum> statSum = boxAll.computeIfAbsent(projectKey, k -> new HashMap<>());
+        final TechUsageStatSum techUsageStatSum = statSum.computeIfAbsent(techLabel, k -> new TechUsageStatSum(techLabel));
+        if (maxInsteadOfAdd)
+            techUsageStatSum.max(stat);
+        else
+            techUsageStatSum.add(stat);
     }
 
     /**
      * A helper method to query the structure created above, since Freemarker can't query maps with numerical keys.
      */
-    static Map<String, TechReportService.TechUsageStatSum> queryMap(List arguments)
+    static Map<String, TechUsageStatSum> queryMap(List arguments)
     {
-        Map<String, Map<String, Map<Long, Map<String, TechReportService.TechUsageStatSum>>>> map =
-                (Map<String, Map<String, Map<Long, Map<String, TechReportService.TechUsageStatSum>>>>) ((StringModel)arguments.get(0)).getWrappedObject();
+        Map<String, Map<String, Map<Long, Map<String, TechUsageStatSum>>>> map =
+                (Map<String, Map<String, Map<Long, Map<String, TechUsageStatSum>>>>) ((StringModel)arguments.get(0)).getWrappedObject();
         String rowTagName = ((SimpleScalar) arguments.get(1)).getAsString();
         String boxTagName = ((SimpleScalar) arguments.get(2)).getAsString();
         Long projectId = ((SimpleNumber) arguments.get(3)).getAsNumber().longValue();
 
-        final Map<String, Map<Long, Map<String, TechReportService.TechUsageStatSum>>> rowMap = map.get(rowTagName);
+        final Map<String, Map<Long, Map<String, TechUsageStatSum>>> rowMap = map.get(rowTagName);
         if (null == rowMap)
             return null;
-        final Map<Long, Map<String, TechReportService.TechUsageStatSum>> boxMap = rowMap.get(boxTagName);
+        final Map<Long, Map<String, TechUsageStatSum>> boxMap = rowMap.get(boxTagName);
         if (null == boxMap)
             return null;
-        final Map<String, TechReportService.TechUsageStatSum> projectMap = boxMap.get(projectId);
+        final Map<String, TechUsageStatSum> projectMap = boxMap.get(projectId);
         return projectMap;
     }
 
@@ -236,9 +300,15 @@ public class TechReportService
             this.tags.addAll(stat.getTags());
         }
 
+        public TechUsageStatSum max(TechnologyUsageStatisticsModel stat)
+        {
+            this.count = Math.max(count, stat.getOccurrenceCount());
+            return this;
+        }
+
         public TechUsageStatSum add(TechnologyUsageStatisticsModel stat)
         {
-            if (!this.name.equals(stat.getName()))
+            if (!"".equals(this.name) && !this.name.equals(stat.getName()))
                 throw new IllegalArgumentException("Can't add up stats, " + this.name + " != " + stat.getName());
             this.count += stat.getOccurrenceCount();
             this.tags.addAll(stat.getTags());
@@ -247,7 +317,7 @@ public class TechReportService
 
         public TechUsageStatSum add(TechUsageStatSum stat)
         {
-            if (!this.name.equals(stat.getName()))
+            if (!"".equals(this.name) && !this.name.equals(stat.getName()))
                 throw new IllegalArgumentException("Can't add up stats, " + this.name + " != " + stat.getName());
             this.count += stat.getOccurrenceCount();
             this.tags.addAll(stat.getTags());
@@ -267,6 +337,11 @@ public class TechReportService
         public Set<String> getTags()
         {
             return tags;
+        }
+
+        @Override
+        public String toString() {
+            return "{" + name + " " + count + "×, [" + tags + "]}";
         }
     }
 }
