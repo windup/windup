@@ -4,7 +4,7 @@
 
     <!-- These define the vertical groups? -->
     <tag name="techReport-rows:" pseudo="true">
-        <tag name="techRow:java-ee" title="Java EE"  pseudo="true" icon="">
+        <tag name="techRow:java-ee" title="Java EE"  pseudo="true">
             <tag ref="techBox:web"/>
         </tag>
         <tag name="techRow:embedded" title="Embedded"  pseudo="true">
@@ -27,40 +27,40 @@
         <tag name="techSector01:View" title="View" color="#1155CC" pseudo="true">
             <!-- If the tech span exactly matches an existing tag (title, contained tags, ...), then use that.
                  If not, define a techBox:... tag, and include whichever tags it should contain. -->
-            <tag name="techBox:web" title="Web" pseudo="true" parents="techRow:java-ee">
+            <tag name="techBox:web" title="Web" pseudo="true" parents="techRow:java-ee" icon="Misc_Network-Technical">
                 <tag ref="web"/>
             </tag>
-            <tag name="techBox:rich" title="Rich" pseudo="true" parents="techRow:java-ee">
+            <tag name="techBox:rich" title="Rich" pseudo="true" parents="techRow:java-ee"  icon="Hardware_Monitor-Webinar">
                 <tag ref="applet"/>
                 <tag ref="jnlp"/>
             </tag>
-            <tag name="techBox:mvc" title="MVC" pseudo="true" parents="techRow:embedded">
+            <tag name="techBox:mvc" title="MVC" pseudo="true" parents="techRow:embedded" icon="Software_Application-Window">
                 <tag ref="applet"/>
                 <tag ref="spring-mvc"/>
                 <tag ref="struts"/>
                 <tag ref="wicket"/>
                 <tag ref="gwt"/>
             </tag>
-            <tag name="techBox:mvc" title="Markup" pseudo="true" parents="techRow:embedded">
+            <tag name="techBox:markup" title="Markup" pseudo="true" parents="techRow:embedded" icon="Software_Code">
                 <tag ref="html"/>
                 <tag ref="css"/>
                 <tag ref="javascript"/>
             </tag>
         </tag>
         <tag name="techSector02:Connect" title="Connect" color="#38761D" pseudo="true">
-            <tag name="techBox:messaging" title="Messaging" pseudo="true" parents="techRow:java-ee">
+            <tag name="techBox:messaging" title="Messaging" pseudo="true" parents="techRow:java-ee" icon="Object_Envelope-Back">
                 <tag ref="jms"/>
             </tag>
-            <tag name="techBox:ejb" title="EJB" pseudo="true" parents="techRow:java-ee">
+            <tag name="techBox:ejb" title="EJB" pseudo="true" parents="techRow:java-ee" icon="Science_Molecule">
                 <tag ref="ejb"/>
             </tag>
-            <tag name="techBox:webservice" title="WebService / REST" pseudo="true" parents="techRow:java-ee">
+            <tag name="techBox:webservice" title="WebService" pseudo="true" parents="techRow:java-ee" icon="Office_Enclave">
                 <tag ref="webservices"/>
             </tag>
-            <tag name="techBox:rest" title="REST" pseudo="true" parents="techRow:java-ee">
+            <tag name="techBox:rest" title="REST" pseudo="true" parents="techRow:java-ee" icon="Science_Circuit">
                 <tag ref="rest"/>
             </tag>
-            <tag name="techBox:java-ee-other" title="Other" pseudo="true" parents="techRow:java-ee">
+            <tag name="techBox:java-ee-other" title="Other" pseudo="true" parents="techRow:java-ee" icon="">
                 <tag ref="jca"/>
                 <tag ref="jni"/>
                 <tag ref="mail"/>
@@ -69,41 +69,37 @@
         </tag>
         <tag name="techSector03:Store" title="Store" color="#F4B400" pseudo="true">
             <!-- These can be used directly, as it matches an existing tag and the title is okay too. -->
-            <tag name="techBox:orm" title="ORM" pseudo="true" parents="techRow:java-ee">
+            <tag name="techBox:orm" title="ORM" pseudo="true" parents="techRow:java-ee" icon="">
                 <tag ref="orm"/>
             </tag>
-            <tag name="techBox:ogm" title="OGM" pseudo="true" parents="techRow:java-ee">
+            <tag name="techBox:ogm" title="OGM" pseudo="true" parents="techRow:java-ee" icon="Diagram_DevelopmentModel">
                 <tag ref="ogm"/>
             </tag>
-            <tag name="techBox:jdbc" title="JDBC" pseudo="true" parents="techRow:java-ee">
+            <tag name="techBox:jdbc" title="JDBC" pseudo="true" parents="techRow:java-ee"  icon="Hardware_storage">
                 <tag ref="jdbc"/>
             </tag>
-            <tag name="techBox:cache" title="Caching" pseudo="true" parents="techRow:embedded">
+            <tag name="techBox:cache" title="Caching" pseudo="true" parents="techRow:embedded" icon="science_brain">
                 <tag ref="cache"/>
             </tag>
         </tag>
         <tag name="techSector04:Sustain" title="Sustain" color="#DB4437" pseudo="true">
-            <tag name="techBox:Transactions" title="Transactions" pseudo="true" parents="techRow:java-ee">
-
+            <tag name="techBox:Transactions" title="Transactions" pseudo="true" parents="techRow:java-ee" icon="Object_CashRegister-POS">
             </tag>
-            <tag name="techBox:Clustering" title="Clustering" pseudo="true" parents="techRow:java-ee">
-
+            <tag name="techBox:Clustering" title="Clustering" pseudo="true" parents="techRow:java-ee" icon="Hardware_server-stack">
             </tag>
-            <tag name="techBox:Security" title="Security" pseudo="true" parents="techRow:java-ee, techRow:embedded">
-
+            <tag name="techBox:Security" title="Security" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Object_Shield-CoatOfArms">
             </tag>
-            <tag name="techBox:Logging" title="Logging" pseudo="true" parents="techRow:embedded">
-
+            <tag name="techBox:Logging" title="Logging" pseudo="true" parents="techRow:embedded" icon="Object_Book-Open">
             </tag>
-            <tag name="techBox:Test" title="Test" pseudo="true" parents="techRow:embedded">
-
+            <tag name="techBox:Test" title="Test" pseudo="true" parents="techRow:embedded" icon="Science_Explosion">
             </tag>
         </tag>
         <tag name="techSector05:Execute" title="Execute" color="#674EA7" pseudo="true">
-            <tag name="techBox:processing" title="Processing" pseudo="true" parents="techRow:java-ee"/>
-            <tag name="techBox:ioc" title="IoC" pseudo="true" parents="techRow:java-ee"/>
-            <tag name="techBox:rules" title="Rules &amp; Processes" pseudo="true" parents="techRow:embedded"/>
-            <tag name="techBox:3rd-party" title="3rd party" pseudo="true" parents="techRow:embedded"/>
+            <tag name="techBox:processing" title="Processing" pseudo="true" parents="techRow:java-ee" icon="Hardware_processor"/>
+            <tag name="techBox:ioc" title="IoC" pseudo="true" parents="techRow:java-ee" icon="Arrows_Interoperable-CrossPlatform"/>
+            <tag name="techBox:rules" title="Rules &amp; Processes" pseudo="true" parents="techRow:embedded" icon="Object_Gear-Group"/>
+            <tag name="techBox:integration" title="Integration" pseudo="true" parents="techRow:embedded" icon="Software_API"/>
+            <tag name="techBox:3rd-party" title="3rd party" pseudo="true" parents="techRow:embedded" icon="Office_SnackBasket"/>
         </tag>
     </tag>
 
