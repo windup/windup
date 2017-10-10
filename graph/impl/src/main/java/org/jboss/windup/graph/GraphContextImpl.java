@@ -229,9 +229,9 @@ public class GraphContextImpl implements GraphContext
          */
         listIndexKeys.put(WindupVertexFrame.TYPE_PROP, new IndexData(WindupVertexFrame.TYPE_PROP, "", String.class));
 
-        LOG.info("Detected and initialized [" + defaultIndexKeys.size() + "] default indexes: " + defaultIndexKeys);
-        LOG.info("Detected and initialized [" + searchIndexKeys.size() + "] search indexes: " + searchIndexKeys);
-        LOG.info("Detected and initialized [" + listIndexKeys.size() + "] list indexes: " + listIndexKeys);
+        LOG.info("Detected and initialized [" + defaultIndexKeys.size() + "] default indexes:\n" + formatIndexes(defaultIndexKeys));
+        LOG.info("Detected and initialized [" + searchIndexKeys.size() + "] search indexes:\n" + formatIndexes(searchIndexKeys));
+        LOG.info("Detected and initialized [" + listIndexKeys.size() + "] list indexes:\n" + formatIndexes(listIndexKeys));
 
         TitanManagement titan = titanGraph.getManagementSystem();
         for (Map.Entry<String, IndexData> entry : defaultIndexKeys.entrySet())
@@ -284,6 +284,16 @@ public class GraphContextImpl implements GraphContext
         }/**/
 
         titan.commit();
+    }
+
+    private String formatIndexes(Map<String, IndexData> defaultIndexKeys)
+    {
+        StringBuilder sb = new StringBuilder();
+        for (Map.Entry<String, IndexData> x : defaultIndexKeys.entrySet())
+        {
+            sb.append("    property: ").append(x.getValue().getPropertyName()).append(", type: ").append(x.getValue().getType());
+        }
+        return sb.toString();
     }
 
     private PropertyKey getOrCreatePropertyKey(TitanManagement titanGraph, String key, Class<?> dataType, Cardinality cardinality)

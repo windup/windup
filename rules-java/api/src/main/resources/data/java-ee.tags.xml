@@ -1,6 +1,8 @@
 <?xml version="1.0"?>
 <tags setName="java">
-    <tag name="java-ee" root="true" title="Java EE" color="#00CC00">
+    <tag name="framework:" pseudo="true">
+    </tag>
+    <tag name="java-ee" prime="true" title="Java EE" color="#00CC00">
         <tag name="servlet"/>
         <tag name="datasource"/>
         <tag name="application-server:" pseudo="true">
@@ -8,55 +10,66 @@
             <tag name="resin"/>
             <tag name="jonas"/>
             <tag name="jrun"/>
-            <tag name="websphere"/>
-            <tag name="weblogic"/>
+            <tag name="websphere" parents="ibm"/>
+            <tag name="weblogic" parents="oracle"/>
             <tag name="orion"/>
-            <tag name="jboss-eap5"/>
+            <tag name="jboss-eap5" parents="jboss"/>
         </tag>
         <tag name="web-server:" pseudo="true">
-            <tag name="jboss-web"/>
-            <tag name="tomcat"/>
+            <tag name="jboss-ews" title="JBoss Enterprise Web Server" parents="jboss"/>
+            <tag name="jboss-web" title="JBoss Web" parents="jboss"/>
+            <tag name="tomcat" title="Tomcat" parents="apache"/>
         </tag>
-        <tag name="ejb">
+        <tag name="ejb" title="EJB">
            <tag name="ejb2" title="EJB 2.0"/>
         </tag>
         <tag name="jndi" title="JNDI"/>
-        <tag name="jaas"/>
+        <tag name="jaas" title="JAAS"/>
         <tag name="remoting">
-           <tag name="jax-rpc"/>
+           <tag name="jax-rpc" title="JAX-RPC"/>
         </tag>
-        <tag name="messaging" root="true" title="Messaging" color="#AACC00">
-            <tag name="jms"/>
-            <tag name="apache-cxf">
-               <tag name="xfire"/>
+        <tag name="messaging" prime="true" title="Messaging" color="#AACC00">
+            <tag name="jms" title="JMS">
+                <tag name="jms-topic" title="JMS topic"/>
+                <tag name="jms-queue" title="JMS queue"/>
+                <tag name="jms-mdb" title="JMS message-driven bean"/>
+            </tag>
+            <tag name="apache-cxf" title="Apache CXF">
+               <tag name="xfire" title="XFire"/>
             </tag>
             <tag name="mq"/>
             <tag name="mqe"/>
             <tag name="smooks"/>
         </tag>
-        <tag name="framework:" pseudo="true">
-        </tag>
-        <tag name="web-service" root="true" title="Webservice" color="#00BBBB">
+        <tag name="web-service" prime="true" title="Webservice" color="#00BBBB">
            <tag name="webservice"/>
            <tag name="wsdl" parents="descriptor"/>
-           <tag name="axis"/>
-           <tag name="jboss-ws"/>
+           <tag name="axis" title="Apache Axis"/>
+           <tag name="jboss-ws" title="JBoss Web Services"/>
         </tag>
-        <tag name="esb" root="true" title="Enterprise Service Bus" color="#0000BB">
+        <tag name="esb" prime="true" title="Enterprise Service Bus" color="#0000BB">
            <tag name="jboss-esb"/>
            <tag name="sonic-esb"/>
            <tag name="camel"/>
-           <tag name="mule-esb (mule)"/>
+           <tag name="mule-esb"/>
         </tag>
         <tag name="soa" title="SOA">
            <tag name="soa-p" title="SOA-P"/>
            <tag name="apache-tuscany"/>
         </tag>
-        <tag name="soap"/>
-    </tag>
-    <tag name="java-se" root="true" title="Java SE" color="#BB0000">
+        <tag name="jta" title="Java Transaction API"/>
+    </tag><!-- java-ee -->
+
+
+    <tag name="java-se" prime="true" title="Java SE" color="#BB0000">
         <tag name="classloader"/>
         <tag name="classloading"/>
+        <tag name="jni" title="JNI"/>
+    </tag>
+    <tag name="formats:" pseudo="true">
+        <tag name="html" title="HTML"/>
+        <tag name="css" title="CSS"/>
+        <tag name="javascript" title="JavaScript"/>
     </tag>
     <tag name="concepts">
         <tag name="asynchronous">
@@ -68,34 +81,60 @@
            <tag name="startup"/>
         </tag>
         <tag name="pool"/>
-        <tag name="cache"/>
+        <tag name="cache" title="Cache"/>
         <tag name="client"/>
         <tag name="cluster"/>
         <tag name="performance"/>
-        <tag name="configuration" root="true">
+        <tag name="configuration" prime="true">
             <tag name="descriptor"/>
             <tag name="port"/>
         </tag>
-        <tag name="protocol">
-            <tag name="http"/>
+        <tag name="protocol" pseudo="true">
+            <tag name="http" title="HTTP"/>
+            <tag name="https" title="HTTPS"/>
+            <tag name="spdy" title="SPDY"/>
+            <tag name="rest" title="REST"/>
+            <tag name="soap" title="SOAP"/>
         </tag>
-        <tag name="persistence" root="true">
+        <tag name="persistence" prime="true">
             <tag name="database"/>
-            <tag name="hibernate"/>
-            <tag name="postgresql"/>
-            <tag name="jdbc"/>
+            <tag name="hibernate" title="Hibernate"/>
+            <tag name="postgresql" title="PostgreSQL"/>
+            <tag name="jdbc" title="JDBC"/>
+            <tag name="jdbc-datasource" title="JDBC datasource"/>
+            <tag name="jdbc-xa-datasource" title="JDBC XA datasource"/>
+            <tag name="orm" title="ORM">
+                <tag name="jpa" title="JPA">
+                    <tag name="jpa-entity" title="JPA entity"/>
+                    <tag name="persistence-unit" title="persistence unit"/>
+                </tag>
+            </tag>
+            <tag name="ogm" title="OGM">
+                <tag name="hibernate-ogm" title="Hibernate OGM"/>
+                <tag name="tinkerpop-frames" title="Tinkerpop Frames"/>
+            </tag>
         </tag>
-        <tag name="logging" root="true">
+        <tag name="logging" prime="true">
+            <tag name="java-util-logging" title="Java Util Logging"/>
             <tag name="slf4j"/>
             <tag name="log4j"/>
         </tag>
+        <tag name="cdi">
+            <tag name="spring-cdi" parents="spring"/>
+        </tag>
         <tag name="context"/>
-        <tag name="web" root="true">
-           <tag name="seam" parents="framework:" title="Seam Framework"/>
-           <tag name="seam-ui-control" parents="framework:"/>
-           <tag name="spring" parents="framework:"/>
-           <tag name="jsf" parents="framework:"/>
-           <tag name="jsp" parents="framework:"/>
+        <tag name="web" title="Web" prime="true">
+            <tag name="seam" parents="framework:" title="Seam Framework"/>
+            <tag name="seam-ui-control" parents="framework:"/>
+            <tag name="spring-mvc" parents="framework:, spring:"/>
+            <tag name="jsf" parents="framework:"/>
+            <tag name="jsp" parents="framework:"/>
+            <tag name="richfaces" parents="framework:"/>
+            <tag name="wicket" parents="framework:"/>
+            <tag name="struts" parents="framework:"/>
+            <tag name="play" parents="framework:"/>
+            <tag name="thymeleaf" parents="framework:"/>
+            <tag name="websocket" title="WebSocket"/>
         </tag>
         <tag name="web-app"/>
         <tag name="transactions"/>
@@ -107,7 +146,7 @@
         <tag name="security"/>
         <tag name="rules">
             <tag name="wbi">
-                <tag name="ibm-wbi"/>
+                <tag name="ibm-wbi" parents="ibm"/>
             </tag>
         </tag>
         <tag name="file-system"/>
@@ -122,13 +161,15 @@
         <tag name="reviewed-*" pseudo="true"/>
     </tag>
     <tag name="vendors:" pseudo="true">
-        <tag name="ibm"/>
-        <tag name="oracle"/>
-        <tag name="apache"/>
-        <tag name="iona"/>
-        <tag name="jboss"/>
-        <tag name="sonic"/>
-        <tag name="tibco"/>
+        <tag name="redhat" title="Red Hat">
+            <tag name="jboss" title="JBoss"/>
+        </tag>
+        <tag name="ibm" title="IBM"/>
+        <tag name="oracle" title="Oracle"/>
+        <tag name="apache" title="Apache"/>
+        <tag name="iona" title="Iona"/>
+        <tag name="sonic" title="Sonic"/>
+        <tag name="tibco" title="Tibco"/>
     </tag>
     <!-- Only to prevent "Undefined Windup tag name passed to getNearestRoots(tagName)" -->
     <tag name="classifications:" pseudo="true">

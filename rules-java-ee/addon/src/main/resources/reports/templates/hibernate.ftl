@@ -40,8 +40,8 @@
         <div class="row">
             <div class="container-fluid theme-showcase" role="main">
 
-            <#list reportModel.relatedResources.hibernateConfiguration.list.iterator() as hibernateConfiguration>
-                <#list hibernateConfiguration.hibernateSessionFactories.iterator() as sessionFactory>
+            <#list reportModel.relatedResources.hibernateConfiguration as hibernateConfiguration>
+                <#list hibernateConfiguration.hibernateSessionFactories() as sessionFactory>
                     <#if iterableHasContent(sessionFactory.sessionFactoryProperties?keys)>
                         <div class="panel panel-primary">
                             <div class="panel-heading">
@@ -63,7 +63,7 @@
                 </#list>
             </#list>
 
-            <#list reportModel.relatedResources.hibernateEntities.list.iterator()>
+            <#list reportModel.relatedResources.hibernateEntities>
                 <div class="panel panel-primary">
                     <div class="panel-heading">
                         <h3 class="panel-title">Entities</h3>

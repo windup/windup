@@ -95,8 +95,7 @@ public class RuleIterationWhenTest
 
             WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
             FileService fileModelService = new FileService(context);
-            windupCfg.addInputPath(fileModelService.createByFilePath(OperatingSystemUtils.createTempDir()
-                        .getAbsolutePath()));
+            windupCfg.addInputPath(fileModelService.createInputPath(OperatingSystemUtils.createTempDir().getAbsolutePath()));
 
             TestWhenProvider provider = new TestWhenProvider();
             Configuration configuration = provider.getConfiguration(null);

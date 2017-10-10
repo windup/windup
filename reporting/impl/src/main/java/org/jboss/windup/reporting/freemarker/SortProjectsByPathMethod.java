@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import freemarker.template.DefaultIterableAdapter;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.comparator.ProjectModelByRootFileComparator;
@@ -14,23 +15,23 @@ import freemarker.template.TemplateModelException;
 
 /**
  * Takes a list of ProjectModels and orders them according to their path.
- * 
+ *
  * For example, ProjectModels with this structure:
- * 
+ *
  * <ul>
  * <li>/CProject</li>
  * <li>/BProject</li>
  * <li>/AProject</li>
  * </ul>
- * 
+ *
  * Will be returned as:
- * 
+ *
  * <ul>
  * <li>/AProject</li>
  * <li>/BProject</li>
  * <li>/CProject</li>
  * </ul>
- * 
+ *
  */
 public class SortProjectsByPathMethod implements WindupFreeMarkerMethod
 {
@@ -56,9 +57,11 @@ public class SortProjectsByPathMethod implements WindupFreeMarkerMethod
         {
             throw new TemplateModelException("Error, method expects one argument (Iterable<ProjectModel>)");
         }
-        StringModel stringModelArg = (StringModel) arguments.get(0);
+
+        DefaultIterableAdapter argModel = (DefaultIterableAdapter) arguments.get(0);
+
         @SuppressWarnings("unchecked")
-        Iterable<ProjectModel> projectModelIterable = (Iterable<ProjectModel>) stringModelArg.getWrappedObject();
+        Iterable<ProjectModel> projectModelIterable = (Iterable<ProjectModel>) argModel.getAdaptedObject(ProjectModel.class);
         List<ProjectModel> projectModelList = new ArrayList<>();
         for (ProjectModel pm : projectModelIterable)
         {

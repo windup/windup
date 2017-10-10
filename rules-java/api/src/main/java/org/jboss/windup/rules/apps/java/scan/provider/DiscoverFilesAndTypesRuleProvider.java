@@ -3,10 +3,13 @@ package org.jboss.windup.rules.apps.java.scan.provider;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.loader.RuleLoaderContext;
+import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.DiscoveryPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryGremlinCriterion;
 import org.jboss.windup.config.query.QueryPropertyComparisonType;
+import org.jboss.windup.graph.model.ApplicationInputPathModel;
+import org.jboss.windup.graph.model.ApplicationProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.rules.apps.java.scan.operation.AddArchiveReferenceInformation;
@@ -18,6 +21,7 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 import org.jboss.windup.config.metadata.RuleMetadata;
+import org.ocpsoft.rewrite.context.EvaluationContext;
 
 
 /**
@@ -32,9 +36,26 @@ public class DiscoverFilesAndTypesRuleProvider extends AbstractRuleProvider
     {
         return ConfigurationBuilder.begin()
 
+        // Mark all input paths as ApplicationProjectModel.
         .addRule()
-        .when(Query.fromType(WindupConfigurationModel.class)
-            .piped(new QueryGremlinCriterion()
+        .perform(new GraphOperation()
+        {
+            @Override
+            public void perform(GraphRewrite event, EvaluationContext context)
+            {
+                final WindupConfigurationModel windupConf = event.getGraphContext().service(WindupConfigurationModel.class).getUnique();
+                for (FileModel input : windupConf.getInputPaths())
+                {
+                    final ApplicationInputPathModel appPath = event.getGraphContext().service(ApplicationInputPathModel.class).addTypeToModel(input);
+                    if (!input.isDirectory())
+                        appPath.setFileSize(input.asFile().length());
+                }
+            }
+        }).withId("markInputsAsAppModels")
+
+
+        .addRule()
+        .when(Query.fromType(WindupConfigurationModel.class).piped(new QueryGremlinCriterion()
             {
                 @Override
                 public void query(GraphRewrite event, GremlinPipeline<Vertex, Vertex> pipeline)

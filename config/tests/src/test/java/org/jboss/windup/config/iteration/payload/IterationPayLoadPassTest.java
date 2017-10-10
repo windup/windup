@@ -87,7 +87,7 @@ public class IterationPayLoadPassTest
 
             WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
             FileService fileModelService = new FileService(context);
-            windupCfg.addInputPath(fileModelService.createByFilePath("/tmp/testpath"));
+            windupCfg.addInputPath(fileModelService.createInputPath("/tmp/testpath"));
 
             TestIterationPayLoadPassProvider provider = new TestIterationPayLoadPassProvider();
             Configuration configuration = provider.getConfiguration(null);
@@ -115,7 +115,7 @@ public class IterationPayLoadPassTest
 
             WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
             FileService fileModelService = new FileService(context);
-            windupCfg.addInputPath(fileModelService.createByFilePath("/tmp/testpath"));
+            windupCfg.addInputPath(fileModelService.createInputPath("/tmp/testpath"));
 
             TestIterationPayLoadNotPassProvider provider = new TestIterationPayLoadNotPassProvider();
             Configuration configuration = provider.getConfiguration(null);

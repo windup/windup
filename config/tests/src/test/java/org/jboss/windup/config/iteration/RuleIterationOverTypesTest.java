@@ -91,8 +91,7 @@ public class RuleIterationOverTypesTest
 
             WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
             FileService fileModelService = new FileService(context);
-            windupCfg.addInputPath(fileModelService.createByFilePath(OperatingSystemUtils.createTempDir()
-                        .getAbsolutePath()));
+            windupCfg.addInputPath(fileModelService.createInputPath(OperatingSystemUtils.createTempDir().getAbsolutePath()));
 
             TestRuleIterationOverTypesProvider provider = new TestRuleIterationOverTypesProvider();
             Configuration configuration = provider.getConfiguration(null);
@@ -125,8 +124,7 @@ public class RuleIterationOverTypesTest
 
             WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
             FileService fileModelService = new FileService(context);
-            windupCfg.addInputPath(fileModelService
-                        .createByFilePath(OperatingSystemUtils.createTempDir().getAbsolutePath()));
+            windupCfg.addInputPath(fileModelService.createInputPath(OperatingSystemUtils.createTempDir().getAbsolutePath()));
 
             TestRuleIterationOverTypesWithExceptionProvider provider = new TestRuleIterationOverTypesWithExceptionProvider();
             Configuration configuration = provider.getConfiguration(null);

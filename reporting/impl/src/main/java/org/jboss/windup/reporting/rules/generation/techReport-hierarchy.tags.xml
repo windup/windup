@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<tags setName="techReport-hierarchy">
+
+    <!-- These define the vertical groups? -->
+    <tag name="techReport-frameworkTypes:" pseudo="true">
+        <tag name="techSector:java-ee" title="Java EE"  pseudo="true">
+            <tag ref="techSector:web"/>
+        </tag>
+        <tag name="techSector:java-se" title="Java SE"  pseudo="true">
+        </tag>
+        <tag name="techSector:embedded" title="Embedded"  pseudo="true">
+            <tag ref="techBox:mvc"/>
+            <tag ref="techBox:markup"/>
+            <tag ref="techBox:web-service"/>
+            <tag ref="techBox:object-mapping"/>
+            <tag ref="techBox:logging"/>
+            <tag ref="techBox:ioc"/>
+            <tag ref="techBox:3rd-party"/>
+        </tag>
+    </tag>
+
+    <!-- "Columns". The colors match the MZ mockup. -->
+    <!-- Tag names have a prefix to prevent collision with some real tag and cause mess. -->
+    <!-- Also, they are numbered, because we don't store order in the graph yet, so it's sorted by name in the template. -->
+    <tag name="techReport-sectors:" pseudo="true">
+        <tag name="techSector01:View" title="View" color="#1155CC" pseudo="true">
+            <!-- If the tech span exactly matches an existing tag (title, contained tags, ...), then use that.
+                 If not, define a techSector:... tag, and include whichever tags it should contain. -->
+            <tag name="techSector:Web" title="Web" pseudo="true">
+                <tag ref="web"/>
+            </tag>
+            <tag name="techSector:Rich" title="Rich" pseudo="true">
+                <tag ref="rich-clients"/>
+            </tag>
+        </tag>
+        <tag name="techSector02:Connect" title="Connect" color="#38761D" pseudo="true">
+            <tag name="techSector:Messaging" title="Messaging" pseudo="true">
+                <tag ref="jms"/>
+            </tag>
+            <tag name="techSector:ejb" title="EJB" pseudo="true">
+                <tag ref="ejb"/>
+            </tag>
+            <tag name="techSector:ws-rest" title="WS / REST" pseudo="true">
+                <tag ref="webservices"/>
+                <tag ref="rest"/>
+            </tag>
+            <tag name="techSector:jms-mdb" title="JMS / MDB" pseudo="true">
+                <tag ref="jms"/>
+            </tag>
+            <tag ref="jni"/>
+        </tag>
+        <tag name="techSector03:Store" title="Store" color="#F4B400" pseudo="true">
+            <!-- These can be used directly, as it matches an existing tag and the title is okay too. -->
+            <tag ref="orm"/>
+            <tag ref="ogm"/>
+            <tag ref="jdbc"/>
+            <tag ref="cache"/>
+            <!--
+            <tag name="techSector:ORM" title="ORM" pseudo="true"/>
+            <tag name="techSector:OGM" title="OGM" pseudo="true"/>
+            <tag name="techSector:JDBC" title="JDBC" pseudo="true"/>
+            <tag name="techSector:Cache" title="Cache" pseudo="true"/>
+            -->
+        </tag>
+        <tag name="techSector04:Sustain" title="Sustain" color="#DB4437" pseudo="true">
+            <tag name="techSector:Transactions" title="Transactions" pseudo="true"/>
+            <tag name="techSector:Clustering" title="Clustering" pseudo="true"/>
+            <tag name="techSector:Security" title="Security" pseudo="true"/>
+            <tag name="techSector:Logging" title="Logging" pseudo="true"/>
+            <tag name="techSector:Test" title="Test" pseudo="true"/>
+        </tag>
+        <tag name="techSector05:Execute" title="Execute" color="#674EA7" pseudo="true">
+            <tag name="techSector:ioc" title="IoC" pseudo="true"/>
+            <tag name="techSector:3rd-party" title="3rd party" pseudo="true"/>
+        </tag>
+    </tag>
+</tags>

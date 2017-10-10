@@ -44,10 +44,10 @@ public class AndPredicate implements Predicate<RuleProvider>
     @Override
     public String toString()
     {
-        StringBuilder sb = new StringBuilder("AndPredicate{");
+        StringBuilder sb = new StringBuilder("AndPredicate{ ");
         for (Predicate<RuleProvider> predicate : predicates)
         {
-            sb.append("\t").append(predicate).append("\n");
+            sb.append(predicate).append(", ");
         }
         return sb.append("}").toString();
     }

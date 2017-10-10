@@ -82,7 +82,7 @@ public class RuleProviderDisabledTest
 
             WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
             FileService fileModelService = new FileService(context);
-            windupCfg.addInputPath(fileModelService.createByFilePath(folder.toAbsolutePath().toString()));
+            windupCfg.addInputPath(fileModelService.createInputPath(folder.toAbsolutePath().toString()));
             windupCfg.setOnlineMode(false);
 
             Predicate<RuleProvider> migrationPhase = (provider) -> provider.getMetadata().getPhase() == MigrationRulesPhase.class;

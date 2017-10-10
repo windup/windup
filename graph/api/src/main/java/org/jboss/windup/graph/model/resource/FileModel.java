@@ -253,8 +253,27 @@ public interface FileModel extends ResourceModel, HasApplications, HasProject
     @JavaHandler
     boolean belongsToProject(ProjectModel projectModel);
 
+
+    /**
+     * Returns the size of the file, if it is an existing file.
+     * Otherwise return null.
+     *
+     * It's not necessary to store file size on all FileModels. Some submodels have it as a property.
+     */
+    @JavaHandler
+    Long retrieveSize();
+
     abstract class Impl implements FileModel, JavaHandlerContext<Vertex>, HasApplications
     {
+        @Override
+        public Long retrieveSize()
+        {
+            final File file = this.asFile();
+            if (file == null ||  !file.isFile() || !file.exists())
+                return null;
+            return file.length();
+        }
+
         @Override
         public ProjectModel getApplication()
         {

@@ -47,19 +47,19 @@ public abstract class AbstractPathConfigurationOption extends AbstractConfigurat
         {
             if (getUIType() == InputType.DIRECTORY && !Files.isDirectory(path))
             {
-                return new ValidationResult(ValidationResult.Level.ERROR, getName() + " must exist and be a directory!");
+                return new ValidationResult(ValidationResult.Level.ERROR, "Option " + getName() + " is not an existing directory: " + path);
             }
             else if (getUIType() == InputType.FILE && !Files.isRegularFile(path))
             {
-                return new ValidationResult(ValidationResult.Level.ERROR, getName() + " must exist and be a regular file!");
+                return new ValidationResult(ValidationResult.Level.ERROR, "Option " + getName() + " is not an existing regular file: " + path);
             }
             else if (getUIType() == InputType.FILE_OR_DIRECTORY && !Files.exists(path))
             {
-                return new ValidationResult(ValidationResult.Level.ERROR, getName() + " must exist!");
+                return new ValidationResult(ValidationResult.Level.ERROR, "Option " + getName() + " is not an existing file or directory: " + path);
             }
             else if (!Files.exists(path))
             {
-                return new ValidationResult(ValidationResult.Level.ERROR, getName() + " must exist!");
+                return new ValidationResult(ValidationResult.Level.ERROR, "Option " + getName() + " is not an existing path: " + path);
             }
         }
         return ValidationResult.SUCCESS;

@@ -47,6 +47,7 @@ import org.jboss.windup.exec.rulefilters.SourceAndTargetPredicate;
 import org.jboss.windup.exec.rulefilters.TaggedRuleProviderPredicate;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
+import org.jboss.windup.graph.model.ApplicationInputPathModel;
 import org.jboss.windup.graph.model.TechnologyReferenceModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -115,13 +116,13 @@ public class WindupProcessorImpl implements WindupProcessor
 
             WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(context);
 
-            Set<FileModel> inputPathModels = new LinkedHashSet<>();
+            Set<ApplicationInputPathModel> inputPathModels = new LinkedHashSet<>();
             for (Path inputPath : configuration.getInputPaths()) {
-                inputPathModels.add(getFileModel(context, inputPath));
+                inputPathModels.add(createAppInputPathModel(context, inputPath));
             }
             configurationModel.setInputPaths(inputPathModels);
 
-            configurationModel.setOutputPath(getFileModel(context, configuration.getOutputDirectory()));
+            configurationModel.setOutputPath(createAppInputPathModel(context, configuration.getOutputDirectory()));
             configurationModel.setOnlineMode(configuration.isOnline());
             configurationModel.setExportingCSV(configuration.isExportingCSV());
             configurationModel.setKeepWorkDirectories(configuration.getOptionValue(KeepWorkDirsOption.NAME));
@@ -131,11 +132,11 @@ public class WindupProcessorImpl implements WindupProcessor
                     throw new WindupException("Null path found (all paths are: "
                             + configuration.getAllUserRulesDirectories() + ")");
                 }
-                configurationModel.addUserRulesPath(getFileModel(context, path));
+                configurationModel.addUserRulesPath(createAppInputPathModel(context, path));
             }
 
             for (Path path : configuration.getAllIgnoreDirectories()) {
-                configurationModel.addUserIgnorePath(getFileModel(context, path));
+                configurationModel.addUserIgnorePath(createAppInputPathModel(context, path));
             }
 
             List<RuleLifecycleListener> listeners = new ArrayList<>();
@@ -323,9 +324,9 @@ public class WindupProcessorImpl implements WindupProcessor
         return new RuleLoaderContext(ruleLoaderContext.getContext(), ruleLoaderContext.getRulePaths(), config.getRuleProviderFilter());
     }
 
-    private FileModel getFileModel(GraphContext context, Path file)
+    private ApplicationInputPathModel createAppInputPathModel(GraphContext context, Path file)
     {
-        return new FileService(context).createByFilePath(file.toString());
+        return new FileService(context).createInputPath(file.toString());
     }
 
     private EvaluationContext createEvaluationContext()

@@ -55,7 +55,7 @@ public class TagServiceHolderTest
         Assert.assertNotNull(tagService.getTag("a-root"));
         Assert.assertNotNull(tagService.getTag("a1"));
         Assert.assertNull(tagService.getTag("non-existent"));
-        Assert.assertNotNull(tagService.getOrCreateTag("to-be-created"));
+        Assert.assertNotNull(tagService.getOrCreateTag("to-be-created", false));
     }
 
 

@@ -350,7 +350,7 @@
 
         <!#-- We are using short variable names because they repeat a lot in the generated HTML
               and using short reduces the file sizes significantly.
-              
+
               {l} - label
               {oc} - occurences
               {h} - href

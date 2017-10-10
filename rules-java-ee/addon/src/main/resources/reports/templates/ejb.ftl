@@ -88,7 +88,7 @@
         <div class="row">
             <div class="container-fluid theme-showcase" role="main">
 
-            <#if !reportModel.relatedResources.mdb.list.iterator()?has_content && !reportModel.relatedResources.stateless.list.iterator()?has_content && !reportModel.relatedResources.stateful.list.iterator()?has_content && !reportModel.relatedResources.entity.list.iterator()?has_content>
+            <#if !reportModel.relatedResources.mdb?has_content && !reportModel.relatedResources.stateless?has_content && !reportModel.relatedResources.stateful?has_content && !reportModel.relatedResources.entity?has_content>
                 <div class="panel panel-primary">
                     <div class="panel-heading">
                         <h3 class="panel-title">EJB Report</h3>
@@ -99,7 +99,7 @@
                 </div>
             </#if>
 
-            <#list reportModel.relatedResources.mdb.list.iterator()>
+            <#list reportModel.relatedResources.mdb>
                 <div class="panel panel-primary">
                     <div class="panel-heading">
                         <h3 class="panel-title">Message Driven Beans</h3>
@@ -116,7 +116,7 @@
             </#list>
 
 
-            <#list reportModel.relatedResources.stateless.list.iterator()>
+            <#list reportModel.relatedResources.stateless>
                 <div class="panel panel-primary">
                     <div class="panel-heading">
                         <h3 class="panel-title">Stateless Session Beans</h3>
@@ -132,7 +132,7 @@
                 </div>
             </#list>
 
-            <#list reportModel.relatedResources.stateful.list.iterator()>
+            <#list reportModel.relatedResources.stateful>
                 <div class="panel panel-primary">
                     <div class="panel-heading">
                         <h3 class="panel-title">Stateful Session Beans</h3>
@@ -148,7 +148,7 @@
                 </div>
             </#list>
 
-            <#list reportModel.relatedResources.entity.list.iterator()>
+            <#list reportModel.relatedResources.entity>
                 <div class="panel panel-primary">
                     <div class="panel-heading">
                         <h3 class="panel-title">Entity Beans</h3>

@@ -5,7 +5,7 @@
 
 
 <#macro unparsableFilesRenderer subProject>
-    <#list (subProject.unparsableFiles.iterator())!>
+    <#list (subProject.unparsableFiles)!>
     <div class="panel panel-default panel-primary">
         <div class="panel-heading">
             <h3 class="panel-title">${subProject.rootFileModel.prettyPath?html}</h3>
@@ -75,7 +75,7 @@
             </div>
         </div>
 
-        <#list reportModel.allSubProjects.iterator() as subProject>
+        <#list reportModel.allSubProjects as subProject>
             <div class="row unparsableFile">
                 <div class="container-fluid theme-showcase" role="main">
                     <@unparsableFilesRenderer subProject />
@@ -86,7 +86,7 @@
                 <h3>Everything OK - Windup didn't have problems parsing any file.</h3>
             </div>
         </#list>
-        
+
         <#include "include/timestamp.ftl">
     </div> <!-- /container -->
 

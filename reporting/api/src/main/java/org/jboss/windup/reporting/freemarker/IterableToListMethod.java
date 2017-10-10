@@ -2,6 +2,7 @@ package org.jboss.windup.reporting.freemarker;
 
 import java.util.List;
 
+import freemarker.template.DefaultIterableAdapter;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.util.ExecutionStatistics;
 
@@ -33,8 +34,11 @@ public class IterableToListMethod implements WindupFreeMarkerMethod
         if (arguments.size() != 1)
             throw new TemplateModelException("Error, method expects one argument (an Iterable)");
 
-        BeanModel iterableModelArg = (BeanModel) arguments.get(0);
-        Iterable iterable = (Iterable) iterableModelArg.getWrappedObject();
+        ///BeanModel iterableModelArg = (BeanModel) arguments.get(0);
+        DefaultIterableAdapter argModel = (DefaultIterableAdapter) arguments.get(0);
+
+
+        Iterable iterable = (Iterable) argModel.getAdaptedObject(Iterable.class);
         List list = new ArrayList();
         iterable.iterator().forEachRemaining(list::add);
         ExecutionStatistics.get().end(NAME);
