@@ -122,6 +122,7 @@ public class JavaClassAnnotationFilteringTest
             processor.execute(processorConfig);
 
             Assert.assertEquals(1, complexProvider.baseRuleHitCount);
+            Assert.assertEquals(1, complexProvider.nestedAnnotationHitCount);
         }
     }
 
@@ -190,6 +191,7 @@ public class JavaClassAnnotationFilteringTest
     public static class ComplexAnnotationScanProvider extends AbstractRuleProvider
     {
         private int baseRuleHitCount = 0;
+        private int nestedAnnotationHitCount = 0;
 
         public ComplexAnnotationScanProvider()
         {
@@ -214,6 +216,21 @@ public class JavaClassAnnotationFilteringTest
                         public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
                         {
                             baseRuleHitCount++;
+                        }
+                    })
+                    .addRule().when(
+                            JavaClass.references("javax.annotation.sql.DataSourceDefinitions")
+                                    .at(TypeReferenceLocation.ANNOTATION)
+                                    .annotationMatches(
+                                            "value",
+                                            new AnnotationListCondition(0).addCondition(new AnnotationTypeCondition("javax.annotation.sql.DataSourceDefinition"))
+                                    )
+                    ).perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
+                    {
+                        @Override
+                        public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
+                        {
+                            nestedAnnotationHitCount++;
                         }
                     });
         }
