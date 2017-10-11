@@ -1,5 +1,6 @@
 package org.jboss.windup.config.tags;
 
+import java.util.Map;
 import java.util.Stack;
 import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
@@ -83,6 +84,20 @@ public class TagsSaxHandler extends DefaultHandler
                         tag.setColor(color);
                     else
                         LOG.fine("Invalid color, not matching #\\p{XDigit}{6}: " + color);
+                }
+
+                for (int i = 0; i < attributes.getLength(); i++ ) {
+                    final String attrQName = attributes.getQName(i);
+                    if ("prime".equals(attrQName)
+                        || "pseudo".equals(attrQName)
+                        || "name".equals(attrQName)
+                        || "ref".equals(attrQName)
+                        || "title".equals(attrQName)
+                        || "color".equals(attrQName)
+                    )
+                        continue;
+                    final Map<String, String> traits = tag.getOrCreateTraits();
+                    traits.put(attrQName, attributes.getValue(i));
                 }
             }
 

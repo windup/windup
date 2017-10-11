@@ -1,15 +1,13 @@
 package org.jboss.windup.config.tags;
 
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import org.apache.commons.collections4.set.UnmodifiableSet;
 
 /**
  * Represents a tag. Determined by it's lowercased name.
  * The structure is not a tree - a tag may have multiple "parents".
- * 
+ *
  * Note that the "parent" and "contained tags" is misleading.
  * The tags structure is in fact an oriented acyclic graph.
  * (It could even be cyclic if we allowed for synonyms.)
@@ -30,6 +28,7 @@ public final class Tag
     private boolean isRoot = false;
     private String color = null;
     private String title = null;
+    private Map<String, String> traits = null; // Not needed in most cases.
 
 
     Tag(String name)
@@ -170,6 +169,19 @@ public final class Tag
     public String getTitleOrName()
     {
         return title != null ? title : name;
+    }
+
+    /**
+     * Returns the traits map, or null if it was not yet initialized.
+     */
+    public Map<String, String> getTraits()
+    {
+        return traits;
+    }
+
+    public Map<String, String> getOrCreateTraits()
+    {
+        return traits != null ? traits : (traits = new HashMap<>());
     }
 
     @Override
