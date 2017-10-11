@@ -40,10 +40,17 @@ public class TechReportService
         {
             LOG.info(String.format("--- Counting up '%s', count: %sx, tags: %s", stat.getName(), stat.getOccurrenceCount(), stat.getTags()) );
 
+            // Identify placement
             final Set<String>[] normalAndSilly = TechReportService.splitSillyTagNames(graphContext, stat.getTags());
             TechReportService.TechReportPlacement placement = TechReportService.processSillyLabels(graphContext, normalAndSilly[1]);
-            placement = TechReportService.normalizeSillyPlacement(graphContext, placement);
+            if (placement.box == null || placement.row == null)
+            {
+                LOG.severe(String.format("\tPlacement labels not recognized, placement incomplete: %s; stat: %s", placement, stat));
+                continue;
+            }
 
+            // Normalize placement
+            placement = TechReportService.normalizeSillyPlacement(graphContext, placement);
             final Long projectKey = (Long) stat.getProjectModel().getRootProjectModel().asVertex().getId();
 
             LOG.info(String.format("\tplacement: %s, projectKey: %d", placement, projectKey)); ///
@@ -52,7 +59,7 @@ public class TechReportService
                 LOG.severe(String.format("\tPlacement labels not recognized, placement incomplete: %s; stat: %s", placement, stat));
                 continue;
             }
-                
+
 
             /*
             final String statsModelLabel = stat.getName();
@@ -251,6 +258,9 @@ public class TechReportService
 
     private static TagModel getNonSillyParent(TagGraphService tagService, TagModel tag)
     {
+        if (tag == null)
+            return null;
+
         final TagModel sillyRoot = tagService.getTagByName("techReport:mappingOfSillyTagNames");
 
         final Iterator<TagModel> parents = tag.getDesignatedByTags().iterator();

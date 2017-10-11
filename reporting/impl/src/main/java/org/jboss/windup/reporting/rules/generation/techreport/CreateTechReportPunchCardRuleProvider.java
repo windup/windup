@@ -81,9 +81,9 @@ public class CreateTechReportPunchCardRuleProvider extends AbstractRuleProvider
                     new TagGraphService(event.getGraphContext()).feedTheWholeTagStructureToGraph(tagServiceHolder.getTagService());
                     CreateTechReportPunchCardRuleProvider.this.put(TagServiceHolder.class, tagServiceHolder);
                 }
-            })
+            }).withId("feedTagsToGraph")
 
-            /// TODO: Move this to a MarkApplicationProjectModels.
+            /// TODO: Move this to a MarkApplicationProjectModelsProvider.
             .addRule()
             .perform(new GraphOperation() {
                 @Override
@@ -93,11 +93,11 @@ public class CreateTechReportPunchCardRuleProvider extends AbstractRuleProvider
                     new ProjectService(event.getGraphContext()).getRootProjectModels()
                             .forEach(path -> GraphService.addTypeToModel(event.getGraphContext(), path, ApplicationProjectModel.class));
                 }
-            })
+            }).withId("markApplicationProjectModels")
 
 
             .addRule()
-            .perform(new CreateTechReportPunchCardOperation());
+            .perform(new CreateTechReportPunchCardOperation()).withId("createTechReport");
     }
 
     private class CreateTechReportPunchCardOperation extends GraphOperation
@@ -107,8 +107,8 @@ public class CreateTechReportPunchCardRuleProvider extends AbstractRuleProvider
         {
             GraphContext grCtx = event.getGraphContext();
 
-            listAllTechUsageStats(grCtx);
-            listAllApplicationModels(grCtx);
+            //listAllTechUsageStats(grCtx);///
+            //listAllApplicationModels(grCtx);///
 
             // Create the report model.
             TechReportPunchCardModel reportPunch = createTechReportPunchCard(grCtx);
@@ -134,14 +134,6 @@ public class CreateTechReportPunchCardRuleProvider extends AbstractRuleProvider
             Map<String, Integer> maximumsPerTech = computeMaxCountPerTag(countsOfTagsInApps);
             reportPunch.setMaximumCounts(maximumsPerTech);
             */
-
-            // TODO: Maybe it would be better to query like this?
-            // For each application,
-            for (FileModel inputPath : WindupConfigurationService.getConfigurationModel(grCtx).getInputPaths())
-            {
-                List types = (List)inputPath.asVertex().getProperty(WindupVertexFrame.TYPE_PROP);
-                LOG.info("InputPath type:" + types.toString());
-            }
         }
 
         private Map<String,Integer> computeMaxCountPerTag(Map<Long, Map<String, Integer>> countsOfTagsInApps)

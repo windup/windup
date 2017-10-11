@@ -54,17 +54,22 @@
             <tag name="techBox:ejb" title="EJB" pseudo="true" parents="techRow:java-ee" icon="Science_Molecule">
                 <tag ref="ejb"/>
             </tag>
-            <tag name="techBox:webservice" title="WebService" pseudo="true" parents="techRow:java-ee" icon="Office_Enclave">
-                <tag ref="webservices"/>
-            </tag>
-            <tag name="techBox:rest" title="REST" pseudo="true" parents="techRow:java-ee" icon="Science_Circuit">
-                <tag ref="rest"/>
-            </tag>
+            <!-- Disabled for debug purposes.
+            <tag name="techBox:http" title="HTTP" pseudo="true" parents="techRow:java-ee" icon="">
+                <tag ref="jax-ws"/>
+                <tag ref="jax-rs"/>
+            </tag> -->
             <tag name="techBox:java-ee-other" title="Other" pseudo="true" parents="techRow:java-ee" icon="">
                 <tag ref="jca"/>
                 <tag ref="jni"/>
                 <tag ref="mail"/>
                 <tag ref="rmi"/>
+            </tag>
+            <tag name="techBox:webservice" title="WebService" pseudo="true" parents="techRow:embedded" icon="Office_Enclave">
+                <tag ref="webservices"/>
+            </tag>
+            <tag name="techBox:rest" title="REST" pseudo="true" parents="techRow:embedded" icon="Science_Circuit">
+                <tag ref="rest"/>
             </tag>
         </tag>
         <tag name="techSector03:Store" title="Store" color="#F4B400" pseudo="true">
