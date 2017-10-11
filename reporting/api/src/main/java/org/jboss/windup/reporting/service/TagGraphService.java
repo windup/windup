@@ -71,8 +71,11 @@ public class TagGraphService extends GraphService<TagModel>
             return this.getUniqueByProperty(TagModel.PROP_NAME, tag.getName());
         visited.add(tag);
 
-        LOG.info("Creating TagModel for Tag: " + StringUtils.repeat(' ', level*2) + tag.getName() + "("+tag.getContainedTags().size()+")    " + tag.getTitle());
+        LOG.info(String.format("Creating TagModel for Tag: %s%s(%d)   '%s'  traits: %s", StringUtils.repeat(' ', level*2),
+                tag.getName(), tag.getContainedTags().size(), tag.getTitle(), tag.getTraits()));
         TagModel tagModel = this.create().setName(tag.getName()).setTitle(tag.getTitle()).setColor(tag.getColor()).setRoot(tag.isPrime()).setPseudo(tag.isPseudo());
+        if (null != tag.getTraits())
+            tagModel.putAllTraits(tag.getTraits());
 
         tag.getContainedTags().forEach(tag2 -> {
             TagModel tag2model = feedTagStructureToGraph(tag2, visited, level+1);

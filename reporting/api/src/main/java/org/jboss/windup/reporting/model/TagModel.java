@@ -5,7 +5,9 @@ import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.modules.javahandler.JavaHandler;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
+import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
+import org.jboss.windup.graph.MapInProperties;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import com.tinkerpop.frames.Property;
@@ -106,6 +108,26 @@ public interface TagModel extends WindupVertexFrame
     Iterable<TagModel> getDesignatedByTags();
     @Adjacency(label = EDGE_DESIGNATES, direction = Direction.IN)
     TagModel setDesignatedByTags(Iterable<TagModel> tags);
+
+
+    /**
+     * Returns a map of traits - custom tag key-value pairs.
+     */
+    @MapInProperties(propertyPrefix = "t")
+    Map<String, String> getTraits();
+
+    /**
+     * Sets a custom tag key-value pairs.
+     */
+    @MapInProperties(propertyPrefix = "t")
+    void putTraits(String key, String value);
+
+    /**
+     * A map of traits - custom tag key-value pairs.
+     */
+    @MapInProperties(propertyPrefix = "t")
+    void putAllTraits(Map<String, String> traits);
+
 
     public abstract class Impl implements TagModel, JavaHandlerContext<Vertex>
     {

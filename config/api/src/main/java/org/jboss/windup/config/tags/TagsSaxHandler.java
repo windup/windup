@@ -94,6 +94,7 @@ public class TagsSaxHandler extends DefaultHandler
                         || "ref".equals(attrQName)
                         || "title".equals(attrQName)
                         || "color".equals(attrQName)
+                        || "parents".equals(attrQName)
                     )
                         continue;
                     final Map<String, String> traits = tag.getOrCreateTraits();
