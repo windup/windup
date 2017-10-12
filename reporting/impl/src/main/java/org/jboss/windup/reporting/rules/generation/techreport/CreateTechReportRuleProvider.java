@@ -49,7 +49,7 @@ public class CreateTechReportRuleProvider extends AbstractRuleProvider
             + " It shows how the technologies are distributed and is mostly useful when analysing many applications.";
 
     public static final String TEMPLATE_PATH_BOXES = "/reports/templates/techReport-boxes.ftl";
-    private static final String REPORT_NAME_BOXES = "Technologies boxes";
+    private static final String REPORT_NAME_BOXES = "Technologies";
     public static final String REPORT_DESCRIPTION_BOXES =
             "This report is a statistic of technologies occurences in the input applications."
                     + " It is an overview of what techogies are found in given project or a set of projects.";
@@ -103,7 +103,7 @@ public class CreateTechReportRuleProvider extends AbstractRuleProvider
             //listAllTechUsageStats(grCtx);///
             //listAllApplicationModels(grCtx);///
 
-            // Create the report model.
+            // Create the global report models.
             TechReportPunchCardModel reportPunch = createTechReportPunchCard(grCtx);
             TechReportPunchCardModel reportBoxes = createTechReportBoxes(grCtx);
 
@@ -119,7 +119,15 @@ public class CreateTechReportRuleProvider extends AbstractRuleProvider
             reportBoxes.setSectorsHolderTag(sectorsTag);
             reportBoxes.setRowsHolderTag(rowsTag);
 
-            // The actual data is computed by GetTechReportPunchCardStatsMethod.
+
+            // Create the boxes report models for each app.
+            for (ApplicationProjectModel appModel : new ProjectService(grCtx).getRootProjectModels()){
+                final TechReportPunchCardModel appTechReport = createTechReportBoxes(grCtx, appModel);
+                appTechReport.setSectorsHolderTag(sectorsTag);
+                appTechReport.setRowsHolderTag(rowsTag);
+            }
+
+            // The actual data is computed by SortTechUsageStatsMethod.
         }
 
         private Map<String,Integer> computeMaxCountPerTag(Map<Long, Map<String, Integer>> countsOfTagsInApps)
@@ -136,34 +144,56 @@ public class CreateTechReportRuleProvider extends AbstractRuleProvider
         }
 
         private TechReportPunchCardModel createTechReportPunchCard(GraphContext grCtx){
-            TechReportPunchCardModel report = createTechReportBase(grCtx, "punch");
+            TechReportPunchCardModel report = createTechReportBase(grCtx);
             report.setReportName(REPORT_NAME_PUNCH);
             report.setTemplatePath(TEMPLATE_PATH_PUNCH);
             report.setDescription(REPORT_DESCRIPTION_PUNCH);
             report.setReportIconClass("glyphicon glyphicon-tags");
+            report.setDisplayInGlobalApplicationIndex(true);
+            report.setDisplayInApplicationReportIndex(true);
 
+            new ReportService(grCtx).setUniqueFilename(report, "techReport-punch", "html");
             return report;
         }
+
         private TechReportPunchCardModel createTechReportBoxes(GraphContext grCtx){
-            TechReportPunchCardModel report = createTechReportBase(grCtx, "boxes");
+            TechReportPunchCardModel report = createTechReportBase(grCtx);
+            report.setReportName(REPORT_NAME_BOXES);
+            report.setTemplatePath(TEMPLATE_PATH_BOXES);
+            report.setDescription(REPORT_DESCRIPTION_BOXES);
+            report.setReportIconClass("glyphicon glyphicon-tags");
+            report.setDisplayInGlobalApplicationIndex(true);
+            report.setDisplayInApplicationReportIndex(false);
+
+            new ReportService(grCtx).setUniqueFilename(report, "techReport-boxes", "html");
+            return report;
+        }
+
+        private TechReportPunchCardModel createTechReportBoxes(GraphContext grCtx, ApplicationProjectModel appModel)
+        {
+            TechReportPunchCardModel report = createTechReportBase(grCtx);
+            report.setProjectModel(appModel);
+            report.setDisplayInGlobalApplicationIndex(false);
+            report.setDisplayInApplicationReportIndex(true);
             report.setReportName(REPORT_NAME_BOXES);
             report.setTemplatePath(TEMPLATE_PATH_BOXES);
             report.setDescription(REPORT_DESCRIPTION_BOXES);
             report.setReportIconClass("glyphicon glyphicon-tags");
 
-            return report;
+            // Set the filename for the report
+            new ReportService(grCtx).setUniqueFilename(report, "techReport-" + appModel.getName(), "html");
+
+            TechReportPunchCardModel techReport = new GraphService<>(grCtx, TechReportPunchCardModel.class).addTypeToModel(report);
+            return techReport;
         }
-        private TechReportPunchCardModel createTechReportBase(GraphContext grCtx, String reportIdentifier)
+
+        private TechReportPunchCardModel createTechReportBase(GraphContext grCtx)
         {
             ApplicationReportService applicationReportService = new ApplicationReportService(grCtx);
             ApplicationReportModel report = applicationReportService.create();
             report.setTemplateType(TemplateType.FREEMARKER);
-            report.setDisplayInApplicationReportIndex(true);
-            report.setDisplayInGlobalApplicationIndex(true);
-            report.setReportPriority(101);
-
-            ReportService reportService = new ReportService(grCtx);
-            reportService.setUniqueFilename(report, "techReport-" + reportIdentifier, "html");
+            report.setMainApplicationReport(false);
+            report.setReportPriority(103);
 
             TechReportPunchCardModel techReport = new GraphService<>(grCtx, TechReportPunchCardModel.class).addTypeToModel(report);
             return techReport;
@@ -312,7 +342,7 @@ public class CreateTechReportRuleProvider extends AbstractRuleProvider
         for (ProjectModel app : getAllApplications(grCtx))
             LOG.info("App from getAllApplications(): " + app);
 
-        final Iterable<ApplicationProjectModel> apps = grCtx.findAll(ApplicationProjectModel.class);
+        final Iterable<ApplicationProjectModel> apps = new ProjectService(grCtx).getRootProjectModels();
         for (ApplicationProjectModel appM : apps)
             LOG.info("AppProjModel: " + appM);
     }

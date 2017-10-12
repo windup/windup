@@ -110,7 +110,7 @@
 
                 <#-- A precomputed matrix - map of maps of maps, boxTag -> rowTag -> project -> techName -> TechUsageStat.
                      Map<String, Map<String, Map<Long, Map<String, TechReportService.TechUsageStatSum>>>> -->
-                <#assign sortedStatsMap = sortTechUsageStats() />
+                <#assign sortedStatsMap = sortTechUsageStats(reportModel.projectModel) />
 
                 <table class="technologiesBoxCard">
                     <tr class="sectorsHeaders">
