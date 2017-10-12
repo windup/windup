@@ -132,30 +132,28 @@
                                 <td class="sector${sectorTag.title}">
                                     <#list sectorTag.designatedTags as boxTag>
                                         <#if isTagUnderTag(boxTag, rowTag)>
-                                        <div class="box box-${boxTag.name}" id="box${boxTag.asVertex().id?c}">
-                                            <div class="icon icon-${(boxTag.traits["icon"])!}"
-                                                 style="background-image: url('resources/icons/techreport/${(boxTag.traits["icon"])!}.png');"></div>
-                                            <div class="content">
-                                                <h4>${boxTag.titleOrName}</h4>
-
-                                                <#-- Get a map of box buckets with TechUsageStats and take data from there, rather than pulling through a function. -->
-                                                <#assign statsForThisBox = (sortedStatsMap[rowTag.name]?api.get(boxTag.name)?api.get(0?long))! />
-
-                                                <#list statsForThisBox>
-                                                    <ul>
-                                                        <#items as name, stat>
-                                                            <li>
-                                                                ${stat.name}
-                                                                <#if (stat.occurrenceCount > 0) >
-                                                                    <b>${stat.occurrenceCount}</b>
-                                                                </#if>
-                                                            </li>
-                                                        </#items>
-                                                    </ul>
-                                                </#list>
-                                            </div>
-                                            <div style="clear: both;"></div>
-                                        </div>
+                                            <#-- Get a map of box buckets with TechUsageStats and take data from there, rather than pulling through a function. -->
+                                            <#assign statsForThisBox = (sortedStatsMap[rowTag.name]?api.get(boxTag.name)?api.get(0?long))! />
+                                            <#list statsForThisBox>
+                                                <div class="box box-${boxTag.name}" id="box${boxTag.asVertex().id?c}">
+                                                    <div class="icon icon-${(boxTag.traits["icon"])!}"
+                                                         style="background-image: url('resources/icons/techreport/${(boxTag.traits["icon"])!}.png');"></div>
+                                                    <div class="content">
+                                                        <h4>${boxTag.titleOrName}</h4>
+                                                        <ul>
+                                                            <#items as name, stat>
+                                                                <li>
+                                                                    ${stat.name}
+                                                                    <#if (stat.occurrenceCount > 0) >
+                                                                        <b>${stat.occurrenceCount}</b>
+                                                                    </#if>
+                                                                </li>
+                                                            </#items>
+                                                        </ul>
+                                                    </div>
+                                                    <div style="clear: both;"></div>
+                                                </div>
+                                            </#list>
                                         </#if>
                                     </#list>
                                 </td>
