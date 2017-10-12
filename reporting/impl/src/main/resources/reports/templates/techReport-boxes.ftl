@@ -39,20 +39,33 @@
 
         /* Sector headers */
         tr.sectorsHeaders { font-size: 22pt; font-weight: bold; }
-        tr.sectorsHeaders > td { text-align: center; padding: 2ex 20pt; } /* Around the box */
+        tr.sectorsHeaders > td { text-align: center; padding: 10pt 20pt 0; } /* Around the sector header box. */
         tr.rowSectors > td { padding: 2ex 2em; }
         tr.sectorsHeaders > td div { text-align: center; padding: 1ex 2em; }
 
         /* Partitions = gray areas */
-        tr.rowHeader { font-size: 22pt; font-weight: bold; }
+        tr.rowHeader { font-size: 18pt; font-weight: bold; }
         tr.rowHeader > td > div { background-color: #D9D9D9; padding: 1ex 20pt 0; margin-top: 18pt; }
         /*tr.rowHeader td,*/
         tr.rowSectors > td { background-color: #D9D9D9; padding: 1ex 2em; vertical-align: top; }
-        tr.rowSectors > td  > div { padding: 1ex 20pt; margin-bottom: 10pt; }
-        tr.rowSectors > td  > div > h4 { font-size: 14pt; font-weight: bold; }
+        tr.rowSectors > td  > div.box { padding: 8pt 18pt 8pt 12pt; margin-bottom: 10pt; }
+        tr.rowSectors > td  > div.box > h4 { font-size: 12pt; font-weight: bold; }
 
-        tr.rowSectors h4  { font-size: 18pt; font-weight: bold; }
+        tr.rowSectors h4  { font-size: 12   pt; font-weight: bold; }
         tr.rowSectors ul li  { font-size: 12pt; }
+
+        .box .icon {
+            float: left;
+            width: 48px; height: 48px;
+            background-image: url("resources/icons/techreport/Object_Shield-CoatOfArms.png");
+            background-repeat: no-repeat;
+            background-size: contain;
+            background-position: center;
+        }
+        .box .content { margin-left: 62px; }
+        .box .content ul { list-style: none; margin: 0; }
+        .box .content ul li { margin: 0; text-align: right; }
+        .box .content ul li b { width: 3ex; display: inline-block; }
     </style>
 </head>
 
@@ -123,49 +136,53 @@
                                 <td class="sector${sectorTag.title}">
                                     <#list sectorTag.designatedTags as boxTag>
                                         <#if isTagUnderTag(boxTag, rowTag)>
-                                        <div class="box box-${boxTag.name} #box${boxTag.asVertex().id?c}">
-                                            <div class="icon">[icon]</div>
-                                            <h4>${boxTag.titleOrName}</h4>
+                                        <div class="box box-${boxTag.name}" id="box${boxTag.asVertex().id?c}">
+                                            <div class="icon icon-${(boxTag.traits["icon"])!}"
+                                                 style="background-image: url('resources/icons/techreport/${(boxTag.traits["icon"])!}.png');"></div>
+                                            <div class="content">
+                                                <h4>${boxTag.titleOrName}</h4>
 
-                                            <#if false >
-                                            <ul>
-                                                <#-- Get the individual techs under this sector and row. JSF, JSP, Servlet, ... etc. -->
-                                                    <#-- Map<String, TechUsageStatSum> -->
-                                                <#assign techUsageStats = getTechnologiesIdentifiedForSubSectorAndRow(boxTag, rowTag, reportModel.project) />
-
-                                                <#list techUsageStats as name, techUsageStatSum>
-                                                    <li class="stats count${techUsageStatSum.occurrenceCount!0?switch(0, '0', 1, '1', 'Many')}">
-                                                        ${techUsageStatSum.name}
-                                                        <b>${techUsageStatSum.occurrenceCount!}</b>
-                                                    </li>
-                                                </#list>
-                                            </ul>
-                                            <hr /> <!-- 2nd approach, optimized -->
-                                            </#if>
-
-                                            <#-- Get a map of box buckets with TechUsageStats and take data from there, rather than pulling through a function. -->
-                                            <#assign statsForThisBox = (sortedStatsMap[rowTag.name]?api.get(boxTag.name)?api.get(0?long))! />
-                                            <!--
-                                            rowTag = "${rowTag.name}"
-                                            boxTag = "${boxTag.name}"
-                                            row = map[${rowTag.name}]: ${mapToJson(sortedStatsMap[rowTag.name])!}
-                                            <#if sortedStatsMap[rowTag.name]?? && sortedStatsMap[rowTag.name]?is_hash>
-                                            box = row[${boxTag.name}]: ${mapToJson(sortedStatsMap[rowTag.name]?api.get(boxTag.name))!}
-                                            </#if>
-                                            all projects = box[proj 0]: ${(statsForThisBox???then("statsForThisBox", "-"))!}
-                                            -->
-                                            <#list statsForThisBox>
+                                                <#if false >
                                                 <ul>
-                                                    <#items as name, stat>
-                                                        <li>
-                                                        ${stat.name}
-                                                        <#if (stat.occurrenceCount > 0) >
-                                                            <b>${stat.occurrenceCount}</b>
-                                                        </#if>
+                                                    <#-- Get the individual techs under this sector and row. JSF, JSP, Servlet, ... etc. -->
+                                                        <#-- Map<String, TechUsageStatSum> -->
+                                                    <#assign techUsageStats = getTechnologiesIdentifiedForSubSectorAndRow(boxTag, rowTag, reportModel.project) />
+
+                                                    <#list techUsageStats as name, techUsageStatSum>
+                                                        <li class="stats count${techUsageStatSum.occurrenceCount!0?switch(0, '0', 1, '1', 'Many')}">
+                                                            ${techUsageStatSum.name}
+                                                            <b>${techUsageStatSum.occurrenceCount!}</b>
                                                         </li>
-                                                    </#items>
+                                                    </#list>
                                                 </ul>
-                                            </#list>
+                                                <hr /> <!-- 2nd approach, optimized -->
+                                                </#if>
+
+                                                <#-- Get a map of box buckets with TechUsageStats and take data from there, rather than pulling through a function. -->
+                                                <#assign statsForThisBox = (sortedStatsMap[rowTag.name]?api.get(boxTag.name)?api.get(0?long))! />
+                                                <#--
+                                                rowTag = "${rowTag.name}"
+                                                boxTag = "${boxTag.name}"
+                                                row = map[${rowTag.name}]: ${mapToJson(sortedStatsMap[rowTag.name])!}
+                                                <#if sortedStatsMap[rowTag.name]?? && sortedStatsMap[rowTag.name]?is_hash>
+                                                box = row[${boxTag.name}]: ${mapToJson(sortedStatsMap[rowTag.name]?api.get(boxTag.name))!}
+                                                </#if>
+                                                all projects = box[proj 0]: ${(statsForThisBox???then("statsForThisBox", "-"))!}
+                                                -->
+                                                <#list statsForThisBox>
+                                                    <ul>
+                                                        <#items as name, stat>
+                                                            <li>
+                                                                ${stat.name}
+                                                                <#if (stat.occurrenceCount > 0) >
+                                                                    <b>${stat.occurrenceCount}</b>
+                                                                </#if>
+                                                            </li>
+                                                        </#items>
+                                                    </ul>
+                                                </#list>
+                                            </div>
+                                            <div style="clear: both;"></div>
                                         </div>
                                         </#if>
                                     </#list>
