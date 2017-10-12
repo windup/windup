@@ -31,6 +31,18 @@
         .sectorExecute { color: #674EA7; }
         .sectorStats   { color: black; }
 
+        /* A subtle line and space between sectors. */
+        .sector           { border-left: none; }
+        .sector ~ .sector { border-left: 1px solid #E0E0E0; }
+        /* (Only for the first columns of the sector.) */
+        .sectorView     ~ .sectorView    { border-left: none; }
+        .sectorConnect  ~ .sectorConnect { border-left: none; }
+        .sectorStore    ~ .sectorStore   { border-left: none; }
+        .sectorSustain  ~ .sectorSustain { border-left: none; }
+        .sectorExecute  ~ .sectorExecute { border-left: none; }
+        .sectorStats    ~ .sectorStats   { border-left: none; }
+
+
         table.technologiesPunchCard { border-collapse: collapse; }
         table.technologiesPunchCard td,
         table.technologiesPunchCard th {
@@ -46,7 +58,7 @@
         tr.headersGroup td div {
             height: 200px; /* Without this, the text is centered vertically. */
             width:   40px;
-            padding: 0.5em 0;
+            padding: 0.3em 0 0 5pt;
             text-align: left;
             /*vertical-align: bottom; /* No effect. */
             writing-mode: vertical-lr; /* bt-lr doesn't work? So I turn it 180 with rotate() below */
@@ -60,8 +72,8 @@
         tr.app td.sectorStats { text-align: right; vertical-align: middle; }
         tr.app td.circle { text-align: center; vertical-align: middle; padding: 0; line-height: 1; }
         tr.app td.circle { font-size: 26pt; }
-        tr.app td.circle.sizeX:after { content: "𐄂"; color: ghostwhite; font-size: 18pt; } /* No data */
-        tr.app td.circle.size0:after { content: "⊘"; color: whitesmoke; font-size: 18pt; }
+        tr.app td.circle.sizeX:after { content: "𐄂"; color: #e8e8e8; font-size: 18pt; } /* No data */
+        tr.app td.circle.size0:after { content: "⊘"; color: #e8e8e8; font-size: 18pt; }
         tr.app td.circle.size1:after { content: "🞄"; }
         tr.app td.circle.size2:after { content: "⚫"; }
         tr.app td.circle.size3:after { content: "●"; }
@@ -134,18 +146,18 @@
                         <td colspan="3" class="sectorStats">Stats</td>
                     </tr>
                     <tr class="headersGroup">
-                        <td class="sector"></td>
+                        <td></td>
                         <#list sectorTags as sectorTag >
                             <#list sectorTag.designatedTags as boxTag >
                                 <#if !isTagUnderTag(boxTag, sillyTagsParent) >
                                     <#assign techsOrder = techsOrder + [boxTag] />
-                                    <td class="sector${sectorTag.title}"><div>${boxTag.title!}</div></td>
+                                    <td class="sector sector${sectorTag.title}"><div>${boxTag.title!}</div></td>
                                 </#if>
                             </#list>
                         </#list>
-                        <td class="sectorStats sizeMB"><div>Size (MB)</div></td>
-                        <td class="sectorStats libsCount"><div>Libraries</div></td>
-                        <td class="sectorStats storyPoints"><div>Mandatory (SP)</div></td>
+                        <td class="sector sectorStats sizeMB"><div>Size (MB)</div></td>
+                        <td class="sector sectorStats libsCount"><div>Libraries</div></td>
+                        <td class="sector sectorStats storyPoints"><div>Mandatory (SP)</div></td>
                     </tr>
 
 
@@ -171,7 +183,7 @@
                                         <!-- count: ${count}   max: ${maxForThisBox}   getLogaritmicDistribution(): ${ log } x 5 = ${ log * 5.0 } -->
                                     </#if>
 
-                                    <td class="circle size${ log?is_number?then((log * 5.0)?ceiling, "X")} sector${sectorTag.title}"><!-- The circle is put here by CSS :after --></td>
+                                    <td class="circle size${ log?is_number?then((log * 5.0)?ceiling, "X")} sector sector${sectorTag.title}"><!-- The circle is put here by CSS :after --></td>
                                 </#if>
                             <#else>
                                 <td>No technology sectors defined.</td>
