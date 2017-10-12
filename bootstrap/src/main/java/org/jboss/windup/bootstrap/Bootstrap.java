@@ -458,19 +458,19 @@ public class Bootstrap
         return true;
     }
 
-    private File getWindupAddonsDir()
-    {
-        return new File(getWindupHome(), "addons");
-    }
+//    private File getWindupAddonsDir()
+//    {
+//        return new File(getWindupHome(), "addons");
+//    }
 
-    private File getWindupHome()
-    {
-        String windupHome = System.getProperty(WINDUP_HOME);
-        if (windupHome == null)
-        {
-            Path path = new File("").toPath();
-            return path.toFile();
-        }
-        return Paths.get(windupHome).toFile();
-    }
+//    private File getWindupHome()
+//    {
+//        String windupHome = System.getProperty(WINDUP_HOME);
+//        if (windupHome == null)
+//        {
+//            Path path = new File("").toPath();
+//            return path.toFile();
+//        }
+//        return Paths.get(windupHome).toFile();
+//    }
 }

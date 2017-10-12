@@ -335,7 +335,8 @@ public class RunWindupCommand implements Command, FurnaceDependent
 
     private void setDefaultOutputPath(Map<String, Object> optionValues)
     {
-        if (!optionValues.containsKey(OutputPathOption.NAME))
+        Object obj = optionValues.getOrDefault(OutputPathOption.NAME, null);
+        if (obj == null || (obj instanceof File && StringUtils.isBlank( ((File) obj).getPath())) )
         {
             Iterable<Path> paths = (Iterable<Path>) optionValues.get(InputPathOption.NAME);
             if (paths != null && paths.iterator().hasNext())
