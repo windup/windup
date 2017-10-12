@@ -14,5 +14,11 @@
             <annotation-literal name="subLiteral" pattern="subLiteralPattern"/>
         </annotation-type>
     </javaclass>
+    <javaclass references="javax.annotation.sql.DataSourceDefinitions" >
+        <location>ANNOTATION</location>
+        <annotation-list>
+            <annotation-type pattern="javax.annotation.sql.DataSourceDefinition" />
+        </annotation-list>
+    </javaclass>
 </test>
 

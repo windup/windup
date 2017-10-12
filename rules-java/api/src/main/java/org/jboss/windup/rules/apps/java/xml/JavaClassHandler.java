@@ -65,33 +65,54 @@ public class JavaClassHandler implements ElementHandler<JavaClassBuilderAt>
         List<AnnotationTypeCondition> additionalAnnotationConditions = new ArrayList<>();
         for (Element child : children)
         {
+            String name = child.getAttribute(AnnotationConditionHandler.NAME);
             switch (child.getNodeName())
             {
-            case "location":
-                TypeReferenceLocation location = handlerManager.processElement(child);
-                locations.add(location);
-                break;
-            case AnnotationTypeConditionHandler.ANNOTATION_TYPE:
-            case AnnotationListConditionHandler.ANNOTATION_LIST_CONDITION:
-            case AnnotationLiteralConditionHandler.ANNOTATION_LITERAL:
-                String name = child.getAttribute(AnnotationConditionHandler.NAME);
-                AnnotationCondition annotationCondition = handlerManager.processElement(child);
-                if (StringUtils.isBlank(name))
-                {
-                    if (!(annotationCondition instanceof AnnotationTypeCondition))
+                case "location":
+                    TypeReferenceLocation location = handlerManager.processElement(child);
+                    locations.add(location);
+                    break;
+                case AnnotationTypeConditionHandler.ANNOTATION_TYPE:
+                    AnnotationCondition annotationCondition = handlerManager.processElement(child);
+                    if (StringUtils.isBlank(name))
+                    {
+                        additionalAnnotationConditions.add((AnnotationTypeCondition) annotationCondition);
+                    }
+                    else
+                    {
+                        if (conditionMap.containsKey(name))
+                            throw new WindupException("Duplicate condition detected on annotation element: " + name);
+                        conditionMap.put(name, annotationCondition);
+                    }
+                    break;
+                case AnnotationListConditionHandler.ANNOTATION_LIST_CONDITION:
+                    annotationCondition = handlerManager.processElement(child);
+                    if (StringUtils.isBlank(name))
+                    {
+                        name = "value";
+                    }
+                    if (conditionMap.containsKey(name))
+                        throw new WindupException("Duplicate condition detected on annotation element: " + name);
+                    else
+                    {
+                        conditionMap.put(name, annotationCondition);
+                    }
+                    break;
+                case AnnotationLiteralConditionHandler.ANNOTATION_LITERAL:
+                    annotationCondition = handlerManager.processElement(child);
+                    if (StringUtils.isBlank(name))
+                    {
                         throw new WindupException("Additional Annotation Condition must be an " +
                                 AnnotationTypeConditionHandler.ANNOTATION_TYPE + " condition. Could it be that the '" +
                                 AnnotationConditionHandler.NAME + "' property is missing?");
-
-                    additionalAnnotationConditions.add((AnnotationTypeCondition)annotationCondition);
-                }
-                else
-                {
-                    if (conditionMap.containsKey(name))
-                        throw new WindupException("Duplicate condition detected on annotation element: " + name);
-                    conditionMap.put(name, annotationCondition);
-                }
-                break;
+                    }
+                    else
+                    {
+                        if (conditionMap.containsKey(name))
+                            throw new WindupException("Duplicate condition detected on annotation element: " + name);
+                        conditionMap.put(name, annotationCondition);
+                    }
+                    break;
             }
         }
         JavaClassBuilder javaClassReferences;

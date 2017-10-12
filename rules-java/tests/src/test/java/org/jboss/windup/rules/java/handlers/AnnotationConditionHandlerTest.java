@@ -91,5 +91,12 @@ public class AnnotationConditionHandlerTest
         System.out.println("Condition 2: " + asString2);
         Assert.assertTrue(asString2.contains("AnnotationTypeCondition{pattern={*}, conditions={secondName"));
         Assert.assertTrue(asString2.contains("{subLiteral=AnnotationLiteralCondition{pattern=subLiteralPattern}"));
+
+        Element javaClass3 = javaClassList.get(2);
+        JavaClass javaClassCondition3 = parser.<JavaClass> processElement(javaClass3);
+
+        String asString3 = javaClassCondition3.toString();
+        System.out.println("Condition 3: " + asString3);
+        Assert.assertTrue(asString3.contains("AnnotationTypeCondition{pattern={*}, conditions={value=AnnotationListCondition"));
     }
 }
