@@ -59,7 +59,7 @@
                 <tag ref="jax-ws"/>
                 <tag ref="jax-rs"/>
             </tag> -->
-            <tag name="techBox:java-ee-other" title="Other" pseudo="true" parents="techRow:java-ee" icon="">
+            <tag name="techBox:java-ee-other" title="Other" pseudo="true" parents="techRow:java-ee" icon="Office_SnackBasket">
                 <tag ref="jca"/>
                 <tag ref="jni"/>
                 <tag ref="mail"/>
@@ -74,23 +74,23 @@
         </tag>
         <tag name="techSector03:Store" title="Store" color="#F4B400" pseudo="true">
             <!-- These can be used directly, as it matches an existing tag and the title is okay too. -->
-            <tag name="techBox:orm" title="ORM" pseudo="true" parents="techRow:java-ee" icon="">
+            <tag name="techBox:orm" title="ORM" pseudo="true" parents="techRow:java-ee" icon="Diagram_DevelopmentModel">
                 <tag ref="orm"/>
             </tag>
             <tag name="techBox:ogm" title="OGM" pseudo="true" parents="techRow:java-ee" icon="Diagram_DevelopmentModel">
                 <tag ref="ogm"/>
             </tag>
-            <tag name="techBox:jdbc" title="JDBC" pseudo="true" parents="techRow:java-ee"  icon="Hardware_storage">
+            <tag name="techBox:jdbc" title="JDBC" pseudo="true" parents="techRow:java-ee"  icon="Hardware_Storage-A-Stack">
                 <tag ref="jdbc"/>
             </tag>
-            <tag name="techBox:cache" title="Caching" pseudo="true" parents="techRow:embedded" icon="science_brain">
+            <tag name="techBox:cache" title="Caching" pseudo="true" parents="techRow:embedded" icon="Recycle_Symbol">
                 <tag ref="cache"/>
             </tag>
         </tag>
         <tag name="techSector04:Sustain" title="Sustain" color="#DB4437" pseudo="true">
             <tag name="techBox:Transactions" title="Transactions" pseudo="true" parents="techRow:java-ee" icon="Object_CashRegister-POS">
             </tag>
-            <tag name="techBox:Clustering" title="Clustering" pseudo="true" parents="techRow:java-ee" icon="Hardware_server-stack">
+            <tag name="techBox:Clustering" title="Clustering" pseudo="true" parents="techRow:java-ee" icon="Hardware_Server-A-Stack">
             </tag>
             <tag name="techBox:Security" title="Security" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Object_Shield-CoatOfArms">
             </tag>
@@ -100,7 +100,7 @@
             </tag>
         </tag>
         <tag name="techSector05:Execute" title="Execute" color="#674EA7" pseudo="true">
-            <tag name="techBox:processing" title="Processing" pseudo="true" parents="techRow:java-ee" icon="Hardware_processor"/>
+            <tag name="techBox:processing" title="Processing" pseudo="true" parents="techRow:java-ee" icon="Hardware_Processor-Compute"/>
             <tag name="techBox:ioc" title="IoC" pseudo="true" parents="techRow:java-ee" icon="Arrows_Interoperable-CrossPlatform"/>
             <tag name="techBox:rules" title="Rules &amp; Processes" pseudo="true" parents="techRow:embedded" icon="Object_Gear-Group"/>
             <tag name="techBox:integration" title="Integration" pseudo="true" parents="techRow:embedded" icon="Software_API"/>
