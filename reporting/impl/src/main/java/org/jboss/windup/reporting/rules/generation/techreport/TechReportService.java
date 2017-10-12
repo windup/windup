@@ -4,7 +4,6 @@ import freemarker.ext.beans.StringModel;
 import freemarker.template.SimpleNumber;
 import freemarker.template.SimpleScalar;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 import org.jboss.windup.config.tags.Tag;
 import org.jboss.windup.graph.GraphContext;
@@ -61,38 +60,6 @@ public class TechReportService
             }
 
 
-            /*
-            final String statsModelLabel = stat.getName();
-
-            // Sort them out to the map.
-            {
-                final Map<String, Map<Long, Map<String, TechUsageStatSum>>> row = map.computeIfAbsent(placement.row.getName(), k -> new HashMap());
-                final Map<Long, Map<String, TechUsageStatSum>> box = row.computeIfAbsent(placement.box.getName(), k -> new HashMap<>());
-
-                // All Projects
-                final Map<String, TechUsageStatSum> statSumAll = box.computeIfAbsent(Long.valueOf(0), k -> new HashMap<>());
-                statSumAll.put(statsModelLabel, new TechUsageStatSum(stat));
-                // Respective project
-                final Map<String, TechUsageStatSum> statSum = box.computeIfAbsent(projectKey, k -> new HashMap<>());
-                statSum.put(statsModelLabel, new TechUsageStatSum(stat));
-            }
-
-
-            // Roll-up for all rows.
-            {
-                final Map<String, Map<Long, Map<String, TechUsageStatSum>>> rowAll = map.computeIfAbsent("", k -> new HashMap());
-                final Map<Long, Map<String, TechUsageStatSum>> boxAll = rowAll.computeIfAbsent(placement.box.getName(), k -> new HashMap<>());
-
-                // All Projects
-                final Map<String, TechUsageStatSum> statSumAll = boxAll.computeIfAbsent(Long.valueOf(0), k -> new HashMap<>());
-                statSumAll.put(statsModelLabel, new TechUsageStatSum(stat));
-                // Respective project
-                final Long projectKey = (Long) stat.getProjectModel().asVertex().getId();
-                final Map<String, TechUsageStatSum> statSum = boxAll.computeIfAbsent(projectKey, k -> new HashMap<>());
-                statSum.put(statsModelLabel, new TechUsageStatSum(stat));
-            }*/
-
-
             // For boxes report - show each tech in sector, row, box. For individual projects and sum for all projects.
             mergeToTheRightCell(map, placement.row.getName(), placement.box.getName(), projectKey, stat.getName(), stat, false);
             mergeToTheRightCell(map, placement.row.getName(), placement.box.getName(), 0L, stat.getName(), stat, false);
@@ -102,21 +69,6 @@ public class TechReportService
 
             // For the punch card report - maximum count for each box.
             mergeToTheRightCell(map, "", placement.box.getName(), (Long) 0L, "", stat, true);
-
-            /*
-            map.get("").values().forEach(box -> {
-                AtomicInteger max = new AtomicInteger(0);
-
-                // Get the maximum count of all projects.
-                box.values().forEach(project -> {
-                    TechUsageStatSum maxPseudoTech = project.computeIfAbsent("", k -> new TechUsageStatSum(""));
-                    maxPseudoTech.count += stat.getOccurrenceCount();
-                    max.set(Math.max( max.get(), maxPseudoTech.count ));
-                });
-                // Add an entry for pseudoProject #0, set it's count to the maximum.
-                box.computeIfAbsent(0L, k -> new HashMap<>()).computeIfAbsent("", k -> new TechUsageStatSum("")).count = max.get();
-            });
-            /**/
         }
         return map;
     }
@@ -198,7 +150,7 @@ public class TechReportService
         if (tagNames.size() < 3)
             throw new WindupException("There should always be exactly 3 silly labels - row, sector, column/box. It was: " + tagNames);
         if (tagNames.size() > 3)
-            GetTechnologiesIdentifiedForSubSectorAndRowMethod.LOG.severe("There should always be exactly 3 silly labels - row, sector, column/box. It was: " + tagNames);
+            GetTechnologiesIdentifiedForBoxAndRowMethod.LOG.severe("There should always be exactly 3 silly labels - row, sector, column/box. It was: " + tagNames);
 
         TechReportPlacement placement = new TechReportPlacement();
 
@@ -236,7 +188,7 @@ public class TechReportService
         LOG.info(String.format("\t\tLabels %s identified as: sector: %s, box: %s, row: %s", tagNames, placement.sector, placement.box, placement.row));
         if (placement.box == null || placement.row == null)
         {
-            GetTechnologiesIdentifiedForSubSectorAndRowMethod.LOG.severe(String.format("There should always be exactly 3 silly labels - row, sector, column/box. Found: %s, of which box: %s, row: %s", tagNames, placement.box, placement.row));
+            GetTechnologiesIdentifiedForBoxAndRowMethod.LOG.severe(String.format("There should always be exactly 3 silly labels - row, sector, column/box. Found: %s, of which box: %s, row: %s", tagNames, placement.box, placement.row));
         }
         return placement;
     }

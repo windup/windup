@@ -54,11 +54,10 @@
             <tag name="techBox:ejb" title="EJB" pseudo="true" parents="techRow:java-ee" icon="Science_Molecule">
                 <tag ref="ejb"/>
             </tag>
-            <!-- Disabled for debug purposes.
-            <tag name="techBox:http" title="HTTP" pseudo="true" parents="techRow:java-ee" icon="">
+            <tag name="techBox:http" title="HTTP" pseudo="true" parents="techRow:java-ee" icon="Elevator-UpDown">
                 <tag ref="jax-ws"/>
                 <tag ref="jax-rs"/>
-            </tag> -->
+            </tag>
             <tag name="techBox:java-ee-other" title="Other" pseudo="true" parents="techRow:java-ee" icon="Office_SnackBasket">
                 <tag ref="jca"/>
                 <tag ref="jni"/>

@@ -13,13 +13,9 @@ import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.ApplicationInputPathModel;
 import org.jboss.windup.graph.model.ApplicationProjectModel;
-import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.ProjectService;
-import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.model.*;
 import org.jboss.windup.reporting.service.ApplicationReportService;
 import org.jboss.windup.reporting.service.ReportService;
@@ -41,9 +37,9 @@ import org.jboss.windup.graph.model.ProjectModel;
  * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
  */
 @RuleMetadata(phase = ReportGenerationPhase.class)
-public class CreateTechReportPunchCardRuleProvider extends AbstractRuleProvider
+public class CreateTechReportRuleProvider extends AbstractRuleProvider
 {
-    public static final Logger LOG = Logger.getLogger(CreateTechReportPunchCardRuleProvider.class.getName());
+    public static final Logger LOG = Logger.getLogger(CreateTechReportRuleProvider.class.getName());
 
 
     public static final String TEMPLATE_PATH_PUNCH = "/reports/templates/techReport-punchCard.ftl";
@@ -77,9 +73,8 @@ public class CreateTechReportPunchCardRuleProvider extends AbstractRuleProvider
             .perform(new GraphOperation() {
                 @Override
                 public void perform(GraphRewrite event, EvaluationContext context) {
-                    ///LOG.info("TagServiceHolder = " + tagServiceHolder);
                     new TagGraphService(event.getGraphContext()).feedTheWholeTagStructureToGraph(tagServiceHolder.getTagService());
-                    CreateTechReportPunchCardRuleProvider.this.put(TagServiceHolder.class, tagServiceHolder);
+                    CreateTechReportRuleProvider.this.put(TagServiceHolder.class, tagServiceHolder);
                 }
             }).withId("feedTagsToGraph")
 
@@ -88,8 +83,6 @@ public class CreateTechReportPunchCardRuleProvider extends AbstractRuleProvider
             .perform(new GraphOperation() {
                 @Override
                 public void perform(GraphRewrite event, EvaluationContext context) {
-                    //event.getGraphContext().service(ApplicationInputPathModel.class).findAll()
-                        //.forEach(path -> GraphService.addTypeToModel(event.getGraphContext(), path.getProjectModel(), ApplicationProjectModel.class));
                     new ProjectService(event.getGraphContext()).getRootProjectModels()
                             .forEach(path -> GraphService.addTypeToModel(event.getGraphContext(), path, ApplicationProjectModel.class));
                 }
@@ -126,14 +119,7 @@ public class CreateTechReportPunchCardRuleProvider extends AbstractRuleProvider
             reportBoxes.setSectorsHolderTag(sectorsTag);
             reportBoxes.setRowsHolderTag(rowsTag);
 
-            // Now let's fill it with data.
-            /* This is not used, it's computed by GetTechReportPunchCardStatsMethod.
-            Map<Long, Map<String, Integer>> countsOfTagsInApps = computeProjectAndTagsMatrix(grCtx);
-
-            // Find maximum number of occurences within the apps. Used for cirle size.
-            Map<String, Integer> maximumsPerTech = computeMaxCountPerTag(countsOfTagsInApps);
-            reportPunch.setMaximumCounts(maximumsPerTech);
-            */
+            // The actual data is computed by GetTechReportPunchCardStatsMethod.
         }
 
         private Map<String,Integer> computeMaxCountPerTag(Map<Long, Map<String, Integer>> countsOfTagsInApps)

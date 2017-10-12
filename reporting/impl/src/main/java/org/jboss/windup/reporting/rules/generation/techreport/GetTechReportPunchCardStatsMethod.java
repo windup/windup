@@ -115,7 +115,7 @@ public class GetTechReportPunchCardStatsMethod implements WindupFreeMarkerMethod
             {
                 String tagName = techTag.getName();
 
-                Map<Long, Integer> tagCountForAllApps = CreateTechReportPunchCardRuleProvider.getTagCountForAllApps(grCtx, tagName);
+                Map<Long, Integer> tagCountForAllApps = CreateTechReportRuleProvider.getTagCountForAllApps(grCtx, tagName);
 
                 // Transposes the results from getTagCountForAllApps, so that 1st level keys are the apps.
                 tagCountForAllApps.forEach((project, count) -> {

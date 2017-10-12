@@ -18,10 +18,10 @@ import org.jboss.windup.util.ExecutionStatistics;
 /**
  * Gets the list of TechnologyUsageStatisticsModel-s which should be displayed in the box given by the report "coordinates" tags (subsector/box, row).
  *
- * <p> Called from a freemarker template as follows:
+ * <p> Called from a Freemarker template as follows:
  *
  * <pre>
- *      getTechnologiesIdentifiedForSubSectorAndRow(
+ *      getTechnologiesIdentifiedForBoxAndRow(
  *          subsector: TagModel,
  *          row: TagModel,
  *          projectToCount: ProjectModel
@@ -30,10 +30,10 @@ import org.jboss.windup.util.ExecutionStatistics;
  *
  * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
  */
-public class GetTechnologiesIdentifiedForSubSectorAndRowMethod implements WindupFreeMarkerMethod
+public class GetTechnologiesIdentifiedForBoxAndRowMethod implements WindupFreeMarkerMethod
 {
-    public static final Logger LOG = Logger.getLogger(GetTechnologiesIdentifiedForSubSectorAndRowMethod.class.getName());
-    private static final String NAME = "getTechnologiesIdentifiedForSubSectorAndRow";
+    public static final Logger LOG = Logger.getLogger(GetTechnologiesIdentifiedForBoxAndRowMethod.class.getName());
+    private static final String NAME = "getTechnologiesIdentifiedForBoxAndRow";
 
     private GraphContext graphContext;
     private TagGraphService tagService;
@@ -96,7 +96,7 @@ public class GetTechnologiesIdentifiedForSubSectorAndRowMethod implements Windup
      */
     private Map<String, TechReportService.TechUsageStatSum> getTechStats(TagModel boxTag, TagModel rowTag, ProjectModel project)
     {
-        LOG.info(String.format("#### boxTag %s, rowTag %s, project %s", boxTag, rowTag, project));
+        //LOG.info(String.format("#### boxTag %s, rowTag %s, project %s", boxTag, rowTag, project));
 
         final TagGraphService tagService = new TagGraphService(graphContext);
 
@@ -106,7 +106,7 @@ public class GetTechnologiesIdentifiedForSubSectorAndRowMethod implements Windup
         final Set<TechnologyUsageStatisticsModel> forGivenBoxAndRow = StreamSupport.stream(statModels.spliterator(), false)
                 // Only the given project.
                 .filter(stat -> project == null || stat.getProjectModel() != null && stat.getProjectModel().asVertex().getId() == project.asVertex().getId()) /// Can models use equals?
-                .peek(stat -> LOG.info(String.format("    Checking '%s', so far %sx, tags: %s", stat.getName(), sums.getOrDefault(stat.getName(), new TechReportService.TechUsageStatSum("")).getOccurrenceCount(), stat.getTags())))
+                //.peek(stat -> LOG.info(String.format("    Checking '%s', so far %sx, tags: %s", stat.getName(), sums.getOrDefault(stat.getName(), new TechReportService.TechUsageStatSum("")).getOccurrenceCount(), stat.getTags())))
                 // Only those under both row and box tags.
                 .filter(stat -> {
                     final Set<String>[] normalAndSilly = TechReportService.splitSillyTagNames(graphContext, stat.getTags());
@@ -120,7 +120,7 @@ public class GetTechnologiesIdentifiedForSubSectorAndRowMethod implements Windup
                     return placementBelongToThisBoxAndRow(placement, boxTag, rowTag);
                 })
                 .peek(stat -> {
-                    LOG.info(String.format("    Summing '%s', so far %sx, tags: %s", stat.getName(), sums.getOrDefault(stat.getName(), new TechReportService.TechUsageStatSum("")).getOccurrenceCount(), stat.getTags()) );
+                    //LOG.info(String.format("    Summing '%s', so far %sx, tags: %s", stat.getName(), sums.getOrDefault(stat.getName(), new TechReportService.TechUsageStatSum("")).getOccurrenceCount(), stat.getTags()) );
                     sums.put(stat.getName(),
                             sums.getOrDefault(stat.getName(), new TechReportService.TechUsageStatSum(stat.getName())).add(stat) );
                 })
@@ -130,7 +130,7 @@ public class GetTechnologiesIdentifiedForSubSectorAndRowMethod implements Windup
     }
 
     /**
-     * Returns whether the tags of given names are under all of the given tags (or same).
+     * Returns whether any tags of given names are under all of the given tags (or same).
      */
     private boolean anyTagsUnderAllTags(Set<String> childTagNames, List<TagModel> maybeParentTags)
     {
@@ -145,10 +145,8 @@ public class GetTechnologiesIdentifiedForSubSectorAndRowMethod implements Windup
 
             for (TagModel maybeParentTag : maybeParentTags)
             {
-                LOG.info(String.format("        Trying, subTag: name %s -> %s, maybeParent: %s", childTagName, childTag, maybeParentTag) );///
                 if (!tagService.isTagUnderTagOrSame(childTag, maybeParentTag))
                     continue nextChild;
-                LOG.info("          --> YEP :)");
             }
             return true;
         }

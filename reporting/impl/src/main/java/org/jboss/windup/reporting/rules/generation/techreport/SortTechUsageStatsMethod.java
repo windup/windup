@@ -8,20 +8,16 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
-import org.jboss.windup.reporting.service.TagGraphService;
 import org.jboss.windup.util.ExecutionStatistics;
 
 /**
  * Returns a precomputed matrix - map of maps of maps of maps, boxTag -> rowTag -> project -> techName -> TechUsageStat.
  *
- * <p> Called from a freemarker template as follows:
+ * <p> Called from a Freemarker template as follows:
  *
  * <pre>
- *      getTechnologiesIdentifiedForSubSectorAndRow(
- *          subsector: TagModel,
- *          row: TagModel,
- *          projectToCount: ProjectModel
- *      ):
+ *      sortTechUsageStats( projectToCount: ProjectModel ):
+ *          Map<String, Map<String, Map<Long, Map<String, TechReportService.TechUsageStatSum>>>>
  * </pre>
  *
  * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
@@ -32,14 +28,12 @@ public class SortTechUsageStatsMethod implements WindupFreeMarkerMethod
     private static final String NAME = "sortTechUsageStats";
 
     private GraphContext graphContext;
-    private TagGraphService tagService;
     private TechReportService techReportService;
 
     @Override
     public void setContext(GraphRewrite event)
     {
         this.graphContext = event.getGraphContext();
-        this.tagService = new TagGraphService(graphContext);
         this.techReportService = new TechReportService(graphContext);
     }
 
@@ -58,8 +52,6 @@ public class SortTechUsageStatsMethod implements WindupFreeMarkerMethod
     @Override
     public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
     {
-        LOG.info(NAME + "() called.");///
-
         if (arguments.size() == 4)
             return TechReportService.queryMap(arguments);
 

@@ -112,10 +112,6 @@
                      Map<String, Map<String, Map<Long, Map<String, TechReportService.TechUsageStatSum>>>> -->
                 <#assign sortedStatsMap = sortTechUsageStats() />
 
-                <code>
-                map: ${mapToJson(sortedStatsMap)!}
-                </code>
-
                 <table class="technologiesBoxCard">
                     <tr class="sectorsHeaders">
                         <#list sectorTags as sectorTag>
@@ -142,33 +138,9 @@
                                             <div class="content">
                                                 <h4>${boxTag.titleOrName}</h4>
 
-                                                <#if false >
-                                                <ul>
-                                                    <#-- Get the individual techs under this sector and row. JSF, JSP, Servlet, ... etc. -->
-                                                        <#-- Map<String, TechUsageStatSum> -->
-                                                    <#assign techUsageStats = getTechnologiesIdentifiedForSubSectorAndRow(boxTag, rowTag, reportModel.project) />
-
-                                                    <#list techUsageStats as name, techUsageStatSum>
-                                                        <li class="stats count${techUsageStatSum.occurrenceCount!0?switch(0, '0', 1, '1', 'Many')}">
-                                                            ${techUsageStatSum.name}
-                                                            <b>${techUsageStatSum.occurrenceCount!}</b>
-                                                        </li>
-                                                    </#list>
-                                                </ul>
-                                                <hr /> <!-- 2nd approach, optimized -->
-                                                </#if>
-
                                                 <#-- Get a map of box buckets with TechUsageStats and take data from there, rather than pulling through a function. -->
                                                 <#assign statsForThisBox = (sortedStatsMap[rowTag.name]?api.get(boxTag.name)?api.get(0?long))! />
-                                                <#--
-                                                rowTag = "${rowTag.name}"
-                                                boxTag = "${boxTag.name}"
-                                                row = map[${rowTag.name}]: ${mapToJson(sortedStatsMap[rowTag.name])!}
-                                                <#if sortedStatsMap[rowTag.name]?? && sortedStatsMap[rowTag.name]?is_hash>
-                                                box = row[${boxTag.name}]: ${mapToJson(sortedStatsMap[rowTag.name]?api.get(boxTag.name))!}
-                                                </#if>
-                                                all projects = box[proj 0]: ${(statsForThisBox???then("statsForThisBox", "-"))!}
-                                                -->
+
                                                 <#list statsForThisBox>
                                                     <ul>
                                                         <#items as name, stat>
@@ -197,8 +169,6 @@
         </div>
     </div>
 
-    <script src="resources/js/jquery-1.10.1.min.js"></script>
-    <script src="resources/js/jquery-ui.min.js"></script>
     <script src="resources/js/bootstrap.min.js"></script>
 </body>
 </html>

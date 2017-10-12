@@ -23,7 +23,7 @@
     <link href="resources/css/jquery-ui.min.css" rel="stylesheet" media="screen">
     <link href="resources/img/rhamt-icon-128.png" rel="shortcut icon" type="image/x-icon"/>
     <style>
-        /* Colors */
+        /* Colors. TODO: Generate from the techSector:* tags. */
         .sectorView    { color: #1155CC; }
         .sectorConnect { color: #38761D; }
         .sectorStore   { color: #F4B400; }
@@ -36,11 +36,12 @@
         table.technologiesPunchCard th {
             /*border: 1px solid silver;  /* debug */
         }
-        tr.headersSector { font-size: 22pt; font-weight: bold; }
+        tr.headersSector { font-size: 20pt; font-weight: bold; }
         tr.headersSector td { text-align: center; }
 
-        tr.headersGroup  { font-size: 18pt; }
-        tr.headersGroup td {
+        tr.headersGroup  { font-size: 16pt; }
+        tr.headersGroup td.first {
+
         }
         tr.headersGroup td div {
             height: 200px; /* Without this, the text is centered vertically. */
@@ -59,8 +60,8 @@
         tr.app td.sectorStats { text-align: right; vertical-align: middle; }
         tr.app td.circle { text-align: center; vertical-align: middle; padding: 0; line-height: 1; }
         tr.app td.circle { font-size: 26pt; }
-        tr.app td.circle.sizeX:after { content: "𐄂"; color: lightgrey; font-size: 18pt; } /* No data */
-        tr.app td.circle.size0:after { content: "⊘"; color: lightgrey; font-size: 18pt; }
+        tr.app td.circle.sizeX:after { content: "𐄂"; color: ghostwhite; font-size: 18pt; } /* No data */
+        tr.app td.circle.size0:after { content: "⊘"; color: whitesmoke; font-size: 18pt; }
         tr.app td.circle.size1:after { content: "🞄"; }
         tr.app td.circle.size2:after { content: "⚫"; }
         tr.app td.circle.size3:after { content: "●"; }
@@ -114,15 +115,12 @@
                        countsOfTagsInApps,  // Map<ProjectModel, Map<String, Integer>>
                        maximumsPerTag       // Map<String, Integer>
                     }
-                -->
                 <#assign stats = getTechReportPunchCardStats() />
+                -->
 
                 <#-- A precomputed matrix - map of maps of maps, boxTag -> rowTag -> project -> techName -> TechUsageStat.
                      Map<String, Map<String, Map<Long, Map<String, TechReportService.TechUsageStatSum>>>> -->
                 <#assign sortedStatsMap = sortTechUsageStats() />
-                <code>
-                    map: ${mapToJson(sortedStatsMap)!}
-                </code>
 
 
                 <table class="technologiesPunchCard">
@@ -157,8 +155,10 @@
                         <#list sectorTags as sectorTag>
                             <#list sectorTag.designatedTags as boxTag>
                                 <#if !isTagUnderTag(boxTag, sillyTagsParent) >
+                                    <#--
                                     <#assign count = (stats.countsOfTagsInApps?api.get(appProject.asVertex().id)[boxTag.name])!false />
                                     <#assign maxForThisBox = stats.maximumsPerTag[boxTag.name] />
+                                    -->
 
                                     <#-- 2nd way - using the 4 layer map -->
                                     <#assign statsForThisBox = (sortedStatsMap[""]?api.get(boxTag.name)?api.get(appProject.asVertex().id?long))! />
@@ -178,7 +178,6 @@
                             </#list>
                         </#list>
                         <td class="sectorStats sizeMB">
-                            <#-- ${ (app.rootFileModel.retrieveSize() / 1024 / 1024)! } -->
                             ${ ( (appProject.rootFileModel.retrieveSize() / 1024 / 1024)?string["0.##"] )! }
                         </td>
                         <td class="sectorStats libsCount">
@@ -209,11 +208,6 @@
     </pre>
     -->
 
-    <script src="resources/js/jquery-1.10.1.min.js"></script>
-    <script src="resources/js/jquery-ui.min.js"></script>
     <script src="resources/js/bootstrap.min.js"></script>
-    <script src="resources/js/jquery.tablesorter.min.js"></script>
-    <script src="resources/js/jquery.tablesorter.widgets.min.js"></script>
-    <script src="resources/libraries/handlebars/handlebars.4.0.5.min.js"></script>
 </body>
 </html>

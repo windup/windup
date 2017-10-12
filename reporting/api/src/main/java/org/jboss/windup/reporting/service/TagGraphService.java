@@ -54,7 +54,7 @@ public class TagGraphService extends GraphService<TagModel>
             }
 
             int level = 0;
-            feedTagStructureToGraph(tag, visited, level);
+            this.feedTagStructureToGraph(tag, visited, level);
         }
     }
 
@@ -108,12 +108,12 @@ public class TagGraphService extends GraphService<TagModel>
     /**
      * @return true if the subTag is contained directly or indirectly in the superTag.
      */
-    public boolean isTagUnderTagOrSame(TagModel subTag, TagModel superTag)
+    public static boolean isTagUnderTagOrSame(TagModel subTag, TagModel superTag)
     {
         return isTagUnderTag(subTag, superTag, true);
     }
 
-    public boolean isTagUnderTag(TagModel subTag, TagModel superTag, boolean countIfSame)
+    public static boolean isTagUnderTag(TagModel subTag, TagModel superTag, boolean countIfSame)
     {
         if (superTag == null)
             throw new IllegalArgumentException("Super tag param was null. Sub tag: " + subTag);
@@ -158,7 +158,11 @@ public class TagGraphService extends GraphService<TagModel>
         return false;
     }
 
-    public TagModel getSingleParent(TagModel tag)
+
+    /**
+     * Returns a single parent of the given tag. If there are multiple parents, throws a WindupException.
+     */
+    public static TagModel getSingleParent(TagModel tag)
     {
         final Iterator<TagModel> parents = tag.getDesignatedByTags().iterator();
         if (!parents.hasNext())

@@ -39,7 +39,7 @@ public class GetLogarithmicDistribution implements WindupFreeMarkerMethod
     @Override
     public String getDescription()
     {
-        return"Returns a logarithmic distribution usable for visualising ranges that tend to be wide-scale with exponential distribution.";
+        return "Returns a logarithmic distribution usable for visualising ranges that tend to be wide-scale with exponential distribution.";
     }
 
     @Override
@@ -72,7 +72,7 @@ public class GetLogarithmicDistribution implements WindupFreeMarkerMethod
         // Map it to scale 1..1000.
         double ratio2 = 1.0d + ratio * (998d * (1-FLATTENER));
         double log10 = Math.log10(ratio2) / 3D;    // 0..2.999  =>  0..0.999
-        LOG.info(String.format("count: %d, max: %d, ratio %f, ratio2 %f, log10 %f  ///", count, maximum, ratio, ratio2, log10));
+        //LOG.info(String.format("count: %d, max: %d, ratio %f, ratio2 %f, log10 %f", count, maximum, ratio, ratio2, log10));
         return new NumberModel(Double.valueOf(log10), new DefaultObjectWrapper());
     }
 
