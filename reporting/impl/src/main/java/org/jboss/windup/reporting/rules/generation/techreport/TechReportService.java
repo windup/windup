@@ -163,7 +163,7 @@ public class TechReportService
         final TagModel sillyRowsTag = tagService.getTagByName("techReport:sillyRows");
 
 
-        Set<String> tagNames2 = new HashSet(tagNames);
+        Set<String> tagNames2 = new HashSet<>(tagNames);
         for (Iterator<String> tagNamesIt = tagNames2.iterator(); tagNamesIt.hasNext(); )
         {
             String name = tagNamesIt.next();
@@ -171,17 +171,17 @@ public class TechReportService
             if (null == tag)
                 continue;
 
-            if (tagService.isTagUnderTagOrSame(tag, sillySectorsTag))
+            if (TagGraphService.isTagUnderTagOrSame(tag, sillySectorsTag))
             {
                 placement.sector = tag;
                 tagNamesIt.remove();
             }
-            else if (tagService.isTagUnderTagOrSame(tag, sillyBoxesTag))
+            else if (TagGraphService.isTagUnderTagOrSame(tag, sillyBoxesTag))
             {
                 placement.box = tag;
                 tagNamesIt.remove();
             }
-            else if (tagService.isTagUnderTagOrSame(tag, sillyRowsTag))
+            else if (TagGraphService.isTagUnderTagOrSame(tag, sillyRowsTag))
             {
                 placement.row = tag;
                 tagNamesIt.remove();
@@ -201,7 +201,7 @@ public class TechReportService
      * This relies on the tag structure in the XML when the silly mapping tags have exactly one parent
      * outside the silly group, which is the tag they are mapped to.
      */
-    static TechReportPlacement normalizeSillyPlacement(GraphContext grCtx, TechReportPlacement sillyPlacement)
+    private static TechReportPlacement normalizeSillyPlacement(GraphContext grCtx, TechReportPlacement sillyPlacement)
     {
         TagGraphService tagService = new TagGraphService(grCtx);
 
@@ -226,10 +226,10 @@ public class TechReportService
         TagModel nonSillyParent = null;
         do {
             TagModel parentTag = parents.next();
-            if (tagService.isTagUnderTagOrSame(parentTag, sillyRoot))
+            if (TagGraphService.isTagUnderTagOrSame(parentTag, sillyRoot))
                 continue;
             if (nonSillyParent != null)
-                throw new WindupException(String.format("Tag %s has more than one non-silly parent: %s, %s", nonSillyParent, parentTag));
+                throw new WindupException(String.format("Tag %s has more than one non-silly parent: %s, %s", tag.getName(), nonSillyParent, parentTag));
             nonSillyParent = parentTag;
         }
         while (parents.hasNext());
@@ -243,10 +243,10 @@ public class TechReportService
      * Boxes in grid report == columns in punch card report.
      */
     public static class TechReportPlacement {
-        public TagModel sector;
-        public TagModel box;
-        public TagModel row;
-        public Set<String> unknown;
+        TagModel sector;
+        TagModel box;
+        TagModel row;
+        Set<String> unknown;
 
         @Override
         public String toString()
