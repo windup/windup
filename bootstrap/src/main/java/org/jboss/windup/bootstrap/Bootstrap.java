@@ -29,6 +29,7 @@ import org.jboss.forge.furnace.repositories.AddonRepository;
 import org.jboss.forge.furnace.repositories.AddonRepositoryMode;
 import org.jboss.forge.furnace.repositories.MutableAddonRepository;
 import org.jboss.forge.furnace.se.FurnaceFactory;
+import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.versions.EmptyVersion;
 import org.jboss.forge.furnace.versions.SingleVersion;
 import org.jboss.forge.furnace.versions.Version;
@@ -53,6 +54,7 @@ import org.jboss.windup.bootstrap.commands.windup.RunWindupCommand;
 import org.jboss.windup.bootstrap.commands.windup.ServerModeCommand;
 import org.jboss.windup.bootstrap.commands.windup.UpdateRulesetsCommand;
 import org.jboss.windup.bootstrap.listener.GreetingListener;
+import org.jboss.windup.server.WindupServerProvider;
 import org.jboss.windup.util.Util;
 
 /**
@@ -315,6 +317,22 @@ public class Bootstrap
                 return;
 
             furnace.addContainerLifecycleListener(new GreetingListener());
+
+            // Now see if there are any server SPIs that need to run
+            Imported<WindupServerProvider> serverProviders = furnace.getAddonRegistry().getServices(WindupServerProvider.class);
+            for (WindupServerProvider serverProvider : serverProviders)
+            {
+                String expectedArgName = serverProvider.getName();
+
+                boolean matches = args.stream().anyMatch(arg ->
+                    arg.equals(expectedArgName) || arg.equals("--" + expectedArgName)
+                );
+                if (matches)
+                {
+                    serverProvider.runServer(args.toArray(new String[args.size()]));
+                    return;
+                }
+            }
 
             if (!executePhase(CommandPhase.EXECUTION, commands) || commands.isEmpty())
                 return;
