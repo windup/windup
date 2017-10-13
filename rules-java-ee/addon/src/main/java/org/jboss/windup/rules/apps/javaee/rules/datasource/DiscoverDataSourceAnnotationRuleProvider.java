@@ -97,6 +97,7 @@ public class DiscoverDataSourceAnnotationRuleProvider extends AbstractRuleProvid
         dataSourceModel.setApplications(applications);
         dataSourceModel.setName(dataSourceName);
         dataSourceModel.setXa(isXa);
+        dataSourceModel.setJndiLocation(dataSourceName);
     }
 
     private JavaClassModel getJavaClass(JavaTypeReferenceModel javaTypeReference)

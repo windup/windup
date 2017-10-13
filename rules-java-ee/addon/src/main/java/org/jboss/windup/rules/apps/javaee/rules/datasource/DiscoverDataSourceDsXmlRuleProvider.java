@@ -64,7 +64,8 @@ public class DiscoverDataSourceDsXmlRuleProvider extends IteratingRuleProvider<X
                 DataSourceModel dataSourceModel = dataSourceService.create();
 
                 boolean isXa = tagName.equals(SINGLE_DATASOURCE_XA_TAG);
-                dataSourceModel.setName(element.getAttribute("jndi-name"));
+                dataSourceModel.setName(element.getAttribute("pool-name"));
+                dataSourceModel.setJndiLocation(element.getAttribute("jndi-name"));
                 dataSourceModel.setApplications(applications);
                 dataSourceModel.setXa(isXa);
             }
