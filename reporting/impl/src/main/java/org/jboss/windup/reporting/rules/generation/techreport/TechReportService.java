@@ -1,12 +1,10 @@
 package org.jboss.windup.reporting.rules.generation.techreport;
 
-import freemarker.ext.beans.StringModel;
-import freemarker.template.SimpleNumber;
-import freemarker.template.SimpleScalar;
 import java.util.*;
 import java.util.logging.Logger;
 import org.jboss.windup.config.tags.Tag;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.reporting.model.TagModel;
 import org.jboss.windup.reporting.model.TechnologyUsageStatisticsModel;
 import org.jboss.windup.reporting.service.TagGraphService;
@@ -29,15 +27,28 @@ public class TechReportService
 
     /**
      * Prepares a precomputed matrix - map of maps of maps: rowTag -> boxTag -> project -> silly label -> TechUsageStatSum.
+     * @param onlyForProject Sum the statistics only for this project.
      */
-    Map<String, Map<String, Map<Long, Map<String, TechUsageStatSum>>>> getTechStatsMap()
+    Map<String, Map<String, Map<Long, Map<String, TechUsageStatSum>>>> getTechStatsMap(ProjectModel onlyForProject)
     {
+        final Long onlyID = onlyForProject == null ? null : (Long) onlyForProject.getRootProjectModel().asVertex().getId();
+        LOG.info(String.format("### Creating tech stats map for " + (onlyForProject == null ? "global report" : "project #d"), onlyID));
+
         Map<String, Map<String, Map<Long, Map<String, TechUsageStatSum>>>> map = new HashMap<>();
 
         final Iterable<TechnologyUsageStatisticsModel> statModels = graphContext.service(TechnologyUsageStatisticsModel.class).findAll();
         for (TechnologyUsageStatisticsModel stat : statModels)
         {
-            LOG.info(String.format("--- Counting up '%s', count: %sx, tags: %s", stat.getName(), stat.getOccurrenceCount(), stat.getTags()) );
+            final Long projectKey = (Long) stat.getProjectModel().getRootProjectModel().asVertex().getId();
+
+            LOG.info(String.format("--- Counting up p#%d '%s', count: %sx, tags: %s", projectKey, stat.getName(), stat.getOccurrenceCount(), stat.getTags()) );
+            //if (onlyForProject != null)
+            //    LOG.info(String.format("--- Project:  - %s", projectKey, stat.getProjectModel().getRootProjectModel().getName()));
+
+            if (onlyForProject != null && !projectKey.equals(onlyForProject.getRootProjectModel().asVertex().getId())) {
+                LOG.info("\t\tThis stat is for other project, skipping.");
+                continue;
+            }
 
             // Identify placement
             final Set<String>[] normalAndSilly = TechReportService.splitSillyTagNames(graphContext, stat.getTags());
@@ -50,7 +61,6 @@ public class TechReportService
 
             // Normalize placement
             placement = TechReportService.normalizeSillyPlacement(graphContext, placement);
-            final Long projectKey = (Long) stat.getProjectModel().getRootProjectModel().asVertex().getId();
 
             LOG.info(String.format("\tplacement: %s, projectKey: %d", placement, projectKey)); ///
             if (placement.box == null || placement.row == null)
@@ -68,12 +78,12 @@ public class TechReportService
             mergeToTheRightCell(map, "", placement.box.getName(), projectKey, "", stat, false);
 
             // For the punch card report - maximum count for each box.
-            mergeToTheRightCell(map, "", placement.box.getName(), (Long) 0L, "", stat, true);
+            mergeToTheRightCell(map, "", placement.box.getName(), 0L, "", stat, true);
         }
         return map;
     }
 
-    static void mergeToTheRightCell(
+    private static void mergeToTheRightCell(
             Map<String, Map<String, Map<Long, Map<String, TechUsageStatSum>>>> matrix,
             String rowName,
             String boxName,
@@ -92,16 +102,10 @@ public class TechReportService
     }
 
     /**
-     * A helper method to query the structure created above, since Freemarker can't query maps with numerical keys.
+     * A helper method to query the structure created by getTechStatsMap, to overcome some Freemarker Map syntax limitations.
      */
-    static Map<String, TechUsageStatSum> queryMap(List arguments)
+    static Map<String, TechUsageStatSum> queryMap(Map<String, Map<String, Map<Long, Map<String, TechUsageStatSum>>>> map, String rowTagName, String boxTagName, Long projectId)
     {
-        Map<String, Map<String, Map<Long, Map<String, TechUsageStatSum>>>> map =
-                (Map<String, Map<String, Map<Long, Map<String, TechUsageStatSum>>>>) ((StringModel)arguments.get(0)).getWrappedObject();
-        String rowTagName = ((SimpleScalar) arguments.get(1)).getAsString();
-        String boxTagName = ((SimpleScalar) arguments.get(2)).getAsString();
-        Long projectId = ((SimpleNumber) arguments.get(3)).getAsNumber().longValue();
-
         final Map<String, Map<Long, Map<String, TechUsageStatSum>>> rowMap = map.get(rowTagName);
         if (null == rowMap)
             return null;
@@ -128,13 +132,13 @@ public class TechReportService
         Set<String> normalNames = new HashSet<>();
         Set<String> sillyNames = new HashSet<>();
 
-        potentialSillyTags.stream().forEach(name -> {
+        potentialSillyTags.forEach(name -> {
             final TagModel sillyTag = tagService.getTagByName("silly:" + Tag.normalizeName(name));
             if (null != sillyTag)
                 sillyNames.add(sillyTag.getName());
             else
                 // Some may be undefined. This will happen when someone attempts to add a new sector, row or column/box.
-                normalNames.add(sillyTag.getName());
+                normalNames.add(name);
         });
         return new Set[]{normalNames, sillyNames};
     }
