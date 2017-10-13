@@ -163,7 +163,17 @@
 
                     <#list inputApplications as appProject> <#-- ProjectModel -->
                     <tr class="app">
-                        <td class="name">${appProject.rootFileModel.fileName}</td>
+                        <td class="name">
+                            <#assign boxReport = reportModel.appProjectIdToReportMap[appProject.asVertex().id?c] > <#-- TechReportModel -->
+                            <a href="${boxReport.reportFilename}">
+                                ${appProject.rootFileModel.fileName}
+                                <#-- For virtual apps, use name rather than the file name.
+                                ${ (appProject.projectType! = "VIRTUAL" && appProject.name??)?then(
+                                        appProject.name,
+                                        appProject.rootFileModel.fileName)}
+                                -->
+                            </a>
+                        </td>
                         <#list sectorTags as sectorTag>
                             <#list sectorTag.designatedTags as boxTag>
                                 <#if !isTagUnderTag(boxTag, sillyTagsParent) >

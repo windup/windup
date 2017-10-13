@@ -39,18 +39,18 @@ import org.jboss.windup.graph.model.ProjectModel;
 @RuleMetadata(phase = ReportGenerationPhase.class)
 public class CreateTechReportRuleProvider extends AbstractRuleProvider
 {
-    public static final Logger LOG = Logger.getLogger(CreateTechReportRuleProvider.class.getName());
+    private static final Logger LOG = Logger.getLogger(CreateTechReportRuleProvider.class.getName());
 
 
-    public static final String TEMPLATE_PATH_PUNCH = "/reports/templates/techReport-punchCard.ftl";
-    public static final String REPORT_NAME_PUNCH = "Technologies";
-    public static final String REPORT_DESCRIPTION_PUNCH =
+    private static final String TEMPLATE_PATH_PUNCH = "/reports/templates/techReport-punchCard.ftl";
+    private static final String REPORT_NAME_PUNCH = "Technologies";
+    private static final String REPORT_DESCRIPTION_PUNCH =
             "This report is a statistic of technologies occurences in the input applications."
             + " It shows how the technologies are distributed and is mostly useful when analysing many applications.";
 
-    public static final String TEMPLATE_PATH_BOXES = "/reports/templates/techReport-boxes.ftl";
+    private static final String TEMPLATE_PATH_BOXES = "/reports/templates/techReport-boxes.ftl";
     private static final String REPORT_NAME_BOXES = "Technologies";
-    public static final String REPORT_DESCRIPTION_BOXES =
+    private static final String REPORT_DESCRIPTION_BOXES =
             "This report is a statistic of technologies occurences in the input applications."
                     + " It is an overview of what techogies are found in given project or a set of projects.";
 
@@ -100,14 +100,7 @@ public class CreateTechReportRuleProvider extends AbstractRuleProvider
         {
             GraphContext grCtx = event.getGraphContext();
 
-            //listAllTechUsageStats(grCtx);///
-            //listAllApplicationModels(grCtx);///
-
-            // Create the global report models.
-            TechReportPunchCardModel reportPunch = createTechReportPunchCard(grCtx);
-            TechReportPunchCardModel reportBoxes = createTechReportBoxes(grCtx);
-
-            // Add sectors and rows to them.
+            // Get sectors tag and rows tag references.
             TagGraphService tagGraphService = new TagGraphService(grCtx);
             TagModel sectorsTag = tagGraphService.getTagByName(TechReportPunchCardModel.EDGE_TAG_SECTORS);
             TagModel rowsTag = tagGraphService.getTagByName(TechReportPunchCardModel.EDGE_TAG_ROWS);
@@ -115,17 +108,28 @@ public class CreateTechReportRuleProvider extends AbstractRuleProvider
                 throw new WindupException("Tech report sectors tag, '" + TechReportPunchCardModel.EDGE_TAG_SECTORS + "', not found.");
             if (null == rowsTag)
                 throw new WindupException("Tech report rows tag, '" + TechReportPunchCardModel.EDGE_TAG_ROWS + "', not found.");
-            reportPunch.setSectorsHolderTag(sectorsTag);
-            reportBoxes.setSectorsHolderTag(sectorsTag);
-            reportBoxes.setRowsHolderTag(rowsTag);
 
+            Map<String, TechReportPunchCardModel> appProjectToReportMap = new HashMap<>();
 
             // Create the boxes report models for each app.
             for (ApplicationProjectModel appModel : new ProjectService(grCtx).getRootProjectModels()){
                 final TechReportPunchCardModel appTechReport = createTechReportBoxes(grCtx, appModel);
                 appTechReport.setSectorsHolderTag(sectorsTag);
                 appTechReport.setRowsHolderTag(rowsTag);
+                appProjectToReportMap.put(((Long)appModel.asVertex().getId()).toString(), appTechReport);
             }
+
+            // Create the global report models.
+            TechReportPunchCardModel reportPunch = createTechReportPunchCard(grCtx);
+            reportPunch.setSectorsHolderTag(sectorsTag);
+            reportPunch.setAppProjectIdToReportMap(appProjectToReportMap);
+
+            /* In case the box report should also appear on the global level:
+            TechReportPunchCardModel reportBoxes = createTechReportBoxes(grCtx);
+            reportBoxes.setSectorsHolderTag(sectorsTag);
+            reportBoxes.setRowsHolderTag(rowsTag);
+            */
+
 
             // The actual data is computed by SortTechUsageStatsMethod.
         }
@@ -143,7 +147,9 @@ public class CreateTechReportRuleProvider extends AbstractRuleProvider
             return maxCountPerTag;
         }
 
-        private TechReportPunchCardModel createTechReportPunchCard(GraphContext grCtx){
+        private TechReportPunchCardModel createTechReportPunchCard(
+                GraphContext grCtx
+        ){
             TechReportPunchCardModel report = createTechReportBase(grCtx);
             report.setReportName(REPORT_NAME_PUNCH);
             report.setTemplatePath(TEMPLATE_PATH_PUNCH);
@@ -241,7 +247,7 @@ public class CreateTechReportRuleProvider extends AbstractRuleProvider
      *         I.e. how many items tagged with any tag under subSectorTag are there in each input application.
      *         The key is the vertex ID.
      */
-    public static Map<Long, Integer> getTagCountForAllApps(GraphContext grCtx, String subSectorTagName)
+    static Map<Long, Integer> getTagCountForAllApps(GraphContext grCtx, String subSectorTagName)
     {
         // Get all "subtags" of this tag.
         //Set<String> subTagsNames = getSubTagNames_tagService(subSectorTagName);
@@ -277,7 +283,7 @@ public class CreateTechReportRuleProvider extends AbstractRuleProvider
     {
         TagGraphService tagService = new TagGraphService(grCtx);
         Set<TagModel> subTags = tagService.getDescendantTags(tagService.getTagByName(subSectorTagName));
-        return subTags.stream().map(t->t.getName()).collect(Collectors.toSet());
+        return subTags.stream().map(TagModel::getName).collect(Collectors.toSet());
     }
 
 
@@ -315,35 +321,5 @@ public class CreateTechReportRuleProvider extends AbstractRuleProvider
             tagsInProject.put(stat.getProjectModel(), stat.getOccurrenceCount());
         }
         return tagsInProject;
-    }
-
-
-
-
-
-
-
-    /**
-     * Debug purposes.
-     */
-    private static void listAllTechUsageStats(GraphContext grCtx) {
-        Iterable<TechnologyUsageStatisticsModel> usageStats = grCtx.findAll(TechnologyUsageStatisticsModel.class);
-        for (TechnologyUsageStatisticsModel stat : usageStats)
-        {
-            LOG.info("STAT: " + stat.toString());
-            // Only take the root apps.
-            if (!stat.getProjectModel().equals(stat.getProjectModel().getRootProjectModel()))
-                continue;
-        }
-    }
-
-    private static void listAllApplicationModels(GraphContext grCtx)
-    {
-        for (ProjectModel app : getAllApplications(grCtx))
-            LOG.info("App from getAllApplications(): " + app);
-
-        final Iterable<ApplicationProjectModel> apps = new ProjectService(grCtx).getRootProjectModels();
-        for (ApplicationProjectModel appM : apps)
-            LOG.info("AppProjModel: " + appM);
     }
 }
