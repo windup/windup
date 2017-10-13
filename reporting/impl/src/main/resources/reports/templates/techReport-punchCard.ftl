@@ -166,12 +166,10 @@
                         <td class="name">
                             <#assign boxReport = reportModel.appProjectIdToReportMap[appProject.asVertex().id?c] > <#-- TechReportModel -->
                             <a href="${boxReport.reportFilename}">
-                                ${appProject.rootFileModel.fileName}
-                                <#-- For virtual apps, use name rather than the file name.
+                                <#-- For virtual apps, use name rather than the file name. -->
                                 ${ (appProject.projectType! = "VIRTUAL" && appProject.name??)?then(
                                         appProject.name,
                                         appProject.rootFileModel.fileName)}
-                                -->
                             </a>
                         </td>
                         <#list sectorTags as sectorTag>
