@@ -21,6 +21,7 @@ import org.jboss.windup.rules.apps.java.model.JarArchiveModel;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
+import static org.jboss.windup.util.Util.NL;
 
 @RuleMetadata(phase = InitialAnalysisPhase.class, perform = "Discover Hibernate libraries embedded")
 public class DiscoverEmbeddedHibernateLibraryRuleProvider extends AbstractRuleProvider
@@ -48,10 +49,10 @@ public class DiscoverEmbeddedHibernateLibraryRuleProvider extends AbstractRulePr
                                                     "The application has a Hibernate library embedded.  \n"
                                                                 + "Red Hat JBoss EAP includes Hibernate as a module with a version that has been tested and supported by Red Hat.\n"
                                                                 + "There are two options for using the Hibernate library:  \n"
-                                                                + System.lineSeparator()
+                                                                + NL
                                                                 + "1. Keep it embedded as it is now. This approach is low effort but the application will not use a tested and supported library.  \n"
                                                                 + "2. Switch to use the Hibernate library in the EAP module. This will require effort to remove the embedded library and configure the application to use the module's library but then the application will rely on a tested and supported version of the Hibernate library.  \n"
-                                                                + System.lineSeparator()
+                                                                + NL
                                                                 + "In the links below there are the instructions to enable alternative versions for both EAP 6 and 7.");
                                         classificationModel.setEffort(3);
                                         GraphContext graphContext = event.getGraphContext();

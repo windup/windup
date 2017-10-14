@@ -40,6 +40,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import static org.jboss.windup.util.Util.NL;
 
 /**
  * Discover Maven pom files and build a {@link MavenProjectModel} containing this metadata.
@@ -186,7 +187,7 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
         {
             xmlFileModel.setParseError("Could not parse POM XML: " + ex.getMessage());
             LOG.warning("Could not parse POM XML for '" + xmlFileModel.getFilePath()
-                    + "':"+System.lineSeparator()+"\t" + ex.getMessage() + System.lineSeparator()+" \tSkipping Maven project discovery.");
+                    + "':"+NL+"\t" + ex.getMessage() + NL+" \tSkipping Maven project discovery.");
             return null;
         }
 

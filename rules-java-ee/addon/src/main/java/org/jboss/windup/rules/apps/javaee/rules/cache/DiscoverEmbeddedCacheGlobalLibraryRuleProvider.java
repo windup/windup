@@ -18,6 +18,7 @@ import org.jboss.windup.rules.apps.java.model.JarArchiveModel;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
+import static org.jboss.windup.util.Util.NL;
 
 @RuleMetadata(phase = InitialAnalysisPhase.class, perform = "Discover Cache API libraries embedded")
 public class DiscoverEmbeddedCacheGlobalLibraryRuleProvider extends AbstractRuleProvider
@@ -43,7 +44,7 @@ public class DiscoverEmbeddedCacheGlobalLibraryRuleProvider extends AbstractRule
                                                     IssueCategoryRegistry.CLOUD_MANDATORY,
                                                     "Caching - Embedded library",
                                                     "The application embedds a library providing caching capabilities.  \n"
-                                                    + System.lineSeparator()
+                                                    + NL
                                                     + "Cloud readiness issue as potential state information that is not persisted to a backing service.");
                                         classificationModel.setEffort(5);
 

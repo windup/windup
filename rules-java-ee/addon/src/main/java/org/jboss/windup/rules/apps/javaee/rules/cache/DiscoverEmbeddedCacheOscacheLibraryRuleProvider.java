@@ -18,6 +18,7 @@ import org.jboss.windup.rules.apps.java.model.JarArchiveModel;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
+import static org.jboss.windup.util.Util.NL;
 
 @RuleMetadata(phase = InitialAnalysisPhase.class, perform = "Discover Oscache libraries embedded")
 public class DiscoverEmbeddedCacheOscacheLibraryRuleProvider extends AbstractRuleProvider
@@ -43,7 +44,7 @@ public class DiscoverEmbeddedCacheOscacheLibraryRuleProvider extends AbstractRul
                                                     IssueCategoryRegistry.CLOUD_MANDATORY,
                                                     "Caching - Oscache embedded library",
                                                     "The application embedds an Oscache library.  \n"
-                                                    + System.lineSeparator()
+                                                    + NL
                                                     + "Cloud readiness issue as potential state information that is not persisted to a backing service.");
                                         classificationModel.setEffort(5);
 

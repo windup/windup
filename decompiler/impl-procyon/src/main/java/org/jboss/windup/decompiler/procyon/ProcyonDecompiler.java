@@ -1,48 +1,7 @@
 package org.jboss.windup.decompiler.procyon;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Queue;
-import java.util.TreeMap;
-import java.util.concurrent.Callable;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.zip.ZipEntry;
-
-import org.apache.commons.lang3.StringUtils;
-import org.jboss.windup.decompiler.api.ClassDecompileRequest;
-import org.jboss.windup.decompiler.api.DecompilationException;
-import org.jboss.windup.decompiler.api.DecompilationFailure;
-import org.jboss.windup.decompiler.api.DecompilationListener;
-import org.jboss.windup.decompiler.api.DecompilationResult;
-import org.jboss.windup.decompiler.decompiler.AbstractDecompiler;
-import org.jboss.windup.decompiler.util.Filter;
-import org.jboss.windup.util.Checks;
-import org.jboss.windup.util.ExecutionStatistics;
-import org.jboss.windup.util.exception.WindupException;
-
 import com.strobel.assembler.InputTypeLoader;
-import com.strobel.assembler.metadata.ClasspathTypeLoader;
-import com.strobel.assembler.metadata.CompositeTypeLoader;
-import com.strobel.assembler.metadata.IMetadataResolver;
-import com.strobel.assembler.metadata.ITypeLoader;
-import com.strobel.assembler.metadata.MetadataParser;
-import com.strobel.assembler.metadata.MetadataSystem;
-import com.strobel.assembler.metadata.NoRetryMetadataSystem;
-import com.strobel.assembler.metadata.TypeDefinition;
-import com.strobel.assembler.metadata.TypeReference;
+import com.strobel.assembler.metadata.*;
 import com.strobel.decompiler.DecompilationOptions;
 import com.strobel.decompiler.DecompilerSettings;
 import com.strobel.decompiler.PlainTextOutput;
@@ -51,6 +10,25 @@ import com.strobel.decompiler.languages.LineNumberPosition;
 import com.strobel.decompiler.languages.TypeDecompilationResults;
 import com.strobel.decompiler.languages.java.JavaFormattingOptions;
 import com.strobel.io.PathHelper;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.zip.ZipEntry;
+import org.apache.commons.lang3.StringUtils;
+import org.jboss.windup.decompiler.api.*;
+import org.jboss.windup.decompiler.decompiler.AbstractDecompiler;
+import org.jboss.windup.decompiler.util.Filter;
+import org.jboss.windup.util.Checks;
+import org.jboss.windup.util.ExecutionStatistics;
+import static org.jboss.windup.util.Util.NL;
+import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.util.exception.WindupStopException;
 
 /**
@@ -460,7 +438,7 @@ public class ProcyonDecompiler extends AbstractDecompiler
                         {
                             String msg = "Detected a request to stop during decompilation of " + archive.toString() + "!" + name + ":\n    "
                                     + ex.getMessage();
-                            log.log(Level.WARNING, msg + System.lineSeparator()+"     (Rethrowing)");
+                            log.log(Level.WARNING, msg + NL+"     (Rethrowing)");
                             throw new WindupStopException(msg, ex);
                         }
                         catch (Throwable th)

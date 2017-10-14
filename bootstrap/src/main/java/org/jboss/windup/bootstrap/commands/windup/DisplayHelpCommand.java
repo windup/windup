@@ -6,6 +6,7 @@ import org.jboss.windup.bootstrap.commands.CommandResult;
 import org.jboss.windup.bootstrap.help.Help;
 import org.jboss.windup.bootstrap.help.OptionDescription;
 import org.jboss.windup.util.Util;
+import static org.jboss.windup.util.Util.NL;
 
 public class DisplayHelpCommand implements Command
 {
@@ -13,62 +14,62 @@ public class DisplayHelpCommand implements Command
     public CommandResult execute()
     {
         StringBuilder sb = new StringBuilder();
-        sb.append("Usage: "+Util.WINDUP_CLI_NAME+" [OPTION]... PARAMETER ... ").append(System.lineSeparator());
-        sb.append("Extendable migration analysis, at your fingertips.  ").append(System.lineSeparator());
-        sb.append(System.lineSeparator());
+        sb.append("Usage: "+Util.WINDUP_CLI_NAME+" [OPTION]... PARAMETER ... ").append(NL);
+        sb.append("Extendable migration analysis, at your fingertips.  ").append(NL);
+        sb.append(NL);
 
-        sb.append(System.lineSeparator()).append(Util.WINDUP_BRAND_NAME_ACRONYM +" CLI Options:").append(System.lineSeparator());
+        sb.append(NL).append(Util.WINDUP_BRAND_NAME_ACRONYM +" CLI Options:").append(NL);
 
         for (OptionDescription option : Help.load().getOptions())
         {
-            sb.append("--").append(option.getName()).append(System.lineSeparator());
-            sb.append("\t").append(option.getDescription()).append(System.lineSeparator());
+            sb.append("--").append(option.getName()).append(NL);
+            sb.append("\t").append(option.getDescription()).append(NL);
         }
 
-        sb.append("--listTags").append(System.lineSeparator());
-        sb.append("\t List all available tags.").append(System.lineSeparator());
+        sb.append("--listTags").append(NL);
+        sb.append("\t List all available tags.").append(NL);
 
-        sb.append("--listSourceTechnologies").append(System.lineSeparator());
-        sb.append("\t List all available source technologies.").append(System.lineSeparator());
+        sb.append("--listSourceTechnologies").append(NL);
+        sb.append("\t List all available source technologies.").append(NL);
 
-        sb.append("--listTargetTechnologies").append(System.lineSeparator());
-        sb.append("\t List all available target technologies.").append(System.lineSeparator());
+        sb.append("--listTargetTechnologies").append(NL);
+        sb.append("\t List all available target technologies.").append(NL);
 
-        sb.append("--discoverPackages").append(System.lineSeparator());
-        sb.append("\t Lists all available packages in the input application (--input must also be specified).").append(System.lineSeparator());
+        sb.append("--discoverPackages").append(NL);
+        sb.append("\t Lists all available packages in the input application (--input must also be specified).").append(NL);
 
-// temporary disabled until we find out how to properly update rules 
-//        sb.append("--updateRulesets").append(System.lineSeparator());
-//        sb.append("\t Update the core rulesets to the latest version available.").append(System.lineSeparator());
+// temporary disabled until we find out how to properly update rules
+//        sb.append("--updateRulesets").append(NL);
+//        sb.append("\t Update the core rulesets to the latest version available.").append(NL);
 
-        sb.append(System.lineSeparator()).append(" Forge Options:").append(System.lineSeparator());
+        sb.append(NL).append(" Forge Options:").append(NL);
 
-        sb.append("-i, --install GROUP_ID:ARTIFACT_ID[:VERSION]").append(System.lineSeparator());
-        sb.append("\t install the required addons and exit. ex: `"+Util.WINDUP_CLI_NAME+" -i core-addon-x` or `"+Util.WINDUP_CLI_NAME+" -i org.example.addon:example:1.0.0` ").append(System.lineSeparator());
+        sb.append("-i, --install GROUP_ID:ARTIFACT_ID[:VERSION]").append(NL);
+        sb.append("\t install the required addons and exit. ex: `"+Util.WINDUP_CLI_NAME+" -i core-addon-x` or `"+Util.WINDUP_CLI_NAME+" -i org.example.addon:example:1.0.0` ").append(NL);
 
-        sb.append("-r, --remove GROUP_ID:ARTIFACT_ID[:VERSION]").append(System.lineSeparator());
-        sb.append("\t remove the required addons and exit. ex: `"+Util.WINDUP_CLI_NAME+" -r core-addon-x` or `"+Util.WINDUP_CLI_NAME+" -r org.example.addon:example:1.0.0` ").append(System.lineSeparator());
+        sb.append("-r, --remove GROUP_ID:ARTIFACT_ID[:VERSION]").append(NL);
+        sb.append("\t remove the required addons and exit. ex: `"+Util.WINDUP_CLI_NAME+" -r core-addon-x` or `"+Util.WINDUP_CLI_NAME+" -r org.example.addon:example:1.0.0` ").append(NL);
 
-        sb.append("-l, --list").append(System.lineSeparator());
-        sb.append("\t list installed addons and exit ").append(System.lineSeparator());
+        sb.append("-l, --list").append(NL);
+        sb.append("\t list installed addons and exit ").append(NL);
 
-        sb.append("-a, --addonDir DIR").append(System.lineSeparator());
-        sb.append("\t add the given directory for use as a custom addon repository ").append(System.lineSeparator());
+        sb.append("-a, --addonDir DIR").append(NL);
+        sb.append("\t add the given directory for use as a custom addon repository ").append(NL);
 
-        sb.append("-m, --immutableAddonDir DIR").append(System.lineSeparator());
-        sb.append("\t add the given directory for use as a custom immutable addon repository (read only) ").append(System.lineSeparator());
+        sb.append("-m, --immutableAddonDir DIR").append(NL);
+        sb.append("\t add the given directory for use as a custom immutable addon repository (read only) ").append(NL);
 
-        sb.append("-b, --batchMode").append(System.lineSeparator());
-        sb.append("\t run Forge in batch mode and does not prompt for confirmation (exits immediately after running) ").append(System.lineSeparator());
+        sb.append("-b, --batchMode").append(NL);
+        sb.append("\t run Forge in batch mode and does not prompt for confirmation (exits immediately after running) ").append(NL);
 
-        sb.append("-d, --debug").append(System.lineSeparator());
-        sb.append("\t run Forge in debug mode (wait on port 8000 for a debugger to attach) ").append(System.lineSeparator());
+        sb.append("-d, --debug").append(NL);
+        sb.append("\t run Forge in debug mode (wait on port 8000 for a debugger to attach) ").append(NL);
 
-        sb.append("-h, --help").append(System.lineSeparator());
-        sb.append("\t display this help and exit ").append(System.lineSeparator());
+        sb.append("-h, --help").append(NL);
+        sb.append("\t display this help and exit ").append(NL);
 
-        sb.append("-v, --version").append(System.lineSeparator());
-        sb.append("\t output version information and exit ").append(System.lineSeparator());
+        sb.append("-v, --version").append(NL);
+        sb.append("\t output version information and exit ").append(NL);
 
         System.out.println(sb.toString());
         return CommandResult.EXIT;

@@ -22,6 +22,7 @@ import org.jboss.windup.util.xml.XmlUtil;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.Context;
 import org.w3c.dom.Element;
+import static org.jboss.windup.util.Util.NL;
 
 /**
  * Handles parsing the "file-mapping" element to add rules to the current ruleset.
@@ -88,7 +89,7 @@ public class FileMappingHandler implements ElementHandler<Void>
                 throw new WindupException("A '" + ELEM_NAME + "' element specifies a file mapping type ["
                             + name + "] that matched multiple file types. Please select one of matches and "
                             + "update the configuration to use the fully qualified name: ["
-                            + matchingTypes.toString().replaceAll(",", System.lineSeparator()) + "]");
+                            + matchingTypes.toString().replaceAll(",", NL) + "]");
             }
             types.addAll(matchingTypes);
         }

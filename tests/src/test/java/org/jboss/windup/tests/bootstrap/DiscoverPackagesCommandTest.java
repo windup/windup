@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 
 import static org.junit.Assert.assertTrue;
+import static org.jboss.windup.util.Util.NL;
 
 public class DiscoverPackagesCommandTest extends AbstractBootstrapTest {
     private static final String TESTING_FILE_MAPPING_RULES = "<?xml version=\"1.0\"?>\n"
@@ -28,7 +29,7 @@ public class DiscoverPackagesCommandTest extends AbstractBootstrapTest {
             + "            <addon id=\"org.jboss.windup.rules,windup-rules-java," + Bootstrap.getRuntimeAPIVersion() + "\" />\n"
             + "        </dependencies>\n"
             + "    </metadata>\n"
-            + System.lineSeparator()
+            + NL
             + "    <rules>\n"
             + "        <package-mapping from=\"org.apache\" to=\"Apache\" />\n"
             + "    </rules>\n"

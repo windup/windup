@@ -21,6 +21,7 @@ import org.jboss.windup.rules.apps.java.model.JarArchiveModel;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
+import static org.jboss.windup.util.Util.NL;
 
 @RuleMetadata(phase = InitialAnalysisPhase.class, perform = "Discover Seam Java libraries embedded")
 public class DiscoverEmbeddedSeam2LibraryRuleProvider extends AbstractRuleProvider
@@ -48,9 +49,9 @@ public class DiscoverEmbeddedSeam2LibraryRuleProvider extends AbstractRuleProvid
                                                     "The application has a Seam library embedded.  \n"
                                                     +"While official support for Seam 2.2 applications was dropped in JBoss EAP 6, it was still possible to configure dependencies for JSF 1.2 and Hibernate 3 to allow Seam 2.2 applications to run on that release. \n"
                                                     +"Seam 2.3 should work on JBoss EAP 6 even some framework features and integrations from Seam 2.2 are not supported. \n"
-                                                    +System.lineSeparator()
+                                                    +NL
                                                     +"Red Hat JBoss EAP 7, which now includes JSF 2.2 and Hibernate 5, does not support Seam 2.2 or Seam 2.3 due to end of life of Red Hat JBoss Web Framework Kit. It is recommended that you rewrite your Seam components using CDI beans. \n"
-                                                    + System.lineSeparator()
+                                                    + NL
                                                     + "In the links below there are the instructions to enable alternatives for both EAP 6 and 7.");
                                         classificationModel.setEffort(5);
                                         GraphContext graphContext = event.getGraphContext();

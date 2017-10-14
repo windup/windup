@@ -18,6 +18,7 @@ import org.jboss.windup.rules.apps.java.model.JarArchiveModel;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
+import static org.jboss.windup.util.Util.NL;
 
 @RuleMetadata(phase = InitialAnalysisPhase.class, perform = "Discover Infinispan libraries embedded")
 public class DiscoverEmbeddedCacheInfinispanLibraryRuleProvider extends AbstractRuleProvider
@@ -43,7 +44,7 @@ public class DiscoverEmbeddedCacheInfinispanLibraryRuleProvider extends Abstract
                                                     IssueCategoryRegistry.CLOUD_MANDATORY,
                                                     "Caching - Infinispan embedded library",
                                                     "The application embedds an Infinispan library.  \n"
-                                                    + System.lineSeparator()
+                                                    + NL
                                                     + "Cloud readiness issue as potential state information that is not persisted to a backing service.");
                                         classificationModel.setEffort(5);
 

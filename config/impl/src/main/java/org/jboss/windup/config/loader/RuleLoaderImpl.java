@@ -39,6 +39,7 @@ import org.ocpsoft.rewrite.param.ParameterStore;
 import org.ocpsoft.rewrite.param.Parameterized;
 import org.ocpsoft.rewrite.param.ParameterizedRule;
 import org.ocpsoft.rewrite.util.Visitor;
+import static org.jboss.windup.util.Util.NL;
 
 public class RuleLoaderImpl implements RuleLoader
 {
@@ -75,7 +76,7 @@ public class RuleLoaderImpl implements RuleLoader
         for (RuleProvider phase : sortedPhases)
         {
             Class<?> unproxiedClass = Proxies.unwrap(phase).getClass();
-            rulePhaseSB.append("\tPhase: ").append(unproxiedClass.getSimpleName()).append(System.lineSeparator());
+            rulePhaseSB.append("\tPhase: ").append(unproxiedClass.getSimpleName()).append(NL);
         }
         LOG.info("Rule Phases: [\n" + rulePhaseSB.toString() + "]");
     }

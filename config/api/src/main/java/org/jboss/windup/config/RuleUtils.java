@@ -12,10 +12,11 @@ import org.ocpsoft.rewrite.config.Operation;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.config.RuleBuilder;
 import org.ocpsoft.rewrite.context.Context;
+import static org.jboss.windup.util.Util.NL;
 
 /**
  * Utils for the Metadata. Will be likely moved to Windup Utils.
- * 
+ *
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
 public class RuleUtils
@@ -72,7 +73,7 @@ public class RuleUtils
             String conditionToString = conditionToString(condition, indentLevel + 1);
             if (!conditionToString.isEmpty())
             {
-                result.append(System.lineSeparator());
+                result.append(NL);
                 insertPadding(result, indentLevel + 1);
                 result.append(".when(").append(wrap(conditionToString, MAX_WIDTH, indentLevel + 2)).append(")");
             }
@@ -83,21 +84,21 @@ public class RuleUtils
             String operationToString = operationToString(operation, indentLevel + 1);
             if (!operationToString.isEmpty())
             {
-                result.append(System.lineSeparator());
+                result.append(NL);
                 insertPadding(result, indentLevel + 1);
                 result.append(".perform(").append(wrap(operationToString, MAX_WIDTH, indentLevel + 2)).append(")");
             }
         }
         if (rule.getId() != null && !rule.getId().isEmpty())
         {
-            result.append(System.lineSeparator());
+            result.append(NL);
             insertPadding(result, indentLevel);
             result.append("withId(\"").append(rule.getId()).append("\")");
         }
 
         if (rule.priority() != 0)
         {
-            result.append(System.lineSeparator());
+            result.append(NL);
             insertPadding(result, indentLevel);
             result.append(".withPriority(").append(rule.priority()).append(")");
         }
@@ -132,7 +133,7 @@ public class RuleUtils
             {
                 while ((line = br.readLine()) != null)
                 {
-                    result.append(wrapLine(line, wrapLength, indentLevel)).append(System.lineSeparator());
+                    result.append(wrapLine(line, wrapLength, indentLevel)).append(NL);
                 }
             }
             catch (IOException e)

@@ -31,6 +31,7 @@ import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
+import static org.jboss.windup.util.Util.NL;
 
 /**
  * A rule provider validating all of the xml files and registering the classification in case the xml file is not valid.
@@ -42,7 +43,7 @@ public class ValidateXmlFilesRuleProvider extends AbstractRuleProvider
 {
     public static final String NOT_VALID_XML_TAG = "Not valid XML";
     private static final String JAXP_SCHEMA_LANGUAGE = "http://java.sun.com/xml/jaxp/properties/schemaLanguage";
-    
+
 
     public ValidateXmlFilesRuleProvider()
     {
@@ -159,7 +160,7 @@ public class ValidateXmlFilesRuleProvider extends AbstractRuleProvider
                 hintModel.setTitle(XmlFileModel.NOT_VALID_XML);
                 String message = "XSD Validation failed due to:\n\n";
                 message += "\t" + e.getMessage();
-                message += System.lineSeparator()+System.lineSeparator();
+                message += NL+NL;
                 hintModel.setHint(message);
             }
 
@@ -177,7 +178,7 @@ public class ValidateXmlFilesRuleProvider extends AbstractRuleProvider
 
         IssueCategoryRegistry issueCategoryRegistry = IssueCategoryRegistry.instance(event.getRewriteContext());
         model.setIssueCategory(issueCategoryRegistry.loadFromGraph(event.getGraphContext(), IssueCategoryRegistry.POTENTIAL));
-        
+
         TagSetService tagSetService = new TagSetService(event.getGraphContext());
         model.setTagModel(tagSetService.getOrCreate(event, Collections.singleton(NOT_VALID_XML_TAG)));
     }

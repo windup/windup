@@ -19,10 +19,11 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import static org.jboss.windup.util.Util.NL;
 
 /**
  * Base class for decompiler tests .
- * 
+ *
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -81,7 +82,7 @@ public abstract class DecompilerTestBase
             sb.append("Failed decompilation of " + res.getFailures().size() + " classes: ");
             for (final DecompilationFailure e : res.getFailures())
             {
-                sb.append(System.lineSeparator()+"    ").append(e.getMessage());
+                sb.append(NL+"    ").append(e.getMessage());
                 final Throwable cause = e.getCause();
                 cause.printStackTrace();
                 if (cause instanceof NullPointerException)
@@ -148,7 +149,7 @@ public abstract class DecompilerTestBase
             sb.append("Failed decompilation of " + res.getFailures().size() + " classes: ");
             for (final DecompilationFailure dex : res.getFailures())
             {
-                sb.append(System.lineSeparator()+"    ").append(dex.getMessage());
+                sb.append(NL+"    ").append(dex.getMessage());
             }
 
             if (!this.isResultValid(res))

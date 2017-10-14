@@ -32,6 +32,7 @@ import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import static org.jboss.windup.util.Util.NL;
 
 /**
  * Finds files that contain potential hard-coded IP addresses, determined by regular expression.
@@ -83,7 +84,7 @@ public class DiscoverHardcodedIPAddressRuleProvider extends AbstractRuleProvider
                     hintBody.append(payload.getSourceSnippit());
                     hintBody.append("**");
 
-                    hintBody.append(System.lineSeparator()+System.lineSeparator());
+                    hintBody.append(NL+NL);
                     hintBody.append("When migrating environments, hard-coded IP addresses may need to be modified or eliminated.");
                     location.setHint(hintBody.toString());
                     //location.setIssueCategory(IssueCategoryRegistry.loadFromGraph(event.getGraphContext(), IssueCategoryRegistry.MANDATORY));

@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collections;
+import static org.jboss.windup.util.Util.NL;
 
 /**
  * Refers to a specific portion of a File and contains a reference to the code involved.
@@ -93,7 +94,7 @@ public interface FileLocationModel extends FileReferenceModel, ToFileModelTransf
             if (null == getSourceSnippit())
                 return "";
             return StringEscapeUtils.escapeHtml4(
-                    StringUtils.substringBefore(StringUtils.abbreviate(getSourceSnippit().trim(), MAX_DESC_WIDTH), System.lineSeparator()));
+                    StringUtils.substringBefore(StringUtils.abbreviate(getSourceSnippit().trim(), MAX_DESC_WIDTH), NL));
         }
 
         @Override

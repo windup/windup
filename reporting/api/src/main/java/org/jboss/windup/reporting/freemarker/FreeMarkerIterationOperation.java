@@ -31,6 +31,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import static org.jboss.windup.util.Util.NL;
 
 /**
  * This class is used to produce a freemarker report from inside of a Windup {@link Iteration}.
@@ -147,9 +148,9 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
         catch (IOException | TemplateException e)
         {
             LOG.log(Level.WARNING,
-                  System.lineSeparator()+"   Failed to write template: " + templatePath
-                + System.lineSeparator()+"   To: " + outputFilename
-                + System.lineSeparator()+"   Due to: " + e.getMessage(), e);
+                  NL+"   Failed to write template: " + templatePath
+                + NL+"   To: " + outputFilename
+                + NL+"   Due to: " + e.getMessage(), e);
         }
         finally
         {

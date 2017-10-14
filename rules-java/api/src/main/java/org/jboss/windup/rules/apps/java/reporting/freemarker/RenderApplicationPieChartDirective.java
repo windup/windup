@@ -25,6 +25,7 @@ import freemarker.template.TemplateDirectiveBody;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateModel;
 import org.jboss.windup.util.exception.WindupException;
+import static org.jboss.windup.util.Util.NL;
 
 /**
  * Renders a JavaScript block that calls <a href="http://www.flotcharts.org/">Flot</a>. This depends upon the template already loading the JQuery and
@@ -103,31 +104,31 @@ public class RenderApplicationPieChartDirective implements WindupFreeMarkerTempl
 
         String dataVarName = "data_" + elementID;
         writer.append("<script type='text/javascript'>");
-        writer.append(System.lineSeparator()+" WINDUP_PACKAGE_PIE_DATA = typeof(WINDUP_PACKAGE_PIE_DATA) == 'undefined' ? {} : WINDUP_PACKAGE_PIE_DATA;");
-        writer.append(System.lineSeparator()+" WINDUP_PACKAGE_PIE_DATA['").append(elementID).append("'] = [];");
+        writer.append(NL+" WINDUP_PACKAGE_PIE_DATA = typeof(WINDUP_PACKAGE_PIE_DATA) == 'undefined' ? {} : WINDUP_PACKAGE_PIE_DATA;");
+        writer.append(NL+" WINDUP_PACKAGE_PIE_DATA['").append(elementID).append("'] = [];");
         for (PieSort p : pieList)
         {
-            writer.append(System.lineSeparator()+" WINDUP_PACKAGE_PIE_DATA['").append(elementID).append("'].push({label: '" + p.label + "', data: ")
+            writer.append(NL+" WINDUP_PACKAGE_PIE_DATA['").append(elementID).append("'].push({label: '" + p.label + "', data: ")
                         .append(p.value.toString()).append("});");
         }
 
-        writer.append(System.lineSeparator()+" $(function () {");
-        writer.append(System.lineSeparator()+"   var " + dataVarName + " = [];");
+        writer.append(NL+" $(function () {");
+        writer.append(NL+"   var " + dataVarName + " = [];");
         for (PieSort p : pieList)
-            writer.append(System.lineSeparator()+" ").append(dataVarName).append(".push({ label: '").append(p.key).append("', data: ").append(p.value.toString()).append(" });");
+            writer.append(NL+" ").append(dataVarName).append(".push({ label: '").append(p.key).append("', data: ").append(p.value.toString()).append(" });");
 
-        writer.append(System.lineSeparator()+"   $.plot($('#" + elementID + "'), " + dataVarName + ", {");
-        writer.append(System.lineSeparator()+"       series: { pie: { show: true,  innerRadius: 0.55, offset: { top: 0, left: -120 } } },");
-        writer.append(System.lineSeparator()+"       colors: $.map( " + dataVarName + ", function(item, index) {" +
-                      System.lineSeparator()+"           var len = " + dataVarName + ".length;" +
-                      System.lineSeparator()+"           return jQuery.Color({" +
-                      System.lineSeparator()+"               hue: ((index*0.95*360/len) + 90/len) % 360," +
-                      System.lineSeparator()+"               saturation: 0.95," +
-                      System.lineSeparator()+"               lightness: ((index%4 == 3 ? 1:0)/-4)+0.55, alpha: 1" +
-                      System.lineSeparator()+"           }).toHexString();" +
-                      System.lineSeparator()+"       })");
-        writer.append(System.lineSeparator()+"   });");
-        writer.append(System.lineSeparator()+" });");
+        writer.append(NL+"   $.plot($('#" + elementID + "'), " + dataVarName + ", {");
+        writer.append(NL+"       series: { pie: { show: true,  innerRadius: 0.55, offset: { top: 0, left: -120 } } },");
+        writer.append(NL+"       colors: $.map( " + dataVarName + ", function(item, index) {" +
+                      NL+"           var len = " + dataVarName + ".length;" +
+                      NL+"           return jQuery.Color({" +
+                      NL+"               hue: ((index*0.95*360/len) + 90/len) % 360," +
+                      NL+"               saturation: 0.95," +
+                      NL+"               lightness: ((index%4 == 3 ? 1:0)/-4)+0.55, alpha: 1" +
+                      NL+"           }).toHexString();" +
+                      NL+"       })");
+        writer.append(NL+"   });");
+        writer.append(NL+" });");
         writer.append("</script>");
     }
 

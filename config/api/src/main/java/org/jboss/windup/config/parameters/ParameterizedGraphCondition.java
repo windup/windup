@@ -21,6 +21,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.param.DefaultParameterValueStore;
 import org.ocpsoft.rewrite.param.ParameterValueStore;
 import org.ocpsoft.rewrite.param.Parameterized;
+import static org.jboss.windup.util.Util.NL;
 
 public abstract class ParameterizedGraphCondition extends GraphCondition implements Parameterized
 {
@@ -116,11 +117,11 @@ public abstract class ParameterizedGraphCondition extends GraphCondition impleme
                                     // FIXME: WHY DOES THIS HAPPEN? WINDUP-1549
                                     LOG.log(paramValueStoreOverwritten ?  Level.FINER : Level.WARNING,
                                             () -> String.format("resultSetStores already had a ParameterValueStore for frame:"
-                                            + System.lineSeparator()+"    %s"
-                                            + System.lineSeparator()+"    Old: %s"
-                                            + System.lineSeparator()+"    New: %s"
+                                            + NL+"    %s"
+                                            + NL+"    Old: %s"
+                                            + NL+"    New: %s"
                                             + "%s", frame.toPrettyString(), last, frame,
-                                            paramValueStoreOverwritten ? "" : System.lineSeparator()+"Further incidents will be logged at FINER level as it may occur millions of times."));
+                                            paramValueStoreOverwritten ? "" : NL+"Further incidents will be logged at FINER level as it may occur millions of times."));
                                     paramValueStoreOverwritten = true;
                                 }
                             }

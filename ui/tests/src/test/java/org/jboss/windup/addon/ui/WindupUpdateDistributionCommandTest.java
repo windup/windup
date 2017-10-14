@@ -56,6 +56,7 @@ import org.junit.runner.RunWith;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import static org.jboss.windup.util.Util.NL;
 
 /**
  * @author Ondrej Zizka, ozizka at redhat.com
@@ -260,7 +261,7 @@ public class WindupUpdateDistributionCommandTest
                     "org-jboss-windup-ui-windup-ui-" + WINDUP_OLD_VERSION.replaceAll("\\.", "-"));
         olderVersionAddonDir.mkdirs();
 
-        log.warning("Replacing the addon: \n  " + currentAddonDir + System.lineSeparator() + olderVersionAddonDir);
+        log.warning("Replacing the addon: \n  " + currentAddonDir + NL + olderVersionAddonDir);
         try
         {
             FileUtils.copyDirectory(currentAddonDir, olderVersionAddonDir);
