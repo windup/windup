@@ -102,30 +102,30 @@ public class CreateTechReportRuleProvider extends AbstractRuleProvider
 
             // Get sectors tag and rows tag references.
             TagGraphService tagGraphService = new TagGraphService(grCtx);
-            TagModel sectorsTag = tagGraphService.getTagByName(TechReportPunchCardModel.EDGE_TAG_SECTORS);
-            TagModel rowsTag = tagGraphService.getTagByName(TechReportPunchCardModel.EDGE_TAG_ROWS);
+            TagModel sectorsTag = tagGraphService.getTagByName(TechReportModel.EDGE_TAG_SECTORS);
+            TagModel rowsTag = tagGraphService.getTagByName(TechReportModel.EDGE_TAG_ROWS);
             if (null == sectorsTag)
-                throw new WindupException("Tech report sectors tag, '" + TechReportPunchCardModel.EDGE_TAG_SECTORS + "', not found.");
+                throw new WindupException("Tech report sectors tag, '" + TechReportModel.EDGE_TAG_SECTORS + "', not found.");
             if (null == rowsTag)
-                throw new WindupException("Tech report rows tag, '" + TechReportPunchCardModel.EDGE_TAG_ROWS + "', not found.");
+                throw new WindupException("Tech report rows tag, '" + TechReportModel.EDGE_TAG_ROWS + "', not found.");
 
-            Map<String, TechReportPunchCardModel> appProjectToReportMap = new HashMap<>();
+            Map<String, TechReportModel> appProjectToReportMap = new HashMap<>();
 
             // Create the boxes report models for each app.
             for (ApplicationProjectModel appModel : new ProjectService(grCtx).getRootProjectModels()){
-                final TechReportPunchCardModel appTechReport = createTechReportBoxes(grCtx, appModel);
+                final TechReportModel appTechReport = createTechReportBoxes(grCtx, appModel);
                 appTechReport.setSectorsHolderTag(sectorsTag);
                 appTechReport.setRowsHolderTag(rowsTag);
                 appProjectToReportMap.put(((Long)appModel.asVertex().getId()).toString(), appTechReport);
             }
 
             // Create the global report models.
-            TechReportPunchCardModel reportPunch = createTechReportPunchCard(grCtx);
+            TechReportModel reportPunch = createTechReportPunchCard(grCtx);
             reportPunch.setSectorsHolderTag(sectorsTag);
             reportPunch.setAppProjectIdToReportMap(appProjectToReportMap);
 
             /* In case the box report should also appear on the global level:
-            TechReportPunchCardModel reportBoxes = createTechReportBoxes(grCtx);
+            TechReportModel reportBoxes = createTechReportBoxes(grCtx);
             reportBoxes.setSectorsHolderTag(sectorsTag);
             reportBoxes.setRowsHolderTag(rowsTag);
             */
@@ -147,10 +147,10 @@ public class CreateTechReportRuleProvider extends AbstractRuleProvider
             return maxCountPerTag;
         }
 
-        private TechReportPunchCardModel createTechReportPunchCard(
+        private TechReportModel createTechReportPunchCard(
                 GraphContext grCtx
         ){
-            TechReportPunchCardModel report = createTechReportBase(grCtx);
+            TechReportModel report = createTechReportBase(grCtx);
             report.setReportName(REPORT_NAME_PUNCH);
             report.setTemplatePath(TEMPLATE_PATH_PUNCH);
             report.setDescription(REPORT_DESCRIPTION_PUNCH);
@@ -162,8 +162,8 @@ public class CreateTechReportRuleProvider extends AbstractRuleProvider
             return report;
         }
 
-        private TechReportPunchCardModel createTechReportBoxes(GraphContext grCtx){
-            TechReportPunchCardModel report = createTechReportBase(grCtx);
+        private TechReportModel createTechReportBoxes(GraphContext grCtx){
+            TechReportModel report = createTechReportBase(grCtx);
             report.setReportName(REPORT_NAME_BOXES);
             report.setTemplatePath(TEMPLATE_PATH_BOXES);
             report.setDescription(REPORT_DESCRIPTION_BOXES);
@@ -175,9 +175,9 @@ public class CreateTechReportRuleProvider extends AbstractRuleProvider
             return report;
         }
 
-        private TechReportPunchCardModel createTechReportBoxes(GraphContext grCtx, ApplicationProjectModel appModel)
+        private TechReportModel createTechReportBoxes(GraphContext grCtx, ApplicationProjectModel appModel)
         {
-            TechReportPunchCardModel report = createTechReportBase(grCtx);
+            TechReportModel report = createTechReportBase(grCtx);
             report.setProjectModel(appModel);
             report.setDisplayInGlobalApplicationIndex(false);
             report.setDisplayInApplicationReportIndex(true);
@@ -189,11 +189,11 @@ public class CreateTechReportRuleProvider extends AbstractRuleProvider
             // Set the filename for the report
             new ReportService(grCtx).setUniqueFilename(report, "techReport-" + appModel.getName(), "html");
 
-            TechReportPunchCardModel techReport = new GraphService<>(grCtx, TechReportPunchCardModel.class).addTypeToModel(report);
+            TechReportModel techReport = new GraphService<>(grCtx, TechReportModel.class).addTypeToModel(report);
             return techReport;
         }
 
-        private TechReportPunchCardModel createTechReportBase(GraphContext grCtx)
+        private TechReportModel createTechReportBase(GraphContext grCtx)
         {
             ApplicationReportService applicationReportService = new ApplicationReportService(grCtx);
             ApplicationReportModel report = applicationReportService.create();
@@ -201,7 +201,7 @@ public class CreateTechReportRuleProvider extends AbstractRuleProvider
             report.setMainApplicationReport(false);
             report.setReportPriority(103);
 
-            TechReportPunchCardModel techReport = new GraphService<>(grCtx, TechReportPunchCardModel.class).addTypeToModel(report);
+            TechReportModel techReport = new GraphService<>(grCtx, TechReportModel.class).addTypeToModel(report);
             return techReport;
         }
     }
@@ -217,9 +217,9 @@ public class CreateTechReportRuleProvider extends AbstractRuleProvider
         Map<String, Integer> maxCountPerTag = new HashMap<>();
 
         // What sectors (column groups) and sub-sectors (columns) should be on the report. View, Connect, Store, Sustain, ...
-        Tag sectorsTag = tagServiceHolder.getTagService().getTag(TechReportPunchCardModel.EDGE_TAG_SECTORS);
+        Tag sectorsTag = tagServiceHolder.getTagService().getTag(TechReportModel.EDGE_TAG_SECTORS);
         if (null == sectorsTag)
-            throw new WindupException("Tech report hierarchy definition tag, '"+TechReportPunchCardModel.EDGE_TAG_SECTORS +"', not found.");
+            throw new WindupException("Tech report hierarchy definition tag, '"+ TechReportModel.EDGE_TAG_SECTORS +"', not found.");
 
         // For each sector / subsector
         for (Tag tag1 : sectorsTag.getContainedTags())
