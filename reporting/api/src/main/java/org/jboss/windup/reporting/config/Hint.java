@@ -27,6 +27,7 @@ import org.jboss.windup.reporting.category.IssueCategoryModel;
 import org.jboss.windup.reporting.category.IssueCategoryRegistry;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.Logging;
+import org.jboss.windup.util.Util;
 import org.ocpsoft.rewrite.config.OperationBuilder;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -189,7 +190,7 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
                 ((SourceFileModel) locationModel.getFile()).setGenerateSourceReport(true);
 
             LOG.info("Hint added to " + locationModel.getFile().getPrettyPathWithinProject()
-                    + ":\n    " + this.toString(hintModel.getTitle(), null));
+                    + ":"+ Util.NL +"    " + this.toString(hintModel.getTitle(), null));
         }
         finally
         {
@@ -290,9 +291,9 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
         if (tags != null && !tags.isEmpty())
             result.append(".withTags(").append(tags).append(")");
         if (text != null)
-            result.append("\n\t.withText(\"").append(StringUtils.abbreviate(text.trim(), MAX_LOG_TEXT_LENGTH)).append("\")");
+            result.append(Util.NL + "\t.withText(\"").append(StringUtils.abbreviate(text.trim(), MAX_LOG_TEXT_LENGTH)).append("\")");
         if (links != null && !links.isEmpty())
-            result.append("\n\t.with(").append(links).append(")");
+            result.append(Util.NL + "\t.with(").append(links).append(")");
         return result.toString();
     }
 
