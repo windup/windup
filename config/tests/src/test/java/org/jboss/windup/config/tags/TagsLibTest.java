@@ -26,7 +26,7 @@ public class TagsLibTest
         }
         Assert.assertNotNull(tagService.getTag("a-root"));
         Assert.assertNotNull(tagService.getTag("a1"));
-        Assert.assertNull(tagService.getTag("non-existent"));
+        Assert.assertNull(tagService.findTag("non-existent"));
         Assert.assertNotNull(tagService.getOrCreateTag("a1", true));
         Assert.assertNotNull(tagService.getOrCreateTag("to-be-created", false));
 
