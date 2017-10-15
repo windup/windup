@@ -1,5 +1,6 @@
 package org.jboss.windup.rules.apps.java.reporting.freemarker;
 
+import freemarker.template.DefaultIterableAdapter;
 import java.util.List;
 
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
@@ -58,8 +59,13 @@ public class IterableHasContent implements WindupFreeMarkerMethod
         }
         else if (arg instanceof DefaultListAdapter)
         {
-            DefaultListAdapter defaultListAdapter = (DefaultListAdapter) arg;
-            return defaultListAdapter.size() > 0;
+            DefaultListAdapter adapter = (DefaultListAdapter) arg;
+            return adapter.size() > 0;
+        }
+        else if (arg instanceof DefaultIterableAdapter)
+        {
+            DefaultIterableAdapter adapter = (DefaultIterableAdapter) arg;
+            return adapter.iterator().hasNext();
         }
         else if (arg instanceof CollectionAndSequence) {
             CollectionAndSequence sequence = (CollectionAndSequence)arg;
@@ -67,7 +73,7 @@ public class IterableHasContent implements WindupFreeMarkerMethod
         }
         else
         {
-            throw new WindupException("Unrecognized type passed to: " + getMethodName() + ": "
+            throw new WindupException("Unrecognized type passed to " + getMethodName() + "(): "
                         + arg.getClass().getCanonicalName());
         }
     }

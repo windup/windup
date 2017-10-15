@@ -41,7 +41,7 @@
             <div class="container-fluid theme-showcase" role="main">
 
             <#list reportModel.relatedResources.hibernateConfiguration as hibernateConfiguration>
-                <#list hibernateConfiguration.hibernateSessionFactories() as sessionFactory>
+                <#list hibernateConfiguration.hibernateSessionFactories as sessionFactory>
                     <#if iterableHasContent(sessionFactory.sessionFactoryProperties?keys)>
                         <div class="panel panel-primary">
                             <div class="panel-heading">
