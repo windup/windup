@@ -78,13 +78,13 @@
     <enterprise-beans>
 
         <#if iterableHasContent(reportModel.relatedResources.sessionBeans)>
-        <#list reportModel.relatedResources.sessionBeans.list.iterator() as sessionBean>
+        <#list reportModel.relatedResources.sessionBeans as sessionBean>
         <session>
             <ejb-name>${sessionBean.beanName}</ejb-name>
             <#if sessionBean.sessionType??><session-type>${sessionBean.sessionType}</session-type></#if>
 
             <#if iterableHasContent(sessionBean.environmentReferences)>
-                <#list sessionBean.environmentReferences.iterator() as environmentRef>
+                <#list sessionBean.environmentReferences as environmentRef>
                     <@processEnvRef environmentRef />
                 </#list>
             </#if>
@@ -92,7 +92,7 @@
         </#list>
         </#if>
 
-        <#list reportModel.relatedResources.messageDriven.list.iterator() as mdb>
+        <#list reportModel.relatedResources.messageDriven as mdb>
         <message-driven>
             <ejb-name>${mdb.beanName}</ejb-name>
             <activation-config>
@@ -105,7 +105,7 @@
             </activation-config>
 
             <#if iterableHasContent(mdb.environmentReferences)>
-                <#list mdb.environmentReferences.iterator() as environmentRef>
+                <#list mdb.environmentReferences as environmentRef>
                     <@processEnvRef environmentRef />
                 </#list>
             </#if>
@@ -115,7 +115,7 @@
 
     <assembly-descriptor>
     <#if iterableHasContent(reportModel.relatedResources.sessionBeans)>
-        <#list reportModel.relatedResources.sessionBeans.list.iterator() as sessionBean>
+        <#list reportModel.relatedResources.sessionBeans as sessionBean>
             <@processTxTimeout sessionBean />
             <#if sessionBean.clustered?? && sessionBean.clustered>
                 <c:clustering>
@@ -125,7 +125,7 @@
             </#if>
         </#list>
     </#if>
-    <#list reportModel.relatedResources.messageDriven.list.iterator()>
+    <#list reportModel.relatedResources.messageDriven>
         <#items as mdb>
                 <@processTxTimeout mdb />
                 <@processPool mdb />

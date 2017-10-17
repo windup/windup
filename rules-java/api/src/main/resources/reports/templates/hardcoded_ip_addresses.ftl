@@ -17,7 +17,7 @@
                     <th>IP Address</th>
                 </tr>
 
-                <#list reportModel.relatedResources.hardcodedIPLocations.list.iterator() as hardcodedIpRef>
+                <#list reportModel.relatedResources.hardcodedIPLocations as hardcodedIpRef>
                 <tr>
                     <td>
                         <@render_link model=hardcodedIpRef project=reportModel.projectModel/>

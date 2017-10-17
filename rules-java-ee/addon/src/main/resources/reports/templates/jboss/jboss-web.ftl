@@ -37,7 +37,7 @@
 </#macro>
 <jboss-web>
     <#if iterableHasContent(reportModel.relatedResources.environmentReferences)>
-        <#list reportModel.relatedResources.environmentReferences.list.iterator() as environmentRef>
+        <#list reportModel.relatedResources.environmentReferences as environmentRef>
             <@processEnvRef environmentRef />
         </#list>
     </#if>

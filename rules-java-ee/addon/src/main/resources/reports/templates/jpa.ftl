@@ -40,8 +40,8 @@
         <div class="row">
             <div class="container-fluid theme-showcase" role="main">
 
-            <#list reportModel.relatedResources.jpaConfiguration.list.iterator() as jpaConfiguration>
-                <#list jpaConfiguration.persistenceUnits.iterator() as persistenceUnit>
+            <#list reportModel.relatedResources.jpaConfiguration as jpaConfiguration>
+                <#list jpaConfiguration.persistenceUnits as persistenceUnit>
                 <div class="panel panel-primary">
                     <div class="panel-heading">
                         <h3 class="panel-title">Persistence Unit: ${persistenceUnit.name}</h3>
@@ -78,7 +78,7 @@
                                     <th class="col-md-4">Type</th>
                                     <th class="col-md-4">JTA</th>
                                 </tr>
-                            <#list persistenceUnit.dataSources.iterator() as dataSource>
+                            <#list persistenceUnit.dataSources as dataSource>
                                 <tr>
                                     <td class="col-md-4">${dataSource.jndiLocation!""}</td>
                                     <td class="col-md-4">${dataSource.databaseTypeName!""}</td>
@@ -92,7 +92,7 @@
                 </#list>
             </#list>
 
-            <#list reportModel.relatedResources.jpaEntities.list.iterator()>
+            <#list reportModel.relatedResources.jpaEntities>
                 <div class="panel panel-primary">
                     <div class="panel-heading">
                         <h3 class="panel-title">JPA Entities</h3>
@@ -114,7 +114,7 @@
                 </div>
             </#list>
 
-            <#list reportModel.relatedResources.jpaNamedQueries.list.iterator()>
+            <#list reportModel.relatedResources.jpaNamedQueries>
                 <div class="panel panel-primary">
                     <div class="panel-heading">
                         <h3 class="panel-title">JPA Named Queries</h3>
