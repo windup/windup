@@ -126,8 +126,8 @@ public final class Tag
      * For instance, "Java EE" is a good prime tag, as it may contain other technologies.
      * Whereas "frameworks" is probably not a good prime tag as it's too general.
      */
-    public boolean isPrime() { return this.isRoot; }
-    public void setIsPrime(boolean isRoot) { this.isPrime = isPrime; }
+    public boolean isPrime() { return this.isPrime; }
+    public void setIsPrime(boolean isPrime) { this.isPrime = isPrime; }
 
 
     /**

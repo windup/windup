@@ -80,7 +80,7 @@ public class TagsSaxHandler extends DefaultHandler
                 {
                     if (tag.getColor()!= null)
                         LOG.warning("Redefining tag color to '"+title+"', was: " + tag.getColor());
-                    if (color.matches("#\\p{XDigit}{6}"))
+                    if (color.matches("(#\\p{XDigit}{6})|[a-z]+"))
                         tag.setColor(color);
                     else
                         LOG.fine("Invalid color, not matching #\\p{XDigit}{6}: " + color);

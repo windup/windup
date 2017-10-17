@@ -158,8 +158,10 @@ public class TagService
         if (superTagName.equals(subTagName))
             return false;
 
-        final Tag superTag = this.getTag(superTagName);
-        final Tag subTag = this.getTag(subTagName);
+        final Tag superTag = this.findTag(superTagName);
+        final Tag subTag = this.findTag(subTagName);
+        if (subTag == null || superTag == null)
+            return false;
         return this.isUnderTag(superTag, subTag);
     }
 
