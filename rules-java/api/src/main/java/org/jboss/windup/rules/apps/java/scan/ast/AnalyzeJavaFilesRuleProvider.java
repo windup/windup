@@ -3,6 +3,7 @@ package org.jboss.windup.rules.apps.java.scan.ast;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
@@ -381,6 +382,11 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                 shouldKeep |= classNotFoundAnalysisEnabled && reference.getResolutionStatus() != ResolutionStatus.RESOLVED;
                 shouldKeep |= TypeInterestFactory.matchesAny(reference.getQualifiedName(), reference.getLocation());
 
+                // Check if it is an annotation, and if so, check if any children should be kept
+                if (!shouldKeep && reference instanceof AnnotationClassReference)
+                    shouldKeep = processAnnotation(((AnnotationClassReference) reference).getAnnotationValues().values(), classNotFoundAnalysisEnabled);
+
+
                 // we are always interested in types + anything that the TypeInterestFactory has registered
                 if (shouldKeep)
                 {
@@ -388,6 +394,35 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                 }
             }
             return results;
+        }
+
+        private boolean processAnnotation(Collection<AnnotationValue> references, boolean classNotFoundAnalysisEnabled)
+        {
+            if (references == null || references.isEmpty())
+                return false;
+
+
+            for (AnnotationValue childValue : references)
+            {
+                if (childValue instanceof AnnotationArrayValue)
+                {
+                    AnnotationArrayValue annotationArrayValue = (AnnotationArrayValue)childValue;
+                    if (processAnnotation(annotationArrayValue.getValues(), classNotFoundAnalysisEnabled))
+                        return true;
+
+                } else if (childValue instanceof  AnnotationClassReference)
+                {
+                    AnnotationClassReference annotationClassReference = (AnnotationClassReference)childValue;
+                    boolean shouldKeep = classNotFoundAnalysisEnabled && annotationClassReference.getResolutionStatus() != ResolutionStatus.RESOLVED;
+                    shouldKeep |= TypeInterestFactory.matchesAny(annotationClassReference.getQualifiedName(), annotationClassReference.getLocation());
+
+                    if (shouldKeep)
+                        return true;
+                    else
+                        return processAnnotation(annotationClassReference.getAnnotationValues().values(), classNotFoundAnalysisEnabled);
+                }
+            }
+            return false;
         }
 
         private void processReferences(GraphContext context, AtomicInteger referenceCount, Path filePath, List<ClassReference> references)
