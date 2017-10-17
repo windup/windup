@@ -105,9 +105,17 @@ public class CreateTechReportRuleProvider extends AbstractRuleProvider
             TagModel sectorsTag = tagGraphService.getTagByName(TechReportModel.EDGE_TAG_SECTORS);
             TagModel rowsTag = tagGraphService.getTagByName(TechReportModel.EDGE_TAG_ROWS);
             if (null == sectorsTag)
-                throw new WindupException("Tech report sectors tag, '" + TechReportModel.EDGE_TAG_SECTORS + "', not found.");
+            {
+                //throw new WindupException("Tech report sectors tag, '" + TechReportModel.EDGE_TAG_SECTORS + "', not found.");
+                LOG.severe("Tech report sectors tag, '" + TechReportModel.EDGE_TAG_SECTORS + "', not found. The technology report will not be rendered.");
+                return;
+            }
             if (null == rowsTag)
-                throw new WindupException("Tech report rows tag, '" + TechReportModel.EDGE_TAG_ROWS + "', not found.");
+            {
+                //throw new WindupException("Tech report rows tag, '" + TechReportModel.EDGE_TAG_ROWS + "', not found.");
+                LOG.severe("Tech report rows tag, '" + TechReportModel.EDGE_TAG_ROWS + "', not found. The technology report will not be rendered.");
+                return;
+            }
 
             Map<String, TechReportModel> appProjectToReportMap = new HashMap<>();
 
