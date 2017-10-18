@@ -2,9 +2,8 @@ package org.jboss.windup.tests.application;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.Iterator;
-import java.util.List;
-
+import java.nio.file.Paths;
+import java.util.*;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
@@ -12,9 +11,12 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.ApplicationProjectModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.graph.service.ProjectService;
 import org.jboss.windup.graph.service.Service;
 import org.jboss.windup.reporting.model.ReportModel;
+import org.jboss.windup.reporting.model.TechReportModel;
 import org.jboss.windup.reporting.model.source.SourceReportModel;
 import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.reporting.service.SourceReportService;
@@ -25,6 +27,7 @@ import org.jboss.windup.rules.apps.javaee.rules.CreateEJBReportRuleProvider;
 import org.jboss.windup.testutil.html.TestEJBReportUtil;
 import org.jboss.windup.testutil.html.TestEJBReportUtil.EJBType;
 import org.jboss.windup.testutil.html.TestJavaApplicationOverviewUtil;
+import org.jboss.windup.testutil.html.TestTechReportUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,7 +52,9 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
         return ShrinkWrap.create(AddonArchive.class)
                     .addBeansXML()
                     .addClass(WindupArchitectureTest.class)
-                    .addAsResource(new File("src/test/groovy/GroovyExampleRule.windup.groovy"));
+                    .addAsResource(new File("src/test/groovy/GroovyExampleRule.windup.groovy"))
+                    .addAsResource(new File("../rules-java/api/src/main/resources/data/java-ee.tags.xml"))
+                    .addAsResource(new File("../reporting/impl/src/main/java/org/jboss/windup/reporting/rules/generation/techreport/techReport-hierarchy.tags.xml"));
     }
 
     @Test
@@ -165,6 +170,71 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
                     "EJB XML 2.1");
 
         validateEJBBeanReport(context);
+        validateTechReport(context);
+    }
+
+    private void validateTechReport(GraphContext grCtx)
+    {
+        // 2 reports - a global one and the app one.
+        Iterable<TechReportModel> techReportsIt = grCtx.findAll(TechReportModel.class);
+        List<TechReportModel> techReports = new ArrayList<>();
+        techReportsIt.forEach(techReports::add);
+        Assert.assertEquals(techReports.size(), 2);
+
+
+        // There should be one box report for each app.
+
+        Map<Long, TechReportModel> idToReport = new HashMap<>();
+        techReportsIt.forEach(techReportModel -> {
+            Long id = null;
+            if (techReportModel.getProjectModel() != null) {
+                id = (Long) techReportModel.getProjectModel().asVertex().getId();
+            }
+            final TechReportModel previous = idToReport.put(id, techReportModel);
+            if (previous != null)
+                Assert.fail("Duplicate report for project with vertex ID #" + id + " (if null -> the global one)");
+        });
+
+        Assert.assertNotNull(idToReport.get(null));
+        for (ApplicationProjectModel app : new ProjectService(grCtx).getRootProjectModels())
+        {
+            final TechReportModel techReport = idToReport.get(app.asVertex().getId());
+            Assert.assertNotNull(techReport);
+        }
+
+        // Check the reports
+        for (TechReportModel techReportModel : techReportsIt)
+        {
+            final Path path = Paths.get(techReportModel.getReportFilename());
+
+            if (techReportModel.getProjectModel() == null)
+            {
+                // Global bubbles report
+                List<TestTechReportUtil.BubbleInfo> bubblesExpected = new ArrayList<>();
+
+                final String appName = "jee-example-app-1.0.0.ear";
+                bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "Web", 2, 2));
+                bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "EJB", 2, 2));
+                bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "Transactions", 2, 2));
+                bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "Rich", 0, 0));
+                bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "Test", 0, 0));
+                bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "Logging", 0, 0));
+                bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "Processing", 0, 0));
+                bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "IoC", 0, 0));
+
+                new TestTechReportUtil().checkTechGlobalReport(path, bubblesExpected);
+            }
+            else {
+                // Per-app box report
+                List<TestTechReportUtil.BoxInfo> boxesExpected = new ArrayList<>();
+                boxesExpected.add(new TestTechReportUtil.BoxInfo("Java_EE", "View", "Web", "Web XML File", 1));
+                boxesExpected.add(new TestTechReportUtil.BoxInfo("Java_EE", "Sustain", "Transactions", "JTA", 2));
+                boxesExpected.add(new TestTechReportUtil.BoxInfo("Java_EE", "Store", null, null, 0));
+                boxesExpected.add(new TestTechReportUtil.BoxInfo("Embedded", null, null, null, 0));
+                new TestTechReportUtil().checkTechBoxReport(path, boxesExpected);
+            }
+        }
+
     }
 
     private void validateParentOfSourceReports(GraphContext context)

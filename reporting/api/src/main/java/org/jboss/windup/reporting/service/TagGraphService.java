@@ -43,7 +43,7 @@ public class TagGraphService extends GraphService<TagModel>
 
         Set<Tag> visited = new HashSet<>();
 
-        for (Tag tag : tagLoaderService.getPrimeTags())
+        for (Tag tag : tagLoaderService.getRootTags())
         {
             // Sanity check
             TagModel existing = this.getUniqueByProperty(TagModel.PROP_NAME, tag.getName());
