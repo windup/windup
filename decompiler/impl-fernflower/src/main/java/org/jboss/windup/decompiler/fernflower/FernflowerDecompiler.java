@@ -49,6 +49,7 @@ public class FernflowerDecompiler extends AbstractDecompiler
     {
         Map<String, Object> options = new HashMap<>();
         options.put(IFernflowerPreferences.MAX_PROCESSING_METHOD, 30);
+        options.put(IFernflowerPreferences.DECOMPILE_GENERIC_SIGNATURES, "1");
         return options;
     }
 

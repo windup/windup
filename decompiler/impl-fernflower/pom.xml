@@ -18,7 +18,7 @@
         <dependency>
             <groupId>org.jboss.windup.decompiler.fernflower</groupId>
             <artifactId>windup-fernflower</artifactId>
-            <version>1.0.0.20160505b</version>
+            <version>1.0.0.20171018</version>
         </dependency>
 
         <!-- Addon Dependencies -->
