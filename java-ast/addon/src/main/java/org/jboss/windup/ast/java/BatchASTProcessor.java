@@ -92,8 +92,6 @@ public class BatchASTProcessor
                     options.put(JavaCore.CORE_JAVA_BUILD_DUPLICATE_RESOURCE, "warning");
 
                     parser.setCompilerOptions(options);
-
-                    parser.setCompilerOptions(options);
                     parser.setEnvironment(libraryPaths.toArray(new String[libraryPaths.size()]),
                                 sourcePaths.toArray(new String[sourcePaths.size()]),
                                 null,

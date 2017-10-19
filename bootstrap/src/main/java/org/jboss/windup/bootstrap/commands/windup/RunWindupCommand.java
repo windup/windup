@@ -192,9 +192,8 @@ public class RunWindupCommand implements Command, FurnaceDependent
 
         // In case of --unzippedAppInput or --sourceMode, treat the directories in --input as unzipped applications.
         // Otherwise, as a directory containing separate applications (default).
-        Boolean isExplodedApp =
-                (Boolean) optionValues.get(ExplodedAppInputOption.NAME)
-                    || (Boolean) optionValues.get(SourceModeOption.NAME);
+        Boolean isExplodedApp = optionValues != null && ((Boolean) optionValues.get(ExplodedAppInputOption.NAME)
+                    || (Boolean) optionValues.get(SourceModeOption.NAME));
         if (!isExplodedApp)
         {
             List<Path> input = (List<Path>) optionValues.get(InputPathOption.NAME);
