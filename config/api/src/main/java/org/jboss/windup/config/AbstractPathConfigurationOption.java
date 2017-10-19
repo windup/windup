@@ -73,7 +73,7 @@ public abstract class AbstractPathConfigurationOption extends AbstractConfigurat
         if ( (fileObject == null && isRequired()) ||
              (fileObject instanceof Collection && isRequired() && ((Collection) fileObject).isEmpty()) )
         {
-            return new ValidationResult(ValidationResult.Level.ERROR, getLabel() + " must be specified.");
+            return new ValidationResult(ValidationResult.Level.ERROR, getName() + " must be specified.");
         }
         else if (fileObject == null)
         {

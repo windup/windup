@@ -71,6 +71,6 @@ public class NoInputOrOutputPathTest extends AbstractBootstrapTestWithRules {
     public void NoInputPath() {
         bootstrap("--input", " ", "--target", "eap7");
 
-        assertTrue(capturedOutput().contains("ERROR: Input paths must be specified."));
+        assertTrue(capturedOutput().contains("ERROR: input must be specified."));
     }
 }
