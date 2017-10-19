@@ -113,16 +113,16 @@ public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTe
         util.loadPage(reportPath);
         Assert.assertTrue(util
                     .checkHardcodedIPInReport(
-                                "org.apache.wicket.protocol.http.mock.MockHttpServletRequest (67, 32)",
-                                "Line: 67, Position: 32", "127.0.0.1"));
+                                "org.apache.wicket.protocol.http.mock.MockHttpServletRequest (65, 32)",
+                                "Line: 65, Position: 32", "127.0.0.1"));
         Assert.assertTrue(util
                     .checkHardcodedIPInReport(
-                                "org.apache.wicket.protocol.http.mock.MockHttpServletRequest (723, 14)",
-                                "Line: 723, Position: 14", "127.0.0.1"));
+                                "org.apache.wicket.protocol.http.mock.MockHttpServletRequest (721, 14)",
+                                "Line: 721, Position: 14", "127.0.0.1"));
         Assert.assertTrue(util
                     .checkHardcodedIPInReport(
-                                "org.apache.wicket.protocol.http.mock.MockHttpServletRequest (727, 14)",
-                                "Line: 727, Position: 14", "127.0.0.1"));
+                                "org.apache.wicket.protocol.http.mock.MockHttpServletRequest (725, 14)",
+                                "Line: 725, Position: 14", "127.0.0.1"));
 
     }
 
@@ -160,7 +160,7 @@ public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTe
         util.checkFilePathEffort("Windup1x-javaee-example.war", "META-INF/maven/javaee/javaee/pom.properties", 0);
         util.checkFilePathEffort("Windup1x-javaee-example.war/WEB-INF/lib/joda-time-2.0.jar",
                     "org.joda.time.tz.DateTimeZoneBuilder", 32);
-        util.checkMainEffort(2213);
+        util.checkMainEffort(2309);
         util.checkAppSectionEffort("Windup1x-javaee-example.war", 2);
         util.checkAppSectionEffort("Windup1x-javaee-example.war/WEB-INF/lib/joda-time-2.0.jar", 64);
         util.checkAppSectionEffort("Windup1x-javaee-example.war/WEB-INF/lib/slf4j-api-1.6.1.jar", 16);
@@ -178,7 +178,7 @@ public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTe
         TestReportIndexReportUtil util = new TestReportIndexReportUtil();
         util.loadPage(appReportPath);
 
-        Assert.assertTrue(util.checkIncidentByCategoryRow("optional", 292, 2213));
+        Assert.assertTrue(util.checkIncidentByCategoryRow("optional", 304, 2309));
     }
 
     /**
