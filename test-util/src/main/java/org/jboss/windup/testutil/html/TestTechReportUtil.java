@@ -2,7 +2,9 @@ package org.jboss.windup.testutil.html;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
+import org.ocpsoft.common.util.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -13,6 +15,10 @@ import org.openqa.selenium.WebElement;
  */
 public class TestTechReportUtil extends TestReportUtil
 {
+    private final static Logger LOG = Logger.getLogger(TestReportUtil.class.getName());
+
+    final int COLS_BEFORE_BUBBLES = 1;
+
     /**
      * Basically this checks few bubbles if they are as big (or missing) as they should be.
      */
@@ -33,12 +39,15 @@ public class TestTechReportUtil extends TestReportUtil
      */
     private void checkBubble(BubbleInfo bubbleExpected)
     {
+        LOG.info("    Checking bubble " + bubbleExpected);
+
         String appName = bubbleExpected.appName.trim();
         int colOffset = getPunchCardReportColumnOffset(bubbleExpected.techColumnLabel);
-        final String xpath = String.format("tr[@class='app' and td/a[normalize-space()='%s']]/td[position()=%d]", appName, colOffset);
-        WebElement bubbleCell = getDriver().findElement(By.xpath(xpath));
-        if (bubbleCell == null)
-            throw new CheckFailedException(String.format("Bubble cell not found for app %s and bubble %s", appName, bubbleExpected.techColumnLabel));
+        final String xpath = String.format("//tr[@class='app' and td/a[normalize-space()='%s']]/td[position()=%d]", appName, colOffset + COLS_BEFORE_BUBBLES +1);
+        List<WebElement> bubbleCells = getDriver().findElements(By.xpath(xpath));
+        if (bubbleCells.isEmpty())
+            throw new CheckFailedException(String.format("Bubble cell not found for app %s and column %s;  xpath: " + xpath, appName, bubbleExpected.techColumnLabel));
+        WebElement bubbleCell = bubbleCells.get(0);
 
         int actualSize = parseSizeFromClasses(bubbleCell.getAttribute("class"));
 
@@ -56,17 +65,17 @@ public class TestTechReportUtil extends TestReportUtil
 
     private int getPunchCardReportColumnOffset(String label){
         label = label.trim();
-        WebElement headers = getDriver().findElement(By.xpath(String.format("//tr[@class='headersGroup']", label)));
-        assertNotNull(headers, "headers row", true);
+        List<WebElement> headersTR = getDriver().findElements(By.xpath(String.format("//tr[@class='headersGroup']", label)));
+        assertNotEmpty(headersTR, "headers row");
 
-        WebElement header = getDriver().findElement(By.xpath(String.format("//tr[@class='headersGroup']/td/div[normalize-space()='%s']", label)));
-        assertNotNull(headers, "header column div " + label, true);
+        List<WebElement> headerDIV = getDriver().findElements(By.xpath(String.format("//tr[@class='headersGroup']/td/div[normalize-space()='%s']", label)));
+        assertNotEmpty(headerDIV, "header column div " + label);
 
         final String xpath = String.format("//tr[@class='headersGroup']/td[div[normalize-space()='%s']]/preceding-sibling::td", label);
         List<WebElement> precedingSiblings = getDriver().findElements(By.xpath(xpath));
-        assertNotNull(headers, "precending siblings of header column div " + label, true);
+        assertNotEmpty(precedingSiblings, "precending siblings of header column div " + label);
 
-        return precedingSiblings.size() -1;
+        return precedingSiblings.size() - COLS_BEFORE_BUBBLES; // Substracting the app name column.
     }
 
     // ----------------------------
@@ -77,35 +86,75 @@ public class TestTechReportUtil extends TestReportUtil
 
         for (BoxInfo box : boxesExpected)
         {
-            checkBox(box);
+            if (box.sectorLabel == null)
+                checkNoBoxInRow(box);
+            else if (box.boxLabel == null)
+                //checkNoBoxUnderSector(box); // TBD when someone wants to.
+                ;
+            else
+                checkBox(box);
         }
 
         this.getDriver().close();
     }
 
+    private void checkNoBoxInRow(BoxInfo boxNotExpected)
+    {
+        final String xpath = String.format("//tr[@class='rowHeader' and //div[normalize-space()='%s']]//div[contains(@class,'box')]", boxNotExpected.rowLabel);
+        List<WebElement> boxes = getDriver().findElements(By.xpath(xpath));
+        if (!boxes.isEmpty())
+            throw new CheckFailedException(
+                    String.format("There should be no boxes for row '%s';  xpath: " + xpath, boxNotExpected.rowLabel));
+    }
+
+    private void checkNoBoxUnderSector(BoxInfo boxNotExpected)
+    {
+        int sectorOffset = getBoxesReportSectorOffset(boxNotExpected.sectorLabel);
+
+        final String xpath = String.format("//tr[@class='rowHeader' and //div[normalize-space()='%s']]//td[position()=%d]//div[contains(@class,'box')", boxNotExpected.rowLabel, sectorOffset);
+        List<WebElement> boxes = getDriver().findElements(By.xpath(xpath));
+        if (!boxes.isEmpty())
+            throw new CheckFailedException(
+                    String.format("There should be no boxes for row '%s' and sector '%s';  xpath: " + xpath,
+                            boxNotExpected.rowLabel, boxNotExpected.sectorLabel));
+    }
+
+    private int getBoxesReportSectorOffset(String sectorLabel)
+    {
+        // TBD
+        return 0;
+    }
+
     private void checkBox(BoxInfo boxExpected)
     {
         final String xpath = String.format("//div[contains(@class,'box') and //h4[normalize-space()='%s']]", boxExpected.boxLabel);
-        WebElement box = getDriver().findElement(By.xpath(xpath));
-        if (box == null)
+        List<WebElement> boxes = getDriver().findElements(By.xpath(xpath));
+        if (boxes.isEmpty())
             throw new CheckFailedException(
-                    String.format("Box '%s' not found for row '%s' and sector '%s'",
+                    String.format("Box '%s' not found for row '%s' and sector '%s';  xpath: " + xpath,
                     boxExpected.boxLabel, boxExpected.rowLabel, boxExpected.sectorLabel));
 
-        WebElement techLi = box.findElement(By.xpath(String.format("//ul/li[contains(normalize-space(), '%s')]", boxExpected.techName)));
-        if (techLi == null)
+        List<WebElement> techItems = boxes.get(0).findElements(By.xpath(String.format("//ul/li[contains(normalize-space(), '%s')]", boxExpected.techName)));
+        if (techItems.isEmpty())
             throw new CheckFailedException(
                     String.format("Tech '%s' not found in box '%s' at row '%s' and under sector '%s'",
                     boxExpected.techName, boxExpected.boxLabel, boxExpected.rowLabel, boxExpected.sectorLabel));
 
-        if (boxExpected.count == 0)
+        if (boxExpected.minCount == 0)
             return;
 
-        final Integer actualCount = Integer.valueOf(techLi.findElement(By.name("b")).getText());
-        if (actualCount != boxExpected.count)
+        WebElement techLi = techItems.get(0);
+        final List<WebElement> countBs = techLi.findElements(By.tagName("b"));
+        if (countBs.isEmpty())
             throw new CheckFailedException(
-                    String.format("Count %d expected to be %d for tech '%s' not found in box '%s' at row '%s' and under sector '%s'",
-                    actualCount, boxExpected.count, boxExpected.techName, boxExpected.boxLabel, boxExpected.rowLabel, boxExpected.sectorLabel));
+                    String.format("Count was missing, expected to be %d for tech '%s' not found in box '%s' at row '%s' and under sector '%s'",
+                            boxExpected.minCount, boxExpected.techName, boxExpected.boxLabel, boxExpected.rowLabel, boxExpected.sectorLabel));
+
+        final Integer actualCount = Integer.valueOf(countBs.get(0).getText());
+        if (actualCount < boxExpected.minCount)
+            throw new CheckFailedException(
+                    String.format("Count was %d, expected to be at least %d for tech '%s' not found in box '%s' at row '%s' and under sector '%s'",
+                    actualCount, boxExpected.minCount, boxExpected.techName, boxExpected.boxLabel, boxExpected.rowLabel, boxExpected.sectorLabel));
     }
 
 
@@ -117,6 +166,13 @@ public class TestTechReportUtil extends TestReportUtil
                 throw new CheckFailedException(whatIsIt + " was not found on the page.");
         }
         return object != null;
+    }
+
+    private void assertNotEmpty(Iterable iterable, String whatIsIt)
+    {
+        if (!iterable.iterator().hasNext()) {
+                throw new CheckFailedException(whatIsIt + " was not found on the page.");
+        }
     }
 
 
@@ -136,6 +192,12 @@ public class TestTechReportUtil extends TestReportUtil
             this.minSize = minSize;
             this.maxSize = maxSize;
         }
+
+        @Override
+        public String toString()
+        {
+            return "BubbleInfo{appName='" + appName + '\'' + ", techColumnLabel='" + techColumnLabel + '\'' + ", " + minSize + " to " + maxSize + '}';
+        }
     }
 
     public static class BoxInfo
@@ -144,20 +206,21 @@ public class TestTechReportUtil extends TestReportUtil
         String sectorLabel;
         String boxLabel;
         String techName;
-        int count; // Will be missing in HTML if 0.
+        int minCount; // The count will be missing in HTML if 0.
+        int maxCount;
 
         /**
          * @param sectorLabel  If null, the row should not contain any boxes.
          * @param boxLabel     If null, the sector should not contain any boxes.
-         * @param count        If null, the sector should not contain any boxes.
          */
-        public BoxInfo(String rowLabel, String sectorLabel, String boxLabel, String techName, int count)
+        public BoxInfo(String rowLabel, String sectorLabel, String boxLabel, String techName, int minCount, int maxCount)
         {
             this.rowLabel = rowLabel;
             this.sectorLabel = sectorLabel;
             this.boxLabel = boxLabel;
             this.techName = techName;
-            this.count = count;
+            this.minCount = minCount;
+            this.maxCount = maxCount;
         }
     }
 

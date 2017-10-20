@@ -32,7 +32,7 @@ public class TechReportService
     Map<String, Map<String, Map<Long, Map<String, TechUsageStatSum>>>> getTechStatsMap(ProjectModel onlyForProject)
     {
         final Long onlyID = onlyForProject == null ? null : (Long) onlyForProject.getRootProjectModel().asVertex().getId();
-        LOG.info(String.format("### Creating tech stats map for " + (onlyForProject == null ? "global report" : "project #d"), onlyID));
+        LOG.info(String.format("### Creating tech stats map for " + (onlyForProject == null ? "global report" : "project #%d"), onlyID));
 
         Map<String, Map<String, Map<Long, Map<String, TechUsageStatSum>>>> map = new HashMap<>();
 

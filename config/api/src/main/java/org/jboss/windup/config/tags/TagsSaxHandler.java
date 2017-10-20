@@ -35,11 +35,13 @@ public class TagsSaxHandler extends DefaultHandler
 
     private final TagService tagService;
     private final Stack<Tag> stack = new Stack<>();
+    //private final int newTagCounter;
 
 
     public TagsSaxHandler(TagService tagsService)
     {
         this.tagService = tagsService;
+        //this.newTagCounter = 0;
     }
 
 
@@ -57,6 +59,7 @@ public class TagsSaxHandler extends DefaultHandler
                 tagName = tagRef;
 
             Tag tag = tagService.getOrCreateTag(tagName, tagRef != null);
+            LOG.info("/// Reading tag " + tag);
 
             // If it is not a reference, it may be defining a tag that was already referenced;
             // so we need to set the values of the placeholder.
@@ -79,7 +82,7 @@ public class TagsSaxHandler extends DefaultHandler
                 if (color != null)
                 {
                     if (tag.getColor()!= null)
-                        LOG.warning("Redefining tag color to '"+title+"', was: " + tag.getColor());
+                        LOG.warning("Redefining tag color to '"+color+"', was: " + tag.getColor());
                     if (color.matches("(#\\p{XDigit}{6})|[a-z]+"))
                         tag.setColor(color);
                     else

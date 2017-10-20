@@ -37,24 +37,23 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
 {
     @Deployment
     @AddonDependencies({
-                @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
-                @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
-                @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-ee"),
-                @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
-                @AddonDependency(name = "org.jboss.windup.tests:test-util"),
-                @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
-                @AddonDependency(name = "org.jboss.windup.config:windup-config-groovy"),
-                @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
+        @AddonDependency(name = "org.jboss.windup.graph:windup-graph"),
+        @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
+        @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
+        @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-ee"),
+        //@AddonDependency(name = "org.jboss.windup.rules:windup-rulesets"),
+        @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
+        @AddonDependency(name = "org.jboss.windup.tests:test-util"),
+        @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
+        @AddonDependency(name = "org.jboss.windup.config:windup-config-groovy"),
+        @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
     })
     public static AddonArchive getDeployment()
     {
         return ShrinkWrap.create(AddonArchive.class)
-                    .addBeansXML()
-                    .addClass(WindupArchitectureTest.class)
-                    .addAsResource(new File("src/test/groovy/GroovyExampleRule.windup.groovy"))
-                    .addAsResource(new File("../rules-java/api/src/main/resources/data/java-ee.tags.xml"))
-                    .addAsResource(new File("../reporting/impl/src/main/java/org/jboss/windup/reporting/rules/generation/techreport/techReport-hierarchy.tags.xml"));
+            .addBeansXML()
+            .addClass(WindupArchitectureTest.class)
+            .addAsResource(new File("src/test/groovy/GroovyExampleRule.windup.groovy"));
     }
 
     @Test
@@ -63,7 +62,7 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
         try (GraphContext context = super.createGraphContext())
         {
             // The test-files folder in the project root dir.
-            super.runTest(context, "../test-files/jee-example-app-1.0.0.ear", false);
+            super.runTest(context, "../test-files/jee-example-app-1.0.0.ear", "src/test/xml/rules", false);
 
             validateEjbXmlReferences(context);
             validateReports(context);
@@ -97,30 +96,21 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
         {
             if (sessionBean.getBeanName().equals("ItemLookupBean"))
             {
-                Assert.assertEquals("com.acme.anvil.service.ItemLookupHome", sessionBean.getEjbHome()
-                            .getQualifiedName());
+                Assert.assertEquals("com.acme.anvil.service.ItemLookupHome", sessionBean.getEjbHome().getQualifiedName());
                 Assert.assertEquals("com.acme.anvil.service.ItemLookup", sessionBean.getEjbRemote().getQualifiedName());
-                Assert.assertEquals("com.acme.anvil.service.ItemLookupLocalHome", sessionBean.getEjbLocalHome()
-                            .getQualifiedName());
-                Assert.assertEquals("com.acme.anvil.service.ItemLookupLocal", sessionBean.getEjbLocal()
-                            .getQualifiedName());
-                Assert.assertEquals("com.acme.anvil.service.ItemLookupBean", sessionBean.getEjbClass()
-                            .getQualifiedName());
+                Assert.assertEquals("com.acme.anvil.service.ItemLookupLocalHome", sessionBean.getEjbLocalHome().getQualifiedName());
+                Assert.assertEquals("com.acme.anvil.service.ItemLookupLocal", sessionBean.getEjbLocal().getQualifiedName());
+                Assert.assertEquals("com.acme.anvil.service.ItemLookupBean", sessionBean.getEjbClass().getQualifiedName());
                 Assert.assertEquals("Stateless", sessionBean.getSessionType());
                 Assert.assertEquals("Container", sessionBean.getTransactionType());
             }
             else if (sessionBean.getBeanName().equals("ProductCatalogBean"))
             {
-                Assert.assertEquals("com.acme.anvil.service.ProductCatalogHome", sessionBean.getEjbHome()
-                            .getQualifiedName());
-                Assert.assertEquals("com.acme.anvil.service.ProductCatalog", sessionBean.getEjbRemote()
-                            .getQualifiedName());
-                Assert.assertEquals("com.acme.anvil.service.ProductCatalogLocalHome", sessionBean.getEjbLocalHome()
-                            .getQualifiedName());
-                Assert.assertEquals("com.acme.anvil.service.ProductCatalogLocal", sessionBean.getEjbLocal()
-                            .getQualifiedName());
-                Assert.assertEquals("com.acme.anvil.service.ProductCatalogBean", sessionBean.getEjbClass()
-                            .getQualifiedName());
+                Assert.assertEquals("com.acme.anvil.service.ProductCatalogHome", sessionBean.getEjbHome().getQualifiedName());
+                Assert.assertEquals("com.acme.anvil.service.ProductCatalog", sessionBean.getEjbRemote().getQualifiedName());
+                Assert.assertEquals("com.acme.anvil.service.ProductCatalogLocalHome", sessionBean.getEjbLocalHome().getQualifiedName());
+                Assert.assertEquals("com.acme.anvil.service.ProductCatalogLocal", sessionBean.getEjbLocal().getQualifiedName());
+                Assert.assertEquals("com.acme.anvil.service.ProductCatalogBean", sessionBean.getEjbClass().getQualifiedName());
                 Assert.assertEquals("Stateless", sessionBean.getSessionType());
                 Assert.assertEquals("Container", sessionBean.getTransactionType());
             }
@@ -175,11 +165,12 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
 
     private void validateTechReport(GraphContext grCtx)
     {
+
         // 2 reports - a global one and the app one.
         Iterable<TechReportModel> techReportsIt = grCtx.findAll(TechReportModel.class);
         List<TechReportModel> techReports = new ArrayList<>();
         techReportsIt.forEach(techReports::add);
-        Assert.assertEquals(techReports.size(), 2);
+        Assert.assertEquals(2, techReports.size());
 
 
         // There should be one box report for each app.
@@ -202,10 +193,12 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
             Assert.assertNotNull(techReport);
         }
 
+        ReportService reportService = new ReportService(grCtx);
+
         // Check the reports
         for (TechReportModel techReportModel : techReportsIt)
         {
-            final Path path = Paths.get(techReportModel.getReportFilename());
+            final Path path = reportService.getReportDirectory().resolve(techReportModel.getReportFilename());
 
             if (techReportModel.getProjectModel() == null)
             {
@@ -215,7 +208,7 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
                 final String appName = "jee-example-app-1.0.0.ear";
                 bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "Web", 2, 2));
                 bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "EJB", 2, 2));
-                bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "Transactions", 2, 2));
+                bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "Transactions", 3, 9999));
                 bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "Rich", 0, 0));
                 bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "Test", 0, 0));
                 bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "Logging", 0, 0));
@@ -227,10 +220,12 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
             else {
                 // Per-app box report
                 List<TestTechReportUtil.BoxInfo> boxesExpected = new ArrayList<>();
-                boxesExpected.add(new TestTechReportUtil.BoxInfo("Java_EE", "View", "Web", "Web XML File", 1));
-                boxesExpected.add(new TestTechReportUtil.BoxInfo("Java_EE", "Sustain", "Transactions", "JTA", 2));
-                boxesExpected.add(new TestTechReportUtil.BoxInfo("Java_EE", "Store", null, null, 0));
-                boxesExpected.add(new TestTechReportUtil.BoxInfo("Embedded", null, null, null, 0));
+                boxesExpected.add(new TestTechReportUtil.BoxInfo("Java_EE", "View", "Web", "Web XML File", 1, 999));
+                boxesExpected.add(new TestTechReportUtil.BoxInfo("Java_EE", "Sustain", "Transactions", "JTA", 3, 999));
+                // There should be no box in sector Store.
+                boxesExpected.add(new TestTechReportUtil.BoxInfo("Java_EE", "Store", null, null, 0, 0));
+                // There should be no box in row Embedded.
+                boxesExpected.add(new TestTechReportUtil.BoxInfo("Embedded", null, null, null, 0, 0));
                 new TestTechReportUtil().checkTechBoxReport(path, boxesExpected);
             }
         }

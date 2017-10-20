@@ -3,6 +3,8 @@ package org.jboss.windup.testutil.html;
 import java.nio.file.Path;
 import java.util.List;
 
+import java.util.logging.Logger;
+import org.jboss.windup.util.exception.WindupException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -11,11 +13,12 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 
 /**
  * Contains utility methods for assisting tests in interacting with the generated reports.
- * 
+ *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public class TestReportUtil
 {
+    private final static Logger LOG = Logger.getLogger(TestReportUtil.class.getName());
     private final WebDriver driver;
 
     public TestReportUtil()
@@ -31,6 +34,9 @@ public class TestReportUtil
      */
     public void loadPage(Path filePath)
     {
+        LOG.info("Loading page: " + filePath);
+        if (!filePath.toFile().exists())
+            throw new CheckFailedException("Requested page file does not exist: " + filePath);
         getDriver().get(filePath.toUri().toString());
     }
 
