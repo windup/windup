@@ -3,6 +3,7 @@ package org.jboss.windup.testutil.html;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.ocpsoft.common.util.Assert;
 import org.openqa.selenium.By;
@@ -59,7 +60,9 @@ public class TestTechReportUtil extends TestReportUtil
 
     private int parseSizeFromClasses(String classes)
     {
-        final String size = Pattern.compile("(?:.*size)\\d(?:.*)").matcher(classes).group(0);
+        Matcher mat = Pattern.compile("(?:.*size)(\\d)(?:.*)").matcher(classes);
+        mat.matches();
+        String size = mat.group(1);
         return Integer.valueOf(size);
     }
 

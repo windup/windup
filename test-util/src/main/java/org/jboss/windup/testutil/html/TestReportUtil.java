@@ -1,11 +1,13 @@
 package org.jboss.windup.testutil.html;
 
+import com.gargoylesoftware.htmlunit.SilentCssErrorHandler;
+import com.gargoylesoftware.htmlunit.WebClient;
 import java.nio.file.Path;
 import java.util.List;
 
 import java.util.logging.Logger;
-import org.jboss.windup.util.exception.WindupException;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.htmlunit.HtmlUnitDriver;
@@ -15,6 +17,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
  * Contains utility methods for assisting tests in interacting with the generated reports.
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
+ * @author Ondrej Zizka
  */
 public class TestReportUtil
 {
@@ -26,7 +29,7 @@ public class TestReportUtil
         DesiredCapabilities capabilities = new DesiredCapabilities();
         capabilities.setBrowserName("firefox");
         capabilities.setJavascriptEnabled(true);
-        this.driver = new HtmlUnitDriver(capabilities);
+        this.driver = new WindupHtmlUnitDriver(capabilities);
     }
 
     /**
@@ -79,4 +82,20 @@ public class TestReportUtil
         }
         return foundExpectedResult;
     }
+    
+    
+    public class WindupHtmlUnitDriver extends HtmlUnitDriver {
+
+        public WindupHtmlUnitDriver(Capabilities capabilities) {
+            super(capabilities);
+        }
+        
+        @Override
+        protected WebClient modifyWebClient(WebClient client) {
+            WebClient modifiedClient = super.modifyWebClient(client);
+            modifiedClient.getOptions().setThrowExceptionOnScriptError(false);
+            modifiedClient.setCssErrorHandler(new SilentCssErrorHandler());
+            return modifiedClient;
+        }
+    }    
 }

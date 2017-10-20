@@ -41,7 +41,6 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
         @AddonDependency(name = "org.jboss.windup.exec:windup-exec"),
         @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java"),
         @AddonDependency(name = "org.jboss.windup.rules.apps:windup-rules-java-ee"),
-        //@AddonDependency(name = "org.jboss.windup.rules:windup-rulesets"),
         @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
         @AddonDependency(name = "org.jboss.windup.tests:test-util"),
         @AddonDependency(name = "org.jboss.windup.reporting:windup-reporting"),
@@ -206,9 +205,9 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
                 List<TestTechReportUtil.BubbleInfo> bubblesExpected = new ArrayList<>();
 
                 final String appName = "jee-example-app-1.0.0.ear";
-                bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "Web", 2, 2));
-                bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "EJB", 2, 2));
-                bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "Transactions", 3, 9999));
+                bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "Web", 2, 3));
+                bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "EJB", 2, 3));
+                bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "Transactions", 3, 5));
                 bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "Rich", 0, 0));
                 bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "Test", 0, 0));
                 bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "Logging", 0, 0));
