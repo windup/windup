@@ -72,18 +72,19 @@
             </tag>
         </tag>
         <tag name="techSector03:Store" title="Store" color="#F4B400" pseudo="true">
-            <!-- These can be used directly, as it matches an existing tag and the title is okay too. -->
+            <!--
             <tag name="techBox:orm" title="ORM" pseudo="true" parents="techRow:java-ee" icon="Diagram_DevelopmentModel">
-                <tag ref="orm"/>
             </tag>
             <tag name="techBox:ogm" title="OGM" pseudo="true" parents="techRow:java-ee" icon="Diagram_DevelopmentModel">
-                <tag ref="ogm"/>
             </tag>
+            -->
             <tag name="techBox:jdbc" title="JDBC" pseudo="true" parents="techRow:java-ee"  icon="Hardware_Storage-A-Stack">
                 <tag ref="jdbc"/>
             </tag>
-            <tag name="techBox:cache" title="Caching" pseudo="true" parents="techRow:embedded" icon="Recycle_Symbol">
+            <tag name="techBox:Caching" title="Caching" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Recycle_Symbol">
                 <tag ref="cache"/>
+            </tag>
+            <tag name="techBox:object-mapping" title="Object Mapping" pseudo="true" parents="techRow:embedded" icon="Recycle_Symbol">
             </tag>
         </tag>
         <tag name="techSector04:Sustain" title="Sustain" color="#DB4437" pseudo="true">
@@ -99,10 +100,10 @@
             </tag>
         </tag>
         <tag name="techSector05:Execute" title="Execute" color="#674EA7" pseudo="true">
-            <tag name="techBox:processing" title="Processing" pseudo="true" parents="techRow:java-ee" icon="Hardware_Processor-Compute"/>
-            <tag name="techBox:ioc" title="IoC" pseudo="true" parents="techRow:java-ee" icon="Arrows_Interoperable-CrossPlatform"/>
-            <tag name="techBox:rules" title="Rules &amp; Processes" pseudo="true" parents="techRow:embedded" icon="Object_Gear-Group"/>
-            <tag name="techBox:integration" title="Integration" pseudo="true" parents="techRow:embedded" icon="Software_API"/>
+            <tag name="techBox:Processing" title="Processing" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Hardware_Processor-Compute"/>
+            <tag name="techBox:ioc" title="IoC" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Arrows_Interoperable-CrossPlatform"/>
+            <tag name="techBox:Rules" title="Rules &amp; Processes" pseudo="true" parents="techRow:embedded" icon="Object_Gear-Group"/>
+            <tag name="techBox:Integration" title="Integration" pseudo="true" parents="techRow:embedded" icon="Software_API"/>
             <tag name="techBox:3rd-party" title="3rd party" pseudo="true" parents="techRow:embedded" icon="Office_SnackBasket"/>
         </tag>
     </tag>
@@ -121,7 +122,7 @@
             <tag pseudo="true" name="silly:Execute" title="Execute" parents="techSector05:Execute"/>
         </tag>
         <tag name="techReport:sillyBoxes">
-            <tag pseudo="true" name="silly:3rd party" title="3rd party" parents="techBox:3rd"/>
+            <tag pseudo="true" name="silly:3rd party" title="3rd party" parents="techBox:3rd-party"/>
             <tag pseudo="true" name="silly:Batch" title="Batch" parents="techBox:Batch"/> <!-- Not a box? -->
             <tag pseudo="true" name="silly:Bean" title="Bean" parents="techBox:EJB"/>
             <tag pseudo="true" name="silly:Caching" title="Caching" parents="techBox:Caching"/>
@@ -129,7 +130,7 @@
             <tag pseudo="true" name="silly:Clustering" title="Clustering" parents="techBox:Clustering"/>
             <tag pseudo="true" name="silly:HTTP" title="HTTP" parents="techBox:HTTP"/>
             <tag pseudo="true" name="silly:Integration" title="Integration" parents="techBox:Integration"/>
-            <tag pseudo="true" name="silly:Inversion of Control" title="Inversion of Control" parents="techBox:Inversion"/>
+            <tag pseudo="true" name="silly:Inversion of Control" title="Inversion of Control" parents="techBox:ioc"/>
             <tag pseudo="true" name="silly:JSON-P" title="JSON-P" parents="techBox:Processing"/> <!-- Not a box? WINDUPRULE-296 -->
             <tag pseudo="true" name="silly:Markup" title="Markup" parents="techBox:Markup"/>
             <tag pseudo="true" name="silly:Messaging" title="Messaging" parents="techBox:Messaging"/>
@@ -139,7 +140,7 @@
             <tag pseudo="true" name="silly:Processing" title="Processing" parents="techBox:Processing"/>
             <tag pseudo="true" name="silly:REST" title="REST" parents="techBox:rest"/>
             <tag pseudo="true" name="silly:Rich" title="Rich" parents="techBox:rich"/>
-            <tag pseudo="true" name="silly:Rules and Processes" title="Rules and Processes" parents="techBox:rules"/>
+            <tag pseudo="true" name="silly:Rules and Processes" title="Rules and Processes" parents="techBox:Rules"/>
             <tag pseudo="true" name="silly:Security" title="Security" parents="techBox:Security"/>
             <tag pseudo="true" name="silly:Test" title="Test" parents="techBox:Test"/>
             <tag pseudo="true" name="silly:Transaction" title="Transaction" parents="techBox:Transactions"/>
