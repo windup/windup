@@ -16,7 +16,7 @@
 <#macro ignoredFileRenderer reportModel>
     <div class="panel panel-primary">
         <div class="panel-heading">
-            <h3 class="panel-title">Ignored files</h3>
+            <h3 class="panel-title">Ignored Files</h3>
         </div>
         <table class="table table-striped table-bordered">
             <tr>
@@ -60,7 +60,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>${reportModel.projectModel.name} - Ignored files</title>
+    <title>${reportModel.projectModel.name} - Ignored Files</title>
     <link href="resources/css/bootstrap.min.css" rel="stylesheet">
     <link href="resources/css/windup.css" rel="stylesheet" media="screen">
     <link href="resources/css/windup.java.css" rel="stylesheet" media="screen">
