@@ -1,67 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
 
+    <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.jboss.windup</groupId>
-        <artifactId>windup-parent</artifactId>
+        <artifactId>windup-server-provider-spi-parent</artifactId>
         <version>4.1.0-SNAPSHOT</version>
     </parent>
+    <artifactId>windup-server-provider-spi</artifactId>
 
-    <groupId>org.jboss.windup.utils</groupId>
-    <artifactId>windup-utils</artifactId>
-
-    <name>Windup Engine - Utils</name>
+    <name>Windup Server Provider SPI</name>
 
     <dependencies>
-
-        <!-- Local Dependencies -->
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.4</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.4</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-collections4</artifactId>
-            <version>4.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>18.0</version>
-        </dependency>
-
-        <!-- JTar - Java Tar file support -->
-        <dependency>
-            <groupId>org.kamranzafar</groupId>
-            <artifactId>jtar</artifactId>
-            <version>2.3</version>
-        </dependency>
-
-        <!-- Addon Dependencies -->
-
-        <!-- Furnace Container -->
-        <dependency>
-            <groupId>org.jboss.forge.furnace.container</groupId>
-            <artifactId>simple</artifactId>
-            <classifier>forge-addon</classifier>
-            <scope>provided</scope>
-        </dependency>
-
     </dependencies>
-
 
     <build>
         <plugins>
             <plugin>
-                <groupId>org.jboss.forge.furnace</groupId>
                 <artifactId>furnace-maven-plugin</artifactId>
+                <groupId>org.jboss.forge.furnace</groupId>
                 <executions>
                     <execution>
                         <id>generate-dot</id>
@@ -92,4 +49,5 @@
             </plugin>
         </plugins>
     </build>
+
 </project>

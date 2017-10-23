@@ -146,6 +146,13 @@
                 <version>${project.version}</version>
             </dependency>
 
+            <!-- Windup Engine - Server Service Provider Addon -->
+            <dependency>
+                <groupId>org.jboss.windup</groupId>
+                <artifactId>windup-server-provider-spi</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
             <!-- Windup Engine - Tooling API Addon -->
             <dependency>
                 <groupId>org.jboss.windup</groupId>
