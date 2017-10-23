@@ -272,7 +272,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                         processReferences(graphContext, referenceCount, unprocessed, filterClassReferences(references, classNotFoundAnalysisEnabled));
                         filesToProcess.remove(unprocessed);
                     }
-                    catch (Exception e)
+                    catch (Exception | StackOverflowError e)
                     {
                         final String msg = "Failed to process: " + unprocessed + " due to: " + e.getMessage();
                         LOG.log(Level.WARNING, msg, e);
