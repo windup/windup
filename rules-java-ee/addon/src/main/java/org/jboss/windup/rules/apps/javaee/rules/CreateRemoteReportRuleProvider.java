@@ -36,7 +36,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 /**
  * Creates a report of EJB data (eg, a list of EJB session beans).
  */
-@RuleMetadata(phase = ReportGenerationPhase.class, id = "Create Remote Service Report")
+@RuleMetadata(phase = ReportGenerationPhase.class, id = "Create Remote Services Report")
 public class CreateRemoteReportRuleProvider extends AbstractRuleProvider
 {
     public static final String TEMPLATE_EJB_REPORT = "/reports/templates/remote.ftl";
