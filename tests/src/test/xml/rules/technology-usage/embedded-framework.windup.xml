@@ -1,0 +1,214 @@
+<?xml version="1.0"?>
+<ruleset xmlns="http://windup.jboss.org/schema/jboss-ruleset" id="embedded-framework"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://windup.jboss.org/schema/jboss-ruleset http://windup.jboss.org/schema/jboss-ruleset/windup-jboss-ruleset.xsd">
+    <metadata>
+        <description>
+            This ruleset provides analysis of embedded frameworks.
+        </description>
+        <dependencies>
+            <addon id="org.jboss.windup.rules,windup-rules-javaee,3.0.0.Final" />
+            <addon id="org.jboss.windup.rules,windup-rules-java,3.0.0.Final" />
+        </dependencies>
+    </metadata>
+    <rules>
+        <rule id="embedded-framework-01000">
+            <when>
+                <file filename="axis{*}.jar"/>
+            </when>
+            <perform>
+                <classification title="Embedded framework - Apache Axis" category-id="optional" effort="0">
+                    <description>The application embeds the Apache Axis framework.</description>
+                </classification>
+                <technology-tag level="INFORMATIONAL">Apache Axis (embedded)</technology-tag>
+            </perform>
+        </rule>
+        <rule id="embedded-framework-01010">
+            <when>
+                <file filename="axis2{*}.jar"/>
+            </when>
+            <perform>
+                <classification title="Embedded framework - Apache Axis2" category-id="optional" effort="0">
+                    <description>The application embeds the Apache Axis2 framework.</description>
+                </classification>
+                <technology-tag level="INFORMATIONAL">Apache Axis2 (embedded)</technology-tag>
+            </perform>
+        </rule>
+        <rule id="embedded-framework-01100">
+            <when>
+                <file filename="{*}cxf{*}.jar"/>
+            </when>
+            <perform>
+                <classification title="Embedded framework - Apache CXF" category-id="optional" effort="0">
+                    <description>The application embeds the Apache CXF framework.</description>
+                </classification>
+                <technology-tag level="INFORMATIONAL">Apache CXF (embedded)</technology-tag>
+            </perform>
+        </rule>
+        <rule id="embedded-framework-01200">
+            <when>
+                <file filename="{*}xfire{*}.jar"/>
+            </when>
+            <perform>
+                <classification title="Embedded framework - XFire" category-id="optional" effort="0">
+                    <description>The application embeds the XFire framework.</description>
+                </classification>
+                <technology-tag level="INFORMATIONAL">XFire (embedded)</technology-tag>
+            </perform>
+        </rule>
+        <rule id="embedded-framework-01300">
+            <when>
+                <file filename="{*}jersey{*}.jar"/>
+            </when>
+            <perform>
+                <classification title="Embedded framework - Jersey" category-id="optional" effort="0">
+                    <description>The application embeds the Jersey framework.</description>
+                </classification>
+                <technology-tag level="INFORMATIONAL">Jersey (embedded)</technology-tag>
+            </perform>
+        </rule>
+        <rule id="embedded-framework-01400">
+            <when>
+                <file filename="{*}unirest{*}.jar"/>
+            </when>
+            <perform>
+                <classification title="Embedded framework - Unirest" category-id="optional" effort="0">
+                    <description>The application embeds the Unirest framework.</description>
+                </classification>
+                <technology-tag level="INFORMATIONAL">Unirest (embedded)</technology-tag>
+            </perform>
+        </rule>
+        <rule id="embedded-framework-01500">
+            <when>
+                <file filename="hibernate{*}.jar"/>
+            </when>
+            <perform>
+                <classification title="Embedded framework - Hibernate" category-id="optional" effort="0">
+                    <description>The application embeds the Hibernate framework.</description>
+                </classification>
+                <technology-tag level="INFORMATIONAL">Hibernate (embedded)</technology-tag>
+            </perform>
+        </rule>
+        <rule id="embedded-framework-01600">
+            <when>
+                <file filename="hibernate-ogm{*}.jar"/>
+            </when>
+            <perform>
+                <classification title="Embedded framework - Hibernate OGM" category-id="optional" effort="0">
+                    <description>The application embeds the Hibernate OGM framework.</description>
+                </classification>
+                <technology-tag level="INFORMATIONAL">Hibernate OGM (embedded)</technology-tag>
+            </perform>
+        </rule>
+        <rule id="embedded-framework-01700">
+            <when>
+                <file filename="{*}eclipselink{*}.jar"/>
+            </when>
+            <perform>
+                <classification title="Embedded framework - EclipseLink" category-id="optional" effort="0">
+                    <description>The application embeds the EclipseLink framework.</description>
+                </classification>
+                <technology-tag level="INFORMATIONAL">EclipseLink (embedded)</technology-tag>
+            </perform>
+        </rule>
+        <rule id="embedded-framework-01800">
+            <when>
+                <file filename="{*}esapi{*}.jar"/>
+            </when>
+            <perform>
+                <classification title="Embedded framework - ESAPI" category-id="optional" effort="0">
+                    <description>The application embeds the ESAPI framework.</description>
+                </classification>
+                <technology-tag level="INFORMATIONAL">ESAPI (embedded)</technology-tag>
+            </perform>
+        </rule>
+        <rule id="embedded-framework-01900">
+            <when>
+                <file filename="{*}junit{*}.jar"/>
+            </when>
+            <perform>
+                <classification title="Embedded framework - JUnit" category-id="optional" effort="0">
+                    <description>The application embeds the JUnit framework.</description>
+                </classification>
+                <technology-tag level="INFORMATIONAL">JUnit (embedded)</technology-tag>
+            </perform>
+        </rule>
+        <rule id="embedded-framework-02000">
+            <when>
+                <file filename="spring-batch{*}.jar"/>
+            </when>
+            <perform>
+                <classification title="Embedded framework - Spring Batch" category-id="optional" effort="0">
+                    <description>The application embeds the Spring Batch framework.</description>
+                </classification>
+                <technology-tag level="INFORMATIONAL">Spring Batch (embedded)</technology-tag>
+            </perform>
+        </rule>
+        <rule id="embedded-framework-02100">
+            <when>
+                <file filename="spring{*}.jar"/>
+            </when>
+            <perform>
+                <classification title="Embedded framework - Spring" category-id="optional" effort="0">
+                    <description>The application embeds the Spring framework.</description>
+                </classification>
+                <technology-tag level="INFORMATIONAL">Spring (embedded)</technology-tag>
+            </perform>
+        </rule>
+        <rule id="embedded-framework-02200">
+            <when>
+                <file filename="{*}aspectj{*}.jar"/>
+            </when>
+            <perform>
+                <classification title="Embedded framework - AspectJ" category-id="optional" effort="0">
+                    <description>The application embeds the AspectJ framework.</description>
+                </classification>
+                <technology-tag level="INFORMATIONAL">AspectJ (embedded)</technology-tag>
+            </perform>
+        </rule>
+        <rule id="embedded-framework-02300">
+            <when>
+                <file filename="{*}jbpm{*}.jar"/>
+            </when>
+            <perform>
+                <classification title="Embedded framework - JBPM" category-id="optional" effort="0">
+                    <description>The application embeds the JBPM framework.</description>
+                </classification>
+                <technology-tag level="INFORMATIONAL">JBPM (embedded)</technology-tag>
+            </perform>
+        </rule>
+        <rule id="embedded-framework-02400">
+            <when>
+                <file filename="{*}jrules{*}.jar"/>
+            </when>
+            <perform>
+                <classification title="Embedded framework - iLog" category-id="optional" effort="0">
+                    <description>The application embeds the iLog framework.</description>
+                </classification>
+                <technology-tag level="INFORMATIONAL">iLog (embedded)</technology-tag>
+            </perform>
+        </rule>
+        <rule id="embedded-framework-02500">
+            <when>
+                <file filename="{*}liferay{*}.jar"/>
+            </when>
+            <perform>
+                <classification title="Embedded framework - Liferay" category-id="optional" effort="0">
+                    <description>The application embeds the Liferay framework.</description>
+                </classification>
+                <technology-tag level="INFORMATIONAL">Liferay (embedded)</technology-tag>
+            </perform>
+        </rule>
+        <rule id="embedded-framework-02600">
+            <when>
+                <file filename="{*}frm{*}.jar"/>
+            </when>
+            <perform>
+                <classification title="Embedded framework - Oracle Forms" category-id="optional" effort="0">
+                    <description>The application embeds the Oracle Forms framework.</description>
+                </classification>
+                <technology-tag level="INFORMATIONAL">Oracle Forms (embedded)</technology-tag>
+            </perform>
+        </rule>
+    </rules>
+</ruleset>

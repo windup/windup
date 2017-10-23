@@ -4,6 +4,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+import javax.jws.WebService;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
@@ -66,6 +67,17 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
             validateEjbXmlReferences(context);
             validateReports(context);
             validateParentOfSourceReports(context);
+        }
+    }
+
+    @Test
+    public void testTechReportFrameworksWar() throws Exception
+    {
+        try (GraphContext context = super.createGraphContext())
+        {
+            // The test-files folder in the project root dir.
+            super.runTest(context, "../test-files/techReport/frameworks.war", "src/test/xml/rules", false);
+            validateTechReportFrameworksWar(context);
         }
     }
 
@@ -159,10 +171,11 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
                     "EJB XML 2.1");
 
         validateEJBBeanReport(context);
-        validateTechReport(context);
+
+        validateTechReportJEEExample(context);
     }
 
-    private void validateTechReport(GraphContext grCtx)
+    private void validateTechReport(GraphContext grCtx, List<TestTechReportUtil.BubbleInfo> bubblesExpected, List<TestTechReportUtil.BoxInfo> boxesExpected)
     {
 
         // 2 reports - a global one and the app one.
@@ -202,29 +215,10 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
             if (techReportModel.getProjectModel() == null)
             {
                 // Global bubbles report
-                List<TestTechReportUtil.BubbleInfo> bubblesExpected = new ArrayList<>();
-
-                final String appName = "jee-example-app-1.0.0.ear";
-                bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "Web", 2, 3));
-                bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "EJB", 2, 3));
-                bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "Transactions", 3, 5));
-                bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "Rich", 0, 0));
-                bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "Test", 0, 0));
-                bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "Logging", 0, 0));
-                bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "Processing", 0, 0));
-                bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "IoC", 0, 0));
-
                 new TestTechReportUtil().checkTechGlobalReport(path, bubblesExpected);
             }
             else {
                 // Per-app box report
-                List<TestTechReportUtil.BoxInfo> boxesExpected = new ArrayList<>();
-                boxesExpected.add(new TestTechReportUtil.BoxInfo("Java_EE", "View", "Web", "Web XML File", 1, 999));
-                boxesExpected.add(new TestTechReportUtil.BoxInfo("Java_EE", "Sustain", "Transactions", "JTA", 3, 999));
-                // There should be no box in sector Store.
-                boxesExpected.add(new TestTechReportUtil.BoxInfo("Java_EE", "Store", null, null, 0, 0));
-                // There should be no box in row Embedded.
-                boxesExpected.add(new TestTechReportUtil.BoxInfo("Embedded", null, null, null, 0, 0));
                 new TestTechReportUtil().checkTechBoxReport(path, boxesExpected);
             }
         }
@@ -241,5 +235,52 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
             Assert.assertTrue(parents.get(0).getReportName().equals("Dashboard"));
             Assert.assertTrue(parents.get(0).getReportFilename().contains("report_index"));
         }
+    }
+
+    private void validateTechReportJEEExample(GraphContext context)
+    {
+        List<TestTechReportUtil.BubbleInfo> bubblesExpected = new ArrayList<>();
+        final String appName = "jee-example-app-1.0.0.ear";
+        bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "Web", 2, 3));
+        bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "EJB", 2, 3));
+        bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "Transactions", 3, 5));
+        bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "Rich", 0, 0));
+        bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "Test", 0, 0));
+        bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "Logging", 0, 0));
+        bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "Processing", 0, 0));
+        bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "IoC", 0, 0));
+
+        List<TestTechReportUtil.BoxInfo> boxesExpected = new ArrayList<>();
+        boxesExpected.add(new TestTechReportUtil.BoxInfo("Java_EE", "View", "Web", "Web XML File", 1, 999));
+        boxesExpected.add(new TestTechReportUtil.BoxInfo("Java_EE", "Sustain", "Transactions", "JTA", 3, 999));
+        // There should be no box in sector Store.
+        boxesExpected.add(new TestTechReportUtil.BoxInfo("Java_EE", "Store", null, null, 0, 0));
+        // There should be no box in row Embedded.
+        boxesExpected.add(new TestTechReportUtil.BoxInfo("Embedded", null, null, null, 0, 0));
+
+        validateTechReport(context, bubblesExpected, boxesExpected);
+    }
+
+    private void validateTechReportFrameworksWar(GraphContext context)
+    {
+        List<TestTechReportUtil.BubbleInfo> bubblesExpected = new ArrayList<>();
+        final String appName = "frameworks.war";
+        //bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "Web", 2, 3));
+
+        List<TestTechReportUtil.BoxInfo> boxesExpected = new ArrayList<>();
+        boxesExpected.add(new TestTechReportUtil.BoxInfo("Java_EE", "View", "Web", "Web XML File", 1, 999));
+        boxesExpected.add(new TestTechReportUtil.BoxInfo("Embedded", "View", "Markup", "HTML", 4, 4));
+        boxesExpected.add(new TestTechReportUtil.BoxInfo("Embedded", "Connect", "WebService", "CXF", 1, 1));
+        boxesExpected.add(new TestTechReportUtil.BoxInfo("Embedded", "Connect", "WebService", "XFire", 1, 1));
+        boxesExpected.add(new TestTechReportUtil.BoxInfo("Embedded", "Connect", "WebService", "Axis2", 1, 1));
+        //boxesExpected.add(new TestTechReportUtil.BoxInfo("Embedded", "Connect", "WebService", "Axis", 2, 2));
+        boxesExpected.add(new TestTechReportUtil.BoxInfo("Embedded", "Store", "Object Mapping", "Hibernate OGM", 1, 1));
+        boxesExpected.add(new TestTechReportUtil.BoxInfo("Embedded", "Store", "Object Mapping", "Hibernate", 2, 2));
+        boxesExpected.add(new TestTechReportUtil.BoxInfo("Embedded", "Store", "Object Mapping", "EclipseLink", 1, 1));
+        boxesExpected.add(new TestTechReportUtil.BoxInfo("Embedded", "Execute", "Rules & Processes", "Drools", 1, 1));
+        boxesExpected.add(new TestTechReportUtil.BoxInfo("Embedded", "Execute", "Rules & Processes", "JBPM", 1, 1));
+        boxesExpected.add(new TestTechReportUtil.BoxInfo("Embedded", "Execute", "Rules & Processes", "iLog", 1, 1));
+
+        validateTechReport(context, bubblesExpected, boxesExpected);
     }
 }

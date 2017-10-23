@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<ruleset id="technology-usage-database" xmlns="http://windup.jboss.org/schema/jboss-ruleset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://windup.jboss.org/schema/jboss-ruleset http://windup.jboss.org/schema/jboss-ruleset/windup-jboss-ruleset.xsd">
+    <metadata>
+        <description>
+            This ruleset provides statistical summaries of the database items that were found during the analysis.
+        </description>
+        <dependencies>
+            <addon id="org.jboss.windup.rules,windup-rules-javaee,2.7.0.Final" />
+            <addon id="org.jboss.windup.rules,windup-rules-java,2.7.0.Final" />
+        </dependencies>
+        <phase>PostMigrationRulesPhase</phase>
+    </metadata>
+    <rules>
+        <rule id="technology-usage-database-01000">
+            <when>
+                <graph-query discriminator="DataSourceModel">
+                    <property name="isXA" type="BOOLEAN">false</property>
+                </graph-query>
+            </when>
+            <perform>
+                <technology-identified name="JDBC datasources">
+                    <tag name="Store"/>
+                    <tag name="Database"/>
+                    <tag name="Java EE"/>
+                </technology-identified>
+            </perform>
+        </rule>
+        <rule id="technology-usage-database-01001">
+            <when>
+                <graph-query discriminator="DataSourceModel">
+                    <property name="isXA" type="BOOLEAN">true</property>
+                </graph-query>
+            </when>
+            <perform>
+                <technology-identified name="JDBC XA datasources">
+                    <tag name="Store"/>
+                    <tag name="Database"/>
+                    <tag name="Java EE"/>
+                </technology-identified>
+            </perform>
+        </rule>
+        <rule id="technology-usage-database-01100">
+            <when>
+                <graph-query discriminator="JPAEntityModel" />
+            </when>
+            <perform>
+                <technology-identified name="JPA entities">
+                    <tag name="Store"/>
+                    <tag name="Persistence"/>
+                    <tag name="Java EE"/>
+                </technology-identified>
+            </perform>
+        </rule>
+        <rule id="technology-usage-database-01200">
+            <when>
+                <graph-query discriminator="JPANamedQueryModel"  />
+            </when>
+            <perform>
+                <technology-identified name="JPA named queries">
+                    <tag name="Store"/>
+                    <tag name="Persistence"/>
+                    <tag name="Java EE"/>
+                </technology-identified>
+            </perform>
+        </rule>
+        <rule id="technology-usage-database-01300">
+            <when>
+                <graph-query discriminator="JPAPersistenceUnitModel"  />
+            </when>
+            <perform>
+                <technology-identified name="Persistence units">
+                    <tag name="Store"/>
+                    <tag name="Persistence"/>
+                    <tag name="Java EE"/>
+                </technology-identified>
+            </perform>
+        </rule>
+    </rules>
+</ruleset>

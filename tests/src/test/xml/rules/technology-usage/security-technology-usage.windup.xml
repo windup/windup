@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<ruleset id="technology-usage-security" xmlns="http://windup.jboss.org/schema/jboss-ruleset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://windup.jboss.org/schema/jboss-ruleset http://windup.jboss.org/schema/jboss-ruleset/windup-jboss-ruleset.xsd">
+    <metadata>
+        <description>
+            This ruleset provides statistical summaries of the security related items in the input application (eg, security realms).
+        </description>
+        <dependencies>
+            <addon id="org.jboss.windup.rules,windup-rules-javaee,3.0.0.Final" />
+            <addon id="org.jboss.windup.rules,windup-rules-java,3.0.0.Final" />
+        </dependencies>
+        <targetTechnology id="eap"/>
+        <phase>PostMigrationRulesPhase</phase>
+    </metadata>
+    <rules>
+        <rule id="technology-usage-security-01000">
+            <when>
+                <or>
+                    <xmlfile matches="//*[local-name() = 'login-config']/*[local-name() = 'realm-name']"
+                            in="web.xml"/>
+
+                    <xmlfile matches="//*[local-name() = 'login-config']/*[local-name() = 'realm']"
+                            in="{*}ejb-jar.xml"/>
+
+                    <javaclass references="javax.annotation.security.{*}">
+                        <location>ANNOTATION</location>
+                    </javaclass>
+                </or>
+            </when>
+            <perform>
+                <technology-identified name="Security Realm">
+                    <tag name="Sustain"/>
+                    <tag name="Security"/>
+                    <tag name="Java EE"/>
+                </technology-identified>
+            </perform>
+        </rule>
+    </rules>
+</ruleset>

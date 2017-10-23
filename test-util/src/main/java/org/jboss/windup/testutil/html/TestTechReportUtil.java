@@ -1,11 +1,14 @@
 package org.jboss.windup.testutil.html;
 
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.jboss.windup.util.Util;
 import org.ocpsoft.common.util.Assert;
+import org.ocpsoft.common.util.Strings;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -87,6 +90,7 @@ public class TestTechReportUtil extends TestReportUtil
     {
         loadPage(path);
 
+        List errors = new ArrayList();
         for (BoxInfo box : boxesExpected)
         {
             if (box.sectorLabel == null)
@@ -95,8 +99,15 @@ public class TestTechReportUtil extends TestReportUtil
                 //checkNoBoxUnderSector(box); // TBD when someone wants to.
                 ;
             else
-                checkBox(box);
+            {
+                String error = checkBox(box);
+                if (null != error)
+                    errors.add(error);
+            }
         }
+        String glue = Util.NL + "  * ";
+        if (!errors.isEmpty())
+            throw new CheckFailedException("Tech report is wrong: " + glue + Strings.join(errors, glue));
 
         this.getDriver().close();
     }
@@ -128,36 +139,37 @@ public class TestTechReportUtil extends TestReportUtil
         return 0;
     }
 
-    private void checkBox(BoxInfo boxExpected)
+    /**
+     * Returns null if ok, or an error message if not found or wrong number.
+     */
+    private String checkBox(BoxInfo boxExpected)
     {
-        final String xpath = String.format("//div[contains(@class,'box') and //h4[normalize-space()='%s']]", boxExpected.boxLabel);
+        final String xpath = String.format("//div[contains(@class,'box') and //h4[normalize-space() = '%s']]", boxExpected.boxLabel);
         List<WebElement> boxes = getDriver().findElements(By.xpath(xpath));
         if (boxes.isEmpty())
-            throw new CheckFailedException(
-                    String.format("Box '%s' not found for row '%s' and sector '%s';  xpath: " + xpath,
-                    boxExpected.boxLabel, boxExpected.rowLabel, boxExpected.sectorLabel));
+            return String.format("Box '%s' not found for row '%s' and sector '%s';  xpath: " + xpath,
+                    boxExpected.boxLabel, boxExpected.rowLabel, boxExpected.sectorLabel);
 
-        List<WebElement> techItems = boxes.get(0).findElements(By.xpath(String.format("//ul/li[contains(normalize-space(), '%s')]", boxExpected.techName)));
+        List<WebElement> techItems = boxes.get(0).findElements(By.xpath(String.format("//ul/li[node()[normalize-space() = '%s']]", boxExpected.techName)));
         if (techItems.isEmpty())
-            throw new CheckFailedException(
-                    String.format("Tech '%s' not found in box '%s' at row '%s' and under sector '%s'",
-                    boxExpected.techName, boxExpected.boxLabel, boxExpected.rowLabel, boxExpected.sectorLabel));
+            return String.format("Tech '%s' not found in box '%s' at row '%s' and under sector '%s'",
+                    boxExpected.techName, boxExpected.boxLabel, boxExpected.rowLabel, boxExpected.sectorLabel);
 
         if (boxExpected.minCount == 0)
-            return;
+            return null;
 
         WebElement techLi = techItems.get(0);
         final List<WebElement> countBs = techLi.findElements(By.tagName("b"));
         if (countBs.isEmpty())
-            throw new CheckFailedException(
-                    String.format("Count was missing, expected to be %d for tech '%s' not found in box '%s' at row '%s' and under sector '%s'",
-                            boxExpected.minCount, boxExpected.techName, boxExpected.boxLabel, boxExpected.rowLabel, boxExpected.sectorLabel));
+            return String.format("Count was missing, expected to be %d for tech '%s' not found in box '%s' at row '%s' and under sector '%s'",
+                            boxExpected.minCount, boxExpected.techName, boxExpected.boxLabel, boxExpected.rowLabel, boxExpected.sectorLabel);
 
         final Integer actualCount = Integer.valueOf(countBs.get(0).getText());
         if (actualCount < boxExpected.minCount)
-            throw new CheckFailedException(
-                    String.format("Count was %d, expected to be at least %d for tech '%s' not found in box '%s' at row '%s' and under sector '%s'",
-                    actualCount, boxExpected.minCount, boxExpected.techName, boxExpected.boxLabel, boxExpected.rowLabel, boxExpected.sectorLabel));
+            return String.format("Count was %d, expected to be at least %d for tech '%s' not found in box '%s' at row '%s' and under sector '%s'",
+                    actualCount, boxExpected.minCount, boxExpected.techName, boxExpected.boxLabel, boxExpected.rowLabel, boxExpected.sectorLabel);
+
+        return null;
     }
 
 
