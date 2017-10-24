@@ -20,7 +20,8 @@ import org.jboss.windup.graph.model.InMemoryVertexFrame;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.exception.NonUniqueResultException;
 import org.jboss.windup.util.ExecutionStatistics;
-import org.jboss.windup.util.Util;
+import org.jboss.windup.util.FilteredIterator;
+import static org.jboss.windup.util.Util.NL;
 
 public class GraphService<T extends WindupVertexFrame> implements Service<T>
 {
@@ -101,15 +102,10 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
         return ExecutionStatistics.performBenchmarked("GraphService.findAllByProperties(" + Arrays.asList(keys) + ")", () ->
         {
             FramedGraphQuery query = findAllQuery();
-
             for (int i = 0, j = keys.length; i < j; i++)
             {
-                String key = keys[i];
-                String val = vals[i];
-
-                query = query.has(key, val);
+                query = query.has(keys[i], vals[i]);
             }
-
             return query.vertices(type);
         });
     }
@@ -117,7 +113,33 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     @Override
     public Iterable<T> findAllByProperty(final String key, final Object value)
     {
-        return ExecutionStatistics.performBenchmarked("GraphService.findAllByProperty(" + key + ")", () -> context.getFramed().getVertices(key, value, type));
+        return findAllByProperty(key, value, false);
+    }
+
+    /**
+     * Allows optional filtering by model type, because getVertices(prop, value, type) 
+     * does not filter by model type (it only frames the vertex as that type).
+     * That can be used to prevent collisions if multiple models use the same property name (e.g. "name").
+     * 
+     * @param filterByType  If true, the items returned from the graph are further filtered by this service's model type.
+     */
+    public Iterable<T> findAllByProperty(final String key, final Object value, final boolean filterByType)
+    {
+        return ExecutionStatistics.performBenchmarked("GraphService.findAllByProperty(" + key + ")", () -> {
+            if (!filterByType)
+                return context.getFramed().getVertices(key, value, type);
+
+            final Iterable vertices = context.getFramed().getVertices(key, value, WindupVertexFrame.class);
+            return new Iterable<T>()
+            {
+                @Override
+                public Iterator<T> iterator()
+                {
+                    final FilteredIterator.Filter<T> filter = new ModelTypeFilter<>(GraphService.this.type);
+                    return new FilteredIterator<T>(vertices.iterator(), filter);
+                }
+            };
+        });
     }
 
     @Override
@@ -225,7 +247,12 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     @Override
     public T getUniqueByProperty(String property, Object value) throws NonUniqueResultException
     {
-        Iterable<T> results = findAllByProperty(property, value);
+        return getUniqueByProperty(property, value, false);
+    }
+
+    public T getUniqueByProperty(String property, Object value, boolean enforceType) throws NonUniqueResultException
+    {
+        Iterable<T> results = findAllByProperty(property, value, enforceType);
 
         T result = null;
         Iterator<? extends WindupVertexFrame> iterator = results.iterator();
@@ -244,8 +271,9 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
 
             if (result != null)
             {
-                throw new NonUniqueResultException("Expected unique value, but returned non-unique: " + property + " Conflicting models:" + Util.NL
-                        + "\t" + item.toPrettyString() + Util.NL + "\t" + result.toPrettyString());
+                throw new NonUniqueResultException("Expected unique value, but returned non-unique: " + property + " Conflicting models:"
+                        + NL + "\t" + StringUtils.join(item.getClass().getInterfaces(), ", ") + NL + "\t\t" + item.toPrettyString()
+                        + NL + "\t" + StringUtils.join(result.getClass().getInterfaces(), ", ") + NL + "\t\t" + result.toPrettyString());
             }
             result = (T) item;
         }
@@ -288,8 +316,7 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     /**
      * Adds the specified type to this frame, and returns a new object that implements this type.
      */
-    public static <T extends WindupVertexFrame> T addTypeToModel(GraphContext graphContext, WindupVertexFrame frame,
-                                                           Class<T> type)
+    public static <T extends WindupVertexFrame> T addTypeToModel(GraphContext graphContext, WindupVertexFrame frame, Class<T> type)
     {
         Vertex vertex = frame.asVertex();
         graphContext.getGraphTypeManager().addTypeToElement(type, vertex);
@@ -299,12 +326,11 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     /**
      * Removes the specified type from the frame.
      */
-    public static <T extends WindupVertexFrame> T removeTypeFromModel(GraphContext graphContext, WindupVertexFrame frame,
-                Class<T> type)
+    public static <T extends WindupVertexFrame> WindupVertexFrame removeTypeFromModel(GraphContext graphContext, WindupVertexFrame frame, Class<T> type)
     {
         Vertex vertex = frame.asVertex();
         graphContext.getGraphTypeManager().removeTypeFromElement(type, vertex);
-        return graphContext.getFramed().frame(vertex, type);
+        return graphContext.getFramed().frame(vertex, WindupVertexFrame.class);
     }
 
     @Override
@@ -316,4 +342,24 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
             return null;
         });
     }
+
+
+    /**
+     * Only accepts vertices of given type and it's subtypes.
+     */
+    static class ModelTypeFilter<E extends VertexFrame> implements FilteredIterator.Filter<E>
+    {
+        Class<E> type;
+
+        public ModelTypeFilter(Class<E> type)
+        {
+            this.type = type;
+        }
+
+        public boolean accept(E item)
+        {
+            return this.type.isInstance(item);
+        }
+    }
+
 }
