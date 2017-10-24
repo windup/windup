@@ -458,7 +458,8 @@ public class RunWindupCommand implements Command, FurnaceDependent
             }
             if (!Files.isDirectory(path))
             {
-                log.warning("Neither a file or directory found in input: " + path.toString());
+                String pathString = (path == null) ? "" : path.toString(); 
+                log.warning("Neither a file or directory found in input: " + pathString);
                 continue;
             }
 
