@@ -1,16 +1,5 @@
 package org.jboss.windup.graph.service;
 
-import java.lang.reflect.Proxy;
-import java.util.Arrays;
-import java.util.Iterator;
-
-import org.jboss.windup.graph.FramedElementInMemory;
-import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.InMemoryVertexFrame;
-import org.jboss.windup.graph.model.WindupVertexFrame;
-import org.jboss.windup.graph.service.exception.NonUniqueResultException;
-import org.jboss.windup.util.ExecutionStatistics;
-
 import com.thinkaurelius.titan.core.TitanTransaction;
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.thinkaurelius.titan.util.datastructures.IterablesUtil;
@@ -20,6 +9,18 @@ import com.tinkerpop.frames.FramedGraphQuery;
 import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
+import java.lang.reflect.Proxy;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.logging.Logger;
+import org.apache.commons.lang3.StringUtils;
+import org.jboss.windup.graph.FramedElementInMemory;
+import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.InMemoryVertexFrame;
+import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.graph.service.exception.NonUniqueResultException;
+import org.jboss.windup.util.ExecutionStatistics;
+import org.jboss.windup.util.Util;
 
 public class GraphService<T extends WindupVertexFrame> implements Service<T>
 {
@@ -226,18 +227,29 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     {
         Iterable<T> results = findAllByProperty(property, value);
 
-        if (!results.iterator().hasNext())
-        {
-            return null;
-        }
+        T result = null;
+        Iterator<? extends WindupVertexFrame> iterator = results.iterator();
+        do {
+            if (!iterator.hasNext())
+                return result;
 
-        Iterator<T> iterator = results.iterator();
-        T result = iterator.next();
+            WindupVertexFrame item = iterator.next();
 
-        if (iterator.hasNext())
-        {
-            throw new NonUniqueResultException("Expected unique value, but returned non-unique.");
+            // There can be other types using the same property name.
+            if (!type.isInstance(item))
+                continue;
+
+            if ("jsf".equals(value))            /// DEBUG, remove
+                Logger.getLogger("FOO").info("Model with name 'jsf', type: " + type + " item: " + StringUtils.join(item.getClass().getInterfaces(), ", "));
+
+            if (result != null)
+            {
+                throw new NonUniqueResultException("Expected unique value, but returned non-unique: " + property + " Conflicting models:" + Util.NL
+                        + "\t" + item.toPrettyString() + Util.NL + "\t" + result.toPrettyString());
+            }
+            result = (T) item;
         }
+        while (iterator != null); // Needed something true but can't use constant expression.
 
         return result;
     }
