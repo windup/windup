@@ -58,6 +58,7 @@ import org.jboss.windup.ast.java.data.annotations.AnnotationArrayValue;
 import org.jboss.windup.ast.java.data.annotations.AnnotationClassReference;
 import org.jboss.windup.ast.java.data.annotations.AnnotationLiteralValue;
 import org.jboss.windup.ast.java.data.annotations.AnnotationValue;
+import static org.jboss.windup.util.Util.NL;
 
 /**
  * Provides the ability to parse a Java source file and return a {@link List} of {@link ClassReference} objects containing the fully qualified names
@@ -182,7 +183,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
     private String extractDefinitionLine(String typeDeclaration)
     {
         String typeLine = "";
-        String[] lines = typeDeclaration.split(System.lineSeparator());
+        String[] lines = typeDeclaration.split(NL);
         for (String line : lines)
         {
             typeLine = line;
@@ -291,7 +292,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
         this.classReferences.add(reference);
         return reference;
     }
-    
+
     /**
      * The method determines if the type can be resolved and if not, will try to guess the qualified name using the information from the imports.
      */
@@ -484,11 +485,11 @@ public class ReferenceResolvingVisitor extends ASTVisitor
             nodeType = resolveClassname(nodeType).result;
             VariableDeclarationFragment frag = (VariableDeclarationFragment) node.fragments().get(i);
             Expression expression = frag.getInitializer();
-            
+
             final int lineNumber = compilationUnit.getLineNumber(node.getStartPosition());
             final int columnNumber = compilationUnit.getColumnNumber(node.getStartPosition());
             final ITypeBinding resolveBinding = node.getType().resolveBinding();
-            
+
             if (expression instanceof Name)
             {
                 Name expressionName = (Name) expression;
@@ -505,16 +506,16 @@ public class ReferenceResolvingVisitor extends ASTVisitor
                                 status,
                                 TypeReferenceLocation.VARIABLE_INITIALIZER,
                                 lineNumber,
-                                columnNumber, node.getLength(), node.toString());                                        
+                                columnNumber, node.getLength(), node.toString());
                 }
                 else
-                {   
+                {
                     //additionally add Enum Constant type reference
                     if (resolveBinding.isEnum())
                     {
                         processTypeAsEnum(resolveBinding, expressionName, ResolutionStatus.RESOLVED, lineNumber, columnNumber, node.getLength(), extractDefinitionLine(node.toString()));
                     }
-                    
+
                     processTypeBinding(resolveBinding, ResolutionStatus.RESOLVED, TypeReferenceLocation.VARIABLE_INITIALIZER,
                                 lineNumber,
                                 columnNumber, node.getLength(), node.toString());
@@ -1463,7 +1464,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
             this.packageName = packageName;
             this.className = className;
         }
-        
+
         public String toString()
         {
             StringBuffer sb = new StringBuffer();
@@ -1476,7 +1477,7 @@ public class ReferenceResolvingVisitor extends ASTVisitor
 
             return sb.toString();
         }
-        
+
         public static PackageAndClassName parseFromQualifiedName(String qualifiedName)
         {
             final String packageName;

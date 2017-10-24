@@ -47,6 +47,7 @@ import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
+import static org.jboss.windup.util.Util.NL;
 
 
 /**
@@ -436,7 +437,7 @@ public class RunWindupCommand implements Command, FurnaceDependent
             catch (IOException ex)
             {
                 log.log(Level.WARNING, "Failed deleting graph directory: " + graphPath.toFile().getPath()
-                            + System.lineSeparator()+"\tDue to: " + ex.getMessage(), ex);
+                            + NL+"\tDue to: " + ex.getMessage(), ex);
             }
         }
     }

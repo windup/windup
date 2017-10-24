@@ -21,6 +21,8 @@ import freemarker.core.ParseException;
 import freemarker.template.DefaultObjectWrapperBuilder;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
+import static org.jboss.windup.util.Util.NL;
+import static org.jboss.windup.util.Util.NL;
 
 /**
  * Recursively renders the previously created Maven project structure into pom.xml's in a directory tree.
@@ -54,7 +56,7 @@ public class MavenStructureRenderer
                 try {
                     String subDir = entry.getKey();
                     Path resultPomXmlPath = mavenizedAppPath.resolve(subDir).resolve("pom.xml");
-                    LOG.info("Writing " + subDir + "/pom.xml" + System.lineSeparator()+"  > " + entry.getValue());
+                    LOG.info("Writing " + subDir + "/pom.xml" + NL+"  > " + entry.getValue());
                     renderPomXml(mavCtx, entry.getValue(), resultPomXmlPath);
                 }
                 catch (Throwable ex)
@@ -80,17 +82,17 @@ public class MavenStructureRenderer
 
         try
         {
-            LOG.info("Rendering template: " + template + " into " + pomXmlPath + System.lineSeparator()+"  - " + pom);
+            LOG.info("Rendering template: " + template + " into " + pomXmlPath + NL+"  - " + pom);
             Files.createDirectories(pomXmlPath.getParent());
             renderFreemarkerTemplate(template, vars, pomXmlPath);
         }
         catch (ParseException ex)
         {
-            throw new WindupException("Could not parse pom.xml template: " + template + System.lineSeparator()+" Reason: " + ex.getMessage(), ex);
+            throw new WindupException("Could not parse pom.xml template: " + template + NL+" Reason: " + ex.getMessage(), ex);
         }
         catch (IOException | TemplateException ex)
         {
-            throw new WindupException("Error rendering pom.xml template: " + template + System.lineSeparator()+" Reason: " + ex.getMessage(), ex);
+            throw new WindupException("Error rendering pom.xml template: " + template + NL+" Reason: " + ex.getMessage(), ex);
         }
     }
 
@@ -146,7 +148,7 @@ public class MavenStructureRenderer
         StringBuilder sb = new StringBuilder("Errors when creating the Maven project directory tree:\n");
         for (Throwable ex : exceptions)
         {
-            sb.append("    ").append(ex.getMessage()).append(System.lineSeparator());
+            sb.append("    ").append(ex.getMessage()).append(NL);
         }
         sb.append("The first error's stack trace:\n    ");
         sb.append(ExceptionUtils.getStackTrace(exceptions.get(0)));

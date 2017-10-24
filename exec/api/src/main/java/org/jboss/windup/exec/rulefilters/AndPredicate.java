@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.windup.config.RuleProvider;
+import static org.jboss.windup.util.Util.NL;
 
 /**
  * AND predicate which needs all of the given predicates to accept.
@@ -47,7 +48,7 @@ public class AndPredicate implements Predicate<RuleProvider>
         StringBuilder sb = new StringBuilder("AndPredicate{");
         for (Predicate<RuleProvider> predicate : predicates)
         {
-            sb.append("\t").append(predicate).append(System.lineSeparator());
+            sb.append("\t").append(predicate).append(NL);
         }
         return sb.append("}").toString();
     }

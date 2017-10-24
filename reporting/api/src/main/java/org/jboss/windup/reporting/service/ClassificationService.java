@@ -30,6 +30,7 @@ import com.tinkerpop.frames.structures.FramedVertexIterable;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 import java.util.logging.Level;
 import org.jboss.windup.reporting.category.IssueCategoryRegistry;
+import static org.jboss.windup.util.Util.NL;
 
 /**
  * Adds methods for loading and querying ClassificationModel related data.
@@ -150,7 +151,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
     private void getMigrationEffortDetails(ProjectModelTraversal traversal, Set<String> includeTags, Set<String> excludeTags, boolean recursive,
                 boolean includeZero, EffortAccumulatorFunction accumulatorFunction)
     {
-        LOG.log(Level.INFO, String.format(System.lineSeparator()+"\t\t\tEFFORT C: getMigrationEffortDetails() with: %s, %srecur, %sincludeZero, %s, tags: %s, excl: %s",
+        LOG.log(Level.INFO, String.format(NL+"\t\t\tEFFORT C: getMigrationEffortDetails() with: %s, %srecur, %sincludeZero, %s, tags: %s, excl: %s",
                 traversal, recursive ? "" : "!", includeZero ? "" : "!", accumulatorFunction, includeTags, excludeTags));
 
         final Set<Vertex> initialVertices = traversal.getAllProjectsAsVertices(recursive);
@@ -238,9 +239,9 @@ public class ClassificationService extends GraphService<ClassificationModel>
         {
             if (!StringUtils.equals(description, classification.getDescription()))
                 LOG.warning("The description of the newly attached classification differs from the same-titled existing one, so the old description is being changed."
-                        + System.lineSeparator()+"   Clsf title: " + classification.getClassification()
-                        + System.lineSeparator()+"   Old desc: " + classification.getDescription()
-                        + System.lineSeparator()+"   New desc: " + description);
+                        + NL+"   Clsf title: " + classification.getClassification()
+                        + NL+"   Old desc: " + classification.getDescription()
+                        + NL+"   New desc: " + description);
             classification.setDescription(description);
         }
 

@@ -24,7 +24,7 @@ public class RulesetUpdateChecker
     {
         return;
         /* temporary disabled all impl
- 
+
         if (!event.getAddon().getId().getName().contains("org.jboss.windup.ui:windup-ui"))
             return;
 
@@ -35,8 +35,8 @@ public class RulesetUpdateChecker
         RulesetsUpdater updater = furnace.getAddonRegistry().getServices(RulesetsUpdater.class).get();
         if (updater.rulesetsNeedUpdate(true))
         {
-            System.out.println(System.lineSeparator() The rulesets are outdated: " + updater.getRulesetsDir()
-                + System.lineSeparator() Consider running "+ Util.WINDUP_BRAND_NAME_ACRONYM +" with --updateRulesets.\n");
+            System.out.println(NL The rulesets are outdated: " + updater.getRulesetsDir()
+                + NL Consider running "+ Util.WINDUP_BRAND_NAME_ACRONYM +" with --updateRulesets.\n");
         }
         */
     }

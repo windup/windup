@@ -28,6 +28,7 @@ import com.tinkerpop.pipes.transform.OutPipe;
 import com.tinkerpop.pipes.util.Pipeline;
 import com.tinkerpop.pipes.util.StartPipe;
 import org.jboss.windup.util.Logging;
+import static org.jboss.windup.util.Util.NL;
 
 /**
  * Provides CRUD methods for accessing the {@link TechnologyUsageStatisticsModel} vertices.
@@ -233,7 +234,7 @@ public class TechnologyUsageStatisticsService extends GraphService<TechnologyUsa
             {
                 String errorMessage = "Not instance of " +
                             BelongsToProject.class.getName() +
-                            System.lineSeparator() +
+                            NL +
                             clazz.getName();
 
                 LOG.warning(errorMessage);

@@ -18,6 +18,7 @@ import org.jgrapht.alg.CycleDetector;
 import org.jgrapht.graph.DefaultDirectedWeightedGraph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.traverse.TopologicalOrderIterator;
+import static org.jboss.windup.util.Util.NL;
 
 /**
  * Sorts {@link RuleProvider}s based upon their executeBefore/executeAfter methods.
@@ -275,11 +276,11 @@ public class RuleProviderSorter
             StringBuilder errorSB = new StringBuilder();
             for (RuleProvider cycle : cycles)
             {
-                errorSB.append("Found dependency cycle involving: " + cycle.getMetadata().getID()).append(System.lineSeparator());
+                errorSB.append("Found dependency cycle involving: " + cycle.getMetadata().getID()).append(NL);
                 Set<RuleProvider> subCycleSet = cycleDetector.findCyclesContainingVertex(cycle);
                 for (RuleProvider subCycle : subCycleSet)
                 {
-                    errorSB.append("\tSubcycle: " + subCycle.getMetadata().getID()).append(System.lineSeparator());
+                    errorSB.append("\tSubcycle: " + subCycle.getMetadata().getID()).append(NL);
                 }
             }
             throw new RuntimeException("Dependency cycles detected: " + errorSB.toString());

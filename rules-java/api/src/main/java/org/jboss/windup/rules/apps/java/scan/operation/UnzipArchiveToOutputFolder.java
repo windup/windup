@@ -31,6 +31,7 @@ import org.jboss.windup.util.ZipUtil;
 import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.util.exception.WindupStopException;
 import org.ocpsoft.rewrite.context.EvaluationContext;
+import static org.jboss.windup.util.Util.NL;
 
 
 
@@ -288,7 +289,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
             catch (IOException e)
             {
                 throw new WindupException("Failed to create temporary folder for archives: " + windupTempUnzippedArchiveFolder
-                        + System.lineSeparator()+"\tdue to: " + e.getMessage(), e);
+                        + NL+"\tdue to: " + e.getMessage(), e);
             }
         }
     }

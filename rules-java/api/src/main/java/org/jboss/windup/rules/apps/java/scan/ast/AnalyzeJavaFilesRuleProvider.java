@@ -73,6 +73,7 @@ import org.jboss.windup.util.exception.WindupStopException;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
+import static org.jboss.windup.util.Util.NL;
 
 /**
  * Scan the Java Source code files and store the used type information from them.
@@ -289,7 +290,7 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                 message.append("Failed to process " + filesToProcess.size() + " files:\n");
                 for (Path unprocessed : filesToProcess)
                 {
-                    message.append("\tFailed to process: " + unprocessed + System.lineSeparator());
+                    message.append("\tFailed to process: " + unprocessed + NL);
                     String msg = "Could not process neither in batch or individually.";
                     markJavaFileModelAsUnprocessed(graphContext, unprocessed, classificationService, event, context, msg);
                     // Is the classification attached 2nd time here?

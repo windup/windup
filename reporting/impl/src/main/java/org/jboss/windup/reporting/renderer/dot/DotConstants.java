@@ -2,12 +2,13 @@ package org.jboss.windup.reporting.renderer.dot;
 
 import java.util.HashMap;
 import java.util.Map;
+import static org.jboss.windup.util.Util.NL;
 
 public class DotConstants
 {
 
     public static final String INDENT = " \t";
-    public static final String END_LINE = ";"+System.lineSeparator();
+    public static final String END_LINE = ";"+NL;
 
     public enum DotGraphType
     {

@@ -1,6 +1,8 @@
 package org.jboss.windup.util.exception;
 
 import java.util.List;
+import static org.jboss.windup.util.Util.NL;
+import static org.jboss.windup.util.Util.NL;
 
 /**
  * An exception that shows multiple error messages.
@@ -18,10 +20,10 @@ public class WindupMultiStringException extends WindupException
 
     private static String formatMessage(String msg, List<String> errors)
     {
-        StringBuilder sb = new StringBuilder(msg).append(System.lineSeparator());
+        StringBuilder sb = new StringBuilder(msg).append(NL);
         for (String error : errors)
         {
-            sb.append("\t").append(error).append(System.lineSeparator());
+            sb.append("\t").append(error).append(NL);
         }
         return sb.toString();
     }

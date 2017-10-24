@@ -37,6 +37,7 @@ import org.jboss.windup.util.exception.WindupException;
 import org.jboss.windup.util.furnace.FileExtensionFilter;
 import org.jboss.windup.util.furnace.FurnaceClasspathScanner;
 import org.w3c.dom.Document;
+import static org.jboss.windup.util.Util.NL;
 
 /**
  * This {@link RuleProviderLoader} searches for and loads {@link AbstractRuleProvider}s from XML files that within all
@@ -111,9 +112,9 @@ public class XMLRuleProviderLoader implements RuleProviderLoader
         {
             // Log the files found
             final Collection<URL> userXmlRulesetFiles = getWindupUserDirectoryXmlFiles(userRulesPath);
-            StringBuilder sb = new StringBuilder(System.lineSeparator()+"Found " + userXmlRulesetFiles.size() + " user XML rules in: " + userRulesPath);
+            StringBuilder sb = new StringBuilder(NL+"Found " + userXmlRulesetFiles.size() + " user XML rules in: " + userRulesPath);
             for (URL resource : userXmlRulesetFiles)
-                sb.append(System.lineSeparator()).append("\t").append(resource.toString());
+                sb.append(NL).append("\t").append(resource.toString());
             LOG.info(sb.toString());
 
             // Parse each file

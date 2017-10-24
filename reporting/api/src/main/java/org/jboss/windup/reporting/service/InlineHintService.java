@@ -30,6 +30,7 @@ import org.jboss.windup.reporting.model.IssueDisplayMode;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static org.jboss.windup.util.Util.NL;
 
 /**
  * This provides helper functions for finding and creating {@link InlineHintModel} instances within the graph.
@@ -199,7 +200,7 @@ public class InlineHintService extends GraphService<InlineHintModel>
     private void getMigrationEffortDetails(ProjectModelTraversal traversal, Set<String> includeTags, Set<String> excludeTags, boolean recursive,
                 boolean includeZero, EffortAccumulatorFunction accumulatorFunction)
     {
-        LOG.log(Level.INFO, String.format(System.lineSeparator()+"\t\t\tEFFORT H: getMigrationEffortDetails() with: %s, %srecur, %sincludeZero, %s, tags: %s, excl: %s",
+        LOG.log(Level.INFO, String.format(NL+"\t\t\tEFFORT H: getMigrationEffortDetails() with: %s, %srecur, %sincludeZero, %s, tags: %s, excl: %s",
                 traversal, recursive ? "" : "!", includeZero ? "" : "!", accumulatorFunction, includeTags, excludeTags));
 
         final Set<Vertex> initialVertices = traversal.getAllProjectsAsVertices(recursive);

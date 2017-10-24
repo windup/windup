@@ -9,6 +9,7 @@ import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.config.phase.RulePhase;
 import org.jboss.windup.config.phase.RulePhaseFinder;
 import org.w3c.dom.Element;
+import static org.jboss.windup.util.Util.NL;
 
 /**
  * Sets the phase for the current ruleset.
@@ -29,7 +30,7 @@ public class PhaseHandler implements ElementHandler<Void>
         Class<? extends RulePhase> phase = phaseFinder.findPhase(phaseStr);
         if (phase == null)
         {
-            String phasesListing = phaseFinder.getAvailablePhases().stream().map(clazz -> clazz.getSimpleName()).collect(Collectors.joining(System.lineSeparator()+"    "));
+            String phasesListing = phaseFinder.getAvailablePhases().stream().map(clazz -> clazz.getSimpleName()).collect(Collectors.joining(NL+"    "));
             throw new IllegalArgumentException("Unrecognized phase \"" + phaseStr + "\". Available phases: \n    " + phasesListing);
         }
         context.getBuilder().setPhase(phase);

@@ -39,6 +39,7 @@ import org.jboss.windup.util.threading.WindupExecutors;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
+import static org.jboss.windup.util.Util.NL;
 
 /**
  * This renders the ApplicationReport, along with all of its subapplications via freemarker.
@@ -137,7 +138,7 @@ public class RenderReportRuleProvider extends AbstractRuleProvider
                             }
                             catch (Throwable t)
                             {
-                                LOG.log(Level.WARNING, "Failed to render freemarker report:\n    " + reportModel + System.lineSeparator() + t.getMessage(), t);
+                                LOG.log(Level.WARNING, "Failed to render freemarker report:\n    " + reportModel + NL + t.getMessage(), t);
                             }
                         }
                     }

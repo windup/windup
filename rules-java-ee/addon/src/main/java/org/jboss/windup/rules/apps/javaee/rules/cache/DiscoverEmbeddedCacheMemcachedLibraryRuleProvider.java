@@ -18,6 +18,7 @@ import org.jboss.windup.rules.apps.java.model.JarArchiveModel;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
+import static org.jboss.windup.util.Util.NL;
 
 @RuleMetadata(phase = InitialAnalysisPhase.class, perform = "Discover Memcached client libraries embedded")
 public class DiscoverEmbeddedCacheMemcachedLibraryRuleProvider extends AbstractRuleProvider
@@ -42,7 +43,7 @@ public class DiscoverEmbeddedCacheMemcachedLibraryRuleProvider extends AbstractR
                                                     IssueCategoryRegistry.CLOUD_MANDATORY,
                                                     "Caching - Memcached client embedded library",
                                                     "The application embedds a Memcached client library.  \n"
-                                                    + System.lineSeparator()
+                                                    + NL
                                                     + "Cloud readiness issue as potential state information that is not persisted to a backing service.");
                                         classificationModel.setEffort(5);
 

@@ -14,6 +14,7 @@ import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Vertex;
+import static org.jboss.windup.util.Util.NL;
 
 public class DotWriter implements GraphDataSerializer
 {
@@ -49,7 +50,7 @@ public class DotWriter implements GraphDataSerializer
     private void writeGraphTag(OutputStream os) throws IOException
     {
         String name = this.getDotSafeName(graphName);
-        IOUtils.write(graphType.getName() + " " + name + "{" + System.lineSeparator(), os);
+        IOUtils.write(graphType.getName() + " " + name + "{" + NL, os);
 
         writeGraphNodes(os);
         writeGraphEdges(os);

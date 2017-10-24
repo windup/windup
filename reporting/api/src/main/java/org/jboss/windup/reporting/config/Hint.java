@@ -27,6 +27,7 @@ import org.jboss.windup.reporting.category.IssueCategoryModel;
 import org.jboss.windup.reporting.category.IssueCategoryRegistry;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.Logging;
+import org.jboss.windup.util.Util;
 import org.ocpsoft.rewrite.config.OperationBuilder;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -39,6 +40,7 @@ import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
 public class Hint extends ParameterizedIterationOperation<FileLocationModel> implements HintText, HintLink, HintWithIssueCategory, HintEffort, HintQuickfix, HintDisplayMode
 {
     private static final Logger LOG = Logging.get(Hint.class);
+    private static final int MAX_LOG_TEXT_LENGTH = 80;
 
     private RegexParameterizedPatternParser hintTitlePattern;
     private RegexParameterizedPatternParser hintTextPattern;
@@ -187,8 +189,8 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
             if (locationModel.getFile() instanceof SourceFileModel)
                 ((SourceFileModel) locationModel.getFile()).setGenerateSourceReport(true);
 
-            LOG.info("Hint added to " + locationModel.getFile().getPrettyPathWithinProject() + " [" + this.toString(hintModel.getTitle(), hintText)
-                        + "] with tags: " + StringUtils.join(this.getTags(), " "));
+            LOG.info("Hint added to " + locationModel.getFile().getPrettyPathWithinProject()
+                    + ":"+ Util.NL +"    " + this.toString(hintModel.getTitle(), null));
         }
         finally
         {
@@ -284,13 +286,14 @@ public class Hint extends ParameterizedIterationOperation<FileLocationModel> imp
         result.append("Hint");
         if (title != null)
             result.append(".titled(\"").append(title).append("\")");
-        result.append(".withText(\"").append(text).append("\")");
         if (effort != 0)
             result.append(".withEffort(").append(effort).append(")");
-        if (links != null && !links.isEmpty())
-            result.append(".with(").append(links).append(")");
         if (tags != null && !tags.isEmpty())
             result.append(".withTags(").append(tags).append(")");
+        if (text != null)
+            result.append(Util.NL + "\t.withText(\"").append(StringUtils.abbreviate(text.trim(), MAX_LOG_TEXT_LENGTH)).append("\")");
+        if (links != null && !links.isEmpty())
+            result.append(Util.NL + "\t.with(").append(links).append(")");
         return result.toString();
     }
 

@@ -11,6 +11,7 @@ import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.IOException;
+import static org.jboss.windup.util.Util.NL;
 
 public abstract class AbstractBootstrapTestWithRules extends AbstractBootstrapTest {
     private static final String TESTING_MIGRATION_RULES = "<?xml version=\"1.0\"?>\n"
@@ -27,7 +28,7 @@ public abstract class AbstractBootstrapTestWithRules extends AbstractBootstrapTe
             + "        <targetTechnology id=\"eap7\" versionRange=\"[7,)\" />\n"
             + "        <tag>test-tag-eap</tag>\n"
             + "    </metadata>\n"
-            + System.lineSeparator()
+            + NL
             + "    <rules>\n"
             + "        <rule id=\"testing-rule\">\n"
             + "            <when>\n"
@@ -55,7 +56,7 @@ public abstract class AbstractBootstrapTestWithRules extends AbstractBootstrapTe
             + "        <targetTechnology id=\"eap7\" versionRange=\"[7,)\" />\n"
             + "        <tag>another-test-tag-eap</tag>\n"
             + "    </metadata>\n"
-            + System.lineSeparator()
+            + NL
             + "    <rules>\n"
             + "        <rule id=\"another-testing-rule\">\n"
             + "            <when>\n"

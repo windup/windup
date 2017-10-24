@@ -73,6 +73,7 @@ import org.ocpsoft.rewrite.param.Parameterized;
 import org.ocpsoft.rewrite.param.Transposition;
 import org.ocpsoft.rewrite.util.ParameterUtils;
 import org.ocpsoft.rewrite.util.Visitor;
+import static org.jboss.windup.util.Util.NL;
 
 /**
  * An {@link Operation} that allows for conditional evaluation of nested {@link Rule} sets.
@@ -348,17 +349,17 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                     listener.afterRuleExecutionFailed(event, subContext, rule, ex);
                 }
                 String exMsg = "Error encountered while evaluating rule: " + rule;
-                String logMsg = exMsg + System.lineSeparator() + StringUtils.defaultString(ex.getMessage(), "(Exception message is not set)");
+                String logMsg = exMsg + NL + StringUtils.defaultString(ex.getMessage(), "(Exception message is not set)");
                 log.log(Level.SEVERE, logMsg, ex);
                 if (ruleContext != null)
                 {
                     Object origin = ruleContext.get(RuleMetadataType.ORIGIN);
                     if (origin != null)
-                        exMsg += System.lineSeparator()+"  From: " + origin;
+                        exMsg += NL+"  From: " + origin;
 
                     Object location = ruleContext.get(org.ocpsoft.rewrite.config.RuleMetadata.PROVIDER_LOCATION);
                     if (location != null)
-                        exMsg += System.lineSeparator()+"  Defined in: " + location;
+                        exMsg += NL+"  Defined in: " + location;
                 }
 
                 // Depending on RuleProvider's haltOnException, halt Windup on exception.
