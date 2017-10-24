@@ -39,7 +39,7 @@ public class DiscoverEmbeddedJSFLibraryRuleProvider extends AbstractRuleProvider
                     .withId(ruleIDPrefix + "_" + ruleIDSuffix++)
                     .addRule()
                     .when(Query.fromType(JarArchiveModel.class)
-                            .withProperty(FileModel.FILE_NAME, QueryPropertyComparisonType.REGEX, ".*myfaces-[(api)|(impl)].*\\.jar$"))
+                            .withProperty(FileModel.FILE_NAME, QueryPropertyComparisonType.REGEX, ".*myfaces-[(api)|(impl)|(bundle)].*\\.jar$"))
                     .perform(new AddHintOperation())
                     .withId(ruleIDPrefix + "_" + ruleIDSuffix++);
     }
