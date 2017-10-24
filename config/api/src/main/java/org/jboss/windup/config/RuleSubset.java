@@ -348,17 +348,17 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                     listener.afterRuleExecutionFailed(event, subContext, rule, ex);
                 }
                 String exMsg = "Error encountered while evaluating rule: " + rule;
-                String logMsg = exMsg + System.lineSeparator() + StringUtils.defaultString(ex.getMessage(), "(Exception message is not set)");
+                String logMsg = exMsg + Util.NL + StringUtils.defaultString(ex.getMessage() + Util.NL, "(Exception message is not set)");
                 log.log(Level.SEVERE, logMsg, ex);
                 if (ruleContext != null)
                 {
                     Object origin = ruleContext.get(RuleMetadataType.ORIGIN);
                     if (origin != null)
-                        exMsg += System.lineSeparator()+"  From: " + origin;
+                        exMsg += Util.NL + "  From: " + origin;
 
                     Object location = ruleContext.get(org.ocpsoft.rewrite.config.RuleMetadata.PROVIDER_LOCATION);
                     if (location != null)
-                        exMsg += System.lineSeparator()+"  Defined in: " + location;
+                        exMsg += Util.NL + "  Defined in: " + location;
                 }
 
                 // Depending on RuleProvider's haltOnException, halt Windup on exception.
