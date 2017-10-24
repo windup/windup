@@ -37,7 +37,7 @@ public interface TagModel extends WindupVertexFrame
     @Property(PROP_NAME)
     String getName();
     @Property(PROP_NAME)
-    TagModel setName(String name);
+    void setName(String name);
 
     /**
      * Human readable title of technology this tag represents, e.g "Java EE 6".
