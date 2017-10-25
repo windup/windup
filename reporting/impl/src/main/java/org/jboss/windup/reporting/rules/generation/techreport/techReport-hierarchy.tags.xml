@@ -84,8 +84,8 @@
             <tag name="techBox:Caching" title="Caching" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Recycle_Symbol">
                 <tag ref="cache"/>
             </tag>
-            <tag name="techBox:object-mapping" title="Object Mapping" pseudo="true" parents="techRow:embedded" icon="Recycle_Symbol">
-            </tag>
+            <tag name="techBox:object-mapping" title="Object Mapping" pseudo="true" parents="techRow:embedded" icon="Recycle_Symbol"></tag>
+            <tag name="techBox:Persistence" title="Persistence" pseudo="true" parents="techRow:java-ee" icon="Hardware_Storage-A-Stack"></tag>
         </tag>
         <tag name="techSector04:Sustain" title="Sustain" color="#DB4437" pseudo="true">
             <tag name="techBox:Transactions" title="Transactions" pseudo="true" parents="techRow:java-ee" icon="Object_CashRegister-POS">
@@ -128,6 +128,7 @@
             <tag pseudo="true" name="silly:Caching" title="Caching" parents="techBox:Caching"/>
             <tag pseudo="true" name="silly:CDI" title="CDI" parents="techBox:CDI"/> <!-- Not a box? -->
             <tag pseudo="true" name="silly:Clustering" title="Clustering" parents="techBox:Clustering"/>
+            <tag pseudo="true" name="silly:Database" title="Database" parents="techBox:jdbc"/>
             <tag pseudo="true" name="silly:HTTP" title="HTTP" parents="techBox:HTTP"/>
             <tag pseudo="true" name="silly:Integration" title="Integration" parents="techBox:Integration"/>
             <tag pseudo="true" name="silly:Inversion of Control" title="Inversion of Control" parents="techBox:ioc"/>
@@ -137,6 +138,7 @@
             <tag pseudo="true" name="silly:MVC" title="MVC" parents="techBox:mvc"/>
             <tag pseudo="true" name="silly:Object Mapping" title="Object Mapping" parents="techBox:object-mapping"/>
             <tag pseudo="true" name="silly:Other" title="Other" parents="techBox:Other"/>
+            <tag pseudo="true" name="silly:Persistence" title="Processing" parents="techBox:Persistence"/>
             <tag pseudo="true" name="silly:Processing" title="Processing" parents="techBox:Processing"/>
             <tag pseudo="true" name="silly:REST" title="REST" parents="techBox:rest"/>
             <tag pseudo="true" name="silly:Rich" title="Rich" parents="techBox:rich"/>
