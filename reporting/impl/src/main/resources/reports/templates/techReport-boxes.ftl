@@ -21,7 +21,8 @@
     <link href="resources/css/jquery-ui.min.css" rel="stylesheet" media="screen">
     <link href="resources/img/rhamt-icon-128.png" rel="shortcut icon" type="image/x-icon"/>
     <style>
-        /* Colors */
+        /* Colors. */
+        <#-- TODO: These should be generated from the techSector:* tags, but was good enough for initial impl. -->
         .sectorView    div { background-color: #1155CC; color: white; }
         .sectorConnect div { background-color: #38761D; color: white; }
         .sectorStore   div { background-color: #F4B400; color: white; }

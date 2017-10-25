@@ -23,7 +23,8 @@
     <link href="resources/css/jquery-ui.min.css" rel="stylesheet" media="screen">
     <link href="resources/img/rhamt-icon-128.png" rel="shortcut icon" type="image/x-icon"/>
     <style>
-        /* Colors. TODO: Generate from the techSector:* tags. */
+        /* Colors. */
+        <#-- TODO: These should be generated from the techSector:* tags, but was good enough for initial impl. -->
         .sectorView    { color: #1155CC; }
         .sectorConnect { color: #38761D; }
         .sectorStore   { color: #F4B400; }
