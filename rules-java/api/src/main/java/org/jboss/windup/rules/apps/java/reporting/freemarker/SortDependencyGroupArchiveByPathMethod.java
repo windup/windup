@@ -10,7 +10,6 @@ import org.jboss.windup.rules.apps.java.dependencyreport.DependencyReportDepende
 import org.jboss.windup.rules.apps.java.model.comparator.DependencyReportGroupModelComparator;
 import org.jboss.windup.util.ExecutionStatistics;
 
-import freemarker.ext.beans.StringModel;
 import freemarker.template.TemplateModelException;
 
 /**

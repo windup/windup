@@ -6,12 +6,10 @@ import java.util.List;
 
 import freemarker.template.DefaultIterableAdapter;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
-import org.jboss.windup.rules.apps.java.dependencyreport.DependencyReportDependencyGroupModel;
 import org.jboss.windup.rules.apps.java.dependencyreport.DependencyReportToArchiveEdgeModel;
 import org.jboss.windup.rules.apps.java.model.comparator.DependencyReportToEdgeComparator;
 import org.jboss.windup.util.ExecutionStatistics;
 
-import freemarker.ext.beans.StringModel;
 import freemarker.template.TemplateModelException;
 
 /**

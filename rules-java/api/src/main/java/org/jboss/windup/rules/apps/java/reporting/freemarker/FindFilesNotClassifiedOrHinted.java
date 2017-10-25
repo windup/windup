@@ -22,7 +22,6 @@ import org.jboss.windup.util.ExecutionStatistics;
 
 import com.tinkerpop.blueprints.Vertex;
 
-import freemarker.ext.beans.StringModel;
 import freemarker.template.TemplateModelException;
 
 /**
