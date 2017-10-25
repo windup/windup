@@ -126,54 +126,6 @@
             <div class="row">
                 <div class="container-fluid theme-showcase" role="main">
                     <!-- HEAD -->
-                    <#--
-                    <div class="panel panel-default panel-primary">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">Analysis Detail</h3>
-                        </div>
-
-                        <#assign problemsBySeverity = getProblemSummaries(event, reportModel.projectModel, reportModel.includeTags, reportModel.excludeTags)>
-                        <#if !problemsBySeverity?has_content>
-                            <div class="panel-body">
-                                <div>
-                                    No issues were found by the existing rules. If you would like to add custom rules,
-                                    see the <a href="https://github.com/windup/windup/wiki/Rules-Development-Guide">
-                                    Rule Development Guide</a>.
-                                </div>
-                            </div>
-                        </#if>
-
-                        <div class="panel-body">
-                        <#list problemsBySeverity?keys as severity>
-                            <table class="table table-bordered table-condensed tablesorter migration-issues-table">
-                                <thead>
-                                    <tr>
-                                        <th class="sortable">Issue by Category</th>
-                                        <th class="sortable-right text-right">Incidents Found</th>
-                                        <th class="sortable-right text-right">Story Points per Incident</th>
-                                        <th>Level of Effort</th>
-                                        <th class="sortable-right text-right">Total Story Points</th>
-                                    </tr>
-                                    <tr class="tablesorter-ignoreRow" style="background: rgb(212, 230, 233);">
-                                        <td>
-                                            <b>${severity}</b>
-                                        </td>
-                                        <td class="text-right">${getIncidentsFound(problemsBySeverity[severity])}</td>
-                                        <td></td>
-                                        <td></td>
-                                        <td class="text-right">${getTotalPoints(problemsBySeverity[severity])}</td>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <#list problemsBySeverity[severity] as problemSummary>
-                                        <@migrationIssuesRenderer problemSummary />
-                                    </#list>
-                                </tbody>
-                            </table>
-                        </#list>
-                        </div>
-                    </div>
-                    ======= -->
                     <#assign problemsBySeverity = getProblemSummaries(event, reportModel.projectModel, reportModel.includeTags, reportModel.excludeTags)>
                     <#if !problemsBySeverity?has_content>
                         <div>
