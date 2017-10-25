@@ -77,16 +77,18 @@ public class OutputPathOption extends AbstractPathConfigurationOption
         return validateInputsAndOutputPaths(Collections.singletonList(inputPath), outputPath);
     }
 
+    @SuppressWarnings("rawtypes")
     public static ValidationResult validateInputsAndOutputPaths(Collection inputPaths, Path outputPath)
     {
-        if (outputPath == null)
-        {
-            return new ValidationResult(ValidationResult.Level.ERROR, "Output path must be specified.");
-        }
 
         if (inputPaths == null || inputPaths.isEmpty())
         {
             return new ValidationResult(ValidationResult.Level.ERROR, "Input path must be specified.");
+        }
+        
+        if (outputPath == null)
+        {
+            return new ValidationResult(ValidationResult.Level.ERROR, "Output path must be specified.");
         }
 
         File outputFile = outputPath.toFile();
