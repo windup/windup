@@ -39,7 +39,6 @@ public class GroupHintsByFile implements WindupFreeMarkerMethod
         }
     }
 
-    @SuppressWarnings("unchecked")
     private Iterable<HintWithOccurence> groupHints(Iterable<InlineHintModel> hints) throws TemplateModelException
     {
         Map<String, HintWithOccurence> hintOccurences = new HashMap<>();

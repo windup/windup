@@ -22,8 +22,6 @@ import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.config.phase.PostMigrationRulesPhase;
 import org.jboss.windup.config.phase.RulePhase;
-import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.GraphContextFactory;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,9 +50,6 @@ public class MetaDataHandlerTest
 
     @Inject
     private Furnace furnace;
-
-    @Inject
-    private GraphContextFactory graphContextFactory;
 
     @Test
     public void testWindupXmlParsinfOfRulesetMetadata() throws Exception

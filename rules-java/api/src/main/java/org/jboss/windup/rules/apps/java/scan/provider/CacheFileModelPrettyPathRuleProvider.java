@@ -15,7 +15,6 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.ReportResourceFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
-import org.jboss.windup.rules.apps.java.reporting.freemarker.filepath.GetPrettyPathForFile;
 import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;

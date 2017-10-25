@@ -54,7 +54,7 @@ public class IterableHasContent implements WindupFreeMarkerMethod
         else if (arg instanceof SimpleSequence)
         {
             SimpleSequence simpleSequence = (SimpleSequence) arg;
-            return simpleSequence.toList().size() > 0;
+            return simpleSequence.size() > 0;
         }
         else if (arg instanceof DefaultListAdapter)
         {

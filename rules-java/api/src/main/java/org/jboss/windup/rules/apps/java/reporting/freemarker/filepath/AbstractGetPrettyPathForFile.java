@@ -2,7 +2,6 @@ package org.jboss.windup.rules.apps.java.reporting.freemarker.filepath;
 
 import java.util.List;
 
-import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.ReportResourceFileModel;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
