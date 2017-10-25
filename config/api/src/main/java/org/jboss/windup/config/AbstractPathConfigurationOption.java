@@ -3,6 +3,7 @@ package org.jboss.windup.config;
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Collection;
 
 import org.jboss.windup.util.exception.WindupException;
 
@@ -65,12 +66,14 @@ public abstract class AbstractPathConfigurationOption extends AbstractConfigurat
         return ValidationResult.SUCCESS;
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public ValidationResult validate(Object fileObject)
     {
-        if (fileObject == null && isRequired())
+        if ( (fileObject == null && isRequired()) ||
+             (fileObject instanceof Collection && isRequired() && ((Collection) fileObject).isEmpty()) )
         {
-            return new ValidationResult(ValidationResult.Level.ERROR, getName() + " is required!");
+            return new ValidationResult(ValidationResult.Level.ERROR, getName() + " must be specified.");
         }
         else if (fileObject == null)
         {
