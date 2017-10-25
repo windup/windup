@@ -51,21 +51,21 @@
         tr.rowSectors > td  > div.box { padding: 8pt 18pt 8pt 12pt; margin-bottom: 10pt; }
         tr.rowSectors > td  > div.box > h4 { font-size: 12pt; font-weight: bold; }
 
-        tr.rowSectors h4  { font-size: 12   pt; font-weight: bold; }
-        tr.rowSectors ul li  { font-size: 12pt; }
+        tr.rowSectors .box h4  { font-size: 12pt; font-weight: bold; text-align: right; }
+        tr.rowSectors .box ul li  { font-size: 12pt; }
 
-        .box .icon {
+        tr.rowSectors .box .icon {
             float: left;
-            width: 48px; height: 48px;
+            width: 70px; height: 70px;
             background-image: url("resources/icons/techreport/Object_Shield-CoatOfArms.png");
             background-repeat: no-repeat;
             background-size: contain;
             background-position: center;
         }
-        .box .content { margin-left: 62px; }
-        .box .content ul { list-style: none; margin: 0; }
-        .box .content ul li { margin: 0; text-align: right; }
-        .box .content ul li b { width: 3ex; display: inline-block; }
+        tr.rowSectors .box .content { margin-left: 62px; }
+        tr.rowSectors .box .content ul { list-style: none; margin: 0; }
+        tr.rowSectors .box .content ul li { margin: 0; text-align: right; }
+        tr.rowSectors .box .content ul li b { width: 3ex; display: inline-block; }
     </style>
 </head>
 
