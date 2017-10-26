@@ -114,7 +114,7 @@ public class GenerateJBossEjbDescriptorRuleProvider extends AbstractRuleProvider
 
             ReportService reportService = new ReportService(context);
             String ancestorFolder = projectModel.getName();
-            if (ejbDescriptor.getProjectModel().getName().equals(ancestorFolder))
+            if (ejbDescriptor.getProjectModel().getName() == null || ancestorFolder.equals(ejbDescriptor.getProjectModel().getName()))
             {
                 applicationReportModel.setReportFilename(reportService.getUniqueFilename("jboss-web", "xml", false, ancestorFolder));
             } else
