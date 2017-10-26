@@ -88,6 +88,14 @@ public class SortTechUsageStatsMethod implements WindupFreeMarkerMethod
         return techStatsMap;
     }
 
+    /**
+     * Queries the structure returned by it as described above.
+     * The 4 parameters then are:
+     *     Map<String, Map<String, Map<Long, Map<String, TechUsageStatSum>>>> - the map described above,
+     *     String - row tag name
+     *     String - box tag name
+     *     Long   - project (vertex) ID
+     */
     private Object tryQueryMap(List arguments)
     {
         try
@@ -99,7 +107,7 @@ public class SortTechUsageStatsMethod implements WindupFreeMarkerMethod
             Long projectId = ((SimpleNumber) arguments.get(3)).getAsNumber().longValue();
             return TechReportService.queryMap(map, rowTagName, boxTagName, projectId);
         }
-        catch (Exception ex)
+        catch (ClassCastException ex)
         {
             throw new WindupException(String.format("Wrong parameters to query the map, should be: map, string, string, number.\n\tWas: %s%s%s%s",
                     arguments.get(0).getClass(), arguments.get(1).getClass(), arguments.get(2).getClass(), arguments.get(3).getClass() ), ex);

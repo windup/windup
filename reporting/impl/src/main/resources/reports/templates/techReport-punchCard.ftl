@@ -183,16 +183,23 @@
 
                                     <#-- 2nd way - using the 4 layer map -->
                                     <#assign statsForThisBox = (sortedStatsMap[""]?api.get(boxTag.name)?api.get(appProject.asVertex().id?long))! />
-                                    <#assign count = (statsForThisBox[""].occurrenceCount)!0 />
-                                    <#assign maxForThisBox   = (sortedStatsMap[""]?api.get(boxTag.name)?api.get(0?long)?api.get("").occurrenceCount)!0 />
-
-                                    <#assign log = count?is_number?then(getLogaritmicDistribution(count, maxForThisBox), false) />
-
-                                    <#if count?is_number >
-                                        <!-- count: ${count}   max: ${maxForThisBox}   getLogaritmicDistribution(): ${ log } x 5 = ${ log * 5.0 } -->
+                                    <#assign count = (statsForThisBox[""].occurrenceCount)!false />
+                                    <#assign maxForThisBox   = (sortedStatsMap[""]?api.get(boxTag.name)?api.get(0?long)?api.get("").occurrenceCount)!false />
+                                    <#assign isBooleanTech = maxForThisBox?is_number && maxForThisBox == 0 />
+                                    <#if isBooleanTech>
+                                        <!-- The boolean technologies will either be missing or present. Presence is denoted by 0. Use some middle bubble size for present. -->
+                                        <#assign log = count?is_number?then(0.5, 0) />
+                                    <#else>
+                                        <#-- If the tech did not appear in any TechUsageStats, it is missing in the map. -->
+                                        <#if count?is_number && maxForThisBox?is_number >
+                                            <#assign log = getLogaritmicDistribution(count, maxForThisBox) />
+                                        <#else>
+                                            <#assign log = 0 />
+                                        </#if>
                                     </#if>
+                                    <!-- count: ${count?c}   max: ${maxForThisBox?c}   getLogaritmicDistribution(): ${ log?c } x 5 = ${ log * 5.0 } -->
 
-                                    <td class="circle size${ log?is_number?then((log * 5.0)?ceiling, "X")} sector sector${sectorTag.title}"><!-- The circle is put here by CSS :after --></td>
+                                    <td class="circle size${ log?is_number?then((log * 5.0)?ceiling, "X")} sector sector${sectorTag.title}"><#-- The circle is put here by CSS :after --></td>
                                 </#if>
                             <#else>
                                 <td>No technology sectors defined.</td>

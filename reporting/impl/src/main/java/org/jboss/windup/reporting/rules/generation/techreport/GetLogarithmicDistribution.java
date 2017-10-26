@@ -46,12 +46,12 @@ public class GetLogarithmicDistribution implements WindupFreeMarkerMethod
     public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
     {
         if (arguments.size() < 2)
-            throw new TemplateModelException("Expected 2 arguments, count and maximum count.");
+            throw new TemplateModelException(NAME + ": Expected 2 arguments, count and maximum count.");
 
         if (!(arguments.get(0) instanceof TemplateNumberModel))
-            throw new TemplateModelException("Both arguments must be numbers, but the first was " + arguments.get(0).getClass().getName());
+            throw new TemplateModelException(NAME + ": Both arguments must be numbers, but the first was " + arguments.get(0).getClass().getName());
         if (!(arguments.get(1) instanceof TemplateNumberModel))
-            throw new TemplateModelException("Both arguments must be numbers, but the second was " + arguments.get(1).getClass().getName());
+            throw new TemplateModelException(NAME + ": Both arguments must be numbers, but the second was " + arguments.get(1).getClass().getName());
 
         int count = ((TemplateNumberModel) arguments.get(0)).getAsNumber().intValue();
         if (count < 1)
@@ -59,7 +59,7 @@ public class GetLogarithmicDistribution implements WindupFreeMarkerMethod
 
         int maximum = ((TemplateNumberModel) arguments.get(1)).getAsNumber().intValue();
         if (maximum < 0)
-            throw new TemplateModelException("Maximum must be at least 0, " + maximum);
+            throw new TemplateModelException(NAME + "Maximum must be at least 0, " + maximum);
 
         if (count > maximum)
         {
