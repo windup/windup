@@ -1,0 +1,11 @@
+<jboss xmlns="http://www.jboss.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.jboss.com/xml/ns/javaee http://www.jboss.org/j2ee/schema/jboss_5_0.xsd">
+    <enterprise-beans>
+        <session>
+            <ejb-name>SomeFancyEjb</ejb-name>
+            <remote-binding>
+                <jndi-name>THIS_JNDI_NAME_SHOULD_BE_DETECTED</jndi-name>
+            </remote-binding>
+        </session>
+    </enterprise-beans>
+</jboss>
