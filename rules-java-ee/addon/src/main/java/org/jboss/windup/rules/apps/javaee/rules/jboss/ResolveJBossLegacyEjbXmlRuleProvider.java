@@ -136,10 +136,11 @@ public class ResolveJBossLegacyEjbXmlRuleProvider extends IteratingRuleProvider<
             if (StringUtils.isNotBlank(ejbName))
             {
                 LOG.info("Looking up name: " + ejbName);
-                for (EjbSessionBeanModel ejb : ejbSessionBeanService.findAllByProperty(EjbMessageDrivenModel.EJB_BEAN_NAME, ejbName))
+                for (EjbSessionBeanModel ejb : ejbSessionBeanService.findAllByProperty(EjbSessionBeanModel.EJB_BEAN_NAME, ejbName))
                 {
                     String jndi = $(ejbRef).child("jndi-name").content();
                     String localJNDI = $(ejbRef).child("local-jndi-name").content();
+                    String remoteBindingJNDI = $(ejbRef).child("remote-binding").child("jndi-name").content();
                     if (StringUtils.isNotBlank(jndi))
                     {
                         JNDIResourceModel jndiRef = jndiResourceService.createUnique(applications, jndi);
@@ -150,6 +151,12 @@ public class ResolveJBossLegacyEjbXmlRuleProvider extends IteratingRuleProvider<
                     {
                         JNDIResourceModel jndiRef = jndiResourceService.createUnique(applications, localJNDI);
                         ejb.setLocalJndiReference(jndiRef);
+                    }
+                    
+                    if (StringUtils.isNotBlank(remoteBindingJNDI))
+                    {
+                        JNDIResourceModel jndiRef = jndiResourceService.createUnique(applications, remoteBindingJNDI);
+                        ejb.setGlobalJndiReference(jndiRef);
                     }
 
                     if(StringUtils.equalsIgnoreCase("true", sessionClustered)) {
