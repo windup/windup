@@ -163,6 +163,7 @@
 
 
                     <#list inputApplications as appProject> <#-- ProjectModel -->
+                    <#if appProject.projectType! != "VIRTUAL" >
                     <tr class="app">
                         <td class="name">
                             <#assign boxReport = reportModel.appProjectIdToReportMap[appProject.asVertex().id?c] > <#-- TechReportModel -->
@@ -217,6 +218,7 @@
                             ${ panelStoryPoints! }
                         </td>
                     </tr>
+                    </#if>
                     </#list>
                 </table>
 

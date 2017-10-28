@@ -2,8 +2,12 @@ package org.jboss.windup.reporting.rules.generation.techreport;
 
 import java.util.*;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.config.tags.Tag;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.DuplicateProjectModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.reporting.model.TagModel;
 import org.jboss.windup.reporting.model.TechnologyUsageStatisticsModel;
@@ -39,16 +43,17 @@ public class TechReportService
         final Iterable<TechnologyUsageStatisticsModel> statModels = graphContext.service(TechnologyUsageStatisticsModel.class).findAll();
         for (TechnologyUsageStatisticsModel stat : statModels)
         {
-            final Long projectKey = (Long) stat.getProjectModel().getRootProjectModel().asVertex().getId();
+            List<Long> appsToCountTowards = getRootApplicationProjectsOfModuleProject(stat.getProjectModel());
 
-            LOG.info(String.format("--- Counting up p#%d '%s', count: %sx, tags: %s", projectKey, stat.getName(), stat.getOccurrenceCount(), stat.getTags()) );
-            //if (onlyForProject != null)
-            //    LOG.info(String.format("--- Project:  - %s", projectKey, stat.getProjectModel().getRootProjectModel().getName()));
+            LOG.info(String.format("--- Adding to projects %s: tech '%s', count: %sx, tags: %s", StringUtils.join(appsToCountTowards, " "), stat.getName(), stat.getOccurrenceCount(), stat.getTags()) );
 
-            if (onlyForProject != null && !projectKey.equals(onlyForProject.getRootProjectModel().asVertex().getId())) {
-                LOG.info("\t\tThis stat is for other project, skipping.");
+            // A shortcut.
+            if (onlyID != null && !appsToCountTowards.contains(onlyID))
+            {
+                LOG.info("\t\tThis stat is not for this project, skipping.");
                 continue;
             }
+
 
             // Identify placement
             final Set<String>[] normalAndSilly = TechReportService.splitSillyTagNames(graphContext, stat.getTags());
@@ -62,25 +67,52 @@ public class TechReportService
             // Normalize placement
             placement = TechReportService.normalizeSillyPlacement(graphContext, placement);
 
-            LOG.info(String.format("\tplacement: %s, projectKey: %d", placement, projectKey)); ///
             if (placement.box == null || placement.row == null)
             {
                 LOG.severe(String.format("\tPlacement labels not recognized, placement incomplete: %s; stat: %s", placement, stat));
                 continue;
             }
 
-
-            // For boxes report - show each tech in sector, row, box. For individual projects and sum for all projects.
-            mergeToTheRightCell(map, placement.row.getName(), placement.box.getName(), projectKey, stat.getName(), stat, false);
+            // For boxes report - show each tech in sector, row, box. A sum for all projects.
             mergeToTheRightCell(map, placement.row.getName(), placement.box.getName(), 0L, stat.getName(), stat, false);
-
-            // For the punch card report - roll up rows and individual techs.
-            mergeToTheRightCell(map, "", placement.box.getName(), projectKey, "", stat, false);
-
             // For the punch card report - maximum count for each box.
             mergeToTheRightCell(map, "", placement.box.getName(), 0L, "", stat, true);
+
+            for (Long appToCountTowards : appsToCountTowards)
+            {
+                if (onlyID != null && onlyID != appToCountTowards)
+                    continue;
+
+                //LOG.fine(() -> String.format("\tplacement: %s, appToCountTowards: %d", placement, appToCountTowards));
+
+                // For boxes report - show each tech in sector, row, box. For individual projects.
+                mergeToTheRightCell(map, placement.row.getName(), placement.box.getName(), appToCountTowards, stat.getName(), stat, false);
+
+                // For the punch card report - roll up rows and individual techs.
+                mergeToTheRightCell(map, "", placement.box.getName(), appToCountTowards, "", stat, false);
+            }
         }
         return map;
+    }
+
+    /**
+     * Some projects are modules duplicated across multiple input applications.
+     * Their technologies should be counted towards the input applications rather than the "Shared Libraries" pseudo-app.
+     */
+    private List<Long> getRootApplicationProjectsOfModuleProject(ProjectModel projectModel)
+    {
+        final Iterable<DuplicateProjectModel> duplicateProjects = projectModel.getDuplicateProjects();
+        if (projectModel instanceof DuplicateProjectModel)
+            throw new IllegalStateException("The TechnologyUsageStatisticsModel's project should always be a canonical project, not the duplicate projects represented by it.");
+
+        // If it is not a "shared library", use the root app of this module.
+        if (!duplicateProjects.iterator().hasNext())
+            return Arrays.asList((Long)projectModel.getRootProjectModel().asVertex().getId());
+
+        // Else use the root apps of all of the duplications.
+        final List<Long> duplicatedModulesAppProjectIds = StreamSupport.stream(duplicateProjects.spliterator(), false)
+                .map(p -> (Long) p.getRootProjectModel().asVertex().getId()).collect(Collectors.toList());
+        return duplicatedModulesAppProjectIds;
     }
 
     private static void mergeToTheRightCell(
