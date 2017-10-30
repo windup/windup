@@ -113,7 +113,14 @@ public class GenerateJBossEjbDescriptorRuleProvider extends AbstractRuleProvider
             applicationReportModel.setRelatedResource(additionalData);
 
             ReportService reportService = new ReportService(context);
-            reportService.setUniqueFilename(applicationReportModel, "jboss-ejb3_" + projectModel.getName(), "xml");
+            String ancestorFolder = projectModel.getName();
+            if (ejbDescriptor.getProjectModel().getName() == null || ancestorFolder.equals(ejbDescriptor.getProjectModel().getName()))
+            {
+                applicationReportModel.setReportFilename(reportService.getUniqueFilename("jboss-web", "xml", false, ancestorFolder));
+            } else
+            {
+                applicationReportModel.setReportFilename(reportService.getUniqueFilename("jboss-web", "xml", false, ancestorFolder, ejbDescriptor.getProjectModel().getName()));
+            }
 
             LOG.info("Generated jboss-ejb3.xml for " + ejbDescriptor.getFilePath() + " at: " + applicationReportModel.getReportFilename());
 

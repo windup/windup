@@ -87,14 +87,8 @@ public class FreeMarkerIterationOperation extends AbstractIterationOperation<Rep
         {
             ReportService reportService = new ReportService(event.getGraphContext());
 
-            Path outputDir = reportService.getReportDirectory();
-
-            if (!Files.isDirectory(outputDir))
-            {
-                Files.createDirectories(outputDir);
-            }
-
-            Path outputPath = outputDir.resolve(outputFilename);
+            Path outputPath = reportService.getReportDirectory().resolve(outputFilename);
+            Files.createDirectories(outputPath.getParent());
 
             LOG.info("Reporting: Writing template \"" + templatePath + "\" to output file \"" + outputPath.toAbsolutePath().toString() + "\"");
 

@@ -267,9 +267,8 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
         fileName = fileName + extension;
 
         XsltTransformationService xsltTransformationService = new XsltTransformationService(graphContext);
-        Path outputPath = xsltTransformationService.getTransformedXSLTPath();
 
-        Path resultPath = outputPath.resolve(fileName);
+        Path resultPath = xsltTransformationService.getTransformedXSLTPath(payload).resolve(fileName);
 
         Source xmlSource = new DOMSource(payload.asDocument());
         Result xmlResult = new StreamResult(resultPath.toFile());
@@ -296,7 +295,7 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
             GraphService<LinkModel> linkService = new GraphService<>(graphContext, LinkModel.class);
             LinkModel linkModel = linkService.create();
             linkModel.setDescription(description);
-            linkModel.setLink(XsltTransformationService.TRANSFORMEDXML_DIR_NAME + "/" + fileName);
+            linkModel.setLink(xsltTransformationService.getRelativeTransformedXSLTPath(payload).resolve(fileName).toString());
             payload.addLinkToTransformedFile(linkModel);
             // classificationModel.addLink(linkModel);
         }

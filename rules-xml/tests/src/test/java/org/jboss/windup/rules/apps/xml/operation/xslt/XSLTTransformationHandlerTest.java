@@ -149,7 +149,7 @@ public class XSLTTransformationHandlerTest
 
             Assert.assertTrue(classificationModels.get(0).getClassification().contains("XSLT Transformed Output"));
 
-            Path transformedFile = outputPath.resolve("reports").resolve("transformedxml").resolve("sample-xml-test-result.html");
+            Path transformedFile = outputPath.resolve("reports").resolve("xslttransform").resolve("transformedxml").resolve("sample-xml-test-result.html");
             Assert.assertTrue(Files.isRegularFile(transformedFile));
             Assert.assertTrue(Files.size(transformedFile) > 0);
         }
