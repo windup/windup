@@ -5,7 +5,7 @@ import org.jboss.windup.bootstrap.commands.Command;
 import org.jboss.windup.bootstrap.commands.CommandPhase;
 import org.jboss.windup.bootstrap.commands.CommandResult;
 import org.jboss.windup.bootstrap.commands.FurnaceDependent;
-import org.jboss.windup.config.metadata.RuleProviderRegistryCache;
+import org.jboss.windup.exec.configuration.options.IncludeTagsOption;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -15,8 +15,7 @@ public class ListTagsCommand extends AbstractListCommand implements Command, Fur
     @Override
     public CommandResult execute()
     {
-        RuleProviderRegistryCache ruleProviderRegistryCache = getFurnace().getAddonRegistry().getServices(RuleProviderRegistryCache.class).get();
-        printValuesSorted("Available tags", ruleProviderRegistryCache.getAvailableTags());
+        printValuesSorted("Available tags", getOptionValuesFromHelp(IncludeTagsOption.NAME));
         return CommandResult.EXIT;
     }
 

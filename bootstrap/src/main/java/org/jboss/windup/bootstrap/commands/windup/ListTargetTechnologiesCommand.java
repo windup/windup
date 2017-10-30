@@ -5,7 +5,7 @@ import org.jboss.windup.bootstrap.commands.Command;
 import org.jboss.windup.bootstrap.commands.CommandPhase;
 import org.jboss.windup.bootstrap.commands.CommandResult;
 import org.jboss.windup.bootstrap.commands.FurnaceDependent;
-import org.jboss.windup.config.metadata.RuleProviderRegistryCache;
+import org.jboss.windup.exec.configuration.options.TargetOption;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -15,8 +15,7 @@ public class ListTargetTechnologiesCommand extends AbstractListCommand implement
     @Override
     public CommandResult execute()
     {
-        RuleProviderRegistryCache ruleProviderRegistryCache = getFurnace().getAddonRegistry().getServices(RuleProviderRegistryCache.class).get();
-        printValuesSorted("Available target technologies", ruleProviderRegistryCache.getAvailableTargetTechnologies());
+        printValuesSorted("Available target technologies", getOptionValuesFromHelp(TargetOption.NAME));
         return CommandResult.EXIT;
     }
 

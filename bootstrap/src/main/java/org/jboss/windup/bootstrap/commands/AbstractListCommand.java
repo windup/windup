@@ -1,11 +1,9 @@
 package org.jboss.windup.bootstrap.commands;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.jboss.forge.furnace.Furnace;
+import org.jboss.windup.bootstrap.help.Help;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -38,5 +36,14 @@ public abstract class AbstractListCommand implements Command, FurnaceDependent
         {
             System.out.println("\t" + value);
         }
+    }
+
+    protected static Set<String> getOptionValuesFromHelp(String optionName)
+    {
+        Set<String> options = new HashSet<>();
+        Help.load().getOptions().stream()
+                .filter(opt -> opt.getName().equals(optionName))
+                .forEach(optionDescription -> options.addAll(optionDescription.getAvailableOptions()));
+        return options;
     }
 }
