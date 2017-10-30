@@ -21,7 +21,9 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.graph.service.ProjectService;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.jboss.windup.reporting.model.ReportModel;
 import org.jboss.windup.reporting.service.ApplicationReportService;
@@ -34,6 +36,8 @@ import org.jboss.windup.rules.apps.javaee.rules.CreateEJBReportRuleProvider;
 import org.jboss.windup.rules.apps.javaee.rules.CreateJPAReportRuleProvider;
 import org.jboss.windup.rules.apps.javaee.rules.CreateSpringBeanReportRuleProvider;
 import org.jboss.windup.rules.apps.javaee.service.WebXmlService;
+import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
+import org.jboss.windup.rules.apps.xml.service.XmlFileService;
 import org.jboss.windup.rules.apps.xml.service.XsltTransformationService;
 import org.jboss.windup.tests.application.rules.TestServletAnnotationRuleProvider;
 import org.jboss.windup.testutil.html.TestCompatibleReportUtil;
@@ -290,9 +294,15 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
                     "javax.servlet.http.HttpServletRequest usage");
 
         XsltTransformationService xsltService = new XsltTransformationService(context);
-        Assert.assertTrue(Files.isRegularFile(xsltService.getTransformedXSLTPath().resolve(
+        ProjectService projectService = new ProjectService(context);
+        ProjectModel projectModel = projectService.create();
+        projectModel.setName("src_example");
+        XmlFileService xmlFileService = new XmlFileService(context);
+        XmlFileModel xmlFileModel = xmlFileService.create();
+        projectModel.addFileModel(xmlFileModel);
+        Assert.assertTrue(Files.isRegularFile(xsltService.getTransformedXSLTPath(xmlFileModel).resolve(
                     "web-xml-converted-example.xml")));
-        Assert.assertTrue(Files.isRegularFile(xsltService.getTransformedXSLTPath().resolve(
+        Assert.assertTrue(Files.isRegularFile(xsltService.getTransformedXSLTPath(xmlFileModel).resolve(
                     "web-xmluserscript-converted-example.xml")));
 
         validateSpringBeanReport(context);

@@ -114,7 +114,7 @@ public class XMLTransformationTest
             Assert.assertEquals(SIMPLE_XSLT_XSL, xsltTransformation.getSourceLocation());
             Assert.assertEquals(XSLT_EXTENSION, xsltTransformation.getExtension());
             XsltTransformationService xsltTransformationService = new XsltTransformationService(context);
-            Path transformedPath = xsltTransformationService.getTransformedXSLTPath().resolve(
+            Path transformedPath = xsltTransformationService.getTransformedXSLTPath(inputPath).resolve(
                         xsltTransformation.getResult());
 
             Assert.assertEquals(3, xsltTransformation.getEffort());

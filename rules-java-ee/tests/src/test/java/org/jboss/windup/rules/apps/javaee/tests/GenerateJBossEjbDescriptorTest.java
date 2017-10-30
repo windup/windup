@@ -46,14 +46,17 @@ public class GenerateJBossEjbDescriptorTest extends AbstractTest
     public void initData(GraphContext context)
     {
         ProjectModel parentProject1 = context.getFramed().addVertex(null, ProjectModel.class);
+        parentProject1.setName("parentProject1");
         FileModel parentFileModel1 = context.getFramed().addVertex(null, FileModel.class);
         parentProject1.addFileModel(parentFileModel1);
 
         ProjectModel parentProject2 = context.getFramed().addVertex(null, ProjectModel.class);
+        parentProject2.setName("parentProject2");
         FileModel parentFileModel2 = context.getFramed().addVertex(null, FileModel.class);
         parentProject2.addFileModel(parentFileModel2);
 
         ProjectModel pm1 = context.getFramed().addVertex(null, ProjectModel.class);
+        pm1.setName("pm1");
         pm1.setParentProject(parentProject1);
 
         ProjectModel pm2 = context.getFramed().addVertex(null, ProjectModel.class);
