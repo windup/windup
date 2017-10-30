@@ -26,6 +26,8 @@ import org.jboss.windup.exec.rulefilters.NotPredicate;
 import org.jboss.windup.exec.rulefilters.RuleProviderPhasePredicate;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
+import org.jboss.windup.graph.model.ProjectModel;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.xml.model.XsltTransformationModel;
 import org.jboss.windup.rules.apps.xml.service.XsltTransformationService;
@@ -69,7 +71,12 @@ public class XMLTransformationXMLRulesTest
     {
         try (GraphContext context = factory.create())
         {
-            Path inputPath = Paths.get("src/test/resources/");
+            ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
+            pm.setName("Main Project");
+            FileModel inputPath = context.getFramed().addVertex(null, FileModel.class);
+            inputPath.setFilePath("src/test/resources/");
+            pm.addFileModel(inputPath);
+            pm.setRootFileModel(inputPath);
 
             Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windup_"
                         + UUID.randomUUID().toString());
@@ -85,7 +92,7 @@ public class XMLTransformationXMLRulesTest
                         .setRuleProviderFilter(
                                     new NotPredicate(new RuleProviderPhasePredicate(ReportGenerationPhase.class, ReportRenderingPhase.class)))
                         .setGraphContext(context);
-            windupConfiguration.addInputPath(inputPath);
+            windupConfiguration.addInputPath(Paths.get(inputPath.getFilePath()));
             windupConfiguration.setOutputDirectory(outputPath);
             processor.execute(windupConfiguration);
 
@@ -95,7 +102,7 @@ public class XMLTransformationXMLRulesTest
             Assert.assertEquals(SIMPLE_XSLT_XSL, xsltTransformation.getSourceLocation());
             Assert.assertEquals(XSLT_EXTENSION, xsltTransformation.getExtension());
             XsltTransformationService xsltTransformationService = new XsltTransformationService(context);
-            Path transformedPath = xsltTransformationService.getTransformedXSLTPath().resolve(
+            Path transformedPath = xsltTransformationService.getTransformedXSLTPath(inputPath).resolve(
                         xsltTransformation.getResult());
 
             int lineFound = 0;

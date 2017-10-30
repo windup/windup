@@ -3,9 +3,11 @@ package org.jboss.windup.reporting.service;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Stream;
 
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
@@ -93,15 +95,38 @@ public class ReportService extends GraphService<ReportModel>
      */
     public void setUniqueFilename(ReportModel model, String baseFilename, String extension)
     {
-        String filename = PathUtil.cleanFileName(baseFilename) + "." + extension;
+        model.setReportFilename(this.getUniqueFilename(baseFilename, extension, true, null));
+    }
+
+    /**
+     * Returns a unique file name
+     * @param baseFileName the requested base name for the file
+     * @param extension the requested extension for the file
+     * @param cleanBaseFileName specify if the <code>baseFileName</code> has to be cleaned before being used (i.e. 'jboss-web' should not be cleaned to avoid '-' to become '_')
+     * @param ancestorFolders specify the ancestor folders for the file (if there's no ancestor folder, just pass 'null' value)
+     * @return a String representing the unique file generated
+     */
+    public String getUniqueFilename(String baseFileName, String extension, boolean cleanBaseFileName, String... ancestorFolders)
+    {
+        if (cleanBaseFileName)
+        {
+            baseFileName = PathUtil.cleanFileName(baseFileName);
+        }
+
+        if (ancestorFolders != null)
+        {
+            Path pathToFile = Paths.get("", Stream.of(ancestorFolders).map(ancestor -> PathUtil.cleanFileName(ancestor)).toArray(String[]::new)).resolve(baseFileName);
+            baseFileName = pathToFile.toString();
+        }
+        String filename = baseFileName + "." + extension;
 
         // FIXME this looks nasty
         while (usedFilenames.contains(filename))
         {
-            filename = PathUtil.cleanFileName(baseFilename) + "." + index.getAndIncrement() + "." + extension;
+            filename = baseFileName + "." + index.getAndIncrement() + "." + extension;
         }
         usedFilenames.add(filename);
 
-        model.setReportFilename(filename);
+        return filename;
     }
 }
