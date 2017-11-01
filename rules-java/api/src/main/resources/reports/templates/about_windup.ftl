@@ -72,7 +72,7 @@
                             <dd><a href="https://github.com/windup/windup/wiki">https://github.com/windup/windup/wiki</a></dd>
 
                             <dt>Discussion Forum</dt>
-                            <dd><a href="https://community.jboss.org/en/windup?view=discussions">https://community.jboss.org/en/windup</a></dd>
+                            <dd><a href="https://developer.jboss.org/en/windup?view=discussions">https://developer.jboss.org/en/windup</a></dd>
 
                             <dt>Mailing List</dt>
                             <dd><a href="https://lists.jboss.org/mailman/listinfo/windup-dev">https://lists.jboss.org/mailman/listinfo/windup-dev</a></dd>

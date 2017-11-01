@@ -12,7 +12,7 @@ or subscribe to the link:https://lists.jboss.org/mailman/listinfo/windup-dev[win
     https://github.com/windup/windup/wiki/User-Guide[User Guide],
     https://github.com/windup/windup/wiki/Rules-Development-Guide[Rules Development Guide],
     https://github.com/windup/windup/wiki/Core-Development-Guide[Core Development Guide]
-* Forums: https://community.jboss.org/en/windup
+* Forums: https://developer.jboss.org/en/windup
 * Issue Tracker: https://issues.jboss.org/browse/WINDUP
 * Users Mailing List: windup-users@lists.jboss.org
 * Developers Mailing List: windup-dev@lists.jboss.org
