@@ -405,7 +405,7 @@ public class Bootstrap
             }
             else if ("--listTags".equals(arg))
             {
-                commands.add(new ListTagsCommand());
+                commands.add(new ListTagsCommand(arguments));
             }
             else if ("--listSourceTechnologies".equals(arg))
             {
