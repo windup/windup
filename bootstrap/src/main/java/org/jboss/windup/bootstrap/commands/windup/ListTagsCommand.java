@@ -7,11 +7,8 @@ import org.jboss.windup.bootstrap.commands.CommandResult;
 import org.jboss.windup.bootstrap.commands.FurnaceDependent;
 import org.jboss.windup.config.metadata.RuleProviderRegistryCache;
 import org.jboss.windup.exec.configuration.options.IncludeTagsOption;
-import org.jboss.windup.exec.configuration.options.UserRulesDirectoryOption;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -20,28 +17,11 @@ import java.util.Set;
  */
 public class ListTagsCommand extends AbstractListCommand implements Command, FurnaceDependent
 {
-    private final List<Path> userProvidedPaths = new ArrayList<>();
+    private final List<Path> userProvidedPaths;
 
     public ListTagsCommand(List<String> arguments)
     {
-        boolean foundUserRulesDirectoryOption = false;
-        for (int i = 0; i < arguments.size(); i++)
-        {
-            String argument = arguments.get(i);
-            if (argument.equalsIgnoreCase("--" + UserRulesDirectoryOption.NAME))
-            {
-                foundUserRulesDirectoryOption = true;
-            } else if(foundUserRulesDirectoryOption)
-            {
-                if (argument.startsWith("-"))
-                {
-                    break;
-                } else
-                {
-                    userProvidedPaths.add(Paths.get(argument));
-                }
-            }
-        }
+        userProvidedPaths = getUserProvidedPaths(arguments);
     }
 
     @Override
