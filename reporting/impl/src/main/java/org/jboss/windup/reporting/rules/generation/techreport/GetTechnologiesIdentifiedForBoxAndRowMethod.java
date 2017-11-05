@@ -109,14 +109,14 @@ public class GetTechnologiesIdentifiedForBoxAndRowMethod implements WindupFreeMa
                 //.peek(stat -> LOG.info(String.format("    Checking '%s', so far %sx, tags: %s", stat.getName(), sums.getOrDefault(stat.getName(), new TechReportService.TechUsageStatSum("")).getOccurrenceCount(), stat.getTags())))
                 // Only those under both row and box tags.
                 .filter(stat -> {
-                    final Set<String>[] normalAndSilly = TechReportService.splitSillyTagNames(graphContext, stat.getTags());
+                    final Set<String>[] normalAndPlace = TechReportService.splitPlaceTagNames(graphContext, stat.getTags());
 
                     // Normal: any of the tags must fit into the given row and box/column,
-                    if (anyTagsUnderAllTags(normalAndSilly[0], Arrays.asList(boxTag, rowTag)))
+                    if (anyTagsUnderAllTags(normalAndPlace[0], Arrays.asList(boxTag, rowTag)))
                         return true;
 
-                    // Silly: there must be two silly labels representing row or box/column, or one label fitting the box name.
-                    TechReportService.TechReportPlacement placement = TechReportService.processSillyLabels(graphContext, normalAndSilly[1]);
+                    // Place: there must be two placement labels representing row or box/column, or one label fitting the box name.
+                    TechReportService.TechReportPlacement placement = TechReportService.processPlaceLabels(graphContext, normalAndPlace[1]);
                     return placementBelongToThisBoxAndRow(placement, boxTag, rowTag);
                 })
                 .peek(stat -> {

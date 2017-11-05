@@ -122,7 +122,7 @@
                 <#assign sectorTagsIterable = reportModel.sectorsHolderTag.designatedTags />
                 <#assign sectorTags = iterableToList(sectorTagsIterable) />
                 <#assign sectorTags = sectorTags?sort_by("name") />
-                <#assign sillyTagsParent = getTagModelByName("techReport:mappingOfSillyTagNames") />
+                <#assign placeTagsParent = getTagModelByName("techReport:mappingOfPlacementTagNames") />
 
                 <#-- MatrixAndAggregated {
                        countsOfTagsInApps,  // Map<ProjectModel, Map<String, Integer>>
@@ -150,7 +150,7 @@
                         <td></td>
                         <#list sectorTags as sectorTag >
                             <#list sectorTag.designatedTags as boxTag >
-                                <#if !isTagUnderTag(boxTag, sillyTagsParent) >
+                                <#if !isTagUnderTag(boxTag, placeTagsParent) >
                                     <#assign techsOrder = techsOrder + [boxTag] />
                                     <td class="sector sector${sectorTag.title}"><div>${boxTag.title!}</div></td>
                                 </#if>
@@ -176,7 +176,7 @@
                         </td>
                         <#list sectorTags as sectorTag>
                             <#list sectorTag.designatedTags as boxTag>
-                                <#if !isTagUnderTag(boxTag, sillyTagsParent) >
+                                <#if !isTagUnderTag(boxTag, placeTagsParent) >
                                     <#--
                                     <#assign count = (stats.countsOfTagsInApps?api.get(appProject.asVertex().id)[boxTag.name])!false />
                                     <#assign maxForThisBox = stats.maximumsPerTag[boxTag.name] />

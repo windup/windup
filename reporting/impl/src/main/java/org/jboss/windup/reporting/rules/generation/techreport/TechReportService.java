@@ -30,7 +30,7 @@ public class TechReportService
 
 
     /**
-     * Prepares a precomputed matrix - map of maps of maps: rowTag -> boxTag -> project -> silly label -> TechUsageStatSum.
+     * Prepares a precomputed matrix - map of maps of maps: rowTag -> boxTag -> project -> placement label -> TechUsageStatSum.
      * @param onlyForProject Sum the statistics only for this project.
      */
     Map<String, Map<String, Map<Long, Map<String, TechUsageStatSum>>>> getTechStatsMap(ProjectModel onlyForProject)
@@ -56,8 +56,8 @@ public class TechReportService
 
 
             // Identify placement
-            final Set<String>[] normalAndSilly = TechReportService.splitSillyTagNames(graphContext, stat.getTags());
-            TechReportService.TechReportPlacement placement = TechReportService.processSillyLabels(graphContext, normalAndSilly[1]);
+            final Set<String>[] normalAndPlace = TechReportService.splitPlaceTagNames(graphContext, stat.getTags());
+            TechReportService.TechReportPlacement placement = TechReportService.processPlaceLabels(graphContext, normalAndPlace[1]);
             if (placement.box == null || placement.row == null)
             {
                 LOG.severe(String.format("\tPlacement labels not recognized, placement incomplete: %s; stat: %s", placement, stat));
@@ -65,7 +65,7 @@ public class TechReportService
             }
 
             // Normalize placement
-            placement = TechReportService.normalizeSillyPlacement(graphContext, placement);
+            placement = TechReportService.normalizePlacement(graphContext, placement);
 
             if (placement.box == null || placement.row == null)
             {
@@ -151,48 +151,48 @@ public class TechReportService
 
 
     /**
-     * Translates the silly tags (labels) to their normalized real tag counterparts.
-     * Returns a 2-item array; index 0 has the normal names, index 1 the silly names.
+     * Translates the placement tags (labels) to their normalized real tag counterparts.
+     * Returns a 2-item array; index 0 has the normal names, index 1 the placement names.
      *
      * Due to bad design, the rules contain column and row titles for the graph, rather than technology tags.
-     * To make them fit into the tag system, this translation is needed. See also the "silly:..." tags in the report hierarchy definition.
+     * To make them fit into the tag system, this translation is needed. See also the "place:..." tags in the report hierarchy definition.
      */
-    static Set<String>[] splitSillyTagNames(GraphContext graphContext, Set<String> potentialSillyTags)
+    static Set<String>[] splitPlaceTagNames(GraphContext graphContext, Set<String> potentialPlaceTags)
     {
         final TagGraphService tagService = new TagGraphService(graphContext);
 
         Set<String> normalNames = new HashSet<>();
-        Set<String> sillyNames = new HashSet<>();
+        Set<String> placeNames = new HashSet<>();
 
-        potentialSillyTags.forEach(name -> {
-            final TagModel sillyTag = tagService.getTagByName("silly:" + Tag.normalizeName(name));
-            if (null != sillyTag)
-                sillyNames.add(sillyTag.getName());
+        potentialPlaceTags.forEach(name -> {
+            final TagModel placeTag = tagService.getTagByName("place:" + Tag.normalizeName(name));
+            if (null != placeTag)
+                placeNames.add(placeTag.getName());
             else
                 // Some may be undefined. This will happen when someone attempts to add a new sector, row or column/box.
                 normalNames.add(name);
         });
-        return new Set[]{normalNames, sillyNames};
+        return new Set[]{normalNames, placeNames};
     }
 
     /**
      * From three tagNames, if one is under sectorTag and one under rowTag, returns the remaining one, which is supposedly the a box label.
      * Otherwise, returns null.
      */
-    static TechReportPlacement processSillyLabels(GraphContext grCtx, Set<String> tagNames)
+    static TechReportPlacement processPlaceLabels(GraphContext grCtx, Set<String> tagNames)
     {
         TagGraphService tagService = new TagGraphService(grCtx);
 
         if (tagNames.size() < 3)
-            throw new WindupException("There should always be exactly 3 silly labels - row, sector, column/box. It was: " + tagNames);
+            throw new WindupException("There should always be exactly 3 placement labels - row, sector, column/box. It was: " + tagNames);
         if (tagNames.size() > 3)
-            GetTechnologiesIdentifiedForBoxAndRowMethod.LOG.severe("There should always be exactly 3 silly labels - row, sector, column/box. It was: " + tagNames);
+            GetTechnologiesIdentifiedForBoxAndRowMethod.LOG.severe("There should always be exactly 3 placement labels - row, sector, column/box. It was: " + tagNames);
 
         TechReportPlacement placement = new TechReportPlacement();
 
-        final TagModel sillySectorsTag = tagService.getTagByName("techReport:sillySectors");
-        final TagModel sillyBoxesTag = tagService.getTagByName("techReport:sillyBoxes");
-        final TagModel sillyRowsTag = tagService.getTagByName("techReport:sillyRows");
+        final TagModel placeSectorsTag = tagService.getTagByName("techReport:placeSectors");
+        final TagModel placeBoxesTag = tagService.getTagByName("techReport:placeBoxes");
+        final TagModel placeRowsTag = tagService.getTagByName("techReport:placeRows");
 
 
         Set<String> tagNames2 = new HashSet<>(tagNames);
@@ -203,17 +203,17 @@ public class TechReportService
             if (null == tag)
                 continue;
 
-            if (TagGraphService.isTagUnderTagOrSame(tag, sillySectorsTag))
+            if (TagGraphService.isTagUnderTagOrSame(tag, placeSectorsTag))
             {
                 placement.sector = tag;
                 tagNamesIt.remove();
             }
-            else if (TagGraphService.isTagUnderTagOrSame(tag, sillyBoxesTag))
+            else if (TagGraphService.isTagUnderTagOrSame(tag, placeBoxesTag))
             {
                 placement.box = tag;
                 tagNamesIt.remove();
             }
-            else if (TagGraphService.isTagUnderTagOrSame(tag, sillyRowsTag))
+            else if (TagGraphService.isTagUnderTagOrSame(tag, placeRowsTag))
             {
                 placement.row = tag;
                 tagNamesIt.remove();
@@ -224,49 +224,49 @@ public class TechReportService
         LOG.info(String.format("\t\tLabels %s identified as: sector: %s, box: %s, row: %s", tagNames, placement.sector, placement.box, placement.row));
         if (placement.box == null || placement.row == null)
         {
-            GetTechnologiesIdentifiedForBoxAndRowMethod.LOG.severe(String.format("There should always be exactly 3 silly labels - row, sector, column/box. Found: %s, of which box: %s, row: %s", tagNames, placement.box, placement.row));
+            GetTechnologiesIdentifiedForBoxAndRowMethod.LOG.severe(String.format("There should always be exactly 3 placement labels - row, sector, column/box. Found: %s, of which box: %s, row: %s", tagNames, placement.box, placement.row));
         }
         return placement;
     }
 
     /**
-     * This relies on the tag structure in the XML when the silly mapping tags have exactly one parent
-     * outside the silly group, which is the tag they are mapped to.
+     * This relies on the tag structure in the XML when the place:* mapping tags have exactly one parent
+     * outside the place: group, which is the tag they are mapped to.
      */
-    private static TechReportPlacement normalizeSillyPlacement(GraphContext grCtx, TechReportPlacement sillyPlacement)
+    private static TechReportPlacement normalizePlacement(GraphContext grCtx, TechReportPlacement placement)
     {
         TagGraphService tagService = new TagGraphService(grCtx);
 
         final TechReportPlacement normalPlacement = new TechReportPlacement();
-        normalPlacement.sector = getNonSillyParent(tagService, sillyPlacement.sector);
-        normalPlacement.box = getNonSillyParent(tagService, sillyPlacement.box);
-        normalPlacement.row = getNonSillyParent(tagService, sillyPlacement.row);
+        normalPlacement.sector = getNonPlaceParent(tagService, placement.sector);
+        normalPlacement.box = getNonPlaceParent(tagService, placement.box);
+        normalPlacement.row = getNonPlaceParent(tagService, placement.row);
         return normalPlacement;
     }
 
-    private static TagModel getNonSillyParent(TagGraphService tagService, TagModel tag)
+    private static TagModel getNonPlaceParent(TagGraphService tagService, TagModel tag)
     {
         if (tag == null)
             return null;
 
-        final TagModel sillyRoot = tagService.getTagByName("techReport:mappingOfSillyTagNames");
+        final TagModel placeRoot = tagService.getTagByName("techReport:mappingOfPlacementTagNames");
 
         final Iterator<TagModel> parents = tag.getDesignatedByTags().iterator();
         if (!parents.hasNext())
             throw new WindupException("Tag is not designated by any tags: " + tag);
 
-        TagModel nonSillyParent = null;
+        TagModel nonPlaceParent = null;
         do {
             TagModel parentTag = parents.next();
-            if (TagGraphService.isTagUnderTagOrSame(parentTag, sillyRoot))
+            if (TagGraphService.isTagUnderTagOrSame(parentTag, placeRoot))
                 continue;
-            if (nonSillyParent != null)
-                throw new WindupException(String.format("Tag %s has more than one non-silly parent: %s, %s", tag.getName(), nonSillyParent, parentTag));
-            nonSillyParent = parentTag;
+            if (nonPlaceParent != null)
+                throw new WindupException(String.format("Tag %s has more than one non-placement parent: %s, %s", tag.getName(), nonPlaceParent, parentTag));
+            nonPlaceParent = parentTag;
         }
         while (parents.hasNext());
 
-        return nonSillyParent;
+        return nonPlaceParent;
     }
 
 

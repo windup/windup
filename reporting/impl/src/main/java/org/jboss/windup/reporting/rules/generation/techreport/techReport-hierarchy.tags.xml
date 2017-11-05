@@ -136,7 +136,7 @@
         </tag>
     </tag>
 
-    <!-- WINDUP-1697/ This is mapping the silly names to normal tags. -->
+    <!-- WINDUP-1697/ This is mapping the placement names to normal tags. -->
 
     <!-- Note for the maintainers:
 
@@ -144,48 +144,48 @@
         This is likely what you need to edit when adding a new label to a box, or adding or renaming a box or row or sector.
 
         Remember that the tags form an oriented graph, so you can group the labels in any way you like.
-        If you make "silly:JPA 2" be under "silly:JPA", then both will appear in the same box.
+        If you make "place:JPA 2" be under "place:JPA", then both will appear in the same box.
         You can also distribute the same label to 2 different boxes.
     -->
-    <tag name="techReport:mappingOfSillyTagNames">
-        <tag name="techReport:sillyRows">
-            <tag pseudo="true" name="silly:Java EE" title="Java EE" parents="techRow:java-ee"/>
-            <tag pseudo="true" name="silly:Embedded" title="Embedded" parents="techRow:embedded"/>
+    <tag name="techReport:mappingOfPlacementTagNames">
+        <tag name="techReport:placeRows">
+            <tag pseudo="true" name="place:Java EE" title="Java EE" parents="techRow:java-ee"/>
+            <tag pseudo="true" name="place:Embedded" title="Embedded" parents="techRow:embedded"/>
         </tag>
-        <tag name="techReport:sillySectors">
-            <tag pseudo="true" name="silly:View" title="View" parents="techSector01:View"/>
-            <tag pseudo="true" name="silly:Connect" title="Connect" parents="techSector02:Connect"/>
-            <tag pseudo="true" name="silly:Store" title="Store" parents="techSector03:Store"/>
-            <tag pseudo="true" name="silly:Sustain" title="Sustain" parents="techSector04:Sustain"/>
-            <tag pseudo="true" name="silly:Execute" title="Execute" parents="techSector05:Execute"/>
+        <tag name="techReport:placeSectors">
+            <tag pseudo="true" name="place:View" title="View" parents="techSector01:View"/>
+            <tag pseudo="true" name="place:Connect" title="Connect" parents="techSector02:Connect"/>
+            <tag pseudo="true" name="place:Store" title="Store" parents="techSector03:Store"/>
+            <tag pseudo="true" name="place:Sustain" title="Sustain" parents="techSector04:Sustain"/>
+            <tag pseudo="true" name="place:Execute" title="Execute" parents="techSector05:Execute"/>
         </tag>
-        <tag name="techReport:sillyBoxes">
-            <tag pseudo="true" name="silly:3rd party" title="3rd party" parents="techBox:3rd-party"/>
-            <tag pseudo="true" name="silly:Batch" title="Batch" parents="techBox:Batch"/> <!-- Not a box? -->
-            <tag pseudo="true" name="silly:Bean" title="Bean" parents="techBox:EJB"/>
-            <tag pseudo="true" name="silly:Caching" title="Caching" parents="techBox:Caching"/>
-            <tag pseudo="true" name="silly:CDI" title="CDI" parents="techBox:CDI"/> <!-- Not a box? -->
-            <tag pseudo="true" name="silly:Clustering" title="Clustering" parents="techBox:Clustering"/>
-            <tag pseudo="true" name="silly:Database" title="Database" parents="techBox:jdbc"/>
-            <tag pseudo="true" name="silly:HTTP" title="HTTP" parents="techBox:HTTP"/>
-            <tag pseudo="true" name="silly:Integration" title="Integration" parents="techBox:Integration"/>
-            <tag pseudo="true" name="silly:Inversion of Control" title="Inversion of Control" parents="techBox:ioc"/>
-            <tag pseudo="true" name="silly:JSON-P" title="JSON-P" parents="techBox:Processing"/> <!-- Not a box? WINDUPRULE-296 -->
-            <tag pseudo="true" name="silly:Markup" title="Markup" parents="techBox:Markup"/>
-            <tag pseudo="true" name="silly:Messaging" title="Messaging" parents="techBox:Messaging"/>
-            <tag pseudo="true" name="silly:MVC" title="MVC" parents="techBox:mvc"/>
-            <tag pseudo="true" name="silly:Object Mapping" title="Object Mapping" parents="techBox:object-mapping"/>
-            <tag pseudo="true" name="silly:Other" title="Other" parents="techBox:Other"/>
-            <tag pseudo="true" name="silly:Persistence" title="Processing" parents="techBox:Persistence"/>
-            <tag pseudo="true" name="silly:Processing" title="Processing" parents="techBox:Processing"/>
-            <tag pseudo="true" name="silly:REST" title="REST" parents="techBox:rest"/>
-            <tag pseudo="true" name="silly:Rich" title="Rich" parents="techBox:rich"/>
-            <tag pseudo="true" name="silly:Rules and Processes" title="Rules and Processes" parents="techBox:Rules"/>
-            <tag pseudo="true" name="silly:Security" title="Security" parents="techBox:Security"/>
-            <tag pseudo="true" name="silly:Test" title="Test" parents="techBox:Test"/>
-            <tag pseudo="true" name="silly:Transaction" title="Transaction" parents="techBox:Transactions"/>
-            <tag pseudo="true" name="silly:Web" title="Web" parents="techBox:web"/>
-            <tag pseudo="true" name="silly:Web Service" title="Web Service" parents="techBox:webservice"/>
+        <tag name="techReport:placeBoxes">
+            <tag pseudo="true" name="place:3rd party" title="3rd party" parents="techBox:3rd-party"/>
+            <tag pseudo="true" name="place:Batch" title="Batch" parents="techBox:Batch"/> <!-- Not a box? -->
+            <tag pseudo="true" name="place:Bean" title="Bean" parents="techBox:EJB"/>
+            <tag pseudo="true" name="place:Caching" title="Caching" parents="techBox:Caching"/>
+            <tag pseudo="true" name="place:CDI" title="CDI" parents="techBox:CDI"/> <!-- Not a box? -->
+            <tag pseudo="true" name="place:Clustering" title="Clustering" parents="techBox:Clustering"/>
+            <tag pseudo="true" name="place:Database" title="Database" parents="techBox:jdbc"/>
+            <tag pseudo="true" name="place:HTTP" title="HTTP" parents="techBox:HTTP"/>
+            <tag pseudo="true" name="place:Integration" title="Integration" parents="techBox:Integration"/>
+            <tag pseudo="true" name="place:Inversion of Control" title="Inversion of Control" parents="techBox:ioc"/>
+            <tag pseudo="true" name="place:JSON-P" title="JSON-P" parents="techBox:Processing"/> <!-- Not a box? WINDUPRULE-296 -->
+            <tag pseudo="true" name="place:Markup" title="Markup" parents="techBox:Markup"/>
+            <tag pseudo="true" name="place:Messaging" title="Messaging" parents="techBox:Messaging"/>
+            <tag pseudo="true" name="place:MVC" title="MVC" parents="techBox:mvc"/>
+            <tag pseudo="true" name="place:Object Mapping" title="Object Mapping" parents="techBox:object-mapping"/>
+            <tag pseudo="true" name="place:Other" title="Other" parents="techBox:Other"/>
+            <tag pseudo="true" name="place:Persistence" title="Processing" parents="techBox:Persistence"/>
+            <tag pseudo="true" name="place:Processing" title="Processing" parents="techBox:Processing"/>
+            <tag pseudo="true" name="place:REST" title="REST" parents="techBox:rest"/>
+            <tag pseudo="true" name="place:Rich" title="Rich" parents="techBox:rich"/>
+            <tag pseudo="true" name="place:Rules and Processes" title="Rules and Processes" parents="techBox:Rules"/>
+            <tag pseudo="true" name="place:Security" title="Security" parents="techBox:Security"/>
+            <tag pseudo="true" name="place:Test" title="Test" parents="techBox:Test"/>
+            <tag pseudo="true" name="place:Transaction" title="Transaction" parents="techBox:Transactions"/>
+            <tag pseudo="true" name="place:Web" title="Web" parents="techBox:web"/>
+            <tag pseudo="true" name="place:Web Service" title="Web Service" parents="techBox:webservice"/>
         </tag>
     </tag>
 </tags>
