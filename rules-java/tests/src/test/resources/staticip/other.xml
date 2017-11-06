@@ -1,4 +1,6 @@
 <?xml version="1.0"?>
 <test>
     <ip>192.168.0.13</ip>
+    <some>optional/castor-0.9.5.1-xml.jar</some>
+    <device user_agent="CDM-8400/505 UP.Browser/5.0.5.4 (GUI)" fall_back="cdm_8400_ver1" id="cdm_8400_ver1_sub5054"/>
 </test>
