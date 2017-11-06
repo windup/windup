@@ -42,7 +42,7 @@ import org.w3c.dom.Element;
 @RuleMetadata(phase = MigrationRulesPhase.class, tags = {"cloud-readiness"})
 public class DiscoverHardcodedIPAddressRuleProvider extends AbstractRuleProvider
 {
-    private static final String IP_PATTERN = "(?<![\\w.])\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}(?![\\w.])";
+    private static final String IP_PATTERN = "(?<![\\w./-])\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}(?![\\w.-])";
     private static final Logger LOG = Logger.getLogger(DiscoverHardcodedIPAddressRuleProvider.class.getName());
 
     @Override
