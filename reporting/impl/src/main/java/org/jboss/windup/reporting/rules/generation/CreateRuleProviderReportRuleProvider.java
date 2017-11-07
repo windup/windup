@@ -3,7 +3,6 @@ package org.jboss.windup.reporting.rules.generation;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
@@ -20,11 +19,9 @@ import org.jboss.windup.reporting.model.rule.RuleExecutionModel;
 import org.jboss.windup.reporting.model.rule.RuleProviderModel;
 import org.jboss.windup.reporting.ruleexecution.RuleExecutionInformation;
 import org.jboss.windup.reporting.ruleexecution.RuleExecutionResultsListener;
-import org.jboss.windup.reporting.rules.rendering.ExecutionTimeReportRuleProvider;
 import org.jboss.windup.reporting.service.rule.ExecutionPhaseService;
 import org.jboss.windup.reporting.service.rule.RuleExecutionService;
 import org.jboss.windup.reporting.service.rule.RuleProviderService;
-import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -34,11 +31,9 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  *
  * @author <a href="mailto:dklingenberg@gmail.com">David Klingenberg</a>
  */
-@RuleMetadata(phase = PostFinalizePhase.class, after = ExecutionTimeReportRuleProvider.class)
+@RuleMetadata(phase = PostFinalizePhase.class)
 public class CreateRuleProviderReportRuleProvider extends AbstractRuleProvider
 {
-    private static final Logger LOG = Logging.get(CreateRuleProviderReportRuleProvider.class);
-
     @Override
     public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
@@ -88,6 +83,9 @@ public class CreateRuleProviderReportRuleProvider extends AbstractRuleProvider
 
                     for (RuleExecutionInformation ruleInfo : ruleProviderInfo)
                     {
+                        if (ruleInfo == null)
+                            continue;
+
                         RuleExecutionModel ruleExecutionModel = this.ruleExecutionService.create();
                         ruleExecutionModel.setDataFromRuleInfo(ruleInfo);
                         ruleProviderModel.addRule(ruleExecutionModel);

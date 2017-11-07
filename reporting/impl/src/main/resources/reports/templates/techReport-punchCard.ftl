@@ -133,7 +133,7 @@
 
                 <#-- A precomputed matrix - map of maps of maps, boxTag -> rowTag -> project -> techName -> TechUsageStat.
                      Map<String, Map<String, Map<Long, Map<String, TechReportService.TechUsageStatSum>>>> -->
-                <#assign sortedStatsMap = sortTechUsageStats() />
+                <#assign sortedStatsMatrix = sortTechUsageStats() />
 
 
                 <table class="technologiesPunchCard">
@@ -183,9 +183,9 @@
                                     -->
 
                                     <#-- 2nd way - using the 4 layer map -->
-                                    <#assign statsForThisBox = (sortedStatsMap[""]?api.get(boxTag.name)?api.get(appProject.asVertex().id?long))! />
+                                    <#assign statsForThisBox = sortedStatsMatrix.get("", boxTag.name, appProject.asVertex().id?long)! />
                                     <#assign count = (statsForThisBox[""].occurrenceCount)!false />
-                                    <#assign maxForThisBox   = (sortedStatsMap[""]?api.get(boxTag.name)?api.get(0?long)?api.get("").occurrenceCount)!false />
+                                    <#assign maxForThisBox   = (sortedStatsMatrix.get("", boxTag.name, 0?long, "").occurrenceCount)!false />
                                     <#assign isBooleanTech = maxForThisBox?is_number && maxForThisBox == 0 />
                                     <#if isBooleanTech>
                                         <!-- The boolean technologies will either be missing or present. Presence is denoted by 0. Use some middle bubble size for present. -->

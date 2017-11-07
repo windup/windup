@@ -6,7 +6,6 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 import java.util.Map;
 import org.jboss.windup.graph.MapInAdjacentVertices;
-import org.jboss.windup.graph.model.ApplicationProjectModel;
 
 /**
  * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
@@ -27,7 +26,6 @@ public interface TechReportModel extends ApplicationReportModel, IncludeAndExclu
     @Adjacency(label = EDGE_TAG_SECTORS, direction = Direction.OUT)
     TagModel getSectorsHolderTag();
 
-
     @Adjacency(label = EDGE_TAG_SECTORS, direction = Direction.OUT)
     void setSectorsHolderTag(TagModel tag);
 
@@ -36,12 +34,6 @@ public interface TechReportModel extends ApplicationReportModel, IncludeAndExclu
 
     @Adjacency(label = EDGE_TAG_ROWS, direction = Direction.OUT)
     void setRowsHolderTag(TagModel tag);
-
-    @Adjacency(label = EDGE_FOR_APP, direction = Direction.OUT)
-    ApplicationProjectModel getReportedApplication();
-
-    @Adjacency(label = EDGE_FOR_APP, direction = Direction.OUT)
-    TechReportModel setReportedApplication(ApplicationProjectModel app);
 
     @MapInAdjacentVertices(label = "appProjectIdToReportMap")
     void setAppProjectIdToReportMap(Map<String, TechReportModel> values);

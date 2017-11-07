@@ -13,7 +13,7 @@ public class Logging
     /**
      * Shorthand for JUL's <code>getLogger(String)</code>.
      */
-    public static final Logger get(Class<?> cls)
+    public static Logger get(Class<?> cls)
     {
         return Logger.getLogger(cls.getName());
     }
@@ -30,7 +30,7 @@ public class Logging
             sb.append(valueFirst ? e.getValue() : e.getKey());
             sb.append(": ");
             sb.append(valueFirst ? e.getKey() : e.getValue());
-            sb.append("\n");
+            sb.append(Util.NL);
         }
         return sb.toString();
     }

@@ -1,11 +1,14 @@
 package org.jboss.windup.reporting.rules.generation.techreport;
 
+import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.blueprints.Vertex;
 import freemarker.ext.beans.StringModel;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.freemarker.*;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -13,10 +16,15 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.reporting.model.TagModel;
 import org.jboss.windup.reporting.model.TechReportModel;
+import org.jboss.windup.reporting.model.TechnologyUsageStatisticsModel;
+import org.jboss.windup.reporting.service.TagGraphService;
 import org.jboss.windup.util.ExecutionStatistics;
 
 import freemarker.template.TemplateModelException;
+
+import java.util.Set;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * Gets the statistics of technology occurences per input application.
@@ -93,10 +101,10 @@ public class GetTechReportPunchCardStatsMethod implements WindupFreeMarkerMethod
         return result;
     }
 
-    private MatrixAndAggregated computeProjectAndTagsMatrix(GraphContext grCtx, ProjectModel projectToCount)
+    private MatrixAndAggregated computeProjectAndTagsMatrix(GraphContext graphContext, ProjectModel projectToCount)
     {
         // What sectors (column groups) and tech-groups (columns) should be on the report. View, Connect, Store, Sustain, ...
-        GraphService<TagModel> service = new GraphService<>(grCtx, TagModel.class);
+        GraphService<TagModel> service = new GraphService<>(graphContext, TagModel.class);
         TagModel sectorsHolderTag = service.getUniqueByProperty(TagModel.PROP_NAME, TechReportModel.EDGE_TAG_SECTORS);
         if (null == sectorsHolderTag)
         {
@@ -115,7 +123,7 @@ public class GetTechReportPunchCardStatsMethod implements WindupFreeMarkerMethod
             {
                 String tagName = techTag.getName();
 
-                Map<Long, Integer> tagCountForAllApps = CreateTechReportRuleProvider.getTagCountForAllApps(grCtx, tagName);
+                Map<Long, Integer> tagCountForAllApps = GetTechReportPunchCardStatsMethod.getTagCountForAllApps(graphContext, tagName);
 
                 // Transposes the results from getTagCountForAllApps, so that 1st level keys are the apps.
                 tagCountForAllApps.forEach((project, count) -> {
@@ -129,10 +137,63 @@ public class GetTechReportPunchCardStatsMethod implements WindupFreeMarkerMethod
             }
         }
 
-        final MatrixAndAggregated result = new MatrixAndAggregated(matrix, maximums, totals);
-        return result;
+        return new MatrixAndAggregated(matrix, maximums, totals);
     }
 
+    /**
+     * @return Map of counts of given tag and subtags occurrences in all input applications. I.e. how many items tagged with any tag under
+     *         subSectorTag are there in each input application. The key is the vertex ID.
+     */
+    static Map<Long, Integer> getTagCountForAllApps(GraphContext graphContext, String subSectorTagName)
+    {
+        // Get all "subtags" of this tag.
+        Set<String> subTagsNames = getSubTagNamesGraph(graphContext, subSectorTagName);
+
+        // Get all apps.
+        Set<ProjectModel> apps = getAllApplications(graphContext);
+
+        Map<Long, Integer> appToTechSectorCoveredTagsOccurrenceCount = new HashMap<>();
+
+        for (ProjectModel app : apps)
+        {
+            int countSoFar = 0;
+            // Get the TechnologyUsageStatisticsModel's for this ProjectModel
+            Iterable<Vertex> statsIt = app.asVertex().getVertices(Direction.IN, TechnologyUsageStatisticsModel.PROJECT_MODEL);
+            for (Vertex vStat : statsIt)
+            {
+                TechnologyUsageStatisticsModel stat = graphContext.getFramed().frame(vStat, TechnologyUsageStatisticsModel.class);
+
+                // Tags of this TechUsageStat covered by this sector Tag.
+                Set<String> techStatTagsCoveredByGivenTag = stat.getTags().stream().filter(name -> subTagsNames.contains(name))
+                        .collect(Collectors.toSet());
+                // TODO: Optimize this when proven stable - sum the number in the stream
+                // boolean covered = stat.getTags().stream().anyMatch(name -> subTagsNames.contains(name));
+                if (!techStatTagsCoveredByGivenTag.isEmpty())
+                    countSoFar += stat.getOccurrenceCount();
+            }
+            appToTechSectorCoveredTagsOccurrenceCount.put((Long) app.asVertex().getId(), countSoFar);
+        }
+        return appToTechSectorCoveredTagsOccurrenceCount;
+    }
+
+    private static Set<String> getSubTagNamesGraph(GraphContext graphContext, String subSectorTagName)
+    {
+        TagGraphService tagService = new TagGraphService(graphContext);
+        Set<TagModel> subTags = tagService.getDescendantTags(tagService.getTagByName(subSectorTagName));
+        return subTags.stream().map(TagModel::getName).collect(Collectors.toSet());
+    }
+
+    /**
+     * Returns all ApplicationProjectModels.
+     */
+    private static Set<ProjectModel> getAllApplications(GraphContext graphContext)
+    {
+        Set<ProjectModel> apps = new HashSet<>();
+        Iterable<ProjectModel> appProjects = graphContext.findAll(ProjectModel.class);
+        for (ProjectModel appProject : appProjects)
+            apps.add(appProject);
+        return apps;
+    }
 
     /**
      * Just a structure to hold the method result.

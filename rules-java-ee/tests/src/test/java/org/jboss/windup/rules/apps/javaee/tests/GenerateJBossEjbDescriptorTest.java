@@ -5,7 +5,6 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
-import org.jboss.windup.graph.model.ApplicationInputPathModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -48,12 +47,12 @@ public class GenerateJBossEjbDescriptorTest extends AbstractTest
     {
         ProjectModel parentProject1 = context.getFramed().addVertex(null, ProjectModel.class);
         parentProject1.setName("parentProject1");
-        ApplicationInputPathModel parentFileModel1 = context.getFramed().addVertex(null, ApplicationInputPathModel.class);
+        FileModel parentFileModel1 = context.getFramed().addVertex(null, FileModel.class);
         parentProject1.addFileModel(parentFileModel1);
 
         ProjectModel parentProject2 = context.getFramed().addVertex(null, ProjectModel.class);
         parentProject2.setName("parentProject2");
-        ApplicationInputPathModel parentFileModel2 = context.getFramed().addVertex(null, ApplicationInputPathModel.class);
+        FileModel parentFileModel2 = context.getFramed().addVertex(null, FileModel.class);
         parentProject2.addFileModel(parentFileModel2);
 
         ProjectModel pm1 = context.getFramed().addVertex(null, ProjectModel.class);

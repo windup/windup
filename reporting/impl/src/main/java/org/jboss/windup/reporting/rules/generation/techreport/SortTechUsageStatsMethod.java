@@ -1,18 +1,14 @@
 package org.jboss.windup.reporting.rules.generation.techreport;
 
 import freemarker.ext.beans.StringModel;
-import freemarker.template.SimpleNumber;
-import freemarker.template.SimpleScalar;
 import freemarker.template.TemplateModelException;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
 import org.jboss.windup.util.ExecutionStatistics;
-import org.jboss.windup.util.exception.WindupException;
 
 /**
  * Returns a precomputed matrix - map of maps of maps of maps, boxTag -> rowTag -> project -> techName -> TechUsageStat.
@@ -63,9 +59,6 @@ public class SortTechUsageStatsMethod implements WindupFreeMarkerMethod
     @Override
     public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
     {
-        if (arguments.size() == 4)
-            return tryQueryMap(arguments);
-
         ExecutionStatistics.get().begin(NAME);
 
         // Function arguments
@@ -73,7 +66,6 @@ public class SortTechUsageStatsMethod implements WindupFreeMarkerMethod
             throw new TemplateModelException("Expected 0 or 1 argument - project.");
 
         // The project. May be null -> count from all applications.
-        // TODO Not used yet.
         ProjectModel projectModel = null;
         if (arguments.size() == 1)
         {
@@ -82,36 +74,10 @@ public class SortTechUsageStatsMethod implements WindupFreeMarkerMethod
                 projectModel = (ProjectModel) projectArg.getWrappedObject();
         }
 
-        Map<String, Map<String, Map<Long, Map<String, TechReportService.TechUsageStatSum>>>> techStatsMap = techReportService.getTechStatsMap(projectModel);
+        TechReportService.TechStatsMatrix matrix = techReportService.getTechStatsMap(projectModel);
 
         ExecutionStatistics.get().end(NAME);
-        return techStatsMap;
-    }
-
-    /**
-     * Queries the structure returned by it as described above.
-     * The 4 parameters then are:
-     *     Map<String, Map<String, Map<Long, Map<String, TechUsageStatSum>>>> - the map described above,
-     *     String - row tag name
-     *     String - box tag name
-     *     Long   - project (vertex) ID
-     */
-    private Object tryQueryMap(List arguments)
-    {
-        try
-        {
-            Map<String, Map<String, Map<Long, Map<String, TechReportService.TechUsageStatSum>>>> map =
-                    (Map<String, Map<String, Map<Long, Map<String, TechReportService.TechUsageStatSum>>>>) ((StringModel) arguments.get(0)).getWrappedObject();
-            String rowTagName = ((SimpleScalar) arguments.get(1)).getAsString();
-            String boxTagName = ((SimpleScalar) arguments.get(2)).getAsString();
-            Long projectId = ((SimpleNumber) arguments.get(3)).getAsNumber().longValue();
-            return TechReportService.queryMap(map, rowTagName, boxTagName, projectId);
-        }
-        catch (ClassCastException ex)
-        {
-            throw new WindupException(String.format("Wrong parameters to query the map, should be: map, string, string, number.\n\tWas: %s%s%s%s",
-                    arguments.get(0).getClass(), arguments.get(1).getClass(), arguments.get(2).getClass(), arguments.get(3).getClass() ), ex);
-        }
+        return matrix;
     }
 
 }

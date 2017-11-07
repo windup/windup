@@ -111,7 +111,7 @@
 
                 <#-- A precomputed matrix - map of maps of maps, boxTag -> rowTag -> project -> techName -> TechUsageStat.
                      Map<String, Map<String, Map<Long, Map<String, TechReportService.TechUsageStatSum>>>> -->
-                <#assign sortedStatsMap = sortTechUsageStats(reportModel.projectModel) />
+                <#assign sortedStatsMatrix = sortTechUsageStats(reportModel.projectModel) />
 
                 <table class="technologiesBoxCard">
                     <tr class="sectorsHeaders">
@@ -134,7 +134,7 @@
                                     <#list sectorTag.designatedTags as boxTag>
                                         <#if isTagUnderTag(boxTag, rowTag)>
                                             <#-- Get a map of box buckets with TechUsageStats and take data from there, rather than pulling through a function. -->
-                                            <#assign statsForThisBox = (sortedStatsMap[rowTag.name]?api.get(boxTag.name)?api.get(0?long))! />
+                                            <#assign statsForThisBox = (sortedStatsMatrix.get(rowTag.name, boxTag.name, 0))! />
                                             <#list statsForThisBox>
                                                 <div class="box box-${boxTag.name}" id="box${boxTag.asVertex().id?c}">
                                                     <div class="icon icon-${(boxTag.traits["icon"])!}"

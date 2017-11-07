@@ -2,9 +2,12 @@ package org.jboss.windup.tests.application;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
-import javax.jws.WebService;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
@@ -12,7 +15,7 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.ApplicationProjectModel;
+import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.ProjectService;
 import org.jboss.windup.graph.service.Service;
@@ -175,11 +178,11 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
         validateTechReportJEEExample(context);
     }
 
-    private void validateTechReport(GraphContext grCtx, List<TestTechReportUtil.BubbleInfo> bubblesExpected, List<TestTechReportUtil.BoxInfo> boxesExpected)
+    private void validateTechReport(GraphContext graphContext, List<TestTechReportUtil.BubbleInfo> bubblesExpected, List<TestTechReportUtil.BoxInfo> boxesExpected)
     {
 
         // 2 reports - a global one and the app one.
-        Iterable<TechReportModel> techReportsIt = grCtx.findAll(TechReportModel.class);
+        Iterable<TechReportModel> techReportsIt = graphContext.findAll(TechReportModel.class);
         List<TechReportModel> techReports = new ArrayList<>();
         techReportsIt.forEach(techReports::add);
         Assert.assertEquals(2, techReports.size());
@@ -199,13 +202,13 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
         });
 
         Assert.assertNotNull(idToReport.get(null));
-        for (ApplicationProjectModel app : new ProjectService(grCtx).getRootProjectModels())
+        for (ProjectModel app : new ProjectService(graphContext).getRootProjectModels())
         {
             final TechReportModel techReport = idToReport.get(app.asVertex().getId());
             Assert.assertNotNull(techReport);
         }
 
-        ReportService reportService = new ReportService(grCtx);
+        ReportService reportService = new ReportService(graphContext);
 
         // Check the reports
         for (TechReportModel techReportModel : techReportsIt)
