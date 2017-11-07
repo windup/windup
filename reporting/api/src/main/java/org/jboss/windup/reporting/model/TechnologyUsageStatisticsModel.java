@@ -1,14 +1,19 @@
-package org.jboss.windup.rules.apps.javaee.model.stats;
+package org.jboss.windup.reporting.model;
 
 import com.tinkerpop.blueprints.Direction;
+import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.Property;
+import com.tinkerpop.frames.modules.javahandler.JavaHandler;
+import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 import java.util.Date;
 
 import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.model.ProjectModel;
+import org.jboss.windup.graph.model.ProjectModel;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.TaggableModel;
 
 /**
@@ -22,11 +27,11 @@ public interface TechnologyUsageStatisticsModel extends TaggableModel
 {
     String TYPE = "TechnologyUsageStatisticsModel";
 
-    String COMPUTED = TYPE + "-computed";
+    String COMPUTED = "stats.computed";
     String PROJECT_MODEL = "stats.projectModel";
 
     String NAME = "stats.name";
-    String OCCURRENCE_COUNT = "stats.occurrencecount";
+    String OCCURRENCE_COUNT = "stats.occurrenceCount";
 
 
     /**
@@ -42,13 +47,13 @@ public interface TechnologyUsageStatisticsModel extends TaggableModel
     void setComputed(Date when);
 
     /**
-     * ProjectModel for computed stats
+     * ProjectModel for which the stats are computed.
      */
     @Adjacency(label = PROJECT_MODEL, direction = Direction.OUT)
     ProjectModel getProjectModel();
 
     /**
-     * ProjectModel for computed stats
+     * ProjectModel for which the stats are computed.
      */
     @Adjacency(label = PROJECT_MODEL, direction = Direction.OUT)
     TechnologyUsageStatisticsModel setProjectModel(ProjectModel projectModel);
@@ -77,4 +82,17 @@ public interface TechnologyUsageStatisticsModel extends TaggableModel
      */
     @Property(OCCURRENCE_COUNT)
     void setOccurrenceCount(int count);
+
+    @Override
+    @JavaHandler
+    String toString();
+
+    abstract class Impl extends TaggableModel.Impl implements TechnologyUsageStatisticsModel, JavaHandlerContext<Vertex>
+    {
+        @Override
+        public String toString()
+        {
+            return "TechUsageStats{"+ getName() + " ("+getOccurrenceCount()+"x) tags:["+this.getTags()+"] Project:"+ getProjectModel() +"}";
+        }
+    }
 }

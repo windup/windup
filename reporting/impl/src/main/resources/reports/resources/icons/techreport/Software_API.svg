@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 19.1.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 144 144" enable-background="new 0 0 144 144" xml:space="preserve">
+<g id="button" display="none">
+	<circle display="inline" fill="#DCDCDC" cx="72" cy="72" r="54"/>
+</g>
+<g id="template" display="none">
+	<circle display="inline" fill="none" stroke="#FFFFFF" stroke-width="0.25" stroke-miterlimit="10" cx="72" cy="72" r="36"/>
+	<g display="inline">
+		
+			<circle fill="none" stroke="#FFFFFF" stroke-width="0.25" stroke-linecap="round" stroke-miterlimit="10" stroke-dasharray="1.9875,1.9875" cx="72" cy="72" r="40.5"/>
+	</g>
+	
+		<line display="inline" fill="none" stroke="#FFFFFF" stroke-width="0.25" stroke-miterlimit="10" x1="72" y1="18" x2="72" y2="126"/>
+	
+		<line display="inline" fill="none" stroke="#FFFFFF" stroke-width="0.25" stroke-miterlimit="10" x1="126" y1="72" x2="18" y2="72"/>
+	
+		<line display="inline" fill="none" stroke="#FFFFFF" stroke-width="0.25" stroke-miterlimit="10" x1="110.184" y1="33.816" x2="33.816" y2="110.184"/>
+	
+		<line display="inline" fill="none" stroke="#FFFFFF" stroke-width="0.25" stroke-miterlimit="10" x1="110.184" y1="110.184" x2="33.816" y2="33.816"/>
+</g>
+<g id="icon">
+	<path fill="#FFFFFF" d="M97.729,84.022V59.745h-8.221v-8.096h4.347l-5.055-8.753l-5.054,8.753h4.346v8.096H72.236v-0.443v-7.394
+		h3.444v-8.305h-8.305v8.305h3.444v7.394v0.443H54.964v-7.908c1.952-0.338,3.444-2.034,3.444-4.081c0-2.29-1.862-4.152-4.152-4.152
+		s-4.152,1.863-4.152,4.152c0,2.047,1.492,3.742,3.444,4.081v7.908h-8.057v24.276h8.057v7.836h-3.28v8.305h8.305v-8.305h-3.608
+		v-7.836H70.82v0.61v7.705h0.023l-4.369,7.568h10.108l-4.37-7.568h0.023v-7.705v-0.61h15.856v7.908
+		c-1.952,0.338-3.444,2.034-3.444,4.081c0,2.29,1.862,4.152,4.152,4.152s4.152-1.863,4.152-4.152c0-2.048-1.492-3.743-3.444-4.081
+		v-7.908H97.729z M54.964,75.86v-3.269h33.129v3.269H54.964z M88.093,67.792v3.384H54.964v-3.384H88.093z M88.093,66.376H72.236
+		v-5.214h15.856V66.376z M70.82,66.376H54.964v-5.214H70.82V66.376z M54.964,77.276H70.82v5.329H54.964V77.276z M72.236,77.276
+		h15.856v5.329H72.236V77.276z M89.509,82.605V75.86v-3.269h6.805v10.014H89.509z M96.313,71.175h-6.805V61.161h6.805V71.175z
+		 M88.801,45.728l2.602,4.505H86.2L88.801,45.728z M68.792,45.02h5.473v5.473h-5.473V45.02z M51.52,47.756
+		c0-1.509,1.228-2.736,2.736-2.736s2.736,1.228,2.736,2.736s-1.228,2.736-2.736,2.736S51.52,49.265,51.52,47.756z M53.548,61.161
+		v6.63v3.384h-6.641V61.161H53.548z M46.907,72.591h6.641v10.014h-6.641V72.591z M57.156,98.747h-5.473v-5.473h5.473V98.747z
+		 M68.928,98.488l2.601-4.506l2.602,4.506H68.928z M91.537,96.011c0,1.509-1.228,2.736-2.736,2.736s-2.736-1.228-2.736-2.736
+		c0-1.509,1.228-2.737,2.736-2.737S91.537,94.501,91.537,96.011z"/>
+</g>
+</svg>

@@ -11,6 +11,21 @@
     <artifactId>windup-reporting-impl</artifactId>
     <name>Windup Engine - Reporting Impl</name>
 
+    <build>
+        <resources>
+            <resource>
+                <filtering>false</filtering>
+                <directory>src/main/resources</directory>
+            </resource>
+            <resource>
+                <filtering>false</filtering>
+                <directory>src/main/java</directory>
+                <includes><include>**/*</include></includes>
+                <excludes><exclude>**/*.java</exclude></excludes>
+            </resource>
+        </resources>
+    </build>
+
     <dependencies>
         <!-- Local Dependencies -->
         <dependency>

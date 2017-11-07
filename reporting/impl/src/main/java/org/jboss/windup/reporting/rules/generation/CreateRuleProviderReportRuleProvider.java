@@ -83,13 +83,18 @@ public class CreateRuleProviderReportRuleProvider extends AbstractRuleProvider
                     ExecutionPhaseModel executionPhaseModel = this.getPhaseModel(ruleProvider);
                     executionPhaseModel.addRuleProvider(ruleProviderModel);
 
-                    List<RuleExecutionInformation> ruleProviderInfo = RuleExecutionResultsListener.instance(event)
+                    List<RuleExecutionInformation> ruleExecutions = RuleExecutionResultsListener.instance(event)
                             .getRuleExecutionInformation((AbstractRuleProvider) ruleProvider);
 
-                    for (RuleExecutionInformation ruleInfo : ruleProviderInfo)
+                    for (RuleExecutionInformation ruleExecution : ruleExecutions)
                     {
+                        if (null == ruleExecution)
+                        {
+                            LOG.warning("One rule execution info unavailable for RuleProvider: " + ruleProvider);
+                            continue;
+                        }
                         RuleExecutionModel ruleExecutionModel = this.ruleExecutionService.create();
-                        ruleExecutionModel.setDataFromRuleInfo(ruleInfo);
+                        ruleExecutionModel.setDataFromRuleInfo(ruleExecution);
                         ruleProviderModel.addRule(ruleExecutionModel);
                     }
                 }

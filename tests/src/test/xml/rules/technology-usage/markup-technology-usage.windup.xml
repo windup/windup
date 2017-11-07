@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<ruleset id="technology-usage-markup" xmlns="http://windup.jboss.org/schema/jboss-ruleset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://windup.jboss.org/schema/jboss-ruleset http://windup.jboss.org/schema/jboss-ruleset/windup-jboss-ruleset.xsd">
+    <metadata>
+        <description>
+            This ruleset provides statistical summaries of the Markup (HTML, CSS, JS) items that were found during the analysis.
+        </description>
+        <dependencies>
+            <addon id="org.jboss.windup.rules,windup-rules-javaee,3.0.0.Final" />
+            <addon id="org.jboss.windup.rules,windup-rules-java,3.0.0.Final" />
+        </dependencies>
+        <sourceTechnology id="weblogic" />
+        <targetTechnology id="eap"/>
+        <phase>PostMigrationRulesPhase</phase>
+    </metadata>
+    <rules>
+        <rule id="technology-usage-markup-01000">
+            <when>
+                <graph-query discriminator="HtmlFile"/>
+            </when>
+            <perform>
+                <technology-identified name="HTML">
+                    <tag name="View"/>
+                    <tag name="Embedded"/>
+                    <tag name="Markup"/>
+                </technology-identified>
+            </perform>
+        </rule>
+        <rule id="technology-usage-markup-01100">
+            <when>
+                <graph-query discriminator="CssFile"/>
+            </when>
+            <perform>
+                <technology-identified name="CSS">
+                    <tag name="View"/>
+                    <tag name="Embedded"/>
+                    <tag name="Markup"/>
+                </technology-identified>
+            </perform>
+        </rule>
+        <rule id="technology-usage-markup-01200">
+            <when>
+                <graph-query discriminator="JsFile"/>
+            </when>
+            <perform>
+                <technology-identified name="JS">
+                    <tag name="View"/>
+                    <tag name="Embedded"/>
+                    <tag name="Markup"/>
+                </technology-identified>
+            </perform>
+        </rule>
+    </rules>
+</ruleset>

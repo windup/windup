@@ -22,7 +22,9 @@ import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
+import org.jboss.windup.graph.model.ApplicationInputPathModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
+import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.FileService;
 import org.junit.Assert;
 import org.junit.Test;
@@ -89,9 +91,12 @@ public class RuleIterationOverDefaultListVariableTest
             DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
             WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
+
             FileService fileModelService = new FileService(context);
-            windupCfg.addInputPath(fileModelService.createByFilePath(OperatingSystemUtils.createTempDir()
-                        .getAbsolutePath()));
+
+            FileModel tmpDir = fileModelService.createByFilePath(OperatingSystemUtils.createTempDir().getAbsolutePath());
+            final ApplicationInputPathModel appTmpDir = context.service(ApplicationInputPathModel.class).addTypeToModel(tmpDir);
+            windupCfg.addInputPath(appTmpDir);
 
             TestRuleIterationOverDefaultListVariableProvider provider = new TestRuleIterationOverDefaultListVariableProvider();
             Configuration configuration = provider.getConfiguration(null);

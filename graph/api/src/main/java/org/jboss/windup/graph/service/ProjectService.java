@@ -2,6 +2,8 @@ package org.jboss.windup.graph.service;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.ApplicationInputPathModel;
+import org.jboss.windup.graph.model.ApplicationProjectModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -51,7 +53,8 @@ public class ProjectService extends GraphService<ProjectModel>
      */
     public ProjectModel getOrCreateSharedLibsProject()
     {
-        ProjectService service = new ProjectService(getGraphContext());
+        final GraphContext grCtx = getGraphContext();
+        ProjectService service = new ProjectService(grCtx);
         ProjectModel sharedLibsProject = service.getByUniqueID(SHARED_LIBS_UNIQUE_ID);
         if (sharedLibsProject == null)
         {
@@ -61,17 +64,17 @@ public class ProjectService extends GraphService<ProjectModel>
             sharedLibsProject.setProjectType(ProjectModel.TYPE_VIRTUAL);
 
             // attach a directory to it, as we generally assume that all projects have a location on disk
-            Path archivesDirectory = WindupConfigurationService.getArchivesPath(getGraphContext());
+            Path archivesDirectory = WindupConfigurationService.getArchivesPath(grCtx);
             Path sharedLibsPath = archivesDirectory.resolve("shared-libs-" + RandomStringUtils.randomAlphabetic(6)).resolve(SHARED_LIBS_FILENAME);
             PathUtil.createDirectory(sharedLibsPath, "shared libs virtual app");
 
-            FileModel sharedLibsFileModel = new FileService(getGraphContext()).createByFilePath(sharedLibsPath.toString());
+            FileModel sharedLibsFileModel = new FileService(grCtx).createByFilePath(sharedLibsPath.toString());
             sharedLibsProject.setRootFileModel(sharedLibsFileModel);
             sharedLibsProject.addFileModel(sharedLibsFileModel);
 
             // attach this to the configuration, so that reporting treats it as a standalone app
-            WindupConfigurationModel configuration = WindupConfigurationService.getConfigurationModel(getGraphContext());
-            configuration.addInputPath(sharedLibsFileModel);
+            WindupConfigurationModel configuration = WindupConfigurationService.getConfigurationModel(grCtx);
+            configuration.addInputPath(grCtx.service(ApplicationInputPathModel.class).addTypeToModel(sharedLibsFileModel));
         }
 
         return sharedLibsProject;
@@ -125,12 +128,16 @@ public class ProjectService extends GraphService<ProjectModel>
         return projectModels;
     }
 
-    public Set<ProjectModel> getRootProjectModels()
+    /**
+     * Returns all Projects created from the user input paths.
+     */
+    public Set<ApplicationProjectModel> getRootProjectModels()
     {
-        Iterable<FileModel> fileModelIterable = WindupConfigurationService.getConfigurationModel(this.getGraphContext()).getInputPaths();
+        Iterable<ApplicationInputPathModel> fileModelIterable = WindupConfigurationService.getConfigurationModel(this.getGraphContext()).getInputPaths();
 
         return StreamSupport.stream(fileModelIterable.spliterator(), false)
-                .map(FileModel::getProjectModel)
+                // The model should already have ApplicationProjectModel, but to be safe...
+                .map( f -> getGraphContext().service(ApplicationProjectModel.class).addTypeToModel(f.getProjectModel()))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
     }

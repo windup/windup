@@ -92,6 +92,13 @@ public abstract class WindupArchitectureTest
         runTest(createGraphContext(), inputPaths, null, sourceMode, includeList, excludeList);
     }
 
+    protected void runTest(GraphContext graphContext, String inputPath, String userRulesDir, boolean sourceMode) throws Exception
+    {
+        List<String> incl = Collections.emptyList();
+        List<String> excl = Collections.emptyList();
+        runTest(graphContext, Collections.singletonList(inputPath), Collections.singletonList(new File(userRulesDir)), sourceMode, incl, excl);
+    }
+
     protected void runTest(GraphContext graphContext, String inputPath, boolean sourceMode)
                 throws Exception
     {
@@ -289,6 +296,7 @@ public abstract class WindupArchitectureTest
         }
 
     }
+
 
 
     /**

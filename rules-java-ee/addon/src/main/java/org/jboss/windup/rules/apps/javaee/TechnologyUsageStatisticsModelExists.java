@@ -5,7 +5,7 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.condition.GraphCondition;
-import org.jboss.windup.rules.apps.javaee.model.stats.TechnologyUsageStatisticsModel;
+import org.jboss.windup.reporting.model.TechnologyUsageStatisticsModel;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**

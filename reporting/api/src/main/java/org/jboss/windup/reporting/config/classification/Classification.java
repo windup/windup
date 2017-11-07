@@ -282,7 +282,9 @@ public class Classification extends ParameterizedIterationOperation<FileModel> i
         StringBuilder result = new StringBuilder();
         result.append("Classification.as(").append(classificationPattern.getPattern()).append(")");
         if (descriptionPattern != null && !descriptionPattern.getPattern().trim().isEmpty())
-            result.append(".withDescription(").append(descriptionPattern).append(")");
+            result.append(".withDescription(")
+                    .append(StringUtils.abbreviate((""+descriptionPattern).trim().replace("\n\n", "\n"), 50))
+                    .append(")");
         if (effort != 0)
             result.append(".withEffort(").append(effort).append(")");
         if (links != null && !links.isEmpty())

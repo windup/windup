@@ -3,6 +3,7 @@ package org.jboss.windup.rules.apps.java.reporting.freemarker;
 import freemarker.template.DefaultIterableAdapter;
 import java.util.List;
 
+import freemarker.template.DefaultIterableAdapter;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.exception.WindupException;
@@ -56,6 +57,11 @@ public class IterableHasContent implements WindupFreeMarkerMethod
         {
             SimpleSequence simpleSequence = (SimpleSequence) arg;
             return simpleSequence.size() > 0;
+        }
+        else if (arg instanceof DefaultIterableAdapter)
+        {
+            DefaultIterableAdapter adapter = (DefaultIterableAdapter) arg;
+            return adapter.iterator().hasNext();
         }
         else if (arg instanceof DefaultListAdapter)
         {
