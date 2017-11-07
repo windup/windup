@@ -7,6 +7,7 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.DuplicateArchiveModel;
 import org.jboss.windup.graph.model.LinkModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
@@ -273,7 +274,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
      */
     public ClassificationModel attachClassification(GraphRewrite event, ClassificationModel classificationModel, FileModel fileModel)
     {
-        if (!isClassificationLinkedToFileModel(event, classificationModel, fileModel))
+        if (!isClassificationLinkedToFileModel(event, classificationModel, fileModel) && !(fileModel instanceof DuplicateArchiveModel))
         {
             classificationModel.addFileModel(fileModel);
             if (fileModel instanceof SourceFileModel)
