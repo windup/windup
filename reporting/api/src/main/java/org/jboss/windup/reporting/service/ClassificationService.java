@@ -228,6 +228,10 @@ public class ClassificationService extends GraphService<ClassificationModel>
             classification.setIssueCategory(cat);
 
             classification.setRuleID(rule.getId());
+            if (fileModel instanceof DuplicateArchiveModel)
+            {
+                fileModel = ((DuplicateArchiveModel) fileModel).getCanonicalArchive();
+            }
             classification.addFileModel(fileModel);
             if (fileModel instanceof SourceFileModel)
                 ((SourceFileModel) fileModel).setGenerateSourceReport(true);
@@ -274,6 +278,11 @@ public class ClassificationService extends GraphService<ClassificationModel>
      */
     public ClassificationModel attachClassification(GraphRewrite event, ClassificationModel classificationModel, FileModel fileModel)
     {
+        if (fileModel instanceof DuplicateArchiveModel)
+        {
+            fileModel = ((DuplicateArchiveModel) fileModel).getCanonicalArchive();
+        }
+
         if (!isClassificationLinkedToFileModel(event, classificationModel, fileModel) && !(fileModel instanceof DuplicateArchiveModel))
         {
             classificationModel.addFileModel(fileModel);
