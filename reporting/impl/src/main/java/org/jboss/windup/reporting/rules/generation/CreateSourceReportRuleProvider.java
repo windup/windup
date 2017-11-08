@@ -60,11 +60,12 @@ public class CreateSourceReportRuleProvider extends AbstractRuleProvider
             public void perform(GraphRewrite event, EvaluationContext context)
             {
                 WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
+                ReportService reportService = new ReportService(event.getGraphContext());
                 Iterable<FileModel> inputApplications = configurationModel.getInputPaths();
                 for (FileModel inputApplication : inputApplications)
                 {
                     ProjectModelTraversal projectModelTraversal = new ProjectModelTraversal(inputApplication.getProjectModel());
-                    traverse(event, projectModelTraversal);
+                    traverse(event, projectModelTraversal, reportService);
                 }
             }
 
@@ -81,21 +82,21 @@ public class CreateSourceReportRuleProvider extends AbstractRuleProvider
     }
     // @formatter:on
 
-    private void traverse(GraphRewrite event, ProjectModelTraversal traversal)
+    private void traverse(GraphRewrite event, ProjectModelTraversal traversal, ReportService reportService)
     {
         for (FileModel fileModel : traversal.getCanonicalProject().getFileModels())
         {
             if (fileModel instanceof SourceFileModel && ((SourceFileModel) fileModel).isGenerateSourceReport())
-                createSourceReport(event, traversal, fileModel);
+                createSourceReport(event, traversal, reportService, fileModel);
         }
 
         for (ProjectModelTraversal child : traversal.getChildren())
         {
-            traverse(event, child);
+            traverse(event, child, reportService);
         }
     }
 
-    private void createSourceReport(GraphRewrite event, ProjectModelTraversal traversal, FileModel sourceFile)
+    private void createSourceReport(GraphRewrite event, ProjectModelTraversal traversal, ReportService reportService, FileModel sourceFile)
     {
         ProjectModel application = traversal.getCurrent().getRootProjectModel();
         SourceReportService sourceReportService = new SourceReportService(
@@ -138,7 +139,6 @@ public class CreateSourceReportRuleProvider extends AbstractRuleProvider
         }
 
         GraphService.addTypeToModel(event.getGraphContext(), sourceReportModel, FreeMarkerSourceReportModel.class);
-        ReportService reportService = new ReportService(event.getGraphContext());
         reportService.setUniqueFilename(sourceReportModel, sourceFile.getFileName(), "html");
     }
 
