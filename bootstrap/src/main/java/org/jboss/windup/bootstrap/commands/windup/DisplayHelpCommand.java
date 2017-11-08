@@ -22,7 +22,9 @@ public class DisplayHelpCommand implements Command
         for (OptionDescription option : Help.load().getOptions())
         {
             sb.append("--").append(option.getName()).append(System.lineSeparator());
-            sb.append("\t").append(option.getDescription()).append(System.lineSeparator());
+            sb.append("\t");
+            sb.append(option.isRequired() ? "(Required) " : "");
+            sb.append(option.getDescription()).append(System.lineSeparator());
         }
 
         sb.append("--listTags").append(System.lineSeparator());
