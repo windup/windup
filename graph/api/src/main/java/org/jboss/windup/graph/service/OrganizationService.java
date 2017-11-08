@@ -46,13 +46,10 @@ public class OrganizationService extends GraphService<OrganizationModel>
      */
     public OrganizationModel attachOrganization(OrganizationModel organizationModel, ArchiveModel archiveModel)
     {
-        // check for duplicates
-        for (FileModel existingFileModel : organizationModel.getArchiveModels())
+        for (OrganizationModel existingOrganizationModel : archiveModel.getOrganizationModels())
         {
-            if (existingFileModel.equals(archiveModel))
-            {
+            if (existingOrganizationModel.equals(organizationModel))
                 return organizationModel;
-            }
         }
         organizationModel.addArchiveModel(archiveModel);
         return organizationModel;
