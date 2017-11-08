@@ -283,7 +283,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
             fileModel = ((DuplicateArchiveModel) fileModel).getCanonicalArchive();
         }
 
-        if (!isClassificationLinkedToFileModel(event, classificationModel, fileModel) && !(fileModel instanceof DuplicateArchiveModel))
+        if (!isClassificationLinkedToFileModel(event, classificationModel, fileModel))
         {
             classificationModel.addFileModel(fileModel);
             if (fileModel instanceof SourceFileModel)
