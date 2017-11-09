@@ -8,17 +8,15 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.graph.model.FileReferenceModel;
+import org.jboss.windup.graph.model.HasApplications;
 import org.jboss.windup.graph.model.HasProject;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.TagSetModel;
 import org.jboss.windup.reporting.model.TechnologyTagModel;
-import org.jboss.windup.reporting.service.TagSetService;
-import org.jboss.windup.rules.apps.javaee.model.EjbBeanBaseModel;
-import org.jboss.windup.rules.apps.javaee.model.JNDIResourceModel;
 import org.jboss.windup.reporting.model.TechnologyUsageStatisticsModel;
-import org.jboss.windup.graph.model.HasApplications;
+import org.jboss.windup.reporting.service.TagSetService;
 import org.jboss.windup.util.Logging;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
@@ -51,8 +49,8 @@ public class TechnologyIdentified extends AbstractIterationOperation<WindupVerte
     /**
      * Creates the operation with the given input variable and technology name.
      *
-     * This version also specifies the name of the iteration variable for cases in which there are multiple iteration
-     * variables being used. See also {@link Iteration} and {@link AbstractIterationOperation}.
+     * This version also specifies the name of the iteration variable for cases in which there are multiple iteration variables being used. See also
+     * {@link Iteration} and {@link AbstractIterationOperation}.
      */
     public TechnologyIdentified(String variableName, String technologyName)
     {
@@ -154,7 +152,6 @@ public class TechnologyIdentified extends AbstractIterationOperation<WindupVerte
             TechnologyUsageStatisticsService service = new TechnologyUsageStatisticsService(event.getGraphContext());
             TechnologyUsageStatisticsModel stats = service.getOrCreate(project, this.technologyName);
             stats.setOccurrenceCount(stats.getOccurrenceCount() + this.count);
-            LOG.info("Created TechnologyUsageStatisticsModel: " + this.technologyName + " used " + count + "x in " + project.getRootFileModel().getFilePath());
 
             // Update tags
             TagSetModel tagModel = stats.getTagModel();

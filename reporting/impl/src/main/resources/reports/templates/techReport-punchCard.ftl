@@ -213,8 +213,9 @@
                             ${ (appProject.getApplications()?size)! }
                         </td>
                         <td class="sectorStats storyPoints">
-                            <#assign traversal = getProjectTraversal(appProject, 'only_once') />
-                            <#assign panelStoryPoints = getMigrationEffortPointsForProject(traversal, false)! />
+                            <#assign traversal = getProjectTraversal(appProject, 'all') />
+                            <#assign mandatoryCategory = ["mandatory"] />
+                            <#assign panelStoryPoints = getMigrationEffortPointsForProject(traversal, true, [], [], mandatoryCategory)! />
                             ${ panelStoryPoints! }
                         </td>
                     </tr>

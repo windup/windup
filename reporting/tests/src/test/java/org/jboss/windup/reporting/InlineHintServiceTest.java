@@ -61,7 +61,7 @@ public class InlineHintServiceTest
             ProjectModel projectModel = fillData(context);
             ProjectModelTraversal projectModelTraversal = new ProjectModelTraversal(projectModel);
             Set<String> emptySet = Collections.emptySet();
-            final Map<Integer, Integer> effortByCategory = inlineHintService.getMigrationEffortByPoints(projectModelTraversal, emptySet, emptySet, true, true);
+            final Map<Integer, Integer> effortByCategory = inlineHintService.getMigrationEffortByPoints(projectModelTraversal, emptySet, emptySet, emptySet, true, true);
             int totalEffort = 0;
             for (Map.Entry<Integer, Integer> effortEntry : effortByCategory.entrySet())
                 totalEffort += effortEntry.getKey() * effortEntry.getValue();

@@ -255,19 +255,11 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
         Iterable<T> results = findAllByProperty(property, value, enforceType);
 
         T result = null;
-        Iterator<? extends WindupVertexFrame> iterator = results.iterator();
-        do {
-            if (!iterator.hasNext())
-                return result;
-
-            WindupVertexFrame item = iterator.next();
-
+        for (WindupVertexFrame item : results)
+        {
             // There can be other types using the same property name.
             if (!type.isInstance(item))
                 continue;
-
-            if ("jsf".equals(value))            /// DEBUG, remove
-                Logger.getLogger("FOO").info("Model with name 'jsf', type: " + type + " item: " + StringUtils.join(item.getClass().getInterfaces(), ", "));
 
             if (result != null)
             {
@@ -277,7 +269,6 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
             }
             result = (T) item;
         }
-        while (iterator != null); // Needed something true but can't use constant expression.
 
         return result;
     }

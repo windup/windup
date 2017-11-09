@@ -8,13 +8,15 @@
 
     Traverses through the project tree using given traversal and sums all effort (story) points.
 -->
-<#function getMigrationEffortPointsForProject traversal recursive includeAndExcludeTagParameters...>
-    <#if includeAndExcludeTagParameters?size == 0>
+<#function getMigrationEffortPointsForProject traversal recursive includeExcludeTagAndIssueCategoryParameters...>
+    <#if includeExcludeTagAndIssueCategoryParameters?size == 0>
         <#assign effortLevels = getEffortDetailsForProjectTraversal(traversal, recursive)>
-    <#elseif includeAndExcludeTagParameters?size == 1>
-        <#assign effortLevels = getEffortDetailsForProjectTraversal(traversal, recursive, includeAndExcludeTagParameters[0])>
-    <#elseif includeAndExcludeTagParameters?size gt 1>
-        <#assign effortLevels = getEffortDetailsForProjectTraversal(traversal, recursive, includeAndExcludeTagParameters[0], includeAndExcludeTagParameters[1])>
+    <#elseif includeExcludeTagAndIssueCategoryParameters?size == 1>
+        <#assign effortLevels = getEffortDetailsForProjectTraversal(traversal, recursive, includeExcludeTagAndIssueCategoryParameters[0])>
+    <#elseif includeExcludeTagAndIssueCategoryParameters?size == 2>
+        <#assign effortLevels = getEffortDetailsForProjectTraversal(traversal, recursive, includeExcludeTagAndIssueCategoryParameters[0], includeExcludeTagAndIssueCategoryParameters[1])>
+    <#elseif includeExcludeTagAndIssueCategoryParameters?size gt 2>
+            <#assign effortLevels = getEffortDetailsForProjectTraversal(traversal, recursive, includeExcludeTagAndIssueCategoryParameters[0], includeExcludeTagAndIssueCategoryParameters[1], includeExcludeTagAndIssueCategoryParameters[2])>
     </#if>
 
     <#assign totalEffort = 0>

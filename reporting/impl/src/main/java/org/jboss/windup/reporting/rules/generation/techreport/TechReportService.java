@@ -40,7 +40,7 @@ public class TechReportService
     TechStatsMatrix getTechStatsMap(ProjectModel onlyForProject)
     {
         final Long onlyID = onlyForProject == null ? null : (Long) onlyForProject.getRootProjectModel().asVertex().getId();
-        LOG.info(String.format("### Creating tech stats map for " + (onlyForProject == null ? "global report" : "project #%d"), onlyID));
+        LOG.fine(String.format("### Creating tech stats map for " + (onlyForProject == null ? "global report" : "project #%d"), onlyID));
 
         Map<String, Map<String, Map<Long, Map<String, TechUsageStatSum>>>> map = new HashMap<>();
 
@@ -53,13 +53,13 @@ public class TechReportService
                     .map(Long.class::cast)
                     .collect(Collectors.toList());
 
-            LOG.info(String.format("--- Adding to projects %s: tech '%s', count: %sx, tags: %s", StringUtils.join(appsToCountTowards, " "),
+            LOG.fine(String.format("--- Adding to projects %s: tech '%s', count: %sx, tags: %s", StringUtils.join(appsToCountTowards, " "),
                     stat.getName(), stat.getOccurrenceCount(), stat.getTags()));
 
             // A shortcut.
             if (onlyID != null && !appsToCountTowards.contains(onlyID))
             {
-                LOG.info("\t\tThis stat is not for this project, skipping.");
+                LOG.fine("\t\tThis stat is not for this project, skipping.");
                 continue;
             }
 
@@ -181,7 +181,7 @@ public class TechReportService
         }
         placement.unknown = unknownTags;
 
-        LOG.info(String.format("\t\tLabels %s identified as: sector: %s, box: %s, row: %s", tagNames, placement.sector, placement.box,
+        LOG.fine(String.format("\t\tLabels %s identified as: sector: %s, box: %s, row: %s", tagNames, placement.sector, placement.box,
                     placement.row));
         if (placement.box == null || placement.row == null)
         {

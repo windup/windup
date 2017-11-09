@@ -58,7 +58,7 @@ public class ClassificationServiceTest
             ProjectModel projectModel = fillData(context)[0];
             ProjectModelTraversal projectModelTraversal = new ProjectModelTraversal(projectModel);
             Set<String> emptySet = Collections.emptySet();
-            final Map<Integer, Integer> effortByCategory = classificationService.getMigrationEffortByPoints(projectModelTraversal, emptySet, emptySet, true,
+            final Map<Integer, Integer> effortByCategory = classificationService.getMigrationEffortByPoints(projectModelTraversal, emptySet, emptySet, emptySet, true,
                         true);
             int totalEffort = 0;
             for (Map.Entry<Integer, Integer> effortEntry : effortByCategory.entrySet())
@@ -102,7 +102,7 @@ public class ClassificationServiceTest
 
             ProjectModelTraversal projectModelTraversal = new ProjectModelTraversal(projectModel);
             Set<String> emptySet = Collections.emptySet();
-            final Map<Integer, Integer> effortByCategory = classificationService.getMigrationEffortByPoints(projectModelTraversal, emptySet, emptySet, true,
+            final Map<Integer, Integer> effortByCategory = classificationService.getMigrationEffortByPoints(projectModelTraversal, emptySet, emptySet, emptySet, true,
                     true);
             int totalEffort = 0;
             for (Map.Entry<Integer, Integer> effortEntry : effortByCategory.entrySet())

@@ -71,7 +71,7 @@ public class TagGraphService extends GraphService<TagModel>
             return this.getUniqueByProperty(TagModel.PROP_NAME, tag.getName(), true);
         visited.add(tag);
 
-        LOG.info(String.format("Creating TagModel for Tag: %s%s(%d)   '%s'  traits: %s", StringUtils.repeat(' ', level*2),
+        LOG.fine(String.format("Creating TagModel for Tag: %s%s(%d)   '%s'  traits: %s", StringUtils.repeat(' ', level*2),
                 tag.getName(), tag.getContainedTags().size(), tag.getTitle(), tag.getTraits()));
         TagModel tagModel = this.create();
         tagModel.setName(tag.getName());

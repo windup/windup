@@ -104,6 +104,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
      * </p>
      */
     public Map<Integer, Integer> getMigrationEffortByPoints(ProjectModelTraversal traversal, Set<String> includeTags, Set<String> excludeTags,
+                                                            Set<String> issueCategoryIDs,
                                                             boolean recursive, boolean includeZero)
     {
         MapSumEffortAccumulatorFunction<Integer> accumulator = new MapSumEffortAccumulatorFunction()
@@ -114,7 +115,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
                 return migrationEffort;
             }
         };
-        getMigrationEffortDetails(traversal, includeTags, excludeTags, recursive, includeZero, accumulator);
+        getMigrationEffortDetails(traversal, includeTags, excludeTags, issueCategoryIDs, recursive, includeZero, accumulator);
         return accumulator.getResults();
     }
 
@@ -122,7 +123,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
      * Returns the total incidents in all of the {@link ClassificationModel}s associated with the files in this project by severity.
      */
     public Map<IssueCategoryModel, Integer> getMigrationEffortBySeverity(GraphRewrite event,
-        ProjectModelTraversal traversal, Set<String> includeTags, Set<String> excludeTags, boolean recursive)
+        ProjectModelTraversal traversal, Set<String> includeTags, Set<String> excludeTags, Set<String> issueCategoryIDs, boolean recursive)
     {
         MapSumEffortAccumulatorFunction<IssueCategoryModel> accumulator =  new MapSumEffortAccumulatorFunction<IssueCategoryModel>()
         {
@@ -143,12 +144,13 @@ public class ClassificationService extends GraphService<ClassificationModel>
                 super.accumulate(effortReportVertex);
             }
         };
-        this.getMigrationEffortDetails(traversal, includeTags, excludeTags, recursive, true, accumulator);
+        this.getMigrationEffortDetails(traversal, includeTags, excludeTags, issueCategoryIDs, recursive, true, accumulator);
         return accumulator.getResults();
     }
 
-    private void getMigrationEffortDetails(ProjectModelTraversal traversal, Set<String> includeTags, Set<String> excludeTags, boolean recursive,
-                boolean includeZero, EffortAccumulatorFunction accumulatorFunction)
+    private void getMigrationEffortDetails(ProjectModelTraversal traversal, Set<String> includeTags, Set<String> excludeTags,
+                                           Set<String> issueCategoryIDs, boolean recursive, boolean includeZero,
+                                           EffortAccumulatorFunction accumulatorFunction)
     {
         LOG.log(Level.INFO, String.format(System.lineSeparator()+"\t\t\tEFFORT C: getMigrationEffortDetails() with: %s, %srecur, %sincludeZero, %s, tags: %s, excl: %s",
                 traversal, recursive ? "" : "!", includeZero ? "" : "!", accumulatorFunction, includeTags, excludeTags));
@@ -178,9 +180,17 @@ public class ClassificationService extends GraphService<ClassificationModel>
         FileService fileService = new FileService(getGraphContext());
         for (Vertex v : pipeline)
         {
-            // only check tags if we have some passed in
-            if (checkTags && !frame(v).matchesTags(includeTags, excludeTags))
-                continue;
+            if (checkTags || !issueCategoryIDs.isEmpty())
+            {
+                ClassificationModel classificationModel = frame(v);
+
+                // only check tags if we have some passed in
+                if (checkTags && !classificationModel.matchesTags(includeTags, excludeTags))
+                    continue;
+
+                if (!issueCategoryIDs.isEmpty() && !issueCategoryIDs.contains(classificationModel.getIssueCategory().getCategoryID()))
+                    continue;
+            }
 
             // For each classification, count it repeatedly for each file.
             // TODO: .accumulate(v, count);
