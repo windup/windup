@@ -464,3 +464,6 @@ strong.wu-navbar-header {
     margin-top: 0;
 }
 
+.toolbar-pf-results span.label a {
+    color: white;
+}

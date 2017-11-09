@@ -136,15 +136,16 @@ $(document).ready(function () {
         function removeFromFilter(item, node) {
             filters = filters.filter(function(currentItem) { return currentItem !== item; });
             node.remove();
+            filterData();
         }
 
         function makeFilterItem(item) {
             var html = $('<li><span class="label label-info">\
-                    <a href="#"><span class="pficon pficon-close"></span></a>\
+                    <a href="#"><span class="glyphicon glyphicon-remove"></span></a>\
                     </span></li>');
 
             var a = html.find('a');
-            a.prepend(item.name + ': ' + item.data);
+            html.find('span.label').prepend(item.name + ': ' + item.data);
             a.on('click', function() {
                 removeFromFilter(item, html);
             });
