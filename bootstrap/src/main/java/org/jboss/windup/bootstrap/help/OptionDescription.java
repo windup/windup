@@ -14,6 +14,7 @@ public class OptionDescription
     private String type;
     private String uiType;
     private List<String> availableOptions;
+    private boolean required;
 
     /**
      * Creates an {@link OptionDescription} with the specified name, description, type, and UI Type (select one, select many, etc).
@@ -32,13 +33,14 @@ public class OptionDescription
     /**
      * Creates an {@link OptionDescription} with the specified name, description, type, UI Type (select one, select many, etc), and available option list.
      */
-    public OptionDescription(String name, String description, String type, String uiType, List<String> availableOptions)
+    public OptionDescription(String name, String description, String type, String uiType, List<String> availableOptions, boolean required)
     {
         this.name = name;
         this.description = description;
         this.type = type;
         this.uiType = uiType;
         this.availableOptions = availableOptions;
+        this.required = required;
     }
 
     /**
@@ -79,5 +81,13 @@ public class OptionDescription
     public List<String> getAvailableOptions()
     {
         return availableOptions;
+    }
+
+    /**
+     * Tells if the option is required.
+     */
+    public boolean isRequired()
+    {
+        return required;
     }
 }

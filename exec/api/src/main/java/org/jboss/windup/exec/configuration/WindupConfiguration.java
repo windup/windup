@@ -170,7 +170,22 @@ public class WindupConfiguration
             @Override
             public int compare(ConfigurationOption o1, ConfigurationOption o2)
             {
-                return o2.getPriority() - o1.getPriority();
+                // if the 1st is required and...
+                if (o1.isRequired())
+                {
+                    // the 2nd isn't, the 1st is "before" than the 2nd
+                    if (!o2.isRequired()) return -1;
+                    // otherwise if also the 2nd is required, then order is priority-based
+                    else return o2.getPriority() - o1.getPriority();
+                }
+                // if the 1st is not required and...
+                else
+                {
+                    // the 2nd is, the 1st is "after" than the 2nd
+                    if (o2.isRequired()) return 1;
+                    // otherwise also the 2nd isn't and order is priority-based
+                    else return o2.getPriority() - o1.getPriority();
+                }
             }
         });
         return results;

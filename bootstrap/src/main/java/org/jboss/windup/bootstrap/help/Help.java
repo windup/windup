@@ -33,6 +33,7 @@ public class Help
     public static final String AVAILABLE_OPTIONS = "available-options";
     public static final String AVAILABLE_OPTION = "option";
     public static final String UI_TYPE = "ui-type";
+    private static final String REQUIRED = "required";
 
     private List<OptionDescription> options = new ArrayList<>();
 
@@ -71,6 +72,7 @@ public class Help
                 String description = optionElement.element(DESCRIPTION).getTextTrim();
                 String type = optionElement.element(TYPE).getTextTrim();
                 String uiType = optionElement.element(UI_TYPE).getTextTrim();
+                boolean required = Boolean.valueOf(optionElement.element(REQUIRED).getTextTrim());
 
                 List<String> availableOptions = null;
 
@@ -83,7 +85,7 @@ public class Help
                     }
                 }
 
-                OptionDescription option = new OptionDescription(name, description, type, uiType, availableOptions);
+                OptionDescription option = new OptionDescription(name, description, type, uiType, availableOptions, required);
                 result.addOption(option);
             }
         }
@@ -130,6 +132,11 @@ public class Help
             }
             if (!availableOptionsElement.elements().isEmpty())
                 optionElement.add(availableOptionsElement);
+
+            // Is it required?
+            Element required = new DOMElement(REQUIRED);
+            required.setText(Boolean.toString(option.isRequired()));
+            optionElement.add(required);
 
             doc.getRootElement().add(optionElement);
         }
