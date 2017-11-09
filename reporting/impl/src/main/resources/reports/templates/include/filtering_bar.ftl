@@ -8,7 +8,7 @@
                         <div class="input-group-btn">
                             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
                                     aria-haspopup="true"
-                                    aria-expanded="false"><span id="filter-by"><!--Dynamically load content here --></span> <span class="caret"></span></button>
+                                    aria-expanded="false"><span class="filter-by"><!--Dynamically load content here --></span> <span class="caret"></span></button>
                             <ul class="dropdown-menu">
                                 <!-- Dynamically load content here -->
                             </ul>
@@ -34,7 +34,7 @@
             </form>
             <div class="row toolbar-pf-results hidden">
                 <div class="col-sm-12">
-                    <h5 id="count-results"><!-- Dynamically load content here 40 Results --></h5>
+                    <h5><span id="count-results"><!-- Dynamically load content here 40 Results --></span> Results</h5>
                     <p>Active filters:</p>
                     <ul class="list-inline" id="active-filters">
                         <!-- Dynamically load content here -->
