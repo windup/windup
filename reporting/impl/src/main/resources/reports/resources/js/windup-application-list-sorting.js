@@ -79,6 +79,9 @@ $(document).ready(function () {
                 filters = [];
                 filterData();
             });
+
+            /** Use first item from list for filtering */
+            filterOptionsList.find('li a').first().click();
         }
 
         /**
@@ -231,7 +234,7 @@ $(document).ready(function () {
             a.data('filterBy', filterOption);
 
             a.on('click', function() {
-                filterOptionsList.find('li').removeClass('selected');
+                filterOptionsList.find('li a').removeClass('selected');
                 $(this).addClass('selected');
                 currentFilterConfiguration.filterBy = filterOption;
                 filterByLabel.text(filterOption.name);
@@ -317,7 +320,7 @@ $(document).ready(function () {
             a.data('sortBy', sortOption);
 
             a.on('click', function() {
-                sortList.find('li').removeClass('selected');
+                sortList.find('li a').removeClass('selected');
                 $(this).addClass('selected');
                 currentSortConfiguration.sortBy = sortOption;
                 sortBy.text(sortOption.name);

@@ -467,3 +467,9 @@ strong.wu-navbar-header {
 .toolbar-pf-results span.label a {
     color: white;
 }
+
+.toolbar-pf .dropdown-menu>li>a.selected {
+    text-decoration: none;
+    color: #262626;
+    background-color: #eeeeee;
+}
