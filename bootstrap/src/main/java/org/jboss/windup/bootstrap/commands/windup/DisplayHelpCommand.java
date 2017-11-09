@@ -45,6 +45,9 @@ public class DisplayHelpCommand implements Command
 
         sb.append(System.lineSeparator()).append(" Forge Options:").append(System.lineSeparator());
 
+        sb.append("-b, --batchMode").append(System.lineSeparator());
+        sb.append("\t run Forge in batch mode and does not prompt for confirmation (exits immediately after running) ").append(System.lineSeparator());
+
         sb.append("-i, --install GROUP_ID:ARTIFACT_ID[:VERSION]").append(System.lineSeparator());
         sb.append("\t install the required addons and exit. ex: `"+Util.WINDUP_CLI_NAME+" -i core-addon-x` or `"+Util.WINDUP_CLI_NAME+" -i org.example.addon:example:1.0.0` ").append(System.lineSeparator());
 
@@ -59,9 +62,6 @@ public class DisplayHelpCommand implements Command
 
         sb.append("-m, --immutableAddonDir DIR").append(System.lineSeparator());
         sb.append("\t add the given directory for use as a custom immutable addon repository (read only) ").append(System.lineSeparator());
-
-        sb.append("-b, --batchMode").append(System.lineSeparator());
-        sb.append("\t run Forge in batch mode and does not prompt for confirmation (exits immediately after running) ").append(System.lineSeparator());
 
         sb.append("-d, --debug").append(System.lineSeparator());
         sb.append("\t run Forge in debug mode (wait on port 8000 for a debugger to attach) ").append(System.lineSeparator());

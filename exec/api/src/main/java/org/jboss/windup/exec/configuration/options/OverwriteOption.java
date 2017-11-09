@@ -55,4 +55,10 @@ public class OverwriteOption extends AbstractConfigurationOption
     {
         return ValidationResult.SUCCESS;
     }
+
+    @Override
+    public int getPriority()
+    {
+        return 8500;
+    }
 }
