@@ -1,4 +1,7 @@
 $(document).ready(function () {
+    /**
+     * All filtering related code
+     **/
     function filtering() {
         var resultsToolbar = $('.toolbar-pf-results');
         var countResults = $('#count-results');
@@ -6,12 +9,10 @@ $(document).ready(function () {
         var filterInput = $('#filter');
         var filterDiv = $('#filter-div');
         var filterOptionsList = filterDiv.find('ul.dropdown-menu');
-
-        var filterByLabel = $('.filter-by');
-        filterByLabel = $('.filter-by, #filter-by');
-
+        var filterByLabel = $('.filter-by, #filter-by'); // $('.filter-by');
         var clearFiltersButton = $('#clear-filters');
 
+        /** Active filters */
         var filters = [];
 
         var hasItemInArrayCallback = function(element, filterOption) {
@@ -24,26 +25,23 @@ $(document).ready(function () {
             return filteringData.tags.indexOf(filterOption.data) !== -1;
         };
 
-        var checkNameMatch = function(element, filterOption) {
+        var checkNameMatchCallback = function(element, filterOption) {
             var name = $(element).data('name');
             var regex = new RegExp(filterOption.data, 'i');
 
             return name.match(regex) !== null;
         };
 
+        /** Available filter options */
         var filterOptions = [
-            { name: 'Name', value: 'name', data: '', callback:  checkNameMatch },
+            { name: 'Name', value: 'name', data: '', callback:  checkNameMatchCallback },
             { name: 'Tags', value: 'tags', callback: hasItemInArrayCallback, data: '' }
         ];
 
+        /** Currently selected filter option */
         var currentFilterConfiguration = {
             filterBy: filterOptions[0]
         };
-
-        clearFiltersButton.on('click', function() {
-            filters = [];
-            filterData();
-        });
 
         function initialize() {
             $('div.real div.appInfo').each(function () {
@@ -64,10 +62,29 @@ $(document).ready(function () {
 
             filterByLabel.text(currentFilterConfiguration.filterBy.name);
 
-
             makeTagsClickable();
+
+            /**
+             * Event handler for <enter> on filter-by input
+             */
+            $('#filter-form').on('submit', function(e) {
+                e.preventDefault();
+                var filterValue = filterInput.val().trim();
+                addFilter(filterValue, currentFilterConfiguration.filterBy);
+                filterInput.val('');
+            });
+
+            /** Event handler for clear filters action */
+            clearFiltersButton.on('click', function() {
+                filters = [];
+                filterData();
+            });
         }
 
+        /**
+         * Makes tags in application row clickable and adds them to filter after clicking
+         *
+         */
         function makeTagsClickable() {
             $('div.techs span.label').each(function() {
                 var anchored = $('<a href="javascript:null"></a>');
@@ -80,15 +97,30 @@ $(document).ready(function () {
             });
         }
 
+        /**
+         * Checks if object has callback
+         *
+         * @param object
+         * @returns {boolean}
+         */
+        function hasCallback(object) {
+            return object.hasOwnProperty('callback') && typeof object.callback === 'function';
+        }
+
+        /**
+         * Filters data by filters array
+         *
+         */
         function filterData() {
             var filteredDivs = $('div.real div.appInfo').map(function(idx, element) {
                 var show = true;
 
                 if (filters.length > 0) {
                     var filterResults = filters.map(function (filterOption) {
-                        //var filterOption = currentFilterConfiguration.filterBy;
-                        if (filterOption.hasOwnProperty('callback')) {
+                        if (hasCallback(filterOption)) {
                             return filterOption.callback(element, filterOption);
+                        } else {
+                            console.error('Expected callback to be defined on filterOption');
                         }
                     });
 
@@ -115,13 +147,17 @@ $(document).ready(function () {
             refreshFilterPanel();
         }
 
+        /**
+         * Redraws filter panel with used filters labels
+         *
+         */
         function refreshFilterPanel() {
             activeFilters =  $('#active-filters');
             var newActiveFilters = activeFilters.clone(false);
             newActiveFilters.empty();
 
             filters.forEach(function(filter) {
-                newActiveFilters.append(makeFilterItem(filter));
+                newActiveFilters.append(makeFilteredByLabel(filter));
             });
 
             activeFilters.replaceWith(newActiveFilters);
@@ -133,13 +169,26 @@ $(document).ready(function () {
             }
         }
 
-        function removeFromFilter(item, node) {
+        /**
+         * Removes filter from filters array
+         *
+         * @param item
+         * @param node
+         */
+        function removeFilter(item, node) {
             filters = filters.filter(function(currentItem) { return currentItem !== item; });
             node.remove();
             filterData();
         }
 
-        function makeFilterItem(item) {
+        /**
+         * Makes new filtered-by label
+         * (used in filtered-by toolbar)
+         *
+         * @param item {object}
+         * @returns {jQuery|HTMLElement}
+         */
+        function makeFilteredByLabel(item) {
             var html = $('<li><span class="label label-info">\
                     <a href="#"><span class="glyphicon glyphicon-remove"></span></a>\
                     </span></li>');
@@ -147,7 +196,7 @@ $(document).ready(function () {
             var a = html.find('a');
             html.find('span.label').prepend(item.name + ': ' + item.data);
             a.on('click', function() {
-                removeFromFilter(item, html);
+                removeFilter(item, html);
             });
 
             html.data('filter', item);
@@ -155,6 +204,12 @@ $(document).ready(function () {
             return html;
         }
 
+        /**
+         * Adds filter to filters array and filters data by it
+         *
+         * @param value {string}
+         * @param option {object}
+         */
         function addFilter(value, option) {
             var filter = $.extend({}, option);
             filter.data = value;
@@ -163,6 +218,12 @@ $(document).ready(function () {
             filterData();
         }
 
+        /**
+         * Creates HTML element for available filters list
+         *
+         * @param filterOption {object}
+         * @returns {jQuery|HTMLElement}
+         */
         function makeFilterOptionListItem(filterOption) {
             var html = $('<li><a href="#"></li>');
             var a = html.find('a');
@@ -179,16 +240,12 @@ $(document).ready(function () {
             return html;
         }
 
-        $('#filter-form').on('submit', function(e) {
-            e.preventDefault();
-            var filterValue = filterInput.val().trim();
-            addFilter(filterValue, currentFilterConfiguration.filterBy);
-            filterInput.val('');
-        });
-
         initialize();
     }
 
+    /**
+     * All sorting related code
+     */
     function sorting() {
         var sortDiv = $('#sort');
         var sortBy = $('#sort-by');
@@ -199,7 +256,6 @@ $(document).ready(function () {
         var lowerCaseStringComparator = function(a, b) {
             return a.localeCompare(b);
         };
-
 
         var sortOptions = [
             { name: 'Name', value: 'name', comparator:  lowerCaseStringComparator },
@@ -226,7 +282,32 @@ $(document).ready(function () {
                 sortList.append(makeSortListItem(option));
             });
 
+            /** Sorts applications by name */
             sortList.find('li a').first().click();
+
+            /**
+             * On click handler for sort order button
+             * Switches between ASC/DESC sorting
+             */
+            sortOrder.on('click', function() {
+                var currentClass;
+                var newClass;
+
+                if (currentSortConfiguration.order === 1) {
+                    currentClass = sortOrderClasses.ASC;
+                    newClass = sortOrderClasses.DESC;
+                } else {
+                    currentClass = sortOrderClasses.DESC;
+                    newClass = sortOrderClasses.ASC;
+                }
+
+                currentSortConfiguration.order *= -1;
+
+                sortIcon.removeClass(currentClass);
+                sortIcon.addClass(newClass);
+
+                sortData();
+            });
         }
 
         function makeSortListItem(sortOption) {
@@ -240,20 +321,33 @@ $(document).ready(function () {
                 $(this).addClass('selected');
                 currentSortConfiguration.sortBy = sortOption;
                 sortBy.text(sortOption.name);
-                refresh();
+                sortData();
             });
 
             return html;
         }
 
-        function refresh() {
+        /**
+         * Checks if object has comparator
+         *
+         * @param object
+         * @returns {boolean}
+         */
+        function hasComparator(object) {
+            return object.hasOwnProperty('comparator') && typeof object.comparator === 'function';
+        }
+
+        /**
+         * Sorts applications by specified criteria
+         */
+        function sortData() {
             $('div.real div.appInfo').sortElements(function(elementA, elementB) {
                 var result = 0;
 
                 var a = $(elementA).data(currentSortConfiguration.sortBy.value);
                 var b = $(elementB).data(currentSortConfiguration.sortBy.value);
 
-                if (currentSortConfiguration.sortBy.hasOwnProperty('comparator') && typeof currentSortConfiguration.sortBy.comparator === 'function') {
+                if (hasComparator(currentSortConfiguration.sortBy)) {
                     result = currentSortConfiguration.sortBy.comparator(a, b);
                 } else {
                     result = a > b ? 1 : -1;
@@ -263,32 +357,9 @@ $(document).ready(function () {
             });
         }
 
-        sortOrder.on('click', function() {
-            var currentClass;
-            var newClass;
-
-            if (currentSortConfiguration.order === 1) {
-                currentClass = sortOrderClasses.ASC;
-                newClass = sortOrderClasses.DESC;
-            } else {
-                currentClass = sortOrderClasses.DESC;
-                newClass = sortOrderClasses.ASC;
-            }
-
-            currentSortConfiguration.order *= -1;
-
-            sortIcon.removeClass(currentClass);
-            sortIcon.addClass(newClass);
-
-            refresh();
-        });
-
         initialize();
     }
 
     filtering();
     sorting();
-
-
-
 });
