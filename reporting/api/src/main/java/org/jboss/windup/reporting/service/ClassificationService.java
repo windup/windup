@@ -7,6 +7,7 @@ import java.util.Set;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.DuplicateArchiveModel;
 import org.jboss.windup.graph.model.LinkModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
@@ -227,6 +228,10 @@ public class ClassificationService extends GraphService<ClassificationModel>
             classification.setIssueCategory(cat);
 
             classification.setRuleID(rule.getId());
+            if (fileModel instanceof DuplicateArchiveModel)
+            {
+                fileModel = ((DuplicateArchiveModel) fileModel).getCanonicalArchive();
+            }
             classification.addFileModel(fileModel);
             if (fileModel instanceof SourceFileModel)
                 ((SourceFileModel) fileModel).setGenerateSourceReport(true);
@@ -273,6 +278,11 @@ public class ClassificationService extends GraphService<ClassificationModel>
      */
     public ClassificationModel attachClassification(GraphRewrite event, ClassificationModel classificationModel, FileModel fileModel)
     {
+        if (fileModel instanceof DuplicateArchiveModel)
+        {
+            fileModel = ((DuplicateArchiveModel) fileModel).getCanonicalArchive();
+        }
+
         if (!isClassificationLinkedToFileModel(event, classificationModel, fileModel))
         {
             classificationModel.addFileModel(fileModel);
