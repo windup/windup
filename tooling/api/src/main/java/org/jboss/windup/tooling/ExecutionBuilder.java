@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.List;
 
 import org.jboss.windup.tooling.quickfix.QuickfixLocationDTO;
-import org.jboss.windup.tooling.quickfix.QuickfixService;
 import org.jboss.windup.tooling.rules.RuleProviderRegistry;
 
 /**
@@ -128,4 +127,9 @@ public interface ExecutionBuilder extends Remote
      * Executes the quickfix transformation.
      */
     String transform(String transformationID, QuickfixLocationDTO locationDTO) throws RemoteException;
+    
+    /**
+     * Returns the system environment variable value.
+     */
+    String getEnv(String name) throws RemoteException;
 }
