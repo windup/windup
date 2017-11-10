@@ -131,19 +131,19 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest
         TestApplicationListUtil util = new TestApplicationListUtil();
         util.loadPage(reportPath);
 
-        Assert.assertEquals(636, util.getTotalStoryPoints(MAIN_APP_FILENAME));
-        Assert.assertEquals(584, util.getSharedStoryPoints(MAIN_APP_FILENAME));
+        Assert.assertEquals(649, util.getTotalStoryPoints(MAIN_APP_FILENAME));
+        Assert.assertEquals(597, util.getSharedStoryPoints(MAIN_APP_FILENAME));
         Assert.assertEquals(52, util.getUniqueStoryPoints(MAIN_APP_FILENAME));
 
-        Assert.assertEquals(636, util.getTotalStoryPoints(SECOND_APP_FILENAME));
-        Assert.assertEquals(584, util.getSharedStoryPoints(SECOND_APP_FILENAME));
+        Assert.assertEquals(649, util.getTotalStoryPoints(SECOND_APP_FILENAME));
+        Assert.assertEquals(597, util.getSharedStoryPoints(SECOND_APP_FILENAME));
         Assert.assertEquals(52, util.getUniqueStoryPoints(SECOND_APP_FILENAME));
 
-        Assert.assertEquals(576, util.getTotalStoryPoints(THIRD_APP_FILENAME));
-        Assert.assertEquals(576, util.getSharedStoryPoints(THIRD_APP_FILENAME));
+        Assert.assertEquals(589, util.getTotalStoryPoints(THIRD_APP_FILENAME));
+        Assert.assertEquals(589, util.getSharedStoryPoints(THIRD_APP_FILENAME));
         Assert.assertEquals(0, util.getUniqueStoryPoints(THIRD_APP_FILENAME));
 
-        Assert.assertEquals(584, util.getTotalStoryPoints(ProjectService.SHARED_LIBS_APP_NAME));
+        Assert.assertEquals(597, util.getTotalStoryPoints(ProjectService.SHARED_LIBS_APP_NAME));
     }
 
     private void validateReportIndex(GraphContext graphContext)
@@ -160,21 +160,18 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest
         TestReportIndexReportUtil reportIndex = new TestReportIndexReportUtil();
 
         reportIndex.loadPage(mainReportPath);
-        // After removed duplicated classifications with XML rules, this goes away
-        //Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("mandatory", 2, 0));
-        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("optional", 89, 636));
+        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("mandatory", 1, 3));
+        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("optional", 93, 646));
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("potential", 0, 0));
 
         reportIndex.loadPage(secondAppPath);
-        // After removed duplicated classifications with XML rules, this goes away
-        //Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("mandatory", 2, 0));
-        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("optional", 89, 636));
+        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("mandatory", 1, 3));
+        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("optional", 93, 646));
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("potential", 0, 0));
 
         reportIndex.loadPage(sharedLibsPath);
-        // After removed duplicated classifications with XML rules, this goes away
-        //Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("mandatory", 2, 0));
-        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("optional", 85, 584));
+        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("mandatory", 1, 3));
+        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("optional", 89, 594));
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("potential", 0, 0));
     }
 
@@ -184,15 +181,23 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest
         Assert.assertNotNull(dependencyReport);
         TestDependencyReportUtil dependencyReportUtil = new TestDependencyReportUtil();
         dependencyReportUtil.loadPage(dependencyReport);
-        Assert.assertEquals(9, dependencyReportUtil.getNumberOfJarsOnPage());
+        Assert.assertEquals(11, dependencyReportUtil.getNumberOfJarsOnPage());
         Assert.assertEquals(6, dependencyReportUtil.getNumberOfArchivePathsOnPage("log4j-1.2.6.jar"));
         Assert.assertEquals(3, dependencyReportUtil.getNumberOfArchivePathsOnPage("jee-example-services.jar"));
+        Assert.assertEquals(3, dependencyReportUtil.getNumberOfArchivePathsOnPage("ehcache-1.6.2.jar"));
+        Assert.assertEquals(3, dependencyReportUtil.getNumberOfArchivePathsOnPage("hibernate-ehcache-3.6.9.Final.jar"));
         Assert.assertTrue(dependencyReportUtil.findDependencyElement("jee-example-services.jar", "JEE Example EJB Services",
                     "org.windup.example:jee-example-services:1.0.0", "d910370c02710f4bb7f7856e18f50803f1c37e16", "1.0.0", "",
                     Arrays.asList(FOUND_PATHS_JEE_EXAMPLE_SERVICES)));
         Assert.assertTrue(dependencyReportUtil.findDependencyElement("commons-lang-2.5.jar", "Commons Lang",
                     "commons-lang:commons-lang:2.5", "b0236b252e86419eef20c31a44579d2aee2f0a69", "2.5", "The Apache Software Foundation",
                     Arrays.asList(FOUND_PATHS_COMMONS_LANG)));
+        Assert.assertTrue(dependencyReportUtil.findDependencyElement("ehcache-1.6.2.jar", "Ehcache Core",
+                    "net.sf.ehcache:ehcache:1.6.2", "3bb35efc53328e60a0a32b95b670cf60580199a4", "1.6.2", "",
+                    Arrays.asList(FOUND_PATHS_EHCACHE)));
+        Assert.assertTrue(dependencyReportUtil.findDependencyElement("hibernate-ehcache-3.6.9.Final.jar", "Hibernate Ehcache Integration",
+                    "org.hibernate:hibernate-ehcache:3.6.9.Final", "8cb70b2b74df26023c608d7acc953364e3495a29", "3.6.9.Final", "Hibernate.org",
+                    Arrays.asList(FOUND_PATHS_HIBERNATE_EHCACHE)));
     }
 
     private void validateMigrationIssues(GraphContext graphContext)
@@ -215,11 +220,11 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest
 
         TestMigrationIssuesReportUtil migrationIssuesReportUtil = new TestMigrationIssuesReportUtil();
         migrationIssuesReportUtil.loadPage(getPathForReport(graphContext, mainIssuesReportModel));
-        Assert.assertTrue(migrationIssuesReportUtil.checkIssue("Maven POM (pom.xml)", 6, 0, "Info", 0));
+        Assert.assertTrue(migrationIssuesReportUtil.checkIssue("Maven POM (pom.xml)", 8, 0, "Info", 0));
         Assert.assertTrue(migrationIssuesReportUtil.checkIssue("Unparsable XML File", 2, 0, "Info", 0));
 
         migrationIssuesReportUtil.loadPage(getPathForReport(graphContext, copyIssuesReportModel));
-        Assert.assertTrue(migrationIssuesReportUtil.checkIssue("Maven POM (pom.xml)", 6, 0, "Info", 0));
+        Assert.assertTrue(migrationIssuesReportUtil.checkIssue("Maven POM (pom.xml)", 8, 0, "Info", 0));
         Assert.assertTrue(migrationIssuesReportUtil.checkIssue("Unparsable XML File", 2, 0, "Info", 0));
     }
 
@@ -246,6 +251,18 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest
             "duplicate-ear-test-1.ear/jee-example-web.war/WEB-INF/lib/commons-lang-2.5.jar",
             "duplicate-ear-test-2.ear/jee-example-web.war/WEB-INF/lib/commons-lang-2.5.jar",
             "duplicate-ear-test-3.ear/jee-example-web.war/WEB-INF/lib/commons-lang-2.5.jar",
+    };
+
+    private static final String[] FOUND_PATHS_EHCACHE = {
+            "duplicate-ear-test-1.ear/lib/ehcache-1.6.2.jar",
+            "duplicate-ear-test-2.ear/lib/ehcache-1.6.2.jar",
+            "duplicate-ear-test-3.ear/lib/ehcache-1.6.2.jar",
+    };
+
+    private static final String[] FOUND_PATHS_HIBERNATE_EHCACHE = {
+            "duplicate-ear-test-1.ear/lib/hibernate-ehcache-3.6.9.Final.jar",
+            "duplicate-ear-test-2.ear/lib/hibernate-ehcache-3.6.9.Final.jar",
+            "duplicate-ear-test-3.ear/lib/hibernate-ehcache-3.6.9.Final.jar",
     };
 
     private Path getDependencyReportPath(GraphContext graphContext)
