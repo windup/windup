@@ -96,6 +96,8 @@ public class TechReportService
                 mergeToTheRightCell(map, "", placement.box.getName(), appToCountTowards, "", stat, false);
             }
         }
+
+
         return new TechStatsMatrix(map);
     }
 
@@ -246,6 +248,30 @@ public class TechReportService
 
         public TechStatsMatrix()
         {
+        }
+
+        public int getMaxForBox(String boxTagName)
+        {
+            // Data not in a row is stored with the key ""
+            final Map<String, Map<Long, Map<String, TechUsageStatSum>>> rowMap = map.get("");
+
+            if (null == rowMap)
+                return 0;
+
+            // mergeToTheRightCell(map, "", placement.box.getName(), appToCountTowards, "", stat, false);
+            final Map<Long, Map<String, TechUsageStatSum>> boxMap = rowMap.get(boxTagName);
+            if (null == boxMap)
+                return 0;
+
+            int max = 0;
+            for (Map.Entry<Long, Map<String, TechUsageStatSum>> boxEntry : boxMap.entrySet())
+            {
+                for (Map.Entry<String, TechUsageStatSum> technologyEntry : boxEntry.getValue().entrySet())
+                {
+                    max = Math.max(max, technologyEntry.getValue().count);
+                }
+            }
+            return max;
         }
 
         public Map<String, TechUsageStatSum> get(String rowTagName, String boxTagName, Long projectId)

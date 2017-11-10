@@ -185,7 +185,7 @@
                                     <#-- 2nd way - using the 4 layer map -->
                                     <#assign statsForThisBox = sortedStatsMatrix.get("", boxTag.name, appProject.asVertex().id?long)! />
                                     <#assign count = (statsForThisBox[""].occurrenceCount)!false />
-                                    <#assign maxForThisBox   = (sortedStatsMatrix.get("", boxTag.name, 0?long, "").occurrenceCount)!false />
+                                    <#assign maxForThisBox   = (sortedStatsMatrix.getMaxForBox(boxTag.name))!false />
                                     <#assign isBooleanTech = maxForThisBox?is_number && maxForThisBox == 0 />
                                     <#if isBooleanTech>
                                         <!-- The boolean technologies will either be missing or present. Presence is denoted by 0. Use some middle bubble size for present. -->
