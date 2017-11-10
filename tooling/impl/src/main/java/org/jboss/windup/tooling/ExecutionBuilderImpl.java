@@ -307,6 +307,11 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
         ruleProviderRegistry.buildRuleProviders(ruleProviderCache.getRuleProviderRegistry());
         return ruleProviderRegistry;
     }
+    
+    @Override
+    public String getEnv(String name) throws RemoteException {
+    		return System.getenv(name);
+    }
 
     private class WindupProgressLoggingHandler extends Handler
     {
