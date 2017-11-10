@@ -405,15 +405,15 @@ public class Bootstrap
             }
             else if ("--listTags".equals(arg))
             {
-                commands.add(new ListTagsCommand());
+                commands.add(new ListTagsCommand(arguments));
             }
             else if ("--listSourceTechnologies".equals(arg))
             {
-                commands.add(new ListSourceTechnologiesCommand());
+                commands.add(new ListSourceTechnologiesCommand(arguments));
             }
             else if ("--listTargetTechnologies".equals(arg))
             {
-                commands.add(new ListTargetTechnologiesCommand());
+                commands.add(new ListTargetTechnologiesCommand(arguments));
             }
             else if ("--generateCompletionData".equals(arg))
             {
