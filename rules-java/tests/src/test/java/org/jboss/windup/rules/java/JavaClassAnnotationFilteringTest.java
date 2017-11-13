@@ -22,6 +22,7 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
+import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.engine.predicates.RuleProviderWithDependenciesPredicate;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
@@ -75,12 +76,11 @@ public class JavaClassAnnotationFilteringTest
     public void testBasicAnnotationFiltering() throws Exception
     {
         Path outputPath = getDefaultPath();
+        FileUtils.deleteDirectory(outputPath.toFile());
+        Files.createDirectories(outputPath);
         try (GraphContext context = factory.create(outputPath))
         {
             final String inputDir = "src/test/resources/org/jboss/windup/rules/annotationtests/basic";
-
-            FileUtils.deleteDirectory(outputPath.toFile());
-            Files.createDirectories(outputPath);
 
             final WindupConfiguration processorConfig = new WindupConfiguration();
             processorConfig.setRuleProviderFilter(new RuleProviderWithDependenciesPredicate(
@@ -103,12 +103,12 @@ public class JavaClassAnnotationFilteringTest
     public void testComplexAnnotationFiltering() throws Exception
     {
         Path outputPath = getDefaultPath();
+        FileUtils.deleteDirectory(outputPath.toFile());
+        Files.createDirectories(outputPath);
+
         try (GraphContext context = factory.create(outputPath))
         {
             final String inputDir = "src/test/resources/org/jboss/windup/rules/annotationtests/complex";
-
-            FileUtils.deleteDirectory(outputPath.toFile());
-            Files.createDirectories(outputPath);
 
             final WindupConfiguration processorConfig = new WindupConfiguration();
             processorConfig.setRuleProviderFilter(new RuleProviderWithDependenciesPredicate(
@@ -197,7 +197,8 @@ public class JavaClassAnnotationFilteringTest
 
         public ComplexAnnotationScanProvider()
         {
-            super(MetadataBuilder.forProvider(ComplexAnnotationScanProvider.class).addExecuteAfter(AnalyzeJavaFilesRuleProvider.class));
+            super(MetadataBuilder.forProvider(ComplexAnnotationScanProvider.class).setPhase(InitialAnalysisPhase.class)
+                    .addExecuteAfter(AnalyzeJavaFilesRuleProvider.class));
         }
 
         // @formatter:off

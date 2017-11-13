@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<ruleset id="technology-usage-clustering" xmlns="http://windup.jboss.org/schema/jboss-ruleset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://windup.jboss.org/schema/jboss-ruleset http://windup.jboss.org/schema/jboss-ruleset/windup-jboss-ruleset.xsd">
+    <metadata>
+        <description>
+            This ruleset provides statistical summaries of the clustering items that were found during the analysis.
+        </description>
+        <dependencies>
+            <addon id="org.jboss.windup.rules,windup-rules-javaee,3.0.0.Final" />
+            <addon id="org.jboss.windup.rules,windup-rules-java,3.0.0.Final" />
+        </dependencies>
+        <phase>PostMigrationRulesPhase</phase>
+    </metadata>
+    <rules>
+        <rule id="technology-usage-clustering-01000">
+            <when>
+                <graph-query discriminator="TechnologyTagModel">
+                    <property name="name">Clustering Web Session</property>
+                </graph-query>
+            </when>
+            <perform>
+                <technology-identified name="Web Session">
+                    <tag name="Sustain"/>
+                    <tag name="Java EE"/>
+                    <tag name="Clustering"/>
+                </technology-identified>
+            </perform>
+        </rule>
+        <rule id="technology-usage-clustering-02000">
+            <when>
+                <graph-query discriminator="TechnologyTagModel">
+                    <property name="name">Clustering EJB</property>
+                </graph-query>
+            </when>
+            <perform>
+                <technology-identified name="EJB">
+                    <tag name="Sustain"/>
+                    <tag name="Java EE"/>
+                    <tag name="Clustering"/>
+                </technology-identified>
+            </perform>
+        </rule>
+    </rules>
+</ruleset>

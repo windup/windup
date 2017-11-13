@@ -1,5 +1,6 @@
 package org.jboss.windup.graph;
 
+import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
@@ -139,19 +140,27 @@ public class MapInPropertiesHandler implements MethodHandler<MapInProperties>
      */
     private WindupVertexFrame handleAdder(Vertex vertex, Method method, Object[] args, MapInProperties ann, FramedGraph<?> framedGraph)
     {
-        if (args == null || args.length != 1)
-            throw new WindupException("Method must take one argument: " + method.getName());
+        if (args != null && args.length != 1)
+            throw new WindupException("Method '" + method.getName() + "' must take one argument, not " + args.length);
+
+        if (args == null || args[0] == null || !(args[0] instanceof Map))
+            throw new WindupException("Method '" + method.getName() + "' must take one argument, " +
+                    "a Map<String, Serializable> to store in the vertex. Was: " + (args == null || args[0] == null ? "null" : args[0].getClass()));
+
 
         String prefix = preparePrefix(ann);
 
         // Argument.
         @SuppressWarnings("unchecked")
-        Map<String, Object> map = (Map<String, Object>) args[0];
+        Map<String, Serializable> map = (Map<String, Serializable>) args[0];
 
         // Store all map entries in vertex'es properties.
-        for (Map.Entry<String, Object> entry : map.entrySet())
+        for (Map.Entry<String, Serializable> entry : map.entrySet())
         {
-            vertex.setProperty(prefix + entry.getKey(), entry.getValue());
+            final Object value = entry.getValue();
+            if (! (value instanceof Serializable))
+                throw new WindupException("The values of the map to store in a vertex must all implement Serializable.");
+            vertex.setProperty(prefix + entry.getKey(), value);
         }
 
         return null;

@@ -17,6 +17,7 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.traversal.ProjectModelTraversal;
+import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.EffortReportModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.category.IssueCategoryModel;
@@ -155,7 +156,8 @@ public class InlineHintService extends GraphService<InlineHintModel>
      * </p>
      */
     public Map<Integer, Integer> getMigrationEffortByPoints(
-        ProjectModelTraversal traversal, Set<String> includeTags, Set<String> excludeTags, boolean recursive, boolean includeZero)
+        ProjectModelTraversal traversal, Set<String> includeTags, Set<String> excludeTags, Set<String> issueCategoryIDs,
+        boolean recursive, boolean includeZero)
     {
         MapSumEffortAccumulatorFunction<Integer> accumulator = new MapSumEffortAccumulatorFunction(){
             public Object vertexToKey(Vertex effortReportVertex) {
@@ -163,7 +165,7 @@ public class InlineHintService extends GraphService<InlineHintModel>
                 return migrationEffort;
             }
         };
-        getMigrationEffortDetails(traversal, includeTags, excludeTags, recursive, includeZero, accumulator);
+        getMigrationEffortDetails(traversal, includeTags, excludeTags, issueCategoryIDs, recursive, includeZero, accumulator);
         return accumulator.getResults();
     }
 
@@ -171,7 +173,7 @@ public class InlineHintService extends GraphService<InlineHintModel>
      * Returns the total incidents in all of the {@link InlineHintModel}s associated with the files in this project by severity.
      */
     public Map<IssueCategoryModel, Integer> getMigrationEffortBySeverity(GraphRewrite event, ProjectModelTraversal traversal, Set<String> includeTags, Set<String> excludeTags,
-                                                                    boolean recursive)
+                                                                         Set<String> issueCategoryIDs, boolean recursive)
     {
         MapSumEffortAccumulatorFunction<IssueCategoryModel> accumulator = new MapSumEffortAccumulatorFunction<IssueCategoryModel>()
         {
@@ -192,12 +194,13 @@ public class InlineHintService extends GraphService<InlineHintModel>
                 super.accumulate(effortReportVertex);
             }
         };
-        this.getMigrationEffortDetails(traversal, includeTags, excludeTags, recursive, true, accumulator);
+        this.getMigrationEffortDetails(traversal, includeTags, excludeTags, issueCategoryIDs, recursive, true, accumulator);
         return accumulator.getResults();
     }
 
-    private void getMigrationEffortDetails(ProjectModelTraversal traversal, Set<String> includeTags, Set<String> excludeTags, boolean recursive,
-                boolean includeZero, EffortAccumulatorFunction accumulatorFunction)
+    private void getMigrationEffortDetails(ProjectModelTraversal traversal, Set<String> includeTags, Set<String> excludeTags,
+                                           Set<String> issueCategoryIDs, boolean recursive, boolean includeZero,
+                                           EffortAccumulatorFunction accumulatorFunction)
     {
         LOG.log(Level.INFO, String.format(System.lineSeparator()+"\t\t\tEFFORT H: getMigrationEffortDetails() with: %s, %srecur, %sincludeZero, %s, tags: %s, excl: %s",
                 traversal, recursive ? "" : "!", includeZero ? "" : "!", accumulatorFunction, includeTags, excludeTags));
@@ -225,9 +228,17 @@ public class InlineHintService extends GraphService<InlineHintModel>
         boolean checkTags = !includeTags.isEmpty() || !excludeTags.isEmpty();
         for (Vertex v : pipeline)
         {
-            // only check tags if we have some passed in
-            if (checkTags && !frame(v).matchesTags(includeTags, excludeTags))
-                continue;
+            if (checkTags || !issueCategoryIDs.isEmpty())
+            {
+                InlineHintModel hintModel = frame(v);
+
+                // only check tags if we have some passed in
+                if (checkTags && !hintModel.matchesTags(includeTags, excludeTags))
+                    continue;
+
+                if (!issueCategoryIDs.isEmpty() && !issueCategoryIDs.contains(hintModel.getIssueCategory().getCategoryID()))
+                    continue;
+            }
 
             accumulatorFunction.accumulate(v);
         }

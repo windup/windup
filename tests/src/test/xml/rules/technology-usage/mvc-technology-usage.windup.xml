@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<ruleset id="technology-usage-mvc" xmlns="http://windup.jboss.org/schema/jboss-ruleset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://windup.jboss.org/schema/jboss-ruleset http://windup.jboss.org/schema/jboss-ruleset/windup-jboss-ruleset.xsd">
+    <metadata>
+        <description>
+            This ruleset provides statistical summaries of the MVC (Spring MVC,Struts, Wicket, GWT) items that were found during the analysis.
+        </description>
+        <dependencies>
+            <addon id="org.jboss.windup.rules,windup-rules-javaee,3.0.0.Final" />
+            <addon id="org.jboss.windup.rules,windup-rules-java,3.0.0.Final" />
+        </dependencies>
+        <phase>PostMigrationRulesPhase</phase>
+    </metadata>
+    <rules>
+        <rule id="technology-usage-mvc-01000">
+            <when>
+                <graph-query discriminator="TechnologyTagModel">
+                    <property name="name">Apache Wicket (embedded)</property>
+                </graph-query>
+            </when>
+            <perform>
+                <technology-identified name="Wicket">
+                    <tag name="View"/>
+                    <tag name="Embedded"/>
+                    <tag name="MVC"/>
+                </technology-identified>
+            </perform>
+        </rule>
+        <rule id="technology-usage-mvc-01100">
+            <when>
+                <graph-query discriminator="TechnologyTagModel">
+                    <property name="name">Apache Struts (embedded)</property>
+                </graph-query>
+            </when>
+            <perform>
+                <technology-identified name="Struts">
+                    <tag name="View"/>
+                    <tag name="Embedded"/>
+                    <tag name="MVC"/>
+                </technology-identified>
+            </perform>
+        </rule>
+        <rule id="technology-usage-mvc-01200">
+            <when>
+                <graph-query discriminator="TechnologyTagModel">
+                    <property name="name">Spring MVC (embedded)</property>
+                </graph-query>
+            </when>
+            <perform>
+                <technology-identified name="Spring-MVC">
+                    <tag name="View"/>
+                    <tag name="Embedded"/>
+                    <tag name="MVC"/>
+                </technology-identified>
+            </perform>
+        </rule>
+        <rule id="technology-usage-mvc-01300">
+            <when>
+                <graph-query discriminator="TechnologyTagModel">
+                    <property name="name">GWT (embedded)</property>
+                </graph-query>
+            </when>
+            <perform>
+                <technology-identified name="GWT">
+                    <tag name="View"/>
+                    <tag name="Embedded"/>
+                    <tag name="MVC"/>
+                </technology-identified>
+            </perform>
+        </rule>
+    </rules>
+</ruleset>

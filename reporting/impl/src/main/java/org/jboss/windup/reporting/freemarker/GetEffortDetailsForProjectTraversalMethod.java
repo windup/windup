@@ -28,7 +28,8 @@ import java.util.logging.Logger;
  *              projectModel: ProjectModel,
  *              recursive: Boolean,
  *              [includeTags: Set<String>],
- *              [excludeTags: Set<String>]
+ *              [excludeTags: Set<String>],
+ *              [issueCategoryIDs: Set:<String>]
  *           ) : int
  *      </pre>
  *
@@ -94,11 +95,17 @@ public class GetEffortDetailsForProjectTraversalMethod implements WindupFreeMark
             excludeTags = FreeMarkerUtil.simpleSequenceToSet((SimpleSequence) arguments.get(3));
         }
 
+        Set<String> issueCategories = Collections.emptySet();
+        if (arguments.size() >= 5)
+        {
+            issueCategories = FreeMarkerUtil.simpleSequenceToSet((SimpleSequence) arguments.get(4));
+        }
+
         // Get values for classification and hints.
         Map<Integer, Integer> classificationEffortDetails =
-                classificationService.getMigrationEffortByPoints(projectModelTraversal, includeTags, excludeTags, recursive, false);
+                classificationService.getMigrationEffortByPoints(projectModelTraversal, includeTags, excludeTags, issueCategories, recursive, false);
         Map<Integer, Integer> hintEffortDetails =
-                inlineHintService.getMigrationEffortByPoints(projectModelTraversal, includeTags, excludeTags, recursive, false);
+                inlineHintService.getMigrationEffortByPoints(projectModelTraversal, includeTags, excludeTags, issueCategories, recursive, false);
 
         Map<Integer, Integer> results = sumMaps(classificationEffortDetails, hintEffortDetails);
 
@@ -106,7 +113,7 @@ public class GetEffortDetailsForProjectTraversalMethod implements WindupFreeMark
 
 
         int points = sumPoints(results);
-        LOG.info(String.format("%s() FM function called:\n\t\t\tEFFORT: %3d = %s = C%s + H%s; %s, %srecur, tags: %s, excl: %s",
+        LOG.fine(String.format("%s() FM function called:\n\t\t\tEFFORT: %3d = %s = C%s + H%s; %s, %srecur, tags: %s, excl: %s",
                 NAME, points, results, classificationEffortDetails, hintEffortDetails,
                 projectModelTraversal, recursive ? "" : "!", includeTags, excludeTags));
 

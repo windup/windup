@@ -10,7 +10,6 @@ import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.IterationProgress;
 import org.jboss.windup.config.phase.PostFinalizePhase;
-import org.jboss.windup.config.phase.PostReportRenderingPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.WindupConfigurationQuery;
 import org.jboss.windup.graph.model.ArchiveModel;
@@ -30,7 +29,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * @author Ondrej Zizka
  */
 @RuleMetadata(
-    after = {PostReportRenderingPhase.class},
+    afterIDs = "CreateRuleProviderReportRuleProvider",
     // I don't want to create a dependency: before = {ExecutionTimeReportRuleProvider.class},
     description = "Deletes the temporary data " + Util.WINDUP_BRAND_NAME_ACRONYM + " analyzes: the unzipped archives, and the graph data."
             + " Use --" + KeepWorkDirsOption.NAME + " to keep them.",

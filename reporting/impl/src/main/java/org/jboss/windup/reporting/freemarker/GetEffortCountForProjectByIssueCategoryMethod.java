@@ -89,9 +89,9 @@ public class GetEffortCountForProjectByIssueCategoryMethod implements WindupFree
         }
 
         Map<IssueCategoryModel, Integer> classificationEffortDetails = classificationService.getMigrationEffortBySeverity(event, traversal, includeTags,
-                    excludeTags, recursive);
+                    excludeTags, Collections.emptySet(), recursive);
         Map<IssueCategoryModel, Integer> hintEffortDetails = inlineHintService.getMigrationEffortBySeverity(event, traversal, includeTags, excludeTags,
-                    recursive);
+                Collections.emptySet(), recursive);
 
         Map<IssueCategoryModel, Integer> results = new TreeMap<>(new IssueCategoryModel.IssueSummaryPriorityComparator());
         addAllIncidents(results, classificationEffortDetails);

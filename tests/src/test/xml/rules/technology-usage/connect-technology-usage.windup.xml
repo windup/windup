@@ -1,0 +1,114 @@
+<?xml version="1.0"?>
+<ruleset id="technology-usage-connect" xmlns="http://windup.jboss.org/schema/jboss-ruleset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://windup.jboss.org/schema/jboss-ruleset http://windup.jboss.org/schema/jboss-ruleset/windup-jboss-ruleset.xsd">
+    <metadata>
+        <description>
+            This ruleset provides statistical summaries of the other connect technologies (JCA, JNI, Mail, RMI) items that were found during the analysis.
+        </description>
+        <dependencies>
+            <addon id="org.jboss.windup.rules,windup-rules-javaee,2.7.0.Final" />
+            <addon id="org.jboss.windup.rules,windup-rules-java,2.7.0.Final" />
+        </dependencies>
+        <phase>PostMigrationRulesPhase</phase>
+    </metadata>
+    <rules>
+        <rule id="technology-usage-connect-01000">
+            <when>
+                <graph-query discriminator="RMIServiceModel" />
+            </when>
+            <perform>
+                <technology-identified name="RMI">
+                    <tag name="Connect"/>
+                    <tag name="Other"/>
+                    <tag name="Java EE"/>
+                </technology-identified>
+            </perform>
+        </rule>
+
+        <rule id="technology-usage-connect-01100">
+            <when>
+                <or>
+                    <javaclass references="java.lang.System.{systemNativeMethods}({*})">
+                        <location>METHOD_CALL</location>
+                    </javaclass>
+                    <javaclass references="java.lang.Runtime.load({*})">
+                        <location>METHOD_CALL</location>
+                    </javaclass>
+                    <javaclass references="java.lang.Runtime.loadLibrary({*})">
+                        <location>METHOD_CALL</location>
+                    </javaclass>
+                </or>
+            </when>
+            <perform>
+                <technology-identified name="JNI">
+                    <tag name="Connect"/>
+                    <tag name="Other"/>
+                    <tag name="Java EE"/>
+                </technology-identified>
+            </perform>
+            <where param="systemNativeMethods">
+                <matches pattern="(load|loadLibrary|mapLibraryName)"/>
+            </where>
+        </rule>
+
+        <rule id="technology-usage-connect-01101">
+            <when>
+                <javaclass references="com.sun.jna.{*}">
+                    <location>CONSTRUCTOR_CALL</location>
+                    <location>IMPORT</location>
+                    <location>INHERITANCE</location>
+                    <location>METHOD_CALL</location>
+                    <location>VARIABLE_DECLARATION</location>
+                </javaclass>
+            </when>
+            <perform>
+                <technology-identified name="JNA">
+                    <tag name="Connect"/>
+                    <tag name="Other"/>
+                    <tag name="Java EE"/>
+                </technology-identified>
+            </perform>
+        </rule>
+
+        <rule id="technology-usage-connect-01200">
+            <when>
+                <or>
+                    <javaclass references="javax.mail.{*}" />
+                    <javaclass references="com.sun.mail.{*}" />
+                    <javaclass references="org.simplejavamail.{*}" />
+                    <javaclass references="org.apache.commons.mail.{*}" />
+                </or>
+            </when>
+            <perform>
+                <technology-identified name="Mail">
+                    <tag name="Connect"/>
+                    <tag name="Other"/>
+                    <tag name="Java EE"/>
+                </technology-identified>
+            </perform>
+        </rule>
+
+        <rule id="technology-usage-connect-01300">
+            <when>
+                <or>
+                    <file filename="ra.xml" />
+                    <xmlfile matches="//*[local-name()='jms-jca-provider']"/>
+                    <javaclass references="javax.resource.{*}">
+                        <location>CONSTRUCTOR_CALL</location>
+                        <location>IMPORT</location>
+                        <location>INHERITANCE</location>
+                        <location>METHOD_CALL</location>
+                        <location>VARIABLE_DECLARATION</location>
+                    </javaclass>
+                </or>
+            </when>
+            <perform>
+                <technology-identified name="JCA">
+                    <tag name="Connect"/>
+                    <tag name="Other"/>
+                    <tag name="Java EE"/>
+                </technology-identified>
+            </perform>
+        </rule>
+    </rules>
+</ruleset>

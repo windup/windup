@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<tags setName="techReport-hierarchy">
+
+    <!-- Note for the maintainers:
+         The idea of tag system is:
+         The tag IDs from java-ee.tags.xml (and similar, which are merged into one graph) would be attached to the items within the applications.
+         Then, an algorithm would sum them up at the per-project level.
+         Then, an algorithm would sum the "child tags" of the the high-level technologies.
+         Then, the report would use these data to render the technology reports (and others, like Application List).
+
+         The implementation is ready to group these tags under "techBox:..." tags. For instance:
+         Assume a tag "jms-queue" is under "jms" which is under "java-ee".
+         Then, there is a tag "techBox:messaging" which contains "jms", and is under the "techSector02:Connect" tag.
+         So marking anything with "jms-queue" would automatically make it appear within the box labeled Messaging
+         under the Connect sector, under "Java-EE" row (because the box has parent "techRow:java-ee").
+
+         However, the decision was to use column/box labels, row labels and box labels as kind of coordinates
+         to position the technology labels within the report. It is a bit more complicated and not reusable way.
+         One of the complications is that it needs the tags further bellow.
+
+         Briefly to the tags system:
+         The tags from all *.tags.xml files are loaded in to a single graph.
+         It is not a tree, unlike XML. That is achieved by the parents="tagName, tagName, ...", which is equivalent to being a child in XML.
+
+         This graph should be used to capture the "is" relations between technologies (eventually other structures).
+    -->
+
+
+    <!-- These define the vertical groups? -->
+    <tag name="techReport-rows:" pseudo="true">
+        <tag name="techRow:java-ee" title="Java EE"  pseudo="true">
+            <tag ref="techBox:web"/>
+        </tag>
+        <tag name="techRow:embedded" title="Embedded"  pseudo="true">
+            <!-- You can place boxes under rows here, or using parents="..." - has the same effect.
+            <tag ref="techBox:mvc"/>
+            <tag ref="techBox:markup"/>
+
+            <tag ref="techBox:web-service"/>
+            <tag ref="techBox:object-mapping"/>
+
+            <tag ref="techBox:logging"/>
+            <tag ref="techBox:ioc"/>
+            <tag ref="techBox:3rd-party"/>
+            -->
+        </tag>
+    </tag>
+
+    <!-- "techReport-sectors:..." are "columns". The colors match the MZ mockup.
+        Tag names have a prefix to prevent collision with some real tag names.
+        Also, they are numbered, because we don't store order in the graph yet, so it's sorted by name in the template.
+
+        Some boxes have multiple row parents.
+        The parents of the boxes determines whether a technology may appear under that row.
+        For instance, Security may appear in both, so it has both techRow:... parents.
+        You can force a box to be under certain row or sector by limiting its parents to it.
+    -->
+    <tag name="techReport-sectors:" pseudo="true">
+        <tag name="techSector01:View" title="View" color="#1155CC" pseudo="true">
+            <!-- If the tech span exactly matches an existing tag (title, contained tags, ...), then use that.
+                 If not, define a techBox:... tag, and include whichever tags it should contain. -->
+            <tag name="techBox:web" title="Web" pseudo="true" parents="techRow:java-ee" icon="Misc_Network-Technical">
+                <tag ref="web"/>
+            </tag>
+            <tag name="techBox:rich" title="Rich" pseudo="true" parents="techRow:java-ee"  icon="Hardware_Monitor-Webinar">
+                <tag ref="applet"/>
+                <tag ref="jnlp"/>
+            </tag>
+            <tag name="techBox:mvc" title="MVC" pseudo="true" parents="techRow:embedded" icon="Software_Application-Window">
+                <tag ref="applet"/>
+                <tag ref="spring-mvc"/>
+                <tag ref="struts"/>
+                <tag ref="wicket"/>
+                <tag ref="gwt"/>
+            </tag>
+            <tag name="techBox:markup" title="Markup" pseudo="true" parents="techRow:embedded" icon="Software_Code">
+                <tag ref="html"/>
+                <tag ref="css"/>
+                <tag ref="javascript"/>
+            </tag>
+        </tag>
+        <tag name="techSector02:Connect" title="Connect" color="#38761D" pseudo="true">
+            <tag name="techBox:messaging" title="Messaging" pseudo="true" parents="techRow:java-ee" icon="Object_Envelope-Back">
+                <tag ref="jms"/>
+            </tag>
+            <tag name="techBox:ejb" title="EJB" pseudo="true" parents="techRow:java-ee" icon="Science_Molecule">
+                <tag ref="ejb"/>
+            </tag>
+            <tag name="techBox:http" title="HTTP" pseudo="true" parents="techRow:java-ee" icon="Elevator-UpDown">
+                <tag ref="jax-ws"/>
+                <tag ref="jax-rs"/>
+            </tag>
+            <tag name="techBox:java-ee-other" title="Other" pseudo="true" parents="techRow:java-ee" icon="Office_SnackBasket">
+                <tag ref="jca"/>
+                <tag ref="jni"/>
+                <tag ref="mail"/>
+                <tag ref="rmi"/>
+            </tag>
+            <tag name="techBox:webservice" title="WebService" pseudo="true" parents="techRow:embedded" icon="Office_Enclave">
+                <tag ref="webservices"/>
+            </tag>
+            <tag name="techBox:rest" title="REST" pseudo="true" parents="techRow:embedded" icon="Science_Circuit">
+                <tag ref="rest"/>
+            </tag>
+        </tag>
+        <tag name="techSector03:Store" title="Store" color="#F4B400" pseudo="true">
+            <!--
+            <tag name="techBox:orm" title="ORM" pseudo="true" parents="techRow:java-ee" icon="Diagram_DevelopmentModel">
+            </tag>
+            <tag name="techBox:ogm" title="OGM" pseudo="true" parents="techRow:java-ee" icon="Diagram_DevelopmentModel">
+            </tag>
+            -->
+            <tag name="techBox:jdbc" title="JDBC" pseudo="true" parents="techRow:java-ee"  icon="Hardware_Storage-A-Stack">
+                <tag ref="jdbc"/>
+            </tag>
+            <tag name="techBox:Caching" title="Caching" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="science_brain"><!-- Alternative: Recycle_Symbol. I couldn't find the "brain profile". -->
+                <tag ref="cache"/>
+            </tag>
+            <tag name="techBox:object-mapping" title="Object Mapping" pseudo="true" parents="techRow:embedded" icon="Diagram_DevelopmentModel"></tag>
+            <tag name="techBox:Persistence" title="Persistence" pseudo="true" parents="techRow:java-ee" icon="Hardware_Storage-A-Stack"></tag>
+        </tag>
+        <tag name="techSector04:Sustain" title="Sustain" color="#DB4437" pseudo="true">
+            <tag name="techBox:Transactions" title="Transactions" pseudo="true" parents="techRow:java-ee" icon="Object_CashRegister-POS"></tag>
+            <tag name="techBox:Clustering" title="Clustering" pseudo="true" parents="techRow:java-ee" icon="Hardware_Server-A-Stack"></tag>
+            <tag name="techBox:Security" title="Security" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Object_Shield-CoatOfArms"></tag>
+            <tag name="techBox:Logging" title="Logging" pseudo="true" parents="techRow:embedded" icon="Object_Book-Open"></tag>
+            <tag name="techBox:Test" title="Test" pseudo="true" parents="techRow:embedded" icon="Science_Explosion"></tag>
+        </tag>
+        <tag name="techSector05:Execute" title="Execute" color="#674EA7" pseudo="true">
+            <tag name="techBox:Processing" title="Processing" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Hardware_Processor-Compute"/>
+            <tag name="techBox:ioc" title="IoC" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Arrows_Interoperable-CrossPlatform"/>
+            <tag name="techBox:Rules" title="Rules &amp; Processes" pseudo="true" parents="techRow:embedded" icon="Object_Gear-Group"/>
+            <tag name="techBox:Integration" title="Integration" pseudo="true" parents="techRow:embedded" icon="Software_API"/>
+            <tag name="techBox:3rd-party" title="3rd party" pseudo="true" parents="techRow:embedded" icon="Office_SnackBasket"/>
+        </tag>
+    </tag>
+
+    <!-- WINDUP-1697/ This is mapping the placement names to normal tags. -->
+
+    <!-- Note for the maintainers:
+
+        These tags are needed so that it is possible to determine which non-ID labels represent what - column/box, sector, or row.
+        This is likely what you need to edit when adding a new label to a box, or adding or renaming a box or row or sector.
+
+        Remember that the tags form an oriented graph, so you can group the labels in any way you like.
+        If you make "place:JPA 2" be under "place:JPA", then both will appear in the same box.
+        You can also distribute the same label to 2 different boxes.
+    -->
+    <tag name="techReport:mappingOfPlacementTagNames">
+        <tag name="techReport:placeRows">
+            <tag pseudo="true" name="place:Java EE" title="Java EE" parents="techRow:java-ee"/>
+            <tag pseudo="true" name="place:Embedded" title="Embedded" parents="techRow:embedded"/>
+        </tag>
+        <tag name="techReport:placeSectors">
+            <tag pseudo="true" name="place:View" title="View" parents="techSector01:View"/>
+            <tag pseudo="true" name="place:Connect" title="Connect" parents="techSector02:Connect"/>
+            <tag pseudo="true" name="place:Store" title="Store" parents="techSector03:Store"/>
+            <tag pseudo="true" name="place:Sustain" title="Sustain" parents="techSector04:Sustain"/>
+            <tag pseudo="true" name="place:Execute" title="Execute" parents="techSector05:Execute"/>
+        </tag>
+        <tag name="techReport:placeBoxes">
+            <tag pseudo="true" name="place:3rd party" title="3rd party" parents="techBox:3rd-party"/>
+            <tag pseudo="true" name="place:Batch" title="Batch" parents="techBox:Batch"/> <!-- Not a box? -->
+            <tag pseudo="true" name="place:Bean" title="Bean" parents="techBox:EJB"/>
+            <tag pseudo="true" name="place:Caching" title="Caching" parents="techBox:Caching"/>
+            <tag pseudo="true" name="place:CDI" title="CDI" parents="techBox:CDI"/> <!-- Not a box? -->
+            <tag pseudo="true" name="place:Clustering" title="Clustering" parents="techBox:Clustering"/>
+            <tag pseudo="true" name="place:Database" title="Database" parents="techBox:jdbc"/>
+            <tag pseudo="true" name="place:HTTP" title="HTTP" parents="techBox:HTTP"/>
+            <tag pseudo="true" name="place:Integration" title="Integration" parents="techBox:Integration"/>
+            <tag pseudo="true" name="place:Inversion of Control" title="Inversion of Control" parents="techBox:ioc"/>
+            <tag pseudo="true" name="place:JSON-P" title="JSON-P" parents="techBox:Processing"/> <!-- Not a box? WINDUPRULE-296 -->
+            <tag pseudo="true" name="place:Markup" title="Markup" parents="techBox:Markup"/>
+            <tag pseudo="true" name="place:Messaging" title="Messaging" parents="techBox:Messaging"/>
+            <tag pseudo="true" name="place:MVC" title="MVC" parents="techBox:mvc"/>
+            <tag pseudo="true" name="place:Object Mapping" title="Object Mapping" parents="techBox:object-mapping"/>
+            <tag pseudo="true" name="place:Other" title="Other" parents="techBox:Other"/>
+            <tag pseudo="true" name="place:Persistence" title="Processing" parents="techBox:Persistence"/>
+            <tag pseudo="true" name="place:Processing" title="Processing" parents="techBox:Processing"/>
+            <tag pseudo="true" name="place:REST" title="REST" parents="techBox:rest"/>
+            <tag pseudo="true" name="place:Rich" title="Rich" parents="techBox:rich"/>
+            <tag pseudo="true" name="place:Rules and Processes" title="Rules and Processes" parents="techBox:Rules"/>
+            <tag pseudo="true" name="place:Security" title="Security" parents="techBox:Security"/>
+            <tag pseudo="true" name="place:Test" title="Test" parents="techBox:Test"/>
+            <tag pseudo="true" name="place:Transaction" title="Transaction" parents="techBox:Transactions"/>
+            <tag pseudo="true" name="place:Web" title="Web" parents="techBox:web"/>
+            <tag pseudo="true" name="place:Web Service" title="Web Service" parents="techBox:webservice"/>
+        </tag>
+    </tag>
+</tags>

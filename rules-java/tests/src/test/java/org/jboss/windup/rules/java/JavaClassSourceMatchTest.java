@@ -72,12 +72,11 @@ public class JavaClassSourceMatchTest
     public void testJavaClassCondition() throws IOException, InstantiationException, IllegalAccessException
     {
         final Path outputPath = getDefaultPath();
+        FileUtils.deleteDirectory(outputPath.toFile());
+        Files.createDirectories(outputPath);
         try (GraphContext context = factory.create(outputPath))
         {
             final String inputDir = "src/test/resources/org/jboss/windup/rules/java";
-
-            FileUtils.deleteDirectory(outputPath.toFile());
-            Files.createDirectories(outputPath);
 
             final WindupConfiguration processorConfig = new WindupConfiguration();
             processorConfig.setRuleProviderFilter(new RuleProviderWithDependenciesPredicate(
