@@ -125,6 +125,9 @@ public class ProjectService extends GraphService<ProjectModel>
         return projectModels;
     }
 
+    /**
+     * Returns all Projects created from the user input paths.
+     */
     public Set<ProjectModel> getRootProjectModels()
     {
         Iterable<FileModel> fileModelIterable = WindupConfigurationService.getConfigurationModel(this.getGraphContext()).getInputPaths();
