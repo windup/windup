@@ -14,9 +14,20 @@
         <td class="text-right">${problemSummary.numberFound * problemSummary.effortPerIncident}</td>
     </tr>
     <tr class="tablesorter-childRow bg-info" data-summary-id="${problemSummary.id}">
-        <td><div class="indent"><strong>File</strong></div></td>
-        <td class="text-right"><strong>Incidents Found</strong></td>
-        <td colspan="3"><strong>Hint</strong></td>
+        <td colspan="5">
+            <table>
+                <thead>
+                    <tr>
+                        <th><div class="indent"><strong>File</strong></div></th>
+                        <th class="text-right"><strong>Incidents Found</strong></th>
+                        <th colspan="3"><strong>Hint</strong></th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </td>
     </tr>
 </#macro>
 
