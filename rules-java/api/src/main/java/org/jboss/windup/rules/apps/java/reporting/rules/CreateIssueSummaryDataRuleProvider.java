@@ -114,7 +114,7 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider
                 }
                 issueSummaryWriter.write("];" + NEWLINE);
 
-                issueSummaryWriter.write("var severityOrder = [");
+                issueSummaryWriter.write("var categoryOrder = [");
                 IssueCategoryRegistry issueCategoryRegistry = IssueCategoryRegistry.instance(event.getRewriteContext());
                 for (IssueCategory issueCategory : issueCategoryRegistry.getIssueCategories())
                 {
