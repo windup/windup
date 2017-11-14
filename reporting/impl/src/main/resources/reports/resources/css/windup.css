@@ -369,3 +369,14 @@ strong.wu-navbar-header {
     text-transform: uppercase;
     font-size: 18px;
 }
+
+
+/**************** Migration issues *******************************/
+.table-inner-wrapping-td {
+    padding: 0 !important;
+}
+
+.table-inner {
+    border: 0 !important;
+    margin-bottom: 0;
+}
