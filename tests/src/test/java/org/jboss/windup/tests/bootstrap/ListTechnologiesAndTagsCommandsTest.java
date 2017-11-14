@@ -2,10 +2,17 @@ package org.jboss.windup.tests.bootstrap;
 
 import static org.junit.Assert.assertTrue;
 
+import org.junit.Before;
 import org.junit.Test;
 
 public class ListTechnologiesAndTagsCommandsTest extends AbstractBootstrapTestWithRules
 {
+    @Before
+    public void insureHelpCacheIsAvailable()
+    {
+        bootstrap("--generateHelp");
+    }
+
     @Test
     public void sourceTechnologies()
     {
