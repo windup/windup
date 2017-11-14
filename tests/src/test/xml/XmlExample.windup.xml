@@ -8,9 +8,9 @@
                 </javaclass>
             </when>
             <perform>
-                <classification title="Not In Summary" issue-display-mode="detail-only"></classification>
-                <classification title="In Summary" issue-display-mode="all"></classification>
-                <hint title="javax.servlet.http.HttpServletRequest usage">
+                <classification issue-display-mode="all" title="Not In Summary" issue-display-mode="detail-only"></classification>
+                <classification issue-display-mode="all" title="In Summary" issue-display-mode="all"></classification>
+                <hint issue-display-mode="all" title="javax.servlet.http.HttpServletRequest usage">
                     <message>"Message from XML Rule</message>
                     <link href="http://example.com" title="Description from XML Hint Link"/>
                     <tag>TestTag</tag>
@@ -25,7 +25,7 @@
                 </xmlfile>
             </when>
             <perform>
-                <hint title="Title for Hint from XML">
+                <hint issue-display-mode="all" title="Title for Hint from XML">
                     <message>Container Auth</message>
                     <tag>TestTag2</tag>
                 </hint>
@@ -41,7 +41,7 @@
                 </javaclass>
             </when>
             <perform>
-                <hint title="Other Taglib Import">
+                <hint issue-display-mode="all" title="Other Taglib Import">
                     <message>This is importing another taglib</message>
                     <tag>taglib</tag>
                 </hint>

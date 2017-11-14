@@ -3,7 +3,10 @@ package org.jboss.windup.testutil.html;
 import com.gargoylesoftware.htmlunit.SilentCssErrorHandler;
 import com.gargoylesoftware.htmlunit.WebClient;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.lang3.StringUtils;
+import org.jboss.windup.util.exception.WindupException;
 
 import java.util.logging.Logger;
 import org.openqa.selenium.By;
@@ -47,6 +50,53 @@ public class TestReportUtil
     {
         return driver;
     }
+
+    /**
+     * The purpose of this method is to show the expected and actual row numbers when a test fails.
+     */
+    void assertValueInTableRowByFirstColumn(WebElement element, String firstColumnVal, String... expectedValues)
+    {
+        List<WebElement> rowElements = element.findElements(By.xpath(".//tr"));
+        for (WebElement rowElement : rowElements)
+        {
+            // Check if the first column matches the key
+            List<WebElement> firstTd = rowElement.findElements(By.xpath("./td[position() = 1]"));
+            if (firstTd.size() != 1)
+                continue;
+            String actualKey = firstTd.get(0).getText().trim();
+            if (!actualKey.equals(firstColumnVal))
+                continue;
+
+            boolean rowMatches = true;
+
+            List<String> actualValues = new ArrayList(1 + expectedValues.length);
+            for (int i = 0; i < expectedValues.length; i++)
+            {
+                String expectedValue = expectedValues[i];
+                List<WebElement> tdElements = rowElement.findElements(By.xpath("./td[position() = " + (i + 1 + 1) + "]"));
+                if (tdElements.size() != 1)
+                    break;
+                String actualValue = tdElements.get(0).getText().trim();
+                actualValues.add(actualValue);
+                if (!actualValue.trim().equals(expectedValue.trim()))
+                    rowMatches = false;
+
+            }
+            if (rowMatches)
+                return;
+            else
+                throw new WindupException(String.format(
+                        "The row starting with '%s' did not match."
+                        + "\n    Expected: %s"
+                        + "\n    Actual: %s",
+                        firstColumnVal,
+                        StringUtils.join(expectedValues, ", "),
+                        StringUtils.join(actualValues, ", ")
+                ));
+        }
+
+    }
+
 
     /**
      * Checks that the table contains a row with the given first two columns
