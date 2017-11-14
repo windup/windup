@@ -113,12 +113,33 @@ function resizeTables() {
             tableArr[i].rows[0].cells[j].style.width = cellWidths[j]+'px';
         }
     }
+
+    console.log(cellWidths);
+
+    var styles = '';
+
+    for (var index = 0; index < cellWidths.length; index++) {
+        styles += 'table thead tr:nth-child(1) td:nth-child(' + (index + 1) + '),\n'
+               +  'table thead tr:nth-child(1) th:nth-child(' + (index + 1) + ') { width: ' + cellWidths[index] + 'px; }\n\n'
+    }
+
+    var styleEl = $('<style></style>');
+    styleEl.append(styles);
+    $('body').append(styleEl);
 }
 
 window.onload = resizeTables;
 
 
 var issueDataLoaded = [];
+
+function loadProblemSummaryScript(problemSummaryID) {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src = "data/problem_summary_" + problemSummaryID + ".js";
+    document.body.appendChild(script);
+}
+
 
 function showDetails(element) {
     var problemSummaryID = $(element).parent().attr("data-summary-id");
@@ -127,11 +148,7 @@ function showDetails(element) {
     var issueDataArray = MIGRATION_ISSUES_DETAILS[problemSummaryID];
     if (!issueDataLoaded[problemSummaryID]) {
         // append it and try again in a second
-        var script = document.createElement("script");
-        script.type = "text/javascript";
-        script.src = "data/problem_summary_" + problemSummaryID + ".js";
-        document.body.appendChild(script);
-
+        loadProblemSummaryScript(problemSummaryID);
         issueDataLoaded[problemSummaryID] = true;
         setTimeout(function() { showDetails(element); }, 25);
         return;
@@ -141,7 +158,7 @@ function showDetails(element) {
     }
 
     function toggleRow () {
-        $(tr).find("td").toggle();
+        $(tr).find("td").first().toggle();
         var issuesTable = $(element).parent().parent().parent();
         $(issuesTable).trigger("update", [true]);
     }
@@ -156,21 +173,13 @@ function showDetails(element) {
     var template = Handlebars.compile(source);
     var html = template({problemSummaries: issueDataArray});
 
-    $(html).insertAfter(tr);
-
     function replaceTr() {
         tr.children().remove();
-        /*
-                            var html = $('<td colspan="5">')
-                                    .appendChild($('<table></table>')
-                                            .appendChild(
-                                                $('<thead></thead>').appendChild($('<tr></tr>').appendChild())
-                                            ));
-        */
-        var html = $('<td colspan="5" style="display:none">\n' +
-            '            <table>\n' +
+
+        var html = $('<td colspan="5" style="display:none" class="table-inner-wrapping-td">\n' +
+            '            <table class="table-inner table table-bordered table-condensed migration-issues-table">\n' +
             '                <thead>\n' +
-            '                    <tr>\n' +
+            '                    <tr class="bg-info">\n' +
             '                        <th><div class="indent"><strong>File</strong></div></th>\n' +
             '                        <th class="text-right"><strong>Incidents Found</strong></th>\n' +
             '                        <th colspan="3"><strong>Hint</strong></th>\n' +
@@ -185,6 +194,7 @@ function showDetails(element) {
     }
 
     replaceTr();
+    tr.find('tbody').append(html);
 
     toggleRow();
 }
