@@ -30,6 +30,8 @@
                     ]},
                     </#list>
                 ];
+
+                onProblemSummaryLoaded("${problemSummary.id}");
                 </#compress>
             </@write_to_disk>
         </#list>

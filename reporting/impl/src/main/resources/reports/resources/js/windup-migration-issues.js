@@ -120,7 +120,7 @@ function resizeTables() {
 
     for (var index = 0; index < cellWidths.length; index++) {
         styles += 'table thead tr:nth-child(1) td:nth-child(' + (index + 1) + '),\n'
-               +  'table thead tr:nth-child(1) th:nth-child(' + (index + 1) + ') { width: ' + cellWidths[index] + 'px; }\n\n'
+               +  'table thead tr:nth-child(1) th:nth-child(' + (index + 1) + ') { width: ' + cellWidths[index] + 'px; }\n\n';
     }
 
     var styleEl = $('<style></style>');
@@ -143,32 +143,39 @@ function loadProblemSummaryScript(problemSummaryID) {
 
 function showDetails(element) {
     var problemSummaryID = $(element).parent().attr("data-summary-id");
-    var tr = $(element).parent();
 
-    var issueDataArray = MIGRATION_ISSUES_DETAILS[problemSummaryID];
     if (!issueDataLoaded[problemSummaryID]) {
         // append it and try again in a second
         loadProblemSummaryScript(problemSummaryID);
         issueDataLoaded[problemSummaryID] = true;
-        setTimeout(function() { showDetails(element); }, 25);
-        return;
-    } else if (issueDataArray === null) {
-        setTimeout(function() { showDetails(element); }, 25);
-        return;
+    }  else {
+        onProblemSummaryLoaded(problemSummaryID);
     }
+}
+
+/**
+ * This will get executed from newly loaded script
+ *
+ * @param problemSummaryID
+ */
+function onProblemSummaryLoaded(problemSummaryID) {
+    var tr = $('tr[data-summary-id="' + problemSummaryID + '"]').first();
+
+    var wrappingTd = tr.find('td').first();
 
     function toggleRow () {
-        $(tr).find("td").first().toggle();
-        var issuesTable = $(element).parent().parent().parent();
+        wrappingTd.toggle();
+        var issuesTable = tr.parent().parent();
         $(issuesTable).trigger("update", [true]);
     }
 
     $(".fileSummary_id_" + problemSummaryID).remove();
-    if ($(element).is(":visible")) {
+    if (wrappingTd.is(":visible")) {
         toggleRow();
         return;
     }
 
+    var issueDataArray = MIGRATION_ISSUES_DETAILS[problemSummaryID];
     var source   = $("#detail-row-template").html();
     var template = Handlebars.compile(source);
     var html = template({problemSummaries: issueDataArray});
@@ -179,6 +186,7 @@ function showDetails(element) {
         var html = $('<td colspan="5" style="display:none" class="table-inner-wrapping-td">\n' +
             '            <table class="table-inner table table-bordered table-condensed migration-issues-table">\n' +
             '                <thead>\n' +
+            '                    <tr><th style="padding: 10px 15px">omg</th><th></th><th></th><th></th><th></th></tr>\n' +
             '                    <tr class="bg-info">\n' +
             '                        <th><div class="indent"><strong>File</strong></div></th>\n' +
             '                        <th class="text-right"><strong>Incidents Found</strong></th>\n' +
@@ -195,6 +203,7 @@ function showDetails(element) {
 
     replaceTr();
     tr.find('tbody').append(html);
+    wrappingTd = tr.find('td').first(); // old wrapping td is deleted, find new one
 
     toggleRow();
 }
