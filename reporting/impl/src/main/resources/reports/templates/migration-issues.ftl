@@ -239,53 +239,7 @@
         </script>
         </#noparse>
 
-        <script type="text/javascript">
-            var issueDataLoaded = [];
-
-            function showDetails(element) {
-                var problemSummaryID = $(element).parent().attr("data-summary-id")
-                var tr = $(element).parent();
-
-                var issueDataArray = MIGRATION_ISSUES_DETAILS[problemSummaryID];
-                if (!issueDataLoaded[problemSummaryID]) {
-                    // append it and try again in a second
-                    var script = document.createElement("script");
-                    script.type = "text/javascript";
-                    script.src = "data/problem_summary_" + problemSummaryID + ".js";
-                    document.body.appendChild(script);
-
-                    issueDataLoaded[problemSummaryID] = true;
-                    setTimeout(function() { showDetails(element); }, 25);
-                    return;
-                } else if (issueDataArray == null) {
-                    setTimeout(function() { showDetails(element); }, 25);
-                    return;
-                }
-
-                function toggleRow () {
-                    $(tr).find("td").toggle();
-                    var issuesTable = $(element).parent().parent().parent();
-                    $(issuesTable).trigger("update", [true]);
-                }
-
-                $(".fileSummary_id_" + problemSummaryID).remove();
-                if ($(element).is(":visible")) {
-                    toggleRow();
-                    return;
-                }
-
-                var source   = $("#detail-row-template").html();
-                var template = Handlebars.compile(source);
-                var html = template({problemSummaries: issueDataArray});
-
-                $(html).insertAfter(tr);
-
-                toggleRow();
-            }
-
-            // summary in JS should go here
-            var MIGRATION_ISSUES_DETAILS = [];
-        </script>
+        <script src="resources/js/windup-migration-issues.js"></script>
 
         <#if problemsBySeverity?has_content>
             <#list problemsBySeverity?keys as severity>
