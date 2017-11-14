@@ -68,9 +68,15 @@
         <link href="resources/img/rhamt-icon-128.png" rel="shortcut icon" type="image/x-icon"/>
         <style>
             .table-bordered { border: 1px solid #222222;  border-collapse: collapse;}
-            .table-bordered>tfoot>tr>th, .table-bordered>tfoot>tr>td .table-bordered>tbody>tr>th,  .table-bordered>thead>tr>th, .table-bordered>thead>tr>td, .table-bordered>tbody>tr>td {
+
+            .table-bordered>tfoot>tr>th,
+            .table-bordered>tfoot>tr>td .table-bordered>tbody>tr>th,
+            .table-bordered>thead>tr>th,
+            .table-bordered>thead>tr>td,
+            .table-bordered>tbody>tr>td {
               border: 1px inset #dddddd
             }
+
             .fileSummary {
                 background-color: #f5f5f5;
             }
@@ -86,6 +92,7 @@
                 border-color: #c2c2c2;
                 background-color: #fbf4b1;
             }
+
             .hint-detail-panel {
                 border-color: #c2c2c2;
                 background-color: #fffcdc;
