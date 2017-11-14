@@ -153,6 +153,12 @@ public class RunWindupCommand implements Command, FurnaceDependent
             {
                 String valueString = arguments.size() > (i+1) ? arguments.get(++i) : null;
 
+                if (getOptionName(valueString) != null)
+                {
+                    i--;
+                    valueString = "";
+                }
+
                 Object value = convertType(option.getType(), valueString);
                 optionValues.put(option.getName(), value);
             }

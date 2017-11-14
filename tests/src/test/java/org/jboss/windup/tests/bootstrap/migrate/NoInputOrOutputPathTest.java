@@ -35,7 +35,7 @@ public class NoInputOrOutputPathTest extends AbstractBootstrapTestWithRules {
     @Test()
     public void InputAndNoOutputPath() {
         bootstrap("--input", TEST_FILE_WAR,
-                "--output", "",
+                "--output",
                 "--target", "eap7");
 
         try
