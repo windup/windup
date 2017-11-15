@@ -169,43 +169,21 @@ function onProblemSummaryLoaded(problemSummaryID) {
         $(issuesTable).trigger("update", [true]);
     }
 
-    $(".fileSummary_id_" + problemSummaryID).remove();
+    var tbody = tr.find('tbody');
+
     if (wrappingTd.is(":visible")) {
         toggleRow();
-        return;
+        // TODO: Is it worth to remove it?
+        tbody.children().remove();
+    } else {
+        var issueDataArray = MIGRATION_ISSUES_DETAILS[problemSummaryID];
+        var source   = $("#detail-row-template").html();
+        var template = Handlebars.compile(source);
+        var html = template({problemSummaries: issueDataArray});
+
+        tbody.append(html);
+        toggleRow();
     }
-
-    var issueDataArray = MIGRATION_ISSUES_DETAILS[problemSummaryID];
-    var source   = $("#detail-row-template").html();
-    var template = Handlebars.compile(source);
-    var html = template({problemSummaries: issueDataArray});
-
-    function replaceTr() {
-        tr.children().remove();
-
-        var html = $('<td colspan="5" style="display:none" class="table-inner-wrapping-td">\n' +
-            '            <table class="table-inner table table-bordered table-condensed migration-issues-table">\n' +
-            '                <thead>\n' +
-            '                    <tr><th style="padding: 10px 15px">omg</th><th></th><th></th><th></th><th></th></tr>\n' +
-            '                    <tr class="bg-info">\n' +
-            '                        <th><div class="indent"><strong>File</strong></div></th>\n' +
-            '                        <th class="text-right"><strong>Incidents Found</strong></th>\n' +
-            '                        <th colspan="3"><strong>Hint</strong></th>\n' +
-            '                    </tr>\n' +
-            '                </thead>\n' +
-            '                <tbody>\n' +
-            '                </tbody>\n' +
-            '            </table>\n' +
-            '        </td>');
-
-        tr.append(html);
-    }
-
-    replaceTr();
-    tr.find('tbody').append(html);
-    wrappingTd = tr.find('td').first(); // old wrapping td is deleted, find new one
-
-    toggleRow();
 }
 
 // summary in JS should go here
