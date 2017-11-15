@@ -89,48 +89,6 @@ $(document).ready(function() {
 
 });
 
-function resizeTables() {
-    var tableArr = document.getElementsByClassName('migration-issues-table');
-    var cellWidths = [];
-
-    // get widest
-    for(var i = 0; i < tableArr.length; i++)
-    {
-        for(var j = 0; j < tableArr[i].rows[0].cells.length; j++)
-        {
-            var cell = tableArr[i].rows[0].cells[j];
-
-            if(!cellWidths[j] || cellWidths[j] < cell.clientWidth)
-                cellWidths[j] = cell.clientWidth;
-        }
-    }
-
-    // set all columns to the widest width found
-    for(i = 0; i < tableArr.length; i++)
-    {
-        for(j = 0; j < tableArr[i].rows[0].cells.length; j++)
-        {
-            tableArr[i].rows[0].cells[j].style.width = cellWidths[j]+'px';
-        }
-    }
-
-    console.log(cellWidths);
-
-    var styles = '';
-
-    for (var index = 0; index < cellWidths.length; index++) {
-        styles += 'table thead tr:nth-child(1) td:nth-child(' + (index + 1) + '),\n'
-               +  'table thead tr:nth-child(1) th:nth-child(' + (index + 1) + ') { width: ' + cellWidths[index] + 'px; }\n\n';
-    }
-
-    var styleEl = $('<style></style>');
-    styleEl.append(styles);
-    $('body').append(styleEl);
-}
-
-window.onload = resizeTables;
-
-
 var issueDataLoaded = [];
 
 function loadProblemSummaryScript(problemSummaryID) {

@@ -380,3 +380,9 @@ strong.wu-navbar-header {
     border: 0 !important;
     margin-bottom: 0;
 }
+
+table thead tr:nth-child(1) td:nth-child(1),
+table thead tr:nth-child(1) th:nth-child(1) { width: 43%; }
+
+table thead tr:nth-child(1) td:nth-child(2),
+table thead tr:nth-child(1) th:nth-child(2) { width: 7%; }
