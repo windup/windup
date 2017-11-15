@@ -8,9 +8,10 @@ $(document).ready(function () {
         var activeFilters = $('#active-filters');
         var filterInput = $('#filter');
         var filterDiv = $('#filter-div');
-        var filterOptionsList = filterDiv.find('ul.dropdown-menu');
+        var filterOptionsList = filterDiv.find('ul.dropdown-menu').first();
         var filterByLabel = $('.filter-by, #filter-by'); // $('.filter-by');
         var clearFiltersButton = $('#clear-filters');
+        var filterTypeDiv = $('#filter-type');
 
         /** Active filters */
         var filters = [];
@@ -38,9 +39,19 @@ $(document).ready(function () {
             { name: 'Tags', value: 'tags', callback: hasItemInArrayCallback, data: '' }
         ];
 
+        var andReducer = function(prev, curr) { return prev && curr; };
+        var orReducer  = function(prev, curr) { return prev || curr; };
+
+        var filterTypes = [
+            { name: 'Matches all filters (AND)', reducer: andReducer, default: true },
+            { name: 'Matches any filter (OR)',  reducer: orReducer,  default: false }
+        ];
+
+
         /** Currently selected filter option */
         var currentFilterConfiguration = {
-            filterBy: filterOptions[0]
+            filterBy: filterOptions[0],
+            type: filterTypes[0]
         };
 
         function initialize() {
@@ -82,6 +93,13 @@ $(document).ready(function () {
 
             /** Use first item from list for filtering */
             filterOptionsList.find('li a').first().click();
+
+            filterTypes.forEach(function(filterType) {
+                filterTypeDiv.find('ul.dropdown-menu').append(makeFilterType(filterType));
+            });
+
+            /** Use first filter-type (AND) for filtering */
+            filterTypeDiv.find('li a').first().click();
         }
 
         /**
@@ -98,6 +116,23 @@ $(document).ready(function () {
 
                 $(this).replaceWith(anchored);
             });
+        }
+
+        function makeFilterType(filterType) {
+            var html = $('<li><a href="#"></li>');
+            var a = html.find('a');
+            a.text(filterType.name);
+            a.data('filterBy', filterType);
+
+            a.on('click', function() {
+                $('#filter-type').find('li a').removeClass('selected');
+                $(this).addClass('selected');
+                currentFilterConfiguration.type = filterType;
+                $('.filter-type').text(filterType.name);
+                filterData();
+            });
+
+            return html;
         }
 
         /**
@@ -127,10 +162,8 @@ $(document).ready(function () {
                         }
                     });
 
-                    // TODO: Use AND or OR?
-                    show = filterResults.reduce(function (previous, current) {
-                        return previous || current;
-                    }, false);
+                    var reduceOptions = currentFilterConfiguration.type;
+                    show = filterResults.reduce(reduceOptions.reducer, reduceOptions.default);
                 }
 
                 if (!show) {

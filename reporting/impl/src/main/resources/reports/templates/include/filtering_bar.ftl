@@ -14,6 +14,14 @@
                             </ul>
                         </div><!-- /btn-group -->
                         <input type="text" class="form-control" id="filter" placeholder="Filter By Name...">
+                        <div class="input-group-btn" id="filter-type">
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
+                                    aria-haspopup="true"
+                                    aria-expanded="false"><span class="filter-type"><!--Dynamically load content here --></span> <span class="caret"></span></button>
+                            <ul class="dropdown-menu">
+                                <!-- Dynamically load content here -->
+                            </ul>
+                        </div><!-- /btn-group -->
                     </div><!-- /input-group -->
                 </div>
                 <!-- sort -->
