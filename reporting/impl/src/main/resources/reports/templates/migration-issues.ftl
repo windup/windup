@@ -17,7 +17,6 @@
         <td colspan="5" style="display: none;" class="table-inner-wrapping-td">
             <table class="table-inner table table-bordered table-condensed migration-issues-table">
                 <thead>
-                    <tr><th style="padding: 10px 15px">omg</th><th></th><th></th><th></th><th></th></tr>
                     <tr class="bg-info">
                         <th><div class="indent"><strong>File</strong></div></th>
                         <th class="text-right"><strong>Incidents Found</strong></th>
