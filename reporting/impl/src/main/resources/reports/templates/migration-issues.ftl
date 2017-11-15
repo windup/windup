@@ -14,10 +14,11 @@
         <td class="text-right">${problemSummary.numberFound * problemSummary.effortPerIncident}</td>
     </tr>
     <tr class="tablesorter-childRow bg-info" data-summary-id="${problemSummary.id}">
-        <td colspan="5">
-            <table>
+        <td colspan="5" style="display: none;" class="table-inner-wrapping-td">
+            <table class="table-inner table table-bordered table-condensed migration-issues-table">
                 <thead>
-                    <tr>
+                    <tr><th style="padding: 10px 15px">omg</th><th></th><th></th><th></th><th></th></tr>
+                    <tr class="bg-info">
                         <th><div class="indent"><strong>File</strong></div></th>
                         <th class="text-right"><strong>Incidents Found</strong></th>
                         <th colspan="3"><strong>Hint</strong></th>
