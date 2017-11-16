@@ -422,7 +422,9 @@ public class RunWindupCommand implements Command, FurnaceDependent
 
     private String getOptionName(String argument)
     {
-        if (argument.startsWith("--"))
+        if (argument == null)
+            return null;
+        else if (argument.startsWith("--"))
             return argument.substring(2);
         else if (argument.startsWith("-"))
             return argument.substring(1);
