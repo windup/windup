@@ -48,6 +48,7 @@
                             <xs:element name="phase" maxOccurs="1" minOccurs="0">
                                 <xs:simpleType>
                                     <xs:restriction base="xs:string">
+                                        <xs:enumeration value="InitialAnalysisPhase" />
                                         <xs:enumeration value="MigrationRulesPhase" />
                                         <xs:enumeration value="PostMigrationRulesPhase" />
                                         <xs:enumeration value="PreReportGenerationPhase" />
@@ -240,6 +241,7 @@
                 <xs:complexType mixed="true">
                     <xs:attribute type="xs:string" name="name" use="required" />
                     <xs:attribute type="property-type" name="type" use="optional" />
+                    <xs:attribute type="property-search-type" name="searchType" use="optional" />
                 </xs:complexType>
             </xs:element>
         </xs:sequence>
@@ -340,6 +342,19 @@
             <xs:enumeration value="REPLACE"/>
             <xs:enumeration value="DELETE_LINE"/>
             <xs:enumeration value="INSERT_LINE"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="property-search-type">
+        <xs:annotation>
+            <xs:documentation><![CDATA[
+            This defines the type of the value of the property.
+            It's optional and default is 'string'.]]>
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="regex"/>
+            <xs:enumeration value="equals"/>
         </xs:restriction>
     </xs:simpleType>
 
