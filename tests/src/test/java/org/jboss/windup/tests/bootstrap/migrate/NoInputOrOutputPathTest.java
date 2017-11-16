@@ -48,6 +48,24 @@ public class NoInputOrOutputPathTest extends AbstractBootstrapTestWithRules {
     }
 
     /**
+     * Test should show error about empty output argument
+     */
+    @Test()
+    public void InputAndNoOutputPathAsLastOption() {
+        bootstrap("--input", TEST_FILE_WAR,
+                "--target", "eap7",
+                "--output");
+
+        try
+        {
+            System.out.println(TEST_FILE_OUTPUT_DIR.getCanonicalPath()+" -> comparison");
+            assertTrue(capturedOutput().contains("Output Path:"+TEST_FILE_OUTPUT_DIR.getCanonicalPath()));
+        } catch (IOException ex) {
+            fail("Something happend while getting canonical path.");
+        }
+    }
+
+    /**
      * Test should show error about space and therefore empty output argument
      */
     @Test
