@@ -43,7 +43,6 @@ public class ToolingRMIServer
             }
             catch (Throwable t)
             {
-                t.printStackTrace();
                 LOG.warning("Registry not already there, starting...");
                 registry = LocateRegistry.createRegistry(port);
             }
