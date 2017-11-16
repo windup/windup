@@ -1,0 +1,161 @@
+<?xml version="1.0"?>
+<ruleset id="embedded-framework-libraries" xmlns="http://windup.jboss.org/schema/jboss-ruleset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://windup.jboss.org/schema/jboss-ruleset http://windup.jboss.org/schema/jboss-ruleset/windup-jboss-ruleset.xsd">
+    <metadata>
+        <description>
+            This ruleset detects embedded framework libraries that may cause issues during migration.
+        </description>
+        <dependencies>
+            <addon id="org.jboss.windup.rules,windup-rules-javaee,3.0.0.Final" />
+            <addon id="org.jboss.windup.rules,windup-rules-java,3.0.0.Final" />
+        </dependencies>
+        <targetTechnology id="eap"/>
+        <phase>InitialAnalysisPhase</phase>
+    </metadata>
+    <rules>
+        <rule id="embedded-framework-libraries-01000">
+            <when>
+                <graph-query discriminator="JarArchiveModel">
+                    <property name="fileName" searchType="regex">.*drools.*\.jar$</property>
+                </graph-query>
+            </when>
+            <perform>
+                <classification title="Embedded library - Drools" category-id="optional" effort="0">
+                    <description>
+                        The application embedds a Drools library.
+                    </description>
+                </classification>
+                <technology-tag level="INFORMATIONAL">Drools (embedded)</technology-tag>
+            </perform>
+        </rule>
+        <rule id="embedded-framework-libraries-02000">
+            <when>
+                <graph-query discriminator="JarArchiveModel">
+                    <property name="fileName" searchType="regex">.*camel.*\.jar$</property>
+                </graph-query>
+            </when>
+            <perform>
+                <classification title="Embedded library - Apache Camel" category-id="optional" effort="0">
+                    <description>
+                        The application embedds an Apache Camel library.
+                    </description>
+                </classification>
+                <technology-tag level="INFORMATIONAL">Apache Camel (embedded)</technology-tag>
+            </perform>
+        </rule>
+        <rule id="embedded-framework-libraries-03000">
+            <when>
+                <graph-query discriminator="JarArchiveModel">
+                    <property name="fileName" searchType="regex">.*hibernate.*\.jar$</property>
+                </graph-query>
+            </when>
+            <perform>
+                <classification title="Hibernate embedded library" category-id="mandatory" effort="3">
+                    <description>
+                        The application has a Hibernate library embedded.
+                        Red Hat JBoss EAP includes Hibernate as a module with a version that has been tested and supported by Red Hat.
+                        There are two options for using the Hibernate library:
+
+                        1. Keep it embedded as it is now. This approach is low effort but the application will not use a tested and supported library.
+                        2. Switch to use the Hibernate library in the EAP module. This will require effort to remove the embedded library and configure the application to use the module's library but then the application will rely on a tested and supported version of the Hibernate library.
+
+                        In the links below there are the instructions to enable alternative versions for both EAP 6 and 7.
+                    </description>
+                    <link title="Red Hat JBoss EAP: Component Details" href="https://access.redhat.com/articles/112673"/>
+                    <link title="Red Hat JBoss EAP 6: Hibernate and JPA Migration Changes" href="https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html/Migration_Guide/sect-Changes_Dependent_on_Your_Application_Architecture_and_Components.html#sect-Hibernate_and_JPA_Changes"/>
+                    <link title="Red Hat JBoss EAP 7: Hibernate and JPA Migration Changes" href="https://access.redhat.com/documentation/en-us/red_hat_jboss_enterprise_application_platform/7.0/html/migration_guide/application_migration_changes#hibernate_and_jpa_migration_changes"/>
+                </classification>
+                <technology-tag level="INFORMATIONAL">Hibernate (embedded)</technology-tag>
+            </perform>
+        </rule>
+        <rule id="embedded-framework-libraries-04000">
+            <when>
+                <graph-query discriminator="JarArchiveModel">
+                    <property name="fileName" searchType="regex">.*jdbc.*\.jar$</property>
+                </graph-query>
+            </when>
+            <perform>
+                <classification title="Embedded library - JDBC" category-id="optional" effort="0">
+                    <description>
+                        The application embeds a JDBC library.
+                    </description>
+                </classification>
+                <technology-tag level="INFORMATIONAL">JDBC (embedded)</technology-tag>
+            </perform>
+        </rule>
+        <rule id="embedded-framework-libraries-05000">
+            <when>
+                <or>
+                    <graph-query discriminator="JarArchiveModel">
+                        <property name="fileName" searchType="regex">.*jsf-[(api)|(impl)].*\.jar$</property>
+                    </graph-query>
+                    <graph-query discriminator="JarArchiveModel">
+                        <property name="fileName" searchType="regex">.*myfaces-[(api)|(impl)|(bundle)].*\.jar$</property>
+                    </graph-query>
+                </or>
+            </when>
+            <perform>
+                <classification title="JSF embedded library" category-id="mandatory" effort="3">
+                    <description>
+                        The application has a JSF library embedded.
+
+                        Red Hat JBoss EAP includes JSF as a module with a version that has been tested and is supported by Red Hat.
+                        There are two options for using the JSF library:
+
+                        1. Keep it embedded as it is now. This approach is low effort but the application will not use a tested and supported library.
+                        2. Switch to use the JSF library in the EAP module. This will require effort to remove the embedded library and configure the application to use the module's library, but then the application will rely on a tested and supported version of the JSF library.
+
+                        In the links below there are instructions to enable alternative versions for both EAP 6 and 7.
+                    </description>
+                    <link title="Red Hat JBoss EAP: Component Details" href="https://access.redhat.com/articles/112673"/>
+                    <link title="Red Hat JBoss EAP 6: JavaServer Faces (JSF) Code Changes" href="https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html/Migration_Guide/sect-Changes_Dependent_on_Your_Application_Architecture_and_Components.html#sect-JSF_changes"/>
+                    <link title="How to use JSF 1.2 with EAP 6" href="https://access.redhat.com/solutions/690953"/>
+                    <link title="Red Hat JBoss EAP 7: JavaServer Faces (JSF) Code Changes" href="https://access.redhat.com/documentation/en-us/red_hat_jboss_enterprise_application_platform/7.0/html/migration_guide/application_migration_changes#migrate_jsf_code_changes"/>
+                    <link title="How to use JSF 1.2 with EAP 7?" href="https://access.redhat.com/solutions/2773121"/>
+                </classification>
+                <technology-tag level="INFORMATIONAL">JSF (embedded)</technology-tag>
+            </perform>
+        </rule>
+        <rule id="embedded-framework-libraries-06000">
+            <when>
+                <graph-query discriminator="JarArchiveModel">
+                    <property name="fileName" searchType="regex">jboss-seam.*\.jar$</property>
+                </graph-query>
+            </when>
+            <perform>
+                <classification title="Seam 2 embedded library" category-id="mandatory" effort="5">
+                    <description>
+                        The application has a Seam library embedded.
+
+                        While official support for Seam 2.2 applications was dropped in JBoss EAP 6, it was still possible to configure dependencies for JSF 1.2 and Hibernate 3 to allow Seam 2.2 applications to run on that release.
+
+                        Seam 2.3 should work on JBoss EAP 6 even some framework features and integrations from Seam 2.2 are not supported.
+
+                        Red Hat JBoss EAP 7, which now includes JSF 2.2 and Hibernate 5, does not support Seam 2.2 or Seam 2.3 due to end of life of Red Hat JBoss Web Framework Kit. It is recommended that you rewrite your Seam components using CDI beans.
+                        In the links below there are the instructions to enable alternatives for both EAP 6 and 7
+                    </description>
+                    <link title="EAP 6 - Migrate Seam 2.2 applications" href="https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html-single/Migration_Guide/index.html#sect-Migrate_Seam_2.2_Applications"/>
+                    <link title="Red Hat JBoss EAP 6: Migration from 2.2 to 2.3" href="https://access.redhat.com/documentation/en-US/Red_Hat_JBoss_Web_Framework_Kit/2.7/html-single/Seam_Guide/index.html#migration23"/>
+                    <link title="Red Hat JBoss EAP: Migration from Seam 2 to Java EE and alternatives" href="https://access.redhat.com/documentation/en-US/Red_Hat_JBoss_Web_Framework_Kit/2.7/html-single/Seam_Guide/index.html#idm54350960"/>
+                    <link title="How to use JSF 1.2 with EAP 7?" href="https://access.redhat.com/solutions/2773121"/>
+                </classification>
+                <technology-tag level="INFORMATIONAL">Seam (embedded)</technology-tag>
+            </perform>
+        </rule>
+        <rule id="embedded-framework-libraries-07000">
+            <when>
+                <graph-query discriminator="JarArchiveModel">
+                    <property name="fileName" searchType="regex">.*teiid.*\.jar$</property>
+                </graph-query>
+            </when>
+            <perform>
+                <classification title="Embedded library - Teiid" category-id="optional" effort="0">
+                    <description>
+                        The application embedds a Teiid library.
+                    </description>
+                </classification>
+                <technology-tag level="INFORMATIONAL">Teiid (embedded)</technology-tag>
+            </perform>
+        </rule>
+    </rules>
+</ruleset>

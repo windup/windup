@@ -66,7 +66,9 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest
                 .addBeansXML()
                 .addClass(WindupArchitectureTest.class)
                 .addAsResource(new File("src/test/groovy/GroovyExampleRule.windup.groovy"))
-                .addAsResource(new File("src/test/xml/DuplicateTestRules.windup.xml"));
+                .addAsResource(new File("src/test/xml/DuplicateTestRules.windup.xml"))
+                .addAsResource(new File("src/test/xml/rules/embedded-libraries/embedded-cache-libraries.windup.xml"))
+                .addAsResource(new File("src/test/xml/rules/embedded-libraries/embedded-framework-libraries.windup.xml"));
     }
 
     @Test

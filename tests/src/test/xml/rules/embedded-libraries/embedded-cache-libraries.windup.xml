@@ -1,0 +1,255 @@
+<?xml version="1.0"?>
+<ruleset id="embedded-cache-libraries" xmlns="http://windup.jboss.org/schema/jboss-ruleset" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://windup.jboss.org/schema/jboss-ruleset http://windup.jboss.org/schema/jboss-ruleset/windup-jboss-ruleset.xsd">
+    <metadata>
+        <description>
+            This ruleset detects embedded cache libraries that may cause issues during migration.
+        </description>
+        <dependencies>
+            <addon id="org.jboss.windup.rules,windup-rules-javaee,3.0.0.Final" />
+            <addon id="org.jboss.windup.rules,windup-rules-java,3.0.0.Final" />
+        </dependencies>
+        <targetTechnology id="cloud-readiness"/>
+        <phase>InitialAnalysisPhase</phase>
+    </metadata>
+    <rules>
+        <rule id="embedded-cache-libraries-01000">
+            <when>
+                <graph-query discriminator="JarArchiveModel">
+                    <property name="fileName" searchType="regex">.*ehcache.*\.jar$</property>
+                </graph-query>
+            </when>
+            <perform>
+                <classification title="Caching - Ehcache embedded library" category-id="cloud-mandatory" effort="5">
+                    <description>
+                        The application embeds an Ehcache library.
+
+                        Cloud readiness issue as potential state information that is not persisted to a backing service.
+                    </description>
+                </classification>
+                <technology-tag level="INFORMATIONAL">Ehcache (embedded)</technology-tag>
+            </perform>
+        </rule>
+        <rule id="embedded-cache-libraries-02000">
+            <when>
+                <graph-query discriminator="JarArchiveModel">
+                    <property name="fileName" searchType="regex">.*coherence.*\.jar$</property>
+                </graph-query>
+            </when>
+            <perform>
+                <classification title="Caching - Coherence embedded library" category-id="cloud-mandatory" effort="5">
+                    <description>
+                        The application embeds a Coherence library.
+
+                        Cloud readiness issue as potential state information that is not persisted to a backing service.
+                    </description>
+                </classification>
+                <technology-tag level="INFORMATIONAL">Coherence (embedded)</technology-tag>
+            </perform>
+        </rule>
+        <rule id="embedded-cache-libraries-03000">
+            <when>
+                <graph-query discriminator="JarArchiveModel">
+                    <property name="fileName" searchType="regex">.*commons-jcs.*\.jar$</property>
+                </graph-query>
+            </when>
+            <perform>
+                <classification title="Caching - Apache Commons JCS embedded library" category-id="cloud-mandatory" effort="5">
+                    <description>
+                        The application embeds an Apache Commons JCS library.
+
+                        Cloud readiness issue as potential state information that is not persisted to a backing service.
+                    </description>
+                </classification>
+                <technology-tag level="INFORMATIONAL">Apache Commons JCS (embedded)</technology-tag>
+            </perform>
+        </rule>
+        <rule id="embedded-cache-libraries-04000">
+            <when>
+                <graph-query discriminator="JarArchiveModel">
+                    <property name="fileName" searchType="regex">.*dynacache.*\.jar$</property>
+                </graph-query>
+            </when>
+            <perform>
+                <classification title="Caching - Dynacache embedded library" category-id="cloud-mandatory" effort="5">
+                    <description>
+                        The application embeds a Dynacache library.
+
+                        Cloud readiness issue as potential state information that is not persisted to a backing service.
+                    </description>
+                </classification>
+                <technology-tag level="INFORMATIONAL">Dynacache (embedded)</technology-tag>
+            </perform>
+        </rule>
+        <rule id="embedded-cache-libraries-05000">
+            <when>
+                <graph-query discriminator="JarArchiveModel">
+                    <property name="fileName" searchType="regex">.*cache-api.*\.jar$</property>
+                </graph-query>
+            </when>
+            <perform>
+                <classification title="Caching - Embedded library" category-id="cloud-mandatory" effort="5">
+                    <description>
+                        The application embeds a library providing caching capabilities.
+
+                        Cloud readiness issue as potential state information that is not persisted to a backing service.
+                    </description>
+                </classification>
+                <technology-tag level="INFORMATIONAL">Cache API (embedded)</technology-tag>
+            </perform>
+        </rule>
+        <rule id="embedded-cache-libraries-06000">
+            <when>
+                <graph-query discriminator="JarArchiveModel">
+                    <property name="fileName" searchType="regex">.*hazelcast.*\.jar$</property>
+                </graph-query>
+            </when>
+            <perform>
+                <classification title="Caching - Hazelcast embedded library" category-id="cloud-mandatory" effort="5">
+                    <description>
+                        The application embeds an Hazelcast library.
+
+                        Cloud readiness issue as potential state information that is not persisted to a backing service.
+                    </description>
+                </classification>
+                <technology-tag level="INFORMATIONAL">Hazelcast (embedded)</technology-tag>
+            </perform>
+        </rule>
+        <rule id="embedded-cache-libraries-07000">
+            <when>
+                <graph-query discriminator="JarArchiveModel">
+                    <property name="fileName" searchType="regex">.*ignite.*\.jar$</property>
+                </graph-query>
+            </when>
+            <perform>
+                <classification title="Caching - Apache Ignite embedded library" category-id="cloud-mandatory" effort="5">
+                    <description>
+                        The application embeds an Apache Ignite library.
+
+                        Cloud readiness issue as potential state information that is not persisted to a backing service.
+                    </description>
+                </classification>
+                <technology-tag level="INFORMATIONAL">Apache Ignite (embedded)</technology-tag>
+            </perform>
+        </rule>
+        <rule id="embedded-cache-libraries-08000">
+            <when>
+                <graph-query discriminator="JarArchiveModel">
+                    <property name="fileName" searchType="regex">.*infinispan.*\.jar$</property>
+                </graph-query>
+            </when>
+            <perform>
+                <classification title="Caching - Infinispan embedded library" category-id="cloud-mandatory" effort="5">
+                    <description>
+                        The application embeds an Infinispan library.
+
+                        Cloud readiness issue as potential state information that is not persisted to a backing service.
+                    </description>
+                </classification>
+                <technology-tag level="INFORMATIONAL">Infinispan (embedded)</technology-tag>
+            </perform>
+        </rule>
+        <rule id="embedded-cache-libraries-09000">
+            <when>
+                <graph-query discriminator="JarArchiveModel">
+                    <property name="fileName" searchType="regex">.*jbosscache.*\.jar$</property>
+                </graph-query>
+            </when>
+            <perform>
+                <classification title="Caching - JBoss Cache embedded library" category-id="cloud-mandatory" effort="5">
+                    <description>
+                        The application embedds a JBoss Cache library.
+
+                        Cloud readiness issue as potential state information that is not persisted to a backing service.
+                    </description>
+                </classification>
+                <technology-tag level="INFORMATIONAL">JBoss Cache (embedded)</technology-tag>
+            </perform>
+        </rule>
+        <rule id="embedded-cache-libraries-10000">
+            <when>
+                <graph-query discriminator="JarArchiveModel">
+                    <property name="fileName" searchType="regex">.*jcache.*\.jar$</property>
+                </graph-query>
+            </when>
+            <perform>
+                <classification title="Caching - JCache embedded library" category-id="cloud-mandatory" effort="5">
+                    <description>
+                        The application embeds a JCache library.
+
+                        Cloud readiness issue as potential state information that is not persisted to a backing service.
+                    </description>
+                </classification>
+                <technology-tag level="INFORMATIONAL">JCache (embedded)</technology-tag>
+            </perform>
+        </rule>
+        <rule id="embedded-cache-libraries-11000">
+            <when>
+                <graph-query discriminator="JarArchiveModel">
+                    <property name="fileName" searchType="regex">.*memcached.*\.jar$</property>
+                </graph-query>
+            </when>
+            <perform>
+                <classification title="Caching - Memcached client embedded library" category-id="cloud-mandatory" effort="5">
+                    <description>
+                        The application embeds a Memcached client library.
+
+                        Cloud readiness issue as potential state information that is not persisted to a backing service.
+                    </description>
+                </classification>
+                <technology-tag level="INFORMATIONAL">Memcached client (embedded)</technology-tag>
+            </perform>
+        </rule>
+        <rule id="embedded-cache-libraries-12000">
+            <when>
+                <graph-query discriminator="JarArchiveModel">
+                    <property name="fileName" searchType="regex">.*oscache.*\.jar$</property>
+                </graph-query>
+            </when>
+            <perform>
+                <classification title="Caching - Oscache embedded library" category-id="cloud-mandatory" effort="5">
+                    <description>
+                        The application embeds an Oscache library.
+
+                        Cloud readiness issue as potential state information that is not persisted to a backing service.
+                    </description>
+                </classification>
+                <technology-tag level="INFORMATIONAL">Oscache (embedded)</technology-tag>
+            </perform>
+        </rule>
+        <rule id="embedded-cache-libraries-13000">
+            <when>
+                <graph-query discriminator="JarArchiveModel">
+                    <property name="fileName" searchType="regex">.*shiftone.*\.jar$</property>
+                </graph-query>
+            </when>
+            <perform>
+                <classification title="Caching - ShiftOne (Java Object Cache) embedded library" category-id="cloud-mandatory" effort="5">
+                    <description>
+                        The application embeds a ShiftOne library (Java Object Cache aka. JOCache).
+
+                        Cloud readiness issue as potential state information that is not persisted to a backing service.
+                    </description>
+                </classification>
+                <technology-tag level="INFORMATIONAL">ShiftOne (embedded)</technology-tag>
+            </perform>
+        </rule>
+        <rule id="embedded-cache-libraries-14000">
+            <when>
+                <graph-query discriminator="JarArchiveModel">
+                    <property name="fileName" searchType="regex">.*swarmcache.*\.jar$</property>
+                </graph-query>
+            </when>
+            <perform>
+                <classification title="Caching - SwarmCache embedded library" category-id="cloud-mandatory" effort="5">
+                    <description>
+                        The application embedds a SwarmCache library.
+
+                        Cloud readiness issue as potential state information that is not persisted to a backing service.
+                    </description>
+                </classification>
+                <technology-tag level="INFORMATIONAL">SwarmCache (embedded)</technology-tag>
+            </perform>
+        </rule>
+    </rules>
+</ruleset>
