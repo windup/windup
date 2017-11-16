@@ -167,5 +167,6 @@ public class IssueCategoryRegistry
         this.issueCategories.putIfAbsent(MANDATORY, new IssueCategory(MANDATORY, IssueCategoryRegistry.class.getCanonicalName(), "Mandatory", MANDATORY, 1000, true));
         this.issueCategories.putIfAbsent(OPTIONAL, new IssueCategory(OPTIONAL, IssueCategoryRegistry.class.getCanonicalName(), "Optional", OPTIONAL, 1000, true));
         this.issueCategories.putIfAbsent(POTENTIAL, new IssueCategory(POTENTIAL, IssueCategoryRegistry.class.getCanonicalName(), "Potential Issues", POTENTIAL, 1000, true));
+        this.issueCategories.putIfAbsent(CLOUD_MANDATORY, new IssueCategory(CLOUD_MANDATORY, IssueCategoryRegistry.class.getCanonicalName(), "Cloud Mandatory", CLOUD_MANDATORY, 1000, true));
     }
 }
