@@ -11,6 +11,7 @@ import org.jboss.windup.config.parser.NamespaceElementHandler;
 import org.jboss.windup.config.parser.ParserContext;
 import org.jboss.windup.config.parser.xml.RuleProviderHandler;
 import org.jboss.windup.config.query.Query;
+import org.jboss.windup.config.query.QueryPropertyComparisonType;
 import org.jboss.windup.graph.GraphTypeManager;
 import org.jboss.windup.graph.model.WindupFrame;
 import org.jboss.windup.graph.model.WindupVertexFrame;
@@ -32,6 +33,7 @@ public class QueryHandler implements ElementHandler<Query>
     public static final String PROPERTY = "property";
     public static final String PROPERTY_NAME = "name";
     public static final String PROPERTY_TYPE = "type";
+    public static final String PROPERTY_SEARCH_TYPE = "searchType";
 
     @Inject
     private GraphTypeManager graphTypeManager;
@@ -78,19 +80,17 @@ public class QueryHandler implements ElementHandler<Query>
 
                 String value = $(child).text();
                 String propertyType = $(child).attr(PROPERTY_TYPE);
-                if (StringUtils.isBlank(propertyType))
+                String searchMode = $(child).attr(PROPERTY_SEARCH_TYPE);
+
+                if (StringUtils.equals("BOOLEAN", propertyType))
                 {
-                    query.withProperty(propertyName, value);
+                    query.withProperty(propertyName, Boolean.valueOf(value));
                 } else
                 {
-                    switch (propertyType)
-                    {
-                        case "BOOLEAN":
-                            query.withProperty(propertyName, Boolean.valueOf(value));
-                            break;
-                        case "STRING":
-                            query.withProperty(propertyName, value);
-                    }
+                    if (StringUtils.equals("regex", searchMode))
+                        query.withProperty(propertyName, QueryPropertyComparisonType.REGEX, value);
+                    else
+                        query.withProperty(propertyName, value);
                 }
             }
         }

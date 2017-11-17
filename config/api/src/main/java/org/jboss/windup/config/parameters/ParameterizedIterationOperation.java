@@ -67,7 +67,7 @@ public abstract class ParameterizedIterationOperation<T extends WindupVertexFram
             for (Entry<String, Parameter<?>> entry : parameterStore)
             {
                 Parameter<?> parameter = entry.getValue();
-                String value = valueStore.retrieve(parameter);
+                String value = valueStore == null ? null : valueStore.retrieve(parameter);
                 ParameterUtils.enqueueSubmission(event, tempEvaluationContext, parameter, value);
             }
             context.put(ParameterValueStore.class, valueStore);

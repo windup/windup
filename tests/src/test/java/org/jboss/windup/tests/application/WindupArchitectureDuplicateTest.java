@@ -66,7 +66,9 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest
                 .addBeansXML()
                 .addClass(WindupArchitectureTest.class)
                 .addAsResource(new File("src/test/groovy/GroovyExampleRule.windup.groovy"))
-                .addAsResource(new File("src/test/xml/DuplicateTestRules.windup.xml"));
+                .addAsResource(new File("src/test/xml/DuplicateTestRules.windup.xml"))
+                .addAsResource(new File("src/test/xml/rules/embedded-libraries/embedded-cache-libraries.windup.xml"))
+                .addAsResource(new File("src/test/xml/rules/embedded-libraries/embedded-framework-libraries.windup.xml"));
     }
 
     @Test
@@ -161,18 +163,21 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest
 
         reportIndex.loadPage(mainReportPath);
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("mandatory", 1, 3));
-        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("optional", 93, 646));
+        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("optional", 91, 636));
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("potential", 0, 0));
+        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("cloud-mandatory", 2, 10));
 
         reportIndex.loadPage(secondAppPath);
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("mandatory", 1, 3));
-        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("optional", 93, 646));
+        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("optional", 91, 636));
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("potential", 0, 0));
+        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("cloud-mandatory", 2, 10));
 
         reportIndex.loadPage(sharedLibsPath);
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("mandatory", 1, 3));
-        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("optional", 89, 594));
+        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("optional", 87, 584));
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("potential", 0, 0));
+        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("cloud-mandatory", 2, 10));
     }
 
     private void validateJarDependencyReport(GraphContext graphContext)
