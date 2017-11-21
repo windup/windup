@@ -17,6 +17,8 @@
         <td colspan="5" style="display: none;" class="table-inner-wrapping-td">
             <table class="table-inner table table-bordered table-condensed migration-issues-table">
                 <thead>
+                    <!-- First rows used to calculate columns width -->
+                    <tr style="visibility: collapse;"><th></th><th></th><th></th><th></th><th></th></tr>
                     <tr class="bg-info">
                         <th><div class="indent"><strong>File</strong></div></th>
                         <th class="text-right"><strong>Incidents Found</strong></th>
@@ -201,7 +203,7 @@
 
         <!#-- We are using short variable names because they repeat a lot in the generated HTML
               and using short reduces the file sizes significantly.
-              
+
               {l} - label
               {oc} - occurences
               {h} - href
