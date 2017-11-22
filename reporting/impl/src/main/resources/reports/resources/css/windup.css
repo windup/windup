@@ -369,3 +369,29 @@ strong.wu-navbar-header {
     text-transform: uppercase;
     font-size: 18px;
 }
+
+
+/**************** Migration issues *******************************/
+.table-inner-wrapping-td {
+    padding: 0 !important;
+}
+
+.table-inner {
+    border: 0 !important;
+    margin-bottom: 0;
+}
+
+table thead tr:nth-child(1) td:nth-child(1),
+table thead tr:nth-child(1) th:nth-child(1) { width: 43%; }
+
+table thead tr:nth-child(1) td:nth-child(2),
+table thead tr:nth-child(1) th:nth-child(2) { width: 7%; }
+
+table thead tr:nth-child(1) td:nth-child(3),
+table thead tr:nth-child(1) th:nth-child(3) { width: 10%; }
+
+table thead tr:nth-child(1) td:nth-child(4),
+table thead tr:nth-child(1) th:nth-child(4) { width: 20%; }
+
+table thead tr:nth-child(1) td:nth-child(5),
+table thead tr:nth-child(1) th:nth-child(5) { width: 20%; }
