@@ -14,9 +14,22 @@
         <td class="text-right">${problemSummary.numberFound * problemSummary.effortPerIncident}</td>
     </tr>
     <tr class="tablesorter-childRow bg-info" data-summary-id="${problemSummary.id}">
-        <td><div class="indent"><strong>File</strong></div></td>
-        <td class="text-right"><strong>Incidents Found</strong></td>
-        <td colspan="3"><strong>Hint</strong></td>
+        <td colspan="5" style="display: none;" class="table-inner-wrapping-td">
+            <table class="table-inner table table-bordered table-condensed migration-issues-table">
+                <thead>
+                    <!-- First rows used to calculate columns width -->
+                    <tr style="visibility: collapse;"><th></th><th></th><th></th><th></th><th></th></tr>
+                    <tr class="bg-info">
+                        <th><div class="indent"><strong>File</strong></div></th>
+                        <th class="text-right"><strong>Incidents Found</strong></th>
+                        <th colspan="3"><strong>Hint</strong></th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </td>
     </tr>
 </#macro>
 
@@ -57,9 +70,15 @@
         <link href="resources/img/rhamt-icon-128.png" rel="shortcut icon" type="image/x-icon"/>
         <style>
             .table-bordered { border: 1px solid #222222;  border-collapse: collapse;}
-            .table-bordered>tfoot>tr>th, .table-bordered>tfoot>tr>td .table-bordered>tbody>tr>th,  .table-bordered>thead>tr>th, .table-bordered>thead>tr>td, .table-bordered>tbody>tr>td {
+
+            .table-bordered>tfoot>tr>th,
+            .table-bordered>tfoot>tr>td .table-bordered>tbody>tr>th,
+            .table-bordered>thead>tr>th,
+            .table-bordered>thead>tr>td,
+            .table-bordered>tbody>tr>td {
               border: 1px inset #dddddd
             }
+
             .fileSummary {
                 background-color: #f5f5f5;
             }
@@ -75,6 +94,7 @@
                 border-color: #c2c2c2;
                 background-color: #fbf4b1;
             }
+
             .hint-detail-panel {
                 border-color: #c2c2c2;
                 background-color: #fffcdc;
@@ -181,125 +201,6 @@
         <script src="resources/js/jquery.tablesorter.widgets.min.js"></script>
         <script src="resources/libraries/handlebars/handlebars.4.0.5.min.js"></script>
 
-        <script type="text/javascript">
-            $(document).ready(function() {
-
-                var $table = $('.tablesorter');
-
-                // hide child rows & make draggable
-                $table.find('.tablesorter-childRow')
-                    .find('td')
-                    .droppable({
-                        accept: '.draggingSiblings',
-                        drop: function(event, ui) {
-                            if ($(this).closest('tr').length){
-                                $(this).closest('tr').before(
-                                    ui.draggable
-                                        .css({ left: 0, top: 0 })
-                                        .parent()
-                                        .removeClass('draggingRow')
-                                    );
-                                $table
-                                    .find('.draggingSiblingsRow')
-                                    .removeClass('draggingSiblingsRow')
-                                    .find('.draggingSiblings')
-                                    .removeClass('draggingSiblings');
-                                $table.trigger('update');
-                            } else {
-                                return false;
-                            }
-                        }
-                    })
-                    .draggable({
-                        revert: "invalid",
-                        start: function( event, ui ) {
-                            $(this)
-                                .parent()
-                                .addClass('draggingRow')
-                                .prevUntil('.tablesorter-hasChildRow')
-                                .nextUntil('tr:not(.tablesorter-childRow)')
-                                .addClass('draggingSiblingsRow')
-                                .find('td')
-                                .addClass('draggingSiblings');
-                        }
-                    })
-                    .hide();
-
-                // we need these parsers because we are using comma to separate thousands and are also sorting links
-                $.tablesorter.addParser({
-                     id: 'thousands',
-                     is: function(s) { return true; },
-                     format: function(s) {
-                         return s.replace('$','').replace(/,/g,'');
-                     },
-                     type: 'numeric'
-                });
-                $.tablesorter.addParser({
-                    id: 'a-elements',
-                    is: function(s) { return true; },
-                    format: function(s)
-                    {
-                        // format your data for normalization
-                        return s.replace(new RegExp(/<.*?>/),"");
-                    },
-                    parsed: true,
-                    type: 'text'
-                });
-
-                $table
-                    .tablesorter({
-                        // this is the default setting
-                        cssChildRow: "tablesorter-childRow",
-                        sortList: [[1,1]],
-                        headers: {
-                            0: {sorter: 'a-elements'},
-                            1: {sorter: 'thousands'},
-                            2: {sorter: 'thousands'},
-                            3: {sorter: false},
-                            4: {sorter: 'thousands'},
-                        }
-                    })
-                    .delegate('.toggle', 'click' ,function(){
-                        $(this)
-                            .closest('tr')
-                            .nextUntil('tr.tablesorter-hasChildRow')
-                            .find('td').first().each(function(index, element) { showDetails(element) });
-                        return false;
-                    });
-
-            });
-
-       	    function resizeTables()
-            {
-                var tableArr = document.getElementsByClassName('migration-issues-table');
-                var cellWidths = new Array();
-
-                // get widest
-                for(i = 0; i < tableArr.length; i++)
-                {
-                    for(j = 0; j < tableArr[i].rows[0].cells.length; j++)
-                    {
-                       var cell = tableArr[i].rows[0].cells[j];
-
-                       if(!cellWidths[j] || cellWidths[j] < cell.clientWidth)
-                            cellWidths[j] = cell.clientWidth;
-                    }
-                }
-
-                // set all columns to the widest width found
-                for(i = 0; i < tableArr.length; i++)
-                {
-                    for(j = 0; j < tableArr[i].rows[0].cells.length; j++)
-                    {
-                        tableArr[i].rows[0].cells[j].style.width = cellWidths[j]+'px';
-                    }
-                }
-            }
-
-            window.onload = resizeTables;
-
-        </script>
-
         <!#-- We are using short variable names because they repeat a lot in the generated HTML
               and using short reduces the file sizes significantly.
 
@@ -358,90 +259,8 @@
         </script>
         </#noparse>
 
-        <script type="text/javascript">
-            var issueDataLoaded = [];
+        <script src="resources/js/windup-migration-issues.js"></script>
 
-            function showDetails(element) {
-                var problemSummaryID = $(element).parent().attr("data-summary-id")
-                var tr = $(element).parent();
-
-                var issueDataArray = MIGRATION_ISSUES_DETAILS[problemSummaryID];
-                if (!issueDataLoaded[problemSummaryID]) {
-                    // append it and try again in a second
-                    var script = document.createElement("script");
-                    script.type = "text/javascript";
-                    script.src = "data/problem_summary_" + problemSummaryID + ".js";
-                    document.body.appendChild(script);
-
-                    issueDataLoaded[problemSummaryID] = true;
-                    setTimeout(function() { showDetails(element); }, 25);
-                    return;
-                } else if (issueDataArray == null) {
-                    setTimeout(function() { showDetails(element); }, 25);
-                    return;
-                }
-
-                function toggleRow () {
-                    $(tr).find("td").toggle();
-                    var issuesTable = $(element).parent().parent().parent();
-                    $(issuesTable).trigger("update", [true]);
-                }
-
-                $(".fileSummary_id_" + problemSummaryID).remove();
-                if ($(element).is(":visible")) {
-                    toggleRow();
-                    return;
-                }
-
-                var source   = $("#detail-row-template").html();
-                var template = Handlebars.compile(source);
-                var html = template({problemSummaries: issueDataArray});
-
-                $(html).insertAfter(tr);
-
-                toggleRow();
-            }
-
-            // summary in JS should go here
-            var MIGRATION_ISSUES_DETAILS = [];
-        </script>
-
-        <#if problemsBySeverity?has_content>
-            <#list problemsBySeverity?keys as severity>
-                <#list problemsBySeverity[severity] as problemSummary>
-                    <@write_to_disk filename="problem_summary_${problemSummary.id}.js">
-                        <#compress>
-                        MIGRATION_ISSUES_DETAILS["${problemSummary.id}"] = [
-                        <#list problemSummary.descriptions as originalDescription>
-                            <#assign description = originalDescription!"-- No detailed text --">
-                            <#assign ruleID = problemSummary.ruleID!"">
-                            <#assign issueName = problemSummary.issueName!"">
-                            {description: "${markdownToHtml(description)?js_string}", ruleID: "${ruleID?js_string}", issueName: "${issueName?js_string}",
-                            problemSummaryID: "${problemSummary.id}", files: [
-                            <#list problemSummary.getFilesForDescription(originalDescription) as fileSummary>
-                                <#--
-                                    If this is an application specific report, then the report model will contain the
-                                     correct application. In this case the non-canonical project will be used.
-
-                                     If it is a global report, then the file model can be used to find the application associated
-                                     with that file. In this case, the canonical local will be used.
-                                -->
-                                <#assign application = reportModel.projectModel!fileSummary.file.projectModel.rootProjectModel>
-
-                                <#assign renderedLink><@render_link model=fileSummary.file project=application/></#assign>
-                                {l:"${renderedLink?json_string}", oc:"${fileSummary.occurrences?json_string}"},
-                            </#list>
-                            ], resourceLinks: [
-                                <#list problemSummary.links! as link>
-                                {h:"${link.link?json_string}", t:"${link.title?json_string}"},
-                                </#list>
-                            ]},
-                        </#list>
-                        ];
-                        </#compress>
-                    </@write_to_disk>
-                </#list>
-            </#list>
-        </#if>
+        <#include "include/problem_summary.ftl">
     </body>
 </html>
