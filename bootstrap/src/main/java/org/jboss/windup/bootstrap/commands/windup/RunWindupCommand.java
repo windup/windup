@@ -109,6 +109,10 @@ public class RunWindupCommand implements Command, FurnaceDependent
             if (option == null)
             {
                 System.err.println("WARNING: Unrecognized command-line argument: " + argument);
+                if (options.size() == 0)
+                {
+                    System.err.println("FATAL: Furnace Addon repository path: " + System.lineSeparator() + furnace.getAddonRegistry().toString());
+                }
                 continue;
             }
 
