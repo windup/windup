@@ -19,11 +19,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.forge.furnace.Furnace;
+import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.forge.furnace.repositories.AddonRepository;
 import org.jboss.forge.furnace.repositories.AddonRepositoryMode;
 import org.jboss.forge.furnace.repositories.MutableAddonRepository;
@@ -301,8 +303,7 @@ public class Bootstrap
 
             try
             {
-                Future<Furnace> future = furnace.startAsync();
-                future.get(); // use future.get() to wait until it is started
+                startFurnace();
             }
             catch (Exception e)
             {
@@ -338,11 +339,47 @@ public class Bootstrap
 
             if (!executePhase(CommandPhase.POST_EXECUTION, commands) || commands.isEmpty())
                 return;
+
         }
         catch (Throwable t)
         {
             System.err.println(Util.WINDUP_BRAND_NAME_ACRONYM +" execution failed due to: " + t.getMessage());
             t.printStackTrace();
+        }
+    }
+
+    private void startFurnace() throws InterruptedException, ExecutionException
+    {
+        Future<Furnace> future = furnace.startAsync();
+        future.get(); // use future.get() to wait until it is started
+        long startTime = System.currentTimeMillis();
+        long maxWait = 1000L * 30L; // only wait at most 30 seconds for addons to start
+        while (true)
+        {
+            long currentTime = System.currentTimeMillis();
+            long timeWaited = currentTime - startTime;
+
+            boolean allStarted = true;
+            for (Addon addon : furnace.getAddonRegistry().getAddons())
+            {
+                if (!addon.getStatus().isStarted())
+                {
+                    allStarted = false;
+                }
+            }
+            if (allStarted)
+                break;
+
+            if (timeWaited > maxWait)
+            {
+                System.err.println("WARN: Not all addons started!");
+                for (Addon addon : furnace.getAddonRegistry().getAddons())
+                {
+                    if (!addon.getStatus().isStarted())
+                        System.err.println("WARN: " + addon.getId() + " status: " + addon.getStatus());
+                }
+                break;
+            }
         }
     }
 
