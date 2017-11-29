@@ -16,7 +16,6 @@ import org.dom4j.dom.DOMDocument;
 import org.dom4j.dom.DOMElement;
 import org.dom4j.io.SAXReader;
 import org.jboss.forge.furnace.Furnace;
-import org.jboss.forge.furnace.addons.Addon;
 import org.jboss.windup.config.ConfigurationOption;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.util.PathUtil;

@@ -378,6 +378,7 @@ public class Bootstrap
                     if (!addon.getStatus().isStarted())
                         System.err.println("WARN: " + addon.getId() + " status: " + addon.getStatus());
                 }
+                break;
             }
         }
     }
