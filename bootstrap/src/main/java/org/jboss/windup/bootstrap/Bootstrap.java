@@ -54,6 +54,7 @@ import org.jboss.windup.bootstrap.commands.windup.ListTargetTechnologiesCommand;
 import org.jboss.windup.bootstrap.commands.windup.RunWindupCommand;
 import org.jboss.windup.bootstrap.commands.windup.ServerModeCommand;
 import org.jboss.windup.bootstrap.commands.windup.UpdateRulesetsCommand;
+import org.jboss.windup.bootstrap.listener.ContainerStatusListener;
 import org.jboss.windup.bootstrap.listener.GreetingListener;
 import org.jboss.windup.server.WindupServerProvider;
 import org.jboss.windup.util.Util;
@@ -70,6 +71,7 @@ public class Bootstrap
     public static final String WINDUP_HOME = "windup.home";
     private final AtomicBoolean batchMode = new AtomicBoolean(false);
     private Furnace furnace;
+    private final ContainerStatusListener containerStatusListener = new ContainerStatusListener();
 
     public static void main(final String[] args)
     {
@@ -301,6 +303,7 @@ public class Bootstrap
             if (!executePhase(CommandPhase.POST_CONFIGURATION, commands) || commands.isEmpty())
                 return;
 
+            furnace.addContainerLifecycleListener(containerStatusListener);
             try
             {
                 startFurnace();
@@ -387,6 +390,15 @@ public class Bootstrap
     {
         if (furnace != null && !furnace.getStatus().isStopped())
             furnace.stop();
+        while (!containerStatusListener.getContainerStatus().isStopped())
+        {
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                System.err.println("Failure waiting for Furnace to shutdown: " + e.getMessage());
+                e.printStackTrace();
+            }
+        }
     }
 
     private List<Command> processArguments(List<String> arguments)
