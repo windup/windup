@@ -87,20 +87,6 @@
             </div>
         </div>
 
-        <div class="row">
-            <div class="container-fluid theme-showcase" role="main">
-                <div class="panel panel-primary">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Contributors</h3>
-                    </div>
-                    <div class="panel-body">
-                        <div id="windup-contributors"></div>
-                        <p class="windup-contributors small">A special <strong>thanks</strong> to our contributors!</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <#include "include/timestamp.ftl">
     </div> <!-- /container -->
 
@@ -110,17 +96,5 @@
     <script src="resources/libraries/flot/jquery.flot.pie.min.js"></script>
     <script src="resources/js/bootstrap.min.js"></script>
 
-    <script type="text/javascript">
-        var divTarget = $("#windup-contributors");
-        $.getJSON( "https://api.github.com/repos/windup/windup/contributors", function( data ) {
-          $.each( data, function( key, val ) {
-            $( "<a data-toggle='tooltip' title='"+val.login+"' href='"+val.html_url+"'><img class='windup-contributors' src='"+val.avatar_url+"'/></a>").appendTo(divTarget);
-          });
-        });
-
-        $('[data-toggle="tooltip"]').tooltip({
-            'placement': 'top'
-        });
-    </script>
 </body>
 </html>
