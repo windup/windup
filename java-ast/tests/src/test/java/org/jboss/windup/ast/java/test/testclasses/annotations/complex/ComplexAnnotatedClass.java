@@ -1,4 +1,4 @@
-package testclasses.annotations.complex;
+package org.jboss.windup.ast.java.test.testclasses.annotations.complex;
 
 @ExampleComplexAnnotation(
             booleanValue = true,

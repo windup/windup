@@ -1,4 +1,4 @@
-package testclasses.annotations.basic;
+package org.jboss.windup.ast.java.test.testclasses.annotations.basic;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;

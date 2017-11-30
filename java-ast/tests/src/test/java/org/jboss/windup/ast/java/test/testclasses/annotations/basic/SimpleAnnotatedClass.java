@@ -1,4 +1,4 @@
-package testclasses.annotations.basic;
+package org.jboss.windup.ast.java.test.testclasses.annotations.basic;
 
 @SimpleTestAnnotation(value1 = "value 1", value2 = "value 2")
 @SimpleSingleMemberAnnotation(SimpleAnnotatedClass.SINGLE_MEMBER_VALUE)
