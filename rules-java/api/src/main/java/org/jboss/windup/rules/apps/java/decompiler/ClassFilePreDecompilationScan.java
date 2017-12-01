@@ -3,18 +3,36 @@ package org.jboss.windup.rules.apps.java.decompiler;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.commons.lang3.StringUtils;
+import org.jboss.windup.ast.java.ClassFileScanner;
+import org.jboss.windup.ast.java.data.ClassReference;
 import org.jboss.windup.config.GraphRewrite;
-import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
+import org.jboss.windup.config.operation.GraphOperation;
+import org.jboss.windup.graph.model.ArchiveModel;
+import org.jboss.windup.graph.model.WindupConfigurationModel;
+import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.service.ArchiveService;
+import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.rules.apps.java.DependencyVisitor;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
+import org.jboss.windup.rules.apps.java.scan.ast.TypeInterestFactory;
 import org.jboss.windup.rules.apps.java.scan.ast.ignore.JavaClassIgnoreResolver;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
@@ -31,7 +49,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  * @author Ondrej Zizka
  */
-public class ClassFilePreDecompilationScan extends AbstractIterationOperation<JavaClassFileModel>
+public class ClassFilePreDecompilationScan extends GraphOperation
 {
     private static final Logger LOG = Logging.get(ClassFilePreDecompilationScan.class);
 
@@ -150,21 +168,130 @@ public class ClassFilePreDecompilationScan extends AbstractIterationOperation<Ja
 
 
     @Override
-    public void perform(GraphRewrite event, EvaluationContext context, JavaClassFileModel fileModel)
+    public void perform(GraphRewrite event, EvaluationContext context)
     {
         ExecutionStatistics.get().begin("ClassFilePreDecompilationScan.perform()");
         try
         {
-            addClassFileMetadata(event, context, fileModel);
-            if (fileModel.getParseError() != null)
-                return;
+            WindupConfigurationModel configuration = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
+            Set<String> classpaths = new HashSet<>();
+            for (FileModel inputPath : configuration.getInputPaths())
+            {
+                if (inputPath.isDirectory())
+                    classpaths.add(inputPath.getFilePath());
+            }
+            ArchiveService archiveService = new ArchiveService(event.getGraphContext());
+            for (ArchiveModel archiveModel : archiveService.findAll())
+            {
+                classpaths.add(archiveModel.getFilePath());
+            }
+            ClassFileScanner classFileScanner = new ClassFileScanner(classpaths);
 
-            filterClassesToDecompile(event, context, fileModel);
+            GraphService<JavaClassFileModel> javaClassFileService = new GraphService<>(event.getGraphContext(), JavaClassFileModel.class);
+            ClassFileMap classFileMap = new ClassFileMap();
+
+            for (JavaClassFileModel javaClassFileModel : javaClassFileService.findAllWithoutProperty(FileModel.PARSE_ERROR))
+            {
+                classFileMap.addClass(javaClassFileModel);
+            }
+
+            for (List<JavaClassFileModel> classBatch : classFileMap.getClasses())
+            {
+                classBatch.sort(Comparator.comparingInt(o -> o.getFileName().length()));
+
+                boolean foundMatch = false;
+                for (JavaClassFileModel fileModel : classBatch)
+                {
+                    addClassFileMetadata(event, context, fileModel);
+                }
+
+                for (JavaClassFileModel fileModel : classBatch)
+                {
+                    filterClassesToDecompile(event, context, fileModel);
+
+                    Collection<ClassReference> references = classFileScanner.scanClass(Paths.get(fileModel.getFilePath()));
+                    for (ClassReference reference : references)
+                    {
+                        if (TypeInterestFactory.matchesAny(reference.getQualifiedName(), reference.getLocation()))
+                        {
+                            foundMatch = true;
+                            break;
+                        }
+                    }
+
+                    if (foundMatch)
+                        break;
+                }
+
+                // This is just to make it more readable. Mark them as skipped if there were no matches found.
+                boolean shouldSkip = !foundMatch;
+                for (JavaClassFileModel fileModel : classBatch)
+                {
+                    fileModel.setSkipDecompilation(shouldSkip);
+                }
+            }
 
         }
         finally
         {
             ExecutionStatistics.get().end("ClassFilePreDecompilationScan.perform()");
+        }
+    }
+
+    private class ClassFileMap
+    {
+        /*
+         * This maps from outer class filepaths, without inner classes) to a list
+         * of {@link JavaClassFileModel}s that includes any inner classes.
+         *
+         * For example, take the following files as an example:
+         *  - /path/to/MyClass.class
+         *  - /path/to/MyClass$1.class
+         *  - /path/to/MyClass$1$1.class
+         *
+         *  In this case, this would create a map that looks like this:
+         *  - Key: /path/to/MyClass
+         *      - Values:
+         *          - /path/to/MyClass.class
+         *          - /path/to/MyClass$1.class
+         *          - /path/to/MyClass$1$1.class
+         */
+        Map<String, List<JavaClassFileModel>> basePathToClassFiles = new HashMap<>();
+
+        public Collection<List<JavaClassFileModel>> getClasses()
+        {
+            return basePathToClassFiles.values();
+        }
+
+        public void addClass(JavaClassFileModel javaClassFileModel)
+        {
+            String baseFilename = getBaseClassPath(javaClassFileModel);
+            List<JavaClassFileModel> classFileList = basePathToClassFiles.get(baseFilename);
+            if (classFileList == null)
+            {
+                classFileList = new ArrayList<>();
+                basePathToClassFiles.put(baseFilename, classFileList);
+            }
+            classFileList.add(javaClassFileModel);
+        }
+
+        private String getBaseClassPath(JavaClassFileModel javaClassFileModel)
+        {
+            String filePath = javaClassFileModel.getFilePath();
+            String filename = javaClassFileModel.getFileName();
+
+            // This is not an inner class, so just return it without the ".class" at the end
+            if (!StringUtils.contains(filename, "$"))
+                return filePath.substring(0, filePath.length() - 5);
+
+
+            String baseFilename = filePath.substring(0, filePath.indexOf("$"));
+
+            /*
+             * It looks a bit strange to reconstitute the full path like this instead of just searching filename itself,
+             * but this deals cleanly with the edge case where a "$" is in the directory instead of the filename.
+             */
+            return Paths.get(filePath).getParent().resolve(baseFilename).toString();
         }
     }
 

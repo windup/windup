@@ -22,9 +22,6 @@ public class BeforeDecompileClassesRuleProvider extends AbstractRuleProvider
     {
         return ConfigurationBuilder.begin()
         .addRule()
-        .when(Query.fromType(JavaClassFileModel.class)
-                .withoutProperty(FileModel.PARSE_ERROR)
-        )
         .perform(new ClassFilePreDecompilationScan());
     }
     // @formatter:on

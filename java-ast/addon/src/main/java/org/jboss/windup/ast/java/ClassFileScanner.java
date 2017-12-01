@@ -218,6 +218,12 @@ public class ClassFileScanner
         signature.append(")");
 
         List<ClassReference> results = new ArrayList<>();
+        for (String parameter : parameters)
+        {
+            if (!StringUtils.isBlank(parameter))
+                results.addAll(createClassReference(parameter, TypeReferenceLocation.METHOD_PARAMETER));
+        }
+
         TypeReferenceLocation location = methodDeclaration ? TypeReferenceLocation.METHOD : TypeReferenceLocation.METHOD_CALL;
         String qualifiedName = signature.toString();
 
