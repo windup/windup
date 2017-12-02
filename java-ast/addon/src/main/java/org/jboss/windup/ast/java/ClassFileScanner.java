@@ -33,6 +33,8 @@ import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.TypePath;
+import org.objectweb.asm.signature.SignatureReader;
+import org.objectweb.asm.signature.SignatureVisitor;
 
 /**
  * Supports scanning a .class file and extracting information about which methods and variables are declared within it.
@@ -124,7 +126,7 @@ public class ClassFileScanner
             @Override
             public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions)
             {
-                ClassReference[] references = parseMethod(classname, name, desc, true);
+                ClassReference[] references = parseMethod(classname, name, desc, signature, true);
                 results.addAll(Arrays.asList(references));
                 return new MethodVisitor(Opcodes.ASM6)
                 {
@@ -140,7 +142,7 @@ public class ClassFileScanner
                     public void visitMethodInsn(int opcode, String owner, String name, String desc, boolean itf)
                     {
                         super.visitMethodInsn(opcode, owner, name, desc, itf);
-                        ClassReference[] references = parseMethod(owner, name, desc, false);
+                        ClassReference[] references = parseMethod(owner, name, desc, null, false);
                         results.addAll(Arrays.asList(references));
                     }
                 };
@@ -193,7 +195,7 @@ public class ClassFileScanner
         return asmClassname.replace("/", ".").replace("\\", ".");
     }
 
-    private ClassReference[] parseMethod(String owner, String name, String description, boolean methodDeclaration)
+    private ClassReference[] parseMethod(String owner, String name, String description, String asmSignature, boolean methodDeclaration)
     {
         owner = fixClassname(owner);
 
@@ -208,6 +210,7 @@ public class ClassFileScanner
 
             parameters.add(type);
         }
+
         StringBuilder signature = new StringBuilder(owner + "." + name + "(");
         for (String param : parameters)
         {
@@ -218,22 +221,91 @@ public class ClassFileScanner
         signature.append(")");
 
         List<ClassReference> results = new ArrayList<>();
-        for (String parameter : parameters)
+
+        if (asmSignature != null)
         {
-            if (!StringUtils.isBlank(parameter))
-                results.addAll(createClassReference(parameter, TypeReferenceLocation.METHOD_PARAMETER));
+            SignatureReader signatureReader = new SignatureReader(asmSignature);
+            signatureReader.accept(new SignatureVisitor(Opcodes.ASM6)
+            {
+                private boolean returnTypeMode = false;
+                private boolean exceptionMode = false;
+
+                @Override
+                public SignatureVisitor visitReturnType()
+                {
+                    returnTypeMode = true;
+                    exceptionMode = false;
+                    return super.visitReturnType();
+                }
+
+                @Override
+                public SignatureVisitor visitExceptionType()
+                {
+                    returnTypeMode = false;
+                    exceptionMode = true;
+                    return super.visitExceptionType();
+                }
+
+                private void addType(String type)
+                {
+                    String parsedType = parseType(type);
+                    TypeReferenceLocation location = null;
+                    if (returnTypeMode)
+                        location = TypeReferenceLocation.RETURN_TYPE;
+                    else if (!exceptionMode)
+                        location = TypeReferenceLocation.METHOD_PARAMETER;
+
+                    if (location != null)
+                        results.addAll(createClassReference(parsedType, location));
+                }
+
+                @Override
+                public void visitBaseType(char descriptor)
+                {
+                    addType(""+descriptor);
+                    super.visitBaseType(descriptor);
+                }
+
+                @Override
+                public void visitTypeVariable(String name)
+                {
+                    addType(name);
+                    super.visitTypeVariable(name);
+                }
+
+                @Override
+                public void visitClassType(String name)
+                {
+                    addType(name);
+                    super.visitClassType(name);
+                }
+
+                @Override
+                public void visitInnerClassType(String name)
+                {
+                    addType(name);
+                    super.visitInnerClassType(name);
+                }
+            });
+        }
+        else
+        {
+            for (String parameter : parameters)
+            {
+                if (!StringUtils.isBlank(parameter))
+                    results.addAll(createClassReference(parameter, TypeReferenceLocation.METHOD_PARAMETER));
+            }
+            if (returnType.equals("V"))
+            {
+                returnType = "void";
+            }
+            results.addAll(createClassReference(parseType(returnType), TypeReferenceLocation.RETURN_TYPE));
         }
 
         TypeReferenceLocation location = methodDeclaration ? TypeReferenceLocation.METHOD : TypeReferenceLocation.METHOD_CALL;
         String qualifiedName = signature.toString();
 
         results.addAll(createClassReference(owner, qualifiedName, name, location));
-
-        if (returnType.equals("V"))
-        {
-            returnType = "void";
-        }
-        results.addAll(createClassReference(parseType(returnType), TypeReferenceLocation.RETURN_TYPE));
 
         return results.toArray(new ClassReference[results.size()]);
     }
@@ -267,7 +339,7 @@ public class ClassFileScanner
             // Return a type with fake location data (since we don't always get accurate location data from classes, so we
             // intentionally do not rely on it being accurate).
             result.add(new ClassReference(newQualifiedName, packageAndClassName.getPackageName(), packageAndClassName.getClassName(),
-                    methodName, ResolutionStatus.RESOLVED, location, 1, 1, 1, qualifiedName));
+                        methodName, ResolutionStatus.RESOLVED, location, 1, 1, 1, qualifiedName));
         }
         return result;
     }
@@ -330,7 +402,8 @@ public class ClassFileScanner
                                 {
                                     classInfo.addSuperclass(superclass);
                                     classInfo.addInterfaces(interfaces);
-                                } else
+                                }
+                                else
                                 {
                                     classInfo = new ClassInfo(classname, superclass, interfaces);
                                     classInfoCache.put(classname, classInfo);

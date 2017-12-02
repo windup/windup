@@ -38,6 +38,7 @@ import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.Logging;
+import org.jboss.windup.util.ProgressEstimate;
 import org.jboss.windup.util.Util;
 import org.objectweb.asm.ClassReader;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -110,12 +111,12 @@ public class ClassFilePreDecompilationScan extends GraphOperation
             final String message = "BCEL was unable to parse class file '" + javaClassFileModel.getFilePath() + "':" + nl + ex.toString();
             LOG.log(Level.WARNING, message);
             ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-            classificationService.attachClassification(event, context, javaClassFileModel, UNPARSEABLE_CLASS_CLASSIFICATION, UNPARSEABLE_CLASS_DESCRIPTION);
+            classificationService.attachClassification(event, context, javaClassFileModel, UNPARSEABLE_CLASS_CLASSIFICATION,
+                        UNPARSEABLE_CLASS_DESCRIPTION);
             javaClassFileModel.setParseError(message);
             javaClassFileModel.setSkipDecompilation(true);
         }
     }
-
 
     private void filterClassesToDecompile(GraphRewrite event, EvaluationContext context, JavaClassFileModel fileModel)
     {
@@ -149,14 +150,15 @@ public class ClassFilePreDecompilationScan extends GraphOperation
             // If we should ignore any of the contained classes, skip decompilation of the whole file.
             for (String typeReference : dependencyVisitor.classes)
             {
-                if (shouldIgnore(typeReference)) {
+                if (shouldIgnore(typeReference))
+                {
                     LOG.fine("Skipping decompilation for: " + fileModel.getFilePath() + " due javaclass-ignore!");
                     fileModel.setSkipDecompilation(true);
                     break;
                 }
             }
         }
-        catch (IOException|IllegalArgumentException e)
+        catch (IOException | IllegalArgumentException e)
         {
             final String message = "ASM was unable to parse class file '" + fileModel.getFilePath() + "':\n\t" + e.getMessage();
             LOG.log(Level.WARNING, message, e);
@@ -165,7 +167,6 @@ public class ClassFilePreDecompilationScan extends GraphOperation
             fileModel.setParseError(message);
         }
     }
-
 
     @Override
     public void perform(GraphRewrite event, EvaluationContext context)
@@ -190,44 +191,72 @@ public class ClassFilePreDecompilationScan extends GraphOperation
             GraphService<JavaClassFileModel> javaClassFileService = new GraphService<>(event.getGraphContext(), JavaClassFileModel.class);
             ClassFileMap classFileMap = new ClassFileMap();
 
+            int totalWork = 0;
             for (JavaClassFileModel javaClassFileModel : javaClassFileService.findAllWithoutProperty(FileModel.PARSE_ERROR))
             {
                 classFileMap.addClass(javaClassFileModel);
+                totalWork++;
             }
+            ProgressEstimate progressEstimate = new ProgressEstimate(totalWork);
 
             for (List<JavaClassFileModel> classBatch : classFileMap.getClasses())
             {
-                classBatch.sort(Comparator.comparingInt(o -> o.getFileName().length()));
-
-                boolean foundMatch = false;
-                for (JavaClassFileModel fileModel : classBatch)
+                try
                 {
-                    addClassFileMetadata(event, context, fileModel);
-                }
+                    classBatch.sort(Comparator.comparingInt(o -> o.getFileName().length()));
 
-                for (JavaClassFileModel fileModel : classBatch)
-                {
-                    filterClassesToDecompile(event, context, fileModel);
-
-                    Collection<ClassReference> references = classFileScanner.scanClass(Paths.get(fileModel.getFilePath()));
-                    for (ClassReference reference : references)
+                    boolean foundMatch = false;
+                    for (JavaClassFileModel fileModel : classBatch)
                     {
-                        if (TypeInterestFactory.matchesAny(reference.getQualifiedName(), reference.getLocation()))
-                        {
-                            foundMatch = true;
-                            break;
-                        }
+                        addClassFileMetadata(event, context, fileModel);
                     }
 
-                    if (foundMatch)
-                        break;
-                }
+                    for (JavaClassFileModel fileModel : classBatch)
+                    {
+                        filterClassesToDecompile(event, context, fileModel);
+                        if (fileModel.getParseError() != null)
+                            continue;
 
-                // This is just to make it more readable. Mark them as skipped if there were no matches found.
-                boolean shouldSkip = !foundMatch;
-                for (JavaClassFileModel fileModel : classBatch)
+                        Collection<ClassReference> references = classFileScanner.scanClass(Paths.get(fileModel.getFilePath()));
+                        Map<String, ClassReference> deduplicatedReferences = new HashMap<>();
+                        for (ClassReference classReference : references)
+                        {
+                            String key = classReference.getLocation() + "_" + classReference.getQualifiedName();
+                            if (!deduplicatedReferences.containsKey(key))
+                                deduplicatedReferences.put(key, classReference);
+                        }
+
+                        for (ClassReference reference : deduplicatedReferences.values())
+                        {
+                            if (TypeInterestFactory.matchesAny(reference.getQualifiedName(), reference.getLocation()))
+                            {
+                                foundMatch = true;
+                                break;
+                            }
+                        }
+
+                        if (foundMatch)
+                            break;
+                    }
+
+                    // This is just to make it more readable. Mark them as skipped if there were no matches found.
+                    boolean shouldSkip = !foundMatch;
+                    for (JavaClassFileModel fileModel : classBatch)
+                    {
+                        fileModel.setSkipDecompilation(shouldSkip);
+                    }
+                }
+                finally
                 {
-                    fileModel.setSkipDecompilation(shouldSkip);
+                    progressEstimate.addWork(classBatch.size());
+
+                    if (progressEstimate.getWorked() % 1000 == 0)
+                    {
+                        long remainingTimeMillis = progressEstimate.getTimeRemainingInMillis();
+                        if (remainingTimeMillis > 1000)
+                            event.ruleEvaluationProgress(ClassFilePreDecompilationScan.class.getSimpleName(), progressEstimate.getWorked(), totalWork, (int) remainingTimeMillis / 1000);
+                        LOG.info(progressEstimate.getWorked() + " / " + totalWork);
+                    }
                 }
             }
 
@@ -238,23 +267,33 @@ public class ClassFilePreDecompilationScan extends GraphOperation
         }
     }
 
+    /**
+     * This method is called on every reference that is in the .class file.
+     *
+     * @param typeReference
+     * @return
+     */
+    private boolean shouldIgnore(String typeReference)
+    {
+        typeReference = typeReference.replace('/', '.').replace('\\', '.');
+        return JavaClassIgnoreResolver.singletonInstance().matches(typeReference);
+    }
+
+    @Override
+    public String toString()
+    {
+        return ClassFilePreDecompilationScan.class.getSimpleName();
+    }
+
     private class ClassFileMap
     {
         /*
-         * This maps from outer class filepaths, without inner classes) to a list
-         * of {@link JavaClassFileModel}s that includes any inner classes.
+         * This maps from outer class filepaths, without inner classes) to a list of {@link JavaClassFileModel}s that includes any inner classes.
          *
-         * For example, take the following files as an example:
-         *  - /path/to/MyClass.class
-         *  - /path/to/MyClass$1.class
-         *  - /path/to/MyClass$1$1.class
+         * For example, take the following files as an example: - /path/to/MyClass.class - /path/to/MyClass$1.class - /path/to/MyClass$1$1.class
          *
-         *  In this case, this would create a map that looks like this:
-         *  - Key: /path/to/MyClass
-         *      - Values:
-         *          - /path/to/MyClass.class
-         *          - /path/to/MyClass$1.class
-         *          - /path/to/MyClass$1$1.class
+         * In this case, this would create a map that looks like this: - Key: /path/to/MyClass - Values: - /path/to/MyClass.class -
+         * /path/to/MyClass$1.class - /path/to/MyClass$1$1.class
          */
         Map<String, List<JavaClassFileModel>> basePathToClassFiles = new HashMap<>();
 
@@ -282,34 +321,15 @@ public class ClassFilePreDecompilationScan extends GraphOperation
 
             // This is not an inner class, so just return it without the ".class" at the end
             if (!StringUtils.contains(filename, "$"))
-                return filePath.substring(0, filePath.length() - 5);
-
+                return filePath.substring(0, filePath.length() - 6);
 
             String baseFilename = filePath.substring(0, filePath.indexOf("$"));
 
             /*
-             * It looks a bit strange to reconstitute the full path like this instead of just searching filename itself,
-             * but this deals cleanly with the edge case where a "$" is in the directory instead of the filename.
+             * It looks a bit strange to reconstitute the full path like this instead of just searching filename itself, but this deals cleanly with
+             * the edge case where a "$" is in the directory instead of the filename.
              */
             return Paths.get(filePath).getParent().resolve(baseFilename).toString();
         }
-    }
-
-    /**
-     * This method is called on every reference that is in the .class file.
-     * @param typeReference
-     * @return
-     */
-    private boolean shouldIgnore(String typeReference)
-    {
-        typeReference = typeReference.replace('/', '.').replace('\\', '.');
-        return JavaClassIgnoreResolver.singletonInstance().matches(typeReference);
-    }
-
-
-    @Override
-    public String toString()
-    {
-        return ClassFilePreDecompilationScan.class.getSimpleName();
     }
 }
