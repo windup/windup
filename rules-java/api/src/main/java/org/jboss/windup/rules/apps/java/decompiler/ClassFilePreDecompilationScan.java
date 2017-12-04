@@ -20,6 +20,7 @@ import org.apache.bcel.classfile.JavaClass;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.ast.java.ClassFileScanner;
 import org.jboss.windup.ast.java.data.ClassReference;
+import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.graph.model.ArchiveModel;
@@ -224,6 +225,16 @@ public class ClassFilePreDecompilationScan extends GraphOperation
                             String key = classReference.getLocation() + "_" + classReference.getQualifiedName();
                             if (!deduplicatedReferences.containsKey(key))
                                 deduplicatedReferences.put(key, classReference);
+
+                            // Also, include an import line for each qualified name
+                            String importQualifiedName = StringUtils.isNotBlank(classReference.getPackageName()) ? classReference.getPackageName() + "." : "";
+                            importQualifiedName += classReference.getClassName();
+                            key = TypeReferenceLocation.IMPORT + "_" + importQualifiedName;
+
+                            if (!deduplicatedReferences.containsKey(key))
+                                deduplicatedReferences.put(key, new ClassReference(importQualifiedName, classReference.getPackageName(), classReference.getClassName(),
+                                        null, classReference.getResolutionStatus(), TypeReferenceLocation.IMPORT,
+                                        classReference.getLineNumber(), classReference.getColumn(), classReference.getLength(), classReference.getLine()));
                         }
 
                         for (ClassReference reference : deduplicatedReferences.values())
