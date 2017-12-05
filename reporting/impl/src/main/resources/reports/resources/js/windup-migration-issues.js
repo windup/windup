@@ -5,40 +5,6 @@ $(document).ready(function() {
     // hide child rows & make draggable
     $table.find('.tablesorter-childRow')
         .find('td')
-        .droppable({
-            accept: '.draggingSiblings',
-            drop: function(event, ui) {
-                if ($(this).closest('tr').length) {
-                    $(this).closest('tr').before(
-                        ui.draggable
-                            .css({ left: 0, top: 0 })
-                            .parent()
-                            .removeClass('draggingRow')
-                    );
-                    $table
-                        .find('.draggingSiblingsRow')
-                        .removeClass('draggingSiblingsRow')
-                        .find('.draggingSiblings')
-                        .removeClass('draggingSiblings');
-                    $table.trigger('update');
-                } else {
-                    return false;
-                }
-            }
-        })
-        .draggable({
-            revert: "invalid",
-            start: function( event, ui ) {
-                $(this)
-                    .parent()
-                    .addClass('draggingRow')
-                    .prevUntil('.tablesorter-hasChildRow')
-                    .nextUntil('tr:not(.tablesorter-childRow)')
-                    .addClass('draggingSiblingsRow')
-                    .find('td')
-                    .addClass('draggingSiblings');
-            }
-        })
         .hide();
 
     // we need these parsers because we are using comma to separate thousands and are also sorting links
