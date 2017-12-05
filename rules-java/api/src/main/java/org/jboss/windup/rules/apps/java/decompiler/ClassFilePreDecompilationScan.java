@@ -218,6 +218,9 @@ public class ClassFilePreDecompilationScan extends GraphOperation
                         if (fileModel.getParseError() != null)
                             continue;
 
+                        if (fileModel.getSkipDecompilation() != null && fileModel.getSkipDecompilation())
+                            continue;
+
                         Collection<ClassReference> references = classFileScanner.scanClass(Paths.get(fileModel.getFilePath()));
                         Map<String, ClassReference> deduplicatedReferences = new HashMap<>();
                         for (ClassReference classReference : references)
