@@ -18,7 +18,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.WindupProgressMonitor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
-import org.jboss.windup.exec.configuration.options.UserRulesDirectoryOption;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -294,10 +293,7 @@ public abstract class WindupArchitectureTest
         {
             Assert.assertNotNull(javaClassFileModel.getJavaClass().getDecompiledSource());
         }
-
     }
-
-
 
     /**
      * Stores the info about incoming calls which the tests can review.

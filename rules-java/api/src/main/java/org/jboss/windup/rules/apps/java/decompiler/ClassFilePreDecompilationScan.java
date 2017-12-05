@@ -228,7 +228,9 @@ public class ClassFilePreDecompilationScan extends GraphOperation
 
                             // Also, include an import line for each qualified name
                             String importQualifiedName = StringUtils.isNotBlank(classReference.getPackageName()) ? classReference.getPackageName() + "." : "";
-                            importQualifiedName += classReference.getClassName();
+
+                            // For import purposes, do not include the array markers
+                            importQualifiedName += classReference.getClassName().replace("[", "").replace("]", "");
                             key = TypeReferenceLocation.IMPORT + "_" + importQualifiedName;
 
                             if (!deduplicatedReferences.containsKey(key))
