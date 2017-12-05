@@ -5,6 +5,7 @@ import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
+import org.jboss.windup.graph.model.LinkModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -85,7 +86,9 @@ public class GenerateJBossEjbDescriptorTest extends AbstractTest
         GraphService<EjbDeploymentDescriptorModel> ejbDescriptors = new GraphService<>(context,EjbDeploymentDescriptorModel.class);
         for (EjbDeploymentDescriptorModel ejbDesc : ejbDescriptors.findAll())
         {
-            Assert.assertEquals(1, Iterables.size(ejbDesc.getLinksToTransformedFiles()));
+            Iterable<LinkModel> linkModels = ejbDesc.getLinksToTransformedFiles();
+            linkModels.forEach(linkModel -> Assert.assertTrue(linkModel.getLink().endsWith("jboss-ejb3.xml")));
+            Assert.assertEquals(1, Iterables.size(linkModels));
         }
     }
 
