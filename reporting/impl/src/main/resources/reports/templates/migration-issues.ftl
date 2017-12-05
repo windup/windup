@@ -113,7 +113,7 @@
             */
         </style>
     </head>
-    <body role="document">
+    <body role="document" class="migration-issues">
         <!-- Navbar -->
         <div id="main-navbar" class="navbar navbar-default navbar-fixed-top">
             <div class="wu-navbar-header navbar-header">
