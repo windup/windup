@@ -61,7 +61,7 @@
                             <dd><a href="https://developers.redhat.com/products/rhamt/overview/">https://developers.redhat.com/products/rhamt/overview/</a></dd>
 
                             <dt>Documentation</dt>
-                            <dd><a href="https://access.redhat.com/documentation/en/red-hat-application-migration-toolkit/">https://access.redhat.com/documentation/en/red-hat-application-migration-toolkit/</a></dd>
+                            <dd><a href="https://access.redhat.com/documentation/en-us/red_hat_application_migration_toolkit/">https://access.redhat.com/documentation/en-us/red_hat_application_migration_toolkit/</a></dd>
                         </dl>
 
                         <dl class="dl-horizontal">
