@@ -105,7 +105,7 @@ public class TattletaleRuleProvider extends AbstractRuleProvider
                     main.execute();
                     System.setProperty(StandardSystemProperty.JAVA_IO_TMPDIR.key(), previousTmpDir);
 
-                    createReportModel(event.getGraphContext(), input, tattletaleRelativePath);
+                    createReportModel(event.getGraphContext(), input, tattletaleRelativePath, tattletaleDir);
                 }
                 catch (Exception e)
                 {
@@ -114,9 +114,16 @@ public class TattletaleRuleProvider extends AbstractRuleProvider
             }
         }
 
-        private void createReportModel(GraphContext context, FileModel input, String reportRelativePath)
+        private void createReportModel(GraphContext context, FileModel input, String reportRelativePath,
+                                       String tattletaleAbsolutePath)
         {
             ProjectModel inputProjectModel = input.getProjectModel();
+
+            Path reportIndexPath = Paths.get(tattletaleAbsolutePath, "index.html");
+
+            if (!Files.exists(reportIndexPath)) {
+                return;
+            }
 
             ApplicationReportModel applicationReportModel = new ApplicationReportService(context).create();
             applicationReportModel.setReportName("Tattletale");
