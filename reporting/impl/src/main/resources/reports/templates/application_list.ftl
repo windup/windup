@@ -162,8 +162,6 @@
 
 
     <div class="container-fluid" role="main">
-        <#include "include/filtering_bar.ftl">
-
         <div class="row">
             <div class="page-header page-header-no-border">
                 <h1>
@@ -174,6 +172,8 @@
                 </div>
             </div>
         </div>
+
+        <#include "include/filtering_bar.ftl">
 
         <!-- Apps -->
         <#assign sharedLibsExists = reportModel.relatedResources["sharedLibsApplicationReport"]!?has_content >
