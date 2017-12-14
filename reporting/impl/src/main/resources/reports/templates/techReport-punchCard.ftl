@@ -77,17 +77,20 @@
 
 
                 <table class="technologiesPunchCard">
-                    <tr class="headersSector">
-                        <td></td>
+                    <thead>
+                        <tr class="headersSector">
+                            <td></td>
                         <#list sectorTags as sector>
                             <td colspan="${ (iterableToList(sector.designatedTags)?size-1)?c}" class="sector${sector.title}">${sector.title}</td>
                         <#else>
                             <td>No technology sectors defined.</td>
                         </#list>
-                        <td colspan="3" class="sectorStats">Stats</td>
-                    </tr>
-                    <tr class="headersGroup">
-                        <td></td>
+                            <td colspan="3" class="sectorStats">Stats</td>
+                            <!-- this td is needed for scrollbar positioning -->
+                            <td class="scrollbar-padding"></td>
+                        </tr>
+                        <tr class="headersGroup">
+                            <td></td>
                         <#list sectorTags as sectorTag >
                             <#list sectorTag.designatedTags as boxTag >
                                 <#if !isTagUnderTag(boxTag, placeTagsParent) >
@@ -96,71 +99,76 @@
                                 </#if>
                             </#list>
                         </#list>
-                        <td class="sector sectorStats sizeMB"><div>Size (MB)</div></td>
-                        <td class="sector sectorStats libsCount"><div>Libraries</div></td>
-                        <td class="sector sectorStats storyPoints"><div>Mandatory (SP)</div></td>
-                    </tr>
+                            <td class="sector sectorStats sizeMB"><div>Size (MB)</div></td>
+                            <td class="sector sectorStats libsCount"><div>Libraries</div></td>
+                            <td class="sector sectorStats storyPoints"><div>Mandatory (SP)</div></td>
+                            <!-- this td is needed for scrollbar positioning -->
+                            <td class="scrollbar-padding"></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <#list inputApplications as appProject> <#-- ProjectModel -->
+                        <#if appProject.projectType! != "VIRTUAL" >
+                        <tr class="app">
+                            <td class="name">
+                                <#assign boxReport = reportModel.appProjectIdToReportMap[appProject.asVertex().id?c] > <#-- TechReportModel -->
+                                <a href="${boxReport.reportFilename}">
+                                    <#-- For virtual apps, use name rather than the file name. -->
+                                    ${ (appProject.projectType! = "VIRTUAL" && appProject.name??)?then(
+                                            appProject.name,
+                                            appProject.rootFileModel.fileName)}
+                                </a>
+                            </td>
+                            <#list sectorTags as sectorTag>
+                                <#list sectorTag.designatedTags as boxTag>
+                                    <#if !isTagUnderTag(boxTag, placeTagsParent) >
+                                        <#--
+                                        <#assign count = (stats.countsOfTagsInApps?api.get(appProject.asVertex().id)[boxTag.name])!false />
+                                        <#assign maxForThisBox = stats.maximumsPerTag[boxTag.name] />
+                                        -->
 
-
-                    <#list inputApplications as appProject> <#-- ProjectModel -->
-                    <#if appProject.projectType! != "VIRTUAL" >
-                    <tr class="app">
-                        <td class="name">
-                            <#assign boxReport = reportModel.appProjectIdToReportMap[appProject.asVertex().id?c] > <#-- TechReportModel -->
-                            <a href="${boxReport.reportFilename}">
-                                <#-- For virtual apps, use name rather than the file name. -->
-                                ${ (appProject.projectType! = "VIRTUAL" && appProject.name??)?then(
-                                        appProject.name,
-                                        appProject.rootFileModel.fileName)}
-                            </a>
-                        </td>
-                        <#list sectorTags as sectorTag>
-                            <#list sectorTag.designatedTags as boxTag>
-                                <#if !isTagUnderTag(boxTag, placeTagsParent) >
-                                    <#--
-                                    <#assign count = (stats.countsOfTagsInApps?api.get(appProject.asVertex().id)[boxTag.name])!false />
-                                    <#assign maxForThisBox = stats.maximumsPerTag[boxTag.name] />
-                                    -->
-
-                                    <#-- 2nd way - using the 4 layer map -->
-                                    <#assign statsForThisBox = sortedStatsMatrix.get("", boxTag.name, appProject.asVertex().id?long)! />
-                                    <#assign count = (statsForThisBox[""].occurrenceCount)!false />
-                                    <#assign maxForThisBox   = (sortedStatsMatrix.getMaxForBox(boxTag.name))!false />
-                                    <#assign isBooleanTech = maxForThisBox?is_number && maxForThisBox == 0 />
-                                    <#if isBooleanTech>
-                                        <!-- The boolean technologies will either be missing or present. Presence is denoted by 0. Use some middle bubble size for present. -->
-                                        <#assign log = count?is_number?then(0.5, 0) />
-                                    <#else>
-                                        <#-- If the tech did not appear in any TechUsageStats, it is missing in the map. -->
-                                        <#if count?is_number && maxForThisBox?is_number >
-                                            <#assign log = getLogaritmicDistribution(count, maxForThisBox) />
+                                        <#-- 2nd way - using the 4 layer map -->
+                                        <#assign statsForThisBox = sortedStatsMatrix.get("", boxTag.name, appProject.asVertex().id?long)! />
+                                        <#assign count = (statsForThisBox[""].occurrenceCount)!false />
+                                        <#assign maxForThisBox   = (sortedStatsMatrix.getMaxForBox(boxTag.name))!false />
+                                        <#assign isBooleanTech = maxForThisBox?is_number && maxForThisBox == 0 />
+                                        <#if isBooleanTech>
+                                            <!-- The boolean technologies will either be missing or present. Presence is denoted by 0. Use some middle bubble size for present. -->
+                                            <#assign log = count?is_number?then(0.5, 0) />
                                         <#else>
-                                            <#assign log = 0 />
+                                            <#-- If the tech did not appear in any TechUsageStats, it is missing in the map. -->
+                                            <#if count?is_number && maxForThisBox?is_number >
+                                                <#assign log = getLogaritmicDistribution(count, maxForThisBox) />
+                                            <#else>
+                                                <#assign log = 0 />
+                                            </#if>
                                         </#if>
-                                    </#if>
-                                    <!-- count: ${count?c}   max: ${maxForThisBox?c}   getLogaritmicDistribution(): ${ log?c } x 5 = ${ log * 5.0 } -->
+                                        <!-- count: ${count?c}   max: ${maxForThisBox?c}   getLogaritmicDistribution(): ${ log?c } x 5 = ${ log * 5.0 } -->
 
-                                    <td class="circle size${ log?is_number?then((log * 5.0)?ceiling, "X")} sector sector${sectorTag.title}"><#-- The circle is put here by CSS :after --></td>
-                                </#if>
-                            <#else>
-                                <td>No technology sectors defined.</td>
+                                        <td class="circle size${ log?is_number?then((log * 5.0)?ceiling, "X")} sector sector${sectorTag.title}"><#-- The circle is put here by CSS :after --></td>
+                                    </#if>
+                                <#else>
+                                    <td>No technology sectors defined.</td>
+                                </#list>
                             </#list>
+                            <td class="sectorStats sector sizeMB">
+                                ${ ( (appProject.rootFileModel.retrieveSize() / 1024 / 1024)?string["0.##"] )! }
+                            </td>
+                            <td class="sectorStats libsCount">
+                                ${ (appProject.getApplications()?size)! }
+                            </td>
+                            <td class="sectorStats storyPoints">
+                                <#assign traversal = getProjectTraversal(appProject, 'all') />
+                                <#assign mandatoryCategory = ["mandatory"] />
+                                <#assign panelStoryPoints = getMigrationEffortPointsForProject(traversal, true, [], [], mandatoryCategory)! />
+                                ${ panelStoryPoints! }
+                            </td>
+                            <!-- this td is needed for scrollbar positioning -->
+                            <td class="scrollbar-padding"></td>
+                        </tr>
+                        </#if>
                         </#list>
-                        <td class="sectorStats sizeMB">
-                            ${ ( (appProject.rootFileModel.retrieveSize() / 1024 / 1024)?string["0.##"] )! }
-                        </td>
-                        <td class="sectorStats libsCount">
-                            ${ (appProject.getApplications()?size)! }
-                        </td>
-                        <td class="sectorStats storyPoints">
-                            <#assign traversal = getProjectTraversal(appProject, 'all') />
-                            <#assign mandatoryCategory = ["mandatory"] />
-                            <#assign panelStoryPoints = getMigrationEffortPointsForProject(traversal, true, [], [], mandatoryCategory)! />
-                            ${ panelStoryPoints! }
-                        </td>
-                    </tr>
-                    </#if>
-                    </#list>
+                    </tbody>
                 </table>
 
             </div>
