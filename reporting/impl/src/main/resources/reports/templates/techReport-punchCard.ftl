@@ -22,67 +22,7 @@
     <link href="resources/css/windup.java.css" rel="stylesheet" media="screen">
     <link href="resources/css/jquery-ui.min.css" rel="stylesheet" media="screen">
     <link href="resources/img/rhamt-icon-128.png" rel="shortcut icon" type="image/x-icon"/>
-    <style>
-        /* Colors. */
-        <#-- TODO: These should be generated from the techSector:* tags, but was good enough for initial impl. -->
-        .sectorView    { color: #1155CC; }
-        .sectorConnect { color: #38761D; }
-        .sectorStore   { color: #F4B400; }
-        .sectorSustain { color: #DB4437; }
-        .sectorExecute { color: #674EA7; }
-        .sectorStats   { color: black; }
-
-        /* A subtle line and space between sectors. */
-        .sector           { border-left: none; }
-        .sector ~ .sector { border-left: 1px solid #E0E0E0; }
-        /* (Only for the first columns of the sector.) */
-        .sectorView     ~ .sectorView    { border-left: none; }
-        .sectorConnect  ~ .sectorConnect { border-left: none; }
-        .sectorStore    ~ .sectorStore   { border-left: none; }
-        .sectorSustain  ~ .sectorSustain { border-left: none; }
-        .sectorExecute  ~ .sectorExecute { border-left: none; }
-        .sectorStats    ~ .sectorStats   { border-left: none; }
-
-
-        table.technologiesPunchCard { border-collapse: collapse; }
-        table.technologiesPunchCard td,
-        table.technologiesPunchCard th {
-            /*border: 1px solid silver;  /* debug */
-        }
-        tr.headersSector { font-size: 20pt; font-weight: bold; }
-        tr.headersSector td { text-align: center; }
-
-        tr.headersGroup  { font-size: 16pt; }
-        tr.headersGroup td.first {
-
-        }
-        tr.headersGroup td div {
-            height: 200px; /* Without this, the text is centered vertically. */
-            width:   40px;
-            padding: 0.3em 0 0 5pt;
-            text-align: left;
-            /*vertical-align: bottom; /* No effect. */
-            writing-mode: vertical-lr; /* bt-lr doesn't work? So I turn it 180 with rotate() below */
-            transform: rotate(180deg);
-            white-space: nowrap;
-        }
-
-        tr.app { font-size: 12pt; }
-        tr.app td.name,
-        tr.app td.sectorStats { padding: 0 0.5em; }
-        tr.app td.sectorStats { text-align: right; vertical-align: middle; }
-        tr.app td.circle { text-align: center; vertical-align: middle; padding: 0; line-height: 1; }
-        tr.app td.circle { font-size: 26pt; }
-        tr.app td.circle.sizeX:after { content: "𐄂"; color: #e8e8e8; font-size: 18pt; } /* No data */
-        tr.app td.circle.size0:after { content: "⊘"; color: #e8e8e8; font-size: 18pt; }
-        tr.app td.circle.size1:after { content: "🞄"; }
-        tr.app td.circle.size2:after { content: "⚫"; }
-        tr.app td.circle.size3:after { content: "●"; }
-        tr.app td.circle.size4:after { content: "⬤"; }
-        tr.app td.circle.size5:after { content: "⬤"; } /* Should be 0-4, but just in case. */
-
-    </style>
-
+    <link href="resources/css/tech-report-punchcard.css" rel="stylesheet">
 </head>
 <body role="document">
     <!-- Navbar -->
@@ -137,17 +77,20 @@
 
 
                 <table class="technologiesPunchCard">
-                    <tr class="headersSector">
-                        <td></td>
+                    <thead>
+                        <tr class="headersSector">
+                            <td></td>
                         <#list sectorTags as sector>
                             <td colspan="${ (iterableToList(sector.designatedTags)?size-1)?c}" class="sector${sector.title}">${sector.title}</td>
                         <#else>
                             <td>No technology sectors defined.</td>
                         </#list>
-                        <td colspan="3" class="sectorStats">Stats</td>
-                    </tr>
-                    <tr class="headersGroup">
-                        <td></td>
+                            <td colspan="3" class="sectorStats">Stats</td>
+                            <!-- this td is needed for scrollbar positioning -->
+                            <td class="scrollbar-padding"></td>
+                        </tr>
+                        <tr class="headersGroup">
+                            <td></td>
                         <#list sectorTags as sectorTag >
                             <#list sectorTag.designatedTags as boxTag >
                                 <#if !isTagUnderTag(boxTag, placeTagsParent) >
@@ -156,71 +99,76 @@
                                 </#if>
                             </#list>
                         </#list>
-                        <td class="sector sectorStats sizeMB"><div>Size (MB)</div></td>
-                        <td class="sector sectorStats libsCount"><div>Libraries</div></td>
-                        <td class="sector sectorStats storyPoints"><div>Mandatory (SP)</div></td>
-                    </tr>
+                            <td class="sector sectorStats sizeMB"><div>Size (MB)</div></td>
+                            <td class="sector sectorStats libsCount"><div>Libraries</div></td>
+                            <td class="sector sectorStats storyPoints"><div>Mandatory (SP)</div></td>
+                            <!-- this td is needed for scrollbar positioning -->
+                            <td class="scrollbar-padding"></td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <#list inputApplications as appProject> <#-- ProjectModel -->
+                        <#if appProject.projectType! != "VIRTUAL" >
+                        <tr class="app">
+                            <td class="name">
+                                <#assign boxReport = reportModel.appProjectIdToReportMap[appProject.asVertex().id?c] > <#-- TechReportModel -->
+                                <a href="${boxReport.reportFilename}">
+                                    <#-- For virtual apps, use name rather than the file name. -->
+                                    ${ (appProject.projectType! = "VIRTUAL" && appProject.name??)?then(
+                                            appProject.name,
+                                            appProject.rootFileModel.fileName)}
+                                </a>
+                            </td>
+                            <#list sectorTags as sectorTag>
+                                <#list sectorTag.designatedTags as boxTag>
+                                    <#if !isTagUnderTag(boxTag, placeTagsParent) >
+                                        <#--
+                                        <#assign count = (stats.countsOfTagsInApps?api.get(appProject.asVertex().id)[boxTag.name])!false />
+                                        <#assign maxForThisBox = stats.maximumsPerTag[boxTag.name] />
+                                        -->
 
-
-                    <#list inputApplications as appProject> <#-- ProjectModel -->
-                    <#if appProject.projectType! != "VIRTUAL" >
-                    <tr class="app">
-                        <td class="name">
-                            <#assign boxReport = reportModel.appProjectIdToReportMap[appProject.asVertex().id?c] > <#-- TechReportModel -->
-                            <a href="${boxReport.reportFilename}">
-                                <#-- For virtual apps, use name rather than the file name. -->
-                                ${ (appProject.projectType! = "VIRTUAL" && appProject.name??)?then(
-                                        appProject.name,
-                                        appProject.rootFileModel.fileName)}
-                            </a>
-                        </td>
-                        <#list sectorTags as sectorTag>
-                            <#list sectorTag.designatedTags as boxTag>
-                                <#if !isTagUnderTag(boxTag, placeTagsParent) >
-                                    <#--
-                                    <#assign count = (stats.countsOfTagsInApps?api.get(appProject.asVertex().id)[boxTag.name])!false />
-                                    <#assign maxForThisBox = stats.maximumsPerTag[boxTag.name] />
-                                    -->
-
-                                    <#-- 2nd way - using the 4 layer map -->
-                                    <#assign statsForThisBox = sortedStatsMatrix.get("", boxTag.name, appProject.asVertex().id?long)! />
-                                    <#assign count = (statsForThisBox[""].occurrenceCount)!false />
-                                    <#assign maxForThisBox   = (sortedStatsMatrix.getMaxForBox(boxTag.name))!false />
-                                    <#assign isBooleanTech = maxForThisBox?is_number && maxForThisBox == 0 />
-                                    <#if isBooleanTech>
-                                        <!-- The boolean technologies will either be missing or present. Presence is denoted by 0. Use some middle bubble size for present. -->
-                                        <#assign log = count?is_number?then(0.5, 0) />
-                                    <#else>
-                                        <#-- If the tech did not appear in any TechUsageStats, it is missing in the map. -->
-                                        <#if count?is_number && maxForThisBox?is_number >
-                                            <#assign log = getLogaritmicDistribution(count, maxForThisBox) />
+                                        <#-- 2nd way - using the 4 layer map -->
+                                        <#assign statsForThisBox = sortedStatsMatrix.get("", boxTag.name, appProject.asVertex().id?long)! />
+                                        <#assign count = (statsForThisBox[""].occurrenceCount)!false />
+                                        <#assign maxForThisBox   = (sortedStatsMatrix.getMaxForBox(boxTag.name))!false />
+                                        <#assign isBooleanTech = maxForThisBox?is_number && maxForThisBox == 0 />
+                                        <#if isBooleanTech>
+                                            <!-- The boolean technologies will either be missing or present. Presence is denoted by 0. Use some middle bubble size for present. -->
+                                            <#assign log = count?is_number?then(0.5, 0) />
                                         <#else>
-                                            <#assign log = 0 />
+                                            <#-- If the tech did not appear in any TechUsageStats, it is missing in the map. -->
+                                            <#if count?is_number && maxForThisBox?is_number >
+                                                <#assign log = getLogaritmicDistribution(count, maxForThisBox) />
+                                            <#else>
+                                                <#assign log = 0 />
+                                            </#if>
                                         </#if>
-                                    </#if>
-                                    <!-- count: ${count?c}   max: ${maxForThisBox?c}   getLogaritmicDistribution(): ${ log?c } x 5 = ${ log * 5.0 } -->
+                                        <!-- count: ${count?c}   max: ${maxForThisBox?c}   getLogaritmicDistribution(): ${ log?c } x 5 = ${ log * 5.0 } -->
 
-                                    <td class="circle size${ log?is_number?then((log * 5.0)?ceiling, "X")} sector sector${sectorTag.title}"><#-- The circle is put here by CSS :after --></td>
-                                </#if>
-                            <#else>
-                                <td>No technology sectors defined.</td>
+                                        <td class="circle size${ log?is_number?then((log * 5.0)?ceiling, "X")} sector sector${sectorTag.title}"><#-- The circle is put here by CSS :after --></td>
+                                    </#if>
+                                <#else>
+                                    <td>No technology sectors defined.</td>
+                                </#list>
                             </#list>
+                            <td class="sectorStats sector sizeMB">
+                                ${ ( (appProject.rootFileModel.retrieveSize() / 1024 / 1024)?string["0.##"] )! }
+                            </td>
+                            <td class="sectorStats libsCount">
+                                ${ (appProject.getApplications()?size)! }
+                            </td>
+                            <td class="sectorStats storyPoints">
+                                <#assign traversal = getProjectTraversal(appProject, 'all') />
+                                <#assign mandatoryCategory = ["mandatory"] />
+                                <#assign panelStoryPoints = getMigrationEffortPointsForProject(traversal, true, [], [], mandatoryCategory)! />
+                                ${ panelStoryPoints! }
+                            </td>
+                            <!-- this td is needed for scrollbar positioning -->
+                            <td class="scrollbar-padding"></td>
+                        </tr>
+                        </#if>
                         </#list>
-                        <td class="sectorStats sizeMB">
-                            ${ ( (appProject.rootFileModel.retrieveSize() / 1024 / 1024)?string["0.##"] )! }
-                        </td>
-                        <td class="sectorStats libsCount">
-                            ${ (appProject.getApplications()?size)! }
-                        </td>
-                        <td class="sectorStats storyPoints">
-                            <#assign traversal = getProjectTraversal(appProject, 'all') />
-                            <#assign mandatoryCategory = ["mandatory"] />
-                            <#assign panelStoryPoints = getMigrationEffortPointsForProject(traversal, true, [], [], mandatoryCategory)! />
-                            ${ panelStoryPoints! }
-                        </td>
-                    </tr>
-                    </#if>
-                    </#list>
+                    </tbody>
                 </table>
 
             </div>
