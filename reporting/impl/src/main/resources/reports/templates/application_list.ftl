@@ -108,6 +108,7 @@
     <link href="reports/resources/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="reports/resources/css/windup.css" rel="stylesheet" media="screen"/>
     <link href="reports/resources/img/rhamt-icon-128.png" rel="shortcut icon" type="image/x-icon"/>
+    <link href="reports/resources/css/font-awesome.min.css" rel="stylesheet" />
     <style>
         body.viewAppList .apps  { margin: 0 2ex; }
 
@@ -161,7 +162,6 @@
 
 
     <div class="container-fluid" role="main">
-
         <div class="row">
             <div class="page-header page-header-no-border">
                 <h1>
@@ -172,6 +172,8 @@
                 </div>
             </div>
         </div>
+
+        <#include "include/filtering_bar.ftl">
 
         <!-- Apps -->
         <#assign sharedLibsExists = reportModel.relatedResources["sharedLibsApplicationReport"]!?has_content >
