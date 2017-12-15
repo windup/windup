@@ -2,7 +2,7 @@ package org.jboss.windup.rules.apps.java.archives.model;
 
 import org.jboss.windup.graph.model.ArchiveModel;
 
-import com.tinkerpop.blueprints.Direction;
+import org.apache.tinkerpop.gremlin.structure.Direction;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 

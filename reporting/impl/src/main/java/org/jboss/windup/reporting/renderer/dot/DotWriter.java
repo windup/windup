@@ -10,7 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.reporting.renderer.GraphDataSerializer;
 import org.jboss.windup.reporting.renderer.dot.DotConstants.DotGraphType;
 
-import com.tinkerpop.blueprints.Direction;
+import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import com.tinkerpop.blueprints.Graph;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
