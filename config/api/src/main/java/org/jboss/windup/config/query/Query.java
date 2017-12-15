@@ -90,7 +90,7 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
             @Override
             public void query(GraphRewrite event, GraphTraversal<Vertex, Vertex> pipeline)
             {
-                pipeline.filter(it -> GraphTypeManager.hasType(type, it));
+                pipeline.filter(it -> GraphTypeManager.hasType(type, it.get()));
             }
         });
         return this;
