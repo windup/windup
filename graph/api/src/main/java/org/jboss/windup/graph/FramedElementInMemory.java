@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import com.tinkerpop.blueprints.Direction;
+import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import com.tinkerpop.blueprints.VertexQuery;
 import org.jboss.windup.graph.model.InMemoryVertexFrame;

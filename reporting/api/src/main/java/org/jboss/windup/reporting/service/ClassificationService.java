@@ -25,7 +25,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Compare;
-import com.tinkerpop.blueprints.Direction;
+import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.tinkerpop.frames.structures.FramedVertexIterable;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;

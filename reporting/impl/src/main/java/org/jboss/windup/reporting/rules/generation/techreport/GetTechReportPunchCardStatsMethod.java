@@ -1,6 +1,6 @@
 package org.jboss.windup.reporting.rules.generation.techreport;
 
-import com.tinkerpop.blueprints.Direction;
+import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import freemarker.ext.beans.StringModel;
 import org.jboss.windup.graph.GraphContext;

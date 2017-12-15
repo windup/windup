@@ -1,6 +1,6 @@
 package org.jboss.windup.rules.apps.java.query;
 
-import com.tinkerpop.blueprints.Direction;
+import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import com.tinkerpop.pipes.PipeFunction;

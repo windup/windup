@@ -1,6 +1,6 @@
 package org.jboss.windup.rules.apps.java.model;
 
-import com.tinkerpop.blueprints.Direction;
+import org.apache.tinkerpop.gremlin.structure.Direction;
 import com.tinkerpop.frames.Adjacency;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;

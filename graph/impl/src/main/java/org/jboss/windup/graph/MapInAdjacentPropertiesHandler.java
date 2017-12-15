@@ -11,7 +11,7 @@ import java.util.logging.Logger;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
 
-import com.tinkerpop.blueprints.Direction;
+import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Element;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.tinkerpop.frames.FramedGraph;

@@ -5,7 +5,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.tinkerpop.blueprints.Direction;
+import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 
