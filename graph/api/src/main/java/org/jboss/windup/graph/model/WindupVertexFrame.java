@@ -1,8 +1,7 @@
 package org.jboss.windup.graph.model;
 
+import com.syncleus.ferma.VertexFrame;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.tinkerpop.frames.VertexFrame;
-import com.tinkerpop.frames.modules.typedgraph.TypeField;
 
 /**
  * The base {@link VertexFrame} type implemented by all model types.

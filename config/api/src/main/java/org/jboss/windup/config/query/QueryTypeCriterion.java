@@ -3,13 +3,13 @@ package org.jboss.windup.config.query;
 import java.util.List;
 
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.graph.GraphTypeManager;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import com.tinkerpop.blueprints.Predicate;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.tinkerpop.frames.FramedGraphQuery;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
-import org.jboss.windup.graph.frames.TypeAwareFramedGraphQuery;
 
 class QueryTypeCriterion implements QueryFramesCriterion, QueryGremlinCriterion
 {
@@ -19,7 +19,7 @@ class QueryTypeCriterion implements QueryFramesCriterion, QueryGremlinCriterion
     public QueryTypeCriterion(Class<? extends WindupVertexFrame> clazz)
     {
         this.searchedClass = clazz;
-        this.typeValue = TypeAwareFramedGraphQuery.getTypeValue(clazz);
+        this.typeValue = GraphTypeManager.getTypeValue(clazz);
     }
 
     @Override
@@ -27,7 +27,6 @@ class QueryTypeCriterion implements QueryFramesCriterion, QueryGremlinCriterion
     {
         q.has(WindupVertexFrame.TYPE_PROP, typeValue);
     }
-
 
     /**
      * Adds a criterion to given pipeline which filters out vertices representing given WindupVertexFrame.

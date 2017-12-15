@@ -20,17 +20,7 @@
             <version>${version.titangraph}</version>
         </dependency>
         <dependency>
-            <groupId>org.jboss.windup.graph.frames</groupId>
-            <artifactId>frames-tp3</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>guava</artifactId>
-                    <groupId>com.google.guava</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.tinkerpop.gremlin</groupId>
+            <groupId>org.apache.tinkerpop</groupId>
             <artifactId>gremlin-core</artifactId>
             <version>${version.tinkerpop.blueprints}</version>
         </dependency>
