@@ -3,7 +3,7 @@ package org.jboss.windup.rules.apps.java.scan.ast.annotations;
 import java.util.Map;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
-import com.tinkerpop.frames.Adjacency;
+import com.syncleus.ferma.annotations.Adjacency;
 import org.jboss.windup.graph.MapInAdjacentVertices;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 

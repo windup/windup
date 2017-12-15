@@ -34,6 +34,12 @@
             <artifactId>gremlin-core</artifactId>
             <version>${version.tinkerpop.blueprints}</version>
         </dependency>
+        <!-- Ferma is replacement for frames -->
+        <dependency>
+            <groupId>com.syncleus.ferma</groupId>
+            <artifactId>ferma</artifactId>
+            <version>3.2.1</version>
+        </dependency>
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy</artifactId>
