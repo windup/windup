@@ -2,7 +2,7 @@ package org.jboss.windup.graph.frames;
 
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
-import com.tinkerpop.frames.FramedGraph;
+import com.syncleus.ferma.FramedGraph;
 import com.tinkerpop.frames.FramedGraphQuery;
 import com.tinkerpop.frames.core.FramedGraphQueryImpl;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;

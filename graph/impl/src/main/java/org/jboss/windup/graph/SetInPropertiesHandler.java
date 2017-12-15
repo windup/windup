@@ -11,7 +11,7 @@ import org.jboss.windup.util.exception.WindupException;
 
 import org.apache.tinkerpop.gremlin.structure.Element;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.tinkerpop.frames.FramedGraph;
+import com.syncleus.ferma.FramedGraph;
 import com.tinkerpop.frames.modules.MethodHandler;
 
 /**
