@@ -2,7 +2,7 @@ package org.jboss.windup.graph.rexster;
 
 import com.thinkaurelius.titan.core.TitanGraph;
 import com.tinkerpop.blueprints.util.wrappers.event.EventGraph;
-import com.tinkerpop.frames.FramedGraph;
+import com.syncleus.ferma.FramedGraph;
 import com.tinkerpop.rexster.protocol.EngineConfiguration;
 import com.tinkerpop.rexster.protocol.EngineController;
 import com.tinkerpop.rexster.server.DefaultRexsterApplication;

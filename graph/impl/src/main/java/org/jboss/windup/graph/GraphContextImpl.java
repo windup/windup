@@ -43,7 +43,7 @@ import com.tinkerpop.blueprints.Graph;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.tinkerpop.blueprints.util.wrappers.batch.BatchGraph;
 import com.tinkerpop.blueprints.util.wrappers.event.EventGraph;
-import com.tinkerpop.frames.FramedGraph;
+import com.syncleus.ferma.FramedGraph;
 import com.tinkerpop.frames.FramedGraphConfiguration;
 import com.tinkerpop.frames.FramedGraphFactory;
 import com.syncleus.ferma.annotations.Property;

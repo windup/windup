@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import com.tinkerpop.blueprints.Graph;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.tinkerpop.frames.FramedGraph;
+import com.syncleus.ferma.FramedGraph;
 import com.tinkerpop.frames.FramedGraphFactory;
 import com.tinkerpop.frames.modules.Module;
 import com.tinkerpop.frames.modules.gremlingroovy.GremlinGroovyModule;
