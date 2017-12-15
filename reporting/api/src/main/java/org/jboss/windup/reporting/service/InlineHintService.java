@@ -23,7 +23,7 @@ import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.category.IssueCategoryModel;
 
 import com.thinkaurelius.titan.core.attribute.Text;
-import com.tinkerpop.blueprints.Compare;
+import org.apache.tinkerpop.gremlin.process.traversal.Compare;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.tinkerpop.frames.structures.FramedVertexIterable;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
@@ -75,7 +75,7 @@ public class InlineHintService extends GraphService<InlineHintModel>
     {
         GraphTraversal<Vertex, Vertex> inlineHintPipeline = new GraphTraversal<>(fileModel.asVertex());
         inlineHintPipeline.in(InlineHintModel.FILE_MODEL);
-        inlineHintPipeline.has(EffortReportModel.EFFORT, Compare.GREATER_THAN, 0);
+        inlineHintPipeline.has(EffortReportModel.EFFORT, Compare.gt, 0);
         inlineHintPipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, InlineHintModel.TYPE);
 
         int hintEffort = 0;

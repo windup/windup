@@ -4,7 +4,7 @@ import org.jboss.windup.graph.model.report.IgnoredFileRegexModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
-import com.tinkerpop.frames.Adjacency;
+import com.syncleus.ferma.annotations.Adjacency;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
 

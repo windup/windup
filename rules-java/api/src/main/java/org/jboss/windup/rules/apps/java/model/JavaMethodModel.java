@@ -3,7 +3,7 @@ package org.jboss.windup.rules.apps.java.model;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
-import com.tinkerpop.frames.Adjacency;
+import com.syncleus.ferma.annotations.Adjacency;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.annotations.gremlin.GremlinGroovy;
 import com.tinkerpop.frames.annotations.gremlin.GremlinParam;

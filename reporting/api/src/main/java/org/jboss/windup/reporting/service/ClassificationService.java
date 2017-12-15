@@ -24,13 +24,14 @@ import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 import com.thinkaurelius.titan.core.attribute.Text;
-import com.tinkerpop.blueprints.Compare;
+import org.apache.tinkerpop.gremlin.process.traversal.Compare;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.tinkerpop.frames.structures.FramedVertexIterable;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import java.util.logging.Level;
 import org.jboss.windup.reporting.category.IssueCategoryRegistry;
+// import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.*;
 
 /**
  * Adds methods for loading and querying ClassificationModel related data.
@@ -54,7 +55,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
     {
         GraphTraversal<Vertex, Vertex> classificationPipeline = new GraphTraversal<>(fileModel.asVertex());
         classificationPipeline.in(ClassificationModel.FILE_MODEL);
-        classificationPipeline.has(EffortReportModel.EFFORT, Compare.GREATER_THAN, 0);
+        classificationPipeline.has(EffortReportModel.EFFORT, Compare.gt, 0);
         classificationPipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, ClassificationModel.TYPE);
 
         int classificationEffort = 0;

@@ -1,7 +1,7 @@
 package org.jboss.windup.rules.apps.java.reporting.rules;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
-import com.tinkerpop.frames.Adjacency;
+import com.syncleus.ferma.annotations.Adjacency;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
 
