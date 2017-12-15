@@ -3,7 +3,6 @@ package org.jboss.windup.rules.apps.java.query;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
-import com.tinkerpop.pipes.PipeFunction;
 import org.jboss.forge.furnace.util.Lists;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.FileLocationModel;
@@ -53,40 +52,39 @@ public class FindFilesNotClassifiedOrHintedGremlinCriterion
         classificationPipeline.fill(allClassifiedOrHintedVertices);
         ExecutionStatistics.get().end("FindFilesNotClassifiedOrHintedGremlinCriterion.classificationPipeline");
 
-        pipeline.filter(new PipeFunction<Vertex, Boolean>()
-        {
-            @Override
-            public Boolean compute(Vertex v)
+        pipeline.filter(it -> {
+            Vertex v = it.get();
+            FileModel f = context.getFramed().frame(v, FileModel.class);
+
+            //1. we don't want to show files with hints/classifications
+            if (allClassifiedOrHintedVertices.contains(v))
             {
-                FileModel f = context.getFramed().frame(v, FileModel.class);
+                return false;
+            }
 
-                //1. we don't want to show files with hints/classifications
-                if (allClassifiedOrHintedVertices.contains(v))
-                {
-                    return false;
-                }
+            //2. we don't want to show our decompiled classes in the report
+            if (f.isWindupGenerated())
+            {
+                return false;
+            }
 
-                //2. we don't want to show our decompiled classes in the report
-                if (f.isWindupGenerated())
-                {
-                    return false;
-                }
+            //3. we don't want to show class in case it's .java decompiled file has hints/classifications
+            if (f instanceof JavaClassFileModel)
+            {
+                Iterator<Vertex> decompiled = v.vertices(Direction.OUT, JavaClassFileModel.DECOMPILED_FILE);
 
-                //3. we don't want to show class in case it's .java decompiled file has hints/classifications
-                if (f instanceof JavaClassFileModel)
+                if (decompiled.hasNext())
                 {
-                    Iterator<Vertex> decompiled = v.getVertices(Direction.OUT, JavaClassFileModel.DECOMPILED_FILE).iterator();
-                    if (decompiled.hasNext())
+                    JavaSourceFileModel source = context.getFramed().frame(decompiled.next(), JavaSourceFileModel.class);
+
+                    if (allClassifiedOrHintedVertices.contains(source.asVertex()))
                     {
-                        JavaSourceFileModel source = context.getFramed().frame(decompiled.next(), JavaSourceFileModel.class);
-                        if (allClassifiedOrHintedVertices.contains(source.asVertex()))
-                        {
-                            return false;
-                        }
+                        return false;
                     }
                 }
-                return true;
             }
+
+            return true;
         });
 
         ExecutionStatistics.get().end("FindFilesNotClassifiedOrHintedGremlinCriterion.total");
