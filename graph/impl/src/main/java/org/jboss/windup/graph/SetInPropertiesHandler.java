@@ -9,7 +9,7 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
 
-import com.tinkerpop.blueprints.Element;
+import org.apache.tinkerpop.gremlin.structure.Element;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.frames.modules.MethodHandler;
