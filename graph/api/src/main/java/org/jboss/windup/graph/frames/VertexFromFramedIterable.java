@@ -2,7 +2,7 @@ package org.jboss.windup.graph.frames;
 
 import java.util.Iterator;
 
-import com.tinkerpop.blueprints.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.tinkerpop.frames.VertexFrame;
 
 /**

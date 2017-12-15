@@ -13,7 +13,7 @@ import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-import com.tinkerpop.blueprints.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 import com.tinkerpop.pipes.PipeFunction;
 

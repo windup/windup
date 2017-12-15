@@ -1,6 +1,6 @@
 package org.jboss.windup.reporting.config;
 
-import com.tinkerpop.blueprints.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.config.GraphRewrite;

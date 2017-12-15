@@ -12,7 +12,7 @@ import com.tinkerpop.blueprints.VertexQuery;
 import org.jboss.windup.graph.model.InMemoryVertexFrame;
 import org.jboss.windup.util.exception.WindupException;
 
-import com.tinkerpop.blueprints.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.tinkerpop.frames.ClassUtilities;
 import com.tinkerpop.frames.Property;
 import com.tinkerpop.frames.VertexFrame;

@@ -6,7 +6,7 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import com.tinkerpop.blueprints.Predicate;
-import com.tinkerpop.blueprints.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.tinkerpop.frames.FramedGraphQuery;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 import org.jboss.windup.graph.frames.TypeAwareFramedGraphQuery;

@@ -2,7 +2,7 @@ package org.jboss.windup.reporting.service;
 
 import org.jboss.windup.graph.GraphContext;
 
-import com.tinkerpop.blueprints.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.QuickfixModel;
 import org.jboss.windup.reporting.model.QuickfixType;

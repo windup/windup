@@ -4,7 +4,7 @@ import org.jboss.windup.config.GraphRewrite;
 
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.thinkaurelius.titan.graphdb.query.TitanPredicate;
-import com.tinkerpop.blueprints.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 class QueryPropertyCriterion implements QueryGremlinCriterion

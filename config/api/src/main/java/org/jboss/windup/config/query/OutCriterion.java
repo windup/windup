@@ -1,7 +1,7 @@
 package org.jboss.windup.config.query;
 
 
-import com.tinkerpop.blueprints.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 import org.jboss.windup.config.GraphRewrite;
 
