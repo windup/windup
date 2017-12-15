@@ -29,8 +29,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 
 @RunWith(Arquillian.class)
 public class InlineHintModelQueryTest
@@ -113,7 +113,7 @@ public class InlineHintModelQueryTest
             vertexList.add(v);
         }
 
-        GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(context.getQuery().type(FileModel.class)
+        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(context.getQuery().type(FileModel.class)
                     .vertices());
 
         GraphRewrite event = new GraphRewrite(context);

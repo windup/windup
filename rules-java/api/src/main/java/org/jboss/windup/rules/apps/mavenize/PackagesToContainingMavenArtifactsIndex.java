@@ -1,7 +1,7 @@
 package org.jboss.windup.rules.apps.mavenize;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.blueprints.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import java.util.Collections;
 import java.util.logging.Logger;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;

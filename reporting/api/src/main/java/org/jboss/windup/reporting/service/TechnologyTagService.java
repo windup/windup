@@ -17,12 +17,10 @@ import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.model.TechnologyTagModel;
 
 import com.thinkaurelius.titan.core.attribute.Text;
-import com.tinkerpop.blueprints.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.tinkerpop.frames.FramedGraphQuery;
 import com.tinkerpop.frames.structures.FramedVertexIterable;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
-import com.tinkerpop.pipes.PipeFunction;
-import com.tinkerpop.pipes.util.structures.Pair;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 
 /**
  * Contains methods for finding, creating, and deleting {@link TechnologyTagModel} instances.
@@ -79,18 +77,12 @@ public class TechnologyTagService extends GraphService<TechnologyTagModel>
      */
     public Iterable<TechnologyTagModel> findTechnologyTagsForFile(FileModel fileModel)
     {
-        GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(fileModel.asVertex());
+        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(fileModel.asVertex());
         pipeline.in(TechnologyTagModel.TECH_TAG_TO_FILE_MODEL).has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, TechnologyTagModel.TYPE);
-        pipeline.order(new PipeFunction<Pair<Vertex, Vertex>, Integer>()
-        {
-            private Comparator<TechnologyTagModel> comparator = new DefaultTechnologyTagComparator();
 
-            @Override
-            public Integer compute(Pair<Vertex, Vertex> argument)
-            {
-                return comparator.compare(frame(argument.getA()), frame(argument.getB()));
-            }
-        });
+        Comparator<TechnologyTagModel> comparator = new DefaultTechnologyTagComparator();
+        pipeline.order().by((a, b) -> comparator.compare(a, b)); // TODO: Sort framing vertex to Model class
+
         return new FramedVertexIterable<>(getGraphContext().getFramed(), pipeline, TechnologyTagModel.class);
     }
 
@@ -101,7 +93,7 @@ public class TechnologyTagService extends GraphService<TechnologyTagModel>
     {
         Set<TechnologyTagModel> results = new TreeSet<>(new DefaultTechnologyTagComparator());
 
-        GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(traversal.getCanonicalProject().asVertex());
+        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(traversal.getCanonicalProject().asVertex());
         pipeline.out(ProjectModel.PROJECT_MODEL_TO_FILE);
         pipeline.in(TechnologyTagModel.TECH_TAG_TO_FILE_MODEL).has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, TechnologyTagModel.TYPE);
 

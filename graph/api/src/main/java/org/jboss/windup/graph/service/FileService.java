@@ -1,7 +1,7 @@
 package org.jboss.windup.graph.service;
 
 import java.nio.file.Paths;
-import com.tinkerpop.blueprints.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.tinkerpop.frames.structures.FramedVertexIterable;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.TitanUtil;
