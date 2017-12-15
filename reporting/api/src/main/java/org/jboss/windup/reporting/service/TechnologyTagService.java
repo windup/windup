@@ -20,7 +20,7 @@ import com.thinkaurelius.titan.core.attribute.Text;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.tinkerpop.frames.FramedGraphQuery;
 import com.tinkerpop.frames.structures.FramedVertexIterable;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import com.tinkerpop.pipes.PipeFunction;
 import com.tinkerpop.pipes.util.structures.Pair;
 
@@ -79,7 +79,7 @@ public class TechnologyTagService extends GraphService<TechnologyTagModel>
      */
     public Iterable<TechnologyTagModel> findTechnologyTagsForFile(FileModel fileModel)
     {
-        GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(fileModel.asVertex());
+        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(fileModel.asVertex());
         pipeline.in(TechnologyTagModel.TECH_TAG_TO_FILE_MODEL).has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, TechnologyTagModel.TYPE);
         pipeline.order(new PipeFunction<Pair<Vertex, Vertex>, Integer>()
         {
@@ -101,7 +101,7 @@ public class TechnologyTagService extends GraphService<TechnologyTagModel>
     {
         Set<TechnologyTagModel> results = new TreeSet<>(new DefaultTechnologyTagComparator());
 
-        GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(traversal.getCanonicalProject().asVertex());
+        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(traversal.getCanonicalProject().asVertex());
         pipeline.out(ProjectModel.PROJECT_MODEL_TO_FILE);
         pipeline.in(TechnologyTagModel.TECH_TAG_TO_FILE_MODEL).has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, TechnologyTagModel.TYPE);
 

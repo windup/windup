@@ -25,7 +25,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.tinkerpop.frames.FramedGraphQuery;
 import com.tinkerpop.frames.structures.FramedVertexIterable;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import com.tinkerpop.pipes.PipeFunction;
 
 public class Query extends GraphCondition implements QueryBuilderFind, QueryBuilderFrom, QueryBuilderWith,
@@ -72,7 +72,7 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
         pipelineCriteria.add(new QueryGremlinCriterion()
         {
             @Override
-            public void query(GraphRewrite event, GremlinPipeline<Vertex, Vertex> pipeline)
+            public void query(GraphRewrite event, GraphTraversal<Vertex, Vertex> pipeline)
             {
                 pipeline.filter(new PipeFunction<Vertex, Boolean>()
                 {
@@ -96,7 +96,7 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
         pipelineCriteria.add(new QueryGremlinCriterion()
         {
             @Override
-            public void query(GraphRewrite event, GremlinPipeline<Vertex, Vertex> pipeline)
+            public void query(GraphRewrite event, GraphTraversal<Vertex, Vertex> pipeline)
             {
                 pipeline.filter(new PipeFunction<Vertex, Boolean>()
                 {
@@ -198,7 +198,7 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
             public Iterable<WindupVertexFrame> getFrames(GraphRewrite event, EvaluationContext context)
             {
                 Iterable<Vertex> startingVertices = getStartingVertices(event);
-                GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(startingVertices);
+                GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(startingVertices);
                 Set<WindupVertexFrame> frames = new HashSet<>();
                 for (QueryGremlinCriterion c : query.getPipelineCriteria())
                 {

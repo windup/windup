@@ -2,7 +2,7 @@ package org.jboss.windup.rules.apps.java.query;
 
 import com.tinkerpop.blueprints.Direction;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import com.tinkerpop.pipes.PipeFunction;
 import org.jboss.forge.furnace.util.Lists;
 import org.jboss.windup.graph.GraphContext;
@@ -33,13 +33,13 @@ public class FindFilesNotClassifiedOrHintedGremlinCriterion
 
         final List<Vertex> initialVerticesList = Lists.toList(initialVertices);
 
-        GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(initialVertices);
+        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(initialVertices);
 
         final Set<Vertex> allClassifiedOrHintedVertices = new HashSet<>();
 
         ExecutionStatistics.get().begin("FindFilesNotClassifiedOrHintedGremlinCriterion.hintPipeline");
         // create a pipeline to get all hinted items
-        GremlinPipeline<Vertex, Vertex> hintPipeline = new GremlinPipeline<>(
+        GraphTraversal<Vertex, Vertex> hintPipeline = new GraphTraversal<>(
                     context.getQuery().type(InlineHintModel.class).vertices());
         hintPipeline.as("fileLocation1").out(FileLocationModel.FILE_MODEL).retain(initialVerticesList);
         hintPipeline.fill(allClassifiedOrHintedVertices);
@@ -47,7 +47,7 @@ public class FindFilesNotClassifiedOrHintedGremlinCriterion
 
         ExecutionStatistics.get().begin("FindFilesNotClassifiedOrHintedGremlinCriterion.classificationPipeline");
         // create a pipeline to get all items with attached classifications
-        GremlinPipeline<Vertex, Vertex> classificationPipeline = new GremlinPipeline<>(
+        GraphTraversal<Vertex, Vertex> classificationPipeline = new GraphTraversal<>(
                     context.getQuery().type(ClassificationModel.class).vertices());
         classificationPipeline.as("fileModel2").out(ClassificationModel.FILE_MODEL).retain(initialVerticesList);
         classificationPipeline.fill(allClassifiedOrHintedVertices);

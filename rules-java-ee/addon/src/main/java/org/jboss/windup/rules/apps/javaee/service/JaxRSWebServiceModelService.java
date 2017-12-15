@@ -9,7 +9,7 @@ import org.jboss.windup.rules.apps.javaee.model.JaxRSWebServiceModel;
 
 import com.thinkaurelius.titan.core.attribute.Text;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 
 /**
  * Provides methods for creating, updating, and deleting {@link JaxRSWebServiceModelService} vertices.
@@ -25,16 +25,16 @@ public class JaxRSWebServiceModelService extends GraphService<JaxRSWebServiceMod
 
     public JaxRSWebServiceModel getOrCreate(ProjectModel application, String path, JavaClassModel implementationClass)
     {
-        GremlinPipeline<Vertex, Vertex> pipeline;
+        GraphTraversal<Vertex, Vertex> pipeline;
         if (implementationClass == null)
         {
-            pipeline = new GremlinPipeline<>(getGraphContext().getGraph());
+            pipeline = new GraphTraversal<>(getGraphContext().getGraph());
             pipeline.V();
             pipeline.has(WindupVertexFrame.TYPE_PROP, JaxRSWebServiceModel.TYPE);
         }
         else
         {
-            pipeline = new GremlinPipeline<>(implementationClass.asVertex());
+            pipeline = new GraphTraversal<>(implementationClass.asVertex());
             pipeline.out(JaxRSWebServiceModel.JAXRS_IMPLEMENTATION_CLASS);
             pipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, JaxRSWebServiceModel.TYPE);
         }

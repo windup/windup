@@ -7,7 +7,7 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
 
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.jboss.windup.util.Logging;
 
 import java.util.logging.Logger;
@@ -57,7 +57,7 @@ public class ApplicationReportService extends GraphService<ApplicationReportMode
         {
             rootProjectModel = rootProjectModel.getRootProjectModel();
         }
-        GremlinPipeline<Vertex, Vertex> pipe = new GremlinPipeline<>(rootProjectModel.asVertex());
+        GraphTraversal<Vertex, Vertex> pipe = new GraphTraversal<>(rootProjectModel.asVertex());
         pipe.in(ApplicationReportModel.REPORT_TO_PROJECT_MODEL);
         pipe.has(ApplicationReportModel.MAIN_APPLICATION_REPORT, true);
 

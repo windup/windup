@@ -23,7 +23,7 @@ import org.jboss.windup.util.ExecutionStatistics;
 
 import com.thinkaurelius.titan.core.attribute.Text;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 
 /**
  * Adds the getPackageUseFrequencies() and createTypeReference().
@@ -91,7 +91,7 @@ public class TypeReferenceService extends GraphService<JavaTypeReferenceModel>
         InlineHintService hintService = new InlineHintService(getGraphContext());
 
         // 1. Get all JavaHints for the given project
-        GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(projectModel.asVertex());
+        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(projectModel.asVertex());
         pipeline.out(ProjectModel.PROJECT_MODEL_TO_FILE).in(InlineHintModel.FILE_MODEL);
         pipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, InlineHintModel.TYPE);
 

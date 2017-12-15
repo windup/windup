@@ -5,7 +5,7 @@ import org.jboss.windup.config.GraphRewrite;
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.thinkaurelius.titan.graphdb.query.TitanPredicate;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 
 class QueryPropertyCriterion implements QueryGremlinCriterion
 {
@@ -24,7 +24,7 @@ class QueryPropertyCriterion implements QueryGremlinCriterion
     }
 
     @Override
-    public void query(GraphRewrite event, GremlinPipeline<Vertex, Vertex> pipeline)
+    public void query(GraphRewrite event, GraphTraversal<Vertex, Vertex> pipeline)
     {
         switch (searchType)
         {

@@ -9,7 +9,7 @@ import org.jboss.windup.rules.apps.java.model.project.MavenProjectModel;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 
 /**
  * Contains methods for searching and deleting {@link MavenProjectModel}s.
@@ -51,7 +51,7 @@ public class MavenProjectService extends GraphService<MavenProjectModel>
 
     public boolean isMavenConfiguration(XmlFileModel resource)
     {
-        return (new GremlinPipeline<Vertex, Vertex>(resource.asVertex())).in("xmlFacet").as("facet")
+        return (new GraphTraversal<Vertex, Vertex>(resource.asVertex())).in("xmlFacet").as("facet")
                     .has(WindupVertexFrame.TYPE_PROP, this.getTypeValueForSearch()).select("facet")
                     .iterator().hasNext();
     }
@@ -59,7 +59,7 @@ public class MavenProjectService extends GraphService<MavenProjectModel>
     public MavenProjectModel getMavenConfigurationFromResource(XmlFileModel resource)
     {
         @SuppressWarnings("unchecked")
-        Iterator<Vertex> v = (Iterator<Vertex>) (new GremlinPipeline<Vertex, Vertex>(resource.asVertex()))
+        Iterator<Vertex> v = (Iterator<Vertex>) (new GraphTraversal<Vertex, Vertex>(resource.asVertex()))
                     .in("xmlFacet").as("facet")
                     .has(WindupVertexFrame.TYPE_PROP, this.getTypeValueForSearch()).select("facet")
                     .iterator();

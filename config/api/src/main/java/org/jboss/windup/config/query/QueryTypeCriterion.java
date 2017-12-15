@@ -8,7 +8,7 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 import com.tinkerpop.blueprints.Predicate;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.tinkerpop.frames.FramedGraphQuery;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.jboss.windup.graph.frames.TypeAwareFramedGraphQuery;
 
 class QueryTypeCriterion implements QueryFramesCriterion, QueryGremlinCriterion
@@ -32,7 +32,7 @@ class QueryTypeCriterion implements QueryFramesCriterion, QueryGremlinCriterion
     /**
      * Adds a criterion to given pipeline which filters out vertices representing given WindupVertexFrame.
      */
-    public static GremlinPipeline<Vertex, Vertex> addPipeFor(GremlinPipeline<Vertex, Vertex> pipeline,
+    public static GraphTraversal<Vertex, Vertex> addPipeFor(GraphTraversal<Vertex, Vertex> pipeline,
                 Class<? extends WindupVertexFrame> clazz)
     {
         pipeline.has(WindupVertexFrame.TYPE_PROP, TypeAwareFramedGraphQuery.getTypeValue(clazz));
@@ -45,7 +45,7 @@ class QueryTypeCriterion implements QueryFramesCriterion, QueryGremlinCriterion
     }
 
     @Override
-    public void query(GraphRewrite event, GremlinPipeline<Vertex, Vertex> pipeline)
+    public void query(GraphRewrite event, GraphTraversal<Vertex, Vertex> pipeline)
     {
         pipeline.has(WindupVertexFrame.TYPE_PROP, new Predicate()
         {

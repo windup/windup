@@ -26,7 +26,7 @@ import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Compare;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.tinkerpop.frames.structures.FramedVertexIterable;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.jboss.windup.reporting.model.IssueDisplayMode;
 
 import java.util.logging.Level;
@@ -51,7 +51,7 @@ public class InlineHintService extends GraphService<InlineHintModel>
      */
     public Iterable<InlineHintModel> getHintsForFileReference(FileReferenceModel reference)
     {
-        GremlinPipeline<Vertex, Vertex> inlineHintPipeline = new GremlinPipeline<>(reference.asVertex());
+        GraphTraversal<Vertex, Vertex> inlineHintPipeline = new GraphTraversal<>(reference.asVertex());
         inlineHintPipeline.in(InlineHintModel.FILE_LOCATION_REFERENCE);
         inlineHintPipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, InlineHintModel.TYPE);
         return new FramedVertexIterable<>(getGraphContext().getFramed(), inlineHintPipeline, InlineHintModel.class);
@@ -62,7 +62,7 @@ public class InlineHintService extends GraphService<InlineHintModel>
      */
     public Iterable<InlineHintModel> getHintsForFile(FileModel file)
     {
-        GremlinPipeline<Vertex, Vertex> inlineHintPipeline = new GremlinPipeline<>(file.asVertex());
+        GraphTraversal<Vertex, Vertex> inlineHintPipeline = new GraphTraversal<>(file.asVertex());
         inlineHintPipeline.in(FileReferenceModel.FILE_MODEL);
         inlineHintPipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, InlineHintModel.TYPE);
         return new FramedVertexIterable<>(getGraphContext().getFramed(), inlineHintPipeline, InlineHintModel.class);
@@ -73,7 +73,7 @@ public class InlineHintService extends GraphService<InlineHintModel>
      */
     public int getMigrationEffortPoints(FileModel fileModel)
     {
-        GremlinPipeline<Vertex, Vertex> inlineHintPipeline = new GremlinPipeline<>(fileModel.asVertex());
+        GraphTraversal<Vertex, Vertex> inlineHintPipeline = new GraphTraversal<>(fileModel.asVertex());
         inlineHintPipeline.in(InlineHintModel.FILE_MODEL);
         inlineHintPipeline.has(EffortReportModel.EFFORT, Compare.GREATER_THAN, 0);
         inlineHintPipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, InlineHintModel.TYPE);
@@ -131,7 +131,7 @@ public class InlineHintService extends GraphService<InlineHintModel>
     }
 
     private Iterable<InlineHintModel> getInlineHintModels(Iterable<Vertex> initialProjectVertices) {
-        GremlinPipeline<Vertex, Vertex> inlineHintPipeline = new GremlinPipeline<>(initialProjectVertices);
+        GraphTraversal<Vertex, Vertex> inlineHintPipeline = new GraphTraversal<>(initialProjectVertices);
         inlineHintPipeline.out(ProjectModel.PROJECT_MODEL_TO_FILE);
         inlineHintPipeline.in(InlineHintModel.FILE_MODEL).has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, InlineHintModel.TYPE);
 
@@ -207,7 +207,7 @@ public class InlineHintService extends GraphService<InlineHintModel>
 
         final Set<Vertex> initialVertices = traversal.getAllProjectsAsVertices(recursive);
 
-        GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(this.getGraphContext().getGraph());
+        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(this.getGraphContext().getGraph());
         pipeline.V();
         // If the multivalue index is not 1st, then it doesn't work - https://github.com/thinkaurelius/titan/issues/403
         if (!includeZero)
