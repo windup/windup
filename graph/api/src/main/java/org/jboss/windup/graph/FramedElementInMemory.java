@@ -14,7 +14,7 @@ import org.jboss.windup.util.exception.WindupException;
 
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.tinkerpop.frames.ClassUtilities;
-import com.tinkerpop.frames.Property;
+import com.syncleus.ferma.annotations.Property;
 import com.tinkerpop.frames.VertexFrame;
 
 /**

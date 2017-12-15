@@ -3,7 +3,7 @@ package org.jboss.windup.rules.apps.xml.model;
 import org.jboss.windup.graph.model.FileLocationModel;
 
 import com.syncleus.ferma.annotations.Adjacency;
-import com.tinkerpop.frames.Property;
+import com.syncleus.ferma.annotations.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
