@@ -175,7 +175,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
         pipeline.out(ClassificationModel.FILE_MODEL);
         pipeline.in(ProjectModel.PROJECT_MODEL_TO_FILE);
         pipeline.filter(new SetMembersFilter(initialVertices));
-        pipeline.back("classification");
+        pipeline.select("classification");
 
         boolean checkTags = !includeTags.isEmpty() || !excludeTags.isEmpty();
         FileService fileService = new FileService(getGraphContext());

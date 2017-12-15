@@ -223,7 +223,7 @@ public class InlineHintService extends GraphService<InlineHintModel>
         pipeline.out(InlineHintModel.FILE_MODEL);
         pipeline.in(ProjectModel.PROJECT_MODEL_TO_FILE);
         pipeline.filter(new SetMembersFilter(initialVertices));
-        pipeline.back("hint");
+        pipeline.select("hint");
 
         boolean checkTags = !includeTags.isEmpty() || !excludeTags.isEmpty();
         for (Vertex v : pipeline)

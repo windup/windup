@@ -28,12 +28,12 @@ public class JaxWSWebServiceModelService extends GraphService<JaxWSWebServiceMod
         pipeline.V().has(WindupVertexFrame.TYPE_PROP, JaxWSWebServiceModel.TYPE);
         if (endpointInterface != null)
             pipeline.as("endpointInterface").out(JaxWSWebServiceModel.JAXWS_INTERFACE).retain(Collections.singleton(endpointInterface.asVertex()))
-                        .back("endpointInterface");
+                        .select("endpointInterface");
 
         if (implementationClass != null)
             pipeline.as("implementationClass").out(JaxWSWebServiceModel.JAXWS_IMPLEMENTATION_CLASS)
                         .retain(Collections.singleton(implementationClass.asVertex()))
-                        .back("implementationClass");
+                        .select("implementationClass");
 
         if (pipeline.hasNext())
         {

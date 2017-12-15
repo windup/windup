@@ -60,7 +60,7 @@ public class HintExists extends GraphCondition
                     pipeline.as(HINT_STEP);
                     pipeline.out(InlineHintModel.FILE_MODEL);
                     pipeline.has(FileModel.FILE_NAME, filename);
-                    pipeline.back(HINT_STEP);
+                    pipeline.select(HINT_STEP);
                 }
             });
         }

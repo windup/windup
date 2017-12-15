@@ -60,7 +60,7 @@ public class ClassificationExists extends GraphCondition
                     pipeline.as(CLASSIFICATION_STEP);
                     pipeline.out(ClassificationModel.FILE_MODEL);
                     pipeline.has(FileModel.FILE_NAME, filename);
-                    pipeline.back(CLASSIFICATION_STEP);
+                    pipeline.select(CLASSIFICATION_STEP);
                 }
             });
         }

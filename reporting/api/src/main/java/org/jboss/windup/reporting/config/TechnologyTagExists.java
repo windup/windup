@@ -60,7 +60,7 @@ public class TechnologyTagExists extends GraphCondition
                     pipeline.as(TECHNOLOGYTAG_STEP);
                     pipeline.out(TechnologyTagModel.TECH_TAG_TO_FILE_MODEL);
                     pipeline.has(FileModel.FILE_NAME, filename);
-                    pipeline.back(TECHNOLOGYTAG_STEP);
+                    pipeline.select(TECHNOLOGYTAG_STEP);
                 }
             });
         }

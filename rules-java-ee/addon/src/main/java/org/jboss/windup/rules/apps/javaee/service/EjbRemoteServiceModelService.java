@@ -34,12 +34,12 @@ public class EjbRemoteServiceModelService extends GraphService<EjbRemoteServiceM
         pipeline.V().has(WindupVertexFrame.TYPE_PROP, EjbRemoteServiceModel.TYPE);
         if (remoteInterface != null)
             pipeline.as("remoteInterface").out(EjbRemoteServiceModel.EJB_INTERFACE).retain(Collections.singleton(remoteInterface.asVertex()))
-                        .back("remoteInterface");
+                        .select("remoteInterface");
 
         if (implementationClass != null)
             pipeline.as("implementationClass").out(EjbRemoteServiceModel.EJB_IMPLEMENTATION_CLASS)
                         .retain(Collections.singleton(implementationClass.asVertex()))
-                        .back("implementationClass");
+                        .select("implementationClass");
 
         if (pipeline.hasNext())
         {
