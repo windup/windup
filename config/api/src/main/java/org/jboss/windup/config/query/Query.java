@@ -26,7 +26,6 @@ import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.tinkerpop.frames.FramedGraphQuery;
 import com.tinkerpop.frames.structures.FramedVertexIterable;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
-import com.tinkerpop.pipes.PipeFunction;
 
 public class Query extends GraphCondition implements QueryBuilderFind, QueryBuilderFrom, QueryBuilderWith,
             QueryBuilderPiped
@@ -74,14 +73,7 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
             @Override
             public void query(GraphRewrite event, GraphTraversal<Vertex, Vertex> pipeline)
             {
-                pipeline.filter(new PipeFunction<Vertex, Boolean>()
-                {
-                    @Override
-                    public Boolean compute(Vertex argument)
-                    {
-                        return !GraphTypeManager.hasType(type, argument);
-                    }
-                });
+                pipeline.filter(it -> !GraphTypeManager.hasType(type, it.get()));
             }
         });
         return this;
@@ -98,14 +90,7 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
             @Override
             public void query(GraphRewrite event, GraphTraversal<Vertex, Vertex> pipeline)
             {
-                pipeline.filter(new PipeFunction<Vertex, Boolean>()
-                {
-                    @Override
-                    public Boolean compute(Vertex argument)
-                    {
-                        return GraphTypeManager.hasType(type, argument);
-                    }
-                });
+                pipeline.filter(it -> GraphTypeManager.hasType(type, it));
             }
         });
         return this;

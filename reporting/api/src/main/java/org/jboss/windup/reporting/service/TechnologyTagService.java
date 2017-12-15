@@ -21,8 +21,6 @@ import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.tinkerpop.frames.FramedGraphQuery;
 import com.tinkerpop.frames.structures.FramedVertexIterable;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
-import com.tinkerpop.pipes.PipeFunction;
-import com.tinkerpop.pipes.util.structures.Pair;
 
 /**
  * Contains methods for finding, creating, and deleting {@link TechnologyTagModel} instances.
@@ -81,16 +79,10 @@ public class TechnologyTagService extends GraphService<TechnologyTagModel>
     {
         GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(fileModel.asVertex());
         pipeline.in(TechnologyTagModel.TECH_TAG_TO_FILE_MODEL).has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, TechnologyTagModel.TYPE);
-        pipeline.order(new PipeFunction<Pair<Vertex, Vertex>, Integer>()
-        {
-            private Comparator<TechnologyTagModel> comparator = new DefaultTechnologyTagComparator();
 
-            @Override
-            public Integer compute(Pair<Vertex, Vertex> argument)
-            {
-                return comparator.compare(frame(argument.getA()), frame(argument.getB()));
-            }
-        });
+        Comparator<TechnologyTagModel> comparator = new DefaultTechnologyTagComparator();
+        pipeline.order().by((a, b) -> comparator.compare(a, b)); // TODO: Sort framing vertex to Model class
+
         return new FramedVertexIterable<>(getGraphContext().getFramed(), pipeline, TechnologyTagModel.class);
     }
 
