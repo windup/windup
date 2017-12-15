@@ -2,7 +2,7 @@ package org.jboss.windup.reporting.ruleexecution;
 
 import org.ocpsoft.rewrite.config.Rule;
 
-import com.tinkerpop.blueprints.Edge;
+import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 
 /**
