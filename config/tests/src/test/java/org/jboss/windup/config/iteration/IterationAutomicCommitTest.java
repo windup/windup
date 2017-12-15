@@ -57,7 +57,7 @@ import com.thinkaurelius.titan.core.schema.EdgeLabelMaker;
 import com.thinkaurelius.titan.core.schema.PropertyKeyMaker;
 import com.thinkaurelius.titan.core.schema.TitanManagement;
 import com.thinkaurelius.titan.core.schema.VertexLabelMaker;
-import com.tinkerpop.blueprints.Edge;
+import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Element;
 import com.tinkerpop.blueprints.Features;
 import com.tinkerpop.blueprints.Parameter;

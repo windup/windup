@@ -9,7 +9,7 @@ import org.jboss.windup.reporting.renderer.graphlib.GraphvizConstants.GraphvizDi
 import org.jboss.windup.reporting.renderer.graphlib.GraphvizConstants.GraphvizType;
 
 import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.blueprints.Edge;
+import org.apache.tinkerpop.gremlin.structure.Edge;
 import com.tinkerpop.blueprints.Graph;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 

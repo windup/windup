@@ -5,7 +5,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.jboss.forge.furnace.util.Assert;
 import org.ocpsoft.rewrite.config.Rule;
 
-import com.tinkerpop.blueprints.Edge;
+import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 
 /**

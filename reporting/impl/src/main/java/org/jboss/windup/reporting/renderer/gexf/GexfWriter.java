@@ -8,7 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.reporting.renderer.GraphDataSerializer;
 
 import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.blueprints.Edge;
+import org.apache.tinkerpop.gremlin.structure.Edge;
 import com.tinkerpop.blueprints.Graph;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 

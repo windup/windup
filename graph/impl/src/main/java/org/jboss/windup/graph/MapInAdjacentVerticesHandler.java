@@ -8,7 +8,7 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.util.exception.WindupException;
 
 import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.blueprints.Edge;
+import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Element;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.tinkerpop.frames.FramedGraph;
