@@ -21,7 +21,7 @@ import org.jboss.windup.util.furnace.FurnaceClasspathScanner;
 
 import com.thinkaurelius.titan.graphdb.vertices.StandardVertex;
 import com.tinkerpop.blueprints.Edge;
-import com.tinkerpop.blueprints.Element;
+import org.apache.tinkerpop.gremlin.structure.Element;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.tinkerpop.blueprints.util.wrappers.event.EventVertex;
 import com.tinkerpop.frames.EdgeFrame;

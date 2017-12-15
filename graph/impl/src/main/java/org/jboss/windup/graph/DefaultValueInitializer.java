@@ -1,6 +1,6 @@
 package org.jboss.windup.graph;
 
-import com.tinkerpop.blueprints.Element;
+import org.apache.tinkerpop.gremlin.structure.Element;
 import com.tinkerpop.frames.FrameInitializer;
 import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.frames.Property;
