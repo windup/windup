@@ -12,7 +12,7 @@ import org.jboss.windup.reporting.model.ClassificationModel;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 
 /**
  * Returns true if there are {@link ClassificationModel} entries that match the given classification text.
@@ -55,7 +55,7 @@ public class ClassificationExists extends GraphCondition
                 private static final String CLASSIFICATION_STEP = "classificationModel";
 
                 @Override
-                public void query(GraphRewrite event, GremlinPipeline<Vertex, Vertex> pipeline)
+                public void query(GraphRewrite event, GraphTraversal<Vertex, Vertex> pipeline)
                 {
                     pipeline.as(CLASSIFICATION_STEP);
                     pipeline.out(ClassificationModel.FILE_MODEL);

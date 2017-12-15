@@ -22,7 +22,7 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.jboss.windup.config.metadata.RuleMetadata;
 
 /**
@@ -63,7 +63,7 @@ public class FindUnboundJavaReferencesRuleProvider extends AbstractRuleProvider
             HasHint hasHint = new HasHint();
 
             // Reuse the progress and commit logic from these
-            GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(event.getGraphContext().getGraph());
+            GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(event.getGraphContext().getGraph());
             pipeline.V();
             pipeline.has(WindupVertexFrame.TYPE_PROP, JavaTypeReferenceModel.TYPE);
             pipeline.hasNot(JavaTypeReferenceModel.RESOLUTION_STATUS, ResolutionStatus.RESOLVED);

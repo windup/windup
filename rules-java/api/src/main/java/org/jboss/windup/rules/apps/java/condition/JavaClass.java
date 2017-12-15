@@ -4,7 +4,7 @@ import com.thinkaurelius.titan.core.attribute.Text;
 import com.tinkerpop.blueprints.Predicate;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.tinkerpop.frames.structures.FramedVertexIterable;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
@@ -216,7 +216,7 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
                 QueryBuilderFrom fromQuery = Query.from(getInputVariablesName());
                 QueryBuilderPiped piped = fromQuery.piped(new QueryGremlinCriterion()
                 {
-                    @Override public void query(GraphRewrite event, GremlinPipeline<Vertex, Vertex> pipeline)
+                    @Override public void query(GraphRewrite event, GraphTraversal<Vertex, Vertex> pipeline)
                     {
                         pipeline.out(FileReferenceModel.FILE_MODEL).in(FileReferenceModel.FILE_MODEL)
                                     .has(JavaTypeReferenceModel.RESOLVED_SOURCE_SNIPPIT, Text.REGEX, compiledPattern.toString());
@@ -226,7 +226,7 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
             }
             else
             {
-                GremlinPipeline<Vertex, Vertex> resolvedTextSearch = new GremlinPipeline<>(event.getGraphContext().getGraph());
+                GraphTraversal<Vertex, Vertex> resolvedTextSearch = new GraphTraversal<>(event.getGraphContext().getGraph());
                 resolvedTextSearch.V();
                 resolvedTextSearch.has(JavaTypeReferenceModel.RESOLVED_SOURCE_SNIPPIT, Text.REGEX, TitanUtil.titanifyRegex(compiledPattern.pattern()));
 
@@ -367,7 +367,7 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
         }
 
         @Override
-        public void query(GraphRewrite event, GremlinPipeline<Vertex, Vertex> pipeline)
+        public void query(GraphRewrite event, GraphTraversal<Vertex, Vertex> pipeline)
         {
             Predicate regexPredicate = new Predicate()
             {

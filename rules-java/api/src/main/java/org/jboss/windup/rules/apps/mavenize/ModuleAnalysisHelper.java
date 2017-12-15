@@ -19,7 +19,7 @@ import org.jboss.windup.util.Logging;
 
 import com.thinkaurelius.titan.core.attribute.Text;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import com.tinkerpop.pipes.PipeFunction;
 import com.tinkerpop.pipes.branch.CopySplitPipe;
 import com.tinkerpop.pipes.filter.PropertyFilterPipe;
@@ -92,7 +92,7 @@ public class ModuleAnalysisHelper
     {
         Map<String, Integer> pkgsMap = new HashMap<>();
         Set<String> pkgs = new HashSet<>(1000);
-        GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(projectModel);
+        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(projectModel);
 
         PipeFunction<String, String> upToThirdDot = new PipeFunction<String, String>()
         {

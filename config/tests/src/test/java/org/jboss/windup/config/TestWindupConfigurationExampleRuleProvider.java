@@ -28,7 +28,7 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
@@ -55,7 +55,7 @@ public class TestWindupConfigurationExampleRuleProvider extends AbstractRuleProv
         QueryGremlinCriterion methodNameCriterion = new QueryGremlinCriterion()
         {
             @Override
-            public void query(GraphRewrite event, GremlinPipeline<Vertex, Vertex> pipeline)
+            public void query(GraphRewrite event, GraphTraversal<Vertex, Vertex> pipeline)
             {
                 pipeline.out("javaMethod").has("methodName", "toString");
             }

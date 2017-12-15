@@ -11,7 +11,7 @@ import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.javaee.model.EjbRemoteServiceModel;
 
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 
 /**
  * Contains methods for managing {@link EjbRemoteServiceModel} instances.
@@ -30,7 +30,7 @@ public class EjbRemoteServiceModelService extends GraphService<EjbRemoteServiceM
      */
     public EjbRemoteServiceModel getOrCreate(Iterable<ProjectModel> applications, JavaClassModel remoteInterface, JavaClassModel implementationClass)
     {
-        GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(getGraphContext().getGraph());
+        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(getGraphContext().getGraph());
         pipeline.V().has(WindupVertexFrame.TYPE_PROP, EjbRemoteServiceModel.TYPE);
         if (remoteInterface != null)
             pipeline.as("remoteInterface").out(EjbRemoteServiceModel.EJB_INTERFACE).retain(Collections.singleton(remoteInterface.asVertex()))

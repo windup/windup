@@ -11,7 +11,7 @@ import org.jboss.windup.reporting.model.ApplicationReportModel;
 
 import com.tinkerpop.blueprints.Direction;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import com.tinkerpop.pipes.PipeFunction;
 
 /**
@@ -31,7 +31,7 @@ public class ApplicationReportIndexService extends GraphService<ApplicationRepor
      */
     public ApplicationReportIndexModel getOrCreateGlobalApplicationIndex()
     {
-        GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(getGraphContext().getGraph());
+        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(getGraphContext().getGraph());
         pipeline.V();
         pipeline.has(WindupVertexFrame.TYPE_PROP, ApplicationReportModel.TYPE);
         pipeline.filter(new PipeFunction<Vertex, Boolean>()
@@ -54,7 +54,7 @@ public class ApplicationReportIndexService extends GraphService<ApplicationRepor
      */
     public ApplicationReportIndexModel getApplicationReportIndexForProjectModel(ProjectModel projectModel)
     {
-        GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(projectModel.asVertex());
+        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(projectModel.asVertex());
         pipeline.in(ApplicationReportIndexModel.APPLICATION_REPORT_INDEX_TO_PROJECT_MODEL);
 
         ApplicationReportIndexModel applicationReportIndex = null;

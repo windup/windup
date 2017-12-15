@@ -12,7 +12,7 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.ClassificationModel;
 
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
@@ -48,7 +48,7 @@ class ClassificationServiceCache extends AbstractRuleLifecycleListener implement
 
         if (linked == null)
         {
-            GremlinPipeline<Vertex, Vertex> existenceCheck = new GremlinPipeline<>(classificationModel.asVertex());
+            GraphTraversal<Vertex, Vertex> existenceCheck = new GraphTraversal<>(classificationModel.asVertex());
             existenceCheck.out(ClassificationModel.FILE_MODEL);
             existenceCheck.retain(Collections.singleton(fileModel.asVertex()));
 

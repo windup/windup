@@ -10,7 +10,7 @@ import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.javaee.model.JaxWSWebServiceModel;
 
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
@@ -24,7 +24,7 @@ public class JaxWSWebServiceModelService extends GraphService<JaxWSWebServiceMod
 
     public JaxWSWebServiceModel getOrCreate(ProjectModel application, JavaClassModel endpointInterface, JavaClassModel implementationClass)
     {
-        GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(getGraphContext().getGraph());
+        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(getGraphContext().getGraph());
         pipeline.V().has(WindupVertexFrame.TYPE_PROP, JaxWSWebServiceModel.TYPE);
         if (endpointInterface != null)
             pipeline.as("endpointInterface").out(JaxWSWebServiceModel.JAXWS_INTERFACE).retain(Collections.singleton(endpointInterface.asVertex()))

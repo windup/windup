@@ -8,7 +8,7 @@ import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.tinkerpop.frames.FramedGraphQuery;
 import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -55,7 +55,7 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     {
         return ExecutionStatistics.performBenchmarked("GraphService.count", () ->
         {
-            GremlinPipeline<Iterable<?>, Object> pipe = new GremlinPipeline<>();
+            GraphTraversal<Iterable<?>, Object> pipe = new GraphTraversal<>();
             long result = pipe.start(obj).count();
             return result;
         });

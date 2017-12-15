@@ -16,7 +16,7 @@ import org.jboss.windup.util.ExecutionStatistics;
 import com.thinkaurelius.titan.core.attribute.Text;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.tinkerpop.frames.structures.FramedVertexIterable;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 
 import freemarker.ext.beans.StringModel;
 import freemarker.template.TemplateModelException;
@@ -78,7 +78,7 @@ public class GetTagsFromFileClassificationsAndHints implements WindupFreeMarkerM
 
         // Classifications
         {
-            GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(fileModel.asVertex());
+            GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(fileModel.asVertex());
             pipeline.in(ClassificationModel.FILE_MODEL).has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, ClassificationModel.TYPE);
             FramedVertexIterable<ClassificationModel> iterable = new FramedVertexIterable<>(this.context.getFramed(), pipeline, ClassificationModel.class);
             for (ClassificationModel classification : iterable)
@@ -87,7 +87,7 @@ public class GetTagsFromFileClassificationsAndHints implements WindupFreeMarkerM
 
         // Hints
         {
-            GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(fileModel.asVertex());
+            GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(fileModel.asVertex());
             pipeline.in(FileLocationModel.FILE_MODEL).has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, FileLocationModel.TYPE);
             pipeline.in(InlineHintModel.FILE_LOCATION_REFERENCE).has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, InlineHintModel.TYPE);
             FramedVertexIterable<InlineHintModel> iterable = new FramedVertexIterable<>(this.context.getFramed(), pipeline, InlineHintModel.class);

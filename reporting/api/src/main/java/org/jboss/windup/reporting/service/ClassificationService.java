@@ -28,7 +28,7 @@ import com.tinkerpop.blueprints.Compare;
 import com.tinkerpop.blueprints.Direction;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.tinkerpop.frames.structures.FramedVertexIterable;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import java.util.logging.Level;
 import org.jboss.windup.reporting.category.IssueCategoryRegistry;
 
@@ -52,7 +52,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
      */
     public int getMigrationEffortPoints(FileModel fileModel)
     {
-        GremlinPipeline<Vertex, Vertex> classificationPipeline = new GremlinPipeline<>(fileModel.asVertex());
+        GraphTraversal<Vertex, Vertex> classificationPipeline = new GraphTraversal<>(fileModel.asVertex());
         classificationPipeline.in(ClassificationModel.FILE_MODEL);
         classificationPipeline.has(EffortReportModel.EFFORT, Compare.GREATER_THAN, 0);
         classificationPipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, ClassificationModel.TYPE);
@@ -74,7 +74,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
      */
     public Iterable<ClassificationModel> getClassifications(FileModel model)
     {
-        GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(model.asVertex());
+        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(model.asVertex());
         pipeline.in(ClassificationModel.FILE_MODEL);
         pipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, ClassificationModel.TYPE);
         return new FramedVertexIterable<>(getGraphContext().getFramed(), pipeline, ClassificationModel.class);
@@ -85,7 +85,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
      */
     public Iterable<ClassificationModel> getClassificationByName(FileModel model, String classificationName)
     {
-        GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(model.asVertex());
+        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(model.asVertex());
         pipeline.in(ClassificationModel.FILE_MODEL);
         pipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, ClassificationModel.TYPE);
         pipeline.has(ClassificationModel.CLASSIFICATION, classificationName);
@@ -158,7 +158,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
 
         final Set<Vertex> initialVertices = traversal.getAllProjectsAsVertices(recursive);
 
-        GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(this.getGraphContext().getGraph());
+        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(this.getGraphContext().getGraph());
         pipeline.V();
         // If the multivalue index is not 1st, then it doesn't work - https://github.com/thinkaurelius/titan/issues/403
         if (!includeZero)
