@@ -1,3 +1,0 @@
-!https://github.com/tinkerpop/frames/raw/master/doc/images/frames-logo.png!
-
-Frames exposes the elements of a "Blueprints":http://blueprints.tinkerpop.com graph as Java objects. Instead of writing software in terms of vertices and edges, with Frames, software is written in terms of domain objects and their relationships to each other.

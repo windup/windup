@@ -48,8 +48,8 @@
             <!-- Windup Engine - Frames -->
             <dependency>
                 <groupId>org.jboss.windup.graph.frames</groupId>
-                <artifactId>windup-frames</artifactId>
-                <version>${project.version}</version>
+                <artifactId>frames-tp3</artifactId>
+                <version>3.1.0-incubating-SNAPSHOT</version>
             </dependency>
 
             <!-- Windup Engine - Graph Addon -->
