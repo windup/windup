@@ -351,7 +351,7 @@ public class TechnologyUsageStatisticsService extends GraphService<TechnologyUsa
         pipeline.addPipe(new StartPipe(startVertices));
         final OutPipe outPipe = new OutPipe(JavaClassModel.DECOMPILED_SOURCE);
         // The BackFilterPipe needs to wrap all pipes which it "go back before".
-        // This means ...out(...).back(1);
+        // This means ...out(...).select(1);
         pipeline.addPipe(new BackFilterPipe(outPipe));
 
         Map<ProjectModel, Integer> map = new HashMap<>();

@@ -98,7 +98,7 @@ public class TypeReferenceService extends GraphService<JavaTypeReferenceModel>
         pipeline.as("inlineHintVertex");
         pipeline.out(InlineHintModel.FILE_LOCATION_REFERENCE).has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS,
                     JavaTypeReferenceModel.TYPE);
-        pipeline.back("inlineHintVertex");
+        pipeline.select("inlineHintVertex");
 
         // 2. Organize them by package name
         // summarize results.

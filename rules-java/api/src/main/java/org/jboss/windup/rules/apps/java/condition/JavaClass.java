@@ -384,7 +384,7 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
                         .has(JavaClassModel.QUALIFIED_NAME,
                                     regexPredicate,
                                     compiledTypeFilterPattern.pattern())
-                        .back("result");
+                        .select("result");
         }
     }
 

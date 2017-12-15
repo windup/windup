@@ -22,7 +22,7 @@ public class OutAndBackCriterion implements QueryGremlinCriterion
     @Override
     public void query(GraphRewrite event, GremlinPipeline<Vertex, Vertex> pipeline)
     {
-        pipeline.as("x").out(edgeLabel).back("x");
+        pipeline.as("x").out(edgeLabel).select("x");
     }
 
 
