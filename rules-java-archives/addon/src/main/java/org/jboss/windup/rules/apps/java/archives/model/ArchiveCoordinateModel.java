@@ -4,7 +4,7 @@ import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.jboss.forge.addon.dependencies.Coordinate;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
-import com.tinkerpop.frames.Property;
+import com.syncleus.ferma.annotations.Property;
 import com.tinkerpop.frames.modules.javahandler.JavaHandler;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;

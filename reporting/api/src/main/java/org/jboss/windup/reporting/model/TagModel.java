@@ -10,7 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.graph.MapInProperties;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
-import com.tinkerpop.frames.Property;
+import com.syncleus.ferma.annotations.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**

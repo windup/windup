@@ -15,7 +15,7 @@ import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-import com.tinkerpop.frames.Property;
+import com.syncleus.ferma.annotations.Property;
 
 /**
  * Simplified operation having method that already accepts the found payload.
