@@ -27,7 +27,6 @@ import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.GraphTypeManager;
-import org.jboss.windup.graph.frames.TypeAwareFramedGraphQuery;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.FileService;

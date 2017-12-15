@@ -9,7 +9,6 @@ import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.frames.TypeAwareFramedGraphQuery;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;

@@ -1,26 +1,28 @@
 package org.jboss.windup.graph.service;
 
-import com.thinkaurelius.titan.core.TitanTransaction;
+import com.syncleus.ferma.Traversable;
+import com.syncleus.ferma.VertexFrame;
 import com.thinkaurelius.titan.core.attribute.Text;
 import com.thinkaurelius.titan.util.datastructures.IterablesUtil;
-import com.tinkerpop.blueprints.GraphQuery;
+import org.apache.tinkerpop.gremlin.process.traversal.Traversal;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.DefaultGraphTraversal;
+import org.apache.tinkerpop.gremlin.structure.Transaction;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.tinkerpop.frames.FramedGraphQuery;
-import com.tinkerpop.frames.VertexFrame;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
-import java.lang.reflect.Proxy;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.logging.Logger;
+import java.util.List;
+
 import org.apache.commons.lang3.StringUtils;
-import org.jboss.windup.graph.FramedElementInMemory;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.model.InMemoryVertexFrame;
+import org.jboss.windup.graph.GraphTypeManager;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.exception.NonUniqueResultException;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.FilteredIterator;
+import org.jboss.windup.util.exception.WindupException;
+
 import static org.jboss.windup.util.Util.NL;
 
 public class GraphService<T extends WindupVertexFrame> implements Service<T>
@@ -37,7 +39,7 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     @SuppressWarnings("unchecked")
     public static <T extends WindupVertexFrame> T refresh(GraphContext context, T frame)
     {
-        return (T) context.getFramed().frame(frame.asVertex(), WindupVertexFrame.class);
+        return (T) context.getFramed().frameElement(frame.getElement(), WindupVertexFrame.class);
     }
 
     @Override
@@ -45,7 +47,7 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     {
         ExecutionStatistics.performBenchmarked("GraphService.commit", () ->
         {
-            getGraphContext().getGraph().getBaseGraph().commit();
+            getGraphContext().getGraph().tx().commit();
             return null;
         });
     }
@@ -55,19 +57,9 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     {
         return ExecutionStatistics.performBenchmarked("GraphService.count", () ->
         {
-            GraphTraversal<Iterable<?>, Object> pipe = new GraphTraversal<>();
-            long result = pipe.start(obj).count();
-            return result;
+            GraphTraversal<Iterable<?>, Object> pipe = new DefaultGraphTraversal<>();
+            return pipe.V(obj).count().next();
         });
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public T createInMemory()
-    {
-        Class<?>[] resolvedTypes = new Class<?>[] { VertexFrame.class, InMemoryVertexFrame.class, type };
-        return (T) Proxy.newProxyInstance(this.type.getClassLoader(),
-                    resolvedTypes, new FramedElementInMemory<>(this.type));
     }
 
     /**
@@ -76,7 +68,7 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     @Override
     public T create()
     {
-        return ExecutionStatistics.performBenchmarked("GraphService.create", () -> context.getFramed().addVertex(null, type));
+        return ExecutionStatistics.performBenchmarked("GraphService.create", () -> context.getFramed().addFramedVertex(null, type));
     }
 
     @Override
@@ -85,15 +77,17 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
         return ExecutionStatistics.performBenchmarked("GraphService.addTypeToModel", () -> GraphService.addTypeToModel(getGraphContext(), model, type));
     }
 
-    protected FramedGraphQuery findAllQuery()
+    protected Traversable<?, ?> findAllQuery()
     {
-        return context.getQuery().type(type);
+        return context.getFramed().traverse((g) ->
+            g.V().property(WindupVertexFrame.TYPE_PROP, GraphTypeManager.getTypeValue(type))
+        );
     }
 
     @Override
     public Iterable<T> findAll()
     {
-        return findAllQuery().vertices(type);
+        return (Iterable<T>)findAllQuery().toList(type);
     }
 
     @Override
@@ -101,12 +95,17 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     {
         return ExecutionStatistics.performBenchmarked("GraphService.findAllByProperties(" + Arrays.asList(keys) + ")", () ->
         {
-            FramedGraphQuery query = findAllQuery();
+            Traversable<?, ?> traversable = findAllQuery();
             for (int i = 0, j = keys.length; i < j; i++)
             {
-                query = query.has(keys[i], vals[i]);
+                final String key = keys[i];
+                final String val = vals[i];
+
+                traversable = traversable.traverse(g ->
+                    g.property(key, val)
+                );
             }
-            return query.vertices(type);
+            return (List<T>)traversable.toList(type);
         });
     }
 
@@ -126,18 +125,17 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     public Iterable<T> findAllByProperty(final String key, final Object value, final boolean filterByType)
     {
         return ExecutionStatistics.performBenchmarked("GraphService.findAllByProperty(" + key + ")", () -> {
-            if (!filterByType)
-                return context.getFramed().getVertices(key, value, type);
+            Class<?> typeSearch = filterByType ? WindupVertexFrame.class : type;
+            final Iterator verticesIterator = context.getFramed().getFramedVertices(key, value, typeSearch);
+            final List<T> vertices = new ArrayList<>();
 
-            final Iterable vertices = context.getFramed().getVertices(key, value, WindupVertexFrame.class);
-            return new Iterable<T>()
-            {
-                @Override
-                public Iterator<T> iterator()
-                {
-                    final FilteredIterator.Filter<T> filter = new ModelTypeFilter<>(GraphService.this.type);
-                    return new FilteredIterator<T>(vertices.iterator(), filter);
-                }
+            verticesIterator.forEachRemaining(v -> vertices.add((T)v));
+            if (!filterByType)
+                return vertices;
+
+            return (Iterable<T>) () -> {
+                final FilteredIterator.Filter<T> filter = new ModelTypeFilter<>(GraphService.this.type);
+                return new FilteredIterator<T>(vertices.iterator(), filter);
             };
         });
     }
@@ -145,13 +143,19 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     @Override
     public Iterable<T> findAllWithoutProperty(final String key, final Object value)
     {
-        return ExecutionStatistics.performBenchmarked("GraphService.findAllWithoutProperty(" + key + ")", () -> findAllQuery().hasNot(key, value).vertices(type));
+        return ExecutionStatistics.performBenchmarked("GraphService.findAllWithoutProperty(" + key + ")", () -> {
+            return (List<T>)findAllQuery().traverse(g -> {
+                return g.not(g.has(key, value));
+            }).toList(type);
+        });
     }
 
     @Override
     public Iterable<T> findAllWithoutProperty(final String key)
     {
-        return ExecutionStatistics.performBenchmarked("GraphService.findAllWithoutProperty(" + key + ")", () -> findAllQuery().hasNot(key).vertices(type));
+        return ExecutionStatistics.performBenchmarked("GraphService.findAllWithoutProperty(" + key + ")", () -> {
+            return (List<T>)findAllQuery().traverse(g -> g.hasNot(key)).toList(type);
+        });
     }
 
     @Override
@@ -182,7 +186,7 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
                 builder.append(")\\b");
                 regexFinal = builder.toString();
             }
-            return findAllQuery().has(key, Text.REGEX, regexFinal).vertices(type);
+            return (List<T>)findAllQuery().traverse(g -> g.has(key, Text.textContainsRegex(regexFinal))).toList(type);
         });
     }
 
@@ -192,13 +196,13 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     @Override
     public T getById(Object id)
     {
-        return context.getFramed().getVertex(id, this.type);
+        return context.getFramed().getFramedVertex(this.type, id);
     }
 
     @Override
     public T frame(Vertex vertex)
     {
-        return getGraphContext().getFramed().frame(vertex, this.getType());
+        return getGraphContext().getFramed().frameElement(vertex, this.getType());
     }
 
     @Override
@@ -207,20 +211,9 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
         return this.type;
     }
 
-    protected GraphQuery getTypedQuery()
+    protected Traversal<?, ?> getTypedQuery()
     {
-        return getGraphContext().getQuery().type(type);
-    }
-
-    /**
-     * Returns what this' frame has in @TypeValue().
-     */
-    protected String getTypeValueForSearch()
-    {
-        TypeValue typeValue = this.type.getAnnotation(TypeValue.class);
-        if (typeValue == null)
-            throw new IllegalArgumentException("Must be annotated with '@TypeValue': " + this.type.getName());
-        return typeValue.value();
+        return getGraphContext().getQuery(type);
     }
 
     @Override
@@ -273,24 +266,27 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
         return result;
     }
 
-    protected T getUnique(GraphQuery framedQuery)
+    protected T getUnique(Traversal<?, ?> framedQuery)
     {
-        Iterable<Vertex> results = framedQuery.vertices();
+        List<?> results = framedQuery.toList();
 
         if (!results.iterator().hasNext())
         {
             return null;
         }
 
-        Iterator<Vertex> iter = results.iterator();
-        Vertex result = iter.next();
+        Iterator<?> iter = results.iterator();
+        Object resultObj = iter.next();
 
         if (iter.hasNext())
         {
             throw new NonUniqueResultException("Expected unique value, but returned non-unique.");
         }
 
-        return frame(result);
+        if (!(resultObj instanceof Vertex))
+            throw new WindupException("Unrecognized type returned by framed query: " + resultObj);
+
+        return frame((Vertex)resultObj);
     }
 
     protected GraphContext getGraphContext()
@@ -299,9 +295,9 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     }
 
     @Override
-    public TitanTransaction newTransaction()
+    public Transaction newTransaction()
     {
-        return context.getGraph().getBaseGraph().newTransaction();
+        return context.getGraph().tx();
     }
 
     /**
@@ -309,9 +305,9 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
      */
     public static <T extends WindupVertexFrame> T addTypeToModel(GraphContext graphContext, WindupVertexFrame frame, Class<T> type)
     {
-        Vertex vertex = frame.asVertex();
+        Vertex vertex = frame.getElement();
         graphContext.getGraphTypeManager().addTypeToElement(type, vertex);
-        return graphContext.getFramed().frame(vertex, type);
+        return graphContext.getFramed().frameElement(vertex, type);
     }
 
     /**
@@ -319,9 +315,9 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
      */
     public static <T extends WindupVertexFrame> WindupVertexFrame removeTypeFromModel(GraphContext graphContext, WindupVertexFrame frame, Class<T> type)
     {
-        Vertex vertex = frame.asVertex();
+        Vertex vertex = frame.getElement();
         graphContext.getGraphTypeManager().removeTypeFromElement(type, vertex);
-        return graphContext.getFramed().frame(vertex, WindupVertexFrame.class);
+        return graphContext.getFramed().frameElement(vertex, WindupVertexFrame.class);
     }
 
     @Override
@@ -329,7 +325,7 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     {
         ExecutionStatistics.performBenchmarked("GraphService.commit", () ->
         {
-            model.asVertex().remove();
+            model.getElement().remove();
             return null;
         });
     }
