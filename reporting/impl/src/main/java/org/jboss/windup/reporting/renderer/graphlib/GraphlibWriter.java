@@ -11,7 +11,7 @@ import org.jboss.windup.reporting.renderer.graphlib.GraphvizConstants.GraphvizTy
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Edge;
 import com.tinkerpop.blueprints.Graph;
-import com.tinkerpop.blueprints.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 
 public class GraphlibWriter implements GraphDataSerializer
 {

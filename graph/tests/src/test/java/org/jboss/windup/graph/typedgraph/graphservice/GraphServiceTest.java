@@ -24,7 +24,7 @@ import org.junit.runner.RunWith;
 
 import com.thinkaurelius.titan.core.attribute.Cmp;
 import com.tinkerpop.blueprints.Edge;
-import com.tinkerpop.blueprints.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.tinkerpop.blueprints.util.wrappers.event.EventGraph;
 import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.frames.FramedGraphQuery;

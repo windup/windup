@@ -1,6 +1,6 @@
 package org.jboss.windup.reporting.service;
 
-import com.tinkerpop.blueprints.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.tinkerpop.pipes.PipeFunction;
 import java.util.Set;
 

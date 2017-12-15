@@ -12,7 +12,7 @@ import org.jboss.windup.rules.apps.javaee.model.RMIServiceModel;
 import org.jboss.windup.util.Logging;
 
 import com.thinkaurelius.titan.core.attribute.Text;
-import com.tinkerpop.blueprints.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 
 /**

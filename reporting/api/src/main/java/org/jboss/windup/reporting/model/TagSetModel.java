@@ -5,7 +5,7 @@ import java.util.Set;
 import org.jboss.windup.graph.SetInProperties;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
-import com.tinkerpop.blueprints.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**

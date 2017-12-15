@@ -12,7 +12,7 @@ import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.GraphService;
 
 import com.tinkerpop.blueprints.Edge;
-import com.tinkerpop.blueprints.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.tinkerpop.blueprints.util.wrappers.event.listener.GraphChangedListener;
 
 /**

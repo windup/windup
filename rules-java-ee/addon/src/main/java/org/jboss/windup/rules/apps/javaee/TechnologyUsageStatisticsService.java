@@ -21,7 +21,7 @@ import org.jboss.windup.graph.model.HasApplications;
 import org.jboss.windup.rules.apps.javaee.model.stats.GeneralStatsItemModel;
 import org.jboss.windup.reporting.model.TechnologyUsageStatisticsModel;
 
-import com.tinkerpop.blueprints.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.tinkerpop.frames.FramedGraphQuery;
 import com.tinkerpop.pipes.filter.BackFilterPipe;
 import com.tinkerpop.pipes.transform.OutPipe;

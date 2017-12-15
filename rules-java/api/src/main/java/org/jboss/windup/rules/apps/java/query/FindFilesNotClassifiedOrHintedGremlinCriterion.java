@@ -1,7 +1,7 @@
 package org.jboss.windup.rules.apps.java.query;
 
 import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.blueprints.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.tinkerpop.gremlin.java.GremlinPipeline;
 import com.tinkerpop.pipes.PipeFunction;
 import org.jboss.forge.furnace.util.Lists;

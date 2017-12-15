@@ -1,6 +1,6 @@
 package org.jboss.windup.rules.apps.java.archives.model;
 
-import com.tinkerpop.blueprints.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.jboss.forge.addon.dependencies.Coordinate;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 

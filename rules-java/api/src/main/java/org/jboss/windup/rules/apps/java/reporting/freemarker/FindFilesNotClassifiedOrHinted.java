@@ -20,7 +20,7 @@ import org.jboss.windup.rules.apps.java.query.FindFilesNotClassifiedOrHintedGrem
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.util.ExecutionStatistics;
 
-import com.tinkerpop.blueprints.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 
 import freemarker.template.TemplateModelException;
 

@@ -1,7 +1,7 @@
 package org.jboss.windup.graph.test.polymorf;
 
 import com.tinkerpop.blueprints.Graph;
-import com.tinkerpop.blueprints.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.tinkerpop.blueprints.impls.tg.TinkerGraph;
 
 /**

@@ -13,7 +13,7 @@ import org.jboss.windup.util.exception.WindupException;
 
 import com.tinkerpop.blueprints.Direction;
 import com.tinkerpop.blueprints.Element;
-import com.tinkerpop.blueprints.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.tinkerpop.frames.FramedGraph;
 import com.tinkerpop.frames.modules.MethodHandler;
 
