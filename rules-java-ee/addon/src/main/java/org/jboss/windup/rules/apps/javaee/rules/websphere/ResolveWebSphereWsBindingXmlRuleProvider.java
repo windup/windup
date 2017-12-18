@@ -48,18 +48,18 @@ public class ResolveWebSphereWsBindingXmlRuleProvider extends IteratingRuleProvi
         GraphContext graphContext = event.getGraphContext();
         LinkService linkService = new LinkService(graphContext);
         LinkModel documentationEAP6Link = linkService.create();
-        documentationEAP6Link.setDescription("JAX-WS Web Services (EAP 6)");
+        documentationEAP6Link.setDescription("JAX-WS Web Services (JBoss EAP 6)");
         documentationEAP6Link.setLink(
                     "https://access.redhat.com/documentation/en-US/JBoss_Enterprise_Application_Platform/6.4/html/Development_Guide/chap-JAX-WS_Web_Services.html");
         classificationService.attachLink(classificationModel, documentationEAP6Link);
         LinkModel documentationEAP7Link = linkService.create();
-        documentationEAP7Link.setDescription("Developing JAX-WS Web Services (EAP 7)");
+        documentationEAP7Link.setDescription("Developing JAX-WS Web Services (JBoss EAP 7)");
         documentationEAP7Link.setLink(
                     "https://access.redhat.com/documentation/en-us/red_hat_jboss_enterprise_application_platform/7.0/html/developing_web_services_applications/developing_jax_ws_web_services");
         classificationService.attachLink(classificationModel, documentationEAP7Link);
         LinkModel documentationCommunityLink = linkService.create();
-        documentationCommunityLink.setDescription("JBossWS configuration (community documentation)");
-        documentationCommunityLink.setLink("https://docs.jboss.org/author/display/JBWS/Predefined+client+and+endpoint+configurations");
+        documentationCommunityLink.setDescription("Assigning Client and Endpoint Configurations (JBoss EAP 7)");
+        documentationCommunityLink.setLink("https://access.redhat.com/documentation/en-us/red_hat_jboss_enterprise_application_platform/7.0/html-single/developing_web_services_applications/#ws_endpoint_assign_config");
         classificationService.attachLink(classificationModel, documentationCommunityLink);
 
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());
