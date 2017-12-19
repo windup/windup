@@ -1,7 +1,6 @@
 package org.jboss.windup.graph.model;
 
 import com.syncleus.ferma.annotations.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
  * Information about the Windup execution.

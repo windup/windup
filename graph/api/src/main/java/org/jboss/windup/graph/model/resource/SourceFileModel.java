@@ -1,15 +1,13 @@
 package org.jboss.windup.graph.model.resource;
 
-import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.tinkerpop.frames.modules.javahandler.JavaHandler;
-import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
+import org.apache.tinkerpop.gremlin.structure.VertexProperty;
 import org.jboss.windup.graph.model.LinkModel;
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import com.syncleus.ferma.annotations.Adjacency;
 import com.syncleus.ferma.annotations.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
  * Indicates that a file is source code (as opposed to a binary file of some kind).
@@ -38,22 +36,15 @@ public interface SourceFileModel extends WindupVertexFrame
     /**
      * Contains a boolean indicating that the reporting system should generate a source report for this {@link SourceFileModel}.
      */
-    @JavaHandler
-    boolean isGenerateSourceReport();
+    default boolean isGenerateSourceReport()
+    {
+        VertexProperty result = getElement().property(GENERATE_SOURCE_REPORT);
+        return result == null ? false : (Boolean)result.value();
+    }
 
     /**
      * Contains a boolean indicating that the reporting system should generate a source report for this {@link SourceFileModel}.
      */
     @Property(GENERATE_SOURCE_REPORT)
     void setGenerateSourceReport(boolean generateSourceReport);
-
-    abstract class Impl implements SourceFileModel, JavaHandlerContext<Vertex>
-    {
-        @Override
-        public boolean isGenerateSourceReport()
-        {
-            Boolean result = it().getProperty(GENERATE_SOURCE_REPORT);
-            return result == null ? false : result;
-        }
-    }
 }

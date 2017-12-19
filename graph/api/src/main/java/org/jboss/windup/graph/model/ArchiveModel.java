@@ -1,14 +1,10 @@
 package org.jboss.windup.graph.model;
 
-import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.tinkerpop.frames.modules.javahandler.JavaHandler;
-import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import org.jboss.windup.graph.model.resource.FileModel;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import com.syncleus.ferma.annotations.Adjacency;
 import com.syncleus.ferma.annotations.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -69,8 +65,27 @@ public interface ArchiveModel extends FileModel
     /**
      * Gets all files in this archive, including subfiles, but not including subfiles of embedded archives.
      */
-    @JavaHandler
-    Iterable<FileModel> getAllFiles();
+    default Iterable<FileModel> getAllFiles()
+    {
+        Set<FileModel> results = new LinkedHashSet<>();
+
+        for (FileModel child : getFilesInDirectory())
+            addAllFiles(results, child);
+
+        return results;
+    }
+
+    default void addAllFiles(Set<FileModel> files, FileModel file)
+    {
+        files.add(file);
+
+        // don't include children of embedded archives
+        if (file instanceof ArchiveModel)
+            return;
+
+        for (FileModel child : file.getFilesInDirectory())
+            addAllFiles(files, child);
+    }
 
     /**
      * Gets the {@link ArchiveModel}s that are duplicates of this archive.
@@ -82,64 +97,30 @@ public interface ArchiveModel extends FileModel
      * Gets the "root" archive model. The root is defined as the model for which {@link #getParentArchive()} would return
      * null. If the current archive is the root, then this will return itself.
      */
-    @JavaHandler
-    ArchiveModel getRootArchiveModel();
+    default ArchiveModel getRootArchiveModel()
+    {
+        ArchiveModel archiveModel = this;
+        while (archiveModel.getParentArchive() != null)
+        {
+            archiveModel = archiveModel.getParentArchive();
+        }
+
+        // reframe it to make sure that we return a proxy
+        // (otherwise, it may return this method handler implementation, which will have some unexpected side effects)
+        return archiveModel;
+    }
 
     /**
      * Indicates whether or not the passed in {@link ArchiveModel} is a child or other descendant of the current
      * archive.
      */
-    @JavaHandler
-    boolean containsArchive(ArchiveModel archiveModel);
-
-    abstract class Impl extends FileModel.Impl implements ArchiveModel, JavaHandlerContext<Vertex>
+    default boolean containsArchive(ArchiveModel archiveModel)
     {
-        @Override
-        public Iterable<FileModel> getAllFiles()
-        {
-            Set<FileModel> results = new LinkedHashSet<>();
-
-            for (FileModel child : getFilesInDirectory())
-                addAllFiles(results, child);
-
-            return results;
-        }
-
-        private void addAllFiles(Set<FileModel> files, FileModel file)
-        {
-            files.add(file);
-
-            // don't include children of embedded archives
-            if (file instanceof ArchiveModel)
-                return;
-
-            for (FileModel child : file.getFilesInDirectory())
-                addAllFiles(files, child);
-        }
-
-        @Override
-        public ArchiveModel getRootArchiveModel()
-        {
-            ArchiveModel archiveModel = this;
-            while (archiveModel.getParentArchive() != null)
-            {
-                archiveModel = archiveModel.getParentArchive();
-            }
-
-            // reframe it to make sure that we return a proxy
-            // (otherwise, it may return this method handler implementation, which will have some unexpected side effects)
-            return frame(archiveModel.asVertex());
-        }
-
-        @Override
-        public boolean containsArchive(ArchiveModel archiveModel)
-        {
-            if (this.asVertex().equals(archiveModel.asVertex()))
-                return true;
-            else if (archiveModel.getParentArchive() != null)
-                return containsArchive(archiveModel.getParentArchive());
-            else
-                return false;
-        }
+        if (this.getElement().equals(archiveModel.getElement()))
+            return true;
+        else if (archiveModel.getParentArchive() != null)
+            return containsArchive(archiveModel.getParentArchive());
+        else
+            return false;
     }
 }

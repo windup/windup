@@ -3,7 +3,6 @@ package org.jboss.windup.graph.model;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import com.syncleus.ferma.annotations.Adjacency;
 import com.syncleus.ferma.annotations.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
  * This classifies files and provides general background information about a specific {@link ArchiveModel}. (For instance,

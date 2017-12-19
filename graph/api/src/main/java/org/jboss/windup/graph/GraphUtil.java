@@ -1,6 +1,7 @@
 package org.jboss.windup.graph;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
@@ -32,22 +33,22 @@ public class GraphUtil
             sb.append(System.lineSeparator()).append(indent).append("(vertex == null)");
             return;
         }
-        if (visitedIDs.contains(vertex.getId()))
+        if (visitedIDs.contains(vertex.id()))
         {
-            sb.append(System.lineSeparator()).append(indent).append("" + vertex.getId());
+            sb.append(System.lineSeparator()).append(indent).append("" + vertex.id());
             return;
         }
 
-        visitedIDs.add(vertex.getId());
+        visitedIDs.add(vertex.id());
 
-        sb.append(System.lineSeparator()).append(indent).append("v #").append("" + vertex.getId()).append(" {");
-        boolean hasProps = !vertex.getPropertyKeys().isEmpty();
-        boolean hasEdges = vertex.getEdges(Direction.IN).iterator().hasNext()
-                    || vertex.getEdges(Direction.OUT).iterator().hasNext();
+        sb.append(System.lineSeparator()).append(indent).append("v #").append("" + vertex.id()).append(" {");
+        boolean hasProps = !vertex.keys().isEmpty();
+        boolean hasEdges = vertex.edges(Direction.IN).hasNext()
+                    || vertex.edges(Direction.OUT).hasNext();
 
-        for (String propKey : vertex.getPropertyKeys())
+        for (String propKey : vertex.keys())
         {
-            sb.append(System.lineSeparator()).append(indent).append(propKey).append(": ").append("" + vertex.getProperty(propKey));
+            sb.append(System.lineSeparator()).append(indent).append(propKey).append(": ").append("" + vertex.property(propKey));
         }
 
         if (withEdgesOfLabel == null || depth == 0)
@@ -61,18 +62,24 @@ public class GraphUtil
         {
             boolean allEdges = "*".equals(withEdgesOfLabel);
             sb.append(System.lineSeparator()).append(indent).append(withEdgesOfLabel).append(" OUT -> ");
-            for (Edge edge : allEdges ? vertex.getEdges(Direction.OUT) : vertex.getEdges(Direction.OUT, withEdgesOfLabel))
+
+            Iterator<Edge> edgesOutIterator = allEdges ? vertex.edges(Direction.OUT) : vertex.edges(Direction.OUT, withEdgesOfLabel);
+            while (edgesOutIterator.hasNext())
             {
+                Edge edge = edgesOutIterator.next();
                 if (allEdges)
-                    sb.append(System.lineSeparator()).append(indent).append(edge.getLabel()).append(" --> ");
-                vertexAsString(edge.getVertex(Direction.IN), depth - 1, withEdgesOfLabel, sb, atLevel + 1, visitedIDs);
+                    sb.append(System.lineSeparator()).append(indent).append(edge.label()).append(" --> ");
+                vertexAsString(edge.inVertex(), depth - 1, withEdgesOfLabel, sb, atLevel + 1, visitedIDs);
             }
             sb.append(System.lineSeparator()).append(indent).append(withEdgesOfLabel).append(" <- IN");
-            for (Edge edge : allEdges ? vertex.getEdges(Direction.IN) : vertex.getEdges(Direction.IN, withEdgesOfLabel))
+
+            Iterator<Edge> edgesInIterator = allEdges ? vertex.edges(Direction.IN) : vertex.edges(Direction.IN, withEdgesOfLabel);
+            while (edgesInIterator.hasNext())
             {
+                Edge edge = edgesInIterator.next();
                 if (allEdges)
-                    sb.append(System.lineSeparator()).append(indent).append(" <-- ").append(edge.getLabel()).append(" --> ");
-                vertexAsString(edge.getVertex(Direction.OUT), depth - 1, withEdgesOfLabel, sb, atLevel + 1, visitedIDs);
+                    sb.append(System.lineSeparator()).append(indent).append(" <-- ").append(edge.label()).append(" --> ");
+                vertexAsString(edge.outVertex(), depth - 1, withEdgesOfLabel, sb, atLevel + 1, visitedIDs);
             }
         }
 

@@ -1,13 +1,12 @@
 package org.jboss.windup.graph.model;
 
+import com.syncleus.ferma.VertexFrame;
 import org.apache.tinkerpop.gremlin.structure.Element;
-import com.tinkerpop.frames.modules.javahandler.JavaHandler;
-import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public interface WindupFrame<T extends Element>
+public interface WindupFrame<T extends Element> extends VertexFrame
 {
     /**
      * Name of the property where vertex/frame types are stored.
@@ -16,47 +15,31 @@ public interface WindupFrame<T extends Element>
      */
     String TYPE_PROP = "w:winduptype";
 
-    @JavaHandler
-    @Override
-    String toString();
-
     /**
      * A string representation of this vertex, showing it's properties in a JSON-like format.
      */
-    @JavaHandler
-    String toPrettyString();
-
-    abstract class Impl<T extends Element> implements WindupVertexFrame, JavaHandlerContext<T>
+    default String toPrettyString()
     {
-        @Override
-        public String toString()
+        Element v = getElement();
+        StringBuilder result = new StringBuilder();
+        result.append("[").append(v.toString()).append("=");
+        result.append("{");
+
+        boolean hasSome = false;
+        for (String propKey : v.keys())
         {
-            return toPrettyString();
+            hasSome = true;
+            Object propVal = v.property(propKey);
+            result.append(propKey).append(": ").append(propVal);
+            result.append(", ");
         }
 
-        public String toPrettyString()
+        if (hasSome)
         {
-            Element v = it();
-            StringBuilder result = new StringBuilder();
-            result.append("[").append(v.toString()).append("=");
-            result.append("{");
-
-            boolean hasSome = false;
-            for (String propKey : v.getPropertyKeys())
-            {
-                hasSome = true;
-                Object propVal = v.getProperty(propKey);
-                result.append(propKey).append(": ").append(propVal);
-                result.append(", ");
-            }
-
-            if (hasSome)
-            {
-                result.delete(result.length() - 2, result.length());
-            }
-
-            result.append("}]");
-            return result.toString();
+            result.delete(result.length() - 2, result.length());
         }
+
+        result.append("}]");
+        return result.toString();
     }
 }

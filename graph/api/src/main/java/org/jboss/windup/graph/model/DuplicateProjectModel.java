@@ -2,7 +2,6 @@ package org.jboss.windup.graph.model;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import com.syncleus.ferma.annotations.Adjacency;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
  * Represents a {@link ProjectModel} that is actually an exact duplicate of another project.

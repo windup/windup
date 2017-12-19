@@ -1,10 +1,5 @@
 package org.jboss.windup.graph.model;
 
-import com.tinkerpop.frames.modules.javahandler.JavaHandler;
-
-import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
-
 /**
  * @author <a href="mailto:dklingenberg@gmail.com">David Klingenberg</a>
  */
@@ -18,26 +13,19 @@ public interface HasApplications extends BelongsToProject
      */
     Iterable<ProjectModel> getApplications();
 
-    @Override
-    @JavaHandler
-    boolean belongsToProject(ProjectModel projectModel);
 
-    abstract class Impl implements HasApplications, JavaHandlerContext<Vertex>, BelongsToProject
+    default boolean belongsToProject(ProjectModel projectModel)
     {
-        @Override
-        public boolean belongsToProject(ProjectModel project)
+        ProjectModel canonicalProjectModel = this.getCanonicalProjectModel(projectModel);
+
+        for (ProjectModel currentProject : this.getApplications())
         {
-            ProjectModel canonicalProjectModel = this.getCanonicalProjectModel(project);
-
-            for (ProjectModel currentProject : this.getApplications())
+            if (currentProject.equals(canonicalProjectModel))
             {
-                if (currentProject.equals(canonicalProjectModel))
-                {
-                    return true;
-                }
+                return true;
             }
-
-            return false;
         }
+
+        return false;
     }
 }
