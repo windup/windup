@@ -1,5 +1,6 @@
 package org.jboss.windup.graph;
 
+import com.syncleus.ferma.ClassInitializer;
 import com.syncleus.ferma.typeresolvers.TypeResolver;
 import com.thinkaurelius.titan.core.TitanEdge;
 import java.util.ArrayList;
@@ -13,9 +14,10 @@ import java.util.Set;
 
 import com.thinkaurelius.titan.graphdb.internal.AbstractElement;
 import com.thinkaurelius.titan.graphdb.relations.StandardEdge;
-import com.tinkerpop.blueprints.util.wrappers.event.EventEdge;
+import org.apache.tinkerpop.gremlin.structure.Property;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupFrame;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.util.furnace.FurnaceClasspathScanner;
@@ -33,7 +35,7 @@ import org.jboss.windup.util.exception.WindupException;
  * Windup's implementation of extended type handling for TinkerPop Frames. This allows storing multiple types based on the @TypeValue.value(), also in
  * the type property (see {@link WindupVertexFrame#TYPE_PROP}.
  */
-public class GraphTypeManager implements TypeResolver, FrameInitializer
+public class GraphTypeManager implements TypeResolver, ClassInitializer<?>
 {
     private static final Logger LOG = Logger.getLogger(GraphTypeManager.class.getName());
 
@@ -121,12 +123,6 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
      */
     public void removeTypeFromElement(Class<? extends WindupFrame<?>> kind, Element element)
     {
-        Class<?> typeHoldingTypeField = getTypeRegistry().getTypeHoldingTypeField(kind);
-        if (typeHoldingTypeField == null)
-            return;
-        String typeFieldName = typeHoldingTypeField.getAnnotation(TypeField.class).value();
-
-
         TypeValue typeValueAnnotation = kind.getAnnotation(TypeValue.class);
         if (typeValueAnnotation == null)
             return;
@@ -135,16 +131,16 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
         AbstractElement abstractElement = GraphTypeManager.asTitanElement(element);
 
         List<String> newTypes = new ArrayList<>();
-        for (String existingType : (Iterable<String>)abstractElement.getProperty(typeFieldName))
+        for (String existingType : (Iterable<String>)abstractElement.property(WindupFrame.TYPE_PROP))
         {
             if (!existingType.toString().equals(typeValue))
             {
                 newTypes.add(typeValue);
             }
         }
-        abstractElement.removeProperty(typeFieldName);
+        abstractElement.property(WindupFrame.TYPE_PROP).remove();
         for (String newType : newTypes)
-            addProperty(abstractElement, typeFieldName, newType);
+            addProperty(abstractElement, WindupFrame.TYPE_PROP, newType);
 
         addSuperclassType(kind, element);
     }
@@ -153,7 +149,7 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
     {
         // This uses the direct Titan API which is indexed. See GraphContextImpl.
         if (abstractElement instanceof StandardVertex)
-            ((StandardVertex) abstractElement).addProperty(propertyName, propertyValue);
+            ((StandardVertex) abstractElement).property(propertyName, propertyValue);
         // StandardEdge doesn't have addProperty().
         else if (abstractElement instanceof StandardEdge)
             //((StandardEdge) abstractElement).setProperty(propertyName, propertyValue);
@@ -161,16 +157,17 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
         // For all others, we resort to storing a list
         else
         {
-            List<String> existingList = abstractElement.getProperty(propertyName);
-            if (existingList == null)
+            Property<List<String>> property = abstractElement.property(propertyName);
+            if (property == null)
             {
-                abstractElement.setProperty(propertyName, Collections.singletonList(propertyValue));
+                abstractElement.property(propertyName, Collections.singletonList(propertyValue));
             }
             else
             {
+                List<String> existingList = property.value();
                 List<String> newList = new ArrayList<>(existingList);
                 newList.add(propertyValue);
-                abstractElement.setProperty(propertyName, newList);
+                abstractElement.property(propertyName, newList);
             }
         }
     }
@@ -182,19 +179,6 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
             el.setProperty(propertyName, propertyValue);
         else
             el.setProperty(propertyName, val + "|" + propertyValue);
-    }
-
-
-    /**
-     * Returns the type identifier for given type - the value in the property discriminating this type.
-     */
-    public static String getTypeIdentifier(Class<? extends VertexFrame> modelInterface)
-    {
-        TypeValue typeValueAnnotation = modelInterface.getAnnotation(TypeValue.class);
-        if (typeValueAnnotation == null)
-            return null;
-
-        return typeValueAnnotation.value();
     }
 
     /**
