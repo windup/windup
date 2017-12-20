@@ -1,16 +1,18 @@
 package org.jboss.windup.graph.service;
 
 import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.tinkerpop.frames.structures.FramedVertexIterable;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.TitanUtil;
+import org.jboss.windup.graph.frames.FramedVertexIterable;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.util.ExecutionStatistics;
 
 import com.thinkaurelius.titan.core.attribute.Text;
-import com.thinkaurelius.titan.util.datastructures.IterablesUtil;
 
 public class FileService extends GraphService<FileModel>
 {
@@ -52,19 +54,19 @@ public class FileService extends GraphService<FileModel>
     public Iterable<FileModel> findByFilenameRegex(String filenameRegex)
     {
         filenameRegex = TitanUtil.titanifyRegex(filenameRegex);
-        Iterable<Vertex> vertices = getGraphContext().getFramed().query()
-                .has(FileModel.FILE_NAME, Text.REGEX, filenameRegex)
-                .has(WindupVertexFrame.TYPE_PROP, FileModel.TYPE).vertices();
+        Iterable<Vertex> vertices = getGraphContext().getGraph()
+                .traversal()
+                .V()
+                .property(FileModel.FILE_NAME, Text.REGEX, filenameRegex)
+                .property(WindupVertexFrame.TYPE_PROP, FileModel.TYPE).toList();
         return new FramedVertexIterable<>(getGraphContext().getFramed(), vertices, FileModel.class);
     }
 
-    public Iterable<FileModel> findArchiveEntryWithExtension(String... values)
+    public List<FileModel> findArchiveEntryWithExtension(String... values)
     {
         // build regex
         if (values.length == 0)
-        {
-            return IterablesUtil.emptyIterable();
-        }
+            return Collections.emptyList();
 
         final String regex;
         if (values.length == 1)
@@ -84,7 +86,7 @@ public class FileService extends GraphService<FileModel>
             regex = ".+\\." + builder.toString() + "$";
         }
 
-        return getGraphContext().getQuery().type(FileModel.class)
-                    .has("filePath", Text.REGEX, regex).vertices(FileModel.class);
+        return (List<FileModel>)getGraphContext().getQuery(FileModel.class).traverse(g -> g.property("filePath", Text.REGEX, regex))
+                    .toList(FileModel.class);
     }
 }

@@ -1,13 +1,14 @@
 package org.jboss.windup.graph.service;
 
+import java.util.List;
 import java.util.StringTokenizer;
 
 import com.thinkaurelius.titan.core.attribute.Text;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.tinkerpop.frames.structures.FramedVertexIterable;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.commons.io.FilenameUtils;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.frames.FramedVertexIterable;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -30,10 +31,12 @@ public class ArchiveService extends GraphService<ArchiveModel>
      */
     public Iterable<ArchiveModel> findBySHA1(String sha1)
     {
-        GraphTraversal<Vertex, Vertex> query = new GraphTraversal<>(getGraphContext().getGraph());
-        query.V();
-        query.has(FileModel.SHA1_HASH, sha1);
-        query.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, ArchiveModel.TYPE);
+        List<Vertex> query = getGraphContext().getGraph().traversal()
+            .V()
+            .property(FileModel.SHA1_HASH, sha1)
+            .property(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, ArchiveModel.TYPE)
+            .toList();
+
         return new FramedVertexIterable<>(getGraphContext().getFramed(), query, ArchiveModel.class);
     }
 

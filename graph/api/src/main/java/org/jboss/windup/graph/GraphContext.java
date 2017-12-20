@@ -4,6 +4,7 @@ import java.io.Closeable;
 import java.nio.file.Path;
 import java.util.Map;
 
+import com.syncleus.ferma.Traversable;
 import org.apache.tinkerpop.gremlin.process.traversal.Traversal;
 import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerGraph;
 
@@ -28,7 +29,7 @@ public interface GraphContext extends Closeable
     /**
      * Get the underlying {@link TinkerGraph}, which is itself a wrapper for a {@link TitanGraph}.
      */
-    TinkerGraph getGraph();
+    TitanGraph getGraph();
 
     /**
      * Creates new graph using the configuration. In case there was already a graph located in the specified path, it will be deleted.
@@ -55,7 +56,7 @@ public interface GraphContext extends Closeable
     /**
      * Get the {@link GraphModelScanner}.
      */
-    Traversal<?, ?> getQuery(Class<? extends WindupVertexFrame> kind);
+    Traversable<?, ?> getQuery(Class<? extends WindupVertexFrame> kind);
 
     /**
      * Clear all data from the graph (note: the graph must be closed for this operation to succeed)

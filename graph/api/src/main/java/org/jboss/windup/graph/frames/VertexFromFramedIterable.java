@@ -2,8 +2,8 @@ package org.jboss.windup.graph.frames;
 
 import java.util.Iterator;
 
+import com.syncleus.ferma.VertexFrame;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.tinkerpop.frames.VertexFrame;
 
 /**
  * Converts an {@link Iterable<? extends VertexFrame>} to {@link Iterable<Vertex>}.
@@ -39,7 +39,7 @@ public class VertexFromFramedIterable implements Iterable<Vertex>
 
             public Vertex next()
             {
-                return iterator.next().asVertex();
+                return iterator.next().getElement();
             }
         };
     }

@@ -3,9 +3,10 @@ package org.jboss.windup.graph.service;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.performance.RuleProviderExecutionStatisticsModel;
 
-import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
-
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 /**
  * This service provides useful methods for dealing with {@link RuleProviderExecutionStatisticsModel} Vertices within
@@ -26,10 +27,11 @@ public class RuleProviderExecutionStatisticsService extends GraphService<RulePro
      */
     public Iterable<RuleProviderExecutionStatisticsModel> findAllOrderedByIndex()
     {
-        GraphTraversal<RuleProviderExecutionStatisticsModel, RuleProviderExecutionStatisticsModel> pipeline = new GraphTraversal<>(
-                    findAll());
-        pipeline.order().by(Comparator.comparingInt(RuleProviderExecutionStatisticsModel::getRuleIndex));
+        List<RuleProviderExecutionStatisticsModel> immutableList = findAll();
+        List<RuleProviderExecutionStatisticsModel> mutableList = new ArrayList<>(immutableList.size());
+        mutableList.addAll(immutableList);
 
-        return pipeline;
+        Collections.sort(mutableList, Comparator.comparingInt(RuleProviderExecutionStatisticsModel::getRuleIndex));
+        return mutableList;
     }
 }

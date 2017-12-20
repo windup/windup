@@ -12,6 +12,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import com.syncleus.ferma.DelegatingFramedGraph;
+import com.syncleus.ferma.FramedGraph;
+import com.syncleus.ferma.Traversable;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
@@ -38,18 +41,8 @@ import com.thinkaurelius.titan.core.schema.TitanManagement;
 import com.thinkaurelius.titan.core.util.TitanCleanup;
 import com.thinkaurelius.titan.diskstorage.berkeleyje.BerkeleyJEStoreManager;
 import org.apache.tinkerpop.gremlin.structure.Edge;
-import com.tinkerpop.blueprints.Graph;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.tinkerpop.blueprints.util.wrappers.batch.BatchGraph;
-import com.tinkerpop.blueprints.util.wrappers.event.EventGraph;
-import com.syncleus.ferma.FramedGraph;
-import com.tinkerpop.frames.FramedGraphConfiguration;
-import com.tinkerpop.frames.FramedGraphFactory;
 import com.syncleus.ferma.annotations.Property;
-import com.tinkerpop.frames.modules.FrameClassLoaderResolver;
-import com.tinkerpop.frames.modules.Module;
-import com.tinkerpop.frames.modules.gremlingroovy.GremlinGroovyModule;
-import com.tinkerpop.frames.modules.javahandler.JavaHandlerModule;
 import org.jboss.windup.graph.model.WindupEdgeFrame;
 
 public class GraphContextImpl implements GraphContext
@@ -67,9 +60,8 @@ public class GraphContextImpl implements GraphContext
      */
     private final Map<String, BeforeGraphCloseListener> beforeGraphCloseListenerBuffer = new HashMap<>();
     private Map<String, Object> configurationOptions;
-    private EventGraph<TitanGraph> eventGraph;
-    private BatchGraph<TitanGraph> batchGraph;
-    private FramedGraph<EventGraph<TitanGraph>> framed;
+    private TitanGraph graph;
+    private FramedGraph framed;
     private Configuration conf;
 
     public GraphContextImpl(Furnace furnace, GraphTypeManager typeManager,
@@ -126,43 +118,41 @@ public class GraphContextImpl implements GraphContext
 
     private void createFramed(TitanGraph titanGraph)
     {
-        this.eventGraph = new EventGraph<>(titanGraph);
-        this.batchGraph = new BatchGraph<>(titanGraph, 1000L);
+        this.graph = titanGraph;
 
         final ClassLoader compositeClassLoader = classLoaderProvider.getCompositeClassLoader();
 
-        final FrameClassLoaderResolver classLoaderResolver = new FrameClassLoaderResolver()
-        {
-            public ClassLoader resolveClassLoader(Class<?> frameType)
-            {
-                return compositeClassLoader;
-            }
-        };
+//        final FrameClassLoaderResolver classLoaderResolver = new FrameClassLoaderResolver()
+//        {
+//            public ClassLoader resolveClassLoader(Class<?> frameType)
+//            {
+//                return compositeClassLoader;
+//            }
+//        };
 
-        final Module addModules = new Module()
-        {
-            @Override
-            public Graph configure(Graph baseGraph, FramedGraphConfiguration config)
-            {
-                config.setFrameClassLoaderResolver(classLoaderResolver);
-                config.addFrameInitializer(new DefaultValueInitializer());
-                config.addMethodHandler(new MapInPropertiesHandler());
-                config.addMethodHandler(new MapInAdjacentPropertiesHandler());
-                config.addMethodHandler(new MapInAdjacentVerticesHandler());
-                config.addMethodHandler(new SetInPropertiesHandler());
+//        final Module addModules = new Module()
+//        {
+//            @Override
+//            public Graph configure(Graph baseGraph, FramedGraphConfiguration config)
+//            {
+//                config.setFrameClassLoaderResolver(classLoaderResolver);
+//                config.addFrameInitializer(new DefaultValueInitializer());
+//                config.addMethodHandler(new MapInPropertiesHandler());
+//                config.addMethodHandler(new MapInAdjacentPropertiesHandler());
+//                config.addMethodHandler(new MapInAdjacentVerticesHandler());
+//                config.addMethodHandler(new SetInPropertiesHandler());
+//
+//                return baseGraph;
+//            }
+//        };
 
-                return baseGraph;
-            }
-        };
-
-        FramedGraphFactory factory = new FramedGraphFactory(
-                    addModules,
-                    new JavaHandlerModule(),   // Supports @JavaHandler
-                    graphTypeManager.build(),     // Adds detected WindupVertexFrame/Model classes
-                    new GremlinGroovyModule() // Supports @Gremlin
-        );
-
-        framed = factory.create(eventGraph);
+//        FramedGraphFactory factory = new FramedGraphFactory(
+//                    addModules,
+//                    new JavaHandlerModule(),   // Supports @JavaHandler
+//                    graphTypeManager.build(),     // Adds detected WindupVertexFrame/Model classes
+//                    new GremlinGroovyModule() // Supports @Gremlin
+//        );
+        framed = new DelegatingFramedGraph<TitanGraph>(titanGraph);
     }
 
     private List<Indexed> getIndexAnnotations(Method method)
@@ -232,7 +222,7 @@ public class GraphContextImpl implements GraphContext
         LOG.info("Detected and initialized [" + searchIndexKeys.size() + "] search indexes: " + searchIndexKeys);
         LOG.info("Detected and initialized [" + listIndexKeys.size() + "] list indexes: " + listIndexKeys);
 
-        TitanManagement titan = titanGraph.getManagementSystem();
+        TitanManagement titan = titanGraph.openManagement();
         for (Map.Entry<String, IndexData> entry : defaultIndexKeys.entrySet())
         {
             String key = entry.getKey();
@@ -253,7 +243,7 @@ public class GraphContextImpl implements GraphContext
             if (dataType == String.class)
             {
                 PropertyKey propKey = getOrCreatePropertyKey(titan, key, String.class, Cardinality.SINGLE);
-                titan.buildIndex(indexData.getIndexName(), Vertex.class).addKey(propKey, Mapping.STRING.getParameter()).buildMixedIndex("search");
+                titan.buildIndex(indexData.getIndexName(), Vertex.class).addKey(propKey, Mapping.STRING.asParameter()).buildMixedIndex("search");
             }
             else
             {
@@ -379,48 +369,36 @@ public class GraphContextImpl implements GraphContext
         {
             LOG.warning("Could not call before shutdown listeners during close due to: " + e.getMessage());
         }
-        this.eventGraph.getBaseGraph().shutdown();
+        this.graph.close();;
     }
 
     @Override
     public void clear()
     {
-        if (this.eventGraph == null)
+        if (this.graph == null)
             return;
-        if (this.eventGraph.getBaseGraph() == null)
-            return;
-        if (this.eventGraph.getBaseGraph().isOpen())
+        if (this.graph.isOpen())
             close();
 
-        TitanCleanup.clear(this.eventGraph.getBaseGraph());
+        TitanCleanup.clear(this.graph);
     }
 
     @Override
-    public EventGraph<TitanGraph> getGraph()
+    public TitanGraph getGraph()
     {
-        return eventGraph;
-    }
-
-    /**
-     * Returns a graph suitable for batchGraph processing.
-     * <p>
-     * Note: This bypasses the event graph (thus no events will be fired for modifications to this graph)
-     */
-    public BatchGraph<TitanGraph> getBatch()
-    {
-        return batchGraph;
+        return graph;
     }
 
     @Override
-    public FramedGraph<EventGraph<TitanGraph>> getFramed()
+    public FramedGraph getFramed()
     {
         return framed;
     }
 
     @Override
-    public TypeAwareFramedGraphQuery getQuery()
+    public Traversable<?, ?> getQuery(Class<? extends WindupVertexFrame> kind)
     {
-        return new TypeAwareFramedGraphQuery(getFramed());
+        return getFramed().traverse(g -> g.V().property(WindupVertexFrame.TYPE_PROP, GraphTypeManager.getTypeValue(kind)));
     }
 
     @Override
@@ -493,7 +471,7 @@ public class GraphContextImpl implements GraphContext
     @Override
     public void commit()
     {
-        getGraph().getBaseGraph().commit();
+        getGraph().tx().commit();
     }
 
     private class IndexData

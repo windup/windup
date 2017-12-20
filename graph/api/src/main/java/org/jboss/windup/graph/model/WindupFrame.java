@@ -1,12 +1,12 @@
 package org.jboss.windup.graph.model;
 
-import com.syncleus.ferma.VertexFrame;
+import com.syncleus.ferma.ElementFrame;
 import org.apache.tinkerpop.gremlin.structure.Element;
 
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public interface WindupFrame<T extends Element> extends VertexFrame
+public interface WindupFrame<T extends Element> extends ElementFrame
 {
     /**
      * Name of the property where vertex/frame types are stored.

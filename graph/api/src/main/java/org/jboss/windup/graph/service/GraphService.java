@@ -85,9 +85,9 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     }
 
     @Override
-    public Iterable<T> findAll()
+    public List<T> findAll()
     {
-        return (Iterable<T>)findAllQuery().toList(type);
+        return (List<T>)findAllQuery().toList(type);
     }
 
     @Override
@@ -211,9 +211,9 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
         return this.type;
     }
 
-    protected Traversal<?, ?> getTypedQuery()
+    protected Traversable<?, ?> getQuery()
     {
-        return getGraphContext().getQuery(type);
+        return getGraphContext().getQuery(this.getType());
     }
 
     @Override

@@ -7,6 +7,8 @@ import org.jboss.windup.graph.service.exception.NonUniqueResultException;
 
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 
+import java.util.List;
+
 /**
  * Base service interface for interacting with {@link WindupVertexFrame} instances.
  * 
@@ -47,7 +49,7 @@ public interface Service<FRAMETYPE extends WindupVertexFrame>
     /**
      * Find all instances of the {@link WindupVertexFrame} type on which this {@link Service} operates.
      */
-    Iterable<FRAMETYPE> findAll();
+    List<FRAMETYPE> findAll();
 
     /**
      * Find all instances of the {@link WindupVertexFrame} type on which this {@link Service} operates with the given properties.

@@ -25,7 +25,7 @@ public class OrganizationService extends GraphService<OrganizationModel>
      */
     public OrganizationModel attachOrganization(ArchiveModel archiveModel, String organizationName)
     {
-        OrganizationModel model = getUnique(getTypedQuery().has(OrganizationModel.NAME, organizationName));
+        OrganizationModel model = getUnique(getQuery().traverse(g -> g.property(OrganizationModel.NAME, organizationName)));
         if (model == null)
         {
             model = create();

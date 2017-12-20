@@ -107,7 +107,7 @@ public class ProjectModelTraversal
     {
         Set<Vertex> vertices = new LinkedHashSet<>();
         for (ProjectModel projectModel : getAllProjects(recursive))
-            vertices.add(projectModel.asVertex());
+            vertices.add(projectModel.getElement());
         return vertices;
     }
 
