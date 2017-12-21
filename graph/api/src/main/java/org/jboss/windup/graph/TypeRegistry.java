@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.jboss.windup.graph.model.TypeValue;
-import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.graph.model.WindupFrame;
 import org.jboss.windup.util.exception.WindupException;
 
 /**
@@ -14,11 +14,16 @@ public class TypeRegistry
 {
     Map<String, Class<?>> typeDiscriminators = new HashMap<>();
 
+    public Class<?> getType(String typeName)
+    {
+        return typeDiscriminators.get(typeName);
+    }
+
     /**
      * @param type Add the interface to the registry. The interface should have a {@link TypeValue} annotation, and there should be a
      *            {@link TypeField} annotation on the interface or its parents.
      */
-    public TypeRegistry add(Class<? extends WindupVertexFrame> type)
+    public TypeRegistry add(Class<? extends WindupFrame> type)
     {
         String typeString = GraphTypeManager.getTypeValue(type);
         if (typeString == null)

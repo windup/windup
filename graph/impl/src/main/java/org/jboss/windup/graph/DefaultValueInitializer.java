@@ -1,10 +1,11 @@
 package org.jboss.windup.graph;
 
+import com.syncleus.ferma.ClassInitializer;
+import com.syncleus.ferma.ElementFrame;
 import org.apache.tinkerpop.gremlin.structure.Element;
-import com.tinkerpop.frames.FrameInitializer;
-import com.syncleus.ferma.FramedGraph;
 import com.syncleus.ferma.annotations.Property;
 import org.jboss.windup.graph.frames.FrameBooleanDefaultValue;
+import org.jboss.windup.graph.model.WindupFrame;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -17,17 +18,26 @@ import java.util.Map;
  *
  * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  */
-public class DefaultValueInitializer implements FrameInitializer
+public class DefaultValueInitializer implements ClassInitializer
 {
     private Map<Class<?>, LinkedList<PropertyDefaultValue>> cachedValues = new HashMap<>();
 
-    public void initElement(final Class<?> kind, final FramedGraph<?> framedGraph, final Element element)
+    @Override
+    public Class getInitializationType()
     {
+        return WindupFrame.class;
+    }
+
+    @Override
+    public void initalize(Object frame) {
+        Class<?> kind = frame.getClass();
+        ElementFrame elementFrame = (ElementFrame)frame;
+
         if (!cachedValues.containsKey(kind))
         {
             cacheFrameInterface(kind);
         }
-        setupDefaults(element, cachedValues.get(kind));
+        setupDefaults(elementFrame.getElement(), cachedValues.get(kind));
     }
 
     private void cacheFrameInterface(Class<?> kind) {
@@ -35,7 +45,7 @@ public class DefaultValueInitializer implements FrameInitializer
         for (Method m : kind.getMethods())
         {
             Annotation[] annotations = m.getAnnotations();
-            for (Annotation annotation : m.getAnnotations())
+            for (Annotation annotation : annotations)
             {
                 if (annotation instanceof FrameBooleanDefaultValue)
                 {
@@ -53,7 +63,7 @@ public class DefaultValueInitializer implements FrameInitializer
     {
         for (PropertyDefaultValue pValue : values)
         {
-            element.setProperty(pValue.key, pValue.value);
+            element.property(pValue.key, pValue.value);
         }
     }
 
