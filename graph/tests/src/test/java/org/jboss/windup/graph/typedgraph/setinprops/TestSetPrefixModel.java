@@ -3,9 +3,8 @@ package org.jboss.windup.graph.typedgraph.setinprops;
 import java.util.Set;
 
 import org.jboss.windup.graph.SetInProperties;
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
-
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("SetInPropsPrefixModel")
 public interface TestSetPrefixModel extends WindupVertexFrame

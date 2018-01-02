@@ -13,6 +13,7 @@ import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.Service;
@@ -25,18 +26,14 @@ import org.junit.runner.RunWith;
 import com.thinkaurelius.titan.core.attribute.Cmp;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.tinkerpop.blueprints.util.wrappers.event.EventGraph;
-import com.syncleus.ferma.FramedGraph;
-import com.tinkerpop.frames.FramedGraphQuery;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import java.util.List;
-import org.jboss.windup.graph.GraphTypeManager;
+import java.util.stream.Collectors;
+
 import org.jboss.windup.graph.model.WindupFrame;
 import org.jboss.windup.graph.typedgraph.TestIncidenceAaaModel;
 import org.jboss.windup.graph.typedgraph.TestIncidenceAaaToBbbEdgeModel;
 import org.jboss.windup.graph.typedgraph.TestIncidenceBbbModel;
 import org.junit.Assume;
-import org.junit.Ignore;
 
 @RunWith(Arquillian.class)
 public class GraphServiceTest
@@ -63,19 +60,21 @@ public class GraphServiceTest
         try (GraphContext context = factory.create())
         {
             Assert.assertNotNull(context);
-            TestFooModel initialModelType = context.getFramed().addVertex(null, TestFooModel.class);
+            TestFooModel initialModelType = context.getFramed().addFramedVertex(TestFooModel.class);
 
             try
             {
                 GraphService.addTypeToModel(context, initialModelType, TestFooSubModel.class);
 
-                Iterable<Vertex> vertices = context.getQuery().type(TestFooModel.class).vertices();
+                Iterable<Vertex> vertices = context.getQuery(TestFooModel.class).toList(TestFooModel.class).stream()
+                        .map(TestFooModel::getElement)
+                        .collect(Collectors.toList());
 
                 int numberFound = 0;
                 for (Vertex v : vertices)
                 {
                     numberFound++;
-                    WindupVertexFrame framed = context.getFramed().frame(v, WindupVertexFrame.class);
+                    WindupVertexFrame framed = context.getFramed().frameElement(v, WindupVertexFrame.class);
 
                     Assert.assertTrue(framed instanceof TestFooModel);
                     Assert.assertTrue(framed instanceof TestFooSubModel);
@@ -84,7 +83,7 @@ public class GraphServiceTest
             }
             finally
             {
-                context.getGraph().removeVertex(initialModelType.asVertex());
+                initialModelType.remove();
             }
         }
     }
@@ -96,23 +95,25 @@ public class GraphServiceTest
         {
             Assert.assertNotNull(context);
 
-            TestFooModel foo1 = context.getFramed().addVertex(null, TestFooModel.class);
-            TestFooModel foo2 = context.getFramed().addVertex(null, TestFooModel.class);
-            TestFooModel foo3 = context.getFramed().addVertex(null, TestFooModel.class);
-            TestFooModel foo4 = context.getFramed().addVertex(null, TestFooModel.class);
+            TestFooModel foo1 = context.getFramed().addFramedVertex(TestFooModel.class);
+            TestFooModel foo2 = context.getFramed().addFramedVertex(TestFooModel.class);
+            TestFooModel foo3 = context.getFramed().addFramedVertex(TestFooModel.class);
+            TestFooModel foo4 = context.getFramed().addFramedVertex(TestFooModel.class);
 
             try
             {
                 GraphService.addTypeToModel(context, foo1, TestFooSubModel.class);
                 GraphService.addTypeToModel(context, foo2, TestFooSubModel.class);
 
-                Iterable<Vertex> vertices = context.getQuery().type(TestFooSubModel.class).vertices();
+                Iterable<Vertex> vertices = context.getQuery(TestFooSubModel.class).toList(TestFooSubModel.class).stream()
+                        .map(TestFooSubModel::getElement)
+                        .collect(Collectors.toList());
 
                 int numberFound = 0;
                 for (Vertex v : vertices)
                 {
                     numberFound++;
-                    WindupVertexFrame framed = context.getFramed().frame(v, WindupVertexFrame.class);
+                    WindupVertexFrame framed = context.getFramed().frameElement(v, WindupVertexFrame.class);
 
                     Assert.assertTrue(framed instanceof TestFooModel);
                 }
@@ -120,10 +121,10 @@ public class GraphServiceTest
             }
             finally
             {
-                context.getGraph().removeVertex(foo1.asVertex());
-                context.getGraph().removeVertex(foo2.asVertex());
-                context.getGraph().removeVertex(foo3.asVertex());
-                context.getGraph().removeVertex(foo4.asVertex());
+                foo1.remove();
+                foo2.remove();
+                foo3.remove();
+                foo4.remove();
             }
         }
     }
@@ -145,10 +146,12 @@ public class GraphServiceTest
             model.setFoo("myFoo");
 
             // test findAll
-            FramedGraphQuery query = context.getFramed().query();
-            query.has(WindupVertexFrame.TYPE_PROP, Cmp.EQUAL, "Foo");
-            Iterable<TestFooSubModel> verticesFoundByContext = query.vertices(TestFooSubModel.class);
-            Iterator<TestFooSubModel> iterator = verticesFoundByContext.iterator();
+            List<Vertex> vertices = context.getGraph().traversal().V().property(WindupVertexFrame.TYPE_PROP, Cmp.EQUAL, "Foo").toList();
+            //query.has(WindupVertexFrame.TYPE_PROP, Cmp.EQUAL, "Foo");
+            //Iterable<TestFooSubModel> verticesFoundByContext = query.vertices(TestFooSubModel.class);
+
+
+            Iterator<TestFooSubModel> iterator = (Iterator<TestFooSubModel>)context.getFramed().frame(vertices.iterator(), TestFooSubModel.class);
             Assert.assertTrue(iterator.hasNext());
             TestFooSubModel model2 = iterator.next();
             Assert.assertEquals("myFoo", model2.getFoo());
@@ -166,7 +169,7 @@ public class GraphServiceTest
 
             model2 = graphService.getUniqueByProperty("fooProperty", "myFoo");
             Assert.assertNotNull(model2);
-            context.getFramed().removeVertex(model.asVertex());
+            model.remove();
         }
     }
 
@@ -189,21 +192,22 @@ public class GraphServiceTest
             // This would put a String into "w:winduptype", we need at least List<String>.
             //TestIncidenceAaaToBbbEdgeModel edgeModel = graphContext.getFramed().addEdge(new Object(), aaa.asVertex(), bbb.asVertex(), TestIncidenceAaaToBbbEdgeModel.TYPE, TestIncidenceAaaToBbbEdgeModel.class);
             String label = TestIncidenceAaaToBbbEdgeModel.TYPE;
-            Edge edge = graphContext.getFramed().addEdge(new Object(), aaa.asVertex(), bbb.asVertex(), label);
-            Assert.assertNull(edge.getProperty(WindupFrame.TYPE_PROP));
+            Edge edge = aaa.getElement().addEdge(label, bbb.getElement());
+            Assert.assertTrue(edge.property(WindupFrame.TYPE_PROP).isPresent());
 
             graphContext.getGraphTypeManager().addTypeToElement(TestIncidenceAaaToBbbEdgeModel.class, edge);
-            Object discriminator = (edge.getProperty(WindupFrame.TYPE_PROP));
+            Object discriminator = edge.property(WindupFrame.TYPE_PROP).value();
             Assert.assertTrue(discriminator instanceof String);
             Assert.assertEquals(TestIncidenceAaaToBbbEdgeModel.TYPE, discriminator);
 
-            TestIncidenceAaaToBbbEdgeModel edgeModel = graphContext.getFramed().frame(edge, TestIncidenceAaaToBbbEdgeModel.class);
+            TestIncidenceAaaToBbbEdgeModel edgeModel = graphContext.getFramed().frameElement(edge, TestIncidenceAaaToBbbEdgeModel.class);
 
             edgeModel.setProp1("edge1");
             graphContext.commit();
 
             // then load the edge and check the connections,
-            TestIncidenceAaaToBbbEdgeModel edgeModel2 = graphContext.getFramed().getEdge(edgeModel.asEdge().getId(), TestIncidenceAaaToBbbEdgeModel.class);
+
+            TestIncidenceAaaToBbbEdgeModel edgeModel2 = graphContext.getFramed().frameElement(edgeModel.getElement(), TestIncidenceAaaToBbbEdgeModel.class);
             Assert.assertNotNull(edgeModel2);
             Assert.assertEquals("edge1", edgeModel2.getProp1());
             Assert.assertNotNull(edgeModel2.getAaa());
@@ -214,7 +218,7 @@ public class GraphServiceTest
             Assert.assertEquals("edge1", edgeModel2.getBbb().getEdgesToAaa().iterator().next().getProp1());
 
             // And that the type was correctly set.
-            Assert.assertEquals(TestIncidenceAaaToBbbEdgeModel.TYPE, edgeModel2.asEdge().getProperty(WindupFrame.TYPE_PROP));
+            Assert.assertEquals(TestIncidenceAaaToBbbEdgeModel.TYPE, edgeModel2.getElement().property(WindupFrame.TYPE_PROP).value());
         }
         catch (Exception ex)
         {
@@ -249,10 +253,10 @@ public class GraphServiceTest
     private void checkObject(TestFooModel created)
     {
         Assert.assertNotNull(created);
-        Assert.assertNotNull(created.asVertex());
-        Assert.assertNotNull(created.asVertex().getProperty(WindupFrame.TYPE_PROP));
+        Assert.assertNotNull(created.getElement());
+        Assert.assertNotNull(created.getElement().property(WindupFrame.TYPE_PROP));
         Assert.assertTrue(created instanceof TestFooSubModel);
-        Assert.assertTrue(((List)created.asVertex().getProperty(WindupFrame.TYPE_PROP))
+        Assert.assertTrue(((List)created.getElement().property(WindupFrame.TYPE_PROP).value())
                 .contains(TestFooSubModel.class.getAnnotation(TypeValue.class).value()));
     }
 

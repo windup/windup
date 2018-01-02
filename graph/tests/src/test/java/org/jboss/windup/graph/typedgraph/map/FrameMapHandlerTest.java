@@ -2,6 +2,7 @@ package org.jboss.windup.graph.typedgraph.map;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 
@@ -46,12 +47,12 @@ public class FrameMapHandlerTest
         {
             Assert.assertNotNull(context);
 
-            TestMapMainModel mainModel = context.getFramed().addVertex(null, TestMapMainModel.class);
-            TestMapValueModel value1 = context.getFramed().addVertex(null, TestMapValueModel.class);
+            TestMapMainModel mainModel = context.getFramed().addFramedVertex(TestMapMainModel.class);
+            TestMapValueModel value1 = context.getFramed().addFramedVertex(TestMapValueModel.class);
             value1.setProperty("value1");
-            TestMapValueModel value2 = context.getFramed().addVertex(null, TestMapValueModel.class);
+            TestMapValueModel value2 = context.getFramed().addFramedVertex(TestMapValueModel.class);
             value2.setProperty("value2");
-            TestMapValueModel value3 = context.getFramed().addVertex(null, TestMapValueModel.class);
+            TestMapValueModel value3 = context.getFramed().addFramedVertex(TestMapValueModel.class);
             value3.setProperty("value3");
 
             Map<String, TestMapValueModel> map = new HashMap<>();
@@ -61,13 +62,16 @@ public class FrameMapHandlerTest
 
             mainModel.setMap(map);
 
-            Iterable<Vertex> vertices = context.getQuery().type(TestMapMainModel.class).vertices();
+            Iterable<Vertex> vertices = context.getQuery(TestMapMainModel.class).toList(TestMapMainModel.class)
+                    .stream()
+                    .map(TestMapMainModel::getElement)
+                    .collect(Collectors.toList());
 
             int numberFound = 0;
             for (Vertex v : vertices)
             {
                 numberFound++;
-                TestMapMainModel framed = (TestMapMainModel) context.getFramed().frame(v, WindupVertexFrame.class);
+                TestMapMainModel framed = (TestMapMainModel) context.getFramed().frameElement(v, WindupVertexFrame.class);
 
                 Assert.assertTrue(framed instanceof TestMapMainModel);
 

@@ -40,7 +40,7 @@ public class DefaultValueTest
         try (GraphContext context = factory.create())
         {
             Assert.assertNotNull(context);
-            DefaultValueTestModel initialModelType = context.getFramed().addVertex(null, DefaultValueTestModel.class);
+            DefaultValueTestModel initialModelType = context.getFramed().addFramedVertex(DefaultValueTestModel.class);
             Assert.assertFalse(initialModelType.getDefaultFalseValue());
             Assert.assertTrue(initialModelType.getDefaultTrueValue());
         }

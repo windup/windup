@@ -88,7 +88,7 @@ public class FramesIterableSetTest
     private void checkForDuplicates(FramesSetIterable<WindupVertexFrame> iterable) {
         Set<String> ids = new HashSet<>();
         for(WindupVertexFrame frame : iterable) {
-            String frameId = frame.asVertex().getId().toString();
+            String frameId = frame.getElement().id().toString();
             if(ids.contains(frameId)){
                 Assert.fail("FramesSetIterable should not return multiple vertices with same ID. However, it contained twice ID " + frameId);
             }
@@ -104,10 +104,10 @@ public class FramesIterableSetTest
     }
 
     private List<WindupVertexFrame> fillInTestDataAndReturn(GraphContext context) {
-        WindupVertexFrame model1= context.getFramed().addVertex(null, TestSimpleModel.class);
-        WindupVertexFrame model2= context.getFramed().addVertex(null, TestSimpleModel.class);
-        WindupVertexFrame model3= context.getFramed().addVertex(null, TestSimpleModel.class);
-        WindupVertexFrame model4= context.getFramed().addVertex(null, TestSimpleModel.class);
+        WindupVertexFrame model1= context.getFramed().addFramedVertex(TestSimpleModel.class);
+        WindupVertexFrame model2= context.getFramed().addFramedVertex(TestSimpleModel.class);
+        WindupVertexFrame model3= context.getFramed().addFramedVertex(TestSimpleModel.class);
+        WindupVertexFrame model4= context.getFramed().addFramedVertex(TestSimpleModel.class);
         List<WindupVertexFrame> models = new ArrayList<>();
         models.add(model1);
         models.add(model2);

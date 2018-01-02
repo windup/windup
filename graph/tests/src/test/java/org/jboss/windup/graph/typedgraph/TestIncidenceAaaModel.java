@@ -1,11 +1,12 @@
 package org.jboss.windup.graph.typedgraph;
 
-import static com.tinkerpop.blueprints.Direction.OUT;
-import com.tinkerpop.frames.Incidence;
 
+import com.syncleus.ferma.annotations.Incidence;
 import com.syncleus.ferma.annotations.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+
+import static org.apache.tinkerpop.gremlin.structure.Direction.OUT;
 
 /**
  *

@@ -120,7 +120,7 @@ public class GraphContextImpl implements GraphContext
     {
         this.graph = titanGraph;
 
-        final ClassLoader compositeClassLoader = classLoaderProvider.getCompositeClassLoader();
+        //final ClassLoader compositeClassLoader = classLoaderProvider.getCompositeClassLoader();
 
 //        final FrameClassLoaderResolver classLoaderResolver = new FrameClassLoaderResolver()
 //        {

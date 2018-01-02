@@ -18,6 +18,8 @@ import org.junit.runner.RunWith;
 
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 
+import java.util.stream.Collectors;
+
 @RunWith(Arquillian.class)
 public class WindupPropertyMethodHandlerTest
 {
@@ -50,13 +52,15 @@ public class WindupPropertyMethodHandlerTest
             TestFooModel inMemoryModel = fooModelService.create();
             inMemoryModel.setProp1("prop1").setProp2("prop2").setProp3("prop3");
 
-            Iterable<Vertex> vertices = context.getQuery().type(TestFooModel.class).vertices();
+            Iterable<Vertex> vertices = context.getQuery(TestFooModel.class).toList(TestFooModel.class).stream()
+                    .map(TestFooModel::getElement)
+                    .collect(Collectors.toList());
 
             int numberFound = 0;
             for (Vertex v : vertices)
             {
                 numberFound++;
-                TestFooModel framed = (TestFooModel) context.getFramed().frame(v, WindupVertexFrame.class);
+                TestFooModel framed = (TestFooModel) context.getFramed().frameElement(v, WindupVertexFrame.class);
 
                 Assert.assertTrue(framed instanceof TestFooModel);
                 Assert.assertEquals("prop1", framed.getProp1());

@@ -3,8 +3,7 @@ package org.jboss.windup.graph.typedgraph.mapinprops;
 import java.util.Map;
 
 import org.jboss.windup.graph.MapInProperties;
-
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.model.TypeValue;
 
 @TypeValue("MapInPropsBlankSubModel")
 public interface TestMapBlankSubModel extends TestMapPrefixModel
