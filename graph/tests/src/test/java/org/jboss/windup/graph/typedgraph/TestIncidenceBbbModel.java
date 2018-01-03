@@ -5,6 +5,8 @@ import com.syncleus.ferma.annotations.Property;
 import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
+import java.util.List;
+
 import static org.apache.tinkerpop.gremlin.structure.Direction.IN;
 
 /**
@@ -21,5 +23,5 @@ public interface TestIncidenceBbbModel extends WindupVertexFrame
     String getProp1();
 
     @Incidence(label = TestIncidenceAaaToBbbEdgeModel.TYPE, direction = IN)
-    Iterable<TestIncidenceAaaToBbbEdgeModel> getEdgesToAaa();
+    List<TestIncidenceAaaToBbbEdgeModel> getEdgesToAaa();
 }

@@ -1,9 +1,12 @@
 package org.jboss.windup.graph.typedgraph.graphservice;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 
 import javax.inject.Inject;
 
+import org.apache.tinkerpop.gremlin.structure.Property;
+import org.apache.tinkerpop.gremlin.structure.VertexProperty;
 import org.janusgraph.core.attribute.Cmp;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -23,7 +26,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -145,7 +147,7 @@ public class GraphServiceTest
             model.setFoo("myFoo");
 
             // test findAll
-            List<Vertex> vertices = context.getGraph().traversal().V().property(WindupVertexFrame.TYPE_PROP, Cmp.EQUAL, "Foo").toList();
+            List<Vertex> vertices = context.getGraph().traversal().V().has(WindupVertexFrame.TYPE_PROP, "Foo").toList();
             //query.has(WindupVertexFrame.TYPE_PROP, Cmp.EQUAL, "Foo");
             //Iterable<TestFooSubModel> verticesFoundByContext = query.vertices(TestFooSubModel.class);
 
@@ -190,16 +192,13 @@ public class GraphServiceTest
 
             // This would put a String into "w:winduptype", we need at least List<String>.
             //TestIncidenceAaaToBbbEdgeModel edgeModel = graphContext.getFramed().addEdge(new Object(), aaa.asVertex(), bbb.asVertex(), TestIncidenceAaaToBbbEdgeModel.TYPE, TestIncidenceAaaToBbbEdgeModel.class);
-            String label = TestIncidenceAaaToBbbEdgeModel.TYPE;
-            Edge edge = aaa.getElement().addEdge(label, bbb.getElement());
-            Assert.assertTrue(edge.property(WindupFrame.TYPE_PROP).isPresent());
+            TestIncidenceAaaToBbbEdgeModel edgeModel = graphContext.getFramed().addFramedEdge(aaa, bbb, TestIncidenceAaaToBbbEdgeModel.TYPE, TestIncidenceAaaToBbbEdgeModel.class);
+            Assert.assertTrue(edgeModel.getElement().property(WindupFrame.TYPE_PROP).isPresent());
 
-            graphContext.getGraphTypeManager().addTypeToElement(TestIncidenceAaaToBbbEdgeModel.class, edge);
-            Object discriminator = edge.property(WindupFrame.TYPE_PROP).value();
+            graphContext.getGraphTypeManager().addTypeToElement(TestIncidenceAaaToBbbEdgeModel.class, edgeModel.getElement());
+            Object discriminator = edgeModel.getElement().property(WindupFrame.TYPE_PROP).value();
             Assert.assertTrue(discriminator instanceof String);
             Assert.assertEquals(TestIncidenceAaaToBbbEdgeModel.TYPE, discriminator);
-
-            TestIncidenceAaaToBbbEdgeModel edgeModel = graphContext.getFramed().frameElement(edge, TestIncidenceAaaToBbbEdgeModel.class);
 
             edgeModel.setProp1("edge1");
             graphContext.commit();
@@ -253,10 +252,13 @@ public class GraphServiceTest
     {
         Assert.assertNotNull(created);
         Assert.assertNotNull(created.getElement());
-        Assert.assertNotNull(created.getElement().property(WindupFrame.TYPE_PROP));
+        Assert.assertNotNull(created.getElement().properties(WindupFrame.TYPE_PROP));
         Assert.assertTrue(created instanceof TestFooSubModel);
-        Assert.assertTrue(((List)created.getElement().property(WindupFrame.TYPE_PROP).value())
-                .contains(TestFooSubModel.class.getAnnotation(TypeValue.class).value()));
+
+        Iterator<VertexProperty<Object>> typeProperties = created.getElement().properties(WindupFrame.TYPE_PROP);
+        List<String> types = new ArrayList<>();
+        typeProperties.forEachRemaining(p -> types.add((String)p.value()));
+        Assert.assertTrue(types.contains(TestFooSubModel.class.getAnnotation(TypeValue.class).value()));
     }
 
 }

@@ -409,7 +409,7 @@ public class GraphContextImpl implements GraphContext
     @Override
     public Traversable<?, ?> getQuery(Class<? extends WindupVertexFrame> kind)
     {
-        return getFramed().traverse(g -> g.V().property(WindupVertexFrame.TYPE_PROP, GraphTypeManager.getTypeValue(kind)));
+        return getFramed().traverse(g -> getFramed().getTypeResolver().hasType(g.V(), kind));
     }
 
     @Override

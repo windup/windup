@@ -14,6 +14,7 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.tinkerpop.gremlin.process.traversal.Traverser;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.structure.Property;
 import org.janusgraph.core.JanusGraphEdge;
@@ -30,8 +31,8 @@ import org.jboss.windup.util.furnace.FurnaceClasspathScanner;
 import org.apache.tinkerpop.gremlin.structure.Element;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import java.util.Arrays;
+import java.util.function.Predicate;
 import java.util.logging.Logger;
-import org.jboss.windup.util.exception.WindupException;
 
 /**
  * Windup's implementation of extended type handling for TinkerPop Frames. This allows storing multiple types based on the @TypeValue.value(), also in
@@ -135,7 +136,7 @@ public class GraphTypeManager implements TypeResolver, ClassInitializer
         List<String> newTypes = new ArrayList<>();
         for (String existingType : getTypeProperties(element))
         {
-            if (!existingType.toString().equals(typeValue))
+            if (!existingType.equals(typeValue))
             {
                 newTypes.add(typeValue);
             }
@@ -177,7 +178,7 @@ public class GraphTypeManager implements TypeResolver, ClassInitializer
     private void addTokenProperty(AbstractElement el, String propertyName, String propertyValue)
     {
         Property<String> val = el.property(propertyName);
-        if (val == null)
+        if (!val.isPresent())
             el.property(propertyName, propertyValue);
         else
             el.property(propertyName, val.value() + "|" + propertyValue);
@@ -192,7 +193,7 @@ public class GraphTypeManager implements TypeResolver, ClassInitializer
             Property<String> typeProperty = abstractElement.property(WindupFrame.TYPE_PROP);
             if (typeProperty.isPresent())
             {
-                List<String> all = Arrays.asList(((String)typeProperty.value()).split("|"));
+                List<String> all = Arrays.asList(((String)typeProperty.value()).split("\\|"));
                 results.addAll(all);
                 return results;
             }
@@ -356,7 +357,7 @@ public class GraphTypeManager implements TypeResolver, ClassInitializer
     @Override
     public Class<?> resolve(Element element)
     {
-        return null;
+        return resolve(element, WindupFrame.class);
     }
 
     @Override
@@ -371,18 +372,33 @@ public class GraphTypeManager implements TypeResolver, ClassInitializer
     @Override
     public void deinit(Element element)
     {
-
+        element.properties(WindupFrame.TYPE_PROP).forEachRemaining(Property::remove);
     }
 
     @Override
     public <P extends Element, T extends Element> GraphTraversal<P, T> hasType(GraphTraversal<P, T> traverser, Class<?> type)
     {
-        return null;
+        String typeValue = getTypeValue((Class<? extends WindupFrame>)type);
+        return traverser.has(WindupFrame.TYPE_PROP, org.apache.tinkerpop.gremlin.process.traversal.P.eq(typeValue));
     }
 
     @Override
     public <P extends Element, T extends Element> GraphTraversal<P, T> hasNotType(GraphTraversal<P, T> traverser, Class<?> type)
     {
-        return null;
+        String typeValue = getTypeValue((Class<? extends WindupFrame>)type);
+        return traverser.filter(new Predicate<Traverser<T>>() {
+            @Override
+            public boolean test(final Traverser<T> toCheck) {
+                final Property<String> property = toCheck.get().property(WindupFrame.TYPE_PROP);
+                if(!property.isPresent())
+                    return true;
+
+                final String resolvedType = property.value();
+                if(typeValue.contains(resolvedType))
+                    return false;
+                else
+                    return true;
+            }
+        });
     }
 }
