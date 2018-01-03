@@ -5,11 +5,10 @@ import java.nio.file.Path;
 import java.util.Map;
 
 import com.syncleus.ferma.Traversable;
-import org.apache.tinkerpop.gremlin.process.traversal.Traversal;
 import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerGraph;
 
-import com.thinkaurelius.titan.core.TitanGraph;
 import com.syncleus.ferma.FramedGraph;
+import org.janusgraph.core.JanusGraph;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.Service;
 
@@ -27,9 +26,9 @@ public interface GraphContext extends Closeable
     Path getGraphDirectory();
 
     /**
-     * Get the underlying {@link TinkerGraph}, which is itself a wrapper for a {@link TitanGraph}.
+     * Get the underlying {@link TinkerGraph}, which is itself a wrapper for a {@link JanusGraph}.
      */
-    TitanGraph getGraph();
+    JanusGraph getGraph();
 
     /**
      * Creates new graph using the configuration. In case there was already a graph located in the specified path, it will be deleted.
@@ -40,8 +39,6 @@ public interface GraphContext extends Closeable
      * Loads the graph using the configuration.
      */
     GraphContext load();
-
-
 
     /**
      * Get the {@link FramedGraph} view of the underlying {@link TinkerGraph}.
@@ -77,8 +74,6 @@ public interface GraphContext extends Closeable
      * </pre>
      */
     Map<String, Object> getOptionMap();
-
-
 
     /**
      * Create a GraphService of given class.

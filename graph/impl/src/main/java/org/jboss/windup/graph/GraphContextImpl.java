@@ -10,10 +10,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.syncleus.ferma.DelegatingFramedGraph;
 import com.syncleus.ferma.FramedGraph;
+import com.syncleus.ferma.ReflectionCache;
 import com.syncleus.ferma.Traversable;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
@@ -22,6 +24,13 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.janusgraph.core.Cardinality;
+import org.janusgraph.core.JanusGraph;
+import org.janusgraph.core.JanusGraphFactory;
+import org.janusgraph.core.PropertyKey;
+import org.janusgraph.core.schema.JanusGraphManagement;
+import org.janusgraph.core.schema.Mapping;
+import org.janusgraph.diskstorage.berkeleyje.BerkeleyJEStoreManager;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Annotations;
@@ -32,14 +41,6 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
 
 import com.sleepycat.je.LockMode;
-import com.thinkaurelius.titan.core.Cardinality;
-import com.thinkaurelius.titan.core.PropertyKey;
-import com.thinkaurelius.titan.core.TitanFactory;
-import com.thinkaurelius.titan.core.TitanGraph;
-import com.thinkaurelius.titan.core.schema.Mapping;
-import com.thinkaurelius.titan.core.schema.TitanManagement;
-import com.thinkaurelius.titan.core.util.TitanCleanup;
-import com.thinkaurelius.titan.diskstorage.berkeleyje.BerkeleyJEStoreManager;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.syncleus.ferma.annotations.Property;
@@ -60,7 +61,7 @@ public class GraphContextImpl implements GraphContext
      */
     private final Map<String, BeforeGraphCloseListener> beforeGraphCloseListenerBuffer = new HashMap<>();
     private Map<String, Object> configurationOptions;
-    private TitanGraph graph;
+    private JanusGraph graph;
     private FramedGraph framed;
     private Configuration conf;
 
@@ -76,17 +77,17 @@ public class GraphContextImpl implements GraphContext
     public GraphContextImpl create()
     {
         FileUtils.deleteQuietly(graphDir.toFile());
-        TitanGraph titan = initializeTitanGraph();
-        initializeTitanIndexes(titan);
-        createFramed(titan);
+        JanusGraph janusGraph = initializeJanusGraph();
+        initializeTitanIndexes(janusGraph);
+        createFramed(janusGraph);
         fireListeners();
         return this;
     }
 
     public GraphContextImpl load()
     {
-        TitanGraph titan = initializeTitanGraph();
-        createFramed(titan);
+        JanusGraph janusGraph = initializeJanusGraph();
+        createFramed(janusGraph);
         fireListeners();
         return this;
     }
@@ -116,11 +117,11 @@ public class GraphContextImpl implements GraphContext
         }
     }
 
-    private void createFramed(TitanGraph titanGraph)
+    private void createFramed(JanusGraph janusGraph)
     {
-        this.graph = titanGraph;
+        this.graph = janusGraph;
 
-        //final ClassLoader compositeClassLoader = classLoaderProvider.getCompositeClassLoader();
+        final ClassLoader compositeClassLoader = classLoaderProvider.getCompositeClassLoader();
 
 //        final FrameClassLoaderResolver classLoaderResolver = new FrameClassLoaderResolver()
 //        {
@@ -152,7 +153,11 @@ public class GraphContextImpl implements GraphContext
 //                    graphTypeManager.build(),     // Adds detected WindupVertexFrame/Model classes
 //                    new GremlinGroovyModule() // Supports @Gremlin
 //        );
-        framed = new DelegatingFramedGraph<TitanGraph>(titanGraph);
+
+        final ReflectionCache reflections = new ReflectionCache();
+        AnnotationFrameFactory frameFactory = new AnnotationFrameFactory(compositeClassLoader, reflections);
+
+        framed = new DelegatingFramedGraph<>(janusGraph, frameFactory, this.graphTypeManager);
     }
 
     private List<Indexed> getIndexAnnotations(Method method)
@@ -171,7 +176,7 @@ public class GraphContextImpl implements GraphContext
         return results;
     }
 
-    private void initializeTitanIndexes(TitanGraph titanGraph)
+    private void initializeTitanIndexes(JanusGraph janusGraph)
     {
         Map<String, IndexData> defaultIndexKeys = new HashMap<>();
         Map<String, IndexData> searchIndexKeys = new HashMap<>();
@@ -222,7 +227,7 @@ public class GraphContextImpl implements GraphContext
         LOG.info("Detected and initialized [" + searchIndexKeys.size() + "] search indexes: " + searchIndexKeys);
         LOG.info("Detected and initialized [" + listIndexKeys.size() + "] list indexes: " + listIndexKeys);
 
-        TitanManagement titan = titanGraph.openManagement();
+        JanusGraphManagement janusGraphManagement = janusGraph.openManagement();
         for (Map.Entry<String, IndexData> entry : defaultIndexKeys.entrySet())
         {
             String key = entry.getKey();
@@ -230,8 +235,8 @@ public class GraphContextImpl implements GraphContext
 
             Class<?> dataType = indexData.type;
 
-            PropertyKey propKey = getOrCreatePropertyKey(titan, key, dataType, Cardinality.SINGLE);
-            titan.buildIndex(indexData.getIndexName(), Vertex.class).addKey(propKey).buildCompositeIndex();
+            PropertyKey propKey = getOrCreatePropertyKey(janusGraphManagement, key, dataType, Cardinality.SINGLE);
+            janusGraphManagement.buildIndex(indexData.getIndexName(), Vertex.class).addKey(propKey).buildCompositeIndex();
         }
 
         for (Map.Entry<String, IndexData> entry : searchIndexKeys.entrySet())
@@ -242,13 +247,13 @@ public class GraphContextImpl implements GraphContext
 
             if (dataType == String.class)
             {
-                PropertyKey propKey = getOrCreatePropertyKey(titan, key, String.class, Cardinality.SINGLE);
-                titan.buildIndex(indexData.getIndexName(), Vertex.class).addKey(propKey, Mapping.STRING.asParameter()).buildMixedIndex("search");
+                PropertyKey propKey = getOrCreatePropertyKey(janusGraphManagement, key, String.class, Cardinality.SINGLE);
+                janusGraphManagement.buildIndex(indexData.getIndexName(), Vertex.class).addKey(propKey, Mapping.STRING.asParameter()).buildMixedIndex("search");
             }
             else
             {
-                PropertyKey propKey = getOrCreatePropertyKey(titan, key, dataType, Cardinality.SINGLE);
-                titan.buildIndex(indexData.getIndexName(), Vertex.class).addKey(propKey).buildMixedIndex("search");
+                PropertyKey propKey = getOrCreatePropertyKey(janusGraphManagement, key, dataType, Cardinality.SINGLE);
+                janusGraphManagement.buildIndex(indexData.getIndexName(), Vertex.class).addKey(propKey).buildMixedIndex("search");
             }
         }
 
@@ -258,8 +263,8 @@ public class GraphContextImpl implements GraphContext
             IndexData indexData = entry.getValue();
             Class<?> dataType = indexData.type;
 
-            PropertyKey propKey = getOrCreatePropertyKey(titan, key, dataType, Cardinality.LIST);
-            titan.buildIndex(indexData.getIndexName(), Vertex.class).addKey(propKey).buildCompositeIndex();
+            PropertyKey propKey = getOrCreatePropertyKey(janusGraphManagement, key, dataType, Cardinality.LIST);
+            janusGraphManagement.buildIndex(indexData.getIndexName(), Vertex.class).addKey(propKey).buildCompositeIndex();
         }
 
         // Also index TYPE_PROP on Edges.
@@ -267,25 +272,25 @@ public class GraphContextImpl implements GraphContext
         {
             String indexName = "edge-typevalue";
             // Titan enforces items to be String, but there can be multiple items under one property name.
-            PropertyKey propKey = getOrCreatePropertyKey(titan, WindupEdgeFrame.TYPE_PROP, String.class, Cardinality.LIST);
+            PropertyKey propKey = getOrCreatePropertyKey(janusGraphManagement, WindupEdgeFrame.TYPE_PROP, String.class, Cardinality.LIST);
             //PropertyKey propKey = getOrCreatePropertyKey(titan, WindupEdgeFrame.TYPE_PROP, ArrayList.class, Cardinality.SINGLE);
-            titan.buildIndex(indexName, Edge.class).addKey(propKey).buildCompositeIndex();
+            janusGraphManagement.buildIndex(indexName, Edge.class).addKey(propKey).buildCompositeIndex();
         }/**/
 
-        titan.commit();
+        janusGraphManagement.commit();
     }
 
-    private PropertyKey getOrCreatePropertyKey(TitanManagement titanGraph, String key, Class<?> dataType, Cardinality cardinality)
+    private PropertyKey getOrCreatePropertyKey(JanusGraphManagement janusGraphManagement, String key, Class<?> dataType, Cardinality cardinality)
     {
-        PropertyKey propertyKey = titanGraph.getPropertyKey(key);
+        PropertyKey propertyKey = janusGraphManagement.getPropertyKey(key);
         if (propertyKey == null)
         {
-            propertyKey = titanGraph.makePropertyKey(key).dataType(dataType).cardinality(cardinality).make();
+            propertyKey = janusGraphManagement.makePropertyKey(key).dataType(dataType).cardinality(cardinality).make();
         }
         return propertyKey;
     }
 
-    private TitanGraph initializeTitanGraph()
+    private JanusGraph initializeJanusGraph()
     {
         LOG.fine("Initializing graph.");
 
@@ -332,7 +337,7 @@ public class GraphContextImpl implements GraphContext
         conf.setProperty("index.search.directory", lucene.toAbsolutePath().toString());
 
         writeToPropertiesFile(conf, graphDir.resolve("TitanConfiguration.properties").toFile());
-        return TitanFactory.open(conf);
+        return JanusGraphFactory.open(conf);
     }
 
     public Configuration getConfiguration()
@@ -380,11 +385,17 @@ public class GraphContextImpl implements GraphContext
         if (this.graph.isOpen())
             close();
 
-        TitanCleanup.clear(this.graph);
+        try
+        {
+            JanusGraphFactory.drop(this.graph);
+        } catch (Exception e)
+        {
+            LOG.log(Level.WARNING, "Failed to delete graph due to: " + e.getMessage(), e);
+        }
     }
 
     @Override
-    public TitanGraph getGraph()
+    public JanusGraph getGraph()
     {
         return graph;
     }

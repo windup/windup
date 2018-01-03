@@ -4,20 +4,22 @@ import com.syncleus.ferma.ClassInitializer;
 import com.syncleus.ferma.EdgeFrame;
 import com.syncleus.ferma.VertexFrame;
 import com.syncleus.ferma.typeresolvers.TypeResolver;
-import com.thinkaurelius.titan.core.TitanEdge;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
-import com.thinkaurelius.titan.graphdb.internal.AbstractElement;
-import com.thinkaurelius.titan.graphdb.relations.StandardEdge;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.structure.Property;
+import org.janusgraph.core.JanusGraphEdge;
+import org.janusgraph.graphdb.internal.AbstractElement;
+import org.janusgraph.graphdb.relations.StandardEdge;
+import org.janusgraph.graphdb.vertices.StandardVertex;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.windup.graph.model.TypeValue;
@@ -25,7 +27,6 @@ import org.jboss.windup.graph.model.WindupFrame;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.util.furnace.FurnaceClasspathScanner;
 
-import com.thinkaurelius.titan.graphdb.vertices.StandardVertex;
 import org.apache.tinkerpop.gremlin.structure.Element;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import java.util.Arrays;
@@ -132,14 +133,14 @@ public class GraphTypeManager implements TypeResolver, ClassInitializer
         AbstractElement abstractElement = GraphTypeManager.asTitanElement(element);
 
         List<String> newTypes = new ArrayList<>();
-        for (String existingType : (Iterable<String>)abstractElement.property(WindupFrame.TYPE_PROP))
+        for (String existingType : getTypeProperties(element))
         {
             if (!existingType.toString().equals(typeValue))
             {
                 newTypes.add(typeValue);
             }
         }
-        abstractElement.property(WindupFrame.TYPE_PROP).remove();
+        abstractElement.properties(WindupFrame.TYPE_PROP).forEachRemaining(Property::remove);
         for (String newType : newTypes)
             addProperty(abstractElement, WindupFrame.TYPE_PROP, newType);
 
@@ -182,6 +183,41 @@ public class GraphTypeManager implements TypeResolver, ClassInitializer
             el.property(propertyName, val.value() + "|" + propertyValue);
     }
 
+    private static Set<String> getTypeProperties(Element abstractElement)
+    {
+        Set<String> results = new HashSet<>();
+        Iterator<? extends Property> properties = null;
+        if (abstractElement instanceof JanusGraphEdge)
+        {
+            Property<String> typeProperty = abstractElement.property(WindupFrame.TYPE_PROP);
+            if (typeProperty.isPresent())
+            {
+                List<String> all = Arrays.asList(((String)typeProperty.value()).split("|"));
+                results.addAll(all);
+                return results;
+            }
+        }
+        else if (abstractElement instanceof StandardVertex)
+        {
+            LOG.info("Getting from standardvertex as properties method");
+            properties = ((StandardVertex) abstractElement).properties(WindupFrame.TYPE_PROP);
+        }
+        else
+        {
+            LOG.info("Using the old style properties method");
+            properties = Collections.singleton(abstractElement.property(WindupFrame.TYPE_PROP)).iterator();
+        }
+
+        if (properties == null)
+            return results;
+
+        properties.forEachRemaining(property -> {
+            if (property.isPresent())
+                results.add((String)property.value());
+        });
+        return results;
+    }
+
     /**
      * Adds the type value to the field denoting which type the element represents.
      */
@@ -194,19 +230,15 @@ public class GraphTypeManager implements TypeResolver, ClassInitializer
         String typeValue = typeValueAnnotation.value();
 
         AbstractElement abstractElement = GraphTypeManager.asTitanElement(element);
-        Property<Object> typeProp = abstractElement.property(WindupFrame.TYPE_PROP);
-        if (typeProp != null)
-        {
-            if (!(typeProp instanceof Iterable))
-                throw new RuntimeException("Discriminators property is not Iterable, but " + typeProp.getClass() + ": " + typeProp);
+        Set<String> types = getTypeProperties(abstractElement);
 
-            for (String existingType : (Iterable<String>)typeProp.value())
+        LOG.info("Adding type to element: " + element + " type: " + kind + " property is already present? " + types);
+        for (String typePropertyValue : types)
+        {
+            if (typePropertyValue.equals(typeValue))
             {
-                if (existingType.equals(typeValue))
-                {
-                    // this is already in the list, so just exit now
-                    return;
-                }
+                // this is already in the list, so just exit now
+                return;
             }
         }
 
@@ -233,8 +265,9 @@ public class GraphTypeManager implements TypeResolver, ClassInitializer
         {
             throw new IllegalArgumentException("Class " + type.getCanonicalName() + " lacks a @TypeValue annotation");
         }
+        LOG.info("has type called for: " + type + " and vertex: " + v);
         AbstractElement abstractElement= GraphTypeManager.asTitanElement(v);
-        Iterable<String> vertexTypes = (Iterable<String>)abstractElement.property(WindupVertexFrame.TYPE_PROP).value();
+        Iterable<String> vertexTypes = getTypeProperties(abstractElement);
         for (String typeValue : vertexTypes)
         {
             if (typeValue.equals(typeValueAnnotation.value()))
@@ -269,29 +302,9 @@ public class GraphTypeManager implements TypeResolver, ClassInitializer
     @Override
     public <T> Class<T> resolve(Element e, Class<T> defaultType)
     {
-        AbstractElement abstractElement = GraphTypeManager.asTitanElement(e);
-
-        final Property<Object> typeValue = abstractElement.property(WindupFrame.TYPE_PROP);
-        if (typeValue == null)
+        final Set<String> valuesAll = getTypeProperties(e);
+        if (valuesAll == null || valuesAll.isEmpty())
             return defaultType;
-
-        Iterable<String> valuesAll = null;
-
-        if (abstractElement instanceof StandardVertex)
-        {
-            if (!Iterable.class.isAssignableFrom(typeValue.getClass()))
-                throw new WindupException(String.format("Expected Iterable stored in vertex's %s, was %s: %s", WindupFrame.TYPE_PROP, typeValue.getClass().getName(), typeValue.toString()));
-            valuesAll = (Iterable<String>) typeValue;
-        }
-        else if (abstractElement instanceof TitanEdge)
-        {
-            if (!String.class.isAssignableFrom(typeValue.getClass()))
-                throw new WindupException(String.format("Expected String with tokens stored in edge's %s, was %s: %s", WindupFrame.TYPE_PROP, typeValue.getClass().getName(), typeValue.toString()));
-            valuesAll = Arrays.asList(((String)typeValue.value()).split("|"));
-        }
-        else
-            throw new WindupException(String.format("Unknown element type: %s", abstractElement.getClass().getName()));
-
 
         List<Class<?>> resultClasses = new ArrayList<>();
         for (String value : valuesAll)

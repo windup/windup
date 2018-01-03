@@ -3,10 +3,9 @@ package org.jboss.windup.graph.service;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import com.thinkaurelius.titan.core.attribute.Text;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.commons.io.FilenameUtils;
+import org.janusgraph.core.attribute.Text;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.frames.FramedVertexIterable;
 import org.jboss.windup.graph.model.ArchiveModel;

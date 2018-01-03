@@ -2,15 +2,11 @@ package org.jboss.windup.arquillian;
 
 import org.jboss.arquillian.container.spi.client.deployment.DeploymentDescription;
 import org.jboss.arquillian.test.spi.TestClass;
-import org.jboss.forge.arquillian.archive.AddonDeploymentArchive;
 import org.jboss.forge.arquillian.spi.AddonDeploymentScenarioEnhancer;
-import org.jboss.forge.furnace.addons.AddonId;
-import org.jboss.shrinkwrap.api.ShrinkWrap;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Deployment service that deploys the rexster addon everytime debugging is on.
@@ -24,15 +20,15 @@ public class WindupFurnaceAddonDeploymentEnhancer implements AddonDeploymentScen
         if(Boolean.getBoolean("maven.surefire.debug")) {
             String version = getWindupVersion(deployments);
             if(version != null) {
-                AddonId id = AddonId.from("org.jboss.windup.rexster:windup-rexster", version);
-                AddonDeploymentArchive archive = ShrinkWrap.create(AddonDeploymentArchive.class).setAddonId(id);
-
-                archive.setDeploymentTimeoutUnit(TimeUnit.MILLISECONDS);
-                archive.setDeploymentTimeoutQuantity(10000);
-
-                DeploymentDescription deploymentDescription = new DeploymentDescription(id.toCoordinates(), archive);
-                deploymentDescription.shouldBeTestable(false);
-                deployments.add(deploymentDescription);
+//                AddonId id = AddonId.from("org.jboss.windup.rexster:windup-rexster", version);
+//                AddonDeploymentArchive archive = ShrinkWrap.create(AddonDeploymentArchive.class).setAddonId(id);
+//
+//                archive.setDeploymentTimeoutUnit(TimeUnit.MILLISECONDS);
+//                archive.setDeploymentTimeoutQuantity(10000);
+//
+//                DeploymentDescription deploymentDescription = new DeploymentDescription(id.toCoordinates(), archive);
+//                deploymentDescription.shouldBeTestable(false);
+//                deployments.add(deploymentDescription);
             }
         }
         return deployments;

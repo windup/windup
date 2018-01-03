@@ -2,8 +2,6 @@ package org.jboss.windup.graph.service;
 
 import com.syncleus.ferma.Traversable;
 import com.syncleus.ferma.VertexFrame;
-import com.thinkaurelius.titan.core.attribute.Text;
-import com.thinkaurelius.titan.util.datastructures.IterablesUtil;
 import org.apache.tinkerpop.gremlin.process.traversal.Traversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.DefaultGraphTraversal;
 import org.apache.tinkerpop.gremlin.structure.Transaction;
@@ -15,6 +13,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
+import org.janusgraph.core.attribute.Text;
+import org.janusgraph.util.datastructures.IterablesUtil;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphTypeManager;
 import org.jboss.windup.graph.model.WindupVertexFrame;
@@ -68,7 +68,7 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     @Override
     public T create()
     {
-        return ExecutionStatistics.performBenchmarked("GraphService.create", () -> context.getFramed().addFramedVertex(null, type));
+        return ExecutionStatistics.performBenchmarked("GraphService.create", () -> context.getFramed().addFramedVertex(type));
     }
 
     @Override

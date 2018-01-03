@@ -21,7 +21,8 @@
         <version.forge>3.7.2.Final</version.forge>
         <version.furnace>2.26.2.Final</version.furnace>
         <version.titangraph>1.0.0</version.titangraph>
-        <version.tinkerpop.blueprints>3.1.0-incubating</version.tinkerpop.blueprints>
+        <version.janusgraph>0.2.0</version.janusgraph>
+        <version.tinkerpop.blueprints>3.2.6</version.tinkerpop.blueprints>
         <version.freemarker>2.3.26-incubating</version.freemarker>
         <version.jacoco>0.7.9</version.jacoco>
 

@@ -1,10 +1,10 @@
 package org.jboss.windup.graph.typedgraph.graphservice;
 
-import com.thinkaurelius.titan.core.TitanGraph;
 import java.util.Iterator;
 
 import javax.inject.Inject;
 
+import org.janusgraph.core.attribute.Cmp;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependency;
@@ -23,7 +23,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.thinkaurelius.titan.core.attribute.Cmp;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import java.util.List;

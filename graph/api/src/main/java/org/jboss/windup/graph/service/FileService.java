@@ -5,14 +5,13 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.janusgraph.core.attribute.Text;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.TitanUtil;
 import org.jboss.windup.graph.frames.FramedVertexIterable;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.util.ExecutionStatistics;
-
-import com.thinkaurelius.titan.core.attribute.Text;
 
 public class FileService extends GraphService<FileModel>
 {
