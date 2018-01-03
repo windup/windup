@@ -16,6 +16,7 @@ import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.DiscoverProjectStructurePhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.model.ArchiveModel;
+import org.jboss.windup.graph.model.DuplicateArchiveModel;
 import org.jboss.windup.graph.model.FileLocationModel;
 import org.jboss.windup.graph.model.ProjectDependencyModel;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -162,6 +163,24 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
             {
                 // this is a new project (submodule) -- break;
                 return;
+            }
+        }
+
+        // Also, make sure it isn't a zip file with a pom (that also couldn't be part of the same project)
+        if (fileModel instanceof ArchiveModel)
+        {
+            ArchiveModel childArchive = (ArchiveModel)fileModel;
+            if (childArchive instanceof DuplicateArchiveModel)
+                childArchive = ((DuplicateArchiveModel) childArchive).getCanonicalArchive();
+
+            for (FileModel archiveChild : childArchive.getAllFiles())
+            {
+                String filename = archiveChild.getFileName();
+                if (filename.equals("pom.xml"))
+                {
+                    // this is a new project (submodule) -- break;
+                    return;
+                }
             }
         }
 
