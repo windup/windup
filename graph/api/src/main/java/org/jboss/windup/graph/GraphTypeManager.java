@@ -4,6 +4,10 @@ import com.syncleus.ferma.ClassInitializer;
 import com.syncleus.ferma.EdgeFrame;
 import com.syncleus.ferma.VertexFrame;
 import com.syncleus.ferma.typeresolvers.TypeResolver;
+
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -14,6 +18,7 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
+import net.bytebuddy.ByteBuddy;
 import org.apache.tinkerpop.gremlin.process.traversal.Traverser;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.tinkerpop.gremlin.structure.Property;
@@ -38,10 +43,12 @@ import java.util.logging.Logger;
  * Windup's implementation of extended type handling for TinkerPop Frames. This allows storing multiple types based on the @TypeValue.value(), also in
  * the type property (see {@link WindupVertexFrame#TYPE_PROP}.
  */
-public class GraphTypeManager implements TypeResolver, ClassInitializer
+public class GraphTypeManager implements TypeResolver
 {
     private static final Logger LOG = Logger.getLogger(GraphTypeManager.class.getName());
 
+    private GraphApiCompositeClassLoaderProvider graphApiCompositeClassLoaderProvider;
+    private Furnace furnace;
     private Map<String, Class<? extends WindupFrame<?>>> registeredTypes;
     private TypeRegistry typeRegistry;
 
@@ -49,10 +56,24 @@ public class GraphTypeManager implements TypeResolver, ClassInitializer
     {
     }
 
+    private GraphApiCompositeClassLoaderProvider getGraphApiCompositeClassLoaderProvider()
+    {
+        if (this.graphApiCompositeClassLoaderProvider == null)
+            this.graphApiCompositeClassLoaderProvider = getFurnace().getAddonRegistry().getServices(GraphApiCompositeClassLoaderProvider.class)
+                    .get();
+        return this.graphApiCompositeClassLoaderProvider;
+    }
+
+    private Furnace getFurnace()
+    {
+        if (furnace == null)
+            this.furnace = SimpleContainer.getFurnace(GraphContextFactory.class.getClassLoader());
+        return this.furnace;
+    }
+
     private void initRegistry()
     {
-        Furnace furnace = SimpleContainer.getFurnace(GraphTypeManager.class.getClassLoader());
-        FurnaceClasspathScanner furnaceClasspathScanner = furnace.getAddonRegistry().getServices(FurnaceClasspathScanner.class).get();
+        FurnaceClasspathScanner furnaceClasspathScanner = getFurnace().getAddonRegistry().getServices(FurnaceClasspathScanner.class).get();
 
         this.registeredTypes = new HashMap<>();
         this.typeRegistry = new TypeRegistry();
@@ -308,6 +329,8 @@ public class GraphTypeManager implements TypeResolver, ClassInitializer
             return defaultType;
 
         List<Class<?>> resultClasses = new ArrayList<>();
+        resultClasses.add(defaultType);
+
         for (String value : valuesAll)
         {
             Class<?> type = getTypeRegistry().getType(value);
@@ -332,26 +355,21 @@ public class GraphTypeManager implements TypeResolver, ClassInitializer
                 }
 
                 if (shouldAdd)
+                {
                     resultClasses.add(type);
+                }
             }
         }
         if (!resultClasses.isEmpty())
         {
-            resultClasses.add(VertexFrame.class);
-            return (Class<T>)resultClasses.get(0);
+            // Ferma needs a single class, so create a composite one
+            return (Class<T>)new ByteBuddy()
+                    .makeInterface()
+                    .implement(resultClasses).make()
+                    .load(this.getGraphApiCompositeClassLoaderProvider().getCompositeClassLoader())
+                    .getLoaded();
         }
         return defaultType;
-    }
-
-    @Override
-    public Class<?> getInitializationType()
-    {
-        return null;
-    }
-
-    @Override
-    public void initalize(Object frame)
-    {
     }
 
     @Override

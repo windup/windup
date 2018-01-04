@@ -15,19 +15,19 @@ import com.syncleus.ferma.annotations.Property;
 public interface TestFooModel extends ResourceModel
 {
     @Property("prop1")
-    TestFooModel setProp1(String prop);
+    void setProp1(String prop);
 
     @Property("prop1")
     String getProp1();
 
     @Property("prop2")
-    TestFooModel setProp2(String prop);
+    void setProp2(String prop);
 
     @Property("prop2")
     String getProp2();
 
     @Property("prop3")
-    TestFooModel setProp3(String prop);
+    void setProp3(String prop);
 
     @Property("prop3")
     String getProp3();

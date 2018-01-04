@@ -62,7 +62,7 @@ public class SetInPropertiesHandler extends AbstractMethodHandler implements Met
 
     private <E> DynamicType.Builder<E> createInterceptor(final DynamicType.Builder<E> builder, final Method method)
     {
-        return builder.method(ElementMatchers.is(method)).intercept(MethodDelegation.to(PropertyMethodHandler.SetPropertyInterceptor.class));
+        return builder.method(ElementMatchers.is(method)).intercept(MethodDelegation.to(SetInPropertiesHandler.SetInPropertiesMethodInterceptor.class));
     }
 
     public static final class SetInPropertiesMethodInterceptor

@@ -53,11 +53,8 @@ public class MapInAdjacentPropertiesHandler extends AbstractMethodHandler implem
         String methodName = method.getName();
         if (methodName.startsWith("get"))
             return createInterceptor(builder, method);
-
-        if (methodName.startsWith("set"))
-        {
+        else if (methodName.startsWith("set"))
             return createInterceptor(builder, method);
-        }
 
         throw new WindupException("Only get* and set* method names are supported for @" + MapInAdjacentProperties.class.getSimpleName());
     }
@@ -127,7 +124,7 @@ public class MapInAdjacentPropertiesHandler extends AbstractMethodHandler implem
                 final Property<Object> val = mapVertex.property(key);
                 if (!val.isPresent() || !(val.value() instanceof String))
                     log.warning("@InProperties is meant for Map<String,Serializable>, but the value was: " + val.getClass());
-                map.put(key, "" + val);
+                map.put(key, "" + val.value());
             }
             return map;
         }

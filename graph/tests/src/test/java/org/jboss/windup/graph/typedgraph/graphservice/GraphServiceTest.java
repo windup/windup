@@ -5,9 +5,7 @@ import java.util.Iterator;
 
 import javax.inject.Inject;
 
-import org.apache.tinkerpop.gremlin.structure.Property;
 import org.apache.tinkerpop.gremlin.structure.VertexProperty;
-import org.janusgraph.core.attribute.Cmp;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependency;

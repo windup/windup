@@ -6,6 +6,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,7 @@ import com.syncleus.ferma.DelegatingFramedGraph;
 import com.syncleus.ferma.FramedGraph;
 import com.syncleus.ferma.ReflectionCache;
 import com.syncleus.ferma.Traversable;
+import com.syncleus.ferma.framefactories.annotation.MethodHandler;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
@@ -34,6 +36,7 @@ import org.janusgraph.diskstorage.berkeleyje.BerkeleyJEStoreManager;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Annotations;
+import org.jboss.windup.graph.javahandler.JavaHandlerHandler;
 import org.jboss.windup.graph.listeners.AfterGraphInitializationListener;
 import org.jboss.windup.graph.listeners.BeforeGraphCloseListener;
 import org.jboss.windup.graph.model.WindupFrame;
@@ -154,8 +157,19 @@ public class GraphContextImpl implements GraphContext
 //                    new GremlinGroovyModule() // Supports @Gremlin
 //        );
 
+
+
         final ReflectionCache reflections = new ReflectionCache();
-        AnnotationFrameFactory frameFactory = new AnnotationFrameFactory(compositeClassLoader, reflections);
+        //this.graphTypeManager.addClassInitializer(new DefaultValueInitializer());
+
+        Set<MethodHandler> handlers = new HashSet<>();
+        handlers.add(new MapInPropertiesHandler());
+        handlers.add(new MapInAdjacentPropertiesHandler());
+        handlers.add(new MapInAdjacentVerticesHandler());
+        handlers.add(new SetInPropertiesHandler());
+        handlers.add(new JavaHandlerHandler());
+
+        AnnotationFrameFactory frameFactory = new AnnotationFrameFactory(compositeClassLoader, reflections, handlers);
 
         framed = new DelegatingFramedGraph<>(janusGraph, frameFactory, this.graphTypeManager);
     }

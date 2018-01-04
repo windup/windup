@@ -106,7 +106,7 @@ public class MapInAdjacentVerticesHandler extends AbstractMethodHandler implemen
 
                 Vertex v = edge.outVertex();
                 WindupVertexFrame frame = framedGraph.frameElement(v, WindupVertexFrame.class);
-                result.put(property.key(), frame);
+                result.put(property.value(), frame);
             }
             return result;
         }

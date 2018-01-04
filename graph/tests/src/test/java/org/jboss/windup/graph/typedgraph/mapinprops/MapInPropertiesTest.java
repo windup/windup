@@ -69,7 +69,7 @@ public class MapInPropertiesTest
 
             v.property("preexistingKey", "still here");
             TestMapBlankSubModel framed = (TestMapBlankSubModel) context.getFramed().frameElement(v, TestMapBlankSubModel.class);
-            checkMap(framed.getMap(), 5);
+            checkMap(framed.getMap(), 4);
             for (String string : framed.getElement().keys())
             {
                 System.out.println("    Key: " + string);
@@ -100,8 +100,10 @@ public class MapInPropertiesTest
             Vertex v = new GraphService<>(context, TestMapBlankModel.class).getUnique().getElement();
             Assert.assertNotNull(v);
             v.property("preexistingKey", "still here");
-            TestMapBlankSubModel framed = (TestMapBlankSubModel) context.getFramed().frameElement(v, TestMapBlankSubModel.class);
-            checkMap(framed.getMap(), 5);
+
+            Object uncastObject = context.getFramed().frameElement(v, TestMapBlankSubModel.class);
+            TestMapBlankSubModel framed = (TestMapBlankSubModel) uncastObject;
+            checkMap(framed.getMap(), 4);
             for (String string : framed.getElement().keys())
             {
                 System.out.println("    Key: " + string);

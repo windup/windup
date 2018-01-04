@@ -12,6 +12,7 @@ import com.syncleus.ferma.framefactories.annotation.MethodHandler;
 import org.apache.tinkerpop.gremlin.structure.Element;
 import org.apache.tinkerpop.gremlin.structure.Property;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.jboss.windup.graph.model.WindupFrame;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
@@ -113,13 +114,18 @@ public class MapInPropertiesHandler extends AbstractMethodHandler implements Met
             {
                 if (!key.startsWith(prefix))
                     continue;
+
+                // Skip the type property
+                if (key.equals(WindupFrame.TYPE_PROP))
+                    continue;
+
                 final Property<Object> val = vertex.property(key);
                 if (!ann.propertyType().isAssignableFrom(val.value().getClass()))
                 {
                     log.warning("@InProperties is meant for Map<String," + ann.propertyType().getName() + ">, but the value was: " + val.getClass());
                 }
 
-                map.put(key.substring(prefix.length()), val);
+                map.put(key.substring(prefix.length()), val.value());
             }
 
             return map;

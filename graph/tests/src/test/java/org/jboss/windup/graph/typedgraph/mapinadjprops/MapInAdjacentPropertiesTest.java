@@ -67,7 +67,7 @@ public class MapInAdjacentPropertiesTest
 
             // Query for the 1 MapMainModel's
             String typeVal = MapMainModel.class.getAnnotation(TypeValue.class).value();
-            Iterable<Vertex> vertices = context.getGraph().traversal().V().property(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, typeVal).toList();
+            Iterable<Vertex> vertices = context.getGraph().traversal().V().has(WindupVertexFrame.TYPE_PROP, Text.textContains(typeVal)).toList();
 
             int numberFound = 0;
             for (Vertex v : vertices)

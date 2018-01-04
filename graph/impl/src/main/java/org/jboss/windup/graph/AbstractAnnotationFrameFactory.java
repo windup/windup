@@ -15,6 +15,7 @@
  */
 package org.jboss.windup.graph;
 
+import java.io.FileOutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -42,59 +43,80 @@ import net.bytebuddy.dynamic.DynamicType;
 import net.bytebuddy.dynamic.loading.ClassLoadingStrategy;
 import net.bytebuddy.implementation.FieldAccessor;
 
-public class AbstractAnnotationFrameFactory implements FrameFactory {
+public class AbstractAnnotationFrameFactory implements FrameFactory
+{
     protected final Map<Class<? extends Annotation>, MethodHandler> methodHandlers = new HashMap<>();
     private final ClassLoader classLoader;
     private final ReflectionCache reflectionCache;
     private final Map<Class, Class> constructedClassCache = new HashMap<>();
 
-    protected AbstractAnnotationFrameFactory(final ClassLoader classLoader, final ReflectionCache reflectionCache, Set<MethodHandler> handlers) {
+    protected AbstractAnnotationFrameFactory(final ClassLoader classLoader, final ReflectionCache reflectionCache, Set<MethodHandler> handlers)
+    {
         this.classLoader = classLoader;
         this.reflectionCache = reflectionCache;
-        for(MethodHandler handler : handlers)
+        for (MethodHandler handler : handlers)
             this.methodHandlers.put(handler.getAnnotationType(), handler);
     }
 
-    private static boolean isAbstract(final Class<?> clazz) {
+    private static boolean isAbstract(final Class<?> clazz)
+    {
         return Modifier.isAbstract(clazz.getModifiers());
     }
 
-    private static boolean isAbstract(final Method method) {
+    private static boolean isAbstract(final Method method)
+    {
         return Modifier.isAbstract(method.getModifiers());
     }
 
     @Override
-    public <T> T create(final Element e, final Class<T> kind) {
+    public <T> T create(final Element e, final Class<T> kind)
+    {
 
         Class<? extends T> resolvedKind = kind;
         if (isAbstract(resolvedKind))
             resolvedKind = constructClass(e, kind);
-        try {
+        try
+        {
             final T object = resolvedKind.newInstance();
             if (object instanceof CachesReflection)
                 ((CachesReflection) object).setReflectionCache(this.reflectionCache);
             return object;
         }
-        catch (final InstantiationException | IllegalAccessException caught) {
+        catch (final InstantiationException | IllegalAccessException caught)
+        {
             throw new IllegalArgumentException("kind could not be instantiated", caught);
         }
     }
 
-    private <E> Class<? extends E> constructClass(final Element element, final Class<E> clazz) {
+    private <E> Class<? extends E> constructClass(final Element element, final Class<E> clazz)
+    {
         Class constructedClass = constructedClassCache.get(clazz);
         if (constructedClass != null)
             return constructedClass;
 
         DynamicType.Builder<? extends E> classBuilder;
         if (clazz.isInterface())
+        {
             if (element instanceof Vertex)
-                classBuilder = (DynamicType.Builder<? extends E>) new ByteBuddy().subclass(AbstractVertexFrame.class).implement(clazz);
+                classBuilder = (DynamicType.Builder<? extends E>) new ByteBuddy().subclass(AbstractVertexFrame.class);
             else if (element instanceof Edge)
-                classBuilder = (DynamicType.Builder<? extends E>) new ByteBuddy().subclass(AbstractEdgeFrame.class).implement(clazz);
+                classBuilder = (DynamicType.Builder<? extends E>) new ByteBuddy().subclass(AbstractEdgeFrame.class);
             else
                 throw new IllegalStateException("class is neither an Edge or a vertex!");
-        else {
-            if( !(element instanceof Vertex || element instanceof Edge) )
+
+            if (clazz.getCanonicalName().contains("ByteBuddy"))
+            {
+                // if the input class is itself a bytebuddy class, only take its interfaces
+                classBuilder = classBuilder.implement(clazz.getInterfaces());
+            }
+            else
+            {
+                classBuilder = classBuilder.implement(clazz);
+            }
+        }
+        else
+        {
+            if (!(element instanceof Vertex || element instanceof Edge))
                 throw new IllegalStateException("element is neither an edge nor a vertex");
             else if (element instanceof Vertex && !VertexFrame.class.isAssignableFrom(clazz))
                 throw new IllegalStateException(clazz.getName() + " Class is not a type of VertexFrame");
@@ -103,22 +125,24 @@ public class AbstractAnnotationFrameFactory implements FrameFactory {
             classBuilder = new ByteBuddy().subclass(clazz);
         }
 
-        classBuilder = classBuilder.defineField("reflectionCache", ReflectionCache.class, Visibility.PRIVATE, FieldManifestation.PLAIN).implement(CachesReflection.class).intercept(FieldAccessor.
-              ofBeanProperty());
+        classBuilder = classBuilder.defineField("reflectionCache", ReflectionCache.class, Visibility.PRIVATE, FieldManifestation.PLAIN)
+                    .implement(CachesReflection.class).intercept(FieldAccessor.ofBeanProperty());
 
-        //try and construct any abstract methods that are left
+        // try and construct any abstract methods that are left
         for (final Method method : clazz.getMethods())
             if (isAbstract(method))
-                annotation_loop:
-                for (final Annotation annotation : method.getAnnotations()) {
+                annotation_loop: for (final Annotation annotation : method.getAnnotations())
+                {
                     final MethodHandler handler = methodHandlers.get(annotation.annotationType());
-                    if (handler != null) {
+                    if (handler != null)
+                    {
                         classBuilder = handler.processMethod(classBuilder, method, annotation);
                         break;
                     }
                 }
 
-        constructedClass = classBuilder.make().load(this.classLoader, ClassLoadingStrategy.Default.WRAPPER).getLoaded();
+        DynamicType.Unloaded unloadedClass = classBuilder.make();
+        constructedClass = unloadedClass.load(this.classLoader, ClassLoadingStrategy.Default.WRAPPER).getLoaded();
         this.constructedClassCache.put(clazz, constructedClass);
         return constructedClass;
     }

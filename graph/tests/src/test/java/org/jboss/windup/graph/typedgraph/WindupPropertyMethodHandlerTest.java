@@ -41,7 +41,7 @@ public class WindupPropertyMethodHandlerTest
     private GraphContextFactory factory;
 
     @Test
-    public void testInMemoryFrame() throws Exception
+    public void testPropertyHandler() throws Exception
     {
         try (GraphContext context = factory.create())
         {
@@ -49,8 +49,10 @@ public class WindupPropertyMethodHandlerTest
 
             GraphService<TestFooModel> fooModelService = new GraphService<>(context, TestFooModel.class);
 
-            TestFooModel inMemoryModel = fooModelService.create();
-            inMemoryModel.setProp1("prop1").setProp2("prop2").setProp3("prop3");
+            TestFooModel testFooModel = fooModelService.create();
+            testFooModel.setProp1("prop1");
+            testFooModel.setProp2("prop2");
+            testFooModel.setProp3("prop3");
 
             Iterable<Vertex> vertices = context.getQuery(TestFooModel.class).toList(TestFooModel.class).stream()
                     .map(TestFooModel::getElement)

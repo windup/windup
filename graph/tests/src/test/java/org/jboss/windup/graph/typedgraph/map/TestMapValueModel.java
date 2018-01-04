@@ -8,9 +8,9 @@ import com.syncleus.ferma.annotations.Property;
 @TypeValue("MapModelValue")
 public interface TestMapValueModel extends WindupVertexFrame
 {
-    @Property("property")
+    @Property("myproperty")
     String getProperty();
 
-    @Property("property")
+    @Property("myproperty")
     void setProperty(String val);
 }
