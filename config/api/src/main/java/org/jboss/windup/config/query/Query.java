@@ -22,11 +22,10 @@ import org.jboss.windup.util.Task;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-import com.tinkerpop.blueprints.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.tinkerpop.frames.FramedGraphQuery;
 import com.tinkerpop.frames.structures.FramedVertexIterable;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
-import com.tinkerpop.pipes.PipeFunction;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 
 public class Query extends GraphCondition implements QueryBuilderFind, QueryBuilderFrom, QueryBuilderWith,
             QueryBuilderPiped
@@ -72,16 +71,9 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
         pipelineCriteria.add(new QueryGremlinCriterion()
         {
             @Override
-            public void query(GraphRewrite event, GremlinPipeline<Vertex, Vertex> pipeline)
+            public void query(GraphRewrite event, GraphTraversal<Vertex, Vertex> pipeline)
             {
-                pipeline.filter(new PipeFunction<Vertex, Boolean>()
-                {
-                    @Override
-                    public Boolean compute(Vertex argument)
-                    {
-                        return !GraphTypeManager.hasType(type, argument);
-                    }
-                });
+                pipeline.filter(it -> !GraphTypeManager.hasType(type, it.get()));
             }
         });
         return this;
@@ -96,16 +88,9 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
         pipelineCriteria.add(new QueryGremlinCriterion()
         {
             @Override
-            public void query(GraphRewrite event, GremlinPipeline<Vertex, Vertex> pipeline)
+            public void query(GraphRewrite event, GraphTraversal<Vertex, Vertex> pipeline)
             {
-                pipeline.filter(new PipeFunction<Vertex, Boolean>()
-                {
-                    @Override
-                    public Boolean compute(Vertex argument)
-                    {
-                        return GraphTypeManager.hasType(type, argument);
-                    }
-                });
+                pipeline.filter(it -> GraphTypeManager.hasType(type, it.get()));
             }
         });
         return this;
@@ -198,7 +183,7 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
             public Iterable<WindupVertexFrame> getFrames(GraphRewrite event, EvaluationContext context)
             {
                 Iterable<Vertex> startingVertices = getStartingVertices(event);
-                GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(startingVertices);
+                GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(startingVertices);
                 Set<WindupVertexFrame> frames = new HashSet<>();
                 for (QueryGremlinCriterion c : query.getPipelineCriteria())
                 {

@@ -1,5 +1,6 @@
 package org.jboss.windup.graph;
 
+import com.syncleus.ferma.typeresolvers.TypeResolver;
 import com.thinkaurelius.titan.core.TitanEdge;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,21 +21,10 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.util.furnace.FurnaceClasspathScanner;
 
 import com.thinkaurelius.titan.graphdb.vertices.StandardVertex;
-import com.tinkerpop.blueprints.Edge;
-import com.tinkerpop.blueprints.Element;
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.blueprints.util.wrappers.event.EventVertex;
-import com.tinkerpop.frames.EdgeFrame;
-import com.tinkerpop.frames.FrameInitializer;
-import com.tinkerpop.frames.FramedGraph;
-import com.tinkerpop.frames.FramedGraphConfiguration;
-import com.tinkerpop.frames.VertexFrame;
-import com.tinkerpop.frames.modules.AbstractModule;
-import com.tinkerpop.frames.modules.Module;
-import com.tinkerpop.frames.modules.TypeResolver;
-import com.tinkerpop.frames.modules.typedgraph.TypeField;
-import com.tinkerpop.frames.modules.typedgraph.TypeRegistry;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.apache.tinkerpop.gremlin.structure.Edge;
+import org.apache.tinkerpop.gremlin.structure.Element;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import com.syncleus.ferma.FramedGraph;
 import java.util.Arrays;
 import java.util.logging.Logger;
 import org.jboss.windup.util.exception.WindupException;
@@ -72,6 +62,18 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
     public Set<Class<? extends WindupFrame<?>>> getRegisteredTypes()
     {
         return Collections.unmodifiableSet(new HashSet<>(getRegisteredTypeMap().values()));
+    }
+
+    /**
+     * Returns the type discriminator value for given Frames model class, extracted from the @TypeValue annotation.
+     */
+    public static String getTypeValue(Class<? extends WindupVertexFrame> clazz)
+    {
+        TypeValue typeValueAnnotation = clazz.getAnnotation(TypeValue.class);
+        if (typeValueAnnotation == null)
+            throw new IllegalArgumentException("Class " + clazz.getCanonicalName() + " lacks a @TypeValue annotation");
+
+        return typeValueAnnotation.value();
     }
 
     private synchronized Map<String, Class<? extends WindupFrame<?>>> getRegisteredTypeMap()

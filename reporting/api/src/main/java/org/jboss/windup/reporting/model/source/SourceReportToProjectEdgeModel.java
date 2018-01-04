@@ -2,7 +2,7 @@ package org.jboss.windup.reporting.model.source;
 
 import com.tinkerpop.frames.InVertex;
 import com.tinkerpop.frames.OutVertex;
-import com.tinkerpop.frames.Property;
+import com.syncleus.ferma.annotations.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupEdgeFrame;

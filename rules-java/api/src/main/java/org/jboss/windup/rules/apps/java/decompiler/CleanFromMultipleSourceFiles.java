@@ -13,8 +13,8 @@ import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import com.tinkerpop.pipes.PipeFunction;
 
 /**
@@ -26,7 +26,7 @@ public class CleanFromMultipleSourceFiles extends GraphOperation
     @Override
     public void perform(GraphRewrite event, EvaluationContext context)
     {
-        GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(
+        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(
                     event.getGraphContext().getQuery().type(JavaSourceFileModel.class).vertices());
         final GraphContext gContext = event.getGraphContext();
         pipeline.groupBy(groupByProjectModelFunction(gContext), valueAsFramedVertex(gContext), returnVerticesToDelete(gContext)).cap();

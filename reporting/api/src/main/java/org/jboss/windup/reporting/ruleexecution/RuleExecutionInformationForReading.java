@@ -2,8 +2,8 @@ package org.jboss.windup.reporting.ruleexecution;
 
 import org.ocpsoft.rewrite.config.Rule;
 
-import com.tinkerpop.blueprints.Edge;
-import com.tinkerpop.blueprints.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Edge;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 
 /**
  * Provides access to RuleExecutionInformation data

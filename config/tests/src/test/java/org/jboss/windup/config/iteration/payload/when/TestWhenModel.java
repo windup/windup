@@ -2,7 +2,7 @@ package org.jboss.windup.config.iteration.payload.when;
 
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
-import com.tinkerpop.frames.Property;
+import com.syncleus.ferma.annotations.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue("TestWhenModel")

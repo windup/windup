@@ -17,8 +17,8 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 import com.tinkerpop.blueprints.Predicate;
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 
 public class TestGremlinQueryOnlyRuleProvider extends AbstractRuleProvider
 {
@@ -46,7 +46,7 @@ public class TestGremlinQueryOnlyRuleProvider extends AbstractRuleProvider
             Query.gremlin(new QueryGremlinCriterion()
             {
                 @Override
-                public void query(GraphRewrite event, GremlinPipeline<Vertex, Vertex> pipeline)
+                public void query(GraphRewrite event, GraphTraversal<Vertex, Vertex> pipeline)
                 {
                     pipeline.has(WindupVertexFrame.TYPE_PROP,new Predicate() {
 

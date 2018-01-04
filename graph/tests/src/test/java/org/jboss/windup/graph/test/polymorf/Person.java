@@ -2,8 +2,8 @@ package org.jboss.windup.graph.test.polymorf;
 
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
-import com.tinkerpop.frames.Adjacency;
-import com.tinkerpop.frames.Property;
+import com.syncleus.ferma.annotations.Adjacency;
+import com.syncleus.ferma.annotations.Property;
 import com.tinkerpop.frames.VertexFrame;
 import com.tinkerpop.frames.modules.typedgraph.TypeField;
 

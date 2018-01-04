@@ -5,9 +5,9 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.blueprints.Edge;
-import com.tinkerpop.blueprints.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.apache.tinkerpop.gremlin.structure.Edge;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 
 /**
  * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>

@@ -11,9 +11,9 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.javaee.model.association.VendorSpecificationExtensionModel;
 
 import com.thinkaurelius.titan.core.attribute.Text;
-import com.tinkerpop.blueprints.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.tinkerpop.frames.structures.FramedVertexIterable;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 
 /**
  * Contains methods for querying, updating, and deleting {@link VendorSpecificationExtensionModel}
@@ -35,7 +35,7 @@ public class VendorSpecificationExtensionService extends GraphService<VendorSpec
 
     public Iterable<VendorSpecificationExtensionModel> getVendorSpecificationExtensions(FileModel model)
     {
-        GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(model.asVertex());
+        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(model.asVertex());
         pipeline.out(VendorSpecificationExtensionModel.REF);
         pipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, VendorSpecificationExtensionModel.TYPE);
         return new FramedVertexIterable<>(getGraphContext().getFramed(), pipeline, VendorSpecificationExtensionModel.class);

@@ -10,7 +10,6 @@ import java.util.stream.StreamSupport;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.frames.TypeAwareFramedGraphQuery;
 import org.jboss.windup.graph.model.BelongsToProject;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
@@ -21,7 +20,7 @@ import org.jboss.windup.graph.model.HasApplications;
 import org.jboss.windup.rules.apps.javaee.model.stats.GeneralStatsItemModel;
 import org.jboss.windup.reporting.model.TechnologyUsageStatisticsModel;
 
-import com.tinkerpop.blueprints.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.tinkerpop.frames.FramedGraphQuery;
 import com.tinkerpop.pipes.filter.BackFilterPipe;
 import com.tinkerpop.pipes.transform.OutPipe;
@@ -351,7 +350,7 @@ public class TechnologyUsageStatisticsService extends GraphService<TechnologyUsa
         pipeline.addPipe(new StartPipe(startVertices));
         final OutPipe outPipe = new OutPipe(JavaClassModel.DECOMPILED_SOURCE);
         // The BackFilterPipe needs to wrap all pipes which it "go back before".
-        // This means ...out(...).back(1);
+        // This means ...out(...).select(1);
         pipeline.addPipe(new BackFilterPipe(outPipe));
 
         Map<ProjectModel, Integer> map = new HashMap<>();

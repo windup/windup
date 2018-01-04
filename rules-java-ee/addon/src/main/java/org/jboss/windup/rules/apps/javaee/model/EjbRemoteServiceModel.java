@@ -2,8 +2,8 @@ package org.jboss.windup.rules.apps.javaee.model;
 
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.frames.Adjacency;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import com.syncleus.ferma.annotations.Adjacency;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**

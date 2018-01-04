@@ -3,13 +3,13 @@ package org.jboss.windup.config.query;
 import java.util.List;
 
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.graph.GraphTypeManager;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import com.tinkerpop.blueprints.Predicate;
-import com.tinkerpop.blueprints.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.tinkerpop.frames.FramedGraphQuery;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
-import org.jboss.windup.graph.frames.TypeAwareFramedGraphQuery;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 
 class QueryTypeCriterion implements QueryFramesCriterion, QueryGremlinCriterion
 {
@@ -19,7 +19,7 @@ class QueryTypeCriterion implements QueryFramesCriterion, QueryGremlinCriterion
     public QueryTypeCriterion(Class<? extends WindupVertexFrame> clazz)
     {
         this.searchedClass = clazz;
-        this.typeValue = TypeAwareFramedGraphQuery.getTypeValue(clazz);
+        this.typeValue = GraphTypeManager.getTypeValue(clazz);
     }
 
     @Override
@@ -28,11 +28,10 @@ class QueryTypeCriterion implements QueryFramesCriterion, QueryGremlinCriterion
         q.has(WindupVertexFrame.TYPE_PROP, typeValue);
     }
 
-
     /**
      * Adds a criterion to given pipeline which filters out vertices representing given WindupVertexFrame.
      */
-    public static GremlinPipeline<Vertex, Vertex> addPipeFor(GremlinPipeline<Vertex, Vertex> pipeline,
+    public static GraphTraversal<Vertex, Vertex> addPipeFor(GraphTraversal<Vertex, Vertex> pipeline,
                 Class<? extends WindupVertexFrame> clazz)
     {
         pipeline.has(WindupVertexFrame.TYPE_PROP, TypeAwareFramedGraphQuery.getTypeValue(clazz));
@@ -45,7 +44,7 @@ class QueryTypeCriterion implements QueryFramesCriterion, QueryGremlinCriterion
     }
 
     @Override
-    public void query(GraphRewrite event, GremlinPipeline<Vertex, Vertex> pipeline)
+    public void query(GraphRewrite event, GraphTraversal<Vertex, Vertex> pipeline)
     {
         pipeline.has(WindupVertexFrame.TYPE_PROP, new Predicate()
         {

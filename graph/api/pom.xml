@@ -18,37 +18,17 @@
             <groupId>com.thinkaurelius.titan</groupId>
             <artifactId>titan-core</artifactId>
             <version>${version.titangraph}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>frames</artifactId>
-                    <groupId>com.tinkerpop</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
-            <groupId>org.jboss.windup.graph.frames</groupId>
-            <artifactId>windup-frames</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>guava</artifactId>
-                    <groupId>com.google.guava</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.tinkerpop.gremlin</groupId>
-            <artifactId>gremlin-groovy</artifactId>
+            <groupId>org.apache.tinkerpop</groupId>
+            <artifactId>gremlin-core</artifactId>
             <version>${version.tinkerpop.blueprints}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.ivy</groupId>
-                    <artifactId>ivy</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.ant</groupId>
-                    <artifactId>ant</artifactId>
-                </exclusion>
-            </exclusions>
+        </dependency>
+        <!-- Ferma is replacement for frames -->
+        <dependency>
+            <groupId>com.syncleus.ferma</groupId>
+            <artifactId>ferma</artifactId>
+            <version>3.2.1</version>
         </dependency>
         <dependency>
             <groupId>org.codehaus.groovy</groupId>

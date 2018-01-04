@@ -3,7 +3,7 @@ package org.jboss.windup.graph.service;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.LinkModel;
 
-import com.tinkerpop.blueprints.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 
 /**
  * Contains methods for loading, querying, and deleting {@link LinkModel}s.

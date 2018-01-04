@@ -1,6 +1,6 @@
 package org.jboss.windup.graph.typedgraph.setinprops;
 
-import com.tinkerpop.blueprints.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import java.util.HashSet;
 import java.util.Set;
 import javax.inject.Inject;
