@@ -1,6 +1,6 @@
 package org.jboss.windup.graph.traversal;
 
-import com.tinkerpop.blueprints.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.graph.model.DuplicateProjectModel;
 import org.jboss.windup.graph.model.ProjectModel;

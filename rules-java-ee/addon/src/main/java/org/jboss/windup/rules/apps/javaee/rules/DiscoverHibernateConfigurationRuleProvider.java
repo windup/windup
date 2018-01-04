@@ -37,9 +37,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import com.thinkaurelius.titan.core.attribute.Text;
-import com.tinkerpop.blueprints.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.tinkerpop.frames.FramedGraphQuery;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 
 /**
  * Discovers Hibernate Configuration Files (eg, hibernate.cfg.xml), extracts their metadata, and places this metadata into the graph.
@@ -65,13 +65,13 @@ public class DiscoverHibernateConfigurationRuleProvider extends IteratingRulePro
         QueryGremlinCriterion doctypeSearchCriterion = new QueryGremlinCriterion()
         {
             @Override
-            public void query(GraphRewrite event, GremlinPipeline<Vertex, Vertex> pipeline)
+            public void query(GraphRewrite event, GraphTraversal<Vertex, Vertex> pipeline)
             {
                 pipeline.has(DoctypeMetaModel.PROPERTY_PUBLIC_ID, Text.REGEX, REGEX_HIBERNATE);
 
                 FramedGraphQuery systemIDQuery = event.getGraphContext().getQuery().type(DoctypeMetaModel.class)
                             .has(DoctypeMetaModel.PROPERTY_SYSTEM_ID, Text.REGEX, REGEX_HIBERNATE);
-                GremlinPipeline<Vertex, Vertex> systemIdPipeline = new GremlinPipeline<>(systemIDQuery.vertices());
+                GraphTraversal<Vertex, Vertex> systemIdPipeline = new GraphTraversal<>(systemIDQuery.vertices());
 
                 pipeline.add(systemIdPipeline);
 

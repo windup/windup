@@ -15,8 +15,8 @@ import org.jboss.windup.util.ZipUtil;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.jboss.windup.config.metadata.RuleMetadata;
 
 
@@ -37,7 +37,7 @@ public class DiscoverFilesAndTypesRuleProvider extends AbstractRuleProvider
             .piped(new QueryGremlinCriterion()
             {
                 @Override
-                public void query(GraphRewrite event, GremlinPipeline<Vertex, Vertex> pipeline)
+                public void query(GraphRewrite event, GraphTraversal<Vertex, Vertex> pipeline)
                 {
                     pipeline.out(WindupConfigurationModel.INPUT_PATH);
                     pipeline.has(FileModel.IS_DIRECTORY, true);

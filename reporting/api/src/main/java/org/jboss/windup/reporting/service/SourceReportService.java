@@ -5,8 +5,8 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.source.SourceReportModel;
 
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 
 /**
  * 
@@ -27,7 +27,7 @@ public class SourceReportService extends GraphService<SourceReportModel>
      */
     public SourceReportModel getSourceReportForFileModel(FileModel fileModel)
     {
-        GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(fileModel.asVertex());
+        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(fileModel.asVertex());
         pipeline.in(SourceReportModel.SOURCE_REPORT_TO_SOURCE_FILE_MODEL);
 
         SourceReportModel result = null;

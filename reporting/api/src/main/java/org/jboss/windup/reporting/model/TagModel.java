@@ -1,8 +1,8 @@
 package org.jboss.windup.reporting.model;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.frames.Adjacency;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import com.syncleus.ferma.annotations.Adjacency;
 import com.tinkerpop.frames.modules.javahandler.JavaHandler;
 import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import java.util.Map;
@@ -10,7 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.graph.MapInProperties;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
-import com.tinkerpop.frames.Property;
+import com.syncleus.ferma.annotations.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**

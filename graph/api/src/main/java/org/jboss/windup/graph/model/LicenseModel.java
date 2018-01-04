@@ -3,7 +3,7 @@ package org.jboss.windup.graph.model;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.SourceFileModel;
 
-import com.tinkerpop.frames.Property;
+import com.syncleus.ferma.annotations.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue(LicenseModel.TYPE)

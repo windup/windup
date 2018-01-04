@@ -5,7 +5,7 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.exception.NonUniqueResultException;
 
 import com.thinkaurelius.titan.core.TitanTransaction;
-import com.tinkerpop.blueprints.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.tinkerpop.frames.VertexFrame;
 
 /**

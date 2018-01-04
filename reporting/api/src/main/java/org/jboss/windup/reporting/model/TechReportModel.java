@@ -1,7 +1,7 @@
 package org.jboss.windup.reporting.model;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.frames.Adjacency;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import com.syncleus.ferma.annotations.Adjacency;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 import java.util.Map;

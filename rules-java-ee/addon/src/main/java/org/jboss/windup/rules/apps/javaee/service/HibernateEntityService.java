@@ -1,9 +1,9 @@
 package org.jboss.windup.rules.apps.javaee.service;
 
 import com.thinkaurelius.titan.core.attribute.Text;
-import com.tinkerpop.blueprints.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.tinkerpop.frames.structures.FramedVertexIterable;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
@@ -28,7 +28,7 @@ public class HibernateEntityService extends GraphService<HibernateEntityModel>
      */
     public Iterable<HibernateEntityModel> findAllByApplication(ProjectModel application)
     {
-        GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(application.asVertex());
+        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(application.asVertex());
         pipeline.in(HibernateEntityModel.APPLICATIONS);
         pipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, HibernateEntityModel.TYPE);
 

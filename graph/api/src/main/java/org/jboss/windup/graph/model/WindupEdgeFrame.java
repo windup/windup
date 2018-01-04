@@ -1,6 +1,6 @@
 package org.jboss.windup.graph.model;
 
-import com.tinkerpop.blueprints.Edge;
+import org.apache.tinkerpop.gremlin.structure.Edge;
 import com.tinkerpop.frames.EdgeFrame;
 import com.tinkerpop.frames.modules.typedgraph.TypeField;
 

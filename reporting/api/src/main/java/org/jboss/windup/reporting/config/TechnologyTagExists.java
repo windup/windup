@@ -1,7 +1,7 @@
 package org.jboss.windup.reporting.config;
 
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.condition.GraphCondition;
@@ -55,12 +55,12 @@ public class TechnologyTagExists extends GraphCondition
                 private static final String TECHNOLOGYTAG_STEP = "technologyTagModel";
 
                 @Override
-                public void query(GraphRewrite event, GremlinPipeline<Vertex, Vertex> pipeline)
+                public void query(GraphRewrite event, GraphTraversal<Vertex, Vertex> pipeline)
                 {
                     pipeline.as(TECHNOLOGYTAG_STEP);
                     pipeline.out(TechnologyTagModel.TECH_TAG_TO_FILE_MODEL);
                     pipeline.has(FileModel.FILE_NAME, filename);
-                    pipeline.back(TECHNOLOGYTAG_STEP);
+                    pipeline.select(TECHNOLOGYTAG_STEP);
                 }
             });
         }

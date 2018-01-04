@@ -4,9 +4,9 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.rules.apps.xml.operation.xslt.XSLTTransformation;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.frames.Adjacency;
-import com.tinkerpop.frames.Property;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import com.syncleus.ferma.annotations.Adjacency;
+import com.syncleus.ferma.annotations.Property;
 import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
