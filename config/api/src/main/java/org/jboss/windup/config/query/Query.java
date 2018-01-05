@@ -7,14 +7,20 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.google.common.collect.Iterables;
+import com.syncleus.ferma.Traversable;
+import com.syncleus.ferma.VertexFrame;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.DefaultGraphTraversal;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.Variables;
 import org.jboss.windup.config.condition.GraphCondition;
 import org.jboss.windup.config.selectors.FramesSelector;
 import org.jboss.windup.graph.GraphTypeManager;
+import org.jboss.windup.graph.frames.FramedVertexIterable;
 import org.jboss.windup.graph.frames.VertexFromFramedIterable;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.util.ExecutionStatistics;
@@ -23,8 +29,6 @@ import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.tinkerpop.frames.FramedGraphQuery;
-import com.tinkerpop.frames.structures.FramedVertexIterable;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 
 public class Query extends GraphCondition implements QueryBuilderFind, QueryBuilderFrom, QueryBuilderWith,
@@ -71,7 +75,7 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
         pipelineCriteria.add(new QueryGremlinCriterion()
         {
             @Override
-            public void query(GraphRewrite event, GraphTraversal<Vertex, Vertex> pipeline)
+            public void query(GraphRewrite event, GraphTraversal<?, Vertex> pipeline)
             {
                 pipeline.filter(it -> !GraphTypeManager.hasType(type, it.get()));
             }
@@ -88,7 +92,7 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
         pipelineCriteria.add(new QueryGremlinCriterion()
         {
             @Override
-            public void query(GraphRewrite event, GraphTraversal<Vertex, Vertex> pipeline)
+            public void query(GraphRewrite event, GraphTraversal<?, Vertex> pipeline)
             {
                 pipeline.filter(it -> GraphTypeManager.hasType(type, it.get()));
             }
@@ -182,8 +186,8 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
             @Override
             public Iterable<WindupVertexFrame> getFrames(GraphRewrite event, EvaluationContext context)
             {
-                Iterable<Vertex> startingVertices = getStartingVertices(event);
-                GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(startingVertices);
+                List<Vertex> startingVertices = getStartingVertices(event);
+                GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversalSource(event.getGraphContext().getGraph()).V(startingVertices);
                 Set<WindupVertexFrame> frames = new HashSet<>();
                 for (QueryGremlinCriterion c : query.getPipelineCriteria())
                 {
@@ -191,7 +195,7 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
                 }
 
                 FramedVertexIterable<WindupVertexFrame> framedVertexIterable = new FramedVertexIterable<>(
-                            event.getGraphContext().getFramed(), pipeline,
+                            event.getGraphContext().getFramed(), pipeline.toList(),
                             WindupVertexFrame.class);
                 for (WindupVertexFrame frame : framedVertexIterable)
                 {
@@ -200,11 +204,10 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
                 return frames;
             }
 
-            private Iterable<Vertex> getStartingVertices(GraphRewrite event)
+            private List<Vertex> getStartingVertices(GraphRewrite event)
             {
                 boolean hasStartingVerticesVariable = query.getInputVariablesName() != null
                             && !query.getInputVariablesName().isEmpty();
-                Iterable<Vertex> startingVertices;
                 if (hasStartingVerticesVariable)
                 {
                     // save the type as a gremlin criterion
@@ -214,20 +217,24 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
                     }
                     Variables variables = (Variables) event.getRewriteContext().get(Variables.class);
                     Iterable<? extends WindupVertexFrame> frames = variables.findVariable(query.getInputVariablesName());
-                    return new VertexFromFramedIterable(frames);
+                    List<Vertex> results = new ArrayList<>();
+                    for (WindupVertexFrame frame : frames)
+                        results.add(frame.getElement());
+                    return results;
                 }
                 else
                 {
-                    FramedGraphQuery framesQueryType = event.getGraphContext().getFramed().query();
+                    Traversable<?, ?> framesQueryType = event.getGraphContext().getFramed().traverse(g -> g.V());
                     if (query.searchType != null)
                     {
                         new QueryTypeCriterion(query.searchType).query(framesQueryType);
-                        startingVertices = framesQueryType.vertices();
-                        return startingVertices;
+                        return framesQueryType.toList(WindupVertexFrame.class).stream()
+                            .map(VertexFrame::getElement)
+                            .collect(Collectors.toList());
                     }
 
                 }
-                return event.getGraphContext().getGraph().getVertices();
+                return event.getGraphContext().getGraph().traversal().V().toList();
             }
         };
     }

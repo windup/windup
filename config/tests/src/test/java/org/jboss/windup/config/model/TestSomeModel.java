@@ -1,6 +1,6 @@
 package org.jboss.windup.config.model;
 
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 /**
@@ -10,7 +10,5 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 @TypeValue("SomeModel")
 public interface TestSomeModel extends WindupVertexFrame
 {
-
-    
 
 }

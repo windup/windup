@@ -149,7 +149,7 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
             model.setRuleProviderID(ruleProvider.getMetadata().getID());
             model.setTimeTaken(timeTaken);
 
-            timeTakenByProvider.put(ruleProvider, model.asVertex().getId());
+            timeTakenByProvider.put(ruleProvider, model.getElement().id());
         }
         else
         {
@@ -173,7 +173,7 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
             model.setRulePhase(phase.toString());
             model.setTimeTaken(timeTaken);
             model.setOrderExecuted(timeTakenByPhase.size());
-            timeTakenByPhase.put(phase, model.asVertex().getId());
+            timeTakenByPhase.put(phase, model.getElement().id());
         }
         else
         {
@@ -329,7 +329,7 @@ public class RuleSubset extends DefaultOperationBuilder implements CompositeOper
                         autocommit = (Boolean) ruleContext.get(RuleMetadataType.AUTO_COMMIT);
 
                     if (autocommit)
-                        event.getGraphContext().getGraph().getBaseGraph().commit();
+                        event.getGraphContext().commit();
 
                     Variables.instance(event).pop();
 

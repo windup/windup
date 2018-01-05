@@ -159,8 +159,8 @@ public class IterationPayloadTest
                                                                 {
                                                                     WindupVertexFrame outerFrame = Variables.instance(event)
                                                                                 .findSingletonVariable("outer_item");
-                                                                    outerVertices.add(outerFrame.asVertex());
-                                                                    innerVertices.add(payload.asVertex());
+                                                                    outerVertices.add(outerFrame.getElement());
+                                                                    innerVertices.add(payload.getElement());
                                                                     iterationCount++;
                                                                 }
                                                             }).endIteration())

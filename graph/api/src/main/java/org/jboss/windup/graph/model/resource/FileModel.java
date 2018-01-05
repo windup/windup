@@ -164,6 +164,12 @@ public interface FileModel extends ResourceModel, HasApplications, HasProject {
     void setParentFile(FileModel parentFile);
 
     /**
+     * Parent directory
+     */
+    @Adjacency(label = PARENT_FILE, direction = Direction.OUT)
+    void removeParentFile();
+
+    /**
      * Files contained within this directory
      */
     @Adjacency(label = PARENT_FILE, direction = Direction.IN)

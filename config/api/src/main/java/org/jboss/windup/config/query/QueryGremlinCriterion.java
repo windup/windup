@@ -10,5 +10,5 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
  */
 public interface QueryGremlinCriterion
 {
-    public void query(GraphRewrite event, GraphTraversal<Vertex, Vertex> pipeline);
+    void query(GraphRewrite event, GraphTraversal<?, Vertex> pipeline);
 }

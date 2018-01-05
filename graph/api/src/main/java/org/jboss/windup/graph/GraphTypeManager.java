@@ -10,6 +10,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -38,6 +39,7 @@ import org.apache.tinkerpop.gremlin.structure.Vertex;
 import java.util.Arrays;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * Windup's implementation of extended type handling for TinkerPop Frames. This allows storing multiple types based on the @TypeValue.value(), also in
@@ -363,13 +365,31 @@ public class GraphTypeManager implements TypeResolver
         if (!resultClasses.isEmpty())
         {
             // Ferma needs a single class, so create a composite one
-            return (Class<T>)new ByteBuddy()
-                    .makeInterface()
-                    .implement(resultClasses).make()
-                    .load(this.getGraphApiCompositeClassLoaderProvider().getCompositeClassLoader())
-                    .getLoaded();
+            return (Class<T>)getClass(resultClasses);
         }
         return defaultType;
+    }
+
+    private Map<String, Class<?>> classCache = new HashMap<>();
+    private Class<?> getClass(List<Class<?>> interfaces)
+    {
+        List<String> interfaceNames = interfaces.stream()
+                .map(Class::getCanonicalName)
+                .sorted(Comparator.naturalOrder())
+                .collect(Collectors.toList());
+        String key = interfaceNames.toString();
+
+        Class<?> result = classCache.get(key);
+        if (result == null)
+        {
+            result = new ByteBuddy()
+                    .makeInterface()
+                    .implement(interfaces).make()
+                    .load(this.getGraphApiCompositeClassLoaderProvider().getCompositeClassLoader())
+                    .getLoaded();
+            classCache.put(key, result);
+        }
+        return result;
     }
 
     @Override

@@ -2,7 +2,9 @@ package org.jboss.windup.config;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiPredicate;
 
+import org.apache.tinkerpop.gremlin.process.traversal.P;
 import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.Iteration;
@@ -16,7 +18,6 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-import com.tinkerpop.blueprints.Predicate;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 
@@ -46,20 +47,18 @@ public class TestGremlinQueryOnlyRuleProvider extends AbstractRuleProvider
             Query.gremlin(new QueryGremlinCriterion()
             {
                 @Override
-                public void query(GraphRewrite event, GraphTraversal<Vertex, Vertex> pipeline)
+                @SuppressWarnings("unchecked")
+                public void query(GraphRewrite event, GraphTraversal<?, Vertex> pipeline)
                 {
-                    pipeline.has(WindupVertexFrame.TYPE_PROP,new Predicate() {
-
+                    pipeline.has(WindupVertexFrame.TYPE_PROP,new P(new BiPredicate() {
                         @Override
-                        public boolean evaluate(Object first, Object second)
-                        {
+                        public boolean test(Object first, Object second) {
                             @SuppressWarnings("unchecked")
                             List<String> firstString =(List<String>)first;
                             boolean match =firstString.contains(second);
                             return match;
                         }
-                        
-                    }, JavaMethodModel.TYPE);
+                    }, JavaMethodModel.TYPE));
                 }
             }).as("javaMethods")
         )

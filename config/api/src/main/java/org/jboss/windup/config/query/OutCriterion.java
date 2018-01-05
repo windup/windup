@@ -20,7 +20,7 @@ public class OutCriterion implements QueryGremlinCriterion
 
 
     @Override
-    public void query(GraphRewrite event, GraphTraversal<Vertex, Vertex> pipeline)
+    public void query(GraphRewrite event, GraphTraversal<?, Vertex> pipeline)
     {
         pipeline.out(edgeLabel);
     }

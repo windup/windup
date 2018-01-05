@@ -36,7 +36,10 @@ public class FileService extends GraphService<FileModel>
         {
             entry = this.create();
             entry.setFilePath(absolutePath);
-            entry.setParentFile(parentFile);
+            if (parentFile == null)
+                entry.removeParentFile();
+            else
+                entry.setParentFile(parentFile);
         }
 
         ExecutionStatistics.get().end("FileService.createByFilePath(parentFile, filePath)");

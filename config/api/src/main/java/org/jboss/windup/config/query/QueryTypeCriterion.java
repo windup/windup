@@ -1,14 +1,15 @@
 package org.jboss.windup.config.query;
 
 import java.util.List;
+import java.util.function.BiPredicate;
 
+import com.syncleus.ferma.Traversable;
+import org.apache.tinkerpop.gremlin.process.traversal.P;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphTypeManager;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
-import com.tinkerpop.blueprints.Predicate;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.tinkerpop.frames.FramedGraphQuery;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 
 class QueryTypeCriterion implements QueryFramesCriterion, QueryGremlinCriterion
@@ -23,9 +24,9 @@ class QueryTypeCriterion implements QueryFramesCriterion, QueryGremlinCriterion
     }
 
     @Override
-    public void query(FramedGraphQuery q)
+    public void query(Traversable<?, ?> q)
     {
-        q.has(WindupVertexFrame.TYPE_PROP, typeValue);
+        q.traverse(g -> g.has(WindupVertexFrame.TYPE_PROP, P.eq(typeValue)));
     }
 
     /**
@@ -34,7 +35,7 @@ class QueryTypeCriterion implements QueryFramesCriterion, QueryGremlinCriterion
     public static GraphTraversal<Vertex, Vertex> addPipeFor(GraphTraversal<Vertex, Vertex> pipeline,
                 Class<? extends WindupVertexFrame> clazz)
     {
-        pipeline.has(WindupVertexFrame.TYPE_PROP, TypeAwareFramedGraphQuery.getTypeValue(clazz));
+        pipeline.has(WindupVertexFrame.TYPE_PROP, GraphTypeManager.getTypeValue(clazz));
         return pipeline;
     }
 
@@ -44,19 +45,14 @@ class QueryTypeCriterion implements QueryFramesCriterion, QueryGremlinCriterion
     }
 
     @Override
-    public void query(GraphRewrite event, GraphTraversal<Vertex, Vertex> pipeline)
+    @SuppressWarnings("unchecked")
+    public void query(GraphRewrite event, GraphTraversal<?, Vertex> pipeline)
     {
-        pipeline.has(WindupVertexFrame.TYPE_PROP, new Predicate()
-        {
-
+        pipeline.has(WindupVertexFrame.TYPE_PROP, new P(new BiPredicate<List<String>, String>() {
             @Override
-            public boolean evaluate(Object first, Object second)
-            {
-                @SuppressWarnings("unchecked")
-                List<String> firstList = (List<String>) first;
+            public boolean test(List<String> firstList, String second) {
                 return firstList.contains(second);
             }
-
-        }, typeValue);
+        }, typeValue));
     }
 }

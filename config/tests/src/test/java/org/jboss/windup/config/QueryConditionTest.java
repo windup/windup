@@ -76,18 +76,18 @@ public class QueryConditionTest
 
     private void fillData(final GraphContext context)
     {
-        context.getFramed().addVertex(null, TestSomeModel.class);
-        context.getFramed().addVertex(null, TestSomeModel.class);
-        context.getFramed().addVertex(null, TestSomeModel.class);
-        context.getFramed().addVertex(null, TestSomeModel.class);
+        context.getFramed().addFramedVertex(TestSomeModel.class);
+        context.getFramed().addFramedVertex(TestSomeModel.class);
+        context.getFramed().addFramedVertex(TestSomeModel.class);
+        context.getFramed().addFramedVertex(TestSomeModel.class);
 
-        TestXmlMetaFacetModel xmlFacet1 = context.getFramed().addVertex(null, TestXmlMetaFacetModel.class);
+        TestXmlMetaFacetModel xmlFacet1 = context.getFramed().addFramedVertex(TestXmlMetaFacetModel.class);
         xmlFacet1.setRootTagName("xmlTag1");
-        TestXmlMetaFacetModel xmlFacet2 = context.getFramed().addVertex(null, TestXmlMetaFacetModel.class);
+        TestXmlMetaFacetModel xmlFacet2 = context.getFramed().addFramedVertex(TestXmlMetaFacetModel.class);
         xmlFacet2.setRootTagName("xmlTag2");
-        TestXmlMetaFacetModel xmlFacet3 = context.getFramed().addVertex(null, TestXmlMetaFacetModel.class);
+        TestXmlMetaFacetModel xmlFacet3 = context.getFramed().addFramedVertex(TestXmlMetaFacetModel.class);
         xmlFacet3.setRootTagName("xmlTag3");
-        TestXmlMetaFacetModel xmlFacet4 = context.getFramed().addVertex(null, TestXmlMetaFacetModel.class);
+        TestXmlMetaFacetModel xmlFacet4 = context.getFramed().addFramedVertex(TestXmlMetaFacetModel.class);
         xmlFacet4.setRootTagName("xmlTag4");
     }
 
@@ -100,19 +100,19 @@ public class QueryConditionTest
             GraphRewrite event = new GraphRewrite(context);
             DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
-            WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
+            WindupConfigurationModel windupCfg = context.getFramed().addFramedVertex(WindupConfigurationModel.class);
             FileService fileModelService = new FileService(context);
             windupCfg.addInputPath(fileModelService.createByFilePath(folder.toAbsolutePath().toString()));
 
-            JavaClassModel classModel1 = context.getFramed().addVertex(null, JavaClassModel.class);
+            JavaClassModel classModel1 = context.getFramed().addFramedVertex(JavaClassModel.class);
             classModel1.setQualifiedName("com.example.Class1NoToString");
-            JavaClassModel classModel2 = context.getFramed().addVertex(null, JavaClassModel.class);
+            JavaClassModel classModel2 = context.getFramed().addFramedVertex(JavaClassModel.class);
             classModel2.setQualifiedName("com.example.Class2HasToString");
 
-            JavaMethodModel methodModelSomeMethod = context.getFramed().addVertex(null, JavaMethodModel.class);
+            JavaMethodModel methodModelSomeMethod = context.getFramed().addFramedVertex(JavaMethodModel.class);
             methodModelSomeMethod.setJavaClass(classModel2);
             methodModelSomeMethod.setMethodName("foo");
-            JavaMethodModel methodModelToString = context.getFramed().addVertex(null, JavaMethodModel.class);
+            JavaMethodModel methodModelToString = context.getFramed().addFramedVertex(JavaMethodModel.class);
             methodModelToString.setJavaClass(classModel2);
             methodModelToString.setMethodName("toString");
 
@@ -139,19 +139,19 @@ public class QueryConditionTest
             GraphRewrite event = new GraphRewrite(context);
             DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
-            WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
+            WindupConfigurationModel windupCfg = context.getFramed().addFramedVertex(WindupConfigurationModel.class);
             FileService fileModelService = new FileService(context);
             windupCfg.addInputPath(fileModelService.createByFilePath(folder.toAbsolutePath().toString()));
 
-            JavaClassModel classModel1 = context.getFramed().addVertex(null, JavaClassModel.class);
+            JavaClassModel classModel1 = context.getFramed().addFramedVertex(JavaClassModel.class);
             classModel1.setQualifiedName("com.example.Class1NoToString");
-            JavaClassModel classModel2 = context.getFramed().addVertex(null, JavaClassModel.class);
+            JavaClassModel classModel2 = context.getFramed().addFramedVertex(JavaClassModel.class);
             classModel2.setQualifiedName("com.example.Class2HasToString");
 
-            JavaMethodModel methodModelSomeMethod = context.getFramed().addVertex(null, JavaMethodModel.class);
+            JavaMethodModel methodModelSomeMethod = context.getFramed().addFramedVertex(JavaMethodModel.class);
             methodModelSomeMethod.setJavaClass(classModel2);
             methodModelSomeMethod.setMethodName("foo");
-            JavaMethodModel methodModelToString = context.getFramed().addVertex(null, JavaMethodModel.class);
+            JavaMethodModel methodModelToString = context.getFramed().addFramedVertex(JavaMethodModel.class);
             methodModelToString.setJavaClass(classModel2);
             methodModelToString.setMethodName("toString");
 
@@ -191,15 +191,15 @@ public class QueryConditionTest
             GraphRewrite event = new GraphRewrite(context);
             DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
-            JavaClassModel classModel1 = context.getFramed().addVertex(null, JavaClassModel.class);
+            JavaClassModel classModel1 = context.getFramed().addFramedVertex(JavaClassModel.class);
             classModel1.setQualifiedName("com.example.Class1NoToString");
-            JavaClassModel classModel2 = context.getFramed().addVertex(null, JavaClassModel.class);
+            JavaClassModel classModel2 = context.getFramed().addFramedVertex(JavaClassModel.class);
             classModel2.setQualifiedName("com.example.Class2HasToString");
 
-            JavaMethodModel methodModelSomeMethod = context.getFramed().addVertex(null, JavaMethodModel.class);
+            JavaMethodModel methodModelSomeMethod = context.getFramed().addFramedVertex(JavaMethodModel.class);
             methodModelSomeMethod.setJavaClass(classModel2);
             methodModelSomeMethod.setMethodName("foo");
-            JavaMethodModel methodModelToString = context.getFramed().addVertex(null, JavaMethodModel.class);
+            JavaMethodModel methodModelToString = context.getFramed().addFramedVertex(JavaMethodModel.class);
             methodModelToString.setJavaClass(classModel2);
             methodModelToString.setMethodName("toString");
 
@@ -227,7 +227,7 @@ public class QueryConditionTest
         {
 
             fillData(context);
-            context.getGraph().getBaseGraph().commit();
+            context.commit();
 
             // setup the context for the rules
             GraphRewrite event = new GraphRewrite(context);
@@ -251,7 +251,7 @@ public class QueryConditionTest
         {
 
             fillData(context);
-            context.getGraph().getBaseGraph().commit();
+            context.commit();
 
             // setup the context for the rules
             GraphRewrite event = new GraphRewrite(context);
@@ -283,7 +283,7 @@ public class QueryConditionTest
         {
 
             fillData(context);
-            context.getGraph().getBaseGraph().commit();
+            context.commit();
 
             // setup the context for the rules
             GraphRewrite event = new GraphRewrite(context);
@@ -307,7 +307,7 @@ public class QueryConditionTest
         try (final GraphContext context = factory.create(folder))
         {
             fillData(context);
-            context.getGraph().getBaseGraph().commit();
+            context.commit();
 
             // setup the context for the rules
             GraphRewrite event = new GraphRewrite(context);
@@ -334,10 +334,10 @@ public class QueryConditionTest
 
             fillData(context);
 
-            WindupVertexFrame bothTypesFrame = context.getFramed().addVertex(null, TestSomeModel.class);
+            WindupVertexFrame bothTypesFrame = context.getFramed().addFramedVertex(TestSomeModel.class);
             bothTypesFrame = GraphService.addTypeToModel(context, bothTypesFrame, TestXmlMetaFacetModel.class);
 
-            context.getGraph().getBaseGraph().commit();
+            context.commit();
 
             Variables variables = Variables.instance(event);
             variables.push();
@@ -379,10 +379,10 @@ public class QueryConditionTest
 
             fillData(context);
 
-            WindupVertexFrame bothTypesFrame = context.getFramed().addVertex(null, TestSomeModel.class);
+            WindupVertexFrame bothTypesFrame = context.getFramed().addFramedVertex(TestSomeModel.class);
             bothTypesFrame = GraphService.addTypeToModel(context, bothTypesFrame, TestXmlMetaFacetModel.class);
 
-            context.getGraph().getBaseGraph().commit();
+            context.commit();
 
             Variables variables = Variables.instance(event);
             variables.push();

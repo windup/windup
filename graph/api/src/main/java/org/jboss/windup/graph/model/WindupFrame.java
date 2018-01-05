@@ -2,6 +2,7 @@ package org.jboss.windup.graph.model;
 
 import com.syncleus.ferma.ElementFrame;
 import org.apache.tinkerpop.gremlin.structure.Element;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.jboss.windup.graph.DefaultValueInitializer;
 import org.jboss.windup.graph.JavaHandler;
 
@@ -19,6 +20,10 @@ public interface WindupFrame<T extends Element> extends ElementFrame
 
     @JavaHandler(handler = Impl.class)
     void init ();
+
+    @JavaHandler(handler = Impl.class)
+    @Override
+    boolean equals (Object other);
 
     /**
      * A string representation of this vertex, showing it's properties in a JSON-like format.
@@ -52,6 +57,19 @@ public interface WindupFrame<T extends Element> extends ElementFrame
         public void init(ElementFrame frame)
         {
             new DefaultValueInitializer().initalize(frame);
+        }
+
+        public boolean equals (ElementFrame thiz, Object o)
+        {
+            Element element;
+            if (o instanceof Element)
+                element = (Element)o;
+            else if (o instanceof ElementFrame)
+                element = ((ElementFrame) o).getElement();
+            else
+                return false;
+
+            return thiz.getElement().equals(element);
         }
     }
 }

@@ -77,23 +77,23 @@ public class RuleIterationWhenTest
         try (final GraphContext context = factory.create(folder))
         {
 
-            TestWhenModel vertex = context.getFramed().addVertex(null, TestWhenModel.class);
+            TestWhenModel vertex = context.getFramed().addFramedVertex(TestWhenModel.class);
             vertex.setName(NAME);
             vertex.setSecondName(NAME);
-            vertex = context.getFramed().addVertex(null, TestWhenModel.class);
+            vertex = context.getFramed().addFramedVertex(TestWhenModel.class);
             vertex.setName(SECOND_NAME);
             vertex.setSecondName(SECOND_NAME);
-            vertex = context.getFramed().addVertex(null, TestWhenModel.class);
+            vertex = context.getFramed().addFramedVertex(TestWhenModel.class);
             vertex.setName(NAME);
             vertex.setSecondName(SECOND_NAME);
-            vertex = context.getFramed().addVertex(null, TestWhenModel.class);
+            vertex = context.getFramed().addFramedVertex(TestWhenModel.class);
             vertex.setName(SECOND_NAME);
             vertex.setSecondName(NAME);
 
             GraphRewrite event = new GraphRewrite(context);
             DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
-            WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
+            WindupConfigurationModel windupCfg = context.getFramed().addFramedVertex(WindupConfigurationModel.class);
             FileService fileModelService = new FileService(context);
             windupCfg.addInputPath(fileModelService.createByFilePath(OperatingSystemUtils.createTempDir()
                         .getAbsolutePath()));
