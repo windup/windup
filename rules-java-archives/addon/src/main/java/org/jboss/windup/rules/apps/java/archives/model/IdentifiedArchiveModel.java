@@ -4,7 +4,7 @@ import org.jboss.windup.graph.model.ArchiveModel;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import com.syncleus.ferma.annotations.Adjacency;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.model.TypeValue;
 
 /**
  * An {@link IdentifiedArchiveModel} has a {@link ArchiveCoordinateModel}.

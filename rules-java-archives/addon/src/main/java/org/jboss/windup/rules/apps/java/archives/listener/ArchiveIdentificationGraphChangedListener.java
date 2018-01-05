@@ -2,11 +2,15 @@ package org.jboss.windup.rules.apps.java.archives.listener;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tinkerpop.gremlin.process.traversal.step.util.event.MutationListener;
+import org.apache.tinkerpop.gremlin.structure.Edge;
+import org.apache.tinkerpop.gremlin.structure.Property;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.apache.tinkerpop.gremlin.structure.VertexProperty;
 import org.jboss.forge.addon.dependencies.Coordinate;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ArchiveModel;
@@ -19,26 +23,28 @@ import org.jboss.windup.rules.apps.java.archives.identify.ArchiveIdentificationS
 import org.jboss.windup.rules.apps.java.archives.model.ArchiveCoordinateModel;
 import org.jboss.windup.rules.apps.java.archives.model.IdentifiedArchiveModel;
 import org.jboss.windup.rules.apps.java.archives.model.IgnoredArchiveModel;
+import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
 
-import org.apache.tinkerpop.gremlin.structure.Edge;
-import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.tinkerpop.blueprints.util.wrappers.event.listener.GraphChangedListener;
-import org.jboss.windup.util.Logging;
-
 /**
- * {@link GraphChangedListener} responsible for identifying {@link ArchiveModel} instances when they are added to the graph.
+ * {@link MutationListener} responsible for identifying {@link ArchiveModel} instances when they are added to the graph.
  *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
-public final class ArchiveIdentificationGraphChangedListener implements GraphChangedListener
+public final class ArchiveIdentificationGraphChangedListener implements MutationListener
 {
     private static final Logger LOG = Logging.get(ArchiveIdentificationGraphChangedListener.class);
 
     private final ArchiveIdentificationService identifier;
     private GraphContext context;
     private ArchiveService archiveService;
+
+    public ArchiveIdentificationGraphChangedListener(GraphContext context, ArchiveIdentificationService identifier)
+    {
+        this.identifier = identifier;
+        this.setGraphContext(context);
+    }
 
     public ArchiveIdentificationGraphChangedListener setGraphContext(GraphContext context)
     {
@@ -47,18 +53,13 @@ public final class ArchiveIdentificationGraphChangedListener implements GraphCha
         return this;
     }
 
-    public ArchiveIdentificationGraphChangedListener(GraphContext context, ArchiveIdentificationService identifier)
-    {
-        this.identifier = identifier;
-        this.setGraphContext(context);
-    }
-
     @Override
-    public void vertexPropertyChanged(Vertex vertex, String key, Object oldValue, Object setValue)
+    public void vertexPropertyChanged(Vertex element, Property oldValue, Object setValue, Object... vertexPropertyKeyValues)
     {
+        String key = oldValue.key();
         if (ArchiveModel.ARCHIVE_NAME.equals(key))
         {
-            ArchiveModel archive = archiveService.frame(vertex);
+            ArchiveModel archive = archiveService.frame(element);
 
             setArchiveHashes(archive);
 
@@ -127,38 +128,56 @@ public final class ArchiveIdentificationGraphChangedListener implements GraphCha
     }
 
     @Override
-    public void vertexPropertyRemoved(Vertex vertex, String key, Object removedValue)
-    {
-    }
-
-    @Override
     public void vertexAdded(Vertex vertex)
     {
+
     }
 
     @Override
-    public void vertexRemoved(Vertex vertex, Map<String, Object> props)
+    public void vertexRemoved(Vertex vertex)
     {
+
+    }
+
+    @Override
+    public void vertexPropertyRemoved(VertexProperty vertexProperty)
+    {
+
     }
 
     @Override
     public void edgeAdded(Edge edge)
     {
+
     }
 
     @Override
-    public void edgePropertyChanged(Edge edge, String key, Object oldValue, Object setValue)
+    public void edgeRemoved(Edge edge)
     {
+
     }
 
     @Override
-    public void edgePropertyRemoved(Edge edge, String key, Object removedValue)
+    public void edgePropertyChanged(Edge element, Property oldValue, Object setValue)
     {
+
     }
 
     @Override
-    public void edgeRemoved(Edge edge, Map<String, Object> props)
+    public void edgePropertyRemoved(Edge element, Property property)
     {
+
     }
 
+    @Override
+    public void vertexPropertyPropertyChanged(VertexProperty element, Property oldValue, Object setValue)
+    {
+
+    }
+
+    @Override
+    public void vertexPropertyPropertyRemoved(VertexProperty element, Property property)
+    {
+
+    }
 }

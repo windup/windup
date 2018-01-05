@@ -1,14 +1,12 @@
 package org.jboss.windup.rules.apps.java.archives.model;
 
-import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.apache.commons.lang.StringUtils;
 import org.jboss.forge.addon.dependencies.Coordinate;
+import org.jboss.windup.graph.JavaHandler;
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import com.syncleus.ferma.annotations.Property;
-import com.tinkerpop.frames.modules.javahandler.JavaHandler;
-import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * Represents a {@link Coordinate} for an {@link IdentifiedArchiveModel}.
@@ -20,12 +18,11 @@ import org.apache.commons.lang.StringUtils;
 public interface ArchiveCoordinateModel extends WindupVertexFrame
 {
     public static final String TYPE = "ArchiveCoordinateModel";
-    public static final String GROUP_ID    = TYPE + "-groupId";
+    public static final String GROUP_ID = TYPE + "-groupId";
     public static final String ARTIFACT_ID = TYPE + "-artifactId";
-    public static final String PACKAGING   = TYPE + "-packaging";
-    public static final String CLASSIFIER  = TYPE + "-classifier";
-    public static final String VERSION     = TYPE + "-version";
-
+    public static final String PACKAGING = TYPE + "-packaging";
+    public static final String CLASSIFIER = TYPE + "-classifier";
+    public static final String VERSION = TYPE + "-version";
 
     @Property(GROUP_ID)
     String getGroupId();
@@ -57,18 +54,18 @@ public interface ArchiveCoordinateModel extends WindupVertexFrame
     @Property(VERSION)
     ArchiveCoordinateModel setVersion(String version);
 
-
     /**
      * @return Formatted as "G:A:V:C:P"
      */
-    @JavaHandler
+    @JavaHandler(handler = Impl.class)
     String toString();
 
-    public abstract class Impl implements ArchiveCoordinateModel, JavaHandlerContext<Vertex>
+    class Impl
     {
-        public String toString(){
-            return String.format("%s:%s:%s:%s:%s", this.getGroupId(), this.getArtifactId(), this.getVersion(),
-                    StringUtils.defaultString(this.getClassifier()), this.getPackaging());
+        public String toString(ArchiveCoordinateModel coordinateModel)
+        {
+            return String.format("%s:%s:%s:%s:%s", coordinateModel.getGroupId(), coordinateModel.getArtifactId(), coordinateModel.getVersion(),
+                        StringUtils.defaultString(coordinateModel.getClassifier()), coordinateModel.getPackaging());
         }
     }
 }

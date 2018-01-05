@@ -4,6 +4,10 @@ import java.util.logging.Logger;
 
 import javax.inject.Inject;
 
+import org.apache.tinkerpop.gremlin.process.traversal.TraversalStrategies;
+import org.apache.tinkerpop.gremlin.process.traversal.strategy.decoration.EventStrategy;
+import org.apache.tinkerpop.gremlin.structure.Graph;
+import org.janusgraph.graphdb.database.StandardJanusGraph;
 import org.jboss.windup.config.AbstractRuleLifecycleListener;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.rules.apps.java.archives.identify.CompositeArchiveIdentificationService;
@@ -25,6 +29,10 @@ public class ArchiveIdentificationLifecycleListener extends AbstractRuleLifecycl
     public void beforeExecution(GraphRewrite event)
     {
         LOG.info("Registered " + ArchiveIdentificationGraphChangedListener.class.getSimpleName() + " - archives will be identified automatically.");
-        event.getGraphContext().getGraph().addListener(new ArchiveIdentificationGraphChangedListener(event.getGraphContext(), identifier));
+        TraversalStrategies graphStrategies = TraversalStrategies.GlobalCache
+                .getStrategies(Graph.class)
+                .clone()
+                .addStrategies(EventStrategy.build().addListener(new ArchiveIdentificationGraphChangedListener(event.getGraphContext(), identifier)).create());
+        TraversalStrategies.GlobalCache.registerStrategies(StandardJanusGraph.class, graphStrategies);
     }
 }
