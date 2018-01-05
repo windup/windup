@@ -2,12 +2,12 @@ package org.jboss.windup.graph.model;
 
 import org.jboss.windup.graph.model.resource.FileModel;
 
-import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.syncleus.ferma.annotations.Property;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Refers to a specific portion of a File and contains a reference to the code involved.
@@ -83,8 +83,8 @@ public interface FileLocationModel extends FileReferenceModel, ToFileModelTransf
     }
 
     @Override
-    default Iterable<FileModel> transformToFileModel()
+    default List<FileModel> transformToFileModel()
     {
-        return Collections.singleton(getFile());
+        return Collections.singletonList(getFile());
     }
 }

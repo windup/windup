@@ -55,7 +55,7 @@ public class HintExists extends GraphCondition
                 private static final String HINT_STEP = "hintModel";
 
                 @Override
-                public void query(GraphRewrite event, GraphTraversal<Vertex, Vertex> pipeline)
+                public void query(GraphRewrite event, GraphTraversal<?, Vertex> pipeline)
                 {
                     pipeline.as(HINT_STEP);
                     pipeline.out(InlineHintModel.FILE_MODEL);

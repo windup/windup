@@ -39,7 +39,7 @@ public class TechReportService
      */
     TechStatsMatrix getTechStatsMap(ProjectModel onlyForProject)
     {
-        final Long onlyID = onlyForProject == null ? null : (Long) onlyForProject.getRootProjectModel().asVertex().getId();
+        final Long onlyID = onlyForProject == null ? null : (Long) onlyForProject.getRootProjectModel().getElement().id();
         LOG.fine(String.format("### Creating tech stats map for " + (onlyForProject == null ? "global report" : "project #%d"), onlyID));
 
         Map<String, Map<String, Map<Long, Map<String, TechUsageStatSum>>>> map = new HashMap<>();
@@ -48,8 +48,8 @@ public class TechReportService
         for (TechnologyUsageStatisticsModel stat : statModels)
         {
             List<Long> appsToCountTowards = StreamSupport.stream(stat.getProjectModel().getApplications().spliterator(), false)
-                    .map(ProjectModel::asVertex)
-                    .map(Vertex::getId)
+                    .map(ProjectModel::getElement)
+                    .map(Vertex::id)
                     .map(Long.class::cast)
                     .collect(Collectors.toList());
 

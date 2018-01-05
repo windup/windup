@@ -7,6 +7,7 @@ import com.syncleus.ferma.annotations.Adjacency;
 import com.syncleus.ferma.annotations.Property;
 
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -60,7 +61,7 @@ public interface ArchiveModel extends FileModel
      * Contains a link to the organization which produced this archive.
      */
     @Adjacency(label = OrganizationModel.ARCHIVE_MODEL, direction = Direction.IN)
-    Iterable<OrganizationModel> getOrganizationModels();
+    List<OrganizationModel> getOrganizationModels();
 
     /**
      * Gets all files in this archive, including subfiles, but not including subfiles of embedded archives.
@@ -91,7 +92,7 @@ public interface ArchiveModel extends FileModel
      * Gets the {@link ArchiveModel}s that are duplicates of this archive.
      */
     @Adjacency(label = DuplicateArchiveModel.CANONICAL_ARCHIVE, direction = Direction.IN)
-    Iterable<DuplicateArchiveModel> getDuplicateArchives();
+    List<DuplicateArchiveModel> getDuplicateArchives();
 
     /**
      * Gets the "root" archive model. The root is defined as the model for which {@link #getParentArchive()} would return

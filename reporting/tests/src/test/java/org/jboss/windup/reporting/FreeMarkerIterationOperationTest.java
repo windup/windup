@@ -76,7 +76,7 @@ public class FreeMarkerIterationOperationTest
 
     private void fillData(final GraphContext context) throws Exception
     {
-        WindupConfigurationModel cfgModel = context.getFramed().addVertex(null, WindupConfigurationModel.class);
+        WindupConfigurationModel cfgModel = context.getFramed().addFramedVertex(WindupConfigurationModel.class);
         this.tempFolder = Paths.get(FileUtils.getTempDirectoryPath(), "freemarkeroperationtest");
         if (!Files.isDirectory(this.tempFolder))
         {
@@ -85,7 +85,7 @@ public class FreeMarkerIterationOperationTest
         FileService fileModelService = new FileService(context);
         cfgModel.setOutputPath(fileModelService.createByFilePath(tempFolder.toAbsolutePath().toString()));
 
-        ApplicationReportModel appReportModel = context.getFramed().addVertex(null, ApplicationReportModel.class);
+        ApplicationReportModel appReportModel = context.getFramed().addFramedVertex(ApplicationReportModel.class);
         appReportModel.setTemplatePath("/reports/templates/FreeMarkerOperationTest.ftl");
         appReportModel.setReportFilename("testapplicationreport.html");
     }

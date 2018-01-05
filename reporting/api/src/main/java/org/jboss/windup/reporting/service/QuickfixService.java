@@ -24,9 +24,10 @@ public class QuickfixService extends GraphService<QuickfixModel>
     /**
      * Tries to find a link with the specified description and href. If it cannot, then it will return a new one.
      */
+    @SuppressWarnings("unchecked")
     public QuickfixModel getOrCreate(String name, QuickfixType type)
     {
-        Iterable<Vertex> results = getTypedQuery().has(QuickfixModel.PROPERTY_TYPE, type).has(QuickfixModel.PROPERTY_DESCRIPTION, name).vertices();
+        Iterable<Vertex> results = (Iterable<Vertex>)getQuery().getRawTraversal().has(QuickfixModel.PROPERTY_TYPE, type).has(QuickfixModel.PROPERTY_DESCRIPTION, name).toList();
         if (!results.iterator().hasNext())
         {
             QuickfixModel model = create();

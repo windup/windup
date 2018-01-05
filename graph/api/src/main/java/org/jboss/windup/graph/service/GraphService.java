@@ -3,10 +3,9 @@ package org.jboss.windup.graph.service;
 import com.syncleus.ferma.Traversable;
 import com.syncleus.ferma.VertexFrame;
 import org.apache.tinkerpop.gremlin.process.traversal.Traversal;
-import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.DefaultGraphTraversal;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.Transaction;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -16,7 +15,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.janusgraph.core.attribute.Text;
 import org.janusgraph.util.datastructures.IterablesUtil;
 import org.jboss.windup.graph.GraphContext;
-import org.jboss.windup.graph.GraphTypeManager;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.exception.NonUniqueResultException;
 import org.jboss.windup.util.ExecutionStatistics;
@@ -57,7 +55,7 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     {
         return ExecutionStatistics.performBenchmarked("GraphService.count", () ->
         {
-            GraphTraversal<Iterable<?>, Object> pipe = new DefaultGraphTraversal<>();
+            GraphTraversalSource pipe = new GraphTraversalSource(getGraphContext().getGraph());
             return pipe.V(obj).count().next();
         });
     }
@@ -79,9 +77,7 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
 
     protected Traversable<?, ?> findAllQuery()
     {
-        return context.getFramed().traverse((g) ->
-            g.V().property(WindupVertexFrame.TYPE_PROP, GraphTypeManager.getTypeValue(type))
-        );
+        return getGraphContext().getQuery(type);
     }
 
     @Override

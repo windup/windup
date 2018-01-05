@@ -1,12 +1,18 @@
 package org.jboss.windup.reporting.service;
 
+import java.util.Iterator;
 import java.util.logging.Logger;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tinkerpop.gremlin.process.traversal.P;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
+import org.apache.tinkerpop.gremlin.structure.Property;
+import org.janusgraph.core.attribute.Text;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.frames.FramedVertexIterable;
 import org.jboss.windup.graph.model.DuplicateArchiveModel;
 import org.jboss.windup.graph.model.LinkModel;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -23,15 +29,11 @@ import org.jboss.windup.reporting.model.IssueDisplayMode;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-import com.thinkaurelius.titan.core.attribute.Text;
-import org.apache.tinkerpop.gremlin.process.traversal.Compare;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.tinkerpop.frames.structures.FramedVertexIterable;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import java.util.logging.Level;
 import org.jboss.windup.reporting.category.IssueCategoryRegistry;
-// import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.*;
 
 /**
  * Adds methods for loading and querying ClassificationModel related data.
@@ -53,18 +55,18 @@ public class ClassificationService extends GraphService<ClassificationModel>
      */
     public int getMigrationEffortPoints(FileModel fileModel)
     {
-        GraphTraversal<Vertex, Vertex> classificationPipeline = new GraphTraversal<>(fileModel.asVertex());
+        GraphTraversal<Vertex, Vertex> classificationPipeline = new GraphTraversalSource(getGraphContext().getGraph()).V(fileModel.getElement());
         classificationPipeline.in(ClassificationModel.FILE_MODEL);
-        classificationPipeline.has(EffortReportModel.EFFORT, Compare.gt, 0);
-        classificationPipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, ClassificationModel.TYPE);
+        classificationPipeline.has(EffortReportModel.EFFORT, P.gt(0));
+        classificationPipeline.has(WindupVertexFrame.TYPE_PROP, Text.textContains(ClassificationModel.TYPE));
 
         int classificationEffort = 0;
-        for (Vertex v : classificationPipeline)
+        for (Vertex v : classificationPipeline.toList())
         {
-            Integer migrationEffort = v.getProperty(ClassificationModel.EFFORT);
-            if (migrationEffort != null)
+            Property<Integer> migrationEffort = v.property(ClassificationModel.EFFORT);
+            if (migrationEffort.isPresent())
             {
-                classificationEffort += migrationEffort;
+                classificationEffort += migrationEffort.value();
             }
         }
         return classificationEffort;
@@ -75,10 +77,10 @@ public class ClassificationService extends GraphService<ClassificationModel>
      */
     public Iterable<ClassificationModel> getClassifications(FileModel model)
     {
-        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(model.asVertex());
+        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversalSource(getGraphContext().getGraph()).V(model.getElement());
         pipeline.in(ClassificationModel.FILE_MODEL);
-        pipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, ClassificationModel.TYPE);
-        return new FramedVertexIterable<>(getGraphContext().getFramed(), pipeline, ClassificationModel.class);
+        pipeline.has(WindupVertexFrame.TYPE_PROP, Text.textContains(ClassificationModel.TYPE));
+        return new FramedVertexIterable<>(getGraphContext().getFramed(), pipeline.toList(), ClassificationModel.class);
     }
 
     /**
@@ -86,11 +88,11 @@ public class ClassificationService extends GraphService<ClassificationModel>
      */
     public Iterable<ClassificationModel> getClassificationByName(FileModel model, String classificationName)
     {
-        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(model.asVertex());
+        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversalSource(getGraphContext().getGraph()).V(model.getElement());
         pipeline.in(ClassificationModel.FILE_MODEL);
-        pipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, ClassificationModel.TYPE);
+        pipeline.has(WindupVertexFrame.TYPE_PROP, Text.textContains(ClassificationModel.TYPE));
         pipeline.has(ClassificationModel.CLASSIFICATION, classificationName);
-        return new FramedVertexIterable<>(getGraphContext().getFramed(), pipeline, ClassificationModel.class);
+        return new FramedVertexIterable<>(getGraphContext().getFramed(), pipeline.toList(), ClassificationModel.class);
     }
 
     /**
@@ -113,7 +115,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
         {
             public Integer vertexToKey(Vertex effortReportVertex)
             {
-                Integer migrationEffort = effortReportVertex.getProperty(EffortReportModel.EFFORT);
+                Integer migrationEffort = (Integer)effortReportVertex.property(EffortReportModel.EFFORT).value();
                 return migrationEffort;
             }
         };
@@ -159,13 +161,12 @@ public class ClassificationService extends GraphService<ClassificationModel>
 
         final Set<Vertex> initialVertices = traversal.getAllProjectsAsVertices(recursive);
 
-        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(this.getGraphContext().getGraph());
-        pipeline.V();
+        GraphTraversal<Vertex, Vertex> pipeline = this.getGraphContext().getGraph().traversal().V();
         // If the multivalue index is not 1st, then it doesn't work - https://github.com/thinkaurelius/titan/issues/403
         if (!includeZero)
         {
-            pipeline.has(EffortReportModel.EFFORT, Compare.GREATER_THAN, 0);
-            pipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, ClassificationModel.TYPE);
+            pipeline.has(EffortReportModel.EFFORT, P.gt(0));
+            pipeline.has(WindupVertexFrame.TYPE_PROP, Text.textContains(ClassificationModel.TYPE));
         }
         else
         {
@@ -180,7 +181,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
 
         boolean checkTags = !includeTags.isEmpty() || !excludeTags.isEmpty();
         FileService fileService = new FileService(getGraphContext());
-        for (Vertex v : pipeline)
+        for (Vertex v : pipeline.toList())
         {
             if (checkTags || !issueCategoryIDs.isEmpty())
             {
@@ -198,12 +199,15 @@ public class ClassificationService extends GraphService<ClassificationModel>
             // TODO: .accumulate(v, count);
             // TODO: This could be all done just within the query (provided that the tags would be taken care of).
             //       Accumulate could be a PipeFunction.
-            for (Vertex fileVertex : v.getVertices(Direction.OUT, ClassificationModel.FILE_MODEL))
+            Iterator<Vertex> fileVertexIterator = v.vertices(Direction.OUT, ClassificationModel.FILE_MODEL);
+            while (fileVertexIterator.hasNext())
             {
+                Vertex fileVertex = fileVertexIterator.next();
+
                 // Make sure that this file is actually in an accepted project. The pipeline condition will return
                 // classifications that aren't necessarily in the same project.
                 FileModel fileModel = fileService.frame(fileVertex);
-                if (initialVertices.contains(fileModel.getProjectModel().asVertex()))
+                if (initialVertices.contains(fileModel.getProjectModel().getElement()))
                     accumulatorFunction.accumulate(v);
             }
         }
@@ -227,7 +231,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
      */
     public ClassificationModel attachClassification(GraphRewrite event, Rule rule, FileModel fileModel, String categoryId, String classificationTitle, String description)
     {
-        ClassificationModel classification = getUnique(getTypedQuery().has(ClassificationModel.CLASSIFICATION, classificationTitle));
+        ClassificationModel classification = getUnique(getQuery().traverse(g -> g.has(ClassificationModel.CLASSIFICATION, classificationTitle)));
         if (classification == null)
         {
             classification = create();

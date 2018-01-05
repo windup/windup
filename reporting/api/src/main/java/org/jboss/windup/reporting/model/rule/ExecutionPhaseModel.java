@@ -3,8 +3,10 @@ package org.jboss.windup.reporting.model.rule;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import com.syncleus.ferma.annotations.Adjacency;
 import com.syncleus.ferma.annotations.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+
+import java.util.List;
 
 /**
  * Represents execution phase
@@ -26,11 +28,11 @@ public interface ExecutionPhaseModel extends WindupVertexFrame
     ExecutionPhaseModel setName(String name);
 
     @Adjacency(label = RULE_PROVIDERS, direction = Direction.OUT)
-    Iterable<RuleProviderModel> getRuleProviders();
+    List<RuleProviderModel> getRuleProviders();
 
     @Adjacency(label = RULE_PROVIDERS, direction = Direction.OUT)
     void addRuleProvider(RuleProviderModel ruleProvider);
 
     @Adjacency(label = RULE_PROVIDERS, direction = Direction.OUT)
-    void setRuleProviders(Iterable<RuleProviderModel> ruleProviders);
+    void setRuleProviders(List<RuleProviderModel> ruleProviders);
 }

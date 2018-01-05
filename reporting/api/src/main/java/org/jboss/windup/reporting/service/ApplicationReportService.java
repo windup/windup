@@ -1,5 +1,6 @@
 package org.jboss.windup.reporting.service;
 
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -41,7 +42,7 @@ public class ApplicationReportService extends GraphService<ApplicationReportMode
     }
 
     /**
-     * Takes the first {@link ApplicationReportModel} that has set boolean value {@link ApplicationReportModel.MAIN_APPLICATION_REPORT} to true and whose
+     * Takes the first {@link ApplicationReportModel} that has set boolean value {@link ApplicationReportModel#MAIN_APPLICATION_REPORT} to true and whose
      * projectModel is the same as the rootProjectModel of the given file
      * @param fileModel A FileModel for which we are looking for the main application report to link to.
      * @return
@@ -57,12 +58,12 @@ public class ApplicationReportService extends GraphService<ApplicationReportMode
         {
             rootProjectModel = rootProjectModel.getRootProjectModel();
         }
-        GraphTraversal<Vertex, Vertex> pipe = new GraphTraversal<>(rootProjectModel.asVertex());
+        GraphTraversal<Vertex, Vertex> pipe = new GraphTraversalSource(getGraphContext().getGraph()).V(rootProjectModel.getElement());
         pipe.in(ApplicationReportModel.REPORT_TO_PROJECT_MODEL);
         pipe.has(ApplicationReportModel.MAIN_APPLICATION_REPORT, true);
 
         ApplicationReportModel mainAppReport = null;
-        for (Vertex v : pipe)
+        for (Vertex v : pipe.toList())
         {
             ApplicationReportModel appReport = frame(v);
 

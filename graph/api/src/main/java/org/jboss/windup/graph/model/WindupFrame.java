@@ -1,10 +1,16 @@
 package org.jboss.windup.graph.model;
 
 import com.syncleus.ferma.ElementFrame;
+import com.syncleus.ferma.WrappedFramedGraph;
 import org.apache.tinkerpop.gremlin.structure.Element;
-import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Property;
+import org.janusgraph.core.JanusGraph;
 import org.jboss.windup.graph.DefaultValueInitializer;
 import org.jboss.windup.graph.JavaHandler;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
@@ -19,11 +25,22 @@ public interface WindupFrame<T extends Element> extends ElementFrame
     String TYPE_PROP = "w:winduptype";
 
     @JavaHandler(handler = Impl.class)
+    String toString();
+
+    @JavaHandler(handler = Impl.class)
     void init ();
 
     @JavaHandler(handler = Impl.class)
     @Override
     boolean equals (Object other);
+
+    /**
+     * Gets the wrapped graph itself, allowing access to the underlying JanusGraph for raw queries.
+     */
+    default WrappedFramedGraph<JanusGraph> getWrappedGraph()
+    {
+        return (WrappedFramedGraph<JanusGraph>)getGraph();
+    }
 
     /**
      * A string representation of this vertex, showing it's properties in a JSON-like format.
@@ -39,8 +56,15 @@ public interface WindupFrame<T extends Element> extends ElementFrame
         for (String propKey : v.keys())
         {
             hasSome = true;
-            Object propVal = v.property(propKey);
-            result.append(propKey).append(": ").append(propVal);
+            Iterator<? extends Property<Object>> propVal = v.properties(propKey);
+            List<Object> propValues = new ArrayList<>();
+            propVal.forEachRemaining(prop -> propValues.add(prop.value()));
+
+            if (propValues.size() == 1)
+                result.append(propKey).append(": ").append(propValues.get(0));
+            else
+                result.append(propKey).append(": ").append(propValues);
+
             result.append(", ");
         }
 
@@ -54,6 +78,14 @@ public interface WindupFrame<T extends Element> extends ElementFrame
     }
 
     class Impl {
+        public String toString(ElementFrame frame)
+        {
+            if (frame instanceof WindupFrame)
+                return ((WindupFrame) frame).toPrettyString();
+            else
+                return frame.toString();
+        }
+
         public void init(ElementFrame frame)
         {
             new DefaultValueInitializer().initalize(frame);

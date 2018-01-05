@@ -2,13 +2,15 @@ package org.jboss.windup.reporting.model;
 
 import org.jboss.windup.graph.model.FileLocationModel;
 import org.jboss.windup.graph.model.LinkModel;
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.config.Link;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import com.syncleus.ferma.annotations.Adjacency;
 import com.syncleus.ferma.annotations.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+
+import java.util.List;
 
 /**
  * This is used to classify lines within application source {@link FileModel} instances, and to provide hints and related data regarding specific
@@ -85,13 +87,13 @@ public interface InlineHintModel extends EffortReportModel, FileLocationModel, T
      * Get the related {@link Link} instances associated with this {@link InlineHintModel}
      */
     @Adjacency(label = LINKS, direction = Direction.OUT)
-    Iterable<LinkModel> getLinks();
+    List<LinkModel> getLinks();
 
     @Adjacency(label = QUICKFIXES, direction = Direction.OUT)
     void addQuickfix(QuickfixModel quickfixModel);
 
     @Adjacency(label = QUICKFIXES, direction = Direction.OUT)
-    Iterable<QuickfixModel> getQuickfixes();
+    List<QuickfixModel> getQuickfixes();
 
     /**
      * Set the ID of the rule that triggered this particular blacklist entry

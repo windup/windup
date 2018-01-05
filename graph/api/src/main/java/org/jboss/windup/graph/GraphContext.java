@@ -5,6 +5,7 @@ import java.nio.file.Path;
 import java.util.Map;
 
 import com.syncleus.ferma.Traversable;
+import com.syncleus.ferma.WrappedFramedGraph;
 import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerGraph;
 
 import com.syncleus.ferma.FramedGraph;
@@ -43,7 +44,7 @@ public interface GraphContext extends Closeable
     /**
      * Get the {@link FramedGraph} view of the underlying {@link TinkerGraph}.
      */
-    FramedGraph getFramed();
+    WrappedFramedGraph<JanusGraph> getFramed();
 
     /**
      * Get the {@link GraphTypeManager}.

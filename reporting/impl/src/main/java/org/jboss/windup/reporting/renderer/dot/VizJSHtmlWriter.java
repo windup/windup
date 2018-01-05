@@ -18,13 +18,12 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.jboss.windup.reporting.renderer.GraphWriter;
 import org.jboss.windup.reporting.renderer.dot.DotConstants.DotGraphType;
 import org.jboss.windup.util.Logging;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
-
-import com.tinkerpop.blueprints.Graph;
 
 public class VizJSHtmlWriter implements GraphWriter
 {

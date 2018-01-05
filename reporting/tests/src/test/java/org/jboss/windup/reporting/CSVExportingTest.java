@@ -128,10 +128,10 @@ public class CSVExportingTest
         ClassificationService classificationService = new ClassificationService(context);
         LinkService linkService = new LinkService(context);
 
-        FileModel f1 = context.getFramed().addVertex(null, FileModel.class);
+        FileModel f1 = context.getFramed().addFramedVertex(FileModel.class);
         f1.setFilePath("/f1");
         projectModel.addFileModel(f1);
-        FileModel f2 = context.getFramed().addVertex(null, FileModel.class);
+        FileModel f2 = context.getFramed().addFramedVertex(FileModel.class);
         f2.setFilePath("/f2");
         projectModel2.addFileModel(f2);
 

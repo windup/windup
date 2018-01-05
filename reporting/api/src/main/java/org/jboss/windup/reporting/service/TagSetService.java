@@ -48,7 +48,7 @@ public class TagSetService extends GraphService<TagSetModel>
         {
             TagSetModel model = create();
             model.setTags(tags);
-            cache.put(tags, model.asVertex());
+            cache.put(tags, model.getElement());
             return model;
         }
         else

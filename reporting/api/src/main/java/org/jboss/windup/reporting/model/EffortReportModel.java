@@ -1,22 +1,19 @@
 package org.jboss.windup.reporting.model;
 
-import com.thinkaurelius.titan.core.TitanGraph;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.tinkerpop.blueprints.util.wrappers.event.EventGraph;
 import com.syncleus.ferma.annotations.Adjacency;
-import com.syncleus.ferma.FramedGraph;
-import com.tinkerpop.frames.modules.javahandler.JavaHandler;
-import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
 import org.jboss.windup.graph.IndexType;
 import org.jboss.windup.graph.Indexed;
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import com.syncleus.ferma.annotations.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import org.jboss.windup.reporting.category.IssueCategory;
 import org.jboss.windup.reporting.category.IssueCategoryModel;
 import org.jboss.windup.reporting.category.IssueCategoryRegistry;
+
+import java.util.Iterator;
 
 /**
  * Aggregates the common properties of all the items generating effort for the Application.
@@ -53,26 +50,20 @@ public interface EffortReportModel extends WindupVertexFrame
     /**
      * Contains a the id of the {@link IssueCategory} (for example, mandatory or potential).
      */
-    @JavaHandler
-    IssueCategoryModel getIssueCategory();
-
-    abstract class Impl implements EffortReportModel, JavaHandlerContext<Vertex>
+    default IssueCategoryModel getIssueCategory()
     {
-        @Override
-        public IssueCategoryModel getIssueCategory()
-        {
-            Iterable<Vertex> categoryVertices = it().getVertices(Direction.OUT, ISSUE_CATEGORY);
+        Iterator<Vertex> categoryVertices = getElement().vertices(Direction.OUT, ISSUE_CATEGORY);
 
-            IssueCategoryModel result;
-            if (categoryVertices.iterator().hasNext())
-            {
-                result = frame(categoryVertices.iterator().next());
-            }
-            else
-            {
-                result = IssueCategoryRegistry.loadFromGraph((FramedGraph<EventGraph<TitanGraph>>)g(), IssueCategoryRegistry.DEFAULT);
-            }
-            return result;
+        IssueCategoryModel result;
+        if (categoryVertices.hasNext())
+        {
+            result = getGraph().frameElement(categoryVertices.next(), IssueCategoryModel.class);
         }
+        else
+        {
+            result = IssueCategoryRegistry.loadFromGraph(getGraph(), IssueCategoryRegistry.DEFAULT);
+        }
+        return result;
     }
+
 }

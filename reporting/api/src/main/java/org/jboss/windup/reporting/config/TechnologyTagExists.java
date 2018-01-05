@@ -55,7 +55,7 @@ public class TechnologyTagExists extends GraphCondition
                 private static final String TECHNOLOGYTAG_STEP = "technologyTagModel";
 
                 @Override
-                public void query(GraphRewrite event, GraphTraversal<Vertex, Vertex> pipeline)
+                public void query(GraphRewrite event, GraphTraversal<?, Vertex> pipeline)
                 {
                     pipeline.as(TECHNOLOGYTAG_STEP);
                     pipeline.out(TechnologyTagModel.TECH_TAG_TO_FILE_MODEL);

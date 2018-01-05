@@ -3,15 +3,16 @@ package org.jboss.windup.reporting.model;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.syncleus.ferma.annotations.Adjacency;
-import com.tinkerpop.frames.modules.javahandler.JavaHandler;
-import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
+
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
+import org.jboss.windup.graph.JavaHandler;
 import org.jboss.windup.graph.MapInProperties;
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import com.syncleus.ferma.annotations.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
  * Holds information about a tag, as per the definition from tags.xml files.
@@ -25,8 +26,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
  * @see TaggableModel
  */
 @TypeValue(TagModel.TYPE)
-public interface TagModel extends WindupVertexFrame
-{
+public interface TagModel extends WindupVertexFrame {
     String TYPE = "TagModel";
     static final String PROP_NAME = "name";
     static final String EDGE_DESIGNATES = "designates";
@@ -36,6 +36,7 @@ public interface TagModel extends WindupVertexFrame
      */
     @Property(PROP_NAME)
     String getName();
+
     @Property(PROP_NAME)
     void setName(String name);
 
@@ -44,11 +45,14 @@ public interface TagModel extends WindupVertexFrame
      */
     @Property("title")
     String getTitle();
+
     @Property("title")
     TagModel setTitle(String title);
 
-    @JavaHandler
-    String getTitleOrName();
+    default String getTitleOrName()
+    {
+        return StringUtils.defaultString(this.getTitle(), this.getName());
+    }
 
     /**
      * A "prime" tag is one which is an important group of subtags, suitable for showing in aggregated reports.
@@ -88,16 +92,16 @@ public interface TagModel extends WindupVertexFrame
     @Property("color")
     TagModel setColor(String color);
 
-    @JavaHandler
+    @JavaHandler(handler = Impl.class)
     String toString();
 
     /**
      * Which tags this designates; for instance, "java-ee" designates "ejb" and "jms".
      */
     @Adjacency(label = EDGE_DESIGNATES, direction = Direction.OUT)
-    Iterable<TagModel> getDesignatedTags();
+    List<TagModel> getDesignatedTags();
     @Adjacency(label = EDGE_DESIGNATES, direction = Direction.OUT)
-    TagModel setDesignatedTags(Iterable<TagModel> tags);
+    TagModel setDesignatedTags(List<TagModel> tags);
     @Adjacency(label = EDGE_DESIGNATES, direction = Direction.OUT)
     TagModel addDesignatedTag(TagModel tag);
 
@@ -105,9 +109,9 @@ public interface TagModel extends WindupVertexFrame
      * Which tags is this tag designated by; for instance, "seam" is designated by "web" and "framework:".
      */
     @Adjacency(label = EDGE_DESIGNATES, direction = Direction.IN)
-    Iterable<TagModel> getDesignatedByTags();
+    List<TagModel> getDesignatedByTags();
     @Adjacency(label = EDGE_DESIGNATES, direction = Direction.IN)
-    TagModel setDesignatedByTags(Iterable<TagModel> tags);
+    TagModel setDesignatedByTags(List<TagModel> tags);
 
 
     /**
@@ -129,17 +133,11 @@ public interface TagModel extends WindupVertexFrame
     void putAllTraits(Map<String, String> traits);
 
 
-    public abstract class Impl implements TagModel, JavaHandlerContext<Vertex>
+    class Impl
     {
-        public String getTitleOrName()
+        public String toString(TagModel frame)
         {
-            return StringUtils.defaultString(this.getTitle(), this.getName());
-        }
-
-        @Override
-        public String toString()
-        {
-            return "{"+this.getName()+"}";
+            return "{"+frame.getName()+"}";
         }
     }
 }

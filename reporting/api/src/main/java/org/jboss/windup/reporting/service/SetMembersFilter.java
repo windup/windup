@@ -1,15 +1,17 @@
 package org.jboss.windup.reporting.service;
 
-import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.tinkerpop.pipes.PipeFunction;
 import java.util.Set;
+import java.util.function.Predicate;
+
+import org.apache.tinkerpop.gremlin.process.traversal.Traverser;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 
 /**
- *  Filters the pipeline based upon a {@link Set} of vertices.
+ * Filters the pipeline based upon a {@link Set} of vertices.
  *
- *  @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
+ * @author <a href="http://ondra.zizka.cz/">Ondrej Zizka, zizka@seznam.cz</a>
  */
-public final class SetMembersFilter implements PipeFunction<Vertex, Boolean>
+public final class SetMembersFilter implements Predicate<Traverser<Vertex>>
 {
     private final Set<Vertex> initialVertices;
 
@@ -22,8 +24,8 @@ public final class SetMembersFilter implements PipeFunction<Vertex, Boolean>
     }
 
     @Override
-    public Boolean compute(Vertex argument)
+    public boolean test(Traverser<Vertex> vertexTraverser)
     {
-        return initialVertices.contains(argument);
+        return initialVertices.contains(vertexTraverser.get());
     }
 }

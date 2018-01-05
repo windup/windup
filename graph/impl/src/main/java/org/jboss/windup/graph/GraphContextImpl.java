@@ -18,6 +18,7 @@ import com.syncleus.ferma.DelegatingFramedGraph;
 import com.syncleus.ferma.FramedGraph;
 import com.syncleus.ferma.ReflectionCache;
 import com.syncleus.ferma.Traversable;
+import com.syncleus.ferma.WrappedFramedGraph;
 import com.syncleus.ferma.framefactories.annotation.MethodHandler;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
@@ -26,6 +27,9 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tinkerpop.gremlin.process.traversal.TraversalStrategies;
+import org.apache.tinkerpop.gremlin.process.traversal.strategy.decoration.EventStrategy;
+import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.janusgraph.core.Cardinality;
 import org.janusgraph.core.JanusGraph;
 import org.janusgraph.core.JanusGraphFactory;
@@ -65,7 +69,7 @@ public class GraphContextImpl implements GraphContext
     private final Map<String, BeforeGraphCloseListener> beforeGraphCloseListenerBuffer = new HashMap<>();
     private Map<String, Object> configurationOptions;
     private JanusGraph graph;
-    private FramedGraph framed;
+    private WrappedFramedGraph<JanusGraph> framed;
     private Configuration conf;
 
     public GraphContextImpl(Furnace furnace, GraphTypeManager typeManager,
@@ -415,7 +419,7 @@ public class GraphContextImpl implements GraphContext
     }
 
     @Override
-    public FramedGraph getFramed()
+    public WrappedFramedGraph<JanusGraph> getFramed()
     {
         return framed;
     }

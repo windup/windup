@@ -7,13 +7,10 @@ import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.jboss.windup.reporting.renderer.GraphDataSerializer;
 import org.jboss.windup.reporting.renderer.dot.DotConstants.DotGraphType;
-
-import org.apache.tinkerpop.gremlin.structure.Direction;
-import org.apache.tinkerpop.gremlin.structure.Edge;
-import com.tinkerpop.blueprints.Graph;
-import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.jboss.windup.util.exception.WindupException;
 
 public class DotWriter implements GraphDataSerializer
 {
@@ -59,13 +56,19 @@ public class DotWriter implements GraphDataSerializer
 
     private void writeGraphEdges(OutputStream os) throws IOException
     {
-        for (Edge edge : graph.getEdges())
-        {
+        graph.edges().forEachRemaining(edge -> {
             String label = edgeLabel;
-            String source = "" + edge.getVertex(Direction.OUT).getId().toString();
-            String target = "" + edge.getVertex(Direction.IN).getId().toString();
-            writeGraphEdge(label, source, target, os);
-        }
+            String source = "" + edge.outVertex().id().toString();
+            String target = "" + edge.inVertex().id().toString();
+            try
+            {
+                writeGraphEdge(label, source, target, os);
+            }
+            catch (IOException e)
+            {
+                throw new WindupException(e);
+            }
+        });
     }
 
     private void writeGraphEdge(String label, String source, String target, OutputStream os) throws IOException
@@ -95,17 +98,23 @@ public class DotWriter implements GraphDataSerializer
     {
 
         // iterate the nodes.
-        for (Vertex vertex : graph.getVertices())
-        {
-            String id = "" + vertex.getId().toString();
-            String label = vertex.getProperty(vertexLabelProperty);
+        graph.vertices().forEachRemaining(vertex -> {
+            String id = "" + vertex.id().toString();
+            String label = (String) vertex.property(vertexLabelProperty).value();
 
             if (StringUtils.isBlank(label))
             {
                 label = vertex.toString();
             }
-            writeGraphNode(id, label, os);
-        }
+            try
+            {
+                writeGraphNode(id, label, os);
+            }
+            catch (IOException e)
+            {
+                throw new WindupException(e);
+            }
+        });
 
     }
 

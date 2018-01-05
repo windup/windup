@@ -4,8 +4,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
+import org.janusgraph.core.attribute.Text;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.frames.FramedVertexIterable;
 import org.jboss.windup.graph.model.FileLocationModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -13,9 +16,7 @@ import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.util.ExecutionStatistics;
 
-import com.thinkaurelius.titan.core.attribute.Text;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.tinkerpop.frames.structures.FramedVertexIterable;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 
 import freemarker.ext.beans.StringModel;
@@ -78,19 +79,19 @@ public class GetTagsFromFileClassificationsAndHints implements WindupFreeMarkerM
 
         // Classifications
         {
-            GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(fileModel.asVertex());
-            pipeline.in(ClassificationModel.FILE_MODEL).has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, ClassificationModel.TYPE);
-            FramedVertexIterable<ClassificationModel> iterable = new FramedVertexIterable<>(this.context.getFramed(), pipeline, ClassificationModel.class);
+            GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversalSource(context.getGraph()).V(fileModel.getElement());
+            pipeline.in(ClassificationModel.FILE_MODEL).has(WindupVertexFrame.TYPE_PROP, Text.textContains(ClassificationModel.TYPE));
+            FramedVertexIterable<ClassificationModel> iterable = new FramedVertexIterable<>(this.context.getFramed(), pipeline.toList(), ClassificationModel.class);
             for (ClassificationModel classification : iterable)
                 tags.addAll(classification.getTags());
         }
 
         // Hints
         {
-            GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(fileModel.asVertex());
-            pipeline.in(FileLocationModel.FILE_MODEL).has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, FileLocationModel.TYPE);
-            pipeline.in(InlineHintModel.FILE_LOCATION_REFERENCE).has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, InlineHintModel.TYPE);
-            FramedVertexIterable<InlineHintModel> iterable = new FramedVertexIterable<>(this.context.getFramed(), pipeline, InlineHintModel.class);
+            GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversalSource(context.getGraph()).V(fileModel.getElement());
+            pipeline.in(FileLocationModel.FILE_MODEL).has(WindupVertexFrame.TYPE_PROP, Text.textContains(FileLocationModel.TYPE));
+            pipeline.in(InlineHintModel.FILE_LOCATION_REFERENCE).has(WindupVertexFrame.TYPE_PROP, Text.textContains(InlineHintModel.TYPE));
+            FramedVertexIterable<InlineHintModel> iterable = new FramedVertexIterable<>(this.context.getFramed(), pipeline.toList(), InlineHintModel.class);
             for(InlineHintModel hint : iterable)
                 tags.addAll(hint.getTags());
         }

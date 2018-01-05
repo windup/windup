@@ -1,11 +1,13 @@
 package org.jboss.windup.reporting.model.association;
 
 import org.jboss.windup.graph.model.LinkModel;
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import com.syncleus.ferma.annotations.Adjacency;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+
+import java.util.List;
 
 @TypeValue(LinkableModel.TYPE)
 public interface LinkableModel extends WindupVertexFrame
@@ -17,7 +19,7 @@ public interface LinkableModel extends WindupVertexFrame
      * Contains the link for the resource.
      */
     @Adjacency(label = LINK, direction = Direction.OUT)
-    Iterable<LinkModel> getLinks();
+    List<LinkModel> getLinks();
 
     /**
      * Contains the link for the resource.

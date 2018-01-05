@@ -1,4 +1,4 @@
-package org.jboss.windup.reporting;
+package org.jboss.windup.rules.java;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependency;
@@ -73,48 +74,41 @@ public class InlineHintModelQueryTest
     @Test
     public void testFindingClassifiedFiles() throws Exception
     {
-        FileModel f1 = context.getFramed().addVertex(null, FileModel.class);
+        FileModel f1 = context.getFramed().addFramedVertex(FileModel.class);
         f1.setFilePath("/f1");
-        FileModel f2 = context.getFramed().addVertex(null, FileModel.class);
+        FileModel f2 = context.getFramed().addFramedVertex(FileModel.class);
         f2.setFilePath("/f2");
-        FileModel f3 = context.getFramed().addVertex(null, FileModel.class);
+        FileModel f3 = context.getFramed().addFramedVertex(FileModel.class);
         f3.setFilePath("/f3");
-        FileModel f4 = context.getFramed().addVertex(null, FileModel.class);
+        FileModel f4 = context.getFramed().addFramedVertex(FileModel.class);
         f4.setFilePath("/f4");
-        FileModel f5 = context.getFramed().addVertex(null, FileModel.class);
+        FileModel f5 = context.getFramed().addFramedVertex(FileModel.class);
         f5.setFilePath("/f5");
-        FileModel f6 = context.getFramed().addVertex(null, FileModel.class);
+        FileModel f6 = context.getFramed().addFramedVertex(FileModel.class);
         f6.setFilePath("/f6");
-        FileModel f7 = context.getFramed().addVertex(null, FileModel.class);
+        FileModel f7 = context.getFramed().addFramedVertex(FileModel.class);
         f7.setFilePath("/f7");
 
-        InlineHintModel b1 = context.getFramed().addVertex(null, InlineHintModel.class);
-        InlineHintModel b1b = context.getFramed().addVertex(null, InlineHintModel.class);
+        InlineHintModel b1 = context.getFramed().addFramedVertex(InlineHintModel.class);
+        InlineHintModel b1b = context.getFramed().addFramedVertex(InlineHintModel.class);
         b1.setFile(f1);
         b1b.setFile(f1);
 
-        InlineHintModel b2 = context.getFramed().addVertex(null, InlineHintModel.class);
+        InlineHintModel b2 = context.getFramed().addFramedVertex(InlineHintModel.class);
         b2.setFile(f2);
 
-        ClassificationModel c1 = context.getFramed().addVertex(null, ClassificationModel.class);
-        ClassificationModel c1b = context.getFramed().addVertex(null, ClassificationModel.class);
+        ClassificationModel c1 = context.getFramed().addFramedVertex(ClassificationModel.class);
+        ClassificationModel c1b = context.getFramed().addFramedVertex(ClassificationModel.class);
         c1.addFileModel(f1);
         c1b.addFileModel(f1);
 
-        ClassificationModel c2 = context.getFramed().addVertex(null, ClassificationModel.class);
+        ClassificationModel c2 = context.getFramed().addFramedVertex(ClassificationModel.class);
         c2.addFileModel(f3);
 
         TechnologyTagService techTagService = new TechnologyTagService(context);
         techTagService.addTagToFileModel(f4, "TestTag", TechnologyTagLevel.IMPORTANT);
 
-        List<Vertex> vertexList = new ArrayList<>();
-        for (Vertex v : context.getQuery().type(FileModel.class).vertices())
-        {
-            vertexList.add(v);
-        }
-
-        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(context.getQuery().type(FileModel.class)
-                    .vertices());
+        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversalSource(context.getGraph()).V(context.getQuery(FileModel.class).getRawTraversal().toList());
 
         GraphRewrite event = new GraphRewrite(context);
 
@@ -122,7 +116,7 @@ public class InlineHintModelQueryTest
         new FindSourceReportFilesGremlinCriterion().query(event, pipeline);
 
         List<FileModel> fileModels = new ArrayList<>();
-        for (Vertex v : pipeline)
+        for (Vertex v : pipeline.toList())
         {
             // Explicit cast here insures that the frame returned was actually a FileModel. If it is not, a
             // ClassCastException will
@@ -130,7 +124,7 @@ public class InlineHintModelQueryTest
             //
             // If we called frame(v, FileModel.class) directly, frames would happily force it to be a FileModel
             // even if the underlying query were returning invalid results.
-            FileModel fm = (FileModel) context.getFramed().frame(v, WindupVertexFrame.class);
+            FileModel fm = (FileModel) context.getFramed().frameElement(v, WindupVertexFrame.class);
             fileModels.add(fm);
         }
 
@@ -167,45 +161,39 @@ public class InlineHintModelQueryTest
     @Test
     public void testFindingNonClassifiedFiles() throws Exception
     {
-        FileModel f1 = context.getFramed().addVertex(null, FileModel.class);
+        FileModel f1 = context.getFramed().addFramedVertex(FileModel.class);
         f1.setFilePath("/f1");
-        FileModel f2 = context.getFramed().addVertex(null, FileModel.class);
+        FileModel f2 = context.getFramed().addFramedVertex(FileModel.class);
         f2.setFilePath("/f2");
-        FileModel f3 = context.getFramed().addVertex(null, FileModel.class);
+        FileModel f3 = context.getFramed().addFramedVertex(FileModel.class);
         f3.setFilePath("/f3");
-        FileModel f4 = context.getFramed().addVertex(null, FileModel.class);
+        FileModel f4 = context.getFramed().addFramedVertex(FileModel.class);
         f4.setFilePath("/f4");
-        FileModel f5 = context.getFramed().addVertex(null, FileModel.class);
+        FileModel f5 = context.getFramed().addFramedVertex(FileModel.class);
         f5.setFilePath("/f5");
-        FileModel f6 = context.getFramed().addVertex(null, FileModel.class);
+        FileModel f6 = context.getFramed().addFramedVertex(FileModel.class);
         f6.setFilePath("/f6");
-        FileModel f7 = context.getFramed().addVertex(null, FileModel.class);
+        FileModel f7 = context.getFramed().addFramedVertex(FileModel.class);
         f7.setFilePath("/f7");
 
-        InlineHintModel b1 = context.getFramed().addVertex(null, InlineHintModel.class);
-        InlineHintModel b1b = context.getFramed().addVertex(null, InlineHintModel.class);
+        InlineHintModel b1 = context.getFramed().addFramedVertex(InlineHintModel.class);
+        InlineHintModel b1b = context.getFramed().addFramedVertex(InlineHintModel.class);
         b1.setFile(f1);
         b1b.setFile(f1);
 
-        InlineHintModel b2 = context.getFramed().addVertex(null, InlineHintModel.class);
+        InlineHintModel b2 = context.getFramed().addFramedVertex(InlineHintModel.class);
         b2.setFile(f2);
 
-        ClassificationModel c1 = context.getFramed().addVertex(null, ClassificationModel.class);
-        ClassificationModel c1b = context.getFramed().addVertex(null, ClassificationModel.class);
+        ClassificationModel c1 = context.getFramed().addFramedVertex(ClassificationModel.class);
+        ClassificationModel c1b = context.getFramed().addFramedVertex(ClassificationModel.class);
         c1.addFileModel(f1);
         c1b.addFileModel(f1);
 
-        ClassificationModel c2 = context.getFramed().addVertex(null, ClassificationModel.class);
+        ClassificationModel c2 = context.getFramed().addFramedVertex(ClassificationModel.class);
         c2.addFileModel(f3);
 
-        List<Vertex> vertexList = new ArrayList<>();
-        for (Vertex v : context.getQuery().type(FileModel.class).vertices())
-        {
-            vertexList.add(v);
-        }
-
         // manually execute this criterion (this just adds things to the pipeline)
-        Iterable<Vertex> allFMVertices = context.getQuery().type(FileModel.class).vertices();
+        Iterable<Vertex> allFMVertices = (List<Vertex>)context.getQuery(FileModel.class).getRawTraversal().toList();
         Iterable<Vertex> fileModelIterable = new FindFilesNotClassifiedOrHintedGremlinCriterion()
                     .query(context, allFMVertices);
 
@@ -218,7 +206,7 @@ public class InlineHintModelQueryTest
             //
             // If we called frame(v, FileModel.class) directly, frames would happily force it to be a FileModel
             // even if the underlying query were returning invalid results.
-            FileModel fm = (FileModel) context.getFramed().frame(v, WindupVertexFrame.class);
+            FileModel fm = (FileModel) context.getFramed().frameElement(v, WindupVertexFrame.class);
             fileModels.add(fm);
         }
 

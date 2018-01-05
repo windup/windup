@@ -55,7 +55,7 @@ public class ClassificationExists extends GraphCondition
                 private static final String CLASSIFICATION_STEP = "classificationModel";
 
                 @Override
-                public void query(GraphRewrite event, GraphTraversal<Vertex, Vertex> pipeline)
+                public void query(GraphRewrite event, GraphTraversal<?, Vertex> pipeline)
                 {
                     pipeline.as(CLASSIFICATION_STEP);
                     pipeline.out(ClassificationModel.FILE_MODEL);

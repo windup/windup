@@ -1,5 +1,7 @@
 package org.jboss.windup.reporting.model;
 
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.jboss.windup.graph.MapInAdjacentProperties;
@@ -9,9 +11,7 @@ import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.syncleus.ferma.annotations.Adjacency;
 import com.syncleus.ferma.annotations.Property;
-import com.tinkerpop.frames.modules.javahandler.JavaHandler;
-import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.model.TypeValue;
 
 /**
  * These reports are directly associated with an application, and that application's project model.
@@ -41,8 +41,21 @@ public interface ApplicationReportModel extends ReportModel
      * Provides a link to the Navigation Index that is used for this particular report. If there is more than one (for example, in the case of a
      * single report used both globally and associated with an application), then return the one associated with an app.
      */
-    @JavaHandler
-    ApplicationReportIndexModel getApplicationReportIndexModel();
+    default ApplicationReportIndexModel getApplicationReportIndexModel()
+    {
+        ApplicationReportIndexModel result = null;
+        Iterator<Vertex> vertexIterator = getElement().vertices(Direction.IN, ApplicationReportIndexModel.APPLICATION_REPORT_INDEX_TO_REPORT_MODEL);
+        while (vertexIterator.hasNext())
+        {
+            Vertex v = vertexIterator.next();
+            ApplicationReportIndexModel model = getGraph().frameElement(v, ApplicationReportIndexModel.class);
+            if (result == null)
+                result = model;
+            else if (!result.getProjectModels().iterator().hasNext() && model.getProjectModels().iterator().hasNext())
+                result = model;
+        }
+        return result;
+    }
 
     /**
      * This can be used to determine a reports location in a navigation bar. The primary purpose is sorting.
@@ -98,7 +111,7 @@ public interface ApplicationReportModel extends ReportModel
      * Application notes allow custom text to be added
      */
     @Adjacency(label = REPORT_LINES, direction = Direction.OUT)
-    Iterable<OverviewReportLineMessageModel> getApplicationReportLines();
+    List<OverviewReportLineMessageModel> getApplicationReportLines();
 
     /**
      * Application notes allow custom text to be added
@@ -129,23 +142,4 @@ public interface ApplicationReportModel extends ReportModel
      */
     @MapInAdjacentProperties(label = "reportProperties")
     void setReportProperties(Map<String, String> map);
-
-    abstract class Impl implements ApplicationReportModel, JavaHandlerContext<Vertex>
-    {
-        @Override
-        public ApplicationReportIndexModel getApplicationReportIndexModel()
-        {
-            ApplicationReportIndexModel result = null;
-            for (Vertex v : it().getVertices(Direction.IN, ApplicationReportIndexModel.APPLICATION_REPORT_INDEX_TO_REPORT_MODEL))
-            {
-                ApplicationReportIndexModel model = frame(v, ApplicationReportIndexModel.class);
-                if (result == null)
-                    result = model;
-                else if (!result.getProjectModels().iterator().hasNext() && model.getProjectModels().iterator().hasNext())
-                    result = model;
-            }
-            return result;
-        }
-    }
-
 }

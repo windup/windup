@@ -7,15 +7,13 @@ import java.util.Map;
 
 import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.MapInAdjacentVertices;
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.syncleus.ferma.annotations.Adjacency;
 import com.syncleus.ferma.annotations.Property;
-import com.tinkerpop.frames.modules.javahandler.JavaHandler;
-import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
  * Provides the base object for all reports.
@@ -134,7 +132,7 @@ public interface ReportModel extends WindupVertexFrame
      * Provides a list of child reports referenced by this report
      */
     @Adjacency(label = CHILD_REPORT, direction = Direction.OUT)
-    Iterable<ReportModel> getChildReports();
+    List<ReportModel> getChildReports();
 
     @Adjacency(label = CHILD_REPORT, direction = Direction.OUT)
     void addChildReport(final ReportModel reportResource);
@@ -142,24 +140,18 @@ public interface ReportModel extends WindupVertexFrame
     /**
      * Get all ReportModels that should be displayed in the path to this report.
      */
-    @JavaHandler
-    List<ReportModel> getAllParentsInReversedOrder();
-
-    abstract class Impl implements ReportModel, JavaHandlerContext<Vertex>
+    default List<ReportModel> getAllParentsInReversedOrder()
     {
-        public List<ReportModel> getAllParentsInReversedOrder()
+        List<ReportModel> reports = new ArrayList<>();
+        ReportModel currentReport = this;
+        reports.add(this);
+        while (currentReport.getParentReport() != null)
         {
-            List<ReportModel> reports = new ArrayList<>();
-            ReportModel currentReport = this;
-            reports.add(this);
-            while (currentReport.getParentReport() != null)
-            {
-                reports.add(currentReport.getParentReport());
-                currentReport = currentReport.getParentReport();
-            }
-
-            Collections.reverse(reports);
-            return reports;
+            reports.add(currentReport.getParentReport());
+            currentReport = currentReport.getParentReport();
         }
+
+        Collections.reverse(reports);
+        return reports;
     }
 }

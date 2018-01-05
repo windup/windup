@@ -1,6 +1,7 @@
 package org.jboss.windup.reporting.model;
 
 import org.jboss.windup.graph.model.ProjectModel;
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.ocpsoft.rewrite.config.Rule;
@@ -8,7 +9,6 @@ import org.ocpsoft.rewrite.config.Rule;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import com.syncleus.ferma.annotations.Adjacency;
 import com.syncleus.ferma.annotations.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
  * This classifies files and provides general background information about a specific {@link FileModel}. (For instance,

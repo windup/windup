@@ -3,18 +3,22 @@ package org.jboss.windup.reporting.ruleexecution;
 import java.util.ArrayList;
 import java.util.IdentityHashMap;
 import java.util.List;
-import java.util.Map;
 
+import org.apache.tinkerpop.gremlin.process.traversal.TraversalStrategies;
+import org.apache.tinkerpop.gremlin.process.traversal.step.util.event.MutationListener;
+import org.apache.tinkerpop.gremlin.process.traversal.strategy.decoration.EventStrategy;
+import org.apache.tinkerpop.gremlin.structure.Edge;
+import org.apache.tinkerpop.gremlin.structure.Graph;
+import org.apache.tinkerpop.gremlin.structure.Property;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.apache.tinkerpop.gremlin.structure.VertexProperty;
+import org.janusgraph.graphdb.database.StandardJanusGraph;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleLifecycleListener;
 import org.jboss.windup.config.metadata.RuleProviderRegistry;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
-
-import org.apache.tinkerpop.gremlin.structure.Edge;
-import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.tinkerpop.blueprints.util.wrappers.event.listener.GraphChangedListener;
 
 /**
  * Manages recording the history of {@link Rule}s executed by Windup.
@@ -58,7 +62,12 @@ public class RuleExecutionResultsListener implements RuleLifecycleListener
         ruleExecutionInformation.clear();
         this.event = event;
         event.getRewriteContext().put(RuleExecutionResultsListener.class, this);
-        event.getGraphContext().getGraph().addListener(new GraphChangeListener());
+
+        TraversalStrategies graphStrategies = TraversalStrategies.GlobalCache
+                    .getStrategies(Graph.class)
+                    .clone()
+                    .addStrategies(EventStrategy.build().addListener(new GraphChangeListener()).create());
+        TraversalStrategies.GlobalCache.registerStrategies(StandardJanusGraph.class, graphStrategies);
     }
 
     @Override
@@ -115,23 +124,30 @@ public class RuleExecutionResultsListener implements RuleLifecycleListener
     /**
      * Stores or counts the information about graph changes, especially which rules created which elements.
      */
-    private class GraphChangeListener implements GraphChangedListener
+    private class GraphChangeListener implements MutationListener
     {
         @Override
         public synchronized void vertexAdded(Vertex vertex)
         {
             if (currentRule != null)
             {
-                ruleExecutionInformation.get(currentRule).addVertexIDAdded(vertex.getId());
+                System.out.println("--------------------------------------------------");
+                System.out.println("--------------------------------------------------");
+                System.out.println("--------------------------------------------------");
+                System.out.println("Vertex added!!!! - " + vertex);
+                System.out.println("--------------------------------------------------");
+                System.out.println("--------------------------------------------------");
+                System.out.println("--------------------------------------------------");
+                ruleExecutionInformation.get(currentRule).addVertexIDAdded(vertex.id());
             }
         }
 
         @Override
-        public synchronized void vertexRemoved(Vertex vertex, Map<String, Object> props)
+        public synchronized void vertexRemoved(Vertex vertex)
         {
             if (currentRule != null)
             {
-                ruleExecutionInformation.get(currentRule).addVertexIDRemoved(vertex.getId());
+                ruleExecutionInformation.get(currentRule).addVertexIDRemoved(vertex.id());
             }
         }
 
@@ -140,36 +156,47 @@ public class RuleExecutionResultsListener implements RuleLifecycleListener
         {
             if (currentRule != null)
             {
-                ruleExecutionInformation.get(currentRule).addEdgeIDAdded(edge.getId());
+                ruleExecutionInformation.get(currentRule).addEdgeIDAdded(edge.id());
             }
         }
 
         @Override
-        public synchronized void edgeRemoved(Edge edge, Map<String, Object> props)
+        public synchronized void edgeRemoved(Edge edge)
         {
             if (currentRule != null)
             {
-                ruleExecutionInformation.get(currentRule).addVertexIDRemoved(edge.getId());
+                ruleExecutionInformation.get(currentRule).addVertexIDRemoved(edge.id());
             }
         }
 
         @Override
-        public void edgePropertyRemoved(Edge edge, String key, Object removedValue)
+        public void edgePropertyRemoved(Edge edge, Property removed)
         {
         }
 
         @Override
-        public void vertexPropertyChanged(Vertex vertex, String key, Object oldValue, Object setValue)
+        public void vertexPropertyChanged(final Vertex element, final Property oldValue, final Object setValue,
+                    final Object... vertexPropertyKeyValues)
         {
         }
 
         @Override
-        public void vertexPropertyRemoved(Vertex vertex, String key, Object removedValue)
+        public void vertexPropertyRemoved(VertexProperty vertexProperty)
         {
         }
 
         @Override
-        public void edgePropertyChanged(Edge edge, String key, Object oldValue, Object setValue)
+        public void vertexPropertyPropertyChanged(VertexProperty vertexProperty, final Property oldValue, final Object setValue)
+        {
+        }
+
+        @Override
+        public void vertexPropertyPropertyRemoved(VertexProperty vertexProperty, final Property property)
+        {
+        }
+
+        @Override
+        public void edgePropertyChanged(final Edge element, final Property oldValue, final Object setValue)
         {
         }
     }

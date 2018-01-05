@@ -4,6 +4,8 @@ import org.apache.tinkerpop.gremlin.structure.Direction;
 import com.syncleus.ferma.annotations.Adjacency;
 import com.syncleus.ferma.annotations.Property;
 
+import java.util.List;
+
 /**
  * Project dependency information. This has all of the information that would be required for a Maven dependency, but
  * can also be used for non-maven dependencies. Additional interfaces may extend this to provide further functionality.
@@ -58,11 +60,11 @@ public interface ProjectDependencyModel extends WindupVertexFrame
      * Sets the original {@link FileLocationModel} associated with this {@link ProjectDependencyModel}
      */
     @Adjacency(label = FILE_LOCATION_REFERENCE, direction = Direction.OUT)
-    void setFileLocationReference(Iterable<FileLocationModel> m);
+    void setFileLocationReference(List<FileLocationModel> m);
 
     /**
      * Gets the original{@link FileLocationModel} associated with this {@link ProjectDependencyModel}
      */
     @Adjacency(label = FILE_LOCATION_REFERENCE, direction = Direction.OUT)
-    Iterable<FileLocationModel> getFileLocationReference();
+    List<FileLocationModel> getFileLocationReference();
 }

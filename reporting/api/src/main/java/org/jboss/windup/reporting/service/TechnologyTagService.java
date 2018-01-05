@@ -4,8 +4,12 @@ import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeSet;
 
+import com.syncleus.ferma.Traversable;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
+import org.janusgraph.core.attribute.Text;
 import org.jboss.forge.furnace.util.Iterators;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.frames.FramedVertexIterable;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -16,10 +20,7 @@ import org.jboss.windup.reporting.model.DefaultTechnologyTagComparator;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.model.TechnologyTagModel;
 
-import com.thinkaurelius.titan.core.attribute.Text;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.tinkerpop.frames.FramedGraphQuery;
-import com.tinkerpop.frames.structures.FramedVertexIterable;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 
 /**
@@ -42,9 +43,9 @@ public class TechnologyTagService extends GraphService<TechnologyTagModel>
      */
     public TechnologyTagModel addTagToFileModel(FileModel fileModel, String tagName, TechnologyTagLevel level)
     {
-        FramedGraphQuery q = getGraphContext().getQuery().type(TechnologyTagModel.class)
-                    .has(TechnologyTagModel.NAME, tagName);
-        TechnologyTagModel technologyTag = super.getUnique(q);
+        Traversable<Vertex, Vertex> q = getGraphContext().getQuery(TechnologyTagModel.class)
+                    .traverse(g -> g.has(TechnologyTagModel.NAME, tagName));
+        TechnologyTagModel technologyTag = super.getUnique(q.getRawTraversal());
         if (technologyTag == null)
         {
             technologyTag = create();
@@ -64,9 +65,9 @@ public class TechnologyTagService extends GraphService<TechnologyTagModel>
      */
     public void removeTagFromFileModel(FileModel fileModel, String tagName)
     {
-        FramedGraphQuery q = getGraphContext().getQuery().type(TechnologyTagModel.class)
-                    .has(TechnologyTagModel.NAME, tagName);
-        TechnologyTagModel technologyTag = super.getUnique(q);
+        Traversable<Vertex, Vertex> q = getGraphContext().getQuery(TechnologyTagModel.class)
+                .traverse(g -> g.has(TechnologyTagModel.NAME, tagName));
+        TechnologyTagModel technologyTag = super.getUnique(q.getRawTraversal());
 
         if (technologyTag != null)
             technologyTag.removeFileModel(fileModel);
@@ -77,13 +78,18 @@ public class TechnologyTagService extends GraphService<TechnologyTagModel>
      */
     public Iterable<TechnologyTagModel> findTechnologyTagsForFile(FileModel fileModel)
     {
-        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(fileModel.asVertex());
-        pipeline.in(TechnologyTagModel.TECH_TAG_TO_FILE_MODEL).has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, TechnologyTagModel.TYPE);
+        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversalSource(getGraphContext().getGraph()).V(fileModel.getElement());
+        pipeline.in(TechnologyTagModel.TECH_TAG_TO_FILE_MODEL).has(WindupVertexFrame.TYPE_PROP, Text.textContains(TechnologyTagModel.TYPE));
 
         Comparator<TechnologyTagModel> comparator = new DefaultTechnologyTagComparator();
-        pipeline.order().by((a, b) -> comparator.compare(a, b)); // TODO: Sort framing vertex to Model class
+        pipeline.order().by((a, b) -> {
+            TechnologyTagModel aModel = getGraphContext().getFramed().frameElement(a, TechnologyTagModel.class);
+            TechnologyTagModel bModel = getGraphContext().getFramed().frameElement(b, TechnologyTagModel.class);
 
-        return new FramedVertexIterable<>(getGraphContext().getFramed(), pipeline, TechnologyTagModel.class);
+            return comparator.compare(aModel, bModel);
+        });;
+
+        return new FramedVertexIterable<>(getGraphContext().getFramed(), pipeline.toList(), TechnologyTagModel.class);
     }
 
     /**
@@ -93,11 +99,11 @@ public class TechnologyTagService extends GraphService<TechnologyTagModel>
     {
         Set<TechnologyTagModel> results = new TreeSet<>(new DefaultTechnologyTagComparator());
 
-        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(traversal.getCanonicalProject().asVertex());
+        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversalSource(getGraphContext().getGraph()).V(traversal.getCanonicalProject().getElement());
         pipeline.out(ProjectModel.PROJECT_MODEL_TO_FILE);
-        pipeline.in(TechnologyTagModel.TECH_TAG_TO_FILE_MODEL).has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, TechnologyTagModel.TYPE);
+        pipeline.in(TechnologyTagModel.TECH_TAG_TO_FILE_MODEL).has(WindupVertexFrame.TYPE_PROP, Text.textContains(TechnologyTagModel.TYPE));
 
-        Iterable<TechnologyTagModel> modelIterable = new FramedVertexIterable<>(getGraphContext().getFramed(), pipeline,
+        Iterable<TechnologyTagModel> modelIterable = new FramedVertexIterable<>(getGraphContext().getFramed(), pipeline.toList(),
                     TechnologyTagModel.class);
         results.addAll(Iterators.asSet(modelIterable));
 

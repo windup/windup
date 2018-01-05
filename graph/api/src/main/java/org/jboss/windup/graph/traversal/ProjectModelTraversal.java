@@ -1,26 +1,26 @@
 package org.jboss.windup.graph.traversal;
 
-import org.apache.tinkerpop.gremlin.structure.Vertex;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.NoSuchElementException;
+import java.util.Set;
+
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.jboss.windup.graph.model.DuplicateProjectModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 /**
  * This allows a {@link ProjectModel} to be traversed in a way that is aware of {@link DuplicateProjectModel}s.
  *
- * This should make it easier to calculate the actual path within the application without regard to where the original
- * project was actually stored.
+ * This should make it easier to calculate the actual path within the application without regard to where the original project was actually stored.
  *
  * Cases where this is used include:
  * <ul>
- *   <li>Listing all of the files in the application with accurate paths, regardless of how they are stored in the graph</li>
- *   <li>The application details report, which traverses the applications in a hierarchical manner.</li>
+ * <li>Listing all of the files in the application with accurate paths, regardless of how they are stored in the graph</li>
+ * <li>The application details report, which traverses the applications in a hierarchical manner.</li>
  * </ul>
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
@@ -28,26 +28,9 @@ import java.util.Set;
  */
 public class ProjectModelTraversal
 {
-    public enum TraversalState
-    {
-        /**
-         * Traverse this node and all children.
-         */
-        ALL,
-        /**
-         * Skip the current node, but do include the children
-         */
-        CHILDREN_ONLY,
-        /**
-         * Do not traverse this node and also do not traverse the children.
-         */
-        NONE
-    }
-
     private final ProjectModelTraversal previous;
     private final ProjectModel current;
     private final TraversalStrategy traversalStrategy;
-
     /**
      * Builds an instance with a reference to the previous {@link ProjectModelTraversal}, and the given parameters.
      *
@@ -61,8 +44,8 @@ public class ProjectModelTraversal
     }
 
     /**
-     * Creates a new {@link ProjectModelTraversal} based upon the provided {@link ProjectModel}. The {@link ProjectModel}
-     * should be a "root" model (an application) rather than a subpart of an application.
+     * Creates a new {@link ProjectModelTraversal} based upon the provided {@link ProjectModel}. The {@link ProjectModel} should be a "root" model (an
+     * application) rather than a subpart of an application.
      *
      * {@link TraversalStrategy} will default to {@link AllTraversalStrategy}.
      */
@@ -72,8 +55,8 @@ public class ProjectModelTraversal
     }
 
     /**
-     * Creates a new {@link ProjectModelTraversal} based upon the provided {@link ProjectModel}. The {@link ProjectModel}
-     * should be a "root" model (an application) rather than a subpart of an application.
+     * Creates a new {@link ProjectModelTraversal} based upon the provided {@link ProjectModel}. The {@link ProjectModel} should be a "root" model (an
+     * application) rather than a subpart of an application.
      *
      * The provided {@link TraversalStrategy} will determine how the ProjectModel's subprojects tree will be traversed.
      */
@@ -83,9 +66,8 @@ public class ProjectModelTraversal
     }
 
     /**
-     * Recursively crawls this {@link ProjectModelTraversal} and adds all of the {@link ProjectModel}s to a
-     * {@link Set}. The exact projects returns will be affected by the {@link TraversalStrategy} in use by the
-     * current traversal.
+     * Recursively crawls this {@link ProjectModelTraversal} and adds all of the {@link ProjectModel}s to a {@link Set}. The exact projects returns
+     * will be affected by the {@link TraversalStrategy} in use by the current traversal.
      */
     public Set<ProjectModel> getAllProjects(boolean recursive)
     {
@@ -96,12 +78,10 @@ public class ProjectModelTraversal
     }
 
     /**
-     * Recursively crawls this {@link ProjectModelTraversal} and adds all of the {@link ProjectModel}s to a
-     * {@link Set}. The exact projects returns will be affected by the {@link TraversalStrategy} in use by the
-     * current traversal.
+     * Recursively crawls this {@link ProjectModelTraversal} and adds all of the {@link ProjectModel}s to a {@link Set}. The exact projects returns
+     * will be affected by the {@link TraversalStrategy} in use by the current traversal.
      *
-     * This is the same as {@link ProjectModelTraversal#getAllProjects(boolean)} except that it returns a Set of vertices
-     * instead of frames.
+     * This is the same as {@link ProjectModelTraversal#getAllProjects(boolean)} except that it returns a Set of vertices instead of frames.
      */
     public Set<Vertex> getAllProjectsAsVertices(boolean recursive)
     {
@@ -127,9 +107,8 @@ public class ProjectModelTraversal
     }
 
     /**
-     * Implements the Visitor pattern with a callback that receives each {@link ProjectModelTraversal}
-     * instance. This can be useful for implementing algorithms that need to operate over all of the data within
-     * this traversal.
+     * Implements the Visitor pattern with a callback that receives each {@link ProjectModelTraversal} instance. This can be useful for implementing
+     * algorithms that need to operate over all of the data within this traversal.
      *
      * Note that the children visited will be affected by the current {@link TraversalStrategy} selected for this traversal.
      */
@@ -150,8 +129,8 @@ public class ProjectModelTraversal
     }
 
     /**
-     * Gets the path of the specified {@link FileModel} within this traversal. The file must be within the
-     * current {@link ProjectModel} for this method to return an accurate path.
+     * Gets the path of the specified {@link FileModel} within this traversal. The file must be within the current {@link ProjectModel} for this
+     * method to return an accurate path.
      */
     public String getFilePath(FileModel fileModel)
     {
@@ -228,9 +207,21 @@ public class ProjectModelTraversal
     @Override
     public String toString()
     {
-        FileModel rootFileModel = current == null ? null : current.getRootFileModel();
+        FileModel rootFileModel = null;
+        if (current != null)
+        {
+            try
+            {
+                rootFileModel = current.getRootFileModel();
+            }
+            catch (NoSuchElementException e)
+            {
+                // Workaround for Ferma behavior
+                rootFileModel = null;
+            }
+        }
         String checksum = rootFileModel == null ? null : StringUtils.substring(rootFileModel.getMD5Hash(), 0, 8);
-        String name     = rootFileModel == null ? current.getName() : rootFileModel.getFileName();
+        String name = rootFileModel == null ? current.getName() : rootFileModel.getFileName();
         String projectInfo = current == null ? null : checksum + " " + name + " (" + current.getProjectType() + ')';
         String strategyInfo = traversalStrategy == null ? null : traversalStrategy.getClass().getSimpleName();
         return "Trav@" + this.hashCode() + "{cur: " + projectInfo + ", strategy: " + strategyInfo + ", prev: " + previous + '}';
@@ -242,6 +233,22 @@ public class ProjectModelTraversal
     public void reset()
     {
         this.traversalStrategy.reset();
+    }
+
+    public enum TraversalState
+    {
+        /**
+         * Traverse this node and all children.
+         */
+        ALL,
+        /**
+         * Skip the current node, but do include the children
+         */
+        CHILDREN_ONLY,
+        /**
+         * Do not traverse this node and also do not traverse the children.
+         */
+        NONE
     }
 
 }

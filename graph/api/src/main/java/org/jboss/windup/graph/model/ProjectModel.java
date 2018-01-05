@@ -3,15 +3,15 @@ package org.jboss.windup.graph.model;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.model.resource.FileModel;
 
-import org.apache.tinkerpop.gremlin.structure.Direction;
-import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.syncleus.ferma.annotations.Adjacency;
 import com.syncleus.ferma.annotations.Property;
-import org.jboss.windup.graph.Indexed;
 
 /**
  * Base interface representing an abstract project model with a project name, version, type, and location on disk. Projects may be source-based or
@@ -48,14 +48,14 @@ public interface ProjectModel extends WindupVertexFrame, HasApplications
      * project.
      */
     @Adjacency(label = ROOT_FILE_MODEL, direction = Direction.OUT)
-    void setRootFileModel(FileModel fileModel);
+    FileModel getRootFileModel();
 
     /**
      * This represents the root directory (in the case of a source-based analysis) or root archive (for binary analysis) containing this particular
      * project.
      */
     @Adjacency(label = ROOT_FILE_MODEL, direction = Direction.OUT)
-    FileModel getRootFileModel();
+    void setRootFileModel(FileModel fileModel);
 
     /**
      * Indicates whether or not this is a source-based project (eg, the project provided by the user for analysis), or a binary project (eg, as part
@@ -87,13 +87,13 @@ public interface ProjectModel extends WindupVertexFrame, HasApplications
      * Indicates the project's artifact type (jar, war, ear, etc)
      */
     @Property(PROJECT_TYPE)
-    void setProjectType(String projectType);
+    String getProjectType();
 
     /**
      * Indicates the project's artifact type (jar, war, ear, etc)
      */
     @Property(PROJECT_TYPE)
-    String getProjectType();
+    void setProjectType(String projectType);
 
     /**
      * Contains the project's version.
@@ -108,30 +108,26 @@ public interface ProjectModel extends WindupVertexFrame, HasApplications
     void setVersion(String version);
 
     /**
-     * Project's name.
-     * This is often derived Maven name or MANIFEST.MF name or from project's root filename.
+     * Project's name. This is often derived Maven name or MANIFEST.MF name or from project's root filename.
      */
     @Property(NAME)
     String getName();
 
     /**
-     * Project's name.
-     * This is often derived Maven name or MANIFEST.MF name or from project's root filename.
+     * Project's name. This is often derived Maven name or MANIFEST.MF name or from project's root filename.
      */
     @Property(NAME)
     void setName(String name);
 
     /**
-     * Project's unique ID. Not necessarily set for all projects,
-     * only those special, such like shared-libs.
+     * Project's unique ID. Not necessarily set for all projects, only those special, such like shared-libs.
      */
     @Indexed
     @Property(UNIQUE_ID)
     String getUniqueID();
 
     /**
-     * Project's unique ID. Not necessarily set for all projects,
-     * only those special, such like shared-libs.
+     * Project's unique ID. Not necessarily set for all projects, only those special, such like shared-libs.
      */
     @Property(UNIQUE_ID)
     void setUniqueID(String name);
@@ -164,13 +160,13 @@ public interface ProjectModel extends WindupVertexFrame, HasApplications
      * The parent ProjectModel, or null if no parent is present.
      */
     @Adjacency(label = PARENT_PROJECT, direction = Direction.OUT)
-    void setParentProject(ProjectModel maven);
+    ProjectModel getParentProject();
 
     /**
      * The parent ProjectModel, or null if no parent is present.
      */
     @Adjacency(label = PARENT_PROJECT, direction = Direction.OUT)
-    ProjectModel getParentProject();
+    void setParentProject(ProjectModel maven);
 
     /**
      * A list of child projects
@@ -182,7 +178,7 @@ public interface ProjectModel extends WindupVertexFrame, HasApplications
      * A list of child projects
      */
     @Adjacency(label = PARENT_PROJECT, direction = Direction.IN)
-    Iterable<ProjectModel> getChildProjects();
+    List<ProjectModel> getChildProjects();
 
     /**
      * Project dependencies, as well as metadata about those deps.
@@ -194,13 +190,13 @@ public interface ProjectModel extends WindupVertexFrame, HasApplications
      * Project dependencies, as well as metadata about those deps.
      */
     @Adjacency(label = DEPENDENCY, direction = Direction.OUT)
-    Iterable<ProjectDependencyModel> getDependencies();
+    List<ProjectDependencyModel> getDependencies();
 
     /**
      * Retrieve all files contained within the project.
      */
     @Adjacency(label = PROJECT_MODEL_TO_FILE, direction = Direction.OUT)
-    Iterable<FileModel> getFileModels();
+    List<FileModel> getFileModels();
 
     /**
      * Add a file model to the project.
@@ -211,7 +207,7 @@ public interface ProjectModel extends WindupVertexFrame, HasApplications
     /**
      * Gets all contained files that are not directories
      */
-    default Iterable<FileModel> getFileModelsNoDirectories()
+    default List<FileModel> getFileModelsNoDirectories()
     {
         List<FileModel> result = new ArrayList<>();
         getFileModels().forEach(fileModel -> {
@@ -224,7 +220,7 @@ public interface ProjectModel extends WindupVertexFrame, HasApplications
     /**
      * Gets all contained files that unparsable
      */
-    default Iterable<FileModel> getUnparsableFiles()
+    default List<FileModel> getUnparsableFiles()
     {
         List<FileModel> result = new ArrayList<>();
         getFileModels().forEach(fileModel -> {
@@ -244,23 +240,28 @@ public interface ProjectModel extends WindupVertexFrame, HasApplications
     default ProjectModel getRootProjectModel()
     {
         ProjectModel projectModel = this;
-        while (projectModel.getParentProject() != null)
+        try
         {
-            projectModel = projectModel.getParentProject();
+            while (projectModel.getParentProject() != null)
+            {
+                projectModel = projectModel.getParentProject();
+            }
+        }
+        catch (NoSuchElementException e)
+        {
+            // Ignore... this just means that the parent didn't exist.
+            // Ferma tends to throw a NoSuchElementException instead of just returning null
         }
 
-        // reframe it to make sure that we return a proxy
-        // (otherwise, it may return this method handler implementation, which will have some unexpected side effects)
         return projectModel;
     }
 
     /**
-     * Returns all applications that this project is a part of. This could be multiple applications if this project
-     * is included multiple times.
+     * Returns all applications that this project is a part of. This could be multiple applications if this project is included multiple times.
      */
-    default Iterable<ProjectModel> getApplications()
+    default List<ProjectModel> getApplications()
     {
-        return this.getApplications(this);
+        return new ArrayList<>(this.getApplications(this));
     }
 
     default Set<ProjectModel> getApplications(ProjectModel project)
@@ -294,5 +295,5 @@ public interface ProjectModel extends WindupVertexFrame, HasApplications
     }
 
     @Adjacency(label = DuplicateProjectModel.CANONICAL_PROJECT, direction = Direction.IN)
-    Iterable<DuplicateProjectModel> getDuplicateProjects();
+    List<DuplicateProjectModel> getDuplicateProjects();
 }

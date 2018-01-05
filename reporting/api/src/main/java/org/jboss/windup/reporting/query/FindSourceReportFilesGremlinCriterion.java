@@ -1,5 +1,9 @@
 package org.jboss.windup.reporting.query;
 
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.janusgraph.core.attribute.Text;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.query.QueryGremlinCriterion;
 import org.jboss.windup.graph.GraphContext;
@@ -12,10 +16,6 @@ import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.model.TechnologyTagModel;
 
-import com.thinkaurelius.titan.core.attribute.Text;
-import org.apache.tinkerpop.gremlin.structure.Vertex;
-import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
-
 /**
  * This provides a helper class that can be used in a Windup Query call to execute a Gremlin search returning all FileModels that have associated
  * {@link FileLocationModel}s or @{link ClassificationModel}s.
@@ -24,34 +24,34 @@ public class FindSourceReportFilesGremlinCriterion implements QueryGremlinCriter
 {
     @SuppressWarnings("unchecked")
     @Override
-    public void query(GraphRewrite event, GraphTraversal<Vertex, Vertex> pipeline)
+    public void query(GraphRewrite event, GraphTraversal<?, Vertex> pipeline)
     {
         GraphContext context = event.getGraphContext();
 
         // create a pipeline to get all hinted items
-        GraphTraversal<Vertex, Vertex> hintPipeline = new GraphTraversal<>(
-                    context.getQuery().type(FileModel.class).vertices());
+        GraphTraversal<Vertex, Vertex> hintPipeline = new GraphTraversalSource(event.getGraphContext().getGraph())
+                    .V(context.getQuery(FileModel.class).getRawTraversal().toList());
         hintPipeline.as("fileModel1").in(FileLocationModel.FILE_MODEL)
-                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, InlineHintModel.TYPE).select("fileModel1");
+                    .has(WindupVertexFrame.TYPE_PROP, Text.textContains(InlineHintModel.TYPE)).select("fileModel1");
 
         // create a pipeline to get all items with attached classifications
-        GraphTraversal<Vertex, Vertex> classificationPipeline = new GraphTraversal<>(
-                    context.getQuery().type(FileModel.class).vertices());
+        GraphTraversal<Vertex, Vertex> classificationPipeline = new GraphTraversalSource(event.getGraphContext().getGraph())
+                    .V(context.getQuery(FileModel.class).getRawTraversal().toList());
         classificationPipeline.as("fileModel2").in(ClassificationModel.FILE_MODEL)
-                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, ClassificationModel.TYPE)
+                    .has(WindupVertexFrame.TYPE_PROP, Text.textContains(ClassificationModel.TYPE))
                     .select("fileModel2");
 
         // create a pipeline to get all items with attached technology tags
-        GraphTraversal<Vertex, Vertex> technologyTagPipeline = new GraphTraversal<>(
-                    context.getQuery().type(FileModel.class).vertices());
+        GraphTraversal<Vertex, Vertex> technologyTagPipeline = new GraphTraversalSource(event.getGraphContext().getGraph())
+                    .V(context.getQuery(FileModel.class).getRawTraversal().toList());
         technologyTagPipeline.as("fileModel3").in(TechnologyTagModel.TECH_TAG_TO_FILE_MODEL)
-                    .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, TechnologyTagModel.TYPE)
+                    .has(WindupVertexFrame.TYPE_PROP, Text.textContains(TechnologyTagModel.TYPE))
                     .has(TechnologyTagModel.LEVEL, TechnologyTagLevel.IMPORTANT.toString())
                     .select("fileModel3");
 
         // Also return SourceFileModel results with the generate source flag set to true
-        GraphTraversal<Vertex, Vertex> generateSourceReportPropertyPipeline = new GraphTraversal<>(
-                    context.getQuery().type(SourceFileModel.class).vertices());
+        GraphTraversal<Vertex, Vertex> generateSourceReportPropertyPipeline = new GraphTraversalSource(event.getGraphContext().getGraph())
+                    .V(context.getQuery(FileModel.class).getRawTraversal().toList());
         generateSourceReportPropertyPipeline
                     .has(SourceFileModel.GENERATE_SOURCE_REPORT, true);
 

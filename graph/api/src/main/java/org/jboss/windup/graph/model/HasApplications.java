@@ -1,5 +1,7 @@
 package org.jboss.windup.graph.model;
 
+import java.util.List;
+
 /**
  * @author <a href="mailto:dklingenberg@gmail.com">David Klingenberg</a>
  */
@@ -11,8 +13,7 @@ public interface HasApplications extends BelongsToProject
      *
      * @return root project models
      */
-    Iterable<ProjectModel> getApplications();
-
+    List<ProjectModel> getApplications();
 
     default boolean belongsToProject(ProjectModel projectModel)
     {

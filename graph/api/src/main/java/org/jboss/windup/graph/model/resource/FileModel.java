@@ -3,6 +3,7 @@ package org.jboss.windup.graph.model.resource;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.List;
 
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -173,7 +174,7 @@ public interface FileModel extends ResourceModel, HasApplications, HasProject {
      * Files contained within this directory
      */
     @Adjacency(label = PARENT_FILE, direction = Direction.IN)
-    Iterable<FileModel> getFilesInDirectory();
+    List<FileModel> getFilesInDirectory();
 
     /**
      * Add a file to this directory
@@ -298,7 +299,7 @@ public interface FileModel extends ResourceModel, HasApplications, HasProject {
      * as well as any actual applications.
      */
     @Override
-    default Iterable<ProjectModel> getApplications()
+    default List<ProjectModel> getApplications()
     {
         return getProjectModel().getApplications();
     }

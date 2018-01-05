@@ -1,9 +1,9 @@
 package org.jboss.windup.reporting.model;
 
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import com.syncleus.ferma.annotations.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>

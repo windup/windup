@@ -2,8 +2,6 @@ package org.jboss.windup.reporting.service;
 
 import java.util.*;
 import java.util.logging.Logger;
-import org.apache.commons.beanutils.BeanUtils;
-import org.apache.commons.collections4.IterableUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.config.tags.Tag;
 import org.jboss.windup.graph.GraphContext;

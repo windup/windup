@@ -2,10 +2,10 @@ package org.jboss.windup.reporting.model;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import com.syncleus.ferma.annotations.Adjacency;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 import java.util.Map;
 import org.jboss.windup.graph.MapInAdjacentVertices;
+import org.jboss.windup.graph.model.TypeValue;
 
 /**
  * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>

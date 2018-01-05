@@ -9,6 +9,8 @@ import org.apache.tinkerpop.gremlin.structure.Direction;
 import com.syncleus.ferma.annotations.Adjacency;
 import com.syncleus.ferma.annotations.Property;
 
+import java.util.List;
+
 /**
  * Indicates that a file is source code (as opposed to a binary file of some kind).
  *
@@ -25,7 +27,7 @@ public interface SourceFileModel extends WindupVertexFrame
      * Links to the files that were created by transforming this file.
      */
     @Adjacency(label = TRANSFORMED_TO, direction = Direction.OUT)
-    Iterable<LinkModel> getLinksToTransformedFiles();
+    List<LinkModel> getLinksToTransformedFiles();
 
     /**
      * Add a link to a file that was created by transforming this file.

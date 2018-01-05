@@ -5,8 +5,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
-import com.thinkaurelius.titan.core.TitanGraph;
-import com.tinkerpop.blueprints.util.wrappers.event.EventGraph;
 import com.syncleus.ferma.FramedGraph;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.windup.config.GraphRewrite;
@@ -87,10 +85,10 @@ public class IssueCategoryRegistry
     /**
      * Loads the related graph vertex for the given {@link IssueCategory#getCategoryID()}.
      */
-    public static IssueCategoryModel loadFromGraph(FramedGraph<EventGraph<TitanGraph>> framedGraph, String issueCategoryID)
+    public static IssueCategoryModel loadFromGraph(FramedGraph framedGraph, String issueCategoryID)
     {
-        Iterable<Vertex> vertices = framedGraph.query().has(WindupVertexFrame.TYPE_PROP, IssueCategoryModel.TYPE)
-                .has(IssueCategoryModel.CATEGORY_ID, issueCategoryID).vertices();
+        Iterable<Vertex> vertices = framedGraph.traverse(g -> framedGraph.getTypeResolver().hasType(g.V(), IssueCategoryModel.class))
+                .traverse(g -> g.has(IssueCategoryModel.CATEGORY_ID, issueCategoryID));
 
         IssueCategoryModel result = null;
         for (Vertex vertex : vertices)
@@ -98,7 +96,7 @@ public class IssueCategoryRegistry
             if (result != null)
                 throw new DuplicateIssueCategoryException("Found more than one issue category for this id: " + issueCategoryID);
 
-            result = framedGraph.frame(vertex, IssueCategoryModel.class);
+            result = framedGraph.frameElement(vertex, IssueCategoryModel.class);
         }
         return result;
     }

@@ -3,14 +3,12 @@ package org.jboss.windup.reporting.model;
 import java.util.Collections;
 import java.util.Set;
 
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.syncleus.ferma.annotations.Adjacency;
-import com.tinkerpop.frames.modules.javahandler.JavaHandler;
-import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import org.jboss.windup.reporting.TagUtil;
 
 /**
@@ -42,32 +40,21 @@ public interface TaggableModel extends WindupVertexFrame
     /**
      * Gets the {@link Set} of tags associated with this vertex.
      */
-    @JavaHandler
-    Set<String> getTags();
+    default Set<String> getTags()
+    {
+        TagSetModel tagSetModel = getTagModel();
+        if (tagSetModel == null)
+            return Collections.emptySet();
+        return tagSetModel.getTags();
+    }
 
     /**
      * Returns true if this {@link TaggableModel} matches the provided inclusion and exclusion tags.
      *
      * {@see TagUtil}
      */
-    @JavaHandler
-    boolean matchesTags(Set<String> includeTags, Set<String> excludeTags);
-
-
-    abstract class Impl implements TaggableModel, JavaHandlerContext<Vertex>
+    default boolean matchesTags(Set<String> includeTags, Set<String> excludeTags)
     {
-        @Override
-        public Set<String> getTags()
-        {
-            TagSetModel tagSetModel = getTagModel();
-            if (tagSetModel == null)
-                return Collections.emptySet();
-            return tagSetModel.getTags();
-        }
-
-        public boolean matchesTags(Set<String> includeTags, Set<String> excludeTags)
-        {
-            return TagUtil.checkMatchingTags(this.getTags(), includeTags, excludeTags);
-        }
+        return TagUtil.checkMatchingTags(this.getTags(), includeTags, excludeTags);
     }
 }

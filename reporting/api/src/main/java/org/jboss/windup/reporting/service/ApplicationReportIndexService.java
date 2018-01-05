@@ -1,7 +1,6 @@
 package org.jboss.windup.reporting.service;
 
-import java.util.Iterator;
-
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
@@ -30,13 +29,11 @@ public class ApplicationReportIndexService extends GraphService<ApplicationRepor
      */
     public ApplicationReportIndexModel getOrCreateGlobalApplicationIndex()
     {
-        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(getGraphContext().getGraph());
-        pipeline.V();
+        GraphTraversal<Vertex, Vertex> pipeline = getGraphContext().getGraph().traversal().V();
         pipeline.has(WindupVertexFrame.TYPE_PROP, ApplicationReportModel.TYPE);
         pipeline.filter(it -> !it.get().edges(Direction.OUT, ApplicationReportIndexModel.APPLICATION_REPORT_INDEX_TO_PROJECT_MODEL).hasNext());
 
-        Iterator<Vertex> pipeIterator = pipeline.iterator();
-        final ApplicationReportIndexModel result = pipeIterator.hasNext() ? frame(pipeIterator.next()) : create();
+        final ApplicationReportIndexModel result = pipeline.hasNext() ? frame(pipeline.next()) : create();
         return result;
     }
 
@@ -45,7 +42,7 @@ public class ApplicationReportIndexService extends GraphService<ApplicationRepor
      */
     public ApplicationReportIndexModel getApplicationReportIndexForProjectModel(ProjectModel projectModel)
     {
-        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(projectModel.asVertex());
+        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversalSource(getGraphContext().getGraph()).V(projectModel.getElement());
         pipeline.in(ApplicationReportIndexModel.APPLICATION_REPORT_INDEX_TO_PROJECT_MODEL);
 
         ApplicationReportIndexModel applicationReportIndex = null;

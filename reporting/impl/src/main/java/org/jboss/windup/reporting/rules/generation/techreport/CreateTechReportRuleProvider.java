@@ -100,7 +100,7 @@ public class CreateTechReportRuleProvider extends AbstractRuleProvider
                 final TechReportModel appTechReport = createTechReportBoxes(event.getGraphContext(), appModel);
                 appTechReport.setSectorsHolderTag(sectorsTag);
                 appTechReport.setRowsHolderTag(rowsTag);
-                appProjectToReportMap.put(appModel.asVertex().getId().toString(), appTechReport);
+                appProjectToReportMap.put(appModel.getElement().id().toString(), appTechReport);
             }
 
             // Create the global report models.

@@ -4,6 +4,8 @@ import org.apache.tinkerpop.gremlin.structure.Direction;
 import com.syncleus.ferma.annotations.Adjacency;
 import com.syncleus.ferma.annotations.Property;
 
+import java.util.List;
+
 /**
  * This classifies files and provides general background information about a specific {@link ArchiveModel}. (For instance,
  * an XML file may be classified as a "XYZ Configuration File".) A {@link OrganizationModel} may also contain links to
@@ -28,7 +30,7 @@ public interface OrganizationModel extends WindupVertexFrame
      * Get the {@link ArchiveModel} associated with this {@link OrganizationModel}.
      */
     @Adjacency(label = ARCHIVE_MODEL, direction = Direction.OUT)
-    Iterable<ArchiveModel> getArchiveModels();
+    List<ArchiveModel> getArchiveModels();
 
     /**
      * Add a related {@link Link} to this {@link OrganizationModel}
@@ -40,7 +42,7 @@ public interface OrganizationModel extends WindupVertexFrame
      * Get the related {@link Link} instances associated with this {@link OrganizationModel}
      */
     @Adjacency(label = LINKS, direction = Direction.OUT)
-    Iterable<LinkModel> getLinks();
+    List<LinkModel> getLinks();
 
     /**
      * Set the description text of this {@link OrganizationModel}.

@@ -3,8 +3,10 @@ package org.jboss.windup.reporting.model.rule;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import com.syncleus.ferma.annotations.Adjacency;
 import com.syncleus.ferma.annotations.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+
+import java.util.List;
 
 /**
  * Represents a rule provider
@@ -26,7 +28,7 @@ public interface RuleProviderModel extends WindupVertexFrame
     RuleProviderModel setRuleProviderID(String id);
 
     @Adjacency(label = EXECUTED_RULES, direction = Direction.OUT)
-    Iterable<RuleExecutionModel> getRules();
+    List<RuleExecutionModel> getRules();
 
     @Adjacency(label = EXECUTED_RULES, direction = Direction.OUT)
     RuleProviderModel addRule(RuleExecutionModel rule);
