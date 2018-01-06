@@ -10,7 +10,7 @@ import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.w3c.dom.Document;
 
-import com.esotericsoftware.minlog.Log;
+import java.util.logging.Logger;
 
 /**
  * This provides a simplified way to extend {@link AbstractRuleProvider} for cases where the rule simply needs to
@@ -20,6 +20,7 @@ import com.esotericsoftware.minlog.Log;
  */
 public abstract class IteratingXmlRuleProvider<PAYLOADTYPE extends XmlFileModel> extends IteratingRuleProvider<PAYLOADTYPE>
 {
+    private static Logger LOG = Logger.getLogger(IteratingXmlRuleProvider.class.getCanonicalName());
 
     public IteratingXmlRuleProvider()
     {
@@ -42,7 +43,7 @@ public abstract class IteratingXmlRuleProvider<PAYLOADTYPE extends XmlFileModel>
     public void perform(GraphRewrite event, EvaluationContext context, PAYLOADTYPE payload) {
         Document doc = payload.asDocument();
         if(doc == null) {
-            Log.warn("Document is null.");
+            LOG.warning("Document is null.");
             return;
         }
         

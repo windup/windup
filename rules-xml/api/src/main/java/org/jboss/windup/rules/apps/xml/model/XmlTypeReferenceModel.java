@@ -4,7 +4,7 @@ import org.jboss.windup.graph.model.FileLocationModel;
 
 import com.syncleus.ferma.annotations.Adjacency;
 import com.syncleus.ferma.annotations.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.model.TypeValue;
 
 /**
  * The result of the XmlFile condition

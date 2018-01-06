@@ -1,12 +1,12 @@
 package org.jboss.windup.rules.apps.xml.model;
 
 import org.jboss.windup.graph.Indexed;
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import com.syncleus.ferma.annotations.Adjacency;
 import com.syncleus.ferma.annotations.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue(DoctypeMetaModel.TYPE_ID)
 public interface DoctypeMetaModel extends WindupVertexFrame

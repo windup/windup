@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.util.logging.Logger;
 
 import org.jboss.windup.graph.Indexed;
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.SourceFileModel;
 import org.jboss.windup.util.exception.WindupException;
@@ -11,12 +12,8 @@ import org.jboss.windup.util.xml.LocationAwareXmlReader;
 import org.w3c.dom.Document;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
-import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.syncleus.ferma.annotations.Adjacency;
 import com.syncleus.ferma.annotations.Property;
-import com.tinkerpop.frames.modules.javahandler.JavaHandler;
-import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue(XmlFileModel.TYPE)
 public interface XmlFileModel extends FileModel, SourceFileModel
@@ -51,41 +48,33 @@ public interface XmlFileModel extends FileModel, SourceFileModel
     @Property(ROOT_TAG_NAME)
     void setRootTagName(String rootTagName);
 
-    @JavaHandler
-    Document asDocument();
-
-    abstract class Impl implements XmlFileModel, JavaHandlerContext<Vertex>
+    default Document asDocument()
     {
-        @Override
-        public Document asDocument()
+        XMLDocumentCache.Result cacheResult = XMLDocumentCache.get(this);
+        Document document;
+        if (cacheResult.isParseFailure())
         {
-            XMLDocumentCache.Result cacheResult = XMLDocumentCache.get(this);
-            Document document;
-            if (cacheResult.isParseFailure())
+            throw new WindupException("Could not load " + asFile() + " due to previous parse failure");
+        }
+        else if (cacheResult.getDocument() == null)
+        {
+            FileModel fileModel = getGraph().frameElement(getElement(), FileModel.class);
+            try (InputStream is = fileModel.asInputStream())
             {
-                throw new WindupException("Could not load " + asFile() + " due to previous parse failure");
+                document = LocationAwareXmlReader.readXML(is);
+                XMLDocumentCache.cache(this, document);
             }
-            else if (cacheResult.getDocument() == null)
+            catch (Exception e)
             {
-                FileModel fileModel = frame(asVertex(), FileModel.class);
-                try (InputStream is = fileModel.asInputStream())
-                {
-                    document = LocationAwareXmlReader.readXML(is);
-                    XMLDocumentCache.cache(this, document);
-                }
-                catch (Exception e)
-                {
-                    XMLDocumentCache.cacheParseFailure(this);
-                    throw new WindupException("Exception reading document due to: " + e.getMessage(), e);
-                }
+                XMLDocumentCache.cacheParseFailure(this);
+                throw new WindupException("Exception reading document due to: " + e.getMessage(), e);
             }
-            else
-            {
-                document = cacheResult.getDocument();
-            }
-
-            return document;
+        }
+        else
+        {
+            document = cacheResult.getDocument();
         }
 
+        return document;
     }
 }

@@ -81,7 +81,7 @@ public class XmlFileDtdNamespaceTest
 
     public void initData(GraphContext context)
     {
-        XmlFileModel xmlFileWithDtdNamespace =context.getFramed().addVertex(null, XmlFileModel.class);
+        XmlFileModel xmlFileWithDtdNamespace =context.getFramed().addFramedVertex(XmlFileModel.class);
         xmlFileWithDtdNamespace.setFilePath("src/test/resources/dtd-namespace-test.xml");
     }
 

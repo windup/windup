@@ -1,5 +1,6 @@
 package org.jboss.windup.rules.apps.xml.model;
 
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.rules.apps.xml.operation.xslt.XSLTTransformation;
@@ -7,7 +8,6 @@ import org.jboss.windup.rules.apps.xml.operation.xslt.XSLTTransformation;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import com.syncleus.ferma.annotations.Adjacency;
 import com.syncleus.ferma.annotations.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
  * Contains metadata regarding the result of an XSLT Transformation

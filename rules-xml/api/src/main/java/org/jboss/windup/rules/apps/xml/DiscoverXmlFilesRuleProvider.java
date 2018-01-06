@@ -103,7 +103,7 @@ public class DiscoverXmlFilesRuleProvider extends AbstractRuleProvider
                 }
                 else
                 {
-                    DoctypeMetaModel meta = event.getGraphContext().getFramed().addVertex(null, DoctypeMetaModel.class);
+                    DoctypeMetaModel meta = event.getGraphContext().getFramed().addFramedVertex(DoctypeMetaModel.class);
                     meta.addXmlResource(xmlResourceModel);
                     meta.setBaseURI(docType.getBaseURI());
                     meta.setName(docType.getName());

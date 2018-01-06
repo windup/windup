@@ -16,9 +16,9 @@ public class NamespaceService extends GraphService<NamespaceMetaModel>
 
     public NamespaceMetaModel createNamespaceSchemaLocation(String namespaceURI, String schemaLocation)
     {
-        Iterable<NamespaceMetaModel> results = getGraphContext().getQuery().type(NamespaceMetaModel.class)
-                    .has("namespaceURI", namespaceURI).has("schemaLocation", schemaLocation)
-                    .vertices(NamespaceMetaModel.class);
+        Iterable<? extends NamespaceMetaModel> results = getGraphContext().getQuery(NamespaceMetaModel.class)
+                .traverse(g -> g.has("namespaceURI", namespaceURI).has("schemaLocation", schemaLocation))
+                .toList(NamespaceMetaModel.class);
 
         if (results.iterator().hasNext())
         {
@@ -26,7 +26,7 @@ public class NamespaceService extends GraphService<NamespaceMetaModel>
         }
 
         // otherwise, create it.
-        NamespaceMetaModel meta = getGraphContext().getFramed().addVertex(null, NamespaceMetaModel.class);
+        NamespaceMetaModel meta = getGraphContext().getFramed().addFramedVertex(NamespaceMetaModel.class);
         meta.setSchemaLocation(schemaLocation);
         meta.setURI(namespaceURI);
 
