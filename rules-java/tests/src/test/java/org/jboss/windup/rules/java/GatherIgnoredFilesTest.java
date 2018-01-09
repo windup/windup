@@ -61,9 +61,9 @@ public class GatherIgnoredFilesTest
     {
         try (GraphContext context = factory.create())
         {
-            ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
+            ProjectModel pm = context.getFramed().addFramedVertex(ProjectModel.class);
             pm.setName("Main Project");
-            FileModel inputPath = context.getFramed().addVertex(null, FileModel.class);
+            FileModel inputPath = context.getFramed().addFramedVertex(FileModel.class);
             inputPath.setFilePath("src/test/resources/");
 
             Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(),
@@ -72,7 +72,7 @@ public class GatherIgnoredFilesTest
             Files.createDirectories(outputPath);
 
             WindupConfigurationModel config = WindupConfigurationService.getConfigurationModel(context);
-            FileModel ignoreFile = context.getFramed().addVertex(null, FileModel.class);
+            FileModel ignoreFile = context.getFramed().addFramedVertex(FileModel.class);
             ignoreFile.setFilePath("src/test/resources/test-windup-ignore.txt");
             config.addUserIgnorePath(ignoreFile);
             pm.setRootFileModel(inputPath);

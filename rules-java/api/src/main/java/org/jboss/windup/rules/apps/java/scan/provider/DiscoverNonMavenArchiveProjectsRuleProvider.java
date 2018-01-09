@@ -111,7 +111,7 @@ public class DiscoverNonMavenArchiveProjectsRuleProvider extends AbstractRulePro
 
                                         // also, don't set the project model if one is already set
                                         // this uses the edge directly to improve performance
-                                        if (f.asVertex().getVertices(Direction.IN, ProjectModel.PROJECT_MODEL_TO_FILE).iterator().hasNext())
+                                        if (f.getElement().vertices(Direction.IN, ProjectModel.PROJECT_MODEL_TO_FILE).hasNext())
                                             continue;
 
                                         // only set it if it has not already been set

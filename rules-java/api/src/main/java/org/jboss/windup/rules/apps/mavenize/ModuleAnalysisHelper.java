@@ -5,10 +5,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiPredicate;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tinkerpop.gremlin.process.traversal.P;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
+import org.janusgraph.core.attribute.Text;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.GraphTypeManager;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
@@ -16,16 +21,8 @@ import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.project.MavenProjectModel;
 import org.jboss.windup.util.Logging;
 
-import com.thinkaurelius.titan.core.attribute.Text;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
-import com.tinkerpop.pipes.PipeFunction;
-import com.tinkerpop.pipes.branch.CopySplitPipe;
-import com.tinkerpop.pipes.filter.PropertyFilterPipe;
-import com.tinkerpop.pipes.sideeffect.AggregatePipe;
-import com.tinkerpop.pipes.sideeffect.GroupCountPipe;
-import com.tinkerpop.pipes.transform.OutPipe;
-import com.tinkerpop.pipes.transform.PropertyPipe;
 
 /**
  * Contains methods for assistance in analyzing modules
@@ -89,58 +86,41 @@ public class ModuleAnalysisHelper
      */
     String deriveGroupIdFromPackages(ProjectModel projectModel)
     {
-        Map<String, Integer> pkgsMap = new HashMap<>();
+        Map<Object, Long> pkgsMap = new HashMap<>();
         Set<String> pkgs = new HashSet<>(1000);
-        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(projectModel);
+        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversalSource(graphContext.getGraph()).V(projectModel);
 
-        PipeFunction<String, String> upToThirdDot = new PipeFunction<String, String>()
-        {
-            @Override
-            public String compute(String pkgName)
-            {
-                int upToThirdDot = StringUtils.ordinalIndexOf(pkgName, ".", 3);
-                return StringUtils.substring(pkgName, 0, upToThirdDot);
-            }
-        };
-        PipeFunction<String, String> identity = new PipeFunction<String, String>()
-        {
-            @Override
-            public String compute(String pkgName)
-            {
-                return pkgName;
-            }
-        };
 
-        pipeline
-                    .add(new OutPipe(ProjectModel.PROJECT_MODEL_TO_FILE))
-                    .add(new TypePipe(JavaClassFileModel.class))
-                    // .add(new GroupByPipe(identity, identity)
-                    .add(new PropertyPipe(JavaClassFileModel.PROPERTY_PACKAGE_NAME))
-                    .add(new CopySplitPipe(
-                                new AggregatePipe(pkgs, upToThirdDot),
-                                new GroupCountPipe(pkgsMap)))
-        // .add(new AggregatePipe(pkgs, upToThirdDot))
-        ;
+        pkgsMap = pipeline.out(ProjectModel.PROJECT_MODEL_TO_FILE)
+                .has(WindupVertexFrame.TYPE_PROP, new P(new BiPredicate<String, String>() {
+                            @Override
+                            public boolean test(String o, String o2) {
+                                return o.contains(o2);
+                            }
+                        },
+                        GraphTypeManager.getTypeValue(JavaClassFileModel.class)))
+                .hasKey(JavaClassFileModel.PROPERTY_PACKAGE_NAME)
+                .groupCount()
+                .by(v -> upToThirdDot(graphContext, (Vertex)v)).toList().get(0);
 
-        Map.Entry<String, Integer> biggest = null;
-        for (Map.Entry<String, Integer> entry : pkgsMap.entrySet())
+        Map.Entry<Object, Long> biggest = null;
+        for (Map.Entry<Object, Long> entry : pkgsMap.entrySet())
         {
             if (biggest == null || biggest.getValue() < entry.getValue())
                 biggest = entry;
         }
         // More than a half is of this package.
         if (biggest != null && biggest.getValue() > pkgsMap.size() / 2)
-            return biggest.getKey();
+            return biggest.getKey().toString();
 
         return null;
     }
 
-    public class TypePipe extends PropertyFilterPipe<Vertex, Vertex>
+    public String upToThirdDot(final GraphContext context, final Vertex v)
     {
-        public TypePipe(Class<? extends WindupVertexFrame> clazz)
-        {
-            super(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, TypeAwareFramedGraphQuery.getTypeValue(clazz));
-        }
+        JavaClassFileModel javaModel = context.getFramed().frameElement(v, JavaClassFileModel.class);
+        String pkgName = javaModel.getPackageName();
+        int upToThirdDot = StringUtils.ordinalIndexOf(pkgName, ".", 3);
+        return StringUtils.substring(pkgName, 0, upToThirdDot);
     }
-
 }

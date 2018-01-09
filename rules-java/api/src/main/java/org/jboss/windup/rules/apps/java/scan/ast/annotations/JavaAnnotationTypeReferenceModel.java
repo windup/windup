@@ -7,7 +7,7 @@ import com.syncleus.ferma.annotations.Adjacency;
 import org.jboss.windup.graph.MapInAdjacentVertices;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.model.TypeValue;
 
 /**
  * Contains metadata related to Java annotations (eg, attribute values).

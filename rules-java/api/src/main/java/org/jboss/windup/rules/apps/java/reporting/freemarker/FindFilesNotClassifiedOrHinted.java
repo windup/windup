@@ -62,14 +62,14 @@ public class FindFilesNotClassifiedOrHinted implements WindupFreeMarkerMethod
         List<Vertex> initialFileModelsAsVertices = new ArrayList<>();
         for (FileModel fm : fileModels)
         {
-            initialFileModelsAsVertices.add(fm.asVertex());
+            initialFileModelsAsVertices.add(fm.getElement());
         }
         Iterable<Vertex> result = criterion.query(context, initialFileModelsAsVertices);
 
         List<FileModel> resultModels = new ArrayList<>();
         for (Vertex v : result)
         {
-            FileModel f = context.getFramed().frame(v, FileModel.class);
+            FileModel f = context.getFramed().frameElement(v, FileModel.class);
 
             //we don't want to show our decompiled classes in the report
             boolean wasNotGenerated = !f.isWindupGenerated();
@@ -79,10 +79,10 @@ public class FindFilesNotClassifiedOrHinted implements WindupFreeMarkerMethod
 
             if (f instanceof JavaClassFileModel)
             {
-                Iterator<Vertex> decompiled = v.getVertices(Direction.OUT, JavaClassFileModel.DECOMPILED_FILE).iterator();
+                Iterator<Vertex> decompiled = v.vertices(Direction.OUT, JavaClassFileModel.DECOMPILED_FILE);
                 if (decompiled.hasNext())
                 {
-                    withoutHiddenHints = !decompiled.next().getVertices(Direction.IN, FileReferenceModel.FILE_MODEL).iterator().hasNext();
+                    withoutHiddenHints = !decompiled.next().vertices(Direction.IN, FileReferenceModel.FILE_MODEL).hasNext();
                 }
             }
 

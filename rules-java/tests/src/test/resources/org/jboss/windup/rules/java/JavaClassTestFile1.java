@@ -59,11 +59,11 @@ public class JavaClassTestFile1
             Files.createDirectories(outputPath);
 
             // Fill the graph with test data.
-            ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
+            ProjectModel pm = context.getFramed().addFramedVertex(ProjectModel.class);
             pm.setName("Main Project");
 
             // Create FileModel for $inputDir
-            FileModel inputPathFrame = context.getFramed().addVertex(null, FileModel.class);
+            FileModel inputPathFrame = context.getFramed().addFramedVertex(FileModel.class);
             inputPathFrame.setFilePath(inputDir);
             inputPathFrame.setProjectModel(pm);
             pm.addFileModel(inputPathFrame);
@@ -72,18 +72,18 @@ public class JavaClassTestFile1
             pm.setRootFileModel(inputPathFrame);
 
             // Create FileModel for $inputDir/HintsClassificationsTest.java
-            FileModel fileModel = context.getFramed().addVertex(null, FileModel.class);
+            FileModel fileModel = context.getFramed().addFramedVertex(FileModel.class);
             fileModel.setFilePath(inputDir + "/JavaHintsClassificationsTest.java");
             fileModel.setProjectModel(pm);
             pm.addFileModel(fileModel);
 
             // Create FileModel for $inputDir/JavaClassTest.java
-            fileModel = context.getFramed().addVertex(null, FileModel.class);
+            fileModel = context.getFramed().addFramedVertex(FileModel.class);
             fileModel.setFilePath(inputDir + "/JavaClassTest.java");
             fileModel.setProjectModel(pm);
             pm.addFileModel(fileModel);
 
-            context.getGraph().getBaseGraph().commit();
+            context.commit();
 
             final WindupConfiguration processorConfig = new WindupConfiguration().setOutputDirectory(outputPath);
             processorConfig.setRuleProviderFilter(new RuleProviderWithDependenciesPredicate(

@@ -1,10 +1,8 @@
 package org.jboss.windup.rules.apps.java.model;
 
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.tinkerpop.frames.modules.javahandler.JavaHandler;
-import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import org.apache.commons.lang.StringUtils;
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.resource.FileModel;
 
 /**
@@ -24,23 +22,16 @@ public interface JavaSourceFileModel extends AbstractJavaSourceModel
      * Returns the path of this file within the parent project (format suitable for reporting)
      * Uses fully qualified class name notation for classes
      */
-    @JavaHandler
-    String getPrettyPathWithinProject(boolean useFQNForClasses);
-
-    abstract class Impl extends FileModel.Impl implements JavaSourceFileModel, JavaHandlerContext<Vertex>
+    default String getPrettyPathWithinProject(boolean useFQNForClasses)
     {
-        @Override
-        public String getPrettyPathWithinProject(boolean useFQNForClasses)
-        {
-            if (!useFQNForClasses) {
-                return this.getPrettyPathWithinProject();
-            }
-
-            String filename = StringUtils.removeEndIgnoreCase(getFileName(), ".java");
-            String packageName = getPackageName();
-
-            return (packageName == null || packageName.isEmpty()) ? filename : packageName + "." + filename;
+        if (!useFQNForClasses) {
+            return this.getPrettyPathWithinProject();
         }
+
+        String filename = StringUtils.removeEndIgnoreCase(getFileName(), ".java");
+        String packageName = getPackageName();
+
+        return (packageName == null || packageName.isEmpty()) ? filename : packageName + "." + filename;
     }
 
 }

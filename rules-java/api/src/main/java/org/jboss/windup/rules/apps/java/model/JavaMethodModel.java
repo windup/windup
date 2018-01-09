@@ -1,13 +1,15 @@
 package org.jboss.windup.rules.apps.java.model;
 
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import com.syncleus.ferma.annotations.Adjacency;
 import com.syncleus.ferma.annotations.Property;
-import com.tinkerpop.frames.annotations.gremlin.GremlinGroovy;
-import com.tinkerpop.frames.annotations.gremlin.GremlinParam;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.model.TypeValue;
+
+import java.util.List;
 
 /**
  * Represents a Java Method within a {@link JavaClassModel}
@@ -21,6 +23,7 @@ public interface JavaMethodModel extends WindupVertexFrame
     public static final String METHOD_NAME = "methodName";
     public static final String JAVA_METHOD = "javaMethod";
     public static final String TYPE = "JavaMethodModel";
+    String PARAMETER_POSITION = "parameterPosition";
 
     /**
      * The {@link JavaClassModel} that contains this method
@@ -49,14 +52,18 @@ public interface JavaMethodModel extends WindupVertexFrame
     /**
      * Returns the number of method parameters to this method
      */
-    @GremlinGroovy(value = "it.out('" + METHOD_PARAMETER + "').count()", frame = false)
-    public long countParameters();
+    default long countParameters()
+    {
+        return new GraphTraversalSource(getWrappedGraph().getBaseGraph()).V(getElement())
+                .in(METHOD_PARAMETER).toList().size();
+    }
+
 
     /**
      * Returns all parameters to this method
      */
     @Adjacency(label = METHOD_PARAMETER, direction = Direction.OUT)
-    public Iterable<JavaParameterModel> getMethodParameters();
+    public List<JavaParameterModel> getMethodParameters();
 
     /**
      * Adds the provided {@link JavaParameterModel} parameter
@@ -67,7 +74,17 @@ public interface JavaMethodModel extends WindupVertexFrame
     /**
      * Returns the {@link JavaParameterModel} at the provided position in the parameter list.
      */
-    @GremlinGroovy("it.out('methodParameter').has('parameterPosition', parameterPosition)")
-    public JavaParameterModel getParameter(@GremlinParam("parameterPosition") int parameterPosition);
+    default JavaParameterModel getParameter(int parameterPosition)
+    {
+/*
+        List<Vertex> vertices = new GraphTraversalSource(getWrappedGraph().getBaseGraph()).V(getElement())
+                .in(METHOD_PARAMETER)
+                .has(PARAMETER_POSITION, parameterPosition)
+                .toList();
+        return vertices.stream().map(v -> getGraph().frameElement(v, JavaParameterModel.class)).findFirst().get();
+*/
+        return this.traverse(v -> v.in(METHOD_PARAMETER).has(PARAMETER_POSITION, parameterPosition)).next(JavaParameterModel.class);
+    }
+
 
 }

@@ -1,10 +1,7 @@
 package org.jboss.windup.rules.apps.java.scan.provider;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
@@ -358,7 +355,7 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
                 fileLocation.setColumnNumber(columnNumber);
                 fileLocation.setLength(node.toString().length());
                 fileLocation.setFile(xmlFileModel);
-                Collection<FileLocationModel> fileLocationList = new ArrayList<FileLocationModel>(1);
+                List<FileLocationModel> fileLocationList = new ArrayList<FileLocationModel>(1);
                 fileLocationList.add(fileLocation);
                 projectDep.setFileLocationReference(fileLocationList);
                 mavenProjectModel.addDependency(projectDep);

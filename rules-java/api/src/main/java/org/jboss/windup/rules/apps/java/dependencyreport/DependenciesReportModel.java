@@ -4,7 +4,7 @@ import org.jboss.windup.reporting.model.ApplicationReportModel;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import com.syncleus.ferma.annotations.Adjacency;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.model.TypeValue;
 
 /**
  * This represents Jar Dependencies report model

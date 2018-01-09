@@ -1,5 +1,6 @@
 package org.jboss.windup.rules.apps.java.query;
 
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
@@ -32,29 +33,30 @@ public class FindFilesNotClassifiedOrHintedGremlinCriterion
 
         final List<Vertex> initialVerticesList = Lists.toList(initialVertices);
 
-        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(initialVertices);
+//        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(initialVertices);
+        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversalSource(context.getGraph()).V(initialVertices);
 
         final Set<Vertex> allClassifiedOrHintedVertices = new HashSet<>();
 
         ExecutionStatistics.get().begin("FindFilesNotClassifiedOrHintedGremlinCriterion.hintPipeline");
         // create a pipeline to get all hinted items
-        GraphTraversal<Vertex, Vertex> hintPipeline = new GraphTraversal<>(
-                    context.getQuery().type(InlineHintModel.class).vertices());
-        hintPipeline.as("fileLocation1").out(FileLocationModel.FILE_MODEL).retain(initialVerticesList);
+        GraphTraversal<Vertex, Vertex> hintPipeline = new GraphTraversalSource(context.getGraph())
+                .V(context.getQuery(InlineHintModel.class).getRawTraversal().toList());
+        hintPipeline.as("fileLocation1").out(FileLocationModel.FILE_MODEL).filter(v -> initialVerticesList.contains(v));
         hintPipeline.fill(allClassifiedOrHintedVertices);
         ExecutionStatistics.get().end("FindFilesNotClassifiedOrHintedGremlinCriterion.hintPipeline");
 
         ExecutionStatistics.get().begin("FindFilesNotClassifiedOrHintedGremlinCriterion.classificationPipeline");
         // create a pipeline to get all items with attached classifications
-        GraphTraversal<Vertex, Vertex> classificationPipeline = new GraphTraversal<>(
-                    context.getQuery().type(ClassificationModel.class).vertices());
-        classificationPipeline.as("fileModel2").out(ClassificationModel.FILE_MODEL).retain(initialVerticesList);
+        GraphTraversal<Vertex, Vertex> classificationPipeline = new GraphTraversalSource(context.getGraph())
+                .V(context.getQuery(ClassificationModel.class).getRawTraversal().toList());
+        classificationPipeline.as("fileModel2").out(ClassificationModel.FILE_MODEL).filter(v -> initialVerticesList.contains(v));
         classificationPipeline.fill(allClassifiedOrHintedVertices);
         ExecutionStatistics.get().end("FindFilesNotClassifiedOrHintedGremlinCriterion.classificationPipeline");
 
         pipeline.filter(it -> {
             Vertex v = it.get();
-            FileModel f = context.getFramed().frame(v, FileModel.class);
+            FileModel f = context.getFramed().frameElement(v, FileModel.class);
 
             //1. we don't want to show files with hints/classifications
             if (allClassifiedOrHintedVertices.contains(v))
@@ -75,9 +77,9 @@ public class FindFilesNotClassifiedOrHintedGremlinCriterion
 
                 if (decompiled.hasNext())
                 {
-                    JavaSourceFileModel source = context.getFramed().frame(decompiled.next(), JavaSourceFileModel.class);
+                    JavaSourceFileModel source = context.getFramed().frameElement(decompiled.next(), JavaSourceFileModel.class);
 
-                    if (allClassifiedOrHintedVertices.contains(source.asVertex()))
+                    if (allClassifiedOrHintedVertices.contains(source))
                     {
                         return false;
                     }
@@ -88,6 +90,6 @@ public class FindFilesNotClassifiedOrHintedGremlinCriterion
         });
 
         ExecutionStatistics.get().end("FindFilesNotClassifiedOrHintedGremlinCriterion.total");
-        return pipeline;
+        return pipeline.toList();
     }
 }

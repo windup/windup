@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
+import org.janusgraph.core.attribute.Text;
 import org.jboss.windup.ast.java.data.ResolutionStatus;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.graph.GraphContext;
@@ -21,7 +23,6 @@ import org.jboss.windup.reporting.service.InlineHintService;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.jboss.windup.util.ExecutionStatistics;
 
-import com.thinkaurelius.titan.core.attribute.Text;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 
@@ -91,18 +92,18 @@ public class TypeReferenceService extends GraphService<JavaTypeReferenceModel>
         InlineHintService hintService = new InlineHintService(getGraphContext());
 
         // 1. Get all JavaHints for the given project
-        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(projectModel.asVertex());
+        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversalSource(getGraphContext().getGraph()).V(projectModel.getElement());
         pipeline.out(ProjectModel.PROJECT_MODEL_TO_FILE).in(InlineHintModel.FILE_MODEL);
-        pipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, InlineHintModel.TYPE);
+        pipeline.has(WindupVertexFrame.TYPE_PROP, Text.textContains(InlineHintModel.TYPE));
 
         pipeline.as("inlineHintVertex");
-        pipeline.out(InlineHintModel.FILE_LOCATION_REFERENCE).has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS,
-                    JavaTypeReferenceModel.TYPE);
+        pipeline.out(InlineHintModel.FILE_LOCATION_REFERENCE)
+                .has(WindupVertexFrame.TYPE_PROP, Text.textContains(JavaTypeReferenceModel.TYPE));
         pipeline.select("inlineHintVertex");
 
         // 2. Organize them by package name
         // summarize results.
-        for (Vertex inlineHintVertex : pipeline)
+        for (Vertex inlineHintVertex : pipeline.toList())
         {
             InlineHintModel javaInlineHint = hintService.frame(inlineHintVertex);
             // only check tags if we have some passed in

@@ -3,7 +3,7 @@ package org.jboss.windup.rules.apps.java.model;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
 import org.jboss.windup.reporting.model.IncludeAndExcludeTagsModel;
 
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.model.TypeValue;
 
 /**
  * Represents an overview of the Java application.

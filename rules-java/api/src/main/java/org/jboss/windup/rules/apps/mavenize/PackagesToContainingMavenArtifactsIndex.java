@@ -3,6 +3,7 @@ package org.jboss.windup.rules.apps.mavenize;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.logging.Logger;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.graph.GraphContext;
@@ -78,7 +79,7 @@ public class PackagesToContainingMavenArtifactsIndex
             {
                 ArchiveCoordinateModel apiArchiveRepresentant = new ArchiveCoordinateService(graphContext, ArchiveCoordinateModel.class)
                         .getSingleOrCreate(apiCoords.getGroupId(), apiCoords.getArtifactId(), null); // We specifically want null.
-                project.asVertex().addEdge(EDGE_USES, apiArchiveRepresentant.asVertex());
+                project.getElement().addEdge(EDGE_USES, apiArchiveRepresentant.getElement());
             }
         }
     }
@@ -95,10 +96,11 @@ public class PackagesToContainingMavenArtifactsIndex
         if (archive == null)
             return false;
         //return graphContext.testIncidence(projectModel.asVertex(), archive.asVertex(), EDGE_USES);
-        Iterable<Vertex> projectsVerts = archive.asVertex().getVertices(Direction.IN, EDGE_USES);
-        Iterable<ProjectModel> projects = graphContext.getFramed().frameVertices(projectsVerts, ProjectModel.class);
-        for (ProjectModel project : projects)
+        Iterator<Vertex> projectsVerts = archive.getElement().vertices(Direction.IN, EDGE_USES);
+        Iterator<ProjectModel> projects = (Iterator<ProjectModel>)graphContext.getFramed().frame(projectsVerts, ProjectModel.class);
+        while (projects.hasNext())
         {
+            ProjectModel project = projects.next();
             if (projectModel.equals(project))
                     return true;
         }

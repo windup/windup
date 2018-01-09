@@ -7,7 +7,7 @@ import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import com.syncleus.ferma.annotations.Adjacency;
 import com.syncleus.ferma.annotations.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.model.TypeValue;
 
 /**
  * Extends ProjectModel to support maven specific properties.

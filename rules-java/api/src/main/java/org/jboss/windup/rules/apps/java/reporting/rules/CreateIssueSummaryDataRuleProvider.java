@@ -89,7 +89,7 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider
                             event.getGraphContext(), projectModelTraversal.getAllProjects(true), Collections.emptySet(), Collections.emptySet())
                             .entrySet().stream().collect(Collectors.toMap((e) -> e.getKey().getCategoryID(), Map.Entry::getValue));
 
-                    issueSummaryWriter.write("WINDUP_ISSUE_SUMMARIES['" + inputApplication.asVertex().getId() + "'] = ");
+                    issueSummaryWriter.write("WINDUP_ISSUE_SUMMARIES['" + inputApplication.getId() + "'] = ");
                     objectMapper.writeValue(issueSummaryWriter, summariesBySeverity);
                     issueSummaryWriter.write(";" + NEWLINE);
                 }

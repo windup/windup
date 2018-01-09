@@ -147,7 +147,7 @@ public class RenderLinkDirective implements WindupFreeMarkerTemplateDirective
     {
         String position = " (" + obj.getLineNumber() + ", " + obj.getColumnNumber() + ")";
         String linkText = StringUtils.isBlank(defaultText) ? getPrettyPathForFile(obj.getFile()) + position : defaultText;
-        String anchor = obj.asVertex().getId().toString();
+        String anchor = obj.getId().toString();
 
         SourceReportModel result = sourceReportService.getSourceReportForFileModel(obj.getFile());
         if (result == null)
@@ -285,7 +285,7 @@ public class RenderLinkDirective implements WindupFreeMarkerTemplateDirective
 
     private void appendProject(Writer writer, ProjectModel project) throws IOException {
         if (project != null)
-            writer.append("?project=").append(String.valueOf(project.asVertex().getId()));
+            writer.append("?project=").append(String.valueOf(project.getId()));
     }
 
     private void renderAsHorizontal(Writer writer, ProjectModel project, Iterator<Link> links) throws IOException

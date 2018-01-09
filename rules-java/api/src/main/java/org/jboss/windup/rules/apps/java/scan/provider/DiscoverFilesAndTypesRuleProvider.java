@@ -34,15 +34,10 @@ public class DiscoverFilesAndTypesRuleProvider extends AbstractRuleProvider
 
         .addRule()
         .when(Query.fromType(WindupConfigurationModel.class)
-            .piped(new QueryGremlinCriterion()
-            {
-                @Override
-                public void query(GraphRewrite event, GraphTraversal<Vertex, Vertex> pipeline)
-                {
+                .piped((GraphRewrite event, GraphTraversal<?, Vertex> pipeline) -> {
                     pipeline.out(WindupConfigurationModel.INPUT_PATH);
                     pipeline.has(FileModel.IS_DIRECTORY, true);
-                }
-            })
+                })
         )
         .perform(new RecurseDirectoryAndAddFiles())
 

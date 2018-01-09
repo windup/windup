@@ -5,7 +5,7 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import com.syncleus.ferma.annotations.Adjacency;
 import com.syncleus.ferma.annotations.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.model.TypeValue;
 
 /**
  * Contains information regarding parameters to a Java Method.

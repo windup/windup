@@ -88,20 +88,20 @@ public class JavaClassWithEnumConstOnClasspatTest
             FileUtils.deleteDirectory(outputPath.toFile());
             Files.createDirectories(outputPath);
 
-            ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
+            ProjectModel pm = context.getFramed().addFramedVertex(ProjectModel.class);
             pm.setName("Main Project");
 
-            FileModel inputPathFrame = context.getFramed().addVertex(null, FileModel.class);
+            FileModel inputPathFrame = context.getFramed().addFramedVertex(FileModel.class);
             inputPathFrame.setFilePath(inputDir);
             pm.addFileModel(inputPathFrame);
 
             pm.setRootFileModel(inputPathFrame);
 
-            FileModel fileModel = context.getFramed().addVertex(null, FileModel.class);
+            FileModel fileModel = context.getFramed().addFramedVertex(FileModel.class);
             fileModel.setFilePath(inputDir + "/EnumerationClassUsage.java");
             pm.addFileModel(fileModel);
 
-            context.getGraph().getBaseGraph().commit();
+            context.commit();
 
             final WindupConfiguration processorConfig = new WindupConfiguration();
             processorConfig.setRuleProviderFilter(new RuleProviderWithDependenciesPredicate(

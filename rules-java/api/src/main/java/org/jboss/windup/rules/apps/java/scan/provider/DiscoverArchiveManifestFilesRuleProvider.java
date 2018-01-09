@@ -90,7 +90,7 @@ public class DiscoverArchiveManifestFilesRuleProvider extends IteratingRuleProvi
             {
                 String property = StringUtils.trim(key.toString());
                 String propertyValue = StringUtils.trim(manifest.getMainAttributes().get(key).toString());
-                jarManifest.asVertex().setProperty(property, propertyValue);
+                jarManifest.setProperty(property, propertyValue);
             }
 
             if (StringUtils.isBlank(jarManifest.getName()))
@@ -103,8 +103,8 @@ public class DiscoverArchiveManifestFilesRuleProvider extends IteratingRuleProvi
                     {
                         String property = StringUtils.trim(key.toString());
                         String propertyValue = StringUtils.trim(manifest.getAttributes(entry).get(key).toString());
-                        if (StringUtils.isBlank((String) jarManifest.asVertex().getProperty(property)))
-                            jarManifest.asVertex().setProperty(property, propertyValue);
+                        if (StringUtils.isBlank(jarManifest.getProperty(property)))
+                            jarManifest.setProperty(property, propertyValue);
                     }
                     if (!StringUtils.isBlank(jarManifest.getName()))
                         break;

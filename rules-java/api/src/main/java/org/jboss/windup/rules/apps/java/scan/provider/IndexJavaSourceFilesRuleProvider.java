@@ -99,7 +99,7 @@ public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
             // If we are in binary mode, then we ignore java sources. Just remove them from the graph
             if (SourceMode.isDisabled().evaluate(event, context))
             {
-                payload.asVertex().remove();
+                payload.remove();
                 return;
             }
 

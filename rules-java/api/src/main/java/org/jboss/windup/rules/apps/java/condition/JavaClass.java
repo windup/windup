@@ -1,11 +1,11 @@
 package org.jboss.windup.rules.apps.java.condition;
 
-import com.thinkaurelius.titan.core.attribute.Text;
-import com.tinkerpop.blueprints.Predicate;
+import org.apache.tinkerpop.gremlin.process.traversal.P;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.tinkerpop.frames.structures.FramedVertexIterable;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.apache.commons.lang3.StringUtils;
+import org.janusgraph.core.attribute.Text;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.config.GraphRewrite;
@@ -22,6 +22,7 @@ import org.jboss.windup.config.query.QueryBuilderPiped;
 import org.jboss.windup.config.query.QueryGremlinCriterion;
 import org.jboss.windup.config.query.QueryPropertyComparisonType;
 import org.jboss.windup.graph.TitanUtil;
+import org.jboss.windup.graph.frames.FramedVertexIterable;
 import org.jboss.windup.graph.model.FileReferenceModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -55,6 +56,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiPredicate;
 import java.util.regex.Pattern;
 
 /**
@@ -216,26 +218,25 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
                 QueryBuilderFrom fromQuery = Query.from(getInputVariablesName());
                 QueryBuilderPiped piped = fromQuery.piped(new QueryGremlinCriterion()
                 {
-                    @Override public void query(GraphRewrite event, GraphTraversal<Vertex, Vertex> pipeline)
+                    @Override public void query(GraphRewrite event, GraphTraversal<?, Vertex> pipeline)
                     {
                         pipeline.out(FileReferenceModel.FILE_MODEL).in(FileReferenceModel.FILE_MODEL)
-                                    .has(JavaTypeReferenceModel.RESOLVED_SOURCE_SNIPPIT, Text.REGEX, compiledPattern.toString());
+                                    .has(JavaTypeReferenceModel.RESOLVED_SOURCE_SNIPPIT, Text.textContains(compiledPattern.toString()));
                     }
                 });
                 piped.as(initialQueryID).evaluate(event,context);
             }
             else
             {
-                GraphTraversal<Vertex, Vertex> resolvedTextSearch = new GraphTraversal<>(event.getGraphContext().getGraph());
-                resolvedTextSearch.V();
-                resolvedTextSearch.has(JavaTypeReferenceModel.RESOLVED_SOURCE_SNIPPIT, Text.REGEX, TitanUtil.titanifyRegex(compiledPattern.pattern()));
+                GraphTraversal<Vertex, Vertex> resolvedTextSearch = new GraphTraversalSource(event.getGraphContext().getGraph()).V();
+                resolvedTextSearch.has(JavaTypeReferenceModel.RESOLVED_SOURCE_SNIPPIT, Text.textRegex(TitanUtil.titanifyRegex(compiledPattern.pattern())));
 
-                if (!resolvedTextSearch.iterator().hasNext())
+                if (!resolvedTextSearch.hasNext())
                     return false;
 
                 Variables.instance(event).setVariable(
                             initialQueryID,
-                            new FramedVertexIterable<>(event.getGraphContext().getFramed(), resolvedTextSearch,
+                            new FramedVertexIterable<>(event.getGraphContext().getFramed(), resolvedTextSearch.toList(),
                                         JavaTypeReferenceModel.class));
             }
             query = Query.from(initialQueryID);
@@ -367,23 +368,13 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
         }
 
         @Override
-        public void query(GraphRewrite event, GraphTraversal<Vertex, Vertex> pipeline)
+        public void query(GraphRewrite event, GraphTraversal<?, Vertex> pipeline)
         {
-            Predicate regexPredicate = new Predicate()
-            {
-                @Override
-                public boolean evaluate(Object first, Object second)
-                {
-                    return ((String) first).matches((String) second);
-                }
-
-            };
             pipeline.as("result")
                         .out(FileReferenceModel.FILE_MODEL)
                         .out(JavaSourceFileModel.JAVA_CLASS_MODEL)
                         .has(JavaClassModel.QUALIFIED_NAME,
-                                    regexPredicate,
-                                    compiledTypeFilterPattern.pattern())
+                            Text.textRegex(compiledTypeFilterPattern.pattern()))
                         .select("result");
         }
     }

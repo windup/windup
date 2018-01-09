@@ -13,9 +13,7 @@ import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.syncleus.ferma.annotations.Adjacency;
 import com.syncleus.ferma.annotations.Property;
-import com.tinkerpop.frames.modules.javahandler.JavaHandler;
-import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.model.TypeValue;
 
 /**
  * This references a particular location within a Java source file, as well as the contents of that location.
@@ -84,17 +82,11 @@ public interface JavaTypeReferenceModel extends FileLocationModel
     /**
      * Gets a human readable description of the location in the file
      */
-    @JavaHandler
-    String getDescription();
-
-    abstract class Impl implements JavaTypeReferenceModel, JavaHandlerContext<Vertex>
+    default String getDescription()
     {
-        @Override
-        public String getDescription()
-        {
-            TypeReferenceLocation location = getReferenceLocation();
+        TypeReferenceLocation location = getReferenceLocation();
 
-            return location.toReadablePrefix() + " '" + getResolvedSourceSnippit() + "'";
-        }
+        return location.toReadablePrefix() + " '" + getResolvedSourceSnippit() + "'";
     }
+
 }

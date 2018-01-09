@@ -1,9 +1,10 @@
 package org.jboss.windup.rules.apps.java.service;
 
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.tinkerpop.frames.structures.FramedVertexIterable;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.frames.FramedVertexIterable;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.model.JarManifestModel;
@@ -26,8 +27,8 @@ public class JarManifestService extends GraphService<JarManifestModel>
      */
     public Iterable<JarManifestModel> getManifestsByArchive(ArchiveModel archiveModel)
     {
-        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(archiveModel.asVertex());
+        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversalSource(getGraphContext().getGraph()).V(archiveModel.getElement());
         pipeline.out(JarManifestModel.ARCHIVE);
-        return new FramedVertexIterable<>(getGraphContext().getFramed(), pipeline, JarManifestModel.class);
+        return new FramedVertexIterable<>(getGraphContext().getFramed(), pipeline.toList(), JarManifestModel.class);
     }
 }

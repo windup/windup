@@ -1,5 +1,6 @@
 package org.jboss.windup.rules.apps.java.scan.provider;
 
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.jboss.windup.ast.java.data.ResolutionStatus;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
@@ -63,15 +64,14 @@ public class FindUnboundJavaReferencesRuleProvider extends AbstractRuleProvider
             HasHint hasHint = new HasHint();
 
             // Reuse the progress and commit logic from these
-            GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(event.getGraphContext().getGraph());
-            pipeline.V();
+            GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversalSource(event.getGraphContext().getGraph()).V();
             pipeline.has(WindupVertexFrame.TYPE_PROP, JavaTypeReferenceModel.TYPE);
-            pipeline.hasNot(JavaTypeReferenceModel.RESOLUTION_STATUS, ResolutionStatus.RESOLVED);
+            pipeline.not(pipeline.has(JavaTypeReferenceModel.RESOLUTION_STATUS, ResolutionStatus.RESOLVED));
 
             GraphService<JavaTypeReferenceModel> typeReferenceService = new GraphService<>(event.getGraphContext(), JavaTypeReferenceModel.class);
             int count = 0;
 
-            for (Vertex vertex : pipeline)
+            for (Vertex vertex : pipeline.toList())
             {
                 JavaTypeReferenceModel typeReference = typeReferenceService.frame(vertex);
                 if (hasHint.evaluate(event, context, typeReference))
@@ -99,7 +99,7 @@ public class FindUnboundJavaReferencesRuleProvider extends AbstractRuleProvider
                 count++;
                 if (count % 1000 == 0)
                 {
-                    event.getGraphContext().getGraph().getBaseGraph().commit();
+                    event.getGraphContext().commit();
                 }
             }
         }
