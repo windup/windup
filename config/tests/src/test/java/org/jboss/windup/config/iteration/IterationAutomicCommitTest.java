@@ -6,8 +6,8 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import com.syncleus.ferma.FramedGraph;
 import com.syncleus.ferma.Traversable;
+import com.syncleus.ferma.WrappedFramedGraph;
 import org.janusgraph.core.JanusGraph;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -174,7 +174,7 @@ public class IterationAutomicCommitTest
         }
 
         @Override
-        public FramedGraph getFramed()
+        public WrappedFramedGraph<JanusGraph> getFramed()
         {
             return delegate.getFramed();
         }
