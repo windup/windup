@@ -8,6 +8,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tinkerpop.gremlin.process.traversal.Traversal;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
+import org.janusgraph.core.attribute.Text;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.query.Query;
@@ -30,9 +33,7 @@ import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.w3c.dom.Document;
 
-import com.thinkaurelius.titan.core.attribute.Text;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.tinkerpop.frames.FramedGraphQuery;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.jboss.windup.config.metadata.RuleMetadata;
 
@@ -58,15 +59,15 @@ public class DiscoverHibernateMappingRuleProvider extends IteratingRuleProvider<
         QueryGremlinCriterion doctypeSearchCriterion = new QueryGremlinCriterion()
         {
             @Override
-            public void query(GraphRewrite event, GraphTraversal<Vertex, Vertex> pipeline)
+            public void query(GraphRewrite event, GraphTraversal<?, Vertex> pipeline)
             {
-                pipeline.has(DoctypeMetaModel.PROPERTY_PUBLIC_ID, Text.REGEX, REGEX_HIBERNATE);
+                pipeline.has(DoctypeMetaModel.PROPERTY_PUBLIC_ID, Text.textRegex(REGEX_HIBERNATE));
 
-                FramedGraphQuery systemIDQuery = event.getGraphContext().getQuery().type(DoctypeMetaModel.class)
-                            .has(DoctypeMetaModel.PROPERTY_SYSTEM_ID, Text.REGEX, REGEX_HIBERNATE);
-                GraphTraversal<Vertex, Vertex> systemIdPipeline = new GraphTraversal<>(systemIDQuery.vertices());
+                Traversal<?, ?> systemIDQuery = event.getGraphContext().getQuery(DoctypeMetaModel.class)
+                            .getRawTraversal().has(DoctypeMetaModel.PROPERTY_SYSTEM_ID, Text.textRegex(REGEX_HIBERNATE));
+                GraphTraversal<Vertex, Vertex> systemIdPipeline = new GraphTraversalSource(event.getGraphContext().getGraph()).V(systemIDQuery.toList());
 
-                pipeline.add(systemIdPipeline);
+                pipeline.union(systemIdPipeline);
 
                 pipeline.dedup();
             }

@@ -78,34 +78,34 @@ public class ProjectWithHintTest
     {
         try (GraphContext context = factory.create())
         {
-            ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
+            ProjectModel pm = context.getFramed().addFramedVertex(ProjectModel.class);
             pm.setName("Main Project");
-            ProjectModel subProject = context.getFramed().addVertex(null, MavenProjectModel.class);
-            MavenProjectModel subsubProject = context.getFramed().addVertex(null, MavenProjectModel.class);
+            ProjectModel subProject = context.getFramed().addFramedVertex(MavenProjectModel.class);
+            MavenProjectModel subsubProject = context.getFramed().addFramedVertex(MavenProjectModel.class);
             subsubProject.setArtifactId("abc");
-            ProjectDependencyModel dependency = context.getFramed().addVertex(null, ProjectDependencyModel.class);
+            ProjectDependencyModel dependency = context.getFramed().addFramedVertex(ProjectDependencyModel.class);
             dependency.setClassifier("abc");
             dependency.setProject(subsubProject);
 
-            FileModel dependencyFile = context.getFramed().addVertex(null, FileModel.class);
+            FileModel dependencyFile = context.getFramed().addFramedVertex(FileModel.class);
             dependencyFile.setFilePath("src/test/resources/xml/project.xml");
             subsubProject.addFileModel(dependencyFile);
-            FileLocationModel locationReference = context.getFramed().addVertex(null, FileLocationModel.class);
+            FileLocationModel locationReference = context.getFramed().addFramedVertex(FileLocationModel.class);
             locationReference.setLineNumber(3);
             locationReference.setColumnNumber(4);
             locationReference.setLength(5);
             locationReference.setSourceSnippit("snippet");
             locationReference.setFile(dependencyFile);
-            dependency.setFileLocationReference(Collections.singleton(locationReference));
+            dependency.setFileLocationReference(Collections.singletonList(locationReference));
 
             subProject.addDependency(dependency);
             pm.addChildProject(subProject);
 
-            FileModel inputPath = context.getFramed().addVertex(null, FileModel.class);
+            FileModel inputPath = context.getFramed().addFramedVertex(FileModel.class);
             inputPath.setFilePath("src/test/resources/");
-            FileModel subinputPath = context.getFramed().addVertex(null, FileModel.class);
+            FileModel subinputPath = context.getFramed().addFramedVertex(FileModel.class);
             subinputPath.setFilePath("src/test/resources/org");
-            FileModel subsubinputPath = context.getFramed().addVertex(null, FileModel.class);
+            FileModel subsubinputPath = context.getFramed().addFramedVertex(FileModel.class);
             subsubinputPath.setFilePath("src/test/resources/org/jboss");
 
             Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windup_"

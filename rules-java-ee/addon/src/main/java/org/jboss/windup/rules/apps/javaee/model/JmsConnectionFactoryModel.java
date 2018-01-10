@@ -1,7 +1,7 @@
 package org.jboss.windup.rules.apps.javaee.model;
 
 import com.syncleus.ferma.annotations.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.model.TypeValue;
 
 /**
  * Represents a JMS Connection Factory that is defined or referenced by the application.
@@ -9,19 +9,18 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(JmsConnectionFactoryModel.TYPE)
 public interface JmsConnectionFactoryModel extends JNDIResourceModel
 {
-    public static final String TYPE = "JmsConnectionFactoryModel";
-    public static final String CONNECTION_FACTORY_TYPE = "connectionFactoryType";
+    String TYPE = "JmsConnectionFactoryModel";
+    String CONNECTION_FACTORY_TYPE = "connectionFactoryType";
 
     /**
      * Contains JMS destination type (queue / topic)
      */
     @Property(CONNECTION_FACTORY_TYPE)
-    public JmsDestinationType getConnectionFactoryType();
+    JmsDestinationType getConnectionFactoryType();
 
     /**
      * Contains JMS destination type (queue / topic)
      */
     @Property(CONNECTION_FACTORY_TYPE)
-    public void setConnectionFactoryType(JmsDestinationType type);
-
+    void setConnectionFactoryType(JmsDestinationType type);
 }

@@ -3,16 +3,17 @@ package org.jboss.windup.rules.apps.javaee.service;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
+import org.janusgraph.core.attribute.Text;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.frames.FramedVertexIterable;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.javaee.model.association.VendorSpecificationExtensionModel;
 
-import com.thinkaurelius.titan.core.attribute.Text;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.tinkerpop.frames.structures.FramedVertexIterable;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 
 /**
@@ -35,10 +36,10 @@ public class VendorSpecificationExtensionService extends GraphService<VendorSpec
 
     public Iterable<VendorSpecificationExtensionModel> getVendorSpecificationExtensions(FileModel model)
     {
-        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(model.asVertex());
+        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversalSource(getGraphContext().getGraph()).V(model.getElement());
         pipeline.out(VendorSpecificationExtensionModel.REF);
-        pipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, VendorSpecificationExtensionModel.TYPE);
-        return new FramedVertexIterable<>(getGraphContext().getFramed(), pipeline, VendorSpecificationExtensionModel.class);
+        pipeline.has(WindupVertexFrame.TYPE_PROP, Text.textContains(VendorSpecificationExtensionModel.TYPE));
+        return new FramedVertexIterable<>(getGraphContext().getFramed(), pipeline.toList(), VendorSpecificationExtensionModel.class);
     }
 
     /**

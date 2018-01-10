@@ -2,13 +2,12 @@ package org.jboss.windup.rules.apps.javaee.service;
 
 import java.util.logging.Logger;
 
+import org.apache.tinkerpop.gremlin.process.traversal.Traversal;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.javaee.model.EnvironmentReferenceModel;
 import org.jboss.windup.rules.apps.javaee.model.EnvironmentReferenceTagType;
 import org.jboss.windup.rules.apps.javaee.model.JNDIResourceModel;
-
-import com.tinkerpop.blueprints.GraphQuery;
 
 /**
  * Manages creating, querying, and deleting {@link EnvironmentReferenceModel}s.
@@ -36,7 +35,7 @@ public class EnvironmentReferenceService extends GraphService<EnvironmentReferen
      */
     public EnvironmentReferenceModel findEnvironmentReference(String name, EnvironmentReferenceTagType type)
     {
-        GraphQuery query = getTypedQuery().has(EnvironmentReferenceModel.NAME, name).has(
+        Traversal<?, ?> query = findAllQuery().getRawTraversal().has(EnvironmentReferenceModel.NAME, name).has(
                     EnvironmentReferenceModel.TAG_TYPE, type);
         return getUnique(query);
     }

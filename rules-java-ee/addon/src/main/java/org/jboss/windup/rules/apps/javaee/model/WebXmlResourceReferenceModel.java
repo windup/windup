@@ -1,10 +1,10 @@
 package org.jboss.windup.rules.apps.javaee.model;
 
 import org.jboss.windup.graph.Indexed;
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import com.syncleus.ferma.annotations.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import org.jboss.windup.rules.apps.java.model.mixin.HasTypeModel;
 
 /**
@@ -35,48 +35,46 @@ import org.jboss.windup.rules.apps.java.model.mixin.HasTypeModel;
 @TypeValue(WebXmlResourceReferenceModel.TYPE)
 public interface WebXmlResourceReferenceModel extends WindupVertexFrame, HasTypeModel
 {
-    public static final String TYPE = "WebXmlResourceReferenceModel";
+    String TYPE = "WebXmlResourceReferenceModel";
 
-    public static final String RESOURCE_NAME = "resourceName";
-    public static final String RESOURCE_AUTH = "resourceAuth";
-    public static final String DESCRIPTION = "desc";
+    String RESOURCE_NAME = "resourceName";
+    String RESOURCE_AUTH = "resourceAuth";
+    String DESCRIPTION = "desc";
 
     /**
      * Contains the reference id
      */
     @Indexed
     @Property(RESOURCE_NAME)
-    public String getReferenceName();
+    String getReferenceName();
 
     /**
      * Contains the reference id
      */
     @Property(RESOURCE_NAME)
-    public void setReferenceName(String resourceId);
+    void setReferenceName(String resourceId);
 
     /**
      * The referenced resource's auth (res-auth).
      */
     @Property(RESOURCE_AUTH)
-    public String getResourceAuth();
+    String getResourceAuth();
 
     /**
      * The referenced resource's auth (res-auth).
      */
     @Property(RESOURCE_AUTH)
-    public void setResourceAuth(String auth);
+    void setResourceAuth(String auth);
 
     /**
      * Resource description
      */
     @Property(DESCRIPTION)
-    public String getDescription();
+    String getDescription();
 
     /**
      * Resource description
      */
     @Property(DESCRIPTION)
-    public void setDescription(String desc);
-
-
+    void setDescription(String desc);
 }

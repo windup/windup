@@ -1,11 +1,11 @@
 package org.jboss.windup.rules.apps.javaee.model.association;
 
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.rules.apps.javaee.model.JNDIResourceModel;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import com.syncleus.ferma.annotations.Adjacency;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 @TypeValue(JNDIReferenceModel.TYPE)
 public interface JNDIReferenceModel extends WindupVertexFrame

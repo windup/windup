@@ -1,10 +1,11 @@
 package org.jboss.windup.rules.apps.javaee.service;
 
-import com.thinkaurelius.titan.core.attribute.Text;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.tinkerpop.frames.structures.FramedVertexIterable;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
+import org.janusgraph.core.attribute.Text;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.frames.FramedVertexIterable;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
@@ -35,10 +36,10 @@ public class SpringBeanService extends GraphService<SpringBeanModel>
      */
     public Iterable<SpringBeanModel> findAllByApplication(ProjectModel application)
     {
-        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(application.asVertex());
+        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversalSource(getGraphContext().getGraph()).V(application.getElement());
         pipeline.in(SpringBeanModel.APPLICATIONS);
-        pipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, SpringBeanModel.TYPE);
+        pipeline.has(WindupVertexFrame.TYPE_PROP, Text.textContains(SpringBeanModel.TYPE));
 
-        return new FramedVertexIterable<>(getGraphContext().getFramed(), pipeline, SpringBeanModel.class);
+        return new FramedVertexIterable<>(getGraphContext().getFramed(), pipeline.toList(), SpringBeanModel.class);
     }
 }

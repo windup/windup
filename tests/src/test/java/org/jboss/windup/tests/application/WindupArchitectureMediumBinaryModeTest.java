@@ -90,9 +90,9 @@ public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTe
         {
             if (manifest.getArchive().getFileName().equals("Windup1x-javaee-example.war") && !manifest.getFilePath().contains("/WEB-INF/"))
             {
-                Assert.assertEquals("1.0", manifest.asVertex().getProperty("Manifest-Version"));
-                Assert.assertEquals("Plexus Archiver", manifest.asVertex().getProperty("Archiver-Version"));
-                Assert.assertEquals("Apache Maven", manifest.asVertex().getProperty("Created-By"));
+                Assert.assertEquals("1.0", manifest.getElement().property("Manifest-Version").value());
+                Assert.assertEquals("Plexus Archiver", manifest.getElement().property("Archiver-Version").value());
+                Assert.assertEquals("Apache Maven", manifest.getElement().property("Created-By").value());
                 warManifestFound = true;
             }
 

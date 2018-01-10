@@ -194,7 +194,7 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
         techReportsIt.forEach(techReportModel -> {
             Long id = null;
             if (techReportModel.getProjectModel() != null) {
-                id = (Long) techReportModel.getProjectModel().asVertex().getId();
+                id = (Long) techReportModel.getProjectModel().getElement().id();
             }
             final TechReportModel previous = idToReport.put(id, techReportModel);
             if (previous != null)
@@ -204,7 +204,7 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
         Assert.assertNotNull(idToReport.get(null));
         for (ProjectModel app : new ProjectService(graphContext).getRootProjectModels())
         {
-            final TechReportModel techReport = idToReport.get(app.asVertex().getId());
+            final TechReportModel techReport = idToReport.get(app.getElement().id());
             Assert.assertNotNull(techReport);
         }
 

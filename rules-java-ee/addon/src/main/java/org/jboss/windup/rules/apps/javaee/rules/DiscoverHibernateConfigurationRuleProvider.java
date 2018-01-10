@@ -5,11 +5,15 @@ import static org.joox.JOOX.$;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-//import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tinkerpop.gremlin.process.traversal.Traversal;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.janusgraph.core.attribute.Text;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
@@ -36,11 +40,6 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.thinkaurelius.titan.core.attribute.Text;
-import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.tinkerpop.frames.FramedGraphQuery;
-import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
-
 /**
  * Discovers Hibernate Configuration Files (eg, hibernate.cfg.xml), extracts their metadata, and places this metadata into the graph.
  *
@@ -50,14 +49,11 @@ import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 @RuleMetadata(phase = InitialAnalysisPhase.class, perform = "Discover hibernate.cfg.xml files")
 public class DiscoverHibernateConfigurationRuleProvider extends IteratingRuleProvider<DoctypeMetaModel>
 {
-    //private static final Logger LOG = Logging.get(DiscoverHibernateConfigurationRuleProvider.class);
-
     private static final String TECH_TAG = "Hibernate Cfg";
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.IMPORTANT;
 
     private static final String REGEX_HIBERNATE = "(?i).*hibernate.configuration.*";
     private static final String JTA_HIBERNATE_PLATFORM = "transaction.jta.platform";
-
 
     @Override
     public ConditionBuilder when()
@@ -65,15 +61,16 @@ public class DiscoverHibernateConfigurationRuleProvider extends IteratingRulePro
         QueryGremlinCriterion doctypeSearchCriterion = new QueryGremlinCriterion()
         {
             @Override
-            public void query(GraphRewrite event, GraphTraversal<Vertex, Vertex> pipeline)
+            public void query(GraphRewrite event, GraphTraversal<?, Vertex> pipeline)
             {
-                pipeline.has(DoctypeMetaModel.PROPERTY_PUBLIC_ID, Text.REGEX, REGEX_HIBERNATE);
+                pipeline.has(DoctypeMetaModel.PROPERTY_PUBLIC_ID, Text.textRegex(REGEX_HIBERNATE));
 
-                FramedGraphQuery systemIDQuery = event.getGraphContext().getQuery().type(DoctypeMetaModel.class)
-                            .has(DoctypeMetaModel.PROPERTY_SYSTEM_ID, Text.REGEX, REGEX_HIBERNATE);
-                GraphTraversal<Vertex, Vertex> systemIdPipeline = new GraphTraversal<>(systemIDQuery.vertices());
+                Traversal<?, ?> systemIDQuery = event.getGraphContext().getQuery(DoctypeMetaModel.class)
+                            .getRawTraversal()
+                            .has(DoctypeMetaModel.PROPERTY_SYSTEM_ID, Text.textRegex(REGEX_HIBERNATE));
+                GraphTraversal<Vertex, Vertex> systemIdPipeline = new GraphTraversalSource(event.getGraphContext().getGraph()).V(systemIDQuery.toList());
 
-                pipeline.add(systemIdPipeline);
+                pipeline.union(systemIdPipeline);
 
                 pipeline.dedup();
             }
@@ -97,7 +94,8 @@ public class DiscoverHibernateConfigurationRuleProvider extends IteratingRulePro
         }
     }
 
-    private void createHibernateConfigurationModel(GraphRewrite event, EvaluationContext context, XmlFileModel xmlFileModel, String versionInformation)
+    private void createHibernateConfigurationModel(GraphRewrite event, EvaluationContext context, XmlFileModel xmlFileModel,
+                String versionInformation)
     {
         GraphContext graphContext = event.getGraphContext();
         DataSourceService dataSourceService = new DataSourceService(graphContext);
@@ -146,7 +144,8 @@ public class DiscoverHibernateConfigurationRuleProvider extends IteratingRulePro
                 {
                     String dialect = sessionFactoryProperties.get("dialect");
                     String resolvedType = HibernateDialectDataSourceTypeResolver.resolveDataSourceTypeFromDialect(dialect);
-                    if(StringUtils.isNotBlank(resolvedType)) {
+                    if (StringUtils.isNotBlank(resolvedType))
+                    {
                         dataSource.setDatabaseTypeName(resolvedType);
                     }
                 }

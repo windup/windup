@@ -1,5 +1,7 @@
 package org.jboss.windup.rules.apps.javaee.service;
 
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
+import org.janusgraph.core.attribute.Text;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
@@ -7,7 +9,6 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.javaee.model.JaxRSWebServiceModel;
 
-import com.thinkaurelius.titan.core.attribute.Text;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 
@@ -28,15 +29,14 @@ public class JaxRSWebServiceModelService extends GraphService<JaxRSWebServiceMod
         GraphTraversal<Vertex, Vertex> pipeline;
         if (implementationClass == null)
         {
-            pipeline = new GraphTraversal<>(getGraphContext().getGraph());
-            pipeline.V();
+            pipeline = new GraphTraversalSource(getGraphContext().getGraph()).V();
             pipeline.has(WindupVertexFrame.TYPE_PROP, JaxRSWebServiceModel.TYPE);
         }
         else
         {
-            pipeline = new GraphTraversal<>(implementationClass.asVertex());
+            pipeline = new GraphTraversalSource(getGraphContext().getGraph()).V(implementationClass.getElement());
             pipeline.out(JaxRSWebServiceModel.JAXRS_IMPLEMENTATION_CLASS);
-            pipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, JaxRSWebServiceModel.TYPE);
+            pipeline.has(WindupVertexFrame.TYPE_PROP, Text.textContains(JaxRSWebServiceModel.TYPE));
         }
         pipeline.has(JaxRSWebServiceModel.PATH, path);
 

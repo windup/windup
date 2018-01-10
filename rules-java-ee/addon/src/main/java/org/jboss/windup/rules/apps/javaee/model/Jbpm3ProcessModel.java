@@ -1,5 +1,6 @@
 package org.jboss.windup.rules.apps.javaee.model;
 
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.resource.ReportResourceFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
@@ -7,7 +8,6 @@ import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import com.syncleus.ferma.annotations.Adjacency;
 import com.syncleus.ferma.annotations.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
  * Contains information regarding a JBPM 3 process model.

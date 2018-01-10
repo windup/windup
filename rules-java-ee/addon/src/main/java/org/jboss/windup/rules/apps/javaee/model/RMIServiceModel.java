@@ -1,10 +1,10 @@
 package org.jboss.windup.rules.apps.javaee.model;
 
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import com.syncleus.ferma.annotations.Adjacency;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
  * RMI Service marker interface.

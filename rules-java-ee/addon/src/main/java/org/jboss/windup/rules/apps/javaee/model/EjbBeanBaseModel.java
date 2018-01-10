@@ -3,13 +3,15 @@ package org.jboss.windup.rules.apps.javaee.model;
 import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.model.HasApplications;
 import org.jboss.windup.graph.model.ProjectModel;
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import com.syncleus.ferma.annotations.Adjacency;
 import com.syncleus.ferma.annotations.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+
+import java.util.List;
 
 /**
  * Contains metadata used by all specializations of EJBs (eg, environment references)
@@ -35,7 +37,7 @@ public interface EjbBeanBaseModel extends WindupVertexFrame, HasApplications
      * Contains the application in which this EJB was discovered.
      */
     @Adjacency(label = APPLICATIONS, direction = Direction.OUT)
-    Iterable<ProjectModel> getApplications();
+    List<ProjectModel> getApplications();
 
     /**
      * Contains the application in which this EJB was discovered.

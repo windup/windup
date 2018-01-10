@@ -1,6 +1,6 @@
 package org.jboss.windup.rules.apps.javaee.model;
 
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.model.TypeValue;
 
 /**
  * Base type for Web Service.

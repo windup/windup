@@ -3,8 +3,10 @@ package org.jboss.windup.rules.apps.javaee.model.stats;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import com.syncleus.ferma.annotations.Adjacency;
 import com.syncleus.ferma.annotations.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 import java.util.Date;
+import java.util.List;
+
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 /**
@@ -26,7 +28,7 @@ public interface GeneralStatsModel extends WindupVertexFrame
      * The statistics items contained in this model.
      */
     @Adjacency(label = ITEMS, direction = Direction.OUT)
-    Iterable<GeneralStatsItemModel> getStatsItems();
+    List<GeneralStatsItemModel> getStatsItems();
 
     /**
      * The statistics items contained in this model.

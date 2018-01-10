@@ -44,7 +44,7 @@ public interface WindupVertexListModel<T extends WindupVertexFrame> extends Wind
      * Adds all of the items to the list.
      */
     @JavaHandler(handler = Impl.class)
-    WindupVertexListModel<T> addAll(List<T> items);
+    WindupVertexListModel<T> addAll(Iterable<T> items);
 
     /**
      * Returns an {@link Iterator} for this list.

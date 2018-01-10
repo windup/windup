@@ -1,8 +1,7 @@
 package org.jboss.windup.rules.apps.javaee.service;
 
-import java.util.Collections;
-
 import com.google.common.collect.Iterables;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
@@ -30,15 +29,16 @@ public class EjbRemoteServiceModelService extends GraphService<EjbRemoteServiceM
      */
     public EjbRemoteServiceModel getOrCreate(Iterable<ProjectModel> applications, JavaClassModel remoteInterface, JavaClassModel implementationClass)
     {
-        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(getGraphContext().getGraph());
-        pipeline.V().has(WindupVertexFrame.TYPE_PROP, EjbRemoteServiceModel.TYPE);
+        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversalSource(getGraphContext().getGraph()).V();
+        pipeline.has(WindupVertexFrame.TYPE_PROP, EjbRemoteServiceModel.TYPE);
         if (remoteInterface != null)
-            pipeline.as("remoteInterface").out(EjbRemoteServiceModel.EJB_INTERFACE).retain(Collections.singleton(remoteInterface.asVertex()))
-                        .select("remoteInterface");
+            pipeline.as("remoteInterface").out(EjbRemoteServiceModel.EJB_INTERFACE)
+                    .filter(vertexTraverser -> vertexTraverser.get().equals(remoteInterface.getElement()))
+                    .select("remoteInterface");
 
         if (implementationClass != null)
             pipeline.as("implementationClass").out(EjbRemoteServiceModel.EJB_IMPLEMENTATION_CLASS)
-                        .retain(Collections.singleton(implementationClass.asVertex()))
+                        .filter(vertexTraverser -> vertexTraverser.get().equals(implementationClass.getElement()))
                         .select("implementationClass");
 
         if (pipeline.hasNext())

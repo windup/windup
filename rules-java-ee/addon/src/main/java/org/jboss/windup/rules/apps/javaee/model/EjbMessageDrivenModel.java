@@ -6,7 +6,7 @@ import org.jboss.windup.graph.MapInAdjacentProperties;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import com.syncleus.ferma.annotations.Adjacency;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.model.TypeValue;
 
 /**
  * Contains EJB Message Driven model information and related data.

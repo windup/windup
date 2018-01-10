@@ -1,7 +1,7 @@
 package org.jboss.windup.rules.apps.javaee.model;
 
 import com.syncleus.ferma.annotations.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.rules.apps.java.model.mixin.HasTypeModel;
 

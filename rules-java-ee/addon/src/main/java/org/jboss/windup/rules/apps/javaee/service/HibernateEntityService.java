@@ -1,10 +1,11 @@
 package org.jboss.windup.rules.apps.javaee.service;
 
-import com.thinkaurelius.titan.core.attribute.Text;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.tinkerpop.frames.structures.FramedVertexIterable;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
+import org.janusgraph.core.attribute.Text;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.frames.FramedVertexIterable;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
@@ -28,10 +29,10 @@ public class HibernateEntityService extends GraphService<HibernateEntityModel>
      */
     public Iterable<HibernateEntityModel> findAllByApplication(ProjectModel application)
     {
-        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(application.asVertex());
+        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversalSource(getGraphContext().getGraph()).V(application.getElement());
         pipeline.in(HibernateEntityModel.APPLICATIONS);
-        pipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, HibernateEntityModel.TYPE);
+        pipeline.has(WindupVertexFrame.TYPE_PROP, Text.textContains(HibernateEntityModel.TYPE));
 
-        return new FramedVertexIterable<>(getGraphContext().getFramed(), pipeline, HibernateEntityModel.class);
+        return new FramedVertexIterable<>(getGraphContext().getFramed(), pipeline.toList(), HibernateEntityModel.class);
     }
 }

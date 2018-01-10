@@ -2,6 +2,7 @@ package org.jboss.windup.rules.apps.javaee.service;
 
 import java.util.Collections;
 
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
@@ -24,15 +25,16 @@ public class JaxWSWebServiceModelService extends GraphService<JaxWSWebServiceMod
 
     public JaxWSWebServiceModel getOrCreate(ProjectModel application, JavaClassModel endpointInterface, JavaClassModel implementationClass)
     {
-        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversal<>(getGraphContext().getGraph());
-        pipeline.V().has(WindupVertexFrame.TYPE_PROP, JaxWSWebServiceModel.TYPE);
+        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversalSource(getGraphContext().getGraph()).V();
+        pipeline.has(WindupVertexFrame.TYPE_PROP, JaxWSWebServiceModel.TYPE);
         if (endpointInterface != null)
-            pipeline.as("endpointInterface").out(JaxWSWebServiceModel.JAXWS_INTERFACE).retain(Collections.singleton(endpointInterface.asVertex()))
+            pipeline.as("endpointInterface").out(JaxWSWebServiceModel.JAXWS_INTERFACE)
+                        .filter(traverser -> traverser.get().equals(endpointInterface.getElement()))
                         .select("endpointInterface");
 
         if (implementationClass != null)
             pipeline.as("implementationClass").out(JaxWSWebServiceModel.JAXWS_IMPLEMENTATION_CLASS)
-                        .retain(Collections.singleton(implementationClass.asVertex()))
+                        .filter(traverser -> traverser.get().equals(implementationClass.getElement()))
                         .select("implementationClass");
 
         if (pipeline.hasNext())
