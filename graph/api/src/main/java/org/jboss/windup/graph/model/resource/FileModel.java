@@ -147,7 +147,19 @@ public interface FileModel extends ResourceModel, HasApplications, HasProject
      * Parent directory
      */
     @Adjacency(label = PARENT_FILE, direction = Direction.OUT)
-    FileModel getParentFile();
+    FileModel getParentFileInternal();
+
+    default FileModel getParentFile()
+    {
+        try
+        {
+            return getParentFileInternal();
+        }
+        catch (NoSuchElementException e)
+        {
+            return null;
+        }
+    }
 
     /**
      * Parent directory

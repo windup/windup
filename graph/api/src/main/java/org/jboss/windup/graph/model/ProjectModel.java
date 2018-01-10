@@ -48,7 +48,19 @@ public interface ProjectModel extends WindupVertexFrame, HasApplications
      * project.
      */
     @Adjacency(label = ROOT_FILE_MODEL, direction = Direction.OUT)
-    FileModel getRootFileModel();
+    FileModel getRootFileModelInternal();
+
+    default FileModel getRootFileModel()
+    {
+        try
+        {
+            return getRootFileModelInternal();
+        }
+        catch (NoSuchElementException e)
+        {
+            return null;
+        }
+    }
 
     /**
      * This represents the root directory (in the case of a source-based analysis) or root archive (for binary analysis) containing this particular
@@ -162,6 +174,12 @@ public interface ProjectModel extends WindupVertexFrame, HasApplications
     @Adjacency(label = PARENT_PROJECT, direction = Direction.OUT)
     ProjectModel getParentProject();
 
+    /**
+     * The parent ProjectModel, or null if no parent is present.
+     */
+    @Adjacency(label = PARENT_PROJECT, direction = Direction.OUT)
+    void setParentProject(ProjectModel maven);
+
     /*
      * FIXME TP3 - Should be removed when a new version of ferma is available
      */
@@ -176,12 +194,6 @@ public interface ProjectModel extends WindupVertexFrame, HasApplications
             return null;
         }
     }
-
-    /**
-     * The parent ProjectModel, or null if no parent is present.
-     */
-    @Adjacency(label = PARENT_PROJECT, direction = Direction.OUT)
-    void setParentProject(ProjectModel maven);
 
     /**
      * A list of child projects

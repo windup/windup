@@ -9,6 +9,8 @@ import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
+import java.util.List;
+
 /**
  * Contains a links to dependent archives, grouped by their SHA1 value.
  *
@@ -50,7 +52,7 @@ public interface DependencyReportDependencyGroupModel extends WindupVertexFrame
      * Contains links to the archives that match this SHA1 hash.
      */
     @Incidence(label = DEPENDENCY_GROUP_TO_ARCHIVE, direction = Direction.OUT)
-    Iterable<DependencyReportToArchiveEdgeModel> getArchives();
+    List<DependencyReportToArchiveEdgeModel> getArchives();
 
     /**
      * Contains links to the archives that match this SHA1 hash.
