@@ -21,6 +21,8 @@ import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.FilteredIterator;
 import org.jboss.windup.util.exception.WindupException;
 
+import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.has;
+import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.not;
 import static org.jboss.windup.util.Util.NL;
 
 public class GraphService<T extends WindupVertexFrame> implements Service<T>
@@ -141,7 +143,7 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     {
         return ExecutionStatistics.performBenchmarked("GraphService.findAllWithoutProperty(" + key + ")", () -> {
             return (List<T>)findAllQuery().traverse(g -> {
-                return g.not(g.has(key, value));
+                return not(has(key, value));
             }).toList(type);
         });
     }

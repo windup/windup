@@ -1,9 +1,7 @@
 package org.jboss.windup.rules.apps.java.model;
 
-import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.commons.lang.StringUtils;
 import org.jboss.windup.graph.model.TypeValue;
-import org.jboss.windup.graph.model.resource.FileModel;
 
 /**
  * Represents a source ".java" file on disk.

@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tinkerpop.gremlin.process.traversal.P;
+import org.apache.tinkerpop.gremlin.process.traversal.Traversal;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.Property;
 import org.janusgraph.core.attribute.Text;
@@ -231,7 +232,8 @@ public class ClassificationService extends GraphService<ClassificationModel>
      */
     public ClassificationModel attachClassification(GraphRewrite event, Rule rule, FileModel fileModel, String categoryId, String classificationTitle, String description)
     {
-        ClassificationModel classification = getUnique(getQuery().traverse(g -> g.has(ClassificationModel.CLASSIFICATION, classificationTitle)));
+        Traversal<?, ?> classificationTraversal = getQuery().traverse(g -> g.has(ClassificationModel.CLASSIFICATION, classificationTitle)).getRawTraversal();
+        ClassificationModel classification = getUnique(classificationTraversal);
         if (classification == null)
         {
             classification = create();

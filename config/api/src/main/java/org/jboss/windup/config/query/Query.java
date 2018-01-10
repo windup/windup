@@ -3,6 +3,7 @@ package org.jboss.windup.config.query;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -185,6 +186,11 @@ public class Query extends GraphCondition implements QueryBuilderFind, QueryBuil
             public Iterable<WindupVertexFrame> getFrames(GraphRewrite event, EvaluationContext context)
             {
                 List<Vertex> startingVertices = getStartingVertices(event);
+
+                // If there are no vertices, go ahead and return it instead of trying to continue.
+                if (startingVertices.isEmpty())
+                    return Collections.emptyList();
+
                 GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversalSource(event.getGraphContext().getGraph()).V(startingVertices);
                 Set<WindupVertexFrame> frames = new HashSet<>();
                 for (QueryGremlinCriterion c : query.getPipelineCriteria())

@@ -2,6 +2,7 @@ package org.jboss.windup.rules.apps.java.scan.provider;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.jboss.windup.config.AbstractRuleProvider;
@@ -25,8 +26,7 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
- * Finds Archives that were not classified as Maven archives/projects, and adds some generic project information for
- * them.
+ * Finds Archives that were not classified as Maven archives/projects, and adds some generic project information for them.
  *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -47,7 +47,11 @@ public class DiscoverNonMavenArchiveProjectsRuleProvider extends AbstractRulePro
                     @Override
                     public boolean evaluate(GraphRewrite event, EvaluationContext context, ArchiveModel payload)
                     {
-                        return !(payload instanceof DuplicateArchiveModel) && payload.getProjectModel() == null;
+                        try {
+                            return !(payload instanceof DuplicateArchiveModel) && payload.getProjectModel() == null;
+                        } catch (NoSuchElementException e) {
+                            return true;
+                        }
                     }
                     @Override
                     public String toString()
@@ -68,9 +72,13 @@ public class DiscoverNonMavenArchiveProjectsRuleProvider extends AbstractRulePro
                             {
                                 hierarchy.add(parentArchive);
 
-                                // break once we have added a parent with a project model
-                                if (parentArchive.getProjectModel() != null)
-                                {
+                                try {
+                                    // break once we have added a parent with a project model
+                                    if (parentArchive.getProjectModel() != null)
+                                    {
+                                        break;
+                                    }
+                                } catch (NoSuchElementException e) {
                                     break;
                                 }
 
@@ -82,7 +90,12 @@ public class DiscoverNonMavenArchiveProjectsRuleProvider extends AbstractRulePro
                             ProjectService projectModelService = new ProjectService(event.getGraphContext());
                             for (ArchiveModel archiveModel : hierarchy)
                             {
-                                ProjectModel projectModel = archiveModel.getProjectModel();
+                                ProjectModel projectModel = null;
+                                try {
+                                    projectModel = archiveModel.getProjectModel();
+                                } catch (NoSuchElementException e) {
+                                    // just ignore it... just means that it is null
+                                }
 
                                 // create the project if we don't already have one
                                 if (projectModel == null)

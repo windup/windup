@@ -1,6 +1,7 @@
 package org.jboss.windup.rules.apps.java.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.syncleus.ferma.ElementFrame;
 import org.jboss.windup.graph.model.WindupVertexFrame;
@@ -8,7 +9,6 @@ import org.jboss.windup.graph.model.report.IgnoredFileRegexModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
-import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.syncleus.ferma.annotations.Adjacency;
 import com.syncleus.ferma.annotations.Property;
 import org.jboss.windup.graph.model.TypeValue;
@@ -39,7 +39,7 @@ public interface WindupJavaConfigurationModel extends WindupVertexFrame, Element
      * Specifies which Java packages should be scanned by windup
      */
     @Adjacency(label = SCAN_JAVA_PACKAGES, direction = Direction.OUT)
-    Iterable<PackageModel> getScanJavaPackages();
+    List<PackageModel> getScanJavaPackages();
 
     /**
      * Add a file that will be ignored during the migration.
@@ -51,7 +51,7 @@ public interface WindupJavaConfigurationModel extends WindupVertexFrame, Element
      * Gets the files that will be ignored during the migration.
      */
     @Adjacency(label = IGNORED_FILES, direction = Direction.OUT)
-    Iterable<IgnoredFileRegexModel> getIgnoredFileRegexes();
+    List<IgnoredFileRegexModel> getIgnoredFileRegexes();
 
     /**
      * Specifies which Java packages should be scanned by windup
@@ -109,7 +109,7 @@ public interface WindupJavaConfigurationModel extends WindupVertexFrame, Element
      * What Java packages to exclude during scanning of applications.
      */
     @Adjacency(label = EXCLUDE_JAVA_PACKAGES, direction = Direction.OUT)
-    Iterable<PackageModel> getExcludeJavaPackages();
+    List<PackageModel> getExcludeJavaPackages();
 
     /**
      * Used to determine whether to scan as source or to do decompilation
@@ -139,7 +139,7 @@ public interface WindupJavaConfigurationModel extends WindupVertexFrame, Element
      * These additional files will be used to aid in resolving references in the application.
      */
     @Adjacency(label = ADDITIONAL_CLASSPATHS, direction = Direction.OUT)
-    Iterable<FileModel> getAdditionalClasspaths();
+    List<FileModel> getAdditionalClasspaths();
 
     /**
      * These additional files will be used to aid in resolving references in the application.

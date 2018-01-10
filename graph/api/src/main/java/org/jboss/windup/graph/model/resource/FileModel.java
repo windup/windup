@@ -4,9 +4,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.jboss.windup.graph.IndexType;
 import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.Indexes;
@@ -17,8 +20,6 @@ import org.jboss.windup.graph.model.HasProject;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.TypeValue;
 
-import org.apache.tinkerpop.gremlin.structure.Direction;
-import org.apache.tinkerpop.gremlin.structure.Vertex;
 import com.syncleus.ferma.annotations.Adjacency;
 import com.syncleus.ferma.annotations.Property;
 
@@ -26,7 +27,8 @@ import com.syncleus.ferma.annotations.Property;
  * Represents a File on disk.
  */
 @TypeValue(FileModel.TYPE)
-public interface FileModel extends ResourceModel, HasApplications, HasProject {
+public interface FileModel extends ResourceModel, HasApplications, HasProject
+{
     String TYPE = "FileModel";
 
     String PARENT_FILE = "parentFile";
@@ -40,14 +42,6 @@ public interface FileModel extends ResourceModel, HasApplications, HasProject {
     String PARSE_ERROR = "parseError";
     String ON_PARSE_ERROR = "onParseError";
 
-    enum OnParseError {
-        IGNORE, WARN;
-
-        OnParseError fromName(String name) {
-            return EnumUtils.getEnum(OnParseError.class, StringUtils.upperCase(name));
-        }
-    }
-
     /**
      * Contains the File Name (the last component of the path). Eg, a file /tmp/foo/bar/file.txt would have fileName set to "file.txt"
      */
@@ -58,8 +52,8 @@ public interface FileModel extends ResourceModel, HasApplications, HasProject {
      * Contains the File Name (the last component of the path). Eg, a file /tmp/foo/bar/file.txt would have fileName set to "file.txt"
      */
     @Indexes({
-            @Indexed,
-            @Indexed(value = IndexType.SEARCH, name = "filenamesearchindex")
+                @Indexed,
+                @Indexed(value = IndexType.SEARCH, name = "filenamesearchindex")
     })
     @Property(FILE_NAME)
     void setFileName(String filename);
@@ -85,13 +79,11 @@ public interface FileModel extends ResourceModel, HasApplications, HasProject {
         vertex.property(FILE_NAME, file.getName());
     }
 
-
     /**
      * TODO: Rename
      */
     @Property(PRETTY_PATH)
     String getCachedPrettyPath();
-
 
     @Property(PRETTY_PATH)
     void setCachedPrettyPath(String path);
@@ -151,7 +143,6 @@ public interface FileModel extends ResourceModel, HasApplications, HasProject {
     @Property(ON_PARSE_ERROR)
     void setOnParseError(OnParseError ignore);
 
-
     /**
      * Parent directory
      */
@@ -189,10 +180,26 @@ public interface FileModel extends ResourceModel, HasApplications, HasProject {
     @Override
     ProjectModel getProjectModel();
 
+    /*
+     * FIXME TP3 - Should be removed when a new version of ferma is available
+     */
+    default ProjectModel getProjectModelWithNull()
+    {
+        try
+        {
+            return getProjectModel();
+        }
+        catch (NoSuchElementException e)
+        {
+            return null;
+        }
+    }
+
     /**
      * Gets a {@link File} object representing this file
      */
-    default File asFile() throws RuntimeException {
+    default File asFile() throws RuntimeException
+    {
         if (this.getFilePath() == null)
             return null;
 
@@ -202,14 +209,18 @@ public interface FileModel extends ResourceModel, HasApplications, HasProject {
     /**
      * Returns an open {@link InputStream} for reading from this file
      */
-    default InputStream asInputStream() throws RuntimeException {
-        try {
+    default InputStream asInputStream() throws RuntimeException
+    {
+        try
+        {
             if (this.getFilePath() == null)
                 return null;
 
             File file = new File(getFilePath());
             return new FileInputStream(file);
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             throw new RuntimeException("Exception reading resource.", e);
         }
     }
@@ -217,23 +228,28 @@ public interface FileModel extends ResourceModel, HasApplications, HasProject {
     /**
      * Returns the path of this file within the archive (including all subarchives, etc)
      */
-    default String getPrettyPath() {
+    default String getPrettyPath()
+    {
         String filename = getFileName();
         String result;
-        if (getParentFile() == null) {
+        if (getParentFile() == null)
+        {
             result = filename;
-        } else {
+        }
+        else
+        {
             result = getParentFile().getPrettyPath() + "/" + filename;
         }
         return result;
     }
 
     /**
-     * Returns the {@link ArchiveModel} that contains this file. If this file is an {@link ArchiveModel} then it will
-     * return itself.
+     * Returns the {@link ArchiveModel} that contains this file. If this file is an {@link ArchiveModel} then it will return itself.
      */
-    default ArchiveModel getArchive() {
-        if (this instanceof ArchiveModel) {
+    default ArchiveModel getArchive()
+    {
+        if (this instanceof ArchiveModel)
+        {
             return (ArchiveModel) this;
         }
 
@@ -246,21 +262,30 @@ public interface FileModel extends ResourceModel, HasApplications, HasProject {
     /**
      * Returns the path of this file within the parent project (format suitable for reporting)
      */
-    default String getPrettyPathWithinProject() {
+    default String getPrettyPathWithinProject()
+    {
         String result;
         ProjectModel projectModel = getProjectModel();
-        if (projectModel == null) {
+        if (projectModel == null)
+        {
             // no project, just return the whole path
             result = getPrettyPath();
-        } else if (projectModel.getRootFileModel().getFilePath().equals(getFilePath())) {
+        }
+        else if (projectModel.getRootFileModel().getFilePath().equals(getFilePath()))
+        {
             // FIXME: Not quite sure if this is the right thing to return here.
             // Maybe it should rather be the file name? Depends on where it ends up being used.
             result = "";
-        } else {
+        }
+        else
+        {
             String filename = getFileName();
-            if (getParentFile() == null) {
+            if (getParentFile() == null)
+            {
                 result = filename;
-            } else {
+            }
+            else
+            {
                 String parentPrettyPath = getParentFile().getPrettyPathWithinProject();
                 result = StringUtils.isEmpty(parentPrettyPath) ? filename : parentPrettyPath + "/" + filename;
             }
@@ -268,12 +293,11 @@ public interface FileModel extends ResourceModel, HasApplications, HasProject {
         return result;
     }
 
-
     /**
-     * Returns the path of this file within the parent project (format suitable for reporting)
-     * Uses fully qualified class name notation for classes
+     * Returns the path of this file within the parent project (format suitable for reporting) Uses fully qualified class name notation for classes
      */
-    default String getPrettyPathWithinProject(boolean useFQNForClasses) {
+    default String getPrettyPathWithinProject(boolean useFQNForClasses)
+    {
         return this.getPrettyPathWithinProject();
     }
 
@@ -295,8 +319,8 @@ public interface FileModel extends ResourceModel, HasApplications, HasProject {
     }
 
     /**
-     * Gets the list of all applications that this file is a part of. This will include both the "shared-libs" project
-     * as well as any actual applications.
+     * Gets the list of all applications that this file is a part of. This will include both the "shared-libs" project as well as any actual
+     * applications.
      */
     @Override
     default List<ProjectModel> getApplications()
@@ -334,16 +358,25 @@ public interface FileModel extends ResourceModel, HasApplications, HasProject {
     }
 
     /**
-     * Returns the size of the file, if it is an existing file.
-     * Otherwise return null.
+     * Returns the size of the file, if it is an existing file. Otherwise return null.
      *
      * It's not necessary to store file size on all FileModels. Some submodels have it as a property.
      */
     default Long retrieveSize()
     {
         final File file = this.asFile();
-        if (file == null ||  !file.isFile() || !file.exists())
+        if (file == null || !file.isFile() || !file.exists())
             return null;
         return file.length();
+    }
+
+    enum OnParseError
+    {
+        IGNORE, WARN;
+
+        OnParseError fromName(String name)
+        {
+            return EnumUtils.getEnum(OnParseError.class, StringUtils.upperCase(name));
+        }
     }
 }

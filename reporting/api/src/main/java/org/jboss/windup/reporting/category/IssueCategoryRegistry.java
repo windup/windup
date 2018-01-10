@@ -85,10 +85,11 @@ public class IssueCategoryRegistry
     /**
      * Loads the related graph vertex for the given {@link IssueCategory#getCategoryID()}.
      */
+    @SuppressWarnings("unchecked")
     public static IssueCategoryModel loadFromGraph(FramedGraph framedGraph, String issueCategoryID)
     {
-        Iterable<Vertex> vertices = framedGraph.traverse(g -> framedGraph.getTypeResolver().hasType(g.V(), IssueCategoryModel.class))
-                .traverse(g -> g.has(IssueCategoryModel.CATEGORY_ID, issueCategoryID));
+        Iterable<Vertex> vertices = (Iterable<Vertex>)framedGraph.traverse(g -> framedGraph.getTypeResolver().hasType(g.V(), IssueCategoryModel.class))
+                .traverse(g -> g.has(IssueCategoryModel.CATEGORY_ID, issueCategoryID)).getRawTraversal().toList();
 
         IssueCategoryModel result = null;
         for (Vertex vertex : vertices)

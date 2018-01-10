@@ -162,6 +162,21 @@ public interface ProjectModel extends WindupVertexFrame, HasApplications
     @Adjacency(label = PARENT_PROJECT, direction = Direction.OUT)
     ProjectModel getParentProject();
 
+    /*
+     * FIXME TP3 - Should be removed when a new version of ferma is available
+     */
+    default ProjectModel getParentProjectWithNull()
+    {
+        try
+        {
+            return getParentProject();
+        }
+        catch (NoSuchElementException e)
+        {
+            return null;
+        }
+    }
+
     /**
      * The parent ProjectModel, or null if no parent is present.
      */

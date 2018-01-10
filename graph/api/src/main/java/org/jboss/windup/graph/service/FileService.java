@@ -59,8 +59,8 @@ public class FileService extends GraphService<FileModel>
         Iterable<Vertex> vertices = getGraphContext().getGraph()
                 .traversal()
                 .V()
-                .property(FileModel.FILE_NAME, Text.REGEX, filenameRegex)
-                .property(WindupVertexFrame.TYPE_PROP, FileModel.TYPE).toList();
+                .has(FileModel.FILE_NAME, Text.textRegex(filenameRegex))
+                .has(WindupVertexFrame.TYPE_PROP, FileModel.TYPE).toList();
         return new FramedVertexIterable<>(getGraphContext().getFramed(), vertices, FileModel.class);
     }
 

@@ -2,11 +2,15 @@ package org.jboss.windup.rules.apps.java.decompiler;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
+import org.apache.tinkerpop.gremlin.process.traversal.Traverser;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.GraphOperation;
@@ -27,14 +31,40 @@ public class CleanFromMultipleSourceFiles extends GraphOperation
     @Override
     public void perform(GraphRewrite event, EvaluationContext context)
     {
-        final GraphContext gContext = event.getGraphContext();
-        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversalSource(gContext.getGraph())
-                .V(gContext.getQuery(JavaSourceFileModel.class).getRawTraversal());
-        List<JavaSourceFileModel> javaClassFileModels = pipeline.group()
-                .by(v -> groupByProjectModelFunction(gContext, (Vertex)v))
-                .map(v -> gContext.getFramed().frameElement((Vertex)v, JavaSourceFileModel.class))
+        final GraphContext graphContext = event.getGraphContext();
+        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversalSource(graphContext.getGraph())
+                .V(graphContext.getQuery(JavaSourceFileModel.class).getRawTraversal());
+        List<Object> javaSourceFileModelsObjects = pipeline.group()
+                .by(v -> {
+                    System.out.println("-------------------------------");
+                    System.out.println("1V: " + v + ": " + v.getClass());
+                    System.out.println("-------------------------------");
+                    return groupByProjectModelFunction(graphContext, (Vertex)v);
+                })
+                .map(traverser -> {
+                    Traverser<Map<Object, Object>> vertexTraverser = traverser;
+                    Map<Object, Object> map = (Map<Object, Object>) traverser.get();
+                    System.out.println("-------------------------------");
+                    System.out.println("2V: " + traverser + ": " + traverser.getClass());
+                    System.out.println("2V: " + vertexTraverser.get());
+                    System.out.println("-------------------------------");
+                    List<JavaSourceFileModel> result = new ArrayList<>();
+                    for (Map.Entry<Object, Object> entry : map.entrySet())
+                    {
+                        List<Vertex> vertices = (List<Vertex>)entry.getValue();
+                        for (Vertex vertex : vertices) {
+                            JavaSourceFileModel framed = graphContext.getFramed().frameElement(vertex, JavaSourceFileModel.class);
+                            result.add(framed);
+                        }
+                    }
+                    return result;
+                })
+                .unfold()
                 .toList();
-        returnVerticesToDelete(javaClassFileModels)
+        System.out.println("Java source file models: " + javaSourceFileModelsObjects);
+
+        List<JavaSourceFileModel> javaSourceFileModels = javaSourceFileModelsObjects.stream().map(o -> (JavaSourceFileModel)o).collect(Collectors.toList());
+        returnVerticesToDelete(javaSourceFileModels)
                 .forEach(javaSourceFileModel -> javaSourceFileModel.remove());
     }
 
@@ -51,15 +81,15 @@ public class CleanFromMultipleSourceFiles extends GraphOperation
         return projectModelID + "_" + packageName + "_" + javaModel.getFileName();
     }
 
-    private List<JavaSourceFileModel> returnVerticesToDelete(final Collection<JavaSourceFileModel> javaClassFileModels)
+    private List<JavaSourceFileModel> returnVerticesToDelete(final Collection<JavaSourceFileModel> javaSourceFileModels)
     {
         boolean uniqueClassFound = false;
         List<JavaSourceFileModel> verticesToBeDeleted = new ArrayList<>();
-        if (javaClassFileModels.isEmpty())
+        if (javaSourceFileModels.isEmpty())
         {
-            return null;
+            return Collections.emptyList();
         }
-        Iterator<JavaSourceFileModel> iterator = javaClassFileModels.iterator();
+        Iterator<JavaSourceFileModel> iterator = javaSourceFileModels.iterator();
         while (iterator.hasNext())
         {
             JavaSourceFileModel javaModel = iterator.next();
