@@ -33,6 +33,6 @@ public class ArchiveIdentificationLifecycleListener extends AbstractRuleLifecycl
                 .getStrategies(Graph.class)
                 .clone()
                 .addStrategies(EventStrategy.build().addListener(new ArchiveIdentificationGraphChangedListener(event.getGraphContext(), identifier)).create());
-        TraversalStrategies.GlobalCache.registerStrategies(StandardJanusGraph.class, graphStrategies);
+        //TraversalStrategies.GlobalCache.registerStrategies(StandardJanusGraph.class, graphStrategies);
     }
 }

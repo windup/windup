@@ -1,6 +1,7 @@
 package org.jboss.windup.reporting.model;
 
 import java.util.Collections;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.jboss.windup.graph.model.TypeValue;
@@ -35,7 +36,16 @@ public interface TaggableModel extends WindupVertexFrame
      * Get the set of tags associated with this {@link ClassificationModel}
      */
     @Adjacency(label = TAG, direction = Direction.OUT)
-    TagSetModel getTagModel();
+    TagSetModel getTagModelNotNullSafe();
+
+    default TagSetModel getTagModel()
+    {
+        try {
+            return getTagModelNotNullSafe();
+        } catch (NoSuchElementException e) {
+            return null;
+        }
+    }
 
     /**
      * Gets the {@link Set} of tags associated with this vertex.

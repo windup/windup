@@ -9,6 +9,8 @@ import com.syncleus.ferma.annotations.Adjacency;
 import com.syncleus.ferma.annotations.Property;
 import org.jboss.windup.graph.model.TypeValue;
 
+import java.util.List;
+
 /**
  * Extends ProjectModel to support maven specific properties.
  * 
@@ -42,13 +44,13 @@ public interface MavenProjectModel extends ProjectModel
      * Gets projects that have this POM set as their maven parent
      */
     @Adjacency(label = PARENT_MAVEN_POM, direction = Direction.IN)
-    Iterable<MavenProjectModel> getMavenChildProjects();
+    List<MavenProjectModel> getMavenChildProjects();
 
     /**
      * Contains the maven pom {@link XmlFileModel}.
      */
     @Adjacency(label = MAVEN_POM, direction = Direction.OUT)
-    Iterable<XmlFileModel> getMavenPom();
+    List<XmlFileModel> getMavenPom();
 
     /**
      * Contains the maven pom {@link XmlFileModel}.

@@ -32,13 +32,13 @@ public interface WindupVertexListModel<T extends WindupVertexFrame> extends Wind
      * Sets the items in the list.
      */
     @Adjacency(label = "list", direction = Direction.OUT)
-    WindupVertexListModel<T> setList(List<T> list);
+    void setList(List<T> list);
 
     /**
      * Adds the provided item to the list.
      */
     @Adjacency(label = "list", direction = Direction.OUT)
-    WindupVertexListModel<T> addItem(T item);
+    void addItem(T item);
 
     /**
      * Adds all of the items to the list.
@@ -53,7 +53,7 @@ public interface WindupVertexListModel<T extends WindupVertexFrame> extends Wind
     @JavaHandler(handler = Impl.class)
     Iterator<T> iterator();
 
-    abstract class Impl<T extends WindupVertexFrame>
+    class Impl<T extends WindupVertexFrame>
     {
         public WindupVertexListModel<T> addAll(WindupVertexListModel<T> frame, List<T> items)
         {

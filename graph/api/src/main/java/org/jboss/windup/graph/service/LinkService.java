@@ -27,7 +27,7 @@ public class LinkService extends GraphService<LinkModel>
      */
     public LinkModel getOrCreate(String description, String href)
     {
-        Iterable<Vertex> results = (List<Vertex>)getQuery().traverse(g -> g.property(LinkModel.PROPERTY_DESCRIPTION, description).property(LinkModel.PROPERTY_LINK, href)).getRawTraversal().toList();
+        Iterable<Vertex> results = (List<Vertex>)getQuery().traverse(g -> g.has(LinkModel.PROPERTY_DESCRIPTION, description).has(LinkModel.PROPERTY_LINK, href)).getRawTraversal().toList();
         if (!results.iterator().hasNext())
         {
             LinkModel model = create();

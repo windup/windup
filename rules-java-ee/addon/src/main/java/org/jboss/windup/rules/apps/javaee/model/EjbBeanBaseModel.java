@@ -123,7 +123,7 @@ public interface EjbBeanBaseModel extends WindupVertexFrame, HasApplications
      * Maintains a list of {@link EnvironmentReferenceModel}s associated with this web.xml file
      */
     @Adjacency(label = EJB_SESSION_TO_ENVIRONMENT_REFERENCE, direction = Direction.OUT)
-    Iterable<EnvironmentReferenceModel> getEnvironmentReferences();
+    List<EnvironmentReferenceModel> getEnvironmentReferences();
 
     /**
      * Maintains a list of {@link EnvironmentReferenceModel}s associated with this web.xml file

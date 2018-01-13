@@ -1,13 +1,9 @@
 package org.jboss.windup.graph;
 
-import com.syncleus.ferma.ClassInitializer;
 import com.syncleus.ferma.EdgeFrame;
 import com.syncleus.ferma.VertexFrame;
 import com.syncleus.ferma.typeresolvers.TypeResolver;
 
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -223,12 +219,12 @@ public class GraphTypeManager implements TypeResolver
         }
         else if (abstractElement instanceof StandardVertex)
         {
-            LOG.info("Getting from standardvertex as properties method");
+            //LOG.info("Getting from standardvertex as properties method");
             properties = ((StandardVertex) abstractElement).properties(WindupFrame.TYPE_PROP);
         }
         else
         {
-            LOG.info("Using the old style properties method");
+            //LOG.info("Using the old style properties method");
             properties = Collections.singleton(abstractElement.property(WindupFrame.TYPE_PROP)).iterator();
         }
 
@@ -256,7 +252,7 @@ public class GraphTypeManager implements TypeResolver
         AbstractElement abstractElement = GraphTypeManager.asTitanElement(element);
         Set<String> types = getTypeProperties(abstractElement);
 
-        LOG.info("Adding type to element: " + element + " type: " + kind + " property is already present? " + types);
+        //LOG.info("Adding type to element: " + element + " type: " + kind + " property is already present? " + types);
         for (String typePropertyValue : types)
         {
             if (typePropertyValue.equals(typeValue))
@@ -289,7 +285,7 @@ public class GraphTypeManager implements TypeResolver
         {
             throw new IllegalArgumentException("Class " + type.getCanonicalName() + " lacks a @TypeValue annotation");
         }
-        LOG.info("has type called for: " + type + " and vertex: " + v);
+        //LOG.info("has type called for: " + type + " and vertex: " + v);
         AbstractElement abstractElement= GraphTypeManager.asTitanElement(v);
         Iterable<String> vertexTypes = getTypeProperties(abstractElement);
         for (String typeValue : vertexTypes)

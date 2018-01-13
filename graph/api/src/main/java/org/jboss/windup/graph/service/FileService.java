@@ -88,7 +88,7 @@ public class FileService extends GraphService<FileModel>
             regex = ".+\\." + builder.toString() + "$";
         }
 
-        return (List<FileModel>)getGraphContext().getQuery(FileModel.class).traverse(g -> g.property("filePath", Text.REGEX, regex))
+        return (List<FileModel>)getGraphContext().getQuery(FileModel.class).traverse(g -> g.has("filePath", Text.textRegex(regex)))
                     .toList(FileModel.class);
     }
 }

@@ -1,14 +1,15 @@
 package org.jboss.windup.graph.model;
 
-import org.jboss.windup.graph.model.resource.FileModel;
-
-import org.apache.tinkerpop.gremlin.structure.Direction;
-import com.syncleus.ferma.annotations.Adjacency;
-import com.syncleus.ferma.annotations.Property;
-
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
+
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.jboss.windup.graph.model.resource.FileModel;
+
+import com.syncleus.ferma.annotations.Adjacency;
+import com.syncleus.ferma.annotations.Property;
 
 /**
  * Represents an archive within the input application.
@@ -25,7 +26,19 @@ public interface ArchiveModel extends FileModel
      * Contains the parent archive.
      */
     @Adjacency(label = PARENT_ARCHIVE, direction = Direction.IN)
-    ArchiveModel getParentArchive();
+    ArchiveModel getParentArchiveNotNullSafe();
+
+    default ArchiveModel getParentArchive()
+    {
+        try
+        {
+            return getParentArchiveNotNullSafe();
+        }
+        catch (NoSuchElementException e)
+        {
+            return null;
+        }
+    }
 
     /**
      * Contains the parent archive.
@@ -49,13 +62,13 @@ public interface ArchiveModel extends FileModel
      * Contains the directory to which this archive has been unzipped. It will be null if the archive has not been unzipped.
      */
     @Property(UNZIPPED_DIRECTORY)
-    void setUnzippedDirectory(String unzippedPath);
+    String getUnzippedDirectory();
 
     /**
      * Contains the directory to which this archive has been unzipped. It will be null if the archive has not been unzipped.
      */
     @Property(UNZIPPED_DIRECTORY)
-    String getUnzippedDirectory();
+    void setUnzippedDirectory(String unzippedPath);
 
     /**
      * Contains a link to the organization which produced this archive.
@@ -95,8 +108,8 @@ public interface ArchiveModel extends FileModel
     List<DuplicateArchiveModel> getDuplicateArchives();
 
     /**
-     * Gets the "root" archive model. The root is defined as the model for which {@link #getParentArchive()} would return
-     * null. If the current archive is the root, then this will return itself.
+     * Gets the "root" archive model. The root is defined as the model for which {@link #getParentArchive()} would return null. If the current archive
+     * is the root, then this will return itself.
      */
     default ArchiveModel getRootArchiveModel()
     {
@@ -112,8 +125,7 @@ public interface ArchiveModel extends FileModel
     }
 
     /**
-     * Indicates whether or not the passed in {@link ArchiveModel} is a child or other descendant of the current
-     * archive.
+     * Indicates whether or not the passed in {@link ArchiveModel} is a child or other descendant of the current archive.
      */
     default boolean containsArchive(ArchiveModel archiveModel)
     {

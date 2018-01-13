@@ -3,20 +3,20 @@ package org.jboss.windup.reporting.model;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
-import org.jboss.windup.graph.MapInAdjacentProperties;
-import org.jboss.windup.graph.model.ProjectModel;
+import java.util.NoSuchElementException;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.syncleus.ferma.annotations.Adjacency;
-import com.syncleus.ferma.annotations.Property;
+import org.jboss.windup.graph.MapInAdjacentProperties;
+import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.TypeValue;
 
+import com.syncleus.ferma.annotations.Adjacency;
+import com.syncleus.ferma.annotations.Property;
+
 /**
- * These reports are directly associated with an application, and that application's project model.
- * These can include things like an Application Overview report (with various hints, etc)
- * as well as more specific reports (hibernate reports, ejb reports, classloading reports, etc).
+ * These reports are directly associated with an application, and that application's project model. These can include things like an Application
+ * Overview report (with various hints, etc) as well as more specific reports (hibernate reports, ejb reports, classloading reports, etc).
  * 
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
@@ -30,12 +30,6 @@ public interface ApplicationReportModel extends ReportModel
     String REPORT_TO_PROJECT_MODEL = "reportToProjectModel";
     String REPORT_PRIORITY = "reportPriority";
     String MAIN_APPLICATION_REPORT = "mainApplicationModel";
-
-    /**
-     * Provides a link to the Navigation Index that is used for this particular report
-     */
-    @Adjacency(label = ApplicationReportIndexModel.APPLICATION_REPORT_INDEX_TO_REPORT_MODEL, direction = Direction.IN)
-    void setApplicationReportIndexModel(ApplicationReportIndexModel navIndex);
 
     /**
      * Provides a link to the Navigation Index that is used for this particular report. If there is more than one (for example, in the case of a
@@ -58,6 +52,12 @@ public interface ApplicationReportModel extends ReportModel
     }
 
     /**
+     * Provides a link to the Navigation Index that is used for this particular report
+     */
+    @Adjacency(label = ApplicationReportIndexModel.APPLICATION_REPORT_INDEX_TO_REPORT_MODEL, direction = Direction.IN)
+    void setApplicationReportIndexModel(ApplicationReportIndexModel navIndex);
+
+    /**
      * This can be used to determine a reports location in a navigation bar. The primary purpose is sorting.
      */
     @Property(REPORT_PRIORITY)
@@ -73,13 +73,13 @@ public interface ApplicationReportModel extends ReportModel
      * Indicates that this report should also be attached to the global application index.
      */
     @Property(DISPLAY_IN_GLOBAL_APPLICATION_INDEX)
-    void setDisplayInGlobalApplicationIndex(Boolean displayInGlobalApplicationIndex);
+    Boolean getDisplayInGlobalApplicationIndex();
 
     /**
      * Indicates that this report should also be attached to the global application index.
      */
     @Property(DISPLAY_IN_GLOBAL_APPLICATION_INDEX)
-    Boolean getDisplayInGlobalApplicationIndex();
+    void setDisplayInGlobalApplicationIndex(Boolean displayInGlobalApplicationIndex);
 
     /**
      * Indicates whether to display this report in the navigation index for the current application. Examples are migration issues, EJBs ...
@@ -123,7 +123,19 @@ public interface ApplicationReportModel extends ReportModel
      * The ProjectModel associated with this Application Report.
      */
     @Adjacency(label = REPORT_TO_PROJECT_MODEL, direction = Direction.OUT)
-    ProjectModel getProjectModel();
+    ProjectModel getProjectModelNotNullSafe();
+
+    default ProjectModel getProjectModel()
+    {
+        try
+        {
+            return getProjectModelNotNullSafe();
+        }
+        catch (NoSuchElementException e)
+        {
+            return null;
+        }
+    }
 
     /**
      * The ProjectModel associated with this Application Report.

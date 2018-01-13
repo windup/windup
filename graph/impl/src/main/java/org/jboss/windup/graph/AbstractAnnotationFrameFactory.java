@@ -15,7 +15,6 @@
  */
 package org.jboss.windup.graph;
 
-import java.io.FileOutputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -23,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import net.bytebuddy.matcher.ElementMatchers;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Element;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
@@ -127,6 +127,13 @@ public class AbstractAnnotationFrameFactory implements FrameFactory
 
         classBuilder = classBuilder.defineField("reflectionCache", ReflectionCache.class, Visibility.PRIVATE, FieldManifestation.PLAIN)
                     .implement(CachesReflection.class).intercept(FieldAccessor.ofBeanProperty());
+
+        /*
+         * Just a hack so that our generified frame types can work.
+         *
+         * This information will not really be used by the generated class.
+         */
+        classBuilder = classBuilder.typeVariable("T");
 
         // try and construct any abstract methods that are left
         for (final Method method : clazz.getMethods())

@@ -44,7 +44,7 @@
     <tr class="projectFile">
         <#-- Name -->
         <td class="path">
-            <a href="${sourceReportModel.reportFilename}?project=${reportModel.projectModel.asVertex().id?c}">
+            <a href="${sourceReportModel.reportFilename}?project=${reportModel.projectModel.getElement().id()?c}">
                 ${getPrettyPathForFile(fileModel)}
             </a>
         </td>
@@ -105,8 +105,8 @@
  then "projectModel" will be the duplicate and "canonicalProject" will the the canonical instance. -->
 <#macro renderAppTreeData projectModel canonicalProject>
     <script>
-        <#assign projectID = "project_${projectModel.asVertex().id?c}">
-        <#assign canonicalProjectID = "project_${canonicalProject.asVertex().id?c}">
+        <#assign projectID = "project_${projectModel.getElement().id()?c}">
+        <#assign canonicalProjectID = "project_${canonicalProject.getElement().id()?c}">
 
         thisProject = new ProjectNode("${projectModel.rootFileModel.fileName?js_string}", "${projectID}-${canonicalProjectID}");
         thisProject.sourceBased = ${projectModel.sourceBased!false?c};
@@ -156,7 +156,7 @@
     <#assign isDuplicateProject = duplicatePaths?size &gt; 1>
 
 	<#assign panelStoryPoints = getMigrationEffortPointsForProject(traversal, false, reportModel.includeTags, reportModel.excludeTags)>
-    <#assign projectID = "project_${canonicalProject.asVertex().id?c}">
+    <#assign projectID = "project_${canonicalProject.getElement().id()?c}">
     <#assign classificationList = getClassificationForFile(projectModel.rootFileModel)>
     <div class="panel panel-primary projectBox" id="${projectID}" data-windup-projectguid="${generateGUID()}" data-windup-project-storypoints="${panelStoryPoints}">
         <div class="panel-heading panel-collapsed clickable">
@@ -187,7 +187,7 @@
                         <!-- Basic info -->
                         <div class="basicInfo">
                             <table class="table">
-                                <#assign gav = canonicalProject.asVertex().getProperty('mavenIdentifier')! >
+                                <#assign gav = canonicalProject.getProperty('mavenIdentifier')! >
                                 <#if gav?? >
                                 <tr>
                                     <th>Maven coordinates</th>
@@ -254,7 +254,7 @@
                         <!-- Packages pie chart -->
                         <div class="chartBoundary">
                             <h4>Java Incidents by Package</h4>
-                            <div id="project_${canonicalProject.asVertex().id?c}_pie" class="windupPieGraph"></div>
+                            <div id="project_${canonicalProject.getElement().id()?c}_pie" class="windupPieGraph"></div>
                         </div>
                     </td>
                     <td>
@@ -449,7 +449,7 @@
         <@render_pie projectTraversal=getProjectTraversal(reportModel.projectModel, 'only_once') recursive=true elementID="application_pie" includeTags=reportModel.includeTags excludeTags=reportModel.excludeTags />
 
         <#macro projectPieRenderer projectTraversal>
-            <@render_pie project=projectTraversal.current recursive=false elementID="project_${projectTraversal.canonicalProject.asVertex().id?c}_pie" includeTags=reportModel.includeTags excludeTags=reportModel.excludeTags />
+            <@render_pie project=projectTraversal.current recursive=false elementID="project_${projectTraversal.canonicalProject.getElement().id()?c}_pie" includeTags=reportModel.includeTags excludeTags=reportModel.excludeTags />
 
             <#list sortProjectTraversalsByPathAscending(projectTraversal.children) as childTraversal>
                 <@projectPieRenderer childTraversal/>

@@ -8,47 +8,49 @@ import org.apache.tinkerpop.gremlin.structure.Direction;
 import com.syncleus.ferma.annotations.Adjacency;
 import com.syncleus.ferma.annotations.Property;
 
+import java.util.List;
+
 @TypeValue(DoctypeMetaModel.TYPE_ID)
 public interface DoctypeMetaModel extends WindupVertexFrame
 {
-    public static final String TYPE_ID = "DoctypeMetaModel";
-    public static final String TYPE_PREFIX = TYPE_ID + "-";
+    String TYPE_ID = "DoctypeMetaModel";
+    String TYPE_PREFIX = TYPE_ID + "-";
 
-    public static final String PROPERTY_BASE_URI = TYPE_PREFIX + "baseURI";
-    public static final String PROPERTY_SYSTEM_ID = TYPE_PREFIX + "systemId";
-    public static final String PROPERTY_PUBLIC_ID = TYPE_PREFIX + "publicId";
-    public static final String PROPERTY_NAME = TYPE_PREFIX + "name";
+    String PROPERTY_BASE_URI = TYPE_PREFIX + "baseURI";
+    String PROPERTY_SYSTEM_ID = TYPE_PREFIX + "systemId";
+    String PROPERTY_PUBLIC_ID = TYPE_PREFIX + "publicId";
+    String PROPERTY_NAME = TYPE_PREFIX + "name";
 
     @Adjacency(label = XmlFileModel.DOCTYPE, direction = Direction.IN)
     public void addXmlResource(XmlFileModel facet);
 
     @Adjacency(label = XmlFileModel.DOCTYPE, direction = Direction.IN)
-    public Iterable<XmlFileModel> getXmlResources();
+    List<XmlFileModel> getXmlResources();
 
     @Indexed
     @Property(PROPERTY_NAME)
-    public String getName();
+    String getName();
 
     @Property(PROPERTY_NAME)
-    public void setName(String name);
+    void setName(String name);
 
     @Indexed
     @Property(PROPERTY_PUBLIC_ID)
-    public String getPublicId();
+    String getPublicId();
 
     @Property(PROPERTY_PUBLIC_ID)
-    public void setPublicId(String publicId);
+    void setPublicId(String publicId);
 
     @Indexed
     @Property(PROPERTY_SYSTEM_ID)
-    public String getSystemId();
+    String getSystemId();
 
     @Property(PROPERTY_SYSTEM_ID)
-    public void setSystemId(String systemId);
+    void setSystemId(String systemId);
 
     @Property(PROPERTY_BASE_URI)
-    public String getBaseURI();
+    String getBaseURI();
 
     @Property(PROPERTY_BASE_URI)
-    public void setBaseURI(String baseURI);
+    void setBaseURI(String baseURI);
 }

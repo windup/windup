@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import freemarker.template.DefaultIterableAdapter;
+import org.jboss.windup.reporting.freemarker.FreeMarkerUtil;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
 import org.jboss.windup.rules.apps.java.dependencyreport.DependencyReportDependencyGroupModel;
 import org.jboss.windup.rules.apps.java.model.comparator.DependencyReportGroupModelComparator;
@@ -56,9 +56,7 @@ public class SortDependencyGroupArchiveByPathMethod implements WindupFreeMarkerM
         {
             throw new TemplateModelException("Error, method expects one argument (Iterable<DependencyReportDependencyGroupModel>)");
         }
-        DefaultIterableAdapter argModel = (DefaultIterableAdapter) arguments.get(0);
-        @SuppressWarnings("unchecked")
-        Iterable<DependencyReportDependencyGroupModel> archiveGroups = (Iterable<DependencyReportDependencyGroupModel>) argModel.getAdaptedObject(DependencyReportDependencyGroupModel.class);
+        Iterable<DependencyReportDependencyGroupModel> archiveGroups = (Iterable<DependencyReportDependencyGroupModel>) FreeMarkerUtil.freemarkerWrapperToIterable(arguments.get(0));
         List<DependencyReportDependencyGroupModel> list = new ArrayList<>();
         for (DependencyReportDependencyGroupModel group : archiveGroups)
         {

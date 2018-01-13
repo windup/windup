@@ -8,8 +8,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
-import org.apache.tinkerpop.gremlin.structure.Element;
-import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.jboss.windup.graph.JavaHandler;
 import org.jboss.windup.graph.MapInAdjacentPropertiesHandler;
 import org.jboss.windup.util.Logging;
@@ -34,8 +32,6 @@ import net.bytebuddy.implementation.bind.annotation.This;
  */
 public class JavaHandlerHandler extends AbstractMethodHandler implements MethodHandler
 {
-    private static final Logger LOG = Logging.get(MapInAdjacentPropertiesHandler.class);
-
     @Override
     public Class<JavaHandler> getAnnotationType()
     {
@@ -61,10 +57,8 @@ public class JavaHandlerHandler extends AbstractMethodHandler implements MethodH
         @RuntimeType
         public static Object execute(@This final ElementFrame thisFrame, @Origin final Method method, @RuntimeType @AllArguments Object[] args)
         {
-            System.out.println("Should execute: " + method);
             final JavaHandler ann = ((CachesReflection) thisFrame).getReflectionCache().getAnnotation(method, JavaHandler.class);
 
-            Element thisElement = thisFrame.getElement();
             try
             {
                 Class<?> handlerClass = ann.handler();

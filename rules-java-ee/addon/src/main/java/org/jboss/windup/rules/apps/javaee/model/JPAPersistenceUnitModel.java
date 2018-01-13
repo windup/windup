@@ -58,7 +58,7 @@ public interface JPAPersistenceUnitModel extends WindupVertexFrame, HasApplicati
      * Contains a link back to the {@link DataSourceModel}
      */
     @Adjacency(label = DATASOURCE, direction = Direction.OUT)
-    Iterable<DataSourceModel> getDataSources();
+    List<DataSourceModel> getDataSources();
 
     /**
      * Contains a link back to the {@link DataSourceModel}

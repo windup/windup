@@ -23,6 +23,6 @@ public class FileMappingLifecycleListener extends AbstractRuleLifecycleListener
                 .getStrategies(Graph.class)
                 .clone()
                 .addStrategies(EventStrategy.build().addListener(new FileMappingGraphChangedListener(event)).create());
-        TraversalStrategies.GlobalCache.registerStrategies(StandardJanusGraph.class, graphStrategies);
+        //TraversalStrategies.GlobalCache.registerStrategies(StandardJanusGraph.class, graphStrategies);
     }
 }

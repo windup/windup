@@ -123,13 +123,13 @@ public interface JavaClassModel extends WindupVertexFrame, BelongsToProject, Has
      * Lists interfaces implemented by this class, or extended if this is an interface.
      */
     @Adjacency(label = INTERFACES, direction = Direction.OUT)
-    Iterable<JavaClassModel> getInterfaces();
+    List<JavaClassModel> getInterfaces();
 
     /**
      * Lists classes which implement this class
      */
     @Adjacency(label = INTERFACES, direction = Direction.IN)
-    Iterable<JavaClassModel> getImplementedBy();
+    List<JavaClassModel> getImplementedBy();
 
     /**
      * Contains the {@link JavaSourceFileModel} of the decompiled version of this file (assuming that it originally was
@@ -196,7 +196,7 @@ public interface JavaClassModel extends WindupVertexFrame, BelongsToProject, Has
      * Adds a {@link JavaMethodModel} to this {@link JavaClassModel}
      */
     @Adjacency(label = JAVA_METHOD, direction = Direction.OUT)
-    Iterable<JavaMethodModel> getJavaMethods();
+    List<JavaMethodModel> getJavaMethods();
 
     @Override
     default List<ProjectModel> getApplications()

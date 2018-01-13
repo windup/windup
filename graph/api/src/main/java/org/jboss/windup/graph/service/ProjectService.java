@@ -37,12 +37,12 @@ public class ProjectService extends GraphService<ProjectModel>
      */
     public ProjectModel getByName(String name)
     {
-        return getUnique(getQuery().traverse(g -> g.property(ProjectModel.NAME, name)));
+        return getUnique(getQuery().traverse(g -> g.has(ProjectModel.NAME, name)));
     }
 
     public ProjectModel getByUniqueID(String id)
     {
-        return getUnique(getQuery().traverse(g -> g.property(ProjectModel.UNIQUE_ID, id)));
+        return getUnique(getQuery().traverse(g -> g.has(ProjectModel.UNIQUE_ID, id)));
     }
 
     /**

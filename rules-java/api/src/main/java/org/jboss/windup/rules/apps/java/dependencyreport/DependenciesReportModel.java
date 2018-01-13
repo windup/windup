@@ -6,6 +6,8 @@ import org.apache.tinkerpop.gremlin.structure.Direction;
 import com.syncleus.ferma.annotations.Adjacency;
 import org.jboss.windup.graph.model.TypeValue;
 
+import java.util.List;
+
 /**
  * This represents Jar Dependencies report model
  * 
@@ -23,7 +25,7 @@ public interface DependenciesReportModel extends ApplicationReportModel
      * Contains all dependencies reported here, grouped by hash.
      */
     @Adjacency(label = DEPENDENCY_REPORT_GROUP, direction = Direction.OUT)
-    Iterable<DependencyReportDependencyGroupModel> getArchiveGroups();
+    List<DependencyReportDependencyGroupModel> getArchiveGroups();
 
     /**
      * Contains all dependencies reported here, grouped by hash.

@@ -1,5 +1,7 @@
 package org.jboss.windup.rules.apps.java.dependencyreport;
 
+import com.syncleus.ferma.ClassInitializer;
+import com.syncleus.ferma.DefaultClassInitializer;
 import com.syncleus.ferma.annotations.Incidence;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import com.syncleus.ferma.annotations.Adjacency;
@@ -58,5 +60,16 @@ public interface DependencyReportDependencyGroupModel extends WindupVertexFrame
      * Contains links to the archives that match this SHA1 hash.
      */
     @Incidence(label = DEPENDENCY_GROUP_TO_ARCHIVE, direction = Direction.OUT)
-    DependencyReportToArchiveEdgeModel addArchiveModel(ArchiveModel archiveModel);
+    DependencyReportToArchiveEdgeModel addArchiveModel(ArchiveModel archiveModel, ClassInitializer<DependencyReportToArchiveEdgeModel> initializer);
+
+    /**
+     * Contains links to the archives that match this SHA1 hash.
+     *
+     * NOTE: This method exists to work around a Ferma limitation. It does not infer the type from the return type, so
+     * we explicitly specify it and we do so via a default method to make the client code easier.
+     */
+    default DependencyReportToArchiveEdgeModel addArchiveModel(ArchiveModel archiveModel)
+    {
+        return addArchiveModel(archiveModel, new DefaultClassInitializer<>(DependencyReportToArchiveEdgeModel.class));
+    }
 }

@@ -7,6 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonFilter;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
@@ -84,13 +89,20 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider
                     MappingJsonFactory jsonFactory = new MappingJsonFactory();
                     jsonFactory.disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
                     ObjectMapper objectMapper = new ObjectMapper(jsonFactory);
+                    objectMapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+                    objectMapper.addMixIn(Object.class, PropertyFilterMixin.class);
+
+                    // Filter out some tinkerpop specific properties
+                    SimpleBeanPropertyFilter simpleBeanPropertyFilter = SimpleBeanPropertyFilter.serializeAllExcept("graph", "steps", "traversal");
+                    FilterProvider filters = new SimpleFilterProvider().addFilter("graphFilter", simpleBeanPropertyFilter);
+
                     Map<String, List<ProblemSummary>> summariesBySeverity =
                         ProblemSummaryService.getProblemSummaries(
                             event.getGraphContext(), projectModelTraversal.getAllProjects(true), Collections.emptySet(), Collections.emptySet())
                             .entrySet().stream().collect(Collectors.toMap((e) -> e.getKey().getCategoryID(), Map.Entry::getValue));
 
                     issueSummaryWriter.write("WINDUP_ISSUE_SUMMARIES['" + inputApplication.getId() + "'] = ");
-                    objectMapper.writeValue(issueSummaryWriter, summariesBySeverity);
+                    objectMapper.writer(filters).writeValue(issueSummaryWriter, summariesBySeverity);
                     issueSummaryWriter.write(";" + NEWLINE);
                 }
 
@@ -129,4 +141,9 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider
         }
     }
     private static final String NEWLINE = OperatingSystemUtils.getLineSeparator();
+
+    @JsonFilter("graphFilter")
+    public static class PropertyFilterMixin {
+
+    }
 }

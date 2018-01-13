@@ -6,6 +6,8 @@ import com.syncleus.ferma.annotations.Adjacency;
 import com.syncleus.ferma.annotations.Property;
 import org.jboss.windup.graph.model.TypeValue;
 
+import java.util.List;
+
 /**
  * Contains metadata associated with a JPA Entity
  *
@@ -71,5 +73,5 @@ public interface JPAEntityModel extends PersistenceEntityModel
      * Contains the jpa named query
      */
     @Adjacency(label = NAMED_QUERY, direction = Direction.OUT)
-    Iterable<JPANamedQueryModel> getNamedQueries();
+    List<JPANamedQueryModel> getNamedQueries();
 }

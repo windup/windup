@@ -7,6 +7,8 @@ import org.jboss.windup.reporting.model.ApplicationReportModel;
 
 import org.jboss.windup.graph.model.TypeValue;
 
+import java.util.List;
+
 /**
  * Model of the Unparsable Files report.
  *
@@ -22,7 +24,7 @@ public interface UnparsablesAppReportModel extends ApplicationReportModel
      * All related (canonical) projects.
      */
     @Adjacency(label = ALL_SUB_PROJECTS, direction = Direction.OUT)
-    Iterable<ProjectModel> getAllSubProjects();
+    List<ProjectModel> getAllSubProjects();
 
     /**
      * All related (canonical) projects.

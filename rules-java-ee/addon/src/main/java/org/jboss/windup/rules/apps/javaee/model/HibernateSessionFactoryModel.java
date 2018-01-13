@@ -1,5 +1,6 @@
 package org.jboss.windup.rules.apps.javaee.model;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.tinkerpop.gremlin.structure.Vertex;
@@ -36,7 +37,7 @@ public interface HibernateSessionFactoryModel extends WindupVertexFrame, HasAppl
      * Contains a link back to the {@link DataSourceModel}
      */
     @Adjacency(label = DATASOURCE, direction = Direction.OUT)
-    Iterable<DataSourceModel> getDataSources();
+    List<DataSourceModel> getDataSources();
 
     /**
      * Contains a link back to the {@link DataSourceModel}

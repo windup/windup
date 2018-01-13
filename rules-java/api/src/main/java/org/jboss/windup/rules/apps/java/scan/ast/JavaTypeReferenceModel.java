@@ -15,6 +15,8 @@ import com.syncleus.ferma.annotations.Adjacency;
 import com.syncleus.ferma.annotations.Property;
 import org.jboss.windup.graph.model.TypeValue;
 
+import java.util.List;
+
 /**
  * This references a particular location within a Java source file, as well as the contents of that location.
  */
@@ -31,7 +33,7 @@ public interface JavaTypeReferenceModel extends FileLocationModel
      * Contains the annotations linked to this item.
      */
     @Adjacency(label = JavaAnnotationTypeReferenceModel.ORIGINAL_ANNOTATED_TYPE, direction = Direction.IN)
-    Iterable<JavaAnnotationTypeReferenceModel> getAnnotations();
+    List<JavaAnnotationTypeReferenceModel> getAnnotations();
 
     /**
      * Overrides the default behavior to get the {@link JavaSourceFileModel} directly.

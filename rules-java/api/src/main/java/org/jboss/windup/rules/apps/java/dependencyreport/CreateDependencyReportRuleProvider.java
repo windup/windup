@@ -3,6 +3,7 @@ package org.jboss.windup.rules.apps.java.dependencyreport;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.syncleus.ferma.DefaultClassInitializer;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
@@ -82,7 +83,7 @@ public class CreateDependencyReportRuleProvider extends AbstractRuleProvider
         FileModel rootFileModel = traversal.getCurrent().getRootFileModel();
 
         // Don't create a dependency entry for the entire application (root project)
-        boolean isRootProject = traversal.getCurrent().getParentProjectWithNull() == null;
+        boolean isRootProject = traversal.getCurrent().getParentProject() == null;
         if (!isRootProject && rootFileModel instanceof ArchiveModel)
         {
             ArchiveModel archiveModel = (ArchiveModel) rootFileModel;

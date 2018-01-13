@@ -9,6 +9,8 @@ import com.syncleus.ferma.annotations.Adjacency;
 import com.syncleus.ferma.annotations.Property;
 import org.jboss.windup.graph.model.TypeValue;
 
+import java.util.List;
+
 /**
  *
  * This represents Java source code as an abstract concept. This is useful for things that are not strictly ".java" source code, but are semantically
@@ -62,7 +64,7 @@ public interface AbstractJavaSourceModel extends FileModel, SourceFileModel
      * Lists the {@link JavaClassModel}s contained within this source file
      */
     @Adjacency(label = JAVA_CLASS_MODEL, direction = Direction.OUT)
-    Iterable<JavaClassModel> getJavaClasses();
+    List<JavaClassModel> getJavaClasses();
 
     /**
      * Lists the {@link JavaClassModel}s contained within this source file

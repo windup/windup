@@ -1,6 +1,5 @@
 package org.jboss.windup.rules.apps.java.reporting.freemarker;
 
-import freemarker.template.DefaultIterableAdapter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -11,6 +10,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.FileLocationModel;
 import org.jboss.windup.graph.model.FileReferenceModel;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.reporting.freemarker.FreeMarkerUtil;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
@@ -54,9 +54,8 @@ public class FindFilesNotClassifiedOrHinted implements WindupFreeMarkerMethod
         {
             throw new TemplateModelException("Error, method expects one argument (Iterable<FileModel>)");
         }
-        DefaultIterableAdapter stringModelArg = (DefaultIterableAdapter) arguments.get(0);
         @SuppressWarnings("unchecked")
-        Iterable<FileModel> fileModels = (Iterable<FileModel>) stringModelArg.getWrappedObject();
+        Iterable<FileModel> fileModels = FreeMarkerUtil.freemarkerWrapperToIterable(arguments.get(0));
 
         FindFilesNotClassifiedOrHintedGremlinCriterion criterion = new FindFilesNotClassifiedOrHintedGremlinCriterion();
         List<Vertex> initialFileModelsAsVertices = new ArrayList<>();

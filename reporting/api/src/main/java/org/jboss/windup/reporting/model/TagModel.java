@@ -28,8 +28,8 @@ import com.syncleus.ferma.annotations.Property;
 @TypeValue(TagModel.TYPE)
 public interface TagModel extends WindupVertexFrame {
     String TYPE = "TagModel";
-    static final String PROP_NAME = "name";
-    static final String EDGE_DESIGNATES = "designates";
+    String PROP_NAME = "name";
+    String EDGE_DESIGNATES = "designates";
 
     /**
      * Tag name (ID), preferably kebab-style, e.g "java-ee-6".
@@ -47,7 +47,7 @@ public interface TagModel extends WindupVertexFrame {
     String getTitle();
 
     @Property("title")
-    TagModel setTitle(String title);
+    void setTitle(String title);
 
     default String getTitleOrName()
     {
@@ -62,7 +62,7 @@ public interface TagModel extends WindupVertexFrame {
     @Property("prime")
     boolean isPrime();
     @Property("prime")
-    TagModel setPrime(boolean isPrime);
+    void setPrime(boolean isPrime);
 
     /**
      * A root tag is that which was a root in the XML definition files. These serve as entry point shortcuts when browsing the graph.
@@ -70,7 +70,7 @@ public interface TagModel extends WindupVertexFrame {
     @Property("root")
     boolean isRoot();
     @Property("root")
-    TagModel setRoot(boolean isRoot);
+    void setRoot(boolean isRoot);
 
     /**
      * Pseudo tags serve as grouping for contained tags, but are not suitable to be a root tag.
@@ -82,7 +82,7 @@ public interface TagModel extends WindupVertexFrame {
     @Property("pseudo")
     boolean isPseudo();
     @Property("pseudo")
-    TagModel setPseudo(boolean isPseudo);
+    void setPseudo(boolean isPseudo);
 
     /**
      * A color by which this tag should typically be represented in the UI elements like tags, boxes, chart lines, graph nodes, etc.
@@ -90,7 +90,7 @@ public interface TagModel extends WindupVertexFrame {
     @Property("color")
     String getColor();
     @Property("color")
-    TagModel setColor(String color);
+    void setColor(String color);
 
     @JavaHandler(handler = Impl.class)
     String toString();
@@ -101,9 +101,9 @@ public interface TagModel extends WindupVertexFrame {
     @Adjacency(label = EDGE_DESIGNATES, direction = Direction.OUT)
     List<TagModel> getDesignatedTags();
     @Adjacency(label = EDGE_DESIGNATES, direction = Direction.OUT)
-    TagModel setDesignatedTags(List<TagModel> tags);
+    void setDesignatedTags(List<TagModel> tags);
     @Adjacency(label = EDGE_DESIGNATES, direction = Direction.OUT)
-    TagModel addDesignatedTag(TagModel tag);
+    void addDesignatedTag(TagModel tag);
 
     /**
      * Which tags is this tag designated by; for instance, "seam" is designated by "web" and "framework:".
@@ -111,7 +111,7 @@ public interface TagModel extends WindupVertexFrame {
     @Adjacency(label = EDGE_DESIGNATES, direction = Direction.IN)
     List<TagModel> getDesignatedByTags();
     @Adjacency(label = EDGE_DESIGNATES, direction = Direction.IN)
-    TagModel setDesignatedByTags(List<TagModel> tags);
+    void setDesignatedByTags(List<TagModel> tags);
 
 
     /**

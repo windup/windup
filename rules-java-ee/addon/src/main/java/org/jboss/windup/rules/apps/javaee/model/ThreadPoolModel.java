@@ -8,6 +8,8 @@ import org.apache.tinkerpop.gremlin.structure.Direction;
 import com.syncleus.ferma.annotations.Adjacency;
 import com.syncleus.ferma.annotations.Property;
 
+import java.util.List;
+
 /**
  * Contains thread pool information (max pool size, pool name, etc).
  */
@@ -24,7 +26,7 @@ public interface ThreadPoolModel extends WindupVertexFrame
      * Contains the application in which this thread pool was discovered
      */
     @Adjacency(label = APPLICATIONS, direction = Direction.OUT)
-    Iterable<ProjectModel> getApplications();
+    List<ProjectModel> getApplications();
 
     /**
      * Contains the application in which this thread pool was discovered

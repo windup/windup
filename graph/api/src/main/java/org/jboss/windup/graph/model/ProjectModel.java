@@ -172,7 +172,7 @@ public interface ProjectModel extends WindupVertexFrame, HasApplications
      * The parent ProjectModel, or null if no parent is present.
      */
     @Adjacency(label = PARENT_PROJECT, direction = Direction.OUT)
-    ProjectModel getParentProject();
+    ProjectModel getParentProjectNotNullSafe();
 
     /**
      * The parent ProjectModel, or null if no parent is present.
@@ -183,11 +183,11 @@ public interface ProjectModel extends WindupVertexFrame, HasApplications
     /*
      * FIXME TP3 - Should be removed when a new version of ferma is available
      */
-    default ProjectModel getParentProjectWithNull()
+    default ProjectModel getParentProject()
     {
         try
         {
-            return getParentProject();
+            return getParentProjectNotNullSafe();
         }
         catch (NoSuchElementException e)
         {

@@ -5,6 +5,8 @@ import com.syncleus.ferma.annotations.Adjacency;
 import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
+import java.util.List;
+
 /**
  * Contains links to {@link JarManifestModel}s.
  *
@@ -19,7 +21,7 @@ public interface HasManifestFilesModel extends WindupVertexFrame
      * Contains links to the manifest models associated with this vertex.
      */
     @Adjacency(label = JarManifestModel.ARCHIVE, direction = Direction.OUT)
-    Iterable<JarManifestModel> getManifestModels();
+    List<JarManifestModel> getManifestModels();
 
     /**
      * Contains links to the manifest models associated with this vertex.

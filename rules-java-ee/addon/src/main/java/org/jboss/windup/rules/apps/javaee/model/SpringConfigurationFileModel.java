@@ -7,6 +7,8 @@ import org.apache.tinkerpop.gremlin.structure.Direction;
 import com.syncleus.ferma.annotations.Adjacency;
 import com.syncleus.ferma.annotations.Property;
 
+import java.util.List;
+
 /**
  * Contains metadata extracted from the XML configuration file.
  * 
@@ -15,30 +17,30 @@ import com.syncleus.ferma.annotations.Property;
 @TypeValue(SpringConfigurationFileModel.TYPE)
 public interface SpringConfigurationFileModel extends XmlFileModel
 {
-    public static final String SPECIFICATION_VERSION = "specificationVersion";
-    public static final String TYPE = "SpringConfigurationFileModel";
+    String SPECIFICATION_VERSION = "specificationVersion";
+    String TYPE = "SpringConfigurationFileModel";
 
     /**
      * The Spring specification version.
      */
     @Property(SPECIFICATION_VERSION)
-    public String getSpecificationVersion();
+    String getSpecificationVersion();
 
     /**
      * The Spring specification version.
      */
     @Property(SPECIFICATION_VERSION)
-    public void setSpecificationVersion(String version);
+    void setSpecificationVersion(String version);
 
     /**
      * A list of Spring Beans defined within this Spring configuration file.
      */
     @Adjacency(label = SpringBeanModel.SPRING_CONFIGURATION, direction = Direction.OUT)
-    public Iterable<SpringBeanModel> getSpringBeans();
+    List<SpringBeanModel> getSpringBeans();
 
     /**
      * A list of Spring Beans defined within this Spring configuration file.
      */
     @Adjacency(label = SpringBeanModel.SPRING_CONFIGURATION, direction = Direction.OUT)
-    public void addSpringBeanReference(SpringBeanModel springBean);
+    void addSpringBeanReference(SpringBeanModel springBean);
 }

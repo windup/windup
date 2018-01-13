@@ -7,6 +7,8 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.rules.apps.java.archives.model.ArchiveCoordinateModel;
 import org.jboss.windup.rules.apps.java.model.project.MavenProjectModel;
 
+import java.util.List;
+
 
 /**
  * Represents the structure of a Maven POM file within the graph.
@@ -51,7 +53,7 @@ public interface PomXmlModel extends WindupVertexFrame
      * Contains the coordinates of all dependencies.
      */
     @Adjacency(label = DEPENDS, direction = Direction.OUT)
-    Iterable<ArchiveCoordinateModel> getDependencies();
+    List<ArchiveCoordinateModel> getDependencies();
 
     /**
      * Contains the coordinates of all dependencies.

@@ -73,7 +73,10 @@ public class TagGraphService extends GraphService<TagModel>
                 tag.getName(), tag.getContainedTags().size(), tag.getTitle(), tag.getTraits()));
         TagModel tagModel = this.create();
         tagModel.setName(tag.getName());
-        tagModel.setTitle(tag.getTitle()).setColor(tag.getColor()).setRoot(tag.isPrime()).setPseudo(tag.isPseudo());
+        tagModel.setTitle(tag.getTitle());
+        tagModel.setColor(tag.getColor());
+        tagModel.setRoot(tag.isPrime());
+        tagModel.setPseudo(tag.isPseudo());
         if (null != tag.getTraits())
             tagModel.putAllTraits(tag.getTraits());
 

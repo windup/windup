@@ -100,7 +100,7 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
                 final String val = vals[i];
 
                 traversable = traversable.traverse(g ->
-                    g.property(key, val)
+                    g.has(key, val)
                 );
             }
             return (List<T>)traversable.toList(type);

@@ -6,14 +6,16 @@ import org.apache.tinkerpop.gremlin.structure.Direction;
 import com.syncleus.ferma.annotations.Adjacency;
 import org.jboss.windup.graph.model.TypeValue;
 
+import java.util.List;
+
 @TypeValue(AmbiguousReferenceModel.TYPE)
 public interface AmbiguousReferenceModel<REFERENCETYPE extends WindupVertexFrame> extends WindupVertexFrame
 {
     String TYPE = "AmbiguousReferenceModel";
 
     @Adjacency(label = "targets", direction = Direction.OUT)
-    public void addReference(final REFERENCETYPE referent);
+    void addReference(final REFERENCETYPE referent);
 
     @Adjacency(label = "targets", direction = Direction.OUT)
-    public Iterable<REFERENCETYPE> getReferences();
+    List<REFERENCETYPE> getReferences();
 }

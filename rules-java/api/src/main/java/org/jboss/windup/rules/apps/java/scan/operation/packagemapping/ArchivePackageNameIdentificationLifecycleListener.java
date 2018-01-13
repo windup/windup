@@ -27,6 +27,6 @@ public class ArchivePackageNameIdentificationLifecycleListener extends AbstractR
                 .getStrategies(Graph.class)
                 .clone()
                 .addStrategies(EventStrategy.build().addListener(new ArchivePackageNameIdentificationGraphChangedListener(event)).create());
-        TraversalStrategies.GlobalCache.registerStrategies(StandardJanusGraph.class, graphStrategies);
+        //TraversalStrategies.GlobalCache.registerStrategies(StandardJanusGraph.class, graphStrategies);
     }
 }

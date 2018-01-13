@@ -3,6 +3,8 @@ package org.jboss.windup.reporting.model.source;
 import java.io.IOException;
 import java.util.List;
 
+import com.syncleus.ferma.ClassInitializer;
+import com.syncleus.ferma.DefaultClassInitializer;
 import com.syncleus.ferma.annotations.Incidence;
 import org.apache.commons.io.IOUtils;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -77,5 +79,10 @@ public interface SourceReportModel extends ReportModel
      * Contains all {@link ProjectModel}s that contain this file, including any duplicate {@link ProjectModel}s.
      */
     @Incidence(label = SOURCE_REPORT_TO_PROJECT_MODEL, direction = Direction.OUT)
-    SourceReportToProjectEdgeModel addProjectModel(ProjectModel projectModel);
+    SourceReportToProjectEdgeModel addProjectModel(ProjectModel projectModel, ClassInitializer<SourceReportToProjectEdgeModel> initializer);
+
+    default SourceReportToProjectEdgeModel addProjectModel(ProjectModel projectModel)
+    {
+        return addProjectModel(projectModel, new DefaultClassInitializer<>(SourceReportToProjectEdgeModel.class));
+    }
 }

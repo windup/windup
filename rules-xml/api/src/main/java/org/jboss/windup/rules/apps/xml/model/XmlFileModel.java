@@ -1,6 +1,7 @@
 package org.jboss.windup.rules.apps.xml.model;
 
 import java.io.InputStream;
+import java.util.List;
 import java.util.logging.Logger;
 
 import org.jboss.windup.graph.Indexed;
@@ -39,7 +40,7 @@ public interface XmlFileModel extends FileModel, SourceFileModel
     void addNamespace(NamespaceMetaModel namespace);
 
     @Adjacency(label = NAMESPACE, direction = Direction.OUT)
-    Iterable<NamespaceMetaModel> getNamespaces();
+    List<NamespaceMetaModel> getNamespaces();
 
     @Indexed
     @Property(ROOT_TAG_NAME)

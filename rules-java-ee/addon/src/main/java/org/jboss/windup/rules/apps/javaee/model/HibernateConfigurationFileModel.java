@@ -7,6 +7,8 @@ import org.apache.tinkerpop.gremlin.structure.Direction;
 import com.syncleus.ferma.annotations.Adjacency;
 import com.syncleus.ferma.annotations.Property;
 
+import java.util.List;
+
 /**
  * 
  * 
@@ -27,7 +29,7 @@ public interface HibernateConfigurationFileModel extends XmlFileModel
     void setSpecificationVersion(String version);
 
     @Adjacency(label = HIBERNATE_SESSION_FACTORY, direction = Direction.OUT)
-    Iterable<HibernateSessionFactoryModel> getHibernateSessionFactories();
+    List<HibernateSessionFactoryModel> getHibernateSessionFactories();
 
     @Adjacency(label = HIBERNATE_SESSION_FACTORY, direction = Direction.OUT)
     void addHibernateSessionFactory(HibernateSessionFactoryModel hibernateSessionFactor);

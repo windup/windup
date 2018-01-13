@@ -67,7 +67,7 @@ public class RuleExecutionResultsListener implements RuleLifecycleListener
                     .getStrategies(Graph.class)
                     .clone()
                     .addStrategies(EventStrategy.build().addListener(new GraphChangeListener()).create());
-        TraversalStrategies.GlobalCache.registerStrategies(StandardJanusGraph.class, graphStrategies);
+        //TraversalStrategies.GlobalCache.registerStrategies(StandardJanusGraph.class, graphStrategies);
     }
 
     @Override

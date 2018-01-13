@@ -1,6 +1,5 @@
 package org.jboss.windup.rules.apps.javaee.model;
 
-import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.jboss.windup.graph.JavaHandler;
 import org.jboss.windup.graph.model.HasApplications;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -73,9 +72,9 @@ public interface JPANamedQueryModel extends WindupVertexFrame, HasApplications
     boolean belongsToProject(ProjectModel projectModel);
 
 
-    abstract class Impl
+    class Impl
     {
-        public Iterable<ProjectModel> getApplications(JPANamedQueryModel model)
+        public List<ProjectModel> getApplications(JPANamedQueryModel model)
         {
             return model.getJpaEntity().getApplications();
         }

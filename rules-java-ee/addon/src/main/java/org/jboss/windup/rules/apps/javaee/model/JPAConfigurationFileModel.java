@@ -7,6 +7,8 @@ import org.apache.tinkerpop.gremlin.structure.Direction;
 import com.syncleus.ferma.annotations.Adjacency;
 import com.syncleus.ferma.annotations.Property;
 
+import java.util.List;
+
 /**
  * Contains a graph model representing a JPA configuration file within the application.
  * 
@@ -35,7 +37,7 @@ public interface JPAConfigurationFileModel extends XmlFileModel
      * Contains references to all {@link JPAPersistenceUnitModel}s defined within this file.
      */
     @Adjacency(label = JPA_PERSISTENCE_UNIT, direction = Direction.OUT)
-    Iterable<JPAPersistenceUnitModel> getPersistenceUnits();
+    List<JPAPersistenceUnitModel> getPersistenceUnits();
 
     /**
      * Contains references to all {@link JPAPersistenceUnitModel}s defined within this file.

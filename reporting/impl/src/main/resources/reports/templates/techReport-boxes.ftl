@@ -136,7 +136,7 @@
                                             <#-- Get a map of box buckets with TechUsageStats and take data from there, rather than pulling through a function. -->
                                             <#assign statsForThisBox = (sortedStatsMatrix.get(rowTag.name, boxTag.name, 0))! />
                                             <#list statsForThisBox>
-                                                <div class="box box-${boxTag.name}" id="box${boxTag.asVertex().id?c}">
+                                                <div class="box box-${boxTag.name}" id="box${boxTag.getElement().id()?c}">
                                                     <div class="icon icon-${(boxTag.traits["icon"])!}"
                                                          style="background-image: url('resources/icons/techreport/${(boxTag.traits["icon"])!}.png');"></div>
                                                     <div class="content">

@@ -8,31 +8,32 @@ import org.apache.tinkerpop.gremlin.structure.Direction;
 import com.syncleus.ferma.annotations.Adjacency;
 import com.syncleus.ferma.annotations.Property;
 
+import java.util.List;
+
 @TypeValue(NamespaceMetaModel.TYPE)
 public interface NamespaceMetaModel extends WindupVertexFrame
 {
-    public static final String SCHEMA_LOCATION = "schemaLocation";
-    public static final String NAMESPACE_URI = "namespaceURI";
-    public static final String TYPE = "NamespaceMetaModel";
+    String SCHEMA_LOCATION = "schemaLocation";
+    String NAMESPACE_URI = "namespaceURI";
+    String TYPE = "NamespaceMetaModel";
 
     @Adjacency(label = XmlFileModel.NAMESPACE, direction = Direction.IN)
-    public void addXmlResource(XmlFileModel facet);
+    void addXmlResource(XmlFileModel facet);
 
     @Adjacency(label = XmlFileModel.NAMESPACE, direction = Direction.IN)
-    public Iterable<XmlFileModel> getXmlResources();
+    List<XmlFileModel> getXmlResources();
 
     @Property(NAMESPACE_URI)
-    public String getURI();
+    String getURI();
 
     @Indexed
     @Property(NAMESPACE_URI)
-    public void setURI(String uri);
+    void setURI(String uri);
 
     @Indexed
     @Property(SCHEMA_LOCATION)
-    public String getSchemaLocation();
+    String getSchemaLocation();
 
     @Property(SCHEMA_LOCATION)
-    public void setSchemaLocation(String schemaLocation);
-
+    void setSchemaLocation(String schemaLocation);
 }

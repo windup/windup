@@ -7,6 +7,8 @@ import org.apache.tinkerpop.gremlin.structure.Direction;
 import com.syncleus.ferma.annotations.Adjacency;
 import com.syncleus.ferma.annotations.Property;
 
+import java.util.List;
+
 /**
  * Contains metadata extracted from a hibernate mapping file (*.hbm.xml)
  * 
@@ -35,7 +37,7 @@ public interface HibernateMappingFileModel extends XmlFileModel
      * Contains the list of all {@link HibernateEntityModel}s referenced by this mapping file
      */
     @Adjacency(label = HIBERNATE_ENTITY, direction = Direction.OUT)
-    Iterable<HibernateEntityModel> getHibernateEntities();
+    List<HibernateEntityModel> getHibernateEntities();
 
     /**
      * Contains the list of all {@link HibernateEntityModel}s referenced by this mapping file

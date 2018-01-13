@@ -189,17 +189,17 @@ public interface FileModel extends ResourceModel, HasApplications, HasProject
      * Gets the {@link ProjectModel} that this file is a part of
      */
     @Adjacency(label = ProjectModel.PROJECT_MODEL_TO_FILE, direction = Direction.IN)
-    @Override
-    ProjectModel getProjectModel();
+    ProjectModel getProjectModelNotNullSafe();
 
     /*
      * FIXME TP3 - Should be removed when a new version of ferma is available
      */
-    default ProjectModel getProjectModelWithNull()
+    @Override
+    default ProjectModel getProjectModel()
     {
         try
         {
-            return getProjectModel();
+            return getProjectModelNotNullSafe();
         }
         catch (NoSuchElementException e)
         {

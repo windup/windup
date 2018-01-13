@@ -9,6 +9,8 @@ import org.apache.tinkerpop.gremlin.structure.Direction;
 import com.syncleus.ferma.annotations.Adjacency;
 import com.syncleus.ferma.annotations.Property;
 
+import java.util.List;
+
 /**
  * Contains information regarding a JBPM 3 process model.
  */
@@ -96,7 +98,7 @@ public interface Jbpm3ProcessModel extends XmlFileModel
      * Contains a list of action handlers used by this process.
      */
     @Adjacency(label = ACTION_HANDLERS, direction = Direction.OUT)
-    Iterable<JavaClassModel> getActionHandlers();
+    List<JavaClassModel> getActionHandlers();
 
     /**
      * Contains a list of decision handlers used by this process.
@@ -108,6 +110,6 @@ public interface Jbpm3ProcessModel extends XmlFileModel
      * Contains a list of decision handlers used by this process.
      */
     @Adjacency(label = DECISION_HANDLERS, direction = Direction.OUT)
-    Iterable<JavaClassModel> getDecisionHandlers();
+    List<JavaClassModel> getDecisionHandlers();
 
 }

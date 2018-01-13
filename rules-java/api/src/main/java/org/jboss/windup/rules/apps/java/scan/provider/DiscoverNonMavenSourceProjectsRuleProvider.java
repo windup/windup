@@ -59,11 +59,11 @@ public class DiscoverNonMavenSourceProjectsRuleProvider extends AbstractRuleProv
         {
             for (FileModel childFile : fileModel.getFilesInDirectory())
             {
-                if (childFile.getProjectModelWithNull() == null)
+                if (childFile.getProjectModel() == null)
                 {
                     projectModel.addFileModel(childFile);
                 }
-                else if (childFile.getProjectModel().getParentProjectWithNull() == null && !childFile.getProjectModel().equals(projectModel))
+                else if (childFile.getProjectModel().getParentProject() == null && !childFile.getProjectModel().equals(projectModel))
                 {
                     // if the child has a project, but the project doesn't have a parent, associate it with the root
                     // project
