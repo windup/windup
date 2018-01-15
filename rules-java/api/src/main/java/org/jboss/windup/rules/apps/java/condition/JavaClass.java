@@ -221,7 +221,7 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
                     @Override public void query(GraphRewrite event, GraphTraversal<?, Vertex> pipeline)
                     {
                         pipeline.out(FileReferenceModel.FILE_MODEL).in(FileReferenceModel.FILE_MODEL)
-                                    .has(JavaTypeReferenceModel.RESOLVED_SOURCE_SNIPPIT, Text.textContains(compiledPattern.toString()));
+                                    .has(JavaTypeReferenceModel.RESOLVED_SOURCE_SNIPPIT, Text.textRegex(compiledPattern.toString()));
                     }
                 });
                 piped.as(initialQueryID).evaluate(event,context);

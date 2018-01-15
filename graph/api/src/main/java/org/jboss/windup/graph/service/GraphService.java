@@ -184,7 +184,7 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
                 builder.append(")\\b");
                 regexFinal = builder.toString();
             }
-            return (List<T>)findAllQuery().traverse(g -> g.has(key, Text.textContainsRegex(regexFinal))).toList(type);
+            return (List<T>)findAllQuery().traverse(g -> g.has(key, Text.textRegex(regexFinal))).toList(type);
         });
     }
 

@@ -1,0 +1,3 @@
+Application Name:
+  ${applicationReport.applicationName}
+

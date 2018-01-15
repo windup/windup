@@ -48,7 +48,7 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 @RunWith(Arquillian.class)
-public class JavaClassWithEnumConstOnClasspatTest
+public class JavaClassWithEnumConstOnClasspathTest
 {
     
     @Deployment
