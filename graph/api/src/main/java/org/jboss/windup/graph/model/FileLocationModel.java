@@ -2,7 +2,7 @@ package org.jboss.windup.graph.model;
 
 import org.jboss.windup.graph.model.resource.FileModel;
 
-import com.syncleus.ferma.annotations.Property;
+import org.jboss.windup.graph.Property;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 

@@ -2,13 +2,13 @@ package org.jboss.windup.reporting.model;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.syncleus.ferma.annotations.Adjacency;
+import org.jboss.windup.graph.Adjacency;
 import org.jboss.windup.graph.IndexType;
 import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
-import com.syncleus.ferma.annotations.Property;
+import org.jboss.windup.graph.Property;
 import org.jboss.windup.reporting.category.IssueCategory;
 import org.jboss.windup.reporting.category.IssueCategoryModel;
 import org.jboss.windup.reporting.category.IssueCategoryRegistry;

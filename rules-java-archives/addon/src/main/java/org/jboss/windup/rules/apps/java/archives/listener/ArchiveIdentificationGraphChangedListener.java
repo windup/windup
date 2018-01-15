@@ -7,12 +7,11 @@ import java.util.logging.Logger;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.tinkerpop.gremlin.process.traversal.step.util.event.MutationListener;
-import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Property;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import org.apache.tinkerpop.gremlin.structure.VertexProperty;
 import org.jboss.forge.addon.dependencies.Coordinate;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.GraphListener;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -32,7 +31,7 @@ import org.jboss.windup.util.exception.WindupException;
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
-public final class ArchiveIdentificationGraphChangedListener implements MutationListener
+public final class ArchiveIdentificationGraphChangedListener implements GraphListener
 {
     private static final Logger LOG = Logging.get(ArchiveIdentificationGraphChangedListener.class);
 
@@ -129,54 +128,6 @@ public final class ArchiveIdentificationGraphChangedListener implements Mutation
 
     @Override
     public void vertexAdded(Vertex vertex)
-    {
-
-    }
-
-    @Override
-    public void vertexRemoved(Vertex vertex)
-    {
-
-    }
-
-    @Override
-    public void vertexPropertyRemoved(VertexProperty vertexProperty)
-    {
-
-    }
-
-    @Override
-    public void edgeAdded(Edge edge)
-    {
-
-    }
-
-    @Override
-    public void edgeRemoved(Edge edge)
-    {
-
-    }
-
-    @Override
-    public void edgePropertyChanged(Edge element, Property oldValue, Object setValue)
-    {
-
-    }
-
-    @Override
-    public void edgePropertyRemoved(Edge element, Property property)
-    {
-
-    }
-
-    @Override
-    public void vertexPropertyPropertyChanged(VertexProperty element, Property oldValue, Object setValue)
-    {
-
-    }
-
-    @Override
-    public void vertexPropertyPropertyRemoved(VertexProperty element, Property property)
     {
 
     }

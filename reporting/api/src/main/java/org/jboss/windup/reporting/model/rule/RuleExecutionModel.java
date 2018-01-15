@@ -1,7 +1,7 @@
 package org.jboss.windup.reporting.model.rule;
 
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.syncleus.ferma.annotations.Property;
+import org.jboss.windup.graph.Property;
 import org.jboss.windup.config.RuleUtils;
 import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;

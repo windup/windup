@@ -2,7 +2,7 @@ package org.jboss.windup.rules.apps.mavenize;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.syncleus.ferma.annotations.Adjacency;
+import org.jboss.windup.graph.Adjacency;
 import org.jboss.windup.graph.model.TypeValue;
 import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;

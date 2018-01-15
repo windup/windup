@@ -181,7 +181,7 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
         final GraphService<FileLocationModel> fileLocationService = new GraphService<>(event.getGraphContext(), FileLocationModel.class);
 
         // initialize the input
-        List<FileModel> fileModels = new ArrayList<>();
+       List<FileModel> fileModels = new ArrayList<>();
         fromInput(fileModels, event);
         fileNameInput(fileModels, event, store);
         allInput(fileModels, event, store);

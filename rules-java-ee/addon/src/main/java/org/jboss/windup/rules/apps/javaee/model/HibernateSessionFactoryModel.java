@@ -12,7 +12,7 @@ import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
-import com.syncleus.ferma.annotations.Adjacency;
+import org.jboss.windup.graph.Adjacency;
 
 /**
  * Contains metadata related to Hibernate Session Factories.

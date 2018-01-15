@@ -6,8 +6,8 @@ import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
-import com.syncleus.ferma.annotations.Adjacency;
-import com.syncleus.ferma.annotations.Property;
+import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.Property;
 
 import java.util.List;
 
@@ -41,7 +41,9 @@ public interface SourceFileModel extends WindupVertexFrame
     default boolean isGenerateSourceReport()
     {
         VertexProperty result = getElement().property(GENERATE_SOURCE_REPORT);
-        return result == null ? false : (Boolean)result.value();
+        if (!result.isPresent())
+            return false;
+        return (Boolean)result.value();
     }
 
     /**

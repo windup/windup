@@ -4,7 +4,7 @@ import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
-import com.syncleus.ferma.annotations.Adjacency;
+import org.jboss.windup.graph.Adjacency;
 
 /**
  * RMI Service marker interface.

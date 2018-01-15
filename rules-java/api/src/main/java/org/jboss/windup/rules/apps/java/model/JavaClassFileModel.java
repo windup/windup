@@ -6,8 +6,8 @@ import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.resource.FileModel;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
-import com.syncleus.ferma.annotations.Adjacency;
-import com.syncleus.ferma.annotations.Property;
+import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.Property;
 
 /**
  * This Model represents Java class files on disk (eg, /path/to/Foo.class). This does not represent Java source files (.java files). The class itself

@@ -2,8 +2,8 @@ package org.jboss.windup.rules.apps.xml.model;
 
 import org.jboss.windup.graph.model.FileLocationModel;
 
-import com.syncleus.ferma.annotations.Adjacency;
-import com.syncleus.ferma.annotations.Property;
+import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.Property;
 import org.jboss.windup.graph.model.TypeValue;
 
 import java.util.List;

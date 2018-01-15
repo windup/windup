@@ -11,8 +11,8 @@ import org.jboss.windup.graph.MapInAdjacentProperties;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.TypeValue;
 
-import com.syncleus.ferma.annotations.Adjacency;
-import com.syncleus.ferma.annotations.Property;
+import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.Property;
 
 /**
  * These reports are directly associated with an application, and that application's project model. These can include things like an Application

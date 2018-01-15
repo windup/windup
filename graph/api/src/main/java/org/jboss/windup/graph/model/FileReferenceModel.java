@@ -3,7 +3,7 @@ package org.jboss.windup.graph.model;
 import org.jboss.windup.graph.model.resource.FileModel;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
-import com.syncleus.ferma.annotations.Adjacency;
+import org.jboss.windup.graph.Adjacency;
 
 /**
  * Isolated file reference interface from the other models.

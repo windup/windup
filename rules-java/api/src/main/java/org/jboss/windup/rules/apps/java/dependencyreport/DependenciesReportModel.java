@@ -3,7 +3,7 @@ package org.jboss.windup.rules.apps.java.dependencyreport;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
-import com.syncleus.ferma.annotations.Adjacency;
+import org.jboss.windup.graph.Adjacency;
 import org.jboss.windup.graph.model.TypeValue;
 
 import java.util.List;

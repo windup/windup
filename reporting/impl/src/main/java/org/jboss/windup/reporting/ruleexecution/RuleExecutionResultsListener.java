@@ -5,18 +5,17 @@ import java.util.IdentityHashMap;
 import java.util.List;
 
 import org.apache.tinkerpop.gremlin.process.traversal.TraversalStrategies;
-import org.apache.tinkerpop.gremlin.process.traversal.step.util.event.MutationListener;
 import org.apache.tinkerpop.gremlin.process.traversal.strategy.decoration.EventStrategy;
 import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.apache.tinkerpop.gremlin.structure.Property;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.structure.VertexProperty;
-import org.janusgraph.graphdb.database.StandardJanusGraph;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleLifecycleListener;
 import org.jboss.windup.config.metadata.RuleProviderRegistry;
+import org.jboss.windup.graph.GraphListener;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
@@ -63,11 +62,7 @@ public class RuleExecutionResultsListener implements RuleLifecycleListener
         this.event = event;
         event.getRewriteContext().put(RuleExecutionResultsListener.class, this);
 
-        TraversalStrategies graphStrategies = TraversalStrategies.GlobalCache
-                    .getStrategies(Graph.class)
-                    .clone()
-                    .addStrategies(EventStrategy.build().addListener(new GraphChangeListener()).create());
-        //TraversalStrategies.GlobalCache.registerStrategies(StandardJanusGraph.class, graphStrategies);
+        event.getGraphContext().registerGraphListener(new RuleExecutionGraphListener());
     }
 
     @Override
@@ -124,79 +119,20 @@ public class RuleExecutionResultsListener implements RuleLifecycleListener
     /**
      * Stores or counts the information about graph changes, especially which rules created which elements.
      */
-    private class GraphChangeListener implements MutationListener
+    private class RuleExecutionGraphListener implements GraphListener
     {
         @Override
         public synchronized void vertexAdded(Vertex vertex)
         {
             if (currentRule != null)
             {
-                System.out.println("--------------------------------------------------");
-                System.out.println("--------------------------------------------------");
-                System.out.println("--------------------------------------------------");
-                System.out.println("Vertex added!!!! - " + vertex);
-                System.out.println("--------------------------------------------------");
-                System.out.println("--------------------------------------------------");
-                System.out.println("--------------------------------------------------");
                 ruleExecutionInformation.get(currentRule).addVertexIDAdded(vertex.id());
             }
         }
 
         @Override
-        public synchronized void vertexRemoved(Vertex vertex)
-        {
-            if (currentRule != null)
-            {
-                ruleExecutionInformation.get(currentRule).addVertexIDRemoved(vertex.id());
-            }
-        }
-
-        @Override
-        public synchronized void edgeAdded(Edge edge)
-        {
-            if (currentRule != null)
-            {
-                ruleExecutionInformation.get(currentRule).addEdgeIDAdded(edge.id());
-            }
-        }
-
-        @Override
-        public synchronized void edgeRemoved(Edge edge)
-        {
-            if (currentRule != null)
-            {
-                ruleExecutionInformation.get(currentRule).addVertexIDRemoved(edge.id());
-            }
-        }
-
-        @Override
-        public void edgePropertyRemoved(Edge edge, Property removed)
-        {
-        }
-
-        @Override
         public void vertexPropertyChanged(final Vertex element, final Property oldValue, final Object setValue,
                     final Object... vertexPropertyKeyValues)
-        {
-        }
-
-        @Override
-        public void vertexPropertyRemoved(VertexProperty vertexProperty)
-        {
-        }
-
-        @Override
-        public void vertexPropertyPropertyChanged(VertexProperty vertexProperty, final Property oldValue, final Object setValue)
-        {
-        }
-
-        @Override
-        public void vertexPropertyPropertyRemoved(VertexProperty vertexProperty, final Property property)
-        {
-        }
-
-        @Override
-        public void edgePropertyChanged(final Edge element, final Property oldValue, final Object setValue)
         {
         }
     }

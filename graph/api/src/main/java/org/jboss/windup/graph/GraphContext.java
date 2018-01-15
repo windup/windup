@@ -100,4 +100,9 @@ public interface GraphContext extends Closeable
      * Commit the current transaction.
      */
     void commit();
+
+    /**
+     * Registers a graph listener to receive events upon graph changes.
+     */
+    void registerGraphListener(GraphListener listener);
 }

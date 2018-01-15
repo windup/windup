@@ -5,7 +5,7 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.rules.apps.javaee.model.JNDIResourceModel;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
-import com.syncleus.ferma.annotations.Adjacency;
+import org.jboss.windup.graph.Adjacency;
 
 @TypeValue(JNDIReferenceModel.TYPE)
 public interface JNDIReferenceModel extends WindupVertexFrame

@@ -1,6 +1,6 @@
 package org.jboss.windup.rules.apps.java.scan.ast.annotations;
 
-import com.syncleus.ferma.annotations.Property;
+import org.jboss.windup.graph.Property;
 import org.jboss.windup.graph.model.TypeValue;
 
 @TypeValue(JavaAnnotationLiteralTypeValueModel.TYPE)

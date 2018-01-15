@@ -264,9 +264,9 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
         return result;
     }
 
-    protected T getUnique(Traversal<?, ?> framedQuery)
+    protected T getUnique(Traversal<?, ?> query)
     {
-        List<?> results = framedQuery.toList();
+        List<?> results = query.toList();
 
         if (!results.iterator().hasNext())
         {

@@ -1,6 +1,6 @@
 package org.jboss.windup.rules.apps.javaee.model;
 
-import com.syncleus.ferma.annotations.Property;
+import org.jboss.windup.graph.Property;
 import org.jboss.windup.graph.model.TypeValue;
 
 /**

@@ -1,6 +1,6 @@
 package org.jboss.windup.graph.model;
 
-import com.syncleus.ferma.annotations.Property;
+import org.jboss.windup.graph.Property;
 
 /**
  * This stores a technology reference (id and version range) in the graph.

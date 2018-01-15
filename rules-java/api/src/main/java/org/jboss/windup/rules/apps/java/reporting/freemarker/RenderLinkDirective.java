@@ -285,7 +285,7 @@ public class RenderLinkDirective implements WindupFreeMarkerTemplateDirective
 
     private void appendProject(Writer writer, ProjectModel project) throws IOException {
         if (project != null)
-            writer.append("?project=").append(String.valueOf(project.getId()));
+            writer.append("?project=").append(String.valueOf((Object)project.getId()));
     }
 
     private void renderAsHorizontal(Writer writer, ProjectModel project, Iterator<Link> links) throws IOException

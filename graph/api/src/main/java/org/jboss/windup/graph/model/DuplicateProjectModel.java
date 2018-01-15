@@ -1,7 +1,7 @@
 package org.jboss.windup.graph.model;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
-import com.syncleus.ferma.annotations.Adjacency;
+import org.jboss.windup.graph.Adjacency;
 
 /**
  * Represents a {@link ProjectModel} that is actually an exact duplicate of another project.

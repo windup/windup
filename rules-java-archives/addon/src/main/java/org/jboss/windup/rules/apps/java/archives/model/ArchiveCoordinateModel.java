@@ -6,7 +6,7 @@ import org.jboss.windup.graph.JavaHandler;
 import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
-import com.syncleus.ferma.annotations.Property;
+import org.jboss.windup.graph.Property;
 
 /**
  * Represents a {@link Coordinate} for an {@link IdentifiedArchiveModel}.

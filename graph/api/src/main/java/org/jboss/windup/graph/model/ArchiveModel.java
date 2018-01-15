@@ -8,8 +8,8 @@ import java.util.Set;
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.jboss.windup.graph.model.resource.FileModel;
 
-import com.syncleus.ferma.annotations.Adjacency;
-import com.syncleus.ferma.annotations.Property;
+import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.Property;
 
 /**
  * Represents an archive within the input application.

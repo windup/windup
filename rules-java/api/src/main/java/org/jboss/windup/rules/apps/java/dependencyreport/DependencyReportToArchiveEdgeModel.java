@@ -5,7 +5,7 @@ import com.syncleus.ferma.annotations.OutVertex;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.WindupEdgeFrame;
 
-import com.syncleus.ferma.annotations.Property;
+import org.jboss.windup.graph.Property;
 import org.jboss.windup.graph.model.TypeValue;
 
 /**

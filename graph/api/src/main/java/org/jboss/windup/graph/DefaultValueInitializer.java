@@ -3,7 +3,7 @@ package org.jboss.windup.graph;
 import com.syncleus.ferma.ClassInitializer;
 import com.syncleus.ferma.ElementFrame;
 import org.apache.tinkerpop.gremlin.structure.Element;
-import com.syncleus.ferma.annotations.Property;
+import org.jboss.windup.graph.Property;
 import org.jboss.windup.graph.frames.FrameBooleanDefaultValue;
 import org.jboss.windup.graph.model.WindupFrame;
 

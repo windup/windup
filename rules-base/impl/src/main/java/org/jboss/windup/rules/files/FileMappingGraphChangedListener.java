@@ -5,12 +5,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
-import org.apache.tinkerpop.gremlin.process.traversal.step.util.event.MutationListener;
-import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Property;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import org.apache.tinkerpop.gremlin.structure.VertexProperty;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.graph.GraphListener;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.FileService;
@@ -22,7 +20,7 @@ import org.jboss.windup.graph.service.GraphService;
  *
  * @see FileMappingHandler: <file-mapping from=".*\.tld$" to="XmlFileModel" />
  */
-public class FileMappingGraphChangedListener implements MutationListener
+public class FileMappingGraphChangedListener implements GraphListener
 {
     private static final Logger LOG = Logger.getLogger(FileMappingGraphChangedListener.class.getName());
 
@@ -36,19 +34,23 @@ public class FileMappingGraphChangedListener implements MutationListener
     @Override
     public void vertexPropertyChanged(Vertex element, Property oldValue, Object setValue, Object... vertexPropertyKeyValues)
     {
-        System.out.println("--------------------------------------------------");
-        System.out.println("--------------------------------------------------");
-        System.out.println("--------------------------------------------------");
-        System.out.println("Vertex property changed!!!! - " + element);
-        System.out.println("--------------------------------------------------");
-        System.out.println("--------------------------------------------------");
-        System.out.println("--------------------------------------------------");
-
         String key = oldValue.key();
+
+//        System.out.println("--------------------------------------------------");
+//        System.out.println("--------------------------------------------------");
+//        System.out.println("--------------------------------------------------");
+//        System.out.println("Vertex property changed!!!! - " + element + " key: " + key + " new value: " + setValue);
+//        System.out.println("--------------------------------------------------");
+//        System.out.println("--------------------------------------------------");
+//        System.out.println("--------------------------------------------------");
+
         if (!FileModel.FILE_PATH.equals(key))
             return;
 
         FileService fileService = new FileService(event.getGraphContext());
+        // Reload it to make sure that we have one that is attached to the graph
+        element = event.getGraphContext().getGraph().vertices(element.id()).next();
+
         FileModel model = fileService.frame(element);
 
         if (model.isDirectory())
@@ -76,55 +78,7 @@ public class FileMappingGraphChangedListener implements MutationListener
     }
 
     @Override
-    public void vertexPropertyPropertyChanged(VertexProperty element, Property oldValue, Object setValue)
-    {
-
-    }
-
-    @Override
     public void vertexAdded(Vertex vertex)
-    {
-
-    }
-
-    @Override
-    public void vertexRemoved(Vertex vertex)
-    {
-
-    }
-
-    @Override
-    public void vertexPropertyRemoved(VertexProperty vertexProperty)
-    {
-
-    }
-
-    @Override
-    public void edgeAdded(Edge edge)
-    {
-
-    }
-
-    @Override
-    public void edgeRemoved(Edge edge)
-    {
-
-    }
-
-    @Override
-    public void edgePropertyChanged(Edge element, Property oldValue, Object setValue)
-    {
-
-    }
-
-    @Override
-    public void edgePropertyRemoved(Edge element, Property property)
-    {
-
-    }
-
-    @Override
-    public void vertexPropertyPropertyRemoved(VertexProperty element, Property property)
     {
 
     }

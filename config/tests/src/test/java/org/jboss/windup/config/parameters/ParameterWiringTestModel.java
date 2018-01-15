@@ -3,7 +3,7 @@ package org.jboss.windup.config.parameters;
 import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
-import com.syncleus.ferma.annotations.Property;
+import org.jboss.windup.graph.Property;
 
 /**
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>

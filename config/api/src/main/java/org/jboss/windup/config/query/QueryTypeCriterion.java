@@ -48,10 +48,10 @@ class QueryTypeCriterion implements QueryFramesCriterion, QueryGremlinCriterion
     @SuppressWarnings("unchecked")
     public void query(GraphRewrite event, GraphTraversal<?, Vertex> pipeline)
     {
-        pipeline.has(WindupVertexFrame.TYPE_PROP, new P(new BiPredicate<List<String>, String>() {
+        pipeline.has(WindupVertexFrame.TYPE_PROP, new P(new BiPredicate<String, String>() {
             @Override
-            public boolean test(List<String> firstList, String second) {
-                return firstList.contains(second);
+            public boolean test(String first, String second) {
+                return first.equals(second);
             }
         }, typeValue));
     }

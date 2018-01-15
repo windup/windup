@@ -2,7 +2,7 @@ package org.jboss.windup.reporting.model;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import com.syncleus.ferma.annotations.Adjacency;
+import org.jboss.windup.graph.Adjacency;
 
 import java.util.List;
 import java.util.Map;
@@ -12,7 +12,7 @@ import org.jboss.windup.graph.MapInProperties;
 import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
-import com.syncleus.ferma.annotations.Property;
+import org.jboss.windup.graph.Property;
 
 /**
  * Holds information about a tag, as per the definition from tags.xml files.

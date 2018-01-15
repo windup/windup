@@ -20,8 +20,8 @@ import org.jboss.windup.graph.model.HasProject;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.TypeValue;
 
-import com.syncleus.ferma.annotations.Adjacency;
-import com.syncleus.ferma.annotations.Property;
+import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.Property;
 
 /**
  * Represents a File on disk.
@@ -74,9 +74,11 @@ public interface FileModel extends ResourceModel, HasApplications, HasProject
         File file = new File(filePath);
         Vertex vertex = getElement();
         // set the isDirectory attribute
-        vertex.property(IS_DIRECTORY, file.isDirectory());
-        vertex.property(FILE_PATH, file.getAbsolutePath());
-        vertex.property(FILE_NAME, file.getName());
+        getWrappedGraph().getRawTraversal().V(vertex)
+                .property(IS_DIRECTORY, file.isDirectory())
+                .property(FILE_PATH, file.getAbsolutePath())
+                .property(FILE_NAME, file.getName())
+                .iterate();
     }
 
     /**

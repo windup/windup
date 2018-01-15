@@ -5,8 +5,8 @@ import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
-import com.syncleus.ferma.annotations.Adjacency;
-import com.syncleus.ferma.annotations.Property;
+import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.Property;
 
 /**
  * JaxRS REST Web Service.

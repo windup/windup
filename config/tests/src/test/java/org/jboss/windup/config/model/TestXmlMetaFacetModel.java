@@ -2,7 +2,7 @@ package org.jboss.windup.config.model;
 
 import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import com.syncleus.ferma.annotations.Property;
+import org.jboss.windup.graph.Property;
 
 @TypeValue(TestXmlMetaFacetModel.TYPE)
 public interface TestXmlMetaFacetModel extends WindupVertexFrame

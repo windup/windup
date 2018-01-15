@@ -93,7 +93,7 @@ public class CreateIssueSummaryDataRuleProvider extends AbstractRuleProvider
                     objectMapper.addMixIn(Object.class, PropertyFilterMixin.class);
 
                     // Filter out some tinkerpop specific properties
-                    SimpleBeanPropertyFilter simpleBeanPropertyFilter = SimpleBeanPropertyFilter.serializeAllExcept("graph", "steps", "traversal");
+                    SimpleBeanPropertyFilter simpleBeanPropertyFilter = SimpleBeanPropertyFilter.serializeAllExcept("graph", "steps", "traversal", "rawTraversal", "wrappedGraph");
                     FilterProvider filters = new SimpleFilterProvider().addFilter("graphFilter", simpleBeanPropertyFilter);
 
                     Map<String, List<ProblemSummary>> summariesBySeverity =

@@ -3,7 +3,7 @@ package org.jboss.windup.graph.model;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.SourceFileModel;
 
-import com.syncleus.ferma.annotations.Property;
+import org.jboss.windup.graph.Property;
 
 @TypeValue(LicenseModel.TYPE)
 public interface LicenseModel extends FileModel, SourceFileModel

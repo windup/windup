@@ -1,6 +1,6 @@
 package org.jboss.windup.graph.model;
 
-import com.syncleus.ferma.annotations.Property;
+import org.jboss.windup.graph.Property;
 
 @TypeValue(ApplicationModel.TYPE)
 public interface ApplicationModel extends WindupVertexFrame

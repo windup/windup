@@ -1,7 +1,7 @@
 package org.jboss.windup.graph.model;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
-import com.syncleus.ferma.annotations.Adjacency;
+import org.jboss.windup.graph.Adjacency;
 
 /**
  * Indicates that this {@link ArchiveModel} is actually a duplicate of another archive. This will be linked

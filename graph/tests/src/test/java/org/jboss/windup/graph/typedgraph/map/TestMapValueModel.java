@@ -3,7 +3,7 @@ package org.jboss.windup.graph.typedgraph.map;
 import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
-import com.syncleus.ferma.annotations.Property;
+import org.jboss.windup.graph.Property;
 
 @TypeValue("MapModelValue")
 public interface TestMapValueModel extends WindupVertexFrame

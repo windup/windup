@@ -13,6 +13,7 @@ public class TitanUtil
      */
     public static String titanifyRegex(String regex)
     {
-        return regex.replace("\\Q", "\"").replace("\\E", "\"").replace("?:", "");
+        //return regex.replace("\\Q", "\"").replace("\\E", "\"").replace("?:", "");
+        return regex;
     }
 }

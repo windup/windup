@@ -54,8 +54,7 @@ public class TestGremlinQueryOnlyRuleProvider extends AbstractRuleProvider
                         @Override
                         public boolean test(Object first, Object second) {
                             @SuppressWarnings("unchecked")
-                            List<String> firstString =(List<String>)first;
-                            boolean match =firstString.contains(second);
+                            boolean match =first.equals(second);
                             return match;
                         }
                     }, JavaMethodModel.TYPE));

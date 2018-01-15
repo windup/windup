@@ -5,7 +5,7 @@ import java.util.Map;
 import org.jboss.windup.graph.MapInAdjacentProperties;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
-import com.syncleus.ferma.annotations.Adjacency;
+import org.jboss.windup.graph.Adjacency;
 import org.jboss.windup.graph.model.TypeValue;
 
 /**

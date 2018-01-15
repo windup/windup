@@ -13,8 +13,8 @@ import org.jboss.windup.util.xml.LocationAwareXmlReader;
 import org.w3c.dom.Document;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
-import com.syncleus.ferma.annotations.Adjacency;
-import com.syncleus.ferma.annotations.Property;
+import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.Property;
 
 @TypeValue(XmlFileModel.TYPE)
 public interface XmlFileModel extends FileModel, SourceFileModel

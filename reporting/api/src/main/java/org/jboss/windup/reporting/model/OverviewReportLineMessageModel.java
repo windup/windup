@@ -7,8 +7,8 @@ import org.jboss.windup.graph.model.resource.FileModel;
 import org.ocpsoft.rewrite.config.Rule;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
-import com.syncleus.ferma.annotations.Adjacency;
-import com.syncleus.ferma.annotations.Property;
+import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.Property;
 
 /**
  * This classifies files and provides general background information about a specific {@link FileModel}. (For instance,

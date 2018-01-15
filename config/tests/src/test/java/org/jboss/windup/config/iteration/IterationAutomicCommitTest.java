@@ -6,8 +6,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import com.syncleus.ferma.Traversable;
-import com.syncleus.ferma.WrappedFramedGraph;
 import org.janusgraph.core.JanusGraph;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -27,8 +25,10 @@ import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
+import org.jboss.windup.graph.GraphListener;
 import org.jboss.windup.graph.GraphTypeManager;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
+import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.Service;
@@ -41,7 +41,8 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.param.DefaultParameterValueStore;
 import org.ocpsoft.rewrite.param.ParameterValueStore;
 
-import org.jboss.windup.graph.model.WindupVertexFrame;
+import com.syncleus.ferma.Traversable;
+import com.syncleus.ferma.WrappedFramedGraph;
 
 /**
  * This tests whether or not the automatic insertion of progress tracking and commit operations is handled correctly.
@@ -51,6 +52,9 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 @RunWith(Arquillian.class)
 public class IterationAutomicCommitTest
 {
+    @Inject
+    private GraphContextFactory factory;
+
     @Deployment
     @AddonDependencies({
                 @AddonDependency(name = "org.jboss.windup.config:windup-config"),
@@ -62,9 +66,6 @@ public class IterationAutomicCommitTest
     {
         return ShrinkWrap.create(AddonArchive.class).addBeansXML();
     }
-
-    @Inject
-    private GraphContextFactory factory;
 
     private DefaultEvaluationContext createEvalContext(GraphRewrite event)
     {
@@ -215,13 +216,11 @@ public class IterationAutomicCommitTest
             delegate.close();
         }
 
-
         @Override
         public <T extends WindupVertexFrame> Service<T> service(Class<T> clazz)
         {
             return delegate.service(clazz);
         }
-
 
         @Override
         public <T extends WindupVertexFrame> T getUnique(Class<T> clazz)
@@ -229,13 +228,11 @@ public class IterationAutomicCommitTest
             return delegate.getUnique(clazz);
         }
 
-
         @Override
         public <T extends WindupVertexFrame> Iterable<T> findAll(Class<T> clazz)
         {
             return delegate.findAll(clazz);
         }
-
 
         @Override
         public <T extends WindupVertexFrame> T create(Class<T> clazz)
@@ -248,6 +245,12 @@ public class IterationAutomicCommitTest
         {
             commitCount++;
             delegate.commit();
+        }
+
+        @Override
+        public void registerGraphListener(GraphListener listener)
+        {
+            delegate.registerGraphListener(listener);
         }
     }
 }

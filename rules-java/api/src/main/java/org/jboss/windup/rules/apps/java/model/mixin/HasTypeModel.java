@@ -1,9 +1,9 @@
 package org.jboss.windup.rules.apps.java.model.mixin;
 
-import com.syncleus.ferma.annotations.Adjacency;
+import org.jboss.windup.graph.Adjacency;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
-import com.syncleus.ferma.annotations.Property;
+import org.jboss.windup.graph.Property;
 import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 

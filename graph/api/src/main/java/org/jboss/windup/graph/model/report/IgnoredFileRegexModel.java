@@ -3,7 +3,7 @@ package org.jboss.windup.graph.model.report;
 import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
-import com.syncleus.ferma.annotations.Property;
+import org.jboss.windup.graph.Property;
 
 /**
  * Indicates which files within archives should be skipped by Windup.
