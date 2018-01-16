@@ -1,5 +1,6 @@
 package org.jboss.windup.rules.apps.javaee.service;
 
+import org.apache.tinkerpop.gremlin.process.traversal.P;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
@@ -38,7 +39,7 @@ public class SpringBeanService extends GraphService<SpringBeanModel>
     {
         GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversalSource(getGraphContext().getGraph()).V(application.getElement());
         pipeline.in(SpringBeanModel.APPLICATIONS);
-        pipeline.has(WindupVertexFrame.TYPE_PROP, Text.textContains(SpringBeanModel.TYPE));
+        pipeline.has(WindupVertexFrame.TYPE_PROP, P.eq(SpringBeanModel.TYPE));
 
         return new FramedVertexIterable<>(getGraphContext().getFramed(), pipeline.toList(), SpringBeanModel.class);
     }

@@ -21,7 +21,7 @@ public class GetPrettyPathForFileWithExtensions extends AbstractGetPrettyPathFor
 {
     public String getPath( JavaClassFileModel jcfm) {
         String filename = jcfm.getFileName();
-        String packageName = jcfm.getPackageName().replaceAll("\\.", File.separator);
+        String packageName = jcfm.getPackageName() == null ? "" : jcfm.getPackageName().replaceAll("\\.", File.separator);
         String qualifiedName = packageName + File.separator + filename;
         String reportFileName = qualifiedName;
         return reportFileName;
@@ -29,7 +29,7 @@ public class GetPrettyPathForFileWithExtensions extends AbstractGetPrettyPathFor
 
     public String getPath(JavaSourceFileModel javaSourceModel) {
         String filename = javaSourceModel.getFileName();
-        String packageName = javaSourceModel.getPackageName().replaceAll("\\.", File.separator);
+        String packageName = javaSourceModel.getPackageName() == null ? "" : javaSourceModel.getPackageName().replaceAll("\\.", File.separator);
         String qualifiedName = packageName + File.separator + filename;
         String reportFileName = qualifiedName;
         return reportFileName;

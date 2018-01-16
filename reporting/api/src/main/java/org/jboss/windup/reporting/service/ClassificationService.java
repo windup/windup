@@ -167,7 +167,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
         if (!includeZero)
         {
             pipeline.has(EffortReportModel.EFFORT, P.gt(0));
-            pipeline.has(WindupVertexFrame.TYPE_PROP, Text.textContains(ClassificationModel.TYPE));
+            pipeline.has(WindupVertexFrame.TYPE_PROP, P.eq(ClassificationModel.TYPE));
         }
         else
         {
@@ -182,7 +182,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
 
         boolean checkTags = !includeTags.isEmpty() || !excludeTags.isEmpty();
         FileService fileService = new FileService(getGraphContext());
-        for (Vertex v : pipeline.toList())
+        for (Vertex v : pipeline.toSet())
         {
             if (checkTags || !issueCategoryIDs.isEmpty())
             {

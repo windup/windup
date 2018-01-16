@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -31,6 +32,7 @@ import org.jboss.windup.reporting.model.IssueDisplayMode;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * This provides helper functions for finding and creating {@link InlineHintModel} instances within the graph.
@@ -86,7 +88,7 @@ public class InlineHintService extends GraphService<InlineHintModel>
         return hintEffort;
     }
 
-    private Collection<Vertex> getProjectAndChildren(ProjectModel projectModel)
+    private List<Vertex> getProjectAndChildren(ProjectModel projectModel)
     {
         ArrayList<Vertex> result = new ArrayList<>();
         result.add(projectModel.getElement());
@@ -104,7 +106,7 @@ public class InlineHintService extends GraphService<InlineHintModel>
      */
     public Iterable<InlineHintModel> getHintsForProject(ProjectModel projectModel, boolean recursive)
     {
-        final Iterable<Vertex> initialVertices;
+        final List<Vertex> initialVertices;
         if (recursive)
         {
             initialVertices = getProjectAndChildren(projectModel);
@@ -117,23 +119,16 @@ public class InlineHintService extends GraphService<InlineHintModel>
         return getInlineHintModels(initialVertices);
     }
 
-    public Iterable<InlineHintModel> getHintsForProjects(Iterable<ProjectModel> projectModels)
+    public Iterable<InlineHintModel> getHintsForProjects(List<ProjectModel> projectModels)
     {
-        Iterable<Vertex> projectVertexIterable = Iterables.transform(projectModels, new Function<ProjectModel, Vertex>()
-        {
-            @Override
-            public Vertex apply(ProjectModel input)
-            {
-                return input.getElement();
-            }
-        });
-        return getInlineHintModels(projectVertexIterable);
+        List<Vertex> projectVertexList = projectModels.stream().map(ProjectModel::getElement).collect(Collectors.toList());
+        return getInlineHintModels(projectVertexList);
     }
 
-    private Iterable<InlineHintModel> getInlineHintModels(Iterable<Vertex> initialProjectVertices) {
+    private Iterable<InlineHintModel> getInlineHintModels(List<Vertex> initialProjectVertices) {
         GraphTraversal<Vertex, Vertex> inlineHintPipeline = new GraphTraversalSource(getGraphContext().getGraph()).V(initialProjectVertices);
         inlineHintPipeline.out(ProjectModel.PROJECT_MODEL_TO_FILE);
-        inlineHintPipeline.in(InlineHintModel.FILE_MODEL).has(WindupVertexFrame.TYPE_PROP, Text.textContains(InlineHintModel.TYPE));
+        inlineHintPipeline.in(InlineHintModel.FILE_MODEL).has(WindupVertexFrame.TYPE_PROP, P.eq(InlineHintModel.TYPE));
 
         Set<InlineHintModel> results = new LinkedHashSet<>();
         for (Vertex v : inlineHintPipeline.toList())
@@ -225,7 +220,7 @@ public class InlineHintService extends GraphService<InlineHintModel>
         pipeline.select("hint");
 
         boolean checkTags = !includeTags.isEmpty() || !excludeTags.isEmpty();
-        for (Vertex v : pipeline.toList())
+        for (Vertex v : pipeline.toSet())
         {
             if (checkTags || !issueCategoryIDs.isEmpty())
             {
