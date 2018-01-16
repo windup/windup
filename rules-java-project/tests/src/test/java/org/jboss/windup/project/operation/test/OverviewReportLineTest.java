@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -127,9 +128,8 @@ public class OverviewReportLineTest
             processor.execute(windupConfiguration);
 
             GraphService<OverviewReportLineMessageModel> overviewLineService = new GraphService<>(context, OverviewReportLineMessageModel.class);
-            Iterable<OverviewReportLineMessageModel> allOverviewLines = overviewLineService.findAll();
-            long count = overviewLineService.count(allOverviewLines);
-            Assert.assertEquals(1, count);
+            List<OverviewReportLineMessageModel> allOverviewLines = overviewLineService.findAll();
+            Assert.assertEquals(1, allOverviewLines.size());
             for (OverviewReportLineMessageModel line : allOverviewLines)
             {
                 Assert.assertEquals("Just some test message", line.getMessage());

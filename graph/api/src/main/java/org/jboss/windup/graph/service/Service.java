@@ -26,11 +26,6 @@ public interface Service<FRAMETYPE extends WindupVertexFrame>
     void commit();
 
     /**
-     * Count the number of {@link WindupVertexFrame} instances of the type for which this {@link Service} operates.
-     */
-    long count(Iterable<?> obj);
-
-    /**
      * Create a new instance of the {@link WindupVertexFrame} type on which this {@link Service} operates. The returned instance will already be
      * persisted in the graph.
      */

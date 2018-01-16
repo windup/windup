@@ -3,7 +3,6 @@ package org.jboss.windup.graph.service;
 import com.syncleus.ferma.Traversable;
 import com.syncleus.ferma.VertexFrame;
 import org.apache.tinkerpop.gremlin.process.traversal.Traversal;
-import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.Transaction;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import java.util.ArrayList;
@@ -49,16 +48,6 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
         {
             getGraphContext().getGraph().tx().commit();
             return null;
-        });
-    }
-
-    @Override
-    public long count(final Iterable<?> obj)
-    {
-        return ExecutionStatistics.performBenchmarked("GraphService.count", () ->
-        {
-            GraphTraversalSource pipe = new GraphTraversalSource(getGraphContext().getGraph());
-            return pipe.V(obj).count().next();
         });
     }
 

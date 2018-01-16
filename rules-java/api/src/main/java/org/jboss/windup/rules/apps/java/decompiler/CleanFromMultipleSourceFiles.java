@@ -36,18 +36,10 @@ public class CleanFromMultipleSourceFiles extends GraphOperation
                 .V(graphContext.getQuery(JavaSourceFileModel.class).getRawTraversal());
         List<Object> javaSourceFileModelsObjects = pipeline.group()
                 .by(v -> {
-                    System.out.println("-------------------------------");
-                    System.out.println("1V: " + v + ": " + v.getClass());
-                    System.out.println("-------------------------------");
                     return groupByProjectModelFunction(graphContext, (Vertex)v);
                 })
                 .map(traverser -> {
-                    Traverser<Map<Object, Object>> vertexTraverser = traverser;
                     Map<Object, Object> map = (Map<Object, Object>) traverser.get();
-                    System.out.println("-------------------------------");
-                    System.out.println("2V: " + traverser + ": " + traverser.getClass());
-                    System.out.println("2V: " + vertexTraverser.get());
-                    System.out.println("-------------------------------");
                     List<JavaSourceFileModel> result = new ArrayList<>();
                     for (Map.Entry<Object, Object> entry : map.entrySet())
                     {
@@ -61,7 +53,6 @@ public class CleanFromMultipleSourceFiles extends GraphOperation
                 })
                 .unfold()
                 .toList();
-        System.out.println("Java source file models: " + javaSourceFileModelsObjects);
 
         List<JavaSourceFileModel> javaSourceFileModels = javaSourceFileModelsObjects.stream().map(o -> (JavaSourceFileModel)o).collect(Collectors.toList());
         returnVerticesToDelete(javaSourceFileModels)

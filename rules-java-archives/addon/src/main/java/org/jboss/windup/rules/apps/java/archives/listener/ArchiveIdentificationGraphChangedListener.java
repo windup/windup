@@ -58,7 +58,7 @@ public final class ArchiveIdentificationGraphChangedListener implements GraphLis
         String key = oldValue.key();
         if (ArchiveModel.ARCHIVE_NAME.equals(key))
         {
-            ArchiveModel archive = archiveService.frame(element);
+            ArchiveModel archive = archiveService.getById(element.id());
 
             setArchiveHashes(archive);
 
