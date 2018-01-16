@@ -71,7 +71,7 @@ public class FindFilesNotClassifiedOrHinted implements WindupFreeMarkerMethod
             FileModel f = context.getFramed().frameElement(v, FileModel.class);
 
             //we don't want to show our decompiled classes in the report
-            boolean wasNotGenerated = !f.isWindupGenerated();
+            boolean wasNotGenerated = f.isWindupGenerated() == null || !f.isWindupGenerated();
             boolean isOfInterestingType = f instanceof JavaSourceFileModel || f instanceof XmlFileModel || f instanceof JavaClassFileModel;
             //we don't want to list .class files that have their decompiled .java file with hints/classifications
             boolean withoutHiddenHints = true;

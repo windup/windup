@@ -65,8 +65,8 @@ public class FindFilesNotClassifiedOrHintedGremlinCriterion
                 return false;
             }
 
-            //2. we don't want to show our decompiled classes in the report
-            if (f.isWindupGenerated())
+            //2. we don't want to show our generated classes in the report
+            if (f.isWindupGenerated() != null && f.isWindupGenerated())
             {
                 return false;
             }

@@ -2,13 +2,16 @@ package org.jboss.windup.graph.service;
 
 import com.syncleus.ferma.Traversable;
 import com.syncleus.ferma.VertexFrame;
+import org.apache.tinkerpop.gremlin.process.traversal.P;
 import org.apache.tinkerpop.gremlin.process.traversal.Traversal;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__;
 import org.apache.tinkerpop.gremlin.structure.Transaction;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.janusgraph.core.attribute.Text;
@@ -20,8 +23,6 @@ import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.FilteredIterator;
 import org.jboss.windup.util.exception.WindupException;
 
-import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.has;
-import static org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.__.not;
 import static org.jboss.windup.util.Util.NL;
 
 public class GraphService<T extends WindupVertexFrame> implements Service<T>
@@ -131,9 +132,11 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     public Iterable<T> findAllWithoutProperty(final String key, final Object value)
     {
         return ExecutionStatistics.performBenchmarked("GraphService.findAllWithoutProperty(" + key + ")", () -> {
-            return (List<T>)findAllQuery().traverse(g -> {
-                return not(has(key, value));
-            }).toList(type);
+            //return (List<T>)findAllQuery().traverse(g -> g.hasNot(key).or(g.has(key, P.neq(value)))).toList(type);
+            return findAllQuery().getRawTraversal().not(__.has(key, P.eq(value))).toList()
+                    .stream()
+                    .map(v -> frame((Vertex)v))
+                    .collect(Collectors.toList());
         });
     }
 

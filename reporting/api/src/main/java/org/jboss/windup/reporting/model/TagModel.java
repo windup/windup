@@ -92,9 +92,6 @@ public interface TagModel extends WindupVertexFrame {
     @Property("color")
     void setColor(String color);
 
-    @JavaHandler(handler = Impl.class)
-    String toString();
-
     /**
      * Which tags this designates; for instance, "java-ee" designates "ejb" and "jms".
      */
@@ -132,12 +129,4 @@ public interface TagModel extends WindupVertexFrame {
     @MapInProperties(propertyPrefix = "t")
     void putAllTraits(Map<String, String> traits);
 
-
-    class Impl
-    {
-        public String toString(TagModel frame)
-        {
-            return "{"+frame.getName()+"}";
-        }
-    }
 }

@@ -78,16 +78,4 @@ public interface TechnologyUsageStatisticsModel extends TaggableModel
      */
     @Property(OCCURRENCE_COUNT)
     void setOccurrenceCount(int count);
-
-    @Override
-    @JavaHandler(handler = Impl.class)
-    String toString();
-
-    class Impl
-    {
-        public String toString(TechnologyUsageStatisticsModel frame)
-        {
-            return "TechUsageStats{"+ frame.getName() + " ("+frame.getOccurrenceCount()+"x) tags:["+frame.getTags()+"] Project:"+ frame.getProjectModel() +"}";
-        }
-    }
 }
