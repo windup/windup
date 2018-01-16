@@ -109,6 +109,7 @@ public class XSLTTransformationHandlerTest
         Assert.assertEquals("-test-result.html", xsltOperation.getExtension());
         Assert.assertEquals("testVariable_instance", xsltOperation.getVariableName());
         Assert.assertEquals("simpleXSLT.xsl", xsltOperation.getTemplate());
+        Assert.assertFalse(xsltOperation.isUseSaxon());
 
         Element secondXslt = xsltList.get(1);
         xsltOperation = parser.<XSLTTransformation> processElement(secondXslt);
@@ -117,6 +118,11 @@ public class XSLTTransformationHandlerTest
         Assert.assertEquals("-test-result.html", xsltOperation.getExtension());
         Assert.assertEquals(null, xsltOperation.getVariableName());
         Assert.assertEquals("simpleXSLT.xsl", xsltOperation.getTemplate());
+        Assert.assertFalse(xsltOperation.isUseSaxon());
+
+        Element fifthXslt = xsltList.get(4);
+        xsltOperation = parser.<XSLTTransformation> processElement(fifthXslt);
+        Assert.assertTrue(xsltOperation.isUseSaxon());
     }
 
     @Test

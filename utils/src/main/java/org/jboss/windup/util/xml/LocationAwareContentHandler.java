@@ -66,6 +66,8 @@ public class LocationAwareContentHandler extends DefaultHandler2
 		Element e = null;
 		if (localName != null && !"".equals(localName)) {
 			e = doc.createElementNS(uri, localName);
+			if (qName.contains(":"))
+				e.setPrefix(qName.substring(0, qName.indexOf(":")));
 		}
 		else {
 			e = doc.createElement(qName);

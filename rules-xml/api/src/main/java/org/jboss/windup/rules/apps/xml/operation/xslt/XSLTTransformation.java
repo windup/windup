@@ -8,7 +8,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,7 +17,6 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.URIResolver;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
@@ -44,6 +42,8 @@ import org.jboss.windup.util.exception.WindupException;
 import org.ocpsoft.rewrite.config.Rule;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
+import net.sf.saxon.BasicTransformerFactory;
+
 /**
  * Graph operation doing the xslt transformation using the .xslt source on the target xml object
  * 
@@ -59,7 +59,9 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
     private String template;
     private String extension;
     private int effort = 0;
+    private boolean useSaxon = false;
 
+    private TransformerFactory transformerFactory;
     private Transformer xsltTransformer;
     private Map<String, String> xsltParameters = new HashMap<>();
 
@@ -74,67 +76,11 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
     }
 
     /**
-     * Set the payload to the fileModel of the given instance even though the variable is not directly of it's type. This is mainly to simplify the
-     * creation of the rule, when the FileModel itself is not being iterated but just a model referencing it.
-     *
-     */
-    @Override
-    public void perform(GraphRewrite event, EvaluationContext context)
-    {
-        checkVariableName(event, context);
-        WindupVertexFrame payload = resolveVariable(event, getVariableName());
-        if (payload instanceof FileReferenceModel)
-        {
-            FileModel file = ((FileReferenceModel) payload).getFile();
-            perform(event, context, (XmlFileModel) file);
-        }
-        else
-        {
-            super.perform(event, context);
-        }
-
-    }
-
-    public void addXsltParameter(String key, String value)
-    {
-        xsltParameters.put(key, value);
-    }
-
-    /**
      * Create a new transformation for the given ref.
      */
     public static XSLTTransformationOf of(String variable)
     {
         return new XSLTTransformation(variable);
-    }
-
-    @Override
-    public XSLTTransformationDescription withDescription(String description)
-    {
-        this.description = description;
-        return this;
-    }
-
-    @Override
-    public XSLTTransformationLocation usingTemplate(String template)
-    {
-        this.template = template;
-        return this;
-    }
-
-    @Override
-    public XSLTTransformationLocation usingTemplate(String location, ClassLoader loader)
-    {
-        this.template = location;
-        this.contextClassLoader = loader;
-        return this;
-    }
-
-    @Override
-    public XSLTTransformationExtension withExtension(String extension)
-    {
-        this.extension = extension;
-        return this;
     }
 
     /**
@@ -170,6 +116,78 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
         return tansformation;
     }
 
+    /**
+     * Set the payload to the fileModel of the given instance even though the variable is not directly of it's type. This is mainly to simplify the
+     * creation of the rule, when the FileModel itself is not being iterated but just a model referencing it.
+     *
+     */
+    @Override
+    public void perform(GraphRewrite event, EvaluationContext context)
+    {
+        checkVariableName(event, context);
+        WindupVertexFrame payload = resolveVariable(event, getVariableName());
+        if (payload instanceof FileReferenceModel)
+        {
+            FileModel file = ((FileReferenceModel) payload).getFile();
+            perform(event, context, (XmlFileModel) file);
+        }
+        else
+        {
+            super.perform(event, context);
+        }
+
+    }
+
+    /**
+     * Indicates whether this is configured to use saxon
+     */
+    public boolean isUseSaxon() {
+        return useSaxon;
+    }
+
+    /**
+     * Switch to Saxon, instead of the builtin Java parser (Xalan).
+     */
+    public XSLTTransformation setUseSaxon(boolean useSaxon)
+    {
+        this.useSaxon = useSaxon;
+        return this;
+    }
+
+    public void addXsltParameter(String key, String value)
+    {
+        xsltParameters.put(key, value);
+    }
+
+    @Override
+    public XSLTTransformationDescription withDescription(String description)
+    {
+        this.description = description;
+        return this;
+    }
+
+    @Override
+    public XSLTTransformationLocation usingTemplate(String template)
+    {
+        this.template = template;
+        return this;
+    }
+
+    @Override
+    public XSLTTransformationLocation usingTemplate(String location, ClassLoader loader)
+    {
+        this.template = location;
+        this.contextClassLoader = loader;
+        return this;
+    }
+
+    @Override
+    public XSLTTransformationExtension withExtension(String extension)
+    {
+        this.extension = extension;
+        return this;
+    }
+
     private InputStream openInputStream(String pathString) throws IOException
     {
         if (this.contextClassLoader != null)
@@ -196,41 +214,43 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
         try (InputStream resourceAsStream = openInputStream(this.template))
         {
             final Source xsltSource = new StreamSource(resourceAsStream);
-            final TransformerFactory tf = TransformerFactory.newInstance();
-            tf.setURIResolver(new URIResolver()
+            if (useSaxon)
             {
-                @Override
-                public Source resolve(String href, String base) throws TransformerException
-                {
-                    /*
-                     * Fetch local only, for speed reasons.
-                     */
-                    if (StringUtils.contains(href, "http://"))
-                    {
-                        LOG.warning("Trying to fetch remote URL for XSLT.  This is not possible; for speed reasons: "
-                                    + href + ": " + base);
-                        return null;
-                    }
-                    try
-                    {
-                        InputStream inputStream = openInputStream(href);
-                        return new StreamSource(inputStream);
-                    } catch (IOException e)
-                    {
-                        throw new WindupException("Failed to load template: " + href + " due to: " + e.getMessage(), e);
-                    }
-                }
-            });
-            ClassLoaders.executeIn(TransformerFactory.class.getClassLoader(), new Callable<Object>()
+                /*
+                 * Alternatively, we could pass the Saxon class name to "TransformerFactory.newInstance()".
+                 *
+                 * However, the documentation indicates that it is faster to just instantiate the one that we want explicitly:
+                 * https://www.saxonica.com/html/documentation/using-xsl/embedding/jaxp-transformation.html
+                 */
+                this.transformerFactory = new BasicTransformerFactory();
+            }
+            else
             {
-
-                @Override
-                public Object call() throws Exception
+                this.transformerFactory = TransformerFactory.newInstance();
+            }
+            transformerFactory.setURIResolver((href, base) -> {
+                /*
+                 * Fetch local only, for speed reasons.
+                 */
+                if (StringUtils.contains(href, "http://"))
                 {
-                    xsltTransformer = tf.newTransformer(xsltSource);
+                    LOG.warning("Trying to fetch remote URL for XSLT.  This is not possible; for speed reasons: "
+                                + href + ": " + base);
                     return null;
                 }
-
+                try
+                {
+                    InputStream inputStream = openInputStream(href);
+                    return new StreamSource(inputStream);
+                }
+                catch (IOException e)
+                {
+                    throw new WindupException("Failed to load template: " + href + " due to: " + e.getMessage(), e);
+                }
+            });
+            ClassLoaders.executeIn(TransformerFactory.class.getClassLoader(), () -> {
+                xsltTransformer = transformerFactory.newTransformer(xsltSource);
+                return null;
             });
             if (xsltParameters != null)
             {
@@ -272,9 +292,9 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
 
         Source xmlSource = new DOMSource(payload.asDocument());
         Result xmlResult = new StreamResult(resultPath.toFile());
-
         try
         {
+
             xsltTransformer.transform(xmlSource, xmlResult);
             XsltTransformationModel transformation = transformationService.create();
             transformation.setDescription(description);
@@ -297,7 +317,6 @@ public class XSLTTransformation extends AbstractIterationOperation<XmlFileModel>
             linkModel.setDescription(description);
             linkModel.setLink(xsltTransformationService.getRelativeTransformedXSLTPath(payload).resolve(fileName).toString());
             payload.addLinkToTransformedFile(linkModel);
-            // classificationModel.addLink(linkModel);
         }
         catch (TransformerException e)
         {

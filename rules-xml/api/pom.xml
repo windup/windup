@@ -24,6 +24,11 @@
             <artifactId>asm-all</artifactId>
             <version>5.0.4</version>
         </dependency>
+        <dependency>
+            <groupId>net.sf.saxon</groupId>
+            <artifactId>Saxon-HE</artifactId>
+            <version>9.8.0-7</version>
+        </dependency>
 
         <!-- Addon Dependencies -->
         <dependency>

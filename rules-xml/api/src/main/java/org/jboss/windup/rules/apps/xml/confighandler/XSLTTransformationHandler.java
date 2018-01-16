@@ -43,6 +43,7 @@ public class XSLTTransformationHandler implements ElementHandler<XSLTTransformat
         String extension = $(element).attr("extension");
         String effort = $(element).attr("effort");
         String template = $(element).attr("template");
+        String useSaxonStr = $(element).attr("use-saxon");
         String of = $(element).attr("of");
 
         if (StringUtils.isBlank(description))
@@ -63,6 +64,19 @@ public class XSLTTransformationHandler implements ElementHandler<XSLTTransformat
         {
             XSLTParameter param = handlerManager.processElement(child);
             parameters.put(param.getKey(), param.getValue());
+        }
+
+        boolean useSaxon = false;
+        if (StringUtils.isNotBlank(useSaxonStr))
+        {
+            try
+            {
+                useSaxon = Boolean.parseBoolean(useSaxonStr);
+            }
+            catch (Exception e)
+            {
+                throw new WindupException("Could not parse use-saxon value: " + useSaxonStr + " due to: " + e.getMessage(), e);
+            }
         }
 
         Path pathContainingXml = handlerManager.getXmlInputRootPath();
@@ -88,20 +102,22 @@ public class XSLTTransformationHandler implements ElementHandler<XSLTTransformat
                 }
             }
 
-            XSLTTransformation transformation = (XSLTTransformation) XSLTTransformation
+            XSLTTransformation transformation = ((XSLTTransformation) XSLTTransformation
                         .usingFilesystem(fullPath)
                         .withDescription(description)
                         .withExtension(extension)
-                        .withParameters(parameters);
+                        .withParameters(parameters))
+                        .setUseSaxon(useSaxon);
 
             if (of != null)
             {
-                transformation = (XSLTTransformation) XSLTTransformation
+                transformation = ((XSLTTransformation) XSLTTransformation
                             .of(of)
                             .usingTemplate(fullPath)
                             .withDescription(description)
                             .withExtension(extension)
-                            .withParameters(parameters);
+                            .withParameters(parameters))
+                            .setUseSaxon(useSaxon);
                 return transformation;
             }
             return transformation.withEffort(effort == null ? 0 : Integer.valueOf(effort));
@@ -111,18 +127,23 @@ public class XSLTTransformationHandler implements ElementHandler<XSLTTransformat
             ClassLoader xmlFileAddonClassLoader = handlerManager.getAddonContainingInputXML().getClassLoader();
             if (of != null)
             {
-                return (XSLTTransformation) XSLTTransformation
+                return ((XSLTTransformation) XSLTTransformation
                             .of(of)
                             .usingTemplate(template, xmlFileAddonClassLoader)
                             .withDescription(description)
                             .withExtension(extension)
-                            .withParameters(parameters);
+                            .withParameters(parameters))
+                            .setUseSaxon(useSaxon);
             }
-            return (XSLTTransformation) XSLTTransformation
-                        .using(template, xmlFileAddonClassLoader)
-                        .withDescription(description)
-                        .withExtension(extension)
-                        .withParameters(parameters);
+            else
+            {
+                return ((XSLTTransformation) XSLTTransformation
+                            .using(template, xmlFileAddonClassLoader)
+                            .withDescription(description)
+                            .withExtension(extension)
+                            .withParameters(parameters))
+                            .setUseSaxon(useSaxon);
+            }
         }
     }
 }
