@@ -55,7 +55,7 @@ public interface WindupVertexListModel<T extends WindupVertexFrame> extends Wind
 
     class Impl<T extends WindupVertexFrame>
     {
-        public WindupVertexListModel<T> addAll(WindupVertexListModel<T> frame, List<T> items)
+        public WindupVertexListModel<T> addAll(WindupVertexListModel<T> frame, Iterable<T> items)
         {
             for (T item : items)
                 frame.addItem(item);
