@@ -364,7 +364,7 @@ public class GraphContextImpl implements GraphContext
 
         this.mutationListener = new GraphContextMutationListener();
         TraversalStrategies graphStrategies = TraversalStrategies.GlobalCache
-                    .getStrategies(Graph.class)
+                    .getStrategies(StandardJanusGraph.class)
                     .clone()
                     .addStrategies(EventStrategy.build().addListener(this.mutationListener).create());
         TraversalStrategies.GlobalCache.registerStrategies(StandardJanusGraph.class, graphStrategies);
