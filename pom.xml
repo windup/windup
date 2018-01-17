@@ -94,6 +94,7 @@
         <module>tests</module>
         <module>test-util</module>
         <module>server-provider-spi</module>
+        <module>module-spec</module>
         <module>bootstrap</module>
     </modules>
 

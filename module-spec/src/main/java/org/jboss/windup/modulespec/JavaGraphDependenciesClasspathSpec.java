@@ -1,4 +1,4 @@
-package org.jboss.windup.graph;
+package org.jboss.windup.modulespec;
 
 import java.util.HashSet;
 import java.util.Set;
