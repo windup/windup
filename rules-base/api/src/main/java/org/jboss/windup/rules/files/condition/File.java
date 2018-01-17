@@ -156,37 +156,6 @@ public class File extends ParameterizedGraphCondition
         fromInput(fileModels, event);
         fileNameInput(fileModels, event, store);
         allInput(fileModels, event, store);
-        LOG.info("File search: " + this.toString() + " returned: " + fileModels.size());
-        if (fileModels.isEmpty())
-        {
-            System.out.println("-------------------------------------------");
-            System.out.println("-------------------------------------------");
-
-            System.out.println("Zero models for: " + this.toString());
-            System.out.println("All models: ");
-//            new FileService(event.getGraphContext()).findAll().forEach(fileModel -> {
-//                System.out.println("\t" + fileModel.getFileName());
-//            });
-            event.getGraphContext().getGraph().traversal().V().toList()
-                    .forEach(v -> {
-                        String filename = "";
-                        final StringBuilder types = new StringBuilder();
-                        Iterator<VertexProperty<String>> typeProperties = v.properties(WindupFrame.TYPE_PROP);
-                        typeProperties.forEachRemaining(typeProperty -> {
-                            if (types.length() > 0)
-                                types.append("|" + typeProperty.value());
-                            else
-                                types.append(typeProperty.value());
-                        });
-
-                        if (v.property(FileModel.FILE_NAME).isPresent())
-                            filename = String.valueOf(v.property(FileModel.FILE_NAME).value());
-                        System.out.println("\tVertex: " + v + " filename: " + filename + ", types: " + types);
-                    });
-
-            System.out.println("-------------------------------------------");
-            System.out.println("-------------------------------------------");
-        }
 
         final List<FileLocationModel> results = new ArrayList<>();
         for (final FileModel fileModel : fileModels)
