@@ -2,13 +2,16 @@ package org.jboss.windup.graph.service;
 
 import java.nio.file.Paths;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.apache.tinkerpop.gremlin.structure.VertexProperty;
 import org.janusgraph.core.attribute.Text;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.TitanUtil;
 import org.jboss.windup.graph.frames.FramedVertexIterable;
+import org.jboss.windup.graph.model.WindupFrame;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.util.ExecutionStatistics;
@@ -60,7 +63,19 @@ public class FileService extends GraphService<FileModel>
                 .traversal()
                 .V()
                 .has(FileModel.FILE_NAME, Text.textRegex(filenameRegex))
-                .has(WindupVertexFrame.TYPE_PROP, FileModel.TYPE).toList();
+
+                // I'm not sure why this is necessary, but for some reason ".has(WindupFrame.TYPE_PROP, FileModel.TYPE)"
+                // seems to be unreliable with this query. Doing it with this filter seems to fix it.
+                .filter(traversal -> {
+                    Iterator<VertexProperty<String>> typeIterator = traversal.get().properties(WindupFrame.TYPE_PROP);
+                    while (typeIterator.hasNext()) {
+                        if (FileModel.TYPE.equals(typeIterator.next().value())) {
+                            return true;
+                        }
+                    }
+                    return false;
+                })
+                .toList();
         return new FramedVertexIterable<>(getGraphContext().getFramed(), vertices, FileModel.class);
     }
 
