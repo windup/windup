@@ -42,7 +42,7 @@ public class ArchivePackageNameIdentificationGraphChangedListener implements Gra
             if (ArchiveModel.ARCHIVE_NAME.equals(property.key()))
             {
                 ArchiveService archiveService = new ArchiveService(event.getGraphContext());
-                ArchiveModel archive = archiveService.frame(vertex);
+                ArchiveModel archive = archiveService.getById(vertex.id());
 
                 // archive has already been identified, just ignore it
                 if (archive instanceof IgnoredArchiveModel || archive instanceof IdentifiedArchiveModel)

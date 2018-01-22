@@ -36,14 +36,6 @@ public class FileMappingGraphChangedListener implements GraphListener
     {
         String key = oldValue.key();
 
-//        System.out.println("--------------------------------------------------");
-//        System.out.println("--------------------------------------------------");
-//        System.out.println("--------------------------------------------------");
-//        System.out.println("Vertex property changed!!!! - " + element + " key: " + key + " new value: " + setValue);
-//        System.out.println("--------------------------------------------------");
-//        System.out.println("--------------------------------------------------");
-//        System.out.println("--------------------------------------------------");
-
         if (!FileModel.FILE_PATH.equals(key))
             return;
 
