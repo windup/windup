@@ -3,24 +3,19 @@ package org.jboss.windup.rules.apps.java.decompiler;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
-import org.apache.tinkerpop.gremlin.process.traversal.Traverser;
-import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
+import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 
 /**
  * Removes all the duplicates of .java file within a projectModel. There may be multiple especially in cases where .class is bundled with .java files.
@@ -32,31 +27,22 @@ public class CleanFromMultipleSourceFiles extends GraphOperation
     public void perform(GraphRewrite event, EvaluationContext context)
     {
         final GraphContext graphContext = event.getGraphContext();
-        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversalSource(graphContext.getGraph())
-                .V(graphContext.getQuery(JavaSourceFileModel.class).getRawTraversal());
-        List<Object> javaSourceFileModelsObjects = pipeline.group()
-                .by(v -> {
-                    return groupByProjectModelFunction(graphContext, (Vertex)v);
-                })
-                .map(traverser -> {
-                    Map<Object, Object> map = (Map<Object, Object>) traverser.get();
-                    List<JavaSourceFileModel> result = new ArrayList<>();
-                    for (Map.Entry<Object, Object> entry : map.entrySet())
-                    {
-                        List<Vertex> vertices = (List<Vertex>)entry.getValue();
-                        for (Vertex vertex : vertices) {
-                            JavaSourceFileModel framed = graphContext.getFramed().frameElement(vertex, JavaSourceFileModel.class);
-                            result.add(framed);
-                        }
-                    }
-                    return result;
-                })
-                .unfold()
+
+        List<Map<Object, Object>> javaSourceGroups = graphContext.getQuery(JavaSourceFileModel.class).getRawTraversal()
+                .group()
+                .by(v -> groupByProjectModelFunction(graphContext, (Vertex)v))
                 .toList();
 
-        List<JavaSourceFileModel> javaSourceFileModels = javaSourceFileModelsObjects.stream().map(o -> (JavaSourceFileModel)o).collect(Collectors.toList());
-        returnVerticesToDelete(javaSourceFileModels)
-                .forEach(javaSourceFileModel -> javaSourceFileModel.remove());
+        final GraphService<JavaSourceFileModel> service = new GraphService<>(event.getGraphContext(), JavaSourceFileModel.class);
+        for (Map<Object, Object> duplicateLists : javaSourceGroups)
+        {
+            for (Object duplicateListObject : duplicateLists.values())
+            {
+                List<Vertex> duplicateList = (List<Vertex>)duplicateListObject;
+                List<JavaSourceFileModel> toDelete = returnVerticesToDelete(service, duplicateList);
+                toDelete.forEach(javaSourceFileModel -> javaSourceFileModel.remove());
+            }
+        }
     }
 
     // helping methods
@@ -72,18 +58,19 @@ public class CleanFromMultipleSourceFiles extends GraphOperation
         return projectModelID + "_" + packageName + "_" + javaModel.getFileName();
     }
 
-    private List<JavaSourceFileModel> returnVerticesToDelete(final Collection<JavaSourceFileModel> javaSourceFileModels)
+    private List<JavaSourceFileModel> returnVerticesToDelete(final GraphService<JavaSourceFileModel> service, final Collection<Vertex> javaSourceVertices)
     {
         boolean uniqueClassFound = false;
         List<JavaSourceFileModel> verticesToBeDeleted = new ArrayList<>();
-        if (javaSourceFileModels.isEmpty())
+        if (javaSourceVertices.isEmpty())
         {
             return Collections.emptyList();
         }
-        Iterator<JavaSourceFileModel> iterator = javaSourceFileModels.iterator();
+        Iterator<Vertex> iterator = javaSourceVertices.iterator();
         while (iterator.hasNext())
         {
-            JavaSourceFileModel javaModel = iterator.next();
+            Vertex v = iterator.next();
+            JavaSourceFileModel javaModel = service.frame(v);
             if (javaModel.isWindupGenerated() != null && javaModel.isWindupGenerated() && !uniqueClassFound)
             {
                 uniqueClassFound = true;
