@@ -5,7 +5,7 @@
     <properties>
         <version.forge>3.7.2.Final</version.forge>
         <version.furnace>2.26.2.Final</version.furnace>
-        <version.nexus.index>6.5-SNAPSHOT</version.nexus.index>
+        <version.nexus.index>7.0</version.nexus.index>
     </properties>
 
     <!-- Does NOT use windup-parent - this is a BOM. -->
