@@ -1,15 +1,13 @@
 package org.jboss.windup.rules.apps.java.model;
 
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.frames.modules.javahandler.JavaHandler;
-import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.jboss.windup.graph.Indexed;
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.resource.FileModel;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.frames.Adjacency;
-import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.Property;
 
 /**
  * This Model represents Java class files on disk (eg, /path/to/Foo.class). This does not represent Java source files (.java files). The class itself
@@ -93,30 +91,23 @@ public interface JavaClassFileModel extends FileModel
      * Returns the path of this file within the parent project (format suitable for reporting)
      * Uses fully qualified class name notation for classes
      */
-    @JavaHandler
-    String getPrettyPathWithinProject(boolean useFQNForClasses);
-
-    abstract class Impl extends FileModel.Impl implements JavaClassFileModel, JavaHandlerContext<Vertex>
+    default String getPrettyPathWithinProject(boolean useFQNForClasses)
     {
-        @Override
-        public String getPrettyPathWithinProject(boolean useFQNForClasses)
-        {
-            if (!useFQNForClasses) {
-                return this.getPrettyPathWithinProject();
-            }
-
-            JavaClassModel javaClass = getJavaClass();
-
-            String result;
-
-            if (javaClass == null) {
-                result = getPrettyPathWithinProject();
-            } else {
-                result = javaClass.getQualifiedName();
-            }
-
-            return result;
+        if (!useFQNForClasses) {
+            return this.getPrettyPathWithinProject();
         }
+
+        JavaClassModel javaClass = getJavaClass();
+
+        String result;
+
+        if (javaClass == null) {
+            result = getPrettyPathWithinProject();
+        } else {
+            result = javaClass.getQualifiedName();
+        }
+
+        return result;
     }
 
 }

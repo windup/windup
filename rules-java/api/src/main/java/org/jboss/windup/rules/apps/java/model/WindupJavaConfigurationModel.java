@@ -1,18 +1,17 @@
 package org.jboss.windup.rules.apps.java.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import com.syncleus.ferma.ElementFrame;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.report.IgnoredFileRegexModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.frames.Adjacency;
-import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.modules.javahandler.JavaHandler;
-import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.Property;
+import org.jboss.windup.graph.model.TypeValue;
 
 /**
  * Configuration options that are specific to the Java Ruleset
@@ -20,7 +19,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 @TypeValue(WindupJavaConfigurationModel.TYPE)
-public interface WindupJavaConfigurationModel extends WindupVertexFrame
+public interface WindupJavaConfigurationModel extends WindupVertexFrame, ElementFrame
 {
     String TYPE = "WindupJavaConfigurationModel";
     String SOURCE_MODE = "sourceMode";
@@ -40,7 +39,7 @@ public interface WindupJavaConfigurationModel extends WindupVertexFrame
      * Specifies which Java packages should be scanned by windup
      */
     @Adjacency(label = SCAN_JAVA_PACKAGES, direction = Direction.OUT)
-    Iterable<PackageModel> getScanJavaPackages();
+    List<PackageModel> getScanJavaPackages();
 
     /**
      * Add a file that will be ignored during the migration.
@@ -52,13 +51,24 @@ public interface WindupJavaConfigurationModel extends WindupVertexFrame
      * Gets the files that will be ignored during the migration.
      */
     @Adjacency(label = IGNORED_FILES, direction = Direction.OUT)
-    Iterable<IgnoredFileRegexModel> getIgnoredFileRegexes();
+    List<IgnoredFileRegexModel> getIgnoredFileRegexes();
 
     /**
      * Specifies which Java packages should be scanned by windup
      */
-    @JavaHandler
-    void setScanJavaPackageList(Iterable<String> pkgs);
+    default void setScanJavaPackageList(Iterable<String> pkgs)
+    {
+        setScanJavaPackages(new ArrayList<PackageModel>());
+        if (pkgs == null)
+            return;
+
+        for (String pkg : pkgs)
+        {
+            PackageModel m = getGraph().addFramedVertex(PackageModel.class);
+            m.setPackageName(pkg);
+            addScanJavaPackages(m);
+        }
+    }
 
     /**
      * Specifies which Java packages should be scanned by windup
@@ -75,8 +85,19 @@ public interface WindupJavaConfigurationModel extends WindupVertexFrame
     /**
      * What Java packages to exclude during scanning of applications.
      */
-    @JavaHandler
-    void setExcludeJavaPackageList(Iterable<String> pkgs);
+    default void setExcludeJavaPackageList(Iterable<String> pkgs)
+    {
+        setExcludeJavaPackages(new ArrayList<PackageModel>());
+        if (pkgs == null)
+            return;
+
+        for (String pkg : pkgs)
+        {
+            PackageModel m = getGraph().addFramedVertex(PackageModel.class);
+            m.setPackageName(pkg);
+            addExcludeJavaPackage(m);
+        }
+    }
 
     /**
      * What Java packages to exclude during scanning of applications.
@@ -88,7 +109,7 @@ public interface WindupJavaConfigurationModel extends WindupVertexFrame
      * What Java packages to exclude during scanning of applications.
      */
     @Adjacency(label = EXCLUDE_JAVA_PACKAGES, direction = Direction.OUT)
-    Iterable<PackageModel> getExcludeJavaPackages();
+    List<PackageModel> getExcludeJavaPackages();
 
     /**
      * Used to determine whether to scan as source or to do decompilation
@@ -118,7 +139,7 @@ public interface WindupJavaConfigurationModel extends WindupVertexFrame
      * These additional files will be used to aid in resolving references in the application.
      */
     @Adjacency(label = ADDITIONAL_CLASSPATHS, direction = Direction.OUT)
-    Iterable<FileModel> getAdditionalClasspaths();
+    List<FileModel> getAdditionalClasspaths();
 
     /**
      * These additional files will be used to aid in resolving references in the application.
@@ -126,40 +147,4 @@ public interface WindupJavaConfigurationModel extends WindupVertexFrame
     @Adjacency(label = ADDITIONAL_CLASSPATHS, direction = Direction.OUT)
     void addAdditionalClasspath(FileModel additionalClassPath);
 
-    abstract class Impl implements WindupJavaConfigurationModel, JavaHandlerContext<Vertex>
-    {
-        /**
-         * Converts the String's into a PackageModel's. TODO: WINDUP-135 Move this to Java Basic addon.
-         */
-        public void setScanJavaPackageList(Iterable<String> pkgs)
-        {
-            setScanJavaPackages(new ArrayList<PackageModel>());
-            if (pkgs == null)
-                return;
-
-            for (String pkg : pkgs)
-            {
-                PackageModel m = g().addVertex(null, PackageModel.class);
-                m.setPackageName(pkg);
-                addScanJavaPackages(m);
-            }
-        }
-
-        /**
-         * Converts the String's into a PackageModel's. TODO: WINDUP-135 Move this to Java Basic addon.
-         */
-        public void setExcludeJavaPackageList(Iterable<String> pkgs)
-        {
-            setExcludeJavaPackages(new ArrayList<PackageModel>());
-            if (pkgs == null)
-                return;
-
-            for (String pkg : pkgs)
-            {
-                PackageModel m = g().addVertex(null, PackageModel.class);
-                m.setPackageName(pkg);
-                addExcludeJavaPackage(m);
-            }
-        }
-    }
 }

@@ -1,11 +1,11 @@
 package org.jboss.windup.reporting.model;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.frames.Adjacency;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.jboss.windup.graph.Adjacency;
 
 import java.util.Map;
 import org.jboss.windup.graph.MapInAdjacentVertices;
+import org.jboss.windup.graph.model.TypeValue;
 
 /**
  * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>

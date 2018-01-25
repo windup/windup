@@ -1,9 +1,8 @@
 package org.jboss.windup.rules.apps.java.archives.model;
 
 import org.jboss.windup.graph.model.ArchiveModel;
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.resource.IgnoredFileModel;
-
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
  * Indicates that an Archive file can be ignored.

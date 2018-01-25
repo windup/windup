@@ -7,10 +7,7 @@ import java.util.Properties;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.SourceFileModel;
 
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.frames.modules.javahandler.JavaHandler;
-import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.model.TypeValue;
 
 /**
  * Represents a Java-style {@link Properties} file.
@@ -26,19 +23,14 @@ public interface PropertiesModel extends FileModel, SourceFileModel
     /**
      * Gets the contents of the file as a {@link Properties} object.
      */
-    @JavaHandler
-    public Properties getProperties() throws IOException;
-
-    abstract class Impl extends FileModel.Impl implements PropertiesModel, JavaHandlerContext<Vertex>
+    default Properties getProperties() throws IOException
     {
-        public Properties getProperties() throws IOException
+        try (InputStream is = this.asInputStream())
         {
-            try (InputStream is = this.asInputStream())
-            {
-                Properties props = new Properties();
-                props.load(is);
-                return props;
-            }
+            Properties props = new Properties();
+            props.load(is);
+            return props;
         }
     }
+
 }

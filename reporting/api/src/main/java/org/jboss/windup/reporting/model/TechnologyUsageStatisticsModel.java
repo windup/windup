@@ -1,20 +1,16 @@
 package org.jboss.windup.reporting.model;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.frames.Adjacency;
-import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.modules.javahandler.JavaHandler;
-import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.Property;
 
 import java.util.Date;
 
 import org.jboss.windup.graph.Indexed;
+import org.jboss.windup.graph.JavaHandler;
 import org.jboss.windup.graph.model.ProjectModel;
-import org.jboss.windup.graph.model.ProjectModel;
-import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.reporting.model.TaggableModel;
+import org.jboss.windup.graph.model.TypeValue;
 
 /**
  * Maps particular set of statistic items known in advance in the properties of this single model.
@@ -82,17 +78,4 @@ public interface TechnologyUsageStatisticsModel extends TaggableModel
      */
     @Property(OCCURRENCE_COUNT)
     void setOccurrenceCount(int count);
-
-    @Override
-    @JavaHandler
-    String toString();
-
-    abstract class Impl extends TaggableModel.Impl implements TechnologyUsageStatisticsModel, JavaHandlerContext<Vertex>
-    {
-        @Override
-        public String toString()
-        {
-            return "TechUsageStats{"+ getName() + " ("+getOccurrenceCount()+"x) tags:["+this.getTags()+"] Project:"+ getProjectModel() +"}";
-        }
-    }
 }

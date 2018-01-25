@@ -9,13 +9,13 @@ import org.jboss.windup.rules.apps.java.model.AbstractJavaSourceModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationTypeReferenceModel;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.frames.Adjacency;
-import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.modules.javahandler.JavaHandler;
-import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.Property;
+import org.jboss.windup.graph.model.TypeValue;
+
+import java.util.List;
 
 /**
  * This references a particular location within a Java source file, as well as the contents of that location.
@@ -33,7 +33,7 @@ public interface JavaTypeReferenceModel extends FileLocationModel
      * Contains the annotations linked to this item.
      */
     @Adjacency(label = JavaAnnotationTypeReferenceModel.ORIGINAL_ANNOTATED_TYPE, direction = Direction.IN)
-    Iterable<JavaAnnotationTypeReferenceModel> getAnnotations();
+    List<JavaAnnotationTypeReferenceModel> getAnnotations();
 
     /**
      * Overrides the default behavior to get the {@link JavaSourceFileModel} directly.
@@ -84,17 +84,11 @@ public interface JavaTypeReferenceModel extends FileLocationModel
     /**
      * Gets a human readable description of the location in the file
      */
-    @JavaHandler
-    String getDescription();
-
-    abstract class Impl implements JavaTypeReferenceModel, JavaHandlerContext<Vertex>
+    default String getDescription()
     {
-        @Override
-        public String getDescription()
-        {
-            TypeReferenceLocation location = getReferenceLocation();
+        TypeReferenceLocation location = getReferenceLocation();
 
-            return location.toReadablePrefix() + " '" + getResolvedSourceSnippit() + "'";
-        }
+        return location.toReadablePrefix() + " '" + getResolvedSourceSnippit() + "'";
     }
+
 }

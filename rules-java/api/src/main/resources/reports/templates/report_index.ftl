@@ -167,7 +167,7 @@
 
     <script type="text/javascript">
         function getWindupIssueSummaries() {
-            return WINDUP_ISSUE_SUMMARIES['${reportModel.projectModel.asVertex().id?c}'];
+            return WINDUP_ISSUE_SUMMARIES['${reportModel.projectModel.getElement().id()?c}'];
         }
     </script>
 

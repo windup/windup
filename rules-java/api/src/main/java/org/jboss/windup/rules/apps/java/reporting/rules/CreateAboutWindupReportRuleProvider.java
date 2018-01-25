@@ -102,7 +102,7 @@ public class CreateAboutWindupReportRuleProvider extends AbstractRuleProvider
         applicationReportModel.setTemplateType(TemplateType.FREEMARKER);
 
         Map<String, WindupVertexFrame> related = new HashMap<>();
-        AboutWindupModel aboutWindupModel = context.getFramed().addVertex(null, AboutWindupModel.class);
+        AboutWindupModel aboutWindupModel = context.getFramed().addFramedVertex(AboutWindupModel.class);
 
         aboutWindupModel.setWindupRuntimeVersion(addon.getId().getVersion().toString());
         related.put("windupAbout", aboutWindupModel);

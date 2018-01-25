@@ -85,9 +85,9 @@ public class XmlAndJavaParameterizedTest
     {
         try (GraphContext context = factory.create())
         {
-            ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
+            ProjectModel pm = context.getFramed().addFramedVertex(ProjectModel.class);
             pm.setName("Main Project");
-            FileModel inputPath = context.getFramed().addVertex(null, FileModel.class);
+            FileModel inputPath = context.getFramed().addFramedVertex(FileModel.class);
             inputPath.setFilePath("src/test/resources/parameterizationtests");
 
             Path outputPath = FileUtils.getTempDirectory().toPath().resolve("windup_" + RandomStringUtils.randomAlphanumeric(6));

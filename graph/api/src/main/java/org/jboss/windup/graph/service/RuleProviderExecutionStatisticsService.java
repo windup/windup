@@ -3,9 +3,10 @@ package org.jboss.windup.graph.service;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.performance.RuleProviderExecutionStatisticsModel;
 
-import com.tinkerpop.gremlin.java.GremlinPipeline;
-import com.tinkerpop.pipes.PipeFunction;
-import com.tinkerpop.pipes.util.structures.Pair;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * This service provides useful methods for dealing with {@link RuleProviderExecutionStatisticsModel} Vertices within
@@ -26,17 +27,11 @@ public class RuleProviderExecutionStatisticsService extends GraphService<RulePro
      */
     public Iterable<RuleProviderExecutionStatisticsModel> findAllOrderedByIndex()
     {
-        GremlinPipeline<RuleProviderExecutionStatisticsModel, RuleProviderExecutionStatisticsModel> pipeline = new GremlinPipeline<>(
-                    findAll());
-        pipeline.order(new PipeFunction<Pair<RuleProviderExecutionStatisticsModel, RuleProviderExecutionStatisticsModel>, Integer>()
-        {
-            @Override
-            public Integer compute(
-                        Pair<RuleProviderExecutionStatisticsModel, RuleProviderExecutionStatisticsModel> argument)
-            {
-                return argument.getA().getRuleIndex() - argument.getB().getRuleIndex();
-            }
-        });
-        return pipeline;
+        List<RuleProviderExecutionStatisticsModel> immutableList = findAll();
+        List<RuleProviderExecutionStatisticsModel> mutableList = new ArrayList<>(immutableList.size());
+        mutableList.addAll(immutableList);
+
+        Collections.sort(mutableList, Comparator.comparingInt(RuleProviderExecutionStatisticsModel::getRuleIndex));
+        return mutableList;
     }
 }

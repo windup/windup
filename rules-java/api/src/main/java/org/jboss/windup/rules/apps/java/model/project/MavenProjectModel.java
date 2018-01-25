@@ -4,10 +4,12 @@ import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.frames.Adjacency;
-import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.Property;
+import org.jboss.windup.graph.model.TypeValue;
+
+import java.util.List;
 
 /**
  * Extends ProjectModel to support maven specific properties.
@@ -42,13 +44,13 @@ public interface MavenProjectModel extends ProjectModel
      * Gets projects that have this POM set as their maven parent
      */
     @Adjacency(label = PARENT_MAVEN_POM, direction = Direction.IN)
-    Iterable<MavenProjectModel> getMavenChildProjects();
+    List<MavenProjectModel> getMavenChildProjects();
 
     /**
      * Contains the maven pom {@link XmlFileModel}.
      */
     @Adjacency(label = MAVEN_POM, direction = Direction.OUT)
-    Iterable<XmlFileModel> getMavenPom();
+    List<XmlFileModel> getMavenPom();
 
     /**
      * Contains the maven pom {@link XmlFileModel}.

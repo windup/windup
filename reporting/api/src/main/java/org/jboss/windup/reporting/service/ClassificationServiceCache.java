@@ -4,15 +4,15 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.apache.commons.collections.map.LRUMap;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.jboss.windup.config.AbstractRuleLifecycleListener;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.RuleLifecycleListener;
-import org.jboss.windup.config.Variables;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.ClassificationModel;
 
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
@@ -48,11 +48,11 @@ class ClassificationServiceCache extends AbstractRuleLifecycleListener implement
 
         if (linked == null)
         {
-            GremlinPipeline<Vertex, Vertex> existenceCheck = new GremlinPipeline<>(classificationModel.asVertex());
+            GraphTraversal<Vertex, Vertex> existenceCheck = new GraphTraversalSource(event.getGraphContext().getGraph()).V(classificationModel.getElement());
             existenceCheck.out(ClassificationModel.FILE_MODEL);
-            existenceCheck.retain(Collections.singleton(fileModel.asVertex()));
+            existenceCheck.filter(vertexTraverser -> vertexTraverser.get().equals(fileModel.getElement()));
 
-            linked = existenceCheck.iterator().hasNext();
+            linked = existenceCheck.hasNext();
             cacheClassificationFileModel(event, classificationModel, fileModel, linked);
         }
         return linked;
@@ -71,10 +71,10 @@ class ClassificationServiceCache extends AbstractRuleLifecycleListener implement
     {
         StringBuilder builder = new StringBuilder();
         if (classificationModel != null)
-            builder.append(classificationModel.asVertex().getId());
+            builder.append(classificationModel.getElement().id());
         builder.append("_");
         if (fileModel != null)
-            builder.append(fileModel.asVertex().getId());
+            builder.append(fileModel.getElement().id());
         return builder.toString();
     }
 

@@ -546,7 +546,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
 
             // Commit to ensure that we are using the latest data (otherwise data from other threads may not
             // be visible).
-            event.getGraphContext().getGraph().getBaseGraph().commit();
+            event.getGraphContext().commit();
 
             if (reference.getDecompiledSource() != null)
             {

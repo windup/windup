@@ -69,7 +69,7 @@ public class ProjectModelToApplicationIndexMethod implements WindupFreeMarkerMet
         if (index == null)
         {
             LOG.warning("Could not find an application index for project model: " + projectModel.getName() + " (Vertex ID: "
-                        + projectModel.asVertex().getId() + ")");
+                        + projectModel.getElement().id() + ")");
         }
         ExecutionStatistics.get().end(NAME);
         return index;

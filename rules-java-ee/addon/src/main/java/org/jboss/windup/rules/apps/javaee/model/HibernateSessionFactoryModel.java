@@ -1,18 +1,18 @@
 package org.jboss.windup.rules.apps.javaee.model;
 
+import java.util.List;
 import java.util.Map;
 
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.frames.modules.javahandler.JavaHandler;
-import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.jboss.windup.graph.JavaHandler;
 import org.jboss.windup.graph.MapInAdjacentProperties;
 import org.jboss.windup.graph.model.HasApplications;
 import org.jboss.windup.graph.model.ProjectModel;
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.frames.Adjacency;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.jboss.windup.graph.Adjacency;
 
 /**
  * Contains metadata related to Hibernate Session Factories.
@@ -37,7 +37,7 @@ public interface HibernateSessionFactoryModel extends WindupVertexFrame, HasAppl
      * Contains a link back to the {@link DataSourceModel}
      */
     @Adjacency(label = DATASOURCE, direction = Direction.OUT)
-    public Iterable<DataSourceModel> getDataSources();
+    List<DataSourceModel> getDataSources();
 
     /**
      * Contains a link back to the {@link DataSourceModel}
@@ -58,21 +58,14 @@ public interface HibernateSessionFactoryModel extends WindupVertexFrame, HasAppl
     void setSessionFactoryProperties(Map<String, String> map);
 
     @Override
-    @JavaHandler
+    @JavaHandler(handler = Impl.class)
     boolean belongsToProject(ProjectModel projectModel);
 
-    abstract class Impl implements HibernateSessionFactoryModel, HasApplications, JavaHandlerContext<Vertex>
+    class Impl
     {
-        @Override
-        public boolean belongsToProject(ProjectModel projectModel)
+        public boolean belongsToProject(HibernateSessionFactoryModel model, ProjectModel projectModel)
         {
-            return this.getHibernateConfigurationFileModel().belongsToProject(projectModel);
-        }
-
-        @Override
-        public Iterable<ProjectModel> getApplications()
-        {
-            return this.getHibernateConfigurationFileModel().getApplications();
+            return model.getHibernateConfigurationFileModel().belongsToProject(projectModel);
         }
     }
 }

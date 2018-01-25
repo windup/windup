@@ -24,7 +24,7 @@
         <#list reportModel.projectEdges as toProjectEdge>
             <#assign applicationIndex = projectModelToApplicationIndex(toProjectEdge.projectModel)/>
             <#if applicationIndex??>
-                <div class="navbar-collapse collapse navbar-responsive-collapse project-specific" data-project-id="${toProjectEdge.projectModel.asVertex().id?c}">
+                <div class="navbar-collapse collapse navbar-responsive-collapse project-specific" data-project-id="${toProjectEdge.projectModel.getElement().id()?c}">
                     <@renderNavbar applicationIndex/>
                 </div><!-- /.nav-collapse -->
             </#if>
@@ -39,7 +39,7 @@
                     <div class="main">Source Report</div>
 
                     <#list reportModel.projectEdges as toProjectEdge>
-                        <div class="path project-specific" data-project-id="${toProjectEdge.projectModel.asVertex().id?c}">
+                        <div class="path project-specific" data-project-id="${toProjectEdge.projectModel.getElement().id()?c}">
                             ${toProjectEdge.fullPath?html}
                         </div>
                     </#list>
@@ -159,7 +159,7 @@
             <#assign lineNumber = hintLine.lineNumber>
             <#assign hintClasses = hintLine.tags?join(" tag-","none")>
 
-            $("<a name='${hintLine.asVertex().getId()?c}' class='windup-file-location'></a><#t>
+            $("<a name='${hintLine.getElement().id()?c}' class='windup-file-location'></a><#t>
                 <div class='inline-source-comment green tag-${hintClasses}'><#t>
                     <#if hintLine.hint?has_content>
                         <div class='inline-comment'><#t>
@@ -214,7 +214,7 @@
 
         $(document).ready(function() {
             <#-- Leave a marker to indicate which project id is canonical -->
-            var defaultProjectID = ${reportModel.sourceFileModel.projectModel.rootProjectModel.asVertex().id?c};
+            var defaultProjectID = ${reportModel.sourceFileModel.projectModel.rootProjectModel.getElement().id()?c};
             var selectedProject = qs("project");
             if (!selectedProject)
                 selectedProject = defaultProjectID;

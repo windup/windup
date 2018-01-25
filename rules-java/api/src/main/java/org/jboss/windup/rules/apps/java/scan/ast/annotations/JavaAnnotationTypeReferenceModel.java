@@ -2,12 +2,12 @@ package org.jboss.windup.rules.apps.java.scan.ast.annotations;
 
 import java.util.Map;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.frames.Adjacency;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.jboss.windup.graph.Adjacency;
 import org.jboss.windup.graph.MapInAdjacentVertices;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.model.TypeValue;
 
 /**
  * Contains metadata related to Java annotations (eg, attribute values).

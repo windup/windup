@@ -97,7 +97,7 @@ public class ExecutionResultsImpl implements ExecutionResults
         InlineHintService hintService = new InlineHintService(graphContext);
         for (InlineHintModel hintModel : hintService.findAll())
         {
-            HintImpl hint = new HintImpl(hintModel.asVertex().getId());
+            HintImpl hint = new HintImpl(hintModel.getElement().id());
             hint.setFile(hintModel.getFile().asFile());
             hint.setTitle(hintModel.getTitle());
             hint.setHint(hintModel.getHint());
@@ -124,7 +124,7 @@ public class ExecutionResultsImpl implements ExecutionResults
         {
             for (FileModel fileModel : classificationModel.getFileModels())
             {
-                ClassificationImpl classification = new ClassificationImpl(classificationModel.asVertex().getId());
+                ClassificationImpl classification = new ClassificationImpl(classificationModel.getElement().id());
                 classification.setClassification(classificationModel.getClassification());
                 classification.setDescription(classificationModel.getDescription());
                 classification.setEffort(classificationModel.getEffort());

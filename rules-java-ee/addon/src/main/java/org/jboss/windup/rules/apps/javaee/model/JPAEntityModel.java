@@ -1,10 +1,12 @@
 package org.jboss.windup.rules.apps.javaee.model;
 
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.frames.Adjacency;
-import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.Property;
+import org.jboss.windup.graph.model.TypeValue;
+
+import java.util.List;
 
 /**
  * Contains metadata associated with a JPA Entity
@@ -71,5 +73,5 @@ public interface JPAEntityModel extends PersistenceEntityModel
      * Contains the jpa named query
      */
     @Adjacency(label = NAMED_QUERY, direction = Direction.OUT)
-    Iterable<JPANamedQueryModel> getNamedQueries();
+    List<JPANamedQueryModel> getNamedQueries();
 }

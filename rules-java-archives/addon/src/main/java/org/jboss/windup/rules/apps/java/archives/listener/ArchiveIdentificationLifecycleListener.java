@@ -25,6 +25,6 @@ public class ArchiveIdentificationLifecycleListener extends AbstractRuleLifecycl
     public void beforeExecution(GraphRewrite event)
     {
         LOG.info("Registered " + ArchiveIdentificationGraphChangedListener.class.getSimpleName() + " - archives will be identified automatically.");
-        event.getGraphContext().getGraph().addListener(new ArchiveIdentificationGraphChangedListener(event.getGraphContext(), identifier));
+        event.getGraphContext().registerGraphListener(new ArchiveIdentificationGraphChangedListener(event.getGraphContext(), identifier));
     }
 }

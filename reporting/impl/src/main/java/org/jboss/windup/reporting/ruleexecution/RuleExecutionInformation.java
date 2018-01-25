@@ -5,8 +5,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.jboss.forge.furnace.util.Assert;
 import org.ocpsoft.rewrite.config.Rule;
 
-import com.tinkerpop.blueprints.Edge;
-import com.tinkerpop.blueprints.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Edge;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 
 /**
  * Contains information about a {@link Rule} and how it was executed by Windup (whether it was evaluated and executed, whether it failed, and various

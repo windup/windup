@@ -1,17 +1,16 @@
 package org.jboss.windup.graph.model;
 
-import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.Property;
 
 @TypeValue(ApplicationModel.TYPE)
 public interface ApplicationModel extends WindupVertexFrame
 {
     String TYPE = "ApplicationModel";
-    public static final String PROPERTY_APPLICATION_NAME = "applicationName";
+    String PROPERTY_APPLICATION_NAME = "applicationName";
 
     @Property(PROPERTY_APPLICATION_NAME)
-    public void setApplicationName(String name);
+    void setApplicationName(String name);
 
     @Property(PROPERTY_APPLICATION_NAME)
-    public String getApplicationName();
+    String getApplicationName();
 }

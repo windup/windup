@@ -3,6 +3,7 @@ package org.jboss.windup.rules.apps.java.dependencyreport;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.syncleus.ferma.DefaultClassInitializer;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;

@@ -1,7 +1,7 @@
 package org.jboss.windup.reporting.service;
 
 
-import com.tinkerpop.blueprints.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import java.util.HashMap;
 import java.util.Map;
 

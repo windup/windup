@@ -1,17 +1,17 @@
 package org.jboss.windup.reporting.model;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.frames.Adjacency;
-import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.modules.javahandler.JavaHandler;
-import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.Property;
 import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.model.ToFileModelTransformable;
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.reporting.model.association.LinkableModel;
 import org.ocpsoft.rewrite.config.Rule;
+
+import java.util.List;
 
 import static org.jboss.windup.reporting.model.InlineHintModel.ISSUE_DISPLAY_MODE;
 
@@ -42,7 +42,7 @@ public interface ClassificationModel extends EffortReportModel, LinkableModel, T
      * Get the {@link FileModel} associated with this {@link ClassificationModel}.
      */
     @Adjacency(label = FILE_MODEL, direction = Direction.OUT)
-    Iterable<FileModel> getFileModels();
+    List<FileModel> getFileModels();
 
     /**
      * Set text of this {@link ClassificationModel}.
@@ -97,18 +97,11 @@ public interface ClassificationModel extends EffortReportModel, LinkableModel, T
     void addQuickfix(QuickfixModel quickfixModel);
 
     @Adjacency(label = QUICKFIXES, direction = Direction.OUT)
-    Iterable<QuickfixModel> getQuickfixes();
+    List<QuickfixModel> getQuickfixes();
 
-    @JavaHandler
     @Override
-    Iterable<FileModel> transformToFileModel();
-
-    abstract class Impl implements ClassificationModel, JavaHandlerContext<Vertex>
+    default List<FileModel> transformToFileModel()
     {
-        @Override
-        public Iterable<FileModel> transformToFileModel() {
-            return this.getFileModels();
-        }
+        return this.getFileModels();
     }
-
 }

@@ -1,6 +1,7 @@
 package org.jboss.windup.graph;
 
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -8,21 +9,35 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import com.syncleus.ferma.WrappedFramedGraph;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.apache.tinkerpop.gremlin.structure.Element;
+import org.apache.tinkerpop.gremlin.structure.Graph;
+import org.apache.tinkerpop.gremlin.structure.Property;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.blueprints.Element;
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.frames.FramedGraph;
-import com.tinkerpop.frames.modules.MethodHandler;
+import com.syncleus.ferma.ElementFrame;
+import com.syncleus.ferma.FramedGraph;
+import com.syncleus.ferma.framefactories.annotation.AbstractMethodHandler;
+import com.syncleus.ferma.framefactories.annotation.CachesReflection;
+import com.syncleus.ferma.framefactories.annotation.MethodHandler;
+
+import net.bytebuddy.dynamic.DynamicType;
+import net.bytebuddy.implementation.MethodDelegation;
+import net.bytebuddy.implementation.bind.annotation.AllArguments;
+import net.bytebuddy.implementation.bind.annotation.Origin;
+import net.bytebuddy.implementation.bind.annotation.RuntimeType;
+import net.bytebuddy.implementation.bind.annotation.This;
+import net.bytebuddy.matcher.ElementMatchers;
 
 /**
  * Handles @MapInAdjacentProperties Map<String,String>.
  *
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
-public class MapInAdjacentPropertiesHandler implements MethodHandler<MapInAdjacentProperties>
+public class MapInAdjacentPropertiesHandler extends AbstractMethodHandler implements MethodHandler
 {
     private static final Logger log = Logging.get(MapInAdjacentPropertiesHandler.class);
 
@@ -33,126 +48,154 @@ public class MapInAdjacentPropertiesHandler implements MethodHandler<MapInAdjace
     }
 
     @Override
-    public Map<String, Serializable> processElement(Object frame, Method method, Object[] arguments, MapInAdjacentProperties annotation,
-                FramedGraph<?> framedGraph, Element elm)
+    public <E> DynamicType.Builder<E> processMethod(final DynamicType.Builder<E> builder, final Method method, final Annotation annotation)
     {
-        if (!(elm instanceof Vertex))
-            throw new WindupException("@" + MapInAdjacentProperties.class.getSimpleName() + " is only supported on Vertex objects.");
-
         String methodName = method.getName();
         if (methodName.startsWith("get"))
-            return handleGetter((Vertex) elm, method, arguments, annotation, framedGraph);
-
-        if (methodName.startsWith("set"))
-        {
-            handleSetter((Vertex) elm, method, arguments, annotation, framedGraph);
-            return null;
-        }
+            return createInterceptor(builder, method);
+        else if (methodName.startsWith("set"))
+            return createInterceptor(builder, method);
 
         throw new WindupException("Only get* and set* method names are supported for @" + MapInAdjacentProperties.class.getSimpleName());
     }
 
-    /**
-     * Getter
-     */
-    private Map<String, Serializable> handleGetter(Vertex vertex, Method method, Object[] args,
-                MapInAdjacentProperties ann, FramedGraph<?> framedGraph)
+    private <E> DynamicType.Builder<E> createInterceptor(final DynamicType.Builder<E> builder, final Method method)
     {
-        if (args != null && args.length != 0)
-            throw new WindupException("Method must take no arguments: " + method.getName());
-
-        // Find the map vertex.
-        Map<String, Serializable> map = new HashMap<>();
-        Iterable<Vertex> verts = vertex.getVertices(Direction.OUT, ann.label());
-        Vertex mapVertex = null;
-        final Iterator<Vertex> it = verts.iterator();
-        if (!it.hasNext())
-        {
-            // No map yet.
-            return map;
-        }
-        else
-        {
-            mapVertex = it.next();
-            if (it.hasNext())
-            {
-                // Multiple vertices behind edges with given label.
-                log.warning("Found multiple vertices for a map, using only first one; for: " + method.getName());
-            }
-        }
-
-        Set<String> keys = mapVertex.getPropertyKeys();
-        for (String key : keys)
-        {
-            final Object val = mapVertex.getProperty(key);
-            if (!(val instanceof String))
-                log.warning("@InProperties is meant for Map<String,Serializable>, but the value was: " + val.getClass());
-            map.put(key, "" + val);
-        }
-        return map;
+        return builder.method(ElementMatchers.is(method))
+                    .intercept(MethodDelegation.to(MapInAdjacentPropertiesHandler.MapInAdjacentPropertiesInterceptor.class));
     }
 
-    /**
-     * Setter
-     */
-    private void handleSetter(Vertex vertex, Method method, Object[] args, MapInAdjacentProperties ann,
-                FramedGraph<?> framedGraph)
+    public static final class MapInAdjacentPropertiesInterceptor
     {
-        // Argument.
-        if (args == null || args.length != 1)
-            throw new WindupException("Method must take one argument: " + method.getName());
-
-        if (!(args[0] instanceof Map))
-            throw new WindupException("Argument of " + method.getName() + " must be a Map, but is: " + args[0].getClass());
-
-        @SuppressWarnings("unchecked")
-        Map<String, Serializable> map = (Map<String, Serializable>) args[0];
-
-        // Find or create the map vertex.
-        Iterable<Vertex> verts = vertex.getVertices(Direction.OUT, ann.label());
-        Vertex mapVertex = null;
-        final Iterator<Vertex> it = verts.iterator();
-        if (!it.hasNext())
+        @RuntimeType
+        public static Object execute(@This final ElementFrame thisFrame, @Origin final Method method, @RuntimeType @AllArguments final Object[] args)
         {
-            // No map vertex yet.
-            mapVertex = framedGraph.addVertex(null);
-            vertex.addEdge(ann.label(), mapVertex);
-        }
-        else
-        {
-            mapVertex = it.next();
-            if (it.hasNext())
+            final MapInAdjacentProperties ann = ((CachesReflection) thisFrame).getReflectionCache().getAnnotation(method, MapInAdjacentProperties.class);
+
+            Element thisElement = thisFrame.getElement();
+            if (!(thisElement instanceof Vertex))
+                throw new WindupException("Element is not of supported type, must be Vertex, but was: " + thisElement.getClass().getCanonicalName());
+            Vertex vertex = (Vertex) thisElement;
+
+            String methodName = method.getName();
+            if (methodName.startsWith("get"))
+                return handleGetter(vertex, method, args, ann);
+
+            if (methodName.startsWith("set"))
             {
-                // Multiple vertices behind edges with given label.
-                log.warning("Found multiple vertices for a map, using only first one; for: " + method.getName());
+                handleSetter(vertex, method, args, ann, thisFrame.getGraph());
+                return null;
             }
+
+            throw new WindupException("Only get* and set* method names are supported for @" + MapInAdjacentProperties.class.getSimpleName());
         }
 
-        // For all keys in the old map...
-        Set<String> keys = mapVertex.getPropertyKeys();
-        Set<String> mapKeys = map.keySet();
-        for (String key : keys)
+        /**
+         * Getter
+         */
+        private static Map<String, Serializable> handleGetter(Vertex vertex, Method method, Object[] args,
+                    MapInAdjacentProperties ann)
         {
-            final Object val = mapVertex.getProperty(key);
-            if (!(val instanceof String))
+            if (args != null && args.length != 0)
+                throw new WindupException("Method must take no arguments: " + method.getName());
+
+            // Find the map vertex.
+            Map<String, Serializable> map = new HashMap<>();
+            Iterator<Vertex> it = vertex.vertices(Direction.OUT, ann.label());
+            Vertex mapVertex = null;
+            if (!it.hasNext())
             {
-                log.warning("@InProperties is meant for Map<String,Serializable>, but the value was: " + val.getClass());
+                // No map yet.
+                return map;
             }
-            // ...either change to new value,
-            if (map.containsKey(key))
-            {
-                mapVertex.setProperty(key, map.get(key));
-                mapKeys.remove(key);
-            }
-            // or remove the old.
             else
-                mapVertex.removeProperty(key);
+            {
+                mapVertex = it.next();
+                if (it.hasNext())
+                {
+                    // Multiple vertices behind edges with given label.
+                    log.warning("Found multiple vertices for a map, using only first one; for: " + method.getName());
+                }
+            }
+
+            Set<String> keys = mapVertex.keys();
+            for (String key : keys)
+            {
+                final Property<Object> val = mapVertex.property(key);
+                if (!val.isPresent() || !(val.value() instanceof String))
+                    log.warning("@InProperties is meant for Map<String,Serializable>, but the value was: " + val.getClass());
+                map.put(key, "" + val.value());
+            }
+            return map;
         }
 
-        // Add the new entries.
-        for (String key : mapKeys)
+        /**
+         * Setter
+         */
+
+        private static void handleSetter(Vertex vertex, Method method, Object[] args, MapInAdjacentProperties ann,
+                    FramedGraph framedGraph)
         {
-            mapVertex.setProperty(key, map.get(key));
+            // Argument.
+            if (args == null || args.length != 1)
+                throw new WindupException("Method must take one argument: " + method.getName());
+
+            if (!(args[0] instanceof Map))
+                throw new WindupException("Argument of " + method.getName() + " must be a Map, but is: " + args[0].getClass());
+
+            if (!(framedGraph instanceof WrappedFramedGraph))
+                throw new WindupException("Framed graph must be an instance of " + WrappedFramedGraph.class.getCanonicalName());
+
+            Graph graph = (Graph)((WrappedFramedGraph) framedGraph).getBaseGraph();
+
+            @SuppressWarnings("unchecked")
+            Map<String, Serializable> map = (Map<String, Serializable>) args[0];
+
+            // Find or create the map vertex.
+            Iterator<Vertex> it = vertex.vertices(Direction.OUT, ann.label());
+            Vertex mapVertex = null;
+            if (!it.hasNext())
+            {
+                // No map vertex yet.
+                mapVertex = graph.addVertex();
+                vertex.addEdge(ann.label(), mapVertex);
+            }
+            else
+            {
+                mapVertex = it.next();
+                if (it.hasNext())
+                {
+                    // Multiple vertices behind edges with given label.
+                    log.warning("Found multiple vertices for a map, using only first one; for: " + method.getName());
+                }
+            }
+
+            // For all keys in the old map...
+            Set<String> keys = mapVertex.keys();
+            Set<String> mapKeys = map.keySet();
+            for (String key : keys)
+            {
+                final Property<Object> val = mapVertex.property(key);
+                if (!val.isPresent() || !(val.value() instanceof String))
+                {
+                    log.warning("@InProperties is meant for Map<String,Serializable>, but the value was: " + val.getClass());
+                }
+                // ...either change to new value,
+                if (map.containsKey(key))
+                {
+                    mapVertex.property(key, map.get(key));
+                    mapKeys.remove(key);
+                }
+                // or remove the old.
+                else
+                    val.remove();
+            }
+
+            // Add the new entries.
+            for (String key : mapKeys)
+            {
+                mapVertex.property(key, map.get(key));
+            }
         }
     }
 }

@@ -80,7 +80,7 @@ public class RuleProviderDisabledTest
             GraphRewrite event = new GraphRewrite(context);
             DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
-            WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
+            WindupConfigurationModel windupCfg = context.getFramed().addFramedVertex(WindupConfigurationModel.class);
             FileService fileModelService = new FileService(context);
             windupCfg.addInputPath(fileModelService.createByFilePath(folder.toAbsolutePath().toString()));
             windupCfg.setOnlineMode(false);

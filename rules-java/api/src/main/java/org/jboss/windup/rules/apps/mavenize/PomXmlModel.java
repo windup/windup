@@ -1,11 +1,13 @@
 package org.jboss.windup.rules.apps.mavenize;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.frames.Adjacency;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.rules.apps.java.archives.model.ArchiveCoordinateModel;
 import org.jboss.windup.rules.apps.java.model.project.MavenProjectModel;
+
+import java.util.List;
 
 
 /**
@@ -51,7 +53,7 @@ public interface PomXmlModel extends WindupVertexFrame
      * Contains the coordinates of all dependencies.
      */
     @Adjacency(label = DEPENDS, direction = Direction.OUT)
-    Iterable<ArchiveCoordinateModel> getDependencies();
+    List<ArchiveCoordinateModel> getDependencies();
 
     /**
      * Contains the coordinates of all dependencies.

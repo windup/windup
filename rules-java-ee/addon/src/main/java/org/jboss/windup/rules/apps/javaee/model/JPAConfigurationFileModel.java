@@ -1,11 +1,13 @@
 package org.jboss.windup.rules.apps.javaee.model;
 
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.frames.Adjacency;
-import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.Property;
+
+import java.util.List;
 
 /**
  * Contains a graph model representing a JPA configuration file within the application.
@@ -35,7 +37,7 @@ public interface JPAConfigurationFileModel extends XmlFileModel
      * Contains references to all {@link JPAPersistenceUnitModel}s defined within this file.
      */
     @Adjacency(label = JPA_PERSISTENCE_UNIT, direction = Direction.OUT)
-    Iterable<JPAPersistenceUnitModel> getPersistenceUnits();
+    List<JPAPersistenceUnitModel> getPersistenceUnits();
 
     /**
      * Contains references to all {@link JPAPersistenceUnitModel}s defined within this file.

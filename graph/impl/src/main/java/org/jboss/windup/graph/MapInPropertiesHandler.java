@@ -1,27 +1,40 @@
 package org.jboss.windup.graph;
 
 import java.io.Serializable;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import com.syncleus.ferma.framefactories.annotation.MethodHandler;
+import org.apache.tinkerpop.gremlin.structure.Element;
+import org.apache.tinkerpop.gremlin.structure.Property;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.jboss.windup.graph.model.WindupFrame;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.exception.WindupException;
 
-import com.tinkerpop.blueprints.Element;
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.frames.FramedGraph;
-import com.tinkerpop.frames.modules.MethodHandler;
+import com.syncleus.ferma.ElementFrame;
+import com.syncleus.ferma.framefactories.annotation.AbstractMethodHandler;
+import com.syncleus.ferma.framefactories.annotation.CachesReflection;
+
+import net.bytebuddy.dynamic.DynamicType;
+import net.bytebuddy.implementation.MethodDelegation;
+import net.bytebuddy.implementation.bind.annotation.AllArguments;
+import net.bytebuddy.implementation.bind.annotation.Origin;
+import net.bytebuddy.implementation.bind.annotation.RuntimeType;
+import net.bytebuddy.implementation.bind.annotation.This;
+import net.bytebuddy.matcher.ElementMatchers;
 
 /**
  * Handles @MapInProperties Map<String,String>.
  *
  * @author <a href="mailto:ozizka@redhat.com">Ondrej Zizka</a>
  */
-public class MapInPropertiesHandler implements MethodHandler<MapInProperties>
+public class MapInPropertiesHandler extends AbstractMethodHandler implements MethodHandler
 {
     private static final Logger log = Logging.get(MapInPropertiesHandler.class);
 
@@ -32,146 +45,185 @@ public class MapInPropertiesHandler implements MethodHandler<MapInProperties>
     }
 
     @Override
-    public Object processElement(Object frame, Method method, Object[] args, MapInProperties ann,
-                FramedGraph<?> framedGraph, Element elm)
+    public <E> DynamicType.Builder<E> processMethod(final DynamicType.Builder<E> builder, final Method method, final Annotation annotation)
     {
         String methodName = method.getName();
         if (methodName.startsWith("get"))
-            return handleGetter((Vertex) elm, method, args, ann, framedGraph);
+            return createInterceptor(builder, method);
 
         if (methodName.startsWith("set"))
-            return handleSetter((Vertex) elm, method, args, ann, framedGraph);
+            return createInterceptor(builder, method);
 
         if (methodName.startsWith("put"))
-            return handleAdder((Vertex) elm, method, args, ann, framedGraph);
+            return createInterceptor(builder, method);
 
         if (methodName.startsWith("putAll"))
-            return handleAdder((Vertex) elm, method, args, ann, framedGraph);
+            return createInterceptor(builder, method);
 
         throw new WindupException("Only get*, set*, and put* method names are supported for @"
                     + MapInProperties.class.getSimpleName() + ", found at: " + method.getName());
     }
 
-    /**
-     * Getter
-     */
-    private Map<String, Object> handleGetter(Vertex vertex, Method method, Object[] args, MapInProperties ann, FramedGraph<?> framedGraph)
+    private <E> DynamicType.Builder<E> createInterceptor(final DynamicType.Builder<E> builder, final Method method)
     {
-        if (args != null && args.length != 0)
-            throw new WindupException("Method must take zero arguments");
+        return builder.method(ElementMatchers.is(method)).intercept(MethodDelegation.to(MapInPropertiesHandler.MapInPropertiesInterceptor.class));
+    }
 
-        Map<String, Object> map = new HashMap<>();
-        String prefix = preparePrefix(ann);
-
-        Set<String> keys = vertex.getPropertyKeys();
-        for (String key : keys)
+    public static final class MapInPropertiesInterceptor
+    {
+        @RuntimeType
+        public static Object execute(@This final ElementFrame thisFrame, @Origin final Method method, @RuntimeType @AllArguments final Object[] args)
         {
-            if (!key.startsWith(prefix))
-                continue;
-            final Object val = vertex.getProperty(key);
-            if (!ann.propertyType().isAssignableFrom(val.getClass()))
+            final MapInProperties ann = ((CachesReflection) thisFrame).getReflectionCache().getAnnotation(method, MapInProperties.class);
+
+            Element thisElement = thisFrame.getElement();
+            if (!(thisElement instanceof Vertex))
+                throw new WindupException("Element is not of supported type, must be Vertex, but was: " + thisElement.getClass().getCanonicalName());
+            Vertex vertex = (Vertex) thisElement;
+
+            String methodName = method.getName();
+            if (methodName.startsWith("get"))
+                return handleGetter(vertex, method, args, ann);
+
+            if (methodName.startsWith("set"))
+                return handleSetter(vertex, method, args, ann);
+
+            if (methodName.startsWith("put"))
+                return handleAdder(vertex, method, args, ann);
+
+            if (methodName.startsWith("putAll"))
+                return handleAdder(vertex, method, args, ann);
+
+            throw new WindupException("Only get*, set*, and put* method names are supported for @"
+                        + MapInProperties.class.getSimpleName() + ", found at: " + method.getName());
+        }
+
+        /**
+         * Getter
+         */
+        private static Map<String, Object> handleGetter(Vertex vertex, Method method, Object[] args, MapInProperties ann)
+        {
+            if (args != null && args.length != 0)
+                throw new WindupException("Method must take zero arguments");
+
+            Map<String, Object> map = new HashMap<>();
+            String prefix = preparePrefix(ann);
+
+            Set<String> keys = vertex.keys();
+            for (String key : keys)
             {
-                log.warning("@InProperties is meant for Map<String,"+ann.propertyType().getName()+">, but the value was: " + val.getClass());
+                if (!key.startsWith(prefix))
+                    continue;
+
+                // Skip the type property
+                if (key.equals(WindupFrame.TYPE_PROP))
+                    continue;
+
+                final Property<Object> val = vertex.property(key);
+                if (!ann.propertyType().isAssignableFrom(val.value().getClass()))
+                {
+                    log.warning("@InProperties is meant for Map<String," + ann.propertyType().getName() + ">, but the value was: " + val.getClass());
+                }
+
+                map.put(key.substring(prefix.length()), val.value());
             }
 
-            map.put(key.substring(prefix.length()), val);
+            return map;
         }
 
-        return map;
-    }
-
-    /**
-     * Setter
-     */
-    private WindupVertexFrame handleSetter(Vertex vertex, Method method, Object[] args, MapInProperties ann, FramedGraph<?> framedGraph)
-    {
-        // Argument.
-        if (args == null || args.length != 1)
-            throw new WindupException("Method must take one argument: " + method.getName());
-
-        if (!(args[0] instanceof Map))
-            throw new WindupException("Argument of " + method.getName() + " must be a Map, but is: " + args[0].getClass());
-
-        @SuppressWarnings("unchecked")
-        Map<String, Object> map = (Map<String, Object>) args[0];
-
-        String prefix = preparePrefix(ann);
-
-        // For all keys in the old map...
-        Set<String> keys = vertex.getPropertyKeys();
-        Set<String> mapKeys = map.keySet();
-        for (String key : keys)
+        /**
+         * Setter
+         */
+        private static WindupVertexFrame handleSetter(Vertex vertex, Method method, Object[] args, MapInProperties ann)
         {
-            if (!key.startsWith(prefix))
-                continue;
-            if (WindupVertexFrame.TYPE_PROP.equals(key)) // Leave the "type" property.
-                continue;
-            if (key.startsWith("w:")) // Leave windup internal properties. TODO: Get the prefix from somewhere.
-                continue;
+            // Argument.
+            if (args == null || args.length != 1)
+                throw new WindupException("Method must take one argument: " + method.getName());
 
-            final Object val = vertex.getProperty(key);
-            if (!ann.propertyType().isAssignableFrom(val.getClass()))
+            if (!(args[0] instanceof Map))
+                throw new WindupException("Argument of " + method.getName() + " must be a Map, but is: " + args[0].getClass());
+
+            @SuppressWarnings("unchecked")
+            Map<String, Object> map = (Map<String, Object>) args[0];
+
+            String prefix = preparePrefix(ann);
+
+            // For all keys in the old map...
+            Set<String> keys = vertex.keys();
+            Set<String> mapKeys = map.keySet();
+            for (String key : keys)
             {
-                log.warning("@InProperties is meant for Map<String,"+ann.propertyType().getName()+">, but the value was: " + val.getClass());
+                if (!key.startsWith(prefix))
+                    continue;
+                if (WindupVertexFrame.TYPE_PROP.equals(key)) // Leave the "type" property.
+                    continue;
+                if (key.startsWith("w:")) // Leave windup internal properties. TODO: Get the prefix from somewhere.
+                    continue;
+
+                final Property<Object> val = vertex.property(key);
+                if (!ann.propertyType().isAssignableFrom(val.value().getClass()))
+                {
+                    log.warning("@InProperties is meant for Map<String," + ann.propertyType().getName() + ">, but the value was: " + val.getClass());
+                }
+                String subKey = key.substring(prefix.length());
+                // ...either change to new value,
+                if (map.containsKey(subKey))
+                {
+                    vertex.property(key, map.get(subKey));
+                    mapKeys.remove(subKey);
+                }
+                // or remove the old.
+                else
+                    vertex.property(key).remove();
             }
-            String subKey = key.substring(prefix.length());
-            // ...either change to new value,
-            if (map.containsKey(subKey))
+
+            // Add the new entries.
+            for (String key : mapKeys)
             {
-                vertex.setProperty(key, map.get(subKey));
-                mapKeys.remove(subKey);
+                vertex.property(prefix + key, map.get(key));
             }
-            // or remove the old.
-            else
-                vertex.removeProperty(key);
+
+            return null;
         }
 
-        // Add the new entries.
-        for (String key : mapKeys)
+        /**
+         * Adder
+         */
+        private static WindupVertexFrame handleAdder(Vertex vertex, Method method, Object[] args, MapInProperties ann)
         {
-            vertex.setProperty(prefix + key, map.get(key));
+            if (args != null && args.length != 1)
+                throw new WindupException("Method '" + method.getName() + "' must take one argument, not " + args.length);
+
+            if (args == null || args[0] == null || !(args[0] instanceof Map))
+                throw new WindupException("Method '" + method.getName() + "' must take one argument, " +
+                            "a Map<String, Serializable> to store in the vertex. Was: "
+                            + (args == null || args[0] == null ? "null" : args[0].getClass()));
+
+            String prefix = preparePrefix(ann);
+
+            // Argument.
+            @SuppressWarnings("unchecked")
+            Map<String, Serializable> map = (Map<String, Serializable>) args[0];
+
+            // Store all map entries in vertex'es properties.
+            for (Map.Entry<String, Serializable> entry : map.entrySet())
+            {
+                final Object value = entry.getValue();
+                if (!(value instanceof Serializable))
+                    throw new WindupException("The values of the map to store in a vertex must all implement Serializable.");
+                vertex.property(prefix + entry.getKey(), value);
+            }
+
+            return null;
         }
 
-        return null;
-    }
-
-    /**
-     * Adder
-     */
-    private WindupVertexFrame handleAdder(Vertex vertex, Method method, Object[] args, MapInProperties ann, FramedGraph<?> framedGraph)
-    {
-        if (args != null && args.length != 1)
-            throw new WindupException("Method '" + method.getName() + "' must take one argument, not " + args.length);
-
-        if (args == null || args[0] == null || !(args[0] instanceof Map))
-            throw new WindupException("Method '" + method.getName() + "' must take one argument, " +
-                    "a Map<String, Serializable> to store in the vertex. Was: " + (args == null || args[0] == null ? "null" : args[0].getClass()));
-
-
-        String prefix = preparePrefix(ann);
-
-        // Argument.
-        @SuppressWarnings("unchecked")
-        Map<String, Serializable> map = (Map<String, Serializable>) args[0];
-
-        // Store all map entries in vertex'es properties.
-        for (Map.Entry<String, Serializable> entry : map.entrySet())
+        /**
+         * Returns "<ann.propertyPrefix()><SEPAR>", for example, "map:".
+         */
+        private static String preparePrefix(MapInProperties ann)
         {
-            final Object value = entry.getValue();
-            if (! (value instanceof Serializable))
-                throw new WindupException("The values of the map to store in a vertex must all implement Serializable.");
-            vertex.setProperty(prefix + entry.getKey(), value);
+            return "".equals(ann.propertyPrefix()) ? "" : (ann.propertyPrefix() + MapInProperties.SEPAR);
         }
 
-        return null;
     }
-
-    /**
-     * Returns "<ann.propertyPrefix()><SEPAR>", for example, "map:".
-     */
-    private String preparePrefix(MapInProperties ann)
-    {
-        return "".equals(ann.propertyPrefix()) ? "" : (ann.propertyPrefix() + MapInProperties.SEPAR);
-    }
-
 }

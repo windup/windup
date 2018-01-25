@@ -5,7 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import com.tinkerpop.frames.Property;
+import org.jboss.windup.graph.Property;
 
 /**
  * Designates that a Framed method annotated with {@link Property} should be indexed by the underlying database

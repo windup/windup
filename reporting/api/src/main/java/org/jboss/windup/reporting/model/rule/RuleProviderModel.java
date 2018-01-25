@@ -1,10 +1,12 @@
 package org.jboss.windup.reporting.model.rule;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.frames.Adjacency;
-import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.Property;
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+
+import java.util.List;
 
 /**
  * Represents a rule provider
@@ -23,11 +25,11 @@ public interface RuleProviderModel extends WindupVertexFrame
     String getRuleProviderID();
 
     @Property(RULE_PROVIDER_ID)
-    RuleProviderModel setRuleProviderID(String id);
+    void setRuleProviderID(String id);
 
     @Adjacency(label = EXECUTED_RULES, direction = Direction.OUT)
-    Iterable<RuleExecutionModel> getRules();
+    List<RuleExecutionModel> getRules();
 
     @Adjacency(label = EXECUTED_RULES, direction = Direction.OUT)
-    RuleProviderModel addRule(RuleExecutionModel rule);
+    void addRule(RuleExecutionModel rule);
 }

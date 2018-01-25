@@ -1,8 +1,8 @@
 package org.jboss.windup.rules.apps.javaee.model;
 
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.rules.apps.java.model.AbstractJavaSourceModel;
 
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 /**
  * Represents a JSF template (either in jsp syntax or jsf syntax).

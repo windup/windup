@@ -70,9 +70,9 @@ public class TypeReferenceServiceTest
     {
         InlineHintService inlineHintService = new InlineHintService(context);
         TypeReferenceService typeReferenceService = new TypeReferenceService(context);
-        FileModel f1 = context.getFramed().addVertex(null, FileModel.class);
+        FileModel f1 = context.getFramed().addFramedVertex(FileModel.class);
         f1.setFilePath("/f1");
-        FileModel f2 = context.getFramed().addVertex(null, FileModel.class);
+        FileModel f2 = context.getFramed().addFramedVertex(FileModel.class);
         f2.setFilePath("/f2");
 
         JavaTypeReferenceModel t1 = typeReferenceService.createTypeReference(f1, TypeReferenceLocation.ANNOTATION, ResolutionStatus.RESOLVED, 0, 2,
@@ -90,7 +90,7 @@ public class TypeReferenceServiceTest
         b1b.setFile(f1);
         b1b.setFileLocationReference(t2);
 
-        ProjectModel projectModel = context.getFramed().addVertex(null, ProjectModel.class);
+        ProjectModel projectModel = context.getFramed().addFramedVertex(ProjectModel.class);
         projectModel.addFileModel(f1);
         projectModel.addFileModel(f2);
 

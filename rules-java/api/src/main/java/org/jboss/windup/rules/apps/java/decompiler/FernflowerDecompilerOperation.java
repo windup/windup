@@ -130,7 +130,7 @@ public class FernflowerDecompilerOperation extends AbstractDecompilerOperation
                 public void run()
                 {
                     LOG.info("Performing final commit for decompilation process!");
-                    event.getGraphContext().getGraph().getBaseGraph().commit();
+                    event.getGraphContext().commit();
                 }
             });
             executorService.shutdown();
@@ -217,7 +217,7 @@ public class FernflowerDecompilerOperation extends AbstractDecompilerOperation
                     if (atomicInteger.incrementAndGet() % 100 == 0)
                     {
                         LOG.info("Performing periodic commit (" + atomicInteger.get() + ")");
-                        event.getGraphContext().getGraph().getBaseGraph().commit();
+                        event.getGraphContext().commit();
                     }
                 }
 

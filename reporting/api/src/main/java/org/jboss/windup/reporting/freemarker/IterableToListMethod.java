@@ -1,15 +1,12 @@
 package org.jboss.windup.reporting.freemarker;
 
+import java.util.ArrayList;
 import java.util.List;
 
-import freemarker.template.DefaultIterableAdapter;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.util.ExecutionStatistics;
 
-import freemarker.ext.beans.BeanModel;
-
 import freemarker.template.TemplateModelException;
-import java.util.ArrayList;
 
 /**
  * Turns the given Iterable into a List.
@@ -31,18 +28,23 @@ public class IterableToListMethod implements WindupFreeMarkerMethod
     public Object exec(@SuppressWarnings("rawtypes") List arguments) throws TemplateModelException
     {
         ExecutionStatistics.get().begin(NAME);
-        if (arguments.size() != 1)
-            throw new TemplateModelException("Error, method expects one argument (an Iterable)");
+        try
+        {
+            if (arguments.size() != 1)
+                throw new TemplateModelException("Error, method expects one argument (an Iterable)");
 
-        ///BeanModel iterableModelArg = (BeanModel) arguments.get(0);
-        DefaultIterableAdapter argModel = (DefaultIterableAdapter) arguments.get(0);
+            Iterable iterable = FreeMarkerUtil.freemarkerWrapperToIterable(arguments.get(0));
+            if (iterable instanceof List)
+                return (List) iterable;
 
-
-        Iterable iterable = (Iterable) argModel.getAdaptedObject(Iterable.class);
-        List list = new ArrayList();
-        iterable.iterator().forEachRemaining(list::add);
-        ExecutionStatistics.get().end(NAME);
-        return list;
+            List list = new ArrayList();
+            iterable.iterator().forEachRemaining(list::add);
+            return list;
+        }
+        finally
+        {
+            ExecutionStatistics.get().end(NAME);
+        }
     }
 
     @Override

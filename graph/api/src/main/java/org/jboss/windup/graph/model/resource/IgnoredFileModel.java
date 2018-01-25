@@ -1,7 +1,7 @@
 package org.jboss.windup.graph.model.resource;
 
-import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.Property;
+import org.jboss.windup.graph.model.TypeValue;
 
 /**
  * Indicates that a given file was ignored by windup.

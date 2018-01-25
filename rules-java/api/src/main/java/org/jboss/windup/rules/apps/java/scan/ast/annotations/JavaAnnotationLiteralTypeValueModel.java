@@ -1,7 +1,7 @@
 package org.jboss.windup.rules.apps.java.scan.ast.annotations;
 
-import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.Property;
+import org.jboss.windup.graph.model.TypeValue;
 
 @TypeValue(JavaAnnotationLiteralTypeValueModel.TYPE)
 public interface JavaAnnotationLiteralTypeValueModel extends JavaAnnotationTypeValueModel

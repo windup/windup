@@ -1,7 +1,7 @@
 package org.jboss.windup.reporting.rules.generation.techreport;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.blueprints.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import freemarker.ext.beans.StringModel;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
@@ -9,6 +9,7 @@ import org.jboss.windup.reporting.freemarker.*;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -158,10 +159,11 @@ public class GetTechReportPunchCardStatsMethod implements WindupFreeMarkerMethod
         {
             int countSoFar = 0;
             // Get the TechnologyUsageStatisticsModel's for this ProjectModel
-            Iterable<Vertex> statsIt = app.asVertex().getVertices(Direction.IN, TechnologyUsageStatisticsModel.PROJECT_MODEL);
-            for (Vertex vStat : statsIt)
+            Iterator<Vertex> statsIt = app.getElement().vertices(Direction.IN, TechnologyUsageStatisticsModel.PROJECT_MODEL);
+            while (statsIt.hasNext())
             {
-                TechnologyUsageStatisticsModel stat = graphContext.getFramed().frame(vStat, TechnologyUsageStatisticsModel.class);
+                Vertex vStat = statsIt.next();
+                TechnologyUsageStatisticsModel stat = graphContext.getFramed().frameElement(vStat, TechnologyUsageStatisticsModel.class);
 
                 // Tags of this TechUsageStat covered by this sector Tag.
                 Set<String> techStatTagsCoveredByGivenTag = stat.getTags().stream().filter(name -> subTagsNames.contains(name))
@@ -171,7 +173,7 @@ public class GetTechReportPunchCardStatsMethod implements WindupFreeMarkerMethod
                 if (!techStatTagsCoveredByGivenTag.isEmpty())
                     countSoFar += stat.getOccurrenceCount();
             }
-            appToTechSectorCoveredTagsOccurrenceCount.put((Long) app.asVertex().getId(), countSoFar);
+            appToTechSectorCoveredTagsOccurrenceCount.put((Long) app.getElement().id(), countSoFar);
         }
         return appToTechSectorCoveredTagsOccurrenceCount;
     }

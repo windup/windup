@@ -4,11 +4,12 @@ import java.io.Closeable;
 import java.nio.file.Path;
 import java.util.Map;
 
-import org.jboss.windup.graph.frames.TypeAwareFramedGraphQuery;
+import com.syncleus.ferma.Traversable;
+import com.syncleus.ferma.WrappedFramedGraph;
+import org.apache.tinkerpop.gremlin.tinkergraph.structure.TinkerGraph;
 
-import com.thinkaurelius.titan.core.TitanGraph;
-import com.tinkerpop.blueprints.util.wrappers.event.EventGraph;
-import com.tinkerpop.frames.FramedGraph;
+import com.syncleus.ferma.FramedGraph;
+import org.janusgraph.core.JanusGraph;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.Service;
 
@@ -26,9 +27,9 @@ public interface GraphContext extends Closeable
     Path getGraphDirectory();
 
     /**
-     * Get the underlying {@link EventGraph}, which is itself a wrapper for a {@link TitanGraph}.
+     * Get the underlying {@link TinkerGraph}, which is itself a wrapper for a {@link JanusGraph}.
      */
-    EventGraph<TitanGraph> getGraph();
+    JanusGraph getGraph();
 
     /**
      * Creates new graph using the configuration. In case there was already a graph located in the specified path, it will be deleted.
@@ -40,12 +41,10 @@ public interface GraphContext extends Closeable
      */
     GraphContext load();
 
-
-
     /**
-     * Get the {@link FramedGraph} view of the underlying {@link EventGraph}.
+     * Get the {@link FramedGraph} view of the underlying {@link TinkerGraph}.
      */
-    FramedGraph<EventGraph<TitanGraph>> getFramed();
+    WrappedFramedGraph<JanusGraph> getFramed();
 
     /**
      * Get the {@link GraphTypeManager}.
@@ -55,7 +54,7 @@ public interface GraphContext extends Closeable
     /**
      * Get the {@link GraphModelScanner}.
      */
-    TypeAwareFramedGraphQuery getQuery();
+    Traversable<?, ?> getQuery(Class<? extends WindupVertexFrame> kind);
 
     /**
      * Clear all data from the graph (note: the graph must be closed for this operation to succeed)
@@ -76,8 +75,6 @@ public interface GraphContext extends Closeable
      * </pre>
      */
     Map<String, Object> getOptionMap();
-
-
 
     /**
      * Create a GraphService of given class.
@@ -103,4 +100,9 @@ public interface GraphContext extends Closeable
      * Commit the current transaction.
      */
     void commit();
+
+    /**
+     * Registers a graph listener to receive events upon graph changes.
+     */
+    void registerGraphListener(GraphListener listener);
 }

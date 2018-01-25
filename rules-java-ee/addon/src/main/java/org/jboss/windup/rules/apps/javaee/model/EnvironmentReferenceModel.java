@@ -1,12 +1,12 @@
 package org.jboss.windup.rules.apps.javaee.model;
 
 import org.jboss.windup.graph.Indexed;
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.frames.Adjacency;
-import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.Property;
 
 /**
  * Represents an &lt;env-ref&gt; entry from a Java deployment descriptor (eg, web.xml).
@@ -16,75 +16,74 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(EnvironmentReferenceModel.TYPE)
 public interface EnvironmentReferenceModel extends WindupVertexFrame
 {
-    public static final String TYPE = "EnvironmentReferenceModel";
+    String TYPE = "EnvironmentReferenceModel";
 
-    public static final String REFERENCE_TYPE = "referenceType";
-    public static final String NAME = "name"; // Keeping this without prefix to spare an extra index.
-    public static final String REFERENCE_ID = "referenceId";
-    public static final String TAG_TYPE = "referenceTagType";
+    String REFERENCE_TYPE = "referenceType";
+    String NAME = "name"; // Keeping this without prefix to spare an extra index.
+    String REFERENCE_ID = "referenceId";
+    String TAG_TYPE = "referenceTagType";
 
     /**
      * Contains the reference id
      */
     @Indexed
     @Property(REFERENCE_ID)
-    public String getReferenceId();
+    String getReferenceId();
 
     /**
      * Contains the reference id
      */
     @Property(REFERENCE_ID)
-    public void setReferenceId(String resourceId);
+    void setReferenceId(String resourceId);
 
     /**
      * The reference's name
      */
     @Indexed
     @Property(NAME)
-    public String getName();
+    String getName();
 
     /**
      * The reference's name
      */
     @Property(NAME)
-    public void setName(String name);
+    void setName(String name);
 
     /**
      * The reference type
      */
     @Property(REFERENCE_TYPE)
-    public String getReferenceType();
+    String getReferenceType();
 
     /**
      * The reference type
      */
     @Property(REFERENCE_TYPE)
-    public void setReferenceType(String referenceType);
+    void setReferenceType(String referenceType);
 
 
     /**
      * The reference type
      */
     @Property(TAG_TYPE)
-    public EnvironmentReferenceTagType getReferenceTagType();
+    EnvironmentReferenceTagType getReferenceTagType();
 
     /**
      * The reference type
      */
     @Property(TAG_TYPE)
-    public void setReferenceTagType(EnvironmentReferenceTagType referenceType);
+    void setReferenceTagType(EnvironmentReferenceTagType referenceType);
 
 
     /**
      * Contains the jndi location for this resource.
      */
     @Adjacency(label = JNDIResourceModel.TYPE, direction = Direction.OUT)
-    public JNDIResourceModel getJndiReference();
+    JNDIResourceModel getJndiReference();
 
     /**
      * Contains the jndi location for this resource.
      */
     @Adjacency(label = JNDIResourceModel.TYPE, direction = Direction.OUT)
-    public void setJndiReference(JNDIResourceModel jndiReference);
-
+    void setJndiReference(JNDIResourceModel jndiReference);
 }

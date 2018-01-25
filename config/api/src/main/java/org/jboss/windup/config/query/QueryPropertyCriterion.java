@@ -1,11 +1,13 @@
 package org.jboss.windup.config.query;
 
+import org.apache.tinkerpop.gremlin.process.traversal.P;
+import org.janusgraph.core.attribute.Text;
 import org.jboss.windup.config.GraphRewrite;
 
-import com.thinkaurelius.titan.core.attribute.Text;
-import com.thinkaurelius.titan.graphdb.query.TitanPredicate;
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
+
+import java.util.function.BiPredicate;
 
 class QueryPropertyCriterion implements QueryGremlinCriterion
 {
@@ -24,7 +26,7 @@ class QueryPropertyCriterion implements QueryGremlinCriterion
     }
 
     @Override
-    public void query(GraphRewrite event, GremlinPipeline<Vertex, Vertex> pipeline)
+    public void query(GraphRewrite event, GraphTraversal<?, Vertex> pipeline)
     {
         switch (searchType)
         {
@@ -32,16 +34,16 @@ class QueryPropertyCriterion implements QueryGremlinCriterion
             pipeline.has(this.propertyName, this.searchValue);
             break;
         case NOT_EQUALS:
-            pipeline.hasNot(this.propertyName, this.searchValue);
+            pipeline.has(this.propertyName, P.neq(this.searchValue));
             break;
         case CONTAINS_TOKEN:
-            pipeline.has(this.propertyName, Text.CONTAINS, searchValue);
+            pipeline.has(this.propertyName, Text.textContains(searchValue));
             break;
         case CONTAINS_ANY_TOKEN:
-            pipeline.has(this.propertyName, new MultipleValueTitanPredicate(), searchValue);
+            pipeline.has(this.propertyName, new P(new MultipleValueTitanPredicate(), searchValue));
             break;
         case REGEX:
-            pipeline.has(this.propertyName, Text.REGEX, searchValue);
+            pipeline.has(this.propertyName, Text.textRegex(searchValue));
             break;
         case DEFINED:
             pipeline.has(this.propertyName);
@@ -54,10 +56,10 @@ class QueryPropertyCriterion implements QueryGremlinCriterion
         }
     }
 
-    private final static class MultipleValueTitanPredicate implements TitanPredicate
+    private final static class MultipleValueTitanPredicate implements BiPredicate
     {
         @Override
-        public boolean evaluate(Object first, Object second)
+        public boolean test(Object first, Object second)
         {
             if (first == null)
                 return false;
@@ -82,35 +84,6 @@ class QueryPropertyCriterion implements QueryGremlinCriterion
             return false;
         }
 
-        @Override
-        public boolean isValidCondition(Object condition)
-        {
-            return condition != null && condition instanceof Iterable<?>;
-        }
-
-        @Override
-        public boolean isValidValueType(Class<?> clazz)
-        {
-            return Iterable.class.isAssignableFrom(clazz);
-        }
-
-        @Override
-        public boolean hasNegation()
-        {
-            return false;
-        }
-
-        @Override
-        public TitanPredicate negate()
-        {
-            throw new UnsupportedOperationException();
-        }
-
-        @Override
-        public boolean isQNF()
-        {
-            return true;
-        }
     }
 
     public String toString()

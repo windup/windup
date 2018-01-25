@@ -1,6 +1,6 @@
 package org.jboss.windup.graph.typedgraph.setinprops;
 
-import com.tinkerpop.blueprints.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import java.util.HashSet;
 import java.util.Set;
 import javax.inject.Inject;
@@ -46,12 +46,12 @@ public class SetInPropertiesTest
             Assert.assertNotNull(context);
             prepareFrame(context, TestSetPrefixModel.class);
 
-            Vertex v = new GraphService<>(context, TestSetPrefixModel.class).getUnique().asVertex();
+            Vertex v = new GraphService<>(context, TestSetPrefixModel.class).getUnique().getElement();
 
             Assert.assertNotNull(v);
-            TestSetPrefixModel framed = (TestSetPrefixModel) context.getFramed().frame(v, TestSetPrefixModel.class);
+            TestSetPrefixModel framed = (TestSetPrefixModel) context.getFramed().frameElement(v, TestSetPrefixModel.class);
             checkSet(framed.getSet(), 3);
-            context.getFramed().removeVertex(v);
+            v.remove();
         }
     }
 
@@ -63,19 +63,18 @@ public class SetInPropertiesTest
             TestSetBlankSubModel frame = prepareFrame(context, TestSetBlankSubModel.class);
             System.out.println("    Frame class: " + frame.getClass());
 
-            Vertex v = new GraphService<>(context, TestSetBlankSubModel.class).getUnique().asVertex();
+            Vertex v = new GraphService<>(context, TestSetBlankSubModel.class).getUnique().getElement();
             Assert.assertNotNull(v);
 
-            v.setProperty("still here", "does't matter");
-            TestSetBlankSubModel framed = (TestSetBlankSubModel) context.getFramed().frame(v, TestSetBlankSubModel.class);
+            v.property("still here", "does't matter");
+            TestSetBlankSubModel framed = (TestSetBlankSubModel) context.getFramed().frameElement(v, TestSetBlankSubModel.class);
             checkSet(framed.getSet(), 5);
-            framed.asVertex().getPropertyKeys();
-            for (String string : framed.asVertex().getPropertyKeys())
+            for (String string : framed.getElement().keys())
             {
                 System.out.println("    Key: " + string);
             }
             Assert.assertTrue(framed.getSet().contains("still here"));
-            context.getFramed().removeVertex(v);
+            v.remove();
         }
     }
 
@@ -87,7 +86,7 @@ public class SetInPropertiesTest
     {
         try (GraphContext context = contextFactory.create())
         {
-            TestSetBlankModel frame = context.getFramed().addVertex(null, TestSetBlankModel.class);
+            TestSetBlankModel frame = context.getFramed().addFramedVertex(TestSetBlankModel.class);
             Set<String> set = prepareSet();
             frame.addAllNaturalSet(set);
 
@@ -97,19 +96,18 @@ public class SetInPropertiesTest
                 System.out.println("      Implements: " + iface.getName());
             }
 
-            Vertex v = new GraphService<>(context, TestSetBlankModel.class).getUnique().asVertex();
+            Vertex v = new GraphService<>(context, TestSetBlankModel.class).getUnique().getElement();
 
             Assert.assertNotNull(v);
-            v.setProperty("still here", "does't matter");
-            TestSetBlankSubModel framed = (TestSetBlankSubModel) context.getFramed().frame(v, TestSetBlankSubModel.class);
+            v.property("still here", "does't matter");
+            TestSetBlankSubModel framed = (TestSetBlankSubModel) context.getFramed().frameElement(v, TestSetBlankSubModel.class);
             checkSet(framed.getSet(), 5);
-            framed.asVertex().getPropertyKeys();
-            for (String string : framed.asVertex().getPropertyKeys())
+            for (String string : framed.getElement().keys())
             {
                 System.out.println("    Key: " + string);
             }
             Assert.assertTrue(framed.getSet().contains("still here"));
-            context.getFramed().removeVertex(v);
+            v.remove();
         }
     }
 
@@ -123,7 +121,7 @@ public class SetInPropertiesTest
 
     private static <T extends TestSetPrefixModel> T prepareFrame(GraphContext context, Class<T> cls)
     {
-        T mainModel = context.getFramed().addVertex(null, cls);
+        T mainModel = context.getFramed().addFramedVertex(cls);
         Set<String> set = prepareSet();
         mainModel.setSet(set);
         return mainModel;

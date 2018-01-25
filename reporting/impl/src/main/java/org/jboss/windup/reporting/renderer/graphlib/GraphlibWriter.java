@@ -2,16 +2,18 @@ package org.jboss.windup.reporting.renderer.graphlib;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Iterator;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.jboss.windup.reporting.renderer.GraphDataSerializer;
 import org.jboss.windup.reporting.renderer.graphlib.GraphvizConstants.GraphvizDirection;
 import org.jboss.windup.reporting.renderer.graphlib.GraphvizConstants.GraphvizType;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.blueprints.Edge;
-import com.tinkerpop.blueprints.Graph;
-import com.tinkerpop.blueprints.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.apache.tinkerpop.gremlin.structure.Edge;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 
 public class GraphlibWriter implements GraphDataSerializer
 {
@@ -61,13 +63,15 @@ public class GraphlibWriter implements GraphDataSerializer
     private void writeGraphEdges(OutputStream os) throws IOException
     {
         int i = 0;
-        for (Edge edge : graph.getEdges())
+        Iterator<Edge> edgeIterator = graph.edges();
+        while (edgeIterator.hasNext())
         {
+            Edge edge = edgeIterator.next();
             String id = "" + i;
-            String source = "" + edge.getVertex(Direction.OUT).getId().toString();
-            String target = "" + edge.getVertex(Direction.IN).getId().toString();
+            String source = "" + edge.outVertex().id().toString();
+            String target = "" + edge.inVertex().id().toString();
 
-            String label = "" + edge.getProperty(edgeLabel);
+            String label = "" + edge.property(edgeLabel);
             if (edgeLabel != null)
             {
                 label = edgeLabel;
@@ -101,12 +105,13 @@ public class GraphlibWriter implements GraphDataSerializer
 
     private void writeGraphNodes(OutputStream os) throws IOException
     {
-
         // iterate the nodes.
-        for (Vertex vertex : graph.getVertices())
+        Iterator<Vertex> vertexIterator = graph.vertices();
+        while (vertexIterator.hasNext())
         {
-            String id = vertex.getId().toString();
-            String label = vertex.getProperty(vertexLabelProperty);
+            Vertex vertex = vertexIterator.next();
+            String id = vertex.id().toString();
+            String label = (String)vertex.property(vertexLabelProperty).value();
             writeGraphNode(id, label, os);
         }
 

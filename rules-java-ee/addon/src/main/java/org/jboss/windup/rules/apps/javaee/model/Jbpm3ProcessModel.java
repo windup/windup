@@ -1,13 +1,15 @@
 package org.jboss.windup.rules.apps.javaee.model;
 
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.resource.ReportResourceFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.frames.Adjacency;
-import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.Property;
+
+import java.util.List;
 
 /**
  * Contains information regarding a JBPM 3 process model.
@@ -96,7 +98,7 @@ public interface Jbpm3ProcessModel extends XmlFileModel
      * Contains a list of action handlers used by this process.
      */
     @Adjacency(label = ACTION_HANDLERS, direction = Direction.OUT)
-    Iterable<JavaClassModel> getActionHandlers();
+    List<JavaClassModel> getActionHandlers();
 
     /**
      * Contains a list of decision handlers used by this process.
@@ -108,6 +110,6 @@ public interface Jbpm3ProcessModel extends XmlFileModel
      * Contains a list of decision handlers used by this process.
      */
     @Adjacency(label = DECISION_HANDLERS, direction = Direction.OUT)
-    Iterable<JavaClassModel> getDecisionHandlers();
+    List<JavaClassModel> getDecisionHandlers();
 
 }

@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Set;
 
 import freemarker.template.Configuration;
+import freemarker.template.DefaultIterableAdapter;
+import freemarker.template.DefaultListAdapter;
 import freemarker.template.DefaultObjectWrapperBuilder;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.services.Imported;
@@ -146,5 +148,22 @@ public class FreeMarkerUtil
             }
         }
         return results;
+    }
+
+    public static Iterable freemarkerWrapperToIterable(Object object)
+    {
+        if (object == null)
+            throw new WindupException("Illegal null passed to freemarkerWrapperToIterable method!");
+
+        if (object instanceof DefaultListAdapter)
+        {
+            return (Iterable)((DefaultListAdapter) object).getWrappedObject();
+        } else if (object instanceof DefaultIterableAdapter)
+        {
+            return (Iterable)((DefaultIterableAdapter) object).getWrappedObject();
+        } else
+        {
+            throw new WindupException("Unrecognized type: " + object.getClass());
+        }
     }
 }

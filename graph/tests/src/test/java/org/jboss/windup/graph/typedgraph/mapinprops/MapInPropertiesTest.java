@@ -17,7 +17,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.tinkerpop.blueprints.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.jboss.windup.graph.service.GraphService;
 
 @RunWith(Arquillian.class)
@@ -48,11 +48,11 @@ public class MapInPropertiesTest
             Assert.assertNotNull(context);
             prepareFrame(context, TestMapPrefixModel.class);
 
-            Vertex v = new GraphService<>(context, TestMapPrefixModel.class).getUnique().asVertex();
+            Vertex v = new GraphService<>(context, TestMapPrefixModel.class).getUnique().getElement();
             Assert.assertNotNull(v);
-            TestMapPrefixModel framed = (TestMapPrefixModel) context.getFramed().frame(v, TestMapPrefixModel.class);
+            TestMapPrefixModel framed = (TestMapPrefixModel) context.getFramed().frameElement(v, TestMapPrefixModel.class);
             checkMap(framed.getMap(), 3);
-            context.getFramed().removeVertex(v);
+            v.remove();
         }
     }
 
@@ -64,19 +64,18 @@ public class MapInPropertiesTest
             TestMapBlankSubModel frame = prepareFrame(context, TestMapBlankSubModel.class);
             System.out.println("    Frame class: " + frame.getClass());
 
-            Vertex v = new GraphService<>(context, TestMapBlankSubModel.class).getUnique().asVertex();
+            Vertex v = new GraphService<>(context, TestMapBlankSubModel.class).getUnique().getElement();
             Assert.assertNotNull(v);
 
-            v.setProperty("preexistingKey", "still here");
-            TestMapBlankSubModel framed = (TestMapBlankSubModel) context.getFramed().frame(v, TestMapBlankSubModel.class);
-            checkMap(framed.getMap(), 5);
-            framed.asVertex().getPropertyKeys();
-            for (String string : framed.asVertex().getPropertyKeys())
+            v.property("preexistingKey", "still here");
+            TestMapBlankSubModel framed = (TestMapBlankSubModel) context.getFramed().frameElement(v, TestMapBlankSubModel.class);
+            checkMap(framed.getMap(), 4);
+            for (String string : framed.getElement().keys())
             {
                 System.out.println("    Key: " + string);
             }
             Assert.assertEquals("still here", framed.getMap().get("preexistingKey"));
-            context.getFramed().removeVertex(v);
+            v.remove();
         }
     }
 
@@ -88,7 +87,7 @@ public class MapInPropertiesTest
     {
         try (GraphContext context = contextFactory.create())
         {
-            TestMapBlankModel frame = context.getFramed().addVertex(null, TestMapBlankModel.class);
+            TestMapBlankModel frame = context.getFramed().addFramedVertex(TestMapBlankModel.class);
             Map<String, String> map = prepareMap();
             frame.putNaturalMap(map);
 
@@ -98,18 +97,19 @@ public class MapInPropertiesTest
                 System.out.println("      Implements: " + iface.getName());
             }
 
-            Vertex v = new GraphService<>(context, TestMapBlankModel.class).getUnique().asVertex();
+            Vertex v = new GraphService<>(context, TestMapBlankModel.class).getUnique().getElement();
             Assert.assertNotNull(v);
-            v.setProperty("preexistingKey", "still here");
-            TestMapBlankSubModel framed = (TestMapBlankSubModel) context.getFramed().frame(v, TestMapBlankSubModel.class);
-            checkMap(framed.getMap(), 5);
-            framed.asVertex().getPropertyKeys();
-            for (String string : framed.asVertex().getPropertyKeys())
+            v.property("preexistingKey", "still here");
+
+            Object uncastObject = context.getFramed().frameElement(v, TestMapBlankSubModel.class);
+            TestMapBlankSubModel framed = (TestMapBlankSubModel) uncastObject;
+            checkMap(framed.getMap(), 4);
+            for (String string : framed.getElement().keys())
             {
                 System.out.println("    Key: " + string);
             }
             Assert.assertEquals("still here", framed.getMap().get("preexistingKey"));
-            context.getFramed().removeVertex(v);
+            v.remove();
         }
     }
 
@@ -123,7 +123,7 @@ public class MapInPropertiesTest
 
     private static <T extends TestMapPrefixModel> T prepareFrame(GraphContext context, Class<T> cls)
     {
-        T mainModel = context.getFramed().addVertex(null, cls);
+        T mainModel = context.getFramed().addFramedVertex(cls);
         Map<String, String> map = prepareMap();
         mainModel.setMap(map);
         return mainModel;

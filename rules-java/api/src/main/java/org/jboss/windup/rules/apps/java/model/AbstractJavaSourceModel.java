@@ -4,10 +4,12 @@ import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.SourceFileModel;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.frames.Adjacency;
-import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.Property;
+import org.jboss.windup.graph.model.TypeValue;
+
+import java.util.List;
 
 /**
  *
@@ -62,7 +64,7 @@ public interface AbstractJavaSourceModel extends FileModel, SourceFileModel
      * Lists the {@link JavaClassModel}s contained within this source file
      */
     @Adjacency(label = JAVA_CLASS_MODEL, direction = Direction.OUT)
-    Iterable<JavaClassModel> getJavaClasses();
+    List<JavaClassModel> getJavaClasses();
 
     /**
      * Lists the {@link JavaClassModel}s contained within this source file

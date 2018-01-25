@@ -14,6 +14,7 @@ public class FileMappingLifecycleListener extends AbstractRuleLifecycleListener
     {
         LOG.info("Registered " + FileMappingGraphChangedListener.class.getSimpleName()
                     + "- Mapped file types will be added to the graph automatically.");
-        event.getGraphContext().getGraph().addListener(new FileMappingGraphChangedListener(event));
+
+        event.getGraphContext().registerGraphListener(new FileMappingGraphChangedListener(event));
     }
 }

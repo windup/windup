@@ -1,16 +1,16 @@
 package org.jboss.windup.rules.apps.javaee.model;
 
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.frames.modules.javahandler.JavaHandler;
-import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
+import org.jboss.windup.graph.JavaHandler;
 import org.jboss.windup.graph.model.HasApplications;
 import org.jboss.windup.graph.model.ProjectModel;
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.frames.Adjacency;
-import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.Property;
+
+import java.util.List;
 
 /**
  * Contains metadata associated with a JPA Named Query.
@@ -63,25 +63,25 @@ public interface JPANamedQueryModel extends WindupVertexFrame, HasApplications
     @Adjacency(label = JPAEntityModel.NAMED_QUERY, direction = Direction.IN)
     JPAEntityModel getJpaEntity();
 
-    @JavaHandler
+    @JavaHandler(handler = Impl.class)
     @Override
-    Iterable<ProjectModel> getApplications();
+    List<ProjectModel> getApplications();
 
-    @JavaHandler
+    @JavaHandler(handler = Impl.class)
     @Override
     boolean belongsToProject(ProjectModel projectModel);
 
 
-    abstract class Impl implements JPANamedQueryModel, JavaHandlerContext<Vertex>
+    class Impl
     {
-        public Iterable<ProjectModel> getApplications()
+        public List<ProjectModel> getApplications(JPANamedQueryModel model)
         {
-            return this.getJpaEntity().getApplications();
+            return model.getJpaEntity().getApplications();
         }
 
-        public boolean belongsToProject(ProjectModel projectModel)
+        public boolean belongsToProject(JPANamedQueryModel model, ProjectModel projectModel)
         {
-            return this.getJpaEntity().belongsToProject(projectModel);
+            return model.getJpaEntity().belongsToProject(projectModel);
         }
     }
 }

@@ -1,9 +1,10 @@
 package org.jboss.windup.graph.model;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.frames.Adjacency;
-import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.Property;
+
+import java.util.List;
 
 /**
  * Project dependency information. This has all of the information that would be required for a Maven dependency, but
@@ -12,11 +13,11 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(ProjectDependencyModel.TYPE)
 public interface ProjectDependencyModel extends WindupVertexFrame
 {
-    public static final String TYPE = "ProjectDependencyModel";
-    public static final String PROPERTY_SCOPE = "dependencyScope";
-    public static final String PROPERTY_CLASSIFIER = "dependencyClassifier";
-    public static final String PROPERTY_TYPE = "dependencyType";
-    public static final String FILE_LOCATION_REFERENCE = "fileLocationReference";
+    String TYPE = "ProjectDependencyModel";
+    String PROPERTY_SCOPE = "dependencyScope";
+    String PROPERTY_CLASSIFIER = "dependencyClassifier";
+    String PROPERTY_TYPE = "dependencyType";
+    String FILE_LOCATION_REFERENCE = "fileLocationReference";
 
     @Property(PROPERTY_SCOPE)
     void setScope(String scope);
@@ -59,11 +60,11 @@ public interface ProjectDependencyModel extends WindupVertexFrame
      * Sets the original {@link FileLocationModel} associated with this {@link ProjectDependencyModel}
      */
     @Adjacency(label = FILE_LOCATION_REFERENCE, direction = Direction.OUT)
-    void setFileLocationReference(Iterable<FileLocationModel> m);
+    void setFileLocationReference(List<FileLocationModel> m);
 
     /**
      * Gets the original{@link FileLocationModel} associated with this {@link ProjectDependencyModel}
      */
     @Adjacency(label = FILE_LOCATION_REFERENCE, direction = Direction.OUT)
-    Iterable<FileLocationModel> getFileLocationReference();
+    List<FileLocationModel> getFileLocationReference();
 }

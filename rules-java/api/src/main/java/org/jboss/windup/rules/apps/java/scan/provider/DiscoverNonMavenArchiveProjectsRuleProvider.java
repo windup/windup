@@ -2,8 +2,9 @@ package org.jboss.windup.rules.apps.java.scan.provider;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
-import com.tinkerpop.blueprints.Direction;
+import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.loader.RuleLoaderContext;
@@ -25,8 +26,7 @@ import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
- * Finds Archives that were not classified as Maven archives/projects, and adds some generic project information for
- * them.
+ * Finds Archives that were not classified as Maven archives/projects, and adds some generic project information for them.
  *
  * @author <a href="mailto:lincolnbaxter@gmail.com">Lincoln Baxter, III</a>
  */
@@ -47,7 +47,11 @@ public class DiscoverNonMavenArchiveProjectsRuleProvider extends AbstractRulePro
                     @Override
                     public boolean evaluate(GraphRewrite event, EvaluationContext context, ArchiveModel payload)
                     {
-                        return !(payload instanceof DuplicateArchiveModel) && payload.getProjectModel() == null;
+                        try {
+                            return !(payload instanceof DuplicateArchiveModel) && payload.getProjectModel() == null;
+                        } catch (NoSuchElementException e) {
+                            return true;
+                        }
                     }
                     @Override
                     public String toString()
@@ -68,9 +72,13 @@ public class DiscoverNonMavenArchiveProjectsRuleProvider extends AbstractRulePro
                             {
                                 hierarchy.add(parentArchive);
 
-                                // break once we have added a parent with a project model
-                                if (parentArchive.getProjectModel() != null)
-                                {
+                                try {
+                                    // break once we have added a parent with a project model
+                                    if (parentArchive.getProjectModel() != null)
+                                    {
+                                        break;
+                                    }
+                                } catch (NoSuchElementException e) {
                                     break;
                                 }
 
@@ -82,7 +90,12 @@ public class DiscoverNonMavenArchiveProjectsRuleProvider extends AbstractRulePro
                             ProjectService projectModelService = new ProjectService(event.getGraphContext());
                             for (ArchiveModel archiveModel : hierarchy)
                             {
-                                ProjectModel projectModel = archiveModel.getProjectModel();
+                                ProjectModel projectModel = null;
+                                try {
+                                    projectModel = archiveModel.getProjectModel();
+                                } catch (NoSuchElementException e) {
+                                    // just ignore it... just means that it is null
+                                }
 
                                 // create the project if we don't already have one
                                 if (projectModel == null)
@@ -111,7 +124,7 @@ public class DiscoverNonMavenArchiveProjectsRuleProvider extends AbstractRulePro
 
                                         // also, don't set the project model if one is already set
                                         // this uses the edge directly to improve performance
-                                        if (f.asVertex().getVertices(Direction.IN, ProjectModel.PROJECT_MODEL_TO_FILE).iterator().hasNext())
+                                        if (f.getElement().vertices(Direction.IN, ProjectModel.PROJECT_MODEL_TO_FILE).hasNext())
                                             continue;
 
                                         // only set it if it has not already been set

@@ -136,7 +136,7 @@ public class MavenizeRuleProviderTest
         FileUtils.deleteDirectory(outputPath.toFile());
         Files.createDirectories(outputPath);
 
-        grCtx.getGraph().getBaseGraph().commit();
+        grCtx.commit();
 
         // Configure Windup core
         final WindupConfiguration processorConfig = new WindupConfiguration();

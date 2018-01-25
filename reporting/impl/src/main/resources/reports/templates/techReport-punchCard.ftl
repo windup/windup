@@ -111,7 +111,7 @@
                         <#if appProject.projectType! != "VIRTUAL" >
                         <tr class="app">
                             <td class="name">
-                                <#assign boxReport = reportModel.appProjectIdToReportMap[appProject.asVertex().id?c] > <#-- TechReportModel -->
+                                <#assign boxReport = reportModel.appProjectIdToReportMap[appProject.getElement().id()?c] > <#-- TechReportModel -->
                                 <a href="${boxReport.reportFilename}">
                                     <#-- For virtual apps, use name rather than the file name. -->
                                     ${ (appProject.projectType! = "VIRTUAL" && appProject.name??)?then(
@@ -123,12 +123,12 @@
                                 <#list sectorTag.designatedTags as boxTag>
                                     <#if !isTagUnderTag(boxTag, placeTagsParent) >
                                         <#--
-                                        <#assign count = (stats.countsOfTagsInApps?api.get(appProject.asVertex().id)[boxTag.name])!false />
+                                        <#assign count = (stats.countsOfTagsInApps?api.get(appProject.getElement().id())[boxTag.name])!false />
                                         <#assign maxForThisBox = stats.maximumsPerTag[boxTag.name] />
                                         -->
 
                                         <#-- 2nd way - using the 4 layer map -->
-                                        <#assign statsForThisBox = sortedStatsMatrix.get("", boxTag.name, appProject.asVertex().id?long)! />
+                                        <#assign statsForThisBox = sortedStatsMatrix.get("", boxTag.name, appProject.getElement().id()?long)! />
                                         <#assign count = (statsForThisBox[""].occurrenceCount)!false />
                                         <#assign maxForThisBox   = (sortedStatsMatrix.getMaxForBox(boxTag.name))!false />
                                         <#assign isBooleanTech = maxForThisBox?is_number && maxForThisBox == 0 />

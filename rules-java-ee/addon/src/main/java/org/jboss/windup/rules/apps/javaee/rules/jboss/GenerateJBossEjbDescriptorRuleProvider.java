@@ -80,7 +80,6 @@ public class GenerateJBossEjbDescriptorRuleProvider extends AbstractRuleProvider
 
     private void createReport(GraphRewrite event, EvaluationContext evaluationContext, GraphContext context, ProjectModel projectModel)
     {
-        ClassificationService classificationService = new ClassificationService(context);
         VendorSpecificationExtensionService vendorSpecificService = new VendorSpecificationExtensionService(context);
         LinkService linkService = new LinkService(context);
 

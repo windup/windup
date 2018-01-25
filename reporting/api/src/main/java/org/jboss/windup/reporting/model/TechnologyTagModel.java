@@ -1,13 +1,15 @@
 package org.jboss.windup.reporting.model;
 
 import org.jboss.windup.graph.Indexed;
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.frames.Adjacency;
-import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.Property;
+
+import java.util.List;
 
 /**
  * Represents a technology that is used or implemented by a particular file. For example, this might indicate that a file uses "EJB" or that the file
@@ -79,5 +81,5 @@ public interface TechnologyTagModel extends WindupVertexFrame
      * References the {@link FileModel}s that use this technology.
      */
     @Adjacency(label = TECH_TAG_TO_FILE_MODEL, direction = Direction.OUT)
-    Iterable<FileModel> getFileModels();
+    List<FileModel> getFileModels();
 }

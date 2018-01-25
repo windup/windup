@@ -1,17 +1,18 @@
 package org.jboss.windup.reporting.model;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.frames.Adjacency;
-import com.tinkerpop.frames.modules.javahandler.JavaHandler;
-import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.jboss.windup.graph.Adjacency;
+
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
+import org.jboss.windup.graph.JavaHandler;
 import org.jboss.windup.graph.MapInProperties;
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
-import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.Property;
 
 /**
  * Holds information about a tag, as per the definition from tags.xml files.
@@ -25,17 +26,17 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
  * @see TaggableModel
  */
 @TypeValue(TagModel.TYPE)
-public interface TagModel extends WindupVertexFrame
-{
+public interface TagModel extends WindupVertexFrame {
     String TYPE = "TagModel";
-    static final String PROP_NAME = "name";
-    static final String EDGE_DESIGNATES = "designates";
+    String PROP_NAME = "name";
+    String EDGE_DESIGNATES = "designates";
 
     /**
      * Tag name (ID), preferably kebab-style, e.g "java-ee-6".
      */
     @Property(PROP_NAME)
     String getName();
+
     @Property(PROP_NAME)
     void setName(String name);
 
@@ -44,11 +45,14 @@ public interface TagModel extends WindupVertexFrame
      */
     @Property("title")
     String getTitle();
-    @Property("title")
-    TagModel setTitle(String title);
 
-    @JavaHandler
-    String getTitleOrName();
+    @Property("title")
+    void setTitle(String title);
+
+    default String getTitleOrName()
+    {
+        return StringUtils.defaultString(this.getTitle(), this.getName());
+    }
 
     /**
      * A "prime" tag is one which is an important group of subtags, suitable for showing in aggregated reports.
@@ -58,7 +62,7 @@ public interface TagModel extends WindupVertexFrame
     @Property("prime")
     boolean isPrime();
     @Property("prime")
-    TagModel setPrime(boolean isPrime);
+    void setPrime(boolean isPrime);
 
     /**
      * A root tag is that which was a root in the XML definition files. These serve as entry point shortcuts when browsing the graph.
@@ -66,7 +70,7 @@ public interface TagModel extends WindupVertexFrame
     @Property("root")
     boolean isRoot();
     @Property("root")
-    TagModel setRoot(boolean isRoot);
+    void setRoot(boolean isRoot);
 
     /**
      * Pseudo tags serve as grouping for contained tags, but are not suitable to be a root tag.
@@ -78,7 +82,7 @@ public interface TagModel extends WindupVertexFrame
     @Property("pseudo")
     boolean isPseudo();
     @Property("pseudo")
-    TagModel setPseudo(boolean isPseudo);
+    void setPseudo(boolean isPseudo);
 
     /**
      * A color by which this tag should typically be represented in the UI elements like tags, boxes, chart lines, graph nodes, etc.
@@ -86,28 +90,25 @@ public interface TagModel extends WindupVertexFrame
     @Property("color")
     String getColor();
     @Property("color")
-    TagModel setColor(String color);
-
-    @JavaHandler
-    String toString();
+    void setColor(String color);
 
     /**
      * Which tags this designates; for instance, "java-ee" designates "ejb" and "jms".
      */
     @Adjacency(label = EDGE_DESIGNATES, direction = Direction.OUT)
-    Iterable<TagModel> getDesignatedTags();
+    List<TagModel> getDesignatedTags();
     @Adjacency(label = EDGE_DESIGNATES, direction = Direction.OUT)
-    TagModel setDesignatedTags(Iterable<TagModel> tags);
+    void setDesignatedTags(List<TagModel> tags);
     @Adjacency(label = EDGE_DESIGNATES, direction = Direction.OUT)
-    TagModel addDesignatedTag(TagModel tag);
+    void addDesignatedTag(TagModel tag);
 
     /**
      * Which tags is this tag designated by; for instance, "seam" is designated by "web" and "framework:".
      */
     @Adjacency(label = EDGE_DESIGNATES, direction = Direction.IN)
-    Iterable<TagModel> getDesignatedByTags();
+    List<TagModel> getDesignatedByTags();
     @Adjacency(label = EDGE_DESIGNATES, direction = Direction.IN)
-    TagModel setDesignatedByTags(Iterable<TagModel> tags);
+    void setDesignatedByTags(List<TagModel> tags);
 
 
     /**
@@ -128,18 +129,4 @@ public interface TagModel extends WindupVertexFrame
     @MapInProperties(propertyPrefix = "t")
     void putAllTraits(Map<String, String> traits);
 
-
-    public abstract class Impl implements TagModel, JavaHandlerContext<Vertex>
-    {
-        public String getTitleOrName()
-        {
-            return StringUtils.defaultString(this.getTitle(), this.getName());
-        }
-
-        @Override
-        public String toString()
-        {
-            return "{"+this.getName()+"}";
-        }
-    }
 }

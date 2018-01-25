@@ -65,8 +65,8 @@ public class MavenizeRuleProvider extends AbstractRuleProvider
                 if (!isPerformMavenization(event.getGraphContext()))
                     return;
 
-                GlobalBomModel bom = event.getGraphContext().getFramed().addVertex(null, GlobalBomModel.class);
-                ArchiveCoordinateModel jbossParent = event.getGraphContext().getFramed().addVertex(null, ArchiveCoordinateModel.class);
+                GlobalBomModel bom = event.getGraphContext().getFramed().addFramedVertex(GlobalBomModel.class);
+                ArchiveCoordinateModel jbossParent = event.getGraphContext().getFramed().addFramedVertex(ArchiveCoordinateModel.class);
                 copyTo(JBOSS_PARENT, jbossParent);
                 bom.setParent(jbossParent);
             }

@@ -1,9 +1,9 @@
 package org.jboss.windup.graph.model.performance;
 
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
-import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.Property;
 import java.util.Comparator;
 
 /**

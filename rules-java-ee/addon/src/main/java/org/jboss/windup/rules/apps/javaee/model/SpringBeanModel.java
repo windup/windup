@@ -2,13 +2,13 @@ package org.jboss.windup.rules.apps.javaee.model;
 
 import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.model.ProjectModel;
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.frames.Adjacency;
-import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.Property;
 
 import java.util.Set;
 

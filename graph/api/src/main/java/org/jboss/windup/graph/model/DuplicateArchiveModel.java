@@ -1,8 +1,7 @@
 package org.jboss.windup.graph.model;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.frames.Adjacency;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.jboss.windup.graph.Adjacency;
 
 /**
  * Indicates that this {@link ArchiveModel} is actually a duplicate of another archive. This will be linked

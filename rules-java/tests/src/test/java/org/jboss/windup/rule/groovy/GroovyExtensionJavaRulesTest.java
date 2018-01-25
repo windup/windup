@@ -91,18 +91,18 @@ public class GroovyExtensionJavaRulesTest
         {
             String inputPath = "src/test/resources/org/jboss/windup/rules/java";
 
-            ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
+            ProjectModel pm = context.getFramed().addFramedVertex(ProjectModel.class);
             pm.setName("Main Project");
 
-            FileModel inputPathFrame = context.getFramed().addVertex(null, FileModel.class);
+            FileModel inputPathFrame = context.getFramed().addFramedVertex(FileModel.class);
             inputPathFrame.setFilePath(inputPath);
             pm.setRootFileModel(inputPathFrame);
 
-            FileModel fileModel = context.getFramed().addVertex(null, FileModel.class);
+            FileModel fileModel = context.getFramed().addFramedVertex(FileModel.class);
             fileModel.setFilePath(inputPath + "/JavaClassTestFile1.java");
             pm.addFileModel(inputPathFrame);
             pm.addFileModel(fileModel);
-            fileModel = context.getFramed().addVertex(null, FileModel.class);
+            fileModel = context.getFramed().addFramedVertex(FileModel.class);
             fileModel.setFilePath(inputPath + "/JavaClassTestFile2.java");
             pm.addFileModel(fileModel);
 

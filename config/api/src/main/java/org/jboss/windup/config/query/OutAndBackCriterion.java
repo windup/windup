@@ -1,8 +1,8 @@
 package org.jboss.windup.config.query;
 
 
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.jboss.windup.config.GraphRewrite;
 
 /**
@@ -20,9 +20,9 @@ public class OutAndBackCriterion implements QueryGremlinCriterion
 
 
     @Override
-    public void query(GraphRewrite event, GremlinPipeline<Vertex, Vertex> pipeline)
+    public void query(GraphRewrite event, GraphTraversal<?, Vertex> pipeline)
     {
-        pipeline.as("x").out(edgeLabel).back("x");
+        pipeline.as("x").out(edgeLabel).select("x");
     }
 
 

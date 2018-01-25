@@ -1,12 +1,13 @@
 package org.jboss.windup.graph.service;
 
+import org.apache.tinkerpop.gremlin.structure.Transaction;
 import org.jboss.windup.graph.GraphTypeManager;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.exception.NonUniqueResultException;
 
-import com.thinkaurelius.titan.core.TitanTransaction;
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.frames.VertexFrame;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+
+import java.util.List;
 
 /**
  * Base service interface for interacting with {@link WindupVertexFrame} instances.
@@ -15,7 +16,7 @@ import com.tinkerpop.frames.VertexFrame;
  * 
  * @param <FRAMETYPE>
  */
-public interface Service<FRAMETYPE extends VertexFrame>
+public interface Service<FRAMETYPE extends WindupVertexFrame>
 {
     /**
      * Commit any started transaction.
@@ -23,18 +24,6 @@ public interface Service<FRAMETYPE extends VertexFrame>
      * @see #newTransaction()
      */
     void commit();
-
-    /**
-     * Count the number of {@link WindupVertexFrame} instances of the type for which this {@link Service} operates.
-     */
-    long count(Iterable<?> obj);
-
-    /**
-     * Create a new VertexFrame of the Service's type, but don't attach it to the graph.
-     * 
-     * Note that only @Property annotated methods are supported by the returned object.
-     */
-    FRAMETYPE createInMemory();
 
     /**
      * Create a new instance of the {@link WindupVertexFrame} type on which this {@link Service} operates. The returned instance will already be
@@ -55,7 +44,7 @@ public interface Service<FRAMETYPE extends VertexFrame>
     /**
      * Find all instances of the {@link WindupVertexFrame} type on which this {@link Service} operates.
      */
-    Iterable<FRAMETYPE> findAll();
+    List<FRAMETYPE> findAll();
 
     /**
      * Find all instances of the {@link WindupVertexFrame} type on which this {@link Service} operates with the given properties.
@@ -104,7 +93,7 @@ public interface Service<FRAMETYPE extends VertexFrame>
      * 
      * @see #commit()
      */
-    TitanTransaction newTransaction();
+    Transaction newTransaction();
 
     /**
      * Get the {@link WindupVertexFrame} type for which this {@link Service} operates.

@@ -1,11 +1,9 @@
 package org.jboss.windup.reporting.model.rule;
 
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.modules.javahandler.JavaHandler;
-import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.jboss.windup.graph.Property;
 import org.jboss.windup.config.RuleUtils;
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.reporting.ruleexecution.RuleExecutionInformationForReading;
 import org.ocpsoft.rewrite.config.Rule;
@@ -85,36 +83,29 @@ public interface RuleExecutionModel extends WindupVertexFrame
     @Property(FAILURE_MESSAGE)
     RuleExecutionModel setFailureMessage(String failureMessage);
 
-    @JavaHandler
-    void setDataFromRuleInfo(RuleExecutionInformationForReading ruleInformation);
-
-    abstract class Impl implements RuleExecutionModel, JavaHandlerContext<Vertex>
+    default void setDataFromRuleInfo(RuleExecutionInformationForReading ruleInformation)
     {
-        @Override
-        public void setDataFromRuleInfo(RuleExecutionInformationForReading ruleInformation)
+        Rule rule = ruleInformation.getRule();
+        this.setRuleId(rule.getId());
+
+        String ruleContents = RuleUtils.ruleToRuleContentsString(rule, 0);
+        this.setRuleContents(ruleContents);
+
+        this.setCountAddedVertices(ruleInformation.getVertexIDsAdded());
+        this.setCountAddedEdges(ruleInformation.getEdgeIDsAdded());
+
+        this.setCountRemovedVertices(ruleInformation.getVertexIDsRemoved());
+        this.setCountRemovedEdges(ruleInformation.getEdgeIDsRemoved());
+
+        this.setExecuted(ruleInformation.isExecuted());
+        this.setFailed(ruleInformation.isFailed());
+
+        Throwable failureCase = ruleInformation.getFailureCause();
+
+        if (failureCase != null)
         {
-            Rule rule = ruleInformation.getRule();
-            this.setRuleId(rule.getId());
-
-            String ruleContents = RuleUtils.ruleToRuleContentsString(rule, 0);
-            this.setRuleContents(ruleContents);
-
-            this.setCountAddedVertices(ruleInformation.getVertexIDsAdded());
-            this.setCountAddedEdges(ruleInformation.getEdgeIDsAdded());
-
-            this.setCountRemovedVertices(ruleInformation.getVertexIDsRemoved());
-            this.setCountRemovedEdges(ruleInformation.getEdgeIDsRemoved());
-
-            this.setExecuted(ruleInformation.isExecuted());
-            this.setFailed(ruleInformation.isFailed());
-
-            Throwable failureCase = ruleInformation.getFailureCause();
-
-            if (failureCase != null)
-            {
-                String failureMessage = failureCase.getMessage();
-                this.setFailureMessage(failureMessage);
-            }
+            String failureMessage = failureCase.getMessage();
+            this.setFailureMessage(failureMessage);
         }
     }
 }

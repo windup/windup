@@ -36,7 +36,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.ocpsoft.rewrite.param.DefaultParameterValueStore;
 import org.ocpsoft.rewrite.param.ParameterValueStore;
 
-import com.tinkerpop.blueprints.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 
 @RunWith(Arquillian.class)
 public class IterationPayloadTest
@@ -159,8 +159,8 @@ public class IterationPayloadTest
                                                                 {
                                                                     WindupVertexFrame outerFrame = Variables.instance(event)
                                                                                 .findSingletonVariable("outer_item");
-                                                                    outerVertices.add(outerFrame.asVertex());
-                                                                    innerVertices.add(payload.asVertex());
+                                                                    outerVertices.add(outerFrame.getElement());
+                                                                    innerVertices.add(payload.getElement());
                                                                     iterationCount++;
                                                                 }
                                                             }).endIteration())

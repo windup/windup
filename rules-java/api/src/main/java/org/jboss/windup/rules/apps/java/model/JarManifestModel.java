@@ -1,25 +1,34 @@
 package org.jboss.windup.rules.apps.java.model;
 
+import com.syncleus.ferma.ElementFrame;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.SourceFileModel;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.frames.Adjacency;
-import com.tinkerpop.frames.modules.javahandler.JavaHandler;
-import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.model.TypeValue;
 
 /**
  * Contains information from the META-INF/MANIFEST.MF file within an archive.
  */
 @TypeValue(JarManifestModel.TYPE)
-public interface JarManifestModel extends FileModel, SourceFileModel
+public interface JarManifestModel extends FileModel, SourceFileModel, ElementFrame
 {
     String TYPE = "JarManifestModel";
     String ARCHIVE = TYPE + "-archiveToManifest";
+
+    String SPEC_TITLE = "Specification-Title";
+    String BUNDLE_NAME = "Bundle-Name";
+    String IMPLEMENTATION_TITLE = "Implementation-Title";
+
+    String BUNDLE_DESCRIPTION = "Bundle-Description";
+
+    String SPEC_VENDOR = "Specification-Vendor";
+    String BUNDLE_VENDOR = "Bundle-Vendor";
+
+    String IMPLEMENTATION_VERSION = "Implementation-Version";
 
     @Adjacency(label = ARCHIVE, direction = Direction.IN)
     ArchiveModel getArchive();
@@ -27,54 +36,24 @@ public interface JarManifestModel extends FileModel, SourceFileModel
     @Adjacency(label = ARCHIVE, direction = Direction.IN)
     void setArchive(final ArchiveModel archive);
 
-    @JavaHandler
-    String getName();
-
-    @JavaHandler
-    String getVendor();
-
-    @JavaHandler
-    String getVersion();
-
-    @JavaHandler
-    String getDescription();
-
-    abstract class Impl implements JarManifestModel, JavaHandlerContext<Vertex>
+    default String getName()
     {
-        private static final String SPEC_TITLE = "Specification-Title";
-        private static final String BUNDLE_NAME = "Bundle-Name";
-        private static final String IMPLEMENTATION_TITLE = "Implementation-Title";
-
-        private static final String BUNDLE_DESCRIPTION = "Bundle-Description";
-
-        private static final String SPEC_VENDOR = "Specification-Vendor";
-        private static final String BUNDLE_VENDOR = "Bundle-Vendor";
-
-        private static final String IMPLEMENTATION_VERSION = "Implementation-Version";
-
-        @Override
-        public String getName()
-        {
-            String name = StringUtils.defaultIfBlank((String)it().getProperty(SPEC_TITLE), (String)it().getProperty(BUNDLE_NAME));
-            return StringUtils.defaultIfBlank(name, (String)it().getProperty(IMPLEMENTATION_TITLE));
-        }
-
-        @JavaHandler
-        public String getVendor()
-        {
-            return StringUtils.defaultIfBlank((String)it().getProperty(SPEC_VENDOR), (String)it().getProperty(BUNDLE_VENDOR));
-        }
-
-        @Override
-        public String getVersion()
-        {
-            return (String)it().getProperty(IMPLEMENTATION_VERSION);
-        }
-
-        @Override
-        public String getDescription()
-        {
-            return (String)it().getProperty(BUNDLE_DESCRIPTION);
-        }
+        String name = StringUtils.defaultIfBlank(getProperty(SPEC_TITLE), getProperty(BUNDLE_NAME));
+        return StringUtils.defaultIfBlank(name, getProperty(IMPLEMENTATION_TITLE));
     }
+
+    default String getVendor()
+    {
+        return StringUtils.defaultIfBlank(getProperty(SPEC_VENDOR), getProperty(BUNDLE_VENDOR));
+    }
+
+    default String getVersion() {
+        return getProperty(IMPLEMENTATION_VERSION);
+    }
+
+    default String getDescription()
+    {
+        return getProperty(BUNDLE_DESCRIPTION);
+    }
+
 }

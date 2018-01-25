@@ -1,11 +1,13 @@
 package org.jboss.windup.rules.apps.javaee.model;
 
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.frames.Adjacency;
-import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.Property;
+
+import java.util.List;
 
 /**
  * 
@@ -27,7 +29,7 @@ public interface HibernateConfigurationFileModel extends XmlFileModel
     void setSpecificationVersion(String version);
 
     @Adjacency(label = HIBERNATE_SESSION_FACTORY, direction = Direction.OUT)
-    Iterable<HibernateSessionFactoryModel> getHibernateSessionFactories();
+    List<HibernateSessionFactoryModel> getHibernateSessionFactories();
 
     @Adjacency(label = HIBERNATE_SESSION_FACTORY, direction = Direction.OUT)
     void addHibernateSessionFactory(HibernateSessionFactoryModel hibernateSessionFactor);

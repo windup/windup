@@ -49,7 +49,7 @@ public class FramesSetIterator<T extends WindupVertexFrame> implements Iterator<
     private void fillInNextFrame() {
         while(wrappedIterator.hasNext() && nextFrame==null) {
             T frame = wrappedIterator.next();
-            String frameId = frame.asVertex().getId().toString();
+            String frameId = frame.getElement().id().toString();
             if(!ids.contains(frameId)) {
                 ids.add(frameId);
                 nextFrame=frame;

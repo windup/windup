@@ -1,8 +1,7 @@
 package org.jboss.windup.config.iteration;
 
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
-
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 
 
 @TypeValue("SimpleModel1")

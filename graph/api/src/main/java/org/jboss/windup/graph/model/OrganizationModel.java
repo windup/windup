@@ -1,9 +1,10 @@
 package org.jboss.windup.graph.model;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.frames.Adjacency;
-import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.Property;
+
+import java.util.List;
 
 /**
  * This classifies files and provides general background information about a specific {@link ArchiveModel}. (For instance,
@@ -29,7 +30,7 @@ public interface OrganizationModel extends WindupVertexFrame
      * Get the {@link ArchiveModel} associated with this {@link OrganizationModel}.
      */
     @Adjacency(label = ARCHIVE_MODEL, direction = Direction.OUT)
-    Iterable<ArchiveModel> getArchiveModels();
+    List<ArchiveModel> getArchiveModels();
 
     /**
      * Add a related {@link Link} to this {@link OrganizationModel}
@@ -41,7 +42,7 @@ public interface OrganizationModel extends WindupVertexFrame
      * Get the related {@link Link} instances associated with this {@link OrganizationModel}
      */
     @Adjacency(label = LINKS, direction = Direction.OUT)
-    Iterable<LinkModel> getLinks();
+    List<LinkModel> getLinks();
 
     /**
      * Set the description text of this {@link OrganizationModel}.

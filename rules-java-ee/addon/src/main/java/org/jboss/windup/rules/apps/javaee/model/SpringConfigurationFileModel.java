@@ -1,11 +1,13 @@
 package org.jboss.windup.rules.apps.javaee.model;
 
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.frames.Adjacency;
-import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.Property;
+
+import java.util.List;
 
 /**
  * Contains metadata extracted from the XML configuration file.
@@ -15,30 +17,30 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(SpringConfigurationFileModel.TYPE)
 public interface SpringConfigurationFileModel extends XmlFileModel
 {
-    public static final String SPECIFICATION_VERSION = "specificationVersion";
-    public static final String TYPE = "SpringConfigurationFileModel";
+    String SPECIFICATION_VERSION = "specificationVersion";
+    String TYPE = "SpringConfigurationFileModel";
 
     /**
      * The Spring specification version.
      */
     @Property(SPECIFICATION_VERSION)
-    public String getSpecificationVersion();
+    String getSpecificationVersion();
 
     /**
      * The Spring specification version.
      */
     @Property(SPECIFICATION_VERSION)
-    public void setSpecificationVersion(String version);
+    void setSpecificationVersion(String version);
 
     /**
      * A list of Spring Beans defined within this Spring configuration file.
      */
     @Adjacency(label = SpringBeanModel.SPRING_CONFIGURATION, direction = Direction.OUT)
-    public Iterable<SpringBeanModel> getSpringBeans();
+    List<SpringBeanModel> getSpringBeans();
 
     /**
      * A list of Spring Beans defined within this Spring configuration file.
      */
     @Adjacency(label = SpringBeanModel.SPRING_CONFIGURATION, direction = Direction.OUT)
-    public void addSpringBeanReference(SpringBeanModel springBean);
+    void addSpringBeanReference(SpringBeanModel springBean);
 }

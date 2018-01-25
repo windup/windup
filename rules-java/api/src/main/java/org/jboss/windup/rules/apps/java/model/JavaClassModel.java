@@ -1,25 +1,20 @@
 package org.jboss.windup.rules.apps.java.model;
 
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.frames.modules.javahandler.JavaHandler;
-import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.jboss.windup.graph.Indexed;
-import org.jboss.windup.graph.model.BelongsToProject;
-import org.jboss.windup.graph.model.HasApplications;
-import org.jboss.windup.graph.model.HasProject;
-import org.jboss.windup.graph.model.ProjectModel;
-import org.jboss.windup.graph.model.WindupVertexFrame;
+import org.jboss.windup.graph.model.*;
 import org.jboss.windup.graph.model.resource.FileModel;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.frames.Adjacency;
-import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.annotations.gremlin.GremlinGroovy;
-import com.tinkerpop.frames.annotations.gremlin.GremlinParam;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.Property;
+
 import java.util.Collections;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * Represents a JavaClass, either from a .class file or a .java source file.
@@ -128,13 +123,13 @@ public interface JavaClassModel extends WindupVertexFrame, BelongsToProject, Has
      * Lists interfaces implemented by this class, or extended if this is an interface.
      */
     @Adjacency(label = INTERFACES, direction = Direction.OUT)
-    Iterable<JavaClassModel> getInterfaces();
+    List<JavaClassModel> getInterfaces();
 
     /**
      * Lists classes which implement this class
      */
     @Adjacency(label = INTERFACES, direction = Direction.IN)
-    Iterable<JavaClassModel> getImplementedBy();
+    List<JavaClassModel> getImplementedBy();
 
     /**
      * Contains the {@link JavaSourceFileModel} of the decompiled version of this file (assuming that it originally was
@@ -181,8 +176,15 @@ public interface JavaClassModel extends WindupVertexFrame, BelongsToProject, Has
     /**
      * Gets the {@link JavaMethodModel} by name
      */
-    @GremlinGroovy("it.out('" + JAVA_METHOD + "').has('" + JavaMethodModel.METHOD_NAME + "', methodName)")
-    Iterable<JavaMethodModel> getMethod(@GremlinParam("methodName") String methodName);
+    default List<JavaMethodModel> getMethod(String methodName)
+    {
+        List<Vertex> vertices = new GraphTraversalSource(getWrappedGraph().getBaseGraph()).V(getElement())
+                .in(JAVA_METHOD)
+                .has(JavaMethodModel.METHOD_NAME, methodName)
+                .toList();
+        return vertices.stream().map(v -> getGraph().frameElement(v, JavaMethodModel.class))
+                .collect(Collectors.toList());
+    }
 
     /**
      * Adds a {@link JavaMethodModel} to this {@link JavaClassModel}
@@ -194,87 +196,72 @@ public interface JavaClassModel extends WindupVertexFrame, BelongsToProject, Has
      * Adds a {@link JavaMethodModel} to this {@link JavaClassModel}
      */
     @Adjacency(label = JAVA_METHOD, direction = Direction.OUT)
-    Iterable<JavaMethodModel> getJavaMethods();
+    List<JavaMethodModel> getJavaMethods();
 
-    @JavaHandler
     @Override
-    boolean belongsToProject(ProjectModel projectModel);
-
-    @JavaHandler
-    @Override
-    Iterable<ProjectModel> getApplications();
-
-    @JavaHandler
-    @Override
-    ProjectModel getProjectModel();
-
-    abstract class Impl implements JavaHandlerContext<Vertex>, JavaClassModel, HasApplications
+    default List<ProjectModel> getApplications()
     {
-        @Override
-        public boolean belongsToProject(ProjectModel projectModel)
+        FileModel sourceModel = this.getSourceFile();
+
+        if (sourceModel == null)
         {
-            FileModel sourceModel = this.getSourceFile();
-
-            if (sourceModel == null)
-            {
-                return false;
-            }
-
-            return sourceModel.belongsToProject(projectModel);
+            return Collections.emptyList();
         }
 
-        @Override
-        public ProjectModel getProjectModel()
-        {
-            FileModel sourceModel = this.getSourceFile();
+        return sourceModel.getApplications();
+    }
 
-            if (sourceModel == null)
+    @Override
+    default ProjectModel getProjectModel()
+    {
+        FileModel sourceModel = this.getSourceFile();
+
+        if (sourceModel == null)
+        {
+            return null;
+        }
+
+        return sourceModel.getProjectModel();
+    }
+
+    default FileModel getSourceFile()
+    {
+        FileModel classFile = this.getClassFile();
+
+        if (classFile == null)
+        {
+            // .jsp class will have originalSource instead of classFile
+            AbstractJavaSourceModel originalSource = this.getOriginalSource();
+
+            if (originalSource == null)
             {
+                String name = this.getClassName();
+
+                Logger.getLogger(JavaClassModel.class.getName()).log(
+                        Level.WARNING,
+                        "ClassFile and originalSource null for class: {0}",
+                        name
+                );
+
                 return null;
             }
 
-            return sourceModel.getProjectModel();
+            return originalSource;
         }
 
-        @Override
-        public Iterable<ProjectModel> getApplications()
+        return classFile;
+    }
+
+    @Override
+    default boolean belongsToProject(ProjectModel projectModel)
+    {
+        FileModel sourceModel = this.getSourceFile();
+
+        if (sourceModel == null)
         {
-            FileModel sourceModel = this.getSourceFile();
-
-            if (sourceModel == null)
-            {
-                return Collections.emptyList();
-            }
-            
-            return sourceModel.getApplications();
+            return false;
         }
 
-        protected FileModel getSourceFile()
-        {
-            FileModel classFile = this.getClassFile();
-
-            if (classFile == null)
-            {
-                // .jsp class will have originalSource instead of classFile
-                AbstractJavaSourceModel originalSource = this.getOriginalSource();
-
-                if (originalSource == null)
-                {
-                    String name = this.getClassName();
-
-                    Logger.getLogger(JavaClassModel.class.getName()).log(
-                            Level.WARNING,
-                            "ClassFile and originalSource null for class: {0}",
-                            name
-                    );
-
-                    return null;
-                }
-
-                return originalSource;
-            }
-
-            return classFile;
-        }
+        return sourceModel.belongsToProject(projectModel);
     }
 }

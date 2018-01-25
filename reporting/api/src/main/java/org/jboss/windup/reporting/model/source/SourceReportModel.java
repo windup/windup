@@ -1,21 +1,22 @@
 package org.jboss.windup.reporting.model.source;
 
 import java.io.IOException;
+import java.util.List;
 
-import com.tinkerpop.frames.Incidence;
+import com.syncleus.ferma.ClassInitializer;
+import com.syncleus.ferma.DefaultClassInitializer;
+import com.syncleus.ferma.annotations.Incidence;
 import org.apache.commons.io.IOUtils;
 import org.jboss.windup.graph.model.ProjectModel;
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.reporting.model.ReportFileModel;
 import org.jboss.windup.reporting.model.ReportModel;
 import org.jboss.windup.util.exception.WindupException;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.frames.Adjacency;
-import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.modules.javahandler.JavaHandler;
-import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.Property;
 
 /**
  * Represents a report on a application source code file (eg, .java file, or .xml file).
@@ -55,36 +56,33 @@ public interface SourceReportModel extends ReportModel
     /**
      * Gets the source file contents.
      */
-    @JavaHandler
-    String getSourceBody();
-
-    /**
-     * Contains all {@link ProjectModel}s that contain this file, including any duplicate {@link ProjectModel}s.
-     */
-    @Incidence(label = SOURCE_REPORT_TO_PROJECT_MODEL, direction = Direction.OUT)
-    Iterable<SourceReportToProjectEdgeModel> getProjectEdges();
-
-    /**
-     * Contains all {@link ProjectModel}s that contain this file, including any duplicate {@link ProjectModel}s.
-     */
-    @Incidence(label = SOURCE_REPORT_TO_PROJECT_MODEL, direction = Direction.OUT)
-    SourceReportToProjectEdgeModel addProjectModel(ProjectModel projectModel);
-
-    abstract class Impl implements SourceReportModel, JavaHandlerContext<Vertex>
+    default String getSourceBody()
     {
-
-        @Override
-        public String getSourceBody()
+        try
         {
-            try
-            {
-                return IOUtils.toString(getSourceFileModel().asInputStream());
-            }
-            catch (IOException e)
-            {
-                throw new WindupException("Failed to read source file: \"" + getSourceFileModel().getFilePath()
-                            + "\" due to: " + e.getMessage(), e);
-            }
+            return IOUtils.toString(getSourceFileModel().asInputStream());
         }
+        catch (IOException e)
+        {
+            throw new WindupException("Failed to read source file: \"" + getSourceFileModel().getFilePath()
+                    + "\" due to: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Contains all {@link ProjectModel}s that contain this file, including any duplicate {@link ProjectModel}s.
+     */
+    @Incidence(label = SOURCE_REPORT_TO_PROJECT_MODEL, direction = Direction.OUT)
+    List<SourceReportToProjectEdgeModel> getProjectEdges();
+
+    /**
+     * Contains all {@link ProjectModel}s that contain this file, including any duplicate {@link ProjectModel}s.
+     */
+    @Incidence(label = SOURCE_REPORT_TO_PROJECT_MODEL, direction = Direction.OUT)
+    SourceReportToProjectEdgeModel addProjectModel(ProjectModel projectModel, ClassInitializer<SourceReportToProjectEdgeModel> initializer);
+
+    default SourceReportToProjectEdgeModel addProjectModel(ProjectModel projectModel)
+    {
+        return addProjectModel(projectModel, new DefaultClassInitializer<>(SourceReportToProjectEdgeModel.class));
     }
 }

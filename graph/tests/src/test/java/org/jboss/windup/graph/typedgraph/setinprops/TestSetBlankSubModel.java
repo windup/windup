@@ -3,8 +3,7 @@ package org.jboss.windup.graph.typedgraph.setinprops;
 import java.util.Set;
 
 import org.jboss.windup.graph.SetInProperties;
-
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.model.TypeValue;
 
 @TypeValue("SetInPropsBlankSubModel")
 public interface TestSetBlankSubModel extends TestSetPrefixModel

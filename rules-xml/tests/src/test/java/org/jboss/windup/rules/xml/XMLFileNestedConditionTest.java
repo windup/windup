@@ -82,9 +82,9 @@ public class XMLFileNestedConditionTest
     {
         try (GraphContext context = factory.create())
         {
-            ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
+            ProjectModel pm = context.getFramed().addFramedVertex(ProjectModel.class);
             pm.setName("Main Project");
-            FileModel inputPath = context.getFramed().addVertex(null, FileModel.class);
+            FileModel inputPath = context.getFramed().addFramedVertex(FileModel.class);
             inputPath.setFilePath("src/test/resources/xml_nested_condition_data");
 
             Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "windup_"

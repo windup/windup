@@ -1,9 +1,11 @@
 package org.jboss.windup.rules.apps.java.model;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.frames.Adjacency;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+
+import java.util.List;
 
 /**
  * Contains links to {@link JarManifestModel}s.
@@ -19,7 +21,7 @@ public interface HasManifestFilesModel extends WindupVertexFrame
      * Contains links to the manifest models associated with this vertex.
      */
     @Adjacency(label = JarManifestModel.ARCHIVE, direction = Direction.OUT)
-    Iterable<JarManifestModel> getManifestModels();
+    List<JarManifestModel> getManifestModels();
 
     /**
      * Contains links to the manifest models associated with this vertex.

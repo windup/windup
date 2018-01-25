@@ -1,16 +1,16 @@
 package org.jboss.windup.rules.apps.java.reporting.freemarker;
 
-import freemarker.template.DefaultIterableAdapter;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.tinkerpop.blueprints.Direction;
+import org.apache.tinkerpop.gremlin.structure.Direction;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.FileLocationModel;
 import org.jboss.windup.graph.model.FileReferenceModel;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.reporting.freemarker.FreeMarkerUtil;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
@@ -20,7 +20,7 @@ import org.jboss.windup.rules.apps.java.query.FindFilesNotClassifiedOrHintedGrem
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.util.ExecutionStatistics;
 
-import com.tinkerpop.blueprints.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 
 import freemarker.template.TemplateModelException;
 
@@ -54,35 +54,34 @@ public class FindFilesNotClassifiedOrHinted implements WindupFreeMarkerMethod
         {
             throw new TemplateModelException("Error, method expects one argument (Iterable<FileModel>)");
         }
-        DefaultIterableAdapter stringModelArg = (DefaultIterableAdapter) arguments.get(0);
         @SuppressWarnings("unchecked")
-        Iterable<FileModel> fileModels = (Iterable<FileModel>) stringModelArg.getWrappedObject();
+        Iterable<FileModel> fileModels = FreeMarkerUtil.freemarkerWrapperToIterable(arguments.get(0));
 
         FindFilesNotClassifiedOrHintedGremlinCriterion criterion = new FindFilesNotClassifiedOrHintedGremlinCriterion();
         List<Vertex> initialFileModelsAsVertices = new ArrayList<>();
         for (FileModel fm : fileModels)
         {
-            initialFileModelsAsVertices.add(fm.asVertex());
+            initialFileModelsAsVertices.add(fm.getElement());
         }
         Iterable<Vertex> result = criterion.query(context, initialFileModelsAsVertices);
 
         List<FileModel> resultModels = new ArrayList<>();
         for (Vertex v : result)
         {
-            FileModel f = context.getFramed().frame(v, FileModel.class);
+            FileModel f = context.getFramed().frameElement(v, FileModel.class);
 
             //we don't want to show our decompiled classes in the report
-            boolean wasNotGenerated = !f.isWindupGenerated();
+            boolean wasNotGenerated = f.isWindupGenerated() == null || !f.isWindupGenerated();
             boolean isOfInterestingType = f instanceof JavaSourceFileModel || f instanceof XmlFileModel || f instanceof JavaClassFileModel;
             //we don't want to list .class files that have their decompiled .java file with hints/classifications
             boolean withoutHiddenHints = true;
 
             if (f instanceof JavaClassFileModel)
             {
-                Iterator<Vertex> decompiled = v.getVertices(Direction.OUT, JavaClassFileModel.DECOMPILED_FILE).iterator();
+                Iterator<Vertex> decompiled = v.vertices(Direction.OUT, JavaClassFileModel.DECOMPILED_FILE);
                 if (decompiled.hasNext())
                 {
-                    withoutHiddenHints = !decompiled.next().getVertices(Direction.IN, FileReferenceModel.FILE_MODEL).iterator().hasNext();
+                    withoutHiddenHints = !decompiled.next().vertices(Direction.IN, FileReferenceModel.FILE_MODEL).hasNext();
                 }
             }
 

@@ -3,6 +3,8 @@ package org.jboss.windup.rules.apps.javaee.service;
 import java.util.Iterator;
 import java.util.logging.Logger;
 
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
+import org.janusgraph.core.attribute.Text;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
@@ -11,9 +13,8 @@ import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.javaee.model.RMIServiceModel;
 import org.jboss.windup.util.Logging;
 
-import com.thinkaurelius.titan.core.attribute.Text;
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 
 /**
  * Provides methods for finding, creating, and modifying {@link RMIServiceModel} instances.
@@ -59,9 +60,9 @@ public class RMIServiceModelService extends GraphService<RMIServiceModel>
 
     private RMIServiceModel findByInterface(JavaClassModel rmiInterface)
     {
-        GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(rmiInterface.asVertex());
+        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversalSource(getGraphContext().getGraph()).V(rmiInterface.getElement());
         pipeline.in(RMIServiceModel.RMI_INTERFACE);
-        pipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, RMIServiceModel.TYPE);
+        pipeline.has(WindupVertexFrame.TYPE_PROP, Text.textContains(RMIServiceModel.TYPE));
 
         if (pipeline.hasNext())
         {

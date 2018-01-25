@@ -49,11 +49,11 @@ public class JavaHandlerSubclassSpecializationTest
         {
             Assert.assertNotNull(context);
 
-            TestFooModel model = context.getFramed().addVertex(null, TestFooModel.class);
+            TestFooModel model = context.getFramed().addFramedVertex(TestFooModel.class);
             TestFooSubModel subModel = GraphService.addTypeToModel(context, model, TestFooSubModel.class);
             TestFooModel asParent = subModel;
 
-            TestFooModel reframed = (TestFooModel) context.getFramed().frame(model.asVertex(), WindupVertexFrame.class);
+            TestFooModel reframed = (TestFooModel) context.getFramed().frameElement(model.getElement(), WindupVertexFrame.class);
 
             String s1 = model.testJavaMethod();
             String s2 = subModel.testJavaMethod();

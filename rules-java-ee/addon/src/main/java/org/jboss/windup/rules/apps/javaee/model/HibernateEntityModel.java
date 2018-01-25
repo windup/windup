@@ -1,7 +1,7 @@
 package org.jboss.windup.rules.apps.javaee.model;
 
-import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.Property;
+import org.jboss.windup.graph.model.TypeValue;
 
 /**
  * Contains metadata associated with a Hibernate Entity

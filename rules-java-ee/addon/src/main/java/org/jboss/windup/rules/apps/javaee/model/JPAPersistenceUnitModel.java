@@ -1,19 +1,19 @@
 package org.jboss.windup.rules.apps.javaee.model;
 
+import java.util.List;
 import java.util.Map;
 
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.frames.modules.javahandler.JavaHandler;
-import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.jboss.windup.graph.JavaHandler;
 import org.jboss.windup.graph.MapInAdjacentProperties;
 import org.jboss.windup.graph.model.HasApplications;
 import org.jboss.windup.graph.model.ProjectModel;
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.frames.Adjacency;
-import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.Property;
 
 /**
  * Contains metadata related to JPA Persistence Units.
@@ -58,7 +58,7 @@ public interface JPAPersistenceUnitModel extends WindupVertexFrame, HasApplicati
      * Contains a link back to the {@link DataSourceModel}
      */
     @Adjacency(label = DATASOURCE, direction = Direction.OUT)
-    Iterable<DataSourceModel> getDataSources();
+    List<DataSourceModel> getDataSources();
 
     /**
      * Contains a link back to the {@link DataSourceModel}
@@ -84,24 +84,24 @@ public interface JPAPersistenceUnitModel extends WindupVertexFrame, HasApplicati
     @MapInAdjacentProperties(label = "persistenceUnitProperties")
     void setProperties(Map<String, String> map);
 
-    @JavaHandler
+    @JavaHandler(handler = Impl.class)
     @Override
-    Iterable<ProjectModel> getApplications();
+    List<ProjectModel> getApplications();
 
-    @JavaHandler
+    @JavaHandler(handler = Impl.class)
     @Override
     boolean belongsToProject(ProjectModel projectModel);
 
-    abstract class Impl implements JPAPersistenceUnitModel, JavaHandlerContext<Vertex>
+    class Impl
     {
-        public Iterable<ProjectModel> getApplications()
+        public List<ProjectModel> getApplications(JPAPersistenceUnitModel model)
         {
-            return this.getJPAConfigurationFileModel().getApplications();
+            return model.getJPAConfigurationFileModel().getApplications();
         }
 
-        public boolean belongsToProject(ProjectModel projectModel)
+        public boolean belongsToProject(JPAPersistenceUnitModel model, ProjectModel projectModel)
         {
-            return this.getJPAConfigurationFileModel().belongsToProject(projectModel);
+            return model.getJPAConfigurationFileModel().belongsToProject(projectModel);
         }
     }
 }

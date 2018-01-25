@@ -1,12 +1,12 @@
 package org.jboss.windup.rules.apps.java.dependencyreport;
 
+import com.syncleus.ferma.annotations.InVertex;
+import com.syncleus.ferma.annotations.OutVertex;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.WindupEdgeFrame;
 
-import com.tinkerpop.frames.InVertex;
-import com.tinkerpop.frames.OutVertex;
-import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.Property;
+import org.jboss.windup.graph.model.TypeValue;
 
 /**
  * @author mnovotny

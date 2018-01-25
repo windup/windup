@@ -1,63 +1,142 @@
 package org.jboss.windup.graph;
 
-import com.thinkaurelius.titan.core.TitanEdge;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
-import com.thinkaurelius.titan.graphdb.internal.AbstractElement;
-import com.thinkaurelius.titan.graphdb.relations.StandardEdge;
-import com.tinkerpop.blueprints.util.wrappers.event.EventEdge;
+import org.apache.tinkerpop.gremlin.process.traversal.Traverser;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
+import org.apache.tinkerpop.gremlin.structure.Edge;
+import org.apache.tinkerpop.gremlin.structure.Element;
+import org.apache.tinkerpop.gremlin.structure.Property;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.janusgraph.core.JanusGraphEdge;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupFrame;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.util.furnace.FurnaceClasspathScanner;
 
-import com.thinkaurelius.titan.graphdb.vertices.StandardVertex;
-import com.tinkerpop.blueprints.Edge;
-import com.tinkerpop.blueprints.Element;
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.blueprints.util.wrappers.event.EventVertex;
-import com.tinkerpop.frames.EdgeFrame;
-import com.tinkerpop.frames.FrameInitializer;
-import com.tinkerpop.frames.FramedGraph;
-import com.tinkerpop.frames.FramedGraphConfiguration;
-import com.tinkerpop.frames.VertexFrame;
-import com.tinkerpop.frames.modules.AbstractModule;
-import com.tinkerpop.frames.modules.Module;
-import com.tinkerpop.frames.modules.TypeResolver;
-import com.tinkerpop.frames.modules.typedgraph.TypeField;
-import com.tinkerpop.frames.modules.typedgraph.TypeRegistry;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
-import java.util.Arrays;
-import java.util.logging.Logger;
-import org.jboss.windup.util.exception.WindupException;
+import com.syncleus.ferma.EdgeFrame;
+import com.syncleus.ferma.VertexFrame;
+import com.syncleus.ferma.typeresolvers.TypeResolver;
+
+import net.bytebuddy.ByteBuddy;
 
 /**
  * Windup's implementation of extended type handling for TinkerPop Frames. This allows storing multiple types based on the @TypeValue.value(), also in
  * the type property (see {@link WindupVertexFrame#TYPE_PROP}.
  */
-public class GraphTypeManager implements TypeResolver, FrameInitializer
+public class GraphTypeManager implements TypeResolver
 {
     private static final Logger LOG = Logger.getLogger(GraphTypeManager.class.getName());
 
+    private GraphApiCompositeClassLoaderProvider graphApiCompositeClassLoaderProvider;
+    private Furnace furnace;
     private Map<String, Class<? extends WindupFrame<?>>> registeredTypes;
     private TypeRegistry typeRegistry;
+    private Map<String, Class<?>> classCache = new HashMap<>();
 
     public GraphTypeManager()
     {
     }
 
+    /**
+     * Returns the type discriminator value for given Frames model class, extracted from the @TypeValue annotation.
+     */
+    public static String getTypeValue(Class<? extends WindupFrame> clazz)
+    {
+        TypeValue typeValueAnnotation = clazz.getAnnotation(TypeValue.class);
+        if (typeValueAnnotation == null)
+            throw new IllegalArgumentException("Class " + clazz.getCanonicalName() + " lacks a @TypeValue annotation");
+
+        return typeValueAnnotation.value();
+    }
+
+    private static Set<String> getTypeProperties(Element abstractElement)
+    {
+        Set<String> results = new HashSet<>();
+        Iterator<? extends Property> properties = null;
+        if (abstractElement instanceof Vertex)
+        {
+            // LOG.info("Getting from standardvertex as properties method");
+            properties = ((Vertex) abstractElement).properties(WindupFrame.TYPE_PROP);
+        }
+        else if (abstractElement instanceof JanusGraphEdge)
+        {
+            Property<String> typeProperty = abstractElement.property(WindupFrame.TYPE_PROP);
+            if (typeProperty.isPresent())
+            {
+                List<String> all = Arrays.asList(((String) typeProperty.value()).split("\\|"));
+                results.addAll(all);
+                return results;
+            }
+        }
+        else
+        {
+            // LOG.info("Using the old style properties method");
+            properties = Collections.singleton(abstractElement.property(WindupFrame.TYPE_PROP)).iterator();
+        }
+
+        if (properties == null)
+            return results;
+
+        properties.forEachRemaining(property -> {
+            if (property.isPresent())
+                results.add((String) property.value());
+        });
+        return results;
+    }
+
+    public static boolean hasType(Class<? extends WindupVertexFrame> type, Vertex v)
+    {
+        TypeValue typeValueAnnotation = type.getAnnotation(TypeValue.class);
+        if (typeValueAnnotation == null)
+        {
+            throw new IllegalArgumentException("Class " + type.getCanonicalName() + " lacks a @TypeValue annotation");
+        }
+        // LOG.info("has type called for: " + type + " and vertex: " + v);
+        Iterable<String> vertexTypes = getTypeProperties(v);
+        for (String typeValue : vertexTypes)
+        {
+            if (typeValue.equals(typeValueAnnotation.value()))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private GraphApiCompositeClassLoaderProvider getGraphApiCompositeClassLoaderProvider()
+    {
+        if (this.graphApiCompositeClassLoaderProvider == null)
+            this.graphApiCompositeClassLoaderProvider = getFurnace().getAddonRegistry().getServices(GraphApiCompositeClassLoaderProvider.class)
+                        .get();
+        return this.graphApiCompositeClassLoaderProvider;
+    }
+
+    private Furnace getFurnace()
+    {
+        if (furnace == null)
+            this.furnace = SimpleContainer.getFurnace(GraphContextFactory.class.getClassLoader());
+        return this.furnace;
+    }
+
     private void initRegistry()
     {
-        Furnace furnace = SimpleContainer.getFurnace(GraphTypeManager.class.getClassLoader());
-        FurnaceClasspathScanner furnaceClasspathScanner = furnace.getAddonRegistry().getServices(FurnaceClasspathScanner.class).get();
+        FurnaceClasspathScanner furnaceClasspathScanner = getFurnace().getAddonRegistry().getServices(FurnaceClasspathScanner.class).get();
 
         this.registeredTypes = new HashMap<>();
         this.typeRegistry = new TypeRegistry();
@@ -119,94 +198,59 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
      */
     public void removeTypeFromElement(Class<? extends WindupFrame<?>> kind, Element element)
     {
-        Class<?> typeHoldingTypeField = getTypeRegistry().getTypeHoldingTypeField(kind);
-        if (typeHoldingTypeField == null)
-            return;
-        String typeFieldName = typeHoldingTypeField.getAnnotation(TypeField.class).value();
-
-
         TypeValue typeValueAnnotation = kind.getAnnotation(TypeValue.class);
         if (typeValueAnnotation == null)
             return;
         String typeValue = typeValueAnnotation.value();
 
-        AbstractElement abstractElement = GraphTypeManager.asTitanElement(element);
-
         List<String> newTypes = new ArrayList<>();
-        for (String existingType : (Iterable<String>)abstractElement.getProperty(typeFieldName))
+        for (String existingType : getTypeProperties(element))
         {
-            if (!existingType.toString().equals(typeValue))
+            if (!existingType.equals(typeValue))
             {
                 newTypes.add(typeValue);
             }
         }
-        abstractElement.removeProperty(typeFieldName);
+        element.properties(WindupFrame.TYPE_PROP).forEachRemaining(Property::remove);
         for (String newType : newTypes)
-            addProperty(abstractElement, typeFieldName, newType);
+            addProperty(element, WindupFrame.TYPE_PROP, newType);
 
         addSuperclassType(kind, element);
     }
 
-    private void addProperty(AbstractElement abstractElement, String propertyName, String propertyValue)
+    private void addProperty(Element abstractElement, String propertyName, String propertyValue)
     {
         // This uses the direct Titan API which is indexed. See GraphContextImpl.
-        if (abstractElement instanceof StandardVertex)
-            ((StandardVertex) abstractElement).addProperty(propertyName, propertyValue);
+        if (abstractElement instanceof Vertex)
+            ((Vertex) abstractElement).property(propertyName, propertyValue);
         // StandardEdge doesn't have addProperty().
-        else if (abstractElement instanceof StandardEdge)
-            //((StandardEdge) abstractElement).setProperty(propertyName, propertyValue);
+        else if (abstractElement instanceof Edge)
             addTokenProperty(abstractElement, propertyName, propertyValue);
         // For all others, we resort to storing a list
         else
         {
-            List<String> existingList = abstractElement.getProperty(propertyName);
-            if (existingList == null)
+            Property<List<String>> property = abstractElement.property(propertyName);
+            if (property == null)
             {
-                abstractElement.setProperty(propertyName, Collections.singletonList(propertyValue));
+                abstractElement.property(propertyName, Collections.singletonList(propertyValue));
             }
             else
             {
+                List<String> existingList = property.value();
                 List<String> newList = new ArrayList<>(existingList);
                 newList.add(propertyValue);
-                abstractElement.setProperty(propertyName, newList);
+                abstractElement.property(propertyName, newList);
             }
         }
     }
 
-    private void addTokenProperty(AbstractElement el, String propertyName, String propertyValue)
+    private void addTokenProperty(Element el, String propertyName, String propertyValue)
     {
-        Object val = el.getProperty(propertyName);
-        if (val == null)
-            el.setProperty(propertyName, propertyValue);
+        Property<String> val = el.property(propertyName);
+        if (!val.isPresent())
+            el.property(propertyName, propertyValue);
         else
-            el.setProperty(propertyName, val + "|" + propertyValue);
-    }
-
-
-    /**
-     * Returns the type identifier for given type - the value in the property discriminating this type.
-     */
-    public static String getTypeIdentifier(Class<? extends VertexFrame> modelInterface)
-    {
-        TypeValue typeValueAnnotation = modelInterface.getAnnotation(TypeValue.class);
-        if (typeValueAnnotation == null)
-            return null;
-
-        return typeValueAnnotation.value();
-    }
-
-    /**
-     * Adds the type value to the field denoting which type the element represents. This is similar
-     * to {@link GraphTypeManager#addTypeToElement(Class, Element)}, however it uses a String type instead. The
-     * String type will be looked up from the type registry to determine the class type to use.
-     */
-    public void addTypeToElement(String typeString, Element element)
-    {
-        Class<? extends WindupFrame<?>> kind = getRegisteredTypeMap().get(typeString);
-        if (kind == null)
-            throw new IllegalArgumentException("Unrecognized type: " + typeString);
-
-        addTypeToElement(kind, element);
+            el.property(propertyName, val.value() + "|" + propertyValue);
     }
 
     /**
@@ -214,35 +258,25 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
      */
     public void addTypeToElement(Class<? extends WindupFrame<?>> kind, Element element)
     {
-        Class<?> typeHoldingTypeField = getTypeRegistry().getTypeHoldingTypeField(kind);
-        if (typeHoldingTypeField == null)
-            return;
-
         TypeValue typeValueAnnotation = kind.getAnnotation(TypeValue.class);
         if (typeValueAnnotation == null)
             return;
 
-        String typeFieldName = typeHoldingTypeField.getAnnotation(TypeField.class).value();
         String typeValue = typeValueAnnotation.value();
 
-        AbstractElement abstractElement = GraphTypeManager.asTitanElement(element);
-        Object typeProp = abstractElement.getProperty(typeFieldName);
-        if (typeProp != null)
-        {
-            if (!(typeProp instanceof Iterable))
-                throw new RuntimeException("Discriminators property is not Iterable, but " + typeProp.getClass() + ": " + typeProp);
+        Set<String> types = getTypeProperties(element);
 
-            for (String existingType : (Iterable<String>)typeProp)
+        // LOG.info("Adding type to element: " + element + " type: " + kind + " property is already present? " + types);
+        for (String typePropertyValue : types)
+        {
+            if (typePropertyValue.equals(typeValue))
             {
-                if (existingType.equals(typeValue))
-                {
-                    // this is already in the list, so just exit now
-                    return;
-                }
+                // this is already in the list, so just exit now
+                return;
             }
         }
 
-        addProperty(abstractElement, typeFieldName, typeValue);
+        addProperty(element, WindupFrame.TYPE_PROP, typeValue);
         addSuperclassType(kind, element);
     }
 
@@ -259,113 +293,23 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
     }
 
     /**
-     * Returns the classes which this edge represents, typically subclasses.
-     */
-    @Override
-    public Class<?>[] resolveTypes(Edge e, Class<?> defaultType)
-    {
-        return resolve(e, defaultType);
-    }
-
-    /**
-     * Returns the classes which this vertex represents, typically subclasses.
-     */
-    @Override
-    public Class<?>[] resolveTypes(Vertex v, Class<?> defaultType)
-    {
-        return resolve(v, defaultType);
-    }
-
-    public static boolean hasType(Class<? extends WindupVertexFrame> type, WindupVertexFrame frame)
-    {
-        return hasType(type, frame.asVertex());
-    }
-
-    public static boolean hasType(Class<? extends WindupVertexFrame> type, Vertex v)
-    {
-        TypeValue typeValueAnnotation = type.getAnnotation(TypeValue.class);
-        if (typeValueAnnotation == null)
-        {
-            throw new IllegalArgumentException("Class " + type.getCanonicalName() + " lacks a @TypeValue annotation");
-        }
-        AbstractElement abstractElement= GraphTypeManager.asTitanElement(v);
-        Iterable<String> vertexTypes = abstractElement.getProperty(WindupVertexFrame.TYPE_PROP);
-        for (String typeValue : vertexTypes)
-        {
-            if (typeValue.equals(typeValueAnnotation.value()))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public static AbstractElement asTitanElement(Element e)
-    {
-        if (e instanceof StandardVertex)
-        {
-            return (StandardVertex) e;
-        }
-        else if (e instanceof EventVertex)
-        {
-            return (AbstractElement) ((EventVertex) e).getBaseVertex();
-        } else if (e instanceof StandardEdge)
-        {
-            return (StandardEdge)e;
-        } else if (e instanceof EventEdge)
-        {
-            return (AbstractElement) ((EventEdge) e).getBaseEdge();
-        }
-        else
-        {
-            throw new IllegalArgumentException("Unrecognized element type: " + e.getClass());
-        }
-    }
-
-
-    /**
      * Returns the classes which this vertex/edge represents, typically subclasses. This will only return the lowest level subclasses (no superclasses
      * of types in the type list will be returned). This prevents Annotation resolution issues between superclasses and subclasses (see also:
      * WINDUP-168).
      */
-    private Class<?>[] resolve(Element e, Class<?> defaultType)
+    @Override
+    public <T> Class<T> resolve(Element e, Class<T> defaultType)
     {
-        // The class field holding the name of the type holding property.
-        Class<?> typeHoldingTypeField = getTypeRegistry().getTypeHoldingTypeField(defaultType);
-        if (typeHoldingTypeField == null)
-            return new Class[] { defaultType, VertexFrame.class };
-
-        // Name of the graph element property holding the type list.
-        String propName = typeHoldingTypeField.getAnnotation(TypeField.class).value();
-
-        AbstractElement abstractElement = GraphTypeManager.asTitanElement(e);
-
-        final Object typeValue = abstractElement.getProperty(propName);
-        if (typeValue == null)
-            return new Class[] { defaultType, VertexFrame.class };
-
-        Iterable<String> valuesAll = null;
-
-        if (abstractElement instanceof StandardVertex)
-        {
-            if (!Iterable.class.isAssignableFrom(typeValue.getClass()))
-                throw new WindupException(String.format("Expected Iterable stored in vertex's %s, was %s: %s", propName, typeValue.getClass().getName(), typeValue.toString()));
-            valuesAll = (Iterable<String>) typeValue;
-        }
-        else if (abstractElement instanceof TitanEdge)
-        {
-            if (!String.class.isAssignableFrom(typeValue.getClass()))
-                throw new WindupException(String.format("Expected String with tokens stored in edge's %s, was %s: %s", propName, typeValue.getClass().getName(), typeValue.toString()));
-            valuesAll = Arrays.asList(((String)typeValue).split("|"));
-        }
-        else
-            throw new WindupException(String.format("Unknown element type: %s", abstractElement.getClass().getName()));
-
+        final Set<String> valuesAll = getTypeProperties(e);
+        if (valuesAll == null || valuesAll.isEmpty())
+            return defaultType;
 
         List<Class<?>> resultClasses = new ArrayList<>();
+        resultClasses.add(defaultType);
+
         for (String value : valuesAll)
         {
-            Class<?> type = getTypeRegistry().getType(typeHoldingTypeField, value);
+            Class<?> type = getTypeRegistry().getType(value);
             if (type != null)
             {
                 // first check that no subclasses have already been added
@@ -387,20 +331,48 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
                 }
 
                 if (shouldAdd)
+                {
                     resultClasses.add(type);
+                }
             }
         }
         if (!resultClasses.isEmpty())
         {
-            resultClasses.add(VertexFrame.class);
-            return resultClasses.toArray(new Class<?>[resultClasses.size()]);
+            // Ferma needs a single class, so create a composite one
+            return (Class<T>) getClass(resultClasses);
         }
-        return new Class[] { defaultType, VertexFrame.class };
+        return defaultType;
+    }
+
+    private Class<?> getClass(List<Class<?>> interfaces)
+    {
+        List<String> interfaceNames = interfaces.stream()
+                    .map(Class::getCanonicalName)
+                    .sorted(Comparator.naturalOrder())
+                    .collect(Collectors.toList());
+        String key = interfaceNames.toString();
+
+        Class<?> result = classCache.get(key);
+        if (result == null)
+        {
+            result = new ByteBuddy()
+                        .makeInterface()
+                        .implement(interfaces).make()
+                        .load(this.getGraphApiCompositeClassLoaderProvider().getCompositeClassLoader())
+                        .getLoaded();
+            classCache.put(key, result);
+        }
+        return result;
     }
 
     @Override
-    @SuppressWarnings("unchecked")
-    public void initElement(Class<?> kind, FramedGraph<?> framedGraph, Element element)
+    public Class<?> resolve(Element element)
+    {
+        return resolve(element, WindupFrame.class);
+    }
+
+    @Override
+    public void init(Element element, Class<?> kind)
     {
         if (VertexFrame.class.isAssignableFrom(kind) || EdgeFrame.class.isAssignableFrom(kind))
         {
@@ -408,19 +380,38 @@ public class GraphTypeManager implements TypeResolver, FrameInitializer
         }
     }
 
-    /**
-     * Build TinkerPop Frames module - a collection of models.
-     */
-    public Module build()
+    @Override
+    public void deinit(Element element)
     {
-        return new AbstractModule()
+        element.properties(WindupFrame.TYPE_PROP).forEachRemaining(Property::remove);
+    }
+
+    @Override
+    public <P extends Element, T extends Element> GraphTraversal<P, T> hasType(GraphTraversal<P, T> traverser, Class<?> type)
+    {
+        String typeValue = getTypeValue((Class<? extends WindupFrame>) type);
+        return traverser.has(WindupFrame.TYPE_PROP, org.apache.tinkerpop.gremlin.process.traversal.P.eq(typeValue));
+    }
+
+    @Override
+    public <P extends Element, T extends Element> GraphTraversal<P, T> hasNotType(GraphTraversal<P, T> traverser, Class<?> type)
+    {
+        String typeValue = getTypeValue((Class<? extends WindupFrame>) type);
+        return traverser.filter(new Predicate<Traverser<T>>()
         {
             @Override
-            public void doConfigure(FramedGraphConfiguration config)
+            public boolean test(final Traverser<T> toCheck)
             {
-                config.addTypeResolver(GraphTypeManager.this);
-                config.addFrameInitializer(GraphTypeManager.this);
+                final Property<String> property = toCheck.get().property(WindupFrame.TYPE_PROP);
+                if (!property.isPresent())
+                    return true;
+
+                final String resolvedType = property.value();
+                if (typeValue.contains(resolvedType))
+                    return false;
+                else
+                    return true;
             }
-        };
+        });
     }
 }

@@ -1,15 +1,14 @@
 package org.jboss.windup.reporting.model;
 
 import java.util.Iterator;
+import java.util.List;
 
+import org.jboss.windup.graph.JavaHandler;
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.frames.Adjacency;
-import com.tinkerpop.frames.modules.javahandler.JavaHandler;
-import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.jboss.windup.graph.Adjacency;
 
 /**
  * Contains a list of {@link WindupVertexFrame} objects and (for convenience) implements the {@link Iterable} interface as well.
@@ -27,48 +26,46 @@ public interface WindupVertexListModel<T extends WindupVertexFrame> extends Wind
      * Returns the list as an {@link Iterable<T>}.
      */
     @Adjacency(label = "list", direction = Direction.OUT)
-    Iterable<T> getList();
+    List<T> getList();
 
     /**
      * Sets the items in the list.
      */
     @Adjacency(label = "list", direction = Direction.OUT)
-    WindupVertexListModel<T> setList(Iterable<T> list);
+    void setList(List<T> list);
 
     /**
      * Adds the provided item to the list.
      */
     @Adjacency(label = "list", direction = Direction.OUT)
-    WindupVertexListModel<T> addItem(T item);
+    void addItem(T item);
 
     /**
      * Adds all of the items to the list.
      */
-    @JavaHandler
+    @JavaHandler(handler = Impl.class)
     WindupVertexListModel<T> addAll(Iterable<T> items);
 
     /**
      * Returns an {@link Iterator} for this list.
      */
     @Override
-    @JavaHandler
+    @JavaHandler(handler = Impl.class)
     Iterator<T> iterator();
 
-    abstract class Impl<T extends WindupVertexFrame> implements WindupVertexListModel<T>, JavaHandlerContext<Vertex>
+    class Impl<T extends WindupVertexFrame>
     {
-        @Override
-        public WindupVertexListModel<T> addAll(Iterable<T> items)
+        public WindupVertexListModel<T> addAll(WindupVertexListModel<T> frame, Iterable<T> items)
         {
             for (T item : items)
-                addItem(item);
+                frame.addItem(item);
 
-            return this;
+            return frame;
         }
 
-        @Override
-        public Iterator<T> iterator()
+        public Iterator<T> iterator(WindupVertexListModel<T> frame)
         {
-            return getList().iterator();
+            return frame.getList().iterator();
         }
     }
 }

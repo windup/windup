@@ -84,7 +84,7 @@ public class ApplicationReportIndexModelServiceTest
             ApplicationReportIndexModel result = applicationReportIndexService
                         .getApplicationReportIndexForProjectModel(projectModel);
             Assert.assertNotNull(result);
-            Assert.assertEquals(idx1.asVertex().getId(), result.asVertex().getId());
+            Assert.assertEquals(idx1.getElement().id(), result.getElement().id());
         }
     }
 }

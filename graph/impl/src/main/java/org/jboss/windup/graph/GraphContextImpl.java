@@ -6,12 +6,15 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.syncleus.ferma.ClassInitializer;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
@@ -19,39 +22,38 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tinkerpop.gremlin.process.traversal.TraversalStrategies;
+import org.apache.tinkerpop.gremlin.process.traversal.step.util.event.MutationListener;
+import org.apache.tinkerpop.gremlin.process.traversal.strategy.decoration.EventStrategy;
+import org.apache.tinkerpop.gremlin.structure.Edge;
+import org.apache.tinkerpop.gremlin.structure.Graph;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.apache.tinkerpop.gremlin.structure.VertexProperty;
+import org.janusgraph.core.Cardinality;
+import org.janusgraph.core.JanusGraph;
+import org.janusgraph.core.JanusGraphFactory;
+import org.janusgraph.core.PropertyKey;
+import org.janusgraph.core.schema.JanusGraphManagement;
+import org.janusgraph.core.schema.Mapping;
+import org.janusgraph.diskstorage.berkeleyje.BerkeleyJEStoreManager;
+import org.janusgraph.graphdb.database.StandardJanusGraph;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Annotations;
-import org.jboss.windup.graph.frames.TypeAwareFramedGraphQuery;
+import org.jboss.windup.graph.javahandler.JavaHandlerHandler;
 import org.jboss.windup.graph.listeners.AfterGraphInitializationListener;
 import org.jboss.windup.graph.listeners.BeforeGraphCloseListener;
+import org.jboss.windup.graph.model.WindupEdgeFrame;
 import org.jboss.windup.graph.model.WindupFrame;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
 
 import com.sleepycat.je.LockMode;
-import com.thinkaurelius.titan.core.Cardinality;
-import com.thinkaurelius.titan.core.PropertyKey;
-import com.thinkaurelius.titan.core.TitanFactory;
-import com.thinkaurelius.titan.core.TitanGraph;
-import com.thinkaurelius.titan.core.schema.Mapping;
-import com.thinkaurelius.titan.core.schema.TitanManagement;
-import com.thinkaurelius.titan.core.util.TitanCleanup;
-import com.thinkaurelius.titan.diskstorage.berkeleyje.BerkeleyJEStoreManager;
-import com.tinkerpop.blueprints.Edge;
-import com.tinkerpop.blueprints.Graph;
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.blueprints.util.wrappers.batch.BatchGraph;
-import com.tinkerpop.blueprints.util.wrappers.event.EventGraph;
-import com.tinkerpop.frames.FramedGraph;
-import com.tinkerpop.frames.FramedGraphConfiguration;
-import com.tinkerpop.frames.FramedGraphFactory;
-import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.modules.FrameClassLoaderResolver;
-import com.tinkerpop.frames.modules.Module;
-import com.tinkerpop.frames.modules.gremlingroovy.GremlinGroovyModule;
-import com.tinkerpop.frames.modules.javahandler.JavaHandlerModule;
-import org.jboss.windup.graph.model.WindupEdgeFrame;
+import com.syncleus.ferma.DelegatingFramedGraph;
+import com.syncleus.ferma.ReflectionCache;
+import com.syncleus.ferma.Traversable;
+import com.syncleus.ferma.WrappedFramedGraph;
+import com.syncleus.ferma.framefactories.annotation.MethodHandler;
 
 public class GraphContextImpl implements GraphContext
 {
@@ -67,11 +69,12 @@ public class GraphContextImpl implements GraphContext
      * {@link AfterGraphInitializationListener#afterGraphStarted(Map, GraphContext)} } was called
      */
     private final Map<String, BeforeGraphCloseListener> beforeGraphCloseListenerBuffer = new HashMap<>();
+    private final List<GraphListener> graphListeners = new ArrayList<>();
     private Map<String, Object> configurationOptions;
-    private EventGraph<TitanGraph> eventGraph;
-    private BatchGraph<TitanGraph> batchGraph;
-    private FramedGraph<EventGraph<TitanGraph>> framed;
+    private JanusGraph graph;
+    private WrappedFramedGraph<JanusGraph> framed;
     private Configuration conf;
+    private MutationListener mutationListener;
 
     public GraphContextImpl(Furnace furnace, GraphTypeManager typeManager,
                 GraphApiCompositeClassLoaderProvider classLoaderProvider, Path graphDir)
@@ -82,20 +85,26 @@ public class GraphContextImpl implements GraphContext
         this.graphDir = graphDir;
     }
 
+    @Override
+    public void registerGraphListener(GraphListener listener)
+    {
+        this.graphListeners.add(listener);
+    }
+
     public GraphContextImpl create()
     {
         FileUtils.deleteQuietly(graphDir.toFile());
-        TitanGraph titan = initializeTitanGraph();
-        initializeTitanIndexes(titan);
-        createFramed(titan);
+        JanusGraph janusGraph = initializeJanusGraph();
+        initializeJanusIndexes(janusGraph);
+        createFramed(janusGraph);
         fireListeners();
         return this;
     }
 
     public GraphContextImpl load()
     {
-        TitanGraph titan = initializeTitanGraph();
-        createFramed(titan);
+        JanusGraph janusGraph = initializeJanusGraph();
+        createFramed(janusGraph);
         fireListeners();
         return this;
     }
@@ -125,45 +134,57 @@ public class GraphContextImpl implements GraphContext
         }
     }
 
-    private void createFramed(TitanGraph titanGraph)
+    private void createFramed(JanusGraph janusGraph)
     {
-        this.eventGraph = new EventGraph<>(titanGraph);
-        this.batchGraph = new BatchGraph<>(titanGraph, 1000L);
+        this.graph = janusGraph;
 
         final ClassLoader compositeClassLoader = classLoaderProvider.getCompositeClassLoader();
 
-        final FrameClassLoaderResolver classLoaderResolver = new FrameClassLoaderResolver()
-        {
-            public ClassLoader resolveClassLoader(Class<?> frameType)
-            {
-                return compositeClassLoader;
-            }
-        };
+        final ReflectionCache reflections = new ReflectionCache();
 
-        final Module addModules = new Module()
-        {
+        Set<MethodHandler> handlers = new HashSet<>();
+        handlers.add(new MapInPropertiesHandler());
+        handlers.add(new MapInAdjacentPropertiesHandler());
+        handlers.add(new MapInAdjacentVerticesHandler());
+        handlers.add(new SetInPropertiesHandler());
+        handlers.add(new JavaHandlerHandler());
+        handlers.add(new WindupPropertyMethodHandler());
+        handlers.add(new WindupAdjacencyMethodHandler());
+
+        AnnotationFrameFactory frameFactory = new AnnotationFrameFactory(compositeClassLoader, reflections, handlers);
+
+        /*
+         * We override a couple of key methods here, just to insure that we always have access to the change events.
+         *
+         * Hopefully this will be fixed in a future version of Ferma.
+         *
+         * https://github.com/Syncleus/Ferma/issues/44
+         */
+        framed = new DelegatingFramedGraph<JanusGraph>(janusGraph, frameFactory, this.graphTypeManager) {
             @Override
-            public Graph configure(Graph baseGraph, FramedGraphConfiguration config)
-            {
-                config.setFrameClassLoaderResolver(classLoaderResolver);
-                config.addFrameInitializer(new DefaultValueInitializer());
-                config.addMethodHandler(new MapInPropertiesHandler());
-                config.addMethodHandler(new MapInAdjacentPropertiesHandler());
-                config.addMethodHandler(new MapInAdjacentVerticesHandler());
-                config.addMethodHandler(new SetInPropertiesHandler());
+            public <T> T addFramedVertex(final ClassInitializer<T> initializer, final Object... keyValues) {
+                final Vertex vertex;
+                final T framedVertex;
+                if( keyValues != null ) {
+                    vertex = this.getBaseGraph().addVertex(keyValues);
+                    framedVertex = frameNewElement(vertex, initializer);
+                }
+                else {
+                    vertex = this.getBaseGraph().addVertex();
+                    framedVertex = frameNewElement(vertex, initializer);
+                }
+                GraphContextImpl.this.mutationListener.vertexAdded(vertex);
+                return framedVertex;
+            }
 
-                return baseGraph;
+            @Override
+            public <T> T addFramedVertexExplicit(final ClassInitializer<T> initializer) {
+                Vertex vertex = this.getBaseGraph().addVertex();
+                final T framedVertex = frameNewElementExplicit(vertex, initializer);
+                GraphContextImpl.this.mutationListener.vertexAdded(vertex);
+                return framedVertex;
             }
         };
-
-        FramedGraphFactory factory = new FramedGraphFactory(
-                    addModules,
-                    new JavaHandlerModule(),   // Supports @JavaHandler
-                    graphTypeManager.build(),     // Adds detected WindupVertexFrame/Model classes
-                    new GremlinGroovyModule() // Supports @Gremlin
-        );
-
-        framed = factory.create(eventGraph);
     }
 
     private List<Indexed> getIndexAnnotations(Method method)
@@ -182,7 +203,7 @@ public class GraphContextImpl implements GraphContext
         return results;
     }
 
-    private void initializeTitanIndexes(TitanGraph titanGraph)
+    private void initializeJanusIndexes(JanusGraph janusGraph)
     {
         Map<String, IndexData> defaultIndexKeys = new HashMap<>();
         Map<String, IndexData> searchIndexKeys = new HashMap<>();
@@ -233,7 +254,7 @@ public class GraphContextImpl implements GraphContext
         LOG.info("Detected and initialized [" + searchIndexKeys.size() + "] search indexes: " + searchIndexKeys);
         LOG.info("Detected and initialized [" + listIndexKeys.size() + "] list indexes: " + listIndexKeys);
 
-        TitanManagement titan = titanGraph.getManagementSystem();
+        JanusGraphManagement janusGraphManagement = janusGraph.openManagement();
         for (Map.Entry<String, IndexData> entry : defaultIndexKeys.entrySet())
         {
             String key = entry.getKey();
@@ -241,8 +262,8 @@ public class GraphContextImpl implements GraphContext
 
             Class<?> dataType = indexData.type;
 
-            PropertyKey propKey = getOrCreatePropertyKey(titan, key, dataType, Cardinality.SINGLE);
-            titan.buildIndex(indexData.getIndexName(), Vertex.class).addKey(propKey).buildCompositeIndex();
+            PropertyKey propKey = getOrCreatePropertyKey(janusGraphManagement, key, dataType, Cardinality.SINGLE);
+            janusGraphManagement.buildIndex(indexData.getIndexName(), Vertex.class).addKey(propKey).buildCompositeIndex();
         }
 
         for (Map.Entry<String, IndexData> entry : searchIndexKeys.entrySet())
@@ -253,13 +274,14 @@ public class GraphContextImpl implements GraphContext
 
             if (dataType == String.class)
             {
-                PropertyKey propKey = getOrCreatePropertyKey(titan, key, String.class, Cardinality.SINGLE);
-                titan.buildIndex(indexData.getIndexName(), Vertex.class).addKey(propKey, Mapping.STRING.getParameter()).buildMixedIndex("search");
+                PropertyKey propKey = getOrCreatePropertyKey(janusGraphManagement, key, String.class, Cardinality.SINGLE);
+                janusGraphManagement.buildIndex(indexData.getIndexName(), Vertex.class).addKey(propKey, Mapping.STRING.asParameter())
+                            .buildMixedIndex("search");
             }
             else
             {
-                PropertyKey propKey = getOrCreatePropertyKey(titan, key, dataType, Cardinality.SINGLE);
-                titan.buildIndex(indexData.getIndexName(), Vertex.class).addKey(propKey).buildMixedIndex("search");
+                PropertyKey propKey = getOrCreatePropertyKey(janusGraphManagement, key, dataType, Cardinality.SINGLE);
+                janusGraphManagement.buildIndex(indexData.getIndexName(), Vertex.class).addKey(propKey).buildMixedIndex("search");
             }
         }
 
@@ -269,34 +291,29 @@ public class GraphContextImpl implements GraphContext
             IndexData indexData = entry.getValue();
             Class<?> dataType = indexData.type;
 
-            PropertyKey propKey = getOrCreatePropertyKey(titan, key, dataType, Cardinality.LIST);
-            titan.buildIndex(indexData.getIndexName(), Vertex.class).addKey(propKey).buildCompositeIndex();
+            PropertyKey propKey = getOrCreatePropertyKey(janusGraphManagement, key, dataType, Cardinality.LIST);
+            janusGraphManagement.buildIndex(indexData.getIndexName(), Vertex.class).addKey(propKey).buildCompositeIndex();
         }
 
-        // Also index TYPE_PROP on Edges.
-        /// Removed - Titan probably isn't capable of Cardinality.LIST for edges. There's no StandardEdge#addProperty().
-        {
-            String indexName = "edge-typevalue";
-            // Titan enforces items to be String, but there can be multiple items under one property name.
-            PropertyKey propKey = getOrCreatePropertyKey(titan, WindupEdgeFrame.TYPE_PROP, String.class, Cardinality.LIST);
-            //PropertyKey propKey = getOrCreatePropertyKey(titan, WindupEdgeFrame.TYPE_PROP, ArrayList.class, Cardinality.SINGLE);
-            titan.buildIndex(indexName, Edge.class).addKey(propKey).buildCompositeIndex();
-        }/**/
+        // Titan enforces items to be String, but there can be multiple items under one property name.
+        String indexName = "edge-typevalue";
+        PropertyKey propKey = getOrCreatePropertyKey(janusGraphManagement, WindupEdgeFrame.TYPE_PROP, String.class, Cardinality.LIST);
+        janusGraphManagement.buildIndex(indexName, Edge.class).addKey(propKey).buildCompositeIndex();
 
-        titan.commit();
+        janusGraphManagement.commit();
     }
 
-    private PropertyKey getOrCreatePropertyKey(TitanManagement titanGraph, String key, Class<?> dataType, Cardinality cardinality)
+    private PropertyKey getOrCreatePropertyKey(JanusGraphManagement janusGraphManagement, String key, Class<?> dataType, Cardinality cardinality)
     {
-        PropertyKey propertyKey = titanGraph.getPropertyKey(key);
+        PropertyKey propertyKey = janusGraphManagement.getPropertyKey(key);
         if (propertyKey == null)
         {
-            propertyKey = titanGraph.makePropertyKey(key).dataType(dataType).cardinality(cardinality).make();
+            propertyKey = janusGraphManagement.makePropertyKey(key).dataType(dataType).cardinality(cardinality).make();
         }
         return propertyKey;
     }
 
-    private TitanGraph initializeTitanGraph()
+    private JanusGraph initializeJanusGraph()
     {
         LOG.fine("Initializing graph.");
 
@@ -343,7 +360,15 @@ public class GraphContextImpl implements GraphContext
         conf.setProperty("index.search.directory", lucene.toAbsolutePath().toString());
 
         writeToPropertiesFile(conf, graphDir.resolve("TitanConfiguration.properties").toFile());
-        return TitanFactory.open(conf);
+        JanusGraph janusGraph = JanusGraphFactory.open(conf);
+
+        this.mutationListener = new GraphContextMutationListener();
+        TraversalStrategies graphStrategies = TraversalStrategies.GlobalCache
+                    .getStrategies(StandardJanusGraph.class)
+                    .clone()
+                    .addStrategies(EventStrategy.build().addListener(this.mutationListener).create());
+        TraversalStrategies.GlobalCache.registerStrategies(StandardJanusGraph.class, graphStrategies);
+        return janusGraph;
     }
 
     public Configuration getConfiguration()
@@ -380,48 +405,44 @@ public class GraphContextImpl implements GraphContext
         {
             LOG.warning("Could not call before shutdown listeners during close due to: " + e.getMessage());
         }
-        this.eventGraph.getBaseGraph().shutdown();
+        this.graph.close();
+        ;
     }
 
     @Override
     public void clear()
     {
-        if (this.eventGraph == null)
+        if (this.graph == null)
             return;
-        if (this.eventGraph.getBaseGraph() == null)
-            return;
-        if (this.eventGraph.getBaseGraph().isOpen())
+        if (this.graph.isOpen())
             close();
 
-        TitanCleanup.clear(this.eventGraph.getBaseGraph());
+        try
+        {
+            JanusGraphFactory.drop(this.graph);
+        }
+        catch (Exception e)
+        {
+            LOG.log(Level.WARNING, "Failed to delete graph due to: " + e.getMessage(), e);
+        }
     }
 
     @Override
-    public EventGraph<TitanGraph> getGraph()
+    public JanusGraph getGraph()
     {
-        return eventGraph;
-    }
-
-    /**
-     * Returns a graph suitable for batchGraph processing.
-     * <p>
-     * Note: This bypasses the event graph (thus no events will be fired for modifications to this graph)
-     */
-    public BatchGraph<TitanGraph> getBatch()
-    {
-        return batchGraph;
+        return graph;
     }
 
     @Override
-    public FramedGraph<EventGraph<TitanGraph>> getFramed()
+    public WrappedFramedGraph<JanusGraph> getFramed()
     {
         return framed;
     }
 
     @Override
-    public TypeAwareFramedGraphQuery getQuery()
+    public Traversable<?, ?> getQuery(Class<? extends WindupVertexFrame> kind)
     {
-        return new TypeAwareFramedGraphQuery(getFramed());
+        return getFramed().traverse(g -> getFramed().getTypeResolver().hasType(g.V(), kind));
     }
 
     @Override
@@ -494,7 +515,7 @@ public class GraphContextImpl implements GraphContext
     @Override
     public void commit()
     {
-        getGraph().getBaseGraph().commit();
+        getGraph().tx().commit();
     }
 
     private class IndexData
@@ -532,4 +553,71 @@ public class GraphContextImpl implements GraphContext
         }
     }
 
+    private class GraphContextMutationListener implements MutationListener
+    {
+        @Override
+        public void vertexAdded(Vertex vertex)
+        {
+            GraphContextImpl.this.graphListeners.forEach(listener -> {
+                listener.vertexAdded(vertex);
+            });
+        }
+
+        @Override
+        public void vertexPropertyChanged(Vertex element, org.apache.tinkerpop.gremlin.structure.Property oldValue, Object setValue,
+                    Object... vertexPropertyKeyValues)
+        {
+            GraphContextImpl.this.graphListeners.forEach(listener -> {
+                listener.vertexPropertyChanged(element, oldValue, setValue, vertexPropertyKeyValues);
+            });
+        }
+
+        @Override
+        public void vertexRemoved(Vertex vertex)
+        {
+
+        }
+
+        @Override
+        public void vertexPropertyRemoved(VertexProperty vertexProperty)
+        {
+
+        }
+
+        @Override
+        public void edgeAdded(Edge edge)
+        {
+
+        }
+
+        @Override
+        public void edgeRemoved(Edge edge)
+        {
+
+        }
+
+        @Override
+        public void edgePropertyChanged(Edge element, org.apache.tinkerpop.gremlin.structure.Property oldValue, Object setValue)
+        {
+
+        }
+
+        @Override
+        public void edgePropertyRemoved(Edge element, org.apache.tinkerpop.gremlin.structure.Property property)
+        {
+
+        }
+
+        @Override
+        public void vertexPropertyPropertyChanged(VertexProperty element, org.apache.tinkerpop.gremlin.structure.Property oldValue, Object setValue)
+        {
+
+        }
+
+        @Override
+        public void vertexPropertyPropertyRemoved(VertexProperty element, org.apache.tinkerpop.gremlin.structure.Property property)
+        {
+
+        }
+    }
 }

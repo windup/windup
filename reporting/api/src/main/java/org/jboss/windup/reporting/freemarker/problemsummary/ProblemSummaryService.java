@@ -54,7 +54,7 @@ public class ProblemSummaryService
         Map<RuleSummaryKey, ProblemSummary> ruleToSummary = new HashMap<>();
 
         InlineHintService hintService = new InlineHintService(graphContext);
-        final Iterable<InlineHintModel> hints = projectModels == null ? hintService.findAll() : hintService.getHintsForProjects(projectModels);
+        final Iterable<InlineHintModel> hints = projectModels == null ? hintService.findAll() : hintService.getHintsForProjects(new ArrayList<>(projectModels));
         for (InlineHintModel hint : hints)
         {
             if (hint.getIssueDisplayMode() == IssueDisplayMode.DETAIL_ONLY)

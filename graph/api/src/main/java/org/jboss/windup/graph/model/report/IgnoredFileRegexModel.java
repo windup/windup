@@ -1,9 +1,9 @@
 package org.jboss.windup.graph.model.report;
 
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
-import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.Property;
 
 /**
  * Indicates which files within archives should be skipped by Windup.
@@ -12,7 +12,7 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 public interface IgnoredFileRegexModel extends WindupVertexFrame
 {
 
-    public static final String TYPE = "IgnoredFileRegexModel";
+    String TYPE = "IgnoredFileRegexModel";
     String NAME_REGEX = "nameRegex";
     String COMPILATION_ERROR = "compilationError";
 
@@ -20,21 +20,21 @@ public interface IgnoredFileRegexModel extends WindupVertexFrame
      * Contains the regex pattern to filter out
      */
     @Property(NAME_REGEX)
-    public String getRegex();
+    String getRegex();
 
     /**
      * Contains the regex pattern to filter out
      */
     @Property(NAME_REGEX)
-    public void setRegex(String regex);
+    void setRegex(String regex);
     
     /**
      * Checks if the regex is compilable
      */
     @Property(COMPILATION_ERROR)
-    public String getCompilationError();
+    String getCompilationError();
     
     @Property(COMPILATION_ERROR)
-    public void setCompilationError(String errorMessage);
+    void setCompilationError(String errorMessage);
 
 }

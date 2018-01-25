@@ -1,9 +1,8 @@
 package org.jboss.windup.reporting.model;
 
-import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.Property;
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
-import static org.jboss.windup.reporting.model.QuickfixModel.TYPE;
 
 /**
  * Represents a {@link QuickfixModel} within the graph.

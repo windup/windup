@@ -4,33 +4,35 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
+import org.apache.tinkerpop.gremlin.process.traversal.P;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
+import org.janusgraph.core.attribute.Text;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.frames.FramedVertexIterable;
 import org.jboss.windup.graph.model.FileReferenceModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.traversal.ProjectModelTraversal;
-import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.EffortReportModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.category.IssueCategoryModel;
 
-import com.thinkaurelius.titan.core.attribute.Text;
-import com.tinkerpop.blueprints.Compare;
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.frames.structures.FramedVertexIterable;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.jboss.windup.reporting.model.IssueDisplayMode;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * This provides helper functions for finding and creating {@link InlineHintModel} instances within the graph.
@@ -51,10 +53,10 @@ public class InlineHintService extends GraphService<InlineHintModel>
      */
     public Iterable<InlineHintModel> getHintsForFileReference(FileReferenceModel reference)
     {
-        GremlinPipeline<Vertex, Vertex> inlineHintPipeline = new GremlinPipeline<>(reference.asVertex());
+        GraphTraversal<Vertex, Vertex> inlineHintPipeline = new GraphTraversalSource(getGraphContext().getGraph()).V(reference.getElement());
         inlineHintPipeline.in(InlineHintModel.FILE_LOCATION_REFERENCE);
-        inlineHintPipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, InlineHintModel.TYPE);
-        return new FramedVertexIterable<>(getGraphContext().getFramed(), inlineHintPipeline, InlineHintModel.class);
+        inlineHintPipeline.has(WindupVertexFrame.TYPE_PROP, Text.textContains(InlineHintModel.TYPE));
+        return new FramedVertexIterable<>(getGraphContext().getFramed(), inlineHintPipeline.toList(), InlineHintModel.class);
     }
 
     /**
@@ -62,10 +64,10 @@ public class InlineHintService extends GraphService<InlineHintModel>
      */
     public Iterable<InlineHintModel> getHintsForFile(FileModel file)
     {
-        GremlinPipeline<Vertex, Vertex> inlineHintPipeline = new GremlinPipeline<>(file.asVertex());
+        GraphTraversal<Vertex, Vertex> inlineHintPipeline = new GraphTraversalSource(getGraphContext().getGraph()).V(file.getElement());
         inlineHintPipeline.in(FileReferenceModel.FILE_MODEL);
-        inlineHintPipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, InlineHintModel.TYPE);
-        return new FramedVertexIterable<>(getGraphContext().getFramed(), inlineHintPipeline, InlineHintModel.class);
+        inlineHintPipeline.has(WindupVertexFrame.TYPE_PROP, Text.textContains(InlineHintModel.TYPE));
+        return new FramedVertexIterable<>(getGraphContext().getFramed(), inlineHintPipeline.toList(), InlineHintModel.class);
     }
 
     /**
@@ -73,23 +75,23 @@ public class InlineHintService extends GraphService<InlineHintModel>
      */
     public int getMigrationEffortPoints(FileModel fileModel)
     {
-        GremlinPipeline<Vertex, Vertex> inlineHintPipeline = new GremlinPipeline<>(fileModel.asVertex());
+        GraphTraversal<Vertex, Vertex> inlineHintPipeline = new GraphTraversalSource(getGraphContext().getGraph()).V(fileModel.getElement());
         inlineHintPipeline.in(InlineHintModel.FILE_MODEL);
-        inlineHintPipeline.has(EffortReportModel.EFFORT, Compare.GREATER_THAN, 0);
-        inlineHintPipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, InlineHintModel.TYPE);
+        inlineHintPipeline.has(EffortReportModel.EFFORT, P.gt(0));
+        inlineHintPipeline.has(WindupVertexFrame.TYPE_PROP, Text.textContains(InlineHintModel.TYPE));
 
         int hintEffort = 0;
-        for (Vertex v : inlineHintPipeline)
+        for (Vertex v : inlineHintPipeline.toList())
         {
-            hintEffort += (Integer) v.getProperty(InlineHintModel.EFFORT);
+            hintEffort += (Integer) v.property(InlineHintModel.EFFORT).value();
         }
         return hintEffort;
     }
 
-    private Collection<Vertex> getProjectAndChildren(ProjectModel projectModel)
+    private List<Vertex> getProjectAndChildren(ProjectModel projectModel)
     {
         ArrayList<Vertex> result = new ArrayList<>();
-        result.add(projectModel.asVertex());
+        result.add(projectModel.getElement());
 
         for (ProjectModel child : projectModel.getChildProjects())
         {
@@ -104,39 +106,32 @@ public class InlineHintService extends GraphService<InlineHintModel>
      */
     public Iterable<InlineHintModel> getHintsForProject(ProjectModel projectModel, boolean recursive)
     {
-        final Iterable<Vertex> initialVertices;
+        final List<Vertex> initialVertices;
         if (recursive)
         {
             initialVertices = getProjectAndChildren(projectModel);
         }
         else
         {
-            initialVertices = Collections.singletonList(projectModel.asVertex());
+            initialVertices = Collections.singletonList(projectModel.getElement());
         }
 
         return getInlineHintModels(initialVertices);
     }
 
-    public Iterable<InlineHintModel> getHintsForProjects(Iterable<ProjectModel> projectModels)
+    public Iterable<InlineHintModel> getHintsForProjects(List<ProjectModel> projectModels)
     {
-        Iterable<Vertex> projectVertexIterable = Iterables.transform(projectModels, new Function<ProjectModel, Vertex>()
-        {
-            @Override
-            public Vertex apply(ProjectModel input)
-            {
-                return input.asVertex();
-            }
-        });
-        return getInlineHintModels(projectVertexIterable);
+        List<Vertex> projectVertexList = projectModels.stream().map(ProjectModel::getElement).collect(Collectors.toList());
+        return getInlineHintModels(projectVertexList);
     }
 
-    private Iterable<InlineHintModel> getInlineHintModels(Iterable<Vertex> initialProjectVertices) {
-        GremlinPipeline<Vertex, Vertex> inlineHintPipeline = new GremlinPipeline<>(initialProjectVertices);
+    private Iterable<InlineHintModel> getInlineHintModels(List<Vertex> initialProjectVertices) {
+        GraphTraversal<Vertex, Vertex> inlineHintPipeline = new GraphTraversalSource(getGraphContext().getGraph()).V(initialProjectVertices);
         inlineHintPipeline.out(ProjectModel.PROJECT_MODEL_TO_FILE);
-        inlineHintPipeline.in(InlineHintModel.FILE_MODEL).has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, InlineHintModel.TYPE);
+        inlineHintPipeline.in(InlineHintModel.FILE_MODEL).has(WindupVertexFrame.TYPE_PROP, P.eq(InlineHintModel.TYPE));
 
         Set<InlineHintModel> results = new LinkedHashSet<>();
-        for (Vertex v : inlineHintPipeline)
+        for (Vertex v : inlineHintPipeline.toList())
         {
             results.add(frame(v));
         }
@@ -161,7 +156,7 @@ public class InlineHintService extends GraphService<InlineHintModel>
     {
         MapSumEffortAccumulatorFunction<Integer> accumulator = new MapSumEffortAccumulatorFunction(){
             public Object vertexToKey(Vertex effortReportVertex) {
-                Integer migrationEffort = effortReportVertex.getProperty(EffortReportModel.EFFORT);
+                Integer migrationEffort = (Integer)effortReportVertex.property(EffortReportModel.EFFORT).value();
                 return migrationEffort;
             }
         };
@@ -207,13 +202,12 @@ public class InlineHintService extends GraphService<InlineHintModel>
 
         final Set<Vertex> initialVertices = traversal.getAllProjectsAsVertices(recursive);
 
-        GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(this.getGraphContext().getGraph());
-        pipeline.V();
+        GraphTraversal<Vertex, Vertex> pipeline = this.getGraphContext().getGraph().traversal().V();
         // If the multivalue index is not 1st, then it doesn't work - https://github.com/thinkaurelius/titan/issues/403
         if (!includeZero)
         {
-            pipeline.has(EffortReportModel.EFFORT, Compare.GREATER_THAN, 0);
-            pipeline.has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, InlineHintModel.TYPE);
+            pipeline.has(EffortReportModel.EFFORT, P.gt(0));
+            pipeline.has(WindupVertexFrame.TYPE_PROP, Text.textContains(InlineHintModel.TYPE));
         }
         else
         {
@@ -223,10 +217,10 @@ public class InlineHintService extends GraphService<InlineHintModel>
         pipeline.out(InlineHintModel.FILE_MODEL);
         pipeline.in(ProjectModel.PROJECT_MODEL_TO_FILE);
         pipeline.filter(new SetMembersFilter(initialVertices));
-        pipeline.back("hint");
+        pipeline.select("hint");
 
         boolean checkTags = !includeTags.isEmpty() || !excludeTags.isEmpty();
-        for (Vertex v : pipeline)
+        for (Vertex v : pipeline.toSet())
         {
             if (checkTags || !issueCategoryIDs.isEmpty())
             {

@@ -1,7 +1,6 @@
 package org.jboss.windup.graph.model;
 
-import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.Property;
 
 /**
  * Model saves additional link information.

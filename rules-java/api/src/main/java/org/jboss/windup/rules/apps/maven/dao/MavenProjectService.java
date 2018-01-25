@@ -2,14 +2,16 @@ package org.jboss.windup.rules.apps.maven.dao;
 
 import java.util.Iterator;
 
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.GraphTypeManager;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.model.project.MavenProjectModel;
 import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 
 /**
  * Contains methods for searching and deleting {@link MavenProjectModel}s.
@@ -51,21 +53,25 @@ public class MavenProjectService extends GraphService<MavenProjectModel>
 
     public boolean isMavenConfiguration(XmlFileModel resource)
     {
-        return (new GremlinPipeline<Vertex, Vertex>(resource.asVertex())).in("xmlFacet").as("facet")
-                    .has(WindupVertexFrame.TYPE_PROP, this.getTypeValueForSearch()).back("facet")
-                    .iterator().hasNext();
+        return new GraphTraversalSource(this.getGraphContext().getGraph())
+                .V(resource)
+                .in("xmlFacet")
+                .as("facet")
+                .has(WindupVertexFrame.TYPE_PROP, GraphTypeManager.getTypeValue(this.getType()))
+                .select("facet")
+                .hasNext();
     }
 
     public MavenProjectModel getMavenConfigurationFromResource(XmlFileModel resource)
     {
-        @SuppressWarnings("unchecked")
-        Iterator<Vertex> v = (Iterator<Vertex>) (new GremlinPipeline<Vertex, Vertex>(resource.asVertex()))
-                    .in("xmlFacet").as("facet")
-                    .has(WindupVertexFrame.TYPE_PROP, this.getTypeValueForSearch()).back("facet")
-                    .iterator();
+        Iterator<Vertex> v = new GraphTraversalSource(this.getGraphContext().getGraph())
+                .V(resource)
+                .in("xmlFacet").as("facet")
+                .has(WindupVertexFrame.TYPE_PROP, GraphTypeManager.getTypeValue(this.getType()))
+                .select("facet");
         if (v.hasNext())
         {
-            return getGraphContext().getFramed().frame(v.next(), this.getType());
+            return getGraphContext().getFramed().frameElement(v.next(), this.getType());
         }
 
         return null;

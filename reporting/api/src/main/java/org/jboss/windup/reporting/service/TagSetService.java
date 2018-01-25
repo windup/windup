@@ -9,7 +9,7 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.TagSetModel;
 
-import com.tinkerpop.blueprints.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 
 /**
  * Contains methods for getting tag set models as well as maintaining a cache.
@@ -48,7 +48,7 @@ public class TagSetService extends GraphService<TagSetModel>
         {
             TagSetModel model = create();
             model.setTags(tags);
-            cache.put(tags, model.asVertex());
+            cache.put(tags, model.getElement());
             return model;
         }
         else

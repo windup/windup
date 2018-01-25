@@ -1,11 +1,14 @@
 package org.jboss.windup.graph.typedgraph;
 
-import static com.tinkerpop.blueprints.Direction.OUT;
-import com.tinkerpop.frames.Incidence;
 
-import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import com.syncleus.ferma.annotations.Incidence;
+import org.jboss.windup.graph.Property;
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
+
+import java.util.List;
+
+import static org.apache.tinkerpop.gremlin.structure.Direction.OUT;
 
 /**
  *
@@ -21,5 +24,5 @@ public interface TestIncidenceAaaModel extends WindupVertexFrame
     String getProp1();
 
     @Incidence(label = TestIncidenceAaaToBbbEdgeModel.TYPE, direction = OUT)
-    Iterable<TestIncidenceAaaToBbbEdgeModel> getEdgesToBbb();
+    List<TestIncidenceAaaToBbbEdgeModel> getEdgesToBbb();
 }

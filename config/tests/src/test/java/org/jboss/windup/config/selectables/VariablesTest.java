@@ -62,9 +62,9 @@ public class VariablesTest
             final DefaultParameterValueStore values = new DefaultParameterValueStore();
             evaluationContext.put(ParameterValueStore.class, values);
 
-            JavaClassModel classModel1 = context.getFramed().addVertex(null, JavaClassModel.class);
+            JavaClassModel classModel1 = context.getFramed().addFramedVertex(JavaClassModel.class);
             classModel1.setQualifiedName("com.example.Class1NoToString");
-            JavaClassModel classModel2 = context.getFramed().addVertex(null, JavaClassModel.class);
+            JavaClassModel classModel2 = context.getFramed().addFramedVertex(JavaClassModel.class);
             classModel2.setQualifiedName("com.example.Class2HasToString");
 
             List<WindupVertexFrame> list1 = new ArrayList<>();
@@ -99,9 +99,9 @@ public class VariablesTest
             final DefaultParameterValueStore values = new DefaultParameterValueStore();
             evaluationContext.put(ParameterValueStore.class, values);
 
-            JavaClassModel classModel1 = context.getFramed().addVertex(null, JavaClassModel.class);
+            JavaClassModel classModel1 = context.getFramed().addFramedVertex(JavaClassModel.class);
             classModel1.setQualifiedName("com.example.Class1NoToString");
-            JavaClassModel classModel2 = context.getFramed().addVertex(null, JavaClassModel.class);
+            JavaClassModel classModel2 = context.getFramed().addFramedVertex(JavaClassModel.class);
             classModel2.setQualifiedName("com.example.Class2HasToString");
 
             Variables vars = Variables.instance(event);
@@ -134,9 +134,9 @@ public class VariablesTest
             final DefaultParameterValueStore values = new DefaultParameterValueStore();
             evaluationContext.put(ParameterValueStore.class, values);
 
-            JavaClassModel classModel1 = context.getFramed().addVertex(null, JavaClassModel.class);
+            JavaClassModel classModel1 = context.getFramed().addFramedVertex(JavaClassModel.class);
             classModel1.setQualifiedName("com.example.Class1NoToString");
-            JavaClassModel classModel2 = context.getFramed().addVertex(null, JavaClassModel.class);
+            JavaClassModel classModel2 = context.getFramed().addFramedVertex(JavaClassModel.class);
             classModel2.setQualifiedName("com.example.Class2HasToString");
 
             Variables vars = Variables.instance(event);
@@ -158,9 +158,9 @@ public class VariablesTest
             final DefaultParameterValueStore values = new DefaultParameterValueStore();
             evaluationContext.put(ParameterValueStore.class, values);
 
-            JavaClassModel classModel1 = context.getFramed().addVertex(null, JavaClassModel.class);
+            JavaClassModel classModel1 = context.getFramed().addFramedVertex(JavaClassModel.class);
             classModel1.setQualifiedName("com.example.Class1NoToString");
-            JavaClassModel classModel2 = context.getFramed().addVertex(null, JavaClassModel.class);
+            JavaClassModel classModel2 = context.getFramed().addFramedVertex(JavaClassModel.class);
             classModel2.setQualifiedName("com.example.Class2HasToString");
 
             Variables vars = Variables.instance(event);

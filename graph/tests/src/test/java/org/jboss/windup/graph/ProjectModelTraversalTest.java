@@ -120,7 +120,7 @@ public class ProjectModelTraversalTest
         }
         finally
         {
-            FileUtils.deleteDirectory(tempDirectory.toFile());
+            //FileUtils.deleteDirectory(tempDirectory.toFile());
         }
     }
 

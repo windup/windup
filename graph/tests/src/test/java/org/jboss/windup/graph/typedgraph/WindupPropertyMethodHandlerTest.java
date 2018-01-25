@@ -16,7 +16,9 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.tinkerpop.blueprints.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+
+import java.util.stream.Collectors;
 
 @RunWith(Arquillian.class)
 public class WindupPropertyMethodHandlerTest
@@ -39,7 +41,7 @@ public class WindupPropertyMethodHandlerTest
     private GraphContextFactory factory;
 
     @Test
-    public void testInMemoryFrame() throws Exception
+    public void testPropertyHandler() throws Exception
     {
         try (GraphContext context = factory.create())
         {
@@ -47,16 +49,20 @@ public class WindupPropertyMethodHandlerTest
 
             GraphService<TestFooModel> fooModelService = new GraphService<>(context, TestFooModel.class);
 
-            TestFooModel inMemoryModel = fooModelService.create();
-            inMemoryModel.setProp1("prop1").setProp2("prop2").setProp3("prop3");
+            TestFooModel testFooModel = fooModelService.create();
+            testFooModel.setProp1("prop1");
+            testFooModel.setProp2("prop2");
+            testFooModel.setProp3("prop3");
 
-            Iterable<Vertex> vertices = context.getQuery().type(TestFooModel.class).vertices();
+            Iterable<Vertex> vertices = context.getQuery(TestFooModel.class).toList(TestFooModel.class).stream()
+                    .map(TestFooModel::getElement)
+                    .collect(Collectors.toList());
 
             int numberFound = 0;
             for (Vertex v : vertices)
             {
                 numberFound++;
-                TestFooModel framed = (TestFooModel) context.getFramed().frame(v, WindupVertexFrame.class);
+                TestFooModel framed = (TestFooModel) context.getFramed().frameElement(v, WindupVertexFrame.class);
 
                 Assert.assertTrue(framed instanceof TestFooModel);
                 Assert.assertEquals("prop1", framed.getProp1());

@@ -18,7 +18,7 @@ public class AbstractXsdValidationTest
     public static String URL_MULTIPLE_SCHEMAS = "src/test/resources/xsd-validation/xsd-url-multiple-schemas.xml";
 
     protected void addFileModel(GraphContext context, String filePath) {
-        FileModel fileModel = context.getFramed().addVertex(null, XmlFileModel.class);
+        FileModel fileModel = context.getFramed().addFramedVertex(XmlFileModel.class);
         String fileName = parseFileName(filePath);
 
         fileModel.setFilePath(filePath);

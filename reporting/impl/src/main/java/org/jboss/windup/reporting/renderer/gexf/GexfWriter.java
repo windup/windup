@@ -2,15 +2,15 @@ package org.jboss.windup.reporting.renderer.gexf;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Iterator;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.jboss.windup.reporting.renderer.GraphDataSerializer;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.blueprints.Edge;
-import com.tinkerpop.blueprints.Graph;
-import com.tinkerpop.blueprints.Vertex;
+import org.apache.tinkerpop.gremlin.structure.Edge;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 
 public class GexfWriter implements GraphDataSerializer
 {
@@ -63,11 +63,13 @@ public class GexfWriter implements GraphDataSerializer
     {
         IOUtils.write(GexfConstants.EDGES_OPEN, os);
 
-        for (Edge edge : graph.getEdges())
+        Iterator<Edge> edgeIterator = graph.edges();
+        while (edgeIterator.hasNext())
         {
-            String id = "" + edge.getId().hashCode();
-            String source = "" + edge.getVertex(Direction.OUT).getId().toString();
-            String target = "" + edge.getVertex(Direction.IN).getId().toString();
+            Edge edge = edgeIterator.next();
+            String id = "" + edge.id().hashCode();
+            String source = "" + edge.outVertex().id().toString();
+            String target = "" + edge.inVertex().id().toString();
             writeGraphEdge(id, source, target, os);
         }
 
@@ -94,10 +96,12 @@ public class GexfWriter implements GraphDataSerializer
 
         IOUtils.write(GexfConstants.NODES_OPEN, os);
         // iterate the nodes.
-        for (Vertex vertex : graph.getVertices())
+        Iterator<Vertex> vertexIterator = graph.vertices();
+        while (vertexIterator.hasNext())
         {
-            String id = "" + vertex.getId().toString();
-            String label = vertex.getProperty(vertexLabelProperty);
+            Vertex vertex = vertexIterator.next();
+            String id = "" + vertex.id().toString();
+            String label = (String)vertex.property(vertexLabelProperty).value();
 
             if (StringUtils.isBlank(label))
             {

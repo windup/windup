@@ -64,21 +64,21 @@ public class JavaClassTestFile2
 
             String inputPath = "src/test/java/org/jboss/windup/rules/java";
 
-            ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
+            ProjectModel pm = context.getFramed().addFramedVertex(ProjectModel.class);
             pm.setName("Main Project");
 
-            FileModel inputPathFrame = context.getFramed().addVertex(null, FileModel.class);
+            FileModel inputPathFrame = context.getFramed().addFramedVertex(FileModel.class);
             inputPathFrame.setFilePath(inputPath);
             inputPathFrame.setProjectModel(pm);
             pm.setRootFileModel(inputPathFrame);
 
-            FileModel fileModel = context.getFramed().addVertex(null, FileModel.class);
+            FileModel fileModel = context.getFramed().addFramedVertex(FileModel.class);
             fileModel.setFilePath(inputPath + "/JavaHintsClassificationsTest2.java");
             fileModel.setProjectModel(pm);
 
             pm.addFileModel(inputPathFrame);
             pm.addFileModel(fileModel);
-            fileModel = context.getFramed().addVertex(null, FileModel.class);
+            fileModel = context.getFramed().addFramedVertex(FileModel.class);
             fileModel.setFilePath(inputPath + "/JavaClassTest.java");
             fileModel.setProjectModel(pm);
             pm.addFileModel(fileModel);

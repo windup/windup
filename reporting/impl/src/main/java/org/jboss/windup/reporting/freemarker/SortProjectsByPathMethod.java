@@ -4,13 +4,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import freemarker.template.DefaultIterableAdapter;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.comparator.ProjectModelByRootFileComparator;
 import org.jboss.windup.util.ExecutionStatistics;
 
-import freemarker.ext.beans.StringModel;
 import freemarker.template.TemplateModelException;
 
 /**
@@ -58,10 +56,8 @@ public class SortProjectsByPathMethod implements WindupFreeMarkerMethod
             throw new TemplateModelException("Error, method expects one argument (Iterable<ProjectModel>)");
         }
 
-        DefaultIterableAdapter argModel = (DefaultIterableAdapter) arguments.get(0);
-
         @SuppressWarnings("unchecked")
-        Iterable<ProjectModel> projectModelIterable = (Iterable<ProjectModel>) argModel.getAdaptedObject(ProjectModel.class);
+        Iterable<ProjectModel> projectModelIterable = FreeMarkerUtil.freemarkerWrapperToIterable(arguments.get(0));
         List<ProjectModel> projectModelList = new ArrayList<>();
         for (ProjectModel pm : projectModelIterable)
         {

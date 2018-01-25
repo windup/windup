@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import freemarker.template.DefaultIterableAdapter;
+import org.jboss.windup.reporting.freemarker.FreeMarkerUtil;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
 import org.jboss.windup.rules.apps.java.dependencyreport.DependencyReportToArchiveEdgeModel;
 import org.jboss.windup.rules.apps.java.model.comparator.DependencyReportToEdgeComparator;
@@ -57,11 +57,7 @@ public class SortDependencyArchivesByPathMethod implements WindupFreeMarkerMetho
             throw new TemplateModelException("Error, method expects one argument (Iterable<DependencyReportToArchiveEdgeModel>)");
         }
 
-        DefaultIterableAdapter argModel = (DefaultIterableAdapter) arguments.get(0);
-
-        @SuppressWarnings("unchecked")
-        //Iterable<DependencyReportToArchiveEdgeModel> edges = (Iterable<DependencyReportToArchiveEdgeModel>) stringModelArg.getWrappedObject();
-        Iterable<DependencyReportToArchiveEdgeModel> edges = (Iterable<DependencyReportToArchiveEdgeModel>) argModel.getAdaptedObject(DependencyReportToArchiveEdgeModel.class);
+        Iterable<DependencyReportToArchiveEdgeModel> edges = (Iterable<DependencyReportToArchiveEdgeModel>) FreeMarkerUtil.freemarkerWrapperToIterable(arguments.get(0));
 
         List<DependencyReportToArchiveEdgeModel> list = new ArrayList<>();
         for (DependencyReportToArchiveEdgeModel edge : edges)

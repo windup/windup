@@ -45,9 +45,9 @@ public class DiscoverDataSourceAnnotationRuleProviderTest extends AbstractTest
 
         try (GraphContext context = factory.create(outputPath))
         {
-            ProjectModel pm = context.getFramed().addVertex(null, ProjectModel.class);
+            ProjectModel pm = context.getFramed().addFramedVertex(ProjectModel.class);
             pm.setName("Main Project");
-            FileModel inputPath = context.getFramed().addVertex(null, FileModel.class);
+            FileModel inputPath = context.getFramed().addFramedVertex(FileModel.class);
             inputPath.setFilePath("src/test/resources/discover-data-source");
 
             pm.addFileModel(inputPath);

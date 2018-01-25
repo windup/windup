@@ -24,10 +24,9 @@ public class DuplicateTypeValueTest
     })
     public static AddonArchive getDeployment()
     {
-        AddonArchive archive = ShrinkWrap.create(AddonArchive.class)
+        return ShrinkWrap.create(AddonArchive.class)
                     .addBeansXML()
                     .addClasses(TestSimpleModel.class, TestSimple2Model.class);
-        return archive;
     }
 
     @Inject
@@ -39,7 +38,7 @@ public class DuplicateTypeValueTest
         try (GraphContext context = factory.create())
         {
             Assert.assertNotNull(context);
-            context.getFramed().addVertex(null, TestSimpleModel.class);
+            context.getFramed().addFramedVertex(TestSimpleModel.class);
         }
     }
 }

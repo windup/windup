@@ -82,14 +82,14 @@ public class RuleIterationOverTypesTest
         try (final GraphContext context = factory.create(folder))
         {
 
-            TestSimple1Model vertex = context.getFramed().addVertex(null, TestSimple1Model.class);
-            context.getFramed().addVertex(null, TestSimple2Model.class);
-            context.getFramed().addVertex(null, TestSimple2Model.class);
+            TestSimple1Model vertex = context.getFramed().addFramedVertex(TestSimple1Model.class);
+            context.getFramed().addFramedVertex(TestSimple2Model.class);
+            context.getFramed().addFramedVertex(TestSimple2Model.class);
 
             GraphRewrite event = new GraphRewrite(context);
             DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
-            WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
+            WindupConfigurationModel windupCfg = context.getFramed().addFramedVertex(WindupConfigurationModel.class);
             FileService fileModelService = new FileService(context);
             windupCfg.addInputPath(fileModelService.createByFilePath(OperatingSystemUtils.createTempDir()
                         .getAbsolutePath()));
@@ -101,7 +101,7 @@ public class RuleIterationOverTypesTest
             RuleSubset.create(configuration).perform(event, evaluationContext);
             Assert.assertEquals(TestSimple1ModelCounter, 1);
             Assert.assertEquals(TestSimple2ModelCounter, 2);
-            vertex.asVertex().remove();
+            vertex.remove();
             // this should call otherwise()
             RuleSubset.create(configuration).perform(event, evaluationContext);
             Assert.assertEquals(TestSimple1ModelCounter, 1);
@@ -116,14 +116,14 @@ public class RuleIterationOverTypesTest
         try (final GraphContext context = factory.create(folder))
         {
 
-            TestSimple1Model vertex = context.getFramed().addVertex(null, TestSimple1Model.class);
-            context.getFramed().addVertex(null, TestSimple2Model.class);
-            context.getFramed().addVertex(null, TestSimple2Model.class);
+            TestSimple1Model vertex = context.getFramed().addFramedVertex(TestSimple1Model.class);
+            context.getFramed().addFramedVertex(TestSimple2Model.class);
+            context.getFramed().addFramedVertex(TestSimple2Model.class);
 
             GraphRewrite event = new GraphRewrite(context);
             DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
-            WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
+            WindupConfigurationModel windupCfg = context.getFramed().addFramedVertex(WindupConfigurationModel.class);
             FileService fileModelService = new FileService(context);
             windupCfg.addInputPath(fileModelService
                         .createByFilePath(OperatingSystemUtils.createTempDir().getAbsolutePath()));
@@ -135,7 +135,7 @@ public class RuleIterationOverTypesTest
             RuleSubset.create(configuration).perform(event, evaluationContext);
             Assert.assertEquals(TestSimple1ModelCounter, 1);
             Assert.assertEquals(TestSimple2ModelCounter, 2);
-            vertex.asVertex().remove();
+            vertex.remove();
             // this should call otherwise()
             RuleSubset.create(configuration).perform(event, evaluationContext);
             Assert.assertEquals(TestSimple1ModelCounter, 1);

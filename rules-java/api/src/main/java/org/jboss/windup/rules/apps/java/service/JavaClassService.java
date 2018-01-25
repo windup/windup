@@ -99,8 +99,9 @@ public class JavaClassService extends GraphService<JavaClassModel>
     public Iterable<JavaClassModel> findByJavaPackage(String packageName)
     {
         ExecutionStatistics.get().begin("JavaClassService.findByJavaPackage(packageName)");
-        Iterable<JavaClassModel> result = getGraphContext().getQuery().type(JavaClassModel.class)
-                    .has(JavaClassModel.PACKAGE_NAME, packageName).vertices(getType());
+        List<JavaClassModel> result = (List<JavaClassModel>)getGraphContext().getQuery(JavaClassModel.class)
+                .traverse(g -> g.has(JavaClassModel.PACKAGE_NAME, packageName))
+                .toList(JavaClassModel.class);
         ExecutionStatistics.get().end("JavaClassService.findByJavaPackage(packageName)");
         return result;
 
@@ -109,9 +110,10 @@ public class JavaClassService extends GraphService<JavaClassModel>
     public Iterable<JavaClassModel> findByJavaVersion(JavaVersion version)
     {
         ExecutionStatistics.get().begin("JavaClassService.findByJavaVersion(version)");
-        Iterable<JavaClassModel> result = getGraphContext().getQuery().type(JavaClassModel.class)
-                    .has(JavaClassModel.MAJOR_VERSION, version.getMajor())
-                    .has(JavaClassModel.MINOR_VERSION, version.getMinor()).vertices(getType());
+        List<JavaClassModel> result = (List<JavaClassModel>)getGraphContext().getQuery(JavaClassModel.class)
+                .traverse(g -> g.has(JavaClassModel.MAJOR_VERSION, version.getMajor()))
+                .traverse(g -> g.has(JavaClassModel.MINOR_VERSION, version.getMinor()))
+                .toList(JavaClassModel.class);
         ExecutionStatistics.get().end("JavaClassService.findByJavaVersion(version)");
         return result;
     }
@@ -184,13 +186,13 @@ public class JavaClassService extends GraphService<JavaClassModel>
     public JavaMethodModel addJavaMethod(JavaClassModel jcm, String methodName, JavaClassModel[] params)
     {
         ExecutionStatistics.get().begin("JavaClassService.addJavaMethod(jcm, methodName, params)");
-        JavaMethodModel javaMethodModel = getGraphContext().getFramed().addVertex(null, JavaMethodModel.class);
+        JavaMethodModel javaMethodModel = getGraphContext().getFramed().addFramedVertex(JavaMethodModel.class);
         javaMethodModel.setMethodName(methodName);
 
         for (int i = 0; i < params.length; i++)
         {
             JavaClassModel param = params[i];
-            JavaParameterModel paramModel = getGraphContext().getFramed().addVertex(null, JavaParameterModel.class);
+            JavaParameterModel paramModel = getGraphContext().getFramed().addFramedVertex(JavaParameterModel.class);
             paramModel.setJavaType(param);
             paramModel.setPosition(i);
             javaMethodModel.addMethodParameter(paramModel);

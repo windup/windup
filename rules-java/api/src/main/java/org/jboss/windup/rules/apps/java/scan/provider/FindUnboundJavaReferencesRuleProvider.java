@@ -1,5 +1,7 @@
 package org.jboss.windup.rules.apps.java.scan.provider;
 
+import org.apache.tinkerpop.gremlin.process.traversal.P;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.jboss.windup.ast.java.data.ResolutionStatus;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
@@ -21,8 +23,8 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 import org.jboss.windup.config.metadata.RuleMetadata;
 
 /**
@@ -63,15 +65,15 @@ public class FindUnboundJavaReferencesRuleProvider extends AbstractRuleProvider
             HasHint hasHint = new HasHint();
 
             // Reuse the progress and commit logic from these
-            GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(event.getGraphContext().getGraph());
-            pipeline.V();
-            pipeline.has(WindupVertexFrame.TYPE_PROP, JavaTypeReferenceModel.TYPE);
-            pipeline.hasNot(JavaTypeReferenceModel.RESOLUTION_STATUS, ResolutionStatus.RESOLVED);
+            GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversalSource(event.getGraphContext().getGraph())
+                    .V()
+                    .has(WindupVertexFrame.TYPE_PROP, JavaTypeReferenceModel.TYPE)
+                    .has(JavaTypeReferenceModel.RESOLUTION_STATUS, P.neq(ResolutionStatus.RESOLVED));
 
             GraphService<JavaTypeReferenceModel> typeReferenceService = new GraphService<>(event.getGraphContext(), JavaTypeReferenceModel.class);
             int count = 0;
 
-            for (Vertex vertex : pipeline)
+            for (Vertex vertex : pipeline.toList())
             {
                 JavaTypeReferenceModel typeReference = typeReferenceService.frame(vertex);
                 if (hasHint.evaluate(event, context, typeReference))
@@ -99,7 +101,7 @@ public class FindUnboundJavaReferencesRuleProvider extends AbstractRuleProvider
                 count++;
                 if (count % 1000 == 0)
                 {
-                    event.getGraphContext().getGraph().getBaseGraph().commit();
+                    event.getGraphContext().commit();
                 }
             }
         }

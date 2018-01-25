@@ -3,9 +3,8 @@ package org.jboss.windup.reporting.renderer;
 import java.io.FileOutputStream;
 import java.nio.file.Path;
 
+import org.apache.tinkerpop.gremlin.structure.io.graphml.GraphMLWriter;
 import org.jboss.windup.graph.GraphContext;
-
-import com.tinkerpop.blueprints.util.io.graphml.GraphMLWriter;
 
 public class GraphMLRenderer extends AbstractGraphRenderer
 {
@@ -15,10 +14,10 @@ public class GraphMLRenderer extends AbstractGraphRenderer
         Path outputFolder = createOutputFolder(context, "graphml");
         Path outputFile = outputFolder.resolve("graph.graphml");
 
-        GraphMLWriter graphML = new GraphMLWriter(context.getGraph());
+        GraphMLWriter graphML = GraphMLWriter.build().create();
         try
         {
-            graphML.outputGraph(new FileOutputStream(outputFile.toFile()));
+            graphML.writeGraph(new FileOutputStream(outputFile.toFile()), context.getGraph());
         }
         catch (Exception e)
         {

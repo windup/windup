@@ -1,10 +1,7 @@
 package org.jboss.windup.graph.typedgraph;
 
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.modules.javahandler.JavaHandler;
-import com.tinkerpop.frames.modules.javahandler.JavaHandlerContext;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.Property;
+import org.jboss.windup.graph.model.TypeValue;
 
 /**
  * 
@@ -15,20 +12,14 @@ public interface TestFooSubModel extends TestFooModel
 {
 
     @Property("fooProperty")
-    public String getFoo();
+    String getFoo();
 
     @Property("fooProperty")
-    public void setFoo(String foo);
+    void setFoo(String foo);
 
     @Override
-    @JavaHandler
-    public String testJavaMethod();
-
-    abstract class Impl implements TestFooSubModel, JavaHandlerContext<Vertex>
+    default String testJavaMethod()
     {
-        public String testJavaMethod()
-        {
-            return "subclass";
-        }
+        return "subclass";
     }
 }

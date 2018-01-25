@@ -18,6 +18,7 @@ public class ArchivePackageNameIdentificationLifecycleListener extends AbstractR
     public void beforeExecution(GraphRewrite event)
     {
         LOG.info("Registered " + ArchivePackageNameIdentificationGraphChangedListener.class.getSimpleName() + " - vendors will automatically be identified.");
-        event.getGraphContext().getGraph().addListener(new ArchivePackageNameIdentificationGraphChangedListener(event));
+
+        event.getGraphContext().registerGraphListener(new ArchivePackageNameIdentificationGraphChangedListener(event));
     }
 }

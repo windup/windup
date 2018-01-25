@@ -1,10 +1,12 @@
 package org.jboss.windup.rules.apps.javaee.model.stats;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.frames.Adjacency;
-import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.Property;
 import java.util.Date;
+import java.util.List;
+
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
 /**
@@ -26,7 +28,7 @@ public interface GeneralStatsModel extends WindupVertexFrame
      * The statistics items contained in this model.
      */
     @Adjacency(label = ITEMS, direction = Direction.OUT)
-    Iterable<GeneralStatsItemModel> getStatsItems();
+    List<GeneralStatsItemModel> getStatsItems();
 
     /**
      * The statistics items contained in this model.

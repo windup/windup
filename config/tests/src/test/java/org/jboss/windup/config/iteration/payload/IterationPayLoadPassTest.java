@@ -77,15 +77,14 @@ public class IterationPayLoadPassTest
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
         try (final GraphContext context = factory.create(folder))
         {
-
-            context.getFramed().addVertex(null, TestPayloadModel.class);
-            context.getFramed().addVertex(null, TestPayloadModel.class);
-            context.getFramed().addVertex(null, TestPayloadModel.class);
+            context.getFramed().addFramedVertex(TestPayloadModel.class);
+            context.getFramed().addFramedVertex(TestPayloadModel.class);
+            context.getFramed().addFramedVertex(TestPayloadModel.class);
 
             GraphRewrite event = new GraphRewrite(context);
             DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
-            WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
+            WindupConfigurationModel windupCfg = context.getFramed().addFramedVertex(WindupConfigurationModel.class);
             FileService fileModelService = new FileService(context);
             windupCfg.addInputPath(fileModelService.createByFilePath("/tmp/testpath"));
 
@@ -105,15 +104,14 @@ public class IterationPayLoadPassTest
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
         try (final GraphContext context = factory.create(folder))
         {
-
-            context.getFramed().addVertex(null, TestSimple1Model.class);
-            context.getFramed().addVertex(null, TestSimple2Model.class);
-            context.getFramed().addVertex(null, TestSimple2Model.class);
+            context.getFramed().addFramedVertex(TestSimple1Model.class);
+            context.getFramed().addFramedVertex(TestSimple2Model.class);
+            context.getFramed().addFramedVertex(TestSimple2Model.class);
 
             GraphRewrite event = new GraphRewrite(context);
             DefaultEvaluationContext evaluationContext = createEvalContext(event);
 
-            WindupConfigurationModel windupCfg = context.getFramed().addVertex(null, WindupConfigurationModel.class);
+            WindupConfigurationModel windupCfg = context.getFramed().addFramedVertex(WindupConfigurationModel.class);
             FileService fileModelService = new FileService(context);
             windupCfg.addInputPath(fileModelService.createByFilePath("/tmp/testpath"));
 

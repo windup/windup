@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.janusgraph.core.attribute.Text;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependency;
@@ -13,14 +14,13 @@ import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
+import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import com.thinkaurelius.titan.core.attribute.Text;
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 
 @RunWith(Arquillian.class)
 public class MapInAdjacentPropertiesTest
@@ -49,7 +49,7 @@ public class MapInAdjacentPropertiesTest
 
         try (GraphContext context = contextFactory.create())
         {
-            MapMainModel mainModel = context.getFramed().addVertex(null, MapMainModel.class);
+            MapMainModel mainModel = context.getFramed().addFramedVertex(MapMainModel.class);
 
             // Map 1
             Map<String, String> map = new HashMap<>();
@@ -67,8 +67,7 @@ public class MapInAdjacentPropertiesTest
 
             // Query for the 1 MapMainModel's
             String typeVal = MapMainModel.class.getAnnotation(TypeValue.class).value();
-            Iterable<Vertex> vertices = context.getFramed().query()
-                        .has(WindupVertexFrame.TYPE_PROP, Text.CONTAINS, typeVal).vertices();
+            Iterable<Vertex> vertices = context.getGraph().traversal().V().has(WindupVertexFrame.TYPE_PROP, Text.textContains(typeVal)).toList();
 
             int numberFound = 0;
             for (Vertex v : vertices)
@@ -76,7 +75,7 @@ public class MapInAdjacentPropertiesTest
                 // final Set<String> propertyKeys = v.getVertices( Direction.OUT, "map").iterator().next().getPropertyKeys();
 
                 numberFound++;
-                MapMainModel framed = (MapMainModel) context.getFramed().frame(v, WindupVertexFrame.class);
+                MapMainModel framed = (MapMainModel) context.getFramed().frameElement(v, WindupVertexFrame.class);
 
                 Assert.assertTrue(framed instanceof MapMainModel);
 

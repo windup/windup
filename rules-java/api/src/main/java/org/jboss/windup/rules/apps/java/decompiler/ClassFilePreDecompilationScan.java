@@ -160,6 +160,7 @@ public class ClassFilePreDecompilationScan extends AbstractIterationOperation<Ja
                 return;
 
             filterClassesToDecompile(event, context, fileModel);
+
         }
         finally
         {

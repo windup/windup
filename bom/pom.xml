@@ -5,7 +5,7 @@
     <properties>
         <version.forge>3.7.2.Final</version.forge>
         <version.furnace>2.26.2.Final</version.furnace>
-        <version.nexus.index>6.4</version.nexus.index>
+        <version.nexus.index>7.0</version.nexus.index>
     </properties>
 
     <!-- Does NOT use windup-parent - this is a BOM. -->
@@ -48,8 +48,8 @@
             <!-- Windup Engine - Frames -->
             <dependency>
                 <groupId>org.jboss.windup.graph.frames</groupId>
-                <artifactId>windup-frames</artifactId>
-                <version>${project.version}</version>
+                <artifactId>frames-tp3</artifactId>
+                <version>3.1.0-incubating-SNAPSHOT</version>
             </dependency>
 
             <!-- Windup Engine - Graph Addon -->
@@ -314,9 +314,16 @@
             </dependency>
 
 
+            <!-- Windup Internal Test Dependencies -->
             <dependency>
                 <groupId>org.jboss.windup</groupId>
                 <artifactId>windup-test-harness</artifactId>
+                <version>${project.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.jboss.windup</groupId>
+                <artifactId>windup-module-spec</artifactId>
                 <version>${project.version}</version>
                 <scope>test</scope>
             </dependency>

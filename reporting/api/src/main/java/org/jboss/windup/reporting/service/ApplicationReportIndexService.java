@@ -1,7 +1,6 @@
 package org.jboss.windup.reporting.service;
 
-import java.util.Iterator;
-
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupVertexFrame;
@@ -9,10 +8,9 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.ApplicationReportIndexModel;
 import org.jboss.windup.reporting.model.ApplicationReportModel;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
-import com.tinkerpop.pipes.PipeFunction;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 
 /**
  * Service methods for finding and creating {@link ApplicationReportIndexModel} objects.
@@ -31,21 +29,11 @@ public class ApplicationReportIndexService extends GraphService<ApplicationRepor
      */
     public ApplicationReportIndexModel getOrCreateGlobalApplicationIndex()
     {
-        GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(getGraphContext().getGraph());
-        pipeline.V();
+        GraphTraversal<Vertex, Vertex> pipeline = getGraphContext().getGraph().traversal().V();
         pipeline.has(WindupVertexFrame.TYPE_PROP, ApplicationReportModel.TYPE);
-        pipeline.filter(new PipeFunction<Vertex, Boolean>()
-        {
-            @Override
-            public Boolean compute(Vertex it)
-            {
-                // only include items that have no project models associated
-                return !it.getEdges(Direction.OUT, ApplicationReportIndexModel.APPLICATION_REPORT_INDEX_TO_PROJECT_MODEL).iterator().hasNext();
-            }
-        });
+        pipeline.filter(it -> !it.get().edges(Direction.OUT, ApplicationReportIndexModel.APPLICATION_REPORT_INDEX_TO_PROJECT_MODEL).hasNext());
 
-        Iterator<Vertex> pipeIterator = pipeline.iterator();
-        final ApplicationReportIndexModel result = pipeIterator.hasNext() ? frame(pipeIterator.next()) : create();
+        final ApplicationReportIndexModel result = pipeline.hasNext() ? frame(pipeline.next()) : create();
         return result;
     }
 
@@ -54,7 +42,7 @@ public class ApplicationReportIndexService extends GraphService<ApplicationRepor
      */
     public ApplicationReportIndexModel getApplicationReportIndexForProjectModel(ProjectModel projectModel)
     {
-        GremlinPipeline<Vertex, Vertex> pipeline = new GremlinPipeline<>(projectModel.asVertex());
+        GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversalSource(getGraphContext().getGraph()).V(projectModel.getElement());
         pipeline.in(ApplicationReportIndexModel.APPLICATION_REPORT_INDEX_TO_PROJECT_MODEL);
 
         ApplicationReportIndexModel applicationReportIndex = null;

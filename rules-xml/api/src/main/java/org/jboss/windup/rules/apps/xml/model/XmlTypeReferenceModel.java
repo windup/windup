@@ -2,9 +2,11 @@ package org.jboss.windup.rules.apps.xml.model;
 
 import org.jboss.windup.graph.model.FileLocationModel;
 
-import com.tinkerpop.frames.Adjacency;
-import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.Property;
+import org.jboss.windup.graph.model.TypeValue;
+
+import java.util.List;
 
 /**
  * The result of the XmlFile condition
@@ -12,9 +14,9 @@ import com.tinkerpop.frames.modules.typedgraph.TypeValue;
 @TypeValue(XmlTypeReferenceModel.TYPE)
 public interface XmlTypeReferenceModel extends FileLocationModel
 {
-    public static final String XPATH = "xpath";
-    public static final String NAMESPACES = "namespaces";
-    public static final String TYPE = "XmlTypeReferenceModel";
+    String XPATH = "xpath";
+    String NAMESPACES = "namespaces";
+    String TYPE = "XmlTypeReferenceModel";
 
     @Property(XPATH)
     String getXpath();
@@ -23,7 +25,7 @@ public interface XmlTypeReferenceModel extends FileLocationModel
     void setXpath(String xpath);
 
     @Adjacency(label = NAMESPACES)
-    Iterable<NamespaceMetaModel> getNamespaces();
+    List<NamespaceMetaModel> getNamespaces();
 
     @Adjacency(label = NAMESPACES)
     void setNamespaces(Iterable<NamespaceMetaModel> children);

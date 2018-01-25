@@ -15,11 +15,10 @@ import javax.script.ScriptException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.jboss.windup.reporting.renderer.dot.DotWriter;
 import java.util.logging.Logger;
 import org.jboss.windup.util.Logging;
-
-import com.tinkerpop.blueprints.Graph;
 
 public class GraphvizWriter extends DotWriter
 {

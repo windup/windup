@@ -1,15 +1,16 @@
 package org.jboss.windup.config.query;
 
 import java.util.List;
+import java.util.function.BiPredicate;
 
+import com.syncleus.ferma.Traversable;
+import org.apache.tinkerpop.gremlin.process.traversal.P;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.graph.GraphTypeManager;
 import org.jboss.windup.graph.model.WindupVertexFrame;
 
-import com.tinkerpop.blueprints.Predicate;
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.frames.FramedGraphQuery;
-import com.tinkerpop.gremlin.java.GremlinPipeline;
-import org.jboss.windup.graph.frames.TypeAwareFramedGraphQuery;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
 
 class QueryTypeCriterion implements QueryFramesCriterion, QueryGremlinCriterion
 {
@@ -19,23 +20,22 @@ class QueryTypeCriterion implements QueryFramesCriterion, QueryGremlinCriterion
     public QueryTypeCriterion(Class<? extends WindupVertexFrame> clazz)
     {
         this.searchedClass = clazz;
-        this.typeValue = TypeAwareFramedGraphQuery.getTypeValue(clazz);
+        this.typeValue = GraphTypeManager.getTypeValue(clazz);
     }
 
     @Override
-    public void query(FramedGraphQuery q)
+    public void query(Traversable<?, ?> q)
     {
-        q.has(WindupVertexFrame.TYPE_PROP, typeValue);
+        q.traverse(g -> g.has(WindupVertexFrame.TYPE_PROP, P.eq(typeValue)));
     }
-
 
     /**
      * Adds a criterion to given pipeline which filters out vertices representing given WindupVertexFrame.
      */
-    public static GremlinPipeline<Vertex, Vertex> addPipeFor(GremlinPipeline<Vertex, Vertex> pipeline,
+    public static GraphTraversal<Vertex, Vertex> addPipeFor(GraphTraversal<Vertex, Vertex> pipeline,
                 Class<? extends WindupVertexFrame> clazz)
     {
-        pipeline.has(WindupVertexFrame.TYPE_PROP, TypeAwareFramedGraphQuery.getTypeValue(clazz));
+        pipeline.has(WindupVertexFrame.TYPE_PROP, GraphTypeManager.getTypeValue(clazz));
         return pipeline;
     }
 
@@ -45,19 +45,14 @@ class QueryTypeCriterion implements QueryFramesCriterion, QueryGremlinCriterion
     }
 
     @Override
-    public void query(GraphRewrite event, GremlinPipeline<Vertex, Vertex> pipeline)
+    @SuppressWarnings("unchecked")
+    public void query(GraphRewrite event, GraphTraversal<?, Vertex> pipeline)
     {
-        pipeline.has(WindupVertexFrame.TYPE_PROP, new Predicate()
-        {
-
+        pipeline.has(WindupVertexFrame.TYPE_PROP, new P(new BiPredicate<String, String>() {
             @Override
-            public boolean evaluate(Object first, Object second)
-            {
-                @SuppressWarnings("unchecked")
-                List<String> firstList = (List<String>) first;
-                return firstList.contains(second);
+            public boolean test(String first, String second) {
+                return first.equals(second);
             }
-
-        }, typeValue);
+        }, typeValue));
     }
 }

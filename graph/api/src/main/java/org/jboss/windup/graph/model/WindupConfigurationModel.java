@@ -2,10 +2,11 @@ package org.jboss.windup.graph.model;
 
 import org.jboss.windup.graph.model.resource.FileModel;
 
-import com.tinkerpop.blueprints.Direction;
-import com.tinkerpop.frames.Adjacency;
-import com.tinkerpop.frames.Property;
-import com.tinkerpop.frames.modules.typedgraph.TypeValue;
+import org.apache.tinkerpop.gremlin.structure.Direction;
+import org.jboss.windup.graph.Adjacency;
+import org.jboss.windup.graph.Property;
+
+import java.util.List;
 
 /**
  * Contains the global configuration for the current Windup execution.
@@ -30,7 +31,7 @@ public interface WindupConfigurationModel extends WindupVertexFrame
      * The input path to scan
      */
     @Adjacency(label = INPUT_PATH, direction = Direction.OUT)
-    Iterable<FileModel> getInputPaths();
+    List<FileModel> getInputPaths();
 
     /**
      * The input path to scan
@@ -60,13 +61,13 @@ public interface WindupConfigurationModel extends WindupVertexFrame
      * The location for user provided rules directories (typically Groovy or XML Rules)
      */
     @Adjacency(label = USER_RULES_PATH, direction = Direction.OUT)
-    Iterable<FileModel> getUserRulesPaths();
+    List<FileModel> getUserRulesPaths();
 
     /**
      * The location for user provided rules directories (typically Groovy or XML Rules)
      */
     @Adjacency(label = USER_IGNORE_PATH, direction = Direction.OUT)
-    Iterable<FileModel> getUserIgnorePaths();
+    List<FileModel> getUserIgnorePaths();
 
     /**
      * Where to put the report and other files produced during Windup execution.
@@ -96,7 +97,7 @@ public interface WindupConfigurationModel extends WindupVertexFrame
      * Contains the id of the source technology (the technology being migrated from).
      */
     @Adjacency(label = SOURCE_TECHNOLOGY, direction = Direction.OUT)
-    Iterable<TechnologyReferenceModel> getSourceTechnologies();
+    List<TechnologyReferenceModel> getSourceTechnologies();
 
     /**
      * Contains the id of the source technology (the technology being migrated from).
@@ -108,7 +109,7 @@ public interface WindupConfigurationModel extends WindupVertexFrame
      * Contains the id of the target technology (the technology being migrated to).
      */
     @Adjacency(label = TARGET_TECHNOLOGY, direction = Direction.OUT)
-    Iterable<TechnologyReferenceModel> getTargetTechnologies();
+    List<TechnologyReferenceModel> getTargetTechnologies();
 
     /**
      * Contains the id of the target technology (the technology being migrated to).
