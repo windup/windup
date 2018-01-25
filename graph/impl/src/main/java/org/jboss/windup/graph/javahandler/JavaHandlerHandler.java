@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
+import com.syncleus.ferma.ReflectionCache;
 import org.jboss.windup.graph.JavaHandler;
 import org.jboss.windup.graph.MapInAdjacentPropertiesHandler;
 import org.jboss.windup.util.Logging;
@@ -57,7 +58,8 @@ public class JavaHandlerHandler extends AbstractMethodHandler implements MethodH
         @RuntimeType
         public static Object execute(@This final ElementFrame thisFrame, @Origin final Method method, @RuntimeType @AllArguments Object[] args)
         {
-            final JavaHandler ann = ((CachesReflection) thisFrame).getReflectionCache().getAnnotation(method, JavaHandler.class);
+            ReflectionCache reflectionCache = ((CachesReflection) thisFrame).getReflectionCache();
+            final JavaHandler ann = reflectionCache.getAnnotation(method, JavaHandler.class);
 
             try
             {
