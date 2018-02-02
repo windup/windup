@@ -274,7 +274,7 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD, 
             {
                 XmlFileModel xml = getXmlFileModelFromVertex(iterated);
                 if(xmlFilePassRestrictions(event,context,xml)) {
-                    registerAndSubmitResultsFor(xml, finalResults,evaluationStrategy);
+                    registerAndSubmitResultsFor(xml, finalResults,evaluationStrategy, event, context);
                 }
             }
             setResults(event, getOutputVariablesName(), finalResults);
@@ -307,11 +307,16 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD, 
         return allXmls;
     }
 
-    private void registerAndSubmitResultsFor(XmlFileModel xml, List<WindupVertexFrame> results, EvaluationStrategy evaluationStrategy)
+    private void registerAndSubmitResultsFor(XmlFileModel xml, List<WindupVertexFrame> results, EvaluationStrategy evaluationStrategy, GraphRewrite event, EvaluationContext context)
     {
         final List<WindupVertexFrame> xpathResults = xpathValidator.getAndClearResultLocations();
         if(xpathResults.isEmpty()) {
             evaluationStrategy.modelMatched();
+            if (fileNameValidator.getFileNamePattern() != null && !fileNameValidator.getFileNamePattern().parse(xml.getFileName()).submit(event, context))
+            {
+                evaluationStrategy.modelSubmissionRejected();
+                return;
+            }
             evaluationStrategy.modelSubmitted(xml);
             results.add(xml);
         } else {
