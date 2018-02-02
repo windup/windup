@@ -290,6 +290,7 @@ public class XmlFile extends ParameterizedGraphCondition implements XmlFileDTD, 
     private void initValidators(GraphRewrite event, EvaluationContext context, XmlFileEvaluationStrategy evaluationStrategy)
     {
         xpathValidator.setEvaluationStrategy(evaluationStrategy);
+        xpathValidator.setXmlFileNameValidator(fileNameValidator);
         cacheValidator.clear();
     }
 
