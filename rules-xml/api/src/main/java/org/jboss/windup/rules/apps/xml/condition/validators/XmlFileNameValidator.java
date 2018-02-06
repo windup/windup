@@ -30,7 +30,7 @@ public class XmlFileNameValidator implements XmlFileValidator
             {
                 return false;
             }
-            return fileNamePattern.parse(model.getFileName()).submit(event,context);
+            return true;
         }
         return true;
     }

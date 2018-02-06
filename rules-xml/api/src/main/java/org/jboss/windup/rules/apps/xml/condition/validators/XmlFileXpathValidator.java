@@ -59,6 +59,7 @@ public class XmlFileXpathValidator implements XmlFileValidator
     private String xpathString;
     private static final Logger LOG = Logging.get(XmlFileXpathValidator.class);
     private RegexParameterizedPatternParser xpathPattern;
+    private XmlFileNameValidator fileNameValidator;
 
     public XmlFileXpathValidator()
     {
@@ -80,6 +81,11 @@ public class XmlFileXpathValidator implements XmlFileValidator
         {
             this.xpathPattern = new RegexParameterizedPatternParser(this.xpathString);
         }
+    }
+
+    public void setXmlFileNameValidator(XmlFileNameValidator fileNameValidator)
+    {
+        this.fileNameValidator = fileNameValidator;
     }
 
     @Override
@@ -267,6 +273,12 @@ public class XmlFileXpathValidator implements XmlFileValidator
 
                 evaluationStrategy.modelSubmissionRejected();
                 evaluationStrategy.modelMatched();
+
+                if (fileNameValidator.getFileNamePattern() != null && !fileNameValidator.getFileNamePattern().parse(xml.getFileName()).submit(event, context))
+                {
+                    evaluationStrategy.modelSubmissionRejected();
+                    continue;
+                }
 
                 for (Map.Entry<String, String> entry : paramMatchCache.getVariables().entrySet())
                 {
