@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -15,7 +14,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.syncleus.ferma.ClassInitializer;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
@@ -27,20 +25,16 @@ import org.apache.tinkerpop.gremlin.process.traversal.TraversalStrategies;
 import org.apache.tinkerpop.gremlin.process.traversal.step.util.event.MutationListener;
 import org.apache.tinkerpop.gremlin.process.traversal.strategy.decoration.EventStrategy;
 import org.apache.tinkerpop.gremlin.structure.Edge;
-import org.apache.tinkerpop.gremlin.structure.Element;
-import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.structure.VertexProperty;
 import org.janusgraph.core.Cardinality;
 import org.janusgraph.core.JanusGraph;
 import org.janusgraph.core.JanusGraphFactory;
-import org.janusgraph.core.JanusGraphTransaction;
 import org.janusgraph.core.PropertyKey;
 import org.janusgraph.core.schema.JanusGraphManagement;
 import org.janusgraph.core.schema.Mapping;
 import org.janusgraph.diskstorage.berkeleyje.BerkeleyJEStoreManager;
 import org.janusgraph.graphdb.database.StandardJanusGraph;
-import org.janusgraph.graphdb.transaction.StandardJanusGraphTx;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Annotations;
@@ -53,6 +47,7 @@ import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.service.GraphService;
 
 import com.sleepycat.je.LockMode;
+import com.syncleus.ferma.ClassInitializer;
 import com.syncleus.ferma.DelegatingFramedGraph;
 import com.syncleus.ferma.ReflectionCache;
 import com.syncleus.ferma.Traversable;
@@ -62,7 +57,7 @@ import com.syncleus.ferma.framefactories.annotation.MethodHandler;
 public class GraphContextImpl implements GraphContext
 {
     private static final Logger LOG = Logger.getLogger(GraphContextImpl.class.getName());
-
+    private static final GraphContextMutationListener mutationListener = new GraphContextMutationListener();
     private final Furnace furnace;
     private final GraphTypeManager graphTypeManager;
     private final Path graphDir;
@@ -78,7 +73,6 @@ public class GraphContextImpl implements GraphContext
     private JanusGraph graph;
     private WrappedFramedGraph<JanusGraph> framed;
     private Configuration conf;
-    private static final GraphContextMutationListener mutationListener = new GraphContextMutationListener();
 
     public GraphContextImpl(Furnace furnace, GraphTypeManager typeManager,
                 GraphApiCompositeClassLoaderProvider classLoaderProvider, Path graphDir)
@@ -164,16 +158,20 @@ public class GraphContextImpl implements GraphContext
          *
          * https://github.com/Syncleus/Ferma/issues/44
          */
-        framed = new DelegatingFramedGraph<JanusGraph>(janusGraph, frameFactory, this.graphTypeManager) {
+        framed = new DelegatingFramedGraph<JanusGraph>(janusGraph, frameFactory, this.graphTypeManager)
+        {
             @Override
-            public <T> T addFramedVertex(final ClassInitializer<T> initializer, final Object... keyValues) {
+            public <T> T addFramedVertex(final ClassInitializer<T> initializer, final Object... keyValues)
+            {
                 final Vertex vertex;
                 final T framedVertex;
-                if( keyValues != null ) {
+                if (keyValues != null)
+                {
                     vertex = this.getBaseGraph().addVertex(keyValues);
                     framedVertex = frameNewElement(vertex, initializer);
                 }
-                else {
+                else
+                {
                     vertex = this.getBaseGraph().addVertex();
                     framedVertex = frameNewElement(vertex, initializer);
                 }
@@ -182,7 +180,8 @@ public class GraphContextImpl implements GraphContext
             }
 
             @Override
-            public <T> T addFramedVertexExplicit(final ClassInitializer<T> initializer) {
+            public <T> T addFramedVertexExplicit(final ClassInitializer<T> initializer)
+            {
                 Vertex vertex = this.getBaseGraph().addVertex();
                 final T framedVertex = frameNewElementExplicit(vertex, initializer);
                 GraphContextImpl.this.mutationListener.vertexAdded(vertex);
@@ -367,14 +366,13 @@ public class GraphContextImpl implements GraphContext
         JanusGraph janusGraph = JanusGraphFactory.open(conf);
 
         /*
-         * We only need to setup the eventing system when initializing a graph, not when loading it later for
-         * reporting.
+         * We only need to setup the eventing system when initializing a graph, not when loading it later for reporting.
          */
         if (createMode)
         {
             TraversalStrategies graphStrategies = TraversalStrategies.GlobalCache
-                    .getStrategies(StandardJanusGraph.class)
-                    .clone();
+                        .getStrategies(StandardJanusGraph.class)
+                        .clone();
 
             // Remove any old listeners
             if (graphStrategies.getStrategy(EventStrategy.class) != null)
@@ -421,7 +419,18 @@ public class GraphContextImpl implements GraphContext
         {
             LOG.warning("Could not call before shutdown listeners during close due to: " + e.getMessage());
         }
-        this.graph.close();
+        try
+        {
+            JanusGraphFactory.close(this.graph);
+        }
+        catch (Exception e)
+        {
+            LOG.log(Level.WARNING, "Failed to close graph with JanusGraph method due to: " + e.getMessage() + ", will attempt regular close.", e);
+        }
+        finally
+        {
+            this.graph.close();
+        }
     }
 
     @Override
@@ -533,48 +542,12 @@ public class GraphContextImpl implements GraphContext
         getGraph().tx().commit();
     }
 
-    private class IndexData
-    {
-        private final String propertyName;
-        private final String indexName;
-        private final Class<?> type;
-
-        public IndexData(String propertyName, String indexName, Class<?> type)
-        {
-            this.propertyName = propertyName;
-            this.indexName = indexName;
-            this.type = type;
-        }
-
-        public String getPropertyName()
-        {
-            return propertyName;
-        }
-
-        public String getIndexName()
-        {
-            return StringUtils.defaultIfBlank(indexName, propertyName);
-        }
-
-        public Class<?> getType()
-        {
-            return type;
-        }
-
-        @Override
-        public String toString()
-        {
-            return String.format("IndexData{propertyName='%s', indexName='%s', type=%s}", propertyName, indexName, type);
-        }
-    }
-
     private static class GraphContextMutationListener implements MutationListener
     {
         private GraphContextImpl graphContext;
 
         /**
-         * NOTE: This approach will break if we allow multiple execution threads in the same VM. We probably
-         * shouldn't allow that anyway, though.
+         * NOTE: This approach will break if we allow multiple execution threads in the same VM. We probably shouldn't allow that anyway, though.
          */
         private void setGraph(GraphContextImpl graphContext)
         {
@@ -649,6 +622,41 @@ public class GraphContextImpl implements GraphContext
         public void vertexPropertyPropertyRemoved(VertexProperty element, org.apache.tinkerpop.gremlin.structure.Property property)
         {
 
+        }
+    }
+
+    private class IndexData
+    {
+        private final String propertyName;
+        private final String indexName;
+        private final Class<?> type;
+
+        public IndexData(String propertyName, String indexName, Class<?> type)
+        {
+            this.propertyName = propertyName;
+            this.indexName = indexName;
+            this.type = type;
+        }
+
+        public String getPropertyName()
+        {
+            return propertyName;
+        }
+
+        public String getIndexName()
+        {
+            return StringUtils.defaultIfBlank(indexName, propertyName);
+        }
+
+        public Class<?> getType()
+        {
+            return type;
+        }
+
+        @Override
+        public String toString()
+        {
+            return String.format("IndexData{propertyName='%s', indexName='%s', type=%s}", propertyName, indexName, type);
         }
     }
 }
