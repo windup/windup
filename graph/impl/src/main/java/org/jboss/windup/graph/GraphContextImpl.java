@@ -422,10 +422,6 @@ public class GraphContextImpl implements GraphContext
             LOG.warning("Could not call before shutdown listeners during close due to: " + e.getMessage());
         }
         this.graph.close();
-
-        TraversalStrategies graphStrategies = TraversalStrategies.GlobalCache
-                .getStrategies(StandardJanusGraph.class)
-                .clone();
     }
 
     @Override
