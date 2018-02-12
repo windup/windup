@@ -108,7 +108,7 @@ $(document).ready(function () {
          */
         function makeTagsClickable() {
             $('div.techs span.label').each(function() {
-                var anchored = $('<a href="javascript:null"></a>');
+                var anchored = $('<a href="#"></a>');
                 anchored.append($(this).clone());
                 anchored.on('click', function() {
                     addFilter($(this).text().trim(), filterOptions[1]);
