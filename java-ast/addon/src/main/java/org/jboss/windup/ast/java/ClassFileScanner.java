@@ -2,6 +2,8 @@ package org.jboss.windup.ast.java;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -48,7 +50,10 @@ public class ClassFileScanner
     private static Logger LOG = Logger.getLogger(ClassFileScanner.class.getName());
 
     private Set<String> classpath;
-    private Map<String, ClassInfo> classInfoCache = new HashMap<>();
+
+    private Map<String, ClassReader> classReaderCache = new HashMap<>();
+    private Map<String, ClassInfo> classInfoByPath = new HashMap<>();
+    private Map<String, List<ClassInfo>> classInfoByFQDN = new HashMap<>();
 
     public ClassFileScanner()
     {
@@ -59,6 +64,12 @@ public class ClassFileScanner
     {
         this.classpath = classpath;
         populateCache();
+    }
+
+    public ClassInfo getClassInfo(String path)
+    {
+        String normalizedPath = Paths.get(path).normalize().toAbsolutePath().toString();
+        return classInfoByPath.get(normalizedPath);
     }
 
     public Collection<ClassReference> scanClass(Path classFile)
@@ -262,7 +273,7 @@ public class ClassFileScanner
                 @Override
                 public void visitBaseType(char descriptor)
                 {
-                    addType(""+descriptor);
+                    addType("" + descriptor);
                     super.visitBaseType(descriptor);
                 }
 
@@ -346,9 +357,16 @@ public class ClassFileScanner
 
     private ClassReader createClassReader(Path classFile)
     {
+        classFile = classFile.normalize().toAbsolutePath();
+        ClassReader result = classReaderCache.get(classFile.toString());
+        if (result != null)
+            return result;
+
         try (FileInputStream fis = new FileInputStream(classFile.toFile()))
         {
-            return new ClassReader(fis);
+            result = new ClassReader(fis);
+            classReaderCache.put(classFile.toString(), result);
+            return result;
         }
         catch (Exception e)
         {
@@ -360,11 +378,13 @@ public class ClassFileScanner
     {
         Set<String> owners = new HashSet<>();
         owners.add(owner);
-        ClassInfo classInfo = this.classInfoCache.get(owner);
-        if (classInfo != null)
+        List<ClassInfo> classInfoList = this.classInfoByFQDN.get(owner);
+        if (classInfoList != null)
         {
-            owners.addAll(classInfo.superclass);
-            owners.addAll(classInfo.implementedInterfaces);
+            classInfoList.forEach(classInfo -> {
+                owners.add(classInfo.superclass);
+                owners.addAll(classInfo.implementedInterfaces);
+            });
         }
         return owners;
     }
@@ -375,50 +395,70 @@ public class ClassFileScanner
         {
             try
             {
-                Path path = Paths.get(pathString);
-                if (Files.isDirectory(path) || ZipUtil.endsWithZipExtension(pathString))
+                Path parentPath = Paths.get(pathString);
+                SimpleFileVisitor<Path> visitor = new SimpleFileVisitor<Path>()
+                {
+                    @Override
+                    public FileVisitResult visitFile(Path childFile, BasicFileAttributes attrs) throws IOException
+                    {
+                        if (!StringUtils.endsWithIgnoreCase(childFile.getFileName().toString(), ".class"))
+                            return FileVisitResult.CONTINUE;
+
+                        try
+                        {
+                            String normalizedPath = childFile.normalize().toAbsolutePath().toString();
+                            ClassReader classReader = createClassReader(childFile);
+                            classReaderCache.put(normalizedPath, classReader);
+                            String classname = fixClassname(classReader.getClassName());
+                            String superclass = fixClassname(classReader.getSuperName());
+                            String[] interfaces = Arrays
+                                        .stream(classReader.getInterfaces())
+                                        .map(interfaceName -> fixClassname(interfaceName))
+                                        .collect(Collectors.toList()).toArray(new String[0]);
+
+                            List<ClassInfo> classInfoList = classInfoByFQDN.computeIfAbsent(classname, (key) -> new ArrayList<>());
+
+                            ClassInfo classInfo = new ClassInfo(classname, superclass, interfaces);
+                            classReader.accept(new ClassVisitor(Opcodes.ASM6)
+                            {
+                                @Override
+                                public void visit(int version, int access, String name, String signature, String superName, String[] interfaces)
+                                {
+                                    classInfo.setMajorVersion(version);
+                                }
+                            }, 0);
+                            boolean isInterface = (classReader.getAccess() & Opcodes.ACC_INTERFACE) != 0;
+                            classInfo.setIsInterface(isInterface);
+                            boolean isPublic = (classReader.getAccess() & Opcodes.ACC_PUBLIC) != 0;
+                            classInfo.setPublic(isPublic);
+
+                            classInfoList.add(classInfo);
+                            classInfoByFQDN.put(classname, classInfoList);
+                            classInfoByPath.put(normalizedPath, classInfo);
+                        }
+                        catch (Throwable t)
+                        {
+                            LOG.warning("Could not parse class data for: " + childFile + " due to: " + t.getMessage());
+                            t.printStackTrace();
+                        }
+
+                        return FileVisitResult.CONTINUE;
+                    }
+                };
+
+                if (Files.isDirectory(parentPath))
                 {
                     // handle directory
-                    Files.walkFileTree(path, new SimpleFileVisitor<Path>()
-                    {
-                        @Override
-                        public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException
-                        {
-                            if (!StringUtils.endsWithIgnoreCase(file.getFileName().toString(), ".class"))
-                                return FileVisitResult.CONTINUE;
-
-                            try
-                            {
-                                ClassReader classReader = createClassReader(file);
-                                String classname = fixClassname(classReader.getClassName());
-                                String superclass = fixClassname(classReader.getSuperName());
-                                String[] interfaces = Arrays
-                                            .stream(classReader.getInterfaces())
-                                            .map(interfaceName -> fixClassname(interfaceName))
-                                            .collect(Collectors.toList()).toArray(new String[0]);
-
-                                ClassInfo classInfo = classInfoCache.get(classname);
-                                if (classInfo != null)
-                                {
-                                    classInfo.addSuperclass(superclass);
-                                    classInfo.addInterfaces(interfaces);
-                                }
-                                else
-                                {
-                                    classInfo = new ClassInfo(classname, superclass, interfaces);
-                                    classInfoCache.put(classname, classInfo);
-                                }
-                            }
-                            catch (Throwable t)
-                            {
-                                LOG.warning("Could not parse class data for: " + file + " due to: " + t.getMessage());
-                                t.printStackTrace();
-                            }
-
-                            return FileVisitResult.CONTINUE;
-                        }
-                    });
+                    Files.walkFileTree(parentPath, visitor);
                 }
+                else if (ZipUtil.endsWithZipExtension(pathString))
+                {
+                    try (FileSystem zipFilesystem = FileSystems.newFileSystem(parentPath, null))
+                    {
+                        Files.walkFileTree(zipFilesystem.getPath("/"), visitor);
+                    }
+                }
+
             }
             catch (Throwable t)
             {
@@ -427,7 +467,7 @@ public class ClassFileScanner
         }
     }
 
-    private static class ClassInfo
+    public static class ClassInfo
     {
         String fqdn;
 
@@ -438,24 +478,25 @@ public class ClassFileScanner
          * We just include all of the scenarios, even though this isn't technically accurate. It is more important to not miss a potential scenario,
          * than it is to only include the perfectly accurate ones.
          */
-        Set<String> superclass = new HashSet<>();
-        Set<String> implementedInterfaces = new HashSet<>();
+        private boolean isPublic;
+        private boolean isInterface;
+        private String superclass;
+        private Set<String> implementedInterfaces = new HashSet<>();
+        private int majorVersion;
 
         public ClassInfo(String fqdn, String superclass, String[] implementedInterfaces)
         {
             this.fqdn = fqdn;
-            this.superclass.add(superclass);
+            this.superclass = superclass;
             this.implementedInterfaces.addAll(Arrays.asList(implementedInterfaces));
         }
 
-        public void addSuperclass(String superclass)
+        public String getPackageName()
         {
-            this.superclass.add(superclass);
-        }
-
-        public void addInterfaces(String[] interfaces)
-        {
-            this.implementedInterfaces.addAll(Arrays.asList(interfaces));
+            if (StringUtils.isBlank(fqdn) || !fqdn.contains("."))
+                return "";
+            else
+                return fqdn.substring(0, fqdn.lastIndexOf("."));
         }
 
         public String getFqdn()
@@ -463,7 +504,7 @@ public class ClassFileScanner
             return fqdn;
         }
 
-        public Set<String> getSuperclass()
+        public String getSuperclass()
         {
             return superclass;
         }
@@ -471,6 +512,36 @@ public class ClassFileScanner
         public Set<String> getImplementedInterfaces()
         {
             return implementedInterfaces;
+        }
+
+        public boolean isPublic()
+        {
+            return isPublic;
+        }
+
+        private void setPublic(boolean aPublic)
+        {
+            isPublic = aPublic;
+        }
+
+        public boolean isInterface()
+        {
+            return isInterface;
+        }
+
+        private void setIsInterface(boolean isInterface)
+        {
+            this.isInterface = isInterface;
+        }
+
+        public int getMajorVersion()
+        {
+            return majorVersion;
+        }
+
+        private void setMajorVersion(int majorVersion)
+        {
+            this.majorVersion = majorVersion;
         }
     }
 }

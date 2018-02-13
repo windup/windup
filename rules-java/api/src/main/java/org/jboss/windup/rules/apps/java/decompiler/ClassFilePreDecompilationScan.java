@@ -15,8 +15,6 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.bcel.classfile.ClassParser;
-import org.apache.bcel.classfile.JavaClass;
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.ast.java.ClassFileScanner;
 import org.jboss.windup.ast.java.data.ClassReference;
@@ -58,20 +56,18 @@ public class ClassFilePreDecompilationScan extends GraphOperation
     String UNPARSEABLE_CLASS_CLASSIFICATION = "Unparseable Class File";
     String UNPARSEABLE_CLASS_DESCRIPTION = "This Class file could not be parsed";
 
-    private void addClassFileMetadata(GraphRewrite event, EvaluationContext context, JavaClassFileModel javaClassFileModel)
+    private void addClassFileMetadata(GraphRewrite event, EvaluationContext context, JavaClassFileModel javaClassFileModel, ClassFileScanner classFileScanner)
     {
-        try (FileInputStream fis = new FileInputStream(javaClassFileModel.getFilePath()))
+        try
         {
-            final ClassParser parser = new ClassParser(fis, javaClassFileModel.getFilePath());
-            final JavaClass bcelJavaClass = parser.parse();
-            final String packageName = bcelJavaClass.getPackageName();
+            final ClassFileScanner.ClassInfo classInfo = classFileScanner.getClassInfo(javaClassFileModel.getFilePath());
+            final String packageName = classInfo.getPackageName();
 
-            final String qualifiedName = bcelJavaClass.getClassName();
+            final String qualifiedName = classInfo.getFqdn();
 
             final JavaClassService javaClassService = new JavaClassService(event.getGraphContext());
             final JavaClassModel javaClassModel = javaClassService.create(qualifiedName);
-            int majorVersion = bcelJavaClass.getMajor();
-            int minorVersion = bcelJavaClass.getMinor();
+            int majorVersion = classInfo.getMajorVersion();
 
             String simpleName = qualifiedName;
             if (packageName != null && !packageName.isEmpty() && simpleName != null)
@@ -80,17 +76,16 @@ public class ClassFilePreDecompilationScan extends GraphOperation
             }
 
             javaClassFileModel.setMajorVersion(majorVersion);
-            javaClassFileModel.setMinorVersion(minorVersion);
             javaClassFileModel.setPackageName(packageName);
 
             javaClassModel.setSimpleName(simpleName);
             javaClassModel.setPackageName(packageName);
             javaClassModel.setQualifiedName(qualifiedName);
             javaClassModel.setClassFile(javaClassFileModel);
-            javaClassModel.setPublic(bcelJavaClass.isPublic());
-            javaClassModel.setInterface(bcelJavaClass.isInterface());
+            javaClassModel.setPublic(classInfo.isPublic());
+            javaClassModel.setInterface(classInfo.isInterface());
 
-            final String[] interfaceNames = bcelJavaClass.getInterfaceNames();
+            final Set<String> interfaceNames = classInfo.getImplementedInterfaces();
             if (interfaceNames != null)
             {
                 for (final String interfaceName : interfaceNames)
@@ -100,8 +95,8 @@ public class ClassFilePreDecompilationScan extends GraphOperation
                 }
             }
 
-            String superclassName = bcelJavaClass.getSuperclassName();
-            if (!bcelJavaClass.isInterface() && !StringUtils.isBlank(superclassName))
+            String superclassName = classInfo.getSuperclass();
+            if (!classInfo.isInterface() && !StringUtils.isBlank(superclassName))
                 javaClassModel.setExtends(javaClassService.getOrCreatePhantom(superclassName));
 
             javaClassFileModel.setJavaClass(javaClassModel);
@@ -109,7 +104,7 @@ public class ClassFilePreDecompilationScan extends GraphOperation
         catch (Exception ex)
         {
             String nl = ex.getMessage() != null ? Util.NL + "\t" : " ";
-            final String message = "BCEL was unable to parse class file '" + javaClassFileModel.getFilePath() + "':" + nl + ex.toString();
+            final String message = "ASM was unable to parse class file '" + javaClassFileModel.getFilePath() + "':" + nl + ex.toString();
             LOG.log(Level.WARNING, message);
             ClassificationService classificationService = new ClassificationService(event.getGraphContext());
             classificationService.attachClassification(event, context, javaClassFileModel, UNPARSEABLE_CLASS_CLASSIFICATION,
@@ -185,7 +180,15 @@ public class ClassFilePreDecompilationScan extends GraphOperation
             ArchiveService archiveService = new ArchiveService(event.getGraphContext());
             for (ArchiveModel archiveModel : archiveService.findAll())
             {
-                classpaths.add(archiveModel.getFilePath());
+                /*
+                 * If we have unzipped the zip file, then use the unzipped directory.
+                 *
+                 * Otherwise, use the zip file itself.
+                 */
+                if (StringUtils.isBlank(archiveModel.getUnzippedDirectory()))
+                    classpaths.add(archiveModel.getFilePath());
+                else
+                    classpaths.add(archiveModel.getUnzippedDirectory());
             }
             ClassFileScanner classFileScanner = new ClassFileScanner(classpaths);
 
@@ -209,7 +212,7 @@ public class ClassFilePreDecompilationScan extends GraphOperation
                     boolean foundMatch = false;
                     for (JavaClassFileModel fileModel : classBatch)
                     {
-                        addClassFileMetadata(event, context, fileModel);
+                        addClassFileMetadata(event, context, fileModel, classFileScanner);
                     }
 
                     for (JavaClassFileModel fileModel : classBatch)
