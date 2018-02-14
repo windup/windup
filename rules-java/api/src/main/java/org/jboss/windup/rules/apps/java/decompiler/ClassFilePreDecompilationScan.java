@@ -226,9 +226,6 @@ public class ClassFilePreDecompilationScan extends GraphOperation
                         boolean shouldSkip = true;
                         for (JavaClassFileModel fileModel : classBatch)
                         {
-                            // We acquired this from a different thread, so reload it locally
-                            fileModel = javaClassFileService.getById(fileModel.getId());
-
                             Collection<ClassReference> references;
                             try
                             {
@@ -240,7 +237,10 @@ public class ClassFilePreDecompilationScan extends GraphOperation
                                 continue;
                             }
                             if (filterClassesToDecompile(event, fileModel, references))
+                            {
                                 shouldSkip = shouldSkip && true;
+                                continue;
+                            }
 
                             Map<String, ClassReference> deduplicatedReferences = new HashMap<>();
                             for (ClassReference classReference : references)
@@ -276,13 +276,13 @@ public class ClassFilePreDecompilationScan extends GraphOperation
                                 }
                             }
                         }
+                        return shouldSkip;
                     }
                     finally
                     {
                         progressEstimate.addWork(classBatch.size());
                         printProgress(event, progressEstimate, totalWork);
                     }
-                    return true;
                 });
 
                 /*
@@ -302,7 +302,11 @@ public class ClassFilePreDecompilationScan extends GraphOperation
                 for (Pair<List<JavaClassFileModel>, Future<Boolean>> shouldSkipPair : shouldSkipFutures)
                 {
                     for (JavaClassFileModel javaClassFileModel : shouldSkipPair.getLeft())
+                    {
+                        boolean shouldSkip = shouldSkipPair.getRight().get(1, TimeUnit.NANOSECONDS);
+                        LOG.info("Setting should skip for: " + javaClassFileModel.getFilePath() + " id: " + javaClassFileModel.getId() + " to " + shouldSkip);
                         javaClassFileModel.setSkipDecompilation(shouldSkipPair.getRight().get(1, TimeUnit.NANOSECONDS)); // Short timeout as the executor is already shut down.
+                    }
                 }
             }
             catch (Throwable t)
@@ -317,7 +321,6 @@ public class ClassFilePreDecompilationScan extends GraphOperation
 
                 for (JavaClassFileModel fileModel : classBatch)
                 {
-                    fileModel = javaClassFileService.getById(fileModel.getId());
                     addClassFileMetadata(event, context, fileModel, classFileScanner);
                 }
                 progressEstimate.addWork(classBatch.size());
