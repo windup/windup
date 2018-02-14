@@ -139,13 +139,19 @@ public class ClassFilePreDecompilationScan extends GraphOperation
         WindupJavaConfigurationService configurationService = new WindupJavaConfigurationService(event.getGraphContext());
         boolean shouldScan;
         if (fileModel.getPackageName() != null)
+        {
             shouldScan = configurationService.shouldScanPackage(fileModel.getPackageName());
+            LOG.info("Skipping decompilation for (pkgname): " + fileModel.getFilePath() + " due to package configuration? " + !shouldScan + " pkg: " + fileModel.getPackageName());
+        }
         else
+        {
             shouldScan = configurationService.shouldScanFile(fileModel.getFilePath());
+            LOG.info("Skipping decompilation for (filepath): " + fileModel.getFilePath() + " due to package configuration? " + !shouldScan);
+        }
 
         if (!shouldScan)
         {
-            LOG.fine("Skipping decompilation for: " + fileModel.getFilePath() + " due to configuration!");
+            LOG.info("Skipping decompilation for: " + fileModel.getFilePath() + " due to configuration!");
             return true;
         }
 
@@ -158,7 +164,7 @@ public class ClassFilePreDecompilationScan extends GraphOperation
         {
             if (shouldIgnore(typeReference.getFullyQualifiedClassName()))
             {
-                LOG.fine("Skipping decompilation for: " + fileModel.getFilePath() + " due javaclass-ignore!");
+                LOG.info("Skipping decompilation for: " + fileModel.getFilePath() + " due javaclass-ignore: " + typeReference.getFullyQualifiedClassName() + "!");
                 return true;
             }
         }
@@ -207,6 +213,22 @@ public class ClassFilePreDecompilationScan extends GraphOperation
             final int totalWork = totalWorkCounter * 2;
             ProgressEstimate progressEstimate = new ProgressEstimate(totalWork);
 
+            // Collect all class metadata
+            for (List<JavaClassFileModel> classBatch : classFileMap.getClasses())
+            {
+                classBatch.sort(Comparator.comparingInt(o -> o.getFileName().length()));
+
+                for (JavaClassFileModel fileModel : classBatch)
+                {
+                    addClassFileMetadata(event, context, fileModel, classFileScanner);
+                }
+                progressEstimate.addWork(classBatch.size());
+                printProgress(event, progressEstimate, totalWork);
+                if (progressEstimate.getWorked() % 100 == 0)
+                    event.getGraphContext().commit();
+            }
+            event.getGraphContext().commit();
+
             ExecutorService executorService = WindupExecutors.newFixedThreadPool(WindupExecutors.getDefaultThreadCount());
 
             /*
@@ -238,6 +260,7 @@ public class ClassFilePreDecompilationScan extends GraphOperation
                             }
                             if (filterClassesToDecompile(event, fileModel, references))
                             {
+                                LOG.info("filterClassesToDecompile Setting should skip for: " + fileModel.getFilePath() + " id: " + fileModel.getId() + " to " + shouldSkip);
                                 shouldSkip = shouldSkip && true;
                                 continue;
                             }
@@ -268,10 +291,12 @@ public class ClassFilePreDecompilationScan extends GraphOperation
                                                             classReference.getLine()));
                             }
 
+                            LOG.info("typeinterestfactory references search: " + fileModel.getFilePath() + " id: " + fileModel.getId() + " to " + deduplicatedReferences.values());
                             for (ClassReference reference : deduplicatedReferences.values())
                             {
                                 if (TypeInterestFactory.matchesAny(reference.getQualifiedName(), reference.getLocation()))
                                 {
+                                    LOG.info("typeinterestfactory Setting should skip for: " + fileModel.getFilePath() + " id: " + fileModel.getId() + " to " + false);
                                     shouldSkip = false;
                                 }
                             }
@@ -312,21 +337,6 @@ public class ClassFilePreDecompilationScan extends GraphOperation
             catch (Throwable t)
             {
                 throw new WindupException(t);
-            }
-
-            // Do this after the other jobs have been submitted and are executing in the background
-            for (List<JavaClassFileModel> classBatch : classFileMap.getClasses())
-            {
-                classBatch.sort(Comparator.comparingInt(o -> o.getFileName().length()));
-
-                for (JavaClassFileModel fileModel : classBatch)
-                {
-                    addClassFileMetadata(event, context, fileModel, classFileScanner);
-                }
-                progressEstimate.addWork(classBatch.size());
-                printProgress(event, progressEstimate, totalWork);
-                if (progressEstimate.getWorked() % 100 == 0)
-                    event.getGraphContext().commit();
             }
 
             event.getGraphContext().commit();

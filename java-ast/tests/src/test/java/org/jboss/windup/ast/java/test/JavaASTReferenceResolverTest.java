@@ -24,7 +24,7 @@ public class JavaASTReferenceResolverTest extends AbstractJavaASTTest
 
         Assert.assertTrue(references.contains(
                     new ClassReference("testclasses.helloworld.HelloWorld", "testclasses.helloworld", "HelloWorld", null, ResolutionStatus.RESOLVED,
-                                TypeReferenceLocation.TYPE, 3, 0, 174,
+                                TypeReferenceLocation.TYPE, 3, 0, 222,
                                 "public class HelloWorld {")));
         Assert.assertTrue(references.contains(
                     new ClassReference("testclasses.helloworld.HelloWorld.main(String[])", "testclasses.helloworld", "HelloWorld", "main",
@@ -32,11 +32,11 @@ public class JavaASTReferenceResolverTest extends AbstractJavaASTTest
                                 5, 23, 4,
                                 "public static void main(String[] argv) throws Exception {")));
         Assert.assertTrue(references.contains(
-                    new ClassReference("void", "", "void", null, ResolutionStatus.RESOLVED, TypeReferenceLocation.RETURN_TYPE, 5, 4, 108,
+                    new ClassReference("void", "", "void", null, ResolutionStatus.RESOLVED, TypeReferenceLocation.RETURN_TYPE, 5, 4, 156,
                                 "public static void main(String[] argv) throws Exception {")));
         Assert.assertTrue(references.contains(
                     new ClassReference("java.lang.String[]", "java.lang", "String[]", null, ResolutionStatus.RESOLVED,
-                                TypeReferenceLocation.METHOD_PARAMETER, 5, 4, 108,
+                                TypeReferenceLocation.METHOD_PARAMETER, 5, 4, 156,
                                 "public static void main(String[] argv) throws Exception {")));
         Assert.assertTrue(references.contains(
                     new ClassReference("java.lang.Exception", "java.lang", "Exception", null, ResolutionStatus.RESOLVED,
@@ -48,7 +48,13 @@ public class JavaASTReferenceResolverTest extends AbstractJavaASTTest
                                 6, 19, 7,
                                 "System.out.println(\"Hello world!\")")));
 
-        Assert.assertEquals(6, references.size());
+        Assert.assertTrue(references.contains(
+                new ClassReference("java.lang.String(java.lang.String)", "java.lang", "String", "<init>",
+                        ResolutionStatus.RESOLVED, TypeReferenceLocation.CONSTRUCTOR_CALL,
+                        7, 25, 6,
+                        "new String(\"Testing 123\")")));
+
+        Assert.assertEquals(8, references.size());
     }
 
     @Test

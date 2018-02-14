@@ -59,6 +59,10 @@ public class SimpleClassPrescanTest extends AbstractJavaASTTest
         assertContainsReference(references, TypeReferenceLocation.METHOD_CALL,
                     "org.jboss.windup.ast.java.test.testclasses.simple.SomeInterface.interfaceMethod()",
                     "org.jboss.windup.ast.java.test.testclasses.simple", "SomeInterface", "interfaceMethod");
+
+        assertContainsReference(references, TypeReferenceLocation.CONSTRUCTOR_CALL,
+                "org.jboss.windup.ast.java.test.testclasses.simple.ClassReturningAnother()",
+                "org.jboss.windup.ast.java.test.testclasses.simple", "ClassReturningAnother", "<init>");
     }
 
     private Set<String> getClassPath()

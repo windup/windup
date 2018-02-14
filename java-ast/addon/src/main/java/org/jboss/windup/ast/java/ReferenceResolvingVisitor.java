@@ -199,11 +199,11 @@ public class ReferenceResolvingVisitor extends ASTVisitor
         return this.classReferences;
     }
 
-    private ClassReference processConstructor(ConstructorType interest, ResolutionStatus resolutionStatus, int lineNumber,
+    private ClassReference processConstructor(ConstructorType interest, String packageName, String className, ResolutionStatus resolutionStatus, int lineNumber,
                 int columnNumber, int length, String line)
     {
         String text = interest.toString();
-        ClassReference reference = new ClassReference(text, this.packageName, this.className, "<init>", resolutionStatus,
+        ClassReference reference = new ClassReference(text, packageName, className, "<init>", resolutionStatus,
                 TypeReferenceLocation.CONSTRUCTOR_CALL, lineNumber, columnNumber, length,
                 line);
         this.classReferences.add(reference);
@@ -1194,7 +1194,8 @@ public class ReferenceResolvingVisitor extends ASTVisitor
         }
 
         ConstructorType resolvedConstructor = new ConstructorType(qualifiedClass, constructorMethodQualifiedArguments);
-        processConstructor(resolvedConstructor, resolutionStatus, lineNumber, columnNumber, length, node.toString());
+        PackageAndClassName packageAndClassName = PackageAndClassName.parseFromQualifiedName(qualifiedClass);
+        processConstructor(resolvedConstructor, packageAndClassName.getPackageName(), packageAndClassName.getClassName(), resolutionStatus, lineNumber, columnNumber, length, node.toString());
 
         return super.visit(node);
     }

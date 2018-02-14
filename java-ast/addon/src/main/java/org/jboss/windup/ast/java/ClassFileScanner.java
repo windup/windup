@@ -315,8 +315,16 @@ public class ClassFileScanner
             results.addAll(createClassReference(parseType(returnType), TypeReferenceLocation.RETURN_TYPE));
         }
 
-        TypeReferenceLocation location = methodDeclaration ? TypeReferenceLocation.METHOD : TypeReferenceLocation.METHOD_CALL;
+        TypeReferenceLocation location;
+        if (methodDeclaration)
+            location = TypeReferenceLocation.METHOD;
+        else if ("<init>".equals(name))
+            location = TypeReferenceLocation.CONSTRUCTOR_CALL;
+        else
+            location = TypeReferenceLocation.METHOD_CALL;
         String qualifiedName = signature.toString();
+        // Remove the <init> from the qualified name, as the Java source parser doesn't include this part
+        qualifiedName = qualifiedName.replace(".<init>(", "(");
 
         results.addAll(createClassReference(owner, qualifiedName, name, location));
 
