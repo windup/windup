@@ -258,6 +258,7 @@ public class ClassFilePreDecompilationScan extends GraphOperation
                     {
                         progressEstimate.addWork(classBatch.size());
                         printProgress(event, progressEstimate, totalWork);
+                        event.getGraphContext().commit();
                     }
                 });
             }
@@ -274,6 +275,8 @@ public class ClassFilePreDecompilationScan extends GraphOperation
                 }
                 progressEstimate.addWork(classBatch.size());
                 printProgress(event, progressEstimate, totalWork);
+                if (progressEstimate.getWorked() % 100 == 0)
+                    event.getGraphContext().commit();
             }
 
             try
@@ -285,6 +288,7 @@ public class ClassFilePreDecompilationScan extends GraphOperation
                 throw new WindupException(t);
             }
 
+            event.getGraphContext().commit();
         }
         finally
         {

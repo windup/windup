@@ -39,8 +39,7 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     @SuppressWarnings("unchecked")
     public static <T extends WindupVertexFrame> T refresh(GraphContext context, T frame)
     {
-        Vertex v = context.getGraph().traversal().V((Long)frame.getId()).next();
-        return (T) context.getFramed().frameElement(v, WindupVertexFrame.class);
+        return (T) context.getFramed().frameElement(frame.getElement(), WindupVertexFrame.class);
     }
 
     @Override

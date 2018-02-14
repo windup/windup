@@ -4,9 +4,6 @@ import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.phase.DecompilationPhase;
-import org.jboss.windup.config.query.Query;
-import org.jboss.windup.graph.model.resource.FileModel;
-import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 
