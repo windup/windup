@@ -1,8 +1,5 @@
 package org.jboss.windup.rules.apps.java.decompiler;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,6 +9,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -28,7 +27,6 @@ import org.jboss.windup.graph.service.ArchiveService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.service.ClassificationService;
-import org.jboss.windup.rules.apps.java.DependencyVisitor;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.scan.ast.TypeInterestFactory;
@@ -39,7 +37,8 @@ import org.jboss.windup.util.ExecutionStatistics;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.ProgressEstimate;
 import org.jboss.windup.util.Util;
-import org.objectweb.asm.ClassReader;
+import org.jboss.windup.util.exception.WindupException;
+import org.jboss.windup.util.threading.WindupExecutors;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 /**
@@ -56,7 +55,8 @@ public class ClassFilePreDecompilationScan extends GraphOperation
     String UNPARSEABLE_CLASS_CLASSIFICATION = "Unparseable Class File";
     String UNPARSEABLE_CLASS_DESCRIPTION = "This Class file could not be parsed";
 
-    private void addClassFileMetadata(GraphRewrite event, EvaluationContext context, JavaClassFileModel javaClassFileModel, ClassFileScanner classFileScanner)
+    private void addClassFileMetadata(GraphRewrite event, EvaluationContext context, JavaClassFileModel javaClassFileModel,
+                ClassFileScanner classFileScanner)
     {
         try
         {
@@ -96,7 +96,7 @@ public class ClassFilePreDecompilationScan extends GraphOperation
             }
 
             String superclassName = classInfo.getSuperclass();
-            if (!classInfo.isInterface() && !StringUtils.isBlank(superclassName))
+            if (!classInfo.isInterface() && !StringUtils.isBlank(superclassName) && !superclassName.equals("java.lang.Object"))
                 javaClassModel.setExtends(javaClassService.getOrCreatePhantom(superclassName));
 
             javaClassFileModel.setJavaClass(javaClassModel);
@@ -114,53 +114,38 @@ public class ClassFilePreDecompilationScan extends GraphOperation
         }
     }
 
-    private void filterClassesToDecompile(GraphRewrite event, EvaluationContext context, JavaClassFileModel fileModel)
+    private void filterClassesToDecompile(GraphRewrite event, JavaClassFileModel fileModel, Collection<ClassReference> references)
     {
         if (fileModel.getSkipDecompilation() != null && fileModel.getSkipDecompilation())
             return;
 
-        try (InputStream is = fileModel.asInputStream())
+        WindupJavaConfigurationService configurationService = new WindupJavaConfigurationService(event.getGraphContext());
+        boolean shouldScan;
+        if (fileModel.getPackageName() != null)
+            shouldScan = configurationService.shouldScanPackage(fileModel.getPackageName());
+        else
+            shouldScan = configurationService.shouldScanFile(fileModel.getFilePath());
+
+        if (!shouldScan)
         {
-            WindupJavaConfigurationService configurationService = new WindupJavaConfigurationService(event.getGraphContext());
-            boolean shouldScan;
-            if (fileModel.getPackageName() != null)
-                shouldScan = configurationService.shouldScanPackage(fileModel.getPackageName());
-            else
-                shouldScan = configurationService.shouldScanFile(fileModel.getFilePath());
-
-            if (!shouldScan)
-            {
-                LOG.fine("Skipping decompilation for: " + fileModel.getFilePath() + " due to configuration!");
-                fileModel.setSkipDecompilation(true);
-                return;
-            }
-
-            // keep inner classes (we may need them for decompilation purposes)
-            if (fileModel.getFileName().contains("$"))
-                return;
-
-            DependencyVisitor dependencyVisitor = new DependencyVisitor();
-            ClassReader classReader = new ClassReader(is);
-            classReader.accept(dependencyVisitor, 0);
-
-            // If we should ignore any of the contained classes, skip decompilation of the whole file.
-            for (String typeReference : dependencyVisitor.classes)
-            {
-                if (shouldIgnore(typeReference))
-                {
-                    LOG.fine("Skipping decompilation for: " + fileModel.getFilePath() + " due javaclass-ignore!");
-                    fileModel.setSkipDecompilation(true);
-                    break;
-                }
-            }
+            LOG.fine("Skipping decompilation for: " + fileModel.getFilePath() + " due to configuration!");
+            fileModel.setSkipDecompilation(true);
+            return;
         }
-        catch (IOException | IllegalArgumentException e)
+
+        // keep inner classes (we may need them for decompilation purposes)
+        if (fileModel.getFileName().contains("$"))
+            return;
+
+        // If we should ignore any of the contained classes, skip decompilation of the whole file.
+        for (ClassReference typeReference : references)
         {
-            final String message = "ASM was unable to parse class file '" + fileModel.getFilePath() + "':\n\t" + e.getMessage();
-            LOG.log(Level.WARNING, message, e);
-            ClassificationService classificationService = new ClassificationService(event.getGraphContext());
-            classificationService.attachClassification(event, context, fileModel, UNPARSEABLE_CLASS_CLASSIFICATION, UNPARSEABLE_CLASS_DESCRIPTION);
-            fileModel.setParseError(message);
+            if (shouldIgnore(typeReference.getFullyQualifiedClassName()))
+            {
+                LOG.fine("Skipping decompilation for: " + fileModel.getFilePath() + " due javaclass-ignore!");
+                fileModel.setSkipDecompilation(true);
+                break;
+            }
         }
     }
 
@@ -195,94 +180,127 @@ public class ClassFilePreDecompilationScan extends GraphOperation
             GraphService<JavaClassFileModel> javaClassFileService = new GraphService<>(event.getGraphContext(), JavaClassFileModel.class);
             ClassFileMap classFileMap = new ClassFileMap();
 
-            int totalWork = 0;
+            int totalWorkCounter = 0;
             for (JavaClassFileModel javaClassFileModel : javaClassFileService.findAllWithoutProperty(FileModel.PARSE_ERROR))
             {
                 classFileMap.addClass(javaClassFileModel);
-                totalWork++;
+                totalWorkCounter++;
             }
+            // Include both the scan and the metadata work
+            final int totalWork = totalWorkCounter*2;
             ProgressEstimate progressEstimate = new ProgressEstimate(totalWork);
 
+            ExecutorService executorService = WindupExecutors.newFixedThreadPool(WindupExecutors.getDefaultThreadCount());
             for (List<JavaClassFileModel> classBatch : classFileMap.getClasses())
             {
-                try
-                {
-                    classBatch.sort(Comparator.comparingInt(o -> o.getFileName().length()));
+                classBatch.sort(Comparator.comparingInt(o -> o.getFileName().length()));
 
-                    boolean foundMatch = false;
-                    for (JavaClassFileModel fileModel : classBatch)
+                executorService.submit(() -> {
+                    try
                     {
-                        addClassFileMetadata(event, context, fileModel, classFileScanner);
-                    }
-
-                    for (JavaClassFileModel fileModel : classBatch)
-                    {
-                        filterClassesToDecompile(event, context, fileModel);
-                        if (fileModel.getParseError() != null)
-                            continue;
-
-                        if (fileModel.getSkipDecompilation() != null && fileModel.getSkipDecompilation())
-                            continue;
-
-                        Collection<ClassReference> references = classFileScanner.scanClass(Paths.get(fileModel.getFilePath()));
-                        Map<String, ClassReference> deduplicatedReferences = new HashMap<>();
-                        for (ClassReference classReference : references)
+                        boolean foundMatch = false;
+                        for (JavaClassFileModel fileModel : classBatch)
                         {
-                            String key = classReference.getLocation() + "_" + classReference.getQualifiedName();
-                            if (!deduplicatedReferences.containsKey(key))
-                                deduplicatedReferences.put(key, classReference);
+                            Collection<ClassReference> references = classFileScanner.scanClass(Paths.get(fileModel.getFilePath()));
+                            filterClassesToDecompile(event, fileModel, references);
+                            if (fileModel.getParseError() != null)
+                                continue;
 
-                            // Also, include an import line for each qualified name
-                            String importQualifiedName = StringUtils.isNotBlank(classReference.getPackageName()) ? classReference.getPackageName() + "." : "";
+                            if (fileModel.getSkipDecompilation() != null && fileModel.getSkipDecompilation())
+                                continue;
 
-                            // For import purposes, do not include the array markers
-                            importQualifiedName += classReference.getClassName().replace("[", "").replace("]", "");
-                            key = TypeReferenceLocation.IMPORT + "_" + importQualifiedName;
-
-                            if (!deduplicatedReferences.containsKey(key))
-                                deduplicatedReferences.put(key, new ClassReference(importQualifiedName, classReference.getPackageName(), classReference.getClassName(),
-                                        null, classReference.getResolutionStatus(), TypeReferenceLocation.IMPORT,
-                                        classReference.getLineNumber(), classReference.getColumn(), classReference.getLength(), classReference.getLine()));
-                        }
-
-                        for (ClassReference reference : deduplicatedReferences.values())
-                        {
-                            if (TypeInterestFactory.matchesAny(reference.getQualifiedName(), reference.getLocation()))
+                            Map<String, ClassReference> deduplicatedReferences = new HashMap<>();
+                            for (ClassReference classReference : references)
                             {
-                                foundMatch = true;
-                                break;
+                                String key = classReference.getLocation() + "_" + classReference.getQualifiedName();
+                                if (!deduplicatedReferences.containsKey(key))
+                                    deduplicatedReferences.put(key, classReference);
+
+                                // Also, include an import line for each qualified name
+                                String importQualifiedName = StringUtils.isNotBlank(classReference.getPackageName())
+                                            ? classReference.getPackageName() + "."
+                                            : "";
+
+                                // For import purposes, do not include the array markers
+                                importQualifiedName += classReference.getClassName().replace("[", "").replace("]", "");
+                                key = TypeReferenceLocation.IMPORT + "_" + importQualifiedName;
+
+                                if (!deduplicatedReferences.containsKey(key))
+                                    deduplicatedReferences.put(key,
+                                                new ClassReference(importQualifiedName, classReference.getPackageName(),
+                                                            classReference.getClassName(),
+                                                            null, classReference.getResolutionStatus(), TypeReferenceLocation.IMPORT,
+                                                            classReference.getLineNumber(), classReference.getColumn(), classReference.getLength(),
+                                                            classReference.getLine()));
                             }
+
+                            for (ClassReference reference : deduplicatedReferences.values())
+                            {
+                                if (TypeInterestFactory.matchesAny(reference.getQualifiedName(), reference.getLocation()))
+                                {
+                                    foundMatch = true;
+                                    break;
+                                }
+                            }
+
+                            if (foundMatch)
+                                break;
                         }
 
-                        if (foundMatch)
-                            break;
+                        // This is just to make it more readable. Mark them as skipped if there were no matches found.
+                        boolean shouldSkip = !foundMatch;
+                        for (JavaClassFileModel fileModel : classBatch)
+                        {
+                            fileModel.setSkipDecompilation(shouldSkip);
+                        }
                     }
-
-                    // This is just to make it more readable. Mark them as skipped if there were no matches found.
-                    boolean shouldSkip = !foundMatch;
-                    for (JavaClassFileModel fileModel : classBatch)
+                    finally
                     {
-                        fileModel.setSkipDecompilation(shouldSkip);
+                        progressEstimate.addWork(classBatch.size());
+                        printProgress(event, progressEstimate, totalWork);
                     }
-                }
-                finally
+                });
+            }
+            executorService.shutdown();
+
+            // Do this after the other jobs have been submitted and are executing in the background
+            for (List<JavaClassFileModel> classBatch : classFileMap.getClasses())
+            {
+                classBatch.sort(Comparator.comparingInt(o -> o.getFileName().length()));
+
+                for (JavaClassFileModel fileModel : classBatch)
                 {
-                    progressEstimate.addWork(classBatch.size());
-
-                    if (progressEstimate.getWorked() % 1000 == 0)
-                    {
-                        long remainingTimeMillis = progressEstimate.getTimeRemainingInMillis();
-                        if (remainingTimeMillis > 1000)
-                            event.ruleEvaluationProgress(ClassFilePreDecompilationScan.class.getSimpleName(), progressEstimate.getWorked(), totalWork, (int) remainingTimeMillis / 1000);
-                        LOG.info(progressEstimate.getWorked() + " / " + totalWork);
-                    }
+                    addClassFileMetadata(event, context, fileModel, classFileScanner);
                 }
+                progressEstimate.addWork(classBatch.size());
+                printProgress(event, progressEstimate, totalWork);
+            }
+
+            try
+            {
+                executorService.awaitTermination(10, TimeUnit.DAYS);
+            }
+            catch (Throwable t)
+            {
+                throw new WindupException(t);
             }
 
         }
         finally
         {
             ExecutionStatistics.get().end("ClassFilePreDecompilationScan.perform()");
+        }
+    }
+
+    private void printProgress(GraphRewrite event, ProgressEstimate progressEstimate, int totalWork)
+    {
+        if (progressEstimate.getWorked() % 1000 == 0)
+        {
+            long remainingTimeMillis = progressEstimate.getTimeRemainingInMillis();
+            if (remainingTimeMillis > 1000)
+                event.ruleEvaluationProgress(ClassFilePreDecompilationScan.class.getSimpleName(), progressEstimate.getWorked(),
+                        totalWork, (int) remainingTimeMillis / 1000);
+            LOG.info(progressEstimate.getWorked() + " / " + totalWork);
         }
     }
 
