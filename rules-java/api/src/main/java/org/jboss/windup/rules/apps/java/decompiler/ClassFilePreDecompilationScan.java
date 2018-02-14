@@ -10,11 +10,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.jboss.windup.ast.java.ClassFileScanner;
 import org.jboss.windup.ast.java.data.ClassReference;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
@@ -61,6 +64,17 @@ public class ClassFilePreDecompilationScan extends GraphOperation
         try
         {
             final ClassFileScanner.ClassInfo classInfo = classFileScanner.getClassInfo(javaClassFileModel.getFilePath());
+            if (classInfo == null || StringUtils.isNotBlank(classInfo.getError()))
+            {
+                String errorMessage = classInfo != null ? classInfo.getError() : "-- N/A --";
+                ClassificationService classificationService = new ClassificationService(event.getGraphContext());
+                classificationService.attachClassification(event, context, javaClassFileModel, UNPARSEABLE_CLASS_CLASSIFICATION,
+                            UNPARSEABLE_CLASS_DESCRIPTION);
+                javaClassFileModel.setParseError(errorMessage);
+                javaClassFileModel.setSkipDecompilation(true);
+                return;
+            }
+
             final String packageName = classInfo.getPackageName();
 
             final String qualifiedName = classInfo.getFqdn();
@@ -114,10 +128,13 @@ public class ClassFilePreDecompilationScan extends GraphOperation
         }
     }
 
-    private void filterClassesToDecompile(GraphRewrite event, JavaClassFileModel fileModel, Collection<ClassReference> references)
+    /**
+     * Returns true if this should skip the decompilation.
+     */
+    private boolean filterClassesToDecompile(GraphRewrite event, JavaClassFileModel fileModel, Collection<ClassReference> references)
     {
         if (fileModel.getSkipDecompilation() != null && fileModel.getSkipDecompilation())
-            return;
+            return true;
 
         WindupJavaConfigurationService configurationService = new WindupJavaConfigurationService(event.getGraphContext());
         boolean shouldScan;
@@ -129,13 +146,12 @@ public class ClassFilePreDecompilationScan extends GraphOperation
         if (!shouldScan)
         {
             LOG.fine("Skipping decompilation for: " + fileModel.getFilePath() + " due to configuration!");
-            fileModel.setSkipDecompilation(true);
-            return;
+            return true;
         }
 
         // keep inner classes (we may need them for decompilation purposes)
         if (fileModel.getFileName().contains("$"))
-            return;
+            return false;
 
         // If we should ignore any of the contained classes, skip decompilation of the whole file.
         for (ClassReference typeReference : references)
@@ -143,10 +159,11 @@ public class ClassFilePreDecompilationScan extends GraphOperation
             if (shouldIgnore(typeReference.getFullyQualifiedClassName()))
             {
                 LOG.fine("Skipping decompilation for: " + fileModel.getFilePath() + " due javaclass-ignore!");
-                fileModel.setSkipDecompilation(true);
-                break;
+                return true;
             }
         }
+
+        return false;
     }
 
     @Override
@@ -187,27 +204,43 @@ public class ClassFilePreDecompilationScan extends GraphOperation
                 totalWorkCounter++;
             }
             // Include both the scan and the metadata work
-            final int totalWork = totalWorkCounter*2;
+            final int totalWork = totalWorkCounter * 2;
             ProgressEstimate progressEstimate = new ProgressEstimate(totalWork);
 
             ExecutorService executorService = WindupExecutors.newFixedThreadPool(WindupExecutors.getDefaultThreadCount());
+
+            /*
+             * Doing graph work with the same vertices across multiple threads is a little difficult due
+             * to the way GraphContext is structured.
+             *
+             * So instead... just use accumulate the results in Futures and then process them at the end.
+             */
+            List<Pair<List<JavaClassFileModel>, Future<Boolean>>> shouldSkipFutures = new ArrayList<>();
             for (List<JavaClassFileModel> classBatch : classFileMap.getClasses())
             {
                 classBatch.sort(Comparator.comparingInt(o -> o.getFileName().length()));
 
-                executorService.submit(() -> {
+                Future<Boolean> shouldSkipFuture = executorService.submit(() -> {
                     try
                     {
-                        boolean foundMatch = false;
+                        boolean shouldSkip = true;
                         for (JavaClassFileModel fileModel : classBatch)
                         {
-                            Collection<ClassReference> references = classFileScanner.scanClass(Paths.get(fileModel.getFilePath()));
-                            filterClassesToDecompile(event, fileModel, references);
-                            if (fileModel.getParseError() != null)
-                                continue;
+                            // We acquired this from a different thread, so reload it locally
+                            fileModel = javaClassFileService.getById(fileModel.getId());
 
-                            if (fileModel.getSkipDecompilation() != null && fileModel.getSkipDecompilation())
+                            Collection<ClassReference> references;
+                            try
+                            {
+                                references = classFileScanner.scanClass(Paths.get(fileModel.getFilePath()));
+                            }
+                            catch (Exception ex)
+                            {
+                                // this is dealt with elsewhere in the code
                                 continue;
+                            }
+                            if (filterClassesToDecompile(event, fileModel, references))
+                                shouldSkip = shouldSkip && true;
 
                             Map<String, ClassReference> deduplicatedReferences = new HashMap<>();
                             for (ClassReference classReference : references)
@@ -230,7 +263,8 @@ public class ClassFilePreDecompilationScan extends GraphOperation
                                                 new ClassReference(importQualifiedName, classReference.getPackageName(),
                                                             classReference.getClassName(),
                                                             null, classReference.getResolutionStatus(), TypeReferenceLocation.IMPORT,
-                                                            classReference.getLineNumber(), classReference.getColumn(), classReference.getLength(),
+                                                            classReference.getLineNumber(), classReference.getColumn(),
+                                                            classReference.getLength(),
                                                             classReference.getLine()));
                             }
 
@@ -238,31 +272,43 @@ public class ClassFilePreDecompilationScan extends GraphOperation
                             {
                                 if (TypeInterestFactory.matchesAny(reference.getQualifiedName(), reference.getLocation()))
                                 {
-                                    foundMatch = true;
-                                    break;
+                                    shouldSkip = false;
                                 }
                             }
-
-                            if (foundMatch)
-                                break;
-                        }
-
-                        // This is just to make it more readable. Mark them as skipped if there were no matches found.
-                        boolean shouldSkip = !foundMatch;
-                        for (JavaClassFileModel fileModel : classBatch)
-                        {
-                            fileModel.setSkipDecompilation(shouldSkip);
                         }
                     }
                     finally
                     {
                         progressEstimate.addWork(classBatch.size());
                         printProgress(event, progressEstimate, totalWork);
-                        event.getGraphContext().commit();
                     }
+                    return true;
                 });
+
+                /*
+                 * Create the Future and save it for later.
+                 */
+                Pair<List<JavaClassFileModel>, Future<Boolean>> shouldSkipPair = ImmutablePair.of(classBatch, shouldSkipFuture);
+                shouldSkipFutures.add(shouldSkipPair);
             }
             executorService.shutdown();
+            try
+            {
+                executorService.awaitTermination(10, TimeUnit.DAYS);
+
+                /*
+                 * Process all of the completed futures.
+                 */
+                for (Pair<List<JavaClassFileModel>, Future<Boolean>> shouldSkipPair : shouldSkipFutures)
+                {
+                    for (JavaClassFileModel javaClassFileModel : shouldSkipPair.getLeft())
+                        javaClassFileModel.setSkipDecompilation(shouldSkipPair.getRight().get(1, TimeUnit.NANOSECONDS)); // Short timeout as the executor is already shut down.
+                }
+            }
+            catch (Throwable t)
+            {
+                throw new WindupException(t);
+            }
 
             // Do this after the other jobs have been submitted and are executing in the background
             for (List<JavaClassFileModel> classBatch : classFileMap.getClasses())
@@ -271,21 +317,13 @@ public class ClassFilePreDecompilationScan extends GraphOperation
 
                 for (JavaClassFileModel fileModel : classBatch)
                 {
+                    fileModel = javaClassFileService.getById(fileModel.getId());
                     addClassFileMetadata(event, context, fileModel, classFileScanner);
                 }
                 progressEstimate.addWork(classBatch.size());
                 printProgress(event, progressEstimate, totalWork);
                 if (progressEstimate.getWorked() % 100 == 0)
                     event.getGraphContext().commit();
-            }
-
-            try
-            {
-                executorService.awaitTermination(10, TimeUnit.DAYS);
-            }
-            catch (Throwable t)
-            {
-                throw new WindupException(t);
             }
 
             event.getGraphContext().commit();
@@ -303,7 +341,7 @@ public class ClassFilePreDecompilationScan extends GraphOperation
             long remainingTimeMillis = progressEstimate.getTimeRemainingInMillis();
             if (remainingTimeMillis > 1000)
                 event.ruleEvaluationProgress(ClassFilePreDecompilationScan.class.getSimpleName(), progressEstimate.getWorked(),
-                        totalWork, (int) remainingTimeMillis / 1000);
+                            totalWork, (int) remainingTimeMillis / 1000);
             LOG.info(progressEstimate.getWorked() + " / " + totalWork);
         }
     }

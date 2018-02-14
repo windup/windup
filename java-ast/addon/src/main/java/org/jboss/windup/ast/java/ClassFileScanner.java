@@ -18,8 +18,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+import java.util.zip.ZipError;
 
 import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.ast.java.data.ClassReference;
@@ -393,63 +395,67 @@ public class ClassFileScanner
     {
         for (String pathString : this.classpath)
         {
+            Path parentPath = Paths.get(pathString);
+            SimpleFileVisitor<Path> visitor = new SimpleFileVisitor<Path>()
+            {
+                @Override
+                public FileVisitResult visitFile(Path childFile, BasicFileAttributes attrs) throws IOException
+                {
+                    if (!StringUtils.endsWithIgnoreCase(childFile.getFileName().toString(), ".class"))
+                        return FileVisitResult.CONTINUE;
+
+                    String normalizedPath = childFile.normalize().toAbsolutePath().toString();
+                    try
+                    {
+                        ClassReader classReader = createClassReader(childFile);
+                        classReaderCache.put(normalizedPath, classReader);
+                        String classname = fixClassname(classReader.getClassName());
+                        String superclass = fixClassname(classReader.getSuperName());
+                        String[] interfaces = Arrays
+                                    .stream(classReader.getInterfaces())
+                                    .map(interfaceName -> fixClassname(interfaceName))
+                                    .collect(Collectors.toList()).toArray(new String[0]);
+
+                        List<ClassInfo> classInfoList = classInfoByFQDN.computeIfAbsent(classname, (key) -> new ArrayList<>());
+
+                        ClassInfo classInfo = new ClassInfo(classname, superclass, interfaces);
+                        classReader.accept(new ClassVisitor(Opcodes.ASM6)
+                        {
+                            @Override
+                            public void visit(int version, int access, String name, String signature, String superName, String[] interfaces)
+                            {
+                                classInfo.setMajorVersion(version);
+                            }
+                        }, 0);
+                        boolean isInterface = (classReader.getAccess() & Opcodes.ACC_INTERFACE) != 0;
+                        classInfo.setIsInterface(isInterface);
+                        boolean isPublic = (classReader.getAccess() & Opcodes.ACC_PUBLIC) != 0;
+                        classInfo.setPublic(isPublic);
+
+                        classInfoList.add(classInfo);
+                        classInfoByFQDN.put(classname, classInfoList);
+                        classInfoByPath.put(normalizedPath, classInfo);
+                    }
+                    catch (Throwable t)
+                    {
+                        LOG.warning("Could not parse class data for: " + childFile + " due to: " + t.getMessage());
+                        t.printStackTrace();
+                        ClassInfo errorInfo = new ClassInfo(null, null, null);
+                        errorInfo.setError("Could not parse class data for: " + childFile + " due to: " + t.getMessage());
+                        classInfoByPath.put(normalizedPath, errorInfo);
+                    }
+
+                    return FileVisitResult.CONTINUE;
+                }
+            };
+
             try
             {
-                Path parentPath = Paths.get(pathString);
-                SimpleFileVisitor<Path> visitor = new SimpleFileVisitor<Path>()
-                {
-                    @Override
-                    public FileVisitResult visitFile(Path childFile, BasicFileAttributes attrs) throws IOException
-                    {
-                        if (!StringUtils.endsWithIgnoreCase(childFile.getFileName().toString(), ".class"))
-                            return FileVisitResult.CONTINUE;
-
-                        try
-                        {
-                            String normalizedPath = childFile.normalize().toAbsolutePath().toString();
-                            ClassReader classReader = createClassReader(childFile);
-                            classReaderCache.put(normalizedPath, classReader);
-                            String classname = fixClassname(classReader.getClassName());
-                            String superclass = fixClassname(classReader.getSuperName());
-                            String[] interfaces = Arrays
-                                        .stream(classReader.getInterfaces())
-                                        .map(interfaceName -> fixClassname(interfaceName))
-                                        .collect(Collectors.toList()).toArray(new String[0]);
-
-                            List<ClassInfo> classInfoList = classInfoByFQDN.computeIfAbsent(classname, (key) -> new ArrayList<>());
-
-                            ClassInfo classInfo = new ClassInfo(classname, superclass, interfaces);
-                            classReader.accept(new ClassVisitor(Opcodes.ASM6)
-                            {
-                                @Override
-                                public void visit(int version, int access, String name, String signature, String superName, String[] interfaces)
-                                {
-                                    classInfo.setMajorVersion(version);
-                                }
-                            }, 0);
-                            boolean isInterface = (classReader.getAccess() & Opcodes.ACC_INTERFACE) != 0;
-                            classInfo.setIsInterface(isInterface);
-                            boolean isPublic = (classReader.getAccess() & Opcodes.ACC_PUBLIC) != 0;
-                            classInfo.setPublic(isPublic);
-
-                            classInfoList.add(classInfo);
-                            classInfoByFQDN.put(classname, classInfoList);
-                            classInfoByPath.put(normalizedPath, classInfo);
-                        }
-                        catch (Throwable t)
-                        {
-                            LOG.warning("Could not parse class data for: " + childFile + " due to: " + t.getMessage());
-                            t.printStackTrace();
-                        }
-
-                        return FileVisitResult.CONTINUE;
-                    }
-                };
-
                 if (Files.isDirectory(parentPath))
                 {
                     // handle directory
                     Files.walkFileTree(parentPath, visitor);
+
                 }
                 else if (ZipUtil.endsWithZipExtension(pathString))
                 {
@@ -458,11 +464,10 @@ public class ClassFileScanner
                         Files.walkFileTree(zipFilesystem.getPath("/"), visitor);
                     }
                 }
-
             }
-            catch (Throwable t)
+            catch (Exception | ZipError e)
             {
-                LOG.warning("Could not parse class data for path: " + pathString + " due to: " + t.getMessage());
+                LOG.log(Level.WARNING, "Failed to crawl subtree: " + parentPath + " due to: " + e.getMessage(), e);
             }
         }
     }
@@ -483,12 +488,14 @@ public class ClassFileScanner
         private String superclass;
         private Set<String> implementedInterfaces = new HashSet<>();
         private int majorVersion;
+        private String error;
 
         public ClassInfo(String fqdn, String superclass, String[] implementedInterfaces)
         {
             this.fqdn = fqdn;
             this.superclass = superclass;
-            this.implementedInterfaces.addAll(Arrays.asList(implementedInterfaces));
+            if (implementedInterfaces != null)
+                this.implementedInterfaces.addAll(Arrays.asList(implementedInterfaces));
         }
 
         public String getPackageName()
@@ -542,6 +549,16 @@ public class ClassFileScanner
         private void setMajorVersion(int majorVersion)
         {
             this.majorVersion = majorVersion;
+        }
+
+        public String getError()
+        {
+            return error;
+        }
+
+        private void setError(String error)
+        {
+            this.error = error;
         }
     }
 }

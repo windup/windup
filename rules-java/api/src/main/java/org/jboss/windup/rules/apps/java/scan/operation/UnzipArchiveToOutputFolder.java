@@ -206,7 +206,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
                 /*
                  * New archive must be reloaded in case the archive should be ignored
                  */
-                newArchiveModel = GraphService.refresh(event.getGraphContext(), newArchiveModel);
+                newArchiveModel = new GraphService<>(event.getGraphContext(), ArchiveModel.class).getById(newArchiveModel.getId());
 
                 ArchiveModel canonicalArchiveModel = null;
                 for (FileModel otherMatches : fileService.findAllByProperty(FileModel.SHA1_HASH, newArchiveModel.getSHA1Hash()))

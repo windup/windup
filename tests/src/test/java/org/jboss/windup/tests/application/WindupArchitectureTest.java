@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
@@ -48,6 +49,8 @@ import com.google.common.collect.Iterables;
 public abstract class WindupArchitectureTest
 {
     public static final String REPORTS_TEMPLATES_MIGRATION_ISSUES_FTL = "/reports/templates/migration-issues.ftl";
+
+    private static Logger LOG = Logger.getLogger(WindupArchitectureTest.class.getCanonicalName());
 
     @Inject
     private WindupProcessor processor;
@@ -291,6 +294,8 @@ public abstract class WindupArchitectureTest
         GraphService<JavaClassFileModel> classModels = new GraphService<>(context, JavaClassFileModel.class);
         for (JavaClassFileModel javaClassFileModel : classModels.findAllWithoutProperty(JavaClassFileModel.SKIP_DECOMPILATION, true))
         {
+            if (javaClassFileModel.getJavaClass().getDecompiledSource() == null)
+                LOG.severe("No decompiled source found for file: " + javaClassFileModel.getFilePath() + ", skip decompile? " + javaClassFileModel.getSkipDecompilation() + " id: " + javaClassFileModel.getId());
             Assert.assertNotNull(javaClassFileModel.getJavaClass().getDecompiledSource());
         }
     }
