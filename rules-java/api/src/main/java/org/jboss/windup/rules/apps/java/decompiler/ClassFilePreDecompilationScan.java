@@ -141,17 +141,17 @@ public class ClassFilePreDecompilationScan extends GraphOperation
         if (fileModel.getPackageName() != null)
         {
             shouldScan = configurationService.shouldScanPackage(fileModel.getPackageName());
-            LOG.info("Skipping decompilation for (pkgname): " + fileModel.getFilePath() + " due to package configuration? " + !shouldScan + " pkg: " + fileModel.getPackageName());
+            //LOG.info("Skipping decompilation for (pkgname): " + fileModel.getFilePath() + " due to package configuration? " + !shouldScan + " pkg: " + fileModel.getPackageName());
         }
         else
         {
             shouldScan = configurationService.shouldScanFile(fileModel.getFilePath());
-            LOG.info("Skipping decompilation for (filepath): " + fileModel.getFilePath() + " due to package configuration? " + !shouldScan);
+            //LOG.info("Skipping decompilation for (filepath): " + fileModel.getFilePath() + " due to package configuration? " + !shouldScan);
         }
 
         if (!shouldScan)
         {
-            LOG.info("Skipping decompilation for: " + fileModel.getFilePath() + " due to configuration!");
+            //LOG.info("Skipping decompilation for: " + fileModel.getFilePath() + " due to configuration!");
             return true;
         }
 
@@ -164,7 +164,7 @@ public class ClassFilePreDecompilationScan extends GraphOperation
         {
             if (shouldIgnore(typeReference.getFullyQualifiedClassName()))
             {
-                LOG.info("Skipping decompilation for: " + fileModel.getFilePath() + " due javaclass-ignore: " + typeReference.getFullyQualifiedClassName() + "!");
+                //LOG.info("Skipping decompilation for: " + fileModel.getFilePath() + " due javaclass-ignore: " + typeReference.getFullyQualifiedClassName() + "!");
                 return true;
             }
         }
@@ -260,7 +260,7 @@ public class ClassFilePreDecompilationScan extends GraphOperation
                             }
                             if (filterClassesToDecompile(event, fileModel, references))
                             {
-                                LOG.info("filterClassesToDecompile Setting should skip for: " + fileModel.getFilePath() + " id: " + fileModel.getId() + " to " + shouldSkip);
+                                //LOG.info("filterClassesToDecompile Setting should skip for: " + fileModel.getFilePath() + " id: " + fileModel.getId() + " to " + shouldSkip);
                                 shouldSkip = shouldSkip && true;
                                 continue;
                             }
@@ -291,12 +291,12 @@ public class ClassFilePreDecompilationScan extends GraphOperation
                                                             classReference.getLine()));
                             }
 
-                            LOG.info("typeinterestfactory references search: " + fileModel.getFilePath() + " id: " + fileModel.getId() + " to " + deduplicatedReferences.values());
+                            //LOG.info("typeinterestfactory references search: " + fileModel.getFilePath() + " id: " + fileModel.getId() + " to " + deduplicatedReferences.values());
                             for (ClassReference reference : deduplicatedReferences.values())
                             {
                                 if (TypeInterestFactory.matchesAny(reference.getQualifiedName(), reference.getLocation()))
                                 {
-                                    LOG.info("typeinterestfactory Setting should skip for: " + fileModel.getFilePath() + " id: " + fileModel.getId() + " to " + false);
+                                    //LOG.info("typeinterestfactory Setting should skip for: " + fileModel.getFilePath() + " id: " + fileModel.getId() + " to " + false);
                                     shouldSkip = false;
                                 }
                             }
@@ -329,7 +329,7 @@ public class ClassFilePreDecompilationScan extends GraphOperation
                     for (JavaClassFileModel javaClassFileModel : shouldSkipPair.getLeft())
                     {
                         boolean shouldSkip = shouldSkipPair.getRight().get(1, TimeUnit.NANOSECONDS);
-                        LOG.info("Setting should skip for: " + javaClassFileModel.getFilePath() + " id: " + javaClassFileModel.getId() + " to " + shouldSkip);
+                        //LOG.info("Setting should skip for: " + javaClassFileModel.getFilePath() + " id: " + javaClassFileModel.getId() + " to " + shouldSkip);
                         javaClassFileModel.setSkipDecompilation(shouldSkipPair.getRight().get(1, TimeUnit.NANOSECONDS)); // Short timeout as the executor is already shut down.
                     }
                 }

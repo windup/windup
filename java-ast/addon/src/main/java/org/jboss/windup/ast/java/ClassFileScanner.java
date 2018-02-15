@@ -392,7 +392,6 @@ public class ClassFileScanner
 
     private Set<String> calculatePotentialOwners(final Set<String> existingOwners, String owner)
     {
-        LOG.info("existing owner: " + existingOwners + " owner: " + owner);
         // prevent cycles
         if (existingOwners.contains(owner))
             return existingOwners;
@@ -408,10 +407,10 @@ public class ClassFileScanner
         if (classInfoList != null)
         {
             classInfoList.forEach(classInfo -> {
-                owners.addAll(calculatePotentialOwners(owners, classInfo.superclass));
+                owners.addAll(calculatePotentialOwners(existingOwners, classInfo.superclass));
                 for (String implementedInterface : classInfo.implementedInterfaces)
                 {
-                    owners.addAll(calculatePotentialOwners(owners, implementedInterface));
+                    owners.addAll(calculatePotentialOwners(existingOwners, implementedInterface));
                 }
             });
         }
@@ -423,14 +422,14 @@ public class ClassFileScanner
             try
             {
                 Class clazz = Class.forName(owner);
-                owners.addAll(calculatePotentialOwners(owners, clazz.getSuperclass().getCanonicalName()));
+                owners.addAll(calculatePotentialOwners(existingOwners, clazz.getSuperclass().getCanonicalName()));
 
                 Class[] interfaces = clazz.getInterfaces();
                 if (interfaces != null)
                 {
                     for (Class iface : interfaces)
                     {
-                        owners.addAll(calculatePotentialOwners(owners, iface.getCanonicalName()));
+                        owners.addAll(calculatePotentialOwners(existingOwners, iface.getCanonicalName()));
                     }
                 }
             }
