@@ -392,8 +392,10 @@ public class ClassFileScanner
         if (classInfoList != null)
         {
             classInfoList.forEach(classInfo -> {
-                owners.add(classInfo.superclass);
-                owners.addAll(classInfo.implementedInterfaces);
+                owners.addAll(calculatePotentialOwners(classInfo.superclass));
+                for (String implementedInterface : classInfo.implementedInterfaces) {
+                    owners.addAll(calculatePotentialOwners(implementedInterface));
+                }
             });
         }
         return owners;
