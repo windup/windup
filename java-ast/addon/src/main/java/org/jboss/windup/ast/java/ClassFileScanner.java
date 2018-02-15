@@ -56,6 +56,7 @@ public class ClassFileScanner
     private Map<String, ClassReader> classReaderCache = new HashMap<>();
     private Map<String, ClassInfo> classInfoByPath = new HashMap<>();
     private Map<String, List<ClassInfo>> classInfoByFQDN = new HashMap<>();
+    private Map<String, Set<String>> cachedOwnersForFQDN = new HashMap<>();
 
     public ClassFileScanner()
     {
@@ -386,18 +387,59 @@ public class ClassFileScanner
 
     private Set<String> calculatePotentialOwners(String owner)
     {
+        return calculatePotentialOwners(new HashSet<>(), owner);
+    }
+
+    private Set<String> calculatePotentialOwners(final Set<String> existingOwners, String owner)
+    {
+        LOG.info("existing owner: " + existingOwners + " owner: " + owner);
+        // prevent cycles
+        if (existingOwners.contains(owner))
+            return existingOwners;
+
+        Set<String> cachedOwners = cachedOwnersForFQDN.get(owner);
+        if (cachedOwners!= null)
+            return cachedOwners;
+
         Set<String> owners = new HashSet<>();
+        existingOwners.add(owner);
         owners.add(owner);
         List<ClassInfo> classInfoList = this.classInfoByFQDN.get(owner);
         if (classInfoList != null)
         {
             classInfoList.forEach(classInfo -> {
-                owners.addAll(calculatePotentialOwners(classInfo.superclass));
-                for (String implementedInterface : classInfo.implementedInterfaces) {
-                    owners.addAll(calculatePotentialOwners(implementedInterface));
+                owners.addAll(calculatePotentialOwners(owners, classInfo.superclass));
+                for (String implementedInterface : classInfo.implementedInterfaces)
+                {
+                    owners.addAll(calculatePotentialOwners(owners, implementedInterface));
                 }
             });
         }
+        else
+        {
+            /*
+             * Also, try the classloader to see if we can find more information on this class.
+             */
+            try
+            {
+                Class clazz = Class.forName(owner);
+                owners.addAll(calculatePotentialOwners(owners, clazz.getSuperclass().getCanonicalName()));
+
+                Class[] interfaces = clazz.getInterfaces();
+                if (interfaces != null)
+                {
+                    for (Class iface : interfaces)
+                    {
+                        owners.addAll(calculatePotentialOwners(owners, iface.getCanonicalName()));
+                    }
+                }
+            }
+            catch (Throwable t)
+            {
+                // Ignore it... I guess we just don't have this class
+            }
+        }
+        cachedOwnersForFQDN.put(owner, owners);
         return owners;
     }
 
