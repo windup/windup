@@ -5,6 +5,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Arrays;
+import java.util.Random;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
@@ -22,10 +23,25 @@ public class ToolingRMIServer
     public void startServer(int port, String version)
     {
         LOG.info("Registering RMI Server...");
+        
+        Random random = new Random();
+        Registry registry = null;
+        while (port == -1) {
+            int tmpPort = random.nextInt(65535);
+            if (tmpPort < 4000) {
+                continue;
+            }
+            try {
+                registry = LocateRegistry.getRegistry(port);
+                port = tmpPort;
+            } catch (RemoteException e) {
+                LOG.warning("Could not get Rmi Registry at port: " + port + " - " + e.getMessage());
+            }
+        }
+        
         try
         {
-        	executionBuilder.setVersion(version);
-            Registry registry = LocateRegistry.getRegistry(port);
+            executionBuilder.setVersion(version);
             try
             {
                 String[] registered = registry.list();
@@ -49,6 +65,9 @@ public class ToolingRMIServer
 
             ExecutionBuilder proxy = (ExecutionBuilder) UnicastRemoteObject.exportObject(executionBuilder, 0);
             registry.rebind(ExecutionBuilder.LOOKUP_NAME, proxy);
+            
+            String portName = port + "/" + ExecutionBuilder.LOOKUP_NAME;
+            System.out.println("Port/Name:" + portName);
 
             LOG.info("Registered ExecutionBuilder at: " + registry);
         }
