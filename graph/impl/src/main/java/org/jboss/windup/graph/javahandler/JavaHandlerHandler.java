@@ -5,7 +5,9 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import com.syncleus.ferma.ReflectionCache;
@@ -33,6 +35,9 @@ import net.bytebuddy.implementation.bind.annotation.This;
  */
 public class JavaHandlerHandler extends AbstractMethodHandler implements MethodHandler
 {
+    private static Map<Class<?>, Object> objectCache = new HashMap<>();
+    private static Map<String, Method> methodCache = new HashMap<>();
+
     @Override
     public Class<JavaHandler> getAnnotationType()
     {
@@ -47,8 +52,6 @@ public class JavaHandlerHandler extends AbstractMethodHandler implements MethodH
 
     private <E> DynamicType.Builder<E> createInterceptor(final DynamicType.Builder<E> builder, final Method method)
     {
-//        return builder.method(ElementMatchers.is(method))
-//                    .intercept(MethodDelegation.to(JavaHandlerHandler.JavaHandlerInterceptor.class));
         return builder.define(method).intercept(MethodDelegation.to(JavaHandlerHandler.JavaHandlerInterceptor.class))
                 .annotateMethod(method.getAnnotations());
     }
@@ -64,11 +67,10 @@ public class JavaHandlerHandler extends AbstractMethodHandler implements MethodH
             try
             {
                 Class<?> handlerClass = ann.handler();
-                Method handlerMethod = findMethodHandler(method, handlerClass);
+                Object handler = getHandlerInstance(handlerClass);
+                Method handlerMethod = findMethodHandler(handlerClass, method.getName());
                 if (handlerMethod == null)
                     throw new WindupException("Could not find method on handler with name: " + method.getName());
-
-                Object handler = handlerClass.newInstance();
 
                 // If there is one additional parameter, assume that the first parameter should be the frame itself
                 if (handlerMethod.getParameterTypes().length == (args.length+1))
@@ -87,17 +89,43 @@ public class JavaHandlerHandler extends AbstractMethodHandler implements MethodH
             }
         }
 
+        private static Object getHandlerInstance(Class<?> clazz) throws IllegalAccessException, InstantiationException
+        {
+            synchronized (objectCache)
+            {
+                Object result = objectCache.get(clazz);
+                if (result == null)
+                {
+                    result = clazz.newInstance();
+                    objectCache.put(clazz, result);
+                }
+                return result;
+            }
+        }
+
         /**
          * NOTE: Polymorphism is not currently supported.
          */
-        private static Method findMethodHandler(Method originalMethod, Class handlerClass)
+        private static Method findMethodHandler(Class handlerClass, String methodName)
         {
-            for (Method candidateMethod : handlerClass.getMethods())
+            synchronized (methodCache)
             {
-                if (candidateMethod.getName().equals(originalMethod.getName()))
-                    return candidateMethod;
+                String key = handlerClass.getCanonicalName() + "_" + methodName;
+                Method method = methodCache.get(key);
+                if (method == null)
+                {
+                    for (Method candidateMethod : handlerClass.getMethods())
+                    {
+                        if (candidateMethod.getName().equals(methodName))
+                        {
+                            method = candidateMethod;
+                            methodCache.put(key, method);
+                            break;
+                        }
+                    }
+                }
+                return method;
             }
-            return null;
         }
     }
 }

@@ -59,7 +59,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
         GraphTraversal<Vertex, Vertex> classificationPipeline = new GraphTraversalSource(getGraphContext().getGraph()).V(fileModel.getElement());
         classificationPipeline.in(ClassificationModel.FILE_MODEL);
         classificationPipeline.has(EffortReportModel.EFFORT, P.gt(0));
-        classificationPipeline.has(WindupVertexFrame.TYPE_PROP, Text.textContains(ClassificationModel.TYPE));
+        classificationPipeline.has(WindupVertexFrame.TYPE_PROP, P.eq(ClassificationModel.TYPE));
 
         int classificationEffort = 0;
         for (Vertex v : classificationPipeline.toList())
@@ -80,7 +80,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
     {
         GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversalSource(getGraphContext().getGraph()).V(model.getElement());
         pipeline.in(ClassificationModel.FILE_MODEL);
-        pipeline.has(WindupVertexFrame.TYPE_PROP, Text.textContains(ClassificationModel.TYPE));
+        pipeline.has(WindupVertexFrame.TYPE_PROP, P.eq(ClassificationModel.TYPE));
         return new FramedVertexIterable<>(getGraphContext().getFramed(), pipeline.toList(), ClassificationModel.class);
     }
 
@@ -91,7 +91,7 @@ public class ClassificationService extends GraphService<ClassificationModel>
     {
         GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversalSource(getGraphContext().getGraph()).V(model.getElement());
         pipeline.in(ClassificationModel.FILE_MODEL);
-        pipeline.has(WindupVertexFrame.TYPE_PROP, Text.textContains(ClassificationModel.TYPE));
+        pipeline.has(WindupVertexFrame.TYPE_PROP, P.eq(ClassificationModel.TYPE));
         pipeline.has(ClassificationModel.CLASSIFICATION, classificationName);
         return new FramedVertexIterable<>(getGraphContext().getFramed(), pipeline.toList(), ClassificationModel.class);
     }

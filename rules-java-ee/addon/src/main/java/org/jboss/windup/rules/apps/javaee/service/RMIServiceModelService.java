@@ -3,6 +3,7 @@ package org.jboss.windup.rules.apps.javaee.service;
 import java.util.Iterator;
 import java.util.logging.Logger;
 
+import org.apache.tinkerpop.gremlin.process.traversal.P;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.janusgraph.core.attribute.Text;
 import org.jboss.windup.graph.GraphContext;
@@ -62,7 +63,7 @@ public class RMIServiceModelService extends GraphService<RMIServiceModel>
     {
         GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversalSource(getGraphContext().getGraph()).V(rmiInterface.getElement());
         pipeline.in(RMIServiceModel.RMI_INTERFACE);
-        pipeline.has(WindupVertexFrame.TYPE_PROP, Text.textContains(RMIServiceModel.TYPE));
+        pipeline.has(WindupVertexFrame.TYPE_PROP, P.eq(RMIServiceModel.TYPE));
 
         if (pipeline.hasNext())
         {

@@ -5,6 +5,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import com.syncleus.ferma.Traversable;
+import org.apache.tinkerpop.gremlin.process.traversal.P;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.janusgraph.core.attribute.Text;
 import org.jboss.forge.furnace.util.Iterators;
@@ -79,7 +80,7 @@ public class TechnologyTagService extends GraphService<TechnologyTagModel>
     public Iterable<TechnologyTagModel> findTechnologyTagsForFile(FileModel fileModel)
     {
         GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversalSource(getGraphContext().getGraph()).V(fileModel.getElement());
-        pipeline.in(TechnologyTagModel.TECH_TAG_TO_FILE_MODEL).has(WindupVertexFrame.TYPE_PROP, Text.textContains(TechnologyTagModel.TYPE));
+        pipeline.in(TechnologyTagModel.TECH_TAG_TO_FILE_MODEL).has(WindupVertexFrame.TYPE_PROP, P.eq(TechnologyTagModel.TYPE));
 
         Comparator<TechnologyTagModel> comparator = new DefaultTechnologyTagComparator();
         pipeline.order().by((a, b) -> {
@@ -101,7 +102,7 @@ public class TechnologyTagService extends GraphService<TechnologyTagModel>
 
         GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversalSource(getGraphContext().getGraph()).V(traversal.getCanonicalProject().getElement());
         pipeline.out(ProjectModel.PROJECT_MODEL_TO_FILE);
-        pipeline.in(TechnologyTagModel.TECH_TAG_TO_FILE_MODEL).has(WindupVertexFrame.TYPE_PROP, Text.textContains(TechnologyTagModel.TYPE));
+        pipeline.in(TechnologyTagModel.TECH_TAG_TO_FILE_MODEL).has(WindupVertexFrame.TYPE_PROP, P.eq(TechnologyTagModel.TYPE));
 
         Iterable<TechnologyTagModel> modelIterable = new FramedVertexIterable<>(getGraphContext().getFramed(), pipeline.toList(),
                     TechnologyTagModel.class);

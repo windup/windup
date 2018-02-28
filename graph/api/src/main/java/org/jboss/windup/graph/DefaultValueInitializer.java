@@ -3,7 +3,6 @@ package org.jboss.windup.graph;
 import com.syncleus.ferma.ClassInitializer;
 import com.syncleus.ferma.ElementFrame;
 import org.apache.tinkerpop.gremlin.structure.Element;
-import org.jboss.windup.graph.Property;
 import org.jboss.windup.graph.frames.FrameBooleanDefaultValue;
 import org.jboss.windup.graph.model.WindupFrame;
 
@@ -20,7 +19,7 @@ import java.util.Map;
  */
 public class DefaultValueInitializer implements ClassInitializer
 {
-    private Map<Class<?>, LinkedList<PropertyDefaultValue>> cachedValues = new HashMap<>();
+    private static Map<Class<?>, LinkedList<PropertyDefaultValue>> cachedValues = new HashMap<>();
 
     @Override
     public Class getInitializationType()
@@ -41,33 +40,35 @@ public class DefaultValueInitializer implements ClassInitializer
     }
 
     private void cacheFrameInterface(Class<?> originalKind, Class<?> kind) {
-        if (kind == null)
-            return;
-        cacheFrameInterface(originalKind, kind.getSuperclass());
-        for (Class<?> iface : kind.getInterfaces())
-            cacheFrameInterface(originalKind, iface);
-
-
-        LinkedList<PropertyDefaultValue> values = cachedValues.get(originalKind);
-        if (values == null)
-            values = new LinkedList<>();
-
-        for (Method m : kind.getMethods())
+        synchronized (cachedValues)
         {
-            Annotation[] annotations = m.getAnnotations();
-            for (Annotation annotation : annotations)
+            if (kind == null)
+                return;
+            cacheFrameInterface(originalKind, kind.getSuperclass());
+            for (Class<?> iface : kind.getInterfaces())
+                cacheFrameInterface(originalKind, iface);
+
+            LinkedList<PropertyDefaultValue> values = cachedValues.get(originalKind);
+            if (values == null)
+                values = new LinkedList<>();
+
+            for (Method m : kind.getMethods())
             {
-                if (annotation instanceof FrameBooleanDefaultValue)
+                Annotation[] annotations = m.getAnnotations();
+                for (Annotation annotation : annotations)
                 {
-                    PropertyDefaultValue pDefault = new PropertyDefaultValue();
-                    pDefault.value = ((FrameBooleanDefaultValue) annotation).value();
-                    pDefault.key = m.getAnnotation(Property.class).value();
-                    values.add(pDefault);
+                    if (annotation instanceof FrameBooleanDefaultValue)
+                    {
+                        PropertyDefaultValue pDefault = new PropertyDefaultValue();
+                        pDefault.value = ((FrameBooleanDefaultValue) annotation).value();
+                        pDefault.key = m.getAnnotation(Property.class).value();
+                        values.add(pDefault);
+                    }
                 }
             }
-        }
 
-        cachedValues.put(originalKind, values);
+            cachedValues.put(originalKind, values);
+        }
     }
 
     private void setupDefaults(Element element, LinkedList<PropertyDefaultValue> values)

@@ -53,9 +53,8 @@ public final class ArchiveIdentificationGraphChangedListener implements GraphLis
     }
 
     @Override
-    public void vertexPropertyChanged(Vertex element, Property oldValue, Object setValue, Object... vertexPropertyKeyValues)
+    public void vertexPropertyChanged(Vertex element, String key, Object setValue, Object... vertexPropertyKeyValues)
     {
-        String key = oldValue.key();
         if (ArchiveModel.ARCHIVE_NAME.equals(key))
         {
             ArchiveModel archive = archiveService.getById(element.id());

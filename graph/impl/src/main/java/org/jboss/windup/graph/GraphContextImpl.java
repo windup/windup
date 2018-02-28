@@ -152,7 +152,7 @@ public class GraphContextImpl implements GraphContext
         handlers.add(new MapInAdjacentVerticesHandler());
         handlers.add(new SetInPropertiesHandler());
         handlers.add(new JavaHandlerHandler());
-        handlers.add(new WindupPropertyMethodHandler());
+        handlers.add(new WindupPropertyMethodHandler(mutationListener));
         handlers.add(new WindupAdjacencyMethodHandler());
 
         AnnotationFrameFactory frameFactory = new AnnotationFrameFactory(compositeClassLoader, reflections, handlers);
@@ -336,11 +336,11 @@ public class GraphContextImpl implements GraphContext
         // Sets the berkeley cache to a relatively small value to reduce the memory footprint.
         // This is actually more important than performance on some of the smaller machines out there, and
         // the performance decrease seems to be minimal.
-        conf.setProperty("storage.berkeleydb.cache-percentage", 1);
+        conf.setProperty("storage.berkeleyje.cache-percentage", 1);
 
         // Set READ UNCOMMITTED to improve performance
-        conf.setProperty("storage.berkeleydb.lock-mode", LockMode.READ_UNCOMMITTED);
-        conf.setProperty("storage.berkeleydb.isolation-level", BerkeleyJEStoreManager.IsolationLevel.READ_UNCOMMITTED);
+        conf.setProperty("storage.berkeleyje.lock-mode", LockMode.READ_UNCOMMITTED.toString());
+        conf.setProperty("storage.berkeleyje.isolation-level", BerkeleyJEStoreManager.IsolationLevel.READ_UNCOMMITTED.toString());
 
         // Increase storage write buffer since we basically do a large bulk load during the first phases.
         // See http://s3.thinkaurelius.com/docs/titan/current/bulk-loading.html
@@ -359,6 +359,8 @@ public class GraphContextImpl implements GraphContext
         conf.setProperty("cache.db-cache-clean-wait", 0);
         conf.setProperty("cache.db-cache-size", .09);
         conf.setProperty("cache.db-cache-time", 0);
+        conf.setProperty("cache.tx-cache-size", 100000);
+        //conf.setProperty("cache.tx-dirty-size", 3000);
 
         conf.setProperty("index.search.backend", "lucene");
         conf.setProperty("index.search.directory", lucene.toAbsolutePath().toString());
@@ -568,7 +570,7 @@ public class GraphContextImpl implements GraphContext
         }
     }
 
-    private static class GraphContextMutationListener implements MutationListener
+    public static class GraphContextMutationListener implements MutationListener
     {
         private GraphContextImpl graphContext;
 
@@ -598,8 +600,15 @@ public class GraphContextImpl implements GraphContext
         public void vertexPropertyChanged(Vertex vertex, org.apache.tinkerpop.gremlin.structure.Property oldValue, Object setValue,
                     Object... vertexPropertyKeyValues)
         {
+            String key = oldValue.key();
+            vertexPropertyChanged(vertex, key, setValue, vertexPropertyKeyValues);
+        }
+
+        public void vertexPropertyChanged(Vertex vertex, String key, Object setValue,
+                                          Object... vertexPropertyKeyValues)
+        {
             getGraphContext().graphListeners.forEach(listener -> {
-                listener.vertexPropertyChanged(vertex, oldValue, setValue, vertexPropertyKeyValues);
+                listener.vertexPropertyChanged(vertex, key, setValue, vertexPropertyKeyValues);
             });
         }
 

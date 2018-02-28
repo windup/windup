@@ -18,12 +18,28 @@ import net.bytebuddy.implementation.bind.annotation.This;
 import net.bytebuddy.matcher.ElementMatchers;
 import org.apache.tinkerpop.gremlin.structure.Element;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.apache.tinkerpop.gremlin.structure.util.detached.DetachedVertexProperty;
 
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
 public class WindupPropertyMethodHandler extends AbstractMethodHandler
 {
+    private final transient GraphContextImpl.GraphContextMutationListener listener;
+
+    /**
+     * This is just here to allow furnace to create proxies. It should never be used directly.
+     */
+    public WindupPropertyMethodHandler()
+    {
+        this.listener = null;
+    }
+
+    public WindupPropertyMethodHandler(GraphContextImpl.GraphContextMutationListener listener)
+    {
+        this.listener = listener;
+    }
+
     @Override
     public Class<Property> getAnnotationType()
     {
@@ -59,7 +75,7 @@ public class WindupPropertyMethodHandler extends AbstractMethodHandler
 
     private <E> DynamicType.Builder<E> setProperty(final DynamicType.Builder<E> builder, final Method method, final Annotation annotation)
     {
-        return builder.method(ElementMatchers.is(method)).intercept(MethodDelegation.to(WindupPropertyMethodHandler.SetPropertyInterceptor.class));
+        return builder.method(ElementMatchers.is(method)).intercept(MethodDelegation.to(new SetPropertyInterceptor()));
     }
 
     private <E> DynamicType.Builder<E> getProperty(final DynamicType.Builder<E> builder, final Method method, final Annotation annotation) {
@@ -95,10 +111,10 @@ public class WindupPropertyMethodHandler extends AbstractMethodHandler
         }
     }
 
-    public static final class SetPropertyInterceptor
+    public final class SetPropertyInterceptor
     {
         @RuntimeType
-        public static void setProperty(@This final ElementFrame thiz, @Origin final Method method, @RuntimeType @Argument(0) final Object obj)
+        public void setProperty(@This final ElementFrame thiz, @Origin final Method method, @RuntimeType @Argument(0) final Object obj)
         {
             assert thiz instanceof CachesReflection;
             final Property annotation = ((CachesReflection) thiz).getReflectionCache().getAnnotation(method, Property.class);
@@ -116,10 +132,14 @@ public class WindupPropertyMethodHandler extends AbstractMethodHandler
             }
 
             Element element = thiz.getElement();
+
+            // Update the property directly and fire event manually for vertices,
+            // as this seems to be a little faster than using a traversal to update the property
+            element.property(propertyName, propertyValue);
             if (element instanceof Vertex)
-                thiz.getGraph().getRawTraversal().V(element.id()).property(propertyName, propertyValue).iterate();
-            else
-                thiz.getGraph().getRawTraversal().E(element.id()).property(propertyName, propertyValue).iterate();
+            {
+                WindupPropertyMethodHandler.this.listener.vertexPropertyChanged((Vertex)element, propertyName, propertyValue);
+            }
         }
     }
 

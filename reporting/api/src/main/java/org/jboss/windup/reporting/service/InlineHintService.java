@@ -55,7 +55,7 @@ public class InlineHintService extends GraphService<InlineHintModel>
     {
         GraphTraversal<Vertex, Vertex> inlineHintPipeline = new GraphTraversalSource(getGraphContext().getGraph()).V(reference.getElement());
         inlineHintPipeline.in(InlineHintModel.FILE_LOCATION_REFERENCE);
-        inlineHintPipeline.has(WindupVertexFrame.TYPE_PROP, Text.textContains(InlineHintModel.TYPE));
+        inlineHintPipeline.has(WindupVertexFrame.TYPE_PROP, P.eq(InlineHintModel.TYPE));
         return new FramedVertexIterable<>(getGraphContext().getFramed(), inlineHintPipeline.toList(), InlineHintModel.class);
     }
 
@@ -66,7 +66,7 @@ public class InlineHintService extends GraphService<InlineHintModel>
     {
         GraphTraversal<Vertex, Vertex> inlineHintPipeline = new GraphTraversalSource(getGraphContext().getGraph()).V(file.getElement());
         inlineHintPipeline.in(FileReferenceModel.FILE_MODEL);
-        inlineHintPipeline.has(WindupVertexFrame.TYPE_PROP, Text.textContains(InlineHintModel.TYPE));
+        inlineHintPipeline.has(WindupVertexFrame.TYPE_PROP, P.eq(InlineHintModel.TYPE));
         return new FramedVertexIterable<>(getGraphContext().getFramed(), inlineHintPipeline.toList(), InlineHintModel.class);
     }
 
@@ -78,7 +78,7 @@ public class InlineHintService extends GraphService<InlineHintModel>
         GraphTraversal<Vertex, Vertex> inlineHintPipeline = new GraphTraversalSource(getGraphContext().getGraph()).V(fileModel.getElement());
         inlineHintPipeline.in(InlineHintModel.FILE_MODEL);
         inlineHintPipeline.has(EffortReportModel.EFFORT, P.gt(0));
-        inlineHintPipeline.has(WindupVertexFrame.TYPE_PROP, Text.textContains(InlineHintModel.TYPE));
+        inlineHintPipeline.has(WindupVertexFrame.TYPE_PROP, P.eq(InlineHintModel.TYPE));
 
         int hintEffort = 0;
         for (Vertex v : inlineHintPipeline.toList())
@@ -207,7 +207,7 @@ public class InlineHintService extends GraphService<InlineHintModel>
         if (!includeZero)
         {
             pipeline.has(EffortReportModel.EFFORT, P.gt(0));
-            pipeline.has(WindupVertexFrame.TYPE_PROP, Text.textContains(InlineHintModel.TYPE));
+            pipeline.has(WindupVertexFrame.TYPE_PROP, P.eq(InlineHintModel.TYPE));
         }
         else
         {
