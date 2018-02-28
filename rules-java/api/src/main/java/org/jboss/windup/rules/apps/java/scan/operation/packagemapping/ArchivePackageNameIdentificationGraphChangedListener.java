@@ -35,11 +35,11 @@ public class ArchivePackageNameIdentificationGraphChangedListener implements Gra
     }
 
     @Override
-    public void vertexPropertyChanged(Vertex vertex, Property property, Object oldValue, Object... setValue)
+    public void vertexPropertyChanged(Vertex vertex, String key, Object oldValue, Object... setValue)
     {
         try
         {
-            if (ArchiveModel.ARCHIVE_NAME.equals(property.key()))
+            if (ArchiveModel.ARCHIVE_NAME.equals(key))
             {
                 ArchiveService archiveService = new ArchiveService(event.getGraphContext());
                 ArchiveModel archive = archiveService.getById(vertex.id());

@@ -1,5 +1,6 @@
 package org.jboss.windup.rules.apps.javaee.service;
 
+import org.apache.tinkerpop.gremlin.process.traversal.P;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversal;
@@ -31,7 +32,7 @@ public class HibernateEntityService extends GraphService<HibernateEntityModel>
     {
         GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversalSource(getGraphContext().getGraph()).V(application.getElement());
         pipeline.in(HibernateEntityModel.APPLICATIONS);
-        pipeline.has(WindupVertexFrame.TYPE_PROP, Text.textContains(HibernateEntityModel.TYPE));
+        pipeline.has(WindupVertexFrame.TYPE_PROP, P.eq(HibernateEntityModel.TYPE));
 
         return new FramedVertexIterable<>(getGraphContext().getFramed(), pipeline.toList(), HibernateEntityModel.class);
     }

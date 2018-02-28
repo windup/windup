@@ -93,10 +93,12 @@ public class GraphTypeManager implements TypeResolver
         if (properties == null)
             return results;
 
-        properties.forEachRemaining(property -> {
+        while (properties.hasNext())
+        {
+            Property property = properties.next();
             if (property.isPresent())
                 results.add((String) property.value());
-        });
+        }
         return results;
     }
 

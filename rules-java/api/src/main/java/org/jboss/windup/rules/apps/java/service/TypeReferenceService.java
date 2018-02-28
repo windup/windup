@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.tinkerpop.gremlin.process.traversal.P;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.janusgraph.core.attribute.Text;
 import org.jboss.windup.ast.java.data.ResolutionStatus;
@@ -94,11 +95,11 @@ public class TypeReferenceService extends GraphService<JavaTypeReferenceModel>
         // 1. Get all JavaHints for the given project
         GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversalSource(getGraphContext().getGraph()).V(projectModel.getElement());
         pipeline.out(ProjectModel.PROJECT_MODEL_TO_FILE).in(InlineHintModel.FILE_MODEL);
-        pipeline.has(WindupVertexFrame.TYPE_PROP, Text.textContains(InlineHintModel.TYPE));
+        pipeline.has(WindupVertexFrame.TYPE_PROP, P.eq(InlineHintModel.TYPE));
 
         pipeline.as("inlineHintVertex");
         pipeline.out(InlineHintModel.FILE_LOCATION_REFERENCE)
-                .has(WindupVertexFrame.TYPE_PROP, Text.textContains(JavaTypeReferenceModel.TYPE));
+                .has(WindupVertexFrame.TYPE_PROP, P.eq(JavaTypeReferenceModel.TYPE));
         pipeline.select("inlineHintVertex");
 
         // 2. Organize them by package name

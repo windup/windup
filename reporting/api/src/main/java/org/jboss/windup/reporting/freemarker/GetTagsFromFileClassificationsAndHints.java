@@ -4,8 +4,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.tinkerpop.gremlin.process.traversal.P;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
-import org.janusgraph.core.attribute.Text;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.frames.FramedVertexIterable;
@@ -80,7 +80,7 @@ public class GetTagsFromFileClassificationsAndHints implements WindupFreeMarkerM
         // Classifications
         {
             GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversalSource(context.getGraph()).V(fileModel.getElement());
-            pipeline.in(ClassificationModel.FILE_MODEL).has(WindupVertexFrame.TYPE_PROP, Text.textContains(ClassificationModel.TYPE));
+            pipeline.in(ClassificationModel.FILE_MODEL).has(WindupVertexFrame.TYPE_PROP, P.eq(ClassificationModel.TYPE));
             FramedVertexIterable<ClassificationModel> iterable = new FramedVertexIterable<>(this.context.getFramed(), pipeline.toList(), ClassificationModel.class);
             for (ClassificationModel classification : iterable)
                 tags.addAll(classification.getTags());
@@ -89,8 +89,8 @@ public class GetTagsFromFileClassificationsAndHints implements WindupFreeMarkerM
         // Hints
         {
             GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversalSource(context.getGraph()).V(fileModel.getElement());
-            pipeline.in(FileLocationModel.FILE_MODEL).has(WindupVertexFrame.TYPE_PROP, Text.textContains(FileLocationModel.TYPE));
-            pipeline.in(InlineHintModel.FILE_LOCATION_REFERENCE).has(WindupVertexFrame.TYPE_PROP, Text.textContains(InlineHintModel.TYPE));
+            pipeline.in(FileLocationModel.FILE_MODEL).has(WindupVertexFrame.TYPE_PROP, P.eq(FileLocationModel.TYPE));
+            pipeline.in(InlineHintModel.FILE_LOCATION_REFERENCE).has(WindupVertexFrame.TYPE_PROP, P.eq(InlineHintModel.TYPE));
             FramedVertexIterable<InlineHintModel> iterable = new FramedVertexIterable<>(this.context.getFramed(), pipeline.toList(), InlineHintModel.class);
             for(InlineHintModel hint : iterable)
                 tags.addAll(hint.getTags());

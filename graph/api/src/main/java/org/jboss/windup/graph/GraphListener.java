@@ -1,6 +1,5 @@
 package org.jboss.windup.graph;
 
-import org.apache.tinkerpop.gremlin.structure.Property;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 
 /**
@@ -21,5 +20,5 @@ public interface GraphListener
     /**
      * This should be called whenever a vertex property is updated.
      */
-    void vertexPropertyChanged(Vertex element, Property oldValue, Object setValue, Object... vertexPropertyKeyValues);
+    void vertexPropertyChanged(Vertex element, String propertyName, Object setValue, Object... vertexPropertyKeyValues);
 }

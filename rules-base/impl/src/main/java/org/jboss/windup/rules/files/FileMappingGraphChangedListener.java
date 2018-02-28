@@ -32,10 +32,8 @@ public class FileMappingGraphChangedListener implements GraphListener
     }
 
     @Override
-    public void vertexPropertyChanged(Vertex element, Property oldValue, Object setValue, Object... vertexPropertyKeyValues)
+    public void vertexPropertyChanged(Vertex element, String key, Object setValue, Object... vertexPropertyKeyValues)
     {
-        String key = oldValue.key();
-
         if (!FileModel.FILE_PATH.equals(key))
             return;
 

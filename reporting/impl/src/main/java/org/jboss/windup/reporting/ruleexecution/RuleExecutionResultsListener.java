@@ -131,7 +131,7 @@ public class RuleExecutionResultsListener implements RuleLifecycleListener
         }
 
         @Override
-        public void vertexPropertyChanged(final Vertex element, final Property oldValue, final Object setValue,
+        public void vertexPropertyChanged(final Vertex element, final String propertyName, final Object setValue,
                     final Object... vertexPropertyKeyValues)
         {
         }

@@ -1,5 +1,6 @@
 package org.jboss.windup.rules.apps.javaee.service;
 
+import org.apache.tinkerpop.gremlin.process.traversal.P;
 import org.apache.tinkerpop.gremlin.process.traversal.dsl.graph.GraphTraversalSource;
 import org.janusgraph.core.attribute.Text;
 import org.jboss.windup.graph.GraphContext;
@@ -36,7 +37,7 @@ public class JaxRSWebServiceModelService extends GraphService<JaxRSWebServiceMod
         {
             pipeline = new GraphTraversalSource(getGraphContext().getGraph()).V(implementationClass.getElement());
             pipeline.out(JaxRSWebServiceModel.JAXRS_IMPLEMENTATION_CLASS);
-            pipeline.has(WindupVertexFrame.TYPE_PROP, Text.textContains(JaxRSWebServiceModel.TYPE));
+            pipeline.has(WindupVertexFrame.TYPE_PROP, P.eq(JaxRSWebServiceModel.TYPE));
         }
         pipeline.has(JaxRSWebServiceModel.PATH, path);
 
