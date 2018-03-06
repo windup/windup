@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -69,14 +70,21 @@ public class TarUtil
     {
         try (FileInputStream fileInputStream = new FileInputStream(inputTarFile.toFile()))
         {
-            TarInputStream tarInputStream = new TarInputStream(fileInputStream);
+            untar(outputDirectory, fileInputStream);
+        }
+    }
 
+
+    public static void untar(Path outputDirectory, InputStream inputStream) throws IOException
+    {
+        try (TarInputStream tarInputStream = new TarInputStream(inputStream))
+        {
             TarEntry entry;
 
             while ((entry = tarInputStream.getNextEntry()) != null)
             {
                 int count;
-                byte data[] = new byte[2048];
+                byte data[] = new byte[32768];
                 File outputFile = new File(outputDirectory + "/" + entry.getName());
                 if (!outputFile.getParentFile().isDirectory())
                     outputFile.getParentFile().mkdirs();
