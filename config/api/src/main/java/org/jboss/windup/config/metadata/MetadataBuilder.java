@@ -141,7 +141,9 @@ public class MetadataBuilder extends AbstractRulesetMetadata implements RuleProv
             {
                 builder.addTargetTechnology(new TechnologyReference(
                             technology.id(),
-                            Versions.parseVersionRange(technology.versionRange())));
+                            "".equals(technology.versionRange().trim())
+                                    ? new EmptyVersionRange()
+                                    : Versions.parseVersionRange(technology.versionRange())));
             }
         }
 
