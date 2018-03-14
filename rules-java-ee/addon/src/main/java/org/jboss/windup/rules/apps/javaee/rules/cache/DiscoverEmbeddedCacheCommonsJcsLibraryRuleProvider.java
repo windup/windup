@@ -4,6 +4,7 @@ import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
+import org.jboss.windup.config.metadata.Technology;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.query.Query;
@@ -19,7 +20,8 @@ import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
-@RuleMetadata(phase = InitialAnalysisPhase.class, perform = "Discover Apache Commons JSC libraries embedded")
+@RuleMetadata(phase = InitialAnalysisPhase.class, perform = "Discover Apache Commons JSC libraries embedded",
+        targetTechnologies = @Technology(id = "cloud-readiness"))
 public class DiscoverEmbeddedCacheCommonsJcsLibraryRuleProvider extends AbstractRuleProvider
 {
 
