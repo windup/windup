@@ -36,8 +36,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  */
 @RuleMetadata(
         phase = ReportGenerationPhase.class,
-        id = "Create Spring Bean Report",
-        sourceTechnologies = @Technology(id = "spring", versionRange = "")
+        id = "Create Spring Bean Report"
 )
 public class CreateSpringBeanReportRuleProvider extends AbstractRuleProvider
 {
