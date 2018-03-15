@@ -28,4 +28,6 @@ public interface GraphContextFactory
      */
     GraphContext load(Path dir);
 
+    void closeAll();
+
 }

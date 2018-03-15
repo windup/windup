@@ -2,18 +2,27 @@ package org.jboss.windup.graph;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Set;
+import java.util.WeakHashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
 import org.jboss.windup.util.ExecutionStatistics;
+import org.jboss.windup.util.Logging;
 
 public class GraphContextFactoryImpl implements GraphContextFactory
 {
+    private static Logger LOG = Logging.get(GraphContextFactoryImpl.class);
+
     private GraphApiCompositeClassLoaderProvider graphApiCompositeClassLoaderProvider;
     private Furnace furnace;
     private GraphTypeManager graphTypeManager;
+
+    private WeakHashMap<String, GraphContext> graphMap = new WeakHashMap();
 
     private Furnace getFurnace()
     {
@@ -41,35 +50,42 @@ public class GraphContextFactoryImpl implements GraphContextFactory
     @Override
     public GraphContext create()
     {
-        return ExecutionStatistics.performBenchmarked(GraphContextFactory.class.getName() + ".create(Path)", () ->
-            new GraphContextImpl(
+        return ExecutionStatistics.performBenchmarked(GraphContextFactory.class.getName() + ".create(Path)", () -> {
+            GraphContext graphContext = new GraphContextImpl(
                     getFurnace(),
                     getGraphTypeManager(),
                     getGraphApiCompositeClassLoaderProvider(),
-                    getTempGraphDirectory()).create()
+                    getTempGraphDirectory()).create(false);
+            graphMap.put(graphContext.getGraphDirectory().toString(), graphContext);
+            return graphContext;
+    }
         );
     }
 
     @Override
     public GraphContext create(Path graphDir)
     {
-        return ExecutionStatistics.performBenchmarked(GraphContextFactory.class.getName() + ".create(Path)", () ->
-            new GraphContextImpl(
-                  getFurnace(),
-                  getGraphTypeManager(),
-                  getGraphApiCompositeClassLoaderProvider(),
-                  graphDir).create()
-        );
+        return ExecutionStatistics.performBenchmarked(GraphContextFactory.class.getName() + ".create(Path)", () -> {
+            GraphContext graphContext = new GraphContextImpl(
+                    getFurnace(),
+                    getGraphTypeManager(),
+                    getGraphApiCompositeClassLoaderProvider(),
+                    graphDir).create(true);
+            graphMap.put(graphContext.getGraphDirectory().toString(), graphContext);
+            return graphContext;
+        });
     }
 
     @Override
     public GraphContext load(Path graphDir)
     {
-        return new GraphContextImpl(
+        GraphContext graphContext = new GraphContextImpl(
                     getFurnace(),
                     getGraphTypeManager(),
                     getGraphApiCompositeClassLoaderProvider(),
                     graphDir).load();
+        graphMap.put(graphContext.getGraphDirectory().toString(), graphContext);
+        return graphContext;
     }
 
     private Path getTempGraphDirectory()
@@ -78,4 +94,24 @@ public class GraphContextFactoryImpl implements GraphContextFactory
                     .toPath();
     }
 
+    @Override
+    public void closeAll()
+    {
+        try
+        {
+            LOG.info("Checking for any previously opened graphs...");
+            LOG.info("Already opened: " + graphMap.keySet());
+            for (String graphName : graphMap.keySet())
+            {
+                LOG.info("Still open graph: " + graphName);
+                GraphContext graphContext = graphMap.get(graphName);
+                graphContext.close();
+                LOG.info("Closed graph: " + graphName);
+            }
+        }
+        catch (Throwable t)
+        {
+            LOG.log(Level.WARNING, "Failed at closing previously opened graphs due to: " + t.getMessage(), t);
+        }
+    }
 }

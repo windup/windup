@@ -163,9 +163,9 @@ public class IterationAutomicCommitTest
         }
 
         @Override
-        public GraphContext create()
+        public GraphContext create(boolean enableListeners)
         {
-            return delegate.create();
+            return delegate.create(enableListeners);
         }
 
         @Override

@@ -33,8 +33,11 @@ public interface GraphContext extends Closeable
 
     /**
      * Creates new graph using the configuration. In case there was already a graph located in the specified path, it will be deleted.
+     *
+     * If the enableListeners flag is false, then this will not enable GraphMutation listeners. These are not
+     * necessary for processes that only read from the graph and are only used for graphs that are used as part of an analysis.
      */
-    GraphContext create();
+    GraphContext create(boolean enableListeners);
 
     /**
      * Loads the graph using the configuration.

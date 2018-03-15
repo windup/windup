@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -27,20 +26,16 @@ import org.apache.tinkerpop.gremlin.process.traversal.TraversalStrategies;
 import org.apache.tinkerpop.gremlin.process.traversal.step.util.event.MutationListener;
 import org.apache.tinkerpop.gremlin.process.traversal.strategy.decoration.EventStrategy;
 import org.apache.tinkerpop.gremlin.structure.Edge;
-import org.apache.tinkerpop.gremlin.structure.Element;
-import org.apache.tinkerpop.gremlin.structure.Graph;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.apache.tinkerpop.gremlin.structure.VertexProperty;
 import org.janusgraph.core.Cardinality;
 import org.janusgraph.core.JanusGraph;
 import org.janusgraph.core.JanusGraphFactory;
-import org.janusgraph.core.JanusGraphTransaction;
 import org.janusgraph.core.PropertyKey;
 import org.janusgraph.core.schema.JanusGraphManagement;
 import org.janusgraph.core.schema.Mapping;
 import org.janusgraph.diskstorage.berkeleyje.BerkeleyJEStoreManager;
 import org.janusgraph.graphdb.database.StandardJanusGraph;
-import org.janusgraph.graphdb.transaction.StandardJanusGraphTx;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Annotations;
@@ -95,10 +90,10 @@ public class GraphContextImpl implements GraphContext
         this.graphListeners.add(listener);
     }
 
-    public GraphContextImpl create()
+    public GraphContextImpl create(boolean enableListeners)
     {
         FileUtils.deleteQuietly(graphDir.toFile());
-        JanusGraph janusGraph = initializeJanusGraph(true);
+        JanusGraph janusGraph = initializeJanusGraph(true, enableListeners);
         initializeJanusIndexes(janusGraph);
         createFramed(janusGraph);
         fireListeners();
@@ -107,7 +102,7 @@ public class GraphContextImpl implements GraphContext
 
     public GraphContextImpl load()
     {
-        JanusGraph janusGraph = initializeJanusGraph(false);
+        JanusGraph janusGraph = initializeJanusGraph(false, false);
         createFramed(janusGraph);
         fireListeners();
         return this;
@@ -317,7 +312,7 @@ public class GraphContextImpl implements GraphContext
         return propertyKey;
     }
 
-    private JanusGraph initializeJanusGraph(boolean createMode)
+    private JanusGraph initializeJanusGraph(boolean createMode, boolean enableListeners)
     {
         LOG.fine("Initializing graph.");
 
@@ -370,7 +365,7 @@ public class GraphContextImpl implements GraphContext
          * We only need to setup the eventing system when initializing a graph, not when loading it later for
          * reporting.
          */
-        if (createMode)
+        if (enableListeners)
         {
             TraversalStrategies graphStrategies = TraversalStrategies.GlobalCache
                     .getStrategies(StandardJanusGraph.class)
@@ -382,6 +377,8 @@ public class GraphContextImpl implements GraphContext
 
             graphStrategies.addStrategies(EventStrategy.build().addListener(mutationListener).create());
             TraversalStrategies.GlobalCache.registerStrategies(StandardJanusGraph.class, graphStrategies);
+            LOG.info("Setting graph to: " + this + " for listener: " + mutationListener);
+            new Exception().printStackTrace();
             mutationListener.setGraph(this);
         }
         return janusGraph;
@@ -421,7 +418,14 @@ public class GraphContextImpl implements GraphContext
         {
             LOG.warning("Could not call before shutdown listeners during close due to: " + e.getMessage());
         }
-        this.graph.close();
+        try
+        {
+            this.graph.close();
+        }
+        catch (Throwable t)
+        {
+            LOG.log(Level.WARNING, "Failed to close graph at: " + graphDir + " due to: " + t.getMessage(), t);
+        }
     }
 
     @Override
@@ -589,6 +593,9 @@ public class GraphContextImpl implements GraphContext
         @Override
         public void vertexAdded(Vertex vertex)
         {
+            GraphContextImpl graphContext = getGraphContext();
+            if (graphContext == null || graphContext.graphListeners == null)
+                return;
             getGraphContext().graphListeners.forEach(listener -> {
                 listener.vertexAdded(vertex);
             });
@@ -598,6 +605,10 @@ public class GraphContextImpl implements GraphContext
         public void vertexPropertyChanged(Vertex vertex, org.apache.tinkerpop.gremlin.structure.Property oldValue, Object setValue,
                     Object... vertexPropertyKeyValues)
         {
+            LOG.info("Vertex property changed with graph: " + getGraphContext() + " and this: " + this);
+            GraphContextImpl graphContext = getGraphContext();
+            if (graphContext == null || graphContext.graphListeners == null)
+                return;
             getGraphContext().graphListeners.forEach(listener -> {
                 listener.vertexPropertyChanged(vertex, oldValue, setValue, vertexPropertyKeyValues);
             });
