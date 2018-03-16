@@ -251,7 +251,7 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
             globalLogger.addHandler(loggingHandler);
         }
 
-        try (final GraphContext graphContext = graphContextFactory.create(graphPath))
+        try (final GraphContext graphContext = graphContextFactory.create(graphPath, true))
         {
 
             GraphService<IgnoredFileRegexModel> graphService = new GraphService<>(graphContext, IgnoredFileRegexModel.class);

@@ -41,7 +41,7 @@ public class RuleProviderExecutionStatisticsServiceTest
     @Test
     public void testFindAllOrderedByIndex() throws Exception
     {
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             RuleProviderExecutionStatisticsService service = new RuleProviderExecutionStatisticsService(context);
             RuleProviderExecutionStatisticsModel m1 = service.create();

@@ -78,7 +78,7 @@ public class JavaClassAnnotationFilteringTest
         Path outputPath = getDefaultPath();
         FileUtils.deleteDirectory(outputPath.toFile());
         Files.createDirectories(outputPath);
-        try (GraphContext context = factory.create(outputPath))
+        try (GraphContext context = factory.create(outputPath, true))
         {
             final String inputDir = "src/test/resources/org/jboss/windup/rules/annotationtests/basic";
 
@@ -106,7 +106,7 @@ public class JavaClassAnnotationFilteringTest
         FileUtils.deleteDirectory(outputPath.toFile());
         Files.createDirectories(outputPath);
 
-        try (GraphContext context = factory.create(outputPath))
+        try (GraphContext context = factory.create(outputPath, true))
         {
             final String inputDir = "src/test/resources/org/jboss/windup/rules/annotationtests/complex";
 

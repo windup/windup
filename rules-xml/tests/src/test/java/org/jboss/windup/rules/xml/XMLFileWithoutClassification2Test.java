@@ -59,7 +59,7 @@ public class XMLFileWithoutClassification2Test
     @Test
     public void testXmlFileWithoutClassification() throws IOException
     {
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             Path inputPath = Paths.get("src/test/resources/");
 

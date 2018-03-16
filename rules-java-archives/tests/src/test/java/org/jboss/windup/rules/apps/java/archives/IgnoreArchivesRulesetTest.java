@@ -77,7 +77,7 @@ public class IgnoreArchivesRulesetTest
     @Test
     public void testSkippedArchivesFound() throws Exception
     {
-        try (GraphContext graphContext = contextFactory.create())
+        try (GraphContext graphContext = contextFactory.create(true))
         {
             FileUtils.deleteDirectory(OUTPUT_PATH.toFile());
 

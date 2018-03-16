@@ -21,7 +21,6 @@ import org.apache.tinkerpop.gremlin.structure.Edge;
 import org.apache.tinkerpop.gremlin.structure.Element;
 import org.apache.tinkerpop.gremlin.structure.Property;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import org.apache.tinkerpop.gremlin.structure.VertexProperty;
 import org.janusgraph.core.JanusGraphEdge;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.container.simple.lifecycle.SimpleContainer;
@@ -213,8 +212,6 @@ public class GraphTypeManager implements TypeResolver
             }
         }
         element.properties(WindupFrame.TYPE_PROP).forEachRemaining(Property::remove);
-
-        LOG.info("Setting types for: " + element.id() + " to: " + newTypes);
         for (String newType : newTypes)
             addProperty(element, WindupFrame.TYPE_PROP, newType);
 
@@ -225,14 +222,25 @@ public class GraphTypeManager implements TypeResolver
     {
         // This uses the direct Titan API which is indexed. See GraphContextImpl.
         if (abstractElement instanceof Vertex)
-            ((Vertex) abstractElement).property(VertexProperty.Cardinality.list, propertyName, propertyValue);
+            ((Vertex) abstractElement).property(propertyName, propertyValue);
         // StandardEdge doesn't have addProperty().
         else if (abstractElement instanceof Edge)
             addTokenProperty(abstractElement, propertyName, propertyValue);
         // For all others, we resort to storing a list
         else
         {
-            throw new UnsupportedOperationException("Unrecognized type; " + abstractElement.getClass().getName());
+            Property<List<String>> property = abstractElement.property(propertyName);
+            if (property == null)
+            {
+                abstractElement.property(propertyName, Collections.singletonList(propertyValue));
+            }
+            else
+            {
+                List<String> existingList = property.value();
+                List<String> newList = new ArrayList<>(existingList);
+                newList.add(propertyValue);
+                abstractElement.property(propertyName, newList);
+            }
         }
     }
 
@@ -267,7 +275,6 @@ public class GraphTypeManager implements TypeResolver
                 return;
             }
         }
-        LOG.info("Setting types for: " + element.id() + " to: " + typeValue);
 
         addProperty(element, WindupFrame.TYPE_PROP, typeValue);
         addSuperclassType(kind, element);

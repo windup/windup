@@ -43,7 +43,7 @@ public class MapInPropertiesTest
     @Test
     public void testMapHandling() throws Exception
     {
-        try (GraphContext context = contextFactory.create())
+        try (GraphContext context = contextFactory.create(true))
         {
             Assert.assertNotNull(context);
             prepareFrame(context, TestMapPrefixModel.class);
@@ -59,7 +59,7 @@ public class MapInPropertiesTest
     @Test
     public void testMapWithBlankPrefixHandling() throws Exception
     {
-        try (GraphContext context = contextFactory.create())
+        try (GraphContext context = contextFactory.create(true))
         {
             TestMapBlankSubModel frame = prepareFrame(context, TestMapBlankSubModel.class);
             System.out.println("    Frame class: " + frame.getClass());
@@ -85,7 +85,7 @@ public class MapInPropertiesTest
     @Test
     public void testMapWithBlankPrefixHandling2() throws Exception
     {
-        try (GraphContext context = contextFactory.create())
+        try (GraphContext context = contextFactory.create(true))
         {
             TestMapBlankModel frame = context.getFramed().addFramedVertex(TestMapBlankModel.class);
             Map<String, String> map = prepareMap();

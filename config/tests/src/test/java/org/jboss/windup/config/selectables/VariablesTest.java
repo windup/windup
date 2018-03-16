@@ -55,7 +55,7 @@ public class VariablesTest
     public void testMultipleFramesSameName() throws Exception
     {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder))
+        try (final GraphContext context = factory.create(folder, true))
         {
             GraphRewrite event = new GraphRewrite(context);
             final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
@@ -92,7 +92,7 @@ public class VariablesTest
     public void testInvalidTypeGet() throws Exception
     {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder))
+        try (final GraphContext context = factory.create(folder, true))
         {
             GraphRewrite event = new GraphRewrite(context);
             final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
@@ -127,7 +127,7 @@ public class VariablesTest
     public void testUnTypedGet() throws Exception
     {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder))
+        try (final GraphContext context = factory.create(folder, true))
         {
             GraphRewrite event = new GraphRewrite(context);
             final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
@@ -151,7 +151,7 @@ public class VariablesTest
     public void testInvalidCountGet() throws Exception
     {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder))
+        try (final GraphContext context = factory.create(folder, true))
         {
             GraphRewrite event = new GraphRewrite(context);
             final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();

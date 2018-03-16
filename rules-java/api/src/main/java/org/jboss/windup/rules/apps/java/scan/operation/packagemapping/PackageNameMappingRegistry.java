@@ -49,7 +49,7 @@ public class PackageNameMappingRegistry
 
     public void loadPackageMappings(Path rulesPath)
     {
-        try (GraphContext graphContext = graphContextFactory.create())
+        try (GraphContext graphContext = graphContextFactory.create(false))
         {
             WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(graphContext);
             FileModel windupRulesPath = new FileService(graphContext).createByFilePath(rulesPath.toString());

@@ -88,7 +88,7 @@ public class JavaIgnoreRegexesTest
     @Test
     public void testHintsAndClassificationOperation() throws Exception
     {
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
 
             Assert.assertNotNull(context);

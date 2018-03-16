@@ -71,7 +71,7 @@ public class RuleIterationOverAllSpecifiedTest
     public void testTypeSelection() throws Exception
     {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder))
+        try (final GraphContext context = factory.create(folder, true))
         {
 
             TestSimple1Model vertex = context.getFramed().addFramedVertex(TestSimple1Model.class);
@@ -105,7 +105,7 @@ public class RuleIterationOverAllSpecifiedTest
     public void testTypeSelectionWithException() throws Exception
     {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder))
+        try (final GraphContext context = factory.create(folder, true))
         {
 
             TestSimple1Model vertex = context.getFramed().addFramedVertex(TestSimple1Model.class);

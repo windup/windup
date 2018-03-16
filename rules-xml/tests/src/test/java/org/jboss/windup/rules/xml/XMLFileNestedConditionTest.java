@@ -80,7 +80,7 @@ public class XMLFileNestedConditionTest
     @Test
     public void testNestedCondition() throws IOException
     {
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             ProjectModel pm = context.getFramed().addFramedVertex(ProjectModel.class);
             pm.setName("Main Project");

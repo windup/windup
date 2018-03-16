@@ -36,7 +36,7 @@ public class GenerateJBossEjbDescriptorTest extends AbstractTest
     public void testRuleProviders() throws Exception
     {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder))
+        try (final GraphContext context = factory.create(folder, true))
         {
             initData(context);
             WindupTestUtilMethods.runOnlyRuleProviders(Collections.singletonList(new GenerateJBossEjbDescriptorRuleProvider()), context);

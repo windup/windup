@@ -55,7 +55,7 @@ public class JavaClassWithoutClassificationTest
     @Test
     public void testJavaClassCondition() throws IOException, InstantiationException, IllegalAccessException
     {
-        try (GraphContext context = factory.create(getDefaultPath()))
+        try (GraphContext context = factory.create(getDefaultPath(), true))
         {
             final String inputDir = "src/test/resources/org/jboss/windup/rules/java";
 

@@ -43,7 +43,7 @@ public class DiscoverDataSourceAnnotationRuleProviderTest extends AbstractTest
         FileUtils.deleteDirectory(outputPath.toFile());
         Files.createDirectories(outputPath);
 
-        try (GraphContext context = factory.create(outputPath))
+        try (GraphContext context = factory.create(outputPath, true))
         {
             ProjectModel pm = context.getFramed().addFramedVertex(ProjectModel.class);
             pm.setName("Main Project");

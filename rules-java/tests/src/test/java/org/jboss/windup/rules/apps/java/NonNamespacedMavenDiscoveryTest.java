@@ -67,7 +67,7 @@ public class NonNamespacedMavenDiscoveryTest
         final Path outputPath = getDefaultPath();
         FileUtils.deleteDirectory(outputPath.toFile());
         Files.createDirectories(outputPath);
-        try (GraphContext context = factory.create(outputPath))
+        try (GraphContext context = factory.create(outputPath, true))
         {
             final WindupConfiguration processorConfig = new WindupConfiguration();
             processorConfig.setOptionValue(SourceModeOption.NAME, true);

@@ -79,7 +79,7 @@ public class TechnologyIdentifiedTest
     @Test
     public void testTechnologyIdentified() throws IOException, InstantiationException, IllegalAccessException
     {
-        try (GraphContext context = factory.create(WindupTestUtilMethods.getTempDirectoryForGraph()))
+        try (GraphContext context = factory.create(WindupTestUtilMethods.getTempDirectoryForGraph(), true))
         {
             final String inputDir = "src/test/java";
 
@@ -126,7 +126,7 @@ public class TechnologyIdentifiedTest
         Path graphPath = baseOutputPath.resolve("graph");
         Path reportPath = baseOutputPath.resolve("reports");
 
-        try (GraphContext context = factory.create(graphPath))
+        try (GraphContext context = factory.create(graphPath, true))
         {
             final String basePath = "../../test-files/duplicate/duplicate-ear-test-";
             final String[] inputPaths = new String[]{

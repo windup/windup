@@ -77,7 +77,7 @@ public abstract class WindupArchitectureTest
 
     GraphContext createGraphContext(Path path)
     {
-        return factory.create(path);
+        return factory.create(path, true);
     }
 
     protected void runTest(String inputPath, boolean sourceMode) throws Exception

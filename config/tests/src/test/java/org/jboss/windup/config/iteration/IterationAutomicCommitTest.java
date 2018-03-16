@@ -79,7 +79,7 @@ public class IterationAutomicCommitTest
     public void testAutomaticPeriodicCommit() throws Exception
     {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext baseContext = factory.create(folder))
+        try (final GraphContext baseContext = factory.create(folder, true))
         {
             CommitInterceptingGraphContext context = new CommitInterceptingGraphContext(baseContext);
 

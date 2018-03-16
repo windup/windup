@@ -66,7 +66,7 @@ public class XMLTechnologyMetadataLoaderTest
     @Test
     public void testMetadataLoad() throws Exception
     {
-        try (GraphContext context = graphContextFactory.create())
+        try (GraphContext context = graphContextFactory.create(true))
         {
             WindupConfigurationModel cfg = WindupConfigurationService.getConfigurationModel(context);
 

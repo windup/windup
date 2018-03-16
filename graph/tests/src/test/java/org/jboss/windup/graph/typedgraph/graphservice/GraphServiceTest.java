@@ -56,7 +56,7 @@ public class GraphServiceTest
     @Test
     public void testGraphTypeHandling() throws Exception
     {
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             Assert.assertNotNull(context);
             TestFooModel initialModelType = context.getFramed().addFramedVertex(TestFooModel.class);
@@ -90,7 +90,7 @@ public class GraphServiceTest
     @Test
     public void testGraphSearchWithoutCommit() throws Exception
     {
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             Assert.assertNotNull(context);
 
@@ -131,7 +131,7 @@ public class GraphServiceTest
     @Test
     public void testModelCreation() throws Exception
     {
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             Assert.assertNotNull(context);
 
@@ -176,7 +176,7 @@ public class GraphServiceTest
     @Test
     public void testEdgeFrames() throws Exception
     {
-        try (GraphContext graphContext = factory.create())
+        try (GraphContext graphContext = factory.create(true))
         {
             // Connect two vertexes with an edge,
             TestIncidenceAaaModel aaa = graphContext.create(TestIncidenceAaaModel.class);
@@ -226,7 +226,7 @@ public class GraphServiceTest
     @Test
     public void testServiceDeletagesInGraphContext() throws Exception
     {
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             TestFooModel created = context.create(TestFooSubModel.class);
 

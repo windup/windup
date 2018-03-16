@@ -59,7 +59,7 @@ public class GatherIgnoredFilesTest
     @Test
     public void testJavaClassCondition() throws IOException, InstantiationException, IllegalAccessException
     {
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             ProjectModel pm = context.getFramed().addFramedVertex(ProjectModel.class);
             pm.setName("Main Project");

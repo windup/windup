@@ -89,7 +89,7 @@ public class JavaHintsClassificationsTest
     public void testHintAndClassificationInvalidTitle() throws Exception
     {
         Path outputPath = null;
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             outputPath = runWindup(context);
 
@@ -124,7 +124,7 @@ public class JavaHintsClassificationsTest
     @Test
     public void testHintsAndClassificationOperation() throws Exception
     {
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             Path outputPath = null;
             try

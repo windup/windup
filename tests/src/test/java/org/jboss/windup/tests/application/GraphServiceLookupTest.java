@@ -45,7 +45,7 @@ public class GraphServiceLookupTest
     @Test
     public void testServiceLookup() throws Exception
     {
-        try (GraphContext graphContext = factory.create())
+        try (GraphContext graphContext = factory.create(true))
         {
             Assert.assertNotNull(graphContext);
 

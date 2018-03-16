@@ -236,7 +236,7 @@ public class WindupCommand implements UICommand
 
         FileUtils.deleteQuietly(windupConfiguration.getOutputDirectory().toFile());
         Path graphPath = windupConfiguration.getOutputDirectory().resolve("graph");
-        try (GraphContext graphContext = graphContextFactory.create(graphPath))
+        try (GraphContext graphContext = graphContextFactory.create(graphPath, true))
         {
             context.getUIContext().getAttributeMap().put(GraphContext.class, graphContext);
             UIProgressMonitor uiProgressMonitor = context.getProgressMonitor();

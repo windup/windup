@@ -80,7 +80,7 @@ public class IdentifyArchivesRulesetTest
     @Test
     public void testJarsAreIdentified() throws Exception
     {
-        try (GraphContext graphContext = contextFactory.create())
+        try (GraphContext graphContext = contextFactory.create(true))
         {
             FileUtils.deleteDirectory(OUTPUT_PATH.toFile());
 

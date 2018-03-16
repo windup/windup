@@ -48,7 +48,7 @@ public class ApplicationReportIndexModelServiceTest
     @Test
     public void testGetApplicationReportsForProjectModelSortedByPriority() throws IOException
     {
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             ProjectModel projectModel = new ProjectService(context).create();
             ApplicationReportService applicationReportService = new ApplicationReportService(context);

@@ -95,7 +95,7 @@ public class QueryConditionTest
     public void testInitialQueryAsGremlin() throws Exception
     {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder))
+        try (final GraphContext context = factory.create(folder, true))
         {
             GraphRewrite event = new GraphRewrite(context);
             DefaultEvaluationContext evaluationContext = createEvalContext(event);
@@ -133,7 +133,7 @@ public class QueryConditionTest
     public void testSingletonSelection() throws Exception
     {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder))
+        try (final GraphContext context = factory.create(folder, true))
         {
 
             GraphRewrite event = new GraphRewrite(context);
@@ -185,7 +185,7 @@ public class QueryConditionTest
     public void testJavaMethodModel() throws Exception
     {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder))
+        try (final GraphContext context = factory.create(folder, true))
         {
 
             GraphRewrite event = new GraphRewrite(context);
@@ -223,7 +223,7 @@ public class QueryConditionTest
     {
         // build the initial graph
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder))
+        try (final GraphContext context = factory.create(folder, true))
         {
 
             fillData(context);
@@ -247,7 +247,7 @@ public class QueryConditionTest
     {
         // build the initial graph
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder))
+        try (final GraphContext context = factory.create(folder, true))
         {
 
             fillData(context);
@@ -279,7 +279,7 @@ public class QueryConditionTest
     {
         // build the initial graph
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder))
+        try (final GraphContext context = factory.create(folder, true))
         {
 
             fillData(context);
@@ -304,7 +304,7 @@ public class QueryConditionTest
     {
         // build the initial graph
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder))
+        try (final GraphContext context = factory.create(folder, true))
         {
             fillData(context);
             context.commit();
@@ -327,7 +327,7 @@ public class QueryConditionTest
     @Test
     public void testExcludeTypeFilter() throws Exception
     {
-        try (final GraphContext context = factory.create())
+        try (final GraphContext context = factory.create(true))
         {
             GraphRewrite event = new GraphRewrite(context);
             DefaultEvaluationContext evaluationContext = createEvalContext(event);
@@ -372,7 +372,7 @@ public class QueryConditionTest
     @Test
     public void testIncludeTypeFilter() throws Exception
     {
-        try (final GraphContext context = factory.create())
+        try (final GraphContext context = factory.create(true))
         {
             GraphRewrite event = new GraphRewrite(context);
             DefaultEvaluationContext evaluationContext = createEvalContext(event);

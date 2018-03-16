@@ -75,7 +75,7 @@ public class IterationPayLoadPassTest
     public void testPayloadPass() throws Exception
     {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder))
+        try (final GraphContext context = factory.create(folder, true))
         {
             context.getFramed().addFramedVertex(TestPayloadModel.class);
             context.getFramed().addFramedVertex(TestPayloadModel.class);
@@ -102,7 +102,7 @@ public class IterationPayLoadPassTest
     public void testPayloadNotPass() throws Exception
     {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder))
+        try (final GraphContext context = factory.create(folder, true))
         {
             context.getFramed().addFramedVertex(TestSimple1Model.class);
             context.getFramed().addFramedVertex(TestSimple2Model.class);

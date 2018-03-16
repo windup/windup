@@ -377,8 +377,6 @@ public class GraphContextImpl implements GraphContext
 
             graphStrategies.addStrategies(EventStrategy.build().addListener(mutationListener).create());
             TraversalStrategies.GlobalCache.registerStrategies(StandardJanusGraph.class, graphStrategies);
-            LOG.info("Setting graph to: " + this + " for listener: " + mutationListener);
-            new Exception().printStackTrace();
             mutationListener.setGraph(this);
         }
         return janusGraph;
@@ -605,7 +603,6 @@ public class GraphContextImpl implements GraphContext
         public void vertexPropertyChanged(Vertex vertex, org.apache.tinkerpop.gremlin.structure.Property oldValue, Object setValue,
                     Object... vertexPropertyKeyValues)
         {
-            LOG.info("Vertex property changed with graph: " + getGraphContext() + " and this: " + this);
             GraphContextImpl graphContext = getGraphContext();
             if (graphContext == null || graphContext.graphListeners == null)
                 return;

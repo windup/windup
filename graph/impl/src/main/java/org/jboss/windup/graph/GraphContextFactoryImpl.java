@@ -2,7 +2,6 @@ package org.jboss.windup.graph;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -48,14 +47,14 @@ public class GraphContextFactoryImpl implements GraphContextFactory
     }
 
     @Override
-    public GraphContext create()
+    public GraphContext create(boolean enableListeners)
     {
         return ExecutionStatistics.performBenchmarked(GraphContextFactory.class.getName() + ".create(Path)", () -> {
             GraphContext graphContext = new GraphContextImpl(
                     getFurnace(),
                     getGraphTypeManager(),
                     getGraphApiCompositeClassLoaderProvider(),
-                    getTempGraphDirectory()).create(false);
+                    getTempGraphDirectory()).create(enableListeners);
             graphMap.put(graphContext.getGraphDirectory().toString(), graphContext);
             return graphContext;
     }
@@ -63,14 +62,14 @@ public class GraphContextFactoryImpl implements GraphContextFactory
     }
 
     @Override
-    public GraphContext create(Path graphDir)
+    public GraphContext create(Path graphDir, boolean enableListeners)
     {
         return ExecutionStatistics.performBenchmarked(GraphContextFactory.class.getName() + ".create(Path)", () -> {
             GraphContext graphContext = new GraphContextImpl(
                     getFurnace(),
                     getGraphTypeManager(),
                     getGraphApiCompositeClassLoaderProvider(),
-                    graphDir).create(true);
+                    graphDir).create(enableListeners);
             graphMap.put(graphContext.getGraphDirectory().toString(), graphContext);
             return graphContext;
         });

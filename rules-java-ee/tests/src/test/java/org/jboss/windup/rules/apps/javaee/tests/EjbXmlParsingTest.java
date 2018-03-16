@@ -53,7 +53,7 @@ public class EjbXmlParsingTest extends AbstractTest
     @Test
     public void testEJBWebLogic() throws Exception
     {
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             startWindup(WEBLOGIC_TEST_EJB_XMLS, context);
             EnvironmentReferenceService envRefService = new EnvironmentReferenceService(context);
@@ -104,7 +104,7 @@ public class EjbXmlParsingTest extends AbstractTest
     @Test
     public void testEJBWebSphere() throws Exception
     {
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             startWindup(WEBSPHERE_TEST_EJB_XMLS, context);
             EnvironmentReferenceService envRefService = new EnvironmentReferenceService(context);
@@ -119,7 +119,7 @@ public class EjbXmlParsingTest extends AbstractTest
     @Test
     public void testEJBOrion() throws Exception
     {
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             startWindup(ORION_TEST_EJB_XMLS, context);
             GraphService<EjbSessionBeanModel> ejbSessionBeanService = new GraphService<>(context, EjbSessionBeanModel.class);
@@ -150,7 +150,7 @@ public class EjbXmlParsingTest extends AbstractTest
     @Test
     public void testEJBJBoss() throws Exception
     {
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             startWindup(JBOSS_TEST_EJB_XMLS, context);
             GraphService<EjbSessionBeanModel> ejbSessionBeanService = new GraphService<>(context, EjbSessionBeanModel.class);

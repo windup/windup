@@ -54,7 +54,7 @@ public class InlineHintServiceTest
     public void testHintEffort() throws Exception
     {
 
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             InlineHintService inlineHintService = new InlineHintService(context);
 
@@ -92,7 +92,7 @@ public class InlineHintServiceTest
     @Test
     public void testFindHintsForProject() throws Exception
     {
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             FileService fileService = new FileService(context);
             InlineHintService hintService = new InlineHintService(context);

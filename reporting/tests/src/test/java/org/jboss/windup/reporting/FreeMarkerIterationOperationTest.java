@@ -58,7 +58,7 @@ public class FreeMarkerIterationOperationTest
     @Test
     public void testApplicationReportFreemarker() throws Exception
     {
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             GraphRewrite event = new GraphRewrite(context);
             DefaultEvaluationContext evaluationContext = ReportingTestUtil.createEvalContext(event);

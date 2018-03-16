@@ -44,7 +44,7 @@ public class SpringDataSourceExtractionTest extends AbstractTest
     @Test
     public void testSpringBeans() throws Exception
     {
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             startWindup(SPRING_XMLS, context);
             GraphService<DataSourceModel> dataSourceService = new GraphService<>(context, DataSourceModel.class);

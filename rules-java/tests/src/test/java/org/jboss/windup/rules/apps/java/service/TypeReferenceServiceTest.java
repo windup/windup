@@ -49,7 +49,7 @@ public class TypeReferenceServiceTest
     @Test
     public void testGetPackageUseFrequencies() throws Exception
     {
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             Assert.assertNotNull(context);
 
