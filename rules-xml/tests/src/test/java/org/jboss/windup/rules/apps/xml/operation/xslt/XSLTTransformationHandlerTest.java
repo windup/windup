@@ -132,7 +132,7 @@ public class XSLTTransformationHandlerTest
         Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(), "Windup", "windup_"
                 + UUID.randomUUID().toString());
 
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             FileUtils.deleteDirectory(outputPath.toFile());
             Files.createDirectories(outputPath);

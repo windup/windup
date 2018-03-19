@@ -69,7 +69,7 @@ public class ValidateXmlFilesRuleProviderWithInternetTest extends AbstractXsdVal
     @Test
     public void testNotValidXml() throws Exception
     {
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             initOnlineWindupConfiguration(context);
             addFileModel(context, NOT_VALID_XML);
@@ -94,7 +94,7 @@ public class ValidateXmlFilesRuleProviderWithInternetTest extends AbstractXsdVal
     @Test
     public void testNotValidXsdUrlAttribute() throws Exception
     {
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             initOnlineWindupConfiguration(context);
             addFileModel(context, NOT_VALID_XSD_SCHEMA_URL);
@@ -131,7 +131,7 @@ public class ValidateXmlFilesRuleProviderWithInternetTest extends AbstractXsdVal
     @Test
     public void testWithoutXsdUrlAttribute() throws Exception
     {
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             addFileModel(context, NO_XSD_SCHEMA_URL);
             initOnlineWindupConfiguration(context);
@@ -150,7 +150,7 @@ public class ValidateXmlFilesRuleProviderWithInternetTest extends AbstractXsdVal
     @Ignore // Ignoring for now as we are not currently running validation in offline mode
     public void testNotValidXmlInOfflineMode() throws Exception
     {
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             initOfflineWindupConfiguration(context);
             addFileModel(context, NOT_VALID_XML);
@@ -168,7 +168,7 @@ public class ValidateXmlFilesRuleProviderWithInternetTest extends AbstractXsdVal
     @Test
     public void testUnparsableUrl() throws Exception
     {
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             initOnlineWindupConfiguration(context);
             addFileModel(context, URL_NOT_PARSABLE);
@@ -201,7 +201,7 @@ public class ValidateXmlFilesRuleProviderWithInternetTest extends AbstractXsdVal
     @Test
     public void testMultipleSchemas() throws Exception
     {
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             initOnlineWindupConfiguration(context);
             addFileModel(context, URL_MULTIPLE_SCHEMAS);

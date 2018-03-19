@@ -53,7 +53,7 @@ public class RuleProviderMetadataTest
     @Test
     public void testMetadataPickedUp() throws Exception
     {
-        try (GraphContext context = contextFactory.create())
+        try (GraphContext context = contextFactory.create(true))
         {
             WindupConfiguration windupConfig = new WindupConfiguration();
             windupConfig.setGraphContext(context);

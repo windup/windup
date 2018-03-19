@@ -34,7 +34,7 @@ public class DiscoverEjbConfigurationTest extends AbstractTest
     @Test
     public void testEJBMetadataExtraction() throws Exception
     {
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             ProjectModel pm = context.getFramed().addFramedVertex(ProjectModel.class);
             pm.setName("Main Project");

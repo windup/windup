@@ -60,7 +60,7 @@ public class JavaClassWithoutHintTest
         FileUtils.deleteDirectory(outputPath.toFile());
         Files.createDirectories(outputPath);
 
-        try (GraphContext context = factory.create(outputPath))
+        try (GraphContext context = factory.create(outputPath, true))
         {
             final String inputDir = "src/test/resources/org/jboss/windup/rules/java";
 

@@ -87,7 +87,7 @@ public class FileContentTest
     @Test
     public void testFileContentScan() throws Exception
     {
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             Path inputPath = Paths.get("src/test/resources/");
 

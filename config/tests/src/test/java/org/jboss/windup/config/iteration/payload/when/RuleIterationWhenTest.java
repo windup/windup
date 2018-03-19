@@ -74,7 +74,7 @@ public class RuleIterationWhenTest
     public void testTypeSelection() throws Exception
     {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder))
+        try (final GraphContext context = factory.create(folder, true))
         {
 
             TestWhenModel vertex = context.getFramed().addFramedVertex(TestWhenModel.class);

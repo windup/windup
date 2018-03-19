@@ -27,7 +27,7 @@ public class HibernateEntityServiceTest extends AbstractTest
     @Test
     public void testHibernateEntityFindByProject() throws Exception
     {
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             ProjectService projectService = new ProjectService(context);
             ProjectModel app1 = projectService.create();

@@ -61,7 +61,7 @@ public class TagsRulesTest
     {
 
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder))
+        try (final GraphContext context = factory.create(folder, true))
         {
 
             GraphRewrite event = new GraphRewrite(context);

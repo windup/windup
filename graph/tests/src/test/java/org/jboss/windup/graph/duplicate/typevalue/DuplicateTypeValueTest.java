@@ -35,7 +35,7 @@ public class DuplicateTypeValueTest
     @Test(expected = Exception.class)
     public void testDuplicateTypeValue() throws Exception
     {
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             Assert.assertNotNull(context);
             context.getFramed().addFramedVertex(TestSimpleModel.class);

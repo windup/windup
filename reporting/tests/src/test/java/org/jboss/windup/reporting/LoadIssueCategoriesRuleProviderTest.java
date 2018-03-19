@@ -58,7 +58,7 @@ public class LoadIssueCategoriesRuleProviderTest
     @Test
     public void testLoadIssueCategories() throws Exception
     {
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             GraphRewrite event = new GraphRewrite(context);
             DefaultEvaluationContext evaluationContext = ReportingTestUtil.createEvalContext(event);

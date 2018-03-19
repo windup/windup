@@ -54,7 +54,7 @@ public class RuleLoaderTest
     @Test
     public void testRuleProviderWithFilter() throws IOException
     {
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             Predicate<RuleProvider> predicate = (provider) -> {
                     return provider.getMetadata().getPhase() == MigrationRulesPhase.class;

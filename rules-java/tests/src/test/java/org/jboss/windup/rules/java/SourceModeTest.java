@@ -67,7 +67,7 @@ public class SourceModeTest
         final Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(),
                     "windup_" + RandomStringUtils.randomAlphanumeric(6));
 
-        try (GraphContext context = factory.create(getDefaultPath()))
+        try (GraphContext context = factory.create(getDefaultPath(), true))
         {
             final WindupConfiguration processorConfig = new WindupConfiguration();
             processorConfig.setRuleProviderFilter(new RuleProviderWithDependenciesPredicate(
@@ -91,7 +91,7 @@ public class SourceModeTest
         final Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(),
                     "windup_" + RandomStringUtils.randomAlphanumeric(6));
 
-        try (GraphContext context = factory.create(getDefaultPath()))
+        try (GraphContext context = factory.create(getDefaultPath(), true))
         {
             final WindupConfiguration processorConfig = new WindupConfiguration();
             processorConfig.setRuleProviderFilter(new RuleProviderWithDependenciesPredicate(
@@ -115,7 +115,7 @@ public class SourceModeTest
         final Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(),
                     "windup_" + RandomStringUtils.randomAlphanumeric(6));
 
-        try (GraphContext context = factory.create(getDefaultPath()))
+        try (GraphContext context = factory.create(getDefaultPath(), true))
         {
             final WindupConfiguration processorConfig = new WindupConfiguration();
             processorConfig.setRuleProviderFilter(new RuleProviderWithDependenciesPredicate(

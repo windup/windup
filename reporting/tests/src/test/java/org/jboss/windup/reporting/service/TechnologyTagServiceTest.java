@@ -48,7 +48,7 @@ public class TechnologyTagServiceTest
     @Test
     public void testFindTechnologyTagsByProject() throws Exception
     {
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             ProjectService projectService = new ProjectService(context);
             TechnologyTagService techTagService = new TechnologyTagService(context);

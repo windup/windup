@@ -98,7 +98,7 @@ public class MavenizeRuleProviderTest
     @Test
     public void testMavenizeRuleProvider() throws IOException, InstantiationException, IllegalAccessException
     {
-        try (GraphContext graphContext = factory.create(WindupTestUtilMethods.getTempDirectoryForGraph()))
+        try (GraphContext graphContext = factory.create(WindupTestUtilMethods.getTempDirectoryForGraph(), true))
         {
             final String inputDir = "../../test-files/jee-example-app-1.0.0.ear"; // rules-java/api
             final Class<MavenizeRuleProvider> ruleToRunUpTo = MavenizeRuleProvider.class;

@@ -82,7 +82,7 @@ public class CSVExportingTest
                     "windup_" + RandomStringUtils.randomAlphanumeric(6));
 
         outputPath.toFile().mkdirs();
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             fillData(context);
             String inputPath = "src/test/resources";

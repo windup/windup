@@ -45,7 +45,7 @@ public class JavaHandlerSubclassSpecializationTest
     @Test
     public void testSubclassMethodHandling() throws Exception
     {
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             Assert.assertNotNull(context);
 

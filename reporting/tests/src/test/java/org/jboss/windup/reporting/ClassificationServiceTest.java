@@ -51,7 +51,7 @@ public class ClassificationServiceTest
     @Test
     public void testClassificationEffort() throws Exception
     {
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             ClassificationService classificationService = new ClassificationService(context);
 
@@ -94,7 +94,7 @@ public class ClassificationServiceTest
     @Test
     public void testClassificationAcrossProjectBoundaries() throws Exception
     {
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             ClassificationService classificationService = new ClassificationService(context);
 
@@ -115,7 +115,7 @@ public class ClassificationServiceTest
     @Test
     public void testClassificationAlreadyAttached() throws Exception
     {
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             GraphRewrite event = new GraphRewrite(context);
             ClassificationService classificationService = new ClassificationService(context);

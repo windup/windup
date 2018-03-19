@@ -61,7 +61,7 @@ public class ParameterWiringTest
     public void testIterationVariableResolving() throws Exception
     {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder))
+        try (final GraphContext context = factory.create(folder, true))
         {
 
             GraphRewrite event = new GraphRewrite(context);
@@ -160,7 +160,7 @@ public class ParameterWiringTest
     public void testIterationVariableResolving2() throws Exception
     {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder))
+        try (final GraphContext context = factory.create(folder, true))
         {
 
             GraphRewrite event = new GraphRewrite(context);
@@ -288,7 +288,7 @@ public class ParameterWiringTest
     public void testIterationVariableResolving3() throws Exception
     {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder))
+        try (final GraphContext context = factory.create(folder, true))
         {
 
             GraphRewrite event = new GraphRewrite(context);
@@ -411,7 +411,7 @@ public class ParameterWiringTest
     public void testIterationVariableResolving4() throws Exception
     {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext context = factory.create(folder))
+        try (final GraphContext context = factory.create(folder, true))
         {
 
             GraphRewrite event = new GraphRewrite(context);

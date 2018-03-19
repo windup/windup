@@ -79,7 +79,7 @@ public class IterationAutomicCommitTest
     public void testAutomaticPeriodicCommit() throws Exception
     {
         final Path folder = OperatingSystemUtils.createTempDir().toPath();
-        try (final GraphContext baseContext = factory.create(folder))
+        try (final GraphContext baseContext = factory.create(folder, true))
         {
             CommitInterceptingGraphContext context = new CommitInterceptingGraphContext(baseContext);
 
@@ -163,9 +163,9 @@ public class IterationAutomicCommitTest
         }
 
         @Override
-        public GraphContext create()
+        public GraphContext create(boolean enableListeners)
         {
-            return delegate.create();
+            return delegate.create(enableListeners);
         }
 
         @Override

@@ -87,7 +87,7 @@ public class GroovyExtensionJavaRulesTest
         FileUtils.deleteDirectory(outputPath.toFile());
         Files.createDirectories(outputPath);
 
-        try (GraphContext context = factory.create(outputPath.resolve("graph")))
+        try (GraphContext context = factory.create(outputPath.resolve("graph"), true))
         {
             String inputPath = "src/test/resources/org/jboss/windup/rules/java";
 

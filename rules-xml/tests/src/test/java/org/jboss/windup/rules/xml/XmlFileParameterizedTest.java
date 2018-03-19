@@ -214,7 +214,7 @@ public class XmlFileParameterizedTest
 
     public void _doTestXmlParams(ResultValidator validator) throws IOException
     {
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             ProjectModel pm = context.getFramed().addFramedVertex(ProjectModel.class);
             pm.setName("Main Project");

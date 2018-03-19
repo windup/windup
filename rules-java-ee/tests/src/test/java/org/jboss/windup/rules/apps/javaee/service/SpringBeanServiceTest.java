@@ -29,7 +29,7 @@ public class SpringBeanServiceTest extends AbstractTest
     @Test
     public void testSpringFindByProject() throws Exception
     {
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             ProjectService projectService = new ProjectService(context);
             ProjectModel app1 = projectService.create();

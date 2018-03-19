@@ -61,7 +61,7 @@ public class InlineHintModelQueryTest
     @Before
     public void beforeTest() throws Exception
     {
-        context = factory.create();
+        context = factory.create(true);
     }
 
     @After

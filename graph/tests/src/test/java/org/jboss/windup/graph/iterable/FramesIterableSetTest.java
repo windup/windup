@@ -48,7 +48,7 @@ public class FramesIterableSetTest
     @Test
     public void testIterableSetEmpty() throws IOException
     {
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             List<WindupVertexFrame> models = fillInTestDataAndReturn(context);
             FramesSetIterable iterable = new FramesSetIterable(new ArrayList<>());
@@ -60,7 +60,7 @@ public class FramesIterableSetTest
     @Test
     public void testIterableSetWithoutDuplicates() throws IOException
     {
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             List<WindupVertexFrame> models = fillInTestDataAndReturn(context);
             FramesSetIterable iterable = new FramesSetIterable(models);
@@ -72,7 +72,7 @@ public class FramesIterableSetTest
     @Test
     public void testIterableSetWithDuplicates() throws IOException
     {
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             List<WindupVertexFrame> models = fillInTestDataAndReturn(context);
             models.add(models.get(0));

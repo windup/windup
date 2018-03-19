@@ -170,7 +170,7 @@ public class TagsIncludeExcludeTest
         if (excludeTags != null)
             excluded = new HashSet<>(Arrays.asList(StringUtils.split(excludeTags)));
 
-        try (GraphContext context = contextFactory.create())
+        try (GraphContext context = contextFactory.create(true))
         {
             runRules(context, included, excluded, rules);
         }

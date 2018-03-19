@@ -102,7 +102,7 @@ public class WindupProcessorImpl implements WindupProcessor
             // Since we created it, we should clean it up
             autoCloseGraph = true;
             Path graphPath = configuration.getOutputDirectory().resolve(GraphContextFactory.DEFAULT_GRAPH_SUBDIRECTORY);
-            GraphContext graphContext = this.graphContextFactory.create(graphPath);
+            GraphContext graphContext = this.graphContextFactory.create(graphPath, true);
             configuration.setGraphContext(graphContext);
         }
 

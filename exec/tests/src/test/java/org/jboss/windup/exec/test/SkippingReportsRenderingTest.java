@@ -146,7 +146,7 @@ public class SkippingReportsRenderingTest
 
     private void executeTest(List<Class<? extends RuleProvider>> rules)
     {
-        try (GraphContext context = contextFactory.create())
+        try (GraphContext context = contextFactory.create(true))
         {
             runRules(context, rules);
         }

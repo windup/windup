@@ -86,7 +86,7 @@ public class IterableFilterTest
     }
 
     private void runWindupWithPredicate()  throws Exception{
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             Path inputPath = Paths.get("src/test/resources/");
 

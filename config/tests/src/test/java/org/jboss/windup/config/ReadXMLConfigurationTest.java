@@ -43,7 +43,7 @@ public class ReadXMLConfigurationTest
     public void testRunWindup() throws Exception
     {
         final Path folder = File.createTempFile("windupGraph", "").toPath();
-        try (final GraphContext context = factory.create(folder))
+        try (final GraphContext context = factory.create(folder, true))
         {
             RuleLoaderContext ruleLoaderContext = new RuleLoaderContext();
             final ConfigurationLoader loader = ConfigurationLoader.create(ruleLoaderContext);

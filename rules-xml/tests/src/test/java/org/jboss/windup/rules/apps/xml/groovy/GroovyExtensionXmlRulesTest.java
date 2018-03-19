@@ -71,7 +71,7 @@ public class GroovyExtensionXmlRulesTest
     @Test
     public void testHintsAndClassificationOperation() throws Exception
     {
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             ProjectModel pm = context.getFramed().addFramedVertex(ProjectModel.class);
             pm.setName("Main Project");

@@ -41,7 +41,7 @@ public class SetInPropertiesTest
     @Test
     public void testSetHandling() throws Exception
     {
-        try (GraphContext context = contextFactory.create())
+        try (GraphContext context = contextFactory.create(true))
         {
             Assert.assertNotNull(context);
             prepareFrame(context, TestSetPrefixModel.class);
@@ -58,7 +58,7 @@ public class SetInPropertiesTest
     @Test
     public void testSetWithBlankPrefixHandling() throws Exception
     {
-        try (GraphContext context = contextFactory.create())
+        try (GraphContext context = contextFactory.create(true))
         {
             TestSetBlankSubModel frame = prepareFrame(context, TestSetBlankSubModel.class);
             System.out.println("    Frame class: " + frame.getClass());
@@ -84,7 +84,7 @@ public class SetInPropertiesTest
     @Test
     public void testSetWithBlankPrefixHandling2() throws Exception
     {
-        try (GraphContext context = contextFactory.create())
+        try (GraphContext context = contextFactory.create(true))
         {
             TestSetBlankModel frame = context.getFramed().addFramedVertex(TestSetBlankModel.class);
             Set<String> set = prepareSet();

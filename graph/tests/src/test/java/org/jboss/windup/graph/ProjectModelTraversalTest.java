@@ -65,7 +65,7 @@ public class ProjectModelTraversalTest
 
     private GraphContext createGraphContext(Path temporaryDirectory)
     {
-        return factory.create(temporaryDirectory.resolve("output"));
+        return factory.create(temporaryDirectory.resolve("output"), true);
     }
 
     @Test

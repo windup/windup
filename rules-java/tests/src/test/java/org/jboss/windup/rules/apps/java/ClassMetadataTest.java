@@ -75,7 +75,7 @@ public class ClassMetadataTest
 
     private void runTest(String inputPath) throws Exception
     {
-        try (GraphContext context = factory.create(getDefaultPath()))
+        try (GraphContext context = factory.create(getDefaultPath(), true))
         {
             final Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(),
                         "windup_" + RandomStringUtils.randomAlphanumeric(6));

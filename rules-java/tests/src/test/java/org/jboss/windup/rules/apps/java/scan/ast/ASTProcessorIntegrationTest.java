@@ -69,7 +69,7 @@ public class ASTProcessorIntegrationTest
     @Test
     public void testJavaSourceScanning() throws IOException, InstantiationException, IllegalAccessException
     {
-        try (GraphContext context = factory.create(getDefaultPath()))
+        try (GraphContext context = factory.create(getDefaultPath(), true))
         {
             final String inputDir = "src/test/resources/simple";
 

@@ -64,7 +64,7 @@ public class DiscoverHardcodedIPAddressTest
     @Test
     public void testStaticIPScanner() throws IOException, InstantiationException, IllegalAccessException
     {
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             Path inputPath = Paths.get("src/test/resources/staticip");
 

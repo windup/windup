@@ -47,7 +47,7 @@ public class MapInAdjacentPropertiesTest
     {
         Assert.assertNotNull(contextFactory);
 
-        try (GraphContext context = contextFactory.create())
+        try (GraphContext context = contextFactory.create(true))
         {
             MapMainModel mainModel = context.getFramed().addFramedVertex(MapMainModel.class);
 

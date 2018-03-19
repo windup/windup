@@ -44,7 +44,7 @@ public class JaxRSWebServiceModelServiceTest extends AbstractTest
     public void setUp() throws Exception
     {
         this.graphPath = getDefaultPath();
-        this.context = this.factory.create(graphPath);
+        this.context = this.factory.create(graphPath, true);
         this.javaClassService = new JavaClassService(this.context);
         this.serviceModelService = new JaxRSWebServiceModelService(this.context);
     }

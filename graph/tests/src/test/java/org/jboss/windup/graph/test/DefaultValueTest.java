@@ -37,7 +37,7 @@ public class DefaultValueTest
     @Test
     public void testDefaultValue() throws Exception
     {
-        try (GraphContext context = factory.create())
+        try (GraphContext context = factory.create(true))
         {
             Assert.assertNotNull(context);
             DefaultValueTestModel initialModelType = context.getFramed().addFramedVertex(DefaultValueTestModel.class);
