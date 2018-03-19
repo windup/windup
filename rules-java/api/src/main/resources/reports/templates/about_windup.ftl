@@ -55,7 +55,7 @@
                                 <dd>${getWindupBrandName()} ${reportModel.relatedResources.windupAbout.windupRuntimeVersion}</dd>
                             </#if>
                             <dt>Follow on Twitter</dt>
-                            <dd><a href="http://twitter.com/jbosswindup">@jbossWindup</a></dd>
+                            <dd><a href="https://twitter.com/jbosswindup">@jbossWindup</a></dd>
 
                             <dt>Website</dt>
                             <dd><a href="https://developers.redhat.com/products/rhamt/overview/">https://developers.redhat.com/products/rhamt/overview/</a></dd>
