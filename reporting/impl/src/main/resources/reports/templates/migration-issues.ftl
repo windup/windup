@@ -150,7 +150,7 @@
                     <#if !problemsBySeverity?has_content>
                         <div>
                             No issues were found by the existing rules. If you would like to add custom rules,
-                            see the <a href="https://github.com/windup/windup/wiki/Rules-Development-Guide">
+                            see the <a href="https://access.redhat.com/documentation/en-us/red_hat_application_migration_toolkit/4.0/html/rules_development_guide/">
                             Rule Development Guide</a>.
                         </div>
                     </#if>
