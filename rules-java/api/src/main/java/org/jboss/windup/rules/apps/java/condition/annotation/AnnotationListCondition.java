@@ -1,7 +1,9 @@
 package org.jboss.windup.rules.apps.java.condition.annotation;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.condition.EvaluationStrategy;
@@ -10,6 +12,7 @@ import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationTypeV
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 import com.google.common.collect.Iterables;
+import org.ocpsoft.rewrite.param.ParameterStore;
 
 /**
  * <p>
@@ -135,5 +138,25 @@ public class AnnotationListCondition extends AnnotationCondition
             }
         }
         return selectedValues;
+    }
+
+    @Override
+    public Set<String> getRequiredParameterNames()
+    {
+        Set<String> result = new HashSet<>();
+        if (conditions != null)
+        {
+            conditions.stream().forEach(condition -> result.addAll(condition.getRequiredParameterNames()));
+        }
+        return result;
+    }
+
+    @Override
+    public void setParameterStore(ParameterStore store)
+    {
+        if (conditions != null)
+        {
+            conditions.stream().forEach(condition -> condition.setParameterStore(store));
+        }
     }
 }

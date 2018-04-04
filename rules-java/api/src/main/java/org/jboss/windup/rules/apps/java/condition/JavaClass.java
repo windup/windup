@@ -387,6 +387,8 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
             result.addAll(typeFilterPattern.getRequiredParameterNames());
         if (lineMatchPattern != null)
             result.addAll(lineMatchPattern.getRequiredParameterNames());
+        if (annotationCondition != null)
+            result.addAll(annotationCondition.getRequiredParameterNames());
         return result;
     }
 
@@ -412,6 +414,8 @@ public class JavaClass extends ParameterizedGraphCondition implements JavaClassB
         referencePattern.setParameterStore(store);
         if (typeFilterPattern != null)
             typeFilterPattern.setParameterStore(store);
+        if (annotationCondition != null)
+            annotationCondition.setParameterStore(store);
     }
 
     @Override

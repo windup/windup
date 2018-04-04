@@ -5,8 +5,12 @@ import org.jboss.windup.config.condition.EvaluationStrategy;
 import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationLiteralTypeValueModel;
 import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationTypeValueModel;
 import org.ocpsoft.rewrite.context.EvaluationContext;
+import org.ocpsoft.rewrite.param.ParameterStore;
 import org.ocpsoft.rewrite.param.ParameterizedPatternResult;
 import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
+
+import java.util.Collections;
+import java.util.Set;
 
 /**
  * Matches a literal value on an annotation element. The value itself is a pattern match and the value is always treated as
@@ -56,5 +60,24 @@ public class AnnotationLiteralCondition extends AnnotationCondition
         }
 
         return true;
+    }
+
+    @Override
+    public Set<String> getRequiredParameterNames()
+    {
+        if (pattern != null)
+        {
+            return pattern.getRequiredParameterNames();
+        }
+        else
+        {
+            return Collections.emptySet();
+        }
+    }
+
+    @Override
+    public void setParameterStore(ParameterStore store)
+    {
+        pattern.setParameterStore(store);
     }
 }
