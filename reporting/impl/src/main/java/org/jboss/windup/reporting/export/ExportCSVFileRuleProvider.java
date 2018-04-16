@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
@@ -13,6 +14,7 @@ import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.FinalizePhase;
+import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.model.LinkModel;
 import org.jboss.windup.graph.model.ProjectModel;
@@ -36,12 +38,9 @@ import com.opencsv.CSVWriter;
  *
  * @author <a href="mailto:mbriskar@gmail.com">Matej Briskar</a>
  */
-@RuleMetadata(phase = FinalizePhase.class, haltOnException = true)
+@RuleMetadata(phase = ReportGenerationPhase.class, haltOnException = true)
 public class ExportCSVFileRuleProvider extends AbstractRuleProvider
 {
-    public static final int COMMIT_INTERVAL = 750;
-    public static final int LOG_INTERVAL = 250;
-
     // @formatter:off
     @Override
     public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
@@ -162,8 +161,11 @@ public class ExportCSVFileRuleProvider extends AbstractRuleProvider
         {
             if (!projectToFile.containsKey(projectModel.getName()))
             {
-                CSVWriter writer = initCSVWriter(outputFolderPath + PathUtil.cleanFileName(projectModel.getName()) + ".csv");
+                String filename = PathUtil.cleanFileName(projectModel.getName()) + ".csv";
+                CSVWriter writer = initCSVWriter(outputFolderPath + filename);
                 projectToFile.put(projectModel.getName(), writer);
+                Logger.getLogger(ExportCSVFileRuleProvider.class.getCanonicalName()).info("Setting csv filename to: " + filename + " for id: " + projectModel.getId());
+                projectModel.setCsvFilename(filename);
             }
             projectToFile.get(projectModel.getName()).writeNext(line);
 

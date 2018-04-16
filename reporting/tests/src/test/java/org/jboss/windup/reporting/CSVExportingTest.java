@@ -22,16 +22,16 @@ import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.forge.furnace.util.Predicate;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.config.RuleProvider;
-import org.jboss.windup.config.phase.FinalizePhase;
+import org.jboss.windup.engine.predicates.RuleProviderWithDependenciesPredicate;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
-import org.jboss.windup.exec.rulefilters.RuleProviderPhasePredicate;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.LinkService;
 import org.jboss.windup.graph.service.ProjectService;
+import org.jboss.windup.reporting.export.ExportCSVFileRuleProvider;
 import org.jboss.windup.reporting.model.ClassificationModel;
 import org.jboss.windup.reporting.model.InlineHintModel;
 import org.jboss.windup.reporting.service.ClassificationService;
@@ -70,13 +70,13 @@ public class CSVExportingTest
      * CSV export should be generated only if specified by input in the configuration
      */
     @Test
-    public void testCSVExportGeneration() throws IOException
+    public void testCSVExportGeneration() throws Exception
     {
         csvTest(true);
         csvTest(false);
     }
 
-    private void csvTest(boolean exportCSV) throws IOException
+    private void csvTest(boolean exportCSV) throws Exception
     {
         final Path outputPath = Paths.get(FileUtils.getTempDirectory().toString(),
                     "windup_" + RandomStringUtils.randomAlphanumeric(6));
@@ -86,7 +86,7 @@ public class CSVExportingTest
         {
             fillData(context);
             String inputPath = "src/test/resources";
-            Predicate<RuleProvider> predicate = new RuleProviderPhasePredicate(FinalizePhase.class);
+            Predicate<RuleProvider> predicate = new RuleProviderWithDependenciesPredicate(ExportCSVFileRuleProvider.class);
             WindupConfiguration configuration = new WindupConfiguration()
                         .setGraphContext(context)
                         .setRuleProviderFilter(predicate)

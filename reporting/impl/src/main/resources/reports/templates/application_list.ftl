@@ -86,6 +86,11 @@
                             appReport.projectModel.rootFileModel.fileName)}
                 </a>
             </div>
+            <#if appReport.projectModel.csvFilename??>
+                <div class="csvReport">
+                    <a href="${appReport.projectModel.csvFilename}">(CSV Report)</a>
+                </div>
+            </#if>
             <div class="techs">
                 <#list getTechnologyTagsForProjectTraversal(allTraversal) as tag>
                     <#if tag.name != "Decompiled Java File">
