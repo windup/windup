@@ -2,10 +2,7 @@ package org.jboss.windup.bootstrap.commands.windup;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -482,7 +479,11 @@ public class RunWindupCommand implements Command, FurnaceDependent
                 {
                     for (Path subpath : directoryStream)
                     {
-                        expanded.add(subpath);
+
+                        if (isJavaArchive(subpath))
+                        {
+                            expanded.add(subpath);
+                        }
                     }
                 }
             }
@@ -541,4 +542,12 @@ public class RunWindupCommand implements Command, FurnaceDependent
 
         return packages;
     }
+
+    private static boolean isJavaArchive(Path path)
+    {
+        PathMatcher archiveMatcher = FileSystems.getDefault().getPathMatcher("glob:**.{ear,war,jar}");
+        return archiveMatcher.matches(path);
+    }
+
+
 }
