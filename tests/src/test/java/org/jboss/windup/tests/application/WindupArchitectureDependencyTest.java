@@ -64,7 +64,7 @@ public class WindupArchitectureDependencyTest extends WindupArchitectureTest
         Path dependencyReport = reportService.getReportDirectory().resolve(dependencyReportModel.getReportFilename());
         TestDependencyReportUtil dependencyReportUtil = new TestDependencyReportUtil();
         dependencyReportUtil.loadPage(dependencyReport);
-        Assert.assertTrue(dependencyReportUtil.findDependencyElement("example-0-1.0.0.jar", null,
+        Assert.assertTrue(dependencyReportUtil.findDependencyElement("example-0-1.0.0.jar",
                 "example-0:test:1.0.0", "9e9944d81b31d376643f100775aba3d0b83210ef", "1.0.0", "",
                 Arrays.asList(FOUND_PATH_LIB)));
     }
