@@ -3,13 +3,7 @@ package org.jboss.windup.bootstrap.commands.windup;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -43,6 +37,7 @@ import org.jboss.windup.rules.apps.java.config.ExcludePackagesOption;
 import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.util.Logging;
+import org.jboss.windup.util.ZipUtil;
 import org.jboss.windup.util.exception.WindupException;
 
 
@@ -545,7 +540,25 @@ public class RunWindupCommand implements Command, FurnaceDependent
 
     private static boolean isJavaArchive(Path path)
     {
-        PathMatcher archiveMatcher = FileSystems.getDefault().getPathMatcher("glob:**.{ear,war,jar}");
+        Set<String> archiveExtensions =  ZipUtil.getZipExtensions();
+        StringBuffer syntaxAndPattern = new StringBuffer("glob:**.{");
+        boolean first = true;
+        for(String extension: archiveExtensions)
+        {
+            if(first)
+            {
+                first = false;
+            }
+            else
+            {
+                syntaxAndPattern.append(",");
+            }
+            syntaxAndPattern.append(extension);
+
+        }
+        syntaxAndPattern.append("}");
+
+        PathMatcher archiveMatcher = FileSystems.getDefault().getPathMatcher(syntaxAndPattern.toString());
         return archiveMatcher.matches(path);
     }
 
