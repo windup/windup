@@ -18,6 +18,11 @@ import org.openqa.selenium.WebElement;
 public class TestDependencyReportUtil extends TestReportUtil
 {
 
+    public boolean findDependencyElement(String fileName, String gav, String dependencyHash, String version, String org, List<String> paths)
+    {
+        return findDependencyElement(fileName, null, gav, dependencyHash, version, org, paths);
+    }
+
     public boolean findDependencyElement(String fileName, String name, String gav, String dependencyHash, String version, String org, List<String> paths)
     {
         List<WebElement> elements = getDriver().findElements(By.xpath("//*[@id='" + fileName +"']"));

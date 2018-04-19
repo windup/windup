@@ -76,10 +76,6 @@
                                     <dt class="trait">SHA1 hash:</dt>
                                     <dd id="${archiveName}-hash">${sha1}</dd>
                                 </#if>
-                                <#if dependencyProject.name?? && dependencyProject.name != archiveName>
-                                    <dt class="trait">Name:</dt>
-                                    <dd id="${archiveName}-name">${dependencyProject.name}</dd>
-                                </#if>
                                 <#if dependencyProject.version??>
                                     <dt class="trait">Version:</dt>
                                     <dd id="${archiveName}-version">${dependencyProject.version}</dd>
