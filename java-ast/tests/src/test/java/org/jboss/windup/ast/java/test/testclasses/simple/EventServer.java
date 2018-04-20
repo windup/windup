@@ -1,4 +1,4 @@
-package testclasses.simple;
+package org.jboss.windup.ast.java.test.testclasses.simple;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;

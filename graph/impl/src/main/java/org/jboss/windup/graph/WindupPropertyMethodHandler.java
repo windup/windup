@@ -117,9 +117,13 @@ public class WindupPropertyMethodHandler extends AbstractMethodHandler
 
             Element element = thiz.getElement();
             if (element instanceof Vertex)
+            {
                 thiz.getGraph().getRawTraversal().V(element.id()).property(propertyName, propertyValue).iterate();
+            }
             else
+            {
                 thiz.getGraph().getRawTraversal().E(element.id()).property(propertyName, propertyValue).iterate();
+            }
         }
     }
 

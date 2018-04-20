@@ -21,6 +21,7 @@ public abstract class AbstractJavaASTTest
     @Deployment
     @AddonDependencies({
                 @AddonDependency(name = "org.jboss.windup.ast:windup-java-ast"),
+                @AddonDependency(name = "org.jboss.windup.utils:windup-utils"),
                 @AddonDependency(name = "org.jboss.forge.furnace.container:cdi"),
     })
     public static AddonArchive getDeployment()
@@ -36,6 +37,7 @@ public abstract class AbstractJavaASTTest
     {
         sourcePaths = new HashSet<>();
         sourcePaths.add("src/test/resources");
+        sourcePaths.add("src/test/java");
     }
 
     Set<String> getLibraryPaths()

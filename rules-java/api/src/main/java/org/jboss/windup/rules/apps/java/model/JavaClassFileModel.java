@@ -1,6 +1,5 @@
 package org.jboss.windup.rules.apps.java.model;
 
-import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.jboss.windup.graph.Indexed;
 import org.jboss.windup.graph.model.TypeValue;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -16,7 +15,6 @@ import org.jboss.windup.graph.Property;
 @TypeValue(JavaClassFileModel.TYPE)
 public interface JavaClassFileModel extends FileModel
 {
-    String MINOR_VERSION = "minorVersion";
     String MAJOR_VERSION = "majorVersion";
     String TYPE = "JavaClassFileModel";
     String PROPERTY_PACKAGE_NAME = "packageName";
@@ -74,18 +72,6 @@ public interface JavaClassFileModel extends FileModel
      */
     @Property(MAJOR_VERSION)
     void setMajorVersion(int majorVersion);
-
-    /**
-     * Contains the Minor version of this class file
-     */
-    @Property(MINOR_VERSION)
-    int getMinorVersion();
-
-    /**
-     * Contains the Minor version of this class file
-     */
-    @Property(MINOR_VERSION)
-    void setMinorVersion(int minorVersion);
 
     /**
      * Returns the path of this file within the parent project (format suitable for reporting)

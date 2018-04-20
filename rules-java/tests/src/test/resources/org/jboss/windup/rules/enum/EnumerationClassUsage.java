@@ -1,4 +1,4 @@
-package testclasses.enumeration;
+package org.jboss.windup.ast.java.test.testclasses.enumeration;
 
 import java.nio.file.AccessMode;
 

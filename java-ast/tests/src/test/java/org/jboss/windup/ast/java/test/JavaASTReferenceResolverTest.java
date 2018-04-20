@@ -24,7 +24,7 @@ public class JavaASTReferenceResolverTest extends AbstractJavaASTTest
 
         Assert.assertTrue(references.contains(
                     new ClassReference("testclasses.helloworld.HelloWorld", "testclasses.helloworld", "HelloWorld", null, ResolutionStatus.RESOLVED,
-                                TypeReferenceLocation.TYPE, 3, 0, 174,
+                                TypeReferenceLocation.TYPE, 3, 0, 222,
                                 "public class HelloWorld {")));
         Assert.assertTrue(references.contains(
                     new ClassReference("testclasses.helloworld.HelloWorld.main(String[])", "testclasses.helloworld", "HelloWorld", "main",
@@ -32,11 +32,11 @@ public class JavaASTReferenceResolverTest extends AbstractJavaASTTest
                                 5, 23, 4,
                                 "public static void main(String[] argv) throws Exception {")));
         Assert.assertTrue(references.contains(
-                    new ClassReference("void", "", "void", null, ResolutionStatus.RESOLVED, TypeReferenceLocation.RETURN_TYPE, 5, 4, 108,
+                    new ClassReference("void", "", "void", null, ResolutionStatus.RESOLVED, TypeReferenceLocation.RETURN_TYPE, 5, 4, 156,
                                 "public static void main(String[] argv) throws Exception {")));
         Assert.assertTrue(references.contains(
                     new ClassReference("java.lang.String[]", "java.lang", "String[]", null, ResolutionStatus.RESOLVED,
-                                TypeReferenceLocation.METHOD_PARAMETER, 5, 4, 108,
+                                TypeReferenceLocation.METHOD_PARAMETER, 5, 4, 156,
                                 "public static void main(String[] argv) throws Exception {")));
         Assert.assertTrue(references.contains(
                     new ClassReference("java.lang.Exception", "java.lang", "Exception", null, ResolutionStatus.RESOLVED,
@@ -48,33 +48,39 @@ public class JavaASTReferenceResolverTest extends AbstractJavaASTTest
                                 6, 19, 7,
                                 "System.out.println(\"Hello world!\")")));
 
-        Assert.assertEquals(6, references.size());
+        Assert.assertTrue(references.contains(
+                new ClassReference("java.lang.String(java.lang.String)", "java.lang", "String", "<init>",
+                        ResolutionStatus.RESOLVED, TypeReferenceLocation.CONSTRUCTOR_CALL,
+                        7, 25, 6,
+                        "new String(\"Testing 123\")")));
+
+        Assert.assertEquals(8, references.size());
     }
 
     @Test
     public void testSimpleMain()
     {
         List<ClassReference> references = ASTProcessor.analyze(getLibraryPaths(), getSourcePaths(),
-                    Paths.get("src/test/resources/testclasses/simple/Main.java"));
+                    Paths.get("src/test/java/org/jboss/windup/ast/java/test/testclasses/simple/Main.java"));
 
         Assert.assertTrue(references.contains(
-                    new ClassReference("testclasses.simple.MyBClass", "testclasses.simple", "MyBClass", null, ResolutionStatus.RESOLVED,
+                    new ClassReference("org.jboss.windup.ast.java.test.testclasses.simple.MyBClass", "testclasses.simple", "MyBClass", null, ResolutionStatus.RESOLVED,
                                 TypeReferenceLocation.VARIABLE_DECLARATION, 9, 8,
                                 28,
                                 "MyBClass b=new MyBClass();")));
         Assert.assertTrue(references.contains(
-                    new ClassReference("testclasses.simple.MyAClass.interfaceMethod()", "testclasses.simple", "MyAClass", "interfaceMethod",
+                    new ClassReference("org.jboss.windup.ast.java.test.testclasses.simple.MyAClass.interfaceMethod()", "testclasses.simple", "MyAClass", "interfaceMethod",
                                 ResolutionStatus.RESOLVED,
                                 TypeReferenceLocation.METHOD_CALL,
                                 12, 26, 15,
                                 "c.returnAnother().interfaceMethod()")));
         Assert.assertTrue(references.contains(
-                    new ClassReference("testclasses.simple.SomeInterface.interfaceMethod()", "testclasses.simple", "SomeInterface", "interfaceMethod",
+                    new ClassReference("org.jboss.windup.ast.java.test.testclasses.simple.SomeInterface.interfaceMethod()", "testclasses.simple", "SomeInterface", "interfaceMethod",
                                 ResolutionStatus.RESOLVED,
                                 TypeReferenceLocation.METHOD_CALL, 12, 26, 15,
                                 "c.returnAnother().interfaceMethod()")));
         Assert.assertTrue(references.contains(
-                    new ClassReference("testclasses.simple.ClassReturningAnother.returnAnother()", "testclasses.simple", "ClassReturningAnother",
+                    new ClassReference("org.jboss.windup.ast.java.test.testclasses.simple.ClassReturningAnother.returnAnother()", "testclasses.simple", "ClassReturningAnother",
                                 "returnAnother",
                                 ResolutionStatus.RESOLVED,
                                 TypeReferenceLocation.METHOD_CALL, 12, 10, 13,
@@ -85,15 +91,15 @@ public class JavaASTReferenceResolverTest extends AbstractJavaASTTest
     public void testMyBClass()
     {
         List<ClassReference> references = ASTProcessor.analyze(getLibraryPaths(), getSourcePaths(),
-                    Paths.get("src/test/resources/testclasses/simple/MyBClass.java"));
+                    Paths.get("src/test/java/org/jboss/windup/ast/java/test/testclasses/simple/MyBClass.java"));
 
         Assert.assertTrue(references.contains(
-                    new ClassReference("testclasses.simple.MyBClass", "testclasses.simple", "MyBClass", null, ResolutionStatus.RESOLVED,
-                                TypeReferenceLocation.TYPE, 4, 0, 161,
+                    new ClassReference("org.jboss.windup.ast.java.test.testclasses.simple.MyBClass", "org.jboss.windup.ast.java.test.testclasses.simple", "MyBClass", null, ResolutionStatus.RESOLVED,
+                                TypeReferenceLocation.TYPE, 4, 0, 192,
                                 "public class MyBClass extends MyAClass {")));
         Assert.assertTrue(references.contains(
-                    new ClassReference("testclasses.simple.MyAClass", "testclasses.simple", "MyAClass", null, ResolutionStatus.RESOLVED,
-                                TypeReferenceLocation.TYPE, 4, 0, 161,
+                    new ClassReference("org.jboss.windup.ast.java.test.testclasses.simple.MyAClass", "org.jboss.windup.ast.java.test.testclasses.simple", "MyAClass", null, ResolutionStatus.RESOLVED,
+                                TypeReferenceLocation.TYPE, 4, 0, 192,
                                 "public class MyBClass extends MyAClass {")));
     }
 
@@ -101,14 +107,14 @@ public class JavaASTReferenceResolverTest extends AbstractJavaASTTest
     public void testMyAClass()
     {
         List<ClassReference> references = ASTProcessor.analyze(getLibraryPaths(), getSourcePaths(),
-                    Paths.get("src/test/resources/testclasses/simple/MyAClass.java"));
+                    Paths.get("src/test/java/org/jboss/windup/ast/java/test/testclasses/simple/MyAClass.java"));
 
         Assert.assertTrue(references.contains(
-                    new ClassReference("testclasses.simple.MyAClass", "testclasses.simple", "MyAClass", null, ResolutionStatus.RESOLVED,
-                                TypeReferenceLocation.TYPE, 3, 0, 128,
+                    new ClassReference("org.jboss.windup.ast.java.test.testclasses.simple.MyAClass", "org.jboss.windup.ast.java.test.testclasses.simple", "MyAClass", null, ResolutionStatus.RESOLVED,
+                                TypeReferenceLocation.TYPE, 3, 0, 159,
                                 "public class MyAClass implements SomeInterface {")));
         Assert.assertTrue(references.contains(
-                    new ClassReference("testclasses.simple.SomeInterface", "testclasses.simple", "SomeInterface", null, ResolutionStatus.RESOLVED,
+                    new ClassReference("org.jboss.windup.ast.java.test.testclasses.simple.SomeInterface", "org.jboss.windup.ast.java.test.testclasses.simple", "SomeInterface", null, ResolutionStatus.RESOLVED,
                                 TypeReferenceLocation.IMPLEMENTS_TYPE, 3, 0,
                                 99,
                                 "public class MyAClass implements SomeInterface {")));
@@ -162,7 +168,7 @@ public class JavaASTReferenceResolverTest extends AbstractJavaASTTest
     public void testNonImportedFQCN()
     {
         List<ClassReference> references = ASTProcessor.analyze(getLibraryPaths(), getSourcePaths(),
-                    Paths.get("src/test/resources/testclasses/simple/FullNonImportedFQCNNotOnClasspath.java"));
+                    Paths.get("src/test/resources/testclasses/FullNonImportedFQCNNotOnClasspath.java"));
 
         Assert.assertTrue(references.contains(
                     new ClassReference("com.proprietary.Constants.MY_CONSTANT", "com.proprietary", "Constants", null, ResolutionStatus.RECOVERED,
@@ -178,7 +184,7 @@ public class JavaASTReferenceResolverTest extends AbstractJavaASTTest
     public void testInterfaceExtension()
     {
         List<ClassReference> references = ASTProcessor.analyze(getLibraryPaths(), getSourcePaths(),
-                    Paths.get("src/test/resources/testclasses/simple/EventServer.java"));
+                    Paths.get("src/test/java/org/jboss/windup/ast/java/test/testclasses/simple/EventServer.java"));
 
         Assert.assertTrue(references.contains(
                     new ClassReference("java.rmi.Remote", "java.rmi", "Remote", null, ResolutionStatus.RESOLVED, TypeReferenceLocation.INHERITANCE,

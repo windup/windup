@@ -1,5 +1,7 @@
 package org.jboss.windup.ast.java.data;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * Contains a name that has been referenced by the Java source file. This can include the qualified name (for example, com.example.data.Foo) as well
  * as information about the reference. Information includes indicating where the reference was found within the file (line, column, and length) as
@@ -62,6 +64,22 @@ public class ClassReference
     public String getQualifiedName()
     {
         return qualifiedName;
+    }
+
+    /**
+     * Returns the package and class. This is different from {@link #getQualifiedName()} as that method may also
+     * return a method call and other data.
+     *
+     * This will only return package.classname.
+     */
+    public String getFullyQualifiedClassName()
+    {
+        StringBuilder sb = new StringBuilder();
+        if (StringUtils.isNotBlank(packageName))
+            sb.append(packageName).append(".");
+
+        sb.append(className);
+        return sb.toString();
     }
 
     /**

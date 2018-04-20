@@ -22,7 +22,7 @@ public class JavaAnnotationScanningTest extends AbstractJavaASTTest
     public void testSimpleAnnotatedClass()
     {
         List<ClassReference> references = ASTProcessor.analyze(getLibraryPaths(), getSourcePaths(),
-                    Paths.get("src/test/resources/testclasses/annotations/basic/SimpleAnnotatedClass.java"));
+                    Paths.get("src/test/java/org/jboss/windup/ast/java/test/testclasses/annotations/basic/SimpleAnnotatedClass.java"));
 
         boolean foundSimpleAnnotation = false;
         boolean foundSingleMemberAnnotation = false;
@@ -32,7 +32,7 @@ public class JavaAnnotationScanningTest extends AbstractJavaASTTest
             if (reference instanceof AnnotationClassReference)
             {
                 AnnotationClassReference annotationReference = (AnnotationClassReference) reference;
-                if (reference.getQualifiedName().equals("testclasses.annotations.basic.SimpleTestAnnotation"))
+                if (reference.getQualifiedName().equals("org.jboss.windup.ast.java.test.testclasses.annotations.basic.SimpleTestAnnotation"))
                 {
                     Assert.assertEquals("value 1",
                                 ((AnnotationLiteralValue) annotationReference.getAnnotationValues().get("value1")).getLiteralValue());
@@ -40,7 +40,7 @@ public class JavaAnnotationScanningTest extends AbstractJavaASTTest
                                 ((AnnotationLiteralValue) annotationReference.getAnnotationValues().get("value2")).getLiteralValue());
                     foundSimpleAnnotation = true;
                 }
-                else if (reference.getQualifiedName().equals("testclasses.annotations.basic.SimpleSingleMemberAnnotation"))
+                else if (reference.getQualifiedName().equals("org.jboss.windup.ast.java.test.testclasses.annotations.basic.SimpleSingleMemberAnnotation"))
                 {
                     Assert.assertEquals("single member value",
                                 ((AnnotationLiteralValue) annotationReference.getAnnotationValues().get("value")).getLiteralValue());
@@ -56,7 +56,7 @@ public class JavaAnnotationScanningTest extends AbstractJavaASTTest
     public void testComplexAnnotatedClass()
     {
         List<ClassReference> references = ASTProcessor.analyze(getLibraryPaths(), getSourcePaths(),
-                    Paths.get("src/test/resources/testclasses/annotations/complex/ComplexAnnotatedClass.java"));
+                    Paths.get("src/test/java/org/jboss/windup/ast/java/test/testclasses/annotations/complex/ComplexAnnotatedClass.java"));
 
         boolean foundAnnotation = false;
         for (ClassReference reference : references)
@@ -67,7 +67,7 @@ public class JavaAnnotationScanningTest extends AbstractJavaASTTest
                 foundAnnotation = true;
 
                 AnnotationClassReference annotation = (AnnotationClassReference) reference;
-                Assert.assertEquals("testclasses.annotations.complex.ExampleComplexAnnotation", annotation.getQualifiedName());
+                Assert.assertEquals("org.jboss.windup.ast.java.test.testclasses.annotations.complex.ExampleComplexAnnotation", annotation.getQualifiedName());
                 checkLiteralValue(annotation, "booleanValue", boolean.class, true);
                 checkLiteralValue(annotation, "byteValue", byte.class, 1);
                 checkLiteralValue(annotation, "charValue", char.class, 'a');
@@ -91,15 +91,15 @@ public class JavaAnnotationScanningTest extends AbstractJavaASTTest
     private void checkFirstNestedAnnotation(AnnotationClassReference nestedAnnotation)
     {
         Assert.assertNotNull(nestedAnnotation);
-        Assert.assertEquals("testclasses.annotations.complex.ExampleNestedAnnotation", nestedAnnotation.getQualifiedName());
+        Assert.assertEquals("org.jboss.windup.ast.java.test.testclasses.annotations.complex.ExampleNestedAnnotation", nestedAnnotation.getQualifiedName());
 
         AnnotationClassReference nestedLevel2 = (AnnotationClassReference) nestedAnnotation.getAnnotationValues().get("level2");
         Assert.assertNotNull(nestedLevel2);
-        Assert.assertEquals("testclasses.annotations.complex.ExampleNestedAnnotationLevel2", nestedLevel2.getQualifiedName());
+        Assert.assertEquals("org.jboss.windup.ast.java.test.testclasses.annotations.complex.ExampleNestedAnnotationLevel2", nestedLevel2.getQualifiedName());
 
         AnnotationClassReference firstInnerComplexAnnotation = (AnnotationClassReference) nestedLevel2.getAnnotationValues().get("complex");
         Assert.assertNotNull(firstInnerComplexAnnotation);
-        Assert.assertEquals("testclasses.annotations.complex.AnotherComplexAnnotation", firstInnerComplexAnnotation.getQualifiedName());
+        Assert.assertEquals("org.jboss.windup.ast.java.test.testclasses.annotations.complex.AnotherComplexAnnotation", firstInnerComplexAnnotation.getQualifiedName());
 
         AnnotationValue firstInnerArray = firstInnerComplexAnnotation.getAnnotationValues().get("stringArray");
         Assert.assertNotNull(firstInnerArray);

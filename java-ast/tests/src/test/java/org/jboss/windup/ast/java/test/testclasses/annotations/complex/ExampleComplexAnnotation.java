@@ -1,10 +1,10 @@
-package testclasses.annotations.complex;
+package org.jboss.windup.ast.java.test.testclasses.annotations.complex;
 
 public @interface ExampleComplexAnnotation
 {
     String key();
 
-    ExampleNestedAnnotation nestedAnnotation();
+    org.jboss.windup.ast.java.test.testclasses.annotations.complex.ExampleNestedAnnotation nestedAnnotation();
 
     ExampleNestedAnnotation[] nestedAnnotationArray();
 

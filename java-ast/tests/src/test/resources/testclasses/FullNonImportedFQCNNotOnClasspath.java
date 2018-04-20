@@ -1,4 +1,4 @@
-package testclasses.simple;
+package testclasses;
 
 public class FullNonImportedFQCNNotOnClasspath
 {
