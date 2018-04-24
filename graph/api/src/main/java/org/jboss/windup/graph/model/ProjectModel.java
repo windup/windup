@@ -25,6 +25,7 @@ import org.jboss.windup.graph.Property;
 public interface ProjectModel extends WindupVertexFrame, HasApplications
 {
     String TYPE = "ProjectModel";
+    String CSV_FILENAME = "projectModelCsvFilename";
     String DEPENDENCY = "dependency";
     String PARENT_PROJECT = "parentProject";
     String ROOT_FILE_MODEL = "rootFileModel";
@@ -68,6 +69,18 @@ public interface ProjectModel extends WindupVertexFrame, HasApplications
      */
     @Adjacency(label = ROOT_FILE_MODEL, direction = Direction.OUT)
     void setRootFileModel(FileModel fileModel);
+
+    /**
+     * Contains the filename of the exported CSV data (if available).
+     */
+    @Property(CSV_FILENAME)
+    String getCsvFilename();
+
+    /**
+     * Contains the filename of the exported CSV data (if available).
+     */
+    @Property(CSV_FILENAME)
+    void setCsvFilename(String csvFilename);
 
     /**
      * Indicates whether or not this is a source-based project (eg, the project provided by the user for analysis), or a binary project (eg, as part
