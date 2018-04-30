@@ -24,13 +24,13 @@ table.technologiesPunchCard th {
 tr.headersSector { font-size: 20pt; font-weight: bold; }
 tr.headersSector td { text-align: center; }
 
-tr.headersGroup  { font-size: 16pt; }
+tr.headersGroup  { font-size: 16pt; margin: auto}
 tr.headersGroup td.first {}
 
 tr.headersGroup td div {
     height: 200px; /* Without this, the text is centered vertically. */
     width:   40px;
-    padding: 0.3em 0 0 5pt;
+    padding: 0.3em 0 0 0;
     text-align: left;
     /*vertical-align: bottom; /* No effect. */
     writing-mode: vertical-lr; /* bt-lr doesn't work? So I turn it 180 with rotate() below */
@@ -39,18 +39,20 @@ tr.headersGroup td div {
 }
 
 tr.app { font-size: 12pt; }
-tr.app td.name,
-tr.app td.sectorStats { padding: 0 0.5em; }
-tr.app td.sectorStats { text-align: left; vertical-align: middle; }
-tr.app td.circle {text-align: center;vertical-align: middle;padding: 0;line-height: 1;}
+tr.app td.name, tr.app td.sectorStats { padding: 0 0.5em; }
+tr.app td.name { white-space: nowrap; overflow: hidden;}
+tr.app td.sectorStats { text-align: right; vertical-align: middle; }
+tr.app td.circle {text-align: center; vertical-align: middle; padding: 0;line-height: 1;}
 tr.app td.circle { font-size: 26pt; }
 tr.app td.circle.sizeX:after { content: "𐄂"; color: #e8e8e8; font-size: 18pt; } /* No data */
-tr.app td.circle.size0:after { content: "⊘"; color: #e8e8e8; font-size: 18pt; }
-tr.app td.circle.size1:after { content: "🞄"; }
-tr.app td.circle.size2:after { content: "⚫"; }
-tr.app td.circle.size3:after { content: "●"; }
-tr.app td.circle.size4:after { content: "⬤"; }
-tr.app td.circle.size5:after { content: "⬤"; } /* Should be 0-4, but just in case. */
+tr.app td.circle.size0:after { content: '\2B24'; font-size: 1pt; vertical-align: middle; }
+tr.app td.circle.size1:after { content: '\2B24'; font-size: 8pt; vertical-align: middle; }
+tr.app td.circle.size2:after { content: '\2B24'; font-size: 11pt; vertical-align: middle; }
+tr.app td.circle.size3:after { content: '\2B24'; font-size: 15pt; vertical-align: middle; }
+tr.app td.circle.size4:after { content: '\2B24'; font-size: 18pt; vertical-align: middle; }
+tr.app td.circle.size5:after { content: '\2B24'; font-size: 20pt; vertical-align: middle; }
+
+tr.app td.sectorStats.libsCount, tr.app td.sectorStats.storyPoints { padding-right: 20px }
 
 /********* Styles for scrolling ******************/
 table.technologiesPunchCard thead, table.technologiesPunchCard tbody {
