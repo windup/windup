@@ -63,6 +63,17 @@
         </mailingList>
     </mailingLists>
 
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
+
     <modules>
         <module>bom</module>
         <module>windup-test-harness</module>
@@ -117,7 +128,7 @@
                 <groupId>org.javassist</groupId>
                 <artifactId>javassist</artifactId>
                 <version>3.21.0-GA</version>
-            </dependency>        
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
@@ -319,7 +330,7 @@
                 </plugins>
             </build>
         </profile>
-        
+
         <!-- profile primary for CI, but using locally is good too -->
         <profile>
             <id>findbugs</id>
