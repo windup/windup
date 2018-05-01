@@ -28,7 +28,15 @@ $(document).ready(function () {
 
         var checkNameMatchCallback = function(element, filterOption) {
             var name = $(element).data('name');
-            var regex = new RegExp(filterOption.data, 'i');
+            var regex;
+            try
+            {
+                regex = new RegExp(filterOption.data, 'i');
+            }
+            catch(e)
+            {
+                console.error('Invalid input regular expression: ' + filterOption.data );
+            }
 
             return name.match(regex) !== null;
         };
