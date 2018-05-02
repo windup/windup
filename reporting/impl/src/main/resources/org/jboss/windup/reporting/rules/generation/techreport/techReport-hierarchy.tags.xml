@@ -171,6 +171,7 @@
             <tag pseudo="true" name="place:Integration" title="Integration" parents="techBox:Integration"/>
             <tag pseudo="true" name="place:Inversion of Control" title="Inversion of Control" parents="techBox:ioc"/>
             <tag pseudo="true" name="place:JSON-P" title="JSON-P" parents="techBox:Processing"/> <!-- Not a box? WINDUPRULE-296 -->
+            <tag pseudo="true" name="place:Logging" title="Logging" parents="techBox:Logging"/>
             <tag pseudo="true" name="place:Markup" title="Markup" parents="techBox:Markup"/>
             <tag pseudo="true" name="place:Messaging" title="Messaging" parents="techBox:Messaging"/>
             <tag pseudo="true" name="place:MVC" title="MVC" parents="techBox:mvc"/>
