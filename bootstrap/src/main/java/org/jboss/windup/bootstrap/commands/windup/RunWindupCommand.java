@@ -2,17 +2,8 @@ package org.jboss.windup.bootstrap.commands.windup;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.nio.file.*;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -46,6 +37,7 @@ import org.jboss.windup.rules.apps.java.config.ExcludePackagesOption;
 import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
 import org.jboss.windup.util.Logging;
+import org.jboss.windup.util.ZipUtil;
 import org.jboss.windup.util.exception.WindupException;
 
 
@@ -482,7 +474,11 @@ public class RunWindupCommand implements Command, FurnaceDependent
                 {
                     for (Path subpath : directoryStream)
                     {
-                        expanded.add(subpath);
+
+                        if (isJavaArchive(subpath))
+                        {
+                            expanded.add(subpath);
+                        }
                     }
                 }
             }
@@ -540,5 +536,10 @@ public class RunWindupCommand implements Command, FurnaceDependent
         }
 
         return packages;
+    }
+
+    private static boolean isJavaArchive(Path path)
+    {
+        return ZipUtil.endsWithZipExtension(path.toString());
     }
 }
