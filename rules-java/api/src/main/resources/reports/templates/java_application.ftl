@@ -259,7 +259,7 @@
                     </td>
                     <td>
                         <div class="tagsBarChart chartBoundary">
-                            <h4>Technologies found - occurrence count</h4>
+                            <h4>Tags found - occurrence count</h4>
                             <!-- Tags bar chart will be appended here. -->
                         </div>
                     </td>
@@ -298,7 +298,7 @@
         <#if iterableHasContent(canonicalProject.fileModelsNoDirectories)>
         <table class="subprojects table table-striped table-bordered">
             <tr>
-                <th>Name</th><th>Technology</th><th>Issues</th><th>Story Points</th>
+                <th>Name</th><th>Tags</th><th>Issues</th><th>Story Points</th>
             </tr>
             <#list sortFilesByPathAscending(canonicalProject.fileModelsNoDirectories) as fileModel>
                 <@fileModelRenderer fileModel/>
@@ -398,7 +398,7 @@
                         </td>
                         <td>
                             <div class="chartBoundary">
-                                <h4>Technologies Found - Occurrence Count</h4>
+                                <h4>Tags Found - Occurrence Count</h4>
                                 <div id="tagsChartContainer-sum" style="height: 300px; width: 500px;">
                                     <div class="hideWhenComputed" style="position: relative; top: 4ex; left: 4em;">Computing...</div>
                                 </div>
