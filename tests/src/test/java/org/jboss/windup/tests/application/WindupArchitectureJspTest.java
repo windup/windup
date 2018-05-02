@@ -71,7 +71,7 @@ public class WindupArchitectureJspTest extends WindupArchitectureTest
         {
             super.runTest(context, path, false);
 
-            Assert.assertEquals(1, provider.taglibsFound);
+            Assert.assertEquals(2, provider.taglibsFound);
             Assert.assertEquals(2, provider.enumerationRuleHitCount);
 
             validateReports(context);
@@ -97,7 +97,7 @@ public class WindupArchitectureJspTest extends WindupArchitectureTest
             {
                 countClasses++;
                 
-                Assert.assertTrue(classModel.getClassName().endsWith(".jsp"));
+                Assert.assertTrue(classModel.getClassName().endsWith(".jsp") || classModel.getClassName().endsWith(".tag"));
                 Assert.assertEquals(jspFile.getFileName(), classModel.getClassName());
                 Assert.assertEquals(jspFile.getFileName(), classModel.getQualifiedName());
                 Assert.assertEquals("", classModel.getPackageName());
@@ -118,7 +118,7 @@ public class WindupArchitectureJspTest extends WindupArchitectureTest
             Assert.assertEquals(1, countClasses);
         }
         
-        Assert.assertEquals(4, countJspFiles);
+        Assert.assertEquals(5, countJspFiles);
     }
 
     /**
