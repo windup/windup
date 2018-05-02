@@ -540,27 +540,6 @@ public class RunWindupCommand implements Command, FurnaceDependent
 
     private static boolean isJavaArchive(Path path)
     {
-        Set<String> archiveExtensions =  ZipUtil.getZipExtensions();
-        StringBuffer syntaxAndPattern = new StringBuffer("glob:**.{");
-        boolean first = true;
-        for(String extension: archiveExtensions)
-        {
-            if(first)
-            {
-                first = false;
-            }
-            else
-            {
-                syntaxAndPattern.append(",");
-            }
-            syntaxAndPattern.append(extension);
-
-        }
-        syntaxAndPattern.append("}");
-
-        PathMatcher archiveMatcher = FileSystems.getDefault().getPathMatcher(syntaxAndPattern.toString());
-        return archiveMatcher.matches(path);
+        return ZipUtil.endsWithZipExtension(path.toString());
     }
-
-
 }
