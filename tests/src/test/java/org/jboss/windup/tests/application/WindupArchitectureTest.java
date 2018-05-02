@@ -18,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.WindupProgressMonitor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
+import org.jboss.windup.exec.configuration.options.ExportCSVOption;
 import org.jboss.windup.exec.configuration.options.UserRulesDirectoryOption;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
@@ -175,6 +176,7 @@ public abstract class WindupArchitectureTest
         windupConfiguration.setOptionValue(ExcludePackagesOption.NAME, excludePackages);
         windupConfiguration.setOptionValue(EnableTattletaleReportOption.NAME, false);
         windupConfiguration.setOptionValue(EnableCompatibleFilesReportOption.NAME, true);
+        windupConfiguration.setOptionValue(ExportCSVOption.NAME, true);
 
         for (Map.Entry<String, Object> otherOption : otherOptions.entrySet())
         {
