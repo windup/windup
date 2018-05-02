@@ -23,6 +23,8 @@ public class JspFileMappingRuleProvider extends AbstractRuleProvider
         return ConfigurationBuilder.begin()
                     .addRule(FileMapping.from(".*\\.jsp$").to(JspSourceFileModel.class))
                     .addRule(FileMapping.from(".*\\.jspx$").to(JspSourceFileModel.class))
+                    .addRule(FileMapping.from(".*\\.tag$").to(JspSourceFileModel.class))
+                    .addRule(FileMapping.from(".*\\.tagx$").to(JspSourceFileModel.class))
                     ;
     }
 }
