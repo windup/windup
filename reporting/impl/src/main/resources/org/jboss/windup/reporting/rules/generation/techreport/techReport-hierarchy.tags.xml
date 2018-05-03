@@ -118,7 +118,7 @@
             </tag>
             <tag name="techBox:object-mapping" title="Object Mapping" pseudo="true" parents="techRow:embedded" icon="Diagram_DevelopmentModel"></tag>
             <tag name="techBox:persistence" title="Persistence" pseudo="true" parents="techRow:java-ee" icon="Hardware_Storage-A-Stack"></tag>
-            <tag name="techBox:dbdriver" title="Database Driver" pseudo="true" parents="techRow:embedded" icon="Hardware_Storage-A-Stack"></tag>
+            <tag name="techBox:database-driver" title="Database Driver" pseudo="true" parents="techRow:embedded" icon="Hardware_Storage-A-Stack"></tag>
         </tag>
         <tag name="techSector04:Sustain" title="Sustain" color="#DB4437" pseudo="true">
             <tag name="techBox:transactions" title="Transactions" pseudo="true" parents="techRow:java-ee" icon="Object_CashRegister-POS"></tag>
@@ -167,7 +167,7 @@
             <tag pseudo="true" name="place:CDI" title="CDI" parents="techBox:processing"/> <!-- Not a box? -->
             <tag pseudo="true" name="place:Clustering" title="Clustering" parents="techBox:clustering"/>
             <tag pseudo="true" name="place:Database" title="Database" parents="techBox:jdbc"/>
-            <tag pseudo="true" name="place:Driver" title="Database Driver" parents="techBox:dbdriver"/>
+            <tag pseudo="true" name="place:Database Driver" title="Database Driver" parents="techBox:database-driver"/>
             <tag pseudo="true" name="place:HTTP" title="HTTP" parents="techBox:http"/>
             <tag pseudo="true" name="place:Integration" title="Integration" parents="techBox:integration"/>
             <tag pseudo="true" name="place:Inversion of Control" title="Inversion of Control" parents="techBox:ioc"/>
