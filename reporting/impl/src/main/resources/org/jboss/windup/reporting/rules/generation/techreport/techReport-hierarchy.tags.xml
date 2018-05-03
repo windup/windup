@@ -110,7 +110,7 @@
             <tag name="techBox:ogm" title="OGM" pseudo="true" parents="techRow:java-ee" icon="Diagram_DevelopmentModel">
             </tag>
             -->
-            <tag name="techBox:jdbc" title="JDBC" pseudo="true" parents="techRow:java-ee"  icon="Hardware_Storage-A-Stack">
+            <tag name="techBox:jdbc" title="Database" pseudo="true" parents="techRow:java-ee"  icon="Hardware_Storage-A-Stack">
                 <tag ref="jdbc"/>
             </tag>
             <tag name="techBox:caching" title="Caching" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="science_brain"><!-- Alternative: Recycle_Symbol. I couldn't find the "brain profile". -->
