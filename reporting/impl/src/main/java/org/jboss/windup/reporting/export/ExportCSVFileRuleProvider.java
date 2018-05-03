@@ -13,7 +13,6 @@ import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.Iteration;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
-import org.jboss.windup.config.phase.FinalizePhase;
 import org.jboss.windup.config.phase.ReportGenerationPhase;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.model.LinkModel;
@@ -41,6 +40,8 @@ import com.opencsv.CSVWriter;
 @RuleMetadata(phase = ReportGenerationPhase.class, haltOnException = true)
 public class ExportCSVFileRuleProvider extends AbstractRuleProvider
 {
+    private static final Logger LOG = Logger.getLogger(ExportCSVFileRuleProvider.class.getCanonicalName());
+
     // @formatter:off
     @Override
     public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
@@ -89,7 +90,7 @@ public class ExportCSVFileRuleProvider extends AbstractRuleProvider
                         filePath = hint.getFile().getFilePath();
                     }
                     String[] strings = new String[] {
-                                ruleId, "hint", title, description, links,
+                                ruleId, hint.getIssueCategory().getCategoryID(), title, description, links,
                                 projectNameString,
                                 fileName, filePath, String.valueOf(
                                 hint.getLineNumber()), String.valueOf(hint.getEffort()) };
@@ -115,7 +116,7 @@ public class ExportCSVFileRuleProvider extends AbstractRuleProvider
                         fileName = fileModel.getFileName();
                         filePath = fileModel.getFilePath();
                         String[] strings = new String[] {
-                                    ruleId, "classification", classificationText,
+                                    ruleId, classification.getIssueCategory().getCategoryID(), classificationText,
                                     description, links,
                                     projectNameString, fileName, filePath, "N/A",
                                     String.valueOf(
@@ -164,7 +165,7 @@ public class ExportCSVFileRuleProvider extends AbstractRuleProvider
                 String filename = PathUtil.cleanFileName(projectModel.getName()) + ".csv";
                 CSVWriter writer = initCSVWriter(outputFolderPath + filename);
                 projectToFile.put(projectModel.getName(), writer);
-                Logger.getLogger(ExportCSVFileRuleProvider.class.getCanonicalName()).info("Setting csv filename to: " + filename + " for id: " + projectModel.getId());
+                LOG.info("Setting csv filename to: " + filename + " for id: " + projectModel.getId());
                 projectModel.setCsvFilename(filename);
             }
             projectToFile.get(projectModel.getName()).writeNext(line);
@@ -177,7 +178,7 @@ public class ExportCSVFileRuleProvider extends AbstractRuleProvider
             {
                 CSVWriter writer = new CSVWriter(
                             new FileWriter(path), ',');
-                String[] headerLine = new String[] { "Rule Id", "Problem type", "Title", "Description", "Links", "Application", "File Name",
+                String[] headerLine = new String[] { "Rule Id", "Issue Category", "Title", "Description", "Links", "Application", "File Name",
                             "File Path", "Line", "Story points" };
                 writer.writeNext(headerLine);
                 return writer;

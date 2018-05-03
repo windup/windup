@@ -1,14 +1,18 @@
 package org.jboss.windup.tests.application;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
@@ -113,12 +117,39 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
                 validatePropertiesModels(context);
                 validateReports(context);
                 validateCompatibleReport(context);
+                validateCsvReport(context.getGraphDirectory());
             }
         }
         finally
         {
             FileUtils.deleteDirectory(userPath.toFile());
         }
+    }
+
+    private void validateCsvReport(Path reportDirectory) throws Exception
+    {
+        Path csvPath = reportDirectory.resolve("src_example.csv");
+        Map<String, Boolean> expectedRegexMatches = new HashMap<>();
+        expectedRegexMatches.put("\"Rule Id\",\"Issue Category\".*", false);
+        expectedRegexMatches.put("\"DiscoverWebXmlRuleProvider_1\",\"optional\",\"Web XML\",\" Web Application Deployment Descriptors\",\"\",\"src_example\",\"web.xml\".*", false);
+
+        try (BufferedReader fileReader = new BufferedReader(new FileReader(csvPath.toFile())))
+        {
+            String line = null;
+            while ( (line = fileReader.readLine()) != null)
+            {
+                final String lineFinal = line;
+                expectedRegexMatches.keySet().forEach(key -> {
+                    if (lineFinal.matches(key))
+                        expectedRegexMatches.put(key, true);
+                });
+            }
+        }
+
+        expectedRegexMatches.entrySet().forEach(entry -> {
+            if (!entry.getValue())
+                Assert.fail("CSV Export lacked a line matching: " + entry.getKey());
+        });
     }
 
     /**
