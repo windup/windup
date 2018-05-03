@@ -67,6 +67,7 @@
         tr.rowSectors .box .content ul { list-style: none; margin: 0; }
         tr.rowSectors .box .content ul li { margin: 0; text-align: right; }
         tr.rowSectors .box .content ul li b { width: 3ex; display: inline-block; }
+        tr.headersGroup { height: 215px; }
     </style>
 </head>
 
