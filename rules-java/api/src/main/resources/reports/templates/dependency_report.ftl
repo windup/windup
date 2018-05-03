@@ -33,14 +33,12 @@
         <div class="row">
             <div class="page-header page-header-no-border">
                 <h1>
-                    <div class="main">${reportModel.reportName}</div>
+                    <div class="main">${reportModel.reportName}
+                    <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement=right title="${reportModel.description}"></i></div>
                     <#if reportModel.projectModel??>
                         <div class="path">${reportModel.projectModel.rootFileModel.fileName}</div>
                     </#if>
                 </h1>
-                <div class="desc">
-                    ${reportModel.description}
-                </div>
             </div>
         </div>
 
@@ -108,5 +106,6 @@
 
     <script src="resources/js/jquery-1.10.1.min.js"></script>
     <script src="resources/js/bootstrap.min.js"></script>
+    <script>$(document).ready(function(){$('[data-toggle="tooltip"]').tooltip();});</script>
 </body>
 </html>

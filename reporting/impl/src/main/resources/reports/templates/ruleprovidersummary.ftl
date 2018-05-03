@@ -30,13 +30,10 @@
         <div class="row">
             <div class="page-header page-header-no-border">
                 <h1>
-                    <div class="main">Rule Providers Execution Overview</div>
+                    <div class="main">Rule Providers Execution Overview
+                    <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement=right title="This report lists 'rule providers', or sets of ${getWindupBrandName()} rules. They may originate from a '.windup.xml' or '.rhamt.xml' file
+                    or a Java class implementing 'RuleProvider'."></i></div>
                 </h1>
-                <div class="desc">
-                    This report lists "rule providers", or sets of ${getWindupBrandName()} rules.
-                    They may originate from a <code>.windup.xml</code> or <code>.rhamt.xml</code> file
-                    or a Java class implementing <code>RuleProvider</code>.
-                </div>
             </div>
         </div>
 
@@ -116,5 +113,6 @@
 
     <script src="resources/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="resources/js/navbar.js"></script>
+    <script>$(document).ready(function(){$('[data-toggle="tooltip"]').tooltip();});</script>
 </body>
 </html>

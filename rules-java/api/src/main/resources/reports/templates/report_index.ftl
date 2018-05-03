@@ -43,14 +43,10 @@
         <div class="row">
             <div class="page-header page-header-no-border">
                 <h1>
-                    <div class="main" onmouseover="$(this).parent().parent().addClass('showDesc')" onmouseout=" $(this).parent().parent().removeClass('showDesc')">
-                        ${reportModel.reportName}
-                    </div>
+                    <div class="main">${reportModel.reportName}
+                    <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement=right title="${reportModel.description}"></i></div>
                     <div class="path">${reportModel.projectModel.rootFileModel.fileName}</div>
                 </h1>
-                <div class="desc" style="z-index: 9000">
-                    ${reportModel.description}
-                </div>
             </div>
         </div>
 
@@ -194,5 +190,6 @@
             $("#javaIncidentsByPackageRow").remove();
         }
     </script>
+    <script>$(document).ready(function(){$('[data-toggle="tooltip"]').tooltip();});</script>
 </body>
 </html>
