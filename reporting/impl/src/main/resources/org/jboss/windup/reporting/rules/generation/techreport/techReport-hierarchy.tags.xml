@@ -68,7 +68,6 @@
                 <tag ref="jnlp"/>
             </tag>
             <tag name="techBox:mvc" title="MVC" pseudo="true" parents="techRow:embedded" icon="Software_Application-Window">
-                <tag ref="applet"/>
                 <tag ref="spring-mvc"/>
                 <tag ref="struts"/>
                 <tag ref="wicket"/>
@@ -91,7 +90,7 @@
                 <tag ref="jax-ws"/>
                 <tag ref="jax-rs"/>
             </tag>
-            <tag name="techBox:java-ee-other" title="Other" pseudo="true" parents="techRow:java-ee" icon="Office_SnackBasket">
+            <tag name="techBox:other" title="Other" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Office_SnackBasket">
                 <tag ref="jca"/>
                 <tag ref="jni"/>
                 <tag ref="mail"/>
@@ -111,27 +110,28 @@
             <tag name="techBox:ogm" title="OGM" pseudo="true" parents="techRow:java-ee" icon="Diagram_DevelopmentModel">
             </tag>
             -->
-            <tag name="techBox:jdbc" title="JDBC" pseudo="true" parents="techRow:java-ee"  icon="Hardware_Storage-A-Stack">
+            <tag name="techBox:jdbc" title="Database" pseudo="true" parents="techRow:java-ee"  icon="Hardware_Storage-A-Stack">
                 <tag ref="jdbc"/>
             </tag>
-            <tag name="techBox:Caching" title="Caching" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="science_brain"><!-- Alternative: Recycle_Symbol. I couldn't find the "brain profile". -->
+            <tag name="techBox:caching" title="Caching" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="science_brain"><!-- Alternative: Recycle_Symbol. I couldn't find the "brain profile". -->
                 <tag ref="cache"/>
             </tag>
             <tag name="techBox:object-mapping" title="Object Mapping" pseudo="true" parents="techRow:embedded" icon="Diagram_DevelopmentModel"></tag>
-            <tag name="techBox:Persistence" title="Persistence" pseudo="true" parents="techRow:java-ee" icon="Hardware_Storage-A-Stack"></tag>
+            <tag name="techBox:persistence" title="Persistence" pseudo="true" parents="techRow:java-ee" icon="Hardware_Storage-A-Stack"></tag>
+            <tag name="techBox:database-driver" title="Database Driver" pseudo="true" parents="techRow:embedded" icon="Hardware_Storage-A-Stack"></tag>
         </tag>
         <tag name="techSector04:Sustain" title="Sustain" color="#DB4437" pseudo="true">
-            <tag name="techBox:Transactions" title="Transactions" pseudo="true" parents="techRow:java-ee" icon="Object_CashRegister-POS"></tag>
-            <tag name="techBox:Clustering" title="Clustering" pseudo="true" parents="techRow:java-ee" icon="Hardware_Server-A-Stack"></tag>
-            <tag name="techBox:Security" title="Security" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Object_Shield-CoatOfArms"></tag>
-            <tag name="techBox:Logging" title="Logging" pseudo="true" parents="techRow:embedded" icon="Object_Book-Open"></tag>
-            <tag name="techBox:Test" title="Test" pseudo="true" parents="techRow:embedded" icon="Science_Explosion"></tag>
+            <tag name="techBox:transactions" title="Transactions" pseudo="true" parents="techRow:java-ee" icon="Object_CashRegister-POS"></tag>
+            <tag name="techBox:clustering" title="Clustering" pseudo="true" parents="techRow:java-ee" icon="Hardware_Server-A-Stack"></tag>
+            <tag name="techBox:security" title="Security" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Object_Shield-CoatOfArms"></tag>
+            <tag name="techBox:logging" title="Logging" pseudo="true" parents="techRow:embedded" icon="Object_Book-Open"></tag>
+            <tag name="techBox:test" title="Test" pseudo="true" parents="techRow:embedded" icon="Science_Explosion"></tag>
         </tag>
         <tag name="techSector05:Execute" title="Execute" color="#674EA7" pseudo="true">
-            <tag name="techBox:Processing" title="Processing" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Hardware_Processor-Compute"/>
-            <tag name="techBox:ioc" title="IoC" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Arrows_Interoperable-CrossPlatform"/>
-            <tag name="techBox:Rules" title="Rules &amp; Processes" pseudo="true" parents="techRow:embedded" icon="Object_Gear-Group"/>
-            <tag name="techBox:Integration" title="Integration" pseudo="true" parents="techRow:embedded" icon="Software_API"/>
+            <tag name="techBox:processing" title="Processing" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Hardware_Processor-Compute"/>
+            <tag name="techBox:ioc" title="Inversion of Control" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Arrows_Interoperable-CrossPlatform"/>
+            <tag name="techBox:rules" title="Rules &amp; Processes" pseudo="true" parents="techRow:embedded" icon="Object_Gear-Group"/>
+            <tag name="techBox:integration" title="Integration" pseudo="true" parents="techRow:embedded" icon="Software_API"/>
             <tag name="techBox:3rd-party" title="3rd party" pseudo="true" parents="techRow:embedded" icon="Office_SnackBasket"/>
         </tag>
     </tag>
@@ -161,30 +161,31 @@
         </tag>
         <tag name="techReport:placeBoxes">
             <tag pseudo="true" name="place:3rd party" title="3rd party" parents="techBox:3rd-party"/>
-            <tag pseudo="true" name="place:Batch" title="Batch" parents="techBox:Batch"/> <!-- Not a box? -->
-            <tag pseudo="true" name="place:Bean" title="Bean" parents="techBox:EJB"/>
-            <tag pseudo="true" name="place:Caching" title="Caching" parents="techBox:Caching"/>
-            <tag pseudo="true" name="place:CDI" title="CDI" parents="techBox:CDI"/> <!-- Not a box? -->
-            <tag pseudo="true" name="place:Clustering" title="Clustering" parents="techBox:Clustering"/>
+            <tag pseudo="true" name="place:Batch" title="Batch" parents="techBox:processing"/> <!-- Not a box? -->
+            <tag pseudo="true" name="place:Bean" title="Bean" parents="techBox:ejb"/>
+            <tag pseudo="true" name="place:Caching" title="Caching" parents="techBox:caching"/>
+            <tag pseudo="true" name="place:CDI" title="CDI" parents="techBox:processing"/> <!-- Not a box? -->
+            <tag pseudo="true" name="place:Clustering" title="Clustering" parents="techBox:clustering"/>
             <tag pseudo="true" name="place:Database" title="Database" parents="techBox:jdbc"/>
-            <tag pseudo="true" name="place:HTTP" title="HTTP" parents="techBox:HTTP"/>
-            <tag pseudo="true" name="place:Integration" title="Integration" parents="techBox:Integration"/>
+            <tag pseudo="true" name="place:Database Driver" title="Database Driver" parents="techBox:database-driver"/>
+            <tag pseudo="true" name="place:HTTP" title="HTTP" parents="techBox:http"/>
+            <tag pseudo="true" name="place:Integration" title="Integration" parents="techBox:integration"/>
             <tag pseudo="true" name="place:Inversion of Control" title="Inversion of Control" parents="techBox:ioc"/>
-            <tag pseudo="true" name="place:JSON-P" title="JSON-P" parents="techBox:Processing"/> <!-- Not a box? WINDUPRULE-296 -->
-            <tag pseudo="true" name="place:Logging" title="Logging" parents="techBox:Logging"/>
-            <tag pseudo="true" name="place:Markup" title="Markup" parents="techBox:Markup"/>
-            <tag pseudo="true" name="place:Messaging" title="Messaging" parents="techBox:Messaging"/>
+            <tag pseudo="true" name="place:JSON-P" title="JSON-P" parents="techBox:processing"/> <!-- Not a box? WINDUPRULE-296 -->
+            <tag pseudo="true" name="place:Logging" title="Logging" parents="techBox:logging"/>
+            <tag pseudo="true" name="place:Markup" title="Markup" parents="techBox:markup"/>
+            <tag pseudo="true" name="place:Messaging" title="Messaging" parents="techBox:messaging"/>
             <tag pseudo="true" name="place:MVC" title="MVC" parents="techBox:mvc"/>
             <tag pseudo="true" name="place:Object Mapping" title="Object Mapping" parents="techBox:object-mapping"/>
-            <tag pseudo="true" name="place:Other" title="Other" parents="techBox:Other"/>
-            <tag pseudo="true" name="place:Persistence" title="Processing" parents="techBox:Persistence"/>
-            <tag pseudo="true" name="place:Processing" title="Processing" parents="techBox:Processing"/>
+            <tag pseudo="true" name="place:Other" title="Other" parents="techBox:other"/>
+            <tag pseudo="true" name="place:Persistence" title="Processing" parents="techBox:persistence"/>
+            <tag pseudo="true" name="place:Processing" title="Processing" parents="techBox:processing"/>
             <tag pseudo="true" name="place:REST" title="REST" parents="techBox:rest"/>
             <tag pseudo="true" name="place:Rich" title="Rich" parents="techBox:rich"/>
-            <tag pseudo="true" name="place:Rules and Processes" title="Rules and Processes" parents="techBox:Rules"/>
-            <tag pseudo="true" name="place:Security" title="Security" parents="techBox:Security"/>
-            <tag pseudo="true" name="place:Test" title="Test" parents="techBox:Test"/>
-            <tag pseudo="true" name="place:Transaction" title="Transaction" parents="techBox:Transactions"/>
+            <tag pseudo="true" name="place:Rules and Processes" title="Rules and Processes" parents="techBox:rules"/>
+            <tag pseudo="true" name="place:Security" title="Security" parents="techBox:security"/>
+            <tag pseudo="true" name="place:Test" title="Test" parents="techBox:test"/>
+            <tag pseudo="true" name="place:Transaction" title="Transaction" parents="techBox:transactions"/>
             <tag pseudo="true" name="place:Web" title="Web" parents="techBox:web"/>
             <tag pseudo="true" name="place:Web Service" title="Web Service" parents="techBox:webservice"/>
         </tag>

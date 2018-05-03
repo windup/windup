@@ -155,11 +155,6 @@ a.windup-file-location {
     font-size: 13px;
 }
 
-.page-header-no-border {
-	border: 0;
-	margin-bottom: 0;
-}
-
 .page-header h1{
 	margin:15px;
 }
@@ -174,7 +169,7 @@ a.windup-file-location {
 
 .page-header h1 div.main {
     border-bottom: 1px solid #ADD8E6;
-    margin: 0px 6em 0.5ex 0px;
+    margin: 0px 0.8ex 0px 0px;
     width: auto;
     color: #005387;
 }
@@ -407,8 +402,6 @@ strong.wu-navbar-header {
 /************************* Filtering and sorting toolbar ******************************/
 .toolbar-pf {
     background: #fff;
-    border-bottom: 1px solid #d1d1d1;
-    box-shadow: 0 1px 0 rgba(3,3,3,.045);
     padding-top: 10px;
 }
 
@@ -472,4 +465,33 @@ strong.wu-navbar-header {
     text-decoration: none;
     color: #262626;
     background-color: #eeeeee;
+}
+
+/** Tooltip */
+h1 div.tooltip-inner {
+    text-align: center;
+    -webkit-border-radius: 0px;
+    -moz-border-radius: 0px;
+    border-radius: 0px;
+    margin-bottom: 6px;
+    background-color: #505050;
+    font-size: 14px;
+    max-width: 350px;
+}
+
+h1 div.tooltip {
+    border-bottom: 0px
+}
+
+h1 .glyphicon-info-sign:before {
+    font-size: 14px;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.page-header-no-border {
+    border: 0;
+    margin-bottom: 0;
+    margin: 0 0 12px;
+    padding-bottom: 0;
 }

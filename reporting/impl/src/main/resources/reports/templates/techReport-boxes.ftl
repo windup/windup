@@ -67,6 +67,7 @@
         tr.rowSectors .box .content ul { list-style: none; margin: 0; }
         tr.rowSectors .box .content ul li { margin: 0; text-align: right; }
         tr.rowSectors .box .content ul li b { width: 3ex; display: inline-block; }
+        tr.headersGroup { height: 215px; }
     </style>
 </head>
 
@@ -89,14 +90,12 @@
         <div class="row">
             <div class="page-header page-header-no-border">
                 <h1>
-                    <div class="main">${reportModel.reportName}</div>
+                    <div class="main">${reportModel.reportName}
+                    <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement=right title="${reportModel.description}."></i></div>
                     <#if reportModel.projectModel??>
                         <div class="path">${reportModel.projectModel.rootFileModel.fileName}</div>
                     </#if>
                 </h1>
-                <div class="desc">
-                    ${reportModel.description}
-                </div>
             </div>
         </div>
 
@@ -123,7 +122,8 @@
                     </tr>
 
                     <!-- For each gray row group... -->
-                    <#assign rowTags = reportModel.rowsHolderTag.designatedTags />
+                    <#assign sortedRowTags = reportModel.rowsHolderTag.designatedTags?sort_by("title") />
+                    <#assign rowTags = sortedRowTags?reverse />
                     <#list rowTags as rowTag> <#-- currently Java EE / Embedded -->
                         <tr class="rowHeader row-${rowTag.name}">
                             <td class="heading" colspan="${sectorTags?size}"><div>${rowTag.title}</div></td>
@@ -169,5 +169,6 @@
     </div>
 
     <script src="resources/js/bootstrap.min.js"></script>
+    <script>$(document).ready(function(){$('[data-toggle="tooltip"]').tooltip();});</script>
 </body>
 </html>
