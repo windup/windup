@@ -28,13 +28,10 @@
         <div class="row">
             <div class="page-header page-header-no-border">
                 <h1>
-                    <div class="main">Server Resources</div>
+                    <div class="main">Server Resources
+                    <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement=right title="This reports lists the resources of the application that are supposed to be used by the server, such as datasources, JMS destinations, JMS connection factories, JMS connection factory list, and thread pools."></i></div>
                     <div class="path">${reportModel.projectModel.rootFileModel.fileName}</div>
                 </h1>
-                <div class="desc">
-                    This reports lists the resources of the application that are supposed to be used by the server,
-                    such as datasources, JMS destinations, JMS connection factories, JMS connection factory list, and thread pools.
-                </div>
             </div>
         </div>
 
@@ -165,5 +162,6 @@
 
     <script src="resources/js/jquery-1.10.1.min.js"></script>
     <script src="resources/js/bootstrap.min.js"></script>
+    <script>$(document).ready(function(){$('[data-toggle="tooltip"]').tooltip();});</script>
 </body>
 </html>

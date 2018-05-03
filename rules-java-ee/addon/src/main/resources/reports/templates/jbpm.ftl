@@ -30,14 +30,10 @@
         <div class="row">
             <div class="page-header page-header-no-border">
                 <h1>
-                    <div class="main">JBPM Process Report</div>
+                    <div class="main">JBPM Process Report
+                    <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement=right title="The JBPM process report shows the basic characteristics of JBPM processes found in the application, such like count of nodes, states, tasks, decisions, subprocesses, etc. Also lists the action handlers and decision handlers."></i></div>
                     <div class="path">${reportModel.projectModel.rootFileModel.fileName}</div>
                 </h1>
-                <div class="desc">
-                    The JBPM process report shows the basic characteristics of JBPM processes found in the application,
-                    such like count of nodes, states, tasks, decisions, subprocesses, etc.
-                    Also lists the action handlers and decision handlers.
-                </div>
             </div>
         </div>
 
@@ -131,5 +127,6 @@
     </div><!-- /container main -->
     <script src="resources/js/jquery-1.10.1.min.js"></script>
     <script src="resources/js/bootstrap.min.js"></script>
+    <script>$(document).ready(function(){$('[data-toggle="tooltip"]').tooltip();});</script>
 </body>
 </html>

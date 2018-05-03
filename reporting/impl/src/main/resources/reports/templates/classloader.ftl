@@ -15,16 +15,10 @@
         <div class="row">
             <div class="page-header page-header-no-border">
                 <h1>
-                    <div class="main">Classloader Report</div>
+                    <div class="main">Classloader Report
+                    <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement=right title="The classloader report shows the relations between classloaders and the loaded types, and highlights the conditions which often lead to problems, like: duplicated classes, classes not found in the application, blacklisted classes."></i></div>
                     <div class="path">${application.applicationName?html}</div>
                 </h1>
-                <div class="desc">
-                    The classloader report shows the relations between classloaders and the loaded types,
-                    and highlights the conditions which often lead to problems, like
-                        duplicated classes,
-                        classes not found in the application,
-                        blacklisted classes.
-                </div>
 
                 <div class="navbar navbar-default">
                 <div class="wu-navbar-header navbar-header">
@@ -85,5 +79,6 @@
 
     <script src="https://code.jquery.com/jquery.js"></script>
     <script src="../../resources/js/bootstrap.min.js"></script>
+    <script>$(document).ready(function(){$('[data-toggle="tooltip"]').tooltip();});</script>
   </body>
 </html>
