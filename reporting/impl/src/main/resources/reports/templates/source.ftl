@@ -45,9 +45,6 @@
                         </div>
                     </#list>
                 </h1>
-                <div class="desc">
-                    
-                </div>
             </div>
         </div>
 
