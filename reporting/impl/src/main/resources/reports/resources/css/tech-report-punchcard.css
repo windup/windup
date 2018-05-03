@@ -89,7 +89,7 @@ table.technologiesPunchCard tr td:nth-child(1) {
 table.technologiesPunchCard tbody {
     display: block;
     overflow-y: scroll;
-    height: 40vh;
+    height: 55vh;
 }
 
 table.technologiesPunchCard {
