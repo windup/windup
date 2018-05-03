@@ -77,12 +77,10 @@
         <div class="row">
             <div class="page-header page-header-no-border">
                 <h1>
-                    <div class="main">Unparsable Files Report</div>
+                    <div class="main">Unparsable Files Report
+                    <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement=right title="${reportModel.description}"></i></div>
                     <div class="path">${reportModel.projectModel.rootFileModel.fileName}</div>
                 </h1>
-                <div class="desc">
-                    ${reportModel.description}
-                </div>
             </div>
         </div>
 
@@ -106,5 +104,6 @@
     <script src="resources/libraries/flot/jquery.flot.min.js"></script>
     <script src="resources/libraries/flot/jquery.flot.pie.min.js"></script>
     <script src="resources/js/bootstrap.min.js"></script>
+    <script>$(document).ready(function(){$('[data-toggle="tooltip"]').tooltip();});</script>
 </body>
 </html>

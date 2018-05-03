@@ -30,11 +30,9 @@
         <div class="row">
             <div class="page-header page-header-no-border">
                 <h1>
-                    <div class="main">Used FreeMarker Functions and Directives</div>
+                    <div class="main">Used FreeMarker Functions and Directives
+                    <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement=right title="This report shows the custom Freemarker extensions created for and used by Red Hat Application Migration Toolkit."></i></div>
                 </h1>
-                <div class="desc">
-                    This report shows the custom Freemarker extensions created for and used by Red Hat Application Migration Toolkit.
-                </div>
             </div>
         </div>
 
@@ -93,5 +91,6 @@
 
     <script src="resources/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="resources/js/navbar.js"></script>
+    <script>$(document).ready(function(){$('[data-toggle="tooltip"]').tooltip();});</script>
 </body>
 </html>

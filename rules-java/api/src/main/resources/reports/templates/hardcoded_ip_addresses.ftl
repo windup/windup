@@ -62,14 +62,10 @@
         <div class="row">
             <div class="page-header page-header-no-border">
                 <h1>
-                    <div class="main">Hard-coded IP Report</div>
+                    <div class="main">Hard-coded IP Report
+                    <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement=right title="The hard-coded IP report lists the places where an IP address is found in the application. This may include places where the IP address is specified directly in the code rather than externalized into the configuration files."></i></div>
                     <div class="path">${reportModel.projectModel.rootFileModel.fileName}</div>
                 </h1>
-                <div class="desc">
-                    The hard-coded IP report lists the places where an IP address is found in the application.
-                    This may include places where the IP address is specified directly in the code rather than
-                    externalized into the configuration files.
-                </div>
             </div>
         </div>
 
@@ -87,5 +83,6 @@
     <script src="resources/libraries/flot/jquery.flot.min.js"></script>
     <script src="resources/libraries/flot/jquery.flot.pie.min.js"></script>
     <script src="resources/js/bootstrap.min.js"></script>
+    <script>$(document).ready(function(){$('[data-toggle="tooltip"]').tooltip();});</script>
 </body>
 </html>

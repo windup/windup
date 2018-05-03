@@ -43,14 +43,12 @@
         <div class="row">
             <div class="page-header page-header-no-border">
                 <h1>
-                    <div class="main">${reportModel.reportName}</div>
+                    <div class="main">${reportModel.reportName}
+                    <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement=right title="${reportModel.description}."></i></div>
                     <#if reportModel.projectModel??>
                         <div class="path">${reportModel.projectModel.rootFileModel.fileName}</div>
                     </#if>
                 </h1>
-                <div class="desc">
-                    ${reportModel.description}
-                </div>
             </div>
         </div>
 
@@ -58,9 +56,7 @@
             <div class="container-fluid theme-showcase" role="main">
 
                 <#assign techsOrder = [] />
-
-                <#assign sectorTagsIterable = reportModel.sectorsHolderTag.designatedTags />
-                <#assign sectorTags = iterableToList(sectorTagsIterable) />
+                <#assign sectorTags = iterableToList(reportModel.sectorsHolderTag.designatedTags) />
                 <#assign sectorTags = sectorTags?sort_by("name") />
                 <#assign placeTagsParent = getTagModelByName("techReport:mappingOfPlacementTagNames") />
 
@@ -92,7 +88,8 @@
                         <tr class="headersGroup">
                             <td></td>
                         <#list sectorTags as sectorTag >
-                            <#list sectorTag.designatedTags as boxTag >
+                            <#assign sortedBoxTags = iterableToList(sectorTag.designatedTags)?sort_by("title") />
+                            <#list sortedBoxTags as boxTag >
                                 <#if !isTagUnderTag(boxTag, placeTagsParent) >
                                     <#assign techsOrder = techsOrder + [boxTag] />
                                     <td class="sector sector${sectorTag.title}"><div>${boxTag.title!}</div></td>
@@ -100,14 +97,15 @@
                             </#list>
                         </#list>
                             <td class="sector sectorStats sizeMB"><div>Size (MB)</div></td>
-                            <td class="sector sectorStats libsCount"><div>Libraries</div></td>
+                            <!-- <td class="sector sectorStats libsCount"><div>Libraries</div></td> -->
                             <td class="sector sectorStats storyPoints"><div>Mandatory (SP)</div></td>
                             <!-- this td is needed for scrollbar positioning -->
                             <td class="scrollbar-padding"></td>
                         </tr>
                     </thead>
                     <tbody>
-                        <#list inputApplications as appProject> <#-- ProjectModel -->
+                        <#assign appProjects = inputApplications?sort_by(["name"]) />
+                        <#list appProjects as appProject> <#-- ProjectModel -->
                         <#if appProject.projectType! != "VIRTUAL" >
                         <tr class="app">
                             <td class="name">
@@ -120,7 +118,8 @@
                                 </a>
                             </td>
                             <#list sectorTags as sectorTag>
-                                <#list sectorTag.designatedTags as boxTag>
+                                <#assign sortedBoxTags = iterableToList(sectorTag.designatedTags)?sort_by("title") />
+                                <#list sortedBoxTags as boxTag>
                                     <#if !isTagUnderTag(boxTag, placeTagsParent) >
                                         <#--
                                         <#assign count = (stats.countsOfTagsInApps?api.get(appProject.getElement().id())[boxTag.name])!false />
@@ -189,5 +188,6 @@
     -->
 
     <script src="resources/js/bootstrap.min.js"></script>
+    <script>$(document).ready(function(){$('[data-toggle="tooltip"]').tooltip();});</script>
 </body>
 </html>

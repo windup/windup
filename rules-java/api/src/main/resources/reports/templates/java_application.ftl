@@ -358,12 +358,10 @@
         <div class="row">
             <div class="page-header page-header-no-border">
                 <h1>
-                    <div class="main">Application Details</div>
+                    <div class="main">Application Details
+                    <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement=right title="${reportModel.description}"></i></div>
                     <div class="path">${reportModel.projectModel.rootFileModel.fileName}</div>
                 </h1>
-                <div class="desc">
-                    ${reportModel.description}
-                </div>
             </div>
         </div>
 
@@ -491,6 +489,7 @@
                 }, 500 );
             });
         </script>
+        <script>$(document).ready(function(){$('[data-toggle="tooltip"]').tooltip();});</script>
     </div>
 </body>
 </html>
