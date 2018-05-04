@@ -28,15 +28,7 @@ $(document).ready(function () {
 
         var checkNameMatchCallback = function(element, filterOption) {
             var name = $(element).data('name');
-            var regex;
-            try
-            {
-                regex = new RegExp(filterOption.data, 'i');
-            }
-            catch(e)
-            {
-                console.error('Invalid input regular expression: ' + filterOption.data );
-            }
+            var regex = new RegExp(filterOption.data, 'i');
 
             return name.match(regex) !== null;
         };
@@ -89,9 +81,26 @@ $(document).ready(function () {
             $('#filter-form').on('submit', function(e) {
                 e.preventDefault();
                 var filterValue = filterInput.val().trim();
-                addFilter(filterValue, currentFilterConfiguration.filterBy);
-                filterInput.val('');
+                if (addFilter(filterValue, currentFilterConfiguration.filterBy))
+                {
+                    filterInput.val('');
+                }
+                else
+                {
+                    filterInput.addClass('alert alert-warning');
+                    filterInput.attr('title', 'Invalid Input');
+                }
+
+
             });
+
+            filterInput.on('input', function(e) {
+                e.preventDefault();
+                filterInput.removeClass('alert alert-warning');
+                filterInput.attr('title', '');
+            });
+
+
 
             /** Event handler for clear filters action */
             clearFiltersButton.on('click', function() {
@@ -108,6 +117,11 @@ $(document).ready(function () {
 
             /** Use first filter-type (AND) for filtering */
             filterTypeDiv.find('li a').first().click();
+        }
+
+        function setFailedInputHandler()
+        {
+
         }
 
         /**
@@ -158,13 +172,23 @@ $(document).ready(function () {
          *
          */
         function filterData() {
+            var filterFailed = false;
             var filteredDivs = $('div.real div.appInfo').map(function(idx, element) {
                 var show = true;
 
                 if (filters.length > 0) {
                     var filterResults = filters.map(function (filterOption) {
                         if (hasCallback(filterOption)) {
-                            return filterOption.callback(element, filterOption);
+                            try
+                            {
+                                return   filterOption.callback(element, filterOption);
+                            }
+                            catch(e)
+                            {
+                                console.error('Invalid input regular expression');
+                                filterFailed = true;
+                                return true;
+                            }
                         } else {
                             console.error('Expected callback to be defined on filterOption');
                         }
@@ -188,7 +212,14 @@ $(document).ready(function () {
 
             countResults.text(countFiltered);
 
-            refreshFilterPanel();
+            if (!filterFailed) {
+                refreshFilterPanel();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         /**
@@ -255,11 +286,18 @@ $(document).ready(function () {
          * @param option {object}
          */
         function addFilter(value, option) {
+            var returnValue = true;
             var filter = $.extend({}, option);
             filter.data = value;
             filters.push(filter);
 
-            filterData();
+            if (!filterData())
+            {
+                filters.pop();
+                returnValue = false;
+            }
+
+            return returnValue;
         }
 
         /**
