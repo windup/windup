@@ -38,6 +38,7 @@ import org.jboss.windup.exec.rulefilters.NotPredicate;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.graph.model.ProjectModel;
+import org.jboss.windup.graph.model.report.IgnoredFileRegexModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.config.Hint;
@@ -52,6 +53,7 @@ import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.jboss.windup.rules.apps.java.scan.ast.AnalyzeJavaFilesRuleProvider;
 import org.jboss.windup.rules.apps.java.scan.provider.FindUnboundJavaReferencesRuleProvider;
 import org.jboss.windup.rules.apps.java.scan.provider.IndexJavaSourceFilesRuleProvider;
+import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -86,7 +88,7 @@ public class JavaIgnoreRegexesTest
     private GraphContextFactory factory;
 
     @Test
-    public void testHintsAndClassificationOperation() throws Exception
+    public void testRegexIgnore() throws Exception
     {
         try (GraphContext context = factory.create(true))
         {
@@ -125,6 +127,11 @@ public class JavaIgnoreRegexesTest
                                         new NotPredicate(new EnumeratedRuleProviderPredicate(FindUnboundJavaReferencesRuleProvider.class))
                             );
 
+                IgnoredFileRegexModel ignoredFileRegexModel = new GraphService<IgnoredFileRegexModel>(context, IgnoredFileRegexModel.class).create();
+                ignoredFileRegexModel.setRegex(".*JavaClassTestFile1.*");
+
+                WindupJavaConfigurationService.getJavaConfigurationModel(context).addIgnoredFileRegex(ignoredFileRegexModel);
+
                 WindupConfiguration configuration = new WindupConfiguration()
                             .setGraphContext(context)
                             .setRuleProviderFilter(predicate)
@@ -144,7 +151,7 @@ public class JavaIgnoreRegexesTest
                 Iterable<JavaTypeReferenceModel> typeReferences = typeRefService.findAll();
                 Assert.assertTrue(typeReferences.iterator().hasNext());
 
-                Assert.assertEquals(4, provider.getTypeReferences().size());
+                Assert.assertEquals(2, provider.getTypeReferences().size());
                 List<InlineHintModel> hints = Iterators.asList(hintService.findAll());
 
                 boolean foundAddonDep1 = false;
@@ -179,8 +186,8 @@ public class JavaIgnoreRegexesTest
                     }
                 }
                 Assert.assertTrue(foundAddonDep1);
-                Assert.assertTrue(foundAddonDep2);
-                Assert.assertTrue(foundIterators);
+                Assert.assertFalse(foundAddonDep2);
+                Assert.assertFalse(foundIterators);
                 Assert.assertTrue(foundCallables);
 
                 List<ClassificationModel> classifications = Iterators.asList(classificationService.findAll());
@@ -188,7 +195,7 @@ public class JavaIgnoreRegexesTest
                 Assert.assertTrue(classifications.get(0).getDescription().contains("JavaClassTestFile"));
 
                 Iterable<FileModel> fileModels = classifications.get(0).getFileModels();
-                Assert.assertEquals(2, Iterators.asList(fileModels).size());
+                Assert.assertEquals(1, Iterators.asList(fileModels).size());
             }
             finally
             {

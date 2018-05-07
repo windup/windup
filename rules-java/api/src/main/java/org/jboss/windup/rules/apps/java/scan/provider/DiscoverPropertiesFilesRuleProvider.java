@@ -12,6 +12,7 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.TechnologyTagService;
 import org.jboss.windup.rules.apps.java.model.PropertiesModel;
+import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.jboss.windup.util.ExecutionStatistics;
 import org.ocpsoft.rewrite.config.ConditionBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
@@ -37,6 +38,9 @@ public class DiscoverPropertiesFilesRuleProvider extends IteratingRuleProvider<F
 
     public void perform(GraphRewrite event, EvaluationContext context, FileModel payload)
     {
+        if (new WindupJavaConfigurationService(event.getGraphContext()).checkIfIgnored(event, payload))
+            return;
+
         ExecutionStatistics.get().begin("DiscoverPropertiesFilesRuleProvider.perform");
         GraphService<PropertiesModel> service = new GraphService<>(event.getGraphContext(), PropertiesModel.class);
         TechnologyTagService technologyTagService = new TechnologyTagService(event.getGraphContext());

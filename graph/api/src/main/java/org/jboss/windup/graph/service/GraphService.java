@@ -130,7 +130,7 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     }
 
     @Override
-    public Iterable<T> findAllWithoutProperty(final String key, final Object value)
+    public List<T> findAllWithoutProperty(final String key, final Object value)
     {
         return ExecutionStatistics.performBenchmarked("GraphService.findAllWithoutProperty(" + key + ")", () -> {
             //return (List<T>)findAllQuery().traverse(g -> g.hasNot(key).or(g.has(key, P.neq(value)))).toList(type);
@@ -142,7 +142,7 @@ public class GraphService<T extends WindupVertexFrame> implements Service<T>
     }
 
     @Override
-    public Iterable<T> findAllWithoutProperty(final String key)
+    public List<T> findAllWithoutProperty(final String key)
     {
         return ExecutionStatistics.performBenchmarked("GraphService.findAllWithoutProperty(" + key + ")", () -> {
             return (List<T>)findAllQuery().traverse(g -> g.hasNot(key)).toList(type);
