@@ -23,7 +23,12 @@ $(document).ready(function () {
                 return false;
             }
 
-            return filteringData.tags.indexOf(filterOption.data) !== -1;
+            var regex = new RegExp(filterOption.data, 'i');
+            var filtered = filteringData.tags.filter(function(element) {
+                if (element.match(regex) !== null) return true;
+                else return false;
+            });
+            return filtered.length > 0;
         };
 
         var checkNameMatchCallback = function(element, filterOption) {
