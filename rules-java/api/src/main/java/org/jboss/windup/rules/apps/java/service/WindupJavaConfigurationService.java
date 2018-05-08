@@ -2,13 +2,18 @@ package org.jboss.windup.rules.apps.java.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.apache.commons.io.FilenameUtils;
+import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.report.IgnoredFileRegexModel;
+import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.IgnoredFileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.model.PackageModel;
 import org.jboss.windup.rules.apps.java.model.WindupJavaConfigurationModel;
+import org.jboss.windup.util.Logging;
 
 /**
  * Provides methods for loading and working with {@link WindupJavaConfigurationModel} objects.
@@ -18,6 +23,7 @@ import org.jboss.windup.rules.apps.java.model.WindupJavaConfigurationModel;
  */
 public class WindupJavaConfigurationService extends GraphService<WindupJavaConfigurationModel>
 {
+    private static final Logger LOG = Logging.get(WindupJavaConfigurationService.class);
 
     private List<String> ignoredRegexes;
 
@@ -36,6 +42,31 @@ public class WindupJavaConfigurationService extends GraphService<WindupJavaConfi
         if (config == null)
             config = service.create();
         return config;
+    }
+
+    /**
+     * Checks if the {@link FileModel#getFilePath()} + {@link FileModel#getFileName()} is ignored by any of the specified regular expressions.
+     */
+    public boolean checkIfIgnored(final GraphRewrite event, FileModel file)
+    {
+        List<String> patterns = getIgnoredFileRegexes();
+        boolean ignored = false;
+        if (patterns != null && !patterns.isEmpty())
+        {
+            for (String pattern : patterns)
+            {
+                if (file.getFilePath().matches(pattern))
+                {
+                    IgnoredFileModel ignoredFileModel = GraphService.addTypeToModel(event.getGraphContext(), file, IgnoredFileModel.class);
+                    ignoredFileModel.setIgnoredRegex(pattern);
+                    LOG.info("File/Directory placed in " + file.getFilePath() + " was ignored, because matched [" + pattern + "].");
+                    ignored = true;
+                    break;
+                }
+            }
+        }
+
+        return ignored;
     }
 
     public List<String> getIgnoredFileRegexes()

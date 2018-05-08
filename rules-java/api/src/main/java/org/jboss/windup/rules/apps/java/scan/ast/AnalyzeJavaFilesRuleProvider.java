@@ -51,6 +51,7 @@ import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.TechnologyReferenceModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.IgnoredFileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.WindupConfigurationService;
 import org.jboss.windup.reporting.service.ClassificationService;
@@ -123,7 +124,10 @@ public class AnalyzeJavaFilesRuleProvider extends AbstractRuleProvider
                 final GraphContext graphContext = event.getGraphContext();
                 WindupJavaConfigurationService windupJavaConfigurationService = new WindupJavaConfigurationService(graphContext);
 
-                Iterable<JavaSourceFileModel> allJavaSourceModels = graphContext.service(JavaSourceFileModel.class).findAll();
+                List<JavaSourceFileModel> allJavaSourceModels = graphContext.service(JavaSourceFileModel.class).findAll();
+                allJavaSourceModels = allJavaSourceModels.stream()
+                        .filter(fileModel -> !(fileModel instanceof IgnoredFileModel))
+                        .collect(Collectors.toList());
 
 
                 final Map<ProjectModel, JavaAnalysisBatch> batchMap = new HashMap<>();

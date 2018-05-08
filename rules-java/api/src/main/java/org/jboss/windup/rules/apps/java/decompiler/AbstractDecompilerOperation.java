@@ -1,10 +1,12 @@
 package org.jboss.windup.rules.apps.java.decompiler;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.IgnoredFileModel;
 import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
@@ -42,7 +44,9 @@ abstract public class AbstractDecompilerOperation extends GraphOperation
     private Iterable<JavaClassFileModel> getDefaultFilesToDecompile(GraphContext context)
     {
         GraphService<JavaClassFileModel> classFileService = new GraphService<>(context, JavaClassFileModel.class);
-        return classFileService.findAllWithoutProperty(JavaClassFileModel.SKIP_DECOMPILATION, true);
+        return classFileService.findAllWithoutProperty(JavaClassFileModel.SKIP_DECOMPILATION, true).stream()
+                .filter(fileModel -> !(fileModel instanceof IgnoredFileModel))
+                .collect(Collectors.toList());
     }
 
     protected void setupClassToJavaConnections(GraphContext context, List<String> classFilesPaths, JavaSourceFileModel decompiledJavaFile)

@@ -8,6 +8,7 @@ import org.jboss.windup.graph.model.ApplicationArchiveModel;
 import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
 public class AddArchiveReferenceInformation extends AbstractIterationOperation<FileModel>
@@ -36,6 +37,9 @@ public class AddArchiveReferenceInformation extends AbstractIterationOperation<F
         archiveModel.setArchiveName(file.getName());
 
         ApplicationArchiveModel appArchiveModel = GraphService.addTypeToModel(event.getGraphContext(), fileModel, ApplicationArchiveModel.class);
+
+        // This line will cause the file to be marked if it is to be ignored
+        new WindupJavaConfigurationService(event.getGraphContext()).checkIfIgnored(event, fileModel);
         ///appArchiveModel.setApplicationName(file.getName()); // Removed because not used.
     }
 

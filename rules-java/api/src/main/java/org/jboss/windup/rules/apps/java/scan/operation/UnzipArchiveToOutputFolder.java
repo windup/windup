@@ -57,6 +57,9 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
     @Override
     public void perform(GraphRewrite event, EvaluationContext context, ArchiveModel payload)
     {
+        if (new WindupJavaConfigurationService(event.getGraphContext()).checkIfIgnored(event, payload))
+            return;
+
         LOG.info("Unzipping archive: " + payload.toPrettyString());
         File zipFile = payload.asFile();
 
@@ -189,7 +192,7 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
             FileModel subFileModel = fileService.createByFilePath(parentFileModel, subFile.getAbsolutePath());
 
             // check if this file should be ignored
-            if (checkIfIgnored(event, subFileModel, windupJavaConfigurationService.getIgnoredFileRegexes()))
+            if (windupJavaConfigurationService.checkIfIgnored(event, subFileModel))
                 continue;
 
             numberAdded++;
@@ -236,32 +239,6 @@ public class UnzipArchiveToOutputFolder extends AbstractIterationOperation<Archi
             }
         }
     }
-
-    /**
-     * Checks if the {@link FileModel#getFilePath()} + {@link FileModel#getFileName()} is ignored by any of the specified regular expressions.
-     */
-    private boolean checkIfIgnored(final GraphRewrite event, FileModel file, List<String> patterns)
-    {
-        boolean ignored = false;
-        if (patterns != null && !patterns.isEmpty())
-        {
-            for (String pattern : patterns)
-            {
-                if (file.getFilePath().matches(pattern))
-                {
-                    IgnoredFileModel ignoredFileModel = GraphService.addTypeToModel(event.getGraphContext(), file, IgnoredFileModel.class);
-                    ignoredFileModel.setIgnoredRegex(pattern);
-                    LOG.info("File/Directory placed in " + file.getFilePath() + " was ignored, because matched [" + pattern + "].");
-                    ignored = true;
-                    break;
-                }
-            }
-        }
-
-        return ignored;
-    }
-
-
 
     private static Path getNonexistentDirForAppArchive(Path tempFolder, String appArchiveName)
     {

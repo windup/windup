@@ -5,6 +5,7 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.FileService;
+import org.jboss.windup.rules.apps.java.service.WindupJavaConfigurationService;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 
     /**
@@ -40,15 +41,18 @@ public class RecurseDirectoryAndAddFiles extends AbstractIterationOperation<File
     public void perform(GraphRewrite event, EvaluationContext context, FileModel resourceModel)
     {
         FileService fileModelService = new FileService(event.getGraphContext());
-        recurseAndAddFiles(event, context,  fileModelService, resourceModel);
+        WindupJavaConfigurationService javaConfigurationService = new WindupJavaConfigurationService(event.getGraphContext());
+        recurseAndAddFiles(event, fileModelService, javaConfigurationService, resourceModel);
     }
 
     /**
      * Recurses the given folder and creates the FileModels vertices for the child files to the graph.
      */
-    private void recurseAndAddFiles(GraphRewrite event, EvaluationContext context,
-                FileService fileService, FileModel file)
+    private void recurseAndAddFiles(GraphRewrite event, FileService fileService, WindupJavaConfigurationService javaConfigurationService, FileModel file)
     {
+        if (javaConfigurationService.checkIfIgnored(event, file))
+            return;
+
         String filePath = file.getFilePath();
         File fileReference = new File(filePath);
 
@@ -60,7 +64,7 @@ public class RecurseDirectoryAndAddFiles extends AbstractIterationOperation<File
                 for (File reference : subFiles)
                 {
                     FileModel subFile = fileService.createByFilePath(file, reference.getAbsolutePath());
-                    recurseAndAddFiles(event, context, fileService, subFile);
+                    recurseAndAddFiles(event, fileService, javaConfigurationService, subFile);
                 }
             }
         }
