@@ -155,7 +155,8 @@
                                 ${ ( (appProject.rootFileModel.retrieveSize() / 1024 / 1024)?string["0.##"] )! }
                             </td>
                             <td class="sectorStats libsCount">
-                                ${ (appProject.getApplications()?size)! }
+                                <#assign noOfLibraries = getNumberOfLibraries(appProject) />
+                                ${ noOfLibraries! }
                             </td>
                             <td class="sectorStats storyPoints">
                                 <#assign traversal = getProjectTraversal(appProject, 'all') />
