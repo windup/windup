@@ -84,14 +84,14 @@ $(document).ready(function () {
                 if (addFilter(filterValue, currentFilterConfiguration.filterBy))
                 {
                     filterInput.val('');
+                    $("#searchTermError").addClass("hidden");
                 }
                 else
                 {
                     filterInput.addClass('alert alert-warning');
                     filterInput.attr('title', 'Invalid Input');
+                    $("#searchTermError").removeClass("hidden");
                 }
-
-
             });
 
             filterInput.on('input', function(e) {
