@@ -13,7 +13,7 @@
                                 <!-- Dynamically load content here -->
                             </ul>
                         </div><!-- /btn-group -->
-                        <input type="text" class="form-control" id="filter" placeholder="Filter By Name...">
+                        <input type="text" class="form-control" id="filter" placeholder="Filter By Name..." autocomplete="off" title="">
                         <div class="input-group-btn" id="filter-type">
                             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"
                                     aria-haspopup="true"
@@ -40,6 +40,12 @@
                     </button>
                 </div>
             </form>
+            <div class="row hidden" id="searchTermError">
+                <div class="col-sm-4 alert alert-warning alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    <strong>Warning!</strong> Invalid search regular expression!
+                </div>
+            </div>
             <div class="row toolbar-pf-results hidden">
                 <div class="col-sm-12">
                     <h5><span id="count-results"><!-- Dynamically load content here 40 Results --></span> Results</h5>
