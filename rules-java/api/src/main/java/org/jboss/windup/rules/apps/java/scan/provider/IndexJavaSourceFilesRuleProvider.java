@@ -233,7 +233,7 @@ public class IndexJavaSourceFilesRuleProvider extends AbstractRuleProvider
             {
                 Extendable<?> extendable = (Extendable<?>) javaSource;
                 String superclassName = extendable.getSuperType();
-                if (Strings.isNullOrEmpty(superclassName))
+                if (!Strings.isNullOrEmpty(superclassName))
                     javaClassModel.setExtends(javaClassService.getOrCreatePhantom(superclassName));
             }
 
