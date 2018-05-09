@@ -8,6 +8,7 @@ import org.jboss.windup.graph.model.ArchiveModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.reporting.freemarker.WindupFreeMarkerMethod;
 import org.jboss.windup.util.ExecutionStatistics;
+import org.jboss.windup.util.exception.WindupException;
 
 import java.util.List;
 import java.util.logging.Logger;
@@ -59,10 +60,15 @@ public class GetNumberOfLibrariesMethod implements WindupFreeMarkerMethod {
         // Function arguments
         ProjectModel projectModel = null;
 
-        // The project. May be null -> all input applications.
+        // The project. May *not* be null. All input applications should be passed into this method individually
         if (arguments.size() >= 1) {
             StringModel projectArg = (StringModel) arguments.get(0);
             projectModel = (ProjectModel) projectArg.getWrappedObject();
+        }
+
+        if (projectModel == null) {
+            String errorMessage = "GetNumberOfLibrariesMethod: No project present to count libraries";
+            throw new WindupException(errorMessage);
         }
 
         Integer result = countLibrariesInModel(this.graphContext, projectModel);
