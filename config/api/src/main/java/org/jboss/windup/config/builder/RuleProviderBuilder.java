@@ -5,6 +5,7 @@ import javax.enterprise.inject.Vetoed;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.MetadataBuilder;
+import org.jboss.windup.config.metadata.TechnologyReference;
 import org.jboss.windup.config.phase.RulePhase;
 import org.ocpsoft.rewrite.config.Configuration;
 import org.ocpsoft.rewrite.config.ConfigurationBuilder;
@@ -21,7 +22,9 @@ import org.ocpsoft.rewrite.config.Rule;
 public final class RuleProviderBuilder extends AbstractRuleProvider implements
             RuleProviderBuilderSetPhase,
             RuleProviderBuilderMetadataSetPhase,
-            RuleProviderBuilderAddDependencies
+            RuleProviderBuilderAddDependencies,
+            RuleProviderBuilderMetadataAddSourceTechnology,
+            RuleProviderBuilderMetadataAddTargetTechnology
 {
     private final ConfigurationBuilder configurationBuilder;
     private MetadataBuilder metadata;
@@ -56,6 +59,20 @@ public final class RuleProviderBuilder extends AbstractRuleProvider implements
     public RuleProviderBuilderAddDependencies setPhase(Class<? extends RulePhase> phase)
     {
         metadata.setPhase(phase);
+        return this;
+    }
+
+    @Override
+    public RuleProviderBuilderAddDependencies addSourceTechnology(TechnologyReference technologyReference)
+    {
+        metadata.addSourceTechnology(technologyReference);
+        return this;
+    }
+
+    @Override
+    public RuleProviderBuilderAddDependencies addTargetTechnology(TechnologyReference technologyReference)
+    {
+        metadata.addTargetTechnology(technologyReference);
         return this;
     }
 
