@@ -1,6 +1,8 @@
 package org.jboss.windup.rules.apps.java.model;
 
 import org.jboss.windup.graph.Indexed;
+import org.jboss.windup.graph.model.FileReferenceModel;
+import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.model.resource.SourceFileModel;
 
@@ -10,6 +12,7 @@ import org.jboss.windup.graph.Property;
 import org.jboss.windup.graph.model.TypeValue;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -72,4 +75,22 @@ public interface AbstractJavaSourceModel extends FileModel, SourceFileModel
     @Adjacency(label = JAVA_CLASS_MODEL, direction = Direction.OUT)
     void addJavaClass(JavaClassModel javaClassModel);
 
+    /**
+     * Gets all type references.
+     *
+     * This uses a default method as the edge label is overloaded. We have to filter it down to insure
+     * that only objects of the type that we want are actually returned.
+     */
+    default List<FileReferenceModel> getAllTypeReferences() {
+        return getAllTypeReferencesInternal().stream()
+                .filter(frame -> frame instanceof FileReferenceModel)
+                .map(frame -> (FileReferenceModel)frame)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * This method should not be called directly and should effectively be private.
+     */
+    @Adjacency(label = FileReferenceModel.FILE_MODEL, direction = Direction.IN)
+    List<WindupVertexFrame> getAllTypeReferencesInternal();
 }
