@@ -63,6 +63,21 @@ public class DiscoverPackagesCommand extends AbstractListCommand implements Comm
             return CommandResult.EXIT;
         }
 
+        Path inputPath = Paths.get(input);
+        if (!Files.isDirectory(inputPath) && !Files.isRegularFile(inputPath))
+        {
+            System.err.println();
+            System.err.println("ERROR: --input must exist");
+            return CommandResult.EXIT;
+        }
+
+        if (Files.isRegularFile(inputPath) && !Files.isReadable(inputPath))
+        {
+            System.err.println();
+            System.err.println("ERROR: --input must be readable");
+            return CommandResult.EXIT;
+        }
+
         final Map<String, Integer> classes = findClasses(Paths.get(input));
         PackageNameMappingRegistry packageNameMappingRegistry = getFurnace().getAddonRegistry().getServices(PackageNameMappingRegistry.class).get();
         packageNameMappingRegistry.loadPackageMappings();
