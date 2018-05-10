@@ -1,5 +1,8 @@
 package org.jboss.windup.rules.apps.javaee.rules;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -47,6 +50,7 @@ public class DiscoverJPAAnnotationsRuleProvider extends AbstractRuleProvider
     private static final String TABLE_ANNOTATIONS_LIST = "tableAnnotations";
     private static final String NAMED_QUERY_LIST = "namedQuery";
     private static final String NAMED_QUERIES_LIST = "namedQueries";
+    private static final String DISCRIMINATOR_VALUE_LIST = "discriminatorValueList";
 
     @Override
     public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
@@ -58,6 +62,7 @@ public class DiscoverJPAAnnotationsRuleProvider extends AbstractRuleProvider
                 .or(JavaClass.references("javax.persistence.Table").at(TypeReferenceLocation.ANNOTATION).as(TABLE_ANNOTATIONS_LIST))
                 .or(JavaClass.references("javax.persistence.NamedQuery").at(TypeReferenceLocation.ANNOTATION).as(NAMED_QUERY_LIST))
                 .or(JavaClass.references("javax.persistence.NamedQueries").at(TypeReferenceLocation.ANNOTATION).as(NAMED_QUERIES_LIST))
+                .or(JavaClass.references("javax.persistence.DiscriminatorValue").at(TypeReferenceLocation.ANNOTATION).as(DISCRIMINATOR_VALUE_LIST))
             )
             .perform(Iteration.over(ENTITY_ANNOTATIONS).perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
             {
@@ -85,17 +90,59 @@ public class DiscoverJPAAnnotationsRuleProvider extends AbstractRuleProvider
         }
     }
 
-    private void extractEntityBeanMetadata(GraphRewrite event, JavaTypeReferenceModel entityTypeReference)
+    private JavaAnnotationTypeReferenceModel findTableAnnotation(GraphRewrite event, List<AbstractJavaSourceModel> sourceModels)
     {
-        LOG.log(Level.INFO, () -> "extractEntityBeanMetadata() with " + entityTypeReference.getDescription());
-        entityTypeReference.getFile().setGenerateSourceReport(true);
-        JavaAnnotationTypeReferenceModel entityAnnotationTypeReference = (JavaAnnotationTypeReferenceModel) entityTypeReference;
+        for (AbstractJavaSourceModel sourceModel : sourceModels)
+        {
+            Optional<JavaAnnotationTypeReferenceModel> tableAnnotation = sourceModel.getAllTypeReferences().stream()
+                    .filter(reference -> reference instanceof JavaAnnotationTypeReferenceModel)
+                    .map(reference -> (JavaAnnotationTypeReferenceModel)reference)
+                    .filter(annotationReference -> annotationReference.getResolvedSourceSnippit() != null && annotationReference.getResolvedSourceSnippit().contains("javax.persistence.Table"))
+                    .findFirst();
+
+            if (tableAnnotation.isPresent())
+                return tableAnnotation.get();
+            else
+                return findTableAnnotation(event, getParentSourceFiles(event, sourceModel));
+        }
+        return null;
+    }
+
+    private List<AbstractJavaSourceModel> getParentSourceFiles(GraphRewrite event, AbstractJavaSourceModel sourceModel)
+    {
+        List<AbstractJavaSourceModel> result = new ArrayList<>();
+        if (sourceModel == null)
+            return result;
+
+        for (JavaClassModel javaClass : sourceModel.getJavaClasses())
+        {
+            JavaClassModel parentClass = javaClass.getExtends();
+            if (parentClass == null)
+                continue;
+
+            AbstractJavaSourceModel parentJavaSourceModel = parentClass.getDecompiledSource();
+            if (parentJavaSourceModel == null)
+                parentJavaSourceModel = parentClass.getOriginalSource();
+
+            if (parentJavaSourceModel == null)
+            {
+                LOG.warning("Could not find Java source for class: " + parentClass.getQualifiedName());
+                continue;
+            }
+
+            result.add(parentJavaSourceModel);
+        }
+        return result;
+    }
+
+    private JavaAnnotationTypeReferenceModel findTableAnnotation(GraphRewrite event, JavaTypeReferenceModel entityTypeReference)
+    {
         JavaAnnotationTypeReferenceModel tableAnnotationTypeReference = null;
 
-        final Iterable<? extends WindupVertexFrame> annotations_list = Variables.instance(event).findVariable(TABLE_ANNOTATIONS_LIST);
-        if (annotations_list != null)
+        final Iterable<? extends WindupVertexFrame> tableAnnotationList = Variables.instance(event).findVariable(TABLE_ANNOTATIONS_LIST);
+        if (tableAnnotationList != null)
         {
-            for (WindupVertexFrame annotationTypeReferenceBase : annotations_list)
+            for (WindupVertexFrame annotationTypeReferenceBase : tableAnnotationList)
             {
                 JavaAnnotationTypeReferenceModel annotationTypeReference = (JavaAnnotationTypeReferenceModel) annotationTypeReferenceBase;
                 if (annotationTypeReference.getFile().equals(entityTypeReference.getFile()))
@@ -105,6 +152,22 @@ public class DiscoverJPAAnnotationsRuleProvider extends AbstractRuleProvider
                 }
             }
         }
+
+        if (tableAnnotationTypeReference == null)
+        {
+            AbstractJavaSourceModel sourceModel = entityTypeReference.getFile();
+            tableAnnotationTypeReference = findTableAnnotation(event, getParentSourceFiles(event, sourceModel));
+        }
+
+        return tableAnnotationTypeReference;
+    }
+
+    private void extractEntityBeanMetadata(GraphRewrite event, JavaTypeReferenceModel entityTypeReference)
+    {
+        LOG.log(Level.INFO, () -> "extractEntityBeanMetadata() with " + entityTypeReference.getDescription());
+        entityTypeReference.getFile().setGenerateSourceReport(true);
+        JavaAnnotationTypeReferenceModel entityAnnotationTypeReference = (JavaAnnotationTypeReferenceModel) entityTypeReference;
+        JavaAnnotationTypeReferenceModel tableAnnotationTypeReference = findTableAnnotation(event, entityTypeReference);
 
         JavaClassModel ejbClass = getJavaClass(entityTypeReference);
 
