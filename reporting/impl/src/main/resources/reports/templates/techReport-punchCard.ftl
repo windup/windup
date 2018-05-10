@@ -129,6 +129,7 @@
                                         <#-- 2nd way - using the 4 layer map -->
                                         <#assign statsForThisBox = sortedStatsMatrix.get("", boxTag.name, appProject.getElement().id()?long)! />
                                         <#assign count = (statsForThisBox[""].occurrenceCount)!false />
+                                        <#assign countInteger = count?is_number?then(count, 0) />
                                         <#assign maxForThisBox   = (sortedStatsMatrix.getMaxForBox(boxTag.name))!false />
                                         <#assign isBooleanTech = maxForThisBox?is_number && maxForThisBox == 0 />
                                         <#if isBooleanTech>
@@ -143,23 +144,24 @@
                                             </#if>
                                         </#if>
                                         <#-- count: ${count?c}   max: ${maxForThisBox?c}   getLogaritmicDistribution(): ${ log?c } x 5 = ${ log * 5.0 } -->
-                                        <td class="circle size${ log?is_number?then((log * 5.0)?ceiling, "X")} sector sector${sectorTag.title}"><#-- The circle is put here by CSS :after --></td>
+                                        <td class="circle size${ log?is_number?then((log * 5.0)?ceiling, "X")} sector sector${sectorTag.title}" data-count="${countInteger}"><#-- The circle is put here by CSS :after --></td>
                                     </#if>
                                 <#else>
                                     <td>No technology sectors defined.</td>
                                 </#list>
                             </#list>
-                            <td class="sectorStats sector sizeMB">
+                            <td class="sectorStats sector sizeMB" data-count="${appProject.rootFileModel.retrieveSize()}">
                                 ${ ( (appProject.rootFileModel.retrieveSize() / 1024 / 1024)?string["0.##"] )! }
                             </td>
-                            <td class="sectorStats libsCount">
-                                <#assign noOfLibraries = getNumberOfLibraries(appProject) />
+                            <#assign noOfLibraries = getNumberOfLibraries(appProject) />
+                            <td class="sectorStats libsCount" data-count="${noOfLibraries}">
                                 ${ noOfLibraries! }
                             </td>
-                            <td class="sectorStats storyPoints">
-                                <#assign traversal = getProjectTraversal(appProject, 'all') />
-                                <#assign mandatoryCategory = ["mandatory"] />
-                                <#assign panelStoryPoints = getMigrationEffortPointsForProject(traversal, true, [], [], mandatoryCategory)! />
+
+                            <#assign traversal = getProjectTraversal(appProject, 'all') />
+                            <#assign mandatoryCategory = ["mandatory"] />
+                            <#assign panelStoryPoints = getMigrationEffortPointsForProject(traversal, true, [], [], mandatoryCategory)! />
+                            <td class="sectorStats storyPoints" data-count="${panelStoryPoints}">
                                 ${ panelStoryPoints! }
                             </td>
                             <#-- this td is needed for scrollbar positioning -->
