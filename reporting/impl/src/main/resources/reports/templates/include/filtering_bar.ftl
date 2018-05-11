@@ -40,9 +40,9 @@
                     </button>
                 </div>
             </form>
-            <div class="row hidden" id="searchTermError">
-                <div class="col-sm-4 alert alert-warning alert-dismissible" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <div class="row collapse" id="searchTermError">
+                <div class="col-sm-4 alert alert-warning" role="alert">
+                    <button type="button" class="close" data-toggle="collapse" data-target="#searchTermError" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                     <strong>Warning!</strong> Invalid search regular expression!
                 </div>
             </div>

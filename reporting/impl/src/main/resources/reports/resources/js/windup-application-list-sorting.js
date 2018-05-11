@@ -80,6 +80,9 @@ $(document).ready(function () {
 
             makeTagsClickable();
 
+            // initialise collapsable element, disabling toggle-on-init parameter
+            $("#searchTermError").collapse({toggle:false});
+
             /**
              * Event handler for <enter> on filter-by input
              */
@@ -89,13 +92,13 @@ $(document).ready(function () {
                 if (addFilter(filterValue, currentFilterConfiguration.filterBy))
                 {
                     filterInput.val('');
-                    $("#searchTermError").addClass("hidden");
+                    $("#searchTermError").collapse('hide');
                 }
                 else
                 {
                     filterInput.addClass('alert alert-warning');
                     filterInput.attr('title', 'Invalid Input');
-                    $("#searchTermError").removeClass("hidden");
+                    $("#searchTermError").collapse('show');
                 }
             });
 
@@ -122,11 +125,6 @@ $(document).ready(function () {
 
             /** Use first filter-type (AND) for filtering */
             filterTypeDiv.find('li a').first().click();
-        }
-
-        function setFailedInputHandler()
-        {
-
         }
 
         /**
@@ -203,21 +201,22 @@ $(document).ready(function () {
                     show = filterResults.reduce(reduceOptions.reducer, reduceOptions.default);
                 }
 
-                if (!show) {
-                    $(this).hide();
-                } else {
-                    $(this).show();
-                }
+                if(!filterFailed) {
 
+                    if (!show) {
+                        $(this).hide();
+                    } else {
+                        $(this).show();
+                    }
+                }
                 return show;
             }).toArray();
-
-            var countUnfiltered = filteredDivs.length;
-            var countFiltered = filteredDivs.filter(function(show) { return show; }).length;
-
-            countResults.text(countFiltered);
-
             if (!filterFailed) {
+                var countUnfiltered = filteredDivs.length;
+                var countFiltered = filteredDivs.filter(function(show) { return show; }).length;
+
+                countResults.text(countFiltered);
+
                 refreshFilterPanel();
                 return true;
             }
