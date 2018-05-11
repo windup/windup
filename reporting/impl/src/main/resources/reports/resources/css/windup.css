@@ -404,6 +404,9 @@ strong.wu-navbar-header {
 .migration-issues table thead tr:nth-child(1) td:nth-child(5),
 .migration-issues table thead tr:nth-child(1) th:nth-child(5) { width: 20%; }
 
+.migration-issues table thead tr th,
+.migration-issues table thead tr td {vertical-align: top; }
+
 /************************* Filtering and sorting toolbar ******************************/
 .toolbar-pf {
     background: #fff;
