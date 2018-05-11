@@ -75,6 +75,9 @@ $(document).ready(function () {
 
             makeTagsClickable();
 
+            // initialise collapsable element, disabling toggle-on-init parameter
+            $("#searchTermError").collapse({toggle:false});
+
             /**
              * Event handler for <enter> on filter-by input
              */
