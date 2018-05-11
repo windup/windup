@@ -196,21 +196,22 @@ $(document).ready(function () {
                     show = filterResults.reduce(reduceOptions.reducer, reduceOptions.default);
                 }
 
-                if (!show) {
-                    $(this).hide();
-                } else {
-                    $(this).show();
-                }
+                if(!filterFailed) {
 
+                    if (!show) {
+                        $(this).hide();
+                    } else {
+                        $(this).show();
+                    }
+                }
                 return show;
             }).toArray();
-
-            var countUnfiltered = filteredDivs.length;
-            var countFiltered = filteredDivs.filter(function(show) { return show; }).length;
-
-            countResults.text(countFiltered);
-
             if (!filterFailed) {
+                var countUnfiltered = filteredDivs.length;
+                var countFiltered = filteredDivs.filter(function(show) { return show; }).length;
+
+                countResults.text(countFiltered);
+
                 refreshFilterPanel();
                 return true;
             }
