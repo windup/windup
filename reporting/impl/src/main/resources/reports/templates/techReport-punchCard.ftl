@@ -188,5 +188,55 @@
     -->
     <script src="resources/js/bootstrap.min.js"></script>
     <script>$(document).ready(function(){$('[data-toggle="tooltip"]').tooltip();});</script>
+    <script>
+        var currentSortColumn = null;
+        var reverse = false;
+
+        function sortTable(column) {
+            if (column == currentSortColumn) {
+                reverse = !reverse;
+            } else {
+                reverse = false;
+                currentSortColumn = column;
+            }
+            var f = reverse ? 1 : -1;
+
+            var rows = $('.technologiesPunchCard tbody tr').get();
+
+            rows.sort(function(a, b) {
+
+                var A = getVal(a);
+                var B = getVal(b);
+
+                if(A < B) {
+                    return -1*f;
+                }
+                if(A > B) {
+                    return 1*f;
+                }
+                return 0;
+            });
+
+            function getVal(elm) {
+                var v = $(elm).children('td').eq(column).data("count");
+                if($.isNumeric(v)){
+                    v = parseInt(v,10);
+                }
+                return v;
+            }
+
+            $.each(rows, function(index, row) {
+                $('.technologiesPunchCard').children('tbody').append(row);
+            });
+        }
+
+        $().ready(function () {
+            $(".sector").click(function (event) {
+                var td = event.target.parentNode;
+                var index = $(td).index();
+                sortTable(index);
+            });
+        });
+    </script>
 </body>
 </html>

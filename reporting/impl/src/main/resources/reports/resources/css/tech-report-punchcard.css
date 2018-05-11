@@ -6,7 +6,10 @@
 .sectorStats   { color: black; }
 
 /* A subtle line and space between sectors. */
-.sector           {border-left: none;}
+.sector           {
+    border-left: none;
+    cursor: pointer;
+}
 .sector ~ .sector {border-left: 1px solid #E0E0E0;}
 /* (Only for the first columns of the sector.) */
 .sectorView     ~ .sectorView    { border-left: none; }
