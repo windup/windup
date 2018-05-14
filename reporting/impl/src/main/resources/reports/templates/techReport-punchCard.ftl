@@ -144,24 +144,24 @@
                                             </#if>
                                         </#if>
                                         <#-- count: ${count?c}   max: ${maxForThisBox?c}   getLogaritmicDistribution(): ${ log?c } x 5 = ${ log * 5.0 } -->
-                                        <td class="circle size${ log?is_number?then((log * 5.0)?ceiling, "X")} sector sector${sectorTag.title}" data-count="${countInteger}"><#-- The circle is put here by CSS :after --></td>
+                                        <td class="circle size${ log?is_number?then((log * 5.0)?ceiling, "X")} sector sector${sectorTag.title}" data-count="${countInteger?c}"><#-- The circle is put here by CSS :after --></td>
                                     </#if>
                                 <#else>
                                     <td>No technology sectors defined.</td>
                                 </#list>
                             </#list>
-                            <td class="sectorStats sector sizeMB" data-count="${appProject.rootFileModel.retrieveSize()}">
+                            <td class="sectorStats sector sizeMB" data-count="${appProject.rootFileModel.retrieveSize()?c}">
                                 ${ ( (appProject.rootFileModel.retrieveSize() / 1024 / 1024)?string["0.##"] )! }
                             </td>
                             <#assign noOfLibraries = getNumberOfLibraries(appProject) />
-                            <td class="sectorStats libsCount" data-count="${noOfLibraries}">
+                            <td class="sectorStats libsCount" data-count="${noOfLibraries?c}">
                                 ${ noOfLibraries! }
                             </td>
 
                             <#assign traversal = getProjectTraversal(appProject, 'all') />
                             <#assign mandatoryCategory = ["mandatory"] />
                             <#assign panelStoryPoints = getMigrationEffortPointsForProject(traversal, true, [], [], mandatoryCategory)! />
-                            <td class="sectorStats storyPoints" data-count="${panelStoryPoints}">
+                            <td class="sectorStats storyPoints" data-count="${panelStoryPoints?c}">
                                 ${ panelStoryPoints! }
                             </td>
                             <#-- this td is needed for scrollbar positioning -->
@@ -200,6 +200,11 @@
                 currentSortColumn = column;
             }
             var f = reverse ? 1 : -1;
+            var groupedHeaderColumns = $('.headersGroup td').get();
+            groupedHeaderColumns.forEach(function(tdElement) {
+                $(tdElement).removeClass("sectorSorted");
+            });
+            $(groupedHeaderColumns[column]).addClass("sectorSorted");
 
             var rows = $('.technologiesPunchCard tbody tr').get();
 

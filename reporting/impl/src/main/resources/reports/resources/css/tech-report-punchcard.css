@@ -23,6 +23,8 @@ table.technologiesPunchCard { border-collapse: collapse; }
 tr.headersSector { font-size: 20pt; font-weight: bold; }
 tr.headersSector td { text-align: center; }
 
+td.sectorSorted { font-weight: bold; }
+
 tr.headersGroup  { font-size: 16pt; margin: auto}
 tr.headersGroup td.first {}
 
