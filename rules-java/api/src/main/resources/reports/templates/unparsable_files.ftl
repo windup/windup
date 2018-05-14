@@ -12,9 +12,20 @@
         </div>
         <table class="table unparsableFiles">
             <#items as file>
+            <#assign sourceReportModel = fileModelToSourceReport(file)!>
             <tr>
                 <td>
-                    <div><strong>${file.fileName!}</strong> <span>${file.filePath!}</span></div>
+                    <div>
+                        <#if sourceReportModel.reportFilename?? >
+                            <a href="${sourceReportModel.reportFilename}?project=${reportModel.projectModel.getElement().id()?c}">
+                                <strong>${file.fileName!}</strong>
+                                <span>${file.filePath!}</span>
+                            </a>
+                        <#else>
+                            <strong>${file.fileName!}</strong>
+                            <span>${file.filePath!}</span>
+                        </#if>
+                    </div>
                     <#if file.expectedFormat?has_content>
                     <div><strong>Expected format:</strong> ${file.expectedFormat!}</div>
                     </#if>
