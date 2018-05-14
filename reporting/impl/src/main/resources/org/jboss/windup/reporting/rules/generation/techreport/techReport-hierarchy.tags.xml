@@ -121,7 +121,7 @@
             <tag name="techBox:database-driver" title="Database Driver" pseudo="true" parents="techRow:embedded" icon="Hardware_Storage-A-Stack"></tag>
         </tag>
         <tag name="techSector04:Sustain" title="Sustain" color="#DB4437" pseudo="true">
-            <tag name="techBox:transactions" title="Transactions" pseudo="true" parents="techRow:java-ee" icon="Object_CashRegister-POS"></tag>
+            <tag name="techBox:transactions" title="Transactions" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Object_CashRegister-POS"></tag>
             <tag name="techBox:clustering" title="Clustering" pseudo="true" parents="techRow:java-ee" icon="Hardware_Server-A-Stack"></tag>
             <tag name="techBox:security" title="Security" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Object_Shield-CoatOfArms"></tag>
             <tag name="techBox:logging" title="Logging" pseudo="true" parents="techRow:embedded" icon="Object_Book-Open"></tag>
