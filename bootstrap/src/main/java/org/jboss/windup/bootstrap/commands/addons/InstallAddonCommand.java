@@ -42,7 +42,7 @@ public class InstallAddonCommand extends AbstractAddonCommand implements Command
     public CommandResult execute()
     {
         install(addonId, batchMode.get());
-        return CommandResult.CONTINUE;
+        return CommandResult.EXIT;
     }
 
     void install(String coordinates, boolean batchMode)
