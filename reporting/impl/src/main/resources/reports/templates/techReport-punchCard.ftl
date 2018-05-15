@@ -25,7 +25,7 @@
     <link href="resources/css/tech-report-punchcard.css" rel="stylesheet">
 </head>
 <body role="document">
-    <!-- Navbar -->
+    <#-- Navbar -->
     <div id="main-navbar" class="navbar navbar-default navbar-fixed-top">
         <div class="wu-navbar-header navbar-header">
             <#include "include/navheader.ftl">
@@ -37,7 +37,7 @@
             </div><!-- /.nav-collapse -->
         </#if>
     </div>
-    <!-- / Navbar -->
+    <#-- / Navbar -->
 
     <div class="container-fluid" role="main">
         <div class="row">
@@ -82,7 +82,7 @@
                             <td>No technology sectors defined.</td>
                         </#list>
                             <td colspan="3" class="sectorStats">Stats</td>
-                            <!-- this td is needed for scrollbar positioning -->
+                            <#-- this td is needed for scrollbar positioning -->
                             <td class="scrollbar-padding"></td>
                         </tr>
                         <tr class="headersGroup">
@@ -97,9 +97,9 @@
                             </#list>
                         </#list>
                             <td class="sector sectorStats sizeMB"><div>Size (MB)</div></td>
-                            <!-- <td class="sector sectorStats libsCount"><div>Libraries</div></td> -->
+                            <#-- <td class="sector sectorStats libsCount"><div>Libraries</div></td> -->
                             <td class="sector sectorStats storyPoints"><div>Mandatory (SP)</div></td>
-                            <!-- this td is needed for scrollbar positioning -->
+                            <#-- this td is needed for scrollbar positioning -->
                             <td class="scrollbar-padding"></td>
                         </tr>
                     </thead>
@@ -125,14 +125,13 @@
                                         <#assign count = (stats.countsOfTagsInApps?api.get(appProject.getElement().id())[boxTag.name])!false />
                                         <#assign maxForThisBox = stats.maximumsPerTag[boxTag.name] />
                                         -->
-
                                         <#-- 2nd way - using the 4 layer map -->
                                         <#assign statsForThisBox = sortedStatsMatrix.get("", boxTag.name, appProject.getElement().id()?long)! />
                                         <#assign count = (statsForThisBox[""].occurrenceCount)!false />
                                         <#assign maxForThisBox   = (sortedStatsMatrix.getMaxForBox(boxTag.name))!false />
                                         <#assign isBooleanTech = maxForThisBox?is_number && maxForThisBox == 0 />
                                         <#if isBooleanTech>
-                                            <!-- The boolean technologies will either be missing or present. Presence is denoted by 0. Use some middle bubble size for present. -->
+                                            <#-- The boolean technologies will either be missing or present. Presence is denoted by 0. Use some middle bubble size for present. -->
                                             <#assign log = count?is_number?then(0.5, 0) />
                                         <#else>
                                             <#-- If the tech did not appear in any TechUsageStats, it is missing in the map. -->
@@ -142,8 +141,7 @@
                                                 <#assign log = 0 />
                                             </#if>
                                         </#if>
-                                        <!-- count: ${count?c}   max: ${maxForThisBox?c}   getLogaritmicDistribution(): ${ log?c } x 5 = ${ log * 5.0 } -->
-
+                                        <#-- count: ${count?c}   max: ${maxForThisBox?c}   getLogaritmicDistribution(): ${ log?c } x 5 = ${ log * 5.0 } -->
                                         <td class="circle size${ log?is_number?then((log * 5.0)?ceiling, "X")} sector sector${sectorTag.title}"><#-- The circle is put here by CSS :after --></td>
                                     </#if>
                                 <#else>
@@ -163,7 +161,7 @@
                                 <#assign panelStoryPoints = getMigrationEffortPointsForProject(traversal, true, [], [], mandatoryCategory)! />
                                 ${ panelStoryPoints! }
                             </td>
-                            <!-- this td is needed for scrollbar positioning -->
+                            <#-- this td is needed for scrollbar positioning -->
                             <td class="scrollbar-padding"></td>
                         </tr>
                         </#if>
@@ -174,7 +172,6 @@
             </div>
         </div>
     </div>
-
     <#-- Keep this here for debugging.
     <pre>
         <#list 0..7 as count>
@@ -186,7 +183,6 @@
         </#list>
     </pre>
     -->
-
     <script src="resources/js/bootstrap.min.js"></script>
     <script>$(document).ready(function(){$('[data-toggle="tooltip"]').tooltip();});</script>
 </body>
