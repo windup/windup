@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <title>Source Report for ${reportModel.reportName?html}</title>
     <link href="resources/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="resources/css/font-awesome.min.css" rel="stylesheet" />
     <link href="resources/css/windup.css" rel="stylesheet" media="screen"/>
     <link rel="stylesheet" type="text/css" href="resources/libraries/snippet/jquery.snippet.min.css" />
     <link rel="stylesheet" type="text/css" href="resources/css/windup-source.css" />

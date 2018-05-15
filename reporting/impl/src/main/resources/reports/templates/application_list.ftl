@@ -108,12 +108,10 @@
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <title>${reportModel.reportName}</title>
-
-    <!-- Bootstrap -->
     <link href="reports/resources/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="reports/resources/css/font-awesome.min.css" rel="stylesheet" />
     <link href="reports/resources/css/windup.css" rel="stylesheet" media="screen"/>
     <link href="reports/resources/img/rhamt-icon-128.png" rel="shortcut icon" type="image/x-icon"/>
-    <link href="reports/resources/css/font-awesome.min.css" rel="stylesheet" />
     <style>
         body.viewAppList .apps  { margin: 0 2ex; }
 
