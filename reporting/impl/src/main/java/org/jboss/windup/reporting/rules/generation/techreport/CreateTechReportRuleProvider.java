@@ -116,7 +116,7 @@ public class CreateTechReportRuleProvider extends AbstractRuleProvider
             report.setReportName(REPORT_NAME_PUNCH);
             report.setTemplatePath(TEMPLATE_PATH_PUNCH);
             report.setDescription(REPORT_DESCRIPTION_PUNCH);
-            report.setReportIconClass("glyphicon glyphicon-tags");
+            report.setReportIconClass("fa fa-rocket");
             report.setDisplayInGlobalApplicationIndex(true);
             report.setDisplayInApplicationReportIndex(true);
 
@@ -133,7 +133,7 @@ public class CreateTechReportRuleProvider extends AbstractRuleProvider
             report.setReportName(REPORT_NAME_BOXES);
             report.setTemplatePath(TEMPLATE_PATH_BOXES);
             report.setDescription(REPORT_DESCRIPTION_BOXES);
-            report.setReportIconClass("glyphicon glyphicon-tags");
+            report.setReportIconClass("fa fa-rocket");
 
             // Set the filename for the report
             new ReportService(graphContext).setUniqueFilename(report, "techReport-" + appModel.getName(), "html");
