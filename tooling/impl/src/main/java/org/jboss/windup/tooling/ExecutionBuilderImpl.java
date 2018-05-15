@@ -64,13 +64,13 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
 
     private String windupHome;
     private WindupToolingProgressMonitor progressMonitor;
-    private String input;
     private String output;
     private Set<String> ignorePathPatterns = new HashSet<>();
     private Set<String> includePackagePrefixSet = new HashSet<>();
     private Set<String> excludePackagePrefixSet = new HashSet<>();
     private Set<String> userRulesPathSet = new HashSet<>();
     private Map<String, Object> options = new HashMap<>();
+    private Set<String> input = new HashSet<>();
 
     private String version;
 
@@ -85,8 +85,8 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
     {
         this.windupHome = null;
         this.progressMonitor = null;
-        this.input = null;
         this.output = null;
+        this.input.clear();
         this.ignorePathPatterns.clear();
         this.includePackagePrefixSet.clear();
         this.excludePackagePrefixSet.clear();
@@ -116,8 +116,7 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
     }
 
     @Override
-    public void setInput(String input) throws RemoteException
-    {
+    public void setInput(Set<String> input) throws RemoteException {
         this.input = input;
     }
 
@@ -237,7 +236,7 @@ public class ExecutionBuilderImpl implements ExecutionBuilder
         }
         ToolingProgressMonitorAdapter progressMonitorAdapter = new ToolingProgressMonitorAdapter(this.progressMonitor);
 
-        windupConfiguration.addInputPath(Paths.get(this.input));
+        input.forEach(i -> windupConfiguration.addInputPath(Paths.get(i)));
         windupConfiguration.setOutputDirectory(Paths.get(this.output));
         windupConfiguration.setProgressMonitor(progressMonitorAdapter);
 
