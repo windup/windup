@@ -17,10 +17,6 @@
 .sectorStats    ~ .sectorStats   { border-left: none; }
 
 table.technologiesPunchCard { border-collapse: collapse; }
-table.technologiesPunchCard td,
-table.technologiesPunchCard th {
-    /*border: 1px solid silver;  /* debug */
-}
 tr.headersSector { font-size: 20pt; font-weight: bold; }
 tr.headersSector td { text-align: center; }
 
@@ -67,24 +63,15 @@ table.technologiesPunchCard tbody tr td, table.technologiesPunchCard thead tr td
 }
 
 table.technologiesPunchCard tbody tr td:nth-last-child(2),
-table.technologiesPunchCard tbody tr td:nth-last-child(3),
-table.technologiesPunchCard tbody tr td:nth-last-child(4),
-table.technologiesPunchCard thead tr td:nth-last-child(2),
-table.technologiesPunchCard thead tr td:nth-last-child(3),
-table.technologiesPunchCard thead tr td:nth-last-child(4) {
-    width: 57px;
-    min-width: 57px;
-    max-width: 57px;
-}
+table.technologiesPunchCard thead tr td:nth-last-child(2) { width: 70px; min-width: 70px; max-width: 70px; }
+
+table.technologiesPunchCard tbody tr td:nth-last-child(2),
+table.technologiesPunchCard thead tr td:nth-last-child(2) { width: 57px; min-width: 57px; max-width: 57px; }
 
 table.technologiesPunchCard thead tr td:nth-last-child(1),
-table.technologiesPunchCard tbody tr td:nth-last-child(1) {
-    width: auto;
-}
+table.technologiesPunchCard tbody tr td:nth-last-child(1) { width: auto; }
 
-table.technologiesPunchCard tr td:nth-child(1) {
-    min-width: 350px;
-}
+table.technologiesPunchCard tr td:nth-child(1) { min-width: 350px; }
 
 table.technologiesPunchCard tbody {
     display: block;
