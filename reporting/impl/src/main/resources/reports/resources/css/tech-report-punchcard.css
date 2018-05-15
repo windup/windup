@@ -62,8 +62,8 @@ table.technologiesPunchCard tbody tr td, table.technologiesPunchCard thead tr td
     max-width: 47px;
 }
 
-table.technologiesPunchCard tbody tr td:nth-last-child(2),
-table.technologiesPunchCard thead tr td:nth-last-child(2) { width: 70px; min-width: 70px; max-width: 70px; }
+table.technologiesPunchCard tbody tr td:nth-last-child(3),
+table.technologiesPunchCard thead tr td:nth-last-child(3) { width: 70px; min-width: 70px; max-width: 70px; }
 
 table.technologiesPunchCard tbody tr td:nth-last-child(2),
 table.technologiesPunchCard thead tr td:nth-last-child(2) { width: 57px; min-width: 57px; max-width: 57px; }
