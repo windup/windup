@@ -90,13 +90,13 @@
                 <tag ref="jax-ws"/>
                 <tag ref="jax-rs"/>
             </tag>
-            <tag name="techBox:other" title="Other" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Office_SnackBasket">
+            <tag name="techBox:other" title="Other" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Phone_Land">
                 <tag ref="jca"/>
                 <tag ref="jni"/>
                 <tag ref="mail"/>
                 <tag ref="rmi"/>
             </tag>
-            <tag name="techBox:webservice" title="WebService" pseudo="true" parents="techRow:embedded" icon="Office_Enclave">
+            <tag name="techBox:webservice" title="WebService" pseudo="true" parents="techRow:embedded" icon="Global_Ecosystem">
                 <tag ref="webservices"/>
             </tag>
             <tag name="techBox:rest" title="REST" pseudo="true" parents="techRow:embedded" icon="Science_Circuit">
@@ -117,8 +117,8 @@
                 <tag ref="cache"/>
             </tag>
             <tag name="techBox:object-mapping" title="Object Mapping" pseudo="true" parents="techRow:embedded" icon="Diagram_DevelopmentModel"></tag>
-            <tag name="techBox:persistence" title="Persistence" pseudo="true" parents="techRow:java-ee" icon="Hardware_Storage-A-Stack"></tag>
-            <tag name="techBox:database-driver" title="Database Driver" pseudo="true" parents="techRow:embedded" icon="Hardware_Storage-A-Stack"></tag>
+            <tag name="techBox:persistence" title="Persistence" pseudo="true" parents="techRow:java-ee" icon="Notepad"></tag>
+            <tag name="techBox:database-driver" title="Database Driver" pseudo="true" parents="techRow:embedded" icon="Car_Front"></tag>
         </tag>
         <tag name="techSector04:Sustain" title="Sustain" color="#DB4437" pseudo="true">
             <tag name="techBox:transactions" title="Transactions" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Object_CashRegister-POS"></tag>
@@ -132,7 +132,7 @@
             <tag name="techBox:ioc" title="Inversion of Control" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Arrows_Interoperable-CrossPlatform"/>
             <tag name="techBox:rules" title="Rules &amp; Processes" pseudo="true" parents="techRow:embedded" icon="Object_Gear-Group"/>
             <tag name="techBox:integration" title="Integration" pseudo="true" parents="techRow:embedded" icon="Software_API"/>
-            <tag name="techBox:3rd-party" title="3rd party" pseudo="true" parents="techRow:embedded" icon="Office_SnackBasket"/>
+            <tag name="techBox:3rd-party" title="3rd party" pseudo="true" parents="techRow:embedded" icon="Shopping_Cart"/>
         </tag>
     </tag>
 
