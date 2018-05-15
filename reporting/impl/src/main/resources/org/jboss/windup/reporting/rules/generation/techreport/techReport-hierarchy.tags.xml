@@ -90,7 +90,7 @@
                 <tag ref="jax-ws"/>
                 <tag ref="jax-rs"/>
             </tag>
-            <tag name="techBox:other" title="Other" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Phone_Land">
+            <tag name="techBox:other" title="Other" pseudo="true" parents="techRow:java-ee, techRow:embedded" icon="Podcast">
                 <tag ref="jca"/>
                 <tag ref="jni"/>
                 <tag ref="mail"/>
