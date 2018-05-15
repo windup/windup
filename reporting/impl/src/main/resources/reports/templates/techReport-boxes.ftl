@@ -131,7 +131,9 @@
                         <tr class="rowSectors">
                             <#list sectorTags as sectorTag>
                                 <td class="sector${sectorTag.title}">
-                                    <#list sectorTag.designatedTags as boxTag>
+                                    <#assign boxTags = iterableToList(sectorTag.designatedTags) >
+                                    <#assign boxTags = boxTags?sort_by("name") >
+                                    <#list boxTags as boxTag>
                                         <#if isTagUnderTag(boxTag, rowTag)>
                                             <#-- Get a map of box buckets with TechUsageStats and take data from there, rather than pulling through a function. -->
                                             <#assign statsForThisBox = (sortedStatsMatrix.get(rowTag.name, boxTag.name, 0))! />
