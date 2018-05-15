@@ -63,7 +63,7 @@
             <tag name="techBox:web" title="Web" pseudo="true" parents="techRow:java-ee" icon="Misc_Network-Technical">
                 <tag ref="web"/>
             </tag>
-            <tag name="techBox:rich" title="Rich" pseudo="true" parents="techRow:java-ee"  icon="Hardware_Monitor-Webinar">
+            <tag name="techBox:rich" title="Rich" pseudo="true" parents="techRow:java-ee, techRow:embedded"  icon="Hardware_Monitor-Webinar">
                 <tag ref="applet"/>
                 <tag ref="jnlp"/>
             </tag>
