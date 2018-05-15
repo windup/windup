@@ -267,6 +267,10 @@ p.windup-contributors  {
 	width: 13px;
 }
 
+.nav .glyphicon, .nav .fa {
+	margin-right: 5px;
+}
+
 .navbar-nav .active a {
     background-color: rgb(137, 137, 137) !important;
 }
