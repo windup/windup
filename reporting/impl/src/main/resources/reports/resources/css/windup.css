@@ -431,10 +431,10 @@ strong.wu-navbar-header {
         padding-right: 20px;
     }
     div#filter-div.form-group { border-right: 1px solid #d1d1d1; }
+    .toolbar-pf-results h5, .toolbar-pf-results p, .toolbar-pf-results ul { line-height: 40px; }
 
-    .toolbar-pf-results h5, .toolbar-pf-results p, .toolbar-pf-results ul {
-        line-height: 40px;
-    }
+    .row .toolbar-pf-results { height: 45px }
+    .list-inline { vertical-align: middle; }
 }
 
 .toolbar-pf .form-group .btn+.btn-link, .toolbar-pf .form-group .btn+.dropdown, .toolbar-pf .form-group .btn-group+.btn-link, .toolbar-pf .form-group .btn-group+.dropdown {
