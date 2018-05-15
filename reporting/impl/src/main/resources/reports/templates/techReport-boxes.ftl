@@ -63,7 +63,7 @@
             background-position: center;
         }
         tr.rowSectors .box .content { margin-left: 62px; }
-        tr.rowSectors .box .content ul { list-style: none; margin: 0; }
+        tr.rowSectors .box .content ul { list-style: none; margin: 0; -webkit-padding-start: 10px; }
         tr.rowSectors .box .content ul li { margin: 0; text-align: right; }
         tr.rowSectors .box .content ul li b { width: 3ex; display: inline-block; }
         tr.headersGroup { height: 215px; }
