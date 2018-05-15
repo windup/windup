@@ -418,7 +418,7 @@ strong.wu-navbar-header {
 @media (min-width: 768px) {
     .toolbar-pf-actions .toolbar-pf-filter {
         padding-left: 0;
-        width: 25%;
+        width: 50%;
     }
 
     .toolbar-pf .form-group {
