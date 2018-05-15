@@ -34,9 +34,8 @@
 
         table.technologiesBoxCard { border-collapse: collapse; width: 90%; margin: 10pt auto; }
         table.technologiesBoxCard td,
-        table.technologiesBoxCard th {
-            border: 0px solid silver; /* Debug */
-        }
+        table.technologiesBoxCard th { border: 0px solid silver; }
+        table.technologiesBoxCard td.heading { border-bottom-width: 1px; border-bottom-color:  #d9d9d9; }
 
         /* Sector headers */
         tr.sectorsHeaders { font-size: 22pt; font-weight: bold; }
