@@ -71,7 +71,8 @@ public class InstallRemoveAddonCommandsTest extends AbstractBootstrapTest {
 
     @Test
     public void commaSeparatedVersion() throws IOException {
-        bootstrap("--addonDir", tmp.getRoot().getAbsolutePath(), installOption, installAddonId, removeOption, removeAddonId);
+        bootstrap("--addonDir", tmp.getRoot().getAbsolutePath(), installOption, installAddonId);
+        bootstrap("--addonDir", tmp.getRoot().getAbsolutePath(), removeOption, removeAddonId);
         checkExpectations();
     }
 
@@ -80,7 +81,8 @@ public class InstallRemoveAddonCommandsTest extends AbstractBootstrapTest {
         String installAddonId = this.installAddonId.replace(',', ':');
         String removeAddonId = this.removeAddonId.replace(',', ':');
 
-        bootstrap("--addonDir", tmp.getRoot().getAbsolutePath(), installOption, installAddonId, removeOption, removeAddonId);
+        bootstrap("--addonDir", tmp.getRoot().getAbsolutePath(), installOption, installAddonId);
+        bootstrap("--addonDir", tmp.getRoot().getAbsolutePath(), removeOption, removeAddonId);
         checkExpectations();
     }
 
