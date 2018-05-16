@@ -1,9 +1,11 @@
 package org.jboss.windup.tests.application;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Properties;
 
+import org.apache.commons.io.FileUtils;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.forge.arquillian.AddonDependencies;
@@ -11,8 +13,13 @@ import org.jboss.forge.arquillian.AddonDependency;
 import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.resource.FileModel;
+import org.jboss.windup.graph.model.resource.SourceFileModel;
+import org.jboss.windup.graph.service.FileService;
 import org.jboss.windup.reporting.model.ReportModel;
+import org.jboss.windup.reporting.model.source.SourceReportModel;
 import org.jboss.windup.reporting.service.ReportService;
+import org.jboss.windup.reporting.service.SourceReportService;
 import org.jboss.windup.rules.apps.java.ip.CreateHardcodedIPAddressReportRuleProvider;
 import org.jboss.windup.rules.apps.java.model.JarManifestModel;
 import org.jboss.windup.rules.apps.java.reporting.rules.CreateCompatibleFileReportRuleProvider;
@@ -25,6 +32,8 @@ import org.jboss.windup.testutil.html.TestHardcodedPReportUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import javax.xml.transform.Source;
 
 @RunWith(Arquillian.class)
 public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTest
@@ -182,14 +191,38 @@ public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTe
         Assert.assertTrue(util.checkIncidentByCategoryRow("cloud-mandatory", 3, 3));
     }
 
+    private void validateTagsInSourceReport(GraphContext context) throws IOException
+    {
+        FileService fileService = new FileService(context);
+        boolean reportFound = false;
+        for (FileModel fileModel : fileService.findByFilenameRegex("AbstractClassResolver.java"))
+        {
+            if (fileModel.getPrettyPath().contains("wicket-core-1.5.10.jar/org/apache/wicket/application/AbstractClassResolver.java"))
+            {
+                Assert.assertTrue(fileModel instanceof SourceFileModel);
+                ReportService reportService = new ReportService(context);
+                SourceReportService sourceReportService = new SourceReportService(context);
+                SourceReportModel sourceReportModel = sourceReportService.getSourceReportForFileModel(fileModel);
+                Path sourceReportPath = reportService.getReportDirectory().resolve(sourceReportModel.getReportFilename());
+
+                String sourceReportContents = FileUtils.readFileToString(sourceReportPath.toFile());
+                Assert.assertTrue(sourceReportContents.contains("<span class=\"label label-info\" title=\"GroovyTestHintTag\">GroovyTestHintTag</span>"));
+                reportFound = true;
+            }
+        }
+
+        Assert.assertTrue(reportFound);
+    }
+
     /**
      * Validate that the report pages were generated correctly
      */
-    private void validateReports(GraphContext context)
+    private void validateReports(GraphContext context) throws IOException
     {
         validateOverviewReport(context);
         validateStaticIPReport(context);
         validateCompatibleReport(context);
         validateReportIndex(context);
+        validateTagsInSourceReport(context);
     }
 }

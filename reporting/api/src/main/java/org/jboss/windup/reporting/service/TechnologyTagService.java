@@ -79,7 +79,7 @@ public class TechnologyTagService extends GraphService<TechnologyTagModel>
     public Iterable<TechnologyTagModel> findTechnologyTagsForFile(FileModel fileModel)
     {
         GraphTraversal<Vertex, Vertex> pipeline = new GraphTraversalSource(getGraphContext().getGraph()).V(fileModel.getElement());
-        pipeline.in(TechnologyTagModel.TECH_TAG_TO_FILE_MODEL).has(WindupVertexFrame.TYPE_PROP, Text.textContains(TechnologyTagModel.TYPE));
+        pipeline.in(TechnologyTagModel.TECH_TAG_TO_FILE_MODEL).has(WindupVertexFrame.TYPE_PROP, TechnologyTagModel.TYPE);
 
         Comparator<TechnologyTagModel> comparator = new DefaultTechnologyTagComparator();
         pipeline.order().by((a, b) -> {
@@ -87,7 +87,7 @@ public class TechnologyTagService extends GraphService<TechnologyTagModel>
             TechnologyTagModel bModel = getGraphContext().getFramed().frameElement(b, TechnologyTagModel.class);
 
             return comparator.compare(aModel, bModel);
-        });;
+        });
 
         return new FramedVertexIterable<>(getGraphContext().getFramed(), pipeline.toList(), TechnologyTagModel.class);
     }

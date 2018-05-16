@@ -2,6 +2,7 @@ package org.jboss.windup.reporting.freemarker;
 
 import java.util.List;
 
+import com.google.common.collect.Iterables;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.resource.FileModel;

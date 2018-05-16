@@ -22,7 +22,7 @@ ruleSet("Example Servlet Rule")
 
     .addRule()
     .when(JavaClass.references("java.net.URL"))
-    .perform(Hint.withText("This is using java.net.URL").withEffort(8))
+    .perform(Hint.withText("This is using java.net.URL").withEffort(8).withTags(["GroovyTestHintTag"].toSet()))
 
     .addRule()
     .when(JavaClass.references("URL"))

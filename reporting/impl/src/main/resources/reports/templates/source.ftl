@@ -70,14 +70,20 @@
 
                         <div class="info" style="margin-left: 95pt;">
 
-                            <#list getTechnologyTagsForFile(reportModel.sourceFileModel)>
-                            <h4>Technologies</h4>
-                            <div class="technologies" style="overflow: auto"><!-- "auto" to contain all the tags. -->
-                                <#items as techTag>
-                                    <span class="label label-info" title="${techTag.level}">${techTag.name}</span>
-                                </#items>
-                            </div>
-                            </#list>
+                            <#assign techTagsForFile = iterableToList(getTechnologyTagsForFile(reportModel.sourceFileModel))>
+                            <#assign tagsForClassificationsAndHints = getTagsFromFileClassificationsAndHints(reportModel.sourceFileModel)>
+
+                            <#if (techTagsForFile?size + tagsForClassificationsAndHints?size) &gt; 0>
+                                <h4>Technologies</h4>
+                                <div class="technologies" style="overflow: auto"><!-- "auto" to contain all the tags. -->
+                                    <#list techTagsForFile as techTag>
+                                        <span class="label label-${(techTag.level! == 'IMPORTANT')?then('danger','info')}" title="${techTag.level}">${techTag.name}</span>
+                                    </#list>
+                                    <#list tagsForClassificationsAndHints as techTag>
+                                        <span class="label label-info" title="${techTag}">${techTag}</span>
+                                    </#list>
+                                </div>
+                            </#if>
 
                             <#list reportModel.sourceFileModel.classificationModels>
                                 <ul class="classifications">
