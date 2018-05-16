@@ -58,6 +58,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 
 /**
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
@@ -236,7 +237,7 @@ public class ExecutionBuilderTest
     private ExecutionResults executeWindup(Path input, Path output, WindupToolingProgressMonitor progressMonitor) throws RemoteException
     {
         builder.setWindupHome(Paths.get(".").toString());
-        builder.setInput(input.toString());
+        builder.setInput(Sets.newHashSet(input.toString()));
         builder.setOutput(output.toString());
         builder.setProgressMonitor(progressMonitor);
         builder.includePackage("org.windup.examples.ejb.messagedriven");
@@ -258,7 +259,7 @@ public class ExecutionBuilderTest
         Assert.assertNotNull(builder);
 
         builder.setWindupHome(Paths.get(".").toString());
-        builder.setInput(input.toString());
+        builder.setInput(Sets.newHashSet(input.toString()));
         builder.setOutput(output.toString());
         builder.setProgressMonitor(new TestProgressMonitor());
         builder.setOption(SourceModeOption.NAME, true);

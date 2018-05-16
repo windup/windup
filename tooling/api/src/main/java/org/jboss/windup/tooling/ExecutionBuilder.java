@@ -4,6 +4,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import org.jboss.windup.tooling.quickfix.QuickfixLocationDTO;
 import org.jboss.windup.tooling.rules.RuleProviderRegistry;
@@ -28,9 +29,9 @@ public interface ExecutionBuilder extends Remote
     void setProgressMonitor(WindupToolingProgressMonitor monitor) throws RemoteException;
 
     /**
-     * Sets the input path (application source directory, or application binary file).
+     * Sets the input path(s) (list of application source directories, or application binary files).
      */
-    void setInput(String input) throws RemoteException;
+    void setInput(Set<String> input) throws RemoteException;
 
     /**
      * Sets a pattern of file paths to ignore during processing.
