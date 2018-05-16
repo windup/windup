@@ -42,7 +42,7 @@ public class RemoveAddonCommand extends AbstractAddonCommand implements Command,
     public CommandResult execute()
     {
         remove(addonId, batchMode.get());
-        return CommandResult.CONTINUE;
+        return CommandResult.EXIT;
     }
 
     /**
