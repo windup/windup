@@ -33,8 +33,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import javax.xml.transform.Source;
-
 @RunWith(Arquillian.class)
 public class WindupArchitectureMediumBinaryModeTest extends WindupArchitectureTest
 {

@@ -1,6 +1,7 @@
 package org.jboss.windup.tests.application;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,8 +13,13 @@ import org.jboss.forge.arquillian.archive.AddonArchive;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.service.GraphService;
+import org.jboss.windup.graph.service.Service;
+import org.jboss.windup.reporting.model.ReportModel;
+import org.jboss.windup.reporting.rules.CreateApplicationListReportRuleProvider;
+import org.jboss.windup.reporting.service.ReportService;
 import org.jboss.windup.rules.apps.javaee.model.EjbDeploymentDescriptorModel;
 import org.jboss.windup.rules.apps.javaee.model.WebXmlModel;
+import org.jboss.windup.testutil.html.TestApplicationListUtil;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -60,8 +66,45 @@ public class WindupMultiAppBasicTest extends WindupArchitectureTest
             super.runTest(context, paths, false);
             checkEJBDescriptors(context);
             checkWebXmls(context);
+            validateApplicationList(context);
         }
 
+    }
+
+    private void validateApplicationList(GraphContext context)
+    {
+        Service<ReportModel> service = context.service(ReportModel.class);
+        ReportModel report = service.getUniqueByProperty(ReportModel.TEMPLATE_PATH, CreateApplicationListReportRuleProvider.TEMPLATE_PATH);
+        Assert.assertNotNull(report);
+
+        Path reportPath = new ReportService(context).getReportDirectory().resolve(report.getReportFilename());
+        Assert.assertNotNull(reportPath);
+
+        TestApplicationListUtil util = new TestApplicationListUtil();
+        util.loadPage(reportPath);
+
+        List<String> presortedList = util.getApplicationNames();
+
+        // Check that they are sorted by name
+        Assert.assertEquals("badly_named_app", presortedList.get(0));
+        Assert.assertEquals("maven-info-missing.war", presortedList.get(1));
+        Assert.assertEquals("Windup1x-javaee-example.war", presortedList.get(2));
+
+        util.sortApplicationListByEffortPoints();
+
+        presortedList = util.getApplicationNames();
+        // Check that they are sorted by points (same order)
+        Assert.assertEquals("badly_named_app", presortedList.get(0));
+        Assert.assertEquals("maven-info-missing.war", presortedList.get(1));
+        Assert.assertEquals("Windup1x-javaee-example.war", presortedList.get(2));
+
+        util.reverseSortOrder();
+
+        presortedList = util.getApplicationNames();
+        // Check that the order reversed
+        Assert.assertEquals("Windup1x-javaee-example.war", presortedList.get(0));
+        Assert.assertEquals("maven-info-missing.war", presortedList.get(1));
+        Assert.assertEquals("badly_named_app", presortedList.get(2));
     }
 
     private void checkEJBDescriptors(GraphContext context)
