@@ -343,9 +343,15 @@ $(document).ready(function () {
             return a.localeCompare(b);
         };
 
+        var storyPointComparator = function(a, b) {
+            a = parseInt(a.replace(/[^0-9]/g, ''));
+            b = parseInt(b.replace(/[^0-9]/g, ''));
+            return parseInt(a) - parseInt(b);
+        };
+
         var sortOptions = [
             { name: 'Name', value: 'name', comparator:  lowerCaseStringComparator },
-            { name: 'Story Points', value: 'storypoints' }
+            { name: 'Story Points', value: 'storypoints', comparator: storyPointComparator }
         ];
 
         var currentSortConfiguration = {
@@ -361,7 +367,7 @@ $(document).ready(function () {
         function initialize() {
             $('div.real div.appInfo').each(function (idx, el) {
                 $(this).data('name', $(this).find('.fileName').text().trim());
-                $(this).data('storypoints', parseInt($(this).find('.effortPoints.total').text().trim()));
+                $(this).data('storypoints', $(this).find('.effortPoints.total .points').text().trim());
             });
 
             sortOptions.forEach(function(option) {

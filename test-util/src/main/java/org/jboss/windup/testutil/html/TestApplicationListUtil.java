@@ -1,9 +1,17 @@
 package org.jboss.windup.testutil.html;
 
+import net.bytebuddy.implementation.bytecode.Throw;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.logging.LogEntries;
+import org.openqa.selenium.logging.LogEntry;
+import org.openqa.selenium.logging.LogType;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -38,6 +46,40 @@ public class TestApplicationListUtil extends TestReportUtil
     public int getUniqueStoryPoints(String applicationName)
     {
         return getEffortPoints(applicationName, "unique");
+    }
+
+    public void sortApplicationListByEffortPoints()
+    {
+        String xpathSortDiv = "//div[@id = 'sort']";
+        WebElement sortDiv = getDriver().findElement(By.xpath(xpathSortDiv));
+        sortDiv.findElement(By.xpath("./div/button")).click();
+
+        WebElement storyPointsSort = sortDiv.findElement(By.xpath("./div/ul/li/a[contains(text(), 'Story Points')]"));
+        storyPointsSort.click();
+    }
+
+    public void reverseSortOrder()
+    {
+        String xpathSortDiv = "//button[@id = 'sort-order']";
+        getDriver().findElement(By.xpath(xpathSortDiv)).click();
+    }
+
+    /**
+     * Returns the list of application names on the application list.
+     */
+    public List<String> getApplicationNames()
+    {
+        List<String> result = new ArrayList<>();
+
+        List<WebElement> appInfoElements = getDriver().findElements(By.cssSelector(".appInfo"));
+        for (WebElement appInfoRow : appInfoElements)
+        {
+            WebElement filename = appInfoRow.findElement(By.cssSelector(".fileName"));
+            if (filename != null && filename.getText() != null)
+                result.add(filename.getText().trim());
+        }
+
+        return Collections.unmodifiableList(result);
     }
 
     /**
