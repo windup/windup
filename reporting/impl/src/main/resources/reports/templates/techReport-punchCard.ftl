@@ -144,7 +144,12 @@
                                             </#if>
                                         </#if>
                                         <#-- count: ${count?c}   max: ${maxForThisBox?c}   getLogaritmicDistribution(): ${ log?c } x 5 = ${ log * 5.0 } -->
-                                        <td class="circle size${ log?is_number?then((log * 5.0)?ceiling, "X")} sector sector${sectorTag.title}" data-count="${countInteger?c}"><#-- The circle is put here by CSS :after --></td>
+                                        <td class="circle size${ log?is_number?then((log * 5.0)?ceiling, "X")} sector sector${sectorTag.title} table-tooltip" data-count="${countInteger?c}">
+                                            <#-- The circle is put here by CSS :after -->
+                                            <#if countInteger gt 0>
+                                            <span class="table-tooltiptext">${countInteger?c}</span>
+                                            </#if>
+                                        </td>
                                     </#if>
                                 <#else>
                                     <td>No technology sectors defined.</td>

@@ -111,3 +111,81 @@ table.technologiesPunchCard thead,
 table.technologiesPunchCard tbody tr {
     display: table;
 }
+
+/* Tooltip container */
+.table-tooltip {
+    position: relative;
+}
+
+/* Tooltip text */
+.table-tooltip .table-tooltiptext {
+    visibility: hidden;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+
+    position: absolute;
+    z-index: 1;
+
+    font-size: 14pt;
+    padding: 5px;
+
+    /*left tooltip*/
+    top: 10px;
+    right: 85%;
+
+    opacity: 0;
+    transition: opacity 1s;
+}
+
+.table-tooltip:hover .table-tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}
+
+.table-tooltip .table-tooltiptext::after {
+    position: absolute;
+    border-width: 5px;
+    border-style: solid;
+
+    /* To the right of the tooltip */
+    content: "";
+    top: 50%;
+    left: 100%;
+    margin-top: -5px;
+}
+
+.sectorView.table-tooltip .table-tooltiptext {
+    background-color: #1155CC;
+}
+.sectorView.table-tooltip .table-tooltiptext::after {
+    border-color: transparent transparent transparent #1155CC;
+}
+
+.sectorConnect.table-tooltip .table-tooltiptext {
+    background-color: #38761D;
+}
+.sectorConnect.table-tooltip .table-tooltiptext::after {
+    border-color: transparent transparent transparent #38761D;
+}
+
+.sectorStore.table-tooltip .table-tooltiptext {
+    background-color: #F4B400;
+}
+.sectorStore.table-tooltip .table-tooltiptext::after {
+    border-color: transparent transparent transparent #F4B400;
+}
+
+.sectorSustain.table-tooltip .table-tooltiptext {
+    background-color: #DB4437;
+}
+.sectorSustain.table-tooltip .table-tooltiptext::after {
+    border-color: transparent transparent transparent #DB4437 ;
+}
+
+.sectorExecute.table-tooltip .table-tooltiptext {
+    background-color: #674EA7;
+}
+.sectorExecute.table-tooltip .table-tooltiptext::after {
+    border-color: transparent transparent transparent #674EA7;
+}
