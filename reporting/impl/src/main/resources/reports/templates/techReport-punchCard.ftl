@@ -241,7 +241,7 @@
         }
 
         $().ready(function () {
-            $(".sector").click(function (event) {
+            $(".headersGroup .sector").click(function (event) {
                 var td = event.target.parentNode;
                 var index = $(td).index();
                 sortTable(index);

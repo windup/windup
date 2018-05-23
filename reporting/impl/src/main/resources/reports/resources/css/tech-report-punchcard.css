@@ -6,7 +6,7 @@
 .sectorStats   { color: black; }
 
 /* A subtle line and space between sectors. */
-.sector           {
+.headersGroup .sector {
     border-left: none;
     cursor: pointer;
 }
