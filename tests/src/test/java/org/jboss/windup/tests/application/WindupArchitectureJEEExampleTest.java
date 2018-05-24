@@ -251,7 +251,7 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
         bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "Test", 0, 0));
         bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "Logging", 0, 0));
         bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "Processing", 0, 0));
-        bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "IoC", 0, 0));
+        bubblesExpected.add(new TestTechReportUtil.BubbleInfo(appName, "Inversion of Control", 0, 0));
 
         List<TestTechReportUtil.BoxInfo> boxesExpected = new ArrayList<>();
         boxesExpected.add(new TestTechReportUtil.BoxInfo("Java_EE", "View", "Web", "Web XML File", 1, 999));
