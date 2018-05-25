@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -315,13 +316,8 @@ public class FileContent extends ParameterizedGraphCondition implements FileCont
             }
             else
             {
-                for (FileModel vertex : vertices)
-                {
-                    if (!filenameRegex.matcher(vertex.getFileName()).matches())
-                    {
-                        vertices.remove(vertex);
-                    }
-                }
+                ListIterator<FileModel> fileModelIterator = vertices.listIterator();
+                vertices.removeIf(fileModel -> !filenameRegex.matcher(fileModel.getFileName()).matches());
             }
         }
     }
