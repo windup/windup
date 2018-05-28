@@ -81,11 +81,16 @@ public class OutputPathOption extends AbstractPathConfigurationOption
     public static ValidationResult validateInputsAndOutputPaths(Collection inputPaths, Path outputPath)
     {
 
-        if (inputPaths == null || inputPaths.isEmpty())
+        if (inputPaths == null)
         {
             return new ValidationResult(ValidationResult.Level.ERROR, "Input path must be specified.");
         }
         
+        if (inputPaths.isEmpty())
+        {
+            return new ValidationResult(ValidationResult.Level.ERROR, "Couldn't find any application at the root level of the directory. Use `--sourceMode` if the directory contains source files you want to analyse.");
+        }
+
         if (outputPath == null)
         {
             return new ValidationResult(ValidationResult.Level.ERROR, "Output path must be specified.");
