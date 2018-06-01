@@ -2,16 +2,12 @@ package org.jboss.windup.testutil.html;
 
 import net.bytebuddy.implementation.bytecode.Throw;
 import org.apache.commons.lang3.StringUtils;
+import org.jboss.windup.util.exception.WindupException;
 import org.openqa.selenium.By;
-import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.logging.LogEntries;
-import org.openqa.selenium.logging.LogEntry;
-import org.openqa.selenium.logging.LogType;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -80,6 +76,26 @@ public class TestApplicationListUtil extends TestReportUtil
         }
 
         return Collections.unmodifiableList(result);
+    }
+
+    public void clickTag(String applicationName, String tagName)
+    {
+        WebElement applicationRow = getApplicationRow(applicationName);
+        if (applicationRow == null)
+            throw new WindupException("Could not find application: " + applicationName);
+
+        String xpath = "./div[contains(@class, 'traits')]/div[contains(@class, 'techs')]//span[contains(text(), '" + tagName + "')]/..";
+        WebElement tagElement = applicationRow.findElement(By.xpath(xpath));
+        tagElement.click();
+    }
+
+    public boolean isDisplayed(String applicationName)
+    {
+        WebElement applicationRow = getApplicationRow(applicationName);
+        if (applicationRow == null)
+            return false;
+
+        return applicationRow.isDisplayed();
     }
 
     /**
