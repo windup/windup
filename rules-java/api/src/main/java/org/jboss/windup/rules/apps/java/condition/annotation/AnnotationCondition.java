@@ -5,6 +5,7 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.condition.EvaluationStrategy;
 import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationTypeValueModel;
 import org.ocpsoft.rewrite.context.EvaluationContext;
+import org.ocpsoft.rewrite.param.Parameterized;
 
 /**
  * {@link AnnotationCondition} provides support for filtering type references based upon detailed annotation information.
@@ -14,7 +15,7 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-public abstract class AnnotationCondition
+public abstract class AnnotationCondition implements Parameterized
 {
     /**
      * Called by the framework to evaluate a specific condition. Returns true if the annotation matches the condition and

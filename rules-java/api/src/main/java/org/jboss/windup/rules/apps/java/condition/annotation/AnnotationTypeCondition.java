@@ -1,13 +1,17 @@
 package org.jboss.windup.rules.apps.java.condition.annotation;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+
 
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.condition.EvaluationStrategy;
 import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationTypeReferenceModel;
 import org.jboss.windup.rules.apps.java.scan.ast.annotations.JavaAnnotationTypeValueModel;
 import org.ocpsoft.rewrite.context.EvaluationContext;
+import org.ocpsoft.rewrite.param.ParameterStore;
 import org.ocpsoft.rewrite.param.ParameterizedPatternResult;
 import org.ocpsoft.rewrite.param.RegexParameterizedPatternParser;
 
@@ -85,5 +89,30 @@ public class AnnotationTypeCondition extends AnnotationCondition
                 return false;
         }
         return true;
+    }
+
+    @Override
+    public Set<String> getRequiredParameterNames()
+    {
+        Set<String> result = new HashSet<>();
+        if (pattern != null)
+        {
+            result.addAll(pattern.getRequiredParameterNames());
+        }
+        if (conditions != null)
+        {
+            conditions.values().stream().forEach(condition -> result.addAll(condition.getRequiredParameterNames()));
+        }
+        return result;
+    }
+
+    @Override
+    public void setParameterStore(ParameterStore store)
+    {
+        pattern.setParameterStore(store);
+        if (conditions != null)
+        {
+            conditions.values().stream().forEach(condition -> condition.setParameterStore(store));
+        }
     }
 }
