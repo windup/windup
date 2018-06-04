@@ -45,7 +45,7 @@
             <div class="page-header page-header-no-border">
                 <h1>
                     <div class="main">${reportModel.reportName}
-                    <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement=right title="${reportModel.description}."></i></div>
+                    <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement=right title="${reportModel.description}"></i></div>
                     <#if reportModel.projectModel??>
                         <div class="path">${reportModel.projectModel.rootFileModel.fileName}</div>
                     </#if>
@@ -98,7 +98,7 @@
                             </#list>
                         </#list>
                             <td class="sector sectorStats sizeMB"><div>Size (MB)</div></td>
-                            <#-- <td class="sector sectorStats libsCount"><div>Libraries</div></td> -->
+                            <td class="sector sectorStats libsCount"><div>Libraries</div></td>
                             <td class="sector sectorStats storyPoints"><div>Mandatory (SP)</div></td>
                             <#-- this td is needed for scrollbar positioning -->
                             <td class="scrollbar-padding"></td>
