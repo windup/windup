@@ -22,26 +22,38 @@ $(document).ready(function () {
             if (!filteringData || !filteringData.hasOwnProperty('tags') || filteringData.tags.length === 0) {
                 return false;
             }
+            var searchText = filterOption.data.text;
+            var regex = filterOption.data.isRegex ? new RegExp(filterOption.data.text, 'i') : null;
 
-            var regex = new RegExp(filterOption.data, 'i');
             var filtered = filteringData.tags.filter(function(element) {
-                if (element.match(regex) !== null) return true;
-                else return false;
+                if (regex != null)
+                    if (element.match(regex) !== null) return true;
+
+                // Always try a literal match if there is no regex match
+                if (element.toString().toLowerCase().indexOf(searchText.toLowerCase()) != -1) return true;
+
+                return false;
             });
+
             return filtered.length > 0;
         };
 
         var checkNameMatchCallback = function(element, filterOption) {
             var name = $(element).data('name');
-            var regex = new RegExp(filterOption.data, 'i');
+            var searchText = filterOption.data.text;
 
-            return name.match(regex) !== null;
+            if (filterOption.data.isRegex) {
+                var regex = new RegExp(searchText, 'i');
+                return name.match(regex) !== null;
+            } else {
+                if (name.toString().toLowerCase().indexOf(searchText.toLowerCase()) != -1) return true;
+            }
         };
 
         /** Available filter options */
         var filterOptions = [
-            { name: 'Name', value: 'name', data: '', callback:  checkNameMatchCallback },
-            { name: 'Tags', value: 'tags', callback: hasItemInArrayCallback, data: '' }
+            { name: 'Name', value: 'name', hint: "Filter By Name...", data: '', callback:  checkNameMatchCallback },
+            { name: 'Tag', value: 'tags', hint: "Filter By Tag...", callback: hasItemInArrayCallback, data: '' }
         ];
 
         var andReducer = function(prev, curr) { return prev && curr; };
@@ -89,7 +101,7 @@ $(document).ready(function () {
             $('#filter-form').on('submit', function(e) {
                 e.preventDefault();
                 var filterValue = filterInput.val().trim();
-                if (addFilter(filterValue, currentFilterConfiguration.filterBy))
+                if (addFilter(filterValue, currentFilterConfiguration.filterBy, true))
                 {
                     filterInput.val('');
                     $("#searchTermError").collapse('hide');
@@ -136,7 +148,7 @@ $(document).ready(function () {
                 var anchored = $('<a href="#"></a>');
                 anchored.append($(this).clone());
                 anchored.on('click', function() {
-                    addFilter($(this).text().trim(), filterOptions[1]);
+                    addFilter($(this).text().trim(), filterOptions[1], false);
                 });
 
                 $(this).replaceWith(anchored);
@@ -184,7 +196,7 @@ $(document).ready(function () {
                         if (hasCallback(filterOption)) {
                             try
                             {
-                                return   filterOption.callback(element, filterOption);
+                                return filterOption.callback(element, filterOption);
                             }
                             catch(e)
                             {
@@ -202,7 +214,6 @@ $(document).ready(function () {
                 }
 
                 if(!filterFailed) {
-
                     if (!show) {
                         $(this).hide();
                     } else {
@@ -273,7 +284,7 @@ $(document).ready(function () {
                     </span></li>');
 
             var a = html.find('a');
-            html.find('span.label').prepend(item.name + ': ' + item.data);
+            html.find('span.label').prepend(item.name + ': ' + item.data.text);
             a.on('click', function() {
                 removeFilter(item, html);
             });
@@ -289,10 +300,10 @@ $(document).ready(function () {
          * @param value {string}
          * @param option {object}
          */
-        function addFilter(value, option) {
+        function addFilter(value, option, isRegex) {
             var returnValue = true;
             var filter = $.extend({}, option);
-            filter.data = value;
+            filter.data = { text: value, isRegex: isRegex };
             filters.push(filter);
 
             if (!filterData())
@@ -320,6 +331,7 @@ $(document).ready(function () {
                 filterOptionsList.find('li a').removeClass('selected');
                 $(this).addClass('selected');
                 currentFilterConfiguration.filterBy = filterOption;
+                filterInput.attr("placeholder", filterOption.hint).blur();
                 filterByLabel.text(filterOption.name);
             });
 

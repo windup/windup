@@ -4,6 +4,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
@@ -83,6 +84,28 @@ public class WindupMultiAppBasicTest extends WindupArchitectureTest
         TestApplicationListUtil util = new TestApplicationListUtil();
         util.loadPage(reportPath);
 
+        validateSorting(util);
+        validateTagFiltering(util);
+    }
+
+    private void validateTagFiltering(TestApplicationListUtil util)
+    {
+        List<String> applicationNames = util.getApplicationNames().stream()
+                .filter(util::isDisplayed)
+                .collect(Collectors.toList());
+
+        Assert.assertEquals(3, applicationNames.size());
+
+        util.clickTag("Windup1x-javaee-example.war", "bad regex(foo");
+
+        applicationNames = util.getApplicationNames().stream()
+                .filter(util::isDisplayed)
+                .collect(Collectors.toList());
+        Assert.assertEquals(2, applicationNames.size());
+    }
+
+    private void validateSorting(TestApplicationListUtil util)
+    {
         List<String> presortedList = util.getApplicationNames();
 
         // Check that they are sorted by name
@@ -105,6 +128,14 @@ public class WindupMultiAppBasicTest extends WindupArchitectureTest
         Assert.assertEquals("Windup1x-javaee-example.war", presortedList.get(0));
         Assert.assertEquals("maven-info-missing.war", presortedList.get(1));
         Assert.assertEquals("badly_named_app", presortedList.get(2));
+
+        util.reverseSortOrder();
+
+        presortedList = util.getApplicationNames();
+        // Check that they are back to descending order
+        Assert.assertEquals("badly_named_app", presortedList.get(0));
+        Assert.assertEquals("maven-info-missing.war", presortedList.get(1));
+        Assert.assertEquals("Windup1x-javaee-example.war", presortedList.get(2));
     }
 
     private void checkEJBDescriptors(GraphContext context)

@@ -1,9 +1,11 @@
 import org.jboss.windup.ast.java.data.TypeReferenceLocation
 import org.jboss.windup.reporting.config.Hint
 import org.jboss.windup.reporting.config.Link
+import org.jboss.windup.reporting.config.TechnologyTag
 import org.jboss.windup.reporting.config.classification.Classification
 import org.jboss.windup.rules.apps.java.condition.JavaClass
 import org.jboss.windup.rules.apps.xml.condition.XmlFile
+import org.ocpsoft.rewrite.config.And
 
 ruleSet("Example Servlet Rule")
     .addRule()
@@ -46,7 +48,8 @@ ruleSet("Example Servlet Rule")
 
     .addRule()
     .when(XmlFile.matchesXpath("/w:web-app").namespace("w", "http://java.sun.com/xml/ns/javaee"))
-    .perform(Hint.titled("Container").withText("This is a web descriptor").withEffort(2))
+    .perform(Hint.titled("Container").withText("This is a web descriptor").withEffort(2)
+		.and(TechnologyTag.withName("bad regex(foo")))
 
     .addRule()
     .when(JavaClass.references("javax.ejb.ActivationConfigProperty"))
