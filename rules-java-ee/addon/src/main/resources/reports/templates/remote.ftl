@@ -8,6 +8,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>${reportModel.projectModel.name} - Remote Services</title>
     <link href="resources/css/bootstrap.min.css" rel="stylesheet">
+    <link href="resources/css/font-awesome.min.css" rel="stylesheet" />
     <link href="resources/css/windup.css" rel="stylesheet" media="screen">
     <link href="resources/img/rhamt-icon-128.png" rel="shortcut icon" type="image/x-icon"/>
 </head>
@@ -28,12 +29,10 @@
         <div class="row">
             <div class="page-header page-header-no-border">
                 <h1>
-                    <div class="main">Remote Services</div>
+                    <div class="main">Remote Services
+                    <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement=right title="This report lists Java EE EJB services - their interfaces and implementations."></i></div>
                     <div class="path">${reportModel.projectModel.rootFileModel.fileName}</div>
                 </h1>
-                <div class="desc">
-                    This report lists Java EE EJB services - their interfaces and implementations.
-                </div>
             </div>
         </div>
 
@@ -137,5 +136,6 @@
 
     <script src="resources/js/jquery-1.10.1.min.js"></script>
     <script src="resources/js/bootstrap.min.js"></script>
+    <script>$(document).ready(function(){$('[data-toggle="tooltip"]').tooltip();});</script>
   </body>
 </html>

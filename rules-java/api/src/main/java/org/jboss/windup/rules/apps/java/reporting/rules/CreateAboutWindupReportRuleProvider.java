@@ -89,7 +89,7 @@ public class CreateAboutWindupReportRuleProvider extends AbstractRuleProvider
         applicationReportModel.setReportPriority(10000);
         applicationReportModel.setReportName(REPORT_NAME);
         applicationReportModel.setDescription(REPORT_DESCRIPTION);
-        applicationReportModel.setReportIconClass("glyphicon glyphicon-info-sign");
+        applicationReportModel.setReportIconClass("fa fa-question-circle");
         applicationReportModel.setMainApplicationReport(false);
         applicationReportModel.setDisplayInApplicationReportIndex(true);
 

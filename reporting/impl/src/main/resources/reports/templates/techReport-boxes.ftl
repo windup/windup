@@ -16,6 +16,7 @@
         ${reportModel.reportName}
     </title>
     <link href="resources/css/bootstrap.min.css" rel="stylesheet">
+    <link href="resources/css/font-awesome.min.css" rel="stylesheet" />
     <link href="resources/css/windup.css" rel="stylesheet" media="screen">
     <link href="resources/css/windup.java.css" rel="stylesheet" media="screen">
     <link href="resources/css/jquery-ui.min.css" rel="stylesheet" media="screen">
@@ -34,9 +35,8 @@
 
         table.technologiesBoxCard { border-collapse: collapse; width: 90%; margin: 10pt auto; }
         table.technologiesBoxCard td,
-        table.technologiesBoxCard th {
-            border: 0px solid silver; /* Debug */
-        }
+        table.technologiesBoxCard th { border: 0px solid silver; }
+        table.technologiesBoxCard td.heading { border-bottom-width: 1px; border-bottom-color:  #d9d9d9; }
 
         /* Sector headers */
         tr.sectorsHeaders { font-size: 22pt; font-weight: bold; }
@@ -64,9 +64,10 @@
             background-position: center;
         }
         tr.rowSectors .box .content { margin-left: 62px; }
-        tr.rowSectors .box .content ul { list-style: none; margin: 0; }
+        tr.rowSectors .box .content ul { list-style: none; margin: 0; -webkit-padding-start: 10px; }
         tr.rowSectors .box .content ul li { margin: 0; text-align: right; }
         tr.rowSectors .box .content ul li b { width: 3ex; display: inline-block; }
+        tr.headersGroup { height: 215px; }
     </style>
 </head>
 
@@ -89,14 +90,12 @@
         <div class="row">
             <div class="page-header page-header-no-border">
                 <h1>
-                    <div class="main">${reportModel.reportName}</div>
+                    <div class="main">${reportModel.reportName}
+                    <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement=right title="${reportModel.description}"></i></div>
                     <#if reportModel.projectModel??>
                         <div class="path">${reportModel.projectModel.rootFileModel.fileName}</div>
                     </#if>
                 </h1>
-                <div class="desc">
-                    ${reportModel.description}
-                </div>
             </div>
         </div>
 
@@ -123,7 +122,8 @@
                     </tr>
 
                     <!-- For each gray row group... -->
-                    <#assign rowTags = reportModel.rowsHolderTag.designatedTags />
+                    <#assign sortedRowTags = reportModel.rowsHolderTag.designatedTags?sort_by("title") />
+                    <#assign rowTags = sortedRowTags?reverse />
                     <#list rowTags as rowTag> <#-- currently Java EE / Embedded -->
                         <tr class="rowHeader row-${rowTag.name}">
                             <td class="heading" colspan="${sectorTags?size}"><div>${rowTag.title}</div></td>
@@ -131,7 +131,9 @@
                         <tr class="rowSectors">
                             <#list sectorTags as sectorTag>
                                 <td class="sector${sectorTag.title}">
-                                    <#list sectorTag.designatedTags as boxTag>
+                                    <#assign boxTags = iterableToList(sectorTag.designatedTags) >
+                                    <#assign boxTags = boxTags?sort_by("name") >
+                                    <#list boxTags as boxTag>
                                         <#if isTagUnderTag(boxTag, rowTag)>
                                             <#-- Get a map of box buckets with TechUsageStats and take data from there, rather than pulling through a function. -->
                                             <#assign statsForThisBox = (sortedStatsMatrix.get(rowTag.name, boxTag.name, 0))! />
@@ -169,5 +171,6 @@
     </div>
 
     <script src="resources/js/bootstrap.min.js"></script>
+    <script>$(document).ready(function(){$('[data-toggle="tooltip"]').tooltip();});</script>
 </body>
 </html>

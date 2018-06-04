@@ -108,12 +108,10 @@
     <meta charset="utf-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <title>${reportModel.reportName}</title>
-
-    <!-- Bootstrap -->
     <link href="reports/resources/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="reports/resources/css/font-awesome.min.css" rel="stylesheet" />
     <link href="reports/resources/css/windup.css" rel="stylesheet" media="screen"/>
     <link href="reports/resources/img/rhamt-icon-128.png" rel="shortcut icon" type="image/x-icon"/>
-    <link href="reports/resources/css/font-awesome.min.css" rel="stylesheet" />
     <style>
         body.viewAppList .apps  { margin: 0 2ex; }
 
@@ -147,6 +145,8 @@
 
         /* Specifics for virtual apps. */
         body.viewAppList .apps .virtual .appInfo .traits .fileName { color: #477280; }
+
+        body.viewAppList .apps .appInfo:first-of-type { border-top: 1px solid gray; }
     </style>
 </head>
 <body role="document" class="viewAppList" style="margin: auto;">
@@ -165,16 +165,13 @@
     </div>
     <!-- / Navbar -->
 
-
     <div class="container-fluid" role="main">
         <div class="row">
             <div class="page-header page-header-no-border">
                 <h1>
-                    <div class="main">Application List</div>
+                    <div class="main">Application List
+                    <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement=right title="This report lists all analyzed applications. Select an individual application to show more details."></i></div>
                 </h1>
-                <div class="desc">
-                    This report lists all analyzed applications. Select an individual application to show more details.
-                </div>
             </div>
         </div>
 
@@ -204,11 +201,9 @@
         <div class="row">
             <div class="page-header page-header-no-border">
                 <h1>
-                    <div class="main">Shared Libraries</div>
+                    <div class="main">Shared Libraries
+                    <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement=right title="This section groups all issues found in libraries included in multiple applications."></i></div>
                 </h1>
-                <div class="desc">
-                    This section groups all issues found in libraries included in multiple applications.
-                </div>
             </div>
         </div>
         <section class="apps">
@@ -240,5 +235,6 @@
         });
     </script>
     <script src="reports/resources/js/bootstrap.min.js"></script>
+    <script>$(document).ready(function(){$('[data-toggle="tooltip"]').tooltip();});</script>
 </body>
 </html>

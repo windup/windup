@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <title>Red Hat Application Migration Toolkit FreeMarker Functions and Directives</title>
     <link href="resources/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="resources/css/font-awesome.min.css" rel="stylesheet" />
     <link href="resources/css/windup.css" rel="stylesheet" media="screen"/>
     <link href="resources/css/windup.java.css" rel="stylesheet" media="screen"/>
     <link href="resources/img/rhamt-icon-128.png" rel="shortcut icon" type="image/x-icon"/>
@@ -30,11 +31,9 @@
         <div class="row">
             <div class="page-header page-header-no-border">
                 <h1>
-                    <div class="main">Used FreeMarker Functions and Directives</div>
+                    <div class="main">Used FreeMarker Functions and Directives
+                    <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement=right title="This report shows the custom Freemarker extensions created for and used by Red Hat Application Migration Toolkit."></i></div>
                 </h1>
-                <div class="desc">
-                    This report shows the custom Freemarker extensions created for and used by Red Hat Application Migration Toolkit.
-                </div>
             </div>
         </div>
 
@@ -93,5 +92,6 @@
 
     <script src="resources/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="resources/js/navbar.js"></script>
+    <script>$(document).ready(function(){$('[data-toggle="tooltip"]').tooltip();});</script>
 </body>
 </html>

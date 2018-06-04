@@ -18,6 +18,7 @@
         ${reportModel.reportName}
     </title>
     <link href="resources/css/bootstrap.min.css" rel="stylesheet">
+    <link href="resources/css/font-awesome.min.css" rel="stylesheet" />
     <link href="resources/css/windup.css" rel="stylesheet" media="screen">
     <link href="resources/css/windup.java.css" rel="stylesheet" media="screen">
     <link href="resources/css/jquery-ui.min.css" rel="stylesheet" media="screen">
@@ -25,7 +26,7 @@
     <link href="resources/css/tech-report-punchcard.css" rel="stylesheet">
 </head>
 <body role="document">
-    <!-- Navbar -->
+    <#-- Navbar -->
     <div id="main-navbar" class="navbar navbar-default navbar-fixed-top">
         <div class="wu-navbar-header navbar-header">
             <#include "include/navheader.ftl">
@@ -37,20 +38,18 @@
             </div><!-- /.nav-collapse -->
         </#if>
     </div>
-    <!-- / Navbar -->
+    <#-- / Navbar -->
 
     <div class="container-fluid" role="main">
         <div class="row">
             <div class="page-header page-header-no-border">
                 <h1>
-                    <div class="main">${reportModel.reportName}</div>
+                    <div class="main">${reportModel.reportName}
+                    <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement=right title="${reportModel.description}"></i></div>
                     <#if reportModel.projectModel??>
                         <div class="path">${reportModel.projectModel.rootFileModel.fileName}</div>
                     </#if>
                 </h1>
-                <div class="desc">
-                    ${reportModel.description}
-                </div>
             </div>
         </div>
 
@@ -58,9 +57,7 @@
             <div class="container-fluid theme-showcase" role="main">
 
                 <#assign techsOrder = [] />
-
-                <#assign sectorTagsIterable = reportModel.sectorsHolderTag.designatedTags />
-                <#assign sectorTags = iterableToList(sectorTagsIterable) />
+                <#assign sectorTags = iterableToList(reportModel.sectorsHolderTag.designatedTags) />
                 <#assign sectorTags = sectorTags?sort_by("name") />
                 <#assign placeTagsParent = getTagModelByName("techReport:mappingOfPlacementTagNames") />
 
@@ -86,13 +83,14 @@
                             <td>No technology sectors defined.</td>
                         </#list>
                             <td colspan="3" class="sectorStats">Stats</td>
-                            <!-- this td is needed for scrollbar positioning -->
+                            <#-- this td is needed for scrollbar positioning -->
                             <td class="scrollbar-padding"></td>
                         </tr>
                         <tr class="headersGroup">
                             <td></td>
                         <#list sectorTags as sectorTag >
-                            <#list sectorTag.designatedTags as boxTag >
+                            <#assign sortedBoxTags = iterableToList(sectorTag.designatedTags)?sort_by("title") />
+                            <#list sortedBoxTags as boxTag >
                                 <#if !isTagUnderTag(boxTag, placeTagsParent) >
                                     <#assign techsOrder = techsOrder + [boxTag] />
                                     <td class="sector sector${sectorTag.title}"><div>${boxTag.title!}</div></td>
@@ -102,12 +100,13 @@
                             <td class="sector sectorStats sizeMB"><div>Size (MB)</div></td>
                             <td class="sector sectorStats libsCount"><div>Libraries</div></td>
                             <td class="sector sectorStats storyPoints"><div>Mandatory (SP)</div></td>
-                            <!-- this td is needed for scrollbar positioning -->
+                            <#-- this td is needed for scrollbar positioning -->
                             <td class="scrollbar-padding"></td>
                         </tr>
                     </thead>
                     <tbody>
-                        <#list inputApplications as appProject> <#-- ProjectModel -->
+                        <#assign appProjects = inputApplications?sort_by(["name"]) />
+                        <#list appProjects as appProject> <#-- ProjectModel -->
                         <#if appProject.projectType! != "VIRTUAL" >
                         <tr class="app">
                             <td class="name">
@@ -120,20 +119,20 @@
                                 </a>
                             </td>
                             <#list sectorTags as sectorTag>
-                                <#list sectorTag.designatedTags as boxTag>
+                                <#assign sortedBoxTags = iterableToList(sectorTag.designatedTags)?sort_by("title") />
+                                <#list sortedBoxTags as boxTag>
                                     <#if !isTagUnderTag(boxTag, placeTagsParent) >
                                         <#--
                                         <#assign count = (stats.countsOfTagsInApps?api.get(appProject.getElement().id())[boxTag.name])!false />
                                         <#assign maxForThisBox = stats.maximumsPerTag[boxTag.name] />
                                         -->
-
                                         <#-- 2nd way - using the 4 layer map -->
                                         <#assign statsForThisBox = sortedStatsMatrix.get("", boxTag.name, appProject.getElement().id()?long)! />
                                         <#assign count = (statsForThisBox[""].occurrenceCount)!false />
                                         <#assign maxForThisBox   = (sortedStatsMatrix.getMaxForBox(boxTag.name))!false />
                                         <#assign isBooleanTech = maxForThisBox?is_number && maxForThisBox == 0 />
                                         <#if isBooleanTech>
-                                            <!-- The boolean technologies will either be missing or present. Presence is denoted by 0. Use some middle bubble size for present. -->
+                                            <#-- The boolean technologies will either be missing or present. Presence is denoted by 0. Use some middle bubble size for present. -->
                                             <#assign log = count?is_number?then(0.5, 0) />
                                         <#else>
                                             <#-- If the tech did not appear in any TechUsageStats, it is missing in the map. -->
@@ -143,8 +142,7 @@
                                                 <#assign log = 0 />
                                             </#if>
                                         </#if>
-                                        <!-- count: ${count?c}   max: ${maxForThisBox?c}   getLogaritmicDistribution(): ${ log?c } x 5 = ${ log * 5.0 } -->
-
+                                        <#-- count: ${count?c}   max: ${maxForThisBox?c}   getLogaritmicDistribution(): ${ log?c } x 5 = ${ log * 5.0 } -->
                                         <td class="circle size${ log?is_number?then((log * 5.0)?ceiling, "X")} sector sector${sectorTag.title}"><#-- The circle is put here by CSS :after --></td>
                                     </#if>
                                 <#else>
@@ -164,7 +162,7 @@
                                 <#assign panelStoryPoints = getMigrationEffortPointsForProject(traversal, true, [], [], mandatoryCategory)! />
                                 ${ panelStoryPoints! }
                             </td>
-                            <!-- this td is needed for scrollbar positioning -->
+                            <#-- this td is needed for scrollbar positioning -->
                             <td class="scrollbar-padding"></td>
                         </tr>
                         </#if>
@@ -175,7 +173,6 @@
             </div>
         </div>
     </div>
-
     <#-- Keep this here for debugging.
     <pre>
         <#list 0..7 as count>
@@ -187,7 +184,7 @@
         </#list>
     </pre>
     -->
-
     <script src="resources/js/bootstrap.min.js"></script>
+    <script>$(document).ready(function(){$('[data-toggle="tooltip"]').tooltip();});</script>
 </body>
 </html>

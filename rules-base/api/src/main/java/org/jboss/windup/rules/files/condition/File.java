@@ -235,13 +235,7 @@ public class File extends ParameterizedGraphCondition
             }
             else
             {
-                for (FileModel vertex : vertices)
-                {
-                    if (!filenameRegex.matcher(vertex.getFileName()).matches())
-                    {
-                        vertices.remove(vertex);
-                    }
-                }
+                vertices.removeIf(fileModel -> !filenameRegex.matcher(fileModel.getFileName()).matches());
             }
         }
     }

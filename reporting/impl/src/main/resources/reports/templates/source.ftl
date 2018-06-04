@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
     <title>Source Report for ${reportModel.reportName?html}</title>
     <link href="resources/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="resources/css/font-awesome.min.css" rel="stylesheet" />
     <link href="resources/css/windup.css" rel="stylesheet" media="screen"/>
     <link rel="stylesheet" type="text/css" href="resources/libraries/snippet/jquery.snippet.min.css" />
     <link rel="stylesheet" type="text/css" href="resources/css/windup-source.css" />
@@ -36,7 +37,8 @@
         <div class="row">
             <div class="page-header page-header-no-border">
                 <h1>
-                    <div class="main">Source Report</div>
+                    <div class="main">Source Report
+                    <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement=right title="This report displays what Red Hat Application Migration Toolkit found in individual files. Each item is shown below the line it was found on, and next to it, you may find a link to the rule which it was found by."></i></div>
 
                     <#list reportModel.projectEdges as toProjectEdge>
                         <div class="path project-specific" data-project-id="${toProjectEdge.projectModel.getElement().id()?c}">
@@ -44,11 +46,6 @@
                         </div>
                     </#list>
                 </h1>
-                <div class="desc">
-                    This report displays what Red Hat Application Migration Toolkit found in individual files.
-                    Each item is shown below the line it was found on,
-                    and next to it, you may find a link to the rule which it was found by.
-                </div>
             </div>
         </div>
 
@@ -236,6 +233,6 @@
             $("#main-navbar").show();
         });
     </script>
-
+    <script>$(document).ready(function(){$('[data-toggle="tooltip"]').tooltip();});</script>
 </body>
 </html>

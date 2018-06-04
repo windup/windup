@@ -176,7 +176,7 @@ public class CreateDependencyReportRuleProvider extends AbstractRuleProvider
         applicationReportModel.setReportPriority(120);
         applicationReportModel.setReportName(REPORT_NAME);
         applicationReportModel.setDescription(REPORT_DESCRIPTION);
-        applicationReportModel.setReportIconClass("glyphicon glyphicon-compressed");
+        applicationReportModel.setReportIconClass("glyphicon glyphicon-retweet");
         applicationReportModel.setTemplatePath(TEMPLATE);
         applicationReportModel.setTemplateType(TemplateType.FREEMARKER);
         return applicationReportModel;
