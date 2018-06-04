@@ -39,6 +39,22 @@ tr.headersGroup td div {
     white-space: nowrap;
 }
 
+tr.headersGroup .sort_asc div:after {
+    content: "\f107";
+    font-family: "FontAwesome";
+    font-size: 10px;
+    font-weight: normal;
+    position: relative;
+}
+
+tr.headersGroup .sort_desc div:after {
+    content: "\f106";
+    font-family: "FontAwesome";
+    font-size: 10px;
+    font-weight: normal;
+    position: relative;
+}
+
 tr.app { font-size: 12pt; }
 tr.app td.name, tr.app td.sectorStats { padding: 0 0.5em; }
 tr.app td.name { white-space: nowrap; overflow: hidden;}

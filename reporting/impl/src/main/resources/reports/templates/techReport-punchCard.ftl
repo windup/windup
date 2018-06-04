@@ -198,6 +198,14 @@
         var reverse = false;
 
         function sortTable(column) {
+            // cleanup the previous sort classes
+            var groupedHeaderColumns = $('.headersGroup td').get();
+            groupedHeaderColumns.forEach(function(tdElement) {
+                $(tdElement).removeClass("sectorSorted");
+                $(tdElement).removeClass("sort_asc");
+                $(tdElement).removeClass("sort_desc");
+            });
+
             if (column == currentSortColumn) {
                 reverse = !reverse;
             } else {
@@ -205,11 +213,9 @@
                 currentSortColumn = column;
             }
             var f = reverse ? 1 : -1;
-            var groupedHeaderColumns = $('.headersGroup td').get();
-            groupedHeaderColumns.forEach(function(tdElement) {
-                $(tdElement).removeClass("sectorSorted");
-            });
+
             $(groupedHeaderColumns[column]).addClass("sectorSorted");
+            $(groupedHeaderColumns[column]).addClass(reverse ? "sort_asc" : "sort_desc");
 
             var rows = $('.technologiesPunchCard tbody tr').get();
 
