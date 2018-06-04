@@ -52,8 +52,8 @@ $(document).ready(function () {
 
         /** Available filter options */
         var filterOptions = [
-            { name: 'Name', value: 'name', data: '', callback:  checkNameMatchCallback },
-            { name: 'Tags', value: 'tags', callback: hasItemInArrayCallback, data: '' }
+            { name: 'Name', value: 'name', hint: "Filter By Name...", data: '', callback:  checkNameMatchCallback },
+            { name: 'Tag', value: 'tags', hint: "Filter By Tag...", callback: hasItemInArrayCallback, data: '' }
         ];
 
         var andReducer = function(prev, curr) { return prev && curr; };
@@ -284,7 +284,7 @@ $(document).ready(function () {
                     </span></li>');
 
             var a = html.find('a');
-            html.find('span.label').prepend(item.name + ': ' + item.data);
+            html.find('span.label').prepend(item.name + ': ' + item.data.text);
             a.on('click', function() {
                 removeFilter(item, html);
             });
@@ -331,6 +331,7 @@ $(document).ready(function () {
                 filterOptionsList.find('li a').removeClass('selected');
                 $(this).addClass('selected');
                 currentFilterConfiguration.filterBy = filterOption;
+                filterInput.attr("placeholder", filterOption.hint).blur();
                 filterByLabel.text(filterOption.name);
             });
 
