@@ -88,6 +88,30 @@ public class JavaAnnotationScanningTest extends AbstractJavaASTTest
         Assert.assertTrue(foundAnnotation);
     }
 
+    @Test
+    public void testAnnotationClassLiteral()
+    {
+        List<ClassReference> references = ASTProcessor.analyze(getLibraryPaths(), getSourcePaths(),
+                Paths.get("src/test/resources/testclasses/annotations/mdb/MessageDrivenWithListenerAnnotationNoImplements.java"));
+
+        boolean foundAnnotationType = false;
+        for (ClassReference reference : references)
+        {
+            System.out.println("Reference: " + reference);
+            if (reference instanceof AnnotationClassReference)
+            {
+                AnnotationClassReference annotationReference = (AnnotationClassReference) reference;
+                if (reference.getQualifiedName().equals("javax.ejb.MessageDriven"))
+                {
+                    Assert.assertEquals("com.example.Foo",
+                            ((AnnotationLiteralValue) annotationReference.getAnnotationValues().get("messageListenerInterface")).getLiteralValue());
+                    foundAnnotationType = true;
+                }
+            }
+        }
+        Assert.assertTrue(foundAnnotationType);
+    }
+
     private void checkFirstNestedAnnotation(AnnotationClassReference nestedAnnotation)
     {
         Assert.assertNotNull(nestedAnnotation);

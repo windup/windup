@@ -23,7 +23,8 @@ public class AnnotationLiteralCondition extends AnnotationCondition
      */
     public AnnotationLiteralCondition(String pattern)
     {
-        this.pattern = new RegexParameterizedPatternParser(pattern);
+        if (pattern != null)
+            this.pattern = new RegexParameterizedPatternParser(pattern);
     }
 
     @Override
@@ -46,6 +47,10 @@ public class AnnotationLiteralCondition extends AnnotationCondition
         if (pattern != null)
         {
             String annotationValue = literalType.getLiteralValue();
+
+            // No regular expression will match against null. Allowing it to proceed only results in an NPE
+            if (annotationValue == null)
+                return false;
 
             ParameterizedPatternResult referenceResult = pattern.parse(annotationValue);
             if (!referenceResult.matches())

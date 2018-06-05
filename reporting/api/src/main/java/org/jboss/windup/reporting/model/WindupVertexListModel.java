@@ -13,7 +13,7 @@ import org.jboss.windup.graph.Adjacency;
 /**
  * Contains a list of {@link WindupVertexFrame} objects and (for convenience) implements the {@link Iterable} interface as well.
  *
- * NOTE that this currently doesn't keep the order of the elements. So it's more of a 
+ * NOTE that this currently doesn't keep the order of the elements. It is an unordered collection.
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */

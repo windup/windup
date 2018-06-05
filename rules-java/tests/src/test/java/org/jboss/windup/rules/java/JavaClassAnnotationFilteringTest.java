@@ -124,6 +124,8 @@ public class JavaClassAnnotationFilteringTest
             Assert.assertEquals(1, complexProvider.baseRuleHitCount);
             Assert.assertEquals(1, complexProvider.nestedAnnotationHitCount);
             Assert.assertEquals(0, complexProvider.nestedAnnotationWrongNameHitCount);
+            Assert.assertEquals(1, complexProvider.nestedAnnotationWithNullLiteralShouldMatch);
+            Assert.assertEquals(0, complexProvider.nestedAnnotationWithNullLiteralShouldNotMatchNull);
         }
     }
 
@@ -194,6 +196,8 @@ public class JavaClassAnnotationFilteringTest
         private int baseRuleHitCount = 0;
         private int nestedAnnotationHitCount = 0;
         private int nestedAnnotationWrongNameHitCount = 0;
+        private int nestedAnnotationWithNullLiteralShouldMatch = 0;
+        private int nestedAnnotationWithNullLiteralShouldNotMatchNull = 0;
 
         public ComplexAnnotationScanProvider()
         {
@@ -249,6 +253,45 @@ public class JavaClassAnnotationFilteringTest
                         public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
                         {
                             nestedAnnotationWrongNameHitCount++;
+                        }
+                    })
+
+                    .addRule().when(
+                            JavaClass.references("javax.annotation.sql.DataSourceDefinitions")
+                                    .at(TypeReferenceLocation.ANNOTATION)
+                                    .annotationMatches(
+                                            "value",
+                                            new AnnotationListCondition(2).addCondition(
+                                                    new AnnotationTypeCondition("javax.annotation.sql.DataSourceDefinition")
+                                                            .addCondition("serverName", new AnnotationLiteralCondition(null))
+                                            )
+                                    )
+                    ).perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
+                    {
+                        @Override
+                        public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
+                        {
+                            nestedAnnotationWithNullLiteralShouldMatch++;
+                        }
+                    })
+
+                    .addRule().when(
+                            JavaClass.references("javax.annotation.sql.DataSourceDefinitions")
+                                    .at(TypeReferenceLocation.ANNOTATION)
+                                    .annotationMatches(
+                                            "value",
+                                            new AnnotationListCondition(2).addCondition(
+                                                    new AnnotationTypeCondition("javax.annotation.sql.DataSourceDefinition")
+                                                            .addCondition("className", new AnnotationLiteralCondition("com.example.HasSOmeNulls"))
+                                                            .addCondition("serverName", new AnnotationLiteralCondition("{*}"))
+                                            )
+                                    )
+                    ).perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
+                    {
+                        @Override
+                        public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
+                        {
+                            nestedAnnotationWithNullLiteralShouldNotMatchNull++;
                         }
                     });
         }

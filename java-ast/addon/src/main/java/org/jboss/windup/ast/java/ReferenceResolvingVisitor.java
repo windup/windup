@@ -36,6 +36,7 @@ import org.eclipse.jdt.core.dom.MethodInvocation;
 import org.eclipse.jdt.core.dom.Modifier;
 import org.eclipse.jdt.core.dom.Name;
 import org.eclipse.jdt.core.dom.NormalAnnotation;
+import org.eclipse.jdt.core.dom.NullLiteral;
 import org.eclipse.jdt.core.dom.NumberLiteral;
 import org.eclipse.jdt.core.dom.PackageDeclaration;
 import org.eclipse.jdt.core.dom.ParameterizedType;
@@ -571,7 +572,15 @@ public class ReferenceResolvingVisitor extends ASTVisitor
             }
         }
         else if (expression instanceof TypeLiteral)
-            value = new AnnotationLiteralValue(Class.class, ((TypeLiteral) expression).resolveConstantExpressionValue());
+        {
+            Object literalValue = ((TypeLiteral) expression).resolveConstantExpressionValue();
+            if (literalValue == null)
+            {
+                Type type = ((TypeLiteral) expression).getType();
+                literalValue = type == null ? null : type.toString();
+            }
+            value = new AnnotationLiteralValue(Class.class, literalValue);
+        }
         else if (expression instanceof StringLiteral)
             value = new AnnotationLiteralValue(String.class, ((StringLiteral) expression).getLiteralValue());
         else if (expression instanceof NormalAnnotation)
@@ -637,8 +646,10 @@ public class ReferenceResolvingVisitor extends ASTVisitor
                 Class<?> expressionType = expressionValue == null ? null : expressionValue.getClass();
                 value = new AnnotationLiteralValue(expressionType, expressionValue);
             }
-        }
-        else
+        } else if (expression instanceof NullLiteral)
+        {
+            return new AnnotationLiteralValue(Object.class, null);
+        } else
         {
             LOG.warning("Unexpected type: " + expression.getClass().getCanonicalName() + " in type: " + this.path
                         + " just attempting to use it as a string value");
