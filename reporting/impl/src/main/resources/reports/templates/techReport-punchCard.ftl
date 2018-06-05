@@ -155,7 +155,7 @@
                                     <td>No technology sectors defined.</td>
                                 </#list>
                             </#list>
-                            <td class="sectorStats sector sizeMB" data-count="${appProject.rootFileModel.retrieveSize()?c}">
+                            <td class="sectorStats sector sizeMB" data-count="${(appProject.rootFileModel.retrieveSize()?c)!0}">
                                 ${ ( (appProject.rootFileModel.retrieveSize() / 1024 / 1024)?string["0.##"] )! }
                             </td>
                             <#assign noOfLibraries = getNumberOfLibraries(appProject) />
