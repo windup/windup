@@ -29,7 +29,7 @@ tr.headersGroup  { font-size: 16pt; margin: auto}
 tr.headersGroup td.first {}
 
 tr.headersGroup td div {
-    height: 200px; /* Without this, the text is centered vertically. */
+    height: 240px; /* Without this, the text is centered vertically. */
     width:   40px;
     padding: 0.3em 0 0 0;
     text-align: left;
@@ -42,16 +42,14 @@ tr.headersGroup td div {
 tr.headersGroup .sort_asc div:after {
     content: "\f107";
     font-family: "FontAwesome";
-    font-size: 10px;
-    font-weight: normal;
+    font-weight: bold;
     position: relative;
 }
 
 tr.headersGroup .sort_desc div:after {
     content: "\f106";
     font-family: "FontAwesome";
-    font-size: 10px;
-    font-weight: normal;
+    font-weight: bold;
     position: relative;
 }
 
