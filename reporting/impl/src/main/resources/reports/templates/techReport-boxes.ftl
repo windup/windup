@@ -52,7 +52,7 @@
         tr.rowSectors > td  > div.box { padding: 8pt 18pt 8pt 12pt; margin-bottom: 10pt; }
         tr.rowSectors > td  > div.box > h4 { font-size: 12pt; font-weight: bold; }
 
-        tr.rowSectors .box h4  { font-size: 12px; font-weight: bold; text-align: right; }
+        tr.rowSectors .box h4  { font-size: 12pt; font-weight: bold; text-align: right; }
         tr.rowSectors .box ul li  { font-size: 12px; }
 
         tr.rowSectors .box .icon {
