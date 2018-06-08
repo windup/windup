@@ -39,13 +39,13 @@
         }
 
         /* Sector headers */
-        tr.sectorsHeaders { font-size: 22pt; font-weight: bold; }
+        tr.sectorsHeaders { font-size: 20pt; font-weight: bold; }
         tr.sectorsHeaders > td { text-align: center; padding: 10pt 20pt 0; } /* Around the sector header box. */
         tr.rowSectors > td { padding: 2ex 2em; }
         tr.sectorsHeaders > td div { text-align: center; padding: 1ex 2em; }
 
         /* Partitions = gray areas */
-        tr.rowHeader { font-size: 18pt; font-weight: bold; }
+        tr.rowHeader { font-size: 14pt; font-weight: bold; }
         tr.rowHeader > td > div { background-color: #D9D9D9; padding: 1ex 20pt 0; margin-top: 18pt; }
         /*tr.rowHeader td,*/
         tr.rowSectors > td { background-color: #D9D9D9; padding: 1ex 2em; vertical-align: top; }
