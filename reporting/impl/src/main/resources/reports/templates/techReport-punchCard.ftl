@@ -129,6 +129,7 @@
                                         <#-- 2nd way - using the 4 layer map -->
                                         <#assign statsForThisBox = sortedStatsMatrix.get("", boxTag.name, appProject.getElement().id()?long)! />
                                         <#assign count = (statsForThisBox[""].occurrenceCount)!false />
+                                        <#assign countInteger = count?is_number?then(count, 0) />
                                         <#assign maxForThisBox   = (sortedStatsMatrix.getMaxForBox(boxTag.name))!false />
                                         <#assign isBooleanTech = maxForThisBox?is_number && maxForThisBox == 0 />
                                         <#if isBooleanTech>
@@ -143,23 +144,29 @@
                                             </#if>
                                         </#if>
                                         <#-- count: ${count?c}   max: ${maxForThisBox?c}   getLogaritmicDistribution(): ${ log?c } x 5 = ${ log * 5.0 } -->
-                                        <td class="circle size${ log?is_number?then((log * 5.0)?ceiling, "X")} sector sector${sectorTag.title}"><#-- The circle is put here by CSS :after --></td>
+                                        <td class="circle size${ log?is_number?then((log * 5.0)?ceiling, "X")} sector sector${sectorTag.title} table-tooltip" data-count="${countInteger?c}">
+                                            <#-- The circle is put here by CSS :after -->
+                                            <#if countInteger gt 0>
+                                            <span class="table-tooltiptext">${countInteger?c}</span>
+                                            </#if>
+                                        </td>
                                     </#if>
                                 <#else>
                                     <td>No technology sectors defined.</td>
                                 </#list>
                             </#list>
-                            <td class="sectorStats sector sizeMB">
+                            <td class="sectorStats sector sizeMB" data-count="${(appProject.rootFileModel.retrieveSize()?c)!0}">
                                 ${ ( (appProject.rootFileModel.retrieveSize() / 1024 / 1024)?string["0.##"] )! }
                             </td>
-                            <td class="sectorStats libsCount">
-                                <#assign noOfLibraries = getNumberOfLibraries(appProject) />
+                            <#assign noOfLibraries = getNumberOfLibraries(appProject) />
+                            <td class="sectorStats libsCount" data-count="${noOfLibraries?c}">
                                 ${ noOfLibraries! }
                             </td>
-                            <td class="sectorStats storyPoints">
-                                <#assign traversal = getProjectTraversal(appProject, 'all') />
-                                <#assign mandatoryCategory = ["mandatory"] />
-                                <#assign panelStoryPoints = getMigrationEffortPointsForProject(traversal, true, [], [], mandatoryCategory)! />
+
+                            <#assign traversal = getProjectTraversal(appProject, 'all') />
+                            <#assign mandatoryCategory = ["mandatory"] />
+                            <#assign panelStoryPoints = getMigrationEffortPointsForProject(traversal, true, [], [], mandatoryCategory)! />
+                            <td class="sectorStats storyPoints" data-count="${panelStoryPoints?c}">
                                 ${ panelStoryPoints! }
                             </td>
                             <#-- this td is needed for scrollbar positioning -->
@@ -186,5 +193,66 @@
     -->
     <script src="resources/js/bootstrap.min.js"></script>
     <script>$(document).ready(function(){$('[data-toggle="tooltip"]').tooltip();});</script>
+    <script>
+        var currentSortColumn = null;
+        var reverse = false;
+
+        function sortTable(column) {
+            // cleanup the previous sort classes
+            var groupedHeaderColumns = $('.headersGroup td').get();
+            groupedHeaderColumns.forEach(function(tdElement) {
+                $(tdElement).removeClass("sectorSorted");
+                $(tdElement).removeClass("sort_asc");
+                $(tdElement).removeClass("sort_desc");
+            });
+
+            if (column == currentSortColumn) {
+                reverse = !reverse;
+            } else {
+                reverse = false;
+                currentSortColumn = column;
+            }
+            var f = reverse ? 1 : -1;
+
+            $(groupedHeaderColumns[column]).addClass("sectorSorted");
+            $(groupedHeaderColumns[column]).addClass(reverse ? "sort_asc" : "sort_desc");
+
+            var rows = $('.technologiesPunchCard tbody tr').get();
+
+            rows.sort(function(a, b) {
+
+                var A = getVal(a);
+                var B = getVal(b);
+
+                if(A < B) {
+                    return -1*f;
+                }
+                if(A > B) {
+                    return 1*f;
+                }
+                return 0;
+            });
+
+            function getVal(elm) {
+                var v = $(elm).children('td').eq(column).data("count");
+                if($.isNumeric(v)){
+                    v = parseInt(v,10);
+                }
+                return v;
+            }
+
+            $.each(rows, function(index, row) {
+                $('.technologiesPunchCard').children('tbody').append(row);
+            });
+        }
+
+        $().ready(function () {
+            $(".headersGroup .sector").click(function (event) {
+                var td = event.target.parentNode;
+                var index = $(td).index();
+                sortTable(index);
+            });
+        });
+    </script>
 </body>
 </html>

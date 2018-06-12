@@ -6,7 +6,10 @@
 .sectorStats   { color: black; }
 
 /* A subtle line and space between sectors. */
-.sector           {border-left: none;}
+.headersGroup .sector {
+    border-left: none;
+    cursor: pointer;
+}
 .sector ~ .sector {border-left: 1px solid #E0E0E0;}
 /* (Only for the first columns of the sector.) */
 .sectorView     ~ .sectorView    { border-left: none; }
@@ -20,11 +23,13 @@ table.technologiesPunchCard { border-collapse: collapse; }
 tr.headersSector { font-size: 20pt; font-weight: bold; }
 tr.headersSector td { text-align: center; }
 
+td.sectorSorted { font-weight: bold; }
+
 tr.headersGroup  { font-size: 16pt; margin: auto}
 tr.headersGroup td.first {}
 
 tr.headersGroup td div {
-    height: 200px; /* Without this, the text is centered vertically. */
+    height: 240px; /* Without this, the text is centered vertically. */
     width:   40px;
     padding: 0.3em 0 0 0;
     text-align: left;
@@ -32,6 +37,20 @@ tr.headersGroup td div {
     writing-mode: vertical-lr; /* bt-lr doesn't work? So I turn it 180 with rotate() below */
     transform: rotate(180deg);
     white-space: nowrap;
+}
+
+tr.headersGroup .sort_asc div:after {
+    content: "\f107";
+    font-family: "FontAwesome";
+    font-weight: bold;
+    position: relative;
+}
+
+tr.headersGroup .sort_desc div:after {
+    content: "\f106";
+    font-family: "FontAwesome";
+    font-weight: bold;
+    position: relative;
 }
 
 tr.app { font-size: 12pt; }
@@ -105,4 +124,49 @@ table.technologiesPunchCard tbody tr {
 table.technologiesPunchCard thead,
 table.technologiesPunchCard tbody tr {
     display: table;
+}
+
+/* Tooltip container */
+.table-tooltip {
+    position: relative;
+}
+
+/* Tooltip text */
+.table-tooltip .table-tooltiptext {
+    visibility: hidden;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+
+    position: absolute;
+    z-index: 1;
+
+    font-size: 14pt;
+    padding: 5px;
+
+    /*left tooltip*/
+    top: 10px;
+    right: 85%;
+
+    opacity: 0;
+    transition: opacity 1s;
+    background-color: #505050;
+}
+
+.table-tooltip:hover .table-tooltiptext {
+    visibility: visible;
+    opacity: 0.9;
+}
+
+.table-tooltip .table-tooltiptext::after {
+    position: absolute;
+    border-width: 5px;
+    border-style: solid;
+
+    /* To the right of the tooltip */
+    content: "";
+    top: 50%;
+    left: 100%;
+    margin-top: -5px;
+    border-color: transparent transparent transparent #505050;
 }
