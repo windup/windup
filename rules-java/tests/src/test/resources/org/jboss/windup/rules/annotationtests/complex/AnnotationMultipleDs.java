@@ -24,6 +24,15 @@ import javax.annotation.sql.DataSourceDefinitions;
                 password="secret",
                 transactional = false
         ),
+        @DataSourceDefinition(
+                name = "jdbc/has-some-nulls",
+                className="com.example.HasSOmeNulls",
+                portNumber=6689,
+                serverName=null,
+                user="otheruser",
+                password="othersecret",
+                transactional = true
+        ),
 })
 public class AnnotationMultipleDs
 {
