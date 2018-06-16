@@ -37,8 +37,8 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.condition.JavaClass;
 import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
-import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.jboss.windup.rules.apps.java.scan.ast.AnalyzeJavaFilesRuleProvider;
+import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.jboss.windup.testutil.basics.WindupTestUtilMethods;
 import org.junit.Assert;
 import org.junit.Test;
@@ -50,6 +50,13 @@ import org.ocpsoft.rewrite.context.EvaluationContext;
 @RunWith(Arquillian.class)
 public class JavaClassTest
 {
+    @Inject
+    JavaClassTestRuleProvider provider;
+    @Inject
+    private WindupProcessor processor;
+    @Inject
+    private GraphContextFactory factory;
+
     @Deployment
     @AddonDependencies({
                 @AddonDependency(name = "org.jboss.windup.config:windup-config"),
@@ -65,15 +72,6 @@ public class JavaClassTest
     {
         return ShrinkWrap.create(AddonArchive.class).addBeansXML();
     }
-
-    @Inject
-    JavaClassTestRuleProvider provider;
-
-    @Inject
-    private WindupProcessor processor;
-
-    @Inject
-    private GraphContextFactory factory;
 
     @Test
     public void testJavaClassCondition() throws IOException, InstantiationException, IllegalAccessException
@@ -139,12 +137,6 @@ public class JavaClassTest
         Assert.assertEquals("output", as.getOutputVariablesName());
     }
 
-    private static Path getDefaultPath()
-    {
-        return FileUtils.getTempDirectory().toPath().resolve("Windup")
-                    .resolve("windupgraph_javaclasstest_" + RandomStringUtils.randomAlphanumeric(6));
-    }
-
     @Singleton
     public static class JavaClassTestRuleProvider extends AbstractRuleProvider
     {
@@ -153,7 +145,6 @@ public class JavaClassTest
         private int firstRuleMatchCount = 0;
         private int secondRuleMatchCount = 0;
         private int thirdRuleMatchCount = 0;
-
 
         public JavaClassTestRuleProvider()
         {
@@ -223,6 +214,7 @@ public class JavaClassTest
         {
             return secondRuleMatchCount;
         }
+
         public int getThirdRuleMatchCount()
         {
             return thirdRuleMatchCount;

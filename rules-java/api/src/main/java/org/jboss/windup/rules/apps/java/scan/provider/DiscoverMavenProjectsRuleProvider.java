@@ -22,6 +22,8 @@ import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.TechnologyTagService;
+import org.jboss.windup.rules.apps.java.archives.model.IdentifiedArchiveModel;
+import org.jboss.windup.rules.apps.java.archives.model.IgnoredArchiveModel;
 import org.jboss.windup.rules.apps.java.model.project.MavenProjectModel;
 import org.jboss.windup.rules.apps.java.scan.operation.packagemapping.PackageNameMapping;
 import org.jboss.windup.rules.apps.maven.dao.MavenProjectService;
@@ -169,6 +171,10 @@ public class DiscoverMavenProjectsRuleProvider extends AbstractRuleProvider
             ArchiveModel childArchive = (ArchiveModel)fileModel;
             if (childArchive instanceof DuplicateArchiveModel)
                 childArchive = ((DuplicateArchiveModel) childArchive).getCanonicalArchive();
+
+            // If we separately identified this as a known module, don't override its project settings
+            if (childArchive instanceof IgnoredArchiveModel || childArchive instanceof IdentifiedArchiveModel)
+                return;
 
             for (FileModel archiveChild : childArchive.getAllFiles())
             {

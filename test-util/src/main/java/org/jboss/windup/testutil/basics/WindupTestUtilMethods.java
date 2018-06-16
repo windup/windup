@@ -30,7 +30,7 @@ public class WindupTestUtilMethods
         }
     }
 
-    private static DefaultEvaluationContext createEvalContext(GraphRewrite event)
+    public static DefaultEvaluationContext createEvalContext(GraphRewrite event)
     {
         final DefaultEvaluationContext evaluationContext = new DefaultEvaluationContext();
         final DefaultParameterValueStore values = new DefaultParameterValueStore();

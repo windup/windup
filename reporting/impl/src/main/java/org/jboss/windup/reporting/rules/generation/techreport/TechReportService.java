@@ -1,5 +1,6 @@
 package org.jboss.windup.reporting.rules.generation.techreport;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -11,10 +12,10 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.apache.tinkerpop.gremlin.structure.Vertex;
-import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.config.tags.Tag;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
+import org.jboss.windup.graph.traversal.ProjectModelTraversal;
 import org.jboss.windup.reporting.model.TagModel;
 import org.jboss.windup.reporting.model.TechnologyUsageStatisticsModel;
 import org.jboss.windup.reporting.service.TagGraphService;
@@ -22,83 +23,13 @@ import org.jboss.windup.util.exception.WindupException;
 
 public class TechReportService
 {
-    private static final Logger LOG = Logger.getLogger(TechReportService.class.getName());
     public static final String MAPPING_OF_PLACEMENT_NAMES = "techReport:mappingOfPlacementTagNames";
-
+    private static final Logger LOG = Logger.getLogger(TechReportService.class.getName());
     private final GraphContext graphContext;
 
     public TechReportService(GraphContext graphContext)
     {
         this.graphContext = graphContext;
-    }
-
-    /**
-     * Prepares a precomputed matrix - map of maps of maps: rowTag -> boxTag -> project -> placement label -> TechUsageStatSum.
-     *
-     * @param onlyForProject Sum the statistics only for this project.
-     */
-    TechStatsMatrix getTechStatsMap(ProjectModel onlyForProject)
-    {
-        final Long onlyID = onlyForProject == null ? null : (Long) onlyForProject.getRootProjectModel().getElement().id();
-        LOG.fine(String.format("### Creating tech stats map for " + (onlyForProject == null ? "global report" : "project #%d"), onlyID));
-
-        Map<String, Map<String, Map<Long, Map<String, TechUsageStatSum>>>> map = new HashMap<>();
-
-        final Iterable<TechnologyUsageStatisticsModel> statModels = graphContext.service(TechnologyUsageStatisticsModel.class).findAll();
-        for (TechnologyUsageStatisticsModel stat : statModels)
-        {
-            List<Long> appsToCountTowards = StreamSupport.stream(stat.getProjectModel().getApplications().spliterator(), false)
-                    .map(ProjectModel::getElement)
-                    .map(Vertex::id)
-                    .map(Long.class::cast)
-                    .collect(Collectors.toList());
-
-            LOG.fine(String.format("--- Adding to projects %s: tech '%s', count: %sx, tags: %s", StringUtils.join(appsToCountTowards, " "),
-                    stat.getName(), stat.getOccurrenceCount(), stat.getTags()));
-
-            // A shortcut.
-            if (onlyID != null && !appsToCountTowards.contains(onlyID))
-            {
-                LOG.fine("\t\tThis stat is not for this project, skipping.");
-                continue;
-            }
-
-            final Set<String> placementTags = TechReportService.getPlacementTags(graphContext, stat.getTags());
-            TechReportService.TechReportPlacement placement = TechReportService.processPlaceLabels(graphContext, placementTags);
-            if (placement.box == null || placement.row == null)
-            {
-                LOG.severe(String.format("\tPlacement labels not recognized, placement incomplete: %s; stat: %s", placement, stat));
-                continue;
-            }
-
-            placement = TechReportService.normalizePlacement(graphContext, placement);
-
-            if (placement.box == null || placement.row == null)
-            {
-                LOG.severe(String.format("\tPlacement labels not recognized, placement incomplete: %s; stat: %s", placement, stat));
-                continue;
-            }
-
-            // For boxes report - show each tech in sector, row, box. A sum for all projects.
-            mergeToTheRightCell(map, placement.row.getName(), placement.box.getName(), 0L, stat.getName(), stat, false);
-            // For the punch card report - maximum count for each box.
-            mergeToTheRightCell(map, "", placement.box.getName(), 0L, "", stat, true);
-
-            for (Long appToCountTowards : appsToCountTowards)
-            {
-                if (onlyID != null && onlyID.equals(appToCountTowards))
-                    continue;
-
-                // For boxes report - show each tech in sector, row, box. For individual projects.
-                mergeToTheRightCell(map, placement.row.getName(), placement.box.getName(), appToCountTowards, stat.getName(), stat, false);
-
-                // For the punch card report - roll up rows and individual techs.
-                mergeToTheRightCell(map, "", placement.box.getName(), appToCountTowards, "", stat, false);
-            }
-        }
-
-
-        return new TechStatsMatrix(map);
     }
 
     private static void mergeToTheRightCell(
@@ -176,7 +107,8 @@ public class TechReportService
             else if (TagGraphService.isTagUnderTagOrSame(tag, placeRowsTag))
             {
                 placement.row = tag;
-            } else
+            }
+            else
             {
                 unknownTags.add(name);
             }
@@ -233,6 +165,76 @@ public class TechReportService
         }
 
         return nonPlaceParent;
+    }
+
+    /**
+     * Prepares a precomputed matrix - map of maps of maps: rowTag -> boxTag -> project -> placement label -> TechUsageStatSum.
+     *
+     * @param onlyForApplication Sum the statistics only for this project.
+     */
+    public TechStatsMatrix getTechStatsMap(ProjectModel onlyForApplication)
+    {
+        Set<ProjectModel> applicationProjects = onlyForApplication == null ? null
+                    : new ProjectModelTraversal(onlyForApplication).getAllProjects(true);
+
+        Map<String, Map<String, Map<Long, Map<String, TechUsageStatSum>>>> map = new HashMap<>();
+
+        final Iterable<TechnologyUsageStatisticsModel> statModels = graphContext.service(TechnologyUsageStatisticsModel.class).findAll();
+        for (TechnologyUsageStatisticsModel stat : statModels)
+        {
+            // A shortcut.
+            if (applicationProjects != null && !applicationProjects.contains(stat.getProjectModel()))
+            {
+                LOG.fine("\t\tThis stat is not for this project, skipping.");
+                continue;
+            }
+
+            final Set<String> placementTags = TechReportService.getPlacementTags(graphContext, stat.getTags());
+            TechReportService.TechReportPlacement placement = TechReportService.processPlaceLabels(graphContext, placementTags);
+            if (placement.box == null || placement.row == null)
+            {
+                LOG.severe(String.format("\tPlacement labels not recognized, placement incomplete: %s; stat: %s", placement, stat));
+                continue;
+            }
+
+            placement = TechReportService.normalizePlacement(graphContext, placement);
+
+            if (placement.box == null || placement.row == null)
+            {
+                LOG.severe(String.format("\tPlacement labels not recognized, placement incomplete: %s; stat: %s", placement, stat));
+                continue;
+            }
+
+            // For boxes report - show each tech in sector, row, box. A sum for all projects.
+            mergeToTheRightCell(map, placement.row.getName(), placement.box.getName(), 0L, stat.getName(), stat, false);
+            // For the punch card report - maximum count for each box.
+            mergeToTheRightCell(map, "", placement.box.getName(), 0L, "", stat, true);
+
+            List<Long> appsToCountTowards;
+            if (onlyForApplication == null)
+            {
+                appsToCountTowards = StreamSupport.stream(stat.getProjectModel().getApplications().spliterator(), false)
+                            .map(ProjectModel::getElement)
+                            .map(Vertex::id)
+                            .map(Long.class::cast)
+                            .collect(Collectors.toList());
+            }
+            else
+            {
+                appsToCountTowards = Collections.singletonList(onlyForApplication.getId());
+            }
+
+            for (Long appToCountTowards : appsToCountTowards)
+            {
+                // For boxes report - show each tech in sector, row, box. For individual projects.
+                mergeToTheRightCell(map, placement.row.getName(), placement.box.getName(), appToCountTowards, stat.getName(), stat, false);
+
+                // For the punch card report - roll up rows and individual techs.
+                mergeToTheRightCell(map, "", placement.box.getName(), appToCountTowards, "", stat, false);
+            }
+        }
+
+        return new TechStatsMatrix(map);
     }
 
     public static class TechStatsMatrix

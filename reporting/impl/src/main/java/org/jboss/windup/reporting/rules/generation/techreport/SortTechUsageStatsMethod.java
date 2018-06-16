@@ -66,15 +66,15 @@ public class SortTechUsageStatsMethod implements WindupFreeMarkerMethod
             throw new TemplateModelException("Expected 0 or 1 argument - project.");
 
         // The project. May be null -> count from all applications.
-        ProjectModel projectModel = null;
+        ProjectModel application = null;
         if (arguments.size() == 1)
         {
             StringModel projectArg = (StringModel) arguments.get(0);
             if (null != projectArg)
-                projectModel = (ProjectModel) projectArg.getWrappedObject();
+                application = (ProjectModel) projectArg.getWrappedObject();
         }
 
-        TechReportService.TechStatsMatrix matrix = techReportService.getTechStatsMap(projectModel);
+        TechReportService.TechStatsMatrix matrix = techReportService.getTechStatsMap(application);
 
         ExecutionStatistics.get().end(NAME);
         return matrix;

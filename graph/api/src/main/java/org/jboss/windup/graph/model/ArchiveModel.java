@@ -79,7 +79,7 @@ public interface ArchiveModel extends FileModel
     /**
      * Gets all files in this archive, including subfiles, but not including subfiles of embedded archives.
      */
-    default Iterable<FileModel> getAllFiles()
+    default Set<FileModel> getAllFiles()
     {
         Set<FileModel> results = new LinkedHashSet<>();
 

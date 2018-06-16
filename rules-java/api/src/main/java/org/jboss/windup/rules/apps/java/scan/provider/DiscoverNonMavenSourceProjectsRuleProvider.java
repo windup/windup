@@ -6,6 +6,7 @@ import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
 import org.jboss.windup.config.operation.GraphOperation;
 import org.jboss.windup.config.phase.DiscoverProjectStructurePhase;
+import org.jboss.windup.graph.model.DuplicateArchiveModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -59,11 +60,16 @@ public class DiscoverNonMavenSourceProjectsRuleProvider extends AbstractRuleProv
         {
             for (FileModel childFile : fileModel.getFilesInDirectory())
             {
-                if (childFile.getProjectModel() == null)
+                boolean childHasProject = childFile.getProjectModel() != null;
+                // Also, if it is a duplicate, check the canonical archive
+                if (!childHasProject && childFile instanceof DuplicateArchiveModel)
+                    childHasProject = ((DuplicateArchiveModel)childFile).getCanonicalArchive().getProjectModel() != null;
+
+                if (!childHasProject)
                 {
                     projectModel.addFileModel(childFile);
                 }
-                else if (childFile.getProjectModel().getParentProject() == null && !childFile.getProjectModel().equals(projectModel))
+                else if (childFile.getProjectModel() != null && childFile.getProjectModel().getParentProject() == null && !childFile.getProjectModel().equals(projectModel))
                 {
                     // if the child has a project, but the project doesn't have a parent, associate it with the root
                     // project
