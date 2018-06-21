@@ -8,7 +8,7 @@
         <version>4.1.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.jboss.windup.</groupId>
+    <groupId>org.jboss.windup</groupId>
     <artifactId>windup-module-spec</artifactId>
 
     <name>Windup Engine - Furnace Module Spec</name>
