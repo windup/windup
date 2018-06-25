@@ -39,6 +39,7 @@ function release_windup {
         echo "Finished preparing release"
 
         mvn release:perform \
+                -P jboss-release,gpg-sign \
                 -DdevelopmentVersion=$DEV \
                 -DreleaseVersion=$REL \
                 -Dtag=$REL \
