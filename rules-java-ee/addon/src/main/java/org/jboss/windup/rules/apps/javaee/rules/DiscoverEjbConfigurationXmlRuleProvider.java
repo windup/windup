@@ -2,6 +2,7 @@ package org.jboss.windup.rules.apps.javaee.rules;
 
 import static org.joox.JOOX.$;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.jboss.windup.ast.java.data.TypeReferenceLocation;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
@@ -20,7 +22,9 @@ import org.jboss.windup.config.phase.InitialAnalysisPhase;
 import org.jboss.windup.config.projecttraversal.ProjectTraversalCache;
 import org.jboss.windup.config.query.Query;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.frames.FramedVertexIterable;
 import org.jboss.windup.graph.model.ProjectModel;
+import org.jboss.windup.graph.model.WindupFrame;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.Service;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
@@ -64,7 +68,7 @@ import org.w3c.dom.Element;
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-@RuleMetadata(phase = InitialAnalysisPhase.class, perform = "Discover EJB-JAR XML Files")
+@RuleMetadata(phase = InitialAnalysisPhase.class, perform = "Discover EJB-JAR XML Files and other EJBs")
 public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvider
 {
     private static final Logger LOG = Logger.getLogger(DiscoverEjbConfigurationXmlRuleProvider.class.getName());
@@ -73,10 +77,6 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
     private static final TechnologyTagLevel TECH_TAG_LEVEL = TechnologyTagLevel.INFORMATIONAL;
 
     private static final String REGEX_DTD = "(?i).*enterprise.javabeans.*";
-
-    public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
-    {
-    }
 
     @Override
     public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
@@ -111,7 +111,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
                             classes.forEach(classModel -> {
                                 // Get the entity model
                                 GraphService<EjbEntityBeanModel> ejbEntityService = new GraphService<>(event.getGraphContext(), EjbEntityBeanModel.class);
-                                Iterable<EjbEntityBeanModel> entityBeanModels = ejbEntityService.findAllByProperty(EjbEntityBeanModel.EJB_IMPLEMENTATION_CLASS, classModel.getClassName(), true);
+                                Iterable<EjbEntityBeanModel> entityBeanModels = findByClass(event.getGraphContext(), EjbEntityBeanModel.EJB_IMPLEMENTATION_CLASS, classModel, EjbEntityBeanModel.class);
 
                                 // If it already exists, then skip this one
                                 if (entityBeanModels.iterator().hasNext())
@@ -135,7 +135,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
                         classes.forEach(classModel -> {
                             // Get the session model
                             GraphService<EjbSessionBeanModel> ejbSessionService = new GraphService<>(event.getGraphContext(), EjbSessionBeanModel.class);
-                            Iterable<EjbSessionBeanModel> sessionModels = ejbSessionService.findAllByProperty(EjbEntityBeanModel.EJB_HOME, classModel.getClassName(), true);
+                            Iterable<EjbSessionBeanModel> sessionModels = findByClass(event.getGraphContext(), EjbSessionBeanModel.EJB_HOME, classModel, EjbSessionBeanModel.class);
 
                             // If it already exists, then skip this one
                             if (sessionModels.iterator().hasNext())
@@ -159,7 +159,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
                         classes.forEach(classModel -> {
                             // Get the session model
                             GraphService<EjbSessionBeanModel> ejbSessionService = new GraphService<>(event.getGraphContext(), EjbSessionBeanModel.class);
-                            Iterable<EjbSessionBeanModel> sessionModels = ejbSessionService.findAllByProperty(EjbEntityBeanModel.EJB_REMOTE, classModel.getClassName(), true);
+                            Iterable<EjbSessionBeanModel> sessionModels = findByClass(event.getGraphContext(), EjbSessionBeanModel.EJB_REMOTE, classModel, EjbSessionBeanModel.class);
 
                             // If it already exists, then skip this one
                             if (sessionModels.iterator().hasNext())
@@ -183,7 +183,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
                         classes.forEach(classModel -> {
                             // Get the session model
                             GraphService<EjbSessionBeanModel> ejbSessionService = new GraphService<>(event.getGraphContext(), EjbSessionBeanModel.class);
-                            Iterable<EjbSessionBeanModel> sessionModels = ejbSessionService.findAllByProperty(EjbEntityBeanModel.EJB_IMPLEMENTATION_CLASS, classModel.getClassName(), true);
+                            Iterable<EjbSessionBeanModel> sessionModels = findByClass(event.getGraphContext(), EjbSessionBeanModel.EJB_IMPLEMENTATION_CLASS, classModel, EjbSessionBeanModel.class);
 
                             // If it already exists, then skip this one
                             if (sessionModels.iterator().hasNext())
@@ -207,7 +207,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
                         classes.forEach(classModel -> {
                             // Get the session model
                             GraphService<EjbSessionBeanModel> ejbSessionService = new GraphService<>(event.getGraphContext(), EjbSessionBeanModel.class);
-                            Iterable<EjbSessionBeanModel> sessionModels = ejbSessionService.findAllByProperty(EjbEntityBeanModel.EJB_LOCAL_HOME, classModel.getClassName(), true);
+                            Iterable<EjbSessionBeanModel> sessionModels = findByClass(event.getGraphContext(), EjbSessionBeanModel.EJB_LOCAL_HOME, classModel, EjbSessionBeanModel.class);
 
                             // If it already exists, then skip this one
                             if (sessionModels.iterator().hasNext())
@@ -231,7 +231,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
                         classes.forEach(classModel -> {
                             // Get the session model
                             GraphService<EjbSessionBeanModel> ejbSessionService = new GraphService<>(event.getGraphContext(), EjbSessionBeanModel.class);
-                            Iterable<EjbSessionBeanModel> sessionModels = ejbSessionService.findAllByProperty(EjbEntityBeanModel.EJB_LOCAL, classModel.getClassName(), true);
+                            Iterable<EjbSessionBeanModel> sessionModels = findByClass(event.getGraphContext(), EjbSessionBeanModel.EJB_LOCAL, classModel, EjbSessionBeanModel.class);
 
                             // If it already exists, then skip this one
                             if (sessionModels.iterator().hasNext())
@@ -255,7 +255,7 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
                         classes.forEach(classModel -> {
                             // Get the session model
                             GraphService<EjbMessageDrivenModel> ejbMessageDrivenService = new GraphService<>(event.getGraphContext(), EjbMessageDrivenModel.class);
-                            Iterable<EjbMessageDrivenModel> messageDrivenModels = ejbMessageDrivenService.findAllByProperty(EjbMessageDrivenModel.EJB_IMPLEMENTATION_CLASS, classModel.getClassName(), true);
+                            Iterable<EjbMessageDrivenModel> messageDrivenModels = findByClass(event.getGraphContext(), EjbMessageDrivenModel.EJB_IMPLEMENTATION_CLASS, classModel, EjbMessageDrivenModel.class);
 
                             // If it already exists, then skip this one
                             if (messageDrivenModels.iterator().hasNext())
@@ -268,6 +268,22 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
                         });
                     }
                 });
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> List<T> findByClass(GraphContext graphContext, String edgeLabel, JavaClassModel javaClassModel, Class<T> typeClass)
+    {
+        List<T> result = new ArrayList<>();
+        graphContext.getGraph().traversal().V()
+                .has(JavaClassModel.QUALIFIED_NAME, javaClassModel.getQualifiedName())
+                .has(WindupFrame.TYPE_PROP, JavaClassModel.TYPE)
+                .in(edgeLabel)
+                .toList()
+                .forEach(v -> {
+                    T frame = graphContext.getFramed().frameElement(v, typeClass);
+                    result.add(frame);
+                });
+        return result;
     }
 
     private void extractMetadata(GraphRewrite event, EvaluationContext context, XmlFileModel xmlModel, Document doc)

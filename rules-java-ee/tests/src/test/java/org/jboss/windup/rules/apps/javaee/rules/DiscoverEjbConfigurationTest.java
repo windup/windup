@@ -1,9 +1,11 @@
-package org.jboss.windup.rules.apps.javaee.tests;
+package org.jboss.windup.rules.apps.javaee.rules;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import javax.inject.Inject;
@@ -18,6 +20,7 @@ import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
+import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.javaee.AbstractTest;
 import org.jboss.windup.rules.apps.javaee.model.EjbEntityBeanModel;
 import org.jboss.windup.rules.apps.javaee.model.EjbMessageDrivenModel;
@@ -34,6 +37,54 @@ public class DiscoverEjbConfigurationTest extends AbstractTest
 
     @Inject
     private GraphContextFactory factory;
+
+    @Inject
+    private DiscoverEjbConfigurationXmlRuleProvider discoverEjbConfigurationXmlRuleProvider;
+
+    @Test
+    public void testEjbDiscoveryFindByClass() throws Exception
+    {
+        try (GraphContext context = factory.create(true))
+        {
+            GraphService<JavaClassModel> javaClassService = new GraphService<>(context, JavaClassModel.class);
+            List<JavaClassModel> classModels = new ArrayList<>();
+            for (int i = 1; i < 5; i++)
+            {
+                JavaClassModel classModel = javaClassService.create();
+                classModel.setQualifiedName("com.example.Foo" + i);
+                classModels.add(classModel);
+            }
+
+            GraphService<EjbSessionBeanModel> ejbService = new GraphService<>(context, EjbSessionBeanModel.class);
+
+
+            EjbSessionBeanModel session1 = ejbService.create();
+            session1.setEjbLocal(classModels.get(0));
+
+            EjbSessionBeanModel session2 = ejbService.create();
+            session2.setEjbRemote(classModels.get(1));
+
+
+            List<EjbSessionBeanModel> session1List = discoverEjbConfigurationXmlRuleProvider.findByClass(context, EjbSessionBeanModel.EJB_LOCAL, classModels.get(0), EjbSessionBeanModel.class);
+            Assert.assertEquals(1, session1List.size());
+            Assert.assertNotNull(session1List.get(0));
+            Assert.assertNotNull(session1List.get(0).getEjbLocal());
+            Assert.assertEquals(classModels.get(0).getQualifiedName(), session1List.get(0).getEjbLocal().getQualifiedName());
+
+            List<EjbSessionBeanModel> session2List = discoverEjbConfigurationXmlRuleProvider.findByClass(context, EjbSessionBeanModel.EJB_REMOTE, classModels.get(1), EjbSessionBeanModel.class);
+            Assert.assertEquals(1, session2List.size());
+            Assert.assertNotNull(session2List.get(0));
+            Assert.assertNotNull(session2List.get(0).getEjbRemote());
+            Assert.assertEquals(classModels.get(1).getQualifiedName(), session2List.get(0).getEjbRemote().getQualifiedName());
+
+
+            List<EjbSessionBeanModel> session3List = discoverEjbConfigurationXmlRuleProvider.findByClass(context, EjbSessionBeanModel.EJB_REMOTE, classModels.get(2), EjbSessionBeanModel.class);
+            Assert.assertEquals(0, session3List.size());
+
+            List<EjbSessionBeanModel> session4List = discoverEjbConfigurationXmlRuleProvider.findByClass(context, EjbSessionBeanModel.EJB_REMOTE, classModels.get(3), EjbSessionBeanModel.class);
+            Assert.assertEquals(0, session4List.size());
+        }
+    }
 
     @Test
     public void testEJBMessageDrivenNotInEJBXML() throws Exception
@@ -120,6 +171,8 @@ public class DiscoverEjbConfigurationTest extends AbstractTest
             int msgDrivenFound = 0;
             for (EjbMessageDrivenModel msgDriven : messageDrivenService.findAll())
             {
+                if (msgDriven.getDestination() == null)
+                    continue;
                 Assert.assertEquals("ChatBeanDestination", msgDriven.getDestination().getJndiLocation());
                 msgDrivenFound++;
             }
