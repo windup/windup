@@ -41,6 +41,8 @@ public interface FileModel extends ResourceModel, HasApplications, HasProject
     String WINDUP_GENERATED = "windupGenerated";
     String PARSE_ERROR = "parseError";
     String ON_PARSE_ERROR = "onParseError";
+    String SIZE = "size";
+    String DIRECTORY_SIZE = "directorySize";
 
     /**
      * Contains the File Name (the last component of the path). Eg, a file /tmp/foo/bar/file.txt would have fileName set to "file.txt"
@@ -73,11 +75,15 @@ public interface FileModel extends ResourceModel, HasApplications, HasProject
     {
         File file = new File(filePath);
         Vertex vertex = getElement();
+        Long size = new Long(0);
+        if (!file.isDirectory())
+            size = file.length();
         // set the isDirectory attribute
         getWrappedGraph().getRawTraversal().V(vertex)
                 .property(IS_DIRECTORY, file.isDirectory())
                 .property(FILE_PATH, file.getAbsolutePath())
                 .property(FILE_NAME, file.getName())
+                .property(SIZE, size)
                 .iterate();
     }
 
@@ -144,6 +150,18 @@ public interface FileModel extends ResourceModel, HasApplications, HasProject
      */
     @Property(ON_PARSE_ERROR)
     void setOnParseError(OnParseError ignore);
+
+    @Property(SIZE)
+    Long getSize();
+
+    @Property(SIZE)
+    void setSize(Long size);
+
+    @Property((DIRECTORY_SIZE))
+    Long getDirectorySize();
+
+    @Property(DIRECTORY_SIZE)
+    void setDirectorySize(Long directorySize);
 
     /**
      * Parent directory
