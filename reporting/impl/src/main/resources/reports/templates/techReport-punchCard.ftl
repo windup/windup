@@ -87,7 +87,7 @@
                             <td class="scrollbar-padding"></td>
                         </tr>
                         <tr class="headersGroup">
-                            <td></td>
+                            <td class="sector"><div>Name</div></td>
                         <#list sectorTags as sectorTag >
                             <#assign sortedBoxTags = iterableToList(sectorTag.designatedTags)?sort_by("title") />
                             <#list sortedBoxTags as boxTag >
@@ -223,6 +223,9 @@
 
                 var A = getVal(a);
                 var B = getVal(b);
+                if (!$.isNumeric(A) || !$.isNumeric(B)) {
+                    return B.localeCompare(A) * f;
+                }
 
                 if(A < B) {
                     return -1*f;
@@ -235,9 +238,12 @@
 
             function getVal(elm) {
                 var v = $(elm).children('td').eq(column).data("count");
-                if($.isNumeric(v)){
+                if (v == null) {
+                    v = $(elm).children('td').eq(column).text().trim();
+                } else if($.isNumeric(v)) {
                     v = parseInt(v,10);
                 }
+                console.log("V = " + v);
                 return v;
             }
 
@@ -252,6 +258,9 @@
                 var index = $(td).index();
                 sortTable(index);
             });
+            reverse = true;
+            currentSortColumn = 0;
+            sortTable(0);
         });
     </script>
 </body>
