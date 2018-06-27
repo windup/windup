@@ -36,7 +36,7 @@ public class FileVisit
         }
     }
 
-    private static List<File> visit(final File directory, final Predicate<File> predicate)
+    public static List<File> visit(final File directory, final Predicate<File> predicate)
     {
         try
         {
