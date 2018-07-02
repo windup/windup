@@ -55,6 +55,7 @@ public class RecurseDirectoryAndAddFiles extends AbstractIterationOperation<File
 
         String filePath = file.getFilePath();
         File fileReference = new File(filePath);
+        Long directorySize = new Long(0);
 
         if (fileReference.isDirectory())
         {
@@ -65,8 +66,17 @@ public class RecurseDirectoryAndAddFiles extends AbstractIterationOperation<File
                 {
                     FileModel subFile = fileService.createByFilePath(file, reference.getAbsolutePath());
                     recurseAndAddFiles(event, fileService, javaConfigurationService, subFile);
+                    if (subFile.isDirectory())
+                    {
+                        directorySize = directorySize + subFile.getDirectorySize();
+                    }
+                    else
+                    {
+                        directorySize = directorySize + subFile.getSize();
+                    }
                 }
             }
+            file.setDirectorySize(directorySize);
         }
     }
 }

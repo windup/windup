@@ -155,9 +155,15 @@
                                     <td>No technology sectors defined.</td>
                                 </#list>
                             </#list>
+                            <#if isFileADirectory(appProject.rootFileModel)>
+                            <td class="sectorStats sector sizeMB" data-count="${(appProject.rootFileModel.getDirectorySize()?c)!0}">
+                                ${ ( (appProject.rootFileModel.getDirectorySize() / 1024 / 1024)?string["0.##"] )! }
+                            </td>
+                            <#else>
                             <td class="sectorStats sector sizeMB" data-count="${(appProject.rootFileModel.retrieveSize()?c)!0}">
                                 ${ ( (appProject.rootFileModel.retrieveSize() / 1024 / 1024)?string["0.##"] )! }
                             </td>
+                            </#if>
                             <#assign noOfLibraries = getNumberOfLibraries(appProject) />
                             <td class="sectorStats libsCount" data-count="${noOfLibraries?c}">
                                 ${ noOfLibraries! }
