@@ -12,7 +12,6 @@ import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.TitanUtil;
 import org.jboss.windup.graph.frames.FramedVertexIterable;
 import org.jboss.windup.graph.model.WindupFrame;
-import org.jboss.windup.graph.model.WindupVertexFrame;
 import org.jboss.windup.graph.model.resource.FileModel;
 import org.jboss.windup.util.ExecutionStatistics;
 
@@ -39,6 +38,12 @@ public class FileService extends GraphService<FileModel>
         {
             entry = this.create();
             entry.setFilePath(absolutePath);
+            entry.setParentFile(parentFile);
+        }
+
+        if (entry.getParentFile() == null && parentFile != null)
+        {
+            // Deal with an odd corner case, that probably only happens in my test environment.
             entry.setParentFile(parentFile);
         }
 
