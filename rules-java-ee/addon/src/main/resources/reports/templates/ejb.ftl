@@ -81,7 +81,7 @@
                 <h1>
                     <div class="main">EJB Report
                     <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement=right title="This report lists the Java EE EJB beans with their JNDI address - stateless and statefull beans, message driven beans, and entity beans."></i></div>
-                    <div class="path">${reportModel.projectModel.rootFileModel.fileName}</div>
+                    <div class="path">${reportModel.projectModel.rootFileModel.applicationName}</div>
                 </h1>
             </div>
         </div>

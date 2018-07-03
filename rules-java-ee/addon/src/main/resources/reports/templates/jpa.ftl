@@ -31,7 +31,7 @@
                 <h1>
                     <div class="main">JPA Report
                     <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement=right title="The JPA report lists the JPA entities, named JPA queries, and the JPA configuration found in the application."></i></div>
-                    <div class="path">${reportModel.projectModel.rootFileModel.fileName}</div>
+                    <div class="path">${reportModel.projectModel.rootFileModel.applicationName}</div>
                 </h1>
             </div>
         </div>

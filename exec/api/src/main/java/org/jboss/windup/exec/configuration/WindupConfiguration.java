@@ -26,6 +26,7 @@ import org.jboss.windup.config.furnace.FurnaceHolder;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.WindupProgressMonitor;
 import org.jboss.windup.exec.configuration.options.ExportCSVOption;
+import org.jboss.windup.exec.configuration.options.InputApplicationName;
 import org.jboss.windup.exec.configuration.options.InputPathOption;
 import org.jboss.windup.exec.configuration.options.OnlineModeOption;
 import org.jboss.windup.exec.configuration.options.OutputPathOption;
@@ -240,7 +241,24 @@ public class WindupConfiguration
         Collection<Path> inputPaths = getOptionValue(InputPathOption.NAME);
         return inputPaths;
     }
-    
+
+    public WindupConfiguration addInputApplicationName(String name)
+    {
+        List<String> inputApplicationNames = getOptionValue(InputApplicationName.NAME);
+        if (inputApplicationNames == null)
+        {
+            inputApplicationNames = new ArrayList<>();
+            setOptionValue(InputApplicationName.NAME, inputApplicationNames);
+        }
+        inputApplicationNames.add(name);
+        return this;
+    }
+
+    public List<String> getInputApplicationNames()
+    {
+        return getOptionValue(InputApplicationName.NAME);
+    }
+
     /**
      * Contains the directory to put the output to (migration report, temporary files, exported graph data...).
      */

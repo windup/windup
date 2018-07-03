@@ -33,7 +33,7 @@
                 <h1>
                     <div class="main">JBPM Process Report
                     <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement=right title="The JBPM process report shows the basic characteristics of JBPM processes found in the application, such like count of nodes, states, tasks, decisions, subprocesses, etc. Also lists the action handlers and decision handlers."></i></div>
-                    <div class="path">${reportModel.projectModel.rootFileModel.fileName}</div>
+                    <div class="path">${reportModel.projectModel.rootFileModel.applicationName}</div>
                 </h1>
             </div>
         </div>

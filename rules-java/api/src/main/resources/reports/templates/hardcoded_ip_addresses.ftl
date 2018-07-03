@@ -65,7 +65,7 @@
                 <h1>
                     <div class="main">Hard-coded IP Addresses
                     <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement=right title="The hard-coded IP report lists the places where an IP address is found in the application. This may include places where the IP address is specified directly in the code rather than externalized into the configuration files."></i></div>
-                    <div class="path">${reportModel.projectModel.rootFileModel.fileName}</div>
+                    <div class="path">${reportModel.projectModel.rootFileModel.applicationName}</div>
                 </h1>
             </div>
         </div>

@@ -47,7 +47,7 @@
                     <div class="main">${reportModel.reportName}
                     <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement=right title="${reportModel.description}"></i></div>
                     <#if reportModel.projectModel??>
-                        <div class="path">${reportModel.projectModel.rootFileModel.fileName}</div>
+                        <div class="path">${reportModel.projectModel.rootFileModel.applicationName}</div>
                     </#if>
                 </h1>
             </div>
@@ -115,7 +115,7 @@
                                     <#-- For virtual apps, use name rather than the file name. -->
                                     ${ (appProject.projectType! = "VIRTUAL" && appProject.name??)?then(
                                             appProject.name,
-                                            appProject.rootFileModel.fileName)}
+                                            appProject.rootFileModel.applicationName)}
                                 </a>
                             </td>
                             <#list sectorTags as sectorTag>

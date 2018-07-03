@@ -31,7 +31,7 @@
                 <h1>
                     <div class="main">Server Resources
                     <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement=right title="This reports lists the resources of the application that are supposed to be used by the server, such as datasources, JMS destinations, JMS connection factories, JMS connection factory list, and thread pools."></i></div>
-                    <div class="path">${reportModel.projectModel.rootFileModel.fileName}</div>
+                    <div class="path">${reportModel.projectModel.rootFileModel.applicationName}</div>
                 </h1>
             </div>
         </div>
