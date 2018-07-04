@@ -25,6 +25,7 @@ import org.jboss.windup.rules.apps.javaee.model.EjbSessionBeanModel;
 import org.jboss.windup.rules.apps.javaee.model.EnvironmentReferenceModel;
 import org.jboss.windup.rules.apps.javaee.model.JNDIResourceModel;
 import org.jboss.windup.rules.apps.javaee.model.JmsDestinationModel;
+import org.jboss.windup.rules.apps.javaee.rules.DiscoverEjbAnnotationsRuleProvider;
 import org.jboss.windup.rules.apps.javaee.rules.DiscoverEjbConfigurationXmlRuleProvider;
 import org.jboss.windup.rules.apps.javaee.service.EnvironmentReferenceService;
 import org.jboss.windup.rules.apps.javaee.service.JNDIResourceService;
@@ -42,7 +43,14 @@ import org.w3c.dom.Element;
  *
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  */
-@RuleMetadata(phase = InitialAnalysisPhase.class, after = DiscoverEjbConfigurationXmlRuleProvider.class, perform = "Discover JBoss EJB XML Files")
+@RuleMetadata(
+        phase = InitialAnalysisPhase.class,
+        after = {
+                DiscoverEjbConfigurationXmlRuleProvider.class,
+                DiscoverEjbAnnotationsRuleProvider.class
+        },
+        perform = "Discover JBoss EJB XML Files"
+)
 public class ResolveJBossLegacyEjbXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
 {
     private static final Logger LOG = Logger.getLogger(ResolveJBossLegacyEjbXmlRuleProvider.class.getName());
