@@ -1,14 +1,12 @@
 package org.jboss.windup.reporting.model;
 
 import org.apache.tinkerpop.gremlin.structure.Direction;
-import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.jboss.windup.graph.Adjacency;
 import org.jboss.windup.graph.Property;
 
 import java.util.Date;
 
 import org.jboss.windup.graph.Indexed;
-import org.jboss.windup.graph.JavaHandler;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.TypeValue;
 
