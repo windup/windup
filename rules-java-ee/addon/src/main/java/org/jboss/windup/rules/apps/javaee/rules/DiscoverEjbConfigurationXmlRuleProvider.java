@@ -39,6 +39,7 @@ import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.model.PhantomJavaClassModel;
+import org.jboss.windup.rules.apps.java.scan.ast.AnalyzeJavaFilesRuleProvider;
 import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.jboss.windup.rules.apps.javaee.model.EjbDeploymentDescriptorModel;
@@ -68,7 +69,11 @@ import org.w3c.dom.Element;
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-@RuleMetadata(phase = InitialAnalysisPhase.class, perform = "Discover EJB-JAR XML Files and other EJBs")
+@RuleMetadata(
+        phase = InitialAnalysisPhase.class,
+        after = AnalyzeJavaFilesRuleProvider.class,
+        perform = "Discover EJB-JAR XML Files and other EJBs"
+)
 public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvider
 {
     private static final Logger LOG = Logger.getLogger(DiscoverEjbConfigurationXmlRuleProvider.class.getName());
