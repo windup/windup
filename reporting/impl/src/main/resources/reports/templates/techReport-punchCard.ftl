@@ -243,7 +243,6 @@
                 } else if($.isNumeric(v)) {
                     v = parseInt(v,10);
                 }
-                console.log("V = " + v);
                 return v;
             }
 
