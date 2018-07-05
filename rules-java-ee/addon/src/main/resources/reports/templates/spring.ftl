@@ -31,7 +31,7 @@
                 <h1>
                     <div class="main">Spring Bean Report
                     <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement=right title="The Spring bean report lists the SpringBeans found in the application - their name and the implementing class."></i></div>
-                    <div class="path">${reportModel.projectModel.rootFileModel.fileName}</div>
+                    <div class="path">${reportModel.projectModel.rootFileModel.applicationName}</div>
                 </h1>
             </div>
         </div>

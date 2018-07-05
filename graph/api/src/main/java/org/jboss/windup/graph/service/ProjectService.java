@@ -2,6 +2,7 @@ package org.jboss.windup.graph.service;
 
 import org.apache.commons.lang.RandomStringUtils;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.model.ApplicationModel;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -66,6 +67,8 @@ public class ProjectService extends GraphService<ProjectModel>
             PathUtil.createDirectory(sharedLibsPath, "shared libs virtual app");
 
             FileModel sharedLibsFileModel = new FileService(getGraphContext()).createByFilePath(sharedLibsPath.toString());
+            ApplicationModel applicationModel = GraphService.addTypeToModel(getGraphContext(), sharedLibsFileModel, ApplicationModel.class);
+            applicationModel.setApplicationName(SHARED_LIBS_FILENAME);
             sharedLibsProject.setRootFileModel(sharedLibsFileModel);
             sharedLibsProject.addFileModel(sharedLibsFileModel);
 

@@ -3,6 +3,7 @@ package org.jboss.windup.exec;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +18,6 @@ import javax.inject.Inject;
 import org.jboss.forge.furnace.services.Imported;
 import org.jboss.forge.furnace.util.Assert;
 import org.jboss.forge.furnace.util.Predicate;
-import org.jboss.windup.exec.rulefilters.NotPredicate;
 import org.jboss.windup.config.DefaultEvaluationContext;
 import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.KeepWorkDirsOption;
@@ -39,14 +39,17 @@ import org.jboss.windup.config.phase.ReportRenderingPhase;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.exec.configuration.options.ExcludeTagsOption;
 import org.jboss.windup.exec.configuration.options.IncludeTagsOption;
+import org.jboss.windup.exec.configuration.options.InputApplicationName;
 import org.jboss.windup.exec.configuration.options.SourceOption;
 import org.jboss.windup.exec.configuration.options.TargetOption;
 import org.jboss.windup.exec.rulefilters.AndPredicate;
+import org.jboss.windup.exec.rulefilters.NotPredicate;
 import org.jboss.windup.exec.rulefilters.RuleProviderPhasePredicate;
 import org.jboss.windup.exec.rulefilters.SourceAndTargetPredicate;
 import org.jboss.windup.exec.rulefilters.TaggedRuleProviderPredicate;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
+import org.jboss.windup.graph.model.ApplicationModel;
 import org.jboss.windup.graph.model.TechnologyReferenceModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
 import org.jboss.windup.graph.model.resource.FileModel;
@@ -116,35 +119,63 @@ public class WindupProcessorImpl implements WindupProcessor
             WindupConfigurationModel configurationModel = WindupConfigurationService.getConfigurationModel(context);
 
             Set<FileModel> inputPathModels = new LinkedHashSet<>();
-            for (Path inputPath : configuration.getInputPaths()) {
+            for (Path inputPath : configuration.getInputPaths())
+            {
                 inputPathModels.add(getFileModel(context, inputPath));
             }
             configurationModel.setInputPaths(inputPathModels);
+            List<String> applicationNames = configuration.getInputApplicationNames();
+            GraphService<ApplicationModel> applicationModelService = new GraphService<>(context, ApplicationModel.class);
+            if (applicationNames == null)
+            {
+                inputPathModels.forEach(applicationModel -> {
+                    applicationModelService.addTypeToModel(applicationModel).setApplicationName(applicationModel.getFileName());
+                });
+            }
+            else
+            {
+                // Convert to a list to allow indexing
+                List<FileModel> inputModelsList = new ArrayList<>(inputPathModels);
+                for (int i = 0; i < inputModelsList.size(); i++)
+                {
+                    FileModel fileModel = inputModelsList.get(i);
+                    ApplicationModel applicationModel = applicationModelService.addTypeToModel(fileModel);
+                    if (i < applicationNames.size())
+                        applicationModel.setApplicationName(applicationNames.get(i));
+                    else
+                        applicationModel.setApplicationName(fileModel.getFileName());
+                }
+            }
 
             configurationModel.setOutputPath(getFileModel(context, configuration.getOutputDirectory()));
             configurationModel.setOnlineMode(configuration.isOnline());
             configurationModel.setExportingCSV(configuration.isExportingCSV());
             configurationModel.setKeepWorkDirectories(configuration.getOptionValue(KeepWorkDirsOption.NAME));
-            for (Path path : configuration.getAllUserRulesDirectories()) {
+            for (Path path : configuration.getAllUserRulesDirectories())
+            {
                 System.out.println("Using user rules dir: " + path);
-                if (path == null) {
+                if (path == null)
+                {
                     throw new WindupException("Null path found (all paths are: "
-                            + configuration.getAllUserRulesDirectories() + ")");
+                                + configuration.getAllUserRulesDirectories() + ")");
                 }
                 configurationModel.addUserRulesPath(getFileModel(context, path));
             }
 
-            for (Path path : configuration.getAllIgnoreDirectories()) {
+            for (Path path : configuration.getAllIgnoreDirectories())
+            {
                 configurationModel.addUserIgnorePath(getFileModel(context, path));
             }
 
             List<RuleLifecycleListener> listeners = new ArrayList<>();
-            for (RuleLifecycleListener listener : this.listeners) {
+            for (RuleLifecycleListener listener : this.listeners)
+            {
                 listeners.add(listener);
             }
 
             final GraphRewrite event = new GraphRewrite(listeners, context);
-            RuleLoaderContext ruleLoaderContext = new RuleLoaderContext(event.getRewriteContext(), configuration.getAllUserRulesDirectories(), configuration.getRuleProviderFilter());
+            RuleLoaderContext ruleLoaderContext = new RuleLoaderContext(event.getRewriteContext(), configuration.getAllUserRulesDirectories(),
+                        configuration.getRuleProviderFilter());
             ruleLoaderContext = configureRuleProviderAndTagFilters(ruleLoaderContext, configuration);
             addSourceAndTargetInformation(event, configuration, configurationModel);
 
@@ -159,12 +190,12 @@ public class WindupProcessorImpl implements WindupProcessor
             RuleSubset ruleSubset = RuleSubset.create(rules);
             ruleSubset.setAlwaysHaltOnFailure(configuration.isAlwaysHaltOnException());
 
-            for (RuleLifecycleListener listener : listeners) {
+            for (RuleLifecycleListener listener : listeners)
+            {
                 ruleSubset.addLifecycleListener(listener);
             }
 
-            new RuleVisit(ruleSubset).accept((rule) ->
-            {
+            new RuleVisit(ruleSubset).accept((rule) -> {
                 if (rule instanceof PreRulesetEvaluation)
                     ((PreRulesetEvaluation) rule).preRulesetEvaluation(event);
             });
@@ -173,7 +204,7 @@ public class WindupProcessorImpl implements WindupProcessor
 
             if (event.getWindupStopException() != null)
             {
-                String message = Util.WINDUP_BRAND_NAME_ACRONYM+" was cancelled on request before finishing";
+                String message = Util.WINDUP_BRAND_NAME_ACRONYM + " was cancelled on request before finishing";
                 if (event.getWindupStopException().getMessage() != null)
                     message += ", cause: " + event.getWindupStopException().getMessage();
                 LOG.log(Level.INFO, message);
@@ -186,7 +217,8 @@ public class WindupProcessorImpl implements WindupProcessor
                 try
                 {
                     configuration.getGraphContext().close();
-                } catch (Throwable t)
+                }
+                catch (Throwable t)
                 {
                     LOG.log(Level.WARNING, "Failed to close graph due to: " + t.getMessage(), t);
                 }
@@ -194,7 +226,8 @@ public class WindupProcessorImpl implements WindupProcessor
 
             long endTime = System.currentTimeMillis();
             long seconds = (endTime - startTime) / 1000L;
-            LOG.info(Util.WINDUP_BRAND_NAME_ACRONYM+" execution took " + seconds + " seconds to execute on input: " + configuration.getInputPaths() + "!");
+            LOG.info(Util.WINDUP_BRAND_NAME_ACRONYM + " execution took " + seconds + " seconds to execute on input: " + configuration.getInputPaths()
+                        + "!");
 
             ExecutionStatistics.get().reset();
         }
@@ -207,7 +240,8 @@ public class WindupProcessorImpl implements WindupProcessor
         @SuppressWarnings("unchecked")
         Collection<String> targets = (Collection<String>) configuration.getOptionMap().get(TargetOption.NAME);
 
-        GraphService<TechnologyReferenceModel> technologyReferenceService = new GraphService<>(event.getGraphContext(), TechnologyReferenceModel.class);
+        GraphService<TechnologyReferenceModel> technologyReferenceService = new GraphService<>(event.getGraphContext(),
+                    TechnologyReferenceModel.class);
         Function<String, TechnologyReferenceModel> createReferenceModel = (techID) -> {
             TechnologyReference reference = TechnologyReference.parseFromIDAndVersion(techID);
             TechnologyReferenceModel technologyReferenceModel = technologyReferenceService.create();
@@ -239,10 +273,14 @@ public class WindupProcessorImpl implements WindupProcessor
         Collection<String> sources = (Collection<String>) config.getOptionMap().get(SourceOption.NAME);
         Collection<String> targets = (Collection<String>) config.getOptionMap().get(TargetOption.NAME);
 
-        if(includeTags != null && includeTags.isEmpty()) includeTags = null;
-        if(excludeTags != null && excludeTags.isEmpty()) excludeTags = null;
-        if(sources != null && sources.isEmpty()) sources = null;
-        if(targets != null && targets.isEmpty()) targets = null;
+        if (includeTags != null && includeTags.isEmpty())
+            includeTags = null;
+        if (excludeTags != null && excludeTags.isEmpty())
+            excludeTags = null;
+        if (sources != null && sources.isEmpty())
+            sources = null;
+        if (targets != null && targets.isEmpty())
+            targets = null;
 
         if (includeTags != null || excludeTags != null || sources != null || targets != null)
         {
@@ -256,28 +294,29 @@ public class WindupProcessorImpl implements WindupProcessor
              * Create a Map based upon the ID of the original to be transformed.
              */
             Map<String, List<TechnologyReferenceTransformer>> transformerMap = transformers.stream()
-                .collect(Collectors.toMap(
-                    // This is the Map key
-                    transformer -> transformer.getOriginal().getId(),
+                        .collect(Collectors.toMap(
+                                    // This is the Map key
+                                    transformer -> transformer.getOriginal().getId(),
 
-                    // Create a List for each entry
-                    (transformer) -> {
-                        List<TechnologyReferenceTransformer> list = new ArrayList<>();
-                        list.add(transformer);
-                        return list;
-                    },
+                                    // Create a List for each entry
+                                    (transformer) -> {
+                                        List<TechnologyReferenceTransformer> list = new ArrayList<>();
+                                        list.add(transformer);
+                                        return list;
+                                    },
 
-                    // Merge the list if there are multiple entries for the same id
-                    (old, latest) -> {
-                        old.addAll(latest);
-                        return old;
-                    })
-                );
+                                    // Merge the list if there are multiple entries for the same id
+                                    (old, latest) -> {
+                                        old.addAll(latest);
+                                        return old;
+                                    }));
 
             // Use the tech transformers to transform the IDs
             Function<String, String> transformTechFunction = (technologyID) -> {
-                if (transformerMap.containsKey(technologyID)) {
-                    for (TechnologyReferenceTransformer transformer : transformerMap.get(TechnologyReference.parseFromIDAndVersion(technologyID).getId()))
+                if (transformerMap.containsKey(technologyID))
+                {
+                    for (TechnologyReferenceTransformer transformer : transformerMap
+                                .get(TechnologyReference.parseFromIDAndVersion(technologyID).getId()))
                         technologyID = transformer.transform(technologyID).toString();
                 }
                 return technologyID;
@@ -285,7 +324,7 @@ public class WindupProcessorImpl implements WindupProcessor
 
             sources = (sources == null) ? null : sources.stream().map(transformTechFunction).collect(Collectors.toSet());
             config.setOptionValue(SourceOption.NAME, sources);
-            targets = (targets== null) ? null : targets.stream().map(transformTechFunction).collect(Collectors.toSet());
+            targets = (targets == null) ? null : targets.stream().map(transformTechFunction).collect(Collectors.toSet());
             config.setOptionValue(TargetOption.NAME, targets);
 
             final SourceAndTargetPredicate sourceAndTargetPredicate = new SourceAndTargetPredicate(sources, targets);
@@ -339,7 +378,7 @@ public class WindupProcessorImpl implements WindupProcessor
     private void validateConfig(WindupConfiguration windupConfiguration)
     {
         Assert.notNull(windupConfiguration,
-                    Util.WINDUP_BRAND_NAME_ACRONYM+" configuration must not be null. (Call default execution if no configuration is required.)");
+                    Util.WINDUP_BRAND_NAME_ACRONYM + " configuration must not be null. (Call default execution if no configuration is required.)");
 
         Collection<Path> inputPaths = windupConfiguration.getInputPaths();
         Assert.notNull(inputPaths, "Path to the application must not be null!");

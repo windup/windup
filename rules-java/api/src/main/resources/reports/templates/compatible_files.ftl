@@ -99,7 +99,7 @@
                 <h1>
                     <div class="main">Compatible Files Report
                     <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement=right title="Files in this report are believed to be compatible with the selected target platform. However, it is possible that this report contains incompatible files that were not identified by any ${getWindupBrandName()} rules. It is recommended that these files be reviewed manually for any issues."></i></div>
-                    <div class="path">${reportModel.projectModel.rootFileModel.fileName}</div>
+                    <div class="path">${reportModel.projectModel.rootFileModel.applicationName}</div>
                 </h1>
             </div>
         </div>

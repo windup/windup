@@ -83,7 +83,7 @@
                     ${ (appReport.projectModel.projectType! = "VIRTUAL"
                         && appReport.projectModel.name??)?then(
                             appReport.projectModel.name,
-                            appReport.projectModel.rootFileModel.fileName)}
+                            appReport.projectModel.rootFileModel.applicationName)}
                 </a>
             </div>
             <#if appReport.projectModel.csvFilename??>

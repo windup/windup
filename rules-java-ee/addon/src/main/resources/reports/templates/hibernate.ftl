@@ -31,7 +31,7 @@
                 <h1>
                     <div class="main">Hibernate Report
                     <i class="glyphicon glyphicon-info-sign" data-toggle="tooltip" data-placement=right title="The Hibernate report lists the Hibernate entities and the Hibernate configuration found in the application."></i></div>
-                    <div class="path">${reportModel.projectModel.rootFileModel.fileName}</div>
+                    <div class="path">${reportModel.projectModel.rootFileModel.applicationName}</div>
                 </h1>
             </div>
         </div>
