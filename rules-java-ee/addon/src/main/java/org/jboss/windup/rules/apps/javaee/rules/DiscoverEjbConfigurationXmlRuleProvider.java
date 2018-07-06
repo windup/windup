@@ -2,6 +2,7 @@ package org.jboss.windup.rules.apps.javaee.rules;
 
 import static org.joox.JOOX.$;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -10,20 +11,27 @@ import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.tinkerpop.gremlin.structure.Vertex;
+import org.jboss.windup.ast.java.data.TypeReferenceLocation;
+import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
+import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.RuleMetadata;
+import org.jboss.windup.config.operation.iteration.AbstractIterationOperation;
 import org.jboss.windup.config.phase.InitialAnalysisPhase;
+import org.jboss.windup.config.projecttraversal.ProjectTraversalCache;
 import org.jboss.windup.config.query.Query;
-import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.graph.frames.FramedVertexIterable;
 import org.jboss.windup.graph.model.ProjectModel;
+import org.jboss.windup.graph.model.WindupFrame;
 import org.jboss.windup.graph.service.GraphService;
 import org.jboss.windup.graph.service.Service;
-import org.jboss.windup.config.projecttraversal.ProjectTraversalCache;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.model.TechnologyTagModel;
 import org.jboss.windup.reporting.service.ClassificationService;
 import org.jboss.windup.reporting.service.TechnologyTagService;
+import org.jboss.windup.rules.apps.java.condition.JavaClass;
 import org.jboss.windup.rules.apps.java.decompiler.FernflowerDecompilerOperation;
 import org.jboss.windup.rules.apps.java.model.AbstractJavaSourceModel;
 import org.jboss.windup.rules.apps.java.model.AmbiguousJavaClassModel;
@@ -31,6 +39,8 @@ import org.jboss.windup.rules.apps.java.model.JavaClassFileModel;
 import org.jboss.windup.rules.apps.java.model.JavaClassModel;
 import org.jboss.windup.rules.apps.java.model.JavaSourceFileModel;
 import org.jboss.windup.rules.apps.java.model.PhantomJavaClassModel;
+import org.jboss.windup.rules.apps.java.scan.ast.AnalyzeJavaFilesRuleProvider;
+import org.jboss.windup.rules.apps.java.scan.ast.JavaTypeReferenceModel;
 import org.jboss.windup.rules.apps.java.service.JavaClassService;
 import org.jboss.windup.rules.apps.javaee.model.EjbDeploymentDescriptorModel;
 import org.jboss.windup.rules.apps.javaee.model.EjbEntityBeanModel;
@@ -47,7 +57,8 @@ import org.jboss.windup.rules.apps.xml.model.XmlFileModel;
 import org.jboss.windup.rules.apps.xml.service.XmlFileService;
 import org.jboss.windup.util.xml.DoctypeUtils;
 import org.jboss.windup.util.xml.NamespaceUtils;
-import org.ocpsoft.rewrite.config.ConditionBuilder;
+import org.ocpsoft.rewrite.config.Configuration;
+import org.ocpsoft.rewrite.config.ConfigurationBuilder;
 import org.ocpsoft.rewrite.context.EvaluationContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -58,8 +69,12 @@ import org.w3c.dom.Element;
  * @author <a href="mailto:bradsdavis@gmail.com">Brad Davis</a>
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-@RuleMetadata(phase = InitialAnalysisPhase.class, perform = "Discover EJB-JAR XML Files")
-public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvider<XmlFileModel>
+@RuleMetadata(
+        phase = InitialAnalysisPhase.class,
+        after = AnalyzeJavaFilesRuleProvider.class,
+        perform = "Discover EJB-JAR XML Files and other EJBs"
+)
+public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvider
 {
     private static final Logger LOG = Logger.getLogger(DiscoverEjbConfigurationXmlRuleProvider.class.getName());
 
@@ -68,23 +83,212 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends IteratingRuleProvid
 
     private static final String REGEX_DTD = "(?i).*enterprise.javabeans.*";
 
-
     @Override
-    public ConditionBuilder when()
+    public Configuration getConfiguration(RuleLoaderContext ruleLoaderContext)
     {
-        return Query.fromType(XmlFileModel.class).withProperty(XmlFileModel.ROOT_TAG_NAME, "ejb-jar");
+        return ConfigurationBuilder.begin()
+                    .addRule()
+                    .when(Query.fromType(XmlFileModel.class).withProperty(XmlFileModel.ROOT_TAG_NAME, "ejb-jar"))
+                    .perform(new AbstractIterationOperation<XmlFileModel>()
+                    {
+                        @Override
+                        public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
+                        {
+                            try
+                            {
+                                Document doc = new XmlFileService(event.getGraphContext()).loadDocument(event, context, payload);
+                                extractMetadata(event, context, payload, doc);
+                            }
+                            catch (Exception ex)
+                            {
+                                payload.setParseError("Failed to parse EJB-JAR definitions: " + ex.getMessage());
+                            }
+                        }
+                    })
+                    .addRule()
+                    .when(JavaClass.references("javax.ejb.EntityBean").at(TypeReferenceLocation.IMPLEMENTS_TYPE))
+                    .perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
+                    {
+                        @Override
+                        public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
+                        {
+                            List<JavaClassModel> classes = payload.getFile().getJavaClasses();
+                            classes.forEach(classModel -> {
+                                // Get the entity model
+                                GraphService<EjbEntityBeanModel> ejbEntityService = new GraphService<>(event.getGraphContext(), EjbEntityBeanModel.class);
+                                Iterable<EjbEntityBeanModel> entityBeanModels = findByClass(event.getGraphContext(), EjbEntityBeanModel.EJB_IMPLEMENTATION_CLASS, classModel, EjbEntityBeanModel.class);
+
+                                // If it already exists, then skip this one
+                                if (entityBeanModels.iterator().hasNext())
+                                    return;
+
+                                // We can only create this one piece as we don't know have any other information
+                                EjbEntityBeanModel entity = ejbEntityService.create();
+                                entity.setApplications(payload.getFile().getApplications());
+                                entity.setEjbClass(classModel);
+                            });
+                        }
+                    })
+                .addRule()
+                .when(JavaClass.references("javax.ejb.EJBHome").at(TypeReferenceLocation.INHERITANCE))
+                .perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
+                {
+                    @Override
+                    public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
+                    {
+                        List<JavaClassModel> classes = payload.getFile().getJavaClasses();
+                        classes.forEach(classModel -> {
+                            // Get the session model
+                            GraphService<EjbSessionBeanModel> ejbSessionService = new GraphService<>(event.getGraphContext(), EjbSessionBeanModel.class);
+                            Iterable<EjbSessionBeanModel> sessionModels = findByClass(event.getGraphContext(), EjbSessionBeanModel.EJB_HOME, classModel, EjbSessionBeanModel.class);
+
+                            // If it already exists, then skip this one
+                            if (sessionModels.iterator().hasNext())
+                                return;
+
+                            // We can only create this one piece as we don't know have any other information
+                            EjbSessionBeanModel sessionBeanModel = ejbSessionService.create();
+                            sessionBeanModel.setApplications(payload.getFile().getApplications());
+                            sessionBeanModel.setEjbHome(classModel);
+                        });
+                    }
+                })
+                .addRule()
+                .when(JavaClass.references("javax.ejb.EJBObject").at(TypeReferenceLocation.INHERITANCE))
+                .perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
+                {
+                    @Override
+                    public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
+                    {
+                        List<JavaClassModel> classes = payload.getFile().getJavaClasses();
+                        classes.forEach(classModel -> {
+                            // Get the session model
+                            GraphService<EjbSessionBeanModel> ejbSessionService = new GraphService<>(event.getGraphContext(), EjbSessionBeanModel.class);
+                            Iterable<EjbSessionBeanModel> sessionModels = findByClass(event.getGraphContext(), EjbSessionBeanModel.EJB_REMOTE, classModel, EjbSessionBeanModel.class);
+
+                            // If it already exists, then skip this one
+                            if (sessionModels.iterator().hasNext())
+                                return;
+
+                            // We can only create this one piece as we don't know have any other information
+                            EjbSessionBeanModel sessionBeanModel = ejbSessionService.create();
+                            sessionBeanModel.setApplications(payload.getFile().getApplications());
+                            sessionBeanModel.setEjbRemote(classModel);
+                        });
+                    }
+                })
+                .addRule()
+                .when(JavaClass.references("javax.ejb.SessionBean").at(TypeReferenceLocation.IMPLEMENTS_TYPE))
+                .perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
+                {
+                    @Override
+                    public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
+                    {
+                        List<JavaClassModel> classes = payload.getFile().getJavaClasses();
+                        classes.forEach(classModel -> {
+                            // Get the session model
+                            GraphService<EjbSessionBeanModel> ejbSessionService = new GraphService<>(event.getGraphContext(), EjbSessionBeanModel.class);
+                            Iterable<EjbSessionBeanModel> sessionModels = findByClass(event.getGraphContext(), EjbSessionBeanModel.EJB_IMPLEMENTATION_CLASS, classModel, EjbSessionBeanModel.class);
+
+                            // If it already exists, then skip this one
+                            if (sessionModels.iterator().hasNext())
+                                return;
+
+                            // We can only create this one piece as we don't know have any other information
+                            EjbSessionBeanModel sessionBeanModel = ejbSessionService.create();
+                            sessionBeanModel.setApplications(payload.getFile().getApplications());
+                            sessionBeanModel.setEjbClass(classModel);
+                        });
+                    }
+                })
+                .addRule()
+                .when(JavaClass.references("javax.ejb.EJBLocalHome").at(TypeReferenceLocation.INHERITANCE))
+                .perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
+                {
+                    @Override
+                    public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
+                    {
+                        List<JavaClassModel> classes = payload.getFile().getJavaClasses();
+                        classes.forEach(classModel -> {
+                            // Get the session model
+                            GraphService<EjbSessionBeanModel> ejbSessionService = new GraphService<>(event.getGraphContext(), EjbSessionBeanModel.class);
+                            Iterable<EjbSessionBeanModel> sessionModels = findByClass(event.getGraphContext(), EjbSessionBeanModel.EJB_LOCAL_HOME, classModel, EjbSessionBeanModel.class);
+
+                            // If it already exists, then skip this one
+                            if (sessionModels.iterator().hasNext())
+                                return;
+
+                            // We can only create this one piece as we don't know have any other information
+                            EjbSessionBeanModel sessionBeanModel = ejbSessionService.create();
+                            sessionBeanModel.setApplications(payload.getFile().getApplications());
+                            sessionBeanModel.setEjbLocalHome(classModel);
+                        });
+                    }
+                })
+                .addRule()
+                .when(JavaClass.references("javax.ejb.EJBLocalObject").at(TypeReferenceLocation.INHERITANCE))
+                .perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
+                {
+                    @Override
+                    public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
+                    {
+                        List<JavaClassModel> classes = payload.getFile().getJavaClasses();
+                        classes.forEach(classModel -> {
+                            // Get the session model
+                            GraphService<EjbSessionBeanModel> ejbSessionService = new GraphService<>(event.getGraphContext(), EjbSessionBeanModel.class);
+                            Iterable<EjbSessionBeanModel> sessionModels = findByClass(event.getGraphContext(), EjbSessionBeanModel.EJB_LOCAL, classModel, EjbSessionBeanModel.class);
+
+                            // If it already exists, then skip this one
+                            if (sessionModels.iterator().hasNext())
+                                return;
+
+                            // We can only create this one piece as we don't know have any other information
+                            EjbSessionBeanModel sessionBeanModel = ejbSessionService.create();
+                            sessionBeanModel.setApplications(payload.getFile().getApplications());
+                            sessionBeanModel.setEjbLocal(classModel);
+                        });
+                    }
+                })
+                .addRule()
+                .when(JavaClass.references("javax.ejb.MessageDrivenBean").at(TypeReferenceLocation.IMPLEMENTS_TYPE))
+                .perform(new AbstractIterationOperation<JavaTypeReferenceModel>()
+                {
+                    @Override
+                    public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
+                    {
+                        List<JavaClassModel> classes = payload.getFile().getJavaClasses();
+                        classes.forEach(classModel -> {
+                            // Get the session model
+                            GraphService<EjbMessageDrivenModel> ejbMessageDrivenService = new GraphService<>(event.getGraphContext(), EjbMessageDrivenModel.class);
+                            Iterable<EjbMessageDrivenModel> messageDrivenModels = findByClass(event.getGraphContext(), EjbMessageDrivenModel.EJB_IMPLEMENTATION_CLASS, classModel, EjbMessageDrivenModel.class);
+
+                            // If it already exists, then skip this one
+                            if (messageDrivenModels.iterator().hasNext())
+                                return;
+
+                            // We can only create this one piece as we don't know have any other information
+                            EjbMessageDrivenModel messageDrivenModel = ejbMessageDrivenService.create();
+                            messageDrivenModel.setApplications(payload.getFile().getApplications());
+                            messageDrivenModel.setEjbClass(classModel);
+                        });
+                    }
+                });
     }
 
-    public void perform(GraphRewrite event, EvaluationContext context, XmlFileModel payload)
+    @SuppressWarnings("unchecked")
+    public <T> List<T> findByClass(GraphContext graphContext, String edgeLabel, JavaClassModel javaClassModel, Class<T> typeClass)
     {
-        try {
-            Document doc = new XmlFileService(event.getGraphContext()).loadDocument(event, context, payload);
-            extractMetadata(event, context, payload, doc);
-        }
-        catch (Exception ex)
-        {
-            payload.setParseError("Failed to parse EJB-JAR definitions: " + ex.getMessage());
-        }
+        List<T> result = new ArrayList<>();
+        graphContext.getGraph().traversal().V()
+                .has(JavaClassModel.QUALIFIED_NAME, javaClassModel.getQualifiedName())
+                .has(WindupFrame.TYPE_PROP, JavaClassModel.TYPE)
+                .in(edgeLabel)
+                .toList()
+                .forEach(v -> {
+                    T frame = graphContext.getFramed().frameElement(v, typeClass);
+                    result.add(frame);
+                });
+        return result;
     }
 
     private void extractMetadata(GraphRewrite event, EvaluationContext context, XmlFileModel xmlModel, Document doc)
