@@ -158,8 +158,8 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
         Path reportPath = reportService.getReportDirectory().resolve(reportModel.getReportFilename());
         util.loadPage(reportPath);
         Assert.assertTrue(util.checkBeanInReport(EJBType.MDB, "LogEventSubscriber", "com.acme.anvil.service.jms.LogEventSubscriber"));
-        Assert.assertTrue(util.checkBeanInReport(EJBType.STATELESS, "ItemLookupBean", "LocalRemote", "com.acme.anvil.service.ItemLookupBean"));
-        Assert.assertTrue(util.checkBeanInReport(EJBType.STATELESS, "ProductCatalogBean", "LocalRemote", "com.acme.anvil.service.ProductCatalogBean"));
+        Assert.assertTrue(util.checkBeanInReport(EJBType.STATELESS, "ItemLookupBean", "HomeLocalRemote", "com.acme.anvil.service.ItemLookupBean"));
+        Assert.assertTrue(util.checkBeanInReport(EJBType.STATELESS, "ProductCatalogBean", "HomeLocalRemote", "com.acme.anvil.service.ProductCatalogBean"));
     }
 
     private void validateReports(GraphContext context)
