@@ -112,6 +112,8 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
                         @Override
                         public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
                         {
+                            payload.getFile().setGenerateSourceReport(true);
+
                             List<JavaClassModel> classes = payload.getFile().getJavaClasses();
                             classes.forEach(classModel -> {
                                 // Get the entity model
@@ -136,6 +138,8 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
                     @Override
                     public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
                     {
+                        payload.getFile().setGenerateSourceReport(true);
+
                         List<JavaClassModel> classes = payload.getFile().getJavaClasses();
                         classes.forEach(classModel -> {
                             // Get the session model
@@ -160,6 +164,8 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
                     @Override
                     public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
                     {
+                        payload.getFile().setGenerateSourceReport(true);
+
                         List<JavaClassModel> classes = payload.getFile().getJavaClasses();
                         classes.forEach(classModel -> {
                             // Get the session model
@@ -184,6 +190,8 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
                     @Override
                     public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
                     {
+                        payload.getFile().setGenerateSourceReport(true);
+
                         List<JavaClassModel> classes = payload.getFile().getJavaClasses();
                         classes.forEach(classModel -> {
                             // Get the session model
@@ -208,6 +216,8 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
                     @Override
                     public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
                     {
+                        payload.getFile().setGenerateSourceReport(true);
+
                         List<JavaClassModel> classes = payload.getFile().getJavaClasses();
                         classes.forEach(classModel -> {
                             // Get the session model
@@ -232,6 +242,8 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
                     @Override
                     public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
                     {
+                        payload.getFile().setGenerateSourceReport(true);
+
                         List<JavaClassModel> classes = payload.getFile().getJavaClasses();
                         classes.forEach(classModel -> {
                             // Get the session model
@@ -256,6 +268,8 @@ public class DiscoverEjbConfigurationXmlRuleProvider extends AbstractRuleProvide
                     @Override
                     public void perform(GraphRewrite event, EvaluationContext context, JavaTypeReferenceModel payload)
                     {
+                        payload.getFile().setGenerateSourceReport(true);
+
                         List<JavaClassModel> classes = payload.getFile().getJavaClasses();
                         classes.forEach(classModel -> {
                             // Get the session model

@@ -20,6 +20,11 @@
             <@render_link model=ejb.ejbDeploymentDescriptor project=reportModel.projectModel text=ejb.beanName/>
         </td>
         <td style="text-align:center">
+            <#if ejb.ejbHome??>
+                <@render_link model=ejb.ejbHome project=reportModel.projectModel text="Home" class="btn btn-xxs btn-success"/><#t>
+            <#else>
+                <a style="visibility:hidden" class="btn btn-xxs btn-default disabled">Local</a><#t>
+            </#if>
             <#if ejb.ejbLocal??>
                 <@render_link model=ejb.ejbLocal project=reportModel.projectModel text="Local" class="btn btn-xxs btn-success"/><#t>
             <#else>
