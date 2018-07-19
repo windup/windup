@@ -100,6 +100,8 @@
                             <td class="sector sectorStats sizeMB"><div>Size (MB)</div></td>
                             <td class="sector sectorStats libsCount"><div>Libraries</div></td>
                             <td class="sector sectorStats storyPoints"><div>Mandatory (SP)</div></td>
+                            <td class="sector sectorStats storyPoints"><div>Cloud Mandatory (SP)</div></td>
+                            <td class="sector sectorStats storyPoints"><div>Potential (Count)</div></td>
                             <#-- this td is needed for scrollbar positioning -->
                             <td class="scrollbar-padding"></td>
                         </tr>
@@ -170,11 +172,38 @@
                             </td>
 
                             <#assign traversal = getProjectTraversal(appProject, 'all') />
+
                             <#assign mandatoryCategory = ["mandatory"] />
-                            <#assign panelStoryPoints = getMigrationEffortPointsForProject(traversal, true, [], [], mandatoryCategory)! />
-                            <td class="sectorStats storyPoints" data-count="${panelStoryPoints?c}">
-                                ${ panelStoryPoints! }
+                            <#assign cloudMandatoryCategory = ["cloud-mandatory"] />
+                            <#assign potentialIssuesCategory = ["potential"] />
+
+                            <#assign mandatoryStoryPoints = getMigrationEffortPointsForProject(traversal, true, [], [], mandatoryCategory)! />
+                            <td class="sectorStats storyPoints" data-count="${mandatoryStoryPoints?c}">
+                                ${ mandatoryStoryPoints! }
                             </td>
+
+                            <#assign cloudMandatoryStoryPoints = getMigrationEffortPointsForProject(traversal, true, [], [], cloudMandatoryCategory)! />
+                            <td class="sectorStats storyPoints" data-count="${cloudMandatoryStoryPoints?c}">
+                                ${ cloudMandatoryStoryPoints! }
+                            </td>
+
+                            <#assign incidentCountByCategory = getEffortCountForProjectByIssueCategory(event, traversal, true)>
+                            <#assign potentialFound = false>
+                            <#list incidentCountByCategory?keys as issueCategory>
+                                <#if issueCategory.categoryID == "potential">
+                                    <#assign potentialFound = true>
+                                    <#assign potentialIncidents = incidentCountByCategory?api.get(issueCategory) >
+                                    <td class="sectorStats storyPoints" data-count="${potentialIncidents?c}">
+                                        ${ potentialIncidents! }
+                                    </td>
+                                </#if>
+                            </#list>
+                            <#if !potentialFound>
+                                <td class="sectorStats storyPoints" data-count="0">
+                                    0
+                                </td>
+                            </#if>
+
                             <#-- this td is needed for scrollbar positioning -->
                             <td class="scrollbar-padding"></td>
                         </tr>

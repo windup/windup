@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.windup.util.Util;
 import org.ocpsoft.common.util.Assert;
 import org.ocpsoft.common.util.Strings;
@@ -36,6 +38,43 @@ public class TestTechReportUtil extends TestReportUtil
         }
 
         this.getDriver().close();
+    }
+
+    public void checkPoints(String appName, PointsType pointsType, int expectedCount)
+    {
+        LOG.info("    Checking points " + appName + ", pointstype: " + pointsType);
+
+        String columnName;
+        switch (pointsType) {
+            case MANDATORY:
+                columnName = "Mandatory (SP)";
+                break;
+            case POTENTIAL:
+                columnName = "Potential (Count)";
+                break;
+            case CLOUD_MANDATORY:
+                columnName = "Cloud Mandatory (SP)";
+                break;
+            default:
+                throw new CheckFailedException("Unrecognized type: " + pointsType);
+        }
+
+        int colOffset = getPunchCardReportColumnOffset(columnName);
+        final String xpath = String.format("//tr[@class='app' and td/a[normalize-space()='%s']]/td[position()=%d]", appName, colOffset + COLS_BEFORE_BUBBLES + 1);
+        List<WebElement> bubbleCells = getDriver().findElements(By.xpath(xpath));
+        if (bubbleCells.isEmpty())
+            throw new CheckFailedException(String.format("Cell not found for app %s and column %s;  xpath: " + xpath, appName, pointsType));
+        WebElement cell = bubbleCells.get(0);
+
+        String cellText = cell.getText();
+        if (StringUtils.isBlank(cellText))
+            throw new CheckFailedException("No contents found for " + appName + " points type: " + pointsType);
+
+        cellText = cellText.trim();
+
+        int count = Integer.parseInt(cellText);
+        if (expectedCount != count)
+            throw new CheckFailedException("For " + appName + " points type: " + pointsType + ", expected: " + expectedCount + ", but actual value was: " + count);
     }
 
     /**
@@ -191,7 +230,12 @@ public class TestTechReportUtil extends TestReportUtil
     }
 
 
-
+    public enum PointsType
+    {
+        MANDATORY,
+        CLOUD_MANDATORY,
+        POTENTIAL
+    }
 
     public static class BubbleInfo
     {

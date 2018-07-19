@@ -81,6 +81,7 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
             // The test-files folder in the project root dir.
             super.runTest(context, "../test-files/techReport/frameworks.war", "src/test/xml/rules", false);
             validateTechReportFrameworksWar(context);
+            validateTechReportPointsCount(context);
         }
     }
 
@@ -176,6 +177,29 @@ public class WindupArchitectureJEEExampleTest extends WindupArchitectureTest
         validateEJBBeanReport(context);
 
         validateTechReportJEEExample(context);
+    }
+
+    private void validateTechReportPointsCount(GraphContext graphContext)
+    {
+        Iterable<TechReportModel> techReportsIt = graphContext.findAll(TechReportModel.class);
+        ReportService reportService = new ReportService(graphContext);
+
+        // Check the reports
+        for (TechReportModel techReportModel : techReportsIt)
+        {
+            final Path path = reportService.getReportDirectory().resolve(techReportModel.getReportFilename());
+
+            if (techReportModel.getProjectModel() == null)
+            {
+                TestTechReportUtil techReportUtil = new TestTechReportUtil();
+                techReportUtil.loadPage(path);
+                String appName = "frameworks.war";
+                techReportUtil.checkPoints(appName, TestTechReportUtil.PointsType.MANDATORY, 6);
+                techReportUtil.checkPoints(appName, TestTechReportUtil.PointsType.CLOUD_MANDATORY, 15);
+                techReportUtil.checkPoints(appName, TestTechReportUtil.PointsType.POTENTIAL, 0);
+
+            }
+        }
     }
 
     private void validateTechReport(GraphContext graphContext, List<TestTechReportUtil.BubbleInfo> bubblesExpected, List<TestTechReportUtil.BoxInfo> boxesExpected)
