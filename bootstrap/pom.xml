@@ -23,6 +23,7 @@
         <dependency>
             <groupId>org.jboss.windup</groupId>
             <artifactId>windup-server-provider-spi</artifactId>
+            <classifier>forge-addon</classifier>
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.config</groupId>
