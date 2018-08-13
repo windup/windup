@@ -161,6 +161,7 @@
             <dependency>
                 <groupId>org.jboss.windup</groupId>
                 <artifactId>windup-server-provider-spi</artifactId>
+                <classifier>forge-addon</classifier>
                 <version>${project.version}</version>
             </dependency>
 
