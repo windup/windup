@@ -46,6 +46,18 @@
             <groupId>com.syncleus.ferma</groupId>
             <artifactId>ferma</artifactId>
             <version>3.2.1</version>
+		    <exclusions>
+                <exclusion>
+                    <groupId>net.bytebuddy</groupId>
+                    <artifactId>byte-buddy</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!-- explicitly use this version of byte-buddy due to https://github.com/raphw/byte-buddy/issues/370-->
+        <dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
+            <version>1.8.17</version>
         </dependency>
         <dependency>
             <groupId>org.codehaus.groovy</groupId>

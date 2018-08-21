@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.jboss.windup.rules.apps</groupId>
         <artifactId>windup-rules-java-parent</artifactId>
-        <version>4.1.0-SNAPSHOT</version>
+        <version>4.2.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>windup-rules-java-tests</artifactId>
@@ -130,15 +130,6 @@
             <scope>test</scope>
             <type>pom</type>
         </dependency>
-
-        <!--
-        <dependency>
-            <groupId>org.jboss.windup.rules.apps</groupId>
-            <artifactId>windup-rules-java</artifactId>
-            <classifier>forge-addon</classifier>
-            <scope>test</scope>
-        </dependency>
-        -->
         <!-- Windup Rules - Java - Archives - Data bundle. -->
         <dependency>
             <groupId>org.jboss.windup.maven</groupId>

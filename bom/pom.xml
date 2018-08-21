@@ -4,7 +4,7 @@
 
     <properties>
         <version.forge>3.9.0.Final</version.forge>
-        <version.furnace>2.28.1.Final</version.furnace>
+        <version.furnace>2.28.2.Final</version.furnace>
         <version.nexus.index>7.0</version.nexus.index>
     </properties>
 
