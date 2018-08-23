@@ -36,6 +36,8 @@ import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.rules.apps.java.config.ExcludePackagesOption;
 import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
+import org.jboss.windup.rules.apps.tattletale.DisableTattletaleReportOption;
+import org.jboss.windup.rules.apps.tattletale.EnableTattletaleReportOption;
 import org.jboss.windup.util.Logging;
 import org.jboss.windup.util.ZipUtil;
 import org.jboss.windup.util.exception.WindupException;
@@ -191,6 +193,12 @@ public class RunWindupCommand implements Command, FurnaceDependent
         boolean validationSuccess = validateOptionValues(options, optionValues);
         if (!validationSuccess)
             return;
+
+        if ((Boolean)optionValues.get(DisableTattletaleReportOption.NAME) && (Boolean)optionValues.get(EnableTattletaleReportOption.NAME))
+        {
+            System.err.println("ERROR: Do NOT use --" + EnableTattletaleReportOption.NAME + " and --" + DisableTattletaleReportOption.NAME + " options together. Tattletale report generation is enabled by default so --" + EnableTattletaleReportOption.NAME + " option should be removed.");
+            return;
+        }
 
         // In case of --unzippedAppInput or --sourceMode, treat the directories in --input as unzipped applications.
         // Otherwise, as a directory containing separate applications (default).
