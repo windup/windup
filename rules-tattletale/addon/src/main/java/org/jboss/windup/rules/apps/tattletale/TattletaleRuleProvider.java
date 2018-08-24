@@ -5,6 +5,7 @@ import java.io.PrintStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,6 +16,7 @@ import org.jboss.windup.config.GraphRewrite;
 import org.jboss.windup.config.loader.RuleLoaderContext;
 import org.jboss.windup.config.metadata.MetadataBuilder;
 import org.jboss.windup.config.operation.GraphOperation;
+import org.jboss.windup.exec.configuration.options.TargetOption;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.model.ProjectModel;
 import org.jboss.windup.graph.model.WindupConfigurationModel;
@@ -58,10 +60,14 @@ public class TattletaleRuleProvider extends AbstractRuleProvider
         @Override
         public void perform(GraphRewrite event, EvaluationContext context)
         {
-            Boolean skipReport = (Boolean) event.getGraphContext().getOptionMap().get(DisableTattletaleReportOption.NAME);
-            if (skipReport != null && skipReport) {
+            Boolean enableReport = (Boolean) event.getGraphContext().getOptionMap().get(EnableTattletaleReportOption.NAME);
+            Boolean disableReport = (Boolean) event.getGraphContext().getOptionMap().get(DisableTattletaleReportOption.NAME);
+            Collection<String> targets = (Collection<String>) event.getGraphContext().getOptionMap().get(TargetOption.NAME);
+            boolean eapTarget = targets.stream().anyMatch(target -> target.startsWith("eap"));
+            if (eapTarget && disableReport != null && disableReport && (enableReport == null || !enableReport))
                 return;
-            }
+            else if (!eapTarget && (enableReport == null || !enableReport))
+                return;
 
             WindupConfigurationModel configuration = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
             for (FileModel input : configuration.getInputPaths())

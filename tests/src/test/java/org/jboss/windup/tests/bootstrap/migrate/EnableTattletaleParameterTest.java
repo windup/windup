@@ -9,6 +9,7 @@ import org.junit.rules.TemporaryFolder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class EnableTattletaleParameterTest extends AbstractBootstrapTestWithRules {
@@ -19,7 +20,7 @@ public class EnableTattletaleParameterTest extends AbstractBootstrapTestWithRule
     public final TemporaryFolder tmpAddonDir = new TemporaryFolder();
 
     @Test
-    public void enableTattletaleParameter() {
+    public void enableTattletaleParameterWithEapTarget() {
         bootstrap("--addonDir", tmpAddonDir.getRoot().getAbsolutePath(), 
                 "--install", "org.jboss.windup.rules.apps:windup-rules-tattletale," + Bootstrap.getVersion());
 
@@ -31,6 +32,21 @@ public class EnableTattletaleParameterTest extends AbstractBootstrapTestWithRule
                 "--enableTattletale");
 
         assertTrue(Files.exists(Paths.get(tmp.getRoot().getAbsolutePath(), "reports", "tattletale")));
-        assertTrue(capturedOutput().contains("WARNING: (DEPRECATED) --enableTattletale option is not necessary anymore since Tattletale report generation is enabled by default. Use only --disableTattletale option if you want to disable it."));
+        assertTrue(capturedOutput().contains("INFO: --enableTattletale option can be removed since Tattletale report generation is enabled by default when JBoss EAP is one of the analysis targets."));
+    }
+
+    @Test
+    public void enableTattletaleParameterWithoutEapTarget() {
+        bootstrap("--addonDir", tmpAddonDir.getRoot().getAbsolutePath(),
+                "--install", "org.jboss.windup.rules.apps:windup-rules-tattletale," + Bootstrap.getVersion());
+
+        bootstrap("--input", "../test-files/Windup1x-javaee-example-tiny.war",
+                "--output", tmp.getRoot().getAbsolutePath(),
+                "--target", "cloud-readiness",
+                "--addonDir", tmpAddonDir.getRoot().getAbsolutePath(),
+                "--enableTattletale");
+
+        assertTrue(Files.exists(Paths.get(tmp.getRoot().getAbsolutePath(), "reports", "tattletale")));
+        assertFalse(capturedOutput().contains("INFO: --enableTattletale option can be removed since Tattletale report generation is enabled by default when JBoss EAP is one of the analysis targets."));
     }
 }

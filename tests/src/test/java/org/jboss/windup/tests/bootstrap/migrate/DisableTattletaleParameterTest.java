@@ -21,7 +21,7 @@ public class DisableTattletaleParameterTest extends AbstractBootstrapTestWithRul
     public final TemporaryFolder tmpAddonDir = new TemporaryFolder();
 
     @Test
-    public void disableTattletaleParameter() {
+    public void disableTattletaleParameterWithEapTarget() {
         bootstrap("--addonDir", tmpAddonDir.getRoot().getAbsolutePath(), 
                 "--install", "org.jboss.windup.rules.apps:windup-rules-tattletale," + Bootstrap.getVersion());
 
@@ -33,5 +33,21 @@ public class DisableTattletaleParameterTest extends AbstractBootstrapTestWithRul
                 "--disableTattletale");
 
         assertFalse(Files.exists(Paths.get(tmp.getRoot().getAbsolutePath(), "reports", "tattletale")));
+        assertFalse(capturedOutput().contains("INFO: --disableTattletale option can be removed since Tattletale report generation is not enabled by default when JBoss EAP is not one of the analysis targets."));
+    }
+
+    @Test
+    public void disableTattletaleParameterWithoutEapTarget() {
+        bootstrap("--addonDir", tmpAddonDir.getRoot().getAbsolutePath(),
+                "--install", "org.jboss.windup.rules.apps:windup-rules-tattletale," + Bootstrap.getVersion());
+
+        bootstrap("--input", "../test-files/Windup1x-javaee-example-tiny.war",
+                "--output", tmp.getRoot().getAbsolutePath(),
+                "--target", "cloud-readiness",
+                "--addonDir", tmpAddonDir.getRoot().getAbsolutePath(),
+                "--disableTattletale");
+
+        assertFalse(Files.exists(Paths.get(tmp.getRoot().getAbsolutePath(), "reports", "tattletale")));
+        assertTrue(capturedOutput().contains("INFO: --disableTattletale option can be removed since Tattletale report generation is not enabled by default when JBoss EAP is not one of the analysis targets."));
     }
 }

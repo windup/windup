@@ -194,10 +194,22 @@ public class RunWindupCommand implements Command, FurnaceDependent
         if (!validationSuccess)
             return;
 
+        boolean eapTarget = targets.stream().anyMatch(target -> target.startsWith("eap"));
         if ((Boolean)optionValues.get(DisableTattletaleReportOption.NAME) && (Boolean)optionValues.get(EnableTattletaleReportOption.NAME))
         {
-            System.err.println("ERROR: Do NOT use --" + EnableTattletaleReportOption.NAME + " and --" + DisableTattletaleReportOption.NAME + " options together. Tattletale report generation is enabled by default so --" + EnableTattletaleReportOption.NAME + " option should be removed.");
-            return;
+            System.out.println("INFO: --" + DisableTattletaleReportOption.NAME + " option ignored since --" + EnableTattletaleReportOption.NAME + " option has been provided as well.");
+        } else if (eapTarget)
+        {
+            if ((Boolean)optionValues.get(EnableTattletaleReportOption.NAME))
+            {
+                System.out.println("INFO: --" + EnableTattletaleReportOption.NAME + " option can be removed since Tattletale report generation is enabled by default when JBoss EAP is one of the analysis targets.");
+            }
+        } else
+        {
+            if ((Boolean)optionValues.get(DisableTattletaleReportOption.NAME))
+            {
+                System.out.println("INFO: --" + DisableTattletaleReportOption.NAME + " option can be removed since Tattletale report generation is not enabled by default when JBoss EAP is not one of the analysis targets.");
+            }
         }
 
         // In case of --unzippedAppInput or --sourceMode, treat the directories in --input as unzipped applications.

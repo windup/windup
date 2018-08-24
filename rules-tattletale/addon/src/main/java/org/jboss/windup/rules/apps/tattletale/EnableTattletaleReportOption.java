@@ -10,7 +10,6 @@ import org.jboss.windup.config.ValidationResult;
  *
  * @author <a href="mailto:jesse.sightler@gmail.com">Jesse Sightler</a>
  */
-@Deprecated
 public class EnableTattletaleReportOption extends AbstractConfigurationOption
 {
     public static final String NAME = "enableTattletale";
@@ -18,7 +17,7 @@ public class EnableTattletaleReportOption extends AbstractConfigurationOption
     @Override
     public String getDescription()
     {
-        return "(DEPRECATED) --" + EnableTattletaleReportOption.NAME + " option is not necessary anymore since Tattletale report generation is enabled by default. Use only --" + DisableTattletaleReportOption.NAME + " option if you want to disable it.";
+        return "If set, a Tattletale report will be generated for each application.";
     }
 
     @Override
@@ -54,10 +53,6 @@ public class EnableTattletaleReportOption extends AbstractConfigurationOption
     @Override
     public ValidationResult validate(Object value)
     {
-        if (value instanceof Boolean && (Boolean)value)
-        {
-            return new ValidationResult(ValidationResult.Level.WARNING, this.getDescription());
-        }
         return ValidationResult.SUCCESS;
     }
 
