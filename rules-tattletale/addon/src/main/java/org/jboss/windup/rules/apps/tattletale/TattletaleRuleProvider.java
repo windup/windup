@@ -63,7 +63,7 @@ public class TattletaleRuleProvider extends AbstractRuleProvider
             Boolean enableReport = (Boolean) event.getGraphContext().getOptionMap().get(EnableTattletaleReportOption.NAME);
             Boolean disableReport = (Boolean) event.getGraphContext().getOptionMap().get(DisableTattletaleReportOption.NAME);
             Collection<String> targets = (Collection<String>) event.getGraphContext().getOptionMap().get(TargetOption.NAME);
-            boolean eapTarget = targets.stream().anyMatch(target -> target.startsWith("eap"));
+            boolean eapTarget = targets != null && targets.stream().anyMatch(target -> target.startsWith("eap"));
             if (eapTarget && disableReport != null && disableReport && (enableReport == null || !enableReport))
                 return;
             else if (!eapTarget && (enableReport == null || !enableReport))

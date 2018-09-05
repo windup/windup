@@ -195,18 +195,29 @@ public class RunWindupCommand implements Command, FurnaceDependent
             return;
 
         boolean eapTarget = targets.stream().anyMatch(target -> target.startsWith("eap"));
-        if ((Boolean)optionValues.get(DisableTattletaleReportOption.NAME) && (Boolean)optionValues.get(EnableTattletaleReportOption.NAME))
+        boolean disableReport = false;
+        if (optionValues.containsKey(DisableTattletaleReportOption.NAME))
+        {
+            disableReport = (Boolean) optionValues.get(DisableTattletaleReportOption.NAME);
+        }
+        boolean enableReport = false;
+        if (optionValues.containsKey(EnableTattletaleReportOption.NAME))
+        {
+            enableReport = (Boolean) optionValues.get(EnableTattletaleReportOption.NAME);
+        }
+
+        if (disableReport && enableReport)
         {
             System.out.println("INFO: --" + DisableTattletaleReportOption.NAME + " option ignored since --" + EnableTattletaleReportOption.NAME + " option has been provided as well.");
         } else if (eapTarget)
         {
-            if ((Boolean)optionValues.get(EnableTattletaleReportOption.NAME))
+            if (enableReport)
             {
                 System.out.println("INFO: --" + EnableTattletaleReportOption.NAME + " option can be removed since Tattletale report generation is enabled by default when JBoss EAP is one of the analysis targets.");
             }
         } else
         {
-            if ((Boolean)optionValues.get(DisableTattletaleReportOption.NAME))
+            if (disableReport)
             {
                 System.out.println("INFO: --" + DisableTattletaleReportOption.NAME + " option can be removed since Tattletale report generation is not enabled by default when JBoss EAP is not one of the analysis targets.");
             }
