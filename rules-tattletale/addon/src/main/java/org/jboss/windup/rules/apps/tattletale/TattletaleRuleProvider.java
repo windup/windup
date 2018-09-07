@@ -61,13 +61,7 @@ public class TattletaleRuleProvider extends AbstractRuleProvider
         @Override
         public void perform(GraphRewrite event, EvaluationContext context)
         {
-            Boolean enableReport = (Boolean) event.getGraphContext().getOptionMap().get(EnableTattletaleReportOption.NAME);
-            Boolean disableReport = (Boolean) event.getGraphContext().getOptionMap().get(DisableTattletaleReportOption.NAME);
-            Collection<String> targets = (Collection<String>) event.getGraphContext().getOptionMap().get(TargetOption.NAME);
-            boolean eapTarget = targets != null && targets.stream().anyMatch(target -> target.startsWith("eap"));
-            if (eapTarget && BooleanUtils.isTrue(disableReport) && BooleanUtils.isNotTrue(enableReport))
-                return;
-            else if (!eapTarget && BooleanUtils.isNotTrue(enableReport))
+            if (!isTattleTaleReportGenerationEnabled(event))
                 return;
 
             WindupConfigurationModel configuration = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
@@ -152,6 +146,19 @@ public class TattletaleRuleProvider extends AbstractRuleProvider
 
             ReportService reportService = new ReportService(context);
             reportService.setUniqueFilename(applicationReportModel, "tattletale" + "_" + inputProjectModel.getName(), "html");
+        }
+
+        private boolean isTattleTaleReportGenerationEnabled(GraphRewrite event)
+        {
+            Boolean enableReport = (Boolean) event.getGraphContext().getOptionMap().get(EnableTattletaleReportOption.NAME);
+            Boolean disableReport = (Boolean) event.getGraphContext().getOptionMap().get(DisableTattletaleReportOption.NAME);
+            Collection<String> targets = (Collection<String>) event.getGraphContext().getOptionMap().get(TargetOption.NAME);
+            boolean eapTarget = targets != null && targets.stream().anyMatch(target -> target.startsWith("eap"));
+            if (eapTarget && BooleanUtils.isTrue(disableReport) && BooleanUtils.isNotTrue(enableReport))
+                return false;
+            else if (!eapTarget && BooleanUtils.isNotTrue(enableReport))
+                return false;
+            return true;
         }
     }
 }
