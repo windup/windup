@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.google.common.base.StandardSystemProperty;
+import org.apache.commons.lang.BooleanUtils;
 import org.jboss.tattletale.Main;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
@@ -64,9 +65,9 @@ public class TattletaleRuleProvider extends AbstractRuleProvider
             Boolean disableReport = (Boolean) event.getGraphContext().getOptionMap().get(DisableTattletaleReportOption.NAME);
             Collection<String> targets = (Collection<String>) event.getGraphContext().getOptionMap().get(TargetOption.NAME);
             boolean eapTarget = targets != null && targets.stream().anyMatch(target -> target.startsWith("eap"));
-            if (eapTarget && disableReport != null && disableReport && (enableReport == null || !enableReport))
+            if (eapTarget && BooleanUtils.isTrue(disableReport) && BooleanUtils.isNotTrue(enableReport))
                 return;
-            else if (!eapTarget && (enableReport == null || !enableReport))
+            else if (!eapTarget && BooleanUtils.isNotTrue(enableReport))
                 return;
 
             WindupConfigurationModel configuration = WindupConfigurationService.getConfigurationModel(event.getGraphContext());
