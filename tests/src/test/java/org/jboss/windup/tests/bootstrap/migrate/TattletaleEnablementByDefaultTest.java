@@ -1,14 +1,11 @@
 package org.jboss.windup.tests.bootstrap.migrate;
 
 import org.jboss.windup.bootstrap.Bootstrap;
-import org.jboss.windup.rules.apps.tattletale.TattletaleRuleProvider;
 import org.jboss.windup.tests.bootstrap.AbstractBootstrapTestWithRules;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-import javax.enterprise.inject.Vetoed;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 

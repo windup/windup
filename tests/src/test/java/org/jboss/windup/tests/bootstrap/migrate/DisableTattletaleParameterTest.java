@@ -1,7 +1,6 @@
 package org.jboss.windup.tests.bootstrap.migrate;
 
 import org.jboss.windup.bootstrap.Bootstrap;
-import org.jboss.windup.rules.apps.tattletale.TattletaleRuleProvider;
 import org.jboss.windup.tests.bootstrap.AbstractBootstrapTestWithRules;
 import org.junit.Rule;
 import org.junit.Test;
