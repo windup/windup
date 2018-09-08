@@ -151,33 +151,39 @@ public class WindupArchitectureDuplicateTest extends WindupArchitectureTest
     private void validateReportIndex(GraphContext graphContext)
     {
         Path mainReportPath = getReportIndex(graphContext, MAIN_APP_FILENAME);
+        System.err.println("\n\n\n\n\n\n + WHEEEEE1: " +   mainReportPath.toAbsolutePath());
         Assert.assertNotNull(mainReportPath);
 
         Path secondAppPath = getReportIndex(graphContext, SECOND_APP_FILENAME);
+        System.err.println("\n\n\n\n\n\n + WHEEEEE2: " +   secondAppPath.toAbsolutePath());
         Assert.assertNotNull(secondAppPath);
 
         Path sharedLibsPath = getReportIndex(graphContext, ProjectService.SHARED_LIBS_FILENAME);
+        System.err.println("\n\n\n\n\n\n + WHEEEEE3: " +   sharedLibsPath.toAbsolutePath());
         Assert.assertNotNull(sharedLibsPath);
 
         TestReportIndexReportUtil reportIndex = new TestReportIndexReportUtil();
 
         reportIndex.loadPage(mainReportPath);
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("mandatory", 1, 3));
-        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("optional", 91, 636));
+        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("optional", 83, 636));
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("potential", 0, 0));
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("cloud-mandatory", 2, 10));
+        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("information", 8, 0));
 
         reportIndex.loadPage(secondAppPath);
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("mandatory", 1, 3));
-        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("optional", 91, 636));
+        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("optional", 83, 636));
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("potential", 0, 0));
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("cloud-mandatory", 2, 10));
+        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("information", 8, 0));
 
         reportIndex.loadPage(sharedLibsPath);
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("mandatory", 1, 3));
-        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("optional", 87, 584));
+        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("optional", 80, 584));
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("potential", 0, 0));
         Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("cloud-mandatory", 2, 10));
+        Assert.assertTrue(reportIndex.checkIncidentByCategoryRow("information", 7, 0));
     }
 
     private void validateJarDependencyReport(GraphContext graphContext)
