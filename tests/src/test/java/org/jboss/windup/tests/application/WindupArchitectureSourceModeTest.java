@@ -131,7 +131,7 @@ public class WindupArchitectureSourceModeTest extends WindupArchitectureTest
         Path csvPath = reportDirectory.resolve("src_example.csv");
         Map<String, Boolean> expectedRegexMatches = new HashMap<>();
         expectedRegexMatches.put("\"Rule Id\",\"Issue Category\".*", false);
-        expectedRegexMatches.put("\"DiscoverWebXmlRuleProvider_1\",\"optional\",\"Web XML\",\" Web Application Deployment Descriptors\",\"\",\"src_example\",\"web.xml\".*", false);
+        expectedRegexMatches.put("\"DiscoverWebXmlRuleProvider_1\",\"information\",\"Web XML\",\" Web Application Deployment Descriptors\",\"\",\"src_example\",\"web.xml\".*", false);
 
         try (BufferedReader fileReader = new BufferedReader(new FileReader(csvPath.toFile())))
         {

@@ -15,6 +15,7 @@ import org.jboss.windup.config.query.Query;
 import org.jboss.windup.config.query.QueryPropertyComparisonType;
 import org.jboss.windup.config.ruleprovider.IteratingRuleProvider;
 import org.jboss.windup.graph.GraphContext;
+import org.jboss.windup.reporting.category.IssueCategoryRegistry;
 import org.jboss.windup.reporting.model.TechnologyTagLevel;
 import org.jboss.windup.reporting.model.TechnologyTagModel;
 import org.jboss.windup.reporting.service.ClassificationService;
@@ -119,7 +120,7 @@ public class DiscoverWebXmlRuleProvider extends IteratingRuleProvider<XmlFileMod
         ClassificationService classificationService = new ClassificationService(context);
         TechnologyTagService technologyTagService = new TechnologyTagService(context);
 
-        classificationService.attachClassification(event, evaluationContext, xml, "Web XML", " Web Application Deployment Descriptors");
+        classificationService.attachClassification(event, evaluationContext, xml,  IssueCategoryRegistry.INFORMATION, "Web XML", " Web Application Deployment Descriptors");
         TechnologyTagModel technologyTag = technologyTagService.addTagToFileModel(xml, TECH_TAG, TECH_TAG_LEVEL);
         WebXmlService webXmlService = new WebXmlService(context);
 
