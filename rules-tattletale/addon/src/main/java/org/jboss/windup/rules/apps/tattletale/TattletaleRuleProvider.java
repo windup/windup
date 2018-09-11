@@ -6,11 +6,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.google.common.base.StandardSystemProperty;
-import org.apache.commons.lang.BooleanUtils;
 import org.jboss.tattletale.Main;
 import org.jboss.windup.config.AbstractRuleProvider;
 import org.jboss.windup.config.GraphRewrite;
@@ -150,13 +150,13 @@ public class TattletaleRuleProvider extends AbstractRuleProvider
 
         private boolean isTattleTaleReportGenerationEnabled(GraphRewrite event)
         {
-            Boolean enableReport = (Boolean) event.getGraphContext().getOptionMap().get(EnableTattletaleReportOption.NAME);
-            Boolean disableReport = (Boolean) event.getGraphContext().getOptionMap().get(DisableTattletaleReportOption.NAME);
-            Collection<String> targets = (Collection<String>) event.getGraphContext().getOptionMap().get(TargetOption.NAME);
-            boolean eapTarget = targets != null && targets.stream().anyMatch(target -> target.startsWith("eap"));
-            if (eapTarget && BooleanUtils.isTrue(disableReport) && BooleanUtils.isNotTrue(enableReport))
+            Boolean enableReport = (Boolean) event.getGraphContext().getOptionMap().getOrDefault(EnableTattletaleReportOption.NAME, Boolean.FALSE);
+            Boolean disableReport = (Boolean) event.getGraphContext().getOptionMap().getOrDefault(DisableTattletaleReportOption.NAME, Boolean.FALSE);
+            Collection<String> targets = (Collection<String>) event.getGraphContext().getOptionMap().getOrDefault(TargetOption.NAME, Collections.EMPTY_SET);
+            boolean eapTarget = targets.stream().anyMatch(target -> target.startsWith("eap"));
+            if (eapTarget && disableReport && !enableReport)
                 return false;
-            else if (!eapTarget && BooleanUtils.isNotTrue(enableReport))
+            else if (!eapTarget && !enableReport)
                 return false;
             return true;
         }
